@@ -1,0 +1,174 @@
+openapi: 3.0.2
+
+info:
+  title: Hux Customer Data Management (CDM)
+  description:
+    A REST API for Customer Data Management (CDM) platform.
+  version: 1.0.0
+
+servers:
+  - url: /api/v1/cdm
+
+tags:
+  - name: datafeeds
+    description:
+      Operations related to managing the data feed catalog
+
+paths:
+  /datafeeds:
+    get:
+      operationId: get_datafeeds
+      summary:
+        Retrieves the datafeed catalog
+      tags:
+      - datafeeds
+      responses:
+        200:
+          description:
+            OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Datafeed"
+    post:
+      operationId: add_datafeed
+      summary:
+        Creates and adds a new datafeed in the datafeed catalog
+      tags:
+      - datafeeds
+      requestBody:
+        description:
+          Datafeed object that needs to be added to the datafeed catalog
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Datafeed"
+        required: true
+      responses:
+        201:
+          description:
+            Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Datafeed"
+
+  /datafeeds/{feed_id}:
+    get:
+      operationId: get_datafeed
+      summary:
+        Retrieves the datafeed from the datafeed catalog by ID
+      tags:
+      - datafeeds
+      responses:
+        200:
+          description:
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Datafeed"
+        404:
+          description:
+            Datafeed not found
+    put:
+      operationId: set_datafeed
+      summary:
+        Update an existing datafeed in the datafeed catalog by ID
+      tags:
+      - datafeeds
+      requestBody:
+        description:
+          Datafeed object that needs to be update to the datafeed catalog
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Datafeed"
+        required: true
+      responses:
+        200:
+          description:
+            Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Datafeed"
+        404:
+          description:
+            Datafeed not found
+        405:
+          description:
+            Validation exception
+    delete:
+      operationId: delete_datafeed
+      summary:
+        Deletes an existing datafeed in the datafeed catalog by ID
+      tags:
+      - datafeeds
+      parameters:
+      - name: feed_id
+        in: path
+        description: Datafeed ID to delete
+        required: true
+        schema:
+          type: integer
+      responses:
+        400:
+          description: Invalid ID provided
+        404:
+          description: Datafeed not found
+
+components:
+  schemas:
+    Datafeed:
+      type: object
+      properties:
+        data_source:
+          description:
+            Source of the data for the datafeed
+          type: string
+          example: "Salesforce"
+        data_type:
+          description:
+            Type of data for the datafeed
+          type: string
+          example: "Customers"
+          enum:
+            - "Customers"
+            - "Orders"
+            - "Items"
+        feed_id:
+          description:
+            ID of the datafeed
+          type: integer
+          example: 7
+        feed_type:
+          description:
+            Type of datafeed
+          type: string
+          example: "API"
+          enum:
+            - "Batch"
+            - "API"
+        file_extension:
+          description:
+            File extension of the datafeed
+          type: string
+          example: "json"
+          enum:
+            - "csv"
+            - "json"
+        is_pii:
+          description:
+            Indicate whether the type of data contains personally identifiable
+            information (PII)
+          type: boolean
+          example: True
+        modified:
+          description:
+            Last modified date of the datafeed
+          type: string
+          format: date-time
+          example: 2021-02-20T12:23:45.678+00:00
