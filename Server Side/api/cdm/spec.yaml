@@ -1,19 +1,26 @@
 openapi: 3.0.2
 
+# API information
 info:
   title: Hux Customer Data Management (CDM)
   description:
     A REST API for Customer Data Management (CDM) platform.
   version: 1.0.0
 
+# API servers
 servers:
   - url: /api/v1/cdm
 
+# API tags
 tags:
   - name: datafeeds
     description:
-      Operations related to managing the data feed catalog
+      Operations related to managing the datafeed catalog
+  - name: fieldmappings
+    description:
+      Operations related to managing a datafeed's PII fieldmappings
 
+# API paths
 paths:
   /datafeeds:
     get:
@@ -81,7 +88,7 @@ paths:
       - datafeeds
       requestBody:
         description:
-          Datafeed object that needs to be update to the datafeed catalog
+          Datafeed object that needs to be updated in the datafeed catalog
         content:
           application/json:
             schema:
@@ -115,11 +122,112 @@ paths:
         schema:
           type: integer
       responses:
+        200:
+          description: Deleted
+          content: {}
         400:
           description: Invalid ID provided
         404:
           description: Datafeed not found
 
+  /datafeeds/{feed_id}/fieldmappings:
+    get:
+      operationId: get_fieldmappings
+      summary:
+        Retrieves the fieldmappings for a datafeed
+      tags:
+      - fieldmappings
+      responses:
+        200:
+          description:
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fieldmappings"
+        404:
+          description:
+            Fieldmappings not found
+    post:
+      operationId: add_fieldmappings
+      summary:
+        Creates and adds fieldmappings for a datafeed
+      tags:
+      - fieldmappings
+      requestBody:
+        description:
+          Fieldmappings object that needs to be added for a datafeed
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Fieldmappings"
+        required: true
+      responses:
+        201:
+          description:
+            Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fieldmappings"
+    put:
+      operationId: set_fieldmapping
+      summary:
+        Update an existing fieldmapping object for a datafeed
+      tags:
+      - fieldmappings
+      requestBody:
+        description:
+          Fieldmappings object that needs to be updated for a datafeed
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Fieldmappings"
+        required: true
+      responses:
+        200:
+          description:
+            Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fieldmappings"
+        404:
+          description:
+            fieldmapping not found
+        405:
+          description:
+            Validation exception
+    delete:
+      operationId: delete_fieldmapping
+      summary:
+        Deletes an existing fieldmapping for a datafeed
+      tags:
+      - fieldmappings
+      parameters:
+      - name: feed_id
+        in: path
+        description: Datafeed ID to delete the fieldmapping for
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description:
+            Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fieldmappings"
+              example:
+                feed_id: 7
+                fields: []
+        400:
+          description: Invalid ID provided
+        404:
+          description: Fieldmappings not found
+
+# API components
 components:
   schemas:
     Datafeed:
@@ -178,3 +286,51 @@ components:
             information (PII)
           type: boolean
           example: True
+
+    Fieldmappings:
+      type: object
+      properties:
+        feed_id:
+          description:
+            ID of the datafeed these fieldmappings are associated with
+          type: integer
+          example: 7
+        fields:
+          description:
+            List of fields for a datafeed that contains PII
+          type: array
+          items:
+            $ref: "#/components/schemas/Fields"
+
+    Fields:
+      type: object
+      properties:
+        id:
+          description:
+            ID of the fieldmapping
+          type: integer
+          example: 12
+        field_name:
+          description:
+            Name of the field to map to (ie. standardized field name)
+          type: string
+          enum:
+          - "FNAME"
+          - "LNAME"
+          - "ADD1"
+          - "ADD2"
+          - "CITY"
+          - "STATE"
+          - "ZIP"
+          example: "FNAME"
+        field_variation:
+          description:
+            Name of the field in the originating data feed (ie. source field name)
+          type: string
+          example: "First Name"
+        modified:
+          description:
+            Last modified date of the field mapping
+          type: string
+          format: date-time
+          example: 2021-02-20T12:23:45.678+00:00
