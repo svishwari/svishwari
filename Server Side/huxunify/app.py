@@ -4,6 +4,9 @@ Purpose of this file is to house the main application code.
 from flask import Flask
 from flasgger import Swagger
 from api.route.home import home_api
+from api.route.advertising import advertising_bp
+from api.route.decision import decision_bp
+from api.route.cdm import cdm_bp
 
 
 def create_app():
@@ -23,6 +26,9 @@ def create_app():
 
     # register the blueprint and route
     flask_app.register_blueprint(home_api, url_prefix='/api')
+    flask_app.register_blueprint(advertising_bp, url_prefix='/api/advertising')
+    flask_app.register_blueprint(decision_bp, url_prefix='/api/decision')
+    flask_app.register_blueprint(cdm_bp, url_prefix='/api/cdm')
 
     return flask_app
 

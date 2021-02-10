@@ -19,9 +19,7 @@ home_api = Blueprint('api', __name__)
         }
     }
 })
-
-
-def welcome():
+def home():
     """
     1 liner about the route
     A more detailed description of the endpoint

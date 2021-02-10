@@ -28,6 +28,8 @@ and **[marshmallow](http://marshmallow.readthedocs.io/)** (an object serializati
 that adds additional features to marshmallow, including URL and Hyperlinks fields for HATEOAS-ready APIs. 
 It also (optionally) integrates with **[Flask-SQLAlchemy](http://marshmallow.readthedocs.io/)**.
 
+#### Moto
+Moto is a library that allows your tests to easily mock out AWS Services.
 
 #### apispec
 

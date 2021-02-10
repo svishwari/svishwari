@@ -8,6 +8,7 @@ flask = "*"
 flasgger = "*"
 flask-marshmallow = "*"
 apispec = "*"
+moto = "*"
 
 [dev-packages]
 
