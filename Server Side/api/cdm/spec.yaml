@@ -24,7 +24,6 @@ tags:
 paths:
   /datafeeds:
     get:
-      operationId: get_datafeeds
       summary:
         Retrieves the datafeed catalog
       tags:
@@ -40,7 +39,6 @@ paths:
                 items:
                   $ref: "#/components/schemas/Datafeed"
     post:
-      operationId: add_datafeed
       summary:
         Creates and adds a new datafeed in the datafeed catalog
       tags:
@@ -63,8 +61,16 @@ paths:
                 $ref: "#/components/schemas/Datafeed"
 
   /datafeeds/{feed_id}:
+    parameters:
+      - name: feed_id
+        in: path
+        description: ID of datafeed catalog
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
     get:
-      operationId: get_datafeed
       summary:
         Retrieves the datafeed from the datafeed catalog by ID
       tags:
@@ -81,7 +87,6 @@ paths:
           description:
             Datafeed not found
     put:
-      operationId: set_datafeed
       summary:
         Update an existing datafeed in the datafeed catalog by ID
       tags:
@@ -109,18 +114,10 @@ paths:
           description:
             Validation exception
     delete:
-      operationId: delete_datafeed
       summary:
         Deletes an existing datafeed in the datafeed catalog by ID
       tags:
       - datafeeds
-      parameters:
-      - name: feed_id
-        in: path
-        description: Datafeed ID to delete
-        required: true
-        schema:
-          type: integer
       responses:
         200:
           description: Deleted
@@ -131,8 +128,17 @@ paths:
           description: Datafeed not found
 
   /datafeeds/{feed_id}/fieldmappings:
+    parameters:
+      - name: feed_id
+        in: path
+        description: ID of datafeed catalog
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
     get:
-      operationId: get_fieldmappings
+      operationId: endpoints.fieldmappings.search
       summary:
         Retrieves the fieldmappings for a datafeed
       tags:
@@ -149,7 +155,7 @@ paths:
           description:
             Fieldmappings not found
     post:
-      operationId: add_fieldmappings
+      operationId: endpoints.fieldmappings.post
       summary:
         Creates and adds fieldmappings for a datafeed
       tags:
@@ -171,7 +177,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fieldmappings"
     put:
-      operationId: set_fieldmapping
+      operationId: endpoints.fieldmappings.put
       summary:
         Update an existing fieldmapping object for a datafeed
       tags:
@@ -199,18 +205,11 @@ paths:
           description:
             Validation exception
     delete:
-      operationId: delete_fieldmapping
+      operationId: endpoints.fieldmappings.delete
       summary:
         Deletes an existing fieldmapping for a datafeed
       tags:
       - fieldmappings
-      parameters:
-      - name: feed_id
-        in: path
-        description: Datafeed ID to delete the fieldmapping for
-        required: true
-        schema:
-          type: integer
       responses:
         200:
           description:
