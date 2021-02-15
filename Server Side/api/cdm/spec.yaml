@@ -69,7 +69,7 @@ paths:
   /fieldmappings:
     get:
       summary:
-        Retrieves the fieldmappings for the data feed catalog
+        Retrieves the fieldmappings for the datafeed catalog
       tags:
       - fieldmappings
       responses:
@@ -79,22 +79,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fieldmappings"
-        404:
-          description:
-            Fieldmappings not found
+                type: array
+                items:
+                  $ref: "#/components/schemas/Fieldmapping"
     post:
       summary:
-        Creates and adds fieldmappings for the data feed catalog
+        Creates and adds a new fieldmapping for the datafeed catalog
       tags:
       - fieldmappings
       requestBody:
         description:
-          Fieldmappings object that needs to be added for the data feed catalog
+          Fieldmappings object that needs to be added for the datafeed catalog
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Fieldmappings"
+              $ref: "#/components/schemas/FieldmappingBody"
         required: true
       responses:
         201:
@@ -103,19 +102,48 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fieldmappings"
+                $ref: "#/components/schemas/Fieldmapping"
+        405:
+          description:
+            Validation exception
+  /fieldmappings/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of fieldmapping
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+    get:
+      summary:
+        Retrieves the fieldmapping for the datafeed catalog by ID
+      tags:
+      - fieldmappings
+      responses:
+        200:
+          description:
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fieldmapping"
+        404:
+          description:
+            Fieldmapping not found
     put:
       summary:
-        Update an existing fieldmapping object for the data feed catalog
+        Updates an existing fieldmapping object for the datafeed catalog
       tags:
       - fieldmappings
       requestBody:
         description:
-          Fieldmappings object that needs to be updated for the data feed catalog
+          Fieldmapping object that needs to be updated for the datafeed catalog
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Fieldmappings"
+              $ref: "#/components/schemas/FieldmappingBody"
         required: true
       responses:
         200:
@@ -124,10 +152,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fieldmappings"
+                $ref: "#/components/schemas/Fieldmapping"
         404:
           description:
-            fieldmapping not found
+            Fieldmapping not found
         405:
           description:
             Validation exception
@@ -192,29 +220,26 @@ components:
           type: boolean
           example: True
 
-    Fieldmappings:
-      type: object
-      properties:
-        feed_id:
-          description:
-            ID of the datafeed these fieldmappings are associated with
-          type: integer
-          example: 7
-        fields:
-          description:
-            List of fields for the data feed catalog that contains PII
-          type: array
-          items:
-            $ref: "#/components/schemas/Fields"
+    Fieldmapping:
+      allOf:
+        - $ref: '#/components/schemas/FieldmappingBody'
+        - type: object
+          properties:
+            id:
+              description:
+                ID of the fieldmapping
+              type: integer
+              example: 12
+            modified:
+              description:
+                Last modified date of the field mapping
+              type: string
+              format: date-time
+              example: 2021-02-20T12:23:45.678+00:00
 
-    Fields:
+    FieldmappingBody:
       type: object
       properties:
-        id:
-          description:
-            ID of the fieldmapping
-          type: integer
-          example: 12
         field_name:
           description:
             Name of the field to map to (ie. standardized field name)
@@ -224,18 +249,16 @@ components:
           - "LNAME"
           - "ADD1"
           - "ADD2"
+          - "ADD3"
           - "CITY"
           - "STATE"
           - "ZIP"
+          - "COMPANY"
+          - "TITLE"
+          - "EMAIL"
           example: "FNAME"
         field_variation:
           description:
             Name of the field in the originating data feed (ie. source field name)
           type: string
           example: "First Name"
-        modified:
-          description:
-            Last modified date of the field mapping
-          type: string
-          format: date-time
-          example: 2021-02-20T12:23:45.678+00:00
