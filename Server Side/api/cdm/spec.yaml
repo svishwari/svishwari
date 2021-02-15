@@ -38,27 +38,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Datafeed"
-    post:
-      summary:
-        Creates and adds a new datafeed in the datafeed catalog
-      tags:
-      - datafeeds
-      requestBody:
-        description:
-          Datafeed object that needs to be added to the datafeed catalog
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DatafeedBody"
-        required: true
-      responses:
-        201:
-          description:
-            Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Datafeed"
 
   /datafeeds/{feed_id}:
     parameters:
@@ -86,61 +65,11 @@ paths:
         404:
           description:
             Datafeed not found
-    put:
-      summary:
-        Update an existing datafeed in the datafeed catalog by ID
-      tags:
-      - datafeeds
-      requestBody:
-        description:
-          Datafeed object that needs to be updated in the datafeed catalog
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Datafeed"
-        required: true
-      responses:
-        200:
-          description:
-            Updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DatafeedBody"
-        404:
-          description:
-            Datafeed not found
-        405:
-          description:
-            Validation exception
-    delete:
-      summary:
-        Deletes an existing datafeed in the datafeed catalog by ID
-      tags:
-      - datafeeds
-      responses:
-        200:
-          description: Deleted
-          content: {}
-        400:
-          description: Invalid ID provided
-        404:
-          description: Datafeed not found
 
-  /datafeeds/{feed_id}/fieldmappings:
-    parameters:
-      - name: feed_id
-        in: path
-        description: ID of datafeed catalog
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+  /fieldmappings:
     get:
-      operationId: endpoints.fieldmappings.search
       summary:
-        Retrieves the fieldmappings for a datafeed
+        Retrieves the fieldmappings for the data feed catalog
       tags:
       - fieldmappings
       responses:
@@ -155,14 +84,13 @@ paths:
           description:
             Fieldmappings not found
     post:
-      operationId: endpoints.fieldmappings.post
       summary:
-        Creates and adds fieldmappings for a datafeed
+        Creates and adds fieldmappings for the data feed catalog
       tags:
       - fieldmappings
       requestBody:
         description:
-          Fieldmappings object that needs to be added for a datafeed
+          Fieldmappings object that needs to be added for the data feed catalog
         content:
           application/json:
             schema:
@@ -177,14 +105,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fieldmappings"
     put:
-      operationId: endpoints.fieldmappings.put
       summary:
-        Update an existing fieldmapping object for a datafeed
+        Update an existing fieldmapping object for the data feed catalog
       tags:
       - fieldmappings
       requestBody:
         description:
-          Fieldmappings object that needs to be updated for a datafeed
+          Fieldmappings object that needs to be updated for the data feed catalog
         content:
           application/json:
             schema:
@@ -204,27 +131,6 @@ paths:
         405:
           description:
             Validation exception
-    delete:
-      operationId: endpoints.fieldmappings.delete
-      summary:
-        Deletes an existing fieldmapping for a datafeed
-      tags:
-      - fieldmappings
-      responses:
-        200:
-          description:
-            Deleted
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fieldmappings"
-              example:
-                feed_id: 7
-                fields: []
-        400:
-          description: Invalid ID provided
-        404:
-          description: Fieldmappings not found
 
 # API components
 components:
@@ -296,7 +202,7 @@ components:
           example: 7
         fields:
           description:
-            List of fields for a datafeed that contains PII
+            List of fields for the data feed catalog that contains PII
           type: array
           items:
             $ref: "#/components/schemas/Fields"
