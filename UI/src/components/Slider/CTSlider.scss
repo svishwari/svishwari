@@ -1,0 +1,30 @@
+@import '../../theme/variables.scss';
+
+.ct-slider-wrapper{
+  outline: none;
+  .ct-slider-track {
+    min-height: 10px;
+    outline: none;
+    width: 100%;
+    border-radius: 4px;
+    align-self: center;
+    border: 1px solid #E6E6E6;
+    display: flex;
+    width: 100%;
+
+    .ct-slider-thumb {
+      height: 42px;
+      width: 42px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #FFFFFF;
+      border: 1px solid #00C495;
+      box-sizing: border-box;
+      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.15);
+      outline: none;
+      font-weight: bold;
+    }
+  }
+}

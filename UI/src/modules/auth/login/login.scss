@@ -1,0 +1,115 @@
+@import "../../../theme/_variables.scss";
+
+.login-wrapper {
+  display: flex;
+  min-height: 100vh;
+  height: 100vh;
+  @media screen and (min-width: 1280px) {
+    .left-section {
+      width: 48.61%;
+      min-width: 48.61%;
+      min-height: 100vh;
+    }
+  }
+  @media screen and (max-width: 1279px) {
+    .left-section {
+      display: none;
+    }
+  }
+  .left-section {
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .right-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    .login-form {
+      margin-top: 70px;
+      min-width: 67.432432432432432%;
+      h1 {
+        font-family: Open Sans SemiBold;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 32px;
+        line-height: 40px;
+        /* or 125% */
+
+        letter-spacing: 0.1px;
+        color: $appDark;
+        margin-top: 40px;
+        .color-360 {
+          color: #f43ecc;
+        }
+      }
+      .error {
+        color: red;
+        font-family: 'Open Sans SemiBold';
+        font-style: normal;
+        font-weight: 600;
+        height: 60px;
+        text-align: left;
+      }
+      h6 {
+        margin-top: 8px;
+        font-family: Open Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 22px;
+        /* identical to box height, or 157% */
+
+        letter-spacing: 0.3px;
+
+        color: $appDark;
+      }
+      form {
+        margin-top: 40px;
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          label {
+            font-family: Open Sans SemiBold;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 16px;
+            margin: 0;
+            /* or 133% */
+
+            letter-spacing: 0.2px;
+
+            /* Light Gray */
+
+            color: $appDark;
+          }
+          input {
+              margin-top: 4px;
+            height: 40px;
+            background: #ffffff;
+            /* Lines */
+
+            border: 1px solid #f0f0f0;
+            box-sizing: border-box;
+            border-radius: 4px;
+          }
+        }
+      }
+      .login-btn {
+        background: linear-gradient(151.26deg, #16d864 21.04%, #1aa3dd 95.45%);
+        border-radius: 5px;
+        padding: 8px 72px;
+        color: white;
+        font-weight: bold;
+        &:hover {
+          background: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), $appHighlight;
+      }
+      }
+      .forgot-password {
+        color: #009bff;
+      }
+    }
+  }
+}

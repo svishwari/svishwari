@@ -1,0 +1,60 @@
+@import "../theme/variables.scss";
+.side-bar {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  background: $appNavBackground;
+  transition: 0.5s;
+  max-width: 280px;
+  width: 280px;
+  position: relative;
+  .text {
+    transition: all 1s;
+  }
+  &.collapsed {
+    width: 80px;
+    .menuWrapper {
+      margin-top: 15px;
+    }
+    .text {
+      display: none;
+    }
+    .dropdown-item {
+      padding-left:  0px !important;
+    }
+    .appLogo {
+      margin: 10px 0 0 10px;
+      width: 70%;
+    }
+    .poweredBy {
+      display: none;
+    }
+  }
+  .appLogo {
+    margin: 30px 0 0 30px;
+    transition: all 0.5s ease-in;
+  }
+  .poweredBy {
+    padding-left: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    svg {
+      width: 19px;
+      height: 19px;
+      margin-right: 4px;
+      path {
+        fill: $appDashboardDisabled;
+      }
+    }
+    span {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 16px;
+      letter-spacing: 0.2px;
+      color: $appDashboardDisabled;
+    }
+  }
+}

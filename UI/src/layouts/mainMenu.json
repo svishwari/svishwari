@@ -1,0 +1,78 @@
+[
+  {
+    "name": "Home",
+    "path": "/",
+    "icon": "home-outline"
+  },
+  {
+    "name": "Workflow",
+    "path": "/workflow",
+    "icon": "arrow-decision-outline"
+  },
+  {
+    "name": "Orchestration",
+    "path": "/orchestration",
+    "icon": "account-arrow-right-outline",
+    "subItems": [
+      {
+        "name": "Audiences",
+        "path": "/orchestration/audiences",
+        "icon": "account-group"
+      },
+      {
+        "name": "Segments",
+        "path": "/orchestration/segments",
+        "icon": "human-capacity-decrease"
+      }
+    ]
+  },
+  {
+    "name": "Customer Data",
+    "path": "/data",
+    "icon": "account-details-outline"
+  },
+  {
+    "name": "Decisioning",
+    "path": "/decisioning",
+    "icon": "lan",
+    "subItems": [
+      {
+        "name": "Features",
+        "path": "/decisioning/features",
+        "icon": "diamond-stone"
+      },
+      {
+        "name": "Notebooks",
+        "path": "/decisioning/notebooks",
+        "icon": "human-capacity-decrease"
+      },
+      {
+        "name": "Models",
+        "path": "/decisioning/models",
+        "icon": "tune"
+      },
+      {
+        "name": "Evaluation",
+        "path": "/decisioning/evaluation",
+        "icon": "chart-bar"
+      }
+    ]
+  },
+  {
+    "name": "Connections",
+    "path": "/connections",
+    "icon": "connection",
+    "subItems": [
+      {
+        "name": "Data Sources",
+        "path": "/connections/dataSources",
+        "icon": "arrow-expand-left"
+      },
+      {
+        "name": "Destintations",
+        "path": "/connections/destinations",
+        "icon": "arrow-expand-right"
+      }
+    ]
+  }
+]

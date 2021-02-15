@@ -1,0 +1,25 @@
+@import '../../theme/variables.scss';
+
+.ct-btn-primary {
+    background: $appHighlight;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    font-weight: 500;
+    text-align: center;
+    color: white;
+    box-sizing: border-box;
+    border: 0;
+    &:hover {
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), $appHighlight;
+    }
+}
+
+.ct-btn-primary-disabled {
+    background: $appLinesColor;
+    border-radius: 5px;
+    font-weight: 500;
+    border: 0;
+    text-align: center;
+    color: $appLightGray;
+    box-sizing: border-box;
+}
