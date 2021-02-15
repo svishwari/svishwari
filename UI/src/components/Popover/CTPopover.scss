@@ -1,0 +1,14 @@
+@import "../../theme/variables";
+
+.ct-popover-wrapper {
+    background: white;
+    border: 1px solid $appSmokedWhite;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    .arrow::before {
+        background: white;
+        border: 1px solid $appSmokedWhite;
+        box-sizing: border-box;
+    }
+}
