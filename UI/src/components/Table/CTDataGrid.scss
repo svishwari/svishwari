@@ -1,0 +1,11 @@
+@import "../../theme/variables.scss";
+
+.ct-table-wrapper {
+  .MuiDataGrid-columnsContainer {
+      height: 24px;
+      padding: 3px;
+  }
+  svg {
+    font-size: 29px;
+  }
+}
