@@ -12,15 +12,20 @@ import CTCardGroup from '../../components/Cards/CardGroup/CTCardGroup';
 import CTImageCard from '../../components/Cards/ImageCard/CTImageCard';
 import { ReactComponent as VideoIcon } from "../../assets/icons/video-shooting.svg";
 import CTSimpleCard from '../../components/Cards/SimpleCard/CTSimpleCard';
-import CTWorldMap from '../../components/Charts/CTWorldMap';
+import CTUSAMap from '../../components/Charts/CTUSAMap';
 const Dashboard = (props) => {
-
+    const usData = [
+        { "TX": 90 },
+        { "NY": 28 },
+        { "WA": 68   },
+        { "CA": 18   },
+    ]
     return (
         <div>
             <h1>StyleGuide</h1>
             {/* <button onClick={() => retrieveMetrics() } >Click Me</button> */}
             <h2>WorldMap</h2>
-            <CTWorldMap />
+            <CTUSAMap data={usData} />
             <div className="btnExamples">
                 <h2>Buttons</h2>
                 <div className='mb-2'>
