@@ -13,12 +13,13 @@ export default class CTDataGrid extends Component {
     const { data } = props;
     this.state = {
       dataGridData: data,
-      isEditing: this.props.isEditing,
+      isEditing: false,
+      selectedRows: [],
     };
     // this.setState({ dataGridData: this.props.data });
   }
   updateItem(id, itemAttributes) {
-    var index = this.state.dataGridData.findIndex((x) => x.id === id);
+    let index = this.state.dataGridData.findIndex((x) => x.id === id);
     if (index === -1) {
     } else
       this.setState({
@@ -36,13 +37,52 @@ export default class CTDataGrid extends Component {
     // this.setState({ dataGridData: this.dataGridData });
   };
 
+  toggleEditing = () => {
+    this.setState({isEditing: !this.state.isEditing});
+  }
+
+  rowChange = (params) => {
+    this.setState({selectedRows: params.rowIds});
+  }
+
+  removeRow = (id) => {
+    let index = this.state.dataGridData.findIndex((x) => x.id == id);
+    if (index === -1) {
+      this.props.onRemove('No row found');
+    } else{
+      let updatedArray = [
+        ...this.state.dataGridData.slice(0, index),
+        ...this.state.dataGridData.slice(index + 1),
+      ];
+      this.setState({
+        dataGridData: updatedArray,
+      });
+      this.props.onRemove(this.state.dataGridData[index]);
+    }
+  }
+
+  removeSelectedRows = () => {
+    let rowsTobeRemoved = []
+    this.state.selectedRows.forEach( x =>{
+      let index = this.state.dataGridData.findIndex((y) => y.id == x);
+      rowsTobeRemoved.push(this.state.dataGridData[index]);
+    })
+
+    let filteredArray = this.state.dataGridData.filter(value => !rowsTobeRemoved.includes(value));
+    let deletedArray = this.state.dataGridData.filter(value => rowsTobeRemoved.includes(value));
+    this.setState({
+      dataGridData: filteredArray
+    })
+    this.props.onBulkRemove(deletedArray);
+  }
+
   starredColumn = {
     field: "starred",
     headerName: " ",
     width: 60,
     renderCell: (params) => {
       const updateStar = () => {
-        console.log(params);
+        // console.log(params);
         this.updateStarring(params);
       };
       return (
@@ -58,11 +98,11 @@ export default class CTDataGrid extends Component {
   render() {
     return (
       <>
-        <CTDataGridTop></CTDataGridTop>
+        <CTDataGridTop onAddClick={this.props.onAddClick} onDownload={this.props.onDownload} onRemove={this.removeSelectedRows} selectedRows={this.state.selectedRows} isEditing={this.state.isEditing} changeEditing={this.toggleEditing}></CTDataGridTop>
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}
-          checkboxSelection={true}
+          checkboxSelection={this.state.isEditing}
           disableColumnFilter={true}
           autoHeight={true}
           disableColumnMenu={true}
@@ -70,6 +110,7 @@ export default class CTDataGrid extends Component {
           disableColumnSelector={true}
           rowHeight={60}
           headerHeight={28}
+          onSelectionChange={(params)=>this.rowChange(params)}
           //*****************
           // TO DO THIS CAN HELP IN FUNCTIONALITY
           // onCellClick={(param)=>console.log(param)}
