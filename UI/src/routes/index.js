@@ -20,7 +20,8 @@ import LoggedInRedirect from "../modules/auth/LoggedInRedirect";
 
 // Layouts
 import { PrivateLayout } from "../layouts/PrivateLayout";
-import { StyleGuide } from "../pages/StyleGuide";
+// import { StyleGuide } from "../pages/StyleGuide";
+import ConnectionsSummary from "../modules/connections/ConnectionsSummary";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -50,24 +51,19 @@ function Routes() {
   useEffect(() => {}, []);
 
   return (
-    <div>
+    <>
       <Security oktaAuth={oktaAuth} onAuthRequired={onAuthRequired}>
         <SecureRoute path="/:path?" exact>
           <Switch>
             <PrivateLayout>
               <Switch>
                 <Route path="/" exact component={Dashboard} />
-                <Route path="/styleguide" exact component={StyleGuide} />
-                <Route path="/orchestration" exact component={Page} />
-                <Route path={"/orchestration?/:path?"} exact>
-                  <Switch>
-                    <Route
-                      path="/audiences"
-                      exact
-                      component={Dashboard}
-                    />
-                  </Switch>
-                </Route>
+                <Route path="/connections" exact component={ConnectionsSummary} />
+                <Route
+                  path="/connections/dataSources"
+                  component={Page}
+                ></Route>
+                <Route path="*" exact component={Page} />
               </Switch>
             </PrivateLayout>
           </Switch>
@@ -75,7 +71,7 @@ function Routes() {
         <Route path="/login" render={() => <LoggedInRedirect />} />
         <Route path="/login/callback" component={LoginCallback} />
       </Security>
-    </div>
+    </>
   );
 }
 
