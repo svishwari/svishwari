@@ -11,7 +11,7 @@ export default class CTDataGrid extends Component {
     const { data } = props;
     this.state = {
       dataGridData: data,
-      isEditing: false,
+      isEditing: this.props.isEditing,
     };
     // this.setState({ dataGridData: this.props.data });
   }
@@ -37,7 +37,7 @@ export default class CTDataGrid extends Component {
   starredColumn = {
     field: "starred",
     headerName: " ",
-    width: 100,
+    width: 60,
     renderCell: (params) => {
       const updateStar = () => {
         console.log(params);
@@ -59,12 +59,21 @@ export default class CTDataGrid extends Component {
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}
-          checkboxSelection={this.isEditing}
+          checkboxSelection={true}
           disableColumnFilter={true}
           autoHeight={true}
           disableColumnMenu={true}
           showColumnRightBorder={false}
+          disableColumnSelector={true}
+          rowHeight={60}
+          headerHeight={28}
+          //*****************
+          // TO DO THIS CAN HELP IN FUNCTIONALITY
+          // onCellClick={(param)=>console.log(param)}
+          //********************
           hideFooterRowCount={true}
+          scrollbarSize={0}
+          // disableExtendRowFullWidth={true}
           hideFooter={true}
           disableSelectionOnClick={true}
           rowsPerPageOptions={[25]}

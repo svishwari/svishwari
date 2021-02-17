@@ -15,7 +15,7 @@ import { ReactComponent as FBIcon } from "../../assets/icons/fb-icon.svg";
 import CTPrimaryButton from "../../components/Button/CTPrimaryButton";
 import CTDataGrid from "../../components/Table/CTDataGrid";
 import { Link } from "react-router-dom";
-import { Button, Chip, IconButton } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import CTChip from "../../components/Chip/CTChip";
 
 const data = [
@@ -115,19 +115,19 @@ const columns = [
   {
     field: "name",
     headerName: "Name",
-    width: 300,
+    width: 200,
     renderCell: (params) => <Link to="#">{params.getValue("name")}</Link>,
   },
   {
     field: "status",
     headerName: "Status",
-    width: 300,
+    width: 200,
     renderCell: (params) => (
       <CTChip params={params}/>
     ),
   },
-  { field: "size", headerName: "Size", width: 100 },
-  { field: "created", headerName: "Created", width: 300 },
+  { field: "size", headerName: "Size" },
+  { field: "created", headerName: "Created", width: 200 },
   {
     field: "delivered",
     headerName: " ",
@@ -170,9 +170,9 @@ const Dashboard = (props) => {
   const [dataState, setDataState] = useState(data);
   return (
     <div>
-      <h1>StyleGuide</h1>
+      {/* <h1>StyleGuide</h1> */}
       {/* <button onClick={() => retrieveMetrics() } >Click Me</button> */}
-      {/* <div className="btnExamples">
+            {/* <div className="btnExamples">
                 <h2>Buttons</h2>
                 <div className='mb-2'>
                 <CTPrimaryButton>Primary</CTPrimaryButton>
@@ -186,8 +186,8 @@ const Dashboard = (props) => {
                 <CTTertiaryButton>Tertiary Button</CTTertiaryButton>
                 <CTTertiaryButton isDisabled={true}>Tertiary Button</CTTertiaryButton>
                 </div>
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
                 <h2>Cards</h2>
                 <CTCardGroup>
                     <CTImageCard cardImage={(<VideoIcon />)} cardDescription='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.'></CTImageCard>
@@ -199,8 +199,8 @@ const Dashboard = (props) => {
                         Hello world
                     </CTSimpleCard>
                 </CTCardGroup>
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
                 <h2>Input</h2>
                 <CTLabel>Email</CTLabel>
                 <CTInput inputType='text'/>
@@ -208,18 +208,13 @@ const Dashboard = (props) => {
                 <CTInput inputType='password'/>
                 <CTLabel>Some input</CTLabel>
                 <CTInput errorMessage='Oh no! There is some error' inputType='text'/>
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
             <h2>Slider</h2>
             <CTSlider />
             </div> */}
-      <div>
+      {/* <div>
         <h2>Table</h2>
-        <CTDataGrid
-          data={dataState}
-          columns={columns}
-          hasStarring={true}
-        ></CTDataGrid>
         <CTPrimaryButton
           onClick={() => {
             console.log(dataState)
@@ -228,7 +223,13 @@ const Dashboard = (props) => {
             setDataState(dataState);
           }}
         />
-      </div>
+      </div> */}
+      <CTDataGrid
+        data={dataState}
+        columns={columns}
+        hasStarring={true}
+        isEditing={true}
+      />
     </div>
   );
 };

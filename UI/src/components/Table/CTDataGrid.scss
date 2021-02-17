@@ -1,11 +1,19 @@
 @import "../../theme/variables.scss";
 
 .ct-table-wrapper {
-  .MuiDataGrid-columnsContainer {
-      height: 24px;
-      padding: 3px;
+  background: white;
+  .MuiDataGrid-columnsContainer{
+    .MuiDataGrid-columnSeparator {
+      display: none;
+    }
+    .MuiDataGrid-sortIcon {
+      color: $appMainBlue;
+    }
   }
   svg {
-    font-size: 29px;
+    font-size: 26px;
+  }
+  svg.MuiSvgIcon-root {
+    font-size: 15px;
   }
 }
