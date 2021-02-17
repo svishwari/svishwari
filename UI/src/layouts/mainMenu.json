@@ -27,7 +27,7 @@
     ]
   },
   {
-    "name": "Customer Data",
+    "name": "Customer Profile",
     "path": "/data",
     "icon": "account-details-outline"
   },
