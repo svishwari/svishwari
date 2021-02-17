@@ -1,0 +1,19 @@
+@import '../../theme/variables.scss';
+
+.ct-chip-wrapper {
+    border-radius: 5px;
+    .ct-chip-delivered {
+        background: $appSuccessGreen;
+        color: white;
+    }
+    .ct-chip-not-delivered {
+        background: $appDarkRed;
+        color: white;
+    }
+    .ct-chip-not-delivered-icon {
+        color: $appDarkRed;
+    }
+    .ct-chip-delivered-icon {
+        color: $appSuccessGreen;
+    }
+}

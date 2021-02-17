@@ -16,6 +16,7 @@ import CTPrimaryButton from "../../components/Button/CTPrimaryButton";
 import CTDataGrid from "../../components/Table/CTDataGrid";
 import { Link } from "react-router-dom";
 import { Button, Chip, IconButton } from "@material-ui/core";
+import CTChip from "../../components/Chip/CTChip";
 
 const data = [
   {
@@ -122,29 +123,7 @@ const columns = [
     headerName: "Status",
     width: 300,
     renderCell: (params) => (
-      <>
-        <Chip
-          label={params.getValue("status")}
-          className={params.getValue("status")}
-        />
-        {params.getValue("delivered") === true ? (
-          <IconButton>
-            <span
-              className="iconify"
-              data-icon="mdi:refresh-circle"
-              data-inline="false"
-            ></span>
-          </IconButton>
-        ) : (
-          <IconButton>
-            <span
-              className="iconify"
-              data-icon="mdi:arrow-right-circle"
-              data-inline="false"
-            ></span>
-          </IconButton>
-        )}
-      </>
+      <CTChip params={params}/>
     ),
   },
   { field: "size", headerName: "Size", width: 100 },
