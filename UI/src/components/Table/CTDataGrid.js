@@ -3,7 +3,9 @@ import { DataGrid } from "@material-ui/data-grid";
 import IconButton from "@material-ui/core/IconButton";
 import { ReactComponent as StarEmpty } from '../../assets/icons/NotStarred.svg';
 import { ReactComponent as Starred } from '../../assets/icons/Starred.svg';
-import './CTDataGrid.scss'
+import './CTDataGrid.scss';
+
+import CTDataGridTop from './CTDataGridTop';
 
 export default class CTDataGrid extends Component {
   constructor(props) {
@@ -56,6 +58,7 @@ export default class CTDataGrid extends Component {
   render() {
     return (
       <>
+        <CTDataGridTop></CTDataGridTop>
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}
