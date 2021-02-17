@@ -20,7 +20,7 @@ import CTChip from "../../components/Chip/CTChip";
 
 const data = [
   {
-    name: "Audience Name",
+    name: "Audience Name 1",
     status: "Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -30,7 +30,7 @@ const data = [
     id: 1,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 2",
     status: "Not Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -40,7 +40,7 @@ const data = [
     id: 2,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 3",
     status: "Not Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -50,7 +50,7 @@ const data = [
     id: 3,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 4",
     status: "Not Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -60,7 +60,7 @@ const data = [
     id: 4,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 5",
     status: "Not Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -70,7 +70,7 @@ const data = [
     id: 5,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 6",
     status: "Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -80,7 +80,7 @@ const data = [
     id: 6,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 7",
     status: "Not Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -90,7 +90,7 @@ const data = [
     id: 7,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 8",
     status: "Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -100,7 +100,7 @@ const data = [
     id: 8,
   },
   {
-    name: "Audience Name",
+    name: "Audience Name 9",
     status: "Not Delivered.",
     size: "1.2M",
     created: "8/23/20 11:59PM",
@@ -165,7 +165,7 @@ const columns = [
 const Dashboard = (props) => {
   const handleDataChange = () => {
     data[3].starred = true;
-    console.log(data[3].starred);
+    // console.log(data[3].starred);
   };
   const [dataState, setDataState] = useState(data);
   return (
@@ -228,7 +228,10 @@ const Dashboard = (props) => {
         data={dataState}
         columns={columns}
         hasStarring={true}
-        isEditing={true}
+        onRemove={(params)=>alert(params)}
+        onBulkRemove={(params)=>alert(JSON.stringify(params))}
+        onDownload={(params)=> alert(params) }
+        onAddClick={(params)=>alert('plus clicked')}
       />
     </div>
   );
