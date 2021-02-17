@@ -22,6 +22,7 @@ import LoggedInRedirect from "../modules/auth/LoggedInRedirect";
 import { PrivateLayout } from "../layouts/PrivateLayout";
 // import { StyleGuide } from "../pages/StyleGuide";
 import ConnectionsSummary from "../modules/connections/ConnectionsSummary";
+import ComingSoon from "../pages/ComingSoon";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -53,17 +54,15 @@ function Routes() {
   return (
     <>
       <Security oktaAuth={oktaAuth} onAuthRequired={onAuthRequired}>
-        <SecureRoute path="/:path?" exact>
+        <SecureRoute path="/:path?/:path?/:path?" exact>
           <Switch>
             <PrivateLayout>
               <Switch>
                 <Route path="/" exact component={Dashboard} />
                 <Route path="/connections" exact component={ConnectionsSummary} />
-                <Route
-                  path="/connections/dataSources"
-                  component={Page}
-                ></Route>
-                <Route path="*" exact component={Page} />
+                <Route path="/connections/dataSources" exact component={ConnectionsSummary} />
+                <Route path="/connections/destinations" exact component={Page} />
+                <Route path="*" exact component={ComingSoon} />
               </Switch>
             </PrivateLayout>
           </Switch>

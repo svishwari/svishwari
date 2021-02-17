@@ -17,10 +17,15 @@ const navItem = (route, badge) => {
 const MainMenu = withRouter((props) => {
   const location = useLocation();
   const exactRoute = (path) => {
-    return path === location.pathname ? "active" : "";
+    console.log("Path: " + path + " | " + "Location: " + location.pathname);
+    // debugger
+    return (path !== "/" && location.pathname.includes(path)) ||
+      path === location.pathname
+      ? "active"
+      : "";
   };
   const openDropDown = (path) => {
-    return path === location.pathname;
+    return location.pathname.includes(path);
   };
   const MenuItems = routeDefinitions.map((route, rkey) => {
     return route.subItems && route.subItems.length > 0 ? (
@@ -35,6 +40,7 @@ const MainMenu = withRouter((props) => {
           return (
             <div>
               <NavDropdown.Item
+                className={exactRoute(subItem.path)}
                 key={route.name.toString().toLowerCase() + "_" + skey}
               >
                 {navItem(subItem)}
