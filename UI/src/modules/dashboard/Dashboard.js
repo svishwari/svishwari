@@ -20,8 +20,14 @@ const Dashboard = (props) => {
             <h1>StyleGuide</h1>
             <div>
                 <CTModal 
-                    footerLeftButtons={['Left Button 1','Left Button 2']} 
-                    footerRightButtons={['Right Button 1','Right Button 2']} 
+                    modalTitle='Add Data Source'
+                    modalSubtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    modalBody='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    screens={{
+                            screenComponents: ['First screen', 'Second screen', 'Last screen'],
+                            righButtonNames: ['Fetch Score', 'Continue','Finish'],
+                            righButtonFunctions: [(e)=>{alert('first button clicked')},(e)=>{alert('second button clicked')},(e)=>{alert('last button clicked')},]
+                    }}
                 />
             </div>
             {/* <button onClick={() => retrieveMetrics() } >Click Me</button> */}

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './CTModal.scss';
 import Dialog from '@material-ui/core/Dialog';
+import CTSecondaryButton from '../Button/CTSecondaryButton';
+import CTPrimaryButton from '../Button/CTPrimaryButton';
 
 const CTModal = ({
         isOpen=true,
@@ -12,8 +14,15 @@ const CTModal = ({
         onPreviousScreen=() => void 0,
         onChangeScreen=() => void 0,
         onComplete=() => void 0,
-        screens=[],
+        screens={},
         showFooter=true,
+        mainCTAText='Complete',
+        backButton='Back',
+        completeButton='Finish',
+        modalTitle,
+        maxWidth='md',
+        modalSubtitle,
+        modalBody,
         footerLeftButtons=[],
         footerRightButtons=[],
         ...props
@@ -36,16 +45,23 @@ const CTModal = ({
         if (activeScreenIndex !== 0) { 
             setActiveScreenIndex(activeScreenIndex - 1); 
         }
+        else {
+            handleClose();
+        }
         
         handleChangeScreen();
         onPreviousScreen();
     }
     
     const handleNextScreen = () => {
-        if (activeScreenIndex !== screens.length - 1) { 
+        if (activeScreenIndex !== screens.screenComponents.length - 1) { 
             setActiveScreenIndex(activeScreenIndex + 1); 
         }
+        else {
+            handleClose();
+        }
         handleChangeScreen();
+        screens.righButtonFunctions[activeScreenIndex]();
         onNextScreen();
     }
     
@@ -55,13 +71,18 @@ const CTModal = ({
     
     const handleComplete = () => {
         onComplete();
+        handleClose();
     }
+
+    const IS_MULTI_MODAL = Object.keys(screens).length !== 0;
     
     return (
         <Dialog
             open={open}
             onClose={handleClose}
             className='ct-modal-wrapper'
+            fullWidth={true}
+            maxWidth={maxWidth}
             {...props}
         >
             {/* Modal Header */}
@@ -72,28 +93,38 @@ const CTModal = ({
                 }
 
                 {/* Indicators */}
-                {showIndicators && screens.map((screen, index) => 
-                    <div className={`indicator ${activeScreenIndex === index ? 'active' : ''}`}>{index}</div>
+                {IS_MULTI_MODAL && showIndicators && screens.screenComponents.map((screen,index) => 
+                    <div key={index} className={`indicator ${activeScreenIndex === index ? 'active' : ''}`}></div>
                 )}
             </div>
 
             {/* Modal Body */}
             <div className="modal-body">
                 {/* Active Screen */}
-                {screens[activeScreenIndex]}
+                <div className='ct-modal-title'>
+                    {modalTitle}
+                </div>
+                <div className='ct-modal-subtitle'>
+                    {modalSubtitle}
+                </div>
+                <div className='ct-modal-body'>
+                    {modalBody}
+                </div>
+                {IS_MULTI_MODAL && screens.screenComponents[activeScreenIndex]}
             </div>
             
             {/* Modal Footer */}
             {showFooter &&
                 <div className="modal-footer">
                     <div className="modal-footer-left">
-                        { activeScreenIndex > 0 && <span onClick={handlePreviousScreen}>{ props.backButton }</span> }
-                        { footerLeftButtons.map(button => button) }
+                        { !IS_MULTI_MODAL && <CTSecondaryButton onClick={handleClose}>Cancel</CTSecondaryButton>}
+                        { IS_MULTI_MODAL && <CTSecondaryButton onClick={handlePreviousScreen}>{activeScreenIndex===0 ? 'Close' : backButton}</CTSecondaryButton> }
+                        { footerLeftButtons}
                     </div>
                     <div className="modal-footer-right">
-                        { footerRightButtons.map(button => button) }
-                        { activeScreenIndex < screens.length - 1 && <span onClick={handleNextScreen}>{ props.nextButton }</span> }
-                        { activeScreenIndex === screens.length - 1 && <span onClick={handleComplete}>{ props.completeButton }</span> }
+                        {footerRightButtons}
+                        { IS_MULTI_MODAL && <CTPrimaryButton onClick={handleNextScreen}>{screens.righButtonNames[activeScreenIndex] }</CTPrimaryButton>}
+                        { !IS_MULTI_MODAL && <CTPrimaryButton onClick={handleComplete}>{ mainCTAText }</CTPrimaryButton> }
                     </div>
                 </div>
             }
