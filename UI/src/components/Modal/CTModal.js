@@ -17,6 +17,7 @@ const CTModal = React.forwardRef((props,ref) => {
     const handleClose = () => {
         setOpen(false);
         props.onClose();
+        setActiveScreenIndex(0);
     }
     
     const handlePreviousScreen = () => {
@@ -57,7 +58,7 @@ const CTModal = React.forwardRef((props,ref) => {
     React.useImperativeHandle(
         ref,
         () => ({
-            handOpen() {
+            handleOpen() {
                 setOpen(true);
             }
         }),

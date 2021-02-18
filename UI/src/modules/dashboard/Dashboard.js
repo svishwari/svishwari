@@ -17,6 +17,7 @@ import CTDataGrid from "../../components/Table/CTDataGrid";
 import { Link } from "react-router-dom";
 import { Button, IconButton } from "@material-ui/core";
 import CTChip from "../../components/Chip/CTChip";
+import CTModal from '../../components/Modal/CTModal';
 
 const data = [
   {
@@ -168,8 +169,21 @@ const Dashboard = (props) => {
     // console.log(data[3].starred);
   };
   const [dataState, setDataState] = useState(data);
+  const childRef = React.useRef();
   return (
     <div>
+        <CTPrimaryButton onClick={() => { childRef.current.handleOpen() } } >Primary</CTPrimaryButton>
+        <CTModal 
+            ref={childRef}
+            // modalTitle='Add Data Source'
+            // modalSubtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+            // modalBody='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+            screens={{
+                    screenComponents: ['First screen', 'Second screen', 'Last screen'],
+                    righButtonNames: ['Fetch Score', 'Continue','Finish'],
+                    righButtonFunctions: [(e)=>{alert('first button clicked')},(e)=>{alert('second button clicked')},(e)=>{alert('last button clicked')},]
+            }}
+        />
       {/* <h1>StyleGuide</h1> */}
       {/* <button onClick={() => retrieveMetrics() } >Click Me</button> */}
             {/* <div className="btnExamples">
