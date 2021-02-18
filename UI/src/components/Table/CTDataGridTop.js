@@ -4,13 +4,13 @@ import './CTDataGridTop.scss';
 import CTFilter from '../Filter/CTFilter';
 
 //TO DO ITEMS CHANGE FILTER COMPONENT
-const CTDataGridTop = ({onAddClick,onRemove,onDownload,selectedRows,pageName='Audience',changeEditing,isEditing=false,...props}) => {
+const CTDataGridTop = ({onSearch,onAddClick,onRemove,onDownload,selectedRows,pageName='Audience',changeEditing,isEditing=false,...props}) => {
 
     return (
         <div className='ct-grid-top-wrapper'>
             <span className='ct-grid-top-left'>
                 <span className='iconify ct-grid-search' data-icon="mdi:search" data-inline="false"></span>
-                <input className='ct-grid-search-input' placeholder='Search'></input>
+                <input onChange={(e)=> {onSearch(e)}} className='ct-grid-search-input' placeholder='Search'></input>
             </span>
             <span className='ct-grid-top-right'>
                 <span className='ct-grid-icon-buttons'>

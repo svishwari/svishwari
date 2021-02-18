@@ -15,6 +15,7 @@ export default class CTDataGrid extends Component {
       dataGridData: data,
       isEditing: false,
       selectedRows: [],
+      searchFilter: '',
     };
     // this.setState({ dataGridData: this.props.data });
   }
@@ -76,6 +77,10 @@ export default class CTDataGrid extends Component {
     this.props.onBulkRemove(deletedArray);
   }
 
+  onSearch = (e) => {
+    this.setState({searchFilter: e.target.value})
+  }
+
   starredColumn = {
     field: "starred",
     headerName: " ",
@@ -98,7 +103,7 @@ export default class CTDataGrid extends Component {
   render() {
     return (
       <>
-        <CTDataGridTop onAddClick={this.props.onAddClick} onDownload={this.props.onDownload} onRemove={this.removeSelectedRows} selectedRows={this.state.selectedRows} isEditing={this.state.isEditing} changeEditing={this.toggleEditing}></CTDataGridTop>
+        <CTDataGridTop onSearch={this.onSearch} onAddClick={this.props.onAddClick} onDownload={this.props.onDownload} onRemove={this.removeSelectedRows} selectedRows={this.state.selectedRows} isEditing={this.state.isEditing} changeEditing={this.toggleEditing}></CTDataGridTop>
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}
@@ -110,6 +115,12 @@ export default class CTDataGrid extends Component {
           disableColumnSelector={true}
           rowHeight={60}
           headerHeight={28}
+          filterModel={{
+                items: [
+                  { columnField: 'name', value: this.state.searchFilter, operatorValue: 'contains' },
+                ],
+              }
+          }
           onSelectionChange={(params)=>this.rowChange(params)}
           //*****************
           // TO DO THIS CAN HELP IN FUNCTIONALITY
