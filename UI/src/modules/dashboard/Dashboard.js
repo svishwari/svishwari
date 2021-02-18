@@ -12,11 +12,18 @@ import CTCardGroup from '../../components/Cards/CardGroup/CTCardGroup';
 import CTImageCard from '../../components/Cards/ImageCard/CTImageCard';
 import { ReactComponent as VideoIcon } from "../../assets/icons/video-shooting.svg";
 import CTSimpleCard from '../../components/Cards/SimpleCard/CTSimpleCard';
+import CTModal from '../../components/Modal/CTModal';
 const Dashboard = (props) => {
 
     return (
         <div>
             <h1>StyleGuide</h1>
+            <div>
+                <CTModal 
+                    footerLeftButtons={['Left Button 1','Left Button 2']} 
+                    footerRightButtons={['Right Button 1','Right Button 2']} 
+                />
+            </div>
             {/* <button onClick={() => retrieveMetrics() } >Click Me</button> */}
             <div className="btnExamples">
                 <h2>Buttons</h2>
