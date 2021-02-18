@@ -4,41 +4,19 @@ import Dialog from '@material-ui/core/Dialog';
 import CTSecondaryButton from '../Button/CTSecondaryButton';
 import CTPrimaryButton from '../Button/CTPrimaryButton';
 
-const CTModal = ({
-        isOpen=true,
-        showCloseButton=false,
-        showIndicators=true,
-        onOpen=() => void 0,
-        onClose=() => void 0,
-        onNextScreen=() => void 0,
-        onPreviousScreen=() => void 0,
-        onChangeScreen=() => void 0,
-        onComplete=() => void 0,
-        screens={},
-        showFooter=true,
-        mainCTAText='Complete',
-        backButton='Back',
-        completeButton='Finish',
-        modalTitle,
-        maxWidth='md',
-        modalSubtitle,
-        modalBody,
-        footerLeftButtons=[],
-        footerRightButtons=[],
-        ...props
-    }) => {
+
+// To use this component you need to create a reference to the CTModal
+// and call it's handle open function
+//For more details visit: https://reactjs.org/docs/hooks-reference.html#useref
+
+const CTModal = React.forwardRef((props,ref) => {
     
-    const [open, setOpen] = useState(isOpen);
+    const [open, setOpen] = useState(props.isOpen);
     const [activeScreenIndex, setActiveScreenIndex] = useState(0);
-    
-    const handleOpen = () => {
-        setOpen(true);
-        onOpen();
-    }
     
     const handleClose = () => {
         setOpen(false);
-        onClose();
+        props.onClose();
     }
     
     const handlePreviousScreen = () => {
@@ -50,31 +28,40 @@ const CTModal = ({
         }
         
         handleChangeScreen();
-        onPreviousScreen();
+        props.onPreviousScreen();
     }
     
     const handleNextScreen = () => {
-        if (activeScreenIndex !== screens.screenComponents.length - 1) { 
+        if (activeScreenIndex !== props.screens.screenComponents.length - 1) { 
             setActiveScreenIndex(activeScreenIndex + 1); 
         }
         else {
             handleClose();
         }
         handleChangeScreen();
-        screens.righButtonFunctions[activeScreenIndex]();
-        onNextScreen();
+        props.screens.righButtonFunctions[activeScreenIndex]();
+        props.onNextScreen();
     }
     
     const handleChangeScreen = () => {
-        onChangeScreen();
+        props.onChangeScreen();
     }
     
     const handleComplete = () => {
-        onComplete();
+        props.onComplete();
         handleClose();
     }
 
-    const IS_MULTI_MODAL = Object.keys(screens).length !== 0;
+    const IS_MULTI_MODAL = Object.keys(props.screens).length !== 0;
+
+    React.useImperativeHandle(
+        ref,
+        () => ({
+            handOpen() {
+                setOpen(true);
+            }
+        }),
+    )
     
     return (
         <Dialog
@@ -82,18 +69,17 @@ const CTModal = ({
             onClose={handleClose}
             className='ct-modal-wrapper'
             fullWidth={true}
-            maxWidth={maxWidth}
-            {...props}
+            maxWidth={props.maxWidth}
         >
             {/* Modal Header */}
             <div className="modal-header">
                 {/* Close Button */}
-                {showCloseButton &&
+                {props.showCloseButton &&
                     <div onClick={handleClose}>X</div>
                 }
 
                 {/* Indicators */}
-                {IS_MULTI_MODAL && showIndicators && screens.screenComponents.map((screen,index) => 
+                {IS_MULTI_MODAL && props.showIndicators && props.screens.screenComponents.map((screen,index) => 
                     <div key={index} className={`indicator ${activeScreenIndex === index ? 'active' : ''}`}></div>
                 )}
             </div>
@@ -102,34 +88,53 @@ const CTModal = ({
             <div className="modal-body">
                 {/* Active Screen */}
                 <div className='ct-modal-title'>
-                    {modalTitle}
+                    {props.modalTitle}
                 </div>
                 <div className='ct-modal-subtitle'>
-                    {modalSubtitle}
+                    {props.modalSubtitle}
                 </div>
                 <div className='ct-modal-body'>
-                    {modalBody}
+                    {props.modalBody}
                 </div>
-                {IS_MULTI_MODAL && screens.screenComponents[activeScreenIndex]}
+                {IS_MULTI_MODAL && props.screens.screenComponents[activeScreenIndex]}
             </div>
             
             {/* Modal Footer */}
-            {showFooter &&
+            {props.showFooter &&
                 <div className="modal-footer">
                     <div className="modal-footer-left">
                         { !IS_MULTI_MODAL && <CTSecondaryButton onClick={handleClose}>Cancel</CTSecondaryButton>}
-                        { IS_MULTI_MODAL && <CTSecondaryButton onClick={handlePreviousScreen}>{activeScreenIndex===0 ? 'Close' : backButton}</CTSecondaryButton> }
-                        { footerLeftButtons}
+                        { IS_MULTI_MODAL && <CTSecondaryButton onClick={handlePreviousScreen}>{activeScreenIndex===0 ? 'Close' : props.backButton}</CTSecondaryButton> }
+                        { props.footerLeftButtons}
                     </div>
                     <div className="modal-footer-right">
-                        {footerRightButtons}
-                        { IS_MULTI_MODAL && <CTPrimaryButton onClick={handleNextScreen}>{screens.righButtonNames[activeScreenIndex] }</CTPrimaryButton>}
-                        { !IS_MULTI_MODAL && <CTPrimaryButton onClick={handleComplete}>{ mainCTAText }</CTPrimaryButton> }
+                        {props.footerRightButtons}
+                        { IS_MULTI_MODAL && <CTPrimaryButton onClick={handleNextScreen}>{props.screens.righButtonNames[activeScreenIndex] }</CTPrimaryButton>}
+                        { !IS_MULTI_MODAL && <CTPrimaryButton onClick={handleComplete}>{ props.mainCTAText }</CTPrimaryButton> }
                     </div>
                 </div>
             }
         </Dialog>
     )
-}
+})
 
 export default CTModal
+
+CTModal.defaultProps = {
+    isOpen:false,
+    showCloseButton:false,
+    showIndicators:true,
+    onClose:() => void 0,
+    onNextScreen:() => void 0,
+    onPreviousScreen:() => void 0,
+    onChangeScreen:() => void 0,
+    onComplete:() => void 0,
+    screens:{},
+    showFooter:true,
+    mainCTAText:'Complete',
+    backButton:'Back',
+    completeButton:'Finish',
+    maxWidth:'md',
+    footerLeftButtons:[],
+    footerRightButtons:[],
+}

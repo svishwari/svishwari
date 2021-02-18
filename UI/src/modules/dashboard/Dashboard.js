@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from "react-redux";
 import CTPrimaryButton from '../../components/Button/CTPrimaryButton';
 import CTSecondaryButton from '../../components/Button/CTSecondaryButton';
@@ -15,14 +15,17 @@ import CTSimpleCard from '../../components/Cards/SimpleCard/CTSimpleCard';
 import CTModal from '../../components/Modal/CTModal';
 const Dashboard = (props) => {
 
+    const childRef = React.useRef();
+
     return (
         <div>
             <h1>StyleGuide</h1>
             <div>
                 <CTModal 
-                    modalTitle='Add Data Source'
-                    modalSubtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-                    modalBody='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    ref={childRef}
+                    // modalTitle='Add Data Source'
+                    // modalSubtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                    // modalBody='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
                     screens={{
                             screenComponents: ['First screen', 'Second screen', 'Last screen'],
                             righButtonNames: ['Fetch Score', 'Continue','Finish'],
@@ -34,7 +37,7 @@ const Dashboard = (props) => {
             <div className="btnExamples">
                 <h2>Buttons</h2>
                 <div className='mb-2'>
-                <CTPrimaryButton>Primary</CTPrimaryButton>
+                <CTPrimaryButton onClick={() => { childRef.current.handOpen() } } >Primary</CTPrimaryButton>
                 <CTPrimaryButton isDisabled={true}>Primary</CTPrimaryButton>
                 </div>
                 <div className='mb-2'>
