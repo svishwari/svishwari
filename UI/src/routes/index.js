@@ -23,6 +23,8 @@ import { PrivateLayout } from "../layouts/PrivateLayout";
 // import { StyleGuide } from "../pages/StyleGuide";
 import ConnectionsSummary from "../modules/connections/ConnectionsSummary";
 import ComingSoon from "../pages/ComingSoon";
+import DataSources from "../modules/connections/data-sources/DataSources";
+import Destinations from "../modules/connections/destinations/Destinations";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -60,8 +62,8 @@ function Routes() {
               <Switch>
                 <Route path="/" exact component={Dashboard} />
                 <Route path="/connections" exact component={ConnectionsSummary} />
-                <Route path="/connections/dataSources" exact component={ConnectionsSummary} />
-                <Route path="/connections/destinations" exact component={Page} />
+                <Route path="/connections/dataSources" exact component={DataSources} />
+                <Route path="/connections/destinations" exact component={Destinations} />
                 <Route path="*" exact component={ComingSoon} />
               </Switch>
             </PrivateLayout>

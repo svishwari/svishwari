@@ -17,8 +17,6 @@ const navItem = (route, badge) => {
 const MainMenu = withRouter((props) => {
   const location = useLocation();
   const exactRoute = (path) => {
-    console.log("Path: " + path + " | " + "Location: " + location.pathname);
-    // debugger
     return (path !== "/" && location.pathname.includes(path)) ||
       path === location.pathname
       ? "active"
