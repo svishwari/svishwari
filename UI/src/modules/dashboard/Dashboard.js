@@ -175,7 +175,7 @@ const Dashboard = (props) => {
             {/* <div className="btnExamples">
                 <h2>Buttons</h2>
                 <div className='mb-2'>
-                <CTPrimaryButton>Primary</CTPrimaryButton>
+                <CTPrimaryButton onClick={() => { childRef.current.handOpen() } } >Primary</CTPrimaryButton>
                 <CTPrimaryButton isDisabled={true}>Primary</CTPrimaryButton>
                 </div>
                 <div className='mb-2'>
