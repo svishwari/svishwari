@@ -11,13 +11,13 @@ export default class CTDataGrid extends Component {
   constructor(props) {
     super(props);
     const { data } = props;
+    console.log(data);
     this.state = {
       dataGridData: data,
       isEditing: false,
       selectedRows: [],
       searchFilter: '',
     };
-    // this.setState({ dataGridData: this.props.data });
   }
   updateItem(id, itemAttributes) {
     let index = this.state.dataGridData.findIndex((x) => x.id === id);
@@ -31,7 +31,14 @@ export default class CTDataGrid extends Component {
         ],
       });
   }
-
+  componentDidUpdate(nextProps) {
+    const { data } = this.props
+    console.log(nextProps.data, this.props.data)
+    console.log(nextProps.data, this.props.data)
+    if (nextProps.data !== this.props.data) {
+      this.setState({ dataGridData: this.props.data })
+    }
+  }
   updateStarring = (params) => {
     //   console.log(params.row.id)
     this.updateItem(params.row.id, { starred: !params.row.starred });
@@ -133,6 +140,7 @@ export default class CTDataGrid extends Component {
           disableSelectionOnClick={true}
           rowsPerPageOptions={[25]}
           className="ct-table-wrapper"
+          loading={this.props.loading}
         />
       </>
     );

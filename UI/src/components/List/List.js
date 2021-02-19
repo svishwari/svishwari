@@ -3,10 +3,15 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
-}))
+  root: {
+    background: "#FFFFFF",
+    boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.05)",
+    borderRadius: "5px",
+  },
+}));
 
 const CTList = (props) => {
-    const classes = useStyles()
+  const classes = useStyles();
   return (
     <DataGrid
       disableColumnFilter={true}
@@ -17,9 +22,10 @@ const CTList = (props) => {
       rowHeight={60}
       headerHeight={28}
       {...props}
+      className={classes.root}
       hideFooter={true}
       disableSelectionOnClick={true}
-    className={classes}></DataGrid>
+    ></DataGrid>
   );
 };
 export default CTList;

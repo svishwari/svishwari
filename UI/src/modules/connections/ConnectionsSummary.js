@@ -41,6 +41,40 @@ const useStyles = makeStyles((theme) => ({
 }));
 const ConnectionsSummary = () => {
   const classes = useStyles();
+  const dataSourcesColumns = [
+    {
+      field: "name",
+      headerName: "Source",
+      flex: 0.6,
+      renderCell: (params) => (
+        <Link to="#">
+          {params.getValue("name")}{" "}
+          <span
+            className="iconify"
+            data-icon="mdi:open-in-new"
+            data-inline="false"
+          ></span>
+        </Link>
+      ),
+    },
+    {
+      field: "filesCount",
+      headerName: "No. of Files",
+      flex: 0.4,
+    },
+  ];
+  const dataSourcesData = [
+    {
+      id: 1,
+      name: "Client",
+      filesCount: 3,
+    },
+    {
+      id: 2,
+      name: "Amazon S3",
+      filesCount: 50,
+    }
+  ];
   const destinationColumns = [
     {
       field: "name",
@@ -48,7 +82,11 @@ const ConnectionsSummary = () => {
       flex: 0.7,
       renderCell: (params) => (
         <Link to="#">
-          <span className="iconify" data-icon={"mdi:" + params.getValue("icon")} data-inline="false"></span>
+          <span
+            className="iconify"
+            data-icon={"mdi:" + params.getValue("icon")}
+            data-inline="false"
+          ></span>
           {params.getValue("name")}{" "}
           <span
             className="iconify"
@@ -107,13 +145,13 @@ const ConnectionsSummary = () => {
                 </Link>
               </div>
               <div className="row">
-                <div className="col-md-4 col-sm-3 col-xs-6 pr-0">
+                <div className="col-md-4 col-sm-3 col-xs-6 ">
                   <SummaryCard value="52" title="Total Data Sources" />
                 </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 pr-0">
+                <div className="col-md-4 col-sm-3 col-xs-6 ">
                   <SummaryCard value="24" title="Total Data Sources" />
                 </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 pr-0">
+                <div className="col-md-4 col-sm-3 col-xs-6 ">
                   <SummaryCard
                     value="20"
                     suffix="%"
@@ -122,15 +160,22 @@ const ConnectionsSummary = () => {
                 </div>
               </div>
               <div className="row mt-4">
-                <div className="col-md-4 col-sm-3 col-xs-6 pr-0">
+                <div className="col-md-4 col-sm-3 col-xs-6 ">
                   <SummaryCard value="600" title="Bogus" />
                 </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 pr-0">
+                <div className="col-md-4 col-sm-3 col-xs-6 ">
                   <SummaryCard value="65" title="Cleansed" />
                 </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 pr-0">
+                <div className="col-md-4 col-sm-3 col-xs-6 ">
                   <SummaryCard value="23" title="Empty" />
                 </div>
+              </div>
+              <div className="mt-5">
+                <CTList
+                  columns={dataSourcesColumns}
+                  rows={dataSourcesData}
+                  className="mt-5"
+                />
               </div>
             </div>
           </div>
