@@ -6,6 +6,7 @@ from flasgger import Swagger
 from api.route.home import home_api
 from api.route.advertising import advertising_bp
 from api.route.decision import decision_bp
+from api.route.marketing import marketing_bp
 from api.route.cdm import cdm_bp
 
 
@@ -18,6 +19,9 @@ def create_app():
     # setup the flask app
     flask_app = Flask(__name__)
 
+    # setup the configuration
+    # flask_app.config.from_object(environ['APP_SETTINGS'])
+
     # setup the api documentation
     flask_app.config['SWAGGER'] = {
         'title': 'HUX Unified Solution API',
@@ -27,8 +31,9 @@ def create_app():
     # register the blueprint and route
     flask_app.register_blueprint(home_api, url_prefix='/api')
     flask_app.register_blueprint(advertising_bp, url_prefix='/api/advertising')
-    flask_app.register_blueprint(decision_bp, url_prefix='/api/decision')
     flask_app.register_blueprint(cdm_bp, url_prefix='/api/cdm')
+    flask_app.register_blueprint(decision_bp, url_prefix='/api/decision')
+    flask_app.register_blueprint(marketing_bp, url_prefix='/api/marketing')
 
     return flask_app
 
