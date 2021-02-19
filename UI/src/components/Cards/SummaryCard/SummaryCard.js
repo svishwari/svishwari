@@ -52,7 +52,7 @@ const SummaryCard = (props) => {
       <CountUp
         start={0}
         end={props.value}
-        delay={0} {...props}
+        delay={1} {...props}
         className={classes.valueStyle}
       />
     </Paper>
