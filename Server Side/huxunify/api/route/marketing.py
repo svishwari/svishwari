@@ -258,9 +258,10 @@ def fetch_models(category):
     ],
     'responses': {
         HTTPStatus.OK.value: {
-            'description': 'Fetch Scores API helps you retrieve the the result values for the customers from the '
-                           'machine learning models chosen, the output further can be utilized to categorize in one '
-                           'or many segments. The campaigning strategy can be defined and executed as next steps.',
+            'description': 'Fetch Scores API helps you retrieve the the result values for the '
+                           'customers from the machine learning models chosen, the output further '
+                           'can be utilized to categorize in one or many segments. The campaigning'
+                           ' strategy can be defined and executed as next steps.',
             'schema': schema.SegmentSchema
         }
     }
@@ -336,9 +337,10 @@ def fetch_scores():
     ],
     'responses': {
         HTTPStatus.OK.value: {
-            'description': """Segmentation on the fly API helps you apply the group of segments with the defined
-             criteria, this API will segregate each customer into the segment as per the criteria defined. This 
-             output is the key input to execute the campaign workflow with the help of Orchestration tools.""",
+            'description': """Segmentation on the fly API helps you apply the group of segments
+            with the defined criteria, this API will segregate each customer into the segment as 
+            per the criteria defined. This output is the key input to execute the campaign 
+            workflow with the help of Orchestration tools.""",
             'schema': schema.SegmentFlySchema
         }
     }
@@ -390,9 +392,10 @@ def fetch_scores_on_the_fly():
     ],
     'responses': {
         HTTPStatus.OK.value: {
-            'description': """This DeliverACS API will help you to deliver the segmented customers data(CSV format)
-             to S3 location, the same file would be used by the custom ACS workflow to start the campaign.""",
-             'schema': schema.SegmentDeliverSchema
+            'description': """This DeliverACS API will help you to deliver the segmented customers
+             data(CSV format) to S3 location, the same file would be used by the custom ACS 
+              to start the campaign.""",
+            'schema': schema.SegmentDeliverSchema
         }
     }
 })

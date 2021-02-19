@@ -74,4 +74,3 @@ def customer_features(cluster_id, feature_service_name, customer_id):
     result.get_features()
     result.get_feature_vectors()
     return CustomerFeatureSchema().dump(result), 200
-
