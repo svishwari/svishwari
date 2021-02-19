@@ -41,9 +41,6 @@ const CTUSAMap = (props: IProps) => {
         customize={mapData()}
         defaultFill="#FFFFFF"
       />
-      <div className="tableSummary">
-        
-      </div>
     </div>
   );
 };
