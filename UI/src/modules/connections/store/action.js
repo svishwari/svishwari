@@ -3,6 +3,7 @@ import slugs from "../../../resources/slugs";
 const setDataSources = (payload) => ({ type: "loadDataSources", payload });
 const ingestionCompleted = (payload) => ({ type: "ingestionComplete", payload });
 const dataSourceConnected = (payload) => ({ type: "dataSourceConnected", payload });
+const newDataSourceAdded = (payload) => ({ type: "newDataSourceAdded", payload});
 
 export const logUserOut = () => ({ type: "LOG_OUT" });
 
@@ -148,8 +149,8 @@ const triggerIngestion = (id) => async dispatch => {
   const response = {
     id: id,
     recordsIngested:Math.floor((Math.random()*(10000+1))+350),
-  empty: Math.floor((Math.random()*(100+1))+50),
-  bogus: Math.floor((Math.random()*(1000+1))+150),
+    empty: Math.floor((Math.random()*(100+1))+50),
+    bogus: Math.floor((Math.random()*(1000+1))+150),
     cleansed: Math.floor((Math.random()*(1000+1))+350)
   }
   dispatch(ingestionCompleted(response));
@@ -163,4 +164,19 @@ const triggerConnectionCheck = (id) => async dispatch => {
   }
   dispatch(dataSourceConnected(response));
 }
-export { fetchDataSources, triggerIngestion, triggerConnectionCheck }
+
+const addNewDataSource = (params) => async dispatch => {
+  await new Promise(done => setTimeout(() => done(), 3000));
+  const response = {
+    id: Math.random().toString(16).slice(2),
+    fileName: "Pendalton source",
+    source: "Amazon S3",
+    lastUpdated: "03/26/19 05:04PM",
+    connectionStatus: "not connected",
+    ingested: false,
+
+  }
+  dispatch(newDataSourceAdded(response));
+}
+
+export { fetchDataSources, triggerIngestion, triggerConnectionCheck, addNewDataSource }

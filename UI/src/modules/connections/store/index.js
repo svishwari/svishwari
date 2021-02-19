@@ -36,9 +36,13 @@ const connectionReducer = (state = defaultState, action) => {
         ...state,
         dataSources: _tmpDS
       }
-    case "addNew":
-      state.datasources.Push(action.Payload);
-      return state
+    case "newDataSourceAdded":
+      let original_DS = JSON.parse(JSON.stringify(state.dataSources));
+      original_DS.unshift(action.payload);
+      return {
+        ...state,
+        dataSources: original_DS
+      }
     case "dataSourceConnected":
       let __tmpDS = JSON.parse(JSON.stringify(state.dataSources));
       let _tmpobj = __tmpDS.filter(item => item.id === action.payload.id)

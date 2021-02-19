@@ -107,7 +107,7 @@ export default class CTDataGrid extends Component {
   render() {
     return (
       <>
-        <CTDataGridTop onSearch={this.onSearch} onAddClick={this.props.onAddClick} onDownload={this.props.onDownload} onRemove={this.removeSelectedRows} selectedRows={this.state.selectedRows} isEditing={this.state.isEditing} changeEditing={this.toggleEditing}></CTDataGridTop>
+        <CTDataGridTop pageName={this.props.pageName} onSearch={this.onSearch} onAddClick={this.props.onAddClick} onDownload={this.props.onDownload} onRemove={this.removeSelectedRows} selectedRows={this.state.selectedRows} isEditing={this.state.isEditing} changeEditing={this.toggleEditing}></CTDataGridTop>
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}

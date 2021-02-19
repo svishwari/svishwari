@@ -138,7 +138,7 @@ const ConnectionsSummary = () => {
             <div className={classes.section}>
               <div className={classes.sectionTitle}>
                 <h3 className={classes.sectionTitleHeading}>
-                  <Link to="/connections/datasources">Data Sources ></Link>
+                  <Link to="/connections/datasources">Data Sources &gt;</Link>
                 </h3>
                 <Link className={classes.sectionTitleHeadingLink}>
                   + DataSource
@@ -183,7 +183,7 @@ const ConnectionsSummary = () => {
             <div className={classes.section}>
               <div className={classes.sectionTitle}>
                 <h3 className={classes.sectionTitleHeading}>
-                  <Link to="/connections/datasources">Destinations ></Link>
+                  <Link to="/connections/datasources">Destinations &gt;</Link>
                 </h3>
                 <Link className={classes.sectionTitleHeadingLink}>
                   + Destination

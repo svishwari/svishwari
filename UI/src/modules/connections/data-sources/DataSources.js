@@ -3,7 +3,12 @@ import React from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import CTDataGrid from "../../../components/Table/CTDataGrid";
-import { fetchDataSources, triggerIngestion, triggerConnectionCheck } from "../store/action";
+import { fetchDataSources, triggerIngestion, triggerConnectionCheck,addNewDataSource } from "../store/action";
+import CTModal from "../../../components/Modal/CTModal";
+import CTLabel from "../../../components/Label/CTLabel";
+import CTInput from "../../../components/Input/CTInput";
+import Select from '@material-ui/core/Select';
+import './DataSource.scss';
 const markIngestionStatus = (payload) => ({ type: "updateInestionStatus", payload });
 const markConnecting = (payload) => ({ type: "updateConnectionStatus", payload });
 
@@ -103,8 +108,63 @@ const DataSources = (props) => {
   React.useEffect(() => {
     retrieveDataSources();
   }, []);
+  const [selectedDataSource, setselectedDataSource] = React.useState('Amazon S3');
+  const handleSelectedDataSourceChange = (event) => {
+    setselectedDataSource(event.target.value);
+  };
+  const addDataSourceContent = (
+    <div className='ct-datasource-modal'>
+      <CTLabel>Data Source</CTLabel>
+      <Select
+          value={selectedDataSource}
+          onChange={(e)=>handleSelectedDataSourceChange(e)}
+          label="Account ID"
+        >
+          <option  value={'Amazon S3'}>Amazon S3</option>
+          <option value={'CDP'}>CDP</option>
+          <option value={'Facebook'}>Facebook</option>
+      </Select>
+      <CTLabel>Account ID</CTLabel>
+      <CTInput placeholder={'Account ID'}></CTInput>
+      { selectedDataSource==='Amazon S3' ?
+        <div>
+        <CTLabel>IAM User Name</CTLabel>
+        <CTInput placeholder={'IAM User Name'}></CTInput>
+        <CTLabel>Password / Key</CTLabel>
+        <CTInput placeholder={'Password / Key'}></CTInput>
+        <CTLabel>Filename</CTLabel>
+        <CTInput placeholder={'Unique name for your file'}></CTInput>
+        <CTLabel>Filepath</CTLabel>
+        <CTInput placeholder={'example.csv'}></CTInput>
+        </div>
+      : ''
+      }
+      { selectedDataSource==='Facebook' ?
+        <div>
+        <CTLabel>IAM User Name</CTLabel>
+        <CTInput placeholder={'IAM User Name'}></CTInput>
+        <CTLabel>Password / Key</CTLabel>
+        <CTInput placeholder={'Password / Key'}></CTInput>
+        <CTLabel>Filename</CTLabel>
+        <CTInput placeholder={'Unique name for your file'}></CTInput>
+        </div>
+      : ''
+      }
+      { selectedDataSource==='CDP' ?
+        <div>
+        <CTLabel>IAM User Name</CTLabel>
+        <CTInput placeholder={'IAM User Name'}></CTInput>
+        <CTLabel>Password / Key</CTLabel>
+        <CTInput placeholder={'Password / Key'}></CTInput>
+        </div>
+      : ''
+      }
+    </div>
+  );
+  const childRef = React.useRef();
 
   return (
+    <>
     <CTDataGrid
       data={props.dataSources}
       columns={columns}
@@ -113,10 +173,19 @@ const DataSources = (props) => {
       onRemove={(params) => alert(params)}
       onBulkRemove={(params) => alert(JSON.stringify(params))}
       onDownload={(params) => alert(params)}
-      onAddClick={(params) => alert("plus clicked")}
+      onAddClick={() => { childRef.current.handleOpen() }}
+      pageName={"Data Source"}
     ></CTDataGrid>
+    <CTModal 
+      ref={childRef}
+      modalTitle="Add Data Source"
+      modalSubtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      modalBody={addDataSourceContent}
+      mainCTAText="Verify and Add"
+      onComplete={()=> dispatch(addNewDataSource())}
+    />
+    </>
   )
-
 };
 const mapStateToProps = (state) => {
   return {
