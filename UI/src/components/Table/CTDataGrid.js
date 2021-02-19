@@ -121,7 +121,7 @@ export default class CTDataGrid extends Component {
           headerHeight={28}
           filterModel={{
                 items: [
-                  { columnField: 'name', value: this.state.searchFilter, operatorValue: 'contains' },
+                  { columnField: this.props.columns[0].field, value: this.state.searchFilter, operatorValue: 'contains' },
                 ],
               }
           }
