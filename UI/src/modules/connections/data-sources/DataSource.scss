@@ -2,4 +2,32 @@
 
 .ct-datasource-modal {
     text-align: left;
+    .ct-datasource-modal-select {
+        width: 100%;
+        margin-bottom: 20px;
+        background: white;
+        padding: 8px 12px;
+        .MuiInput-underline {
+            border: none;
+            border-radius: 5px;
+            &:hover {
+                border-bottom: none;
+            }
+            &:before {
+                border: none;
+            }
+        }
+    }
+    .ct-datasource-fields {
+        display: flex;
+        background: #F5F5F5;
+        padding: 8px;
+        border-radius: 5px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        .ct-datasource-field-card {
+            min-width: 48%;
+            margin: 8px;
+        }        
+    }
 }

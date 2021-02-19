@@ -124,7 +124,9 @@ const columns = [
     headerName: "Status",
     width: 200,
     renderCell: (params) => (
-      <CTChip params={params}/>
+      <CTChip isWorking={params.getValue("delivered")}>
+        {params.getValue("delivered") ? 'Delivered': 'Not Delivered'}
+      </CTChip>
     ),
   },
   { field: "size", headerName: "Size" },
@@ -164,16 +166,12 @@ const columns = [
 ];
 
 const Dashboard = (props) => {
-  const handleDataChange = () => {
-    data[3].starred = true;
-    // console.log(data[3].starred);
-  };
   const [dataState, setDataState] = useState(data);
-  const childRef = React.useRef();
+  // const childRef = React.useRef();
   return (
     <div>
-        <CTPrimaryButton onClick={() => { childRef.current.handleOpen() } } >Primary</CTPrimaryButton>
-        <CTModal 
+        {/* <CTPrimaryButton onClick={() => { childRef.current.handleOpen() } } >Primary</CTPrimaryButton> */}
+        {/* <CTModal 
             ref={childRef}
             // modalTitle='Add Data Source'
             // modalSubtitle='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
@@ -183,7 +181,7 @@ const Dashboard = (props) => {
                     righButtonNames: ['Fetch Score', 'Continue','Finish'],
                     righButtonFunctions: [(e)=>{alert('first button clicked')},(e)=>{alert('second button clicked')},(e)=>{alert('last button clicked')},]
             }}
-        />
+        /> */}
       {/* <h1>StyleGuide</h1> */}
       {/* <button onClick={() => retrieveMetrics() } >Click Me</button> */}
             {/* <div className="btnExamples">

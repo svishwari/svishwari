@@ -46,7 +46,7 @@ const connectionReducer = (state = defaultState, action) => {
     case "dataSourceConnected":
       let __tmpDS = JSON.parse(JSON.stringify(state.dataSources));
       let _tmpobj = __tmpDS.filter(item => item.id === action.payload.id)
-      _tmpobj[0].connectionStatus = "connected"
+      _tmpobj[0].connectionStatus = "Connected"
       _tmpobj[0].ingested = false
       return {
         ...state,
@@ -55,7 +55,7 @@ const connectionReducer = (state = defaultState, action) => {
     case "updateConnectionStatus":
       let ___tmpDS = JSON.parse(JSON.stringify(state.dataSources));
       let __record = ___tmpDS.filter(item => item.id === action.payload.id)
-      __record[0].connectionStatus = "connecting..."
+      __record[0].connectionStatus = "Connecting..."
       return {
         ...state,
         dataSources: ___tmpDS

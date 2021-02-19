@@ -2,33 +2,32 @@ import React from 'react';
 import { Chip, IconButton } from "@material-ui/core";
 import './CTChip.scss';
 
-const CTChip = ({params,isDeliverabe=true,...props}) => {
+const CTChip = ({hasIcons=true,isWorkingFn,isNotWorkingFn, isWorking=true,children}) => {
     return (
         <div className='ct-chip-wrapper'>
             <Chip 
-                label={params.getValue("status")} 
-                className={`${(params.getValue("delivered") === true) ? 'ct-chip-delivered' : 'ct-chip-not-delivered'}`}
+                label={children} 
+                className={`${isWorking ? 'ct-chip-success' : 'ct-chip-not-success'}`}
             />
-            { isDeliverabe 
+            { hasIcons 
             ? 
-                (params.getValue("delivered") === true 
+                isWorking === true 
                 ? 
-                    (<IconButton {...props}>
+                    (<IconButton onClick={()=>isWorkingFn()}>
                         <span
-                        className="iconify ct-chip-delivered-icon"
+                        className="iconify ct-chip-success-icon"
                         data-icon="mdi:refresh-circle"
                         data-inline="false"
                         ></span>
                     </IconButton>) 
                 : 
-                (<IconButton {...props}>
+                (<IconButton onClick={()=>isNotWorkingFn()} >
                     <span
-                    className="iconify ct-chip-not-delivered-icon"
+                    className="iconify ct-chip-not-success-icon"
                     data-icon="mdi:arrow-right-circle"
                     data-inline="false"
                     ></span>
                 </IconButton>)
-                )
             : 
             (<></>)
             }

@@ -2,18 +2,21 @@
 
 .ct-chip-wrapper {
     border-radius: 5px;
-    .ct-chip-delivered {
+    .MuiChip-root {
+        border-radius: 5px;
+    }
+    .ct-chip-success {
         background: $appSuccessGreen;
         color: white;
     }
-    .ct-chip-not-delivered {
+    .ct-chip-not-success {
         background: $appDarkRed;
         color: white;
     }
-    .ct-chip-not-delivered-icon {
+    .ct-chip-not-success-icon {
         color: $appDarkRed;
     }
-    .ct-chip-delivered-icon {
+    .ct-chip-success-icon {
         color: $appSuccessGreen;
     }
 }

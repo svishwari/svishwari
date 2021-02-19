@@ -16,7 +16,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 1",
       "source": "Client",
       "lastUpdated": "03/26/19 05:04PM",
-      "connectionStatus": "not connected",
+      "connectionStatus": "Not Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 189,
@@ -29,7 +29,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 2",
       "source": "Client",
       "lastUpdated": "05/08/20 07:37PM",
-      "connectionStatus": "connected",
+      "connectionStatus": "Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 2818,
@@ -42,7 +42,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 3",
       "source": "Client",
       "lastUpdated": "12/13/20 11:57PM",
-      "connectionStatus": "connected",
+      "connectionStatus": "Connected",
       "ingested": false,
       "ingestionStatus": false,
       "recordsIngested": 3779,
@@ -55,7 +55,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 4",
       "source": "Client",
       "lastUpdated": "09/02/20 08:17AM",
-      "connectionStatus": "not connected",
+      "connectionStatus": "Not Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 324,
@@ -68,7 +68,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 5",
       "source": "Amazon S3",
       "lastUpdated": "02/23/19 09:12PM",
-      "connectionStatus": "not connected",
+      "connectionStatus": "Not Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 3641,
@@ -81,7 +81,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 6",
       "source": "Amazon S3",
       "lastUpdated": "12/07/19 01:21PM",
-      "connectionStatus": "connected",
+      "connectionStatus": "Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 896,
@@ -94,7 +94,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 7",
       "source": "Client",
       "lastUpdated": "01/30/20 01:19AM",
-      "connectionStatus": "not connected",
+      "connectionStatus": "Not Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 500,
@@ -107,7 +107,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 8",
       "source": "Amazon S3",
       "lastUpdated": "07/16/19 04:41PM",
-      "connectionStatus": "connected",
+      "connectionStatus": "Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 715,
@@ -120,7 +120,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 9",
       "source": "Amazon S3",
       "lastUpdated": "07/24/20 09:23AM",
-      "connectionStatus": "connected",
+      "connectionStatus": "Connected",
       "ingested": false,
       "ingestionStatus": false,
       "recordsIngested": 684,
@@ -133,7 +133,7 @@ const fetchDataSources = () => async dispatch => {
       "fileName": "File Name 10",
       "source": "Client",
       "lastUpdated": "11/27/19 06:16AM",
-      "connectionStatus": "not connected",
+      "connectionStatus": "Not Connected",
       "ingested": true,
       "ingestionStatus": true,
       "recordsIngested": 484,
@@ -160,19 +160,19 @@ const triggerConnectionCheck = (id) => async dispatch => {
   await new Promise(done => setTimeout(() => done(), 3000));
   const response = {
     id: id,
-    status: "connected"
+    status: "Connected"
   }
   dispatch(dataSourceConnected(response));
 }
 
 const addNewDataSource = (params) => async dispatch => {
-  await new Promise(done => setTimeout(() => done(), 3000));
+  await new Promise(done => setTimeout(() => done(), 800));
   const response = {
     id: Math.random().toString(16).slice(2),
     fileName: "Pendalton source",
     source: "Amazon S3",
     lastUpdated: "03/26/19 05:04PM",
-    connectionStatus: "not connected",
+    connectionStatus: "Not Connected",
     ingested: false,
 
   }

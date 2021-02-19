@@ -7,6 +7,7 @@ import { fetchDataSources, triggerIngestion, triggerConnectionCheck,addNewDataSo
 import CTModal from "../../../components/Modal/CTModal";
 import CTLabel from "../../../components/Label/CTLabel";
 import CTInput from "../../../components/Input/CTInput";
+import CTChip from "../../../components/Chip/CTChip";
 import Select from '@material-ui/core/Select';
 import './DataSource.scss';
 const markIngestionStatus = (payload) => ({ type: "updateInestionStatus", payload });
@@ -52,7 +53,17 @@ const DataSources = (props) => {
           dispatch(markConnecting(payload))
           initiateConnection(params.getValue("id"))
         }
-        return (<><Chip label={params.getValue("connectionStatus")}></Chip>{(params.getValue("connectionStatus") === "connected" ? <IconButton size='small' onClick={() => triggerConnection()}><span className="iconify" data-icon="mdi:refresh-circle" data-inline="false"></span></IconButton> : params.getValue("connectionStatus") === "connecting..." ? "": <IconButton size='small' onClick={() => triggerConnection()}><span className="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton>)}</>)
+        return (
+        <>
+        {
+          params.getValue("connectionStatus") !== "Connecting..." ?
+          <CTChip isWorking={params.getValue("connectionStatus") === "Connected"} isWorkingFn={triggerConnection} isNotWorkingFn={triggerConnection}>
+            {params.getValue("connectionStatus")}
+          </CTChip>
+        :
+        (<span>Connecting...</span>)
+        }
+        </>)
       }
     },
     {
@@ -65,13 +76,28 @@ const DataSources = (props) => {
           dispatch(markIngestionStatus(payload))
           actionIngestion(params.getValue("id"))
         }
-        let cellTemp = ""
-        if (params.getValue("ingested") && params.getValue("ingestionStatus"))
-          cellTemp = (params.getValue("recordsIngested"))
-        else if (!params.getValue("ingested") && params.getValue("ingestionStatus") === "InProgess")
-          cellTemp = (<span>Ingestion in progress...</span>)
-        else cellTemp = (<><Chip label="Not Ingested"></Chip><IconButton size='small' onClick={()=> {triggerIngestion(params)}}><span className="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton></>)
-        return cellTemp
+        return (
+          <>
+          {
+            (params.getValue("ingested") && params.getValue("ingestionStatus") ) ?
+              (<span>{params.getValue("recordsIngested")}</span>)
+            :
+            (!params.getValue("ingested") && params.getValue("ingestionStatus") === "InProgess")
+              ?
+              (<span>Ingestion in progress...</span>)
+              :
+              <CTChip isWorking={params.getValue("ingested")} isWorkingFn={()=>triggerIngestion(params)} isNotWorkingFn={()=>triggerIngestion(params)}>
+                Not ingested
+              </CTChip>
+          }
+        </>)
+        // let cellTemp = ""
+        // if (params.getValue("ingested") && params.getValue("ingestionStatus"))
+        //   cellTemp = (params.getValue("recordsIngested"))
+        // else if (!params.getValue("ingested") && params.getValue("ingestionStatus") === "InProgess")
+        //   cellTemp = (<span>Ingestion in progress...</span>)
+        // else cellTemp = (<><Chip label="Not Ingested"></Chip><IconButton size='small' onClick={()=> {triggerIngestion(params)}}><span className="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton></>)
+        // return cellTemp
       }
     },
     {
@@ -116,47 +142,65 @@ const DataSources = (props) => {
     <div className='ct-datasource-modal'>
       <CTLabel>Data Source</CTLabel>
       <Select
-          value={selectedDataSource}
-          onChange={(e)=>handleSelectedDataSourceChange(e)}
-          label="Account ID"
-        >
-          <option  value={'Amazon S3'}>Amazon S3</option>
-          <option value={'CDP'}>CDP</option>
-          <option value={'Facebook'}>Facebook</option>
+        value={selectedDataSource}
+        onChange={(e)=>handleSelectedDataSourceChange(e)}
+        label="Account ID"
+        className='ct-datasource-modal-select'
+      >
+        <option  value={'Amazon S3'}>Amazon S3</option>
+        <option value={'CDP'}>CDP</option>
+        <option value={'Facebook'}>Facebook</option>
       </Select>
-      <CTLabel>Account ID</CTLabel>
-      <CTInput placeholder={'Account ID'}></CTInput>
+
       { selectedDataSource==='Amazon S3' ?
-        <div>
-        <CTLabel>IAM User Name</CTLabel>
-        <CTInput placeholder={'IAM User Name'}></CTInput>
-        <CTLabel>Password / Key</CTLabel>
-        <CTInput placeholder={'Password / Key'}></CTInput>
-        <CTLabel>Filename</CTLabel>
-        <CTInput placeholder={'Unique name for your file'}></CTInput>
-        <CTLabel>Filepath</CTLabel>
-        <CTInput placeholder={'example.csv'}></CTInput>
+        <div className='ct-datasource-fields'>
+          <span className='ct-datasource-field-card'>
+            <CTLabel>IAM User Name</CTLabel>
+            <CTInput placeholder={'IAM User Name'}></CTInput>
+          </span>
+          <span className='ct-datasource-field-card'>
+          <CTLabel>Password / Key</CTLabel>
+          <CTInput placeholder={'Password / Key'}></CTInput>
+          </span>
+          <span className='ct-datasource-field-card'>
+          <CTLabel>Filename</CTLabel>
+          <CTInput placeholder={'Unique name for your file'}></CTInput>
+          </span>
+          <span className='ct-datasource-field-card'>
+          <CTLabel>Filepath</CTLabel>
+          <CTInput placeholder={'example.csv'}></CTInput>
+          </span>
         </div>
       : ''
       }
       { selectedDataSource==='Facebook' ?
-        <div>
-        <CTLabel>IAM User Name</CTLabel>
-        <CTInput placeholder={'IAM User Name'}></CTInput>
+        <div className='ct-datasource-fields'>
+        <span className='ct-datasource-field-card'>
+          <CTLabel>IAM User Name</CTLabel>
+          <CTInput placeholder={'IAM User Name'}></CTInput>
+        </span>
+        <span className='ct-datasource-field-card'>
         <CTLabel>Password / Key</CTLabel>
         <CTInput placeholder={'Password / Key'}></CTInput>
+        </span>
+        <span className='ct-datasource-field-card'>
         <CTLabel>Filename</CTLabel>
         <CTInput placeholder={'Unique name for your file'}></CTInput>
-        </div>
+        </span>
+      </div>
       : ''
       }
       { selectedDataSource==='CDP' ?
-        <div>
-        <CTLabel>IAM User Name</CTLabel>
-        <CTInput placeholder={'IAM User Name'}></CTInput>
+        <div className='ct-datasource-fields'>
+        <span className='ct-datasource-field-card'>
+          <CTLabel>IAM User Name</CTLabel>
+          <CTInput placeholder={'IAM User Name'}></CTInput>
+        </span>
+        <span className='ct-datasource-field-card'>
         <CTLabel>Password / Key</CTLabel>
         <CTInput placeholder={'Password / Key'}></CTInput>
-        </div>
+        </span>
+      </div>
       : ''
       }
     </div>
