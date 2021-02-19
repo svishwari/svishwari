@@ -1,24 +1,46 @@
 //application theme colors
-$appDark: #53565A;
-$appLightGray: #AAAAAA;
+
+//White
 $appWhite: #FFFFFF;
+$appLinesColor: #F0F0F0;
+$appBackground: #F7F8FA;
+$appSmokedWhite: #E6E6E6;
+
+//Black
+$appTextDark: #3E4246;
+$appDark: #53565A;
+
+//Gray
+$appLightGray: #AAAAAA;
+$appLightGray2: #767676;
+$appLightGray3: #F5F5F5;
+$appGreyBorder: #D0D0CE;
+
+//Green
 $appDeloitteGreen: #09CC92;
+$appMenuActive: #00C395;
+$appDarkerGreen: #00C495;
+$appSuccessGreen: #43B02A;
+
+//Blue
 $appBrightBlue: #1AA3DD;
 $appDashboardDisabled: #AFCAE2;
+$appNavBackground: #3E4B5C;
+$appMainBlue: #0076A8;
+$appDarkBlue: #00597F;
+
+//Red
+$appDarkRed: #EC5B54;
+
+//Yellow
+$appYellowLight: #FFCD00;
+
+//Orange
 $appOrange: #FF9900;
+
+//Miscellaneous
 $appHighlight: linear-gradient(96.82deg, #09CC92 7.15%, #1AA3DD 88.52%);
 $appSecondary: linear-gradient(93.46deg, #FCC400 2.85%, #DE24AA 100.79%);
 $appTertiary: #0074DF;
-$appLinesColor: #F0F0F0;
-$appBackground: #F7F8FA;
-$appNavBackground: #3E4B5C;
-
-$appLightGray2: #767676;
-$appDarkRed: #EC5B54;
 $appSuccess: linear-gradient(96.82deg, #00C395 7.15%, #0D77D4 88.52%);
 $appError: linear-gradient(93.46deg, #FC9700 2.85%, #DA291C 100.79%);
-
-$appTextDark: #3E4246;
-$appMenuActive: #00C395;
-$appDarkerGreen: #00C495;
-$appSmokedWhite: #E6E6E6;

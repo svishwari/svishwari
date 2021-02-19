@@ -20,7 +20,11 @@ import LoggedInRedirect from "../modules/auth/LoggedInRedirect";
 
 // Layouts
 import { PrivateLayout } from "../layouts/PrivateLayout";
-import { StyleGuide } from "../pages/StyleGuide";
+// import { StyleGuide } from "../pages/StyleGuide";
+import ConnectionsSummary from "../modules/connections/ConnectionsSummary";
+import ComingSoon from "../pages/ComingSoon";
+import DataSources from "../modules/connections/data-sources/DataSources";
+import Destinations from "../modules/connections/destinations/Destinations";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -50,24 +54,17 @@ function Routes() {
   useEffect(() => {}, []);
 
   return (
-    <div>
+    <>
       <Security oktaAuth={oktaAuth} onAuthRequired={onAuthRequired}>
-        <SecureRoute path="/:path?" exact>
+        <SecureRoute path="/:path?/:path?/:path?" exact>
           <Switch>
             <PrivateLayout>
               <Switch>
                 <Route path="/" exact component={Dashboard} />
-                <Route path="/styleguide" exact component={StyleGuide} />
-                <Route path="/orchestration" exact component={Page} />
-                <Route path={"/orchestration?/:path?"} exact>
-                  <Switch>
-                    <Route
-                      path="/audiences"
-                      exact
-                      component={Dashboard}
-                    />
-                  </Switch>
-                </Route>
+                <Route path="/connections" exact component={ConnectionsSummary} />
+                <Route path="/connections/dataSources" exact component={DataSources} />
+                <Route path="/connections/destinations" exact component={Destinations} />
+                <Route path="*" exact component={ComingSoon} />
               </Switch>
             </PrivateLayout>
           </Switch>
@@ -75,7 +72,7 @@ function Routes() {
         <Route path="/login" render={() => <LoggedInRedirect />} />
         <Route path="/login/callback" component={LoginCallback} />
       </Security>
-    </div>
+    </>
   );
 }
 
