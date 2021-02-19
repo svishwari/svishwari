@@ -214,9 +214,9 @@ const DataSources = (props) => {
       columns={columns}
       hasStarring={true}
       loading={props.dataSources.length ? false : true}
-      onRemove={(params) => alert(params)}
-      onBulkRemove={(params) => alert(JSON.stringify(params))}
-      onDownload={(params) => alert(params)}
+      onRemove={()=>{}}
+      onBulkRemove={()=>{}}
+      onDownload={()=>{}}
       onAddClick={() => { childRef.current.handleOpen() }}
       pageName={"Data Source"}
     ></CTDataGrid>
