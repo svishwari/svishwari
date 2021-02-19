@@ -1,6 +1,6 @@
 // Action Creators
-import { getRequest } from '../../../hooks/apiClient';
-import { slugs } from '../../../resources/slugs';
+// import { getRequest } from '../../../hooks/apiClient';
+// import { slugs } from '../../../resources/slugs';
 
 const setUser = (payload) => ({ type: "SET_USER", payload})
 
@@ -9,8 +9,7 @@ export const logUserOut = () => ({type: "LOG_OUT"})
 // Methods
 
 export const fetchMetrics = () => async dispatch => {
-    const response = await getRequest(slugs.microServices.dataSources.create)
-    console.log(response)
+    const response = await g
     dispatch(setUser(response))
 }
 

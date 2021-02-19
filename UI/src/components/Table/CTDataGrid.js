@@ -11,7 +11,6 @@ export default class CTDataGrid extends Component {
   constructor(props) {
     super(props);
     const { data } = props;
-    console.log(data);
     this.state = {
       dataGridData: data,
       isEditing: false,
@@ -33,8 +32,6 @@ export default class CTDataGrid extends Component {
   }
   componentDidUpdate(nextProps) {
     const { data } = this.props
-    console.log(nextProps.data, this.props.data)
-    console.log(nextProps.data, this.props.data)
     if (nextProps.data !== this.props.data) {
       this.setState({ dataGridData: this.props.data })
     }

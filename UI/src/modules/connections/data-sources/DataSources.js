@@ -3,8 +3,9 @@ import React from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import CTDataGrid from "../../../components/Table/CTDataGrid";
-import { fetchDataSources, triggerIngestion } from "../store/action";
+import { fetchDataSources, triggerIngestion, triggerConnectionCheck } from "../store/action";
 const markIngestionStatus = (payload) => ({ type: "updateInestionStatus", payload });
+const markConnecting = (payload) => ({ type: "updateConnectionStatus", payload });
 
 
 const DataSources = (props) => {
@@ -40,7 +41,14 @@ const DataSources = (props) => {
       field: "connectionStatus",
       headerName: "Connection Status",
       flex: 0.15,
-      renderCell: (params) => (params.getValue("connectionStatus") === "connected" ? (<><Chip label="Connected"></Chip><IconButton size='small'><span class="iconify" data-icon="mdi:refresh-circle" data-inline="false"></span></IconButton></>) : (<><Chip label="Not Connected"></Chip><IconButton size='small'><span class="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton></>))
+      renderCell: (params) => {
+        const triggerConnection = () => {
+          const payload = { id: params.getValue("id"), status: "Connecting..." }
+          dispatch(markConnecting(payload))
+          initiateConnection(params.getValue("id"))
+        }
+        return (<><Chip label={params.getValue("connectionStatus")}></Chip>{(params.getValue("connectionStatus") === "connected" ? <IconButton size='small' onClick={() => triggerConnection()}><span className="iconify" data-icon="mdi:refresh-circle" data-inline="false"></span></IconButton> : params.getValue("connectionStatus") === "connecting..." ? "": <IconButton size='small' onClick={() => triggerConnection()}><span className="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton>)}</>)
+      }
     },
     {
       field: "recordsIngested",
@@ -49,27 +57,35 @@ const DataSources = (props) => {
       renderCell: (params) => {
         const triggerIngestion = (params) => {
           const payload = { id: params.getValue("id"), status: "Ingestion in Progress..." }
-          console.log("Ingestion triggered" + params)
           dispatch(markIngestionStatus(payload))
           actionIngestion(params.getValue("id"))
         }
-        return ((params.getValue("ingested") && params.getValue("ingestionStatus")) ? (params.getValue("recordsIngested")) : (<><Chip label="Not Ingested"></Chip><IconButton size='small' onClick={()=> {triggerIngestion(params)}}><span class="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton></>))
+        let cellTemp = ""
+        if (params.getValue("ingested") && params.getValue("ingestionStatus"))
+          cellTemp = (params.getValue("recordsIngested"))
+        else if (!params.getValue("ingested") && params.getValue("ingestionStatus") === "InProgess")
+          cellTemp = (<span>Ingestion in progress...</span>)
+        else cellTemp = (<><Chip label="Not Ingested"></Chip><IconButton size='small' onClick={()=> {triggerIngestion(params)}}><span className="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton></>)
+        return cellTemp
       }
     },
     {
       field: "empty",
       headerName: "Empty",
-      flex: 0.1
+      flex: 0.1,
+      renderCell: (params) => ((params.getValue("ingested") && params.getValue("ingestionStatus")) ? (params.getValue("recordsIngested")): (<></>))
     },
     {
       field: "bogus",
       headerName: "Bogus",
-      flex: 0.1
+      flex: 0.1,
+      renderCell: (params) => ((params.getValue("ingested") && params.getValue("ingestionStatus")) ? (params.getValue("recordsIngested")): (<></>))
     },
     {
       field: "cleansed",
       headerName: "Cleansed",
-      flex: 0.1
+      flex: 0.1,
+      renderCell: (params) => ((params.getValue("ingested") && params.getValue("ingestionStatus")) ? (params.getValue("recordsIngested")): (<></>))
     }
 
   ];
@@ -77,8 +93,12 @@ const DataSources = (props) => {
   const retrieveDataSources = (getState) => {
     dispatch(fetchDataSources());
   };
-  const actionIngestion = (getState, id) => {
+  const actionIngestion = (id) => {
     dispatch(triggerIngestion(id));
+  };
+  const initiateConnection = (id) => {
+    console.log(id);
+    dispatch(triggerConnectionCheck(id));
   };
   React.useEffect(() => {
     retrieveDataSources();

@@ -2,6 +2,7 @@ import { getRequest } from "../../../hooks/apiClient";
 import slugs from "../../../resources/slugs";
 const setDataSources = (payload) => ({ type: "loadDataSources", payload });
 const ingestionCompleted = (payload) => ({ type: "ingestionComplete", payload });
+const dataSourceConnected = (payload) => ({ type: "dataSourceConnected", payload });
 
 export const logUserOut = () => ({ type: "LOG_OUT" });
 
@@ -145,11 +146,21 @@ const fetchDataSources = () => async dispatch => {
 const triggerIngestion = (id) => async dispatch => {
   await new Promise(done => setTimeout(() => done(), 5000));
   const response = {
-    ...id,
-    Recordsingested: 715,
-  empty: 43,
-  bogus: 20,
-  Cleansed: 16}
+    id: id,
+    recordsIngested:Math.floor((Math.random()*(10000+1))+350),
+  empty: Math.floor((Math.random()*(100+1))+50),
+  bogus: Math.floor((Math.random()*(1000+1))+150),
+    cleansed: Math.floor((Math.random()*(1000+1))+350)
+  }
   dispatch(ingestionCompleted(response));
 }
-export { fetchDataSources, triggerIngestion }
+
+const triggerConnectionCheck = (id) => async dispatch => {
+  await new Promise(done => setTimeout(() => done(), 3000));
+  const response = {
+    id: id,
+    status: "connected"
+  }
+  dispatch(dataSourceConnected(response));
+}
+export { fetchDataSources, triggerIngestion, triggerConnectionCheck }
