@@ -59,7 +59,7 @@ def get_data_sources():
 })
 def create_data_sources():
     """
-    get data sources
+    create data source
     ---
     """
     result = AdvertisingModel()
@@ -78,7 +78,7 @@ def create_data_sources():
 })
 def update_data_sources():
     """
-    get data sources
+    update data source
     ---
     """
     result = AdvertisingModel()
@@ -116,7 +116,7 @@ def delete_data_source():
 })
 def star_data_sources(data_source_id):
     """
-    get data sources
+    star data source
     ---
     """
     result = AdvertisingModel()
@@ -135,7 +135,7 @@ def star_data_sources(data_source_id):
 })
 def validate_data_source(data_source_id):
     """
-    get data sources
+    validate data source
     ---
     """
     result = AdvertisingModel()
@@ -154,7 +154,7 @@ def validate_data_source(data_source_id):
 })
 def get_destination_count():
     """
-    get data sources
+    get destination count
     ---
     """
     result = AdvertisingModel()
@@ -192,7 +192,7 @@ def get_delivery_platforms():
 })
 def create_delivery_platforms():
     """
-    get delivery platforms
+    create delivery platform
     ---
     """
     result = AdvertisingModel()
@@ -230,7 +230,7 @@ def update_delivery_platforms():
 })
 def star_delivery_platforms():
     """
-    update delivery platform
+    star delivery platform
     ---
     """
     result = AdvertisingModel()
@@ -249,7 +249,7 @@ def star_delivery_platforms():
 })
 def validate_delivery_platforms():
     """
-    update delivery platform
+    validate delivery platform
     ---
     """
     result = AdvertisingModel()
@@ -268,7 +268,7 @@ def validate_delivery_platforms():
 })
 def audience_count():
     """
-    get audience count
+    audience count
     ---
     """
     result = AdvertisingModel()
@@ -287,7 +287,7 @@ def audience_count():
 })
 def get_audiences():
     """
-    get audience count
+    get all audiences
     ---
     """
     result = AdvertisingModel()
@@ -306,7 +306,7 @@ def get_audiences():
 })
 def create_audiences():
     """
-    get audience count
+    create audience
     ---
     """
     result = AdvertisingModel()
@@ -380,9 +380,9 @@ def star_audience(audience_id):
         }
     }
 })
-def recent_audience():
+def recent_audiences():
     """
-    star audience
+    get recent audiences
     ---
     """
     result = AdvertisingModel()
@@ -401,7 +401,7 @@ def recent_audience():
 })
 def get_star_audiences():
     """
-    star audience
+    get star audiences
     ---
     """
     result = AdvertisingModel()

@@ -54,8 +54,8 @@ class CustomerFeatureModel:
         }
 
         # fake the request for now until we have access
-        # response = requests.post(f'https://{self.cluster_id}.tecton.ai/api/v1/feature-service/get-features',
-        #                          headers=TECTON_API_HEADERS, data=data).json()
+        # response = requests.post(f'https://{self.cluster_id}.tecton.ai/api/v1/feature-service
+        # /get-features', headers=TECTON_API_HEADERS, data=data).json()
         self.features = ['imps_count_14d_1d', 'imps_count_28d_1d', 'imps_count_60d_1d']
 
     def get_feature_vectors(self):
@@ -77,8 +77,8 @@ class CustomerFeatureModel:
         }
 
         # fake the request for now until we have access
-        # response = requests.post(f'https://{self.cluster_id}.tecton.ai/api/v1/feature-service/get_feature_vector',
-        #                          headers=TECTON_API_HEADERS, data=data).json()
+        # response = requests.post(f'https://{self.cluster_id}.tecton.ai/api/v1/feature-service
+        # /get_feature_vector', headers=TECTON_API_HEADERS, data=data).json()
         for feat in self.features:
             self.predictions.append(
                 {

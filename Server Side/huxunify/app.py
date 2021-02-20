@@ -1,7 +1,7 @@
 """
 Purpose of this file is to house the main application code.
 """
-from flask import Flask
+from flask import Flask, redirect
 from flasgger import Swagger
 from api.route.home import home_api
 from api.route.advertising import advertising_bp
@@ -27,6 +27,11 @@ def create_app():
         'title': 'HUX Unified Solution API',
     }
     swagger = Swagger(flask_app)
+
+    # default just send user over to apidocs
+    @flask_app.route('/')
+    def index():
+        return redirect(f"/apidocs")
 
     # register the blueprint and route
     flask_app.register_blueprint(home_api, url_prefix='/api')
