@@ -95,9 +95,9 @@ def update_data_sources():
         }
     }
 })
-def update_data_sources():
+def delete_data_source():
     """
-    get data sources
+    delete data source
     ---
     """
     result = AdvertisingModel()
@@ -143,20 +143,286 @@ def validate_data_source(data_source_id):
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route('/data-sources/<data_source_id>/validate', methods=['GET'])
+@advertising_bp.route('/destinations/count', methods=['GET'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
-            'description': 'validate data source',
+            'description': 'destination count',
             'schema': AdvertisingSchema
         }
     }
 })
-def validate_data_source(data_source_id):
+def get_destination_count():
     """
     get data sources
     ---
     """
     result = AdvertisingModel()
-    data_source = result.validate_data_source(data_source_id)
+    data_source = result.get_destination_count()
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/delivery-platforms', methods=['GET'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get delivery platforms',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def get_delivery_platforms():
+    """
+    get delivery platforms
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.get_delivery_platforms()
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/delivery-platforms', methods=['POST'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'create delivery platform',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def create_delivery_platforms():
+    """
+    get delivery platforms
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.create_delivery_platform(request.json)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/delivery-platforms', methods=['PUT'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'update delivery platform',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def update_delivery_platforms():
+    """
+    update delivery platform
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.update_delivery_platform(request.json)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/delivery-platforms/<delivery_platform_id>/star', methods=['POST'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'star delivery platform',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def star_delivery_platforms():
+    """
+    update delivery platform
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.star_delivery_platform(request.json)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/delivery-platforms/<delivery_platform_id>/validate', methods=['GET'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'validate delivery platform',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def validate_delivery_platforms():
+    """
+    update delivery platform
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.validate_delivery_platform(request.json)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience/count', methods=['GET'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get count of all audiences',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def audience_count():
+    """
+    get audience count
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.get_audience_count()
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience', methods=['GET'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get all audiences',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def get_audiences():
+    """
+    get audience count
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.get_audiences()
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience', methods=['POST'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'create audience',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def create_audiences():
+    """
+    get audience count
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.create_audiences(request.json)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience', methods=['PUT'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'update audience',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def update_audience():
+    """
+    update audience
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.update_audiences(request.json)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience/<audience_id>', methods=['DELETE'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'delete audience',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def delete_audience(audience_id):
+    """
+    delete audience
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.delete_audiences(audience_id)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience/<audience_id>/star', methods=['DELETE'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'star audience',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def star_audience(audience_id):
+    """
+    star audience
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.star_audiences(audience_id)
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience/recent', methods=['GET'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get recent audiences',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def recent_audience():
+    """
+    star audience
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.get_recent_audiences()
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience/star', methods=['GET'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get star audiences',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def get_star_audiences():
+    """
+    star audience
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.get_star_audiences()
+    return json.dumps(data_source), 200
+
+
+@advertising_bp.route('/audience/<audience_id>/delivery_jobs', methods=['GET'])
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get delivery jobs for an audience',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def get_audience_delivery_jobs(audience_id):
+    """
+    get audience delivery jobs
+    ---
+    """
+    result = AdvertisingModel()
+    data_source = result.get_audience_delivery_jobs(audience_id)
     return json.dumps(data_source), 200
