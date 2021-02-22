@@ -66,7 +66,7 @@ function Routes() {
                   component={ConnectionsSummary}
                 />
                 <Route
-                  path="/connections/dataSources"
+                  path="/connections/data-sources"
                   exact
                   component={DataSources}
                 />

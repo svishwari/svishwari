@@ -28,7 +28,7 @@
   },
   {
     "name": "Customer Profile",
-    "path": "/customerProfile",
+    "path": "/customer-profile",
     "icon": "account-details-outline"
   },
   {
@@ -65,7 +65,7 @@
     "subItems": [
       {
         "name": "Data Sources",
-        "path": "/connections/dataSources",
+        "path": "/connections/data-sources",
         "icon": "arrow-expand-left"
       },
       {
