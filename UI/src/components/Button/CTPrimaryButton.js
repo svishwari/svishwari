@@ -8,7 +8,6 @@ const CTPrimaryButton = ({
   onClickFn,
   customClass = "",
   isDisabled = false,
-  isLoading = false,
   btnWidth = 160,
   btnHeight = 40,
   children,
@@ -21,6 +20,7 @@ const CTPrimaryButton = ({
         ? `ct-btn-primary-disabled ${customClass}`
         : `ct-btn-primary ${customClass}`
     }
+    type='button'
     onClick={isDisabled ? undefined : onClickFn}
     {...props}
   >

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useOktaAuth } from "@okta/okta-react";
 import { ReactComponent as Collapse } from "../assets/icons/collapse.svg";
 import { UserAvatar } from "../components/UserAvatar";
 import "./topHeader.scss";
-import { useOktaAuth } from "@okta/okta-react";
 
 const TopHeader = ({ isCollapsed, collapsed }) => {
   const { authState, oktaAuth } = useOktaAuth();

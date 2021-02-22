@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import DonutChart from "react-d3-donut/es";
 import CTUSAMap from "../../components/Charts/CTUSAMap";
 
-const Dashboard = (props) => {
+const Dashboard = () => {
   const usData = [{ TX: 90 }, { NY: 28 }, { WA: 68 }, { CA: 18 }];
   const SegmentData = [
     { name: "MostLikely", count: 70, color: "#00A99D" },

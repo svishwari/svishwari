@@ -17,6 +17,9 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if ( passwordMatch) {
+      // Do something
+    }
   };
 
   const handleFullnameChange = (e) => {

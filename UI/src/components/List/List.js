@@ -1,8 +1,8 @@
-import { classnames, DataGrid } from "@material-ui/data-grid";
+import { DataGrid } from "@material-ui/data-grid";
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     background: "#FFFFFF",
     boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.05)",

@@ -5,9 +5,6 @@ import "./UserAvatar.scss";
 
 export const UserAvatar = ({ username }) => {
   const { oktaAuth } = useOktaAuth();
-  // oktaAuth.getUser().then(info => {
-  //   console.log(info)
-  // });
 
   const getInitials = (name) =>
     name
@@ -40,10 +37,12 @@ export const UserAvatar = ({ username }) => {
     >
       <div className="userAvatarIcon">
         <span className="avatar">{getInitials(username)}</span>
-        <button variant="light" className="btn">
+        <button type="button" variant="light" className="btn">
           {username} <span className="iconify" data-icon="mdi:chevron-down" />
         </button>
       </div>
     </OverlayTrigger>
   );
 };
+
+export default UserAvatar;

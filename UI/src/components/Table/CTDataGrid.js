@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-update-set-state */
 import React, { Component } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import IconButton from "@material-ui/core/IconButton";
@@ -8,97 +9,12 @@ import "./CTDataGrid.scss";
 import CTDataGridTop from "./CTDataGridTop";
 
 export default class CTDataGrid extends Component {
-  constructor(props) {
-    super(props);
-    const { data } = props;
-    this.state = {
-      dataGridData: data,
-      isEditing: false,
-      selectedRows: [],
-      searchFilter: "",
-    };
-  }
-
-  updateItem(id, itemAttributes) {
-    const index = this.state.dataGridData.findIndex((x) => x.id === id);
-    if (index === -1) {
-    } else
-      this.setState({
-        dataGridData: [
-          ...this.state.dataGridData.slice(0, index),
-          { ...this.state.dataGridData[index], ...itemAttributes },
-          ...this.state.dataGridData.slice(index + 1),
-        ],
-      });
-  }
-
-  componentDidUpdate(nextProps) {
-    const { data } = this.props;
-    if (nextProps.data !== this.props.data) {
-      this.setState({ dataGridData: this.props.data });
-    }
-  }
-
-  updateStarring = (params) => {
-    //   console.log(params.row.id)
-    this.updateItem(params.row.id, { starred: !params.row.starred });
-    // this.setState({ dataGridData: this.dataGridData });
-  };
-
-  toggleEditing = () => {
-    this.setState({ isEditing: !this.state.isEditing });
-  };
-
-  rowChange = (params) => {
-    this.setState({ selectedRows: params.rowIds });
-  };
-
-  removeRow = (id) => {
-    const index = this.state.dataGridData.findIndex((x) => x.id == id);
-    if (index === -1) {
-      this.props.onRemove("No row found");
-    } else {
-      const updatedArray = [
-        ...this.state.dataGridData.slice(0, index),
-        ...this.state.dataGridData.slice(index + 1),
-      ];
-      this.setState({
-        dataGridData: updatedArray,
-      });
-      this.props.onRemove(this.state.dataGridData[index]);
-    }
-  };
-
-  removeSelectedRows = () => {
-    const rowsTobeRemoved = [];
-    this.state.selectedRows.forEach((x) => {
-      const index = this.state.dataGridData.findIndex((y) => y.id == x);
-      rowsTobeRemoved.push(this.state.dataGridData[index]);
-    });
-
-    const filteredArray = this.state.dataGridData.filter(
-      (value) => !rowsTobeRemoved.includes(value)
-    );
-    const deletedArray = this.state.dataGridData.filter((value) =>
-      rowsTobeRemoved.includes(value)
-    );
-    this.setState({
-      dataGridData: filteredArray,
-    });
-    this.props.onBulkRemove(deletedArray);
-  };
-
-  onSearch = (e) => {
-    this.setState({ searchFilter: e.target.value });
-  };
-
   starredColumn = {
     field: "starred",
     headerName: " ",
     width: 60,
     renderCell: (params) => {
       const updateStar = () => {
-        // console.log(params);
         this.updateStarring(params);
       };
       return (
@@ -110,8 +26,90 @@ export default class CTDataGrid extends Component {
   };
 
   applicableColumns = this.props.hasStarring
-    ? [this.starredColumn, ...this.props.columns]
-    : this.props.columns;
+  ? [this.starredColumn, ...this.props.columns]
+  : this.props.columns;
+
+  constructor(props) {
+    super(props);
+    const { data } = props;
+    this.state = {
+      dataGridData: data,
+      isEditing: false,
+      selectedRows: [],
+      searchFilter: "",
+    };
+  }
+
+  componentDidUpdate(nextProps) {
+    const propsData = this.props.data;
+    if (nextProps.data !== this.props.data) {
+      this.setState({ dataGridData:  propsData});
+    }
+  }
+
+  updateStarring = (params) => {
+    this.updateItem(params.row.id, { starred: !params.row.starred });
+  };
+
+  onSearch = (e) => {
+    this.setState({ searchFilter: e.target.value });
+  };
+
+  removeSelectedRows = () => {
+    const rowsTobeRemoved = [];
+    this.state.selectedRows.forEach((x) => {
+      // eslint-disable-next-line eqeqeq
+      const index = this.state.dataGridData.findIndex((y) => y.id == x);
+      rowsTobeRemoved.push(this.state.dataGridData[index]);
+    });
+
+    const deletedArray = this.state.dataGridData.filter((value) =>
+      rowsTobeRemoved.includes(value)
+    );
+    this.setState(prevState => ({
+      dataGridData: prevState.dataGridData.filter(
+        (value) => !rowsTobeRemoved.includes(value)
+      ),
+    }));
+    this.props.onBulkRemove(deletedArray);
+  };
+
+  removeRow = (id) => {
+    // eslint-disable-next-line eqeqeq
+    const index = this.state.dataGridData.findIndex((x) => x.id == id);
+    if (index === -1) {
+      this.props.onRemove("No row found");
+    } else {
+      this.setState(prevState => ({
+        dataGridData: [
+          ...prevState.dataGridData.slice(0, index),
+          ...prevState.dataGridData.slice(index + 1),
+        ],
+      }));
+      this.props.onRemove(this.state.dataGridData[index]);
+    }
+  };
+
+  toggleEditing = () => {
+    this.setState(prevState=> ({ isEditing: !prevState.isEditing }) );
+  };
+
+  rowChange = (params) => {
+    this.setState({ selectedRows: params.rowIds });
+  };
+
+  updateItem(id, itemAttributes) {
+    const index = this.state.dataGridData.findIndex((x) => x.id === id);
+    if (index !== -1) {
+      this.setState(prevState => ({
+        dataGridData: [
+          ...prevState.dataGridData.slice(0, index),
+          { ...prevState.dataGridData[index], ...itemAttributes },
+          ...prevState.dataGridData.slice(index + 1),
+        ],
+      }));
+    }
+  }
 
   render() {
     return (

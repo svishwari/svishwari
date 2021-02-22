@@ -8,7 +8,6 @@ const CTTertiaryButton = ({
   onClickFn,
   customClass = "",
   isDisabled = false,
-  isLoading = false,
   btnWidth = 160,
   btnHeight = 40,
   children,
@@ -21,6 +20,7 @@ const CTTertiaryButton = ({
         ? `ct-btn-tertiary-disabled ${customClass}`
         : `ct-btn-tertiary ${customClass}`
     }
+    type='button'
     onClick={isDisabled ? undefined : onClickFn}
     {...props}
   >

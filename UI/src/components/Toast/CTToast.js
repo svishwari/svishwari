@@ -42,7 +42,7 @@ const CTToast = ({
           )}
           <div className="ct-toast-message">{toastMessage}</div>
         </div>
-        <div className="right-section" onClick={() => setShow(false)}>
+        <div className="right-section" onKeyPress={() => setShow(false)} onClick={() => setShow(false)}>
           {autoHide === false ? (
             <span
               className="iconify"

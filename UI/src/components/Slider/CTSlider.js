@@ -21,16 +21,16 @@ const CTSlider = ({
         step={STEP}
         min={MIN}
         max={MAX}
-        onChange={(values) => {
-          setValues(values);
+        onChange={(newValues) => {
+          setValues(newValues);
         }}
         {...props}
-        renderTrack={({ props, children }) => (
+        renderTrack={({ trackProps, children }) => (
           <div
-            onMouseDown={props.onMouseDown}
-            onTouchStart={props.onTouchStart}
+            onMouseDown={trackProps.onMouseDown}
+            onTouchStart={trackProps.onTouchStart}
             style={{
-              ...props.style,
+              ...trackProps.style,
               background: getTrackBackground({
                 values,
                 colors: ["#F7F8FA", "#00C495", "#F7F8FA"],
@@ -44,9 +44,9 @@ const CTSlider = ({
             </div>
           </div>
         )}
-        renderThumb={({ props }) => (
+        renderThumb={({ thumbProps }) => (
           <div
-            {...props}
+            {...thumbProps}
             style={{
               ...props.style,
             }}

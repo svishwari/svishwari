@@ -18,12 +18,12 @@ const Login = () => {
     oktaAuth
       .signInWithCredentials({ username, password })
       .then((res) => {
-        const { sessionToken } = res;
-        setSessionToken(sessionToken);
+        const { oktaSessionToken } = res;
+        setSessionToken(oktaSessionToken);
         // sessionToken is a one-use token, so make sure this is only called once
         oktaAuth.signInWithRedirect({ sessionToken });
       })
-      .catch((err) => setError(true));
+      .catch(() => setError(true));
   };
 
   const handleUsernameChange = (e) => {

@@ -1,7 +1,7 @@
 import "./Sidebar.scss";
 import React from "react";
 
-export const Sidebar = ({ width, height, children, collapsed }) => (
+export const Sidebar = ({ width, children, collapsed }) => (
   <>
     <div
       className={`side-bar ${collapsed ? "collapsed" : ""}`}
@@ -14,3 +14,5 @@ export const Sidebar = ({ width, height, children, collapsed }) => (
     </div>
   </>
 );
+
+export default Sidebar;

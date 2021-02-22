@@ -175,7 +175,7 @@ const triggerConnectionCheck = (id) => async (dispatch) => {
   dispatch(dataSourceConnected(response));
 };
 
-const addNewDataSource = (params) => async (dispatch) => {
+const addNewDataSource = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 800));
   const response = {
     id: Math.random().toString(16).slice(2),

@@ -4,7 +4,7 @@ import { NavLink, withRouter, useLocation } from "react-router-dom";
 import routeDefinitions from "./mainMenu.json";
 import "./MainMenu.scss";
 
-const navItem = (route, badge) => (
+const navItem = (route) => (
   <NavLink exact activeClassName="active" to={route.path}>
     <span className="iconify" data-icon={`mdi:${route.icon}`} />
     <span className="text">{route.name}</span>
@@ -12,7 +12,7 @@ const navItem = (route, badge) => (
   </NavLink>
 );
 
-const MainMenu = withRouter((props) => {
+const MainMenu = withRouter(() => {
   const location = useLocation();
   const exactRoute = (path) =>
     (path !== "/" && location.pathname.includes(path)) ||
@@ -20,20 +20,20 @@ const MainMenu = withRouter((props) => {
       ? "active"
       : "";
   const openDropDown = (path) => location.pathname.includes(path);
-  const MenuItems = routeDefinitions.map((route, rkey) =>
+  const MenuItems = routeDefinitions.map((route) =>
     route.subItems && route.subItems.length > 0 ? (
       <NavDropdown
         title={navItem(route)}
         id="nav-dropdown"
-        key={`submenu_${rkey}`}
+        key={`submenu_${route.path}`}
         show={openDropDown(route.path)}
         className={exactRoute(route.path)}
       >
-        {route.subItems.map((subItem, skey) => (
+        {route.subItems.map((subItem) => (
           <div>
             <NavDropdown.Item
               className={exactRoute(subItem.path)}
-              key={`${route.name.toString().toLowerCase()}_${skey}`}
+              key={`${route.name.toString().toLowerCase()}_`}
             >
               {navItem(subItem)}
             </NavDropdown.Item>
@@ -41,7 +41,7 @@ const MainMenu = withRouter((props) => {
         ))}
       </NavDropdown>
     ) : (
-      <Nav.Link key={`main_${rkey}`} className={exactRoute(route.path)}>
+      <Nav.Link key={`main_${route.path}`} className={exactRoute(route.path)}>
         {navItem(route)}
       </Nav.Link>
     )

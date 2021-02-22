@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 const defaultState = {
   dataSources: [],
   destinations: [],
@@ -39,11 +40,11 @@ const connectionReducer = (state = defaultState, action) => {
         dataSources: _tmpDS,
       };
     case "newDataSourceAdded":
-      const original_DS = JSON.parse(JSON.stringify(state.dataSources));
-      original_DS.unshift(action.payload);
+      const originalDS = JSON.parse(JSON.stringify(state.dataSources));
+      originalDS.unshift(action.payload);
       return {
         ...state,
-        dataSources: original_DS,
+        dataSources: originalDS,
       };
     case "dataSourceConnected":
       const __tmpDS = JSON.parse(JSON.stringify(state.dataSources));

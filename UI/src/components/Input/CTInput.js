@@ -5,7 +5,6 @@ const CTInput = ({
   onChangeFunc,
   inputType = "text",
   placeholder = "Please enter some input",
-  label = "",
   inputWidth = "100%",
   errorMessage = "",
   ...props

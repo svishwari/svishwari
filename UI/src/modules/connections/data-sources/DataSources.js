@@ -88,7 +88,7 @@ const DataSources = (props) => {
       headerName: "Ingested",
       flex: 0.15,
       renderCell: (params) => {
-        const triggerIngestion = (params) => {
+        const triggerDataIngestion = () => {
           const payload = {
             id: params.getValue("id"),
             status: "Ingestion in Progress...",
@@ -107,21 +107,14 @@ const DataSources = (props) => {
             ) : (
               <CTChip
                 isWorking={params.getValue("ingested")}
-                isWorkingFn={() => triggerIngestion(params)}
-                isNotWorkingFn={() => triggerIngestion(params)}
+                isWorkingFn={() => triggerDataIngestion(params)}
+                isNotWorkingFn={() => triggerDataIngestion(params)}
               >
                 Not ingested
               </CTChip>
             )}
           </>
         );
-        // let cellTemp = ""
-        // if (params.getValue("ingested") && params.getValue("ingestionStatus"))
-        //   cellTemp = (params.getValue("recordsIngested"))
-        // else if (!params.getValue("ingested") && params.getValue("ingestionStatus") === "InProgess")
-        //   cellTemp = (<span>Ingestion in progress...</span>)
-        // else cellTemp = (<><Chip label="Not Ingested"></Chip><IconButton size='small' onClick={()=> {triggerIngestion(params)}}><span className="iconify" data-icon="mdi:arrow-right-circle" data-inline="false"></span></IconButton></>)
-        // return cellTemp
       },
     },
     {
@@ -159,14 +152,13 @@ const DataSources = (props) => {
     },
   ];
 
-  const retrieveDataSources = (getState) => {
+  const retrieveDataSources = () => {
     dispatch(fetchDataSources());
   };
   const actionIngestion = (id) => {
     dispatch(triggerIngestion(id));
   };
   const initiateConnection = (id) => {
-    console.log(id);
     dispatch(triggerConnectionCheck(id));
   };
   React.useEffect(() => {

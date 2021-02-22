@@ -13,7 +13,6 @@ const CTDataGridTop = ({
   pageName = "Audience",
   changeEditing,
   isEditing = false,
-  ...props
 }) => (
   <div className="ct-grid-top-wrapper">
     <span className="ct-grid-top-left">
@@ -34,14 +33,14 @@ const CTDataGridTop = ({
       <span className="ct-grid-icon-buttons">
         {isEditing ? (
           <>
-            <button onClick={() => onDownload(selectedRows)}>
+            <button type="button" onClick={() => onDownload(selectedRows)}>
               <span
                 className="iconify"
                 data-icon="mdi:smile"
                 data-inline="false"
               />
             </button>
-            <button onClick={() => onRemove(selectedRows)}>
+            <button type="button" onClick={() => onRemove(selectedRows)}>
               <span
                 className="iconify"
                 data-icon="mdi:delete"
@@ -52,7 +51,7 @@ const CTDataGridTop = ({
           </>
         ) : (
           <>
-            <button onClick={() => changeEditing()}>
+            <button type="button" onClick={() => changeEditing()}>
               <span
                 className="iconify"
                 data-icon="mdi:pencil"
@@ -61,7 +60,7 @@ const CTDataGridTop = ({
             </button>
           </>
         )}
-        <button>
+        <button type="button" >
           <CTFilter />
         </button>
       </span>

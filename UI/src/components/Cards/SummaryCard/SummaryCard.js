@@ -20,12 +20,7 @@ const useStyles = makeStyles(() => ({
     fontWeight: 600,
     fontSize: "12px",
     lineHeight: "16px",
-    /* identical to box height, or 133% */
-
     letterSpacing: "0.2px",
-
-    /* Text/ Light Gray */
-
     color: "#767676",
   },
   valueStyle: {
@@ -34,12 +29,7 @@ const useStyles = makeStyles(() => ({
     fontWeight: 600,
     fontSize: "16px",
     lineHeight: "24px",
-    /* identical to box height, or 133% */
-
     letterSpacing: "0.1px",
-
-    /* Text/ Light Gray */
-
     color: "#333333",
   },
 }));

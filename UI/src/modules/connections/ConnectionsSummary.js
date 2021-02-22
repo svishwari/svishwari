@@ -6,7 +6,7 @@ import { ReactComponent as TitleImage } from "../../assets/ConnectionsTitle.svg"
 import SummaryCard from "../../components/Cards/SummaryCard/SummaryCard";
 import CTList from "../../components/List/List";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   contentWrapper: {
     padding: "38px 60px 0px 70px",
   },

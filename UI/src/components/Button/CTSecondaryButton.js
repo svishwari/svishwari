@@ -8,7 +8,6 @@ const CTSecondaryButton = ({
   onClickFn,
   customClass = "",
   isDisabled = false,
-  isLoading = false,
   btnWidth = 160,
   btnHeight = 40,
   children,
@@ -22,6 +21,7 @@ const CTSecondaryButton = ({
         : `ct-btn-secondary ${customClass}`
     }
     onClick={isDisabled ? undefined : onClickFn}
+    type='button'
     {...props}
   >
     {children}

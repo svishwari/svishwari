@@ -1,12 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import "./CTUSAMap.scss";
 import USAMap from "react-usa-map";
 
-interface IProps {
-  data?: [];
-}
 
-const CTUSAMap = (props: IProps) => {
+const CTUSAMap = (props) => {
   const convertHexToRGBA = (hexCode, opacity) => {
     let hex = hexCode.replace("#", "");
 
@@ -22,15 +19,16 @@ const CTUSAMap = (props: IProps) => {
   };
   const mapData = () => {
     if (props.data) {
-      props.data.map((state) => {});
-      return props.data.reduce((result, item, index) => {
+      return props.data.reduce((result, item) => {
         const key = Object.keys(item)[0]; // first property: a, b, c
         const valueObj = {};
         valueObj.fill = convertHexToRGBA("#0076A8", item[key]);
+        // eslint-disable-next-line no-param-reassign
         result[key] = valueObj;
         return result;
       }, {});
     }
+    return [];
   };
   const chartContainer = useRef(null);
   return (

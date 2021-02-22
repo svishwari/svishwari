@@ -3,14 +3,14 @@ import { NavLink, withRouter } from "react-router-dom";
 import routeDefinitions from "./mainMenu.json";
 import "./MainMenu.scss";
 
-const getNavLinkClass = (path) =>
-  this.props.location.pathname === path ? "active" : "";
+// const getNavLinkClass = (path) =>
+//   this.props.location.pathname === path ? "active" : "";
 
-const MainMenu = withRouter((props) => {
-  const MenuItems = routeDefinitions.map((route, key) =>
+const MainMenu = withRouter(() => {
+  const MenuItems = routeDefinitions.map((route) =>
     route.subItems && route.subItems.length > 0 ? (
-      <ul key={`sub_${key}`} title={route.name}>
-        {route.subItems.map((subItem, key) => (
+      <ul key={`sub_${route.name}`} title={route.name}>
+        {route.subItems.map((subItem) => (
           <li>
             <div>
               <NavLink exact activeClassName="active" to={subItem.path}>
@@ -22,7 +22,7 @@ const MainMenu = withRouter((props) => {
         ))}
       </ul>
     ) : (
-      <li key={`main_${key}`}>
+      <li key={`main_${route.path}`}>
         <div>
           <NavLink exact activeClassName="active" to={route.path}>
             <span className="iconify" data-icon={`mdi:${route.icon}`} />

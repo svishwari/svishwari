@@ -19,7 +19,7 @@ export const PrivateLayout = ({ children }) => {
       <LeftNav collapsed={collapsed} />
       <div className="wrapper">
         <TopHeader
-          isCollapsed={(e) => {
+          isCollapsed={() => {
             setCollapseState(!collapsed);
           }}
           collapsed={collapsed}
@@ -29,3 +29,5 @@ export const PrivateLayout = ({ children }) => {
     </div>
   );
 };
+
+export default PrivateLayout;

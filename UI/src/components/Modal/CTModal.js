@@ -67,15 +67,13 @@ const CTModal = React.forwardRef((props, ref) => {
     >
       {/* Modal Header */}
       <div className="modal-header">
-        {/* Close Button */}
-        {props.showCloseButton && <div onClick={handleClose}>X</div>}
 
         {/* Indicators */}
         {IS_MULTI_MODAL &&
           props.showIndicators &&
           props.screens.screenComponents.map((screen, index) => (
             <div
-              key={index}
+              key={screen}
               className={`indicator ${
                 activeScreenIndex === index ? "active" : ""
               }`}
@@ -131,13 +129,12 @@ export default CTModal;
 
 CTModal.defaultProps = {
   isOpen: false,
-  showCloseButton: false,
   showIndicators: true,
-  onClose: () => void 0,
-  onNextScreen: () => void 0,
-  onPreviousScreen: () => void 0,
-  onChangeScreen: () => void 0,
-  onComplete: () => void 0,
+  onClose: () => undefined,
+  onNextScreen: () => undefined,
+  onPreviousScreen: () => undefined,
+  onChangeScreen: () => undefined,
+  onComplete: () => undefined,
   screens: {},
   showFooter: true,
   mainCTAText: "Complete",
