@@ -1,16 +1,19 @@
 import React from "react";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { useOktaAuth } from "@okta/okta-react";
-import './UserAvatar.scss';
+import "./UserAvatar.scss";
+
 export const UserAvatar = ({ username }) => {
   const { oktaAuth } = useOktaAuth();
-  // oktaAuth.getUser().then(info => {
-  //   console.log(info)
-  // });
 
-  const getInitials = (name) => {
-    return name.toString().match(/(^\S\S?|\b\S)?/g).join("").match(/(^\S|\S$)?/g).join("").toUpperCase()
-  }
+  const getInitials = (name) =>
+    name
+      .toString()
+      .match(/(^\S\S?|\b\S)?/g)
+      .join("")
+      .match(/(^\S|\S$)?/g)
+      .join("")
+      .toUpperCase();
   const popover = (
     <Popover id="user-menu" className="userAvatarMenu">
       <Popover.Content>
@@ -30,10 +33,16 @@ export const UserAvatar = ({ username }) => {
       trigger="click"
       placement="bottom"
       overlay={popover}
-      rootClose={true}
+      rootClose
     >
-      
-      <div className="userAvatarIcon"><span className="avatar">{getInitials(username)}</span><button variant="light" className="btn">{username} <span className="iconify" data-icon="mdi:chevron-down"></span></button></div>
+      <div className="userAvatarIcon">
+        <span className="avatar">{getInitials(username)}</span>
+        <button type="button" variant="light" className="btn">
+          {username} <span className="iconify" data-icon="mdi:chevron-down" />
+        </button>
+      </div>
     </OverlayTrigger>
   );
 };
+
+export default UserAvatar;

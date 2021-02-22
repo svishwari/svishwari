@@ -1,14 +1,10 @@
-import React from 'react';
-import './CTLabel.scss';
+import React from "react";
+import "./CTLabel.scss";
 
-const CTLabel = ({children, ...props}) => {
-    return (
-        <div className='ct-label-wrapper'>
-            <label {...props}>
-                {children}
-            </label>
-        </div>
-    )
-}
+const CTLabel = ({ children, ...props }) => (
+  <div className="ct-label-wrapper">
+    <label {...props}>{children}</label>
+  </div>
+);
 
-export default CTLabel
+export default CTLabel;

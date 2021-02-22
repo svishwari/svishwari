@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useOktaAuth } from "@okta/okta-react";
 import { ReactComponent as Collapse } from "../assets/icons/collapse.svg";
 import { UserAvatar } from "../components/UserAvatar";
 import "./topHeader.scss";
-import { useOktaAuth } from "@okta/okta-react";
 
 const TopHeader = ({ isCollapsed, collapsed }) => {
   const { authState, oktaAuth } = useOktaAuth();
-  const [userInfo, setUserInfo] = useState({name: ''});
+  const [userInfo, setUserInfo] = useState({ name: "" });
 
   useEffect(() => {
     if (!authState.isAuthenticated) {
       // When user isn't authenticated, forget any user info
       setUserInfo(null);
     } else {
-      oktaAuth.getUser().then(info => {
+      oktaAuth.getUser().then((info) => {
         setUserInfo(info);
       });
     }
@@ -24,8 +24,11 @@ const TopHeader = ({ isCollapsed, collapsed }) => {
   };
   return (
     <div className="app-header ">
-      <Collapse onClick={() => toggle()} className={"trigger " + (collapsed ? 'extra-space' : '')} />
-      <UserAvatar username={userInfo.name}/>
+      <Collapse
+        onClick={() => toggle()}
+        className={`trigger ${collapsed ? "extra-space" : ""}`}
+      />
+      <UserAvatar username={userInfo.name} />
     </div>
   );
 };
