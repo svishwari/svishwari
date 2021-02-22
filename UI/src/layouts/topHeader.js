@@ -6,14 +6,14 @@ import { useOktaAuth } from "@okta/okta-react";
 
 const TopHeader = ({ isCollapsed, collapsed }) => {
   const { authState, oktaAuth } = useOktaAuth();
-  const [userInfo, setUserInfo] = useState({name: ''});
+  const [userInfo, setUserInfo] = useState({ name: "" });
 
   useEffect(() => {
     if (!authState.isAuthenticated) {
       // When user isn't authenticated, forget any user info
       setUserInfo(null);
     } else {
-      oktaAuth.getUser().then(info => {
+      oktaAuth.getUser().then((info) => {
         setUserInfo(info);
       });
     }
@@ -24,8 +24,11 @@ const TopHeader = ({ isCollapsed, collapsed }) => {
   };
   return (
     <div className="app-header ">
-      <Collapse onClick={() => toggle()} className={"trigger " + (collapsed ? 'extra-space' : '')} />
-      <UserAvatar username={userInfo.name}/>
+      <Collapse
+        onClick={() => toggle()}
+        className={`trigger ${collapsed ? "extra-space" : ""}`}
+      />
+      <UserAvatar username={userInfo.name} />
     </div>
   );
 };

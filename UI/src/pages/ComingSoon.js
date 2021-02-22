@@ -1,18 +1,18 @@
 import React from "react";
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh',
-display:'flex',
-        minHeight: '100vh',
-        alignItems: "center",
-        flexDirection: "column",
-        justifyContent: "center",
+    height: "100vh",
+    display: "flex",
+    minHeight: "100vh",
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "center",
   },
   heading: {
     color: "#00C395",
-      fontSize: 40,
+    fontSize: 40,
     fontWeight: 800,
     marginBottom: 16,
   },
@@ -28,11 +28,11 @@ display:'flex',
 }));
 
 const ComingSoon = () => {
-    const classes = useStyles();
+  const classes = useStyles();
   return (
     <div className={classes.root}>
-          <h2 className={classes.heading}>We are on the WAY!</h2>
-          <strong>Stay tuned for something amazing</strong>
+      <h2 className={classes.heading}>We are on the WAY!</h2>
+      <strong>Stay tuned for something amazing</strong>
     </div>
   );
 };

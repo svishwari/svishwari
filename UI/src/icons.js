@@ -1,1 +1,1 @@
-export { default as BarsOutlined } from '@ant-design/icons/lib/outline/BarsOutlined';
+export { default as BarsOutlined } from "@ant-design/icons/lib/outline/BarsOutlined";

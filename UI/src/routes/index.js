@@ -10,12 +10,11 @@ import {
 
 // Auth
 import { OktaAuth } from "@okta/okta-auth-js";
-import { oktaAuthConfig } from "../modules/auth/AuthConfig";
 import { Security, SecureRoute, LoginCallback } from "@okta/okta-react";
+import { oktaAuthConfig } from "../modules/auth/AuthConfig";
 
-//Modules
+// Modules
 import Dashboard from "../modules/dashboard/Dashboard";
-import Page from "../pages/Page";
 import LoggedInRedirect from "../modules/auth/LoggedInRedirect";
 
 // Layouts
@@ -40,10 +39,10 @@ function Routes() {
     let _appTitle = " | HUX Unified Solution";
     document.body.classList.add("loaded");
 
-    let route = history.location.pathname;
+    const route = history.location.pathname;
     switch (route) {
       case "/":
-        _appTitle = "Home" + _appTitle;
+        _appTitle = `Home${_appTitle}`;
         break;
       default:
         break;
@@ -61,9 +60,21 @@ function Routes() {
             <PrivateLayout>
               <Switch>
                 <Route path="/" exact component={Dashboard} />
-                <Route path="/connections" exact component={ConnectionsSummary} />
-                <Route path="/connections/dataSources" exact component={DataSources} />
-                <Route path="/connections/destinations" exact component={Destinations} />
+                <Route
+                  path="/connections"
+                  exact
+                  component={ConnectionsSummary}
+                />
+                <Route
+                  path="/connections/dataSources"
+                  exact
+                  component={DataSources}
+                />
+                <Route
+                  path="/connections/destinations"
+                  exact
+                  component={Destinations}
+                />
                 <Route path="*" exact component={ComingSoon} />
               </Switch>
             </PrivateLayout>

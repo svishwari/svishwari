@@ -46,7 +46,7 @@
       }
       .error {
         color: red;
-        font-family: 'Open Sans SemiBold';
+        font-family: "Open Sans SemiBold";
         font-style: normal;
         font-weight: 600;
         height: 60px;
@@ -86,7 +86,7 @@
             color: $appDark;
           }
           input {
-              margin-top: 4px;
+            margin-top: 4px;
             height: 40px;
             background: #ffffff;
             /* Lines */
@@ -104,8 +104,13 @@
         color: white;
         font-weight: bold;
         &:hover {
-          background: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), $appHighlight;
-      }
+          background: linear-gradient(
+              0deg,
+              rgba(0, 0, 0, 0.1),
+              rgba(0, 0, 0, 0.1)
+            ),
+            $appHighlight;
+        }
       }
       .forgot-password {
         color: #009bff;

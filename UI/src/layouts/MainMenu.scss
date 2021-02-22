@@ -51,10 +51,11 @@
           &:last-child {
             margin-bottom: 0px;
           }
-          &.active, &:hover {
+          &.active,
+          &:hover {
             background-color: inherit;
             @include background-opacity($appBackground, 0.1);
-            border-left: 2px solid #00C495;
+            border-left: 2px solid #00c495;
             border-top-right-radius: 20px;
             border-bottom-right-radius: 20px;
           }

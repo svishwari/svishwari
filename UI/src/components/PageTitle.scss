@@ -1,4 +1,4 @@
-@import '../theme/variables.scss';
+@import "../theme/variables.scss";
 
 .pageTitle {
   display: flex;
@@ -9,34 +9,34 @@
   padding-left: 70px;
   align-items: center;
   .titleSection {
-      margin-left: 14px;
-      h2 {
-        font-family: Open Sans SemiBold;
-        font-style: normal;
-        font-weight: 600;
-        font-size: 21px;
-        line-height: 40px;
-        /* identical to box height, or 190% */
-        
-        letter-spacing: 0.1px;
-        
-        /* Text/Dark - D */
-        
-        color: $appTextDark;
-      }
-      span {
-        font-family: Open Sans;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 15px;
-        line-height: 24px;
-        /* or 160% */
-        
-        letter-spacing: 0.2px;
-        
-        /* Text/Dark - D */
-        
-        color: $appTextDark;
-      }
+    margin-left: 14px;
+    h2 {
+      font-family: Open Sans SemiBold;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 21px;
+      line-height: 40px;
+      /* identical to box height, or 190% */
+
+      letter-spacing: 0.1px;
+
+      /* Text/Dark - D */
+
+      color: $appTextDark;
+    }
+    span {
+      font-family: Open Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 15px;
+      line-height: 24px;
+      /* or 160% */
+
+      letter-spacing: 0.2px;
+
+      /* Text/Dark - D */
+
+      color: $appTextDark;
+    }
   }
 }

@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import CountUp from "react-countup";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   section: {
     display: "flex",
     flexDirection: "column",
@@ -13,34 +13,34 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "5px",
     width: "100%",
     padding: "10px",
-    },
-    title: {
-        fontFamily: "Open Sans SemiBold",
-        fontStyle: "normal",
-        fontWeight: 600,
-        fontSize: "12px",
-        lineHeight: "16px",
-        /* identical to box height, or 133% */
-        
-        letterSpacing: "0.2px",
-        
-        /* Text/ Light Gray */
-        
-        color: "#767676"
-    },
-    valueStyle: {
-        fontFamily: "Open Sans SemiBold",
-        fontStyle: "normal",
-        fontWeight: 600,
-        fontSize: "16px",
-        lineHeight: "24px",
-        /* identical to box height, or 133% */
-        
-        letterSpacing: "0.1px",
-        
-        /* Text/ Light Gray */
-        
-        color: "#333333"
+  },
+  title: {
+    fontFamily: "Open Sans SemiBold",
+    fontStyle: "normal",
+    fontWeight: 600,
+    fontSize: "12px",
+    lineHeight: "16px",
+    /* identical to box height, or 133% */
+
+    letterSpacing: "0.2px",
+
+    /* Text/ Light Gray */
+
+    color: "#767676",
+  },
+  valueStyle: {
+    fontFamily: "Open Sans SemiBold",
+    fontStyle: "normal",
+    fontWeight: 600,
+    fontSize: "16px",
+    lineHeight: "24px",
+    /* identical to box height, or 133% */
+
+    letterSpacing: "0.1px",
+
+    /* Text/ Light Gray */
+
+    color: "#333333",
   },
 }));
 
@@ -52,7 +52,8 @@ const SummaryCard = (props) => {
       <CountUp
         start={0}
         end={props.value}
-        delay={1} {...props}
+        delay={1}
+        {...props}
         className={classes.valueStyle}
       />
     </Paper>

@@ -1,17 +1,17 @@
-@import '../theme/variables.scss';
+@import "../theme/variables.scss";
 
 .dash-layout {
   height: 100vh;
   display: flex;
-  .toast-container{
+  .toast-container {
     position: absolute;
     left: 0;
     right: 0;
     top: 70px;
     margin: auto;
     z-index: 12;
-    & > div{
-      margin-bottom: .75rem;
+    & > div {
+      margin-bottom: 0.75rem;
     }
   }
   .wrapper {

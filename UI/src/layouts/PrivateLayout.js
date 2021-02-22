@@ -11,19 +11,19 @@ export const PrivateLayout = ({ children }) => {
   const [collapsed, setCollapseState] = useState(false);
 
   return (
-      <div className="dash-layout">
-        <div className='toast-container'>
-          {/* <CTToast toastType='success' toastMessage="This is an error or alert! It will disappear in 5 seconds on its own."/>
+    <div className="dash-layout">
+      <div className="toast-container">
+        {/* <CTToast toastType='success' toastMessage="This is an error or alert! It will disappear in 5 seconds on its own."/>
           <CTToast toastType='error' toastMessage="This is an error or alert! It will disappear in 5 seconds on its own."/> */}
-        </div>
-      <LeftNav collapsed={collapsed}></LeftNav>
+      </div>
+      <LeftNav collapsed={collapsed} />
       <div className="wrapper">
-        <TopHeader 
+        <TopHeader
           isCollapsed={(e) => {
             setCollapseState(!collapsed);
           }}
-          collapsed={collapsed}>
-        </TopHeader>
+          collapsed={collapsed}
+        />
         <div className="content">{children}</div>
       </div>
     </div>

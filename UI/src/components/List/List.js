@@ -14,18 +14,18 @@ const CTList = (props) => {
   const classes = useStyles();
   return (
     <DataGrid
-      disableColumnFilter={true}
-      autoHeight={true}
-      disableColumnMenu={true}
+      disableColumnFilter
+      autoHeight
+      disableColumnMenu
       showColumnRightBorder={false}
-      disableColumnSelector={true}
+      disableColumnSelector
       rowHeight={60}
       headerHeight={28}
       {...props}
       className={classes.root}
-      hideFooter={true}
-      disableSelectionOnClick={true}
-    ></DataGrid>
+      hideFooter
+      disableSelectionOnClick
+    />
   );
 };
 export default CTList;

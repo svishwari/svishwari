@@ -1,8 +1,8 @@
 import React from "react";
-import PageTitle from "../../components/PageTitle";
-import { ReactComponent as TitleImage } from "../../assets/ConnectionsTitle.svg";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import PageTitle from "../../components/PageTitle";
+import { ReactComponent as TitleImage } from "../../assets/ConnectionsTitle.svg";
 import SummaryCard from "../../components/Cards/SummaryCard/SummaryCard";
 import CTList from "../../components/List/List";
 
@@ -47,13 +47,13 @@ const ConnectionsSummary = () => {
       headerName: "Source",
       flex: 0.6,
       renderCell: (params) => (
-        <Link to="#">
+        <Link to={() => false}>
           {params.getValue("name")}{" "}
           <span
             className="iconify"
             data-icon="mdi:open-in-new"
             data-inline="false"
-          ></span>
+          />
         </Link>
       ),
     },
@@ -73,7 +73,7 @@ const ConnectionsSummary = () => {
       id: 2,
       name: "Amazon S3",
       filesCount: 50,
-    }
+    },
   ];
   const destinationColumns = [
     {
@@ -81,18 +81,18 @@ const ConnectionsSummary = () => {
       headerName: "Destination",
       flex: 0.7,
       renderCell: (params) => (
-        <Link to="#">
+        <Link to={() => false}>
           <span
             className="iconify"
-            data-icon={"mdi:" + params.getValue("icon")}
+            data-icon={`mdi:${params.getValue("icon")}`}
             data-inline="false"
-          ></span>
+          />
           {params.getValue("name")}{" "}
           <span
             className="iconify"
             data-icon="mdi:open-in-new"
             data-inline="false"
-          ></span>
+          />
         </Link>
       ),
     },
@@ -126,7 +126,7 @@ const ConnectionsSummary = () => {
     <>
       <PageTitle
         title="Connections"
-        summaryText={"Lorem ipsum."}
+        summaryText="Lorem ipsum."
         readMore="/"
         readMoreLabel="Learn More"
       >
@@ -140,7 +140,7 @@ const ConnectionsSummary = () => {
                 <h3 className={classes.sectionTitleHeading}>
                   <Link to="/connections/datasources">Data Sources &gt;</Link>
                 </h3>
-                <Link className={classes.sectionTitleHeadingLink}>
+                <Link href={() => false} className={classes.sectionTitleHeadingLink}>
                   + DataSource
                 </Link>
               </div>
@@ -185,7 +185,7 @@ const ConnectionsSummary = () => {
                 <h3 className={classes.sectionTitleHeading}>
                   <Link to="/connections/datasources">Destinations &gt;</Link>
                 </h3>
-                <Link className={classes.sectionTitleHeadingLink}>
+                <Link href={() => false} className={classes.sectionTitleHeadingLink}>
                   + Destination
                 </Link>
               </div>

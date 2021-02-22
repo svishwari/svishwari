@@ -1,10 +1,8 @@
-import React from 'react'
+import React from "react";
 
-const Destinations = () => {
-    return (
-        <div>
-            <h2>Welcome to Destinations!</h2>
-        </div>
-    )
-}
-export default Destinations
+const Destinations = () => (
+  <div>
+    <h2>Welcome to Destinations!</h2>
+  </div>
+);
+export default Destinations;

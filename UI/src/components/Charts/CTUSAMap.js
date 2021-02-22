@@ -23,11 +23,10 @@ const CTUSAMap = (props: IProps) => {
   const mapData = () => {
     if (props.data) {
       props.data.map((state) => {});
-      return props.data.reduce(function (result, item, index) {
-        var key = Object.keys(item)[0]; //first property: a, b, c
-        var valueObj = {};
-        valueObj["fill"] =
-        convertHexToRGBA("#0076A8",item[key])
+      return props.data.reduce((result, item, index) => {
+        const key = Object.keys(item)[0]; // first property: a, b, c
+        const valueObj = {};
+        valueObj.fill = convertHexToRGBA("#0076A8", item[key]);
         result[key] = valueObj;
         return result;
       }, {});

@@ -1,7 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
-import CTUSAMap from "../../components/Charts/CTUSAMap";
 import DonutChart from "react-d3-donut/es";
+import CTUSAMap from "../../components/Charts/CTUSAMap";
+
 const Dashboard = (props) => {
   const usData = [{ TX: 90 }, { NY: 28 }, { WA: 68 }, { CA: 18 }];
   const SegmentData = [
@@ -19,8 +20,8 @@ const Dashboard = (props) => {
         <DonutChart
           innerRadius={70}
           outerRadius={100}
-          transition={true}
-          displayTooltip={true}
+          transition
+          displayTooltip
           strokeWidth={3}
           svgClass="segmentDonut"
           pieClass="pie6"
@@ -30,9 +31,7 @@ const Dashboard = (props) => {
     </div>
   );
 };
-const mapStateToProps = (state) => {
-  return {
-    posts: state.dashboardReducer.user || [],
-  };
-};
+const mapStateToProps = (state) => ({
+  posts: state.dashboardReducer.user || [],
+});
 export default connect(mapStateToProps)(Dashboard);

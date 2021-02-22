@@ -18,7 +18,7 @@ const Login = () => {
     oktaAuth
       .signInWithCredentials({ username, password })
       .then((res) => {
-        const sessionToken = res.sessionToken;
+        const { sessionToken } = res;
         setSessionToken(sessionToken);
         // sessionToken is a one-use token, so make sure this is only called once
         oktaAuth.signInWithRedirect({ sessionToken });

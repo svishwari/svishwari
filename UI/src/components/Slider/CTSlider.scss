@@ -1,6 +1,6 @@
-@import '../../theme/variables.scss';
+@import "../../theme/variables.scss";
 
-.ct-slider-wrapper{
+.ct-slider-wrapper {
   outline: none;
   .ct-slider-track {
     min-height: 10px;
@@ -8,7 +8,7 @@
     width: 100%;
     border-radius: 4px;
     align-self: center;
-    border: 1px solid #E6E6E6;
+    border: 1px solid #e6e6e6;
     display: flex;
     width: 100%;
 
@@ -19,8 +19,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #FFFFFF;
-      border: 1px solid #00C495;
+      background: #ffffff;
+      border: 1px solid #00c495;
       box-sizing: border-box;
       box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.15);
       outline: none;
