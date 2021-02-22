@@ -7,7 +7,7 @@ import "./login.scss";
 
 const Login = () => {
   const { oktaAuth } = useOktaAuth();
-  const [sessionToken, setSessionToken] = useState();
+  const [oktaSessionToken, setSessionToken] = useState();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isError, setError] = useState(false);
@@ -18,8 +18,8 @@ const Login = () => {
     oktaAuth
       .signInWithCredentials({ username, password })
       .then((res) => {
-        const { oktaSessionToken } = res;
-        setSessionToken(oktaSessionToken);
+        const { sessionToken } = res;
+        setSessionToken(sessionToken);
         // sessionToken is a one-use token, so make sure this is only called once
         oktaAuth.signInWithRedirect({ sessionToken });
       })
@@ -34,7 +34,7 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
-  if (sessionToken) {
+  if (oktaSessionToken) {
     // Hide form while sessionToken is converted into id/access tokens
     return null;
   }
