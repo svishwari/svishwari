@@ -1,5 +1,5 @@
 """
-Purpose of this file is to house the mnarketing schema
+Purpose of this file is to house the marketing schema
 """
 
 from flask_marshmallow import Schema
