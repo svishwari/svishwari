@@ -265,16 +265,18 @@ const DataSources = (props) => {
         isSummaryEnabled
         bulkOperationText="Ingest Selected"
         summaryContent={[
-          {value: "20",suffix: "%",title: "Bogus"},
-          {value: "20",title: "Bogus"},
-          {value: "20",suffix: "%",title: "Bogus"},
-          {value: "20",suffix: "%",title: "Bogus"},
-          {value: "20",suffix: "%",title: "Bogus"},
-          {value: "20",suffix: "%",title: "Bogus"},
-          {value: "20",suffix: "%",title: "Bogus"},
-          {value: "20",suffix: "%",title: "Bogus"},
-          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "52",title: "Total Data Sources"},
+          {value: "24",title: "Ingested Records"},
+          {value: "34",title: "Empty"},
+          {value: "600",title: "Errors"},
+          {value: "4",title: "Cleansed"},
+          {value: "1.3",decimals:"1",suffix: "k",title: "Stitched"},
+          {value: "1.4",decimals:"1",suffix: "k",title: "Pinned"},
         ]}
+        moreIconContent={[
+          {name: "Configure", function: ()=> {} },
+        ]}
+        isMoreIconEnabled
       />
       <CTModal
         ref={childRef}

@@ -9,6 +9,7 @@ import "./CTDataGrid.scss";
 import CTDataGridTop from "./CTDataGridTop";
 import SummaryCard from "../Cards/SummaryCard/SummaryCard";
 import CTCardGroup from "../Cards/CardGroup/CTCardGroup";
+import CTPopover from "../Popover/CTPopover";
 
 export default class CTDataGrid extends Component {
   starredColumn = {
@@ -27,9 +28,39 @@ export default class CTDataGrid extends Component {
     },
   };
 
+  moreColumn = {
+    field: "more",
+    headerName: " ",
+    renderCell: (params) => {
+      const popOverContent = this.props.moreIconContent.map(content => 
+          <div onKeyPress={() => content.function()} onClick={content.function}>{content.name}</div>
+      );
+      const removeItem = <div 
+                    onKeyPress={() => this.removeRow(params.getValue("id"))}
+                    onClick={()=>this.removeRow(params.getValue("id"))}
+                    style={{cursor: "pointer"}}
+                  >
+                    Remove
+                  </div>
+      popOverContent.push(removeItem);
+
+      return (
+        <CTPopover popoverContent={popOverContent}>
+          <IconButton aria-label="more" size="small">
+            <span className="iconify" data-icon="mdi:dots-vertical" data-inline="false" />
+          </IconButton>
+        </CTPopover>
+      );
+    },
+  };
+
   applicableColumns = this.props.hasStarring
   ? [this.starredColumn, ...this.props.columns]
   : this.props.columns;
+
+  applicableColumns = this.props.isMoreIconEnabled
+  ? [...this.applicableColumns,this.moreColumn]
+  : this.applicableColumns;
 
   constructor(props) {
     super(props);
@@ -158,7 +189,7 @@ export default class CTDataGrid extends Component {
           this.state.isSummaryVisible ? 
           <CTCardGroup style={{margin: "10px 20px"}}>
           {this.props.summaryContent.map(content =>
-          <SummaryCard value={content.value} suffix={content.suffix} title={content.title}/>
+          <SummaryCard decimals={content.decimals} value={content.value} suffix={content.suffix} title={content.title}/>
           )}
           </CTCardGroup>
           : <></>
@@ -215,6 +246,8 @@ CTDataGrid.defaultProps = {
   isTopVisible: true,
   isDownloadAble: false,
   bulkOperationText: "",
+  moreIconContent: [],
+  isMoreIconEnabled: false,
   onBulkRemove: () => {},
   onRemove: () => {},
   onDownload: () => {},
