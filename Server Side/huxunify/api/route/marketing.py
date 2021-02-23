@@ -1,5 +1,5 @@
 """
-purpose of this script is for housing the advertising routes for the API
+The purpose of this script is for housing the Marketing Performance related routes for the API
 """
 import json
 from http import HTTPStatus
