@@ -7,6 +7,8 @@ import { ReactComponent as Starred } from "../../assets/icons/Starred.svg";
 import "./CTDataGrid.scss";
 
 import CTDataGridTop from "./CTDataGridTop";
+import SummaryCard from "../Cards/SummaryCard/SummaryCard";
+import CTCardGroup from "../Cards/CardGroup/CTCardGroup";
 
 export default class CTDataGrid extends Component {
   starredColumn = {
@@ -37,6 +39,7 @@ export default class CTDataGrid extends Component {
       isEditing: false,
       selectedRows: [],
       searchFilter: "",
+      isSummaryVisible: false,
     };
   }
 
@@ -46,6 +49,26 @@ export default class CTDataGrid extends Component {
       this.setState({ dataGridData:  propsData});
     }
   }
+
+  onSummaryToggle = () => {
+    this.setState(prevState => ({
+      isSummaryVisible: !prevState.isSummaryVisible,
+    }));
+  };
+
+  onBulkOperation = () => {
+    const rowsTobeOperated = [];
+    this.state.selectedRows.forEach((x) => {
+      // eslint-disable-next-line eqeqeq
+      const index = this.state.dataGridData.findIndex((y) => y.id == x);
+      rowsTobeOperated.push(this.state.dataGridData[index]);
+    });
+
+    const bulkSelectedRows = this.state.dataGridData.filter((value) =>
+      rowsTobeOperated.includes(value)
+    );
+    this.props.onBulkFunction(bulkSelectedRows);
+  };
 
   updateStarring = (params) => {
     this.updateItem(params.row.id, { starred: !params.row.starred });
@@ -114,8 +137,11 @@ export default class CTDataGrid extends Component {
   render() {
     return (
       <>
+      { this.props.isTopVisible ?
+      <>
         <CTDataGridTop
           pageName={this.props.pageName}
+          isSummaryEnabled={this.props.isSummaryEnabled}
           onSearch={this.onSearch}
           onAddClick={this.props.onAddClick}
           onDownload={this.props.onDownload}
@@ -123,7 +149,23 @@ export default class CTDataGrid extends Component {
           selectedRows={this.state.selectedRows}
           isEditing={this.state.isEditing}
           changeEditing={this.toggleEditing}
+          onSummaryToggle={this.onSummaryToggle}
+          isDownloadAble={this.props.isDownloadAble}
+          onBulkOperation={this.onBulkOperation}
+          bulkOperationText={this.props.bulkOperationText}
         />
+        {
+          this.state.isSummaryVisible ? 
+          <CTCardGroup style={{margin: "10px 20px"}}>
+          {this.props.summaryContent.map(content =>
+          <SummaryCard value={content.value} suffix={content.suffix} title={content.title}/>
+          )}
+          </CTCardGroup>
+          : <></>
+        }
+      </>
+        : <></>
+      }
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}
@@ -162,3 +204,20 @@ export default class CTDataGrid extends Component {
     );
   }
 }
+
+CTDataGrid.defaultProps = {
+  hasStarring: false,
+  columns: [],
+  data: [],
+  loading: false,
+  isSummaryEnabled: false,
+  pageName: "",
+  isTopVisible: true,
+  isDownloadAble: false,
+  bulkOperationText: "",
+  onBulkRemove: () => {},
+  onRemove: () => {},
+  onDownload: () => {},
+  onAddClick: () => {},
+  onBulkFunction: () => {}
+};

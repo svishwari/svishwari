@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import CTPrimaryButton from "../Button/CTPrimaryButton";
 import "./CTDataGridTop.scss";
 import CTFilter from "../Filter/CTFilter";
+import CTSecondaryButton from "../Button/CTSecondaryButton";
 
 // TO DO ITEMS CHANGE FILTER COMPONENT
 const CTDataGridTop = ({
@@ -10,10 +11,23 @@ const CTDataGridTop = ({
   onRemove,
   onDownload,
   selectedRows,
-  pageName = "Audience",
+  pageName,
   changeEditing,
-  isEditing = false,
-}) => (
+  isEditing,
+  isSummaryEnabled,
+  onSummaryToggle,
+  isDownloadAble,
+  bulkOperationText,
+  onBulkOperation,
+}) => {
+const [isSummaryHidden,setisSummaryHidden] = useState(true);
+
+const toggleSummary = () => {
+  setisSummaryHidden(!isSummaryHidden);
+  onSummaryToggle()
+}
+
+return (
   <div className="ct-grid-top-wrapper">
     <span className="ct-grid-top-left">
       <span
@@ -26,21 +40,23 @@ const CTDataGridTop = ({
           onSearch(e);
         }}
         className="ct-grid-search-input"
-        placeholder="Search"
+        placeholder={`Search ${pageName}s`}
       />
     </span>
     <span className="ct-grid-top-right">
       <span className="ct-grid-icon-buttons">
         {isEditing ? (
           <>
-            <button type="button" onClick={() => onDownload(selectedRows)}>
-              <span
-                className="iconify"
-                data-icon="mdi:smile"
-                data-inline="false"
-              />
-            </button>
-            <button type="button" onClick={() => onRemove(selectedRows)}>
+            { isDownloadAble && 
+              <button type="button" onClick={() => onDownload(selectedRows)}>
+                <span
+                  className="iconify"
+                  data-icon="mdi:download"
+                  data-inline="false"
+                />
+              </button>
+            }
+            <button type="button" onClick={() => onRemove()}>
               <span
                 className="iconify"
                 data-icon="mdi:delete"
@@ -48,6 +64,9 @@ const CTDataGridTop = ({
               />
               <span className="ct-grid-remove-text">Remove</span>
             </button>
+            { bulkOperationText !=="" && 
+              <CTSecondaryButton onClick={() => onBulkOperation(selectedRows)}>{bulkOperationText}</CTSecondaryButton>
+            }
           </>
         ) : (
           <>
@@ -64,6 +83,16 @@ const CTDataGridTop = ({
           <CTFilter />
         </button>
       </span>
+      <span className="ct-grid-summary">
+        {isSummaryEnabled && !isEditing ?
+            isSummaryHidden ? (
+              <CTSecondaryButton  onClick={toggleSummary}>Show Summary</CTSecondaryButton>
+            ):(
+              <CTPrimaryButton onClick={toggleSummary}>Hide Summary</CTPrimaryButton>
+            ):(
+            <></>
+        )}
+      </span>
       {isEditing ? (
         <CTPrimaryButton onClick={() => changeEditing()}>
           Done &amp; Return
@@ -75,6 +104,6 @@ const CTDataGridTop = ({
       )}
     </span>
   </div>
-);
+)};
 
 export default CTDataGridTop;

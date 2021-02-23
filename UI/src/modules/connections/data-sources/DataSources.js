@@ -249,13 +249,24 @@ const DataSources = (props) => {
         columns={columns}
         hasStarring
         loading={!props.dataSources.length}
-        onRemove={() => {}}
-        onBulkRemove={() => {}}
-        onDownload={() => {}}
         onAddClick={() => {
           childRef.current.handleOpen();
         }}
         pageName="Data Source"
+        isTopVisible
+        isSummaryEnabled
+        bulkOperationText="Ingest Selected"
+        summaryContent={[
+          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "20",title: "Bogus"},
+          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "20",suffix: "%",title: "Bogus"},
+          {value: "20",suffix: "%",title: "Bogus"},
+        ]}
       />
       <CTModal
         ref={childRef}
