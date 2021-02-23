@@ -1,45 +1,59 @@
-// Action Creators
-import { getRequest } from "../../../hooks/apiClient";
-import { slugs } from "../../../resources/slugs";
+// import { getRequest } from "../../../hooks/apiClient";
+// import slugs from "../../../resources/slugs";
 
-const setUser = (payload) => ({ type: "SET_USER", payload });
+const setSummary = (payload) => ({ type: 'loadSummary', payload });
 
-export const logUserOut = () => ({ type: "LOG_OUT" });
+const updateRecentSegments = (payload) => ({
+  type: 'updateRecentSegments',
+  payload,
+});
 
 // Methods
-
-export const fetchMetrics = () => async (dispatch) => {
-  const response = await getRequest(slugs.microServices.dataSources.create);
-  dispatch(setUser(response));
-};
-
-export const signUserUp = (userInfo) => (dispatch) => {
-  fetch(`http://localhost:4000/users`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
+const fetchSummaryInfo = () => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 200));
+  const response = [
+    {
+      dataSources: 53,
+      destinations: 3,
+      customerProfile: 530000,
+      Audiences: 53,
+      Segments: 3,
     },
-    body: JSON.stringify(userInfo),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      localStorage.setItem("token", data.token);
-      dispatch(setUser(data.user));
-    });
+  ];
+  dispatch(setSummary(response));
+};
+const fetchRecentSegments = () => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 200));
+  const response = [
+    {
+      id: Math.random().toString(36).substr(2, 36),
+      name: 'Social Medial Campaign',
+      status: "Delivered",
+      size: '1.2 M',
+      created: '8/23/20 11:59PM',
+      open: '',
+      extra: '',
+    },
+    {
+      id: Math.random().toString(36).substr(2, 36),
+      name: 'Branding Campaign',
+      status: "Delivered",
+      size: '1.3 M',
+      created: '8/23/20 11:59PM',
+      open: '',
+      extra: '',
+    },
+    {
+      id: Math.random().toString(36).substr(2, 36),
+      name: 'Customer Comeback',
+      status: "Not Delivered",
+      size: '1.75 M',
+      created: '8/23/20 11:59PM',
+      open: '',
+      extra: '',
+    },
+  ];
+  dispatch(updateRecentSegments(response));
 };
 
-export const autoLogin = () => (dispatch) => {
-  fetch(`http://localhost:4000/auto_login`, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      localStorage.setItem("token", data.token);
-      dispatch(setUser(data.user));
-    });
-};
+export { fetchSummaryInfo, fetchRecentSegments };

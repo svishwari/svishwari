@@ -3,6 +3,7 @@
 .dashboard-wrapper {
   .content-wrapper {
     padding-left: 70px;
+    padding-right: 60px;
     .summary {
       display: flex;
       margin-top: 50px;
@@ -37,6 +38,15 @@
           }
         }
       }
+    }
+    .recent-heading {
+      padding-top: 40px;
+      margin-bottom: 15px;
+      @include boldText;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.1px;
+      color: #333333;
     }
   }
 }

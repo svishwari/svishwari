@@ -256,6 +256,7 @@ const DataSources = (props) => {
         data={props.dataSources}
         columns={columns}
         hasStarring
+        headerHeight={28}
         loading={!props.dataSources.length}
         onAddClick={() => {
           childRef.current.handleOpen();

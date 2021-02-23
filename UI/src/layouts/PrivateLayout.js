@@ -20,11 +20,13 @@ export const PrivateLayout = ({ children }) => {
   const { authState, oktaAuth } = useOktaAuth();
   const disptach = useDispatch();
 
-  if (authState.isAuthenticated) {
-    oktaAuth.getUser().then((info) => {
-      disptach(setUser(info));
-    });
-  }
+  React.useEffect(() => {
+    if (authState.isAuthenticated) {
+      oktaAuth.getUser().then((info) => {
+        disptach(setUser(info));
+      });
+    }
+  }, []);
 
   return (
     <div className="dash-layout">

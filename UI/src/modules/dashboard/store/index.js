@@ -1,20 +1,19 @@
 const defaultState = {
-  connections: {
-    dataSources: 0,
-    destinations: 0
-  },
-  customers: 0,
-  orchestrations: {
-    segments: 0
-  }
+  summaryInfo: {},
+  recentSegments: [],
 };
 
 const dashboardReducer = (state = defaultState, action) => {
   switch (action.type) {
-      case 'updateLoggedInUser':
+    case 'loadSummary':
       return {
         ...state,
-          loggedInUser: { ...action.payload } || {},
+        summaryInfo: {...action.payload},
+      };
+    case 'updateRecentSegments':
+      return {
+        ...state,
+        recentSegments: [...action.payload],
       };
     default:
       return state;

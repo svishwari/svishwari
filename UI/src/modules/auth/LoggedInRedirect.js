@@ -12,15 +12,11 @@ const setUser = (payload) => ({
 // import Signup from './signup/Signup';
 
 const LoggedInRedirect = () => {
-  const { authState, oktaAuth } = useOktaAuth();
+  const { authState } = useOktaAuth();
   const disptach = useDispatch();
 
   if (!authState.isAuthenticated) {
     disptach(setUser({}));
-  } else {
-    oktaAuth.getUser().then((info) => {
-      disptach(setUser(info));
-    });
   }
 
   if (authState.isPending) {
