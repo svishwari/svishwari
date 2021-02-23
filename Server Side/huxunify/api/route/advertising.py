@@ -257,7 +257,7 @@ def validate_delivery_platforms():
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route('/audience/count', methods=['GET'])
+@advertising_bp.route('/audiences', methods=['GET'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {

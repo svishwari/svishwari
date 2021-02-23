@@ -57,6 +57,12 @@ For viewing the API Documentation, simply go to the following URL
 
 ![apidocs.png](apidocs.png)
 
+### Style Guide
+PEP8
+
+Google Python Docstrings
+https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+
 ### Test
 ```
 pipenv run python -m unittest
