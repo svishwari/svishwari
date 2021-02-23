@@ -159,7 +159,7 @@ const ConnectionsSummary = () => {
               </div>
               <div className="row">
                 {summaryContent.map(content =>
-                  <SummaryCard width="190px" value={content.value} suffix={content.suffix} title={content.title}/>
+                  <SummaryCard width="185px" value={content.value} suffix={content.suffix} title={content.title}/>
                 )}
               </div>
               <div className="mt-5">
