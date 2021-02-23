@@ -1,15 +1,8 @@
 const defaultState = {
-  connections: {
-    dataSources: 0,
-    destinations: 0
-  },
-  customers: 0,
-  orchestrations: {
-    segments: 0
-  }
+  loggedInUser: {},
 };
 
-const dashboardReducer = (state = defaultState, action) => {
+const userReducer = (state = defaultState, action) => {
   switch (action.type) {
       case 'updateLoggedInUser':
       return {
@@ -21,4 +14,4 @@ const dashboardReducer = (state = defaultState, action) => {
   }
 };
 
-export default dashboardReducer;
+export default userReducer;

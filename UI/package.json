@@ -1,5 +1,5 @@
 {
-  "name": "admin-dash",
+  "name": "hux-unified-ui",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -142,7 +142,6 @@
       "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "testEnvironment": "jsdom",
-    "testRunner": "/Users/rahgoel/Documents/Projects/Unified_Solution/repos/admin-dash/node_modules/jest-circus/runner.js",
     "transform": {
       "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
