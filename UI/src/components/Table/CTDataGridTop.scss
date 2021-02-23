@@ -21,19 +21,25 @@
     }
   }
   .ct-grid-top-right {
+    font-size: 14px;
     .ct-grid-icon-buttons {
       button {
-        font-size: 18px;
         background: white;
         border: 1px solid $appGreyBorder;
         border-radius: 5px;
         margin: 6px;
         min-height: 40px;
         min-width: 40px;
+        svg {
+          font-size: 18px;
+        }
       }
       .ct-grid-remove-text {
         font-size: 14px;
       }
     }
+    .ct-grid-summary {
+      margin-right: 10px;
+    } 
   }
 }

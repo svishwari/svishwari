@@ -96,15 +96,11 @@ const DataSources = (props) => {
           dispatch(markIngestionStatus(payload));
           actionIngestion(params.getValue("id"));
         };
-        return (
-          <>
-            {params.getValue("ingested") &&
-            params.getValue("ingestionStatus") ? (
-              <span>{params.getValue("recordsIngested")}</span>
-            ) : !params.getValue("ingested") &&
-              params.getValue("ingestionStatus") === "InProgess" ? (
-              <span>Ingestion in progress...</span>
-            ) : (
+        if(params.getValue("connectionStatus") !== "Connected"){
+          return <></>;
+        }
+        if( !params.getValue("ingested") &&  params.getValue("ingestionStatus") !== "InProgess")  {
+          return (
               <CTChip
                 isWorking={params.getValue("ingested")}
                 isWorkingFn={() => triggerDataIngestion(params)}
@@ -112,9 +108,15 @@ const DataSources = (props) => {
               >
                 Not ingested
               </CTChip>
-            )}
-          </>
-        );
+          );
+        }
+        if( !params.getValue("ingested") &&  params.getValue("ingestionStatus") === "InProgess") {
+          return (<span>Ingestion in progress...</span>);
+        }
+        if ( params.getValue("ingested") ) {
+          return (<span>{params.getValue("recordsIngested")}</span>);
+        }
+        return (<></>);
       },
     },
     {
@@ -122,7 +124,9 @@ const DataSources = (props) => {
       headerName: "Empty",
       flex: 0.1,
       renderCell: (params) =>
-        params.getValue("ingested") && params.getValue("ingestionStatus") ? (
+        params.getValue("connectionStatus") === "Connected" && 
+        params.getValue("ingested") && 
+        params.getValue("ingestionStatus") !== "InProgess" ? (
           params.getValue("recordsIngested")
         ) : (
           <></>
@@ -133,7 +137,9 @@ const DataSources = (props) => {
       headerName: "Bogus",
       flex: 0.1,
       renderCell: (params) =>
-        params.getValue("ingested") && params.getValue("ingestionStatus") ? (
+        params.getValue("connectionStatus") === "Connected" && 
+        params.getValue("ingested") && 
+        params.getValue("ingestionStatus") !== "InProgess" ? (
           params.getValue("recordsIngested")
         ) : (
           <></>
@@ -144,7 +150,9 @@ const DataSources = (props) => {
       headerName: "Cleansed",
       flex: 0.1,
       renderCell: (params) =>
-        params.getValue("ingested") && params.getValue("ingestionStatus") ? (
+        params.getValue("connectionStatus") === "Connected" && 
+        params.getValue("ingested") && 
+        params.getValue("ingestionStatus") !== "InProgess" ? (
           params.getValue("recordsIngested")
         ) : (
           <></>
@@ -249,13 +257,26 @@ const DataSources = (props) => {
         columns={columns}
         hasStarring
         loading={!props.dataSources.length}
-        onRemove={() => {}}
-        onBulkRemove={() => {}}
-        onDownload={() => {}}
         onAddClick={() => {
           childRef.current.handleOpen();
         }}
         pageName="Data Source"
+        isTopVisible
+        isSummaryEnabled
+        bulkOperationText="Ingest Selected"
+        summaryContent={[
+          {value: "52",title: "Total Data Sources"},
+          {value: "24",title: "Ingested Records"},
+          {value: "34",title: "Empty"},
+          {value: "600",title: "Errors"},
+          {value: "4",title: "Cleansed"},
+          {value: "1.3",decimals:"1",suffix: "k",title: "Stitched"},
+          {value: "1.4",decimals:"1",suffix: "k",title: "Pinned"},
+        ]}
+        moreIconContent={[
+          {name: "Configure", function: ()=> {} },
+        ]}
+        isMoreIconEnabled
       />
       <CTModal
         ref={childRef}

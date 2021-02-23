@@ -39,6 +39,19 @@ const useStyles = makeStyles(() => ({
     color: "#0076A8",
   },
 }));
+
+const summaryContent=[
+  {value: "20",suffix: "%",title: "Bogus"},
+  {value: "20",title: "Bogus"},
+  {value: "20",suffix: "%",title: "Bogus"},
+  {value: "20",suffix: "%",title: "Bogus"},
+  {value: "20",suffix: "%",title: "Bogus"},
+  {value: "20",suffix: "%",title: "Bogus"},
+  {value: "20",suffix: "%",title: "Bogus"},
+  {value: "20",suffix: "%",title: "Bogus"},
+  {value: "20",suffix: "%",title: "Bogus"},
+];
+
 const ConnectionsSummary = () => {
   const classes = useStyles();
   const dataSourcesColumns = [
@@ -145,30 +158,9 @@ const ConnectionsSummary = () => {
                 </Link>
               </div>
               <div className="row">
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="52" title="Total Data Sources" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="24" title="Total Data Sources" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard
-                    value="20"
-                    suffix="%"
-                    title="Total Data Sources"
-                  />
-                </div>
-              </div>
-              <div className="row mt-4">
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="600" title="Bogus" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="65" title="Cleansed" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="23" title="Empty" />
-                </div>
+                {summaryContent.map(content =>
+                  <SummaryCard width="185px" value={content.value} suffix={content.suffix} title={content.title}/>
+                )}
               </div>
               <div className="mt-5">
                 <CTList
