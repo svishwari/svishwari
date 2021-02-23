@@ -1,5 +1,5 @@
 """
-purpose of this file is for housing the decision models
+The purpose of this file is for housing the Decisioning related API models
 """
 from os import getenv
 from random import randint
