@@ -1,9 +1,13 @@
 import React from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import DonutChart from "react-d3-donut/es";
 import CTUSAMap from "../../components/Charts/CTUSAMap";
+import CTPrimaryButton from "../../components/Button/CTPrimaryButton";
+
+import { showAddDataSource } from "../modal/action";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const usData = [{ TX: 90 }, { NY: 28 }, { WA: 68 }, { CA: 18 }];
   const SegmentData = [
     { name: "MostLikely", count: 70, color: "#00A99D" },
@@ -28,10 +32,12 @@ const Dashboard = () => {
           data={SegmentData}
         />
       </div>
+      <CTPrimaryButton onClickFn={()=> dispatch(showAddDataSource())}>Click me!</CTPrimaryButton>
     </div>
   );
 };
 const mapStateToProps = (state) => ({
   posts: state.dashboardReducer.user || [],
+  modal: state.modal,
 });
 export default connect(mapStateToProps)(Dashboard);

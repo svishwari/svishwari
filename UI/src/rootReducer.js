@@ -4,11 +4,13 @@ import { combineReducers } from "redux";
 import dashboardReducer from "./modules/dashboard/store/index";
 import userReducer from "./modules/auth/login/store/index";
 import connectionReducer from "./modules/connections/store/index";
+import modalReducer from "./modules/modal/index";
 
 const rootReducer = combineReducers({
   dashboardReducer,
   user: userReducer,
   connections: connectionReducer,
+  modal: modalReducer,
 });
 
 export default rootReducer;

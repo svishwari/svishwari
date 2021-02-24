@@ -4,6 +4,7 @@ import "./PrivateLayout.scss";
 import LeftNav from "./leftNav";
 
 import TopHeader from "./topHeader";
+import ModalRoot from "../modules/modal/ModalRoot";
 
 // import CTToast from '../components/Toast/CTToast';
 
@@ -26,6 +27,7 @@ export const PrivateLayout = ({ children }) => {
         />
         <div className="content">{children}</div>
       </div>
+      <ModalRoot />
     </div>
   );
 };
