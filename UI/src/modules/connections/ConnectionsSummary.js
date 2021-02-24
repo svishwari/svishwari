@@ -175,7 +175,7 @@ const ConnectionsSummary = () => {
             <div className={classes.section}>
               <div className={classes.sectionTitle}>
                 <h3 className={classes.sectionTitleHeading}>
-                  <Link to="/connections/data-sources">Destinations &gt;</Link>
+                  <Link to="/connections/destinations">Destinations &gt;</Link>
                 </h3>
                 <Link href={() => false} className={classes.sectionTitleHeadingLink}>
                   + Destination

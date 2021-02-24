@@ -2,6 +2,7 @@
 // import slugs from "../../../resources/slugs";
 
 const setDataSources = (payload) => ({ type: "loadDataSources", payload });
+const setDestinations = (payload) => ({ type: "loadDestinations", payload });
 const ingestionCompleted = (payload) => ({
   type: "ingestionComplete",
   payload,
@@ -188,9 +189,98 @@ const addNewDataSource = () => async (dispatch) => {
   dispatch(newDataSourceAdded(response));
 };
 
+
+//  Destination related actions
+const fetchDestinations = () => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 2000));
+  const destinationResponse = [
+    {
+      id: "602ec30dc920d42f1c4c5d22",
+      destination: "fb",
+      connectionStatus: "Not Connected",
+      destinationName: "File Name 1",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30e3d14a94dc1f30e97",
+      destination: "ga",
+      connectionStatus: "Not Connected",
+      destinationName: "File Name 2",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30ed4a16f2941a2e37a",
+      destination: "sfmc",
+      connectionStatus: "Not Connected",
+      destinationName: "File Name 3",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30eb4bd75c785ecc523",
+      destination: "ga",
+      connectionStatus: "Connected",
+      destinationName: "File Name 4",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30e74c166dc2623be9e",
+      destination: "fb",
+      connectionStatus: "Not Connected",
+      destinationName: "File Name 5",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30ef17d5ba0428cbb5e",
+      destination: "fb",
+      connectionStatus: "Not Connected",
+      destinationName: "File Name 6",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30e8b941a5dcd05c61d",
+      destination: "sfmc",
+      connectionStatus: "Connected",
+      destinationName: "File Name 7",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30ed02a9acce5f1e477",
+      destination: "sfmc",
+      connectionStatus: "Not Connected",
+      destinationName: "File Name 8",
+      accountName: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    }
+  ];
+  dispatch(setDestinations(destinationResponse));
+}
+const destinationConnected = (payload) => ({
+  type: "destinationConnected",
+  payload,
+});
+
+const triggerDestinationConnectionCheck = (id) => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 3000));
+  const response = {
+    id,
+    status: "Connected",
+  };
+  dispatch(destinationConnected(response));
+};
+
+
 export {
   fetchDataSources,
   triggerIngestion,
   triggerConnectionCheck,
   addNewDataSource,
+  fetchDestinations,
+  triggerDestinationConnectionCheck,
 };

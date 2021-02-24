@@ -20,11 +20,25 @@ const CTDataGridTop = ({
   bulkOperationText,
   onBulkOperation,
 }) => {
-const [isSummaryHidden,setisSummaryHidden] = useState(true);
+const [gridTopState,setGridTopState] = useState({
+  isSummaryHidden: true,
+  isUserEditing: isEditing,
+});
 
 const toggleSummary = () => {
-  setisSummaryHidden(!isSummaryHidden);
+  setGridTopState(prevState => ({
+    ...prevState,
+    isSummaryHidden: !prevState.isSummaryHidden,
+  }))
   onSummaryToggle()
+}
+
+const toggleEditing = () => {
+  setGridTopState(prevState => ({
+    ...prevState,
+    isUserEditing: !prevState.isUserEditing,
+  }))
+  changeEditing();
 }
 
 return (
@@ -45,7 +59,7 @@ return (
     </span>
     <span className="ct-grid-top-right">
       <span className="ct-grid-icon-buttons">
-        {isEditing ? (
+        {gridTopState.isUserEditing ? (
           <>
             { isDownloadAble && 
               <button type="button" onClick={() => onDownload(selectedRows)}>
@@ -70,7 +84,7 @@ return (
           </>
         ) : (
           <>
-            <button type="button" onClick={() => changeEditing()}>
+            <button type="button" onClick={() => toggleEditing()}>
               <span
                 className="iconify"
                 data-icon="mdi:pencil"
@@ -84,8 +98,8 @@ return (
         </button>
       </span>
       <span className="ct-grid-summary">
-        {isSummaryEnabled && !isEditing ?
-            isSummaryHidden ? (
+        {isSummaryEnabled && !gridTopState.isUserEditing ?
+            gridTopState.isSummaryHidden ? (
               <CTSecondaryButton  onClick={toggleSummary}>Show Summary</CTSecondaryButton>
             ):(
               <CTPrimaryButton onClick={toggleSummary}>Hide Summary</CTPrimaryButton>
@@ -93,8 +107,8 @@ return (
             <></>
         )}
       </span>
-      {isEditing ? (
-        <CTPrimaryButton onClick={() => changeEditing()}>
+      {gridTopState.isUserEditing ? (
+        <CTPrimaryButton onClick={() => toggleEditing()}>
           Done &amp; Return
         </CTPrimaryButton>
       ) : (

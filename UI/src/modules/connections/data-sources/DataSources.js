@@ -70,6 +70,7 @@ const DataSources = (props) => {
           <>
             {params.getValue("connectionStatus") !== "Connecting..." ? (
               <CTChip
+                hasIcons
                 isWorking={params.getValue("connectionStatus") === "Connected"}
                 isWorkingFn={triggerConnection}
                 isNotWorkingFn={triggerConnection}
@@ -102,6 +103,7 @@ const DataSources = (props) => {
         if( !params.getValue("ingested") &&  params.getValue("ingestionStatus") !== "InProgess")  {
           return (
               <CTChip
+                hasIcons
                 isWorking={params.getValue("ingested")}
                 isWorkingFn={() => triggerDataIngestion(params)}
                 isNotWorkingFn={() => triggerDataIngestion(params)}
@@ -276,7 +278,7 @@ const DataSources = (props) => {
         moreIconContent={[
           {name: "Configure", function: ()=> {} },
         ]}
-        isMoreIconEnabled
+        enableMoreIcon
       />
       <CTModal
         ref={childRef}

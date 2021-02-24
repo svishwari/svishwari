@@ -33,12 +33,13 @@ export default class CTDataGrid extends Component {
     headerName: " ",
     renderCell: (params) => {
       const popOverContent = this.props.moreIconContent.map(content => 
-          <div onKeyPress={() => content.function()} onClick={content.function}>{content.name}</div>
+          <div key={content.name} onKeyPress={() => content.function()} onClick={content.function}>{content.name}</div>
       );
       const removeItem = <div 
                     onKeyPress={() => this.removeRow(params.getValue("id"))}
                     onClick={()=>this.removeRow(params.getValue("id"))}
                     style={{cursor: "pointer"}}
+                    key="remove"
                   >
                     Remove
                   </div>
@@ -58,7 +59,7 @@ export default class CTDataGrid extends Component {
   ? [this.starredColumn, ...this.props.columns]
   : this.props.columns;
 
-  applicableColumns = this.props.isMoreIconEnabled
+  applicableColumns = this.props.enableMoreIcon
   ? [...this.applicableColumns,this.moreColumn]
   : this.applicableColumns;
 
@@ -247,7 +248,7 @@ CTDataGrid.defaultProps = {
   isDownloadAble: false,
   bulkOperationText: "",
   moreIconContent: [],
-  isMoreIconEnabled: false,
+  enableMoreIcon: false,
   onBulkRemove: () => {},
   onRemove: () => {},
   onDownload: () => {},
