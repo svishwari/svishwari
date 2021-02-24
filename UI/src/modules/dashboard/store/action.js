@@ -10,7 +10,7 @@ const updateRecentSegments = (payload) => ({
 
 // Methods
 const fetchSummaryInfo = () => async (dispatch) => {
-  await new Promise((done) => setTimeout(() => done(), 200));
+  await new Promise((done) => setTimeout(() => done(), 500));
   const response = [
     {
       dataSources: 53,
@@ -23,7 +23,7 @@ const fetchSummaryInfo = () => async (dispatch) => {
   dispatch(setSummary(response));
 };
 const fetchRecentSegments = () => async (dispatch) => {
-  await new Promise((done) => setTimeout(() => done(), 200));
+  await new Promise((done) => setTimeout(() => done(), 1200));
   const response = [
     {
       id: Math.random().toString(36).substr(2, 36),

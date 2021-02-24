@@ -45,21 +45,21 @@ const Dashboard = (props) => {
       title: 'Connections',
       icon: 'connection',
       sections: [
-        { label: 'Data Sources >', path: '/connections/dataSources', value: 0 },
+        { label: 'Data Sources >', path: '/connections/data-sources', value: 0 },
         { label: 'Destinations >', path: '/connections/destinations', value: 0 },
       ],
     },
     {
       title: 'Customers',
       icon: 'account-details-outline',
-      sections: [{ label: 'Customer Profiles >', path: '/connections/dataSources', value: 0 }],
+      sections: [{ label: 'Customer Profiles >', path: '/customer-profiles', value: 0 }],
     },
     {
       title: 'Orchestration',
       icon: 'account-arrow-right-outline',
       sections: [
-        { label: 'Audiences >', path: '/connections/dataSources', value: 0 },
-        { label: 'Segments >', path: '/connections/destinations', value: 0 },
+        { label: 'Audiences >', path: '/orchestration/audiences', value: 0 },
+        { label: 'Segments >', path: '/orchestration/segments', value: 0 },
       ],
     },
   ];
@@ -139,7 +139,7 @@ const Dashboard = (props) => {
           popoverContent={
             <Box display="flex" flexDirection="column">
               <ListItem>Configure</ListItem>
-              <ListItem>Re</ListItem>
+              <ListItem>Remove</ListItem>
             </Box>
           }
         >

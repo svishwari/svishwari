@@ -84,7 +84,8 @@
     "webpack": "4.44.2",
     "webpack-dev-server": "3.11.0",
     "webpack-manifest-plugin": "2.2.0",
-    "workbox-webpack-plugin": "5.1.4"
+    "workbox-webpack-plugin": "5.1.4",
+    "redux-devtools-extension": "^2.13.8"
   },
   "scripts": {
     "start": "node scripts/start.js",
@@ -186,7 +187,6 @@
     "pretty-quick": "^3.1.0",
     "progress-bar-webpack-plugin": "^2.1.0",
     "react-app-rewired": "^2.1.8",
-    "redux-devtools-extension": "^2.13.8",
     "resolve": "^1.18.1",
     "webpack-bundle-analyzer": "^4.4.0"
   }
