@@ -3,6 +3,7 @@ import Select from "@material-ui/core/Select";
 import CTModal from "../../../components/Modal/CTModal";
 import CTLabel from "../../../components/Label/CTLabel";
 import CTInput from "../../../components/Input/CTInput";
+import "./AddDataSource.scss";
 
 const AddDataSource = () => {
     const [selectedDataSource, setselectedDataSource] = React.useState(

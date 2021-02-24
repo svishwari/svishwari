@@ -10,6 +10,8 @@ import {
 import CTChip from "../../../components/Chip/CTChip";
 import "./DataSource.scss";
 
+import { showAddDataSource } from "../../modal/action";
+
 const markIngestionStatus = (payload) => ({
   type: "updateInestionStatus",
   payload,
@@ -180,6 +182,7 @@ const DataSources = (props) => {
         pageName="Data Source"
         isTopVisible
         isSummaryEnabled
+        onAddClick={()=> dispatch(showAddDataSource())}
         bulkOperationText="Ingest Selected"
         summaryContent={[
           {value: "52",title: "Total Data Sources"},

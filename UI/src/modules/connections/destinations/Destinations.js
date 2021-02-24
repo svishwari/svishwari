@@ -9,6 +9,8 @@ import {
   triggerDestinationConnectionCheck,
 } from "../store/action";
 
+import { showAddDestination } from "../../modal/action"; 
+
 const markConnecting = (payload) => ({
   type: "updateDestinationConnectionStatus",
   payload,
@@ -111,6 +113,7 @@ const Destinations = (props) => {
       loading={!props.destinations.length}
       pageName="Destination"
       isTopVisible
+      onAddClick={()=> dispatch(showAddDestination())}
       enableMoreIcon
       moreIconContent={[
         {name: "Configure", function: ()=> {} },

@@ -1,10 +1,12 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import PageTitle from "../../components/PageTitle";
 import { ReactComponent as TitleImage } from "../../assets/ConnectionsTitle.svg";
 import SummaryCard from "../../components/Cards/SummaryCard/SummaryCard";
 import CTList from "../../components/List/List";
+import { showAddDataSource } from "../modal/action";
 
 const useStyles = makeStyles(() => ({
   contentWrapper: {
@@ -47,12 +49,10 @@ const summaryContent=[
   {value: "20",suffix: "%",title: "Bogus"},
   {value: "20",suffix: "%",title: "Bogus"},
   {value: "20",suffix: "%",title: "Bogus"},
-  {value: "20",suffix: "%",title: "Bogus"},
-  {value: "20",suffix: "%",title: "Bogus"},
-  {value: "20",suffix: "%",title: "Bogus"},
 ];
 
 const ConnectionsSummary = () => {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const dataSourcesColumns = [
     {
@@ -153,9 +153,9 @@ const ConnectionsSummary = () => {
                 <h3 className={classes.sectionTitleHeading}>
                   <Link to="/connections/data-sources">Data Sources &gt;</Link>
                 </h3>
-                <Link href={() => false} className={classes.sectionTitleHeadingLink}>
+                <span className={classes.sectionTitleHeadingLink} onKeyPress={()=> dispatch(showAddDataSource())} onClick={()=> dispatch(showAddDataSource())}>
                   + DataSource
-                </Link>
+                </span>
               </div>
               <div className="row">
                 {summaryContent.map(content =>
