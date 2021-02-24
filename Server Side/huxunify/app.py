@@ -31,7 +31,7 @@ def create_app():
     # default just send user over to apidocs
     @flask_app.route('/')
     def index():
-        return redirect(f"/apidocs")
+        return redirect("/apidocs")
 
     # register the blueprint and route
     flask_app.register_blueprint(home_api, url_prefix='/api')

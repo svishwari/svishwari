@@ -12,6 +12,7 @@ cdm_bp = Blueprint('cdm_bp', __name__)
 
 @cdm_bp.route('/')
 @swag_from({
+    "tags": ["customer data"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'cdm api',

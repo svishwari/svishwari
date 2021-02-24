@@ -14,6 +14,7 @@ marketing_bp = Blueprint('marketing_bp', __name__)
 
 @marketing_bp.route('/')
 @swag_from({
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'marketing api',
@@ -30,10 +31,10 @@ def index():
     return schema.MarketingSchema().dump(result), 200
 
 
-@marketing_bp.route('/segments/count', methods=['GET'])
+@marketing_bp.route('/segments', methods=['GET'])
 @swag_from({
-    "parameters": [
-    ],
+    "parameters": [],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'list all segments',
@@ -55,6 +56,7 @@ def segment_runs_count():
 @swag_from({
     "summary": "get all data sources",
     "parameters": [],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get all data sources',
@@ -76,6 +78,7 @@ def get_all_segments():
 @swag_from({
     "parameters": [
     ],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'create new segment',
@@ -105,6 +108,7 @@ def segment_create():
             "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
         },
     ],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'segment details',
@@ -134,6 +138,7 @@ def segment_run(segment_id):
             "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
         },
     ],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'list all customers for a segment',
@@ -181,6 +186,7 @@ def segment_run_customers(segment_id):
             },
         },
     ],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'update a specific segment',
@@ -199,22 +205,10 @@ def segment_update():
     return json.dumps(result), 200
 
 
-@marketing_bp.route('/models/<category>', methods=['POST'])
+@marketing_bp.route('/models', methods=['POST'])
 @swag_from({
-    "parameters": [
-        {
-            "name": "body",
-            "in": "body",
-            "required": "true",
-            "schema": {
-                "id": "getModels",
-                "example":
-                    {
-                        "Category": "Audience/ Marketing/ Commerce"
-                    }
-            },
-        },
-    ],
+    "parameters": [],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'list all models',
@@ -222,14 +216,13 @@ def segment_update():
         }
     }
 })
-def fetch_models(category):
+def fetch_models():
     """
     get all models
     ---
     """
-    result = MarketingModel()
-    result.get_models(category)
-    return schema.ModelSchema().dump(result), 200
+    result = MarketingModel().get_models()
+    return json.dumps(result), 200
 
 
 @marketing_bp.route('/segmentation', methods=['POST'])
@@ -247,7 +240,7 @@ def fetch_models(category):
                 ],
                 "example":
                 {
-                   "url": "s3://XXXXXXXX/customers.csv",
+                   "url": "s3://xspdev-amc-pipeline/customers_names_e2e.csv",
                    "models": [
                       "Churn",
                       "Propensity"
@@ -256,6 +249,7 @@ def fetch_models(category):
             },
         },
     ],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'Fetch Scores API helps you retrieve the the result values for the '
@@ -273,9 +267,8 @@ def fetch_scores():
     """
     s3_url = request.json['url']
     models = request.json['models']
-    result = MarketingModel()
-    result.get_scores(s3_url, models)
-    return schema.SegmentSchema().dump(result), 200
+    result = MarketingModel().get_scores(s3_url, models)
+    return json.dumps(result), 200
 
 
 @marketing_bp.route('/segmentation/fly', methods=['POST'])
@@ -335,6 +328,7 @@ def fetch_scores():
             },
         },
     ],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': """Segmentation on the fly API helps you apply the group of segments
@@ -350,9 +344,8 @@ def fetch_scores_on_the_fly():
     get all scores
     ---
     """
-    result = MarketingModel()
-    result.get_scores_on_the_fly(request.json)
-    return schema.SegmentFlySchema().dump(result), 200
+    result = MarketingModel().get_scores_on_the_fly(json.dumps(request.json))
+    return json.dumps(result), 200
 
 
 @marketing_bp.route('/segmentation/deliver', methods=['POST'])
@@ -390,6 +383,7 @@ def fetch_scores_on_the_fly():
             },
         },
     ],
+    "tags": ["marketing"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': """This DeliverACS API will help you to deliver the segmented customers

@@ -13,6 +13,7 @@ decision_bp = Blueprint('decision_bp', __name__)
 
 @decision_bp.route('/')
 @swag_from({
+    "tags": ["decisioning"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'decision api',
@@ -58,6 +59,7 @@ def index():
             "default": ""
         }
     ],
+    "tags": ["decisioning"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'list all features per customer',

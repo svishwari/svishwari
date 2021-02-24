@@ -2,6 +2,7 @@
 purpose of this file is for housing the marketing models
 """
 from random import randint, random
+import requests
 
 
 class MarketingModel:
@@ -11,7 +12,9 @@ class MarketingModel:
     segment information/values = Segmentation_Engine.Segmentation_scores
     segments = Segmentation_Engine.Segmentation_Logs  # holistic level, not customer level
     """
+    # this should be configurable
     SEGMENT_API = "https://amc-segmentation.main.use1.k8s.mgnt-xspdev.in/app"
+    SEGMENT_ENGINE = f"{SEGMENT_API}/segmentationengine"
 
     def __init__(self):
         self.message = "Hello marketing"
@@ -113,149 +116,50 @@ class MarketingModel:
             "customers": customers
         }
 
-    def get_models(self, category):
+    def get_models(self):
         """
-        purpose of this function is for getting the models from the api
-        :return:
-        """
-        data = {
-            "params": {
-                "Category": f"{category}"
-            }
-        }
+        get models from the segmentation API
 
-        # fake the request for now until I have access
-        # response = requests.post(f'{SEGMENT_API}/model/fetchModels', data=data).json()
-        self.models = [
-            {
-                "name": "Churn",
-                "value": "1",
-            },
-            {
-                "name": "Propensity",
-                "value": "2",
-            },
-            {
-                "name": "LTV",
-                "value": "3",
-            }
-        ]
+        Args:
+        Returns:
+            The return list of models from the segmentation API
+
+        """
+        return requests.post(f'{self.SEGMENT_API}/model/fetchModels').json()
 
     def get_scores(self, s3_url, models):
-        """
-        purpose of this function is for getting the scores from the api
-        :return:
+        """Fetch the Segmentation Model Scores
+
+        Args:
+            data: input json string
+
+        Returns:
+            Returns the post result
+
         """
         data = {
            "url": s3_url,
            "Models": models
         }
+        return requests.post(f'{self.SEGMENT_ENGINE}/segmentation', data=data).json()
 
-        # fake the request for now until I have access
-        # response = requests.post(f'{SEGMENT_API}/public/segmentation', data=data).json()
-        self.segments =[{
-               "PredictionData": [
-                  {
-                        "User": "A5BB0719-2CE0-762B-7C68-C67361766A18",
-                        "Segment": "Most Likely"
-                  }
-               ],
-               "fileURL": "s3://XXXXXXXX/customers.csv",
-               "TransactionID": "260fecbf-3bd9-4a70-8c4c-0a174f708e46",
-               "Scales": {
-                  "Churn": {
-                        "Segments": {
-                           "0.0-0.2": "Unlikely",
-                           "0.21-0.5": "Likely",
-                           "0.51-0.8": "Most likely",
-                           "0.81-1.0": "Very likely"
-                        },
-                        "Values": {
-                           "Min": "0.0",
-                           "Max": "1.0"
-                        }
-                  },
-                  "Propensity": {
-                        "Segments": {
-                           "0.0-0.2": "Unlikely",
-                           "0.21-0.5": "Likely",
-                           "0.51-0.8": "Most likely",
-                           "0.81-1.0": "Very likely"
-                        },
-                        "Values": {
-                           "Min": "0.0",
-                           "Max": "1.0"
-                        }
-                  }
-               }
-            }]
+    def get_scores_on_the_fly(self, data):
+        """Fetch the Segmentation Model Scores on the fly
+        this api allows for grouping of segments.
 
-    def get_scores_on_the_fly(self, body):
+        Args:
+            data: input json string
+
+        Returns:
+            Returns the post result
+
         """
-        purpose of this function is for getting the scores from the api
-        :return:
-        """
-        # fake the request for now until I have access
-        # return requests.post(f'{SEGMENT_API}/public/segmentOnFly', data=body).json()
-        self.segments = [
-            {
-               "TransactionID": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
-               "Scales": {
-                  "Propensity": {
-                        "Segments": {
-                           "0.0-0.2": "Unlikely",
-                           "0.21-0.5": "Likely",
-                           "0.51-0.8": "Most likely",
-                           "0.81-1.0": "Very likely"
-                        },
-                        "Values": {
-                           "Min": "0.0",
-                           "Max": "1.0"
-                        }
-                  }
-               },
-               "Rules": [
-                  {
-                        "Rule": [
-                           {
-                              "Transaction": {
-                                    "all": [
-                                       {
-                                          "all": [
-                                                {
-                                                   "fact": "Propensity",
-                                                   "operator": "greaterThanInclusive",
-                                                   "value": 0.35
-                                                },
-                                                {
-                                                   "fact": "Propensity",
-                                                   "operator": "lessThanInclusive",
-                                                   "value": 1
-                                                }
-                                          ]
-                                       }
-                                    ]
-                              }
-                           },
-                           {
-                              "Values": {
-                                    "Segment": "Most Likely"
-                              }
-                           }
-                        ]
-                  }
-               ],
-               "PredictionData": [
-                  {
-                        "User": "1",
-                        "Segment": "Most Likely"
-                  },
-                  {
-                        "User": "2"
-                  }
-               ]
-            }
-        ]
+        headers = {
+            'content-type': "application/json",
+            'cache-control': "no-cache"
+        }
+        return requests.post(f'{self.SEGMENT_ENGINE}/segmentOnFly', data=data,
+                             headers=headers).json()
 
     def deliver_segment(self, body):
         """
