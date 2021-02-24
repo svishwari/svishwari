@@ -6,28 +6,29 @@ import requests
 class AudienceModel:
     """
     audience model class
+
+    Here is a sample model response from audience service
+        [
+            {
+                "audience_filters": [
+                    {
+                        "field": "age",
+                        "type": "max",
+                        "value": 60
+                    }
+                ],
+                "audience_name": "string",
+                "audience_type": "string",
+                "created": "2020-10-17T21:54:53.495000+00:00",
+                "updated": "2020-10-17T21:54:53.495000+00:00",
+                "audience_id": "5f5f7262997acad4bac4373b",
+                "ingestion_job_id": "5f5f7262997acad4bac4373b"
+            }
+        ]
     """
+
     API = "https://audience-builder.main.use1.k8s.mgnt-xspdev.in/api/v1/audiences"
 
-    """
-                [
-                {
-                    "audience_filters": [
-                        {
-                            "field": "age",
-                            "type": "max",
-                            "value": 60
-                        }
-                    ],
-                    "audience_name": "string",
-                    "audience_type": "string",
-                    "created": "2020-10-17T21:54:53.495000+00:00",
-                    "updated": "2020-10-17T21:54:53.495000+00:00",
-                    "audience_id": "5f5f7262997acad4bac4373b",
-                    "ingestion_job_id": "5f5f7262997acad4bac4373b"
-                }
-            ]
-    """
     def __init__(self):
         self.message = "Hello audience"
         self.audiences = []

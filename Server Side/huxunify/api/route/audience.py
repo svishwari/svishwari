@@ -11,7 +11,7 @@ from flask import jsonify
 
 audience_bp = Blueprint('audience_bp', __name__)
 
-@audience_bp.route('/audience', methods=['GET'])
+@audience_bp.route('/', methods=['GET'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -29,10 +29,9 @@ def get_audiences():
     """
     result = AudienceModel()
     data_source = result.get_audiences()
-    print(data_source)
     return jsonify(audiences_schema.dump(data_source)), 200
 
-@audience_bp.route('/audience/<audience_id>', methods=['GET'])
+@audience_bp.route('/<audience_id>', methods=['GET'])
 @swag_from({
     "parameters": [
         {
@@ -84,7 +83,7 @@ def audience_count():
     return json.dumps(data_source), 200
 
 
-@audience_bp.route('/audience', methods=['POST'])
+@audience_bp.route('/', methods=['POST'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -105,7 +104,7 @@ def create_audiences():
     return json.dumps(data_source), 200
 
 
-@audience_bp.route('/audience', methods=['PUT'])
+@audience_bp.route('/', methods=['PUT'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -126,7 +125,7 @@ def update_audience():
     return json.dumps(data_source), 200
 
 
-@audience_bp.route('/audience/<audience_id>', methods=['DELETE'])
+@audience_bp.route('/<audience_id>', methods=['DELETE'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -147,7 +146,7 @@ def delete_audience(audience_id):
     return json.dumps(data_source), 200
 
 
-@audience_bp.route('/audience/<audience_id>/star', methods=['DELETE'])
+@audience_bp.route('/<audience_id>/star', methods=['DELETE'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -168,7 +167,7 @@ def star_audience(audience_id):
     return json.dumps(data_source), 200
 
 
-@audience_bp.route('/audience/recent', methods=['GET'])
+@audience_bp.route('/recent', methods=['GET'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -189,7 +188,7 @@ def recent_audiences():
     return json.dumps(data_source), 200
 
 
-@audience_bp.route('/audience/star', methods=['GET'])
+@audience_bp.route('/star', methods=['GET'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -210,7 +209,7 @@ def get_star_audiences():
     return json.dumps(data_source), 200
 
 
-@audience_bp.route('/audience/<audience_id>/delivery_jobs', methods=['GET'])
+@audience_bp.route('/<audience_id>/delivery_jobs', methods=['GET'])
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {

@@ -37,7 +37,7 @@ def create_app():
     # register the blueprint and route
     flask_app.register_blueprint(home_api, url_prefix='/api')
     flask_app.register_blueprint(advertising_bp, url_prefix='/api/advertising')
-    flask_app.register_blueprint(audience_bp, url_prefix='/api/v1')
+    flask_app.register_blueprint(audience_bp, url_prefix='/api/v1/audience')
     flask_app.register_blueprint(cdm_bp, url_prefix='/api/cdm')
     flask_app.register_blueprint(decision_bp, url_prefix='/api/decisioning')
     flask_app.register_blueprint(marketing_bp, url_prefix='/api/marketing')
