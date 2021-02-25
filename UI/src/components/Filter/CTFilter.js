@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from "react";
 import "./CTFilter.scss";
+import Badge from '@material-ui/core/Badge';
 import CTPopover from "../Popover/CTPopover";
 
 // THIS IS A TODO FILE
@@ -92,9 +93,15 @@ const CTFilter = ({
 
   return (
     <CTPopover onToggle={()=> setSelectedFilter("")} customClass="ct-filter-popover" popoverContent={filterContent}>
-      <div className="ct-filter-wrapper">
-        <span className="iconify" data-icon="mdi:filter" data-inline="false" />
-      </div>
+      <button type="button">     
+        <div className="ct-filter-wrapper">
+          <Badge badgeContent={Object.keys(activeFilters).length}>
+            <span className="ct-filter-icon">
+              <span className="iconify" data-icon="mdi:filter" data-inline="false" />
+            </span>
+          </Badge>
+        </div>
+      </button>
     </CTPopover>
   );
 };

@@ -96,9 +96,7 @@ return (
             </button>
           </>
         )}
-        <button type="button" >
-          <CTFilter filterTypes={filterTypes} onFilterChange={onFilterChange} onClearAll={onClearAll}/>
-        </button>
+        <CTFilter filterTypes={filterTypes} onFilterChange={onFilterChange} onClearAll={onClearAll}/>
       </span>
       <span className="ct-grid-summary">
         {isSummaryEnabled && !gridTopState.isUserEditing ?

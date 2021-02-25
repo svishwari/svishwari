@@ -1,6 +1,7 @@
 import { DataGrid } from "@material-ui/data-grid";
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import "./List.scss";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -20,8 +21,9 @@ const CTList = (props) => {
       showColumnRightBorder={false}
       disableColumnSelector
       rowHeight={60}
+      headerHeight={28}
       {...props}
-      className={classes.root}
+      className={`${classes.root} ct-list-wrapper`}
       hideFooter
       disableSelectionOnClick
     />

@@ -261,7 +261,7 @@ export default class CTDataGrid extends Component {
           this.state.isSummaryVisible ? 
           <CTCardGroup style={{margin: "10px 20px"}}>
           {this.props.summaryContent.map(content =>
-          <SummaryCard decimals={content.decimals} value={content.value} suffix={content.suffix} title={content.title}/>
+          <SummaryCard key={content.title} decimals={content.decimals} value={content.value} suffix={content.suffix} title={content.title}/>
           )}
           </CTCardGroup>
           : <></>
