@@ -16,6 +16,21 @@ const markConnecting = (payload) => ({
   payload,
 });
 
+const FILTER_TYPES = {
+  "Starred": {
+    selectMultiple: false,
+    values: ["Starred", "Not Starred"]
+  },
+  "Status": { 
+    selectMultiple: true,
+    values: ["Connected", "Not Connected"]
+  },
+  "Account": {
+    selectMultiple: true,
+    values: ["Pendleton"]
+  }
+}
+
 
 const Destinations = (props) => {
   const dispatch = useDispatch();
@@ -63,7 +78,7 @@ const Destinations = (props) => {
       )},
     },
     {
-      field: "accountName",
+      field: "account",
       headerName: "Account Name",
       flex: 0.1,
     },
@@ -73,7 +88,7 @@ const Destinations = (props) => {
       flex: 0.15,
     },
     {
-      field: "connectionStatus",
+      field: "status",
       headerName: "Status",
       flex: 0.15,
       renderCell: (params) => {
@@ -87,14 +102,14 @@ const Destinations = (props) => {
         };
         return (
           <>
-            {params.getValue("connectionStatus") !== "Connecting..." ? (
+            {params.getValue("status") !== "Connecting..." ? (
               <CTChip
                 hasIcons
-                isWorking={params.getValue("connectionStatus") === "Connected"}
+                isWorking={params.getValue("status") === "Connected"}
                 isWorkingFn={triggerConnection}
                 isNotWorkingFn={triggerConnection}
               >
-                {params.getValue("connectionStatus")}
+                {params.getValue("status")}
               </CTChip>
             ) : (
               <span>Connecting...</span>
@@ -113,6 +128,7 @@ const Destinations = (props) => {
       loading={!props.destinations.length}
       pageName="Destination"
       isTopVisible
+      filterTypes={FILTER_TYPES}
       onAddClick={()=> dispatch(showAddDestination())}
       enableMoreIcon
       moreIconContent={[

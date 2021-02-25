@@ -6,7 +6,7 @@ import PageTitle from "../../components/PageTitle";
 import { ReactComponent as TitleImage } from "../../assets/ConnectionsTitle.svg";
 import SummaryCard from "../../components/Cards/SummaryCard/SummaryCard";
 import CTList from "../../components/List/List";
-import { showAddDataSource } from "../modal/action";
+import { showAddDataSource, showAddDestination } from "../modal/action";
 
 const useStyles = makeStyles(() => ({
   contentWrapper: {
@@ -36,7 +36,7 @@ const useStyles = makeStyles(() => ({
     fontWeight: 600,
     fontSize: "14px",
     lineHeight: "22px",
-
+    cursor: "pointer",
     letterSpacing: "0.3px",
     color: "#0076A8",
   },
@@ -177,9 +177,9 @@ const ConnectionsSummary = () => {
                 <h3 className={classes.sectionTitleHeading}>
                   <Link to="/connections/destinations">Destinations &gt;</Link>
                 </h3>
-                <Link href={() => false} className={classes.sectionTitleHeadingLink}>
+                <span className={classes.sectionTitleHeadingLink} onKeyPress={()=> dispatch(showAddDestination())} onClick={()=> dispatch(showAddDataSource())}>
                   + Destination
-                </Link>
+                </span>
               </div>
             </div>
             <CTList columns={destinationColumns} rows={destinationData} />

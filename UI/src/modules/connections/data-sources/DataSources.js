@@ -12,6 +12,22 @@ import "./DataSource.scss";
 
 import { showAddDataSource } from "../../modal/action";
 
+
+const FILTER_TYPES = {
+  "Starred": {
+    selectMultiple: false,
+    values: ["Starred", "Not Starred"]
+  },
+  "Connection Status": { 
+    selectMultiple: true,
+    values: ["Connected", "Not Connected"]
+  },
+  "Source": {
+    selectMultiple: false,
+    values: ["Client", "Amazon S3"]
+  }
+}
+
 const markIngestionStatus = (payload) => ({
   type: "updateInestionStatus",
   payload,
@@ -193,6 +209,7 @@ const DataSources = (props) => {
           {value: "1.3",decimals:"1",suffix: "k",title: "Stitched"},
           {value: "1.4",decimals:"1",suffix: "k",title: "Pinned"},
         ]}
+        filterTypes={FILTER_TYPES}
         moreIconContent={[
           {name: "Configure", function: ()=> {} },
         ]}

@@ -19,6 +19,9 @@ const CTDataGridTop = ({
   isDownloadAble,
   bulkOperationText,
   onBulkOperation,
+  onFilterChange,
+  onClearAll,
+  filterTypes,
 }) => {
 const [gridTopState,setGridTopState] = useState({
   isSummaryHidden: true,
@@ -94,7 +97,7 @@ return (
           </>
         )}
         <button type="button" >
-          <CTFilter />
+          <CTFilter filterTypes={filterTypes} onFilterChange={onFilterChange} onClearAll={onClearAll}/>
         </button>
       </span>
       <span className="ct-grid-summary">

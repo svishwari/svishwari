@@ -5,3 +5,51 @@
     color: $appSuccessGreen;
   }
 }
+
+.ct-filter-popover{
+  min-width: 200px;
+  .popover-body {
+    padding: 0;
+  }
+  .ct-filter-popover-wrapper {
+    .ct-filter-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 20px;
+      border-bottom: 1px solid $appGreyBorder;
+      .ct-filter-header-left {
+        color: $appLightGray2;
+        cursor: pointer;
+      }
+      .ct-filter-header-right {
+        color: $appMainBlue;
+        cursor: pointer;
+      }
+    }
+    .ct-filter-content {
+      .ct-filter-content-card {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 20px;
+        border-bottom: 1px solid $appGreyBorder;
+        cursor: pointer;
+      }
+      .ct-filter-title {
+        color: $appLightGray2;
+        padding: 8px 20px;
+        font-weight: bold;
+      }
+      .ct-filter-type-container{
+        padding-bottom: 10px;
+        .ct-filter-type {
+          padding: 4px 20px;
+          svg {
+            font-size: 18px;
+            margin-right: 4px;
+            color: $appSuccessGreen;
+          }
+        }
+      }
+    }
+  }
+}

@@ -82,6 +82,74 @@ export default class CTDataGrid extends Component {
     }
   }
 
+  camelize = (str) => str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
+      if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+      return index === 0 ? match.toLowerCase() : match.toUpperCase();
+  })
+
+  // create the unique filter values present in the data
+  createFilterTypes = (types) => {
+    // get all unique values for each row in props.rows
+    const _types = {...types};
+
+    // create regular filters
+    Object.keys(types).filter(type => !_types[type].range).forEach(type => {
+      _types[type].values = [...new Set(this.state.dataGridData.map(row => row[type]))]
+    })
+
+    return _types;
+  }
+
+  onFilterChange = (filterApplied) => {
+    if (filterApplied === {}) {
+      this.setState({ dataGridData:  this.props.data});
+    }
+    else {
+      const matchingRows =[];
+      let conditions;
+      let permitted;
+
+      this.props.data.forEach(row => {
+
+        conditions = Object.keys(filterApplied).map(type => {
+
+          if( type === "Starred" ){
+            if ( filterApplied.Starred.includes("Starred") ) {
+              if( !row.starred) {
+                return false;
+              }
+            }
+            if ( filterApplied.Starred.includes("Not Starred") ) {
+              if( row.starred) {
+                return false;
+              }
+            }
+            return true;
+          }
+          const typeStr = this.camelize(type);
+          if (!filterApplied[type] || filterApplied[type] === []) { permitted = this.createFilterTypes(this.props.filterTypes) }
+          else { permitted = filterApplied[type] }
+          return permitted.includes(row[typeStr]);
+        });
+
+
+        // checks that a row satisfies *all* of the included filter types
+        const rowSatisfiesFilters = !conditions.includes(false);
+        if (rowSatisfiesFilters) { 
+          matchingRows.push(row);
+        }
+
+      });
+      this.setState({ dataGridData:  matchingRows});
+    }
+  };
+
+  onClearAll = () => {
+    this.setState({
+      dataGridData: this.props.data,
+    });
+  };
+
   onSummaryToggle = () => {
     this.setState(prevState => ({
       isSummaryVisible: !prevState.isSummaryVisible,
@@ -179,6 +247,9 @@ export default class CTDataGrid extends Component {
           onDownload={this.props.onDownload}
           onRemove={this.removeSelectedRows}
           selectedRows={this.state.selectedRows}
+          onFilterChange={this.onFilterChange}
+          onClearAll={this.onClearAll}
+          filterTypes={this.props.filterTypes}
           isEditing={this.state.isEditing}
           changeEditing={this.toggleEditing}
           onSummaryToggle={this.onSummaryToggle}
@@ -249,6 +320,7 @@ CTDataGrid.defaultProps = {
   bulkOperationText: "",
   moreIconContent: [],
   enableMoreIcon: false,
+  filterTypes: {},
   onBulkRemove: () => {},
   onRemove: () => {},
   onDownload: () => {},
