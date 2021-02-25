@@ -51,7 +51,7 @@ const Destinations = (props) => {
             : <></>
           }
           </span>
-          <Link href="/destinations">
+          <Link to="/destinations">
             {`${params.getValue("destinationName")} `}
             <span
               className="iconify"
@@ -113,6 +113,7 @@ const Destinations = (props) => {
       loading={!props.destinations.length}
       pageName="Destination"
       isTopVisible
+      headerHeight={28}
       onAddClick={()=> dispatch(showAddDestination())}
       enableMoreIcon
       moreIconContent={[
