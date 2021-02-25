@@ -1,47 +1,101 @@
 import React from 'react';
-import Select from "@material-ui/core/Select";
 import CTModal from "../../../components/Modal/CTModal";
 import CTLabel from "../../../components/Label/CTLabel";
 import CTInput from "../../../components/Input/CTInput";
+import CTSelect from "../../../components/Select/CTSelect";
 import "./AddDestination.scss";
 
+const REQUIRED_FIELDS = {
+  "Facebook": [
+    {
+      label: "Ad Account ID",
+      placeholder: "*********************",
+      type: "password",
+    },
+    {
+      label: "Access Token",
+      placeholder: "**********",
+      type: "password",
+    },
+    {
+      label: "App ID",
+      placeholder: "**********",
+      type: "password",
+    },
+    {
+      label: "App Secret",
+      placeholder: "**********",
+      type: "password",
+    },
+  ],
+  "Google Analytics": [
+    {
+      label: "Ad Account ID",
+      placeholder: "*********************",
+      type: "password",
+    },
+    {
+      label: "Access Token",
+      placeholder: "**********",
+      type: "password",
+    },
+    {
+      label: "App ID",
+      placeholder: "**********",
+      type: "password",
+    },
+  ],
+  "Sales Force Marketing Cloud": [
+    {
+      label: "Ad Account ID",
+      placeholder: "*********************",
+      type: "password",
+    },
+    {
+      label: "Access Token",
+      placeholder: "**********",
+      type: "password",
+    },
+    {
+      label: "App ID",
+      placeholder: "**********",
+      type: "password",
+    },
+  ],
+};
+
+const DESTINATION = Object.keys(REQUIRED_FIELDS);
+
 const AddDestination = () => {
-    const [selectedDestination, setselectedDestination] = React.useState(
-        "Facebook"
-      );
+    const [selectedDestination, setselectedDestination] = React.useState(DESTINATION[0]);
     const handleSelectedDestinationChange = (event) => {
         setselectedDestination(event.target.value);
     };
-    const addDestinationContent = (<div className="ct-destination-modal">
-          <CTLabel>Destination</CTLabel>
-          <Select
-            value={selectedDestination}
-            onChange={(e) => handleSelectedDestinationChange(e)}
-            label="Account ID"
-            className="ct-destination-modal-select"
-          >
-            <option value="Facebook">Facebook</option>
-          </Select>
-          {selectedDestination === "Facebook" ? (
-            <div className="ct-destination-fields">
-              <span className="ct-destination-field-card">
-                <CTLabel>IAM User Name</CTLabel>
-                <CTInput placeholder="IAM User Name" />
-              </span>
-              <span className="ct-destination-field-card">
-                <CTLabel>Password / Key</CTLabel>
-                <CTInput placeholder="Password / Key" />
-              </span>
-            </div>
-          ) : (
-            ""
-          )}
+    const addDestinationContent = (
+        <div className="ct-destination-modal">
+          <CTLabel>Select Destination</CTLabel>
+          <CTSelect selectOptions={DESTINATION} onChange={handleSelectedDestinationChange}/>
+          <div className="account-name-container">
+            <CTLabel>Account Name</CTLabel>
+            <CTInput placeholder="Account Name" />
+          </div>
+          <div className="ct-destination-fields">
+            { 
+              REQUIRED_FIELDS[selectedDestination].map(each=>(
+                <span key={each.label} className="ct-destination-field-card">
+                  <CTLabel>{each.label}</CTLabel>
+                  <CTInput placeholder={each.placeholder} type={each.type} />
+                </span>
+              ))
+            }
+          </div>
         </div>
     );
     return (
         <CTModal
             modalTitle="Add Destination"
-            modalSubtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            modalSubtitle={`Connect a destination so that you can get a deeper insight into your 
+            customers, segments, and audiences.`}
             modalBody={addDestinationContent}
             mainCTAText="Verify and Add"
         />
