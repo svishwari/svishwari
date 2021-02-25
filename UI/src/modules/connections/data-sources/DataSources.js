@@ -178,6 +178,7 @@ const DataSources = (props) => {
         data={props.dataSources}
         columns={columns}
         hasStarring
+        headerHeight={28}
         loading={!props.dataSources.length}
         pageName="Data Source"
         isTopVisible

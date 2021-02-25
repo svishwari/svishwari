@@ -2,3 +2,9 @@
   // background: $color; /* The Fallback */
   background: rgba($color, $opacity);
 }
+
+@mixin boldText {
+  font-family: Open Sans SemiBold;
+  font-style: normal;
+  font-weight: 600;
+}

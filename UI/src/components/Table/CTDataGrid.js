@@ -208,7 +208,7 @@ export default class CTDataGrid extends Component {
           showColumnRightBorder={false}
           disableColumnSelector
           rowHeight={60}
-          headerHeight={28}
+          headerHeight={this.props.headerHeight}
           filterModel={{
             items: [
               {
