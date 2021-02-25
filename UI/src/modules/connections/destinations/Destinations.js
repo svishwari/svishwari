@@ -66,7 +66,7 @@ const Destinations = (props) => {
             : <></>
           }
           </span>
-          <Link href="/destinations">
+          <Link to="/destinations">
             {`${params.getValue("destinationName")} `}
             <span
               className="iconify"

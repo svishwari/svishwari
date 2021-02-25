@@ -20,7 +20,6 @@ const CTList = (props) => {
       showColumnRightBorder={false}
       disableColumnSelector
       rowHeight={60}
-      headerHeight={28}
       {...props}
       className={classes.root}
       hideFooter

@@ -279,7 +279,7 @@ export default class CTDataGrid extends Component {
           showColumnRightBorder={false}
           disableColumnSelector
           rowHeight={60}
-          headerHeight={28}
+          headerHeight={this.props.headerHeight}
           filterModel={{
             items: [
               {
@@ -319,6 +319,7 @@ CTDataGrid.defaultProps = {
   isDownloadAble: false,
   bulkOperationText: "",
   moreIconContent: [],
+  headerHeight: 28,
   enableMoreIcon: false,
   filterTypes: {},
   onBulkRemove: () => {},

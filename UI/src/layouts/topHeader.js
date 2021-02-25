@@ -1,36 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useOktaAuth } from "@okta/okta-react";
-import { ReactComponent as Collapse } from "../assets/icons/collapse.svg";
-import { UserAvatar } from "../components/UserAvatar";
-import "./topHeader.scss";
+import React from 'react';
+import { connect } from 'react-redux';
+import { ReactComponent as Collapse } from '../assets/icons/collapse.svg';
+import { UserAvatar } from '../components/UserAvatar';
+import './topHeader.scss';
 
-const TopHeader = ({ isCollapsed, collapsed }) => {
-  const { authState, oktaAuth } = useOktaAuth();
-  const [userInfo, setUserInfo] = useState({ name: "" });
-
-  useEffect(() => {
-    if (!authState.isAuthenticated) {
-      // When user isn't authenticated, forget any user info
-      setUserInfo(null);
-    } else {
-      oktaAuth.getUser().then((info) => {
-        setUserInfo(info);
-      });
-    }
-  }, [authState, oktaAuth]);
-
+const TopHeader = (props ) => {
   const toggle = () => {
-    isCollapsed();
+    props.isCollapsed();
   };
   return (
     <div className="app-header ">
-      <Collapse
-        onClick={() => toggle()}
-        className={`trigger ${collapsed ? "extra-space" : ""}`}
-      />
-      <UserAvatar username={userInfo.name} />
+      <Collapse onClick={() => toggle()} className={`trigger ${props.collapsed ? 'extra-space' : ''}`} />
+      <UserAvatar username={props.userInfo.name} />
+      {/* <span>{props.userInfo.name}</span> */}
     </div>
   );
 };
 
-export default TopHeader;
+const mapStateToProps = (state) => ({
+  userInfo: state.user.loggedInUser || [],
+});
+
+export default connect(mapStateToProps)(TopHeader);

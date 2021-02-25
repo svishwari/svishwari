@@ -1,15 +1,33 @@
-import React, { useState } from "react";
-import "./PrivateLayout.scss";
+import React, { useState } from 'react';
+import { useOktaAuth } from '@okta/okta-react';
+import { useDispatch } from 'react-redux';
 
-import LeftNav from "./leftNav";
+import './PrivateLayout.scss';
 
 import TopHeader from "./topHeader";
 import ModalRoot from "../modules/modal/ModalRoot";
+import LeftNav from './leftNav';
+
+
+const setUser = (payload) => ({
+  type: 'updateLoggedInUser',
+  payload,
+});
 
 // import CTToast from '../components/Toast/CTToast';
 
 export const PrivateLayout = ({ children }) => {
   const [collapsed, setCollapseState] = useState(false);
+  const { authState, oktaAuth } = useOktaAuth();
+  const disptach = useDispatch();
+
+  React.useEffect(() => {
+    if (authState.isAuthenticated) {
+      oktaAuth.getUser().then((info) => {
+        disptach(setUser(info));
+      });
+    }
+  }, []);
 
   return (
     <div className="dash-layout">

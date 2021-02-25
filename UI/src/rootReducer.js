@@ -1,13 +1,13 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
 // Module Reducers
-import dashboardReducer from "./modules/dashboard/store/index";
-import userReducer from "./modules/auth/login/store/index";
-import connectionReducer from "./modules/connections/store/index";
+import dashboardReducer from './modules/dashboard/store/index';
+import userReducer from './modules/auth/store/index';
+import connectionReducer from './modules/connections/store/index';
 import modalReducer from "./modules/modal/index";
 
 const rootReducer = combineReducers({
-  dashboardReducer,
+  dashboard: dashboardReducer,
   user: userReducer,
   connections: connectionReducer,
   modal: modalReducer,
