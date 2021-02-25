@@ -5,8 +5,8 @@ import json
 from http import HTTPStatus
 from flask import Blueprint
 from flasgger import swag_from
-from api.model.cdm import CdmModel
-from api.schema.cdm import CdmSchema
+from huxunify.api.model.cdm import CdmModel
+from huxunify.api.schema.cdm import CdmSchema
 
 cdm_bp = Blueprint('cdm_bp', __name__)
 
@@ -50,3 +50,7 @@ def get_ingested_data():
 
     """
     return json.dumps(CdmModel().get_data_sources()), 200
+
+
+if __name__ == '__main__':
+    pass

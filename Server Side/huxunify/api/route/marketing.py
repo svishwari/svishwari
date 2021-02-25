@@ -5,8 +5,8 @@ import json
 from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
-from api.model.marketing import MarketingModel
-import api.schema.marketing as schema
+from huxunify.api.model.marketing import MarketingModel
+import huxunify.api.schema.marketing as schema
 
 
 marketing_bp = Blueprint('marketing_bp', __name__)

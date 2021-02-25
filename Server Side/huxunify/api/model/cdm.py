@@ -2,7 +2,7 @@
 The purpose of this file is for housing the Customer Data Management (CDM) related API models
 """
 import logging
-from api.data_connectors.snowflake_client import SnowflakeClient, PROCESSED_DATABASE
+from huxunify.api.data_connectors.snowflake_client import SnowflakeClient, PROCESSED_DATABASE
 
 
 class CdmModel:

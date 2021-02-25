@@ -5,8 +5,8 @@ import json
 from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
-from api.model.advertising import AdvertisingModel
-from api.schema.advertising import AdvertisingSchema
+from huxunify.api.model.advertising import AdvertisingModel
+from huxunify.api.schema.advertising import AdvertisingSchema
 
 advertising_bp = Blueprint('advertising_bp', __name__)
 

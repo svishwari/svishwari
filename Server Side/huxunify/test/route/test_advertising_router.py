@@ -2,7 +2,7 @@
 purpose of this file is testing the advertising performance router
 """
 from unittest import TestCase
-from app import create_app
+from huxunify.app import create_app
 
 
 class TestAdvertising(TestCase):
