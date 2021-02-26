@@ -12,10 +12,22 @@ import "./DataSource.scss";
 
 import { showAddDataSource } from "../../modal/action";
 
-// const markIngestionStatus = (payload) => ({
-//   type: "updateInestionStatus",
-//   payload,
-// });
+
+const FILTER_TYPES = {
+  "Starred": {
+    selectMultiple: false,
+    values: ["Starred", "Not Starred"]
+  },
+  "Connection Status": { 
+    selectMultiple: true,
+    values: ["Connected", "Not Connected"]
+  },
+  "Source": {
+    selectMultiple: false,
+    values: ["Client", "Amazon S3"]
+  }
+}
+
 const markConnecting = (payload) => ({
   type: "updateConnectionStatus",
   payload,
@@ -74,8 +86,7 @@ const DataSources = (props) => {
               <CTChip
                 hasIcons
                 isWorking={params.getValue("connectionStatus") === "Connected"}
-                isWorkingFn={triggerConnection}
-                isNotWorkingFn={triggerConnection}
+                onClickFunc={triggerConnection}
               >
                 {params.getValue("connectionStatus")}
               </CTChip>
@@ -105,8 +116,7 @@ const DataSources = (props) => {
               <CTChip
                 hasIcons
                 isWorking={params.getValue("ingested")}
-                isWorkingFn={() => triggerDataIngestion(params)}
-                isNotWorkingFn={() => triggerDataIngestion(params)}
+                onClickFunc={() => triggerDataIngestion(params)}
               >
                 Not ingested
               </CTChip>
@@ -181,7 +191,6 @@ const DataSources = (props) => {
         data={props.dataSources}
         columns={columns}
         hasStarring
-        headerHeight={28}
         loading={!props.dataSources.length}
         pageName="Data Source"
         isTopVisible
@@ -197,6 +206,7 @@ const DataSources = (props) => {
           {value: "1.3",decimals:"1",suffix: "k",title: "Stitched"},
           {value: "1.4",decimals:"1",suffix: "k",title: "Pinned"},
         ]}
+        filterTypes={FILTER_TYPES}
         moreIconContent={[
           {name: "Configure", function: ()=> {} },
         ]}

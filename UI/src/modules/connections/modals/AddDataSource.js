@@ -1,66 +1,64 @@
 import React from 'react';
-import Select from "@material-ui/core/Select";
 import CTModal from "../../../components/Modal/CTModal";
 import CTLabel from "../../../components/Label/CTLabel";
 import CTInput from "../../../components/Input/CTInput";
+import CTSelect from "../../../components/Select/CTSelect";
 import "./AddDataSource.scss";
 
+const REQUIRED_FIELDS = {
+  "Amazon S3": [
+    {
+      label: "IAM User Name",
+      placeholder: "IAM User Name",
+    },
+    {
+      label: "Password / Key",
+      placeholder: "**********",
+      type: "password",
+    },
+    {
+      label: "Filename",
+      placeholder: "Unique name for your file",
+    },
+    {
+      label: "Filepath",
+      placeholder: "example.csv",
+    },
+  ],
+  "CDP": [
+    {
+      label: "IAM User Name",
+      placeholder: "IAM User Name",
+    },
+    {
+      label: "Password / Key",
+      placeholder: "**********",
+      type: "password",
+    },
+  ]
+};
+
+const DATA_SOURCES = Object.keys(REQUIRED_FIELDS);
+
 const AddDataSource = () => {
-    const [selectedDataSource, setselectedDataSource] = React.useState(
-        "Amazon S3"
-      );
+    const [selectedDataSource, setselectedDataSource] = React.useState(DATA_SOURCES[0]);
     const handleSelectedDataSourceChange = (event) => {
         setselectedDataSource(event.target.value);
     };
-    const addDataSourceContent = (<div className="ct-datasource-modal">
+    const addDataSourceContent = (
+        <div className="ct-datasource-modal">
           <CTLabel>Data Source</CTLabel>
-          <Select
-            value={selectedDataSource}
-            onChange={(e) => handleSelectedDataSourceChange(e)}
-            label="Account ID"
-            className="ct-datasource-modal-select"
-          >
-            <option value="Amazon S3">Amazon S3</option>
-            <option value="CDP">CDP</option>
-            <option value="Facebook">Facebook</option>
-          </Select>
-    
-          {selectedDataSource === "Amazon S3" ? (
-            <div className="ct-datasource-fields">
-              <span className="ct-datasource-field-card">
-                <CTLabel>IAM User Name</CTLabel>
-                <CTInput placeholder="IAM User Name" />
-              </span>
-              <span className="ct-datasource-field-card">
-                <CTLabel>Password / Key</CTLabel>
-                <CTInput placeholder="Password / Key" />
-              </span>
-              <span className="ct-datasource-field-card">
-                <CTLabel>Filename</CTLabel>
-                <CTInput placeholder="Unique name for your file" />
-              </span>
-              <span className="ct-datasource-field-card">
-                <CTLabel>Filepath</CTLabel>
-                <CTInput placeholder="example.csv" />
-              </span>
-            </div>
-          ) : (
-            ""
-          )}
-          {selectedDataSource === "CDP" ? (
-            <div className="ct-datasource-fields">
-              <span className="ct-datasource-field-card">
-                <CTLabel>IAM User Name</CTLabel>
-                <CTInput placeholder="IAM User Name" />
-              </span>
-              <span className="ct-datasource-field-card">
-                <CTLabel>Password / Key</CTLabel>
-                <CTInput placeholder="Password / Key" />
-              </span>
-            </div>
-          ) : (
-            ""
-          )}
+          <CTSelect selectOptions={DATA_SOURCES} onChange={handleSelectedDataSourceChange}/>
+          <div className="ct-datasource-fields">
+            { 
+              REQUIRED_FIELDS[selectedDataSource].map(each=>(
+                <span key={each.label} className="ct-datasource-field-card">
+                  <CTLabel>{each.label}</CTLabel>
+                  <CTInput placeholder={each.placeholder} type={each.type} />
+                </span>
+              ))
+            }
+          </div>
         </div>
     );
     return (

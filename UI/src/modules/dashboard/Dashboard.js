@@ -105,8 +105,7 @@ const Dashboard = (props) => {
         return (
           <CTChip
             isWorking={params.getValue('status') === 'Delivered'}
-            isWorkingFn={triggerConnection}
-            isNotWorkingFn={triggerConnection}
+            onClickFunc={triggerConnection}
           >
             {params.getValue('status') === 'Delivered' ? params.getValue('status') : 'Deliver Now'}
           </CTChip>
@@ -123,8 +122,8 @@ const Dashboard = (props) => {
         <CTPopover
           popoverContent={
             <Box display="flex" flexDirection="column">
-              <ListItem>Facebook</ListItem>
-              <ListItem>Google</ListItem>
+              <Button><span className="iconify" data-icon="logos:facebook" data-inline="false" />{'\u00A0'}Facebook</Button>
+              <Button><span className="iconify" data-icon="logos:google-analytics" data-inline="false" />{'\u00A0'}Google</Button>
             </Box>
           }
         >

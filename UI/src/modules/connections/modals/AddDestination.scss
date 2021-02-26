@@ -2,6 +2,9 @@
 
 .ct-destination-modal {
   text-align: left;
+  .account-name-container {
+    margin-bottom: 20px;
+  }
   .ct-destination-modal-select {
     width: 100%;
     margin-bottom: 20px;
@@ -20,13 +23,12 @@
   }
   .ct-destination-fields {
     display: flex;
-    background: #f5f5f5;
-    padding: 8px;
+    background: $appLightGray3;
+    padding: 20px;
     border-radius: 5px;
     flex-wrap: wrap;
-    justify-content: flex-start;
     .ct-destination-field-card {
-      min-width: 48%;
+      min-width: 47%;
       margin: 8px;
     }
   }
