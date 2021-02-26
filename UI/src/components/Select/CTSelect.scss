@@ -1,0 +1,27 @@
+@import "../../theme/variables.scss";
+
+.MuiInput-underline.ct-select-wrapper {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid $appGreyBorder;
+    border-radius: 4px;
+    padding: 8px 12px;
+    .MuiSelect-select {
+        &:focus {
+            background-color: transparent;
+        }
+    }
+    &:before {
+        border-bottom: none;
+        transition: none;
+    }
+    &:hover:not(.Mui-disabled):before {
+        border-bottom: none;
+        transition: none;
+    }
+    &:after {
+        border-bottom: none;
+        transition: none;
+        transform: none;
+    } 
+}

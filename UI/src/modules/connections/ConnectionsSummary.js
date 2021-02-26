@@ -6,7 +6,7 @@ import PageTitle from "../../components/PageTitle";
 import { ReactComponent as TitleImage } from "../../assets/ConnectionsTitle.svg";
 import SummaryCard from "../../components/Cards/SummaryCard/SummaryCard";
 import CTList from "../../components/List/List";
-import { showAddDataSource } from "../modal/action";
+import { showAddDataSource, showAddDestination } from "../modal/action";
 
 const useStyles = makeStyles(() => ({
   contentWrapper: {
@@ -21,34 +21,28 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-between",
   },
   sectionTitleHeading: {
-    fontFamily: "Open Sans SemiBold",
-    fontStyle: "normal",
-    fontWeight: 600,
     fontSize: "16px",
     lineHeight: "24px",
-
     letterSpacing: "0.1px",
     color: "#333333",
   },
   sectionTitleHeadingLink: {
-    fontFamily: "Open Sans SemiBold",
-    fontStyle: "normal",
-    fontWeight: 600,
     fontSize: "14px",
     lineHeight: "22px",
-
+    fontWeight: "bold",
+    cursor: "pointer",
     letterSpacing: "0.3px",
     color: "#0076A8",
   },
 }));
 
 const summaryContent=[
-  {value: "20",suffix: "%",title: "Bogus"},
-  {value: "20",title: "Bogus"},
-  {value: "20",suffix: "%",title: "Bogus"},
-  {value: "20",suffix: "%",title: "Bogus"},
-  {value: "20",suffix: "%",title: "Bogus"},
-  {value: "20",suffix: "%",title: "Bogus"},
+  {value: 53,title: "Total Data Sources"},
+  {value: 24,title: "Ingested Records"},
+  {value: 20,suffix: "%",title: "% Ingested"},
+  {value: 600,title: "Errors"},
+  {value: 65,title: "Cleansed"},
+  {value: 23,title: "Empty"},
 ];
 
 const ConnectionsSummary = () => {
@@ -93,21 +87,31 @@ const ConnectionsSummary = () => {
       field: "name",
       headerName: "Destination",
       flex: 0.7,
-      renderCell: (params) => (
-        <Link to={() => false}>
-          <span
-            className="iconify"
-            data-icon={`mdi:${params.getValue("icon")}`}
-            data-inline="false"
-          />
-          {params.getValue("name")}{" "}
-          <span
-            className="iconify"
-            data-icon="mdi:open-in-new"
-            data-inline="false"
-          />
-        </Link>
-      ),
+      renderCell: (params) => {
+      const destinationLogo = params.getValue("destination");
+      return (
+        <>
+          <span style={{marginRight: "12px"}}>
+          {
+            destinationLogo === "fb" ?
+              <span className="iconify" data-icon="logos:facebook" data-inline="false" />
+            : destinationLogo === "sfmc" ?
+              <span className="iconify" data-icon="logos:salesforce" data-inline="false" />
+            : destinationLogo === "ga" ?
+              <span className="iconify" data-icon="grommet-icons:google" data-inline="false" />
+            : <></>
+          }
+          </span>
+          <Link to={() => false}>
+            {params.getValue("name")}{" "}
+            <span
+              className="iconify"
+              data-icon="mdi:open-in-new"
+              data-inline="false"
+            />
+          </Link>
+        </>
+      )},
     },
     {
       field: "account",
@@ -119,19 +123,19 @@ const ConnectionsSummary = () => {
     {
       id: 1,
       name: "Facebook Insights",
-      icon: "facebook",
+      destination: "fb",
       account: "Pendleton",
     },
     {
       id: 2,
       name: "Google Analytics",
-      icon: "google-analytics",
+      destination: "ga",
       account: "Pendleton",
     },
     {
       id: 3,
       name: "Salesforce Marketing Cloud",
-      icon: "salesforce",
+      destination: "sfmc",
       account: "Pendleton",
     },
   ];
@@ -159,7 +163,7 @@ const ConnectionsSummary = () => {
               </div>
               <div className="row">
                 {summaryContent.map(content =>
-                  <SummaryCard width="185px" value={content.value} suffix={content.suffix} title={content.title}/>
+                  <SummaryCard key={content.title} width="185px" value={content.value} suffix={content.suffix} title={content.title}/>
                 )}
               </div>
               <div className="mt-5">
@@ -177,9 +181,9 @@ const ConnectionsSummary = () => {
                 <h3 className={classes.sectionTitleHeading}>
                   <Link to="/connections/destinations">Destinations &gt;</Link>
                 </h3>
-                <Link href={() => false} className={classes.sectionTitleHeadingLink}>
+                <span className={classes.sectionTitleHeadingLink} onKeyPress={()=> dispatch(showAddDestination())} onClick={()=> dispatch(showAddDestination())}>
                   + Destination
-                </Link>
+                </span>
               </div>
             </div>
             <CTList columns={destinationColumns} rows={destinationData} />
