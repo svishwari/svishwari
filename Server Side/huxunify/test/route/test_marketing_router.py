@@ -1,5 +1,5 @@
 """
-purpose of this file is testing the advertising performance router
+purpose of this file is testing the marketing performance router
 """
 import json
 from unittest import TestCase
