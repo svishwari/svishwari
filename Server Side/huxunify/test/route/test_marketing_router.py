@@ -6,7 +6,7 @@ from unittest import TestCase
 from huxunify.app import create_app
 
 
-class TestAdvertising(TestCase):
+class TestMarketing(TestCase):
     """
     test all marketing routes
     """
