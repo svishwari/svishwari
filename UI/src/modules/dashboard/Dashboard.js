@@ -101,8 +101,7 @@ const Dashboard = (props) => {
         return (
           <CTChip
             isWorking={params.getValue('status') === 'Delivered'}
-            isWorkingFn={triggerConnection}
-            isNotWorkingFn={triggerConnection}
+            onClickFunc={triggerConnection}
           >
             {params.getValue('status') === 'Delivered' ? params.getValue('status') : 'Deliver Now'}
           </CTChip>

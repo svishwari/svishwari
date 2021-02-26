@@ -85,8 +85,7 @@ const DataSources = (props) => {
               <CTChip
                 hasIcons
                 isWorking={params.getValue("connectionStatus") === "Connected"}
-                isWorkingFn={triggerConnection}
-                isNotWorkingFn={triggerConnection}
+                onClickFunc={triggerConnection}
               >
                 {params.getValue("connectionStatus")}
               </CTChip>
@@ -118,8 +117,7 @@ const DataSources = (props) => {
               <CTChip
                 hasIcons
                 isWorking={params.getValue("ingested")}
-                isWorkingFn={() => triggerDataIngestion(params)}
-                isNotWorkingFn={() => triggerDataIngestion(params)}
+                onClickFunc={() => triggerDataIngestion(params)}
               >
                 Not ingested
               </CTChip>

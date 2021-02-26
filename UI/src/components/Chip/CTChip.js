@@ -1,41 +1,55 @@
-import React from "react";
-import { Chip, IconButton } from "@material-ui/core";
+import React, { useState } from "react";
+import { Chip } from "@material-ui/core";
+import { ReactComponent as RefreshCircle } from "../../assets/icons/refresh-circle.svg";
+import { ReactComponent as ArrowRightCircle } from "../../assets/icons/arrow-right-circle.svg";
 import "./CTChip.scss";
 
 const CTChip = ({
   hasIcons = true,
-  isWorkingFn,
-  isNotWorkingFn,
+  onClickFunc,
   isWorking = true,
   children,
-}) => (
-  <div className="ct-chip-wrapper">
+}) => {
+  const [isHovered,setisHovered] = useState(false);
+
+  const toggleHover = () => {
+    setisHovered(!isHovered);
+  }
+
+  return (
+  <div 
+    className="ct-chip-wrapper"
+    onKeyPress={onClickFunc}
+    onClick={onClickFunc}
+    onMouseOver={toggleHover} 
+    onMouseOut={toggleHover} 
+    onFocus={toggleHover}
+    onBlur={toggleHover}
+  >
     <Chip
       label={children}
-      className={`${isWorking ? "ct-chip-success" : "ct-chip-not-success"}`}
+      className={`${isWorking ? "ct-chip-success" : "ct-chip-not-success"} ${isHovered && "ct-chip-hover"}`}
     />
-    {hasIcons ? (
-      isWorking === true ? (
-        <IconButton onClick={() => isWorkingFn()}>
-          <span
-            className="iconify ct-chip-success-icon"
-            data-icon="mdi:refresh-circle"
-            data-inline="false"
-          />
-        </IconButton>
+      {hasIcons ? (
+        isWorking === true ? (
+          <>
+          <div className={`empty-space-container ${isHovered && "ct-s-hover"}`}/>
+          <RefreshCircle
+            className={`ct-chip-success-icon ${isHovered && "ct-chip-success-hover"}`}
+            />
+          </>
+        ) : (
+          <>
+          <div className={`empty-space-container ${isHovered && "ct-ns-hover"}`}/>
+          <ArrowRightCircle
+            className={`ct-chip-not-success-icon ${isHovered && "ct-chip-not-success-hover"}`}
+            />
+          </>
+        )
       ) : (
-        <IconButton onClick={() => isNotWorkingFn()}>
-          <span
-            className="iconify ct-chip-not-success-icon"
-            data-icon="mdi:arrow-right-circle"
-            data-inline="false"
-          />
-        </IconButton>
-      )
-    ) : (
-      <></>
-    )}
+        <></>
+      )}
   </div>
-);
+)};
 
 export default CTChip;

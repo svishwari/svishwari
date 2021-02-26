@@ -106,8 +106,7 @@ const Destinations = (props) => {
               <CTChip
                 hasIcons
                 isWorking={params.getValue("status") === "Connected"}
-                isWorkingFn={triggerConnection}
-                isNotWorkingFn={triggerConnection}
+                onClickFunc={triggerConnection}
               >
                 {params.getValue("status")}
               </CTChip>
