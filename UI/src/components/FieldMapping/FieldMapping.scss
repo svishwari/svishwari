@@ -1,9 +1,14 @@
 @import "../../theme/variables.scss";
 
 .field-mapping-wrapper {
-    margin-top: 30px;
+    margin-top: 20px;
     font-weight: 600;
     font-size: 14px;
+    .field-mapping-delete {
+        font-size: 26px;
+        cursor: pointer;
+        margin-left: 8px;
+    }
     .field-mapping-title {
         margin-bottom: 10px;
     }
@@ -14,5 +19,29 @@
     .field-type {
         font-size: 14px;
         color: $appLightGray2;
+    }
+    .add-field-container {
+        margin-bottom: 10px;
+        .add-field-icon {
+            color: $appSuccessGreen;
+            font-size: 26px;
+            cursor: pointer;
+        }
+        .add-field-text {
+            margin-left: 10px;
+        }
+    }
+}
+.field-mapping-popover{
+    padding: 4px 12px;
+    .field-mapping-popover-title {
+        font-weight: 600;
+        color: $appLightGray2;
+        margin-bottom: 10px;
+    }
+    .field-mapping-popover-type {
+        cursor: pointer;
+        font-weight: 400;
+        padding: 4px 0px;
     }
 }
