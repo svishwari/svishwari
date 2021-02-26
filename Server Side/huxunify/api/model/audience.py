@@ -28,6 +28,7 @@ class AudienceModel:
     """
 
     API = "https://audience-builder.main.use1.k8s.mgnt-xspdev.in/api/v1/audiences"
+    TOKEN = '<Update OKTA token here for audience service access.>'
 
     def __init__(self):
         self.message = "Hello audience"
@@ -51,25 +52,10 @@ class AudienceModel:
         :return:
         """
         # Make a request to audience service
-        # return requests.get(f'{self.API}').json()
-
-        audiences = []
-        audiences.append({
-                "audience_filters": [
-                    {
-                        "field": "age",
-                        "type": "max",
-                        "value": 60
-                    }
-                ],
-                "audience_name": "string",
-                "audience_type": "string",
-                "created": "2020-10-17T21:54:53.495000+00:00",
-                "updated": "2020-10-17T21:54:53.495000+00:00",
-                "audience_id": "5f5f7262997acad4bac4373b",
-                "ingestion_job_id": "5f5f7262997acad4bac4373b"
-        })
-        return audiences
+        response = requests.get(f'{self.API}',
+                                headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        print(response.json())
+        return response.json()
 
     def get_audience_by_id(self, audience_id):
         """
@@ -80,22 +66,9 @@ class AudienceModel:
         # Make a request to audience service
         # return requests.get(f'{self.API}').json()
 
-        audience = {
-                "audience_filters": [
-                    {
-                        "field": "age",
-                        "type": "max",
-                        "value": 60
-                    }
-                ],
-                "audience_name": "string",
-                "audience_type": "string",
-                "created": "2020-10-17T21:54:53.495000+00:00",
-                "updated": "2020-10-17T21:54:53.495000+00:00",
-                "audience_id": "5f5f7262997acad4bac4373b",
-                "ingestion_job_id": "5f5f7262997acad4bac4373b"
-        }
-        return audience
+        response = requests.get(f'{self.API}/{audience_id}',
+                                headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        return response.json()
 
     def create_audiences(self, data):
         """

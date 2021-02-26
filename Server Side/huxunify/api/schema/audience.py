@@ -13,7 +13,7 @@ class AudienceSchema(Schema):
     class Meta:
         """expose the fields for serialization"""
         # Fields to expose
-        fields = ["audience_name", "audience_type"]
+        fields = ["audience_filters", "audience_name", "audience_type", "audience_id", "created"]
 
 audience_schema = AudienceSchema()
 audiences_schema = AudienceSchema(many=True)
