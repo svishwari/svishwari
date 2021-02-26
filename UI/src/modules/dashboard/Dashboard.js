@@ -6,12 +6,16 @@ import CountUp from 'react-countup';
 // import DonutChart from 'react-d3-donut/es';
 // import CTUSAMap from '../../components/Charts/CTUSAMap';
 import { ReactComponent as HomeIllustration } from '../../assets/Home_Illustration.svg';
+import HelpCard from '../../assets/images/HelpCard1.png';
+import CDPCard from '../../assets/images/HelpCard2.png';
+import MarketingCard from '../../assets/images/HelpCard3.png';
 import PageTitle from '../../components/PageTitle';
 import './Dashboard.scss';
 import CTDataGrid from '../../components/Table/CTDataGrid';
 import CTPopover from '../../components/Popover/CTPopover';
 import { fetchSummaryInfo, fetchRecentSegments } from './store/action';
 import CTChip from '../../components/Chip/CTChip';
+import HelpResources from '../../components/HelpResources/HelpResources';
 
 const summaryCard = (item, i) => (
   <div className="summary-card" key={`${Math.random().toString(36).substr(2, 36)}`}>
@@ -125,7 +129,7 @@ const Dashboard = (props) => {
           }
         >
           <Button color="primary" style={{ textTransform: 'capitalize' }}>
-            Open in { ' '}<span className="iconify" data-icon="zmdi-caret-down" data-inline="false" />
+            Open in <span className="iconify" data-icon="zmdi-caret-down" data-inline="false" />
           </Button>
         </CTPopover>
       ),
@@ -148,6 +152,39 @@ const Dashboard = (props) => {
           </IconButton>
         </CTPopover>
       ),
+    },
+  ];
+  const helpCards = [
+    {
+      id:1,
+      title: 'Improving human experience with AI',
+      description: (
+        <Link to="/">
+          Read more{' '}
+          <span className="iconify" data-icon="mdi:chevron-double-right" data-inline="false" />
+        </Link>
+      ),
+      image: <img src={HelpCard} alt="help" />,
+    }, {
+      id:2,
+      title: 'Realize the potential in your customer data',
+      description: (
+        <Link to="/">
+          Read more{' '}
+          <span className="iconify" data-icon="mdi:chevron-double-right" data-inline="false" />
+        </Link>
+      ),
+      image: <img src={CDPCard} alt="help" />,
+    }, {
+      id: 3,
+      title: 'The ABCs of customer data in marketing',
+      description: (
+        <Link to="/">
+          Read more{' '}
+          <span className="iconify" data-icon="mdi:chevron-double-right" data-inline="false" />
+        </Link>
+      ),
+      image: <img src={MarketingCard} alt="help" />,
     },
   ];
 
@@ -183,6 +220,7 @@ const Dashboard = (props) => {
           data={getRecentSegments()}
         />
       </div>
+      <HelpResources title="Helpful Resources" content={helpCards} />
     </div>
   );
 };
