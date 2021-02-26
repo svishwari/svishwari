@@ -15,6 +15,10 @@ const newDataSourceAdded = (payload) => ({
   type: "newDataSourceAdded",
   payload,
 });
+const newDestinationAdded = (payload) => ({
+  type: "newDestinationAdded",
+  payload,
+});
 
 export const logUserOut = () => ({ type: "LOG_OUT" });
 
@@ -299,6 +303,19 @@ const destinationConnected = (payload) => ({
   payload,
 });
 
+const addNewDestination = () => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 800));
+  const response = {
+    id: "602ec30d21d42f1c4c5d22",
+    destination: "fb",
+    status: "Not Connected",
+    destinationName: "FB USER INSIGHTS",
+    account: "Pendleton",
+    lastUpdated: "03/26/19 05:04PM",
+  };
+  dispatch(newDestinationAdded(response));
+};
+
 const triggerDestinationConnectionCheck = (id) => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 3000));
   const response = {
@@ -316,4 +333,5 @@ export {
   addNewDataSource,
   fetchDestinations,
   triggerDestinationConnectionCheck,
+  addNewDestination,
 };
