@@ -73,16 +73,14 @@ class AdvertisingModel:
         # return requests.get(f'{self.API}/data-sources/{data_source_id}?star={star}').json()
         return "star data source mock, not available in Audience builder yet"
 
-    def validate_data_source(self, data_source_id, star=True):
+    def validate_data_source(self, data_source_id):
         """
-        # TODO method is not ready in Audience Builder yet.
         purpose of this function is to validate a data source
         :param data:
         :return:
         """
         # push the request, perhaps this is a post/put, or this is Update Datasource??
-        # return requests.get(f'{self.API}/data-sources/{data_source_id}?star={star}').json()
-        return "validate_data_source mock, not available in audience builder yet"
+        return requests.get(f'{self.API}/data-sources/{data_source_id}').json()
 
     def get_destination_count(self):
         """
@@ -137,8 +135,7 @@ class AdvertisingModel:
         :param data:
         :return:
         """
-        # return requests.put(f'{self.API}/delivery-platforms', data=data).json()
-        return "validate_delivery_platform mock, not available in Audience builder yet"
+        return requests.put(f'{self.API}/delivery-platforms/{delivery_platform_id}').json()
 
     def get_audience_count(self):
         """

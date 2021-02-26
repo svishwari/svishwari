@@ -207,8 +207,18 @@ def star_data_sources(data_source_id):
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route('/data-sources/<data_source_id>/validate', methods=['GET'])
+@advertising_bp.route('/data-sources/<data_source_id>', methods=['GET'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "data_source_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "ID of data source",
+            "default": "60382f755830d0e0c6898c53"
+        },
+    ],
     "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
@@ -375,8 +385,18 @@ def star_delivery_platforms():
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route('/delivery-platforms/<delivery_platform_id>/validate', methods=['GET'])
+@advertising_bp.route('/delivery-platforms/<delivery_platform_id>', methods=['GET'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "delivery_platform_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "ID of delivery platform",
+            "default": "603835e55830d0e0c6898c54"
+        },
+    ],
     "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
@@ -385,13 +405,13 @@ def star_delivery_platforms():
         }
     }
 })
-def validate_delivery_platforms():
+def validate_delivery_platforms(delivery_platform_id):
     """
     validate delivery platform
     ---
     """
     result = AdvertisingModel()
-    data_source = result.validate_delivery_platform(request.json)
+    data_source = result.validate_delivery_platform(delivery_platform_id)
     return json.dumps(data_source), 200
 
 
