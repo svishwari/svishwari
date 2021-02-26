@@ -105,7 +105,8 @@ const DataSources = (props) => {
         const triggerDataIngestion = () => {
           dispatch(triggerIngestionModal({
             fileName: params.row.fileName,
-            id: params.row.id
+            id: params.row.id,
+            status: "Ingestion in Progress...",
           }))
         };
         if(params.getValue("connectionStatus") !== "Connected"){

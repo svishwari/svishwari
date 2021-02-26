@@ -1,19 +1,35 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 // import { connect, useDispatch } from 'react-redux';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import CTModal from '../../../components/Modal/CTModal';
 import CTSwitch from '../../../components/Switch/CTSwitch';
 import FieldMapping from '../../../components/FieldMapping/FieldMapping';
 import './DataIngest.scss';
+import {
+  triggerIngestion,
+} from "../store/action";
+
+
+const markIngestionStatus = (payload) => ({
+  type: "updateInestionStatus",
+  payload,
+});
 
 const DataIngest = (modalProps) => {
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [state, setState] = useState({
     Stitch: true,
     Cleanse: true,
     PLL: false,
   });
+  const startIngestion = () => {
+    dispatch(markIngestionStatus(modalProps))
+    actionIngestion(modalProps.id);
+  };
+  const actionIngestion = (id) => {
+    dispatch(triggerIngestion(id));
+  };
   const handleFlagChange = (event) => {
     setState({
       ...state,
@@ -54,6 +70,7 @@ const DataIngest = (modalProps) => {
       mainCTAText="Ingest"
       disableBackdropClick
       disableEscapeKeyDown
+      onComplete={startIngestion}
     />
   );
 };

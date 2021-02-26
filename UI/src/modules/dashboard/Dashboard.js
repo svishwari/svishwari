@@ -20,7 +20,7 @@ import HelpResources from '../../components/HelpResources/HelpResources';
 const summaryCard = (item, i) => (
   <div className="summary-card" key={`${Math.random().toString(36).substr(2, 36)}`}>
     <div key={i} className="mb-2">
-      <span className="iconify" data-icon={`mdi:${item.icon}`} data-inline="false" />
+      <span className="iconify mr-2" data-icon={`mdi:${item.icon}`} data-inline="false" />
       {`Your ${item.title}`}
     </div>
     <Paper elevation={2} className="paper">
@@ -194,7 +194,7 @@ const Dashboard = (props) => {
   return (
     <div className="dashboard-wrapper">
       <PageTitle
-        title={`Welcome to ${props.userInfo.name}!`}
+        title={`Welcome Back, ${props.userInfo.name}!`}
         welcomePage
         summaryText="Hux is here to help you make better, faster decisions to improve your Customer Experiences."
         readMore="/"
