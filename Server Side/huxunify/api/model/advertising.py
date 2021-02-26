@@ -7,7 +7,9 @@ import requests
 # HARDCODED HEADERS, temporary solution.
 CODE_HEADERS = {
     'authority': "audience-builder.main.use1.k8s.mgnt-xspdev.in",
-    'authorization': "",
+    # TODO - manually copying token from browser for now, not the best, but at least it works
+    #  for testing
+    'authorization': "Bearer ####",
     "accept": "application/json, text/plain, */*"
 }
 

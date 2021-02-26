@@ -11,6 +11,7 @@ class CdmModel:
     """
     def __init__(self):
         self.message = "Hello cdm"
+        # TODO - using my username/password until
         self.db = SnowflakeClient(username='', password='')
         self.ctx = self.db.connect()
 

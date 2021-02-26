@@ -225,6 +225,25 @@ def fetch_models():
     return json.dumps(result), 200
 
 
+@marketing_bp.route('/segment/count', methods=['GET'])
+@swag_from({
+    "parameters": [],
+    "tags": ["marketing"],
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'list all segments',
+        }
+    }
+})
+def fetch_segments():
+    """
+    get count of all segments/destinations
+    ---
+    """
+    result = MarketingModel().get_segment_count()
+    return json.dumps(result), 200
+
+
 @marketing_bp.route('/segmentation', methods=['POST'])
 @swag_from({
     "parameters": [
