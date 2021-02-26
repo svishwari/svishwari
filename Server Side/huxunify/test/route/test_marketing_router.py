@@ -8,7 +8,7 @@ from huxunify.app import create_app
 
 class TestAdvertising(TestCase):
     """
-    test all advertising routes
+    test all marketing routes
     """
     def setUp(self):
         """
