@@ -20,53 +20,30 @@ const DataIngest = (modalProps) => {
       [event.target.name]: event.target.checked,
     });
   };
-    const fieldsAvailable = ['City', 'County Codes', 'DOB', 'Email Address']
+  const fieldsAvailable = ['City', 'County Codes', 'DOB', 'Email Address'];
+  const ingestFlags = ["Stitch","Cleanse","PLL"];
   const IngestContent = (
     <div className="data-ingest-wrapper">
       <div className="ingest-flags">
-        <div className="section">
-          <Typography className="heading">
-            Stitch
-          </Typography>
-          <div>
-            <CTSwitch
-              checked={state.Stitch}
-              onChange={handleFlagChange}
-              name="Stitch"
-              label={state.Stitch ? 'Yes' : 'No'}
-            />
-          </div>
-        </div>
-        <div className="section">
-          <Typography className="heading">
-            Cleanse
-          </Typography>
-          <div>
-            <CTSwitch
-              checked={state.Cleanse}
-              onChange={handleFlagChange}
-              name="Cleanse"
-              label={state.Cleanse ? 'Yes' : 'No'}
-            />
-          </div>
-        </div>
-        <div className="section">
-          <Typography className="heading">
-            PLL
-          </Typography>
-          <div>
-            <CTSwitch
-              checked={state.PLL}
-              onChange={handleFlagChange}
-              name="PLL"
-              label={state.PLL ? 'Yes' : 'No'}
-            />
-          </div>
-        </div>
+        {
+          ingestFlags.map(each=> 
+            <div key={each} className="section">
+              <Typography className="heading">
+                {each}
+              </Typography>
+              <div>
+                <CTSwitch
+                  checked={state[each]}
+                  onChange={handleFlagChange}
+                  name={each}
+                  label={state[each] ? 'Yes' : 'No'}
+                />
+              </div>
+            </div>
+          )
+        }
       </div>
-      <div className="field-mapping-wrapper">
-        <FieldMapping title="Field Mapping" fields={fieldsAvailable} />
-      </div>
+      <FieldMapping title="Field Mapping" fields={fieldsAvailable} />
     </div>
   );
   return (
