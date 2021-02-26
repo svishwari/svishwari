@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import CTDataGrid from "../../../components/Table/CTDataGrid";
 import {
   fetchDataSources,
-  triggerIngestion,
+  // triggerIngestion,
   triggerConnectionCheck,
 } from "../store/action";
 import CTChip from "../../../components/Chip/CTChip";
@@ -12,13 +12,18 @@ import "./DataSource.scss";
 
 import { showAddDataSource } from "../../modal/action";
 
-const markIngestionStatus = (payload) => ({
-  type: "updateInestionStatus",
-  payload,
-});
+// const markIngestionStatus = (payload) => ({
+//   type: "updateInestionStatus",
+//   payload,
+// });
 const markConnecting = (payload) => ({
   type: "updateConnectionStatus",
   payload,
+});
+const triggerIngestionModal = (props={}) => ({
+  type: "SHOW_MODAL",
+  modalType: "TRIGGER_INGEST",
+  modalProps: props,
 });
 
 const DataSources = (props) => {
@@ -87,12 +92,10 @@ const DataSources = (props) => {
       flex: 0.15,
       renderCell: (params) => {
         const triggerDataIngestion = () => {
-          const payload = {
-            id: params.getValue("id"),
-            status: "Ingestion in Progress...",
-          };
-          dispatch(markIngestionStatus(payload));
-          actionIngestion(params.getValue("id"));
+          dispatch(triggerIngestionModal({
+            fileName: params.row.fileName,
+            id: params.row.id
+          }))
         };
         if(params.getValue("connectionStatus") !== "Connected"){
           return <></>;
@@ -162,9 +165,9 @@ const DataSources = (props) => {
   const retrieveDataSources = () => {
     dispatch(fetchDataSources());
   };
-  const actionIngestion = (id) => {
-    dispatch(triggerIngestion(id));
-  };
+  // const actionIngestion = (id) => {
+  //   dispatch(triggerIngestion(id));
+  // };
   const initiateConnection = (id) => {
     dispatch(triggerConnectionCheck(id));
   };
