@@ -225,7 +225,7 @@ class AdvertisingModel:
         """
         # push the request
         # return requests.get(f'{self.API}/audiences/{audience_id}/deliveries').json()
-        return "get_audience_delivery_jobs mock, not available in Audience builder yet"
+        return requests.get(f'{self.API}/audiences/{audience_id}/deliveries').json()
 
 
 if __name__ == "__main__":
