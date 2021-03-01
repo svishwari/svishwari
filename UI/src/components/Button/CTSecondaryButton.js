@@ -14,7 +14,7 @@ const CTSecondaryButton = ({
   ...props
 }) => (
   <button
-    style={{ width: btnWidth, height: btnHeight }}
+    style={{ minWidth: btnWidth, minHeight: btnHeight }}
     className={
       isDisabled
         ? `ct-btn-secondary-disabled ${customClass}`

@@ -12,7 +12,7 @@ import { hideModal } from "../../modules/modal/action";
 
 const CTModal = React.forwardRef((props, ref) => {
   const [open, setOpen] = useState(true);
-  const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+  const [activeScreenIndex, setActiveScreenIndex] = useState(props.startScreenNumber);
 
   const dispatch = useDispatch();
 
@@ -35,14 +35,16 @@ const CTModal = React.forwardRef((props, ref) => {
   };
 
   const handleNextScreen = () => {
-    if (activeScreenIndex !== props.screens.screenComponents.length - 1) {
-      setActiveScreenIndex(activeScreenIndex + 1);
-    } else {
-      handleClose();
+    if(!props.screens.rightButtonProps[activeScreenIndex].isDisabled){
+      if (activeScreenIndex !== props.screens.screenComponents.length - 1) {
+        setActiveScreenIndex(activeScreenIndex + 1);
+      } else {
+        handleClose();
+      }
+      handleChangeScreen();
+      props.screens.righButtonFunctions[activeScreenIndex]();
+      props.onNextScreen();
     }
-    handleChangeScreen();
-    props.screens.righButtonFunctions[activeScreenIndex]();
-    props.onNextScreen();
   };
 
   const handleChangeScreen = () => {
@@ -114,7 +116,10 @@ const CTModal = React.forwardRef((props, ref) => {
           <div className="modal-footer-right">
             {props.footerRightButtons}
             {IS_MULTI_MODAL && (
-              <CTPrimaryButton onClick={handleNextScreen}>
+              <CTPrimaryButton 
+                {...props.screens.rightButtonProps[activeScreenIndex]} 
+                onClick={handleNextScreen}
+                >
                 {props.screens.righButtonNames[activeScreenIndex]}
               </CTPrimaryButton>
             )}
@@ -137,10 +142,17 @@ CTModal.defaultProps = {
   showIndicators: true,
   onClose: () => undefined,
   onNextScreen: () => undefined,
+  startScreenNumber: 0,
   onPreviousScreen: () => undefined,
   onChangeScreen: () => undefined,
   onComplete: () => undefined,
-  screens: {},
+  screens: {
+    screenComponents: [],
+    rightButtonProps: [],
+    righButtonNames: [],
+    righButtonFunctions: [],
+
+  },
   showFooter: true,
   mainCTAText: "Complete",
   backButton: "Back",
