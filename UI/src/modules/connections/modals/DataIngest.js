@@ -1,6 +1,5 @@
 import { Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-// import { connect, useDispatch } from 'react-redux';
 import { connect, useDispatch } from 'react-redux';
 import CTModal from '../../../components/Modal/CTModal';
 import CTSwitch from '../../../components/Switch/CTSwitch';
@@ -21,7 +20,7 @@ const DataIngest = (modalProps) => {
   const [state, setState] = useState({
     Stitch: true,
     Cleanse: true,
-    PLL: false,
+    PII: false,
   });
   const startIngestion = () => {
     dispatch(markIngestionStatus(modalProps))
@@ -37,7 +36,7 @@ const DataIngest = (modalProps) => {
     });
   };
   const fieldsAvailable = ['City', 'County Codes', 'DOB', 'Email Address'];
-  const ingestFlags = ["Stitch","Cleanse","PLL"];
+  const ingestFlags = ["Stitch","Cleanse","PII"];
   const IngestContent = (
     <div className="data-ingest-wrapper">
       <div className="ingest-flags">
