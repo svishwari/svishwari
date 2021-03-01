@@ -7,13 +7,13 @@ export const UserAvatar = ({ username }) => {
   const { oktaAuth } = useOktaAuth();
 
   const getInitials = (name) =>
-    name
+    name ? name
       .toString()
       .match(/(^\S\S?|\b\S)?/g)
       .join("")
       .match(/(^\S|\S$)?/g)
       .join("")
-      .toUpperCase();
+      .toUpperCase() : "";
   const popover = (
     <Popover id="user-menu" className="userAvatarMenu">
       <Popover.Content>

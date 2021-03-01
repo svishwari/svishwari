@@ -2,9 +2,9 @@ import React from "react";
 import "./CTPopover.scss";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
-const CTPopover = ({ popoverContent, children, ...props }) => {
+const CTPopover = ({ popoverContent,customClass, children, ...props }) => {
   const popover = (
-    <Popover className="ct-popover-wrapper">
+    <Popover className={`ct-popover-wrapper ${customClass}`}>
       <Popover.Content>{popoverContent}</Popover.Content>
     </Popover>
   );

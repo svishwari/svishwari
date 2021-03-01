@@ -2,6 +2,7 @@
 // import slugs from "../../../resources/slugs";
 
 const setDataSources = (payload) => ({ type: "loadDataSources", payload });
+const setDestinations = (payload) => ({ type: "loadDestinations", payload });
 const ingestionCompleted = (payload) => ({
   type: "ingestionComplete",
   payload,
@@ -12,6 +13,10 @@ const dataSourceConnected = (payload) => ({
 });
 const newDataSourceAdded = (payload) => ({
   type: "newDataSourceAdded",
+  payload,
+});
+const newDestinationAdded = (payload) => ({
+  type: "newDestinationAdded",
   payload,
 });
 
@@ -33,6 +38,7 @@ const fetchDataSources = () => async (dispatch) => {
       empty: 148,
       bogus: 43,
       cleansed: 9,
+      starred: true,
     },
     {
       id: "602ec30e3d14a94dc1f30e97",
@@ -46,6 +52,7 @@ const fetchDataSources = () => async (dispatch) => {
       empty: 212,
       bogus: 45,
       cleansed: 1,
+      starred: true,
     },
     {
       id: "602ec30ed4a16f2941a2e37a",
@@ -59,6 +66,7 @@ const fetchDataSources = () => async (dispatch) => {
       empty: 393,
       bogus: 21,
       cleansed: 26,
+      starred: true,
     },
     {
       id: "602ec30eb4bd75c785ecc523",
@@ -85,6 +93,7 @@ const fetchDataSources = () => async (dispatch) => {
       empty: 278,
       bogus: 21,
       cleansed: 15,
+      starred: true,
     },
     {
       id: "602ec30ef17d5ba0428cbb5e",
@@ -98,6 +107,7 @@ const fetchDataSources = () => async (dispatch) => {
       empty: 316,
       bogus: 21,
       cleansed: 19,
+      starred: true,
     },
     {
       id: "602ec30e8b941a5dcd05c61d",
@@ -110,6 +120,7 @@ const fetchDataSources = () => async (dispatch) => {
       recordsIngested: 500,
       empty: 174,
       bogus: 40,
+      starred: true,
       cleansed: 10,
     },
     {
@@ -141,6 +152,33 @@ const fetchDataSources = () => async (dispatch) => {
     {
       id: "602ec30eeba7526a18d2db70",
       fileName: "File Name 10",
+      source: "Client",
+      lastUpdated: "11/27/19 06:16AM",
+      connectionStatus: "Not Connected",
+      ingested: true,
+      ingestionStatus: true,
+      recordsIngested: 484,
+      empty: 53,
+      bogus: 21,
+      cleansed: 19,
+      starred: true,
+    },
+    {
+      id: "602ec30eeba7526a18d2db23",
+      fileName: "File Name 11",
+      source: "Client",
+      lastUpdated: "11/27/19 06:16AM",
+      connectionStatus: "Not Connected",
+      ingested: true,
+      ingestionStatus: true,
+      recordsIngested: 484,
+      empty: 53,
+      bogus: 21,
+      cleansed: 19,
+    },
+    {
+      id: "602ec30eeba3226a18d2db23",
+      fileName: "File Name 12",
       source: "Client",
       lastUpdated: "11/27/19 06:16AM",
       connectionStatus: "Not Connected",
@@ -188,9 +226,112 @@ const addNewDataSource = () => async (dispatch) => {
   dispatch(newDataSourceAdded(response));
 };
 
+
+//  Destination related actions
+const fetchDestinations = () => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 2000));
+  const destinationResponse = [
+    {
+      id: "602ec30dc920d42f1c4c5d22",
+      destination: "fb",
+      status: "Not Connected",
+      destinationName: "File Name 1",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30e3d14a94dc1f30e97",
+      destination: "ga",
+      status: "Not Connected",
+      destinationName: "File Name 2",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30ed4a16f2941a2e37a",
+      destination: "sfmc",
+      status: "Not Connected",
+      destinationName: "File Name 3",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30eb4bd75c785ecc523",
+      destination: "ga",
+      status: "Connected",
+      destinationName: "File Name 4",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30e74c166dc2623be9e",
+      destination: "fb",
+      status: "Not Connected",
+      destinationName: "File Name 5",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30ef17d5ba0428cbb5e",
+      destination: "fb",
+      status: "Not Connected",
+      destinationName: "File Name 6",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30e8b941a5dcd05c61d",
+      destination: "sfmc",
+      status: "Connected",
+      destinationName: "File Name 7",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    },
+    {
+      id: "602ec30ed02a9acce5f1e477",
+      destination: "sfmc",
+      status: "Not Connected",
+      destinationName: "File Name 8",
+      account: "Pendleton",
+      lastUpdated: "03/26/19 05:04PM",
+    }
+  ];
+  dispatch(setDestinations(destinationResponse));
+}
+const destinationConnected = (payload) => ({
+  type: "destinationConnected",
+  payload,
+});
+
+const addNewDestination = () => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 800));
+  const response = {
+    id: "602ec30d21d42f1c4c5d22",
+    destination: "fb",
+    status: "Not Connected",
+    destinationName: "FB USER INSIGHTS",
+    account: "Pendleton",
+    lastUpdated: "03/26/19 05:04PM",
+  };
+  dispatch(newDestinationAdded(response));
+};
+
+const triggerDestinationConnectionCheck = (id) => async (dispatch) => {
+  await new Promise((done) => setTimeout(() => done(), 3000));
+  const response = {
+    id,
+    status: "Connected",
+  };
+  dispatch(destinationConnected(response));
+};
+
+
 export {
   fetchDataSources,
   triggerIngestion,
   triggerConnectionCheck,
   addNewDataSource,
+  fetchDestinations,
+  triggerDestinationConnectionCheck,
+  addNewDestination,
 };

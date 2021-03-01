@@ -1,0 +1,32 @@
+@import "../../../theme/variables";
+
+.ct-datasource-modal {
+  text-align: left;
+  .ct-datasource-modal-select {
+    width: 100%;
+    margin-bottom: 20px;
+    background: white;
+    padding: 8px 12px;
+    .MuiInput-underline {
+      border: none;
+      border-radius: 5px;
+      &:hover {
+        border-bottom: none;
+      }
+      &:before {
+        border: none;
+      }
+    }
+  }
+  .ct-datasource-fields {
+    display: flex;
+    background: $appLightGray3;
+    padding: 20px;
+    border-radius: 5px;
+    flex-wrap: wrap;
+    .ct-datasource-field-card {
+      min-width: 47%;
+      margin: 8px;
+    }
+  }
+}

@@ -1,11 +1,13 @@
-@import "./theme/variables";
-@import "./theme/appTheme";
+@import './theme/variables';
+@import './theme/appTheme';
 
 html,
 body {
   min-height: 100vh;
   min-width: 100vw;
-  font-family: "Open Sans" !important;
+  font-family: 'Open Sans SemiBold';
+  color: #333333;
+  font-style: normal;
 }
 body {
   min-height: 100vh;
@@ -16,3 +18,4 @@ body {
     min-width: 100vw;
   }
 }
+

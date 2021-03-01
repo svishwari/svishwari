@@ -1,10 +1,12 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import PageTitle from "../../components/PageTitle";
 import { ReactComponent as TitleImage } from "../../assets/ConnectionsTitle.svg";
 import SummaryCard from "../../components/Cards/SummaryCard/SummaryCard";
 import CTList from "../../components/List/List";
+import { showAddDataSource, showAddDestination } from "../modal/action";
 
 const useStyles = makeStyles(() => ({
   contentWrapper: {
@@ -19,27 +21,32 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-between",
   },
   sectionTitleHeading: {
-    fontFamily: "Open Sans SemiBold",
-    fontStyle: "normal",
-    fontWeight: 600,
     fontSize: "16px",
     lineHeight: "24px",
-
     letterSpacing: "0.1px",
     color: "#333333",
   },
   sectionTitleHeadingLink: {
-    fontFamily: "Open Sans SemiBold",
-    fontStyle: "normal",
-    fontWeight: 600,
     fontSize: "14px",
     lineHeight: "22px",
-
+    fontWeight: "bold",
+    cursor: "pointer",
     letterSpacing: "0.3px",
     color: "#0076A8",
   },
 }));
+
+const summaryContent=[
+  {value: 53,title: "Total Data Sources"},
+  {value: 24,title: "Ingested Records"},
+  {value: 20,suffix: "%",title: "% Ingested"},
+  {value: 600,title: "Errors"},
+  {value: 65,title: "Cleansed"},
+  {value: 23,title: "Empty"},
+];
+
 const ConnectionsSummary = () => {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const dataSourcesColumns = [
     {
@@ -80,21 +87,31 @@ const ConnectionsSummary = () => {
       field: "name",
       headerName: "Destination",
       flex: 0.7,
-      renderCell: (params) => (
-        <Link to={() => false}>
-          <span
-            className="iconify"
-            data-icon={`mdi:${params.getValue("icon")}`}
-            data-inline="false"
-          />
-          {params.getValue("name")}{" "}
-          <span
-            className="iconify"
-            data-icon="mdi:open-in-new"
-            data-inline="false"
-          />
-        </Link>
-      ),
+      renderCell: (params) => {
+      const destinationLogo = params.getValue("destination");
+      return (
+        <>
+          <span style={{marginRight: "12px"}}>
+          {
+            destinationLogo === "fb" ?
+              <span className="iconify" data-icon="logos:facebook" data-inline="false" />
+            : destinationLogo === "sfmc" ?
+              <span className="iconify" data-icon="logos:salesforce" data-inline="false" />
+            : destinationLogo === "ga" ?
+              <span className="iconify" data-icon="grommet-icons:google" data-inline="false" />
+            : <></>
+          }
+          </span>
+          <Link to={() => false}>
+            {params.getValue("name")}{" "}
+            <span
+              className="iconify"
+              data-icon="mdi:open-in-new"
+              data-inline="false"
+            />
+          </Link>
+        </>
+      )},
     },
     {
       field: "account",
@@ -106,19 +123,19 @@ const ConnectionsSummary = () => {
     {
       id: 1,
       name: "Facebook Insights",
-      icon: "facebook",
+      destination: "fb",
       account: "Pendleton",
     },
     {
       id: 2,
       name: "Google Analytics",
-      icon: "google-analytics",
+      destination: "ga",
       account: "Pendleton",
     },
     {
       id: 3,
       name: "Salesforce Marketing Cloud",
-      icon: "salesforce",
+      destination: "sfmc",
       account: "Pendleton",
     },
   ];
@@ -140,35 +157,14 @@ const ConnectionsSummary = () => {
                 <h3 className={classes.sectionTitleHeading}>
                   <Link to="/connections/data-sources">Data Sources &gt;</Link>
                 </h3>
-                <Link href={() => false} className={classes.sectionTitleHeadingLink}>
+                <span className={classes.sectionTitleHeadingLink} onKeyPress={()=> dispatch(showAddDataSource())} onClick={()=> dispatch(showAddDataSource())}>
                   + DataSource
-                </Link>
+                </span>
               </div>
               <div className="row">
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="52" title="Total Data Sources" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="24" title="Total Data Sources" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard
-                    value="20"
-                    suffix="%"
-                    title="Total Data Sources"
-                  />
-                </div>
-              </div>
-              <div className="row mt-4">
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="600" title="Bogus" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="65" title="Cleansed" />
-                </div>
-                <div className="col-md-4 col-sm-3 col-xs-6 ">
-                  <SummaryCard value="23" title="Empty" />
-                </div>
+                {summaryContent.map(content =>
+                  <SummaryCard key={content.title} width="185px" value={content.value} suffix={content.suffix} title={content.title}/>
+                )}
               </div>
               <div className="mt-5">
                 <CTList
@@ -183,11 +179,11 @@ const ConnectionsSummary = () => {
             <div className={classes.section}>
               <div className={classes.sectionTitle}>
                 <h3 className={classes.sectionTitleHeading}>
-                  <Link to="/connections/data-sources">Destinations &gt;</Link>
+                  <Link to="/connections/destinations">Destinations &gt;</Link>
                 </h3>
-                <Link href={() => false} className={classes.sectionTitleHeadingLink}>
+                <span className={classes.sectionTitleHeadingLink} onKeyPress={()=> dispatch(showAddDestination())} onClick={()=> dispatch(showAddDestination())}>
                   + Destination
-                </Link>
+                </span>
               </div>
             </div>
             <CTList columns={destinationColumns} rows={destinationData} />

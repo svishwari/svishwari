@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import CTPrimaryButton from "../Button/CTPrimaryButton";
 import "./CTDataGridTop.scss";
 import CTFilter from "../Filter/CTFilter";
+import CTSecondaryButton from "../Button/CTSecondaryButton";
 
 // TO DO ITEMS CHANGE FILTER COMPONENT
 const CTDataGridTop = ({
@@ -10,10 +11,40 @@ const CTDataGridTop = ({
   onRemove,
   onDownload,
   selectedRows,
-  pageName = "Audience",
+  pageName,
   changeEditing,
-  isEditing = false,
-}) => (
+  isEditing,
+  isSummaryEnabled,
+  onSummaryToggle,
+  isDownloadAble,
+  bulkOperationText,
+  onBulkOperation,
+  onFilterChange,
+  onClearAll,
+  filterTypes,
+}) => {
+const [gridTopState,setGridTopState] = useState({
+  isSummaryHidden: true,
+  isUserEditing: isEditing,
+});
+
+const toggleSummary = () => {
+  setGridTopState(prevState => ({
+    ...prevState,
+    isSummaryHidden: !prevState.isSummaryHidden,
+  }))
+  onSummaryToggle()
+}
+
+const toggleEditing = () => {
+  setGridTopState(prevState => ({
+    ...prevState,
+    isUserEditing: !prevState.isUserEditing,
+  }))
+  changeEditing();
+}
+
+return (
   <div className="ct-grid-top-wrapper">
     <span className="ct-grid-top-left">
       <span
@@ -26,21 +57,23 @@ const CTDataGridTop = ({
           onSearch(e);
         }}
         className="ct-grid-search-input"
-        placeholder="Search"
+        placeholder={`Search ${pageName}s`}
       />
     </span>
     <span className="ct-grid-top-right">
       <span className="ct-grid-icon-buttons">
-        {isEditing ? (
+        {gridTopState.isUserEditing ? (
           <>
-            <button type="button" onClick={() => onDownload(selectedRows)}>
-              <span
-                className="iconify"
-                data-icon="mdi:smile"
-                data-inline="false"
-              />
-            </button>
-            <button type="button" onClick={() => onRemove(selectedRows)}>
+            { isDownloadAble && 
+              <button type="button" onClick={() => onDownload(selectedRows)}>
+                <span
+                  className="iconify"
+                  data-icon="mdi:download"
+                  data-inline="false"
+                />
+              </button>
+            }
+            <button type="button" onClick={() => onRemove()}>
               <span
                 className="iconify"
                 data-icon="mdi:delete"
@@ -48,10 +81,13 @@ const CTDataGridTop = ({
               />
               <span className="ct-grid-remove-text">Remove</span>
             </button>
+            { bulkOperationText !=="" && 
+              <CTSecondaryButton onClick={() => onBulkOperation(selectedRows)}>{bulkOperationText}</CTSecondaryButton>
+            }
           </>
         ) : (
           <>
-            <button type="button" onClick={() => changeEditing()}>
+            <button type="button" onClick={() => toggleEditing()}>
               <span
                 className="iconify"
                 data-icon="mdi:pencil"
@@ -60,12 +96,20 @@ const CTDataGridTop = ({
             </button>
           </>
         )}
-        <button type="button" >
-          <CTFilter />
-        </button>
+        <CTFilter filterTypes={filterTypes} onFilterChange={onFilterChange} onClearAll={onClearAll}/>
       </span>
-      {isEditing ? (
-        <CTPrimaryButton onClick={() => changeEditing()}>
+      <span className="ct-grid-summary">
+        {isSummaryEnabled && !gridTopState.isUserEditing ?
+            gridTopState.isSummaryHidden ? (
+              <CTSecondaryButton  onClick={toggleSummary}>Show Summary</CTSecondaryButton>
+            ):(
+              <CTPrimaryButton onClick={toggleSummary}>Hide Summary</CTPrimaryButton>
+            ):(
+            <></>
+        )}
+      </span>
+      {gridTopState.isUserEditing ? (
+        <CTPrimaryButton onClick={() => toggleEditing()}>
           Done &amp; Return
         </CTPrimaryButton>
       ) : (
@@ -75,6 +119,6 @@ const CTDataGridTop = ({
       )}
     </span>
   </div>
-);
+)};
 
 export default CTDataGridTop;

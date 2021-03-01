@@ -11,11 +11,6 @@ const connectionReducer = (state = defaultState, action) => {
         ...state,
         dataSources: [...action.payload] || [],
       };
-    case "loadDataExtensions":
-      return {
-        ...state,
-        destinations: [...action.payload],
-      };
     case "updateInestionStatus":
       const tmpDS = JSON.parse(JSON.stringify(state.dataSources));
       const _record = tmpDS.filter((item) => item.id === action.payload.id);
@@ -62,6 +57,35 @@ const connectionReducer = (state = defaultState, action) => {
       return {
         ...state,
         dataSources: ___tmpDS,
+      };
+    //  Destination related dispatches
+    case "loadDestinations":
+      return {
+        ...state,
+        destinations: [...action.payload] || [],
+      };
+    case "newDestinationAdded":
+      const originalDestination = JSON.parse(JSON.stringify(state.destinations));
+      originalDestination.unshift(action.payload);
+      return {
+        ...state,
+        destinations: originalDestination,
+      };
+    case "updateDestinationConnectionStatus":
+      const originalDestinationDATA = JSON.parse(JSON.stringify(state.destinations));
+      const destinationToBeConnected = originalDestinationDATA.filter((item) => item.id === action.payload.id);
+      destinationToBeConnected[0].status = "Connecting...";
+      return {
+        ...state,
+        destinations: originalDestinationDATA,
+      };
+    case "destinationConnected":
+      const originalDestinationDATA2 = JSON.parse(JSON.stringify(state.destinations));
+      const connectedDestination = originalDestinationDATA2.filter((item) => item.id === action.payload.id);
+      connectedDestination[0].status = "Connected";
+      return {
+        ...state,
+        destinations: originalDestinationDATA2,
       };
     default:
       return state;

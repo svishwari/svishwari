@@ -7,6 +7,9 @@ import { ReactComponent as Starred } from "../../assets/icons/Starred.svg";
 import "./CTDataGrid.scss";
 
 import CTDataGridTop from "./CTDataGridTop";
+import SummaryCard from "../Cards/SummaryCard/SummaryCard";
+import CTCardGroup from "../Cards/CardGroup/CTCardGroup";
+import CTPopover from "../Popover/CTPopover";
 
 export default class CTDataGrid extends Component {
   starredColumn = {
@@ -25,9 +28,40 @@ export default class CTDataGrid extends Component {
     },
   };
 
+  moreColumn = {
+    field: "more",
+    headerName: " ",
+    renderCell: (params) => {
+      const popOverContent = this.props.moreIconContent.map(content => 
+          <div key={content.name} onKeyPress={() => content.function()} onClick={content.function}>{content.name}</div>
+      );
+      const removeItem = <div 
+                    onKeyPress={() => this.removeRow(params.getValue("id"))}
+                    onClick={()=>this.removeRow(params.getValue("id"))}
+                    style={{cursor: "pointer"}}
+                    key="remove"
+                  >
+                    Remove
+                  </div>
+      popOverContent.push(removeItem);
+
+      return (
+        <CTPopover popoverContent={popOverContent}>
+          <IconButton aria-label="more" size="small">
+            <span className="iconify" data-icon="mdi:dots-vertical" data-inline="false" />
+          </IconButton>
+        </CTPopover>
+      );
+    },
+  };
+
   applicableColumns = this.props.hasStarring
   ? [this.starredColumn, ...this.props.columns]
   : this.props.columns;
+
+  applicableColumns = this.props.enableMoreIcon
+  ? [...this.applicableColumns,this.moreColumn]
+  : this.applicableColumns;
 
   constructor(props) {
     super(props);
@@ -37,6 +71,7 @@ export default class CTDataGrid extends Component {
       isEditing: false,
       selectedRows: [],
       searchFilter: "",
+      isSummaryVisible: false,
     };
   }
 
@@ -46,6 +81,94 @@ export default class CTDataGrid extends Component {
       this.setState({ dataGridData:  propsData});
     }
   }
+
+  camelize = (str) => str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
+      if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+      return index === 0 ? match.toLowerCase() : match.toUpperCase();
+  })
+
+  // create the unique filter values present in the data
+  createFilterTypes = (types) => {
+    // get all unique values for each row in props.rows
+    const _types = {...types};
+
+    // create regular filters
+    Object.keys(types).filter(type => !_types[type].range).forEach(type => {
+      _types[type].values = [...new Set(this.state.dataGridData.map(row => row[type]))]
+    })
+
+    return _types;
+  }
+
+  onFilterChange = (filterApplied) => {
+    if (filterApplied === {}) {
+      this.setState({ dataGridData:  this.props.data});
+    }
+    else {
+      const matchingRows =[];
+      let conditions;
+      let permitted;
+
+      this.props.data.forEach(row => {
+
+        conditions = Object.keys(filterApplied).map(type => {
+
+          if( type === "Starred" ){
+            if ( filterApplied.Starred.includes("Starred") ) {
+              if( !row.starred) {
+                return false;
+              }
+            }
+            if ( filterApplied.Starred.includes("Not Starred") ) {
+              if( row.starred) {
+                return false;
+              }
+            }
+            return true;
+          }
+          const typeStr = this.camelize(type);
+          if (!filterApplied[type] || filterApplied[type] === []) { permitted = this.createFilterTypes(this.props.filterTypes) }
+          else { permitted = filterApplied[type] }
+          return permitted.includes(row[typeStr]);
+        });
+
+
+        // checks that a row satisfies *all* of the included filter types
+        const rowSatisfiesFilters = !conditions.includes(false);
+        if (rowSatisfiesFilters) { 
+          matchingRows.push(row);
+        }
+
+      });
+      this.setState({ dataGridData:  matchingRows});
+    }
+  };
+
+  onClearAll = () => {
+    this.setState({
+      dataGridData: this.props.data,
+    });
+  };
+
+  onSummaryToggle = () => {
+    this.setState(prevState => ({
+      isSummaryVisible: !prevState.isSummaryVisible,
+    }));
+  };
+
+  onBulkOperation = () => {
+    const rowsTobeOperated = [];
+    this.state.selectedRows.forEach((x) => {
+      // eslint-disable-next-line eqeqeq
+      const index = this.state.dataGridData.findIndex((y) => y.id == x);
+      rowsTobeOperated.push(this.state.dataGridData[index]);
+    });
+
+    const bulkSelectedRows = this.state.dataGridData.filter((value) =>
+      rowsTobeOperated.includes(value)
+    );
+    this.props.onBulkFunction(bulkSelectedRows);
+  };
 
   updateStarring = (params) => {
     this.updateItem(params.row.id, { starred: !params.row.starred });
@@ -114,16 +237,38 @@ export default class CTDataGrid extends Component {
   render() {
     return (
       <>
+      { this.props.isTopVisible ?
+      <>
         <CTDataGridTop
           pageName={this.props.pageName}
+          isSummaryEnabled={this.props.isSummaryEnabled}
           onSearch={this.onSearch}
           onAddClick={this.props.onAddClick}
           onDownload={this.props.onDownload}
           onRemove={this.removeSelectedRows}
           selectedRows={this.state.selectedRows}
+          onFilterChange={this.onFilterChange}
+          onClearAll={this.onClearAll}
+          filterTypes={this.props.filterTypes}
           isEditing={this.state.isEditing}
           changeEditing={this.toggleEditing}
+          onSummaryToggle={this.onSummaryToggle}
+          isDownloadAble={this.props.isDownloadAble}
+          onBulkOperation={this.onBulkOperation}
+          bulkOperationText={this.props.bulkOperationText}
         />
+        {
+          this.state.isSummaryVisible ? 
+          <CTCardGroup style={{margin: "10px 20px"}}>
+          {this.props.summaryContent.map(content =>
+          <SummaryCard key={content.title} decimals={content.decimals} value={content.value} suffix={content.suffix} title={content.title}/>
+          )}
+          </CTCardGroup>
+          : <></>
+        }
+      </>
+        : <></>
+      }
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}
@@ -134,7 +279,7 @@ export default class CTDataGrid extends Component {
           showColumnRightBorder={false}
           disableColumnSelector
           rowHeight={60}
-          headerHeight={28}
+          headerHeight={this.props.headerHeight}
           filterModel={{
             items: [
               {
@@ -162,3 +307,24 @@ export default class CTDataGrid extends Component {
     );
   }
 }
+
+CTDataGrid.defaultProps = {
+  hasStarring: false,
+  columns: [],
+  data: [],
+  loading: false,
+  isSummaryEnabled: false,
+  pageName: "",
+  isTopVisible: true,
+  isDownloadAble: false,
+  bulkOperationText: "",
+  moreIconContent: [],
+  headerHeight: 28,
+  enableMoreIcon: false,
+  filterTypes: {},
+  onBulkRemove: () => {},
+  onRemove: () => {},
+  onDownload: () => {},
+  onAddClick: () => {},
+  onBulkFunction: () => {}
+};

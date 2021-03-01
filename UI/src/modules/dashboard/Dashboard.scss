@@ -1,0 +1,110 @@
+@import '../../theme/_mixins.scss';
+
+.dashboard-wrapper {
+  .content-wrapper {
+    padding-left: 70px;
+    padding-right: 60px;
+    .summary {
+      display: flex;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      .summary-card {
+        margin-right: 30px;
+        .paper {
+          width: 280px;
+          max-width: 280px;
+          padding: 20px 30px;
+          display: flex;
+          .section {
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+            &:nth-last-child() {
+              margin-right: 0px;
+            }
+            span {
+              @include boldText;
+              font-size: 38px;
+              line-height: 40px;
+              margin-bottom: 10px;
+            }
+            a {
+              @include boldText;
+              font-size: 12px;
+              line-height: 16px;
+              letter-spacing: 0.2px;
+              color: #0076a8;
+            }
+          }
+        }
+      }
+    }
+    .recent-heading {
+      padding-top: 40px;
+      margin-bottom: 15px;
+      @include boldText;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.1px;
+      color: #333333;
+    }
+  }
+  .helpResources {
+    background: #ffffff;
+    box-shadow: 0px -1px 0px #e5e5e5;
+    max-height: 477px;
+    height: 477px;
+    display: flex;
+    flex-direction: column;
+    padding: 50px 100px;
+    margin-top: 67px;
+    .heading {
+      font-family: Open Sans SemiBold;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 21px;
+      line-height: 40px;
+      letter-spacing: 0.1px;
+      color: #333333;
+    }
+
+    .helpCard-wrapper {
+      margin-top: 25px;
+      display: flex;
+      .card {
+        padding: 0;
+        margin: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-right: 55px;
+        .ct-imagecard-inner-wrapper {
+          padding: 0;
+          text-align: left;
+          .ct-imagecard-image {
+            width: auto;
+            height: auto;
+          }
+          .ct-imagecard-title {
+            padding: 20px;
+            font-family: Open Sans SemiBold;
+            font-style: normal;
+            font-weight: bolder;
+            font-size: 21px;
+            line-height: 26px;
+            letter-spacing: 0.2px;
+            color: #333333;
+          }
+          .ct-imagecard-description {
+            padding: 0 20px 20px 20px;
+            font-family: Open Sans SemiBold;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 14px;
+            letter-spacing: 0.1px;
+          }
+        }
+      }
+    }
+  }
+}

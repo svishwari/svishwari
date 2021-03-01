@@ -1,19 +1,19 @@
 const defaultState = {
-  home: {},
+  summaryInfo: {},
+  recentSegments: [],
 };
 
 const dashboardReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case "SET_USER":
+    case 'loadSummary':
       return {
-        loggedIn: true,
-        user: [...action.payload],
+        ...state,
+        summaryInfo: {...action.payload},
       };
-    case "LOG_OUT":
-      localStorage.clear();
+    case 'updateRecentSegments':
       return {
-        loggedIn: false,
-        user: {},
+        ...state,
+        recentSegments: [...action.payload],
       };
     default:
       return state;

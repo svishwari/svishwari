@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import "./CTModal.scss";
 import Dialog from "@material-ui/core/Dialog";
+import { useDispatch } from "react-redux";
 import CTSecondaryButton from "../Button/CTSecondaryButton";
 import CTPrimaryButton from "../Button/CTPrimaryButton";
+import { hideModal } from "../../modules/modal/action";
 
 // To use this component you need to create a reference to the CTModal
 // and call it's handle open function
 // For more details visit: https://reactjs.org/docs/hooks-reference.html#useref
 
 const CTModal = React.forwardRef((props, ref) => {
-  const [open, setOpen] = useState(props.isOpen);
+  const [open, setOpen] = useState(true);
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setOpen(false);
     props.onClose();
     setActiveScreenIndex(0);
+    dispatch(hideModal());
   };
 
   const handlePreviousScreen = () => {

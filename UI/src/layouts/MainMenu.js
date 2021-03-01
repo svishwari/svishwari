@@ -25,7 +25,7 @@ const MainMenu = withRouter(() => {
       <NavDropdown
         title={navItem(route)}
         id="nav-dropdown"
-        key={`submenu_${route.path}`}
+        key={route.name}
         show={openDropDown(route.path)}
         className={exactRoute(route.path)}
       >
@@ -33,7 +33,7 @@ const MainMenu = withRouter(() => {
           <div>
             <NavDropdown.Item
               className={exactRoute(subItem.path)}
-              key={`${route.name.toString().toLowerCase()}_`}
+              key={subItem.name}
             >
               {navItem(subItem)}
             </NavDropdown.Item>
@@ -41,7 +41,7 @@ const MainMenu = withRouter(() => {
         ))}
       </NavDropdown>
     ) : (
-      <Nav.Link key={`main_${route.path}`} className={exactRoute(route.path)}>
+      <Nav.Link key={route.path} className={exactRoute(route.path)}>
         {navItem(route)}
       </Nav.Link>
     )
