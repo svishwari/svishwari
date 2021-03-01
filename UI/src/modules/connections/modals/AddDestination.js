@@ -1,9 +1,13 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import CTModal from "../../../components/Modal/CTModal";
 import CTLabel from "../../../components/Label/CTLabel";
 import CTInput from "../../../components/Input/CTInput";
 import CTSelect from "../../../components/Select/CTSelect";
 import "./AddDestination.scss";
+import {
+  addNewDestination
+} from "../store/action";
 
 const REQUIRED_FIELDS = {
   "Facebook": [
@@ -71,6 +75,7 @@ const AddDestination = () => {
     const handleSelectedDestinationChange = (event) => {
         setselectedDestination(event.target.value);
     };
+    const dispatch = useDispatch();
     const addDestinationContent = (
         <div className="ct-destination-modal">
           <CTLabel>Select Destination</CTLabel>
@@ -98,6 +103,7 @@ const AddDestination = () => {
             customers, segments, and audiences.`}
             modalBody={addDestinationContent}
             mainCTAText="Verify and Add"
+            onComplete={()=> dispatch(addNewDestination())}
         />
     )
 }
