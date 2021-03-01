@@ -5,14 +5,15 @@ import json
 from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
-from api.model.advertising import AdvertisingModel
-from api.schema.advertising import AdvertisingSchema
+from huxunify.api.model.advertising import AdvertisingModel
+from huxunify.api.schema.advertising import AdvertisingSchema
 
 advertising_bp = Blueprint('advertising_bp', __name__)
 
 
 @advertising_bp.route('/')
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'advertising api',
@@ -31,6 +32,7 @@ def index():
 
 @advertising_bp.route('/data-sources', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance", "data-sources"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get all data sources',
@@ -48,8 +50,54 @@ def get_data_sources():
     return json.dumps(data_sources), 200
 
 
+@advertising_bp.route('/data-sources/count', methods=['GET'])
+@swag_from({
+    "tags": ["advertising performance", "data-sources"],
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get count of data sources',
+            'schema': AdvertisingSchema
+        }
+    }
+})
+def get_data_sources_count():
+    """
+    get data sources count
+    ---
+    """
+    result = AdvertisingModel()
+    data_sources = result.get_data_sources(count=True)
+    return json.dumps(data_sources), 200
+
+
 @advertising_bp.route('/data-sources', methods=['POST'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "schema": {
+                "id": "createDataSource",
+                "required": [],
+                "example":
+                    {
+                        "data_source_id": "",
+                        "data_source_name": "Hux Unified Test",
+                        "data_source_type": 1,
+                        "data_source_format": "CSV",
+                        "fields": [],
+                        "location_type": "S3",
+                        "location_details": {
+                            "BUCKET": "xspdev-amc-pipeline",
+                            "KEY": "customers_names_e2e.csv"
+                        },
+                        "recent_ingestion_job_id": ""
+                    },
+            },
+        },
+    ],
+    "tags": ["advertising performance", "data-sources"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'create data source',
@@ -67,8 +115,41 @@ def create_data_sources():
     return json.dumps(data_sources), 200
 
 
-@advertising_bp.route('/data-sources', methods=['PUT'])
+@advertising_bp.route('/data-sources/<data_source_id>', methods=['PUT'])
 @swag_from({
+    "parameters": [
+            {
+                "name": "data_source_id",
+                "in": "path",
+                "type": "string",
+                "required": "true",
+                "description": "ID of data source",
+                "default": "60382f755830d0e0c6898c53"
+            },
+            {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "updateDataSource",
+                    "required": [],
+                    "example":
+                        {
+                            "data_source_format": "CSV",
+                            "data_source_id": "60382f755830d0e0c6898c53",
+                            "data_source_name": "Hux Unified Test",
+                            "data_source_type": 1,
+                            "fields": [],
+                            "location_details": {
+                                "BUCKET": "xspdev-amc-pipeline",
+                                "KEY": "customers_names_e2e.csv",
+                            },
+                            "location_type": "S3"
+                        }
+                }
+            },
+    ],
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'update data source',
@@ -76,18 +157,19 @@ def create_data_sources():
         }
     }
 })
-def update_data_sources():
+def update_data_sources(data_source_id):
     """
     update data source
     ---
     """
     result = AdvertisingModel()
-    data_sources = result.update_data_source(request.json)
+    data_sources = result.update_data_source(data_source_id, request.json)
     return json.dumps(data_sources), 200
 
 
 @advertising_bp.route('/data-sources', methods=['DELETE'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'delete data source',
@@ -107,6 +189,7 @@ def delete_data_source():
 
 @advertising_bp.route('/data-sources/<data_source_id>/star', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'star data source',
@@ -124,8 +207,19 @@ def star_data_sources(data_source_id):
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route('/data-sources/<data_source_id>/validate', methods=['GET'])
+@advertising_bp.route('/data-sources/<data_source_id>', methods=['GET'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "data_source_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "ID of data source",
+            "default": "60382f755830d0e0c6898c53"
+        },
+    ],
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'validate data source',
@@ -145,6 +239,7 @@ def validate_data_source(data_source_id):
 
 @advertising_bp.route('/destinations/count', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'destination count',
@@ -164,6 +259,7 @@ def get_destination_count():
 
 @advertising_bp.route('/delivery-platforms', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get delivery platforms',
@@ -183,6 +279,29 @@ def get_delivery_platforms():
 
 @advertising_bp.route('/delivery-platforms', methods=['POST'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "schema": {
+                "id": "createDeliveryPlatform",
+                "required": [],
+                "example":
+                        {
+                            "authentication_details": {
+                                "access_token": "MkU!3Ojgwm",
+                                "ad_account_id": "111333777",
+                                "app_id": "2951925002021888",
+                                "app_secret": "717bdOQqZO99"
+                            },
+                          "delivery_platform_name": "Hux Unified",
+                          "delivery_platform_type": "Facebook"
+                        }
+            },
+        },
+    ],
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'create delivery platform',
@@ -200,8 +319,35 @@ def create_delivery_platforms():
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route('/delivery-platforms', methods=['PUT'])
+@advertising_bp.route('/delivery-platforms/<delivery_platform_id>', methods=['PUT'])
 @swag_from({
+    "parameters": [
+            {
+                "name": "delivery_platform_id",
+                "in": "path",
+                "type": "string",
+                "required": "true",
+                "description": "ID of delivery platform",
+                "default": "603835e55830d0e0c6898c54"
+            },
+            {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "updateDeliveryPlatform",
+                    "required": [],
+                    "example":
+                        {
+                            "delivery_platform_id": "603835e55830d0e0c6898c54",
+                            "delivery_platform_name": "Hux Unified",
+                            "delivery_platform_status": "Pending",
+                            "delivery_platform_type": "Facebook"
+                        }
+                }
+            },
+    ],
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'update delivery platform',
@@ -209,18 +355,19 @@ def create_delivery_platforms():
         }
     }
 })
-def update_delivery_platforms():
+def update_delivery_platforms(delivery_platform_id):
     """
     update delivery platform
     ---
     """
     result = AdvertisingModel()
-    data_source = result.update_delivery_platform(request.json)
+    data_source = result.update_delivery_platform(delivery_platform_id, request.json)
     return json.dumps(data_source), 200
 
 
 @advertising_bp.route('/delivery-platforms/<delivery_platform_id>/star', methods=['POST'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'star delivery platform',
@@ -238,8 +385,19 @@ def star_delivery_platforms():
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route('/delivery-platforms/<delivery_platform_id>/validate', methods=['GET'])
+@advertising_bp.route('/delivery-platforms/<delivery_platform_id>', methods=['GET'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "delivery_platform_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "ID of delivery platform",
+            "default": "603835e55830d0e0c6898c54"
+        },
+    ],
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'validate delivery platform',
@@ -247,18 +405,19 @@ def star_delivery_platforms():
         }
     }
 })
-def validate_delivery_platforms():
+def validate_delivery_platforms(delivery_platform_id):
     """
     validate delivery platform
     ---
     """
     result = AdvertisingModel()
-    data_source = result.validate_delivery_platform(request.json)
+    data_source = result.validate_delivery_platform(delivery_platform_id)
     return json.dumps(data_source), 200
 
 
 @advertising_bp.route('/audiences', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get count of all audiences',
@@ -278,6 +437,7 @@ def audience_count():
 
 @advertising_bp.route('/audience', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get all audiences',
@@ -297,6 +457,7 @@ def get_audiences():
 
 @advertising_bp.route('/audience', methods=['POST'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'create audience',
@@ -316,6 +477,7 @@ def create_audiences():
 
 @advertising_bp.route('/audience', methods=['PUT'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'update audience',
@@ -335,6 +497,7 @@ def update_audience():
 
 @advertising_bp.route('/audience/<audience_id>', methods=['DELETE'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'delete audience',
@@ -354,6 +517,7 @@ def delete_audience(audience_id):
 
 @advertising_bp.route('/audience/<audience_id>/star', methods=['DELETE'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'star audience',
@@ -373,6 +537,7 @@ def star_audience(audience_id):
 
 @advertising_bp.route('/audience/recent', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get recent audiences',
@@ -392,6 +557,7 @@ def recent_audiences():
 
 @advertising_bp.route('/audience/star', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get star audiences',
@@ -411,6 +577,7 @@ def get_star_audiences():
 
 @advertising_bp.route('/audience/<audience_id>/delivery_jobs', methods=['GET'])
 @swag_from({
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get delivery jobs for an audience',

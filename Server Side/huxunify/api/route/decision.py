@@ -4,8 +4,8 @@ purpose of this script is for housing the decision routes for the API
 from http import HTTPStatus
 from flask import Blueprint
 from flasgger import swag_from
-from api.model.decision import DecisionModel, CustomerFeatureModel
-from api.schema.decision import DecisionSchema, CustomerFeatureSchema
+from huxunify.api.model.decision import DecisionModel, CustomerFeatureModel
+from huxunify.api.schema.decision import DecisionSchema, CustomerFeatureSchema
 
 
 decision_bp = Blueprint('decision_bp', __name__)
@@ -13,6 +13,7 @@ decision_bp = Blueprint('decision_bp', __name__)
 
 @decision_bp.route('/')
 @swag_from({
+    "tags": ["decisioning"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'decision api',
@@ -58,6 +59,7 @@ def index():
             "default": ""
         }
     ],
+    "tags": ["decisioning"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'list all features per customer',

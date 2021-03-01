@@ -2,7 +2,7 @@
 Purpose of this script for testing the home route
 """
 from unittest import TestCase
-from app import create_app
+from huxunify.app import create_app
 
 
 class TestHome(TestCase):

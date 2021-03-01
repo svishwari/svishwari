@@ -4,8 +4,8 @@ purpose of this script is for housing the home routes for the API
 from http import HTTPStatus
 from flask import Blueprint
 from flasgger import swag_from
-from api.model.home import HomeModel
-from api.schema.home import HomeSchema
+from huxunify.api.model.home import HomeModel
+from huxunify.api.schema.home import HomeSchema
 
 home_api = Blueprint('api', __name__)
 
