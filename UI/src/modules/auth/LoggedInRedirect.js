@@ -13,10 +13,10 @@ const setUser = (payload) => ({
 
 const LoggedInRedirect = () => {
   const { authState } = useOktaAuth();
-  const disptach = useDispatch();
+  const dispatch = useDispatch();
 
   if (!authState.isAuthenticated) {
-    disptach(setUser({}));
+    dispatch(setUser({}));
   }
 
   if (authState.isPending) {
