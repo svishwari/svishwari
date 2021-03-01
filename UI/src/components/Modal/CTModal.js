@@ -82,8 +82,10 @@ const CTModal = React.forwardRef((props, ref) => {
             <div
               key={screen}
               className={`indicator ${
-                activeScreenIndex === index ? "active" : ""
-              }`}
+                activeScreenIndex === index && "active"
+              }
+              ${ activeScreenIndex < index && "to-be-done"}
+              `}
             />
           ))}
       </div>
@@ -92,6 +94,7 @@ const CTModal = React.forwardRef((props, ref) => {
       <div className="modal-body">
         {/* Active Screen */}
         <div className="ct-modal-title">{props.modalTitle}</div>
+        {IS_MULTI_MODAL && <div className="ct-modal-subtitle">{props.screens.screenTitle[activeScreenIndex]}</div>}
         <div className="ct-modal-subtitle">{props.modalSubtitle}</div>
         <div className="ct-modal-body">{props.modalBody}</div>
         {IS_MULTI_MODAL && props.screens.screenComponents[activeScreenIndex]}
@@ -147,11 +150,15 @@ CTModal.defaultProps = {
   onChangeScreen: () => undefined,
   onComplete: () => undefined,
   screens: {
-    screenComponents: [],
-    rightButtonProps: [],
-    righButtonNames: [],
-    righButtonFunctions: [],
-
+    // ************************
+    // This prop accepts the following items and each item is a required one 
+    // and all the sub props need to be of same length
+    // ************************
+    // screenComponents: [],
+    // rightButtonProps: [],
+    // righButtonNames: [],
+    // righButtonFunctions: [],
+    // screenTitle: [],
   },
   showFooter: true,
   mainCTAText: "Complete",

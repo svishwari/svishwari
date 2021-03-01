@@ -1,0 +1,12 @@
+@import "../../../theme/variables";
+
+.ct-segment-screen1-wrapper {
+    .ct-add-segment-card {
+        flex-grow: 1;
+        text-align: left;
+        margin: 8px;
+    }
+    .ct-imagecard-wrapper .ct-imagecard-inner-wrapper .ct-imagecard-image svg {
+        padding: 1rem;
+    }
+}

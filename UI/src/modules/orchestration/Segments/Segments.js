@@ -7,8 +7,8 @@ const Segments = () => {
     const dispatch = useDispatch();
     return (
         <CTPrimaryButton 
-        onKeyPress={()=> dispatch(showAddSegment({initialScreen: 1}))} 
-        onClick={()=> dispatch(showAddSegment({initialScreen: 1}))} 
+        onKeyPress={()=> dispatch(showAddSegment())} 
+        onClick={()=> dispatch(showAddSegment())} 
         >
             Add Segment
         </CTPrimaryButton>
