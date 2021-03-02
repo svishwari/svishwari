@@ -32,6 +32,11 @@
 }
 .ct-segment-screen2-wrapper {
     text-align: left;
+    .add-condition-icon {
+        color: $appSuccessGreen;
+        font-size: 26px;
+        cursor: pointer;
+    }
     .ct-condition-wrapper{
         .ct-rule-wrapper {
             display: flex;

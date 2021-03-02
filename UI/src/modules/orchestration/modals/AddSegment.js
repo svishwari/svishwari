@@ -43,6 +43,13 @@ const AVAILABLE_MODELS = [
 const AddSegment = (props) => {
     const { initialScreen, initialSelected=[] } = props;
     const [selectedModels, setSelectedModels] = useState(initialSelected);
+
+    const [noOfRules, setNoOfRules] = useState([1]);
+    const addNewRule = () => {
+        const newArray = [...noOfRules,1];
+        setNoOfRules(newArray);
+    }
+
     const dispatch = useDispatch();
     const toggleSelectedModels = (model) => {
         const modelIndex = selectedModels.indexOf(model);
@@ -149,21 +156,34 @@ const AddSegment = (props) => {
     </div>);
     const screen2 = (
     <div className="ct-segment-screen2-wrapper">
+        <div>
+            <span className="add-condition-icon">
+                <span className="iconify" data-icon="mdi:plus-circle" data-inline="false" />
+            </span>
+            Condition
+        </div>
         <div>Condition/Rule Name</div>
         <div className="ct-condition-wrapper">
             <div className="ct-condition-container">
                 <CTInput />
             </div>
-            <div className="ct-rule-arrow-extended" />
-            <div className="ct-rule-wrapper">
-                <div className="ct-rule-arrow" />
-                <CTSelect customClass="ct-rule-select" selectOptions={selectedModels} />
-                <CTSlider customClass="ct-rule-slider"/>
-                <span className="ct-add-rule-wrapper">
-                    <CTSecondaryButton customClass="mr-2">+ Add Sub-Rule</CTSecondaryButton>
-                    <CTSecondaryButton>+ Add Rule</CTSecondaryButton>
-                </span>
-            </div>
+            { noOfRules.map(()=>{
+                const key = Math.random().toString(36).substr(2, 36);
+                return (
+                    <>
+                        <div someattribute={key} className="ct-rule-arrow-extended" />
+                        <div className="ct-rule-wrapper">
+                            <div className="ct-rule-arrow" />
+                            <CTSelect customClass="ct-rule-select" selectOptions={selectedModels} />
+                            <CTSlider customClass="ct-rule-slider"/>
+                            <span className="ct-add-rule-wrapper">
+                                <CTSecondaryButton customClass="mr-2">+ Add Sub-Rule</CTSecondaryButton>
+                                <CTSecondaryButton onClickFn={addNewRule}>+ Add Rule</CTSecondaryButton>
+                            </span>
+                        </div>
+                    </>
+            )}) 
+            }
         </div>
     </div>);
     const screen3 = (
