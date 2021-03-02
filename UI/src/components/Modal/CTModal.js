@@ -6,9 +6,8 @@ import CTSecondaryButton from "../Button/CTSecondaryButton";
 import CTPrimaryButton from "../Button/CTPrimaryButton";
 import { hideModal } from "../../modules/modal/action";
 
-// To use this component you need to create a reference to the CTModal
-// and call it's handle open function
-// For more details visit: https://reactjs.org/docs/hooks-reference.html#useref
+// Opening and closing has been made dynamic using redux, so it can be opened or closed from anywhere
+// Incase of closeing the modal from outside using dipatch onClose function is not going to work
 
 const CTModal = React.forwardRef((props, ref) => {
   const [open, setOpen] = useState(true);
@@ -19,7 +18,6 @@ const CTModal = React.forwardRef((props, ref) => {
   const handleClose = () => {
     setOpen(false);
     props.onClose();
-    setActiveScreenIndex(0);
     dispatch(hideModal());
   };
 
@@ -80,7 +78,7 @@ const CTModal = React.forwardRef((props, ref) => {
           props.showIndicators &&
           props.screens.screenComponents.map((screen, index) => (
             <div
-              key={screen}
+              key={props.screens.righButtonNames[index]}
               className={`indicator ${
                 activeScreenIndex === index && "active"
               }
@@ -114,7 +112,12 @@ const CTModal = React.forwardRef((props, ref) => {
                 {activeScreenIndex === 0 ? "Close" : props.backButton}
               </CTSecondaryButton>
             )}
-            {props.footerLeftButtons}
+            {props.footerLeftButtons.map(each => { 
+              if( activeScreenIndex === each.props.activeindex){
+                return each;
+              }
+              return "";
+            })}
           </div>
           <div className="modal-footer-right">
             {props.footerRightButtons}

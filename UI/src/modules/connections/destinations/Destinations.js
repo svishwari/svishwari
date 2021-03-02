@@ -48,9 +48,9 @@ const Destinations = (props) => {
   };
   const columns = [
     {
-      field: "destinationName",
-      headerName: "Destination",
-      flex: 0.2,
+      field: "destination",
+      headerName: " ",
+      width: 50,
       renderCell: (params) => {
         const destinationLogo = params.getValue("destination")
         return (
@@ -66,6 +66,15 @@ const Destinations = (props) => {
             : <></>
           }
           </span>
+        </>
+      )},
+    },
+    {
+      field: "destinationName",
+      headerName: "Destination",
+      flex: 0.2,
+      renderCell: (params) => (
+        <>
           <Link to="/destinations">
             {`${params.getValue("destinationName")} `}
             <span
@@ -75,7 +84,7 @@ const Destinations = (props) => {
             />
           </Link>
         </>
-      )},
+      ),
     },
     {
       field: "account",

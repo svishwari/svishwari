@@ -68,7 +68,7 @@ export default class CTDataGrid extends Component {
     const { data } = props;
     this.state = {
       dataGridData: data,
-      isEditing: false,
+      isEditing: this.props.isEditingEnabled,
       selectedRows: [],
       searchFilter: "",
       isSummaryVisible: false,
@@ -219,6 +219,7 @@ export default class CTDataGrid extends Component {
 
   rowChange = (params) => {
     this.setState({ selectedRows: params.rowIds });
+    this.props.onRowSelect(params);
   };
 
   updateItem(id, itemAttributes) {
@@ -321,8 +322,10 @@ CTDataGrid.defaultProps = {
   moreIconContent: [],
   headerHeight: 28,
   enableMoreIcon: false,
+  isEditingEnabled: false, 
   filterTypes: {},
   onBulkRemove: () => {},
+  onRowSelect: () => {},
   onRemove: () => {},
   onDownload: () => {},
   onAddClick: () => {},

@@ -4,9 +4,45 @@
     .ct-add-segment-card {
         flex-grow: 1;
         text-align: left;
-        margin: 8px;
+        margin: 1rem;
     }
     .ct-imagecard-wrapper .ct-imagecard-inner-wrapper .ct-imagecard-image svg {
         padding: 1rem;
     }
+    .ct-add-segment-label {
+        font-weight: 600;
+        text-align: left;
+        margin-top: 10px;
+        margin-left: 1rem;
+        .ct-add-segment-label-light {
+            font-weight: normal;
+        }
+    }
+    .model-selected {
+        border: 2px solid $appSuccessGreen;
+        box-shadow: inset 0px 0px 15px rgba(0, 0, 0, 0.2);
+        background: #F1F9EF;
+        .ct-imagecard-image {
+            background: $appSuccessGreen;
+            path {
+                fill: white;
+            }
+        }
+    }
+}
+
+.ct-segment-screen3-wrapper {
+    text-align: left;
+    .ct-segment-screen3-title {
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    .ct-segment-screen3-table {
+        .MuiDataGrid-root{
+            border: none;
+        }
+    }
+}
+.segment-btn-later {
+    margin-left: 10px;
 }
