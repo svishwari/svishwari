@@ -1,4 +1,4 @@
-# HUX Unified Solution Server-Side
+# Hux Unified Solution Server-Side
 
 Information the Server Side Flask Project
 

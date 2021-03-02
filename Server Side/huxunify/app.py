@@ -24,7 +24,7 @@ def create_app():
 
     # setup the api documentation
     flask_app.config['SWAGGER'] = {
-        'title': 'HUX Unified Solution API',
+        'title': 'Hux Unified Solution API',
     }
     swagger = Swagger(flask_app)
 
