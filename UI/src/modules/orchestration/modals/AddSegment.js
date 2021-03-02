@@ -9,6 +9,8 @@ import CTCardGroup from "../../../components/Cards/CardGroup/CTCardGroup";
 import CTImageCard from "../../../components/Cards/ImageCard/CTImageCard";
 import CTSecondaryButton from "../../../components/Button/CTSecondaryButton";
 import CTDataGrid from "../../../components/Table/CTDataGrid";
+import CTSelect from "../../../components/Select/CTSelect";
+import CTSlider from "../../../components/Slider/CTSlider";
 
 import { hideModal } from "../../modal/action";
 import {
@@ -39,17 +41,17 @@ const AVAILABLE_MODELS = [
 ];
 
 const AddSegment = (props) => {
-    const { initialScreen } = props;
-    const [selectedModels, setSelectedModels] = useState(new Set());
+    const { initialScreen, initialSelected=[] } = props;
+    const [selectedModels, setSelectedModels] = useState(initialSelected);
     const dispatch = useDispatch();
     const toggleSelectedModels = (model) => {
-        const newSet = new Set(selectedModels);
-        if (selectedModels.has(model)) {
-            newSet.delete(model);
-            setSelectedModels(newSet);
-        } else {
-            newSet.add(model);
-            setSelectedModels(newSet);
+        const modelIndex = selectedModels.indexOf(model);
+        if ( modelIndex !== -1) {
+            const newArray = selectedModels.filter(each=> each!==model);
+            setSelectedModels(newArray);
+        }
+        else {
+            setSelectedModels([...selectedModels,model] );
         }
     }
     const onCloseAndCompleteLater = () => {
@@ -134,7 +136,7 @@ const AddSegment = (props) => {
                AVAILABLE_MODELS.map(model => (
                 <CTImageCard 
                     key={model.title}
-                    customClass={selectedModels.has(model.title) ? "model-selected" : "" }
+                    customClass={selectedModels.indexOf(model.title) !== -1 ? "model-selected" : "" }
                     cardImage={<span className="ct-add-segment-image">{model.image}</span>}
                     cardTitle={model.title} 
                     onClick={()=> {toggleSelectedModels(model.title)}  }
@@ -145,7 +147,25 @@ const AddSegment = (props) => {
         </CTCardGroup>
 
     </div>);
-    const screen2 = (<div>Screen 2</div>);
+    const screen2 = (
+    <div className="ct-segment-screen2-wrapper">
+        <div>Condition/Rule Name</div>
+        <div className="ct-condition-wrapper">
+            <div className="ct-condition-container">
+                <CTInput />
+            </div>
+            <div className="ct-rule-arrow-extended" />
+            <div className="ct-rule-wrapper">
+                <div className="ct-rule-arrow" />
+                <CTSelect customClass="ct-rule-select" selectOptions={selectedModels} />
+                <CTSlider customClass="ct-rule-slider"/>
+                <span className="ct-add-rule-wrapper">
+                    <CTSecondaryButton customClass="mr-2">+ Add Sub-Rule</CTSecondaryButton>
+                    <CTSecondaryButton>+ Add Rule</CTSecondaryButton>
+                </span>
+            </div>
+        </div>
+    </div>);
     const screen3 = (
     <div className="ct-segment-screen3-wrapper">
         <div className="ct-segment-screen3-title">Select Destination(s)</div>
@@ -165,7 +185,7 @@ const AddSegment = (props) => {
         screenComponents: [screen1,screen2,screen3],
         righButtonFunctions: [fetchScore,()=>{},()=>{}],
         righButtonNames: ["Fetch Scores & Continue","Continue","Deliver & Complete"],
-        rightButtonProps: [{isDisabled: selectedModels.size===0 },{},{}],
+        rightButtonProps: [{isDisabled: selectedModels.length===0 },{},{}],
         screenTitle: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                         "You are required to have at least one condition!",
                         "This is optional - you can always deliver later."
