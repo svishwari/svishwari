@@ -64,10 +64,17 @@ const connectionReducer = (state = defaultState, action) => {
         ...state,
         destinations: [...action.payload] || [],
       };
+    case "newDestinationAdded":
+      const originalDestination = JSON.parse(JSON.stringify(state.destinations));
+      originalDestination.unshift(action.payload);
+      return {
+        ...state,
+        destinations: originalDestination,
+      };
     case "updateDestinationConnectionStatus":
       const originalDestinationDATA = JSON.parse(JSON.stringify(state.destinations));
       const destinationToBeConnected = originalDestinationDATA.filter((item) => item.id === action.payload.id);
-      destinationToBeConnected[0].connectionStatus = "Connecting...";
+      destinationToBeConnected[0].status = "Connecting...";
       return {
         ...state,
         destinations: originalDestinationDATA,
@@ -75,7 +82,7 @@ const connectionReducer = (state = defaultState, action) => {
     case "destinationConnected":
       const originalDestinationDATA2 = JSON.parse(JSON.stringify(state.destinations));
       const connectedDestination = originalDestinationDATA2.filter((item) => item.id === action.payload.id);
-      connectedDestination[0].connectionStatus = "Connected";
+      connectedDestination[0].status = "Connected";
       return {
         ...state,
         destinations: originalDestinationDATA2,

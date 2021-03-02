@@ -33,6 +33,7 @@ const CTImageCard = ({
       )}
 
       <div className="ct-imagecard-title">{cardTitle}</div>
+      {/* <div className="ct-imagecard-description" dangerouslySetInnerHTML={{__html: cardDescription }} /> */}
       <div className="ct-imagecard-description">{cardDescription}</div>
       {children}
     </div>

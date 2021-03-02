@@ -6,17 +6,21 @@ import CountUp from 'react-countup';
 // import DonutChart from 'react-d3-donut/es';
 // import CTUSAMap from '../../components/Charts/CTUSAMap';
 import { ReactComponent as HomeIllustration } from '../../assets/Home_Illustration.svg';
+import HelpCard from '../../assets/images/HelpCard1.png';
+import CDPCard from '../../assets/images/HelpCard2.png';
+import MarketingCard from '../../assets/images/HelpCard3.png';
 import PageTitle from '../../components/PageTitle';
 import './Dashboard.scss';
 import CTDataGrid from '../../components/Table/CTDataGrid';
 import CTPopover from '../../components/Popover/CTPopover';
 import { fetchSummaryInfo, fetchRecentSegments } from './store/action';
 import CTChip from '../../components/Chip/CTChip';
+import HelpResources from '../../components/HelpResources/HelpResources';
 
 const summaryCard = (item, i) => (
   <div className="summary-card" key={`${Math.random().toString(36).substr(2, 36)}`}>
     <div key={i} className="mb-2">
-      <span className="iconify" data-icon={`mdi:${item.icon}`} data-inline="false" />
+      <span className="iconify mr-2" data-icon={`mdi:${item.icon}`} data-inline="false" />
       {`Your ${item.title}`}
     </div>
     <Paper elevation={2} className="paper">
@@ -118,13 +122,13 @@ const Dashboard = (props) => {
         <CTPopover
           popoverContent={
             <Box display="flex" flexDirection="column">
-              <ListItem>Facebook</ListItem>
-              <ListItem>Google</ListItem>
+              <Button><span className="iconify" data-icon="logos:facebook" data-inline="false" />{'\u00A0'}Facebook</Button>
+              <Button><span className="iconify" data-icon="logos:google-analytics" data-inline="false" />{'\u00A0'}Google</Button>
             </Box>
           }
         >
           <Button color="primary" style={{ textTransform: 'capitalize' }}>
-            Open in { ' '}<span className="iconify" data-icon="zmdi-caret-down" data-inline="false" />
+            Open in <span className="iconify" data-icon="zmdi-caret-down" data-inline="false" />
           </Button>
         </CTPopover>
       ),
@@ -149,6 +153,39 @@ const Dashboard = (props) => {
       ),
     },
   ];
+  const helpCards = [
+    {
+      id:1,
+      title: 'Improving human experience with AI',
+      description: (
+        <Link to="/">
+          Read more{' '}
+          <span className="iconify" data-icon="mdi:chevron-double-right" data-inline="false" />
+        </Link>
+      ),
+      image: <img src={HelpCard} alt="help" />,
+    }, {
+      id:2,
+      title: 'Realize the potential in your customer data',
+      description: (
+        <Link to="/">
+          Read more{' '}
+          <span className="iconify" data-icon="mdi:chevron-double-right" data-inline="false" />
+        </Link>
+      ),
+      image: <img src={CDPCard} alt="help" />,
+    }, {
+      id: 3,
+      title: 'The ABCs of customer data in marketing',
+      description: (
+        <Link to="/">
+          Read more{' '}
+          <span className="iconify" data-icon="mdi:chevron-double-right" data-inline="false" />
+        </Link>
+      ),
+      image: <img src={MarketingCard} alt="help" />,
+    },
+  ];
 
   React.useEffect(() => {
     dispatch(fetchSummaryInfo());
@@ -157,7 +194,7 @@ const Dashboard = (props) => {
   return (
     <div className="dashboard-wrapper">
       <PageTitle
-        title={`Welcome to ${props.userInfo.name}!`}
+        title={`Welcome Back, ${props.userInfo.name}!`}
         welcomePage
         summaryText="Hux is here to help you make better, faster decisions to improve your Customer Experiences."
         readMore="/"
@@ -182,6 +219,7 @@ const Dashboard = (props) => {
           data={getRecentSegments()}
         />
       </div>
+      <HelpResources title="Helpful Resources" content={helpCards} />
     </div>
   );
 };

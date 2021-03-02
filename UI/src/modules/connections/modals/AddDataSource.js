@@ -1,9 +1,13 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import CTModal from "../../../components/Modal/CTModal";
 import CTLabel from "../../../components/Label/CTLabel";
 import CTInput from "../../../components/Input/CTInput";
 import CTSelect from "../../../components/Select/CTSelect";
 import "./AddDataSource.scss";
+import {
+  addNewDataSource
+} from "../store/action";
 
 const REQUIRED_FIELDS = {
   "Amazon S3": [
@@ -45,6 +49,7 @@ const AddDataSource = () => {
     const handleSelectedDataSourceChange = (event) => {
         setselectedDataSource(event.target.value);
     };
+    const dispatch = useDispatch();
     const addDataSourceContent = (
         <div className="ct-datasource-modal">
           <CTLabel>Data Source</CTLabel>
@@ -67,6 +72,7 @@ const AddDataSource = () => {
             modalSubtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
             modalBody={addDataSourceContent}
             mainCTAText="Verify and Add"
+            onComplete={()=> dispatch(addNewDataSource())}
         />
     )
 }

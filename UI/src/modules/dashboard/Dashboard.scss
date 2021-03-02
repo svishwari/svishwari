@@ -49,4 +49,62 @@
       color: #333333;
     }
   }
+  .helpResources {
+    background: #ffffff;
+    box-shadow: 0px -1px 0px #e5e5e5;
+    max-height: 477px;
+    height: 477px;
+    display: flex;
+    flex-direction: column;
+    padding: 50px 100px;
+    margin-top: 67px;
+    .heading {
+      font-family: Open Sans SemiBold;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 21px;
+      line-height: 40px;
+      letter-spacing: 0.1px;
+      color: #333333;
+    }
+
+    .helpCard-wrapper {
+      margin-top: 25px;
+      display: flex;
+      .card {
+        padding: 0;
+        margin: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-right: 55px;
+        .ct-imagecard-inner-wrapper {
+          padding: 0;
+          text-align: left;
+          .ct-imagecard-image {
+            width: auto;
+            height: auto;
+          }
+          .ct-imagecard-title {
+            padding: 20px;
+            font-family: Open Sans SemiBold;
+            font-style: normal;
+            font-weight: bolder;
+            font-size: 21px;
+            line-height: 26px;
+            letter-spacing: 0.2px;
+            color: #333333;
+          }
+          .ct-imagecard-description {
+            padding: 0 20px 20px 20px;
+            font-family: Open Sans SemiBold;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 14px;
+            letter-spacing: 0.1px;
+          }
+        }
+      }
+    }
+  }
 }
