@@ -5,7 +5,6 @@ import "./CTSimpleCard.scss";
 const CTSimpleCard = ({
   cardComponent,
   onClickFn,
-  width = "100%",
   customClass = "",
   children,
   ...props
@@ -14,7 +13,6 @@ const CTSimpleCard = ({
     onClick={onClickFn}
     className={`ct-card-wrapper ${customClass}`}
     {...props}
-    style={{ width }}
   >
     {cardComponent}
     {children}

@@ -14,6 +14,9 @@ const CTDataGridTop = ({
   pageName,
   changeEditing,
   isEditing,
+  isEditingEnabled,
+  isAddEnabled,
+  searchPlaceholder,
   isSummaryEnabled,
   onSummaryToggle,
   isDownloadAble,
@@ -57,7 +60,7 @@ return (
           onSearch(e);
         }}
         className="ct-grid-search-input"
-        placeholder={`Search ${pageName}s`}
+        placeholder={`${searchPlaceholder}`}
       />
     </span>
     <span className="ct-grid-top-right">
@@ -85,7 +88,8 @@ return (
               <CTSecondaryButton onClick={() => onBulkOperation(selectedRows)}>{bulkOperationText}</CTSecondaryButton>
             }
           </>
-        ) : (
+        ) : isEditingEnabled ?(
+          
           <>
             <button type="button" onClick={() => toggleEditing()}>
               <span
@@ -95,7 +99,7 @@ return (
               />
             </button>
           </>
-        )}
+        ): <></>}
         <CTFilter filterTypes={filterTypes} onFilterChange={onFilterChange} onClearAll={onClearAll}/>
       </span>
       <span className="ct-grid-summary">
@@ -108,7 +112,9 @@ return (
             <></>
         )}
       </span>
-      {gridTopState.isUserEditing ? (
+      { !isAddEnabled ?
+          (<></>) 
+        : gridTopState.isUserEditing ? (
         <CTPrimaryButton onClick={() => toggleEditing()}>
           Done &amp; Return
         </CTPrimaryButton>

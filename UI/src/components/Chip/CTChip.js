@@ -6,7 +6,7 @@ import "./CTChip.scss";
 
 const CTChip = ({
   hasIcons = true,
-  onClickFunc,
+  onClickFunc=()=>{},
   isWorking = true,
   children,
 }) => {

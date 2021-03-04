@@ -242,6 +242,9 @@ export default class CTDataGrid extends Component {
         <CTDataGridTop
           pageName={this.props.pageName}
           isSummaryEnabled={this.props.isSummaryEnabled}
+          isEditingEnabled={this.props.isEditingEnabled}
+          isAddEnabled={this.props.isAddEnabled}
+          searchPlaceholder={this.props.searchPlaceholder}
           onSearch={this.onSearch}
           onAddClick={this.props.onAddClick}
           onDownload={this.props.onDownload}
@@ -272,7 +275,7 @@ export default class CTDataGrid extends Component {
         <DataGrid
           columns={this.applicableColumns}
           rows={this.state.dataGridData}
-          checkboxSelection={this.state.isEditing}
+          checkboxSelection={ this.props.isEditingEnabled? this.state.isEditing : false}
           disableColumnFilter
           autoHeight
           disableColumnMenu
@@ -314,6 +317,10 @@ CTDataGrid.defaultProps = {
   data: [],
   loading: false,
   isSummaryEnabled: false,
+  summaryContent:[],
+  isEditingEnabled: true,
+  isAddEnabled: true,
+  searchPlaceholder: "",
   pageName: "",
   isTopVisible: true,
   isDownloadAble: false,
