@@ -2,15 +2,16 @@
 purpose of this file is for housing the snowflake database client
 """
 import logging
+from os import getenv
 from typing import Optional
 from snowflake import connector
 
 
-# DATABASE CONSTANTS - we can move these after
-ACCOUNT = "cdmdev1.east-us-2.azure"
-DATA_WAREHOUSE = "COMPUTE_WH"
-PROCESSED_DATABASE = "CDP_LTD"
-
+# TODO - using my username/password until
+USERNAME = getenv("CDM_SNOWFLAKE_USER")
+PASSWORD = getenv("CDM_SNOWFLAKE_PASSWORD")
+ACCOUNT = getenv("CDM_SNOWFLAKE_ACCOUNT")
+WAREHOUSE = "COMPUTE_WH"
 
 class SnowflakeClient:
     """Snowflake client for handling operations on the database."""
@@ -18,9 +19,9 @@ class SnowflakeClient:
     def __init__(
         self,
         account: Optional[str] = ACCOUNT,
-        warehouse: Optional[str] = DATA_WAREHOUSE,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        warehouse: Optional[str] = WAREHOUSE,
+        username: Optional[str] = USERNAME,
+        password: Optional[str] = PASSWORD,
     ) -> None:
         """Initialize a Snowflake database object.
         Args:
