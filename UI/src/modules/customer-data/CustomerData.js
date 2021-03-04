@@ -9,6 +9,7 @@ import SummaryCard from "../../components/Cards/SummaryCard/SummaryCard";
 import CTChip from "../../components/Chip/CTChip";
 import CTList from "../../components/List/List";
 import CTPopover from "../../components/Popover/CTPopover";
+import CTFilter from "../../components/Filter/CTFilter";
 
 import { fetchCustomerProfile } from './store/action';
 
@@ -122,6 +123,17 @@ const DATA_SOURCE_COLUMN = [
     },
 ];
 
+const FILTER_TYPES = {
+    "Event Type": {
+      selectMultiple: true,
+      values: ["Purchase", "Subscription Purchase"]
+    },
+    "Charge": { 
+      selectMultiple: true,
+      values: ["10.23"]
+    },
+}
+
 const CustomerData = (props) => {
     const {profileID} = useParams();
     const dispatch = useDispatch();
@@ -138,7 +150,7 @@ const CustomerData = (props) => {
         {State: "Ohio"},
     ]
     const retrieveCustomerProfile = () => {
-        dispatch(fetchCustomerProfile());
+        dispatch(fetchCustomerProfile(profileID));
     };
     React.useEffect(() => {
         retrieveCustomerProfile();
@@ -146,7 +158,7 @@ const CustomerData = (props) => {
     return (
         <div className="customer-data-wrapper">
             <div className="cd-top-header">
-                <Link className='cd-view-all' to='/customer-profiles'>&lt; View All Customers {profileID}</Link>
+                <Link className='cd-view-all' to='/customer-profiles'>&lt; View All Customers</Link>
                 <button type="button" className="cd-download-btn">
                     <span
                     className="iconify"
@@ -196,7 +208,14 @@ const CustomerData = (props) => {
                     </div>
                 </div>
                 <div className="cd-customer-events">
-                    <div className="cd-customer-title">Events</div>
+                    <div className="cd-customer-event-title">
+                        <div className="cd-customer-title">
+                            Events
+                        </div>
+                        <div className="cd-customer-filter">
+                            <CTFilter filterTypes={FILTER_TYPES}/>
+                        </div>
+                    </div>
                     <CTList
                         columns={EVENTS_COLUMN}
                         rows={props.customerProfile.events || []}

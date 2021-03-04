@@ -8,6 +8,13 @@ import CTDataGrid from "../../components/Table/CTDataGrid";
 import CTChip from "../../components/Chip/CTChip";
 import { fetchCustomerProfiles } from './store/action';
 
+const FILTER_TYPES = {
+    "Customer Value": { 
+      selectMultiple: true,
+      values: ["High", "Medium","Low"]
+    },
+}
+
 const CustomersData = (props) => {
     const dispatch = useDispatch();
     const retrieveCustomerProfiles = () => {
@@ -66,7 +73,7 @@ const CustomersData = (props) => {
             renderCell: (params) => {
                 const customerValue = params.getValue("customerValue");
                 return (
-                <CTChip isWorking hasIcons={false}>
+                <CTChip isNotMiddle={customerValue!=="Medium"} isWorking={customerValue==="High"} hasIcons={false}>
                        {customerValue}
                 </CTChip>
             )},
@@ -102,6 +109,7 @@ const CustomersData = (props) => {
                 {value: "1.4",decimals:"1",suffix: "k",title: "Pinned"},
                 {value: "4",title: "Avg. Strength"},
             ]}
+            filterTypes={FILTER_TYPES}
             searchPlaceholder="Search Customers"
             isAddEnabled={false}
         />

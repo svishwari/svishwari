@@ -12,7 +12,7 @@ const fetchCustomerProfiles = () => async (dispatch) => {
             customerEmail: "tanya.hill@example.com",
             customerPhone: "(205) 555-0100",
             accountNumber: "123198091849812301-2039-12",
-            customerValue: "High",
+            customerValue: "Medium",
             customerEvents: 5,
         },
         {
@@ -34,7 +34,7 @@ const fetchCustomerProfiles = () => async (dispatch) => {
             customerEmail: "tanya.hill@example.com",
             customerPhone: "(205) 555-0100",
             accountNumber: "123198091849812301-2039-12",
-            customerValue: "High",
+            customerValue: "Low",
             customerEvents: 5,
         },
         {
@@ -73,7 +73,7 @@ const fetchCustomerProfile = () => async (dispatch) => {
         customerEmail: "tanya.hill@example.com",
         customerPhone: "(205) 555-0100",
         accountNumber: "123198091849812301-2039-12",
-        customerValue: "High",
+        customerValue: "Medium",
         customerEvents: 5,
         events: [
             {
