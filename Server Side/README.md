@@ -49,7 +49,7 @@ apispec is a pluggable API specification generator. Currently, supports the **ex
 
 Start the API
 ```
-pipenv run python -m flask run
+FLASK_APP=huxunify.app pipenv run python -m flask run
 ```
 
 For viewing the API Documentation, simply go to the following URL
