@@ -11,6 +11,7 @@ import CTSecondaryButton from "../../../components/Button/CTSecondaryButton";
 import CTDataGrid from "../../../components/Table/CTDataGrid";
 import CTSelect from "../../../components/Select/CTSelect";
 import CTSlider from "../../../components/Slider/CTSlider";
+// import CTSwitch from "../../../components/Switch/CTSwitch";
 
 import { hideModal } from "../../modal/action";
 import {
@@ -39,18 +40,69 @@ const AVAILABLE_MODELS = [
         desc: "Predicts lifetime value of your customers based on time, cost of acquisition, cost of sale, etc."
     },
 ];
+const OPERAND_OPTIONS = ["AND", "OR"]
 
 const AddSegment = (props) => {
+    const dispatch = useDispatch();
     const { initialScreen, initialSelected=[] } = props;
     const [selectedModels, setSelectedModels] = useState(initialSelected);
 
-    const [noOfRules, setNoOfRules] = useState([1]);
-    const addNewRule = () => {
-        const newArray = [...noOfRules,1];
-        setNoOfRules(newArray);
+    const BASE_VALUES = {
+        model: selectedModels[0],
+        min: 0.20,
+        max: 0.70,
+    };
+
+    const CONDITION_TEMPLATE = {
+        conditions: [BASE_VALUES],
+        operand: "AND"
+    };
+
+    const SEGMENT_TEMPLATE = {
+        segmentName: "",
+        segmentConditions: [CONDITION_TEMPLATE],
+    };
+
+    const [segments, setSegments] = useState([SEGMENT_TEMPLATE]);
+
+    const addNewSegment = () => {
+        const newArrayOfSegments = [...segments,SEGMENT_TEMPLATE];
+        setSegments(newArrayOfSegments);
     }
 
-    const dispatch = useDispatch();
+    const onSegmentNameChange = (e,segmentIndex) => {
+        const newSegmentName = e.target.value;
+        const segmentWithNewName = segments[segmentIndex];
+        segmentWithNewName.segmentName = newSegmentName;
+
+        setSegments([...segments.slice(0, segmentIndex),
+                        segmentWithNewName,
+                    ...segments.slice(segmentIndex+1)
+                    ]);
+    }
+
+    const addRule = (segmentIndex,condIndex) => {
+        const oldConditions = segments[segmentIndex].segmentConditions[condIndex].conditions;
+        const newConditions = [...oldConditions,BASE_VALUES];
+        const newLevel = [
+            ...segments[segmentIndex].segmentConditions.slice(0, condIndex),
+            {conditions: newConditions,operand: segments[segmentIndex].segmentConditions[condIndex].operand},
+            ...segments[segmentIndex].segmentConditions.slice(condIndex+1)
+        ]
+        const newSegment = [...segments.slice(0, segmentIndex),
+            {segmentConditions: newLevel,segmentName: segments[segmentIndex].segmentName},
+        ...segments.slice(segmentIndex+1)
+        ]
+        setSegments(newSegment);
+    }
+
+    const addSubRule = (segmentIndex) => {
+        const newSubRule = [...segments[segmentIndex].segmentConditions,CONDITION_TEMPLATE];
+        setSegments([...segments.slice(0, segmentIndex),
+            {segmentConditions: newSubRule,segmentName: segments[segmentIndex].segmentName},
+        ...segments.slice(segmentIndex+1)
+        ]);
+    }
     const toggleSelectedModels = (model) => {
         const modelIndex = selectedModels.indexOf(model);
         if ( modelIndex !== -1) {
@@ -156,34 +208,45 @@ const AddSegment = (props) => {
     </div>);
     const screen2 = (
     <div className="ct-segment-screen2-wrapper">
+        <div>Condition/Rule Name</div>
+            { segments.map((segment,segmentIndex)=>(
+                    <div>
+                        <div className="ct-condition-wrapper">
+                            <div className="ct-condition-container">
+                                <CTInput onChangeFunc={(e)=>onSegmentNameChange(e,segmentIndex)} placeholder="Segment Name"/>
+                            </div>
+                        </div>
+                        {
+                            segment.segmentConditions.map( (cond,condIndex) => (
+                                <>
+                                    <div style={{paddingLeft: condIndex*20, }} className="ct-add-rule-wrapper">
+                                        <CTSecondaryButton onClickFn={()=>addSubRule(segmentIndex)} customClass="mr-2">+ Add Sub-Condition</CTSecondaryButton>
+                                        <CTSecondaryButton onClickFn={()=>addRule(segmentIndex,condIndex)}>+ Add Condition</CTSecondaryButton>
+                                        <CTSelect customClass="ct-operand-select-wrapper" selectOptions={OPERAND_OPTIONS} />
+                                    </div>
+                                    {
+                                        cond.conditions.map( (condition) => (
+                                            <div style={{paddingLeft: condIndex*20}}>
+                                                <div className="ct-rule-arrow-extended" />
+                                                <div className="ct-rule-wrapper">
+                                                    <div className="ct-rule-arrow" />
+                                                    <CTSelect customClass="ct-rule-select" selectOptions={selectedModels} />
+                                                    <CTSlider initialMinValue={condition.min} initialMaxValue={condition.max} customClass="ct-rule-slider"/>
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </>
+                            ))
+                        }
+                    </div>
+            )) 
+            }
         <div>
-            <span className="add-condition-icon">
+            <span className="add-condition-icon" onClick={addNewSegment} onKeyPress={addNewSegment}>
                 <span className="iconify" data-icon="mdi:plus-circle" data-inline="false" />
             </span>
-            Condition
-        </div>
-        <div>Condition/Rule Name</div>
-        <div className="ct-condition-wrapper">
-            <div className="ct-condition-container">
-                <CTInput />
-            </div>
-            { noOfRules.map(()=>{
-                const key = Math.random().toString(36).substr(2, 36);
-                return (
-                    <>
-                        <div someattribute={key} className="ct-rule-arrow-extended" />
-                        <div className="ct-rule-wrapper">
-                            <div className="ct-rule-arrow" />
-                            <CTSelect customClass="ct-rule-select" selectOptions={selectedModels} />
-                            <CTSlider customClass="ct-rule-slider"/>
-                            <span className="ct-add-rule-wrapper">
-                                <CTSecondaryButton customClass="mr-2">+ Add Sub-Rule</CTSecondaryButton>
-                                <CTSecondaryButton onClickFn={addNewRule}>+ Add Rule</CTSecondaryButton>
-                            </span>
-                        </div>
-                    </>
-            )}) 
-            }
+            Segment
         </div>
     </div>);
     const screen3 = (
@@ -214,7 +277,7 @@ const AddSegment = (props) => {
 
     return (
         <CTModal
-            modalTitle="Add a Segment"
+            modalTitle="Add Segments"
             startScreenNumber={initialScreen}
             screens={screens}
             footerLeftButtons={[

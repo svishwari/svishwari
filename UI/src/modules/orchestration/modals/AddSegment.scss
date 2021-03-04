@@ -38,41 +38,50 @@
         cursor: pointer;
     }
     .ct-condition-wrapper{
-        .ct-rule-wrapper {
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            border-bottom: 1px solid $appGreyBorder;
-            padding-left: 16px;
-            .ct-rule-arrow {
-                height: 30px;
-                width: 10px;
-                border-left: 1px solid $appLightGray2;
-                border-bottom: 1px solid $appLightGray2;
-            }
-            .ct-rule-select {
-                width: auto;
-                margin-right: 2rem;
-            }
-            .ct-rule-slider {
-                flex-grow: 1;
-            }
-            .ct-add-rule-wrapper {
-                margin-left: 2rem;
-            }
-        }
-        .ct-rule-arrow-extended {
-            height: 14px;
-            width: 10px;
-            margin-left: 16px;
-            border-left: 1px solid $appLightGray2;
-        }
         .ct-condition-container {
             background: $appLightGray3;
             display: flex;
             padding: 10px;
             border-top: 1px solid $appGreyBorder;
             border-bottom: 1px solid $appGreyBorder;
+        }
+    }
+    .ct-rule-arrow-extended {
+        height: 14px;
+        width: 10px;
+        margin-left: 16px;
+        border-left: 1px solid $appLightGray2;
+    }
+    .ct-rule-wrapper {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        border-bottom: 1px solid $appGreyBorder;
+        padding-left: 16px;
+        .ct-rule-arrow {
+            height: 30px;
+            width: 10px;
+            border-left: 1px solid $appLightGray2;
+            border-bottom: 1px solid $appLightGray2;
+        }
+        .ct-rule-select {
+            width: auto;
+            margin-right: 2rem;
+        }
+        .ct-rule-slider {
+            flex-grow: 1;
+        }
+    }
+    .ct-add-rule-wrapper {
+        padding-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: baseline;
+        border-bottom: 1px solid $appGreyBorder;
+        .ct-operand-select-wrapper {
+            width: auto;
+            margin-left: 1rem;
         }
     }
 }

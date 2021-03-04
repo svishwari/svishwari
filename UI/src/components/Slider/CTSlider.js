@@ -5,6 +5,8 @@ import { Range, getTrackBackground } from "react-range";
 const CTSlider = ({
   minValue = 0.0,
   maxValue = 1.0,
+  initialMinValue = 0.1,
+  initialMaxValue = 0.55,
   stepSize = 0.05,
   customClass = "",
   ...sliderprops
@@ -13,7 +15,7 @@ const CTSlider = ({
   const MIN = minValue;
   const MAX = maxValue;
 
-  const [values, setValues] = useState([0.1, 0.55]);
+  const [values, setValues] = useState([initialMinValue, initialMaxValue]);
 
   return (
     <div className={`ct-slider-wrapper ${customClass}`}>
