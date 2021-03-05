@@ -28,7 +28,7 @@ class AudienceModel:
     """
 
     API = "https://audience-builder.main.use1.k8s.mgnt-xspdev.in/api/v1/audiences"
-    TOKEN = '<Update OKTA token here for audience service access.>'
+    TOKEN = '<Auth token goes here>'
 
     def __init__(self):
         self.message = "Hello audience"
@@ -54,7 +54,6 @@ class AudienceModel:
         # Make a request to audience service
         response = requests.get(f'{self.API}',
                                 headers = {'Authorization': f'Bearer {self.TOKEN}'})
-        print(response.json())
         return response.json()
 
     def get_audience_by_id(self, audience_id):
@@ -77,7 +76,8 @@ class AudienceModel:
         :return:
         """
         # push the request
-        return requests.post(f'{self.API}/audiences', data=data).json()
+        response = requests.post(f'{self.API}', json=data, headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        return response.json()
 
     def update_audiences(self, data):
         """
@@ -86,7 +86,8 @@ class AudienceModel:
         :return:
         """
         # push the request
-        return requests.put(f'{self.API}/audiences', data=data).json()
+        response = requests.put(f'{self.API}', json=data, headers={'Authorization': f'Bearer {self.TOKEN}'})
+        return response.json()
 
     def delete_audiences(self, audience_id):
         """
@@ -95,37 +96,9 @@ class AudienceModel:
         :return:
         """
         # push the request
-        return requests.delete(f'{self.API}/audiences/{audience_id}').json()
-
-    def star_audiences(self, audience_id):
-        """
-        purpose of this function is to update audiences
-        :param data:
-        :return:
-        """
-        # push the request
-        # return requests.delete(f'{self.API}/audiences/{audience_id}/star').json()
-        return "star_audiences mock"
-
-    def get_recent_audiences(self):
-        """
-        purpose of this function is to get recent audiences
-        :param data:
-        :return:
-        """
-        # push the request
-        # return requests.get(f'{self.API}/audiences/recent').json()
-        return "get_recent_audiences mock"
-
-    def get_star_audiences(self):
-        """
-        purpose of this function is to get recent audiences
-        :param data:
-        :return:
-        """
-        # push the request
-        # return requests.get(f'{self.API}/audiences/star').json()
-        return "get_star_audiences mock"
+        response = requests.delete(f'{self.API}/{audience_id}',
+                                headers={'Authorization': f'Bearer {self.TOKEN}'})
+        return response.json()
 
     def get_audience_delivery_jobs(self, audience_id):
         """
@@ -134,5 +107,49 @@ class AudienceModel:
         :return:
         """
         # push the request
-        # return requests.get(f'{self.API}/audiences/{audience_id}/deliveries').json()
-        return "get_audience_delivery_jobs mock"
+        response = requests.get(f'{self.API}/{audience_id}/deliveries',
+                            headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        print(response)
+        return response.json()
+
+    def create_audience_delivery_job(self, audience_id, data):
+        """
+        purpose of this function is to create audiences
+        :param data:
+        :return:
+        """
+        # push the request
+        response = requests.post(f'{self.API}/{audience_id}/deliveries', json=data,
+                                 headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        return response.json()
+
+    def get_audience_insights(self, audience_id):
+        """
+        purpose of this function is to get audience insights for an audience
+        :param data:
+        :return:
+        """
+        # push the request
+        return requests.get(f'{self.API}/{audience_id}/insights',
+                            headers = {'Authorization': f'Bearer {self.TOKEN}'}).json()
+
+    def get_delivery_job_by_audience_id(self, audience_id, delivery_job_id):
+        """
+        purpose of this function is to get audience delivery jobs for an audience
+        :param data:
+        :return:
+        """
+        # push the request
+        return requests.get(f'{self.API}/{audience_id}/deliveries/{delivery_job_id}',
+                            headers = {'Authorization': f'Bearer {self.TOKEN}'}).json()
+
+    def get_insights_delivery_job_audience_id(self, audience_id, delivery_job_id):
+        """
+        purpose of this function is to get audience delivery jobs for an audience
+        :param data:
+        :return:
+        """
+        # push the request
+        return requests.get(f'{self.API}/{audience_id}/deliveries/{delivery_job_id}/insights',
+                            headers = {'Authorization': f'Bearer {self.TOKEN}'}).json()
+

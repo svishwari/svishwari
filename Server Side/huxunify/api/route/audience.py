@@ -6,7 +6,9 @@ from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
 from api.model.audience import AudienceModel
-from api.schema.audience import AudienceSchema, audience_schema, audiences_schema
+from api.schema.audience import AudienceSchema, audience_schema, audiences_schema, \
+    AudienceDeliverySchema, audience_delivery_schema, audience_delivery_schemas, \
+    AudienceInsightsSchema, audience_insights_schema, AudienceDeliveryInsightsSchema, audience_delivery_insights_schema
 from flask import jsonify
 
 audience_bp = Blueprint('audience_bp', __name__)
@@ -61,30 +63,25 @@ def get_audience(audience_id):
     data_source = result.get_audience_by_id(audience_id)
     return jsonify(audience_schema.dump(data_source)), 200
 
-
-@audience_bp.route('/count', methods=['GET'])
-@swag_from({
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'get count of all audiences',
-            'schema': AudienceSchema
-        }
-    }
-})
-def audience_count():
-    """
-    audience count
-    ---
-    tags:
-      - Audience API
-    """
-    result = AudienceModel()
-    data_source = result.get_audience_count()
-    return json.dumps(data_source), 200
-
-
 @audience_bp.route('/', methods=['POST'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "schema": {
+                "id": "createAudience",
+                "required": [],
+                "example":
+                    {
+                        "audience_name": "My new audience",
+                        "ingestion_job_id": "5f8d9aa93bdaa787b1879242"
+                    },
+            },
+        },
+    ],
+    "tags": ["advertising performance", "data-sources"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'create audience',
@@ -101,11 +98,44 @@ def create_audiences():
     """
     result = AudienceModel()
     data_source = result.create_audiences(request.json)
-    return json.dumps(data_source), 200
+    return jsonify(audience_schema.dump(data_source)), 200
 
-
-@audience_bp.route('/', methods=['PUT'])
+@audience_bp.route('/<audience_id>', methods=['PUT'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "audience_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Audiencce id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "schema": {
+                "id": "updateAudience",
+                "required": [],
+                "example":
+                    {
+                        "audience_filters": [
+                            {
+                                "field": "age",
+                                "type": "max",
+                                "value": 60
+                            }
+                        ],
+                        "audience_name": "string",
+                        "audience_type": "string",
+                        "created": "2020-10-17T21:54:53.495000+00:00",
+                        "updated": "2020-10-17T21:54:53.495000+00:00"
+                    }
+            }
+        },
+    ],
+    "tags": ["advertising performance"],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'update audience',
@@ -122,15 +152,23 @@ def update_audience():
     """
     result = AudienceModel()
     data_source = result.update_audiences(request.json)
-    return json.dumps(data_source), 200
-
+    return jsonify(audience_schema.dump(data_source)), 200
 
 @audience_bp.route('/<audience_id>', methods=['DELETE'])
 @swag_from({
+    "parameters": [
+        {
+            "name": "audience_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Audiencce id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+    ],
     'responses': {
         HTTPStatus.OK.value: {
-            'description': 'delete audience',
-            'schema': AudienceSchema
+            'description': 'delete audience by id  '
         }
     }
 })
@@ -145,76 +183,22 @@ def delete_audience(audience_id):
     data_source = result.delete_audiences(audience_id)
     return json.dumps(data_source), 200
 
-
-@audience_bp.route('/<audience_id>/star', methods=['DELETE'])
+@audience_bp.route('/<audience_id>/deliveries', methods=['GET'])
 @swag_from({
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'star audience',
-            'schema': AudienceSchema
-        }
-    }
-})
-def star_audience(audience_id):
-    """
-    star audience
-    ---
-    tags:
-      - Audience API
-    """
-    result = AudienceModel()
-    data_source = result.star_audiences(audience_id)
-    return json.dumps(data_source), 200
-
-
-@audience_bp.route('/recent', methods=['GET'])
-@swag_from({
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'get recent audiences',
-            'schema': AudienceSchema
-        }
-    }
-})
-def recent_audiences():
-    """
-    get recent audiences
-    ---
-    tags:
-      - Audience API
-    """
-    result = AudienceModel()
-    data_source = result.get_recent_audiences()
-    return json.dumps(data_source), 200
-
-
-@audience_bp.route('/star', methods=['GET'])
-@swag_from({
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'get star audiences',
-            'schema': AudienceSchema
-        }
-    }
-})
-def get_star_audiences():
-    """
-    get star audiences
-    ---
-    tags:
-      - Audience API
-    """
-    result = AudienceModel()
-    data_source = result.get_star_audiences()
-    return json.dumps(data_source), 200
-
-
-@audience_bp.route('/<audience_id>/delivery_jobs', methods=['GET'])
-@swag_from({
+    "parameters": [
+        {
+            "name": "audience_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Audiencce id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+    ],
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'get delivery jobs for an audience',
-            'schema': AudienceSchema
+            'schema': AudienceDeliverySchema
         }
     }
 })
@@ -227,4 +211,150 @@ def get_audience_delivery_jobs(audience_id):
     """
     result = AudienceModel()
     data_source = result.get_audience_delivery_jobs(audience_id)
-    return json.dumps(data_source), 200
+    return jsonify(audience_delivery_schemas.dump(data_source)), 200
+
+@audience_bp.route('/', methods=['POST'])
+@swag_from({
+    "parameters": [
+        {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "schema": {
+                "id": "createAudienceDeliveryJob",
+                "required": [],
+                "example":
+                    {
+                          "delivery_platform_id": "5f5f7262997acad4bac4373b",
+                          "created": "2020-10-17T21:54:53.495000+00:00",
+                          "updated": "2020-10-17T21:54:53.495000+00:00"
+
+                    },
+            },
+        },
+    ],
+    "tags": ["advertising performance", "data-sources"],
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'create audience delivery job',
+            'schema': AudienceDeliverySchema
+        }
+    }
+})
+def create_audience_delivery_job():
+    """
+    create audience
+    ---
+    tags:
+      - Audience API
+    """
+    result = AudienceModel()
+    data_source = result.create_audience_delivery_job(request.json)
+    return jsonify(audience_delivery_schema.dump(data_source)), 200
+
+@audience_bp.route('/<audience_id>/deliveries/<delivery_job_id>', methods=['GET'])
+@swag_from({
+    "parameters": [
+        {
+            "name": "audience_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Audiencce id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+        {
+            "name": "delivery_job_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Delivery job id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+    ],
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get delivery job for an audience by id',
+            'schema': AudienceDeliverySchema
+        }
+    }
+})
+def get_delivery_job_by_audience_id(audience_id, delivery_job_id):
+    """
+    get audience delivery jobs
+    ---
+    tags:
+      - Audience API
+    """
+    result = AudienceModel()
+    data_source = result.get_delivery_job_by_audience_id(audience_id, delivery_job_id)
+    return jsonify(audience_delivery_schema.dump(data_source)), 200
+
+
+@audience_bp.route('/<audience_id>/insights', methods=['GET'])
+@swag_from({
+    "parameters": [
+        {
+            "name": "audience_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Audiencce id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+    ],
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'retrieve audience insights',
+            'schema': AudienceInsightsSchema
+        }
+    }
+})
+def get_audience_insights(audience_id):
+    """
+    get audience delivery jobs
+    ---
+    tags:
+      - Audience API
+    """
+    result = AudienceModel()
+    data_source = result.get_audience_insights(audience_id)
+    return jsonify(audience_insights_schema.dump(data_source)), 200
+
+@audience_bp.route('/<audience_id>/deliveries/<delivery_job_id>/insights', methods=['GET'])
+@swag_from({
+    "parameters": [
+        {
+            "name": "audience_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Audiencce id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+        {
+            "name": "delivery_job_id",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "Delivery job id",
+            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+        },
+    ],
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'get delivery job for an audience by id',
+            'schema': AudienceDeliveryInsightsSchema
+        }
+    }
+})
+def get_insights_delivery_job_audience_id(audience_id, delivery_job_id):
+    """
+    get audience delivery job insights
+    ---
+    tags:
+      - Audience API
+    """
+    result = AudienceModel()
+    data_source = result.get_insights_delivery_job_audience_id(audience_id, delivery_job_id)
+    return jsonify(audience_delivery_insights_schema.dump(data_source)), 200
