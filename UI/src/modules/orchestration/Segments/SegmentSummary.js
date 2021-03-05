@@ -198,7 +198,7 @@ const SegmentSummary = (props) => {
         dispatch(fetchSegmentSummary(segmentID));
     };
     const insightCard = () => (
-        <div className="insight-wrap">
+        <div className="insight-wrap-1">
             <div className="worldmap">
               <CTUSAMap data={states} />
             </div>
