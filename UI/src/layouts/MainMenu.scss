@@ -66,7 +66,7 @@
     @include background-opacity($appBackground, 0.1);
     .sub-nav-list {
       margin-left: 50px;
-      border-left: 1px solid #ffffff;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
       .nav-link {
         margin-bottom: 5px;
         width: 95%;

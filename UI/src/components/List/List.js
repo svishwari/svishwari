@@ -21,7 +21,7 @@ const CTList = (props) => {
       showColumnRightBorder={false}
       disableColumnSelector
       rowHeight={60}
-      headerHeight={28}
+      headerHeight={props.headerHeight || 0}
       {...props}
       className={`${classes.root} ct-list-wrapper`}
       hideFooter
