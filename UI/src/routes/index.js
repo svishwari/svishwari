@@ -24,6 +24,7 @@ import ConnectionsSummary from "../modules/connections/ConnectionsSummary";
 import ComingSoon from "../pages/ComingSoon";
 import DataSources from "../modules/connections/data-sources/DataSources";
 import Destinations from "../modules/connections/destinations/Destinations";
+import Audiences from "../modules/orchestration/audiences/Audiences";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -74,6 +75,11 @@ function Routes() {
                   path="/connections/destinations"
                   exact
                   component={Destinations}
+                />
+                <Route
+                  path="/orchestration/audiences"
+                  exact
+                  component={Audiences}
                 />
                 <Route path="*" exact component={ComingSoon} />
               </Switch>
