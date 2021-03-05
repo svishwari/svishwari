@@ -15,7 +15,7 @@ const Audiences = (props) => {
   };
 
   const columns = [
-    { field: 'name', headerName: 'Name' },
+    { field: 'name', headerName: 'Name', flex: 0.3 },
   ];
 
   React.useEffect(() => {
