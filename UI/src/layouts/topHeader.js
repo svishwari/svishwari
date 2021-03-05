@@ -1,3 +1,4 @@
+import { AppBar } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
 import { ReactComponent as Collapse } from '../assets/icons/collapse.svg';
@@ -9,12 +10,11 @@ const TopHeader = (props ) => {
     props.isCollapsed();
   };
   return (
-    <div className="app-header ">
+    <AppBar position="static"
+      className={props.collapsed ? 'app-header collapsed': 'app-header'}>
       <Collapse onClick={() => toggle()} className={`trigger ${props.collapsed ? 'extra-space' : ''}`} />
       <UserAvatar username={props.userInfo.name} />
-      {/* <span>{props.userInfo.name}</span> */}
-    </div>
-  );
+    </AppBar>  );
 };
 
 const mapStateToProps = (state) => ({

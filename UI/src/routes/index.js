@@ -25,6 +25,7 @@ import ComingSoon from "../pages/ComingSoon";
 import DataSources from "../modules/connections/data-sources/DataSources";
 import Destinations from "../modules/connections/destinations/Destinations";
 import Segments from "../modules/orchestration/Segments/Segments";
+import OrchestrationSummary from "../modules/orchestration/OrchestrationSummary";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -75,6 +76,11 @@ function Routes() {
                   path="/connections/destinations"
                   exact
                   component={Destinations}
+                />
+                <Route
+                  path="/orchestration"
+                  exact
+                  component={OrchestrationSummary}
                 />
                 <Route
                   path="/orchestration/segments"
