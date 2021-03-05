@@ -1,10 +1,11 @@
 """
 purpose of this script is for housing the decision routes for the API
 """
+import json
 from http import HTTPStatus
-from flask import Blueprint
+from flask import Blueprint, request
 from flasgger import swag_from
-from huxunify.api.model.decision import DecisionModel, CustomerFeatureModel
+from huxunify.api.model.decision import DecisionModel, CustomerFeatureModel, AlgorithmiaModel
 from huxunify.api.schema.decision import DecisionSchema, CustomerFeatureSchema
 
 
@@ -28,6 +29,56 @@ def index():
     """
     result = DecisionModel()
     return DecisionSchema().dump(result), 200
+
+
+@decision_bp.route('/algorithms', methods=['get'])
+@swag_from("../spec/decision/algorithms_search.yaml")
+def algorithms_search():
+    """
+    list all available algorithms
+
+    Args:
+    Returns:
+        The return list of algorithms from algorithmia
+
+    """
+    return json.dumps(AlgorithmiaModel().get_algorithms()), 200
+
+
+@decision_bp.route('/algorithms/<algorithm_name>', methods=['get'])
+@swag_from("../spec/decision/algorithms_get.yaml")
+def algorithm_get(algorithm_name):
+    """
+    get single algorithm information
+
+    Args:
+    Returns:
+        The return algorithm information
+
+    """
+    return json.dumps(AlgorithmiaModel().get_algorithm(algorithm_name.replace(':', '/'))), 200
+
+
+@decision_bp.route('/algorithms', methods=['post'])
+@swag_from("../spec/decision/algorithms_post.yaml")
+def invoke_algorithm():
+    """
+    invoke algorithm
+
+    Args:
+    Returns:
+        The return algorithm information
+
+    """
+    # extract params
+    algo_name = request.json['algorithm_name'].replace(':', '/')
+    params = request.json['params']
+
+    # run the model
+    algo_result = AlgorithmiaModel().invoke_algorithm(algo_name, params)
+
+    # return results
+    return json.dumps(algo_result), 200
 
 
 @decision_bp.route('/features/<cluster_id>/<feature_service_name>/<customer_id>',

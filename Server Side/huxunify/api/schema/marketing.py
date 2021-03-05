@@ -3,7 +3,7 @@ Purpose of this file is to house the marketing schema
 """
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, List, String, Length, Dict
+from marshmallow.fields import Str, List, Length, Dict
 
 
 class MarketingSchema(Schema):

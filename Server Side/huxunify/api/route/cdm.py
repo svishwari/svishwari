@@ -31,15 +31,7 @@ def index():
 
 
 @cdm_bp.route('/ingested_data', methods=['get'])
-@swag_from({
-    "parameters": [],
-    "tags": ["cdm"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'list all ingested data',
-        }
-    }
-})
+@swag_from("../spec/cdm/ingested_data_search.yaml")
 def get_ingested_data():
     """
     list all ingested data, record count and blob path
