@@ -214,8 +214,9 @@ const lists = {
 };
 
 const OrchestrationSummary = () => {
-  const triggerAdd = (name) => {
-    console.log(name);
+  const triggerAdd = () => {
+    // Do something here
+    // Add a prop name and use it to dispath some action
   };
   const insightCard = (section) => (
     <div className="insight-wrap">
