@@ -3,8 +3,12 @@ The purpose of this file is for housing the Decisioning related API models
 """
 from os import getenv
 from random import randint
+from urllib.parse import urlparse
+from io import BytesIO
 import Algorithmia
 from Algorithmia.errors import AlgorithmException
+import pandas as pd
+from huxunify.api.data_connectors.aws import get_aws_client
 
 
 # get tecton api key
@@ -16,9 +20,7 @@ TECTON_API_HEADERS = {
 ALGORITHMIA_KEY = getenv('ALGORITHMIA_API_KEY')
 ALGORITHMIA_API = 'https://api.algorithmia.hux-decisioning.in'
 # TODO - get names of algorithms from Decision team
-ALGORITHMS = ['dolong_deloitte_com/hux_unified_test',
-              'demo/Hello', 'mansoshaik_deloitte_com/iris_xgboost',
-              'mlaclavik_deloitte_com/test_lightgbm']
+ALGORITHMS = ['dolong_deloitte_com/h2o_scores_to_stream']
 
 
 class DecisionModel:
@@ -88,15 +90,8 @@ class AlgorithmiaModel:
         """
         # band-aid solution for this model, algorithmia is currently missing a package needed
         # to run the model Jingjing built, the package is h20, she has a ticket with them.
-        if algorithm_name == 'dolong_deloitte_com/hux_unified_test':
-            return [
-                {
-                    "predict":0,
-                    "p0":0.9997829795,
-                    "p1":0.0002170039,
-                    "user_cookie":"0070b377e0214941a7e5267c9f96b6ab"
-                }
-            ]
+        if 'h2o_scores_to_stream' in algorithm_name:
+            body = prep_data_h2o_scores_to_stream(body)
 
         # setup algo
         algo = self.client.algo(algorithm_name)
@@ -106,6 +101,31 @@ class AlgorithmiaModel:
 
         # get algo result
         return algo.pipe(body).result
+
+
+def prep_data_h2o_scores_to_stream(data):
+    """
+    convert incoming data into JSON for streaming
+    :param data:
+    :return:
+    """
+    # pull parquet file from s3
+    s3_client = get_aws_client()
+
+    # get bucket name from url
+    s3_url_obj = urlparse(data)
+
+    # get the file object, ignore first character from url path to get s3 key
+    s3_obj = s3_client.get_object(Bucket=s3_url_obj.netloc, Key=s3_url_obj.path[1:])
+
+    # read the initial parquet data
+    df = pd.read_parquet(BytesIO(s3_obj["Body"].read()))
+
+    # clean the dataframe for pushing to algorithmia
+    cleaned_df = df.iloc[[1]].dropna(axis=1)
+
+    # return the JSON response
+    return cleaned_df.to_json(orient="records")
 
 
 class CustomerFeatureModel:

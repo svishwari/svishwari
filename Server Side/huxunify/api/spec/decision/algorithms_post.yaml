@@ -4,18 +4,12 @@ tags:
   - decisioning
 
 parameters:
-- name: algorithm_name
-  in: path
-  description: algorithm name
-  required: true
-  type: string
-  default: dolong_deloitte_com:hux_unified_test
 - name: body
   in: body
   description: algorithm inputs
   required: true
   example:
-    algorithm_name: dolong_deloitte_com:hux_unified_test
+    algorithm_name: dolong_deloitte_com:h2o_scores_to_stream
     params: s3://xspdev-tecton-shared/advertiser-data-scoring-data-store/test_with_uid.parquet
 
 responses:
