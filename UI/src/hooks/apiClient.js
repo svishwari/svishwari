@@ -1,7 +1,12 @@
 import axios from "axios";
 
+// TODO: replace me with the `useOktaAuth` hook
+const oktaTokenStorage = JSON.parse(localStorage.getItem("okta-token-storage"));
+const accessToken = oktaTokenStorage?.accessToken?.value || "";
+
 const headers = {
   "Content-Type": "application/json",
+  "Authorization": `Bearer ${accessToken}`,
 };
 
 axios.interceptors.request.use(
@@ -16,6 +21,7 @@ axios.interceptors.response.use(
   (response) => response,
   (error) => Promise.reject(error)
 );
+
 export const postRequest = async (url, payload = {}) => {
   const data = await axios
     .post(url, payload)
