@@ -2,6 +2,7 @@
 const defaultState = {
   segments: [],
   audience: [],
+  segmentSummary: {},
 };
 
 const orchestrationReducer = (state = defaultState, action) => {
@@ -26,6 +27,11 @@ const orchestrationReducer = (state = defaultState, action) => {
         return {
           ...state,
           segments: originalSegments2,
+        };
+      case "loadSegmentSummary":
+        return {
+          ...state,
+          segmentSummary: action.payload || {},
         };
       default:
           return state;
