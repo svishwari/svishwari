@@ -287,7 +287,7 @@ const AddSegment = (props) => {
                 (<CTSecondaryButton customClass="segment-btn-later" key="2" activeindex={2}  onClick={onCloseAndCompleteLater}>
                 Close &amp; Complete Later 
             </CTSecondaryButton>)]}
-            maxWidth="lg"
+            maxWidth="md"
         />
     )
 }
