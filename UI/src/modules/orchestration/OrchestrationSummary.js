@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch } from "react-redux";
 import { Link } from 'react-router-dom';
 import DonutChart from 'react-d3-donut';
 import { Box, Button, IconButton, ListItem, Typography } from '@material-ui/core';
@@ -10,6 +11,7 @@ import CTUSAMap from '../../components/Charts/CTUSAMap';
 import CTList from '../../components/List/List';
 import CTChip from '../../components/Chip/CTChip';
 import CTPopover from '../../components/Popover/CTPopover';
+import { showAddSegment } from '../modal/action';
 
 const lists = {
   audiences: [
@@ -214,15 +216,17 @@ const lists = {
 };
 
 const OrchestrationSummary = () => {
+  const dispatch = useDispatch();
   const triggerAdd = () => {
     // Do something here
     // Add a prop name and use it to dispath some action
+    dispatch(showAddSegment());
   };
   const insightCard = (section) => (
     <div className="insight-wrap">
       <div className="section-title">
         <h3 className="title">
-          <Link to="/connections/data-sources">{`${section.name}s Overview >`}</Link>
+          <Link to="/orchestration/segments">{`${section.name}s Overview >`}</Link>
         </h3>
         <span
           className="action-link"
