@@ -42,11 +42,25 @@ const Segments = (props) => {
           field: "segmentName",
           headerName: "Segment Name",
           flex: 0.2,
-          renderCell: (params) => (
+          // TO DO Check how to apply this class only when the isDraft is true
+          cellClassName: "overflow-visible",
+          renderCell: (params) => {
+            const openAddSegment = () => {
+              dispatch(showAddSegment({initialScreen: 1,initialSelected: params.row.models,isDraft: true,id: params.getValue("id") }));
+            }
+            if( params.getValue("isDraft")){
+              return (
+              <div>Segment Name (Draft)
+                <Link onKeyPress={openAddSegment} onClick={openAddSegment} to={()=>false}>
+                  &nbsp;Continue Configuring &gt;
+                </Link>
+              </div>)
+            }
+            return (
             <Link to={`/orchestration/segments/${params.getValue("id")}`}>
               {params.getValue("segmentName")}
             </Link>
-          ),
+          )},
         },
         {
             field: "deliverStatus",
@@ -61,6 +75,9 @@ const Segments = (props) => {
                 dispatch(markDelivering(payload));
                 markDelivered(params.getValue("id"));
               };
+              if( params.getValue("isDraft")){
+                return (<></>);
+              }
               return (
                 <>
                   {params.getValue("deliverStatus") !== "Delivering..." ? (
@@ -84,6 +101,9 @@ const Segments = (props) => {
           flex: 0.1,
           renderCell: (params) => {
             const modelsLength = params.getValue("models").length;
+            if( params.getValue("isDraft")){
+              return (<></>);
+            }
             if( modelsLength === 1) {
               return (
                 <div>{params.getValue("models")[0]}</div>
@@ -109,6 +129,12 @@ const Segments = (props) => {
           field: "size",
           headerName: "Size",
           flex: 0.15,
+          renderCell: (params) => {
+            if( params.getValue("isDraft")){
+              return (<></>);
+            }
+            return <div>{params.getValue("size")}</div>
+          }
         },
         {
           field: "created",

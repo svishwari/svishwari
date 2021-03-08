@@ -16,6 +16,12 @@ const addSegmentLoad = (props={}) => ({
     modalProps: props,
 });
 
+const showFetchScore = (props={}) => ({
+    type: "SHOW_MODAL",
+    modalType: "SHOW_FETCH_SCORE",
+    modalProps: props,
+})
+
 const closeModal = () => ({
     type: "HIDE_MODAL"
 });
@@ -40,5 +46,6 @@ export {
     showAddDataSource,
     showAddDestination,
     showAddSegment,
+    showFetchScore,
     hideModal,
 }

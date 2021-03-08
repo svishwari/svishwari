@@ -12,6 +12,18 @@ const orchestrationReducer = (state = defaultState, action) => {
               ...state,
               segments: [...action.payload] || [],
             };
+      case "addSegment":
+        return {
+            ...state,
+            segments: [action.payload,...state.segments] || [],
+          };
+      case "removeSegment":
+        const originalSegments3 = JSON.parse(JSON.stringify(state.segments));
+        const filteredSegments3 = originalSegments3.filter((item) => item.id !== action.payload.id);
+        return {
+            ...state,
+            segments: filteredSegments3 || [],
+        };
       case "updateDeliverStatus":
         const originalSegments = JSON.parse(JSON.stringify(state.segments));
         const filteredSegments = originalSegments.filter((item) => item.id === action.payload.id);

@@ -13,7 +13,7 @@ import CTSelect from "../../../components/Select/CTSelect";
 import CTSlider from "../../../components/Slider/CTSlider";
 // import CTSwitch from "../../../components/Switch/CTSwitch";
 
-import { hideModal } from "../../modal/action";
+import { hideModal, showFetchScore, showAddSegment } from "../../modal/action";
 import {
     fetchDestinations,
 } from "../../connections/store/action";
@@ -22,6 +22,7 @@ import "./AddSegment.scss";
 import { ReactComponent as  ChurnIcon } from "../../../assets/icons/churn-icon.svg";
 import { ReactComponent as  Propensity } from "../../../assets/icons/propensity.svg";
 import { ReactComponent as  LifeTimeValue } from "../../../assets/icons/life-time-value.svg";
+import { addDraftSegment, addSegment, removeSegment } from '../store/action';
 
 const AVAILABLE_MODELS = [
     {
@@ -44,7 +45,7 @@ const OPERAND_OPTIONS = ["AND", "OR"]
 
 const AddSegment = (props) => {
     const dispatch = useDispatch();
-    const { initialScreen, initialSelected=[] } = props;
+    const { initialScreen, initialSelected=[], isDraft=false,id="" } = props;
     const [selectedModels, setSelectedModels] = useState(initialSelected);
 
     const BASE_VALUES = {
@@ -116,9 +117,29 @@ const AddSegment = (props) => {
     const onCloseAndCompleteLater = () => {
         // Dispatch some api call here
         dispatch(hideModal());
+        if(isDraft){
+            // TO Do something
+        }
+        else {
+            dispatch(addDraftSegment(selectedModels));
+        }
     }
     const fetchScore = () => {
         // Dispatch some api call here
+        dispatch(hideModal());
+        dispatch(showFetchScore());
+        setTimeout(()=>{
+            dispatch(hideModal());
+            dispatch(showAddSegment({initialScreen: 1,initialSelected: selectedModels }))
+        } ,4000);
+    }
+    const onDeliverAndComplete = () => {
+        // Dispatch some api call here
+        if(isDraft){
+            // TO Do something
+            dispatch(removeSegment(id));
+        }
+        dispatch(addSegment(selectedModels));
     }
     const retrieveDestinations = () => {
         // Dispatch some api call here
@@ -150,7 +171,7 @@ const AddSegment = (props) => {
         {
             field: "destinationName",
             headerName: "Destination",
-            width: 600,
+            width: 400,
             renderCell: (params) => (
                 <>
                 <Link to="/destinations">
@@ -266,7 +287,7 @@ const AddSegment = (props) => {
 
     const screens = {
         screenComponents: [screen1,screen2,screen3],
-        righButtonFunctions: [fetchScore,()=>{},()=>{}],
+        righButtonFunctions: [fetchScore,()=>{},onDeliverAndComplete],
         righButtonNames: ["Fetch Scores & Continue","Continue","Deliver & Complete"],
         rightButtonProps: [{isDisabled: selectedModels.length===0 },{},{}],
         screenTitle: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.",

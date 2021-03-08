@@ -1,4 +1,6 @@
 const setSegments = (payload) => ({ type: "loadSegments", payload });
+const setAddSegments = (payload) => ({ type: "addSegment", payload });
+const setRemoveSegment = (payload) => ({ type: "removeSegment", payload });
 const setSegmentSummary = (payload) => ({ type: "loadSegmentSummary", payload });
 const segmentDelivered = (payload) => ({
     type: "segmentDelivered",
@@ -36,6 +38,22 @@ const fetchSegments = () => async (dispatch) => {
 
     dispatch(setSegments(response));
 };
+
+const addSegment = (selectedModels) => async (dispatch) => {
+    const response = {
+        id: "5",
+        segmentName: "Segment Name 5",
+        deliverStatus: "Not Delivered",
+        models: selectedModels,
+        size: "1.2M",
+        created: "12/07/19 01:21PM",
+    };
+    dispatch(setAddSegments(response));
+};
+
+const removeSegment = (id) => async (dispatch) => {
+    dispatch(setRemoveSegment({id}));
+}
 
 const fetchSegmentSummary = () => async (dispatch) => {
     await new Promise((done) => setTimeout(() => done(), 2000));
@@ -111,7 +129,20 @@ const triggerDeliveredCheck = (id) => async (dispatch) => {
     dispatch(segmentDelivered(response));
 };
 
+const addDraftSegment = (selectedModels) => async (dispatch) => {
+    const response = {
+        id: "10",
+        models: selectedModels,
+        isDraft: true,
+        created: "12/07/19 01:21PM",
+    };
+    dispatch(setAddSegments(response));
+};
+
 export {
+    addSegment,
+    addDraftSegment,
+    removeSegment,
     fetchSegments,
     triggerDeliveredCheck,
     fetchSegmentSummary,
