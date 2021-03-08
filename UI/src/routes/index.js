@@ -24,6 +24,8 @@ import ConnectionsSummary from "../modules/connections/ConnectionsSummary";
 import ComingSoon from "../pages/ComingSoon";
 import DataSources from "../modules/connections/data-sources/DataSources";
 import Destinations from "../modules/connections/destinations/Destinations";
+import CustomersData from "../modules/customer-data/CustomersData";
+import CustomerData from "../modules/customer-data/CustomerData";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -74,6 +76,16 @@ function Routes() {
                   path="/connections/destinations"
                   exact
                   component={Destinations}
+                />
+                <Route
+                  path="/customer-profiles"
+                  exact
+                  component={CustomersData}
+                />
+                <Route
+                  path="/customer-profiles/:profileID"
+                  exact
+                  component={CustomerData}
                 />
                 <Route path="*" exact component={ComingSoon} />
               </Switch>
