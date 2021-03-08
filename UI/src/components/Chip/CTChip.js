@@ -6,8 +6,9 @@ import "./CTChip.scss";
 
 const CTChip = ({
   hasIcons = true,
-  onClickFunc,
+  onClickFunc=()=>{},
   isWorking = true,
+  isNotMiddle = true,
   children,
 }) => {
   const [isHovered,setisHovered] = useState(false);
@@ -26,30 +27,42 @@ const CTChip = ({
     onFocus={toggleHover}
     onBlur={toggleHover}
   >
-    <Chip
-      label={children}
-      className={`${isWorking ? "ct-chip-success" : "ct-chip-not-success"} ${isHovered && "ct-chip-hover"}`}
-    />
-      {hasIcons ? (
-        isWorking === true ? (
-          <>
-          <div className={`empty-space-container ${isHovered && "ct-s-hover"}`}/>
-          <RefreshCircle
-            className={`ct-chip-success-icon ${isHovered && "ct-chip-success-hover"}`}
-            />
-          </>
+    {
+    isNotMiddle ?
+    <>
+      <Chip
+        label={children}
+        className={`${isWorking ? "ct-chip-success" : "ct-chip-not-success"} ${(isHovered && hasIcons) && "ct-chip-hover"}`}
+      />
+        {hasIcons ? (
+          isWorking === true ? (
+            <>
+            <div className={`empty-space-container ${isHovered && "ct-s-hover"}`}/>
+            <RefreshCircle
+              className={`ct-chip-success-icon ${isHovered && "ct-chip-success-hover"}`}
+              />
+            </>
+          ) : (
+            <>
+            <div className={`empty-space-container ${isHovered && "ct-ns-hover"}`}/>
+            <ArrowRightCircle
+              className={`ct-chip-not-success-icon ${isHovered && "ct-chip-not-success-hover"}`}
+              />
+            </>
+          )
         ) : (
-          <>
-          <div className={`empty-space-container ${isHovered && "ct-ns-hover"}`}/>
-          <ArrowRightCircle
-            className={`ct-chip-not-success-icon ${isHovered && "ct-chip-not-success-hover"}`}
-            />
-          </>
-        )
-      ) : (
-        <></>
-      )}
+          <></>
+        )}
+      </> 
+      : <>
+        <Chip
+          label={children}
+          className={`ct-chip-middle ${isHovered && "ct-chip-middle-hover"}`}
+        />
+      </>
+    }
   </div>
+  
 )};
 
 export default CTChip;

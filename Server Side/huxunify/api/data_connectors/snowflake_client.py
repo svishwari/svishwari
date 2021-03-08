@@ -7,11 +7,12 @@ from typing import Optional
 from snowflake import connector
 
 
-# TODO - using my username/password until
+# get snowflake connection params
 USERNAME = getenv("CDM_SNOWFLAKE_USER")
 PASSWORD = getenv("CDM_SNOWFLAKE_PASSWORD")
 ACCOUNT = getenv("CDM_SNOWFLAKE_ACCOUNT")
 WAREHOUSE = "COMPUTE_WH"
+
 
 class SnowflakeClient:
     """Snowflake client for handling operations on the database."""

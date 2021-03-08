@@ -126,6 +126,7 @@ const Destinations = (props) => {
       hasStarring
       loading={!props.destinations.length}
       pageName="Destination"
+      searchPlaceholder="Search Destinations"
       isTopVisible
       filterTypes={FILTER_TYPES}
       onAddClick={()=> dispatch(showAddDestination())}

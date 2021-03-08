@@ -6,7 +6,6 @@ import "./List.scss";
 const useStyles = makeStyles(() => ({
   root: {
     background: "#FFFFFF",
-    boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.05)",
     borderRadius: "5px",
   },
 }));

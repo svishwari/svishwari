@@ -3,9 +3,12 @@ The purpose of this file is for housing the Decisioning related API models
 """
 from os import getenv
 from random import randint
-from pathlib import Path
-import requests
+from urllib.parse import urlparse
+from io import BytesIO
 import Algorithmia
+from Algorithmia.errors import AlgorithmException
+import pandas as pd
+from huxunify.api.data_connectors.aws import get_aws_client
 
 
 # get tecton api key
@@ -13,8 +16,11 @@ TECTON_API_HEADERS = {
     'Authorization': f"Tecton-key {getenv('TECTON_API_KEY')}",
 }
 
-# get ALGORITHMIA_API_KEY
-ALGORITHMIA_API_KEY = getenv('ALGORITHMIA_API_KEY')
+# set Algorithmia vars
+ALGORITHMIA_KEY = getenv('ALGORITHMIA_API_KEY')
+ALGORITHMIA_API = 'https://api.algorithmia.hux-decisioning.in'
+# TODO - get names of algorithms from Decision team
+ALGORITHMS = ['dolong_deloitte_com/h2o_scores_to_stream']
 
 
 class DecisionModel:
@@ -25,13 +31,109 @@ class DecisionModel:
         self.message = "Hello Decisioning"
 
 
+class AlgorithmiaModel:
+    """
+    Decisioning model class
+    """
+    def __init__(self):
+        # initialize the algorithmia connection object
+        self.client = Algorithmia.client(ALGORITHMIA_KEY, ALGORITHMIA_API)
+
+    def get_algorithms(self):
+        """
+        get algos from api.
+        :return: list of algo
+        """
+        # get info for each one
+        algos = [self.get_algorithm(algo) for algo in ALGORITHMS]
+
+        # remove none values if any
+        return [i for i in algos if i]
+
+    def get_algorithm(self, algorithm_name):
+        """
+        get information for a specific algorithm
+        :return: algorithmia dictionary object
+        """
+        try:
+            # get algorithm details
+            algo = self.client.algo(algorithm_name).info()
+        except AlgorithmException:
+            return None
+
+        # extract all the available properties
+        algo_cleaned_dict = self.translate_version_info(algo)
+
+        # remove the thousand line statement of compilation notes of algo
+        if 'compilation' in algo_cleaned_dict:
+            algo_cleaned_dict['compilation'].pop('output', None)
+        return algo_cleaned_dict
+
+    def translate_version_info(self, algo_response):
+        """
+        translate algo to dict
+        I am going to submit a PR to algorithmia to add this.
+        I will update their __dict__ VersionInfo function.
+        """
+        return_dict = {}
+        for k, v in algo_response.attribute_map.items():
+            if hasattr(getattr(algo_response, k), 'attribute_map'):
+                return_dict[k] = self.translate_version_info(getattr(algo_response, k))
+            else:
+                return_dict[k] = getattr(algo_response, k)
+        return return_dict
+
+    def invoke_algorithm(self, algorithm_name, body, timeout_seconds=60):
+        """
+        invoke an algorithm
+        :return:
+        """
+        # band-aid solution for this model, algorithmia is currently missing a package needed
+        # to run the model Jingjing built, the package is h20, she has a ticket with them.
+        if 'h2o_scores_to_stream' in algorithm_name:
+            body = prep_data_h2o_scores_to_stream(body)
+
+        # setup algo
+        algo = self.client.algo(algorithm_name)
+
+        # set query parameters here
+        algo.set_options(timeout=timeout_seconds, stdout=False)
+
+        # get algo result
+        return algo.pipe(body).result
+
+
+def prep_data_h2o_scores_to_stream(data):
+    """
+    convert incoming data into JSON for streaming
+    :param data:
+    :return:
+    """
+    # pull parquet file from s3
+    s3_client = get_aws_client()
+
+    # get bucket name from url
+    s3_url_obj = urlparse(data)
+
+    # get the file object, ignore first character from url path to get s3 key
+    s3_obj = s3_client.get_object(Bucket=s3_url_obj.netloc, Key=s3_url_obj.path[1:])
+
+    # read the initial parquet data
+    df = pd.read_parquet(BytesIO(s3_obj["Body"].read()))
+
+    # clean the dataframe for pushing to algorithmia
+    cleaned_df = df.iloc[[1]].dropna(axis=1)
+
+    # return the JSON response
+    return cleaned_df.to_json(orient="records")
+
+
 class CustomerFeatureModel:
     """
     See all features per customer
     """
 
     def __init__(self, cluster_id, feature_service_name, customer_id):
-        self.algo_client = Algorithmia.client(ALGORITHMIA_API_KEY)
         self.cluster_id = cluster_id
         self.feature_service_name = feature_service_name
         self.customer_id = customer_id
@@ -86,33 +188,3 @@ class CustomerFeatureModel:
                     'user_clicks': randint(1, 60)
                 }
             )
-
-    def get_scores_algo(self):
-        """
-        purpose of this function is to call the Algorithmia API to score the file
-
-        there are two ways to score the file, the current method I could find
-        is using the Algorithmia python SDK, however API would be preferred
-        :return:
-        """
-        # initialize the algorithm
-        algo = self.algo_client.algo('jcb_dg/external_lightgbm_demo_model/0.1.0')
-
-        # create the temporary payload
-        data = {
-                "model_path": "",
-                "scoring_file_path": "",
-                "experiment_id": randint(1, 1000000)
-            }
-        # set the timeout
-        algo.set_options(timeout=300)
-
-        # generate the results
-        result_path = algo.pipe(data).result
-
-        # download the predictions scores
-        result_file = self.algo_client.file(result_path).getFile()
-
-        # load file into numpy
-        # result = numpy.load(result_file.name)
-        self.predictions = [3, 5, 6, 8, 2, 3]

@@ -15,7 +15,8 @@ const Audiences = (props) => {
   };
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 0.3 },
+    { field: 'audience_name', headerName: 'Name', flex: 0.3 },
+    { field: 'updated', headerName: 'Last Updated', flex: 0.3 },
   ];
 
   React.useEffect(() => {
@@ -29,11 +30,10 @@ const Audiences = (props) => {
         </Typography>
         <CTDataGrid
           autoHeight
-          hasStarring={false}
+          hasStarring
           isTopVisible={false}
           hideFooterPagination
           showTopBar={false}
-          headerHeight={0}
           editing={false}
           columns={columns}
           data={getAudiences()}

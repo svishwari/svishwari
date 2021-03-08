@@ -8,13 +8,18 @@ const updateAudiences = (payload) => ({
 });
 
 const fetchAudiences = () => async (dispatch) => {
-  const response = await getRequest(`${RESOURCE_URL}/audiences`)
-  const audiences = response.map(audience => ({
-      id: audience.audience_id,
-      name: audience.audience_name,
-    }
-  ));
-  dispatch(updateAudiences(audiences));
+  try {
+    const response = await getRequest(`${RESOURCE_URL}/audiences`)
+    const audiences = response.map(audience => ({
+      ...audience,
+      ...{
+        id: audience.audience_id
+      }
+    }));
+    dispatch(updateAudiences(audiences));
+  } catch (error) {
+    // TODO: handle error response ...
+  }
 };
 
 export { fetchAudiences };  // eslint-disable-line import/prefer-default-export
