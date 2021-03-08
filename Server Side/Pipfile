@@ -9,8 +9,12 @@ flasgger = "*"
 flask-marshmallow = "*"
 apispec = "*"
 moto = "*"
-Algorithmia = "*"
+algorithmia = "*"
 snowflake-connector-python = "*"
+h2o = "3.32.0.2"
+boto3 = "*"
+pandas = "*"
+pyarrow = "*"
 
 [dev-packages]
 
