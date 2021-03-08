@@ -1,0 +1,33 @@
+Retrieves the ingested data
+---
+tags:
+  - cdm
+
+responses:
+  200:
+    description:
+      OK
+    schema:
+      type: array
+      items:
+        $ref: "#/definitions/IngestedData"
+
+definitions:
+  IngestedData:
+    type: object
+    properties:
+      src:
+        description:
+          src of ingested data
+        type: string
+        example: NETSUITE
+      filename:
+        description:
+          blob path file
+        type: string
+        example: "azure://###########/incoming/######/ITEMS/sample.parquet"
+      record_count:
+        description:
+          Count of processed records in the file
+        type: int
+        example: 50

@@ -1,0 +1,138 @@
+Retrieves all the available algorithms
+---
+tags:
+  - decisioning
+
+responses:
+  200:
+    description:
+      OK
+    schema:
+      type: array
+      items:
+        $ref: "#/definitions/algorithms"
+
+definitions:
+  algorithms:
+    type: object
+    properties:
+      name:
+        type: string
+        example:
+      details:
+        type: object
+        properties:
+          summary:
+            type: string
+            format: nullable
+          label:
+            type: string
+            example:
+          tagline:
+            type: string
+            example:
+      settings:
+        type: object
+        properties:
+          algorithm_callability:
+            type: string
+            example: public
+          source_visibility:
+            type: string
+            example: open
+          language:
+            type: string
+            example: python3-1
+          environment:
+            type: string
+            example: cpu
+          package_set:
+            type: string
+            format: nullable
+          algorithm_environment:
+            type: string
+            format: nullable
+          license:
+            type: string
+            example: apl
+          royalty_microcredits:
+            type: integer
+            format: int32
+            example: 0
+          network_access:
+            type: string
+            example: full
+          pipeline_enabled:
+            type: boolean
+      source:
+        type: object
+        properties:
+          repository_name:
+            type: string
+            format: nullable
+          repository_owner:
+            type: string
+            format: nullable
+          repository_https_url:
+            type: string
+            format: nullable
+          repository_ssh_url:
+            type: string
+            format: nullable
+          scm:
+            type: object
+            properties:
+              id:
+                type: string
+                example: internal
+              enabled:
+                type: boolean
+              default:
+                type: boolean
+              provider:
+                type: string
+                example: internal
+              oauth:
+                type: string
+                format: nullable
+              urls:
+                type: string
+                format: nullable
+      version_info:
+        type: object
+        properties:
+          semantic_version:
+            type: string
+            format: nullable
+          git_hash:
+            type: string
+            example:
+          version_uuid:
+            type: string
+            format: nullable
+          release_notes:
+            type: string
+            format: nullable
+          sample_input:
+            type: string
+            example:
+          sample_output:
+            type: string
+            example: Exception encountered while running sample input
+          insights_enabled:
+            type: string
+            format: nullable
+      build:
+        type: string
+        format: nullable
+      compilation:
+        type: object
+        properties:
+          successful:
+            type: boolean
+      self_link:
+        type: string
+        example:
+      resource_type:
+        type: string
+        example: algorithm

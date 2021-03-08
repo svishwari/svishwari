@@ -11,7 +11,8 @@ const useStyles = makeStyles(() => ({
     border: "1px solid #D0D0CE",
     boxSizing: "border-box",
     borderRadius: "5px",
-    padding: "8px",
+    boxShadow: "none",
+    padding: "10px",
     margin: "10px"
   },
   title: {
@@ -35,18 +36,22 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SummaryCard = (props) => {
+const SummaryCard = ({hasAnimation=true,width,title,value,...props}) => {
   const classes = useStyles();
   return (
-    <Paper style={{width: props.width || "150px" }} elevation={3} className={classes.section}>
-      {props.title ? <span className={classes.title}>{props.title}</span> : ""}
-      <CountUp
-        start={0}
-        end={props.value}
-        delay={1}
-        {...props}
-        className={classes.valueStyle}
-      />
+    <Paper style={{width: width || "150px" }} elevation={3} className={classes.section}>
+      {title ? <span className={classes.title}>{title}</span> : ""}
+      {
+        hasAnimation ?
+        <CountUp
+          start={0}
+          end={value}
+          delay={1}
+          {...props}
+          className={classes.valueStyle}
+        />
+        : <span className={classes.valueStyle}>{value}</span>
+      }
     </Paper>
   );
 };

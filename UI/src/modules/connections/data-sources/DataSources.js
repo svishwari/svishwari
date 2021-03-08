@@ -194,6 +194,7 @@ const DataSources = (props) => {
         hasStarring
         loading={!props.dataSources.length}
         pageName="Data Source"
+        searchPlaceholder="Search Data Sources"
         isTopVisible
         isSummaryEnabled
         onAddClick={()=> dispatch(showAddDataSource())}
