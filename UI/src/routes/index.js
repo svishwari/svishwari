@@ -26,7 +26,7 @@ import DataSources from "../modules/connections/data-sources/DataSources";
 import Destinations from "../modules/connections/destinations/Destinations";
 import CustomersData from "../modules/customer-data/CustomersData";
 import CustomerData from "../modules/customer-data/CustomerData";
-import Audiences from "../modules/orchestration/audiences/Audiences";
+import Audiences from "../modules/orchestration/Audiences/Audiences";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
