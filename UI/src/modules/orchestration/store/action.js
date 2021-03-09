@@ -1,11 +1,51 @@
-const setSegments = (payload) => ({ type: "loadSegments", payload });
-const setAddSegments = (payload) => ({ type: "addSegment", payload });
-const setRemoveSegment = (payload) => ({ type: "removeSegment", payload });
-const setSegmentSummary = (payload) => ({ type: "loadSegmentSummary", payload });
+import {getRequest} from "../../../hooks/apiClient";
+
+const RESOURCE_URL = process.env.REACT_APP_RESOURCE_URL;
+
+const setAudiences = (payload) => ({
+    type: "loadAudiences",
+    payload,
+});
+
+const setSegments = (payload) => ({
+    type: "loadSegments",
+    payload
+});
+
+const setAddSegments = (payload) => ({
+    type: "addSegment",
+    payload
+});
+
+const setRemoveSegment = (payload) => ({
+    type: "removeSegment",
+    payload
+});
+
+const setSegmentSummary = (payload) => ({
+    type: "loadSegmentSummary",
+    payload
+});
+
 const segmentDelivered = (payload) => ({
     type: "segmentDelivered",
     payload,
 });
+
+const fetchAudiences = () => async (dispatch) => {
+    try {
+        const response = await getRequest(`${RESOURCE_URL}/audiences`)
+        const audiences = response.map(audience => ({
+            ...audience,
+            ...{
+                id: audience.audience_id
+            }
+        }));
+        dispatch(setAudiences(audiences));
+    } catch (error) {
+        // TODO: handle error response ...
+    }
+};
 
 const fetchSegments = () => async (dispatch) => {
     await new Promise((done) => setTimeout(() => done(), 2000));
@@ -140,6 +180,7 @@ const addDraftSegment = (selectedModels) => async (dispatch) => {
 };
 
 export {
+    fetchAudiences,
     addSegment,
     addDraftSegment,
     removeSegment,

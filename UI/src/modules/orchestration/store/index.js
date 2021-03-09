@@ -1,12 +1,19 @@
 /* eslint-disable no-case-declarations */
 const defaultState = {
-  segments: [],
   audience: [],
+  audiences: [],
+  segments: [],
   segmentSummary: {},
 };
 
 const orchestrationReducer = (state = defaultState, action) => {
   switch (action.type) {
+      case "loadAudiences":
+          return {
+              ...state,
+              audiences: [...action.payload] || [],
+          };
+
       case "loadSegments":
           return {
               ...state,

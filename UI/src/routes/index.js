@@ -29,6 +29,7 @@ import SegmentSummary from "../modules/orchestration/Segments/SegmentSummary";
 import OrchestrationSummary from "../modules/orchestration/OrchestrationSummary";
 import CustomersData from "../modules/customer-data/CustomersData";
 import CustomerData from "../modules/customer-data/CustomerData";
+import Audiences from "../modules/orchestration/Audiences/Audiences";
 
 const oktaAuth = new OktaAuth(oktaAuthConfig);
 
@@ -104,6 +105,11 @@ function Routes() {
                   path="/customer-profiles/:profileID"
                   exact
                   component={CustomerData}
+                />
+                <Route
+                  path="/orchestration/audiences"
+                  exact
+                  component={Audiences}
                 />
                 <Route path="*" exact component={ComingSoon} />
               </Switch>
