@@ -10,7 +10,6 @@
     align-self: center;
     border: 1px solid $appSmokedWhite;
     display: flex;
-    width: 100%;
 
     .ct-slider-thumb {
       height: 42px;
@@ -20,7 +19,7 @@
       justify-content: center;
       align-items: center;
       background: white;
-      border: 1px solid $appDarkerGreen;
+      border: 1px solid $appSuccessGreen;
       box-sizing: border-box;
       box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.15);
       outline: none;

@@ -5,17 +5,20 @@ import { Range, getTrackBackground } from "react-range";
 const CTSlider = ({
   minValue = 0.0,
   maxValue = 1.0,
+  initialMinValue = 0.1,
+  initialMaxValue = 0.55,
   stepSize = 0.05,
-  ...props
+  customClass = "",
+  ...sliderprops
 }) => {
   const STEP = stepSize;
   const MIN = minValue;
   const MAX = maxValue;
 
-  const [values, setValues] = useState([0.1, 0.55]);
+  const [values, setValues] = useState([initialMinValue, initialMaxValue]);
 
   return (
-    <div className="ct-slider-wrapper">
+    <div className={`ct-slider-wrapper ${customClass}`}>
       <Range
         values={values}
         step={STEP}
@@ -24,16 +27,16 @@ const CTSlider = ({
         onChange={(newValues) => {
           setValues(newValues);
         }}
-        {...props}
-        renderTrack={({ trackProps, children }) => (
+        {...sliderprops}
+        renderTrack={({ props, children }) => (
           <div
-            onMouseDown={trackProps.onMouseDown}
-            onTouchStart={trackProps.onTouchStart}
+            onMouseDown={props.onMouseDown}
+            onTouchStart={props.onTouchStart}
             style={{
-              ...trackProps.style,
+              ...props.style,
               background: getTrackBackground({
                 values,
-                colors: ["#F7F8FA", "#00C495", "#F7F8FA"],
+                colors: ["#F7F8FA", "#43B02A", "#F7F8FA"],
                 min: MIN,
                 max: MAX,
               }),
@@ -44,9 +47,9 @@ const CTSlider = ({
             </div>
           </div>
         )}
-        renderThumb={({ thumbProps }) => (
+        renderThumb={({ props }) => (
           <div
-            {...thumbProps}
+            {...props}
             style={{
               ...props.style,
             }}

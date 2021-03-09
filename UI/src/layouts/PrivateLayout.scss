@@ -2,7 +2,6 @@
 
 .dash-layout {
   height: 100vh;
-  display: flex;
   .toast-container {
     position: absolute;
     left: 0;
@@ -17,11 +16,13 @@
   .wrapper {
     width: 100%;
     background: $appBackground;
+    display: flex;
     .content {
       // padding: 20px;
       height: calc(100% - 65px);
       max-height: calc(100% - 65px);
       overflow: auto;
+      width: 100%;
     }
   }
 }

@@ -16,4 +16,7 @@
   svg.MuiSvgIcon-root {
     font-size: 20px;
   }
+  .MuiCheckbox-colorPrimary.Mui-checked {
+    color: $appSuccessGreen;
+  }
 }

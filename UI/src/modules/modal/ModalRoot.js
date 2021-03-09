@@ -3,13 +3,18 @@ import { connect } from 'react-redux';
 
 import AddDataSource from '../connections/modals/AddDataSource';
 import AddDestination from '../connections/modals/AddDestination';
+import AddSegment from '../orchestration/modals/AddSegment';
 import DataIngest from '../connections/modals/DataIngest';
+import FetchScore from '../orchestration/modals/FetchScore';
+
 
 const MODAL_COMPONENTS = {
-  OPEN_ADD_DATA_SOURCE: AddDataSource,
-  OPEN_ADD_DESTINATION: AddDestination,
-  TRIGGER_INGEST: DataIngest,
-};
+  'OPEN_ADD_DATA_SOURCE': AddDataSource,
+  'OPEN_ADD_DESTINATION': AddDestination,
+  'OPEN_ADD_SEGMENT': AddSegment,
+  'TRIGGER_INGEST': DataIngest,
+  'SHOW_FETCH_SCORE': FetchScore,
+}
 
 const ModalRoot = (props) => {
   if (!props.modal.modalType) {

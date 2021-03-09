@@ -16,12 +16,7 @@
       font-weight: 600;
       font-size: 21px;
       line-height: 40px;
-      /* identical to box height, or 190% */
-
       letter-spacing: 0.1px;
-
-      /* Text/Dark - D */
-
       color: $appTextDark;
     }
     span {
@@ -30,13 +25,11 @@
       font-weight: normal;
       font-size: 15px;
       line-height: 24px;
-      /* or 160% */
-
       letter-spacing: 0.2px;
-
-      /* Text/Dark - D */
-
       color: $appTextDark;
+      width: 76%;
+      display: inline-block;
+      word-break: break-word;
     }
   }
 }
