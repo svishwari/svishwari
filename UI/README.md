@@ -2,7 +2,7 @@
 
 ## Environment
 
-* To configure your local development environment, copy the example `.env.example` file to a `.env.local` and populate it with your local dev environment values.
+* To configure your local development environment, copy the example `.env` file to a `.env.local` and populate it with your local dev environment values.
 * Read more on this [here](https://create-react-app.dev/docs/adding-custom-environment-variables/#adding-development-environment-variables-in-env).
 
 ## Available Scripts
