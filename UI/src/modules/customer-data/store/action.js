@@ -3,6 +3,8 @@ const setCustomerProfile = (payload) => ({ type: "setCustomerProfile", payload }
 
 const fetchCustomerProfiles = () => async (dispatch) => {
     await new Promise((done) => setTimeout(() => done(), 2000));
+    // #TODO
+    // Fetch List of customers
     const response = [
         {
             id: "1",
@@ -65,6 +67,8 @@ const fetchCustomerProfiles = () => async (dispatch) => {
 
 const fetchCustomerProfile = () => async (dispatch) => {
     await new Promise((done) => setTimeout(() => done(), 2000));
+    // #TODO
+    // Fetch specific customer details based on id
     const response = {
         id: "1",
         customerID: "1",
@@ -138,3 +142,11 @@ export {
     fetchCustomerProfiles,
     fetchCustomerProfile
 };
+
+// #TODO
+// Fetch summary of list of customer
+// Values like Records, Data Sources, Stitches, Pinned, Avg. Strength
+
+// #TODO
+// Fetch summary of specific customer 
+// Values like Customer Length, Strength, Last Event, Value, Conversion Time
