@@ -6,20 +6,18 @@ import CTSecondaryButton from "../Button/CTSecondaryButton";
 import CTPrimaryButton from "../Button/CTPrimaryButton";
 import { hideModal } from "../../modules/modal/action";
 
-// To use this component you need to create a reference to the CTModal
-// and call it's handle open function
-// For more details visit: https://reactjs.org/docs/hooks-reference.html#useref
+// Opening and closing has been made dynamic using redux, so it can be opened or closed from anywhere
+// Incase of closeing the modal from outside using dipatch onClose function is not going to work
 
 const CTModal = React.forwardRef((props, ref) => {
   const [open, setOpen] = useState(true);
-  const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+  const [activeScreenIndex, setActiveScreenIndex] = useState(props.startScreenNumber);
 
   const dispatch = useDispatch();
 
   const handleClose = () => {
     setOpen(false);
     props.onClose();
-    setActiveScreenIndex(0);
     dispatch(hideModal());
   };
 
@@ -35,14 +33,16 @@ const CTModal = React.forwardRef((props, ref) => {
   };
 
   const handleNextScreen = () => {
-    if (activeScreenIndex !== props.screens.screenComponents.length - 1) {
-      setActiveScreenIndex(activeScreenIndex + 1);
-    } else {
-      handleClose();
+    if(!props.screens.rightButtonProps[activeScreenIndex].isDisabled){
+      if (activeScreenIndex !== props.screens.screenComponents.length - 1) {
+        setActiveScreenIndex(activeScreenIndex + 1);
+      } else {
+        handleClose();
+      }
+      handleChangeScreen();
+      props.screens.righButtonFunctions[activeScreenIndex]();
+      props.onNextScreen();
     }
-    handleChangeScreen();
-    props.screens.righButtonFunctions[activeScreenIndex]();
-    props.onNextScreen();
   };
 
   const handleChangeScreen = () => {
@@ -78,10 +78,12 @@ const CTModal = React.forwardRef((props, ref) => {
           props.showIndicators &&
           props.screens.screenComponents.map((screen, index) => (
             <div
-              key={screen}
+              key={props.screens.righButtonNames[index]}
               className={`indicator ${
-                activeScreenIndex === index ? "active" : ""
-              }`}
+                activeScreenIndex === index && "active"
+              }
+              ${ activeScreenIndex < index && "to-be-done"}
+              `}
             />
           ))}
       </div>
@@ -90,6 +92,7 @@ const CTModal = React.forwardRef((props, ref) => {
       <div className="modal-body">
         {/* Active Screen */}
         <div className="ct-modal-title">{props.modalTitle}</div>
+        {IS_MULTI_MODAL && <div className="ct-modal-subtitle">{props.screens.screenTitle[activeScreenIndex]}</div>}
         <div className="ct-modal-subtitle">{props.modalSubtitle}</div>
         <div className="ct-modal-body">{props.modalBody}</div>
         {IS_MULTI_MODAL && props.screens.screenComponents[activeScreenIndex]}
@@ -109,12 +112,20 @@ const CTModal = React.forwardRef((props, ref) => {
                 {activeScreenIndex === 0 ? "Close" : props.backButton}
               </CTSecondaryButton>
             )}
-            {props.footerLeftButtons}
+            {props.footerLeftButtons.map(each => { 
+              if( activeScreenIndex === each.props.activeindex){
+                return each;
+              }
+              return "";
+            })}
           </div>
           <div className="modal-footer-right">
             {props.footerRightButtons}
             {IS_MULTI_MODAL && (
-              <CTPrimaryButton onClick={handleNextScreen}>
+              <CTPrimaryButton 
+                {...props.screens.rightButtonProps[activeScreenIndex]} 
+                onClick={handleNextScreen}
+                >
                 {props.screens.righButtonNames[activeScreenIndex]}
               </CTPrimaryButton>
             )}
@@ -137,10 +148,21 @@ CTModal.defaultProps = {
   showIndicators: true,
   onClose: () => undefined,
   onNextScreen: () => undefined,
+  startScreenNumber: 0,
   onPreviousScreen: () => undefined,
   onChangeScreen: () => undefined,
   onComplete: () => undefined,
-  screens: {},
+  screens: {
+    // ************************
+    // This prop accepts the following items and each item is a required one 
+    // and all the sub props need to be of same length
+    // ************************
+    // screenComponents: [],
+    // rightButtonProps: [],
+    // righButtonNames: [],
+    // righButtonFunctions: [],
+    // screenTitle: [],
+  },
   showFooter: true,
   mainCTAText: "Complete",
   backButton: "Back",

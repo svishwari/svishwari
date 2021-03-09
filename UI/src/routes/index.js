@@ -24,6 +24,9 @@ import ConnectionsSummary from "../modules/connections/ConnectionsSummary";
 import ComingSoon from "../pages/ComingSoon";
 import DataSources from "../modules/connections/data-sources/DataSources";
 import Destinations from "../modules/connections/destinations/Destinations";
+import Segments from "../modules/orchestration/Segments/Segments";
+import SegmentSummary from "../modules/orchestration/Segments/SegmentSummary";
+import OrchestrationSummary from "../modules/orchestration/OrchestrationSummary";
 import CustomersData from "../modules/customer-data/CustomersData";
 import CustomerData from "../modules/customer-data/CustomerData";
 
@@ -76,6 +79,21 @@ function Routes() {
                   path="/connections/destinations"
                   exact
                   component={Destinations}
+                />
+                <Route
+                  path="/orchestration"
+                  exact
+                  component={OrchestrationSummary}
+                />
+                <Route
+                  path="/orchestration/segments"
+                  exact
+                  component={Segments}
+                />
+                <Route
+                  path="/orchestration/segments/:segmentID"
+                  exact
+                  component={SegmentSummary}
                 />
                 <Route
                   path="/customer-profiles"

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Select from "@material-ui/core/Select";
 import "./CTSelect.scss";
 
-const CTSelect = ({selectOptions=[],selectLabel="label",onChange,defaultValue,...props}) => {
+const CTSelect = ({ customClass="", selectOptions=[],selectLabel="label",onChange=()=>{},defaultValue,...props}) => {
     const initialValue = defaultValue || selectOptions[0];
     const [selectedValue, setselectedValue] = useState(initialValue);
     const onValueChange = (e) => {
@@ -15,7 +15,7 @@ const CTSelect = ({selectOptions=[],selectLabel="label",onChange,defaultValue,..
             value={selectedValue}
             onChange={(e) => onValueChange(e)}
             label={selectLabel}
-            className="ct-select-wrapper"
+            className={`ct-select-wrapper ${customClass}`}
             {...props}
         >
             {

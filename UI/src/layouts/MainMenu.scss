@@ -1,8 +1,12 @@
-@import "../theme/variables.scss";
-@import "../theme/mixins.scss";
+@import '../theme/variables.scss';
+@import '../theme/mixins.scss';
 
 .menuWrapper {
-  margin-top: 30px;
+  margin-top: 30px !important;
+  color: $appDashboardDisabled;
+  svg {
+    font-size: 16px;
+  }
 
   h3 {
     font-family: Open Sans SemiBold;
@@ -14,74 +18,133 @@
     color: $appDashboardDisabled;
     padding-left: 30px;
   }
-  .menu {
-    display: flex;
-    flex-direction: column;
-    color: $appDashboardDisabled;
-    .dropdown-menu {
-      position: relative !important;
-      transform: inherit !important;
-      padding: 0;
-      border: none;
-      background: transparent;
-      color: inherit;
+  .nav-link {
+    padding-left: 30px;
+    min-width: 30px;
+    &.dropdown-menu {
+      padding-left: 30px;
+      min-width: 30px;
     }
-    .nav-link {
-      padding: 15px 0 15px 30px;
-      &::after {
-        display: none;
+    .icon-wrap {
+      min-width: 30px;
+      svg {
+        font-size: 20px;
+        color: $appDashboardDisabled;
       }
-      &.active {
-        @include background-opacity($appBackground, 0.1);
+    }
+    &.active {
+      @include background-opacity($appBackground, 0.1);
+      color: $appMenuActive;
+      svg {
         color: $appMenuActive;
       }
     }
-
-    .dropdown {
-      &.nav-item {
-        padding: 15px 0 15px 30px;
-        &.active {
-          @include background-opacity($appBackground, 0.1);
-          color: $appMenuActive;
-        }
-        .dropdown-item {
-          padding-left: 24px;
-          margin: 20px 0;
-          display: block;
-          &:last-child {
-            margin-bottom: 0px;
-          }
-          &.active,
-          &:hover {
-            background-color: inherit;
-            @include background-opacity($appBackground, 0.1);
-            border-left: 2px solid #00c495;
-            border-top-right-radius: 20px;
-            border-bottom-right-radius: 20px;
-          }
-          svg {
-            width: 16px;
-            margin-right: 5px;
-            height: 16px;
-          }
-        }
-      }
-      .nav-link {
-        padding: 0;
-      }
-    }
-    a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      width: 100%;
-      svg {
-        width: 20px;
-        margin-right: 8px;
-        height: 20px;
+    &.nested {
+      padding-left: 15px;
+      .num {
+        font-family: Open Sans SemiBold;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 16px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        letter-spacing: 0.2px;
+        color: #ffffff;
+        background-color: #43b02a;
+        min-width: 32px;
+        min-width: 40px;
+        padding: 1px;
+        border-radius: 30px 30px 30px 30px;
+        height: 19px;
+        display: inline-block;
       }
     }
   }
+  .sub-nav {
+    @include background-opacity($appBackground, 0.1);
+    .sub-nav-list {
+      margin-left: 50px;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      .nav-link {
+        margin-bottom: 5px;
+        width: 95%;
+        &.active {
+          border-left: 2px solid #43b02a;
+          border-top-right-radius: 20px;
+          border-bottom-right-radius: 20px;
+        }
+      }
+    }
+  }
+  // .menu {
+  //   display: flex;
+  //   flex-direction: column;
+  //   .dropdown-menu {
+  //     position: relative !important;
+  //     transform: inherit !important;
+  //     padding: 0;
+  //     border: none;
+  //     background: transparent;
+  //     color: inherit;
+  //   }
+  //   .nav-link {
+  //     padding: 15px 0 15px 30px;
+  //     &::after {
+  //       display: none;
+  //     }
+  //     &.active {
+  //       @include background-opacity($appBackground, 0.1);
+  //       color: $appMenuActive;
+  //     }
+  //   }
+
+  //   .dropdown {
+  //     &.nav-item {
+  //       padding: 15px 0 15px 30px;
+  //       &.active {
+  //         @include background-opacity($appBackground, 0.1);
+  //         color: $appMenuActive;
+  //       }
+  //       .dropdown-item {
+  //         padding-left: 24px;
+  //         margin: 20px 0;
+  //         display: block;
+  //         &:last-child {
+  //           margin-bottom: 0px;
+  //         }
+  //         &.active,
+  //         &:hover {
+  //           background-color: inherit;
+  //           @include background-opacity($appBackground, 0.1);
+  //           border-left: 2px solid #00c495;
+  //           border-top-right-radius: 20px;
+  //           border-bottom-right-radius: 20px;
+  //         }
+  //         svg {
+  //           width: 16px;
+  //           margin-right: 5px;
+  //           height: 16px;
+  //         }
+  //       }
+  //     }
+  //     .nav-link {
+  //       padding: 0;
+  //     }
+  //   }
+  //   a {
+  //     text-decoration: none;
+  //     color: inherit;
+  //     display: block;
+  //     width: 100%;
+  //     svg {
+  //       width: 20px;
+  //       margin-right: 8px;
+  //       height: 20px;
+  //     }
+  //   }
+  // }
   // li {
   //   div {
   //     color: $appDashboardDisabled;

@@ -5,6 +5,7 @@ import dashboardReducer from './modules/dashboard/store/index';
 import userReducer from './modules/auth/store/index';
 import connectionReducer from './modules/connections/store/index';
 import modalReducer from "./modules/modal/index";
+import orchestrationReducer from "./modules/orchestration/store/index";
 import customerProfileReducer from "./modules/customer-data/store/index";
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   connections: connectionReducer,
   modal: modalReducer,
+  orchestration: orchestrationReducer,
   customerprofiles: customerProfileReducer,
 });
 

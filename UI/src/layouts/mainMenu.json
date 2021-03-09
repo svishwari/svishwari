@@ -1,25 +1,30 @@
 [
   {
+    "id": "37f3ba38",
     "name": "Home",
     "path": "/",
     "icon": "home-outline"
   },
   {
+    "id": "61c52f8a",
     "name": "Workflow",
     "path": "/workflow",
     "icon": "arrow-decision-outline"
   },
   {
+    "id": "6a5636b2",
     "name": "Orchestration",
     "path": "/orchestration",
     "icon": "account-arrow-right-outline",
     "subItems": [
       {
+        "id": "6e1a9978",
         "name": "Audiences",
         "path": "/orchestration/audiences",
         "icon": "account-group"
       },
       {
+        "id": "78d55696",
         "name": "Segments",
         "path": "/orchestration/segments",
         "icon": "human-capacity-decrease"
@@ -27,31 +32,37 @@
     ]
   },
   {
+    "id": "7ef52f38",
     "name": "Customer Profiles",
     "path": "/customer-profiles",
     "icon": "account-details-outline"
   },
   {
+    "id": "86bf84c0",
     "name": "Decisioning",
     "path": "/decisioning",
     "icon": "lan",
     "subItems": [
       {
+        "id": "8d33cea6",
         "name": "Features",
         "path": "/decisioning/features",
         "icon": "diamond-stone"
       },
       {
+        "id": "90a32f82",
         "name": "Notebooks",
         "path": "/decisioning/notebooks",
         "icon": "human-capacity-decrease"
       },
       {
+        "id": "99fb58d4",
         "name": "Models",
         "path": "/decisioning/models",
         "icon": "tune"
       },
       {
+        "id": "a09d7708",
         "name": "Evaluation",
         "path": "/decisioning/evaluation",
         "icon": "chart-bar"
@@ -59,16 +70,19 @@
     ]
   },
   {
+    "id": "aa545500",
     "name": "Connections",
     "path": "/connections",
     "icon": "connection",
     "subItems": [
       {
+        "id": "adcc66a0",
         "name": "Data Sources",
         "path": "/connections/data-sources",
         "icon": "arrow-expand-left"
       },
       {
+        "id": "b115a4ac",
         "name": "Destintations",
         "path": "/connections/destinations",
         "icon": "arrow-expand-right"

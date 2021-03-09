@@ -20,6 +20,9 @@
         &.active {
           opacity: 1;
         }
+        &.to-be-done {
+          background: $appGreyBorder;
+        }
       }
     }
     .modal-body {
