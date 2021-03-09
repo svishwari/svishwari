@@ -27,6 +27,7 @@ const fetchDataSources = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 2000));
   // #TODO
   // Fetch List of data sources
+  // This will also contain the link to redirect to the data source
   const response = [
     {
       id: "602ec30dc920d42f1c4c5d22",
@@ -240,6 +241,7 @@ const fetchDestinations = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 2000));
   // #TODO
   // Fetch List of destinations
+  // This will also contain the link to redirect to the destionation
   const destinationResponse = [
     {
       id: "602ec30dc920d42f1c4c5d22",
