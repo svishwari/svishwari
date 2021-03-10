@@ -8,6 +8,7 @@ from huxunify.api.route.advertising import advertising_bp
 from huxunify.api.route.decision import decision_bp
 from huxunify.api.route.marketing import marketing_bp
 from huxunify.api.route.cdm import cdm_bp
+from huxunify.api.route.audience import audience_bp
 
 
 def create_app():
@@ -36,6 +37,7 @@ def create_app():
     # register the blueprint and route
     flask_app.register_blueprint(home_api, url_prefix='/api')
     flask_app.register_blueprint(advertising_bp, url_prefix='/api/advertising')
+    flask_app.register_blueprint(audience_bp, url_prefix='/api/audience')
     flask_app.register_blueprint(cdm_bp, url_prefix='/api/cdm')
     flask_app.register_blueprint(decision_bp, url_prefix='/api/decisioning')
     flask_app.register_blueprint(marketing_bp, url_prefix='/api/marketing')
