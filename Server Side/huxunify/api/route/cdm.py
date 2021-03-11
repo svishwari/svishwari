@@ -5,8 +5,8 @@ import json
 from http import HTTPStatus
 from flask import Blueprint
 from flasgger import swag_from
-from huxunify.api.model.cdm import CdmModel
-from huxunify.api.schema.cdm import CdmSchema
+from api.model.cdm import CdmModel
+from api.schema.cdm import CdmSchema
 
 cdm_bp = Blueprint('cdm_bp', __name__)
 

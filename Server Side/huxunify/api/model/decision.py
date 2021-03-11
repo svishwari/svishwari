@@ -8,7 +8,7 @@ from io import BytesIO
 import Algorithmia
 from Algorithmia.errors import AlgorithmException
 import pandas as pd
-from huxunify.api.data_connectors.aws import get_aws_client
+from api.data_connectors.aws import get_aws_client
 
 
 # get tecton api key

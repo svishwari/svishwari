@@ -1,15 +1,16 @@
 """
 purpose of this script is for housing the audience routes for the API
 """
+import sys
 import json
 from http import HTTPStatus
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flasgger import swag_from
 from api.model.audience import AudienceModel
 from api.schema.audience import AudienceSchema, audience_schema, audiences_schema, \
     AudienceDeliverySchema, audience_delivery_schema, audience_delivery_schemas, \
-    AudienceInsightsSchema, audience_insights_schema, AudienceDeliveryInsightsSchema, audience_delivery_insights_schema
-from flask import jsonify
+    AudienceInsightsSchema, audience_insights_schema, \
+    AudienceDeliveryInsightsSchema, audience_delivery_insights_schema
 
 audience_bp = Blueprint('audience_bp', __name__)
 
@@ -260,7 +261,7 @@ def create_audience_delivery_job():
             "in": "path",
             "type": "string",
             "required": "true",
-            "description": "Audiencce id",
+            "description": "Audience id",
             "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
         },
         {
@@ -358,3 +359,6 @@ def get_insights_delivery_job_audience_id(audience_id, delivery_job_id):
     result = AudienceModel()
     data_source = result.get_insights_delivery_job_audience_id(audience_id, delivery_job_id)
     return jsonify(audience_delivery_insights_schema.dump(data_source)), 200
+
+if __name__ == '__main__':
+    pass
