@@ -5,22 +5,21 @@ import json
 from http import HTTPStatus
 from flask import Blueprint
 from flasgger import swag_from
-from api.model.cdm import CdmModel
-from api.schema.cdm import CdmSchema
+from huxunify.api.model.cdm import CdmModel
+from huxunify.api.schema.cdm import CdmSchema
 
-cdm_bp = Blueprint('cdm_bp', __name__)
+cdm_bp = Blueprint("cdm_bp", __name__)
 
 
-@cdm_bp.route('/')
-@swag_from({
-    "tags": ["cdm"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'cdm api',
-            'schema': CdmSchema
-        }
+@cdm_bp.route("/")
+@swag_from(
+    {
+        "tags": ["cdm"],
+        "responses": {
+            HTTPStatus.OK.value: {"description": "cdm api", "schema": CdmSchema}
+        },
     }
-})
+)
 def index():
     """
     cdm api landing
@@ -30,7 +29,7 @@ def index():
     return CdmSchema().dump(result), 200
 
 
-@cdm_bp.route('/ingested_data', methods=['get'])
+@cdm_bp.route("/ingested_data", methods=["get"])
 @swag_from("../spec/cdm/ingested_data_search.yaml")
 def get_ingested_data():
     """
@@ -72,5 +71,5 @@ def datafeeds_get(feed_id: int):
     return json.dumps(datafeed), 200
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

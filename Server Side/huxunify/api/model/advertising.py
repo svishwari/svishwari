@@ -6,11 +6,11 @@ import requests
 
 # HARDCODED HEADERS, temporary solution.
 CODE_HEADERS = {
-    'authority': "audience-builder.main.use1.k8s.mgnt-xspdev.in",
+    "authority": "audience-builder.main.use1.k8s.mgnt-xspdev.in",
     # TODO - manually copying token from browser for now, not the best, but at least it works
     #  for testing
-    'authorization': "Bearer ####",
-    "accept": "application/json, text/plain, */*"
+    "authorization": "Bearer ####",
+    "accept": "application/json, text/plain, */*",
 }
 
 
@@ -18,6 +18,7 @@ class AdvertisingModel:
     """
     advertising model class
     """
+
     API = "https://audience-builder.main.use1.k8s.mgnt-xspdev.in/api/v1"
 
     def __init__(self):
@@ -30,7 +31,7 @@ class AdvertisingModel:
         :return:
         """
         # push the request
-        result = requests.get(f'{self.API}/data-sources', headers=CODE_HEADERS).json()
+        result = requests.get(f"{self.API}/data-sources", headers=CODE_HEADERS).json()
         return len(result) if count else result
 
     def create_data_source(self, data):
@@ -40,7 +41,7 @@ class AdvertisingModel:
         :return:
         """
         # push the request
-        url = f'{self.API}/data-sources'
+        url = f"{self.API}/data-sources"
         obj = requests.post(url, json=data, headers=CODE_HEADERS)
         return obj.json()
 
@@ -51,7 +52,7 @@ class AdvertisingModel:
         :return:
         """
         # push the request
-        url = f'{self.API}/data-sources/{data_source_id}'
+        url = f"{self.API}/data-sources/{data_source_id}"
         obj = requests.put(url, json=data, headers=CODE_HEADERS)
         return obj.json()
 
@@ -63,9 +64,11 @@ class AdvertisingModel:
         :return:
         """
         # push the request
-        return requests.delete(f'{self.API}/data-sources/{data_source_id}').json()
+        return requests.delete(f"{self.API}/data-sources/{data_source_id}").json()
 
-    def star_data_source(self, data_source_id, star=True):
+    @staticmethod
+    # pylint: disable=W0613
+    def star_data_source(data_source_id):
         """
         # TODO method is not ready in Audience Builder yet.
         purpose of this function is to star a data source
@@ -82,7 +85,7 @@ class AdvertisingModel:
         :return:
         """
         # push the request, perhaps this is a post/put, or this is Update Datasource??
-        return requests.get(f'{self.API}/data-sources/{data_source_id}').json()
+        return requests.get(f"{self.API}/data-sources/{data_source_id}").json()
 
     def get_destination_count(self):
         """
@@ -91,7 +94,9 @@ class AdvertisingModel:
         :param data:
         :return:
         """
-        destinations = requests.get(f'{self.API}/delivery-platforms', headers=CODE_HEADERS).json()
+        destinations = requests.get(
+            f"{self.API}/delivery-platforms", headers=CODE_HEADERS
+        ).json()
         return len(destinations)
 
     def get_delivery_platforms(self):
@@ -100,7 +105,9 @@ class AdvertisingModel:
         :param data:
         :return:
         """
-        return requests.get(f'{self.API}/delivery-platforms', headers=CODE_HEADERS).json()
+        return requests.get(
+            f"{self.API}/delivery-platforms", headers=CODE_HEADERS
+        ).json()
 
     def create_delivery_platform(self, data):
         """
@@ -108,7 +115,7 @@ class AdvertisingModel:
         :param data:
         :return:
         """
-        url = f'{self.API}/delivery-platforms'
+        url = f"{self.API}/delivery-platforms"
         obj = requests.post(url, json=data, headers=CODE_HEADERS)
         return obj.json()
 
@@ -118,10 +125,15 @@ class AdvertisingModel:
         :param data:
         :return:
         """
-        return requests.put(f'{self.API}/delivery-platforms/{delivery_platform_id}',
-                            json=data, headers=CODE_HEADERS).json()
+        return requests.put(
+            f"{self.API}/delivery-platforms/{delivery_platform_id}",
+            json=data,
+            headers=CODE_HEADERS,
+        ).json()
 
-    def star_delivery_platform(self, data, star=True):
+    @staticmethod
+    # pylint: disable=W0613
+    def star_delivery_platform(data):
         """
         # TODO method is not ready in Audience Builder yet.
         purpose of this function is to update a delivery platform
@@ -137,4 +149,6 @@ class AdvertisingModel:
         :param data:
         :return:
         """
-        return requests.put(f'{self.API}/delivery-platforms/{delivery_platform_id}').json()
+        return requests.put(
+            f"{self.API}/delivery-platforms/{delivery_platform_id}"
+        ).json()

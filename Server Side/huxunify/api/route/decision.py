@@ -5,23 +5,29 @@ import json
 from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
-from api.model.decision import DecisionModel, CustomerFeatureModel, AlgorithmiaModel
-from api.schema.decision import DecisionSchema, CustomerFeatureSchema
+from huxunify.api.model.decision import (
+    DecisionModel,
+    CustomerFeatureModel,
+    AlgorithmiaModel,
+)
+from huxunify.api.schema.decision import DecisionSchema, CustomerFeatureSchema
 
 
-decision_bp = Blueprint('decision_bp', __name__)
+decision_bp = Blueprint("decision_bp", __name__)
 
 
-@decision_bp.route('/')
-@swag_from({
-    "tags": ["decisioning"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'decision api',
-            'schema': DecisionSchema
-        }
+@decision_bp.route("/")
+@swag_from(
+    {
+        "tags": ["decisioning"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "decision api",
+                "schema": DecisionSchema,
+            }
+        },
     }
-})
+)
 def index():
     """
     decision api landing
@@ -31,7 +37,7 @@ def index():
     return DecisionSchema().dump(result), 200
 
 
-@decision_bp.route('/algorithms', methods=['get'])
+@decision_bp.route("/algorithms", methods=["get"])
 @swag_from("../spec/decision/algorithms_search.yaml")
 def algorithms_search():
     """
@@ -45,7 +51,7 @@ def algorithms_search():
     return json.dumps(AlgorithmiaModel().get_algorithms()), 200
 
 
-@decision_bp.route('/algorithms/<algorithm_name>', methods=['get'])
+@decision_bp.route("/algorithms/<algorithm_name>", methods=["get"])
 @swag_from("../spec/decision/algorithms_get.yaml")
 def algorithm_get(algorithm_name):
     """
@@ -56,10 +62,13 @@ def algorithm_get(algorithm_name):
         The return algorithm information
 
     """
-    return json.dumps(AlgorithmiaModel().get_algorithm(algorithm_name.replace(':', '/'))), 200
+    return (
+        json.dumps(AlgorithmiaModel().get_algorithm(algorithm_name.replace(":", "/"))),
+        200,
+    )
 
 
-@decision_bp.route('/algorithms', methods=['post'])
+@decision_bp.route("/algorithms", methods=["post"])
 @swag_from("../spec/decision/algorithms_post.yaml")
 def invoke_algorithm():
     """
@@ -71,8 +80,8 @@ def invoke_algorithm():
 
     """
     # extract params
-    algo_name = request.json['algorithm_name'].replace(':', '/')
-    params = request.json['params']
+    algo_name = request.json["algorithm_name"].replace(":", "/")
+    params = request.json["params"]
 
     # run the model
     algo_result = AlgorithmiaModel().invoke_algorithm(algo_name, params)
@@ -81,43 +90,46 @@ def invoke_algorithm():
     return json.dumps(algo_result), 200
 
 
-@decision_bp.route('/features/<cluster_id>/<feature_service_name>/<customer_id>',
-                   methods=['GET'])
-@swag_from({
-    "parameters": [
-        {
-            "name": "cluster_id",
-            "in": "path",
-            "type": "string",
-            "required": "true",
-            "description": "the tecton cluster name",
-            "default": "us-east-1.decisioning-internal"
+@decision_bp.route(
+    "/features/<cluster_id>/<feature_service_name>/" "<customer_id>", methods=["GET"]
+)
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "cluster_id",
+                "in": "path",
+                "type": "string",
+                "required": "true",
+                "description": "the tecton cluster name",
+                "default": "us-east-1.decisioning-internal",
+            },
+            {
+                "name": "feature_service_name",
+                "in": "path",
+                "type": "string",
+                "required": "true",
+                "description": "name of the feature service",
+                "default": "impression_click_feature_service",
+            },
+            {
+                "name": "customer_id",
+                "in": "path",
+                "type": "string",
+                "description": "customer id",
+                "required": "true",
+                "default": "",
+            },
+        ],
+        "tags": ["decisioning"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "list all features per customer",
+                "schema": CustomerFeatureSchema,
+            }
         },
-        {
-            "name": "feature_service_name",
-            "in": "path",
-            "type": "string",
-            "required": "true",
-            "description": "name of the feature service",
-            "default": "impression_click_feature_service"
-        },
-        {
-            "name": "customer_id",
-            "in": "path",
-            "type": "string",
-            "description": "customer id",
-            "required": "true",
-            "default": ""
-        }
-    ],
-    "tags": ["decisioning"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'list all features per customer',
-            'schema': CustomerFeatureSchema
-        }
     }
-})
+)
 def customer_features(cluster_id, feature_service_name, customer_id):
     """
     get customer features

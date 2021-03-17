@@ -9,27 +9,14 @@ repos:
     rev: stable
     hooks:
     -   id: black
--   repo: https://github.com/pycqa/pylint
-    rev: pylint-2.7.2
+-   repo: local
     hooks:
     -   id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
         args:
         - --rcfile=.pylintrc
-        - --max-line-length=80
         - --ignore-imports=yes
         - -d duplicate-code
--   repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v7.8.1
-    hooks:
-    -   id: eslint
-        files: (\.js|\.vue)$
-        types: [file]
-        additional_dependencies:
-        -   eslint
-        -   eslint-config-standard
-        -   eslint-plugin-import
-        -   eslint-plugin-node
-        -   eslint-plugin-promise
-        -   eslint-plugin-standard
-        -   eslint-plugin-vue
-        -   babel-eslint

@@ -3,6 +3,7 @@ purpose of this file is for housing the audience models
 """
 import requests
 
+
 class AudienceModel:
     """
     audience model class
@@ -28,7 +29,7 @@ class AudienceModel:
     """
 
     API = "https://audience-builder.main.use1.k8s.mgnt-xspdev.in/api/v1/audiences"
-    TOKEN = '<Auth token goes here>'
+    TOKEN = "<Auth token goes here>"
 
     def __init__(self):
         self.message = "Hello audience"
@@ -43,7 +44,7 @@ class AudienceModel:
         :return:
         """
         # push the request
-        return requests.get(f'{self.API}/count').json()
+        return requests.get(f"{self.API}/count").json()
 
     def get_audiences(self):
         """
@@ -52,8 +53,9 @@ class AudienceModel:
         :return:
         """
         # Make a request to audience service
-        response = requests.get(f'{self.API}',
-                                headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        response = requests.get(
+            f"{self.API}", headers={"Authorization": f"Bearer {self.TOKEN}"}
+        )
         return response.json()
 
     def get_audience_by_id(self, audience_id):
@@ -65,8 +67,10 @@ class AudienceModel:
         # Make a request to audience service
         # return requests.get(f'{self.API}').json()
 
-        response = requests.get(f'{self.API}/{audience_id}',
-                                headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        response = requests.get(
+            f"{self.API}/{audience_id}",
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
+        )
         return response.json()
 
     def create_audiences(self, data):
@@ -76,7 +80,9 @@ class AudienceModel:
         :return:
         """
         # push the request
-        response = requests.post(f'{self.API}', json=data, headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        response = requests.post(
+            f"{self.API}", json=data, headers={"Authorization": f"Bearer {self.TOKEN}"}
+        )
         return response.json()
 
     def update_audiences(self, data):
@@ -86,7 +92,9 @@ class AudienceModel:
         :return:
         """
         # push the request
-        response = requests.put(f'{self.API}', json=data, headers={'Authorization': f'Bearer {self.TOKEN}'})
+        response = requests.put(
+            f"{self.API}", json=data, headers={"Authorization": f"Bearer {self.TOKEN}"}
+        )
         return response.json()
 
     def delete_audiences(self, audience_id):
@@ -96,8 +104,10 @@ class AudienceModel:
         :return:
         """
         # push the request
-        response = requests.delete(f'{self.API}/{audience_id}',
-                                headers={'Authorization': f'Bearer {self.TOKEN}'})
+        response = requests.delete(
+            f"{self.API}/{audience_id}",
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
+        )
         return response.json()
 
     def get_audience_delivery_jobs(self, audience_id):
@@ -107,8 +117,10 @@ class AudienceModel:
         :return:
         """
         # push the request
-        response = requests.get(f'{self.API}/{audience_id}/deliveries',
-                            headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        response = requests.get(
+            f"{self.API}/{audience_id}/deliveries",
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
+        )
         print(response)
         return response.json()
 
@@ -119,8 +131,11 @@ class AudienceModel:
         :return:
         """
         # push the request
-        response = requests.post(f'{self.API}/{audience_id}/deliveries', json=data,
-                                 headers = {'Authorization': f'Bearer {self.TOKEN}'})
+        response = requests.post(
+            f"{self.API}/{audience_id}/deliveries",
+            json=data,
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
+        )
         return response.json()
 
     def get_audience_insights(self, audience_id):
@@ -130,8 +145,10 @@ class AudienceModel:
         :return:
         """
         # push the request
-        return requests.get(f'{self.API}/{audience_id}/insights',
-                            headers = {'Authorization': f'Bearer {self.TOKEN}'}).json()
+        return requests.get(
+            f"{self.API}/{audience_id}/insights",
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
+        ).json()
 
     def get_delivery_job_by_audience_id(self, audience_id, delivery_job_id):
         """
@@ -140,8 +157,10 @@ class AudienceModel:
         :return:
         """
         # push the request
-        return requests.get(f'{self.API}/{audience_id}/deliveries/{delivery_job_id}',
-                            headers = {'Authorization': f'Bearer {self.TOKEN}'}).json()
+        return requests.get(
+            f"{self.API}/{audience_id}/deliveries/{delivery_job_id}",
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
+        ).json()
 
     def get_insights_delivery_job_audience_id(self, audience_id, delivery_job_id):
         """
@@ -150,6 +169,7 @@ class AudienceModel:
         :return:
         """
         # push the request
-        return requests.get(f'{self.API}/{audience_id}/deliveries/{delivery_job_id}/insights',
-                            headers = {'Authorization': f'Bearer {self.TOKEN}'}).json()
-
+        return requests.get(
+            f"{self.API}/{audience_id}/deliveries/{delivery_job_id}/insights",
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
+        ).json()
