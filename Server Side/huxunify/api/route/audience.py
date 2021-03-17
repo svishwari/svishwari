@@ -5,8 +5,8 @@ import json
 from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
-from api.model.audience import AudienceModel
-from api.schema.audience import AudienceSchema, audience_schema, audiences_schema, \
+from huxunify.api.model.audience import AudienceModel
+from huxunify.api.schema.audience import AudienceSchema, audience_schema, audiences_schema, \
     AudienceDeliverySchema, audience_delivery_schema, audience_delivery_schemas, \
     AudienceInsightsSchema, audience_insights_schema, AudienceDeliveryInsightsSchema, audience_delivery_insights_schema
 from flask import jsonify
