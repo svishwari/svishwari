@@ -29,7 +29,7 @@ def index():
     ---
     """
     result = CdmModel()
-    return CdmSchema().dump(result), 200
+    return CdmSchema().dump(result), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/ingested_data", methods=["get"])
@@ -42,7 +42,7 @@ def get_ingested_data():
         Response: The return list of ingested data.
 
     """
-    return json.dumps(CdmModel().get_data_sources()), 200
+    return json.dumps(CdmModel().get_data_sources()), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/datafeeds", methods=["get"])
@@ -70,7 +70,7 @@ def datafeeds_search():
     """
     datafeeds = CdmModel().read_datafeeds()
     response = [Datafeed().dump(datafeed) for datafeed in datafeeds]
-    return jsonify(response), 200
+    return jsonify(response), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/datafeeds/<feed_id>", methods=["get"])
@@ -116,7 +116,7 @@ def datafeeds_get(feed_id: int):
             HTTPStatus.NOT_FOUND.value,
         )
 
-    return Datafeed().dump(datafeed), 200
+    return Datafeed().dump(datafeed), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/fieldmappings", methods=["get"])
@@ -144,7 +144,7 @@ def fieldmappings_search():
     """
     fieldmappings = CdmModel().read_fieldmappings()
     response = [Fieldmapping().dump(fieldmapping) for fieldmapping in fieldmappings]
-    return jsonify(response), 200
+    return jsonify(response), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/fieldmappings/<fieldmapping_id>", methods=["get"])
@@ -190,4 +190,4 @@ def fieldmappings_get(fieldmapping_id: int):
             HTTPStatus.NOT_FOUND.value,
         )
 
-    return Fieldmapping().dump(fieldmapping), 200
+    return Fieldmapping().dump(fieldmapping), HTTPStatus.OK.value
