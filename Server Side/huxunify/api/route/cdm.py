@@ -3,10 +3,10 @@ purpose of this script is for housing the cdm routes for the API
 """
 import json
 from http import HTTPStatus
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flasgger import swag_from
 from huxunify.api.model.cdm import CdmModel
-from huxunify.api.schema.cdm import CdmSchema
+from huxunify.api.schema.cdm import CdmSchema, Fieldmapping
 
 cdm_bp = Blueprint('cdm_bp', __name__)
 
@@ -34,11 +34,10 @@ def index():
 @swag_from("../spec/cdm/ingested_data_search.yaml")
 def get_ingested_data():
     """
-    list all ingested data, record count and blob path
+    List all ingested data, record count and blob path.
 
-    Args:
     Returns:
-        The return list of ingested data from the snowflake database API
+        Response: The return list of ingested data.
 
     """
     return json.dumps(CdmModel().get_data_sources()), 200
@@ -61,8 +60,12 @@ def datafeeds_search():
 def datafeeds_get(feed_id: int):
     """Endpoint returning a datafeed by ID.
 
+    Args:
+        feed_id (int): The datafeed ID.
+
     Returns:
-        datafeed (Response): Return a datafeed by ID.
+        Response: Returns a datafeed by ID.
+
     """
     datafeed = CdmModel().read_datafeed_by_id(feed_id)
 
@@ -72,5 +75,66 @@ def datafeeds_get(feed_id: int):
     return json.dumps(datafeed), 200
 
 
-if __name__ == '__main__':
-    pass
+@cdm_bp.route("/fieldmappings", methods=["get"])
+@swag_from(dict(
+    responses={
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": {
+                    "$ref": Fieldmapping,
+                },
+            }
+        },
+    },
+    tags=["cdm"],
+))
+def fieldmappings_search():
+    """Endpoint returning a list of fieldmappings.
+
+    Returns:
+        Response: List of fieldmappings.
+
+    """
+    fieldmappings = CdmModel().read_fieldmappings()
+    response = [
+        Fieldmapping().dump(fieldmapping)
+        for fieldmapping in fieldmappings
+    ]
+    return jsonify(response), 200
+
+
+@cdm_bp.route("/fieldmappings/<fieldmapping_id>", methods=["get"])
+@swag_from(dict(
+    parameters=[
+        {
+            "name": "fieldmapping_id",
+            "description": "ID of the fieldmapping",
+            "type": "integer",
+            "in": "path",
+            "required": "true",
+        },
+    ],
+    responses={
+        HTTPStatus.OK.value: {
+            "schema": Fieldmapping
+        },
+    },
+    tags=["cdm"],
+))
+def fieldmappings_get(fieldmapping_id: int):
+    """Endpoint returning a fieldmapping by ID.
+
+    Args:
+        fieldmapping_id (int): The fieldmapping ID.
+
+    Returns:
+        Response: Returns a fieldmapping by ID.
+
+    """
+    fieldmapping = CdmModel().read_fieldmapping_by_id(fieldmapping_id)
+
+    if not fieldmapping:
+        return "Fieldmapping not found", 404
+
+    return Fieldmapping().dump(fieldmapping), 200

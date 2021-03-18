@@ -23,8 +23,7 @@ class CdmModel:
 
     def get_data_sources(self):
         """A function to get all CDM processed files.
-        Args:
-            client_table: name of the snowflake client table
+
         Returns:
             list(dict): processed client data sources
         """
@@ -52,7 +51,10 @@ class CdmModel:
         return data_sources
 
     def read_datafeeds(self):
-        """Reads the data feed catalog table, returning a list of data feeds.
+        """Reads the data feed catalog table.
+
+        Returns:
+            list(dict): The list of data feeds in the database.
         """
         cursor = self.ctx.cursor()
 
@@ -93,7 +95,10 @@ class CdmModel:
             cursor.close()
 
     def read_datafeed_by_id(self, datafeed_id: int):
-        """Finds a data feed in the data feed catalog table and returns it.
+        """Finds a data feed in the data feed catalog table.
+
+        Returns:
+            dict: The data feed in the database
         """
         cursor = self.ctx.cursor()
 
@@ -136,7 +141,77 @@ class CdmModel:
         finally:
             cursor.close()
 
+    def read_fieldmappings(self):
+        """Reads the fieldmappings table.
 
+        Returns:
+            list(dict): The list of fieldmappings in the database.
+        """
+        cursor = self.ctx.cursor()
 
-if __name__ == '__main__':
-    pass
+        try:
+            cursor.execute(f"use database {ADMIN_DATABASE}")
+            cursor.execute(f"use schema {SCHEMA}")
+            cursor.execute(f"""
+                select id as field_id, field_name, field_variation, modified
+                from {TABLE_PII_REQUIRED_FIELDS_LOOKUP}
+                order by modified
+            """)
+
+            results = []
+
+            for (field_id, field_name, field_variation, modified) in cursor:
+                result = {
+                    "field_id": field_id,
+                    "field_name": field_name,
+                    "field_variation": field_variation,
+                    "modified": modified,
+                }
+                results.append(result)
+
+            return results
+
+        except Exception as exc:
+            raise Exception(f"Something went wrong. Details {exc}") from exc
+
+        finally:
+            cursor.close()
+
+    def read_fieldmapping_by_id(self, fieldmapping_id: int):
+        """Finds a fieldmapping in the fieldmapping table.
+
+        Returns:
+            dict: The fieldmapping in the database
+        """
+        cursor = self.ctx.cursor()
+
+        try:
+            cursor.execute(f"use database {ADMIN_DATABASE}")
+            cursor.execute(f"use schema {SCHEMA}")
+            cursor.execute(f"""
+                select id as field_id, field_name, field_variation, modified
+                from {TABLE_PII_REQUIRED_FIELDS_LOOKUP}
+                where id = %s""", (int(fieldmapping_id))
+            )
+
+            row = cursor.fetchone()
+
+            if not row:
+                return None
+
+            field_id, field_name, field_variation, modified = row
+
+            result = {
+                "field_id": field_id,
+                "field_name": field_name,
+                "field_variation": field_variation,
+                "modified": modified,
+            }
+
+            return result
+
+        except Exception as exc:
+            raise Exception(f"Something went wrong. Details {exc}") from exc
+
+        finally:
+            cursor.close()
