@@ -1,5 +1,5 @@
 """
-purpose of this script is for housing the cdm routes for the API
+Paths for the CDM API
 """
 import json
 from http import HTTPStatus
@@ -89,7 +89,9 @@ def datafeeds_get(feed_id: int):
     )
 )
 def fieldmappings_search():
-    """Endpoint returning a list of fieldmappings.
+    """Retrieves the data feed's PII field mappings
+
+    ---
 
     Returns:
         Response: List of fieldmappings.
@@ -121,7 +123,9 @@ def fieldmappings_search():
     )
 )
 def fieldmappings_get(fieldmapping_id: int):
-    """Endpoint returning a fieldmapping by ID.
+    """Retrieves the data feed's PII field mapping by ID
+
+    ---
 
     Args:
         fieldmapping_id (int): The fieldmapping ID.

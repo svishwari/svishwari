@@ -1,5 +1,5 @@
 """
-Purpose of this file is to house the CDM Schema
+Schemas for the CDM API
 """
 
 from flask_marshmallow import Schema
@@ -20,6 +20,7 @@ FIELD_NAMES = [
     "TITLE",
     "EMAIL",
 ]
+
 
 class CdmSchema(Schema):
     """

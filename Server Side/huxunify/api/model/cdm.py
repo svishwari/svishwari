@@ -1,5 +1,5 @@
 """
-The purpose of this file is for housing the Customer Data Management (CDM) related API models
+Models for the CDM API
 """
 import logging
 from huxunify.api.data_connectors.snowflake_client import SnowflakeClient
