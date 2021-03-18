@@ -6,7 +6,7 @@ from http import HTTPStatus
 from flask import Blueprint, jsonify
 from flasgger import swag_from
 from huxunify.api.model.cdm import CdmModel
-from huxunify.api.schema.cdm import CdmSchema, Fieldmapping
+from huxunify.api.schema.cdm import CdmSchema, Datafeed, Fieldmapping
 
 cdm_bp = Blueprint("cdm_bp", __name__)
 
@@ -45,21 +45,60 @@ def get_ingested_data():
 
 
 @cdm_bp.route("/datafeeds", methods=["get"])
-@swag_from("../spec/cdm/datafeeds_search.yaml")
+@swag_from(
+    dict(
+        responses={
+            HTTPStatus.OK.value: {
+                "schema": {
+                    "type": "array",
+                    "items": Datafeed,
+                },
+            },
+        },
+        tags=[CDM_TAG],
+    )
+)
 def datafeeds_search():
-    """Endpoint returning a list of datafeeds.
+    """Retrieves the data feed catalog.
+
+    ---
 
     Returns:
-        datafeeds (Response): List of datafeeds.
+        Response: List of datafeeds.
+
     """
     datafeeds = CdmModel().read_datafeeds()
-    return json.dumps(datafeeds), 200
+    response = [Datafeed().dump(datafeed) for datafeed in datafeeds]
+    return jsonify(response), 200
 
 
 @cdm_bp.route("/datafeeds/<feed_id>", methods=["get"])
-@swag_from("../spec/cdm/datafeeds_get.yaml")
+@swag_from(
+    dict(
+        parameters=[
+            {
+                "name": "feed_id",
+                "description": "ID of the datafeed",
+                "type": "integer",
+                "in": "path",
+                "required": "true",
+            },
+        ],
+        responses={
+            HTTPStatus.OK.value: {
+                "schema": Datafeed,
+            },
+            HTTPStatus.NOT_FOUND.value: {
+                "description": "Datafeed not found",
+            },
+        },
+        tags=[CDM_TAG],
+    )
+)
 def datafeeds_get(feed_id: int):
-    """Endpoint returning a datafeed by ID.
+    """Retrieves the data feed configuration by ID.
+
+    ---
 
     Args:
         feed_id (int): The datafeed ID.
@@ -71,9 +110,9 @@ def datafeeds_get(feed_id: int):
     datafeed = CdmModel().read_datafeed_by_id(feed_id)
 
     if not datafeed:
-        return "Data feed not found", 404
+        return "Datafeed not found", 404
 
-    return json.dumps(datafeed), 200
+    return Datafeed().dump(datafeed), 200
 
 
 @cdm_bp.route("/fieldmappings", methods=["get"])
