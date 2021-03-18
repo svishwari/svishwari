@@ -18,7 +18,11 @@ class CdmModel:
     """
     def __init__(self):
         self.message = "Hello cdm"
-        self.db = SnowflakeClient()
+        self.db = SnowflakeClient(username='user',
+                                  password='password',
+                                  warehouse='warehouse',
+                                  account='account')
+        print("Created Snowflake client")
         self.ctx = self.db.connect()
 
     def get_data_sources(self):

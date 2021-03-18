@@ -62,6 +62,7 @@ class SnowflakeClient:
         ctx = None
         try:
             # initialize the snowflake connection object
+            print("Trying to connect ....")
             ctx = connector.connect(
                 user=self._username,
                 password=self._password,
