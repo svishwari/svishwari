@@ -8,19 +8,18 @@ from flasgger import swag_from
 from huxunify.api.model.cdm import CdmModel
 from huxunify.api.schema.cdm import CdmSchema, Fieldmapping
 
-cdm_bp = Blueprint('cdm_bp', __name__)
+cdm_bp = Blueprint("cdm_bp", __name__)
 
 
-@cdm_bp.route('/')
-@swag_from({
-    "tags": ["cdm"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'cdm api',
-            'schema': CdmSchema
-        }
+@cdm_bp.route("/")
+@swag_from(
+    {
+        "tags": ["cdm"],
+        "responses": {
+            HTTPStatus.OK.value: {"description": "cdm api", "schema": CdmSchema}
+        },
     }
-})
+)
 def index():
     """
     cdm api landing
@@ -30,7 +29,7 @@ def index():
     return CdmSchema().dump(result), 200
 
 
-@cdm_bp.route('/ingested_data', methods=['get'])
+@cdm_bp.route("/ingested_data", methods=["get"])
 @swag_from("../spec/cdm/ingested_data_search.yaml")
 def get_ingested_data():
     """
@@ -76,19 +75,21 @@ def datafeeds_get(feed_id: int):
 
 
 @cdm_bp.route("/fieldmappings", methods=["get"])
-@swag_from(dict(
-    responses={
-        HTTPStatus.OK.value: {
-            "schema": {
-                "type": "array",
-                "items": {
-                    "$ref": Fieldmapping,
-                },
-            }
+@swag_from(
+    dict(
+        responses={
+            HTTPStatus.OK.value: {
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "$ref": Fieldmapping,
+                    },
+                }
+            },
         },
-    },
-    tags=["cdm"],
-))
+        tags=["cdm"],
+    )
+)
 def fieldmappings_search():
     """Endpoint returning a list of fieldmappings.
 
@@ -97,31 +98,28 @@ def fieldmappings_search():
 
     """
     fieldmappings = CdmModel().read_fieldmappings()
-    response = [
-        Fieldmapping().dump(fieldmapping)
-        for fieldmapping in fieldmappings
-    ]
+    response = [Fieldmapping().dump(fieldmapping) for fieldmapping in fieldmappings]
     return jsonify(response), 200
 
 
 @cdm_bp.route("/fieldmappings/<fieldmapping_id>", methods=["get"])
-@swag_from(dict(
-    parameters=[
-        {
-            "name": "fieldmapping_id",
-            "description": "ID of the fieldmapping",
-            "type": "integer",
-            "in": "path",
-            "required": "true",
+@swag_from(
+    dict(
+        parameters=[
+            {
+                "name": "fieldmapping_id",
+                "description": "ID of the fieldmapping",
+                "type": "integer",
+                "in": "path",
+                "required": "true",
+            },
+        ],
+        responses={
+            HTTPStatus.OK.value: {"schema": Fieldmapping},
         },
-    ],
-    responses={
-        HTTPStatus.OK.value: {
-            "schema": Fieldmapping
-        },
-    },
-    tags=["cdm"],
-))
+        tags=["cdm"],
+    )
+)
 def fieldmappings_get(fieldmapping_id: int):
     """Endpoint returning a fieldmapping by ID.
 
