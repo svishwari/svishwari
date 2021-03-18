@@ -6,6 +6,7 @@ from http import HTTPStatus
 from flask import Blueprint, jsonify
 from flasgger import swag_from
 from huxunify.api.model.cdm import CdmModel
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.schema.cdm import CdmSchema, Datafeed, Fieldmapping
 
 cdm_bp = Blueprint("cdm_bp", __name__)
@@ -89,7 +90,7 @@ def datafeeds_search():
                 "schema": Datafeed,
             },
             HTTPStatus.NOT_FOUND.value: {
-                "description": "Datafeed not found",
+                "schema": NotFoundError,
             },
         },
         tags=[CDM_TAG],
@@ -110,7 +111,10 @@ def datafeeds_get(feed_id: int):
     datafeed = CdmModel().read_datafeed_by_id(feed_id)
 
     if not datafeed:
-        return "Datafeed not found", 404
+        return (
+            NotFoundError().dump({"message": "Datafeed not found"}),
+            HTTPStatus.NOT_FOUND.value,
+        )
 
     return Datafeed().dump(datafeed), 200
 
@@ -159,6 +163,9 @@ def fieldmappings_search():
             HTTPStatus.OK.value: {
                 "schema": Fieldmapping,
             },
+            HTTPStatus.NOT_FOUND.value: {
+                "schema": NotFoundError,
+            },
         },
         tags=[CDM_TAG],
     )
@@ -178,6 +185,9 @@ def fieldmappings_get(fieldmapping_id: int):
     fieldmapping = CdmModel().read_fieldmapping_by_id(fieldmapping_id)
 
     if not fieldmapping:
-        return "Fieldmapping not found", 404
+        return (
+            NotFoundError().dump({"message": "Fieldmapping not found"}),
+            HTTPStatus.NOT_FOUND.value,
+        )
 
     return Fieldmapping().dump(fieldmapping), 200
