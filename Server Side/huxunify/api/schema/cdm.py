@@ -3,7 +3,7 @@ Purpose of this file is to house the CDM Schema
 """
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, DateTime, List, Nested
+from marshmallow.fields import Str, Int, DateTime
 
 
 class CdmSchema(Schema):
@@ -18,6 +18,8 @@ class CdmSchema(Schema):
     message = Str()
 
 class Fieldmapping(Schema):
+    """Fieldmapping schema.
+    """
     field_id = Int(required=True)
     field_name = Str(required=True)
     field_variation = Str(required=True)
