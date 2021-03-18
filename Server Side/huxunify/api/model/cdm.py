@@ -160,7 +160,7 @@ class CdmModel:
 
             results = []
 
-            for (field_id, field_name, field_variation, modified) in cursor:
+            for field_id, field_name, field_variation, modified in cursor:
                 result = {
                     "field_id": field_id,
                     "field_name": field_name,
