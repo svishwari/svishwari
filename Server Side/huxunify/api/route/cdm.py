@@ -81,10 +81,8 @@ def datafeeds_get(feed_id: int):
             HTTPStatus.OK.value: {
                 "schema": {
                     "type": "array",
-                    "items": {
-                        "$ref": Fieldmapping,
-                    },
-                }
+                    "items": Fieldmapping,
+                },
             },
         },
         tags=["cdm"],
@@ -115,7 +113,9 @@ def fieldmappings_search():
             },
         ],
         responses={
-            HTTPStatus.OK.value: {"schema": Fieldmapping},
+            HTTPStatus.OK.value: {
+                "schema": Fieldmapping,
+            },
         },
         tags=["cdm"],
     )
