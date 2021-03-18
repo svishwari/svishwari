@@ -10,11 +10,13 @@ from huxunify.api.schema.cdm import CdmSchema, Fieldmapping
 
 cdm_bp = Blueprint("cdm_bp", __name__)
 
+CDM_TAG = "cdm"
+
 
 @cdm_bp.route("/")
 @swag_from(
     {
-        "tags": ["cdm"],
+        "tags": [CDM_TAG],
         "responses": {
             HTTPStatus.OK.value: {"description": "cdm api", "schema": CdmSchema}
         },
@@ -85,7 +87,7 @@ def datafeeds_get(feed_id: int):
                 },
             },
         },
-        tags=["cdm"],
+        tags=[CDM_TAG],
     )
 )
 def fieldmappings_search():
@@ -119,7 +121,7 @@ def fieldmappings_search():
                 "schema": Fieldmapping,
             },
         },
-        tags=["cdm"],
+        tags=[CDM_TAG],
     )
 )
 def fieldmappings_get(fieldmapping_id: int):

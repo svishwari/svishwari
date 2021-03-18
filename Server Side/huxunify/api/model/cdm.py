@@ -1,7 +1,6 @@
 """
 Models for the CDM API
 """
-import logging
 from huxunify.api.data_connectors.snowflake_client import SnowflakeClient
 
 # CDM DATABASE CONSTANTS - we can move these after
@@ -19,8 +18,8 @@ class CdmModel:
 
     def __init__(self):
         self.message = "Hello cdm"
-        self.db = SnowflakeClient()
-        self.ctx = self.db.connect()
+        self.database = SnowflakeClient()
+        self.ctx = self.database.connect()
 
     def get_data_sources(self):
         """A function to get all CDM processed files.
@@ -33,18 +32,18 @@ class CdmModel:
             return data_sources, 200
 
         # setup the cursor object
-        cs = self.ctx.cursor()
+        cursor = self.ctx.cursor()
 
         try:
             # execute the fetch all query
-            cs.execute(
+            cursor.execute(
                 f"""
                 select data_source, filename, count(*) as record_count
                 from {PROCESSED_DATABASE}.LTD.NETSUITE_ITEMS_205FD81AFAAB9B858EDA8E503BE224AC_LTD
-                group by data_source, filename 
+                group by data_source, filename
             """
             )
-            results = cs.fetchall()
+            results = cursor.fetchall()
 
             # port the data back into the list
             data_sources = [
@@ -52,7 +51,7 @@ class CdmModel:
                 for rec in results
             ]
         finally:
-            cs.close()
+            cursor.close()
         return data_sources
 
     def read_datafeeds(self):
