@@ -3,8 +3,23 @@ Purpose of this file is to house the CDM Schema
 """
 
 from flask_marshmallow import Schema
+from marshmallow import validate
 from marshmallow.fields import Str, Int, DateTime
 
+
+FIELD_NAMES = [
+    "FNAME",
+    "LNAME",
+    "ADD1",
+    "ADD2",
+    "ADD3",
+    "CITY",
+    "STATE",
+    "ZIP",
+    "COMPANY",
+    "TITLE",
+    "EMAIL",
+]
 
 class CdmSchema(Schema):
     """
@@ -24,6 +39,6 @@ class Fieldmapping(Schema):
     """Fieldmapping schema."""
 
     field_id = Int(required=True)
-    field_name = Str(required=True)
+    field_name = Str(required=True, validate=validate.OneOf(FIELD_NAMES))
     field_variation = Str(required=True)
     modified = DateTime(required=True)
