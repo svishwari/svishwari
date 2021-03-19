@@ -4,8 +4,19 @@ Schemas for the CDM API
 
 from flask_marshmallow import Schema
 from marshmallow import validate
-from marshmallow.fields import Str, Int, DateTime
+from marshmallow.fields import Boolean, DateTime, Int, Str
 
+
+DATA_TYPES = [
+    "customers",
+    "orders",
+    "items",
+]
+
+FEED_TYPES = [
+    "api",
+    "batch",
+]
 
 FIELD_NAMES = [
     "FNAME",
@@ -21,6 +32,11 @@ FIELD_NAMES = [
     "EMAIL",
 ]
 
+FILE_EXTENSIONS = [
+    "csv",
+    "json",
+]
+
 
 class CdmSchema(Schema):
     """
@@ -34,6 +50,18 @@ class CdmSchema(Schema):
         fields = ["message"]
 
     message = Str()
+
+
+class Datafeed(Schema):
+    """Datafeed schema."""
+
+    data_source = Str(required=True)
+    data_type = Str(required=True, validate=validate.OneOf(DATA_TYPES))
+    feed_id = Int(required=True)
+    feed_type = Str(required=True, validate=validate.OneOf(FEED_TYPES))
+    file_extension = Str(required=True, validate=validate.OneOf(FILE_EXTENSIONS))
+    is_pii = Boolean(required=True)
+    modified = DateTime(required=True)
 
 
 class Fieldmapping(Schema):

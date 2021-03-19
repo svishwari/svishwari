@@ -93,7 +93,7 @@ class CdmModel:
                     "feed_type": feed_type,
                     "file_extension": file_extension,
                     "is_pii": is_pii == "Y",
-                    "modified": modified.__str__(),
+                    "modified": modified,
                 }
                 results.append(result)
 
@@ -123,7 +123,7 @@ class CdmModel:
                     is_pii, modified
                 from {TABLE_DATA_FEED_CATALOG}
                 where feed_id = %s""",
-                (int(datafeed_id)),
+                int(datafeed_id),
             )
 
             row = cursor.fetchone()
@@ -148,7 +148,7 @@ class CdmModel:
                 "feed_type": feed_type,
                 "file_extension": file_extension,
                 "is_pii": is_pii == "Y",
-                "modified": modified.__str__(),
+                "modified": modified,
             }
 
             return result

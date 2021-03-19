@@ -6,7 +6,8 @@ from http import HTTPStatus
 from flask import Blueprint, jsonify
 from flasgger import swag_from
 from huxunify.api.model.cdm import CdmModel
-from huxunify.api.schema.cdm import CdmSchema, Fieldmapping
+from huxunify.api.schema.errors import NotFoundError
+from huxunify.api.schema.cdm import CdmSchema, Datafeed, Fieldmapping
 
 cdm_bp = Blueprint("cdm_bp", __name__)
 
@@ -28,7 +29,7 @@ def index():
     ---
     """
     result = CdmModel()
-    return CdmSchema().dump(result), 200
+    return CdmSchema().dump(result), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/ingested_data", methods=["get"])
@@ -41,25 +42,64 @@ def get_ingested_data():
         Response: The return list of ingested data.
 
     """
-    return json.dumps(CdmModel().get_data_sources()), 200
+    return json.dumps(CdmModel().get_data_sources()), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/datafeeds", methods=["get"])
-@swag_from("../spec/cdm/datafeeds_search.yaml")
+@swag_from(
+    dict(
+        responses={
+            HTTPStatus.OK.value: {
+                "schema": {
+                    "type": "array",
+                    "items": Datafeed,
+                },
+            },
+        },
+        tags=[CDM_TAG],
+    )
+)
 def datafeeds_search():
-    """Endpoint returning a list of datafeeds.
+    """Retrieves the data feed catalog.
+
+    ---
 
     Returns:
-        datafeeds (Response): List of datafeeds.
+        Response: List of datafeeds.
+
     """
     datafeeds = CdmModel().read_datafeeds()
-    return json.dumps(datafeeds), 200
+    response = [Datafeed().dump(datafeed) for datafeed in datafeeds]
+    return jsonify(response), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/datafeeds/<feed_id>", methods=["get"])
-@swag_from("../spec/cdm/datafeeds_get.yaml")
+@swag_from(
+    dict(
+        parameters=[
+            {
+                "name": "feed_id",
+                "description": "ID of the datafeed",
+                "type": "integer",
+                "in": "path",
+                "required": "true",
+            },
+        ],
+        responses={
+            HTTPStatus.OK.value: {
+                "schema": Datafeed,
+            },
+            HTTPStatus.NOT_FOUND.value: {
+                "schema": NotFoundError,
+            },
+        },
+        tags=[CDM_TAG],
+    )
+)
 def datafeeds_get(feed_id: int):
-    """Endpoint returning a datafeed by ID.
+    """Retrieves the data feed configuration by ID.
+
+    ---
 
     Args:
         feed_id (int): The datafeed ID.
@@ -71,9 +111,12 @@ def datafeeds_get(feed_id: int):
     datafeed = CdmModel().read_datafeed_by_id(feed_id)
 
     if not datafeed:
-        return "Data feed not found", 404
+        return (
+            NotFoundError().dump({"message": "Datafeed not found"}),
+            HTTPStatus.NOT_FOUND.value,
+        )
 
-    return json.dumps(datafeed), 200
+    return Datafeed().dump(datafeed), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/fieldmappings", methods=["get"])
@@ -101,7 +144,7 @@ def fieldmappings_search():
     """
     fieldmappings = CdmModel().read_fieldmappings()
     response = [Fieldmapping().dump(fieldmapping) for fieldmapping in fieldmappings]
-    return jsonify(response), 200
+    return jsonify(response), HTTPStatus.OK.value
 
 
 @cdm_bp.route("/fieldmappings/<fieldmapping_id>", methods=["get"])
@@ -119,6 +162,9 @@ def fieldmappings_search():
         responses={
             HTTPStatus.OK.value: {
                 "schema": Fieldmapping,
+            },
+            HTTPStatus.NOT_FOUND.value: {
+                "schema": NotFoundError,
             },
         },
         tags=[CDM_TAG],
@@ -139,6 +185,9 @@ def fieldmappings_get(fieldmapping_id: int):
     fieldmapping = CdmModel().read_fieldmapping_by_id(fieldmapping_id)
 
     if not fieldmapping:
-        return "Fieldmapping not found", 404
+        return (
+            NotFoundError().dump({"message": "Fieldmapping not found"}),
+            HTTPStatus.NOT_FOUND.value,
+        )
 
-    return Fieldmapping().dump(fieldmapping), 200
+    return Fieldmapping().dump(fieldmapping), HTTPStatus.OK.value
