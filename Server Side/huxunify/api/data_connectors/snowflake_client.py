@@ -40,8 +40,7 @@ class SnowflakeClient:
 
     @property
     def account(self):
-        """Union[str, None]: name of the azure snowflake account
-        """
+        """Union[str, None]: name of the azure snowflake account"""
         return self._account
 
     @property
@@ -66,8 +65,9 @@ class SnowflakeClient:
                 user=self._username,
                 password=self._password,
                 account=self._account,
-                warehouse=self._warehouse
+                warehouse=self._warehouse,
             )
         except connector.errors.DatabaseError as db_error:
             logging.error(db_error)
+            raise Exception(db_error) from db_error
         return ctx
