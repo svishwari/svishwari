@@ -69,5 +69,5 @@ class SnowflakeClient:
             )
         except connector.errors.DatabaseError as db_error:
             logging.error(db_error)
-            raise Exception(db_error)
+            raise Exception(db_error) from db_error
         return ctx
