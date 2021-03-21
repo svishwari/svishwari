@@ -10,8 +10,10 @@ class HomeSchema(Schema):
     """
     home schema class, return the serialized messages back
     """
+
     class Meta:
         """expose the fields for serialization"""
+
         # Fields to expose
         fields = ["message"]
 

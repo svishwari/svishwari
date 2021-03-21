@@ -7,18 +7,20 @@ from flasgger import swag_from
 from huxunify.api.model.home import HomeModel
 from huxunify.api.schema.home import HomeSchema
 
-home_api = Blueprint('api', __name__)
+home_api = Blueprint("api", __name__)
 
 
-@home_api.route('/')
-@swag_from({
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'Welcome to the Hux Unified Solution',
-            'schema': HomeSchema
+@home_api.route("/")
+@swag_from(
+    {
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "Welcome to the Hux Unified Solution",
+                "schema": HomeSchema,
+            }
         }
     }
-})
+)
 def home():
     """
     1 liner about the route

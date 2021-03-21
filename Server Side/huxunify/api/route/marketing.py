@@ -9,19 +9,21 @@ from huxunify.api.model.marketing import MarketingModel
 import huxunify.api.schema.marketing as schema
 
 
-marketing_bp = Blueprint('marketing_bp', __name__)
+marketing_bp = Blueprint("marketing_bp", __name__)
 
 
-@marketing_bp.route('/')
-@swag_from({
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'marketing api',
-            'schema': schema.MarketingSchema
-        }
+@marketing_bp.route("/")
+@swag_from(
+    {
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "marketing api",
+                "schema": schema.MarketingSchema,
+            }
+        },
     }
-})
+)
 def index():
     """
     marketing api landing
@@ -31,17 +33,19 @@ def index():
     return schema.MarketingSchema().dump(result), 200
 
 
-@marketing_bp.route('/segments', methods=['GET'])
-@swag_from({
-    "parameters": [],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'list all segments',
-            'schema': schema.SegmentCountSchema
-        }
+@marketing_bp.route("/segments", methods=["GET"])
+@swag_from(
+    {
+        "parameters": [],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "list all segments",
+                "schema": schema.SegmentCountSchema,
+            }
+        },
     }
-})
+)
 def segment_runs_count():
     """
     get count of segment runs
@@ -52,18 +56,20 @@ def segment_runs_count():
     return schema.SegmentCountSchema().dump(result), 200
 
 
-@marketing_bp.route('/segments', methods=['GET'])
-@swag_from({
-    "summary": "get all data sources",
-    "parameters": [],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'get all data sources',
-            'schema': schema.MarketingSchema
-        }
+@marketing_bp.route("/segments", methods=["GET"])
+@swag_from(
+    {
+        "summary": "get all data sources",
+        "parameters": [],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "get all data sources",
+                "schema": schema.MarketingSchema,
+            }
+        },
     }
-})
+)
 def get_all_segments():
     """
     get all segment runs
@@ -74,18 +80,19 @@ def get_all_segments():
     return json.dumps(segments), 200
 
 
-@marketing_bp.route('/segments', methods=['POST'])
-@swag_from({
-    "parameters": [
-    ],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'create new segment',
-            'schema': schema.MarketingSchema
-        }
+@marketing_bp.route("/segments", methods=["POST"])
+@swag_from(
+    {
+        "parameters": [],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "create new segment",
+                "schema": schema.MarketingSchema,
+            }
+        },
     }
-})
+)
 def segment_create():
     """
     creates a new segment
@@ -96,26 +103,28 @@ def segment_create():
     return json.dumps(segment), 200
 
 
-@marketing_bp.route('/segments/<segment_id>', methods=['GET'])
-@swag_from({
-    "parameters": [
-        {
-            "name": "segment_id",
-            "in": "path",
-            "type": "string",
-            "required": "true",
-            "description": "segment id",
-            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+@marketing_bp.route("/segments/<segment_id>", methods=["GET"])
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "segment_id",
+                "in": "path",
+                "type": "string",
+                "required": "true",
+                "description": "segment id",
+                "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
+            },
+        ],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "segment details",
+                "schema": schema.MarketingSchema,
+            }
         },
-    ],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'segment details',
-            'schema': schema.MarketingSchema
-        }
     }
-})
+)
 def segment_run(segment_id):
     """
     get all segment runs
@@ -126,26 +135,28 @@ def segment_run(segment_id):
     return json.dumps(segment_info), 200
 
 
-@marketing_bp.route('/segments/<segment_id>/customers', methods=['GET'])
-@swag_from({
-    "parameters": [
-        {
-            "name": "segment_id",
-            "in": "path",
-            "type": "string",
-            "required": "true",
-            "description": "segment id",
-            "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0"
+@marketing_bp.route("/segments/<segment_id>/customers", methods=["GET"])
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "segment_id",
+                "in": "path",
+                "type": "string",
+                "required": "true",
+                "description": "segment id",
+                "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
+            },
+        ],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "list all customers for a segment",
+                "schema": schema.MarketingSchema,
+            }
         },
-    ],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'list all customers for a segment',
-            'schema': schema.MarketingSchema,
-        }
     }
-})
+)
 def segment_run_customers(segment_id):
     """
     get all customers for a segment run
@@ -156,17 +167,17 @@ def segment_run_customers(segment_id):
     return json.dumps(customers), 200
 
 
-@marketing_bp.route('/segments', methods=['PUT'])
-@swag_from({
-    "parameters": [
-        {
-            "name": "body",
-            "in": "body",
-            "required": "true",
-            "schema": {
-                "id": "updateSegment",
-                "example":
-                    {
+@marketing_bp.route("/segments", methods=["PUT"])
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "updateSegment",
+                    "example": {
                         "TransactionID": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
                         "Scales": {
                             "Propensity": {
@@ -174,26 +185,24 @@ def segment_run_customers(segment_id):
                                     "0.0-0.2": "Unlikely",
                                     "0.21-0.5": "Likely",
                                     "0.51-0.8": "Most likely",
-                                    "0.81-1.0": "Very likely"
+                                    "0.81-1.0": "Very likely",
                                 },
-                                "Values": {
-                                    "Min": "0.0",
-                                    "Max": "1.0"
-                                }
+                                "Values": {"Min": "0.0", "Max": "1.0"},
                             }
                         },
-                    }
+                    },
+                },
             },
+        ],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "update a specific segment",
+                "schema": schema.MarketingSchema,
+            }
         },
-    ],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'update a specific segment',
-            'schema': schema.MarketingSchema
-        }
     }
-})
+)
 def segment_update():
     """
     updates an existing segment
@@ -205,17 +214,19 @@ def segment_update():
     return json.dumps(result), 200
 
 
-@marketing_bp.route('/models', methods=['POST'])
-@swag_from({
-    "parameters": [],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'list all models',
-            'schema': schema.ModelSchema
-        }
+@marketing_bp.route("/models", methods=["POST"])
+@swag_from(
+    {
+        "parameters": [],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "list all models",
+                "schema": schema.ModelSchema,
+            }
+        },
     }
-})
+)
 def fetch_models():
     """
     get all models
@@ -225,16 +236,18 @@ def fetch_models():
     return json.dumps(result), 200
 
 
-@marketing_bp.route('/segment/count', methods=['GET'])
-@swag_from({
-    "parameters": [],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'list all segments',
-        }
+@marketing_bp.route("/segment/count", methods=["GET"])
+@swag_from(
+    {
+        "parameters": [],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "list all segments",
+            }
+        },
     }
-})
+)
 def fetch_segments():
     """
     get count of all segments/destinations
@@ -244,120 +257,110 @@ def fetch_segments():
     return json.dumps(result), 200
 
 
-@marketing_bp.route('/segmentation', methods=['POST'])
-@swag_from({
-    "parameters": [
-        {
-            "name": "body",
-            "in": "body",
-            "required": "true",
-            "schema": {
-                "id": "segments",
-                "required": [
-                    "s3_url",
-                    "models"
-                ],
-                "example":
-                {
-                   "url": "s3://xspdev-amc-pipeline/customers_names_e2e.csv",
-                   "models": [
-                      "Churn",
-                      "Propensity"
-                   ]
+@marketing_bp.route("/segmentation", methods=["POST"])
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "segments",
+                    "required": ["s3_url", "models"],
+                    "example": {
+                        "url": "s3://xspdev-amc-pipeline/customers_names_e2e.csv",
+                        "models": ["Churn", "Propensity"],
+                    },
                 },
             },
+        ],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": "Fetch Scores API helps you retrieve the the result values for the "
+                "customers from the machine learning models chosen, the output further "
+                "can be utilized to categorize in one or many segments. The campaigning"
+                " strategy can be defined and executed as next steps.",
+                "schema": schema.SegmentSchema,
+            }
         },
-    ],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': 'Fetch Scores API helps you retrieve the the result values for the '
-                           'customers from the machine learning models chosen, the output further '
-                           'can be utilized to categorize in one or many segments. The campaigning'
-                           ' strategy can be defined and executed as next steps.',
-            'schema': schema.SegmentSchema
-        }
     }
-})
+)
 def fetch_scores():
     """
     get all scores
     ---
     """
-    s3_url = request.json['url']
-    models = request.json['models']
+    s3_url = request.json["url"]
+    models = request.json["models"]
     result = MarketingModel().get_scores(s3_url, models)
     return json.dumps(result), 200
 
 
-@marketing_bp.route('/segmentation/fly', methods=['POST'])
-@swag_from({
-    "parameters": [
-        {
-            "name": "body",
-            "in": "body",
-            "required": "true",
-            "example": {
-               "TransactionID": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
-               "Scales": {
-                  "Propensity": {
-                        "Segments": {
-                           "0.0-0.2": "Unlikely",
-                           "0.21-0.5": "Likely",
-                           "0.51-0.8": "Most likely",
-                           "0.81-1.0": "Very likely"
-                        },
-                        "Values": {
-                           "Min": "0.0",
-                           "Max": "1.0"
+@marketing_bp.route("/segmentation/fly", methods=["POST"])
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "example": {
+                    "TransactionID": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
+                    "Scales": {
+                        "Propensity": {
+                            "Segments": {
+                                "0.0-0.2": "Unlikely",
+                                "0.21-0.5": "Likely",
+                                "0.51-0.8": "Most likely",
+                                "0.81-1.0": "Very likely",
+                            },
+                            "Values": {"Min": "0.0", "Max": "1.0"},
                         }
-                  }
-               },
-               "Rules": [
-                  {
-                        "Rule": [
-                           {
-                              "Transaction": {
-                                    "all": [
-                                       {
-                                          "all": [
-                                                {
-                                                   "fact": "Propensity",
-                                                   "operator": "greaterThanInclusive",
-                                                   "value": 0.6
-                                                },
-                                                {
-                                                   "fact": "Propensity",
-                                                   "operator": "lessThanInclusive",
-                                                   "value": 1
-                                                }
-                                          ]
-                                       }
-                                    ]
-                              }
-                           },
-                           {
-                              "Values": {
-                                    "Segment": "Most Likely"
-                              }
-                           }
-                        ]
-                  }
-               ]
+                    },
+                    "Rules": [
+                        {
+                            "Rule": [
+                                {
+                                    "Transaction": {
+                                        "all": [
+                                            {
+                                                "all": [
+                                                    {
+                                                        "fact": "Propensity",
+                                                        "operator": "greaterThanInclusive",
+                                                        "value": 0.6,
+                                                    },
+                                                    {
+                                                        "fact": "Propensity",
+                                                        "operator": "lessThanInclusive",
+                                                        "value": 1,
+                                                    },
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {"Values": {"Segment": "Most Likely"}},
+                            ]
+                        }
+                    ],
+                },
             },
-        },
-    ],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': """Segmentation on the fly API helps you apply the group of segments
-            with the defined criteria, this API will segregate each customer into the segment as 
-            per the criteria defined. This output is the key input to execute the campaign 
+        ],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": """Segmentation on the fly API helps you apply the group of segments
+            with the defined criteria, this API will segregate each customer into the segment as
+            per the criteria defined. This output is the key input to execute the campaign
             workflow with the help of Orchestration tools.""",
-            'schema': schema.SegmentFlySchema
-        }
+                "schema": schema.SegmentFlySchema,
+            }
+        },
     }
-})
+)
 def fetch_scores_on_the_fly():
     """
     get all scores
@@ -367,51 +370,40 @@ def fetch_scores_on_the_fly():
     return json.dumps(result), 200
 
 
-@marketing_bp.route('/segmentation/deliver', methods=['POST'])
-@swag_from({
-    "parameters": [
-        {
-            "name": "body",
-            "in": "body",
-            "required": "true",
-            "schema": {
-                "id": "segments_deliver",
-                "required": [
-                    "s3_url",
-                    "models"
-                ],
-                "example":
-                    {
+@marketing_bp.route("/segmentation/deliver", methods=["POST"])
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "segments_deliver",
+                    "required": ["s3_url", "models"],
+                    "example": {
                         "fileURL": "filepath",
                         "TransactionID": "ID",
                         "PredictionData": [
-                            {
-                                "User": "Customer1",
-                                "Segment": "Likely"
-                            },
-                            {
-                                "User": "Customer2",
-                                "Segment": "Neutral"
-                            },
-                            {
-                                "User": "Customer3",
-                                "Segment": "Very likely"
-                            }
-                        ]
+                            {"User": "Customer1", "Segment": "Likely"},
+                            {"User": "Customer2", "Segment": "Neutral"},
+                            {"User": "Customer3", "Segment": "Very likely"},
+                        ],
                     },
+                },
             },
+        ],
+        "tags": ["marketing"],
+        "responses": {
+            HTTPStatus.OK.value: {
+                "description": """This DeliverACS API will help you to deliver the segmented
+                customers  data(CSV format) to S3 location, the same file would be used by the
+                custom ACS to start the campaign.""",
+                "schema": schema.SegmentDeliverSchema,
+            }
         },
-    ],
-    "tags": ["marketing"],
-    'responses': {
-        HTTPStatus.OK.value: {
-            'description': """This DeliverACS API will help you to deliver the segmented customers
-             data(CSV format) to S3 location, the same file would be used by the custom ACS 
-              to start the campaign.""",
-            'schema': schema.SegmentDeliverSchema
-        }
     }
-})
+)
 def deliver_segments():
     """
     deliver segment

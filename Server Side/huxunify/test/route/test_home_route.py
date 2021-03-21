@@ -9,6 +9,7 @@ class TestHome(TestCase):
     """
     test all welcome routes
     """
+
     def setUp(self):
         """
         setup the initial test client
@@ -19,7 +20,9 @@ class TestHome(TestCase):
         """
         Tests the route screen message
         """
-        api_route = self.app.get('/api/')
+        api_route = self.app.get("/api/")
 
         # If we recalculate the hash on the block we should get the same result as we have stored
-        self.assertEqual({"message": 'Hello Hux Unified Solution'}, api_route.get_json())
+        self.assertEqual(
+            {"message": "Hello Hux Unified Solution"}, api_route.get_json()
+        )

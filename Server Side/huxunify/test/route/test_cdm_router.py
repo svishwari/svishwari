@@ -9,6 +9,7 @@ class TestCdm(TestCase):
     """
     test all CDM routes
     """
+
     def setUp(self):
         """
         setup the initial test client
@@ -19,7 +20,7 @@ class TestCdm(TestCase):
         """
         Tests the route screen message for the landing page
         """
-        api_route = self.app.get('/api/cdm/')
+        api_route = self.app.get("/api/cdm/")
 
         # If we recalculate the hash on the block we should get the same result as we have stored
-        self.assertEqual({"message": 'Hello cdm'}, api_route.get_json())
+        self.assertEqual({"message": "Hello cdm"}, api_route.get_json())
