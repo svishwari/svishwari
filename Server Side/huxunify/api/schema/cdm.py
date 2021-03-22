@@ -1,14 +1,11 @@
 """
 Schemas for the CDM API
 """
-from http import HTTPStatus
 from dateutil import parser
 from flask_marshmallow import Schema
 from marshmallow import validate, pre_dump
 from marshmallow.fields import Boolean, DateTime, Int, Str
 
-
-DATAFEEDS_TAG = "datafeeds"
 
 DATA_TYPES = [
     "customers",
@@ -101,30 +98,6 @@ class Datafeed(Schema):
         """
         # if string instance, convert to datetime.
         return parser.parse(date_obj) if isinstance(date_obj, str) else date_obj
-
-
-# TODO - find a home for this, perhaps we can generate this even more dynamically.
-DATAFEED_SPECS = {
-    "description": "Retrieves the data feed configuration by ID.",
-    "tags": [DATAFEEDS_TAG],
-    "parameters": [
-        {
-            "name": "feed_id",
-            "description": "ID of the datafeed",
-            "type": "integer",
-            "in": "path",
-            "required": "true",
-        }
-    ],
-    "responses": {
-        HTTPStatus.OK.value: {
-            "schema": Datafeed,
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "schema": Datafeed,
-        },
-    },
-}
 
 
 class Fieldmapping(Schema):
