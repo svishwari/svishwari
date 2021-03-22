@@ -1,2 +1,3 @@
 - r requirements.txt
-moto
+moto==1.3.16
+pylint==2.6.2
