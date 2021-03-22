@@ -5,8 +5,9 @@ import json
 from http import HTTPStatus
 from flask import Blueprint, jsonify
 from flasgger import swag_from
+from marshmallow.exceptions import ValidationError
 from huxunify.api.model.cdm import CdmModel
-from huxunify.api.schema.errors import NotFoundError
+from huxunify.api.schema.errors import NotFoundError, RequestError
 from huxunify.api.schema.cdm import CdmSchema, Datafeed, Fieldmapping
 
 cdm_bp = Blueprint("cdm_bp", __name__)
@@ -108,15 +109,19 @@ def datafeeds_get(feed_id: int):
         Response: Returns a datafeed by ID.
 
     """
-    datafeed = CdmModel().read_datafeed_by_id(feed_id)
+    try:
+        valid_id = Datafeed().load({"feed_id": feed_id}, partial=True).get("feed_id")
+        data = CdmModel().read_datafeed_by_id(valid_id)
 
-    if not datafeed:
-        return (
-            NotFoundError().dump({"message": "Datafeed not found"}),
-            HTTPStatus.NOT_FOUND.value,
-        )
+        if not data:
+            error = NotFoundError().dump({"message": "Datafeed not found"})
+            return error, error["code"]
 
-    return Datafeed().dump(datafeed), HTTPStatus.OK.value
+        return Datafeed().dump(data), HTTPStatus.OK.value
+
+    except ValidationError as err:
+        error = RequestError().dump({"errors": err.messages})
+        return error, error["code"]
 
 
 @cdm_bp.route("/fieldmappings", methods=["get"])
@@ -147,12 +152,12 @@ def fieldmappings_search():
     return jsonify(response), HTTPStatus.OK.value
 
 
-@cdm_bp.route("/fieldmappings/<fieldmapping_id>", methods=["get"])
+@cdm_bp.route("/fieldmappings/<field_id>", methods=["get"])
 @swag_from(
     dict(
         parameters=[
             {
-                "name": "fieldmapping_id",
+                "name": "field_id",
                 "description": "ID of the fieldmapping",
                 "type": "integer",
                 "in": "path",
@@ -170,24 +175,30 @@ def fieldmappings_search():
         tags=[CDM_TAG],
     )
 )
-def fieldmappings_get(fieldmapping_id: int):
+def fieldmappings_get(field_id: int):
     """Retrieves the data feed's PII field mapping by ID
 
     ---
 
     Args:
-        fieldmapping_id (int): The fieldmapping ID.
+        field_id (int): The fieldmapping ID.
 
     Returns:
         Response: Returns a fieldmapping by ID.
 
     """
-    fieldmapping = CdmModel().read_fieldmapping_by_id(fieldmapping_id)
-
-    if not fieldmapping:
-        return (
-            NotFoundError().dump({"message": "Fieldmapping not found"}),
-            HTTPStatus.NOT_FOUND.value,
+    try:
+        valid_id = (
+            Fieldmapping().load({"field_id": field_id}, partial=True).get("field_id")
         )
+        data = CdmModel().read_fieldmapping_by_id(valid_id)
 
-    return Fieldmapping().dump(fieldmapping), HTTPStatus.OK.value
+        if not data:
+            error = NotFoundError().dump({"message": "Fieldmapping not found"})
+            return error, error["code"]
+
+        return Fieldmapping().dump(data), HTTPStatus.OK.value
+
+    except ValidationError as err:
+        error = RequestError().dump({"errors": err.messages})
+        return error, error["code"]
