@@ -16,13 +16,13 @@ class CdmModel:
     """
     cdm model class
     """
-    def __init__(self):
+
+    def __init__(self, db=None):
         self.message = "Hello cdm"
-        self.db = SnowflakeClient(username='user',
-                                  password='password',
-                                  warehouse='warehouse',
-                                  account='account')
-        print("Created Snowflake client")
+        if db is None:
+            self.db = SnowflakeClient()
+        else:
+            self.db = db
         self.ctx = self.db.connect()
 
     def get_data_sources(self):
@@ -41,42 +41,53 @@ class CdmModel:
 
         try:
             # execute the fetch all query
-            cs.execute(f"""
+            cs.execute(
+                f"""
                 select data_source, filename, count(*) as record_count
                 from {PROCESSED_DATABASE}.LTD.NETSUITE_ITEMS_205FD81AFAAB9B858EDA8E503BE224AC_LTD
                 group by data_source, filename 
-            """)
+            """
+            )
             results = cs.fetchall()
 
             # port the data back into the list
-            data_sources = [{'src': rec[0], 'filename': rec[1], 'record_count': rec[2]}
-                            for rec in results]
+            data_sources = [
+                {"src": rec[0], "filename": rec[1], "record_count": rec[2]}
+                for rec in results
+            ]
         finally:
             cs.close()
         return data_sources
 
     def read_datafeeds(self):
-        """Reads the data feed catalog table, returning a list of data feeds.
-        """
+        """Reads the data feed catalog table, returning a list of data feeds."""
         cursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
             cursor.execute(f"use schema {SCHEMA}")
-            cursor.execute(f"""
+            cursor.execute(
+                f"""
                 select
                     feed_id, feed_type, data_source, data_type, file_extension,
                     is_pii, modified
                 from {TABLE_DATA_FEED_CATALOG}
                 order by modified
-            """)
+            """
+            )
 
-            results = []
+            results = cursor.fetchall()
+            datafeeds = []
 
             for (
-                feed_id, feed_type, data_source, data_type, file_extension,
-                is_pii, modified
-            ) in cursor:
+                feed_id,
+                feed_type,
+                data_source,
+                data_type,
+                file_extension,
+                is_pii,
+                modified,
+            ) in results:
                 result = {
                     "data_source": data_source,
                     "data_type": data_type,
@@ -86,9 +97,9 @@ class CdmModel:
                     "is_pii": is_pii == "Y",
                     "modified": modified.__str__(),
                 }
-                results.append(result)
+                datafeeds.append(result)
 
-            return results
+            return datafeeds
 
         except Exception as exc:
             raise Exception(f"Something went wrong. Details {exc}") from exc
@@ -97,19 +108,20 @@ class CdmModel:
             cursor.close()
 
     def read_datafeed_by_id(self, datafeed_id: int):
-        """Finds a data feed in the data feed catalog table and returns it.
-        """
+        """Finds a data feed in the data feed catalog table and returns it."""
         cursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
             cursor.execute(f"use schema {SCHEMA}")
-            cursor.execute(f"""
+            cursor.execute(
+                f"""
                 select
                     feed_id, feed_type, data_source, data_type, file_extension,
                     is_pii, modified
                 from {TABLE_DATA_FEED_CATALOG}
-                where feed_id = %s""", (int(datafeed_id))
+                where feed_id = %s""",
+                (int(datafeed_id)),
             )
 
             row = cursor.fetchone()
@@ -118,8 +130,13 @@ class CdmModel:
                 return None
 
             (
-                feed_id, feed_type, data_source, data_type, file_extension,
-                is_pii, modified
+                feed_id,
+                feed_type,
+                data_source,
+                data_type,
+                file_extension,
+                is_pii,
+                modified,
             ) = row
 
             result = {
@@ -141,6 +158,5 @@ class CdmModel:
             cursor.close()
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
