@@ -103,6 +103,7 @@ class Datafeed(Schema):
         return parser.parse(date_obj) if isinstance(date_obj, str) else date_obj
 
 
+# TODO - find a home for this, perhaps we can generate this even more dynamically.
 DATAFEED_SPECS = {
     "description": "Retrieves the data feed configuration by ID.",
     "tags": [DATAFEEDS_TAG],
