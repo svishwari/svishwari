@@ -97,9 +97,7 @@ class Datafeed(Schema):
 
         """
         # if string instance, convert to datetime.
-        if isinstance(date_obj, str):
-            date_str = parser.parse(date_obj)
-        return date_str
+        return parser.parse(date_obj) if isinstance(date_obj, str) else date_obj
 
 
 class Fieldmapping(Schema):
