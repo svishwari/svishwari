@@ -59,21 +59,23 @@ class CdmTest(TestCase):
         """
         Successfully retrieve field mappings
         """
-        mappings = [['id1', 'name1', 'variation1', 'True'], ['id2', 'name2', 'variation2', 'True']]
+        mappings = [
+            ["id1", "name1", "variation1", "True"],
+            ["id2", "name2", "variation2", "True"],
+        ]
         self.model.ctx.cursor().fetchall.return_value = mappings
 
         returned_mappings = self.model.read_fieldmappings()
         self.assertEqual(2, len(returned_mappings))
-        self.assertEqual('id1', returned_mappings[0]['field_id'])
-        self.assertEqual('id2', returned_mappings[1]['field_id'])
+        self.assertEqual("id1", returned_mappings[0]["field_id"])
+        self.assertEqual("id2", returned_mappings[1]["field_id"])
 
     def test_read_fieldmappings_by_id(self):
         """
         Succesfully retrieve field mappings by id
         """
-        mapping = ['id1', 'name1', 'variation1', 'True']
+        mapping = ["id1", "name1", "variation1", "True"]
         self.model.ctx.cursor().fetchone.return_value = mapping
 
         returned_mapping = self.model.read_fieldmapping_by_id(1)
-        self.assertEqual('id1', returned_mapping['field_id'])
-
+        self.assertEqual("id1", returned_mapping["field_id"])
