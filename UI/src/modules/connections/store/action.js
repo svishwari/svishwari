@@ -25,6 +25,9 @@ export const logUserOut = () => ({ type: "LOG_OUT" });
 // Methods
 const fetchDataSources = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 2000));
+  // #TODO
+  // Fetch List of data sources
+  // This will also contain the link to redirect to the data source
   const response = [
     {
       id: "602ec30dc920d42f1c4c5d22",
@@ -194,6 +197,8 @@ const fetchDataSources = () => async (dispatch) => {
 };
 const triggerIngestion = (id) => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 5000));
+  // #TODO
+  // Trigger ingestion based on data source id
   const response = {
     id,
     recordsIngested: Math.floor(Math.random() * (10000 + 1) + 350),
@@ -206,6 +211,8 @@ const triggerIngestion = (id) => async (dispatch) => {
 
 const triggerConnectionCheck = (id) => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 3000));
+  // #TODO
+  // Updated data source connection status based on id
   const response = {
     id,
     status: "Connected",
@@ -215,6 +222,8 @@ const triggerConnectionCheck = (id) => async (dispatch) => {
 
 const addNewDataSource = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 800));
+  // #TODO
+  // Add a new data source
   const response = {
     id: Math.random().toString(16).slice(2),
     fileName: "Pendalton source",
@@ -230,6 +239,9 @@ const addNewDataSource = () => async (dispatch) => {
 //  Destination related actions
 const fetchDestinations = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 2000));
+  // #TODO
+  // Fetch List of destinations
+  // This will also contain the link to redirect to the destionation
   const destinationResponse = [
     {
       id: "602ec30dc920d42f1c4c5d22",
@@ -305,6 +317,8 @@ const destinationConnected = (payload) => ({
 
 const addNewDestination = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 800));
+  // #TODO
+  // Add a new destination
   const response = {
     id: "602ec30d21d42f1c4c5d22",
     destination: "fb",
@@ -318,6 +332,8 @@ const addNewDestination = () => async (dispatch) => {
 
 const triggerDestinationConnectionCheck = (id) => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 3000));
+  // #TODO
+  // Triggers check on whether destination is connected
   const response = {
     id,
     status: "Connected",
@@ -335,3 +351,22 @@ export {
   triggerDestinationConnectionCheck,
   addNewDestination,
 };
+
+// #TODO
+// Fetch summary of list of data sources
+// Values like Total Data Sources, Ingested Records, Empty, Cleansed, Stitced, Pinned
+
+// #TODO
+// Priority list of data sources and destination for orchestration summary pages
+
+// #TODO
+// Remove single/multiple data sources
+
+// #TODO
+// Ingest multiple data sources
+
+// #TODO
+// Remove single/multiple destinations
+
+// #TODO
+// List of fields required for add

@@ -1,7 +1,6 @@
 """
-The purpose of this file is for housing the Customer Data Management (CDM) related API models
+Models for the CDM API
 """
-import logging
 from huxunify.api.data_connectors.snowflake_client import SnowflakeClient
 
 # CDM DATABASE CONSTANTS - we can move these after
@@ -17,18 +16,17 @@ class CdmModel:
     cdm model class
     """
 
-    def __init__(self, db=None):
+    def __init__(self, database=None):
         self.message = "Hello cdm"
-        if db is None:
-            self.db = SnowflakeClient()
+        if database is None:
+            self.database = SnowflakeClient()
         else:
-            self.db = db
-        self.ctx = self.db.connect()
+            self.database = database
+        self.ctx = self.database.connect()
 
     def get_data_sources(self):
         """A function to get all CDM processed files.
-        Args:
-            client_table: name of the snowflake client table
+
         Returns:
             list(dict): processed client data sources
         """
@@ -37,18 +35,18 @@ class CdmModel:
             return data_sources, 200
 
         # setup the cursor object
-        cs = self.ctx.cursor()
+        cursor = self.ctx.cursor()
 
         try:
             # execute the fetch all query
-            cs.execute(
+            cursor.execute(
                 f"""
                 select data_source, filename, count(*) as record_count
                 from {PROCESSED_DATABASE}.LTD.NETSUITE_ITEMS_205FD81AFAAB9B858EDA8E503BE224AC_LTD
-                group by data_source, filename 
+                group by data_source, filename
             """
             )
-            results = cs.fetchall()
+            results = cursor.fetchall()
 
             # port the data back into the list
             data_sources = [
@@ -56,11 +54,15 @@ class CdmModel:
                 for rec in results
             ]
         finally:
-            cs.close()
+            cursor.close()
         return data_sources
 
     def read_datafeeds(self):
-        """Reads the data feed catalog table, returning a list of data feeds."""
+        """Reads the data feed catalog table.
+
+        Returns:
+            list(dict): The list of data feeds in the database.
+        """
         cursor = self.ctx.cursor()
 
         try:
@@ -95,7 +97,7 @@ class CdmModel:
                     "feed_type": feed_type,
                     "file_extension": file_extension,
                     "is_pii": is_pii == "Y",
-                    "modified": modified.__str__(),
+                    "modified": modified,
                 }
                 datafeeds.append(result)
 
@@ -108,7 +110,11 @@ class CdmModel:
             cursor.close()
 
     def read_datafeed_by_id(self, datafeed_id: int):
-        """Finds a data feed in the data feed catalog table and returns it."""
+        """Finds a data feed in the data feed catalog table.
+
+        Returns:
+            dict: The data feed in the database
+        """
         cursor = self.ctx.cursor()
 
         try:
@@ -121,7 +127,7 @@ class CdmModel:
                     is_pii, modified
                 from {TABLE_DATA_FEED_CATALOG}
                 where feed_id = %s""",
-                (int(datafeed_id)),
+                int(datafeed_id),
             )
 
             row = cursor.fetchone()
@@ -146,7 +152,7 @@ class CdmModel:
                 "feed_type": feed_type,
                 "file_extension": file_extension,
                 "is_pii": is_pii == "Y",
-                "modified": modified.__str__(),
+                "modified": modified,
             }
 
             return result
@@ -157,6 +163,81 @@ class CdmModel:
         finally:
             cursor.close()
 
+    def read_fieldmappings(self):
+        """Reads the fieldmappings table.
 
-if __name__ == "__main__":
-    pass
+        Returns:
+            list(dict): The list of fieldmappings in the database.
+        """
+        cursor = self.ctx.cursor()
+
+        try:
+            cursor.execute(f"use database {ADMIN_DATABASE}")
+            cursor.execute(f"use schema {SCHEMA}")
+            cursor.execute(
+                f"""
+                select id as field_id, field_name, field_variation, modified
+                from {TABLE_PII_REQUIRED_FIELDS_LOOKUP}
+                order by modified
+            """
+            )
+            results = cursor.fetchall()
+            fieldmappings = []
+
+            for field_id, field_name, field_variation, modified in results:
+                result = {
+                    "field_id": field_id,
+                    "field_name": field_name,
+                    "field_variation": field_variation,
+                    "modified": modified,
+                }
+                fieldmappings.append(result)
+
+            return fieldmappings
+
+        except Exception as exc:
+            raise Exception(f"Something went wrong. Details {exc}") from exc
+
+        finally:
+            cursor.close()
+
+    def read_fieldmapping_by_id(self, fieldmapping_id: int):
+        """Finds a fieldmapping in the fieldmapping table.
+
+        Returns:
+            dict: The fieldmapping in the database
+        """
+        cursor = self.ctx.cursor()
+
+        try:
+            cursor.execute(f"use database {ADMIN_DATABASE}")
+            cursor.execute(f"use schema {SCHEMA}")
+            cursor.execute(
+                f"""
+                select id as field_id, field_name, field_variation, modified
+                from {TABLE_PII_REQUIRED_FIELDS_LOOKUP}
+                where id = %s""",
+                (int(fieldmapping_id)),
+            )
+
+            row = cursor.fetchone()
+
+            if not row:
+                return None
+
+            field_id, field_name, field_variation, modified = row
+
+            result = {
+                "field_id": field_id,
+                "field_name": field_name,
+                "field_variation": field_variation,
+                "modified": modified,
+            }
+
+            return result
+
+        except Exception as exc:
+            raise Exception(f"Something went wrong. Details {exc}") from exc
+
+        finally:
+            cursor.close()

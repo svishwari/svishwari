@@ -10,6 +10,8 @@ const updateRecentSegments = (payload) => ({
 
 // Methods
 const fetchSummaryInfo = () => async (dispatch) => {
+  // #TODO
+  // Fetch summary/no of datasource,destinations etc. 
   await new Promise((done) => setTimeout(() => done(), 500));
   const response = [
     {
@@ -24,6 +26,8 @@ const fetchSummaryInfo = () => async (dispatch) => {
 };
 const fetchRecentSegments = () => async (dispatch) => {
   await new Promise((done) => setTimeout(() => done(), 1200));
+  // #TODO
+  // Fetch only a limited no of segments (if user has created any)
   const response = [
     {
       id: Math.random().toString(36).substr(2, 36),
@@ -57,3 +61,6 @@ const fetchRecentSegments = () => async (dispatch) => {
 };
 
 export { fetchSummaryInfo, fetchRecentSegments };
+
+// #TODO
+// Fetch only a limited no of audiences (if user has created any)
