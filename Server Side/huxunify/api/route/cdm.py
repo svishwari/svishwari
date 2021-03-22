@@ -7,7 +7,7 @@ from marshmallow.exceptions import ValidationError
 from flask_apispec import marshal_with, doc
 from huxunify.api.model.cdm import CdmModel
 from huxunify.api.schema.errors import NotFoundError, RequestError
-from huxunify.api.schema.cdm import Datafeed, Fieldmapping
+from huxunify.api.schema.cdm import Datafeed, DATAFEED_SPECS, Fieldmapping
 
 
 CDM_TAG = "cdm"
@@ -38,26 +38,7 @@ def datafeeds_search():
 @cdm_bp.route(
     "/datafeeds/<feed_id>", endpoint="datafeeds_get", provide_automatic_options=False
 )
-@doc(
-    description="Retrieves the data feed configuration by ID.",
-    tags=[DATAFEEDS_TAG],
-    params={
-        "feed_id": {
-            "description": "ID of the datafeed",
-            "type": "integer",
-            "in": "path",
-            "required": "true",
-        },
-    },
-    responses={
-        HTTPStatus.OK.value: {
-            "schema": Datafeed,
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "schema": NotFoundError,
-        },
-    },
-)
+@doc(**DATAFEED_SPECS)
 @marshal_with(Datafeed)
 def datafeeds_get(feed_id: int):
     """Retrieves the data feed configuration by ID.
