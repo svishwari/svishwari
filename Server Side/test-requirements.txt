@@ -1,0 +1,15 @@
+flask
+flasgger
+flask-marshmallow
+flask-restful
+flask-apispec
+apispec
+moto
+algorithmia
+snowflake-connector-python
+h2o
+boto3
+pandas
+pyarrow
+pre-commit
+pylint
