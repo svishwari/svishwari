@@ -1,15 +1,2 @@
-flask
-flasgger
-flask-marshmallow
-flask-restful
-flask-apispec
-apispec
+- r requirements.txt
 moto
-algorithmia
-snowflake-connector-python
-h2o
-boto3
-pandas
-pyarrow
-pre-commit
-pylint
