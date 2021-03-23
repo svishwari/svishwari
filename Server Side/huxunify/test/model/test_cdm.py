@@ -12,6 +12,16 @@ class CdmTest(TestCase):
     """
     Test CDM database querying
     """
+    datafeeds = [
+            [1, "Batch", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
+            [1, "adobe", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
+        ]
+    mappings = [
+        [1, "FNAME", "FIRST", "2021-01-21 05:31:36.094"],
+        [2, "FNAME", "FIRST_NAME", "2021-01-21 05:31:37.072"],
+    ]
+    datafeed_fields = ['feed_id', 'feed_type', 'data_source', 'data_type', 'file_extension', 'is_pii', 'modified']
+    mapping_fields = ['field_id', 'field_name', 'field_variation', 'modified']
 
     def setUp(self):
         """
@@ -34,48 +44,52 @@ class CdmTest(TestCase):
         """
         Successfully retrieve datafeeds
         """
-        feeds = [
-            ["feed1", "feed_type1", "source1", "data_type1", ".test1", "Y", "false"],
-            ["feed2", "feed_type2", "source2", "data_type2", ".test2", "Y", "false"],
-        ]
-
-        self.model.ctx.cursor().fetchall.return_value = feeds
+        self.model.ctx.cursor().fetchall.return_value = CdmTest.datafeeds
         returned_feeds = self.model.read_datafeeds()
+
+        for feed in returned_feeds:
+            for field in CdmTest.datafeed_fields:
+                self.assertTrue(field in feed)
+
         self.assertEqual(2, len(returned_feeds))
-        self.assertEqual("feed_type1", returned_feeds[0]["feed_type"])
-        self.assertEqual("feed_type2", returned_feeds[1]["feed_type"])
+        self.assertEqual("Batch", returned_feeds[0]["feed_type"])
+        self.assertEqual("adobe", returned_feeds[1]["feed_type"])
 
     def test_read_datafeeds_by_id(self):
         """
         Successfully retrieve single datafeed
         """
-        feed = ["feed1", "feed_type1", "source1", "data_type1", ".test2", "Y", "false"]
-        self.model.ctx.cursor().fetchone.return_value = feed
+        self.model.ctx.cursor().fetchone.return_value = CdmTest.datafeeds[0]
 
         returned_feed = self.model.read_datafeed_by_id(1)
-        self.assertEqual("feed_type1", returned_feed["feed_type"])
+        for field in CdmTest.datafeed_fields:
+            self.assertTrue(field in returned_feed)
+        self.assertEqual("Batch", returned_feed["feed_type"])
 
     def test_read_fieldmappings(self):
         """
         Successfully retrieve field mappings
         """
-        mappings = [
-            ["id1", "name1", "variation1", "True"],
-            ["id2", "name2", "variation2", "True"],
-        ]
-        self.model.ctx.cursor().fetchall.return_value = mappings
+        self.model.ctx.cursor().fetchall.return_value = CdmTest.mappings
 
         returned_mappings = self.model.read_fieldmappings()
+        for mapping in returned_mappings:
+            for field in CdmTest.mapping_fields:
+                self.assertTrue(field in mapping)
+
         self.assertEqual(2, len(returned_mappings))
-        self.assertEqual("id1", returned_mappings[0]["field_id"])
-        self.assertEqual("id2", returned_mappings[1]["field_id"])
+        self.assertEqual(1, returned_mappings[0]["field_id"])
+        self.assertEqual(2, returned_mappings[1]["field_id"])
 
     def test_read_fieldmappings_by_id(self):
         """
-        Succesfully retrieve field mappings by id
+        Successfully retrieve field mappings by id
         """
-        mapping = ["id1", "name1", "variation1", "True"]
-        self.model.ctx.cursor().fetchone.return_value = mapping
+        self.model.ctx.cursor().fetchone.return_value = CdmTest.mappings[0]
 
         returned_mapping = self.model.read_fieldmapping_by_id(1)
-        self.assertEqual("id1", returned_mapping["field_id"])
+        for mapping in returned_mapping:
+            for field in CdmTest.mapping_fields:
+                self.assertTrue(field in mapping)
+
+        self.assertEqual(1, returned_mapping["field_id"])
