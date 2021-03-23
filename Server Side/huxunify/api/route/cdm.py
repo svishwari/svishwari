@@ -4,7 +4,7 @@ Paths for the CDM API
 from http import HTTPStatus
 from flask import Blueprint
 from marshmallow.exceptions import ValidationError
-from flask_apispec import marshal_with, doc
+from flask_apispec import marshal_with
 from huxunify.api.model.cdm import CdmModel
 from huxunify.api.schema.errors import NotFoundError, RequestError
 from huxunify.api.schema.cdm import Datafeed, Fieldmapping
@@ -16,61 +16,54 @@ DATAFEEDS_TAG = "datafeeds"
 FIELDMAPPINGS_TAG = "fieldmappings"
 
 # setup the cdm blueprint
-cdm_bp = Blueprint("cdm", __name__, url_prefix="/")
+cdm_bp = Blueprint("cdm", import_name=__name__)
 
 
-@cdm_bp.route("/datafeeds", methods=["get"], provide_automatic_options=False)
-@doc(description="Retrieves the data feed catalog.", tags=[DATAFEEDS_TAG])
+@cdm_bp.route("/datafeeds", methods=["get"])
 @marshal_with(Datafeed(many=True))
 def datafeeds_search():
-    """Retrieves the data feed catalog.
-
+    """
     ---
-
-    Returns:
-        Response: List of datafeeds.
-
+    get:
+      description: Retrieves the data feed catalog.
+      responses:
+        '200':
+          description: List of datafeeds.
+          content:
+            application/json:
+              schema: Datafeed
+      tags:
+          - Datafeeds
     """
     datafeeds = CdmModel().read_datafeeds()
     return datafeeds, HTTPStatus.OK.value
 
 
-@cdm_bp.route(
-    "/datafeeds/<feed_id>", endpoint="datafeeds_get", provide_automatic_options=False
-)
-@doc(
-    description="Retrieves the data feed configuration by ID.",
-    tags=[DATAFEEDS_TAG],
-    parameters=[
-        {
-            "name": "feed_id",
-            "description": "ID of the datafeed",
-            "type": "integer",
-            "in": "path",
-            "required": "true",
-        }
-    ],
-    responses={
-        HTTPStatus.OK.value: {
-            "schema": Datafeed,
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "schema": NotFoundError,
-        },
-    },
-)
+@cdm_bp.route("/datafeeds/<feed_id>", endpoint="datafeeds_get")
 @marshal_with(Datafeed)
 def datafeeds_get(feed_id: int):
-    """Retrieves the data feed configuration by ID.
-
+    """
     ---
-
-    Args:
-        feed_id (int): The datafeed ID.
-
-    Returns:
-        Response: Returns a datafeed by ID.
-
+    get:
+      description: Retrieves the data feed configuration by ID.
+      parameters:
+      - name: feed_id
+        in: path
+        description: ID of the datafeed
+        required: true
+        type: integer
+      responses:
+        '200':
+          description: Returns a datafeed by ID.
+          content:
+            application/json:
+              schema: Datafeed
+        '404':
+          content:
+            application/json:
+              schema: NotFoundError
+      tags:
+          - Datafeeds
     """
     try:
         valid_id = Datafeed().load({"feed_id": feed_id}, partial=True).get("feed_id")
@@ -87,70 +80,51 @@ def datafeeds_get(feed_id: int):
         return error, error["code"]
 
 
-@cdm_bp.route("/fieldmappings", methods=["get"], provide_automatic_options=False)
-@doc(
-    description="Retrieves the data feed's PII field mappings",
-    tags=[FIELDMAPPINGS_TAG],
-    responses={
-        HTTPStatus.OK.value: {
-            "schema": {
-                "type": "array",
-                "items": Fieldmapping,
-            },
-        },
-    },
-)
+@cdm_bp.route("/fieldmappings", methods=["get"])
 @marshal_with(Fieldmapping(many=True))
 def fieldmappings_search():
-    """Retrieves the data feed's PII field mappings
-
+    """
     ---
-
-    Returns:
-        Response: List of fieldmappings.
-
+    get:
+      description: Retrieves the data feed's PII field mappings.
+      responses:
+        '200':
+          description: List of fieldmappings.
+          content:
+            application/json:
+              schema: Fieldmapping
+      tags:
+          - Fieldmappings
     """
     fieldmappings = CdmModel().read_fieldmappings()
     return fieldmappings, HTTPStatus.OK.value
 
 
-@cdm_bp.route(
-    "/fieldmappings/<field_id>",
-    endpoint="fieldmappings_get",
-    provide_automatic_options=False,
-)
-@doc(
-    description="Retrieves the data feed's PII field mapping by ID",
-    tags=[FIELDMAPPINGS_TAG],
-    params={
-        "field_id": {
-            "description": "ID of the fieldmapping",
-            "type": "integer",
-            "in": "path",
-            "required": "true",
-        },
-    },
-    responses={
-        HTTPStatus.OK.value: {
-            "schema": Fieldmapping,
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "schema": NotFoundError,
-        },
-    },
-)
+@cdm_bp.route("/fieldmappings/<field_id>", endpoint="fieldmappings_get")
 @marshal_with(Fieldmapping)
 def fieldmappings_get(field_id: int):
-    """Retrieves the data feed's PII field mapping by ID
-
+    """
     ---
-
-    Args:
-        field_id (int): The fieldmapping ID.
-
-    Returns:
-        Response: Returns a fieldmapping by ID.
-
+    get:
+      description: Retrieves the data feed's PII field mapping by ID.
+      parameters:
+      - name: field_id
+        in: path
+        description: ID of the fieldmapping
+        required: true
+        type: integer
+      responses:
+        '200':
+          description: Returns a fieldmapping by ID.
+          content:
+            application/json:
+              schema: Fieldmapping
+        '404':
+          content:
+            application/json:
+              schema: NotFoundError
+      tags:
+          - Fieldmappings
     """
     try:
         valid_id = (
