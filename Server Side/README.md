@@ -3,29 +3,40 @@
 Information the Server Side Flask Project
 
 ## Installation
+```
+# cd to the server side folder
+cd "/Hux-Unified-Solution/Server Side"
+
+# run pipenv install
+pipenv install
+
+# activate the virtual environment
+pipenv shell
+
+# install the dependencies
+pipenv install tox-pipenv
+pipenv install
+```
+
 
 ### Software Dependencies
 
 Python Version
 * Python 3.7
 
-Install Requirements
-```
-pipenv install
-```
 
 #### Flasgger
-Flasgger is a Flask extension to **extract [OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#operation-object)** 
+Flasgger is a Flask extension to **extract [OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#operation-object)**
 from all Flask views registered in your API.
 
-Flasgger also comes with **[SwaggerUI](http://swagger.io/swagger-ui/) embedded** so you can access [http://localhost:5000/apidocs](localhost:5000/apidocs) 
+Flasgger also comes with **[SwaggerUI](http://swagger.io/swagger-ui/) embedded** so you can access [http://localhost:5000/apidocs](localhost:5000/apidocs)
 and visualize and interact with your API resources.
 
 #### flask-marshmallow
 
-Flask-Marshmallow is a thin integration layer for **[Flask](http://flask.pocoo.org/)** (a Python web framework) 
-and **[marshmallow](http://marshmallow.readthedocs.io/)** (an object serialization/deserialization library) 
-that adds additional features to marshmallow, including URL and Hyperlinks fields for HATEOAS-ready APIs. 
+Flask-Marshmallow is a thin integration layer for **[Flask](http://flask.pocoo.org/)** (a Python web framework)
+and **[marshmallow](http://marshmallow.readthedocs.io/)** (an object serialization/deserialization library)
+that adds additional features to marshmallow, including URL and Hyperlinks fields for HATEOAS-ready APIs.
 It also (optionally) integrates with **[Flask-SQLAlchemy](http://marshmallow.readthedocs.io/)**.
 
 #### Moto

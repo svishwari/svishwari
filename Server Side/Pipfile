@@ -4,21 +4,30 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
-flasgger = "*"
-flask-marshmallow = "*"
-apispec = "*"
-moto = "*"
-algorithmia = "*"
-snowflake-connector-python = "*"
-h2o = "3.32.0.2"
-boto3 = "*"
-pandas = "*"
-pyarrow = "*"
-pre-commit = "*"
-pylint = "*"
+flasgger= "0.9.5"
+Flask= "1.1.2"
+flask-marshmallow= "0.14.0"
+flask-swagger-ui= "3.36.0"
+Flask-RESTful= "0.3.8"
+apispec= "4.3.0"
+apispec-webframeworks= "0.5.2"
+algorithmia= "1.7.10"
+snowflake-connector-python= "2.3.10"
+h2o= "3.32.0.2"
+boto3= "1.17.5"
+pandas= "1.2.3"
+pyarrow= "3.0.0"
+pre-commit= "2.11.1"
 
 [dev-packages]
+pytest = "*"
+pylint = "*"
+black = { version = "*", pre="true"}
+safety = "*"
+moto = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
