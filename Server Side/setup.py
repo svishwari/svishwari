@@ -11,5 +11,4 @@ setup(
         "fallback_version": "0.1.0",
     },
     include_package_data=True,
-    package_data={"": ["swagger/swagger.yaml", "static/**"]},
 )
