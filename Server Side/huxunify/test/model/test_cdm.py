@@ -12,16 +12,25 @@ class CdmTest(TestCase):
     """
     Test CDM database querying
     """
+
     datafeeds = [
-            [1, "Batch", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
-            [1, "adobe", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
-        ]
+        [1, "Batch", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
+        [1, "adobe", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
+    ]
     mappings = [
         [1, "FNAME", "FIRST", "2021-01-21 05:31:36.094"],
         [2, "FNAME", "FIRST_NAME", "2021-01-21 05:31:37.072"],
     ]
-    datafeed_fields = ['feed_id', 'feed_type', 'data_source', 'data_type', 'file_extension', 'is_pii', 'modified']
-    mapping_fields = ['field_id', 'field_name', 'field_variation', 'modified']
+    datafeed_fields = [
+        "feed_id",
+        "feed_type",
+        "data_source",
+        "data_type",
+        "file_extension",
+        "is_pii",
+        "modified",
+    ]
+    mapping_fields = ["field_id", "field_name", "field_variation", "modified"]
 
     def setUp(self):
         """
