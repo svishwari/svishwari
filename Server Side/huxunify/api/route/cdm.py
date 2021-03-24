@@ -9,19 +9,21 @@ from flasgger import SwaggerView
 from huxunify.api.model.cdm import CdmModel
 from huxunify.api.schema.errors import NotFoundError, RequestError
 from huxunify.api.schema.cdm import Datafeed, Fieldmapping
-from huxunify.api.route.utils import rabbit_hole
+from huxunify.api.route.utils import add_view_to_blueprint
 
 
 CDM_TAG = "cdm"
 CDM_DESCRIPTION = "CDM API"
 DATAFEEDS_TAG = "datafeeds"
+DATAFEEDS_ENDPOINT = "datafeeds"
 FIELDMAPPINGS_TAG = "fieldmappings"
+FIELDMAPPINGS_ENDPOINT = "fieldmappings"
 
 # setup the cdm blueprint
 cdm_bp = Blueprint("cdm", import_name=__name__)
 
 
-@rabbit_hole(cdm_bp, f"/{DATAFEEDS_TAG}", "DatafeedSearch")
+@add_view_to_blueprint(cdm_bp, f"/{DATAFEEDS_ENDPOINT}", "DatafeedSearch")
 class DatafeedSearch(SwaggerView):
     """
     Datafeed search class
@@ -47,7 +49,7 @@ class DatafeedSearch(SwaggerView):
         return datafeeds, HTTPStatus.OK.value
 
 
-@rabbit_hole(cdm_bp, f"/{DATAFEEDS_TAG}/<feed_id>", "DatafeedView")
+@add_view_to_blueprint(cdm_bp, f"/{DATAFEEDS_ENDPOINT}/<feed_id>", "DatafeedView")
 class DatafeedView(SwaggerView):
     """
     Datafeed view class
@@ -99,7 +101,7 @@ class DatafeedView(SwaggerView):
             return error, error["code"]
 
 
-@rabbit_hole(cdm_bp, f"/{FIELDMAPPINGS_TAG}", "FieldmappingSearch")
+@add_view_to_blueprint(cdm_bp, f"/{FIELDMAPPINGS_ENDPOINT}", "FieldmappingSearch")
 class FieldmappingSearch(SwaggerView):
     """
     Fieldmapping Search class
@@ -128,7 +130,9 @@ class FieldmappingSearch(SwaggerView):
         return fieldmappings, HTTPStatus.OK.value
 
 
-@rabbit_hole(cdm_bp, f"/{FIELDMAPPINGS_TAG}/<field_id>", "FieldmappingView")
+@add_view_to_blueprint(
+    cdm_bp, f"/{FIELDMAPPINGS_ENDPOINT}/<field_id>", "FieldmappingView"
+)
 class FieldmappingView(SwaggerView):
     """
     Fieldmapping View class

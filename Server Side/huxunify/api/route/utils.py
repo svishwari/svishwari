@@ -14,7 +14,7 @@ def add_view_to_blueprint(self, rule, endpoint, **options):
         methods=['GET']
     )
 
-    Example: @rabbit_hole(cdm_bp, "/datafeeds", "DatafeedSearch")
+    Example: @add_view_to_blueprint(cdm_bp, "/datafeeds", "DatafeedSearch")
     ---
 
     Args:
@@ -23,7 +23,7 @@ def add_view_to_blueprint(self, rule, endpoint, **options):
         endpoint (str): the name of the endpoint
 
     Returns:
-        Response: Returns a datafeed by ID.
+        Response: decorator
 
     """
 
