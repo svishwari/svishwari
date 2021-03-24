@@ -23,7 +23,7 @@ OPENAPI_VERSION = "3.0.2"
 OPENAPI_SPEC = f"""
 openapi: {OPENAPI_VERSION}
 info:
-  description: Hux Unified Solution API document
+  description: Hux API Documentation
   title: {TITLE}
   version: {VERSION}
 """
