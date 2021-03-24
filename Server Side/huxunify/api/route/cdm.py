@@ -13,7 +13,7 @@ from huxunify.api.route.utils import rabbit_hole
 
 
 CDM_TAG = "cdm"
-CDM_DESCRIPTION = "customer data portal API"
+CDM_DESCRIPTION = "CDM API"
 DATAFEEDS_TAG = "datafeeds"
 FIELDMAPPINGS_TAG = "fieldmappings"
 
