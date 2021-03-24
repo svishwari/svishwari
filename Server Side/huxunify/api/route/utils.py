@@ -3,7 +3,7 @@ purpose of this file is to house route utilities
 """
 
 
-def rabbit_hole(self, rule, endpoint, **options):
+def add_view_to_blueprint(self, rule, endpoint, **options):
     """This decorator takes a blueprint and assigns the view function directly
     the alternative to this is having to manually define this in app.py
     or at the bottom of the route file, as the input is a class.
