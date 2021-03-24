@@ -14,7 +14,7 @@ from huxunify.api.route.cdm import cdm_bp
 # set config variables
 SWAGGER_URL = "/api/docs"
 API_URL = "/api/swagger.json"
-TITLE = "Hux Unified Solution API"
+TITLE = "Hux API"
 VERSION = "0.0.1"
 OPENAPI_VERSION = "3.0.2"
 
