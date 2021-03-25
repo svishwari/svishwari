@@ -57,8 +57,7 @@ class CdmTest(TestCase):
         returned_feeds = self.model.read_datafeeds()
 
         for feed in returned_feeds:
-            for field in CdmTest.datafeed_fields:
-                self.assertTrue(field in feed)
+            self.assertCountEqual(feed, CdmTest.datafeed_fields)
 
         self.assertEqual(2, len(returned_feeds))
         self.assertEqual("Batch", returned_feeds[0]["feed_type"])
@@ -71,8 +70,7 @@ class CdmTest(TestCase):
         self.model.ctx.cursor().fetchone.return_value = CdmTest.datafeeds[0]
 
         returned_feed = self.model.read_datafeed_by_id(1)
-        for field in CdmTest.datafeed_fields:
-            self.assertTrue(field in returned_feed)
+        self.assertCountEqual(returned_feed, CdmTest.datafeed_fields)
         self.assertEqual("Batch", returned_feed["feed_type"])
 
     def test_read_fieldmappings(self):
@@ -83,8 +81,7 @@ class CdmTest(TestCase):
 
         returned_mappings = self.model.read_fieldmappings()
         for mapping in returned_mappings:
-            for field in CdmTest.mapping_fields:
-                self.assertTrue(field in mapping)
+            self.assertCountEqual(mapping, CdmTest.mapping_fields)
 
         self.assertEqual(2, len(returned_mappings))
         self.assertEqual(1, returned_mappings[0]["field_id"])
@@ -97,8 +94,6 @@ class CdmTest(TestCase):
         self.model.ctx.cursor().fetchone.return_value = CdmTest.mappings[0]
 
         returned_mapping = self.model.read_fieldmapping_by_id(1)
-        for mapping in returned_mapping:
-            for field in CdmTest.mapping_fields:
-                self.assertTrue(field in mapping)
 
+        self.assertCountEqual(returned_mapping, CdmTest.mapping_fields)
         self.assertEqual(1, returned_mapping["field_id"])
