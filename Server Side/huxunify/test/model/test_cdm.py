@@ -3,9 +3,10 @@ Purpose of this file is testing the cdm model class
 """
 from unittest import TestCase
 from unittest.mock import Mock
-
 from huxunify.api.data_connectors.snowflake_client import SnowflakeClient
 from huxunify.api.model.cdm import CdmModel
+from huxunify.api.schema.cdm import ProcessedData
+from huxunify.api.schema.utils import generate_synthetic_marshmallow_data
 
 
 class CdmTest(TestCase):
@@ -39,15 +40,54 @@ class CdmTest(TestCase):
         mock_client = Mock(spec=SnowflakeClient)
         self.model = CdmModel(mock_client)
 
-    def test_get_datasources(self):
+    def test_get_processed_data(self):
+        """Test Retrieving the processed data sources.
+
+        ---
+
+        Returns:
+            Response: bool - pass/fail.
+
         """
-        Successfully retrieve datasources
-        """
-        self.model.ctx.cursor().fetchall.return_value = [
-            ["test_src", "test_file", "test_count"]
+        # fields only used for this test
+        test_fields = ["created", "modified", "source_name"]
+
+        # get synth data
+        processed_data = [
+            generate_synthetic_marshmallow_data(ProcessedData).fromkeys(test_fields)
+            for _ in range(4)
         ]
-        data_sources = self.model.get_data_sources()
-        self.assertEqual(len(data_sources), 1)
+        self.model.ctx.cursor().fetchall.return_value = processed_data
+
+        # get the returned sources
+        returned_sources = self.model.read_processed_sources()
+
+        # ensure count for first test
+        self.assertEqual(len(returned_sources), len(processed_data))
+
+        # pull the keys we need and test to ensure it pulled them
+        self.assertEqual(returned_sources, processed_data)
+
+    def test_get_processed_data_by_name(self):
+        """Test Retrieving the processed data source by name.
+
+        ---
+
+        Returns:
+            Response: bool - pass/fail.
+
+        """
+        # get synth data
+        processed_data = generate_synthetic_marshmallow_data(ProcessedData)
+        self.model.ctx.cursor().fetchone.return_value = processed_data
+
+        # get the returned sources
+        returned_source = self.model.read_processed_source_by_name(
+            processed_data["source_name"]
+        )
+
+        # ensure dict is the same
+        self.assertDictEqual(returned_source, processed_data)
 
     def test_read_datafeeds(self):
         """
