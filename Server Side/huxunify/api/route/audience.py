@@ -19,13 +19,17 @@ from huxunify.api.schema.audience import (
     audience_delivery_insights_schema,
 )
 
+
+ORCHESTRATION_TAG = "orchestration"
+
+# setup audience blueprint
 audience_bp = Blueprint("audience_bp", __name__)
 
 
 @audience_bp.route("/", methods=["GET"])
 @swag_from(
     {
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get all audiences",
@@ -57,7 +61,7 @@ def get_audiences():
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get audience by id  ",
@@ -94,7 +98,7 @@ def get_audience(audience_id):
                 },
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "create audience",
@@ -144,7 +148,7 @@ def create_audiences():
                 },
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "update audience",
@@ -176,7 +180,7 @@ def update_audience():
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {HTTPStatus.OK.value: {"description": "delete audience by id  "}},
     }
 )
@@ -203,7 +207,7 @@ def delete_audience(audience_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get delivery jobs for an audience",
@@ -241,7 +245,7 @@ def get_audience_delivery_jobs(audience_id):
                 },
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "create audience delivery job",
@@ -281,7 +285,7 @@ def create_audience_delivery_job(audience_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get delivery job for an audience by id",
@@ -313,7 +317,7 @@ def get_delivery_job_by_audience_id(audience_id, delivery_job_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "retrieve audience insights",
@@ -355,7 +359,7 @@ def get_audience_insights(audience_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
-        "tags": ["audience"],
+        "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get delivery job for an audience by id",
