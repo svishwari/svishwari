@@ -79,6 +79,57 @@ https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 pipenv run python -m unittest
 ```
 
+### How to implement a new endpoint
+* Define marshmallow Schema: create a schema by defining a class with variables
+mapping attribute names to Field objects. For example:
+```
+class Fieldmapping(Schema):
+    """Fieldmapping schema."""
+
+    field_id = Int(required=True)
+    field_name = Str(required=True, validate=validate.OneOf(FIELD_NAMES))
+    field_variation = Str(required=True)
+    modified = DateTime(required=True)
+```
+
+* Add swagger view to route
+1. Setup the blueprint, for example:
+```
+cdm_bp = Blueprint("cdm", import_name=__name__)
+```
+
+2. Add view to blueprint, for example:
+```
+@add_view_to_blueprint(
+    cdm_bp, f"/{FIELDMAPPINGS_ENDPOINT}/<field_id>", "FieldmappingView"
+)
+```
+
+3. Add parameters and responses of the endpoint, for example:
+```
+    parameters = [
+        {
+            "name": "field_id",
+            "description": "ID of the fieldmapping",
+            "type": "integer",
+            "in": "path",
+            "required": "true",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": Fieldmapping,
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+```
+4. Add marshal_with(Schema) to the method, for example:
+```
+@marshal_with(Fieldmapping)
+```
+
 
 ### Data
 
