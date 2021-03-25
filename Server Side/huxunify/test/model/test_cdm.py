@@ -50,12 +50,12 @@ class CdmTest(TestCase):
 
         """
         # fields only used for this test
-        test_fields = ["created", "modified", "source_name"]
+        test_fields = ("created", "modified", "source_name")
 
         # get synth data
         processed_data = [
             generate_synthetic_marshmallow_data(ProcessedData).fromkeys(test_fields)
-            for _ in range(4)
+            for i in range(4)
         ]
         self.model.ctx.cursor().fetchall.return_value = processed_data
 
