@@ -25,20 +25,19 @@ audience_bp = Blueprint("audience_bp", __name__)
 @audience_bp.route("/", methods=["GET"])
 @swag_from(
     {
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get all audiences",
                 "schema": AudienceSchema,
             }
-        }
+        },
     }
 )
 def get_audiences():
     """
     get all audiences
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.get_audiences()
@@ -58,6 +57,7 @@ def get_audiences():
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get audience by id  ",
@@ -70,8 +70,6 @@ def get_audience(audience_id):
     """
     get audience by audience id
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.get_audience_by_id(audience_id)
@@ -96,7 +94,7 @@ def get_audience(audience_id):
                 },
             },
         ],
-        "tags": ["advertising performance", "data-sources"],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "create audience",
@@ -109,8 +107,6 @@ def create_audiences():
     """
     create audience
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.create_audiences(request.json)
@@ -148,7 +144,7 @@ def create_audiences():
                 },
             },
         ],
-        "tags": ["advertising performance"],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "update audience",
@@ -161,8 +157,6 @@ def update_audience():
     """
     update audience
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.update_audiences(request.json)
@@ -182,6 +176,7 @@ def update_audience():
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
+        "tags": ["audience"],
         "responses": {HTTPStatus.OK.value: {"description": "delete audience by id  "}},
     }
 )
@@ -189,8 +184,6 @@ def delete_audience(audience_id):
     """
     delete audience
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.delete_audiences(audience_id)
@@ -210,6 +203,7 @@ def delete_audience(audience_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get delivery jobs for an audience",
@@ -222,8 +216,6 @@ def get_audience_delivery_jobs(audience_id):
     """
     get audience delivery jobs
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.get_audience_delivery_jobs(audience_id)
@@ -249,7 +241,7 @@ def get_audience_delivery_jobs(audience_id):
                 },
             },
         ],
-        "tags": ["advertising performance", "data-sources"],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "create audience delivery job",
@@ -262,8 +254,6 @@ def create_audience_delivery_job(audience_id):
     """
     create audience
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.create_audience_delivery_job(audience_id, request.json)
@@ -291,6 +281,7 @@ def create_audience_delivery_job(audience_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get delivery job for an audience by id",
@@ -303,8 +294,6 @@ def get_delivery_job_by_audience_id(audience_id, delivery_job_id):
     """
     get audience delivery jobs
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.get_delivery_job_by_audience_id(audience_id, delivery_job_id)
@@ -324,6 +313,7 @@ def get_delivery_job_by_audience_id(audience_id, delivery_job_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "retrieve audience insights",
@@ -336,8 +326,6 @@ def get_audience_insights(audience_id):
     """
     get audience delivery jobs
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.get_audience_insights(audience_id)
@@ -367,6 +355,7 @@ def get_audience_insights(audience_id):
                 "default": "fdc59077-2c39-4f2b-8cb6-e6b837d93ac0",
             },
         ],
+        "tags": ["audience"],
         "responses": {
             HTTPStatus.OK.value: {
                 "description": "get delivery job for an audience by id",
@@ -379,8 +368,6 @@ def get_insights_delivery_job_audience_id(audience_id, delivery_job_id):
     """
     get audience delivery job insights
     ---
-    tags:
-      - Audience API
     """
     result = AudienceModel()
     data_source = result.get_insights_delivery_job_audience_id(

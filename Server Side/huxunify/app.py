@@ -3,7 +3,6 @@ Purpose of this file is to house the main application code.
 """
 from flask import Flask
 from flasgger import Swagger
-from huxunify.api.route.home import home_api
 from huxunify.api.route.advertising import advertising_bp
 from huxunify.api.route.decision import decision_bp
 from huxunify.api.route.audience import audience_bp
@@ -51,7 +50,6 @@ def create_app():
     _ = Swagger(flask_app)
 
     # register the blueprint and route
-    flask_app.register_blueprint(home_api, url_prefix="/api")
     flask_app.register_blueprint(advertising_bp, url_prefix="/api/advertising")
     flask_app.register_blueprint(audience_bp, url_prefix="/api/audience")
     flask_app.register_blueprint(decision_bp, url_prefix="/api/decisioning")

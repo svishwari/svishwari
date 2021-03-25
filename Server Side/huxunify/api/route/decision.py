@@ -16,27 +16,6 @@ from huxunify.api.schema.decision import DecisionSchema, CustomerFeatureSchema
 decision_bp = Blueprint("decision_bp", __name__)
 
 
-@decision_bp.route("/")
-@swag_from(
-    {
-        "tags": ["decisioning"],
-        "responses": {
-            HTTPStatus.OK.value: {
-                "description": "decision api",
-                "schema": DecisionSchema,
-            }
-        },
-    }
-)
-def index():
-    """
-    decision api landing
-    ---
-    """
-    result = DecisionModel()
-    return DecisionSchema().dump(result), 200
-
-
 @decision_bp.route("/algorithms", methods=["get"])
 @swag_from("../spec/decision/algorithms_search.yaml")
 def algorithms_search():
