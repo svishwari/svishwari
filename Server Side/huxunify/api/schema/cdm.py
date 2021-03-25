@@ -95,8 +95,7 @@ class Datafeed(Schema):
             Response: Returns a datafeed object
 
         """
-        # issue in code when dumping, when of the records in snowflake
-        # 2021-01-21T05:30:48.301000 has time zone defined,
+        # snowflake sometimes returns strings in datetime fields, so we parse to ensure sanity
         if "modified" in data:
             data.update(modified=clean_date(data["modified"]))
         return data

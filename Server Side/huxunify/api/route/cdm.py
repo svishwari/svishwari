@@ -191,7 +191,7 @@ class FieldmappingView(SwaggerView):
 @add_view_to_blueprint(cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}", "ProcessedDataSearch")
 class ProcessedDataSearch(SwaggerView):
     """
-    Datafeed search class
+    ProcessedData search class
     """
 
     parameters = []
