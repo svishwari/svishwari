@@ -12,27 +12,6 @@ import huxunify.api.schema.marketing as schema
 marketing_bp = Blueprint("marketing_bp", __name__)
 
 
-@marketing_bp.route("/")
-@swag_from(
-    {
-        "tags": ["marketing"],
-        "responses": {
-            HTTPStatus.OK.value: {
-                "description": "marketing api",
-                "schema": schema.MarketingSchema,
-            }
-        },
-    }
-)
-def index():
-    """
-    marketing api landing
-    ---
-    """
-    result = MarketingModel()
-    return schema.MarketingSchema().dump(result), 200
-
-
 @marketing_bp.route("/segments", methods=["GET"])
 @swag_from(
     {

@@ -11,27 +11,6 @@ from huxunify.api.schema.advertising import AdvertisingSchema
 advertising_bp = Blueprint("advertising_bp", __name__)
 
 
-@advertising_bp.route("/")
-@swag_from(
-    {
-        "tags": ["advertising performance"],
-        "responses": {
-            HTTPStatus.OK.value: {
-                "description": "advertising api",
-                "schema": AdvertisingSchema,
-            }
-        },
-    }
-)
-def index():
-    """
-    advertising api landing
-    ---
-    """
-    result = AdvertisingModel()
-    return AdvertisingSchema().dump(result), 200
-
-
 @advertising_bp.route("/data-sources", methods=["GET"])
 @swag_from(
     {
