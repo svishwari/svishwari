@@ -16,9 +16,12 @@ class CdmModel:
     cdm model class
     """
 
-    def __init__(self):
+    def __init__(self, database=None):
         self.message = "Hello cdm"
-        self.database = SnowflakeClient()
+        if database is None:
+            self.database = SnowflakeClient()
+        else:
+            self.database = database
         self.ctx = self.database.connect()
 
     def get_data_sources(self):
@@ -75,7 +78,8 @@ class CdmModel:
             """
             )
 
-            results = []
+            results = cursor.fetchall()
+            datafeeds = []
 
             for (
                 feed_id,
@@ -85,7 +89,7 @@ class CdmModel:
                 file_extension,
                 is_pii,
                 modified,
-            ) in cursor:
+            ) in results:
                 result = {
                     "data_source": data_source,
                     "data_type": data_type,
@@ -95,9 +99,9 @@ class CdmModel:
                     "is_pii": is_pii == "Y",
                     "modified": modified,
                 }
-                results.append(result)
+                datafeeds.append(result)
 
-            return results
+            return datafeeds
 
         except Exception as exc:
             raise Exception(f"Something went wrong. Details {exc}") from exc
@@ -177,19 +181,19 @@ class CdmModel:
                 order by modified
             """
             )
+            results = cursor.fetchall()
+            fieldmappings = []
 
-            results = []
-
-            for field_id, field_name, field_variation, modified in cursor:
+            for field_id, field_name, field_variation, modified in results:
                 result = {
                     "field_id": field_id,
                     "field_name": field_name,
                     "field_variation": field_variation,
                     "modified": modified,
                 }
-                results.append(result)
+                fieldmappings.append(result)
 
-            return results
+            return fieldmappings
 
         except Exception as exc:
             raise Exception(f"Something went wrong. Details {exc}") from exc
