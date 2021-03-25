@@ -8,7 +8,7 @@ from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from huxunify.api.model.cdm import CdmModel
 from huxunify.api.schema.errors import NotFoundError, RequestError
-from huxunify.api.schema.cdm import Datafeed, Fieldmapping
+from huxunify.api.schema.cdm import Datafeed, Fieldmapping, ProcessedData
 from huxunify.api.route.utils import add_view_to_blueprint
 
 
@@ -18,6 +18,8 @@ DATAFEEDS_TAG = "datafeeds"
 DATAFEEDS_ENDPOINT = "datafeeds"
 FIELDMAPPINGS_TAG = "fieldmappings"
 FIELDMAPPINGS_ENDPOINT = "fieldmappings"
+PROCESSED_DATA_TAG = "processed_data"
+PROCESSED_DATA_ENDPOINT = "processed_data"
 
 # setup the cdm blueprint
 cdm_bp = Blueprint("cdm", import_name=__name__)
@@ -177,6 +179,92 @@ class FieldmappingView(SwaggerView):
 
             if not data:
                 error = NotFoundError().dump({"message": "Fieldmapping not found"})
+                return error, error["code"]
+
+            return data, HTTPStatus.OK.value
+
+        except ValidationError as err:
+            error = RequestError().dump({"errors": err.messages})
+            return error, error["code"]
+
+
+@add_view_to_blueprint(cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}", "ProcessedDataSearch")
+class ProcessedDataSearch(SwaggerView):
+    """
+    Datafeed search class
+    """
+
+    parameters = []
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of processed data sources.",
+            "schema": ProcessedData,
+        }
+    }
+    tags = [PROCESSED_DATA_TAG]
+
+    @marshal_with(ProcessedData(many=True))
+    def get(self):  # pylint: disable=no-self-use
+        """Retrieves the processed data source catalog.
+
+        ---
+
+        Returns:
+            Response: List of processed data sources.
+
+        """
+        return CdmModel().read_processed_sources(), HTTPStatus.OK.value
+
+
+@add_view_to_blueprint(
+    cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}/<source_name>", "ProcessedDataView"
+)
+class ProcessedDataView(SwaggerView):
+    """
+    ProcessedData view class
+    """
+
+    parameters = [
+        {
+            "name": "source_name",
+            "description": "name of the data source",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": ProcessedData,
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "schema": NotFoundError,
+        },
+    }
+    tags = [PROCESSED_DATA_TAG]
+
+    @marshal_with(ProcessedData)
+    def get(self, source_name: str):  # pylint: disable=no-self-use
+        """Retrieves the processed data source by name.
+
+        ---
+
+        Returns:
+            Response: Returns a processed data source by ID.
+
+        """
+        try:
+            valid_name = (
+                ProcessedData()
+                .load({"source_name": source_name}, partial=True)
+                .get("source_name")
+            )
+            data = CdmModel().read_processed_source_by_name(valid_name)
+
+            if not data:
+                error = NotFoundError().dump(
+                    {"message": "ProcessedData source not found"}
+                )
                 return error, error["code"]
 
             return data, HTTPStatus.OK.value

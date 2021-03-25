@@ -4,7 +4,7 @@ Schemas for the CDM API
 from dateutil import parser
 from flask_marshmallow import Schema
 from marshmallow import validate, pre_dump
-from marshmallow.fields import Boolean, DateTime, Int, Str
+from marshmallow.fields import Boolean, DateTime, Int, Str, Float
 
 
 DATA_TYPES = [
@@ -38,6 +38,22 @@ FILE_EXTENSIONS = [
 ]
 
 
+def clean_date(date_obj):
+    """cleans dates that come back from snowflake as strings instead of DateTimes
+
+    ---
+
+    Args:
+        date_obj (datetime): A datetime object
+
+    Returns:
+        Response: Returns a datetime object
+
+    """
+    # if string instance, convert to datetime.
+    return parser.parse(date_obj) if isinstance(date_obj, str) else date_obj
+
+
 class CdmSchema(Schema):
     """
     CDM schema class, return the serialized messages back
@@ -64,7 +80,9 @@ class Datafeed(Schema):
     modified = DateTime(required=True)
 
     @pre_dump
-    def process_modified(self, data, many=False):  # pylint: disable=unused-argument
+    def process_modified(
+        self, data, many=False
+    ):  # pylint: disable=unused-argument,no-self-use
         """process the schema before serialization.
         override the serialization method from Marshmallow
 
@@ -80,24 +98,8 @@ class Datafeed(Schema):
         # issue in code when dumping, when of the records in snowflake
         # 2021-01-21T05:30:48.301000 has time zone defined,
         if "modified" in data:
-            data.update(modified=self.clean_date(data["modified"]))
+            data.update(modified=clean_date(data["modified"]))
         return data
-
-    @staticmethod
-    def clean_date(date_obj):
-        """cleans dates that come back from snowflake as strings instead of DateTimes
-
-        ---
-
-        Args:
-            date_obj (datetime): A datetime object
-
-        Returns:
-            Response: Returns a datetime object
-
-        """
-        # if string instance, convert to datetime.
-        return parser.parse(date_obj) if isinstance(date_obj, str) else date_obj
 
 
 class Fieldmapping(Schema):
@@ -107,3 +109,39 @@ class Fieldmapping(Schema):
     field_name = Str(required=True, validate=validate.OneOf(FIELD_NAMES))
     field_variation = Str(required=True)
     modified = DateTime(required=True)
+
+
+class ProcessedData(Schema):
+    """Processed Data schema."""
+
+    source_name = Str(required=True, description="name of the data source")
+    created = DateTime(required=False)
+    modified = DateTime(required=False)
+    filename = Str(required=False)
+    item_source = Str(required=False)
+    item_cost = Float(required=False)
+
+    @pre_dump
+    def process_dump(
+        self, data, many=False
+    ):  # pylint: disable=unused-argument,no-self-use
+        """process the schema before serialization.
+        override the serialization method from Marshmallow
+
+        ---
+
+        Args:
+            data (obj): The ProcessedData object
+
+        Returns:
+            Response: Returns a ProcessedData object
+
+        """
+        # change keys to lower case
+        data = {k.lower(): v for k, v in data.items()}
+
+        # issue in code when dumping, when of the records in snowflake
+        # 2021-01-21T05:30:48.301000 has time zone defined,
+        if "modified" in data:
+            data.update(modified=clean_date(data["modified"]))
+        return data

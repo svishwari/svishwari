@@ -1,12 +1,16 @@
 """
 Models for the CDM API
 """
+from snowflake.connector import DictCursor
 from huxunify.api.data_connectors.snowflake_client import SnowflakeClient
+
 
 # CDM DATABASE CONSTANTS - we can move these after
 PROCESSED_DATABASE = "CDP_LTD"
 ADMIN_DATABASE = "CDP_ADMIN"
 SCHEMA = "CTRL"
+PROCESSED_SCHEMA = "LTD"
+INFORMATION_SCHEMA = "INFORMATION_SCHEMA"
 TABLE_DATA_FEED_CATALOG = "DATA_FEED_CATALOG"
 TABLE_PII_REQUIRED_FIELDS_LOOKUP = "PII_REQUIRED_FIELDS_LOOKUP"
 
@@ -21,38 +25,110 @@ class CdmModel:
         self.database = SnowflakeClient()
         self.ctx = self.database.connect()
 
-    def get_data_sources(self):
-        """A function to get all CDM processed files.
+    def table_exists(self, database, schema, table_name):
+        """A function to check if a table exists
+
+        Returns:
+            bool: return boolean if table exists
+        """
+        # setup the cursor object to return list of dict objects
+        cursor = self.ctx.cursor(DictCursor)
+
+        try:
+            # get all data sources and order by date created desc
+            cursor.execute(f"use database {database}")
+            cursor.execute(f"use schema {INFORMATION_SCHEMA}")
+            cursor.execute(
+                f"""
+                        select table_name as source_name,
+                               created,
+                               last_altered as modified
+                        from {database}.{INFORMATION_SCHEMA}.tables
+                        where table_type = 'BASE TABLE' and table_name = '{table_name}'
+                        and table_schema = '{schema}'
+                        order by last_altered desc;
+            """
+            )
+            # change keys to lower case
+            return cursor.fetchone()
+
+        except Exception as exc:
+            raise Exception(f"Something went wrong. Details {exc}") from exc
+
+        finally:
+            cursor.close()
+
+    def read_processed_sources(self):
+        """A function to get all CDM processed sources.
 
         Returns:
             list(dict): processed client data sources
         """
-        data_sources = []
-        if self.ctx is None:
-            return data_sources, 200
-
-        # setup the cursor object
-        cursor = self.ctx.cursor()
+        # setup the cursor object to return list of dict objects
+        cursor = self.ctx.cursor(DictCursor)
 
         try:
-            # execute the fetch all query
+            # get all data sources and order by date created desc
+            cursor.execute(f"use database {PROCESSED_DATABASE}")
+            cursor.execute(f"use schema {INFORMATION_SCHEMA}")
             cursor.execute(
                 f"""
-                select data_source, filename, count(*) as record_count
-                from {PROCESSED_DATABASE}.LTD.NETSUITE_ITEMS_205FD81AFAAB9B858EDA8E503BE224AC_LTD
-                group by data_source, filename
+                        select table_name as source_name,
+                               created,
+                               last_altered as modified
+                        from {PROCESSED_DATABASE}.{INFORMATION_SCHEMA}.tables
+                        where table_type = 'BASE TABLE' and table_name like '%ITEMS_SCHEMA%'
+                        order by last_altered desc;
             """
             )
-            results = cursor.fetchall()
+            # change keys to lower case
+            return cursor.fetchall()
 
-            # port the data back into the list
-            data_sources = [
-                {"src": rec[0], "filename": rec[1], "record_count": rec[2]}
-                for rec in results
-            ]
+        except Exception as exc:
+            raise Exception(f"Something went wrong. Details {exc}") from exc
+
         finally:
             cursor.close()
-        return data_sources
+
+    def read_processed_source_by_name(self, processed_data_source: str):
+        """Finds a processed client data source in the CDP_LTD database table.
+
+        Returns:
+            list(dict): processed client data source
+        """
+        # check if table source exists first
+        if not self.table_exists(
+            PROCESSED_DATABASE, PROCESSED_SCHEMA, processed_data_source
+        ):
+            return {}
+
+        # setup the cursor object to return list of dict objects
+        cursor = self.ctx.cursor(DictCursor)
+
+        try:
+            # get all data sources and order by date created desc
+            cursor.execute(f"use database {PROCESSED_DATABASE}")
+            cursor.execute(f"use schema {PROCESSED_SCHEMA}")
+            cursor.execute(
+                f"""
+                        select data_source as source_name,
+                                filename,
+                                "ITEM SOURCE" as item_source,
+                                itemcost as item_cost,
+                               created as created,
+                               updated as modified
+                        from {PROCESSED_DATABASE}.{PROCESSED_SCHEMA}.{processed_data_source}
+                        order by updated desc;
+            """
+            )
+            # change keys to lower case
+            return cursor.fetchone()
+
+        except Exception as exc:
+            raise Exception(f"Something went wrong. Details {exc}") from exc
+
+        finally:
+            cursor.close()
 
     def read_datafeeds(self):
         """Reads the data feed catalog table.
