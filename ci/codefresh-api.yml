@@ -21,7 +21,7 @@ steps:
       BuildName:
         stage: prepare
         title: Set build variables
-        image: huxhub.repo.mgnt.in/alpine
+        image: alpine
         commands:
           - cf_export BUILD_NAME_API=unified-api
           - cf_export CHECKOUT_DIR="${{CF_REPO_NAME}}"
