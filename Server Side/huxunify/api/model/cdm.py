@@ -125,7 +125,7 @@ class CdmModel:
             return cursor.fetchone()
 
         except Exception as exc:
-            raise Exception(f"Something went wrong. Details {exc}") from exc
+            raise Exception(f"Something went wrong. Details: {exc}") from exc
 
         finally:
             cursor.close()
