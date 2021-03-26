@@ -18,8 +18,8 @@ SPEC_TYPE_LOOKUP = {
 
 
 def generate_synthetic_marshmallow_data(schema_obj):
-    """This function generates synthetic data for marshmallow
-    ---
+    """
+    This function generates synthetic data for marshmallow
 
     Args:
         schema_obj (func): a marshmallow schema object

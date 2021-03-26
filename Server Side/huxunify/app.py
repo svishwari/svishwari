@@ -31,8 +31,6 @@ info:
 def create_app():
     """creates the flask app and blueprints
 
-    ---
-
     Args:
 
     Returns:

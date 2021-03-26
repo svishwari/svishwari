@@ -4,7 +4,8 @@ purpose of this file is to house route utilities
 
 
 def add_view_to_blueprint(self, rule, endpoint, **options):
-    """This decorator takes a blueprint and assigns the view function directly
+    """
+    This decorator takes a blueprint and assigns the view function directly
     the alternative to this is having to manually define this in app.py
     or at the bottom of the route file, as the input is a class.
 
@@ -15,7 +16,6 @@ def add_view_to_blueprint(self, rule, endpoint, **options):
     )
 
     Example: @add_view_to_blueprint(cdm_bp, "/datafeeds", "DatafeedSearch")
-    ---
 
     Args:
         self (func): a flask/blueprint object, must have 'add_url_rule'
@@ -29,7 +29,6 @@ def add_view_to_blueprint(self, rule, endpoint, **options):
 
     def decorator(cls):
         """decorator function
-        ---
 
         Args:
             cls (object): a function to decorate

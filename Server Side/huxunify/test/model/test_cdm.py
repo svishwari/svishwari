@@ -43,8 +43,6 @@ class CdmTest(TestCase):
     def test_get_processed_data(self):
         """Test Retrieving the processed data sources.
 
-        ---
-
         Returns:
             Response: bool - pass/fail.
 
@@ -70,8 +68,6 @@ class CdmTest(TestCase):
 
     def test_get_processed_data_by_name(self):
         """Test Retrieving the processed data source by name.
-
-        ---
 
         Returns:
             Response: bool - pass/fail.
