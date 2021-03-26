@@ -52,7 +52,6 @@ class CdmModel:
                         order by last_altered desc;
             """
             )
-            # change keys to lower case
             return cursor.fetchone()
 
         except Exception as exc:
