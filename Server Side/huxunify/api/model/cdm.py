@@ -124,7 +124,6 @@ class CdmModel:
                         order by updated desc;
             """
             )
-            # change keys to lower case
             return cursor.fetchone()
 
         except Exception as exc:
