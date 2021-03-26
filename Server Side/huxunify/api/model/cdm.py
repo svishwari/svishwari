@@ -84,7 +84,6 @@ class CdmModel:
                         order by last_altered desc;
             """
             )
-            # change keys to lower case
             return cursor.fetchall()
 
         except Exception as exc:
