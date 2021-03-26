@@ -42,7 +42,7 @@ steps:
     stage: build_tag
     description: Set docker tag from build number
     type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
+    image: alpine
     commands: 
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
       
@@ -50,7 +50,7 @@ steps:
     stage: build_tag
     description: Set docker tag based Git tag
     type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
+    image: alpine
     commands: 
       - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}      
     when:
