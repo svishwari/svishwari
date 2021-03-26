@@ -18,8 +18,8 @@ DATAFEEDS_TAG = "datafeeds"
 DATAFEEDS_ENDPOINT = "datafeeds"
 FIELDMAPPINGS_TAG = "fieldmappings"
 FIELDMAPPINGS_ENDPOINT = "fieldmappings"
-PROCESSED_DATA_TAG = "processed_data"
-PROCESSED_DATA_ENDPOINT = "processed_data"
+PROCESSED_ITEMS_TAG = "processed-items"
+PROCESSED_ITEMS_ENDPOINT = "processed-items"
 
 # setup the cdm blueprint
 cdm_bp = Blueprint("cdm", import_name=__name__)
@@ -188,7 +188,7 @@ class FieldmappingView(SwaggerView):
             return error, error["code"]
 
 
-@add_view_to_blueprint(cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}", "ProcessedDataSearch")
+@add_view_to_blueprint(cdm_bp, f"/{PROCESSED_ITEMS_ENDPOINT}", "ProcessedDataSearch")
 class ProcessedDataSearch(SwaggerView):
     """
     ProcessedData search class
@@ -201,7 +201,7 @@ class ProcessedDataSearch(SwaggerView):
             "schema": ProcessedData,
         }
     }
-    tags = [PROCESSED_DATA_TAG]
+    tags = [PROCESSED_ITEMS_TAG]
 
     @marshal_with(ProcessedData(many=True))
     def get(self):  # pylint: disable=no-self-use
@@ -217,7 +217,7 @@ class ProcessedDataSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}/<source_name>", "ProcessedDataView"
+    cdm_bp, f"/{PROCESSED_ITEMS_ENDPOINT}/<source_name>", "ProcessedDataView"
 )
 class ProcessedDataView(SwaggerView):
     """
@@ -241,7 +241,7 @@ class ProcessedDataView(SwaggerView):
             "schema": NotFoundError,
         },
     }
-    tags = [PROCESSED_DATA_TAG]
+    tags = [PROCESSED_ITEMS_TAG]
 
     @marshal_with(ProcessedData)
     def get(self, source_name: str):  # pylint: disable=no-self-use
