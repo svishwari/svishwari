@@ -41,8 +41,6 @@ FILE_EXTENSIONS = [
 def clean_date(date_obj):
     """cleans dates that come back from snowflake as strings instead of DateTimes
 
-    ---
-
     Args:
         date_obj (datetime): A datetime object
 
@@ -86,8 +84,6 @@ class Datafeed(Schema):
         """process the schema before serialization.
         override the serialization method from Marshmallow
 
-        ---
-
         Args:
             data (obj): The datafeed object
 
@@ -126,8 +122,6 @@ class ProcessedData(Schema):
     ):  # pylint: disable=unused-argument,no-self-use
         """process the schema before serialization.
         override the serialization method from Marshmallow
-
-        ---
 
         Args:
             data (obj): The ProcessedData object

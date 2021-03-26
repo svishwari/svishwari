@@ -129,6 +129,52 @@ cdm_bp = Blueprint("cdm", import_name=__name__)
 ```
 @marshal_with(Fieldmapping)
 ```
+4. Define the endpoint description in the docstring for request. [GET, POST, PUT, DELETE, OPTIONS]
+Doc string would follow this protocol
+```
+"""Retrieves the processed data source catalog.
+
+---
+
+Returns:
+    Response: List of processed data sources.
+
+"""
+```
+![img.png](img.png)
+
+
+5. Here is an example of a completed endpoint.
+```
+@add_view_to_blueprint(cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}", "ProcessedDataSearch")
+class ProcessedDataSearch(SwaggerView):
+    """
+    ProcessedData search class
+    """
+
+    parameters = []
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of processed data sources.",
+            "schema": ProcessedData,
+        }
+    }
+    tags = [PROCESSED_DATA_TAG]
+
+    @marshal_with(ProcessedData(many=True))
+    def get(self):  # pylint: disable=no-self-use
+        """Retrieves the processed data source catalog.
+
+        ---
+
+        Returns:
+            Response: List of processed data sources.
+
+        """
+        return CdmModel().read_processed_sources(), HTTPStatus.OK.value
+
+```
+
 
 
 ### Data
