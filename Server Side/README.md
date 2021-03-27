@@ -74,6 +74,24 @@ PEP8
 Google Python Docstrings
 https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
+Typehinting Example
+```
+def generate_synthetic_marshmallow_data(schema_obj: Schema) -> Schema:
+    """This function generates synthetic data for marshmallow
+
+    Args:
+        schema_obj (Schema): a marshmallow schema object
+
+    Returns:
+        Response: dynamic object based on schema
+
+    """
+    # get random data based on marshmallow type
+    return {
+        field: SPEC_TYPE_LOOKUP[type(val)] for field, val in schema_obj().fields.items()
+    }
+```
+
 ### Test
 ```
 pipenv run python -m unittest
@@ -125,26 +143,43 @@ cdm_bp = Blueprint("cdm", import_name=__name__)
         },
     }
 ```
+
 4. Add marshal_with(Schema) to the method, for example:
 ```
 @marshal_with(Fieldmapping)
 ```
-4. Define the endpoint description in the docstring for request. [GET, POST, PUT, DELETE, OPTIONS]
-Doc string would follow this protocol
+
+5. Add Endpoint Summary and Description
+
+Flasgger uses view functions docstrings to fill the summary and description
+The part of the docstring following the '---' line is ignored.
+
+The part before the '---' line is used as summary and description.
+The first lines are used as summary.
+If an empty line is met, all following lines are used as description.
+
 ```
-"""Retrieves the processed data source catalog.
+def get(...):
+    """Retrieves the processed data source catalog.
 
----
-
-Returns:
-    Response: List of processed data sources.
-
-"""
+    Return processed data sources
+    ---
+    Returns:
+        Response: List of processed data sources.
+    """
 ```
-![img.png](img.png)
 
+The example above produces the following documentation attributes:
+```
+{
+    'get': {
+        'summary': 'Retrieves the processed data source catalog.',
+        'description': 'Return processed data sources',
+    }
+}
+```
 
-5. Here is an example of a completed endpoint.
+6. Here is an example of a completed endpoint.
 ```
 @add_view_to_blueprint(cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}", "ProcessedDataSearch")
 class ProcessedDataSearch(SwaggerView):
@@ -165,11 +200,10 @@ class ProcessedDataSearch(SwaggerView):
     def get(self):  # pylint: disable=no-self-use
         """Retrieves the processed data source catalog.
 
+        Return processed data sources
         ---
-
         Returns:
             Response: List of processed data sources.
-
         """
         return CdmModel().read_processed_sources(), HTTPStatus.OK.value
 

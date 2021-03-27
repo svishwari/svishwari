@@ -4,11 +4,12 @@ purpose of this file is to house schema utilities
 import uuid
 from datetime import datetime, timedelta
 import random
+from flask_marshmallow import Schema
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
 
 
 # get random data back based on marshmallow field type
-SPEC_TYPE_LOOKUP = {
+SPEC_TYPE_LOOKUP: dict = {
     Boolean: bool(random.getrandbits(1)),
     DateTime: datetime.now() + timedelta(random.randint(0, 1e4)),
     Int: random.randint(0, 1e4),
@@ -17,13 +18,11 @@ SPEC_TYPE_LOOKUP = {
 }
 
 
-def generate_synthetic_marshmallow_data(schema_obj):
-    """
-    This function generates synthetic data for marshmallow
+def generate_synthetic_marshmallow_data(schema_obj: Schema) -> Schema:
+    """This function generates synthetic data for marshmallow
 
     Args:
-        schema_obj (func): a marshmallow schema object
-        fields (list): list of fields to create synthetic data for
+        schema_obj (Schema): a marshmallow schema object
 
     Returns:
         Response: dynamic object based on schema

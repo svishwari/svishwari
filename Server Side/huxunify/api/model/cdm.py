@@ -1,18 +1,19 @@
 """
 Models for the CDM API
 """
-from snowflake.connector import DictCursor
+from typing import Union, List, Optional, Any
+from snowflake.connector import DictCursor, SnowflakeConnection
 from huxunify.api.data_connectors.snowflake_client import SnowflakeClient
 
 
 # CDM DATABASE CONSTANTS - we can move these after
-PROCESSED_DATABASE = "CDP_LTD"
-ADMIN_DATABASE = "CDP_ADMIN"
-SCHEMA = "CTRL"
-PROCESSED_SCHEMA = "LTD"
-INFORMATION_SCHEMA = "INFORMATION_SCHEMA"
-TABLE_DATA_FEED_CATALOG = "DATA_FEED_CATALOG"
-TABLE_PII_REQUIRED_FIELDS_LOOKUP = "PII_REQUIRED_FIELDS_LOOKUP"
+PROCESSED_DATABASE: str = "CDP_LTD"
+ADMIN_DATABASE: str = "CDP_ADMIN"
+SCHEMA: str = "CTRL"
+PROCESSED_SCHEMA: str = "LTD"
+INFORMATION_SCHEMA: str = "INFORMATION_SCHEMA"
+TABLE_DATA_FEED_CATALOG: str = "DATA_FEED_CATALOG"
+TABLE_PII_REQUIRED_FIELDS_LOOKUP: str = "PII_REQUIRED_FIELDS_LOOKUP"
 
 
 class CdmModel:
@@ -20,22 +21,27 @@ class CdmModel:
     cdm model class
     """
 
-    def __init__(self, database=None):
-        self.message = "Hello cdm"
+    def __init__(self, database: Union[SnowflakeClient, None] = None) -> None:
+        self.message: str = "Hello cdm"
         if database is None:
-            self.database = SnowflakeClient()
+            self.database: SnowflakeClient = SnowflakeClient()
         else:
-            self.database = database
-        self.ctx = self.database.connect()
+            self.database: None = database
+        self.ctx: SnowflakeConnection = self.database.connect()
 
-    def table_exists(self, database, schema, table_name):
+    def table_exists(self, database: str, schema: str, table_name: str) -> dict:
         """A function to check if a table exists
 
+        Args:
+            database (str): name of the database.
+            schema (str): name of the schema.
+            table_name (str): name of the table.
+
         Returns:
-            bool: return boolean if table exists
+            dict: return dict
         """
         # setup the cursor object to return list of dict objects
-        cursor = self.ctx.cursor(DictCursor)
+        cursor: DictCursor = self.ctx.cursor(DictCursor)
 
         try:
             # get all data sources and order by date created desc
@@ -60,14 +66,14 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_processed_sources(self):
+    def read_processed_sources(self) -> List[dict]:
         """A function to get all CDM processed sources.
 
         Returns:
             list(dict): processed client data sources
         """
         # setup the cursor object to return list of dict objects
-        cursor = self.ctx.cursor(DictCursor)
+        cursor: DictCursor = self.ctx.cursor(DictCursor)
 
         try:
             # get all data sources and order by date created desc
@@ -91,8 +97,11 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_processed_source_by_name(self, processed_data_source: str):
+    def read_processed_source_by_name(self, processed_data_source: str) -> dict:
         """Finds a processed client data source in the CDP_LTD database table.
+
+        Args:
+            processed_data_source (str): name of the processed data source.
 
         Returns:
             list(dict): processed client data source
@@ -104,7 +113,7 @@ class CdmModel:
             return {}
 
         # setup the cursor object to return list of dict objects
-        cursor = self.ctx.cursor(DictCursor)
+        cursor: DictCursor = self.ctx.cursor(DictCursor)
 
         try:
             # get all data sources and order by date created desc
@@ -130,13 +139,13 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_datafeeds(self):
+    def read_datafeeds(self) -> List[dict]:
         """Reads the data feed catalog table.
 
         Returns:
             list(dict): The list of data feeds in the database.
         """
-        cursor = self.ctx.cursor()
+        cursor: DictCursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -151,8 +160,8 @@ class CdmModel:
             """
             )
 
-            results = cursor.fetchall()
-            datafeeds = []
+            results: List[Optional[Any]] = cursor.fetchall()
+            datafeeds: List[dict] = []
 
             for (
                 feed_id,
@@ -182,13 +191,16 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_datafeed_by_id(self, datafeed_id: int):
+    def read_datafeed_by_id(self, datafeed_id: int) -> Union[dict, None]:
         """Finds a data feed in the data feed catalog table.
+
+        Args:
+            datafeed_id (int): id of the datafeed
 
         Returns:
             dict: The data feed in the database
         """
-        cursor = self.ctx.cursor()
+        cursor: DictCursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -203,7 +215,7 @@ class CdmModel:
                 int(datafeed_id),
             )
 
-            row = cursor.fetchone()
+            row: Optional[Any] = cursor.fetchone()
 
             if not row:
                 return None
@@ -218,7 +230,7 @@ class CdmModel:
                 modified,
             ) = row
 
-            result = {
+            result: dict = {
                 "data_source": data_source,
                 "data_type": data_type,
                 "feed_id": feed_id,
@@ -236,13 +248,13 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_fieldmappings(self):
+    def read_fieldmappings(self) -> List[dict]:
         """Reads the fieldmappings table.
 
         Returns:
             list(dict): The list of fieldmappings in the database.
         """
-        cursor = self.ctx.cursor()
+        cursor: DictCursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -254,8 +266,8 @@ class CdmModel:
                 order by modified
             """
             )
-            results = cursor.fetchall()
-            fieldmappings = []
+            results: List[Optional[Any]] = cursor.fetchall()
+            fieldmappings: List[dict] = []
 
             for field_id, field_name, field_variation, modified in results:
                 result = {
@@ -274,13 +286,16 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_fieldmapping_by_id(self, fieldmapping_id: int):
+    def read_fieldmapping_by_id(self, fieldmapping_id: int) -> Union[dict, None]:
         """Finds a fieldmapping in the fieldmapping table.
+
+        Args:
+            fieldmapping_id (int): id of the fieldmapping
 
         Returns:
             dict: The fieldmapping in the database
         """
-        cursor = self.ctx.cursor()
+        cursor: DictCursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -293,14 +308,14 @@ class CdmModel:
                 (int(fieldmapping_id)),
             )
 
-            row = cursor.fetchone()
+            row: Optional[Any] = cursor.fetchone()
 
             if not row:
                 return None
 
             field_id, field_name, field_variation, modified = row
 
-            result = {
+            result: dict = {
                 "field_id": field_id,
                 "field_name": field_name,
                 "field_variation": field_variation,
