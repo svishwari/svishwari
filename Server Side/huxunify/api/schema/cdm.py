@@ -3,25 +3,25 @@
 Schemas for the CDM API
 """
 from datetime import datetime
-from typing import Union, List
+from typing import Union
 from dateutil import parser
 from flask_marshmallow import Schema
 from marshmallow import validate, pre_dump
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
 
 
-DATA_TYPES: List[str] = [
+DATA_TYPES = [
     "customers",
     "orders",
     "items",
 ]
 
-FEED_TYPES: List[str] = [
+FEED_TYPES = [
     "api",
     "batch",
 ]
 
-FIELD_NAMES: List[str] = [
+FIELD_NAMES = [
     "FNAME",
     "LNAME",
     "ADD1",
@@ -35,7 +35,7 @@ FIELD_NAMES: List[str] = [
     "EMAIL",
 ]
 
-FILE_EXTENSIONS: List[str] = [
+FILE_EXTENSIONS = [
     "csv",
     "json",
 ]
@@ -64,21 +64,21 @@ class CdmSchema(Schema):
         """expose the fields for serialization"""
 
         # Fields to expose
-        fields: List[str] = ["message"]
+        fields = ["message"]
 
-    message: Str = Str()
+    message = Str()
 
 
 class Datafeed(Schema):
     """Datafeed schema."""
 
-    data_source: Str = Str(required=True)
-    data_type: Str = Str(required=True, validate=validate.OneOf(DATA_TYPES))
-    feed_id: Int = Int(required=True, description="ID of the datafeed")
-    feed_type: Str = Str(required=True, validate=validate.OneOf(FEED_TYPES))
-    file_extension: Str = Str(required=True, validate=validate.OneOf(FILE_EXTENSIONS))
-    is_pii: Boolean = Boolean(required=True)
-    modified: DateTime = DateTime(required=True)
+    data_source = Str(required=True)
+    data_type = Str(required=True, validate=validate.OneOf(DATA_TYPES))
+    feed_id = Int(required=True, description="ID of the datafeed")
+    feed_type = Str(required=True, validate=validate.OneOf(FEED_TYPES))
+    file_extension = Str(required=True, validate=validate.OneOf(FILE_EXTENSIONS))
+    is_pii = Boolean(required=True)
+    modified = DateTime(required=True)
 
     @pre_dump
     # pylint: disable=unused-argument
@@ -102,21 +102,21 @@ class Datafeed(Schema):
 class Fieldmapping(Schema):
     """Fieldmapping schema."""
 
-    field_id: Int = Int(required=True)
-    field_name: Str = Str(required=True, validate=validate.OneOf(FIELD_NAMES))
-    field_variation: Str = Str(required=True)
-    modified: DateTime = DateTime(required=True)
+    field_id = Int(required=True)
+    field_name = Str(required=True, validate=validate.OneOf(FIELD_NAMES))
+    field_variation = Str(required=True)
+    modified = DateTime(required=True)
 
 
 class ProcessedData(Schema):
     """Processed Data schema."""
 
-    source_name: Str = Str(required=True, description="name of the data source")
-    created: DateTime = DateTime(required=False)
-    modified: DateTime = DateTime(required=False)
-    filename: Str = Str(required=False)
-    item_source: Str = Str(required=False)
-    item_cost: Float = Float(required=False)
+    source_name = Str(required=True, description="name of the data source")
+    created = DateTime(required=False)
+    modified = DateTime(required=False)
+    filename = Str(required=False)
+    item_source = Str(required=False)
+    item_cost = Float(required=False)
 
     @pre_dump
     # pylint: disable=unused-argument

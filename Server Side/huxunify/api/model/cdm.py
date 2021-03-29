@@ -1,19 +1,19 @@
 """
 Models for the CDM API
 """
-from typing import Union, List, Optional, Any
-from snowflake.connector import DictCursor, SnowflakeConnection
+from typing import Union, List
+from snowflake.connector import DictCursor
 from huxunify.api.data_connectors.snowflake_client import SnowflakeClient
 
 
 # CDM DATABASE CONSTANTS - we can move these after
-PROCESSED_DATABASE: str = "CDP_LTD"
-ADMIN_DATABASE: str = "CDP_ADMIN"
-SCHEMA: str = "CTRL"
-PROCESSED_SCHEMA: str = "LTD"
-INFORMATION_SCHEMA: str = "INFORMATION_SCHEMA"
-TABLE_DATA_FEED_CATALOG: str = "DATA_FEED_CATALOG"
-TABLE_PII_REQUIRED_FIELDS_LOOKUP: str = "PII_REQUIRED_FIELDS_LOOKUP"
+PROCESSED_DATABASE = "CDP_LTD"
+ADMIN_DATABASE = "CDP_ADMIN"
+SCHEMA = "CTRL"
+PROCESSED_SCHEMA = "LTD"
+INFORMATION_SCHEMA = "INFORMATION_SCHEMA"
+TABLE_DATA_FEED_CATALOG = "DATA_FEED_CATALOG"
+TABLE_PII_REQUIRED_FIELDS_LOOKUP = "PII_REQUIRED_FIELDS_LOOKUP"
 
 
 class CdmModel:
@@ -22,12 +22,12 @@ class CdmModel:
     """
 
     def __init__(self, database: Union[SnowflakeClient, None] = None) -> None:
-        self.message: str = "Hello cdm"
+        self.message = "Hello cdm"
         if database is None:
-            self.database: SnowflakeClient = SnowflakeClient()
+            self.database = SnowflakeClient()
         else:
-            self.database: None = database
-        self.ctx: SnowflakeConnection = self.database.connect()
+            self.database = database
+        self.ctx = self.database.connect()
 
     def table_exists(self, database: str, schema: str, table_name: str) -> dict:
         """A function to check if a table exists
@@ -41,7 +41,7 @@ class CdmModel:
             dict: return dict
         """
         # setup the cursor object to return list of dict objects
-        cursor: DictCursor = self.ctx.cursor(DictCursor)
+        cursor = self.ctx.cursor(DictCursor)
 
         try:
             # get all data sources and order by date created desc
@@ -73,7 +73,7 @@ class CdmModel:
             list(dict): processed client data sources
         """
         # setup the cursor object to return list of dict objects
-        cursor: DictCursor = self.ctx.cursor(DictCursor)
+        cursor = self.ctx.cursor(DictCursor)
 
         try:
             # get all data sources and order by date created desc
@@ -113,7 +113,7 @@ class CdmModel:
             return {}
 
         # setup the cursor object to return list of dict objects
-        cursor: DictCursor = self.ctx.cursor(DictCursor)
+        cursor = self.ctx.cursor(DictCursor)
 
         try:
             # get all data sources and order by date created desc
@@ -145,7 +145,7 @@ class CdmModel:
         Returns:
             list(dict): The list of data feeds in the database.
         """
-        cursor: DictCursor = self.ctx.cursor()
+        cursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -160,8 +160,8 @@ class CdmModel:
             """
             )
 
-            results: List[Optional[Any]] = cursor.fetchall()
-            datafeeds: List[dict] = []
+            results = cursor.fetchall()
+            datafeeds = []
 
             for (
                 feed_id,
@@ -200,7 +200,7 @@ class CdmModel:
         Returns:
             dict: The data feed in the database
         """
-        cursor: DictCursor = self.ctx.cursor()
+        cursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -215,7 +215,7 @@ class CdmModel:
                 int(datafeed_id),
             )
 
-            row: Optional[Any] = cursor.fetchone()
+            row = cursor.fetchone()
 
             if not row:
                 return None
@@ -254,7 +254,7 @@ class CdmModel:
         Returns:
             list(dict): The list of fieldmappings in the database.
         """
-        cursor: DictCursor = self.ctx.cursor()
+        cursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -266,8 +266,8 @@ class CdmModel:
                 order by modified
             """
             )
-            results: List[Optional[Any]] = cursor.fetchall()
-            fieldmappings: List[dict] = []
+            results = cursor.fetchall()
+            fieldmappings = []
 
             for field_id, field_name, field_variation, modified in results:
                 result = {
@@ -295,7 +295,7 @@ class CdmModel:
         Returns:
             dict: The fieldmapping in the database
         """
-        cursor: DictCursor = self.ctx.cursor()
+        cursor = self.ctx.cursor()
 
         try:
             cursor.execute(f"use database {ADMIN_DATABASE}")
@@ -308,14 +308,14 @@ class CdmModel:
                 (int(fieldmapping_id)),
             )
 
-            row: Optional[Any] = cursor.fetchone()
+            row = cursor.fetchone()
 
             if not row:
                 return None
 
             field_id, field_name, field_variation, modified = row
 
-            result: dict = {
+            result = {
                 "field_id": field_id,
                 "field_name": field_name,
                 "field_variation": field_variation,

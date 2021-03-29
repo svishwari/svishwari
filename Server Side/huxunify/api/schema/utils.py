@@ -9,7 +9,7 @@ from marshmallow.fields import Boolean, DateTime, Int, Str, Float
 
 
 # get random data back based on marshmallow field type
-SPEC_TYPE_LOOKUP: dict = {
+SPEC_TYPE_LOOKUP = {
     Boolean: bool(random.getrandbits(1)),
     DateTime: datetime.now() + timedelta(random.randint(0, 1e4)),
     Int: random.randint(0, 1e4),

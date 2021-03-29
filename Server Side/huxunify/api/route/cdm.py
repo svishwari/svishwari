@@ -14,17 +14,17 @@ from huxunify.api.schema.cdm import Datafeed, Fieldmapping, ProcessedData
 from huxunify.api.route.utils import add_view_to_blueprint
 
 
-CDM_TAG: str = "cdm"
-CDM_DESCRIPTION: str = "CDM API"
-DATAFEEDS_TAG: str = "datafeeds"
-DATAFEEDS_ENDPOINT: str = "datafeeds"
-FIELDMAPPINGS_TAG: str = "fieldmappings"
-FIELDMAPPINGS_ENDPOINT: str = "fieldmappings"
-PROCESSED_ITEMS_TAG: str = "processeditems"
-PROCESSED_ITEMS_ENDPOINT: str = "processeditems"
+CDM_TAG = "cdm"
+CDM_DESCRIPTION = "CDM API"
+DATAFEEDS_TAG = "datafeeds"
+DATAFEEDS_ENDPOINT = "datafeeds"
+FIELDMAPPINGS_TAG = "fieldmappings"
+FIELDMAPPINGS_ENDPOINT = "fieldmappings"
+PROCESSED_ITEMS_TAG = "processeditems"
+PROCESSED_ITEMS_ENDPOINT = "processeditems"
 
 # setup the cdm blueprint
-cdm_bp: Blueprint = Blueprint("cdm", import_name=__name__)
+cdm_bp = Blueprint("cdm", import_name=__name__)
 
 
 @add_view_to_blueprint(cdm_bp, f"/{DATAFEEDS_ENDPOINT}", "DatafeedSearch")
@@ -33,11 +33,11 @@ class DatafeedSearch(SwaggerView):
     Datafeed search class
     """
 
-    parameters: List[str] = []
-    responses: dict = {
+    parameters = []
+    responses = {
         HTTPStatus.OK.value: {"description": "List of datafeeds.", "schema": Datafeed}
     }
-    tags: List[str] = [DATAFEEDS_TAG]
+    tags = [DATAFEEDS_TAG]
 
     @marshal_with(Datafeed(many=True))
     def get(self) -> Tuple[List[dict], int]:
@@ -49,7 +49,7 @@ class DatafeedSearch(SwaggerView):
             Response: List of datafeeds.
 
         """
-        datafeeds: List[dict] = CdmModel().read_datafeeds()
+        datafeeds = CdmModel().read_datafeeds()
         return datafeeds, HTTPStatus.OK.value
 
 
@@ -59,7 +59,7 @@ class DatafeedView(SwaggerView):
     Datafeed view class
     """
 
-    parameters: List[dict] = [
+    parameters = [
         {
             "name": "feed_id",
             "description": "ID of the datafeed",
@@ -68,7 +68,7 @@ class DatafeedView(SwaggerView):
             "required": "true",
         }
     ]
-    responses: dict = {
+    responses = {
         HTTPStatus.OK.value: {
             "schema": Datafeed,
         },
@@ -76,7 +76,7 @@ class DatafeedView(SwaggerView):
             "schema": NotFoundError,
         },
     }
-    tags: List[str] = [DATAFEEDS_TAG]
+    tags = [DATAFEEDS_TAG]
 
     @marshal_with(Datafeed)
     def get(self, feed_id: int) -> Tuple[List[dict], int]:
@@ -89,19 +89,19 @@ class DatafeedView(SwaggerView):
 
         """
         try:
-            valid_id: int = (
+            valid_id = (
                 Datafeed().load({"feed_id": feed_id}, partial=True).get("feed_id")
             )
-            data: dict = CdmModel().read_datafeed_by_id(valid_id)
+            data = CdmModel().read_datafeed_by_id(valid_id)
 
             if not data:
-                error: dict = NotFoundError().dump({"message": "Datafeed not found"})
+                error = NotFoundError().dump({"message": "Datafeed not found"})
                 return error, error["code"]
 
             return data, HTTPStatus.OK.value
 
         except ValidationError as err:
-            error: dict = RequestError().dump({"errors": err.messages})
+            error = RequestError().dump({"errors": err.messages})
             return error, error["code"]
 
 
@@ -111,14 +111,14 @@ class FieldmappingSearch(SwaggerView):
     Fieldmapping Search class
     """
 
-    parameters: List[str] = []
-    responses: dict = {
+    parameters = []
+    responses = {
         HTTPStatus.OK.value: {
             "description": "Returns a datafeed by ID.",
             "schema": Fieldmapping,
         }
     }
-    tags: List[str] = [FIELDMAPPINGS_TAG]
+    tags = [FIELDMAPPINGS_TAG]
 
     @marshal_with(Fieldmapping(many=True))
     def get(self) -> Tuple[List[dict], int]:
@@ -130,7 +130,7 @@ class FieldmappingSearch(SwaggerView):
             Response: Returns a datafeed by ID.
 
         """
-        fieldmappings: List[dict] = CdmModel().read_fieldmappings()
+        fieldmappings = CdmModel().read_fieldmappings()
         return fieldmappings, HTTPStatus.OK.value
 
 
@@ -142,7 +142,7 @@ class FieldmappingView(SwaggerView):
     Fieldmapping View class
     """
 
-    parameters: List[dict] = [
+    parameters = [
         {
             "name": "field_id",
             "description": "ID of the fieldmapping",
@@ -151,7 +151,7 @@ class FieldmappingView(SwaggerView):
             "required": "true",
         }
     ]
-    responses: dict = {
+    responses = {
         HTTPStatus.OK.value: {
             "schema": Fieldmapping,
         },
@@ -159,7 +159,7 @@ class FieldmappingView(SwaggerView):
             "schema": NotFoundError,
         },
     }
-    tags: List[str] = [FIELDMAPPINGS_TAG]
+    tags = [FIELDMAPPINGS_TAG]
 
     @marshal_with(Fieldmapping)
     def get(self, field_id: int) -> Tuple[List[dict], int]:
@@ -172,23 +172,21 @@ class FieldmappingView(SwaggerView):
 
         """
         try:
-            valid_id: int = (
+            valid_id = (
                 Fieldmapping()
                 .load({"field_id": field_id}, partial=True)
                 .get("field_id")
             )
-            data: dict = CdmModel().read_fieldmapping_by_id(valid_id)
+            data = CdmModel().read_fieldmapping_by_id(valid_id)
 
             if not data:
-                error: dict = NotFoundError().dump(
-                    {"message": "Fieldmapping not found"}
-                )
+                error = NotFoundError().dump({"message": "Fieldmapping not found"})
                 return error, error["code"]
 
             return data, HTTPStatus.OK.value
 
         except ValidationError as err:
-            error: dict = RequestError().dump({"errors": err.messages})
+            error = RequestError().dump({"errors": err.messages})
             return error, error["code"]
 
 
@@ -198,14 +196,14 @@ class ProcessedDataSearch(SwaggerView):
     ProcessedData search class
     """
 
-    parameters: List[str] = []
-    responses: dict = {
+    parameters = []
+    responses = {
         HTTPStatus.OK.value: {
             "description": "List of processed data sources.",
             "schema": ProcessedData,
         }
     }
-    tags: List[str] = [PROCESSED_ITEMS_TAG]
+    tags = [PROCESSED_ITEMS_TAG]
 
     @marshal_with(ProcessedData(many=True))
     def get(self) -> Tuple[List[dict], int]:
@@ -228,7 +226,7 @@ class ProcessedDataView(SwaggerView):
     ProcessedData view class
     """
 
-    parameters: List[str] = [
+    parameters = [
         {
             "name": "source_name",
             "description": "name of the data source",
@@ -237,7 +235,7 @@ class ProcessedDataView(SwaggerView):
             "required": "true",
         }
     ]
-    responses: dict = {
+    responses = {
         HTTPStatus.OK.value: {
             "schema": ProcessedData,
         },
@@ -245,7 +243,7 @@ class ProcessedDataView(SwaggerView):
             "schema": NotFoundError,
         },
     }
-    tags: List[str] = [PROCESSED_ITEMS_TAG]
+    tags = [PROCESSED_ITEMS_TAG]
 
     @marshal_with(ProcessedData)
     def get(self, source_name: str) -> Tuple[List[dict], int]:
@@ -258,15 +256,15 @@ class ProcessedDataView(SwaggerView):
 
         """
         try:
-            valid_name: str = (
+            valid_name = (
                 ProcessedData()
                 .load({"source_name": source_name}, partial=True)
                 .get("source_name")
             )
-            data: dict = CdmModel().read_processed_source_by_name(valid_name)
+            data = CdmModel().read_processed_source_by_name(valid_name)
 
             if not data:
-                error: dict = NotFoundError().dump(
+                error = NotFoundError().dump(
                     {"message": "ProcessedData source not found"}
                 )
                 return error, error["code"]
@@ -274,5 +272,5 @@ class ProcessedDataView(SwaggerView):
             return data, HTTPStatus.OK.value
 
         except ValidationError as err:
-            error: dict = RequestError().dump({"errors": err.messages})
+            error = RequestError().dump({"errors": err.messages})
             return error, error["code"]
