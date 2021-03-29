@@ -22,7 +22,7 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     """This function generates synthetic data for marshmallow
 
     Args:
-        schema_obj (dict): a marshmallow schema object
+        schema_obj (Schema): a marshmallow schema object
 
     Returns:
         dict: a dictionary that simulates the passed in marshmallow schema obj
