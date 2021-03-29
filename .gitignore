@@ -1,1 +1,33 @@
 Pipfile.lock
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+pip-wheel-metadata
+*.dist-info
+node_modules/
+
+# Environments
+.env**
+env.**
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# docs
+docs/build/*
