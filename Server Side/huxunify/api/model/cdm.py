@@ -29,8 +29,10 @@ class CdmModel:
             self.database = database
         self.ctx = self.database.connect()
 
-    def table_exists(self, database: str, schema: str, table_name: str) -> dict:
-        """A function to check if a table exists
+    def get_table_information(
+        self, database: str, schema: str, table_name: str
+    ) -> dict:
+        """A function to get table information
 
         Args:
             database (str): name of the database.
@@ -107,7 +109,7 @@ class CdmModel:
             list(dict): processed client data source
         """
         # check if table source exists first
-        if not self.table_exists(
+        if not self.get_table_information(
             PROCESSED_DATABASE, PROCESSED_SCHEMA, processed_data_source
         ):
             return {}
@@ -230,7 +232,7 @@ class CdmModel:
                 modified,
             ) = row
 
-            result: dict = {
+            result = {
                 "data_source": data_source,
                 "data_type": data_type,
                 "feed_id": feed_id,

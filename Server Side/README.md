@@ -76,14 +76,14 @@ https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 Typehinting Example
 ```
-def generate_synthetic_marshmallow_data(schema_obj: Schema) -> Schema:
+def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     """This function generates synthetic data for marshmallow
 
     Args:
-        schema_obj (Schema): a marshmallow schema object
+        schema_obj (dict): a marshmallow schema object
 
     Returns:
-        Response: dynamic object based on schema
+        dict: a dictionary that simulates the passed in marshmallow schema obj
 
     """
     # get random data based on marshmallow type
