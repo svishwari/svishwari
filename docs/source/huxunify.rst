@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 4
 
    huxunify.api
-   huxunify.test
 
 Submodules
 ----------
