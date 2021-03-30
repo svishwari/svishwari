@@ -1,0 +1,25 @@
+@import "../../theme/variables";
+
+.ct-input-wrapper {
+  input {
+    background: white;
+    border: 1px solid $appGreyBorder;
+    box-sizing: border-box;
+    border-radius: 4px;
+    padding: 1rem 2rem;
+    margin-bottom: 8px;
+    color: $appDark;
+    &::placeholder {
+      color: $appLightGray;
+    }
+    &:focus {
+      border: 1px solid $appLightGray2;
+    }
+  }
+  .input-error-ct {
+    border: 1px solid $appDarkRed;
+  }
+  .input-error-ct-message {
+    color: $appDarkRed;
+  }
+}

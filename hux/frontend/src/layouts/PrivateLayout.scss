@@ -1,0 +1,28 @@
+@import "../theme/variables";
+
+.dash-layout {
+  height: 100vh;
+  .toast-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 70px;
+    margin: auto;
+    z-index: 12;
+    & > div {
+      margin-bottom: 0.75rem;
+    }
+  }
+  .wrapper {
+    width: 100%;
+    background: $appBackground;
+    display: flex;
+    .content {
+      // padding: 20px;
+      height: calc(100% - 65px);
+      max-height: calc(100% - 65px);
+      overflow: auto;
+      width: 100%;
+    }
+  }
+}

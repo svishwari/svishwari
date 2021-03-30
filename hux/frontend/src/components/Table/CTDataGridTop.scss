@@ -1,0 +1,45 @@
+@import "../../theme/variables";
+
+.ct-grid-top-wrapper {
+  background: white;
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 10px 8px 16px;
+  border: 1px solid $appGreyBorder;
+  display: flex;
+  justify-content: space-between;
+  .ct-grid-top-left {
+    display: flex;
+    align-items: center;
+    .ct-grid-search-input {
+      border: none;
+      outline: none;
+    }
+    .ct-grid-search {
+      font-size: 20px;
+      color: $appLightGray2;
+    }
+  }
+  .ct-grid-top-right {
+    font-size: 14px;
+    .ct-grid-icon-buttons {
+      button {
+        background: white;
+        border: 1px solid $appGreyBorder;
+        border-radius: 5px;
+        margin: 6px;
+        min-height: 40px;
+        min-width: 40px;
+        svg {
+          font-size: 18px;
+        }
+      }
+      .ct-grid-remove-text {
+        font-size: 14px;
+      }
+    }
+    .ct-grid-summary {
+      margin-right: 10px;
+    }
+  }
+}

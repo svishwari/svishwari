@@ -1,5 +1,36 @@
-# Hux-Unified-Solution
-Repository for Hux Unified Solution
+# hux-unified
+Repository for hux unified
+
+
+## Introduction
+todo
+
+
+## Table of Contents
+* [Technologies](#Technologies)
+* [Structure](#Structure)
+* [Add pre-commit git hooks](#Add pre commit githooks)
+* [TOX](#TOX)
+* [CI](#CI)
+* [CD](#CD)
+
+
+## Technologies
+* API
+    * Python 3.7 (Flask)
+* Frontend
+    * Vuejs
+* database
+    * mongodb
+
+
+## Structure
+* [documents](docs/README.md) (coming soon)
+* [api](hux/api/README.md)
+* [frontend](hux/frontend/README.md)
+* [library](lib/README.md)
+    * [database](lib/database/README.md) (coming soon)
+
 
 # Add pre-commit git hooks
 
@@ -15,3 +46,22 @@ Every time you try to commit, checks in the pre-commit hook will run and you wil
 You can also run `pre-commit run` to make sure there are no errors before comitting your code.
 
 For more info, refer https://pre-commit.com/.
+
+
+# TOX
+tox (https://tox.readthedocs.io/) is a tool for running tests in multiple virtualenvs.
+TOX configuration files (tox.ini) will run the scripted tests and commands listed within.
+
+Steps
+
+1. Install tox:`pip install tox` in a virtualenv.
+2. Using the console, cd to the directory you want to test that contains a tox.ini
+3. Run `tox`
+
+
+# CI
+TODO - fill this out
+
+
+# CD
+TODO - fill this out

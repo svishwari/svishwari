@@ -1,0 +1,13 @@
+@import "../../theme/variables";
+
+
+.ct-list-wrapper{
+    .MuiDataGrid-columnsContainer {
+        .MuiDataGrid-columnSeparator {
+            display: none;
+        }
+        .MuiDataGrid-sortIcon {
+            color: $appMainBlue;
+        }
+    }
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+
+    <title>HUX Unified Solution</title>
+    <style>
+      body.loaded .apploader {
+        display: none;
+      }
+      body .apploader {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #F7F8FA;
+        z-index: 999;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        -moz-transition: top 0.1s, right 0.1s, bottom 0.1s, left 0.1s;
+        -webkit-transition: top 0.1s, right 0.1s, bottom 0.1s, left 0.1s;
+        transition: top 0.1s, right 0.1s, bottom 0.1s, left 0.1s;
+        transition-timing-function: ease;
+        transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+        align-items: center;
+      }
+
+      .loader {
+        text-align: center;
+        vertical-align: middle;
+        position: relative;
+        display: flex;
+        background: white;
+        padding: 150px;
+        box-shadow: 0px 40px 60px -20px rgba(0, 0, 0, 0.2);
+      }
+
+      .loader span {
+        display: block;
+        width: 20px;
+        height: 20px;
+        background: #eee;
+        border-radius: 50%;
+        margin: 0 5px;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .loader span:nth-child(2) {
+        background: #f07e6e;
+      }
+
+      .loader span:nth-child(3) {
+        background: #84cdfa;
+      }
+
+      .loader span:nth-child(4) {
+        background: #5ad1cd;
+      }
+
+      .loader span:not(:last-child) {
+        animation: animate 1.5s linear infinite;
+      }
+
+      @keyframes animate {
+        0% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(30px);
+        }
+      }
+
+      .loader span:last-child {
+        animation: jump 1.5s ease-in-out infinite;
+      }
+
+      @keyframes jump {
+        0% {
+          transform: translate(0, 0);
+        }
+        10% {
+          transform: translate(10px, -10px);
+        }
+        20% {
+          transform: translate(20px, 10px);
+        }
+        30% {
+          transform: translate(30px, -50px);
+        }
+        70% {
+          transform: translate(-150px, -50px);
+        }
+        80% {
+          transform: translate(-140px, 10px);
+        }
+        90% {
+          transform: translate(-130px, -10px);
+        }
+        100% {
+          transform: translate(-120px, 0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <div class="apploader">
+      <div class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>

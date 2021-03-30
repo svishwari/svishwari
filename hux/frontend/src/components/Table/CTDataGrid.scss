@@ -1,0 +1,22 @@
+@import "../../theme/variables";
+
+.ct-table-wrapper {
+  background: white;
+  .MuiDataGrid-columnsContainer {
+    .MuiDataGrid-columnSeparator {
+      display: none;
+    }
+    .MuiDataGrid-sortIcon {
+      color: $appMainBlue;
+    }
+  }
+  svg {
+    font-size: 26px;
+  }
+  svg.MuiSvgIcon-root {
+    font-size: 20px;
+  }
+  .MuiCheckbox-colorPrimary.Mui-checked {
+    color: $appSuccessGreen;
+  }
+}
