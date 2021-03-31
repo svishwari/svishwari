@@ -43,13 +43,13 @@ steps:
     revision: '${{CF_BRANCH}}' # Git branch triggering the pipeline
 
 # Below steps "NumberTag" and "VersionTag" can be used to conditionally tag build image based on the Git Branch.
-  
+
   NumberTag:
     stage: build_tag
     description: Set docker tag from build number
     type: freestyle
     image: alpine
-    commands: 
+    commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
 # Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
@@ -58,13 +58,13 @@ steps:
   #   description: Set docker tag based Git tag
   #   type: freestyle
   #   image: alpine
-  #   commands: 
-  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}      
+  #   commands:
+  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
   #   when:
   #     condition:
   #       all:
   #         masterBranch: '"${{CF_BRANCH}}" == "main"'
-  
+
 # To be used when Dockerfile is available
   # DockerBuild:
   #   stage: docker

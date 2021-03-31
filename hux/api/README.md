@@ -1,11 +1,11 @@
-# Hux Unified Solution Server-Side
+# Hux Unified API
 
-Information the Server Side Flask Project
+Information the API Flask Project
 
 ## Installation
 ```
-# cd to the server side folder
-cd "/Hux-Unified-Solution/Server Side"
+# cd to the hux/api folder
+cd "/hux-unified-solution/api"
 
 # run pipenv install
 pipenv install

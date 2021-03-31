@@ -4,7 +4,7 @@ Purpose of this file is to house the main application code.
 from flask import Flask
 from flasgger import Swagger
 from huxunify.api.route.advertising import advertising_bp
-from huxunify.api.route.decision import decision_bp
+from huxunify.api.route.decisioning import decision_bp
 from huxunify.api.route.audience import audience_bp
 from huxunify.api.route.marketing import marketing_bp
 from huxunify.api.route.cdm import cdm_bp
