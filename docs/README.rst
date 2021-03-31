@@ -4,7 +4,7 @@ Steps for setting up Sphinx and autogenerating documentation
 
 ## Installation
 
-    $ pip install -U Sphinx
+    $ Check requirements
 
 ## Quickstart
 
