@@ -19,9 +19,9 @@ todo
 * API
     * Python 3.7 (Flask)
 * Frontend
-    * Vuejs
-* database
-    * mongodb
+    * Vue 2
+* Database
+    * MongoDB
 
 
 ## Structure
