@@ -74,6 +74,24 @@ PEP8
 Google Python Docstrings
 https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
+Typehinting Example
+```
+def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
+    """This function generates synthetic data for marshmallow
+
+    Args:
+        schema_obj (Schema): a marshmallow schema object
+
+    Returns:
+        dict: a dictionary that simulates the passed in marshmallow schema obj
+
+    """
+    # get random data based on marshmallow type
+    return {
+        field: SPEC_TYPE_LOOKUP[type(val)] for field, val in schema_obj().fields.items()
+    }
+```
+
 ### Test
 ```
 pipenv run python -m unittest
@@ -125,10 +143,72 @@ cdm_bp = Blueprint("cdm", import_name=__name__)
         },
     }
 ```
+
 4. Add marshal_with(Schema) to the method, for example:
 ```
 @marshal_with(Fieldmapping)
 ```
+
+5. Add Endpoint Summary and Description
+
+Flasgger uses view functions docstrings to fill the summary and description
+The part of the docstring following the '---' line is ignored.
+
+The part before the '---' line is used as summary and description.
+The first lines are used as summary.
+If an empty line is met, all following lines are used as description.
+
+```
+def get(...):
+    """Retrieves the processed data source catalog.
+
+    Return processed data sources
+    ---
+    Returns:
+        Response: List of processed data sources.
+    """
+```
+
+The example above produces the following documentation attributes:
+```
+{
+    'get': {
+        'summary': 'Retrieves the processed data source catalog.',
+        'description': 'Return processed data sources',
+    }
+}
+```
+
+6. Here is an example of a completed endpoint.
+```
+@add_view_to_blueprint(cdm_bp, f"/{PROCESSED_DATA_ENDPOINT}", "ProcessedDataSearch")
+class ProcessedDataSearch(SwaggerView):
+    """
+    ProcessedData search class
+    """
+
+    parameters = []
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of processed data sources.",
+            "schema": ProcessedData,
+        }
+    }
+    tags = [PROCESSED_DATA_TAG]
+
+    @marshal_with(ProcessedData(many=True))
+    def get(self):  # pylint: disable=no-self-use
+        """Retrieves the processed data source catalog.
+
+        Return processed data sources
+        ---
+        Returns:
+            Response: List of processed data sources.
+        """
+        return CdmModel().read_processed_sources(), HTTPStatus.OK.value
+
+```
+
 
 
 ### Data

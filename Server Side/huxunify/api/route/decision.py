@@ -6,11 +6,10 @@ from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
 from huxunify.api.model.decision import (
-    DecisionModel,
     CustomerFeatureModel,
     AlgorithmiaModel,
 )
-from huxunify.api.schema.decision import DecisionSchema, CustomerFeatureSchema
+from huxunify.api.schema.decision import CustomerFeatureSchema
 
 
 decision_bp = Blueprint("decision_bp", __name__)
