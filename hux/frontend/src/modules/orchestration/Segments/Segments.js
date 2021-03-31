@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Box, Button } from '@material-ui/core';
 
 import { showAddSegment } from '../../modal/action';
-import { fetchSegments, triggerDeliveredCheck } from "../store/action";
+import { fetchSegments, triggerDeliveredCheck } from  "../store/action";
 
 import CTDataGrid from "../../../components/Table/CTDataGrid";
 import CTChip from "../../../components/Chip/CTChip";
