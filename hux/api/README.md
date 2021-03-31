@@ -1,6 +1,6 @@
-# Hux Unified Solution Server-Side
+# Hux Unified API
 
-Information the Server Side Flask Project
+Information the API Flask Project
 
 ## Installation
 ```

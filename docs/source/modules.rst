@@ -1,4 +1,4 @@
-Server Side
+hux/api
 ===========
 
 .. toctree::

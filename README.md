@@ -25,7 +25,7 @@ todo
 
 
 ## Structure
-* [documents](docs/README.md) (coming soon)
+* [documents](docs/README.rst)
 * [api](hux/api/README.md)
 * [frontend](hux/frontend/README.md)
 * [library](lib/README.md)
