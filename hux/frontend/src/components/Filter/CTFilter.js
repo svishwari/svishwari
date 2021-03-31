@@ -35,7 +35,7 @@ const CTFilter = ({
     // adding a filter
     else {
       if (!_activeFilters[type]) { _activeFilters[type] = [] }
-
+    
       if (filterTypes[selectedFilter].selectMultiple === true) {
         _activeFilters = {..._activeFilters, [type]: [..._activeFilters[type], value]}
         setActiveFilters(_activeFilters)
@@ -62,7 +62,7 @@ const CTFilter = ({
 
       <div className="ct-filter-content">
         {
-          selectedFilter === ""
+          selectedFilter === "" 
           ?
             Object.keys(filterTypes).map( (type) => (
             <div key={type} className="ct-filter-content-card" onClick={() => setSelectedFilter(type)}>
@@ -70,14 +70,14 @@ const CTFilter = ({
               <span>&gt;</span>
             </div>
             ))
-          :
+          : 
           (<div>
             <div className="ct-filter-title">{selectedFilter.toUpperCase()}</div>
             <div className="ct-filter-type-container">
             {
               filterTypes[selectedFilter].values.map(value => (
                 <div className="ct-filter-type" key={value} onClick={() => toggleFilter(selectedFilter, value)}>
-                  { activeFilters[selectedFilter] && activeFilters[selectedFilter].includes(value)
+                  { activeFilters[selectedFilter] && activeFilters[selectedFilter].includes(value) 
                   && <span><span className="iconify" data-icon="mdi:check" data-inline="false"/></span>}
                   {value}
                 </div>
@@ -87,13 +87,13 @@ const CTFilter = ({
           </div>)
         }
       </div>
-
+      
     </div>
   );
 
   return (
     <CTPopover onToggle={()=> setSelectedFilter("")} customClass="ct-filter-popover" popoverContent={filterContent}>
-      <button type="button">
+      <button type="button">     
         <div className="ct-filter-wrapper">
           <Badge badgeContent={Object.keys(activeFilters).length}>
             <span className="ct-filter-icon">

@@ -11,7 +11,7 @@ const updateRecentSegments = (payload) => ({
 // Methods
 const fetchSummaryInfo = () => async (dispatch) => {
   // #TODO
-  // Fetch summary/no of datasource,destinations etc.
+  // Fetch summary/no of datasource,destinations etc. 
   await new Promise((done) => setTimeout(() => done(), 500));
   const response = [
     {

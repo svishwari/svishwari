@@ -1,0 +1,76 @@
+@import "../../theme/variables.scss";
+
+.ct-chip-wrapper {
+  border-radius: 5px;
+  .MuiChip-root {
+    border-radius: 5px;
+    height: 25px;
+    cursor: pointer;
+  }
+  .empty-space-container {
+    padding-right: 8px;
+    height: 25px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .ct-s-hover {
+    background: $appSuccessGreen;
+  }
+  .ct-ns-hover {
+    background: $appDarkRed;
+  }
+
+  .ct-chip-hover {
+    border-radius: 5px 0px 0px 5px;
+    transition: 0.5s;
+  }
+  .ct-chip-success {
+    background: $appSuccessGreen;
+    color: white;
+    cursor: pointer;
+  }
+  .ct-chip-not-success {
+    background: $appDarkRed;
+    color: white;
+    cursor: pointer;
+  }
+  .ct-chip-success-icon {
+    background: $appSuccessGreen;
+    border-radius: 50%;
+    height: 25px;
+    width: 25px;
+    cursor: pointer;
+    path {
+      fill: white;
+    }
+  }
+  .ct-chip-not-success-icon {
+    background: $appDarkRed;
+    border-radius: 50%;
+    height: 25px;
+    width: 25px;
+    cursor: pointer;
+    path {
+      fill: white;
+    }
+  }
+  .ct-chip-success-hover {
+    background: $appSuccessGreen;
+    border-radius: 0px 50% 50% 0px;
+    path {
+      fill: white;
+    }
+  }
+  .ct-chip-not-success-hover {
+    background: $appDarkRed;
+    border-radius: 0px 50% 50% 0px;
+    path {
+      fill: white;
+    }
+  }
+  .ct-chip-middle {
+    background: $appOrange2;
+    color: white;
+    cursor: pointer;
+  }
+}

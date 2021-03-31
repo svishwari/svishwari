@@ -3,7 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Drawer } from '@material-ui/core';
 
-export const Sidebar = ({ width, children, collapsed }) =>
+export const Sidebar = ({ width, children, collapsed }) => 
   // const container = window !== undefined ? () => document.getElementById("main-menu") : undefined;
    (
     <nav aria-label="main-menu" id="main-menu">

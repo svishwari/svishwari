@@ -55,7 +55,7 @@ const AddDataSource = () => {
           <CTLabel>Data Source</CTLabel>
           <CTSelect selectOptions={DATA_SOURCES} onChange={handleSelectedDataSourceChange}/>
           <div className="ct-datasource-fields">
-            {
+            { 
               REQUIRED_FIELDS[selectedDataSource].map(each=>(
                 <span key={each.label} className="ct-datasource-field-card">
                   <CTLabel>{each.label}</CTLabel>

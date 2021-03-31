@@ -15,7 +15,7 @@ const FILTER_TYPES = {
       selectMultiple: false,
       values: ["Starred", "Not Starred"]
     },
-    "Deliver Status": {
+    "Deliver Status": { 
       selectMultiple: true,
       values: ["Delivered", "Not Delivered"]
     },

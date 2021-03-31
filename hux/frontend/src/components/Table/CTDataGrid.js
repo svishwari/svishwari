@@ -32,10 +32,10 @@ export default class CTDataGrid extends Component {
     field: "more",
     headerName: " ",
     renderCell: (params) => {
-      const popOverContent = this.props.moreIconContent.map(content =>
+      const popOverContent = this.props.moreIconContent.map(content => 
           <div key={content.name} onKeyPress={() => content.function()} onClick={content.function}>{content.name}</div>
       );
-      const removeItem = <div
+      const removeItem = <div 
                     onKeyPress={() => this.removeRow(params.getValue("id"))}
                     onClick={()=>this.removeRow(params.getValue("id"))}
                     style={{cursor: "pointer"}}
@@ -135,7 +135,7 @@ export default class CTDataGrid extends Component {
 
         // checks that a row satisfies *all* of the included filter types
         const rowSatisfiesFilters = !conditions.includes(false);
-        if (rowSatisfiesFilters) {
+        if (rowSatisfiesFilters) { 
           matchingRows.push(row);
         }
 
@@ -262,7 +262,7 @@ export default class CTDataGrid extends Component {
           bulkOperationText={this.props.bulkOperationText}
         />
         {
-          this.state.isSummaryVisible ?
+          this.state.isSummaryVisible ? 
           <CTCardGroup style={{margin: "10px 20px"}}>
           {this.props.summaryContent.map(content =>
           <SummaryCard key={content.title} decimals={content.decimals} value={content.value} suffix={content.suffix} title={content.title}/>
@@ -328,7 +328,7 @@ CTDataGrid.defaultProps = {
   moreIconContent: [],
   headerHeight: 28,
   enableMoreIcon: false,
-  isEditingEnabled: false,
+  isEditingEnabled: false, 
   filterTypes: {},
   onBulkRemove: () => {},
   onRowSelect: () => {},

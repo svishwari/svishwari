@@ -9,7 +9,7 @@ import CTChip from "../../components/Chip/CTChip";
 import { fetchCustomerProfiles } from './store/action';
 
 const FILTER_TYPES = {
-    "Customer Value": {
+    "Customer Value": { 
       selectMultiple: true,
       values: ["High", "Medium","Low"]
     },
@@ -82,7 +82,7 @@ const CustomersData = (props) => {
             field: "customerEvents",
             headerName: "No. of Events",
             width: 200,
-        }
+        }        
     ];
     React.useEffect(() => {
         retrieveCustomerProfiles();

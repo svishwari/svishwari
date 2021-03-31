@@ -18,7 +18,7 @@ const FieldMapping = (( props) => {
 
   const removeRow = (row) => {
     setFields([row.fieldName,...fields]);
-    const newRows = rows.filter(each=> each.fieldName!==row.fieldName);
+    const newRows = rows.filter(each=> each.fieldName!==row.fieldName); 
     setRows(newRows);
   };
 

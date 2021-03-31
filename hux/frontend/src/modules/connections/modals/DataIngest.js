@@ -41,7 +41,7 @@ const DataIngest = (modalProps) => {
     <div className="data-ingest-wrapper">
       <div className="ingest-flags">
         {
-          ingestFlags.map(each=>
+          ingestFlags.map(each=> 
             <div key={each} className="section">
               <Typography className="heading">
                 {each}

@@ -67,7 +67,7 @@ return (
       <span className="ct-grid-icon-buttons">
         {gridTopState.isUserEditing ? (
           <>
-            { isDownloadAble &&
+            { isDownloadAble && 
               <button type="button" onClick={() => onDownload(selectedRows)}>
                 <span
                   className="iconify"
@@ -84,12 +84,12 @@ return (
               />
               <span className="ct-grid-remove-text">Remove</span>
             </button>
-            { bulkOperationText !=="" &&
+            { bulkOperationText !=="" && 
               <CTSecondaryButton onClick={() => onBulkOperation(selectedRows)}>{bulkOperationText}</CTSecondaryButton>
             }
           </>
         ) : isEditingEnabled ?(
-
+          
           <>
             <button type="button" onClick={() => toggleEditing()}>
               <span
@@ -113,7 +113,7 @@ return (
         )}
       </span>
       { !isAddEnabled ?
-          (<></>)
+          (<></>) 
         : gridTopState.isUserEditing ? (
         <CTPrimaryButton onClick={() => toggleEditing()}>
           Done &amp; Return

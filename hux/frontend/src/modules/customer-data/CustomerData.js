@@ -36,7 +36,7 @@ const EVENTS_COLUMN = [
         field: "date",
         headerName: "Date",
         flex: 0.2,
-    }
+    }     
 ];
 
 const INCLUDED_COLUMN = [
@@ -128,7 +128,7 @@ const FILTER_TYPES = {
       selectMultiple: true,
       values: ["Purchase", "Subscription Purchase"]
     },
-    "Charge": {
+    "Charge": { 
       selectMultiple: true,
       values: ["10.23"]
     },
@@ -180,7 +180,7 @@ const CustomerData = (props) => {
                         <span className="cd-customer-name"> {userName}</span>
                     </div>
                     <div className="cd-customer-acc-id">
-                        <span className="cd-customer-acc-id-label">Account ID </span>
+                        <span className="cd-customer-acc-id-label">Account ID </span> 
                         {accountID}
                     </div>
                 </div>
@@ -194,13 +194,13 @@ const CustomerData = (props) => {
                     <div className="cd-insights-card">
                         <div className="col-3 pl-0">
                             {
-                                USER_PII_DATA.map(each =>
+                                USER_PII_DATA.map(each => 
                                     <div key={each[Object.keys(each)[0] ]} className="cd-customer-detail-container">
                                         <span className="cd-customer-detail-label">{Object.keys(each)[0]}</span>
                                         <span className="cd-customer-detail">{each[Object.keys(each)[0] ]}</span>
                                     </div>
                                 )
-                            }
+                            }                          
                         </div>
                         <div className="col-7">
                             <div>Do something here!</div>

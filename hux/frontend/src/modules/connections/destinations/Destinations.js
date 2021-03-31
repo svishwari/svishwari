@@ -9,7 +9,7 @@ import {
   triggerDestinationConnectionCheck,
 } from "../store/action";
 
-import { showAddDestination } from "../../modal/action";
+import { showAddDestination } from "../../modal/action"; 
 
 const markConnecting = (payload) => ({
   type: "updateDestinationConnectionStatus",
@@ -21,7 +21,7 @@ const FILTER_TYPES = {
     selectMultiple: false,
     values: ["Starred", "Not Starred"]
   },
-  "Status": {
+  "Status": { 
     selectMultiple: true,
     values: ["Connected", "Not Connected"]
   },
@@ -34,7 +34,7 @@ const FILTER_TYPES = {
 
 const Destinations = (props) => {
   const dispatch = useDispatch();
-
+  
   const retrieveDestinations = () => {
     dispatch(fetchDestinations());
   };
@@ -126,7 +126,7 @@ const Destinations = (props) => {
         );
       },
     },
-
+    
   ];
   return (
     <CTDataGrid

@@ -18,12 +18,12 @@ const CTChip = ({
   }
 
   return (
-  <div
+  <div 
     className="ct-chip-wrapper"
     onKeyPress={onClickFunc}
     onClick={onClickFunc}
-    onMouseOver={toggleHover}
-    onMouseOut={toggleHover}
+    onMouseOver={toggleHover} 
+    onMouseOut={toggleHover} 
     onFocus={toggleHover}
     onBlur={toggleHover}
   >
@@ -53,7 +53,7 @@ const CTChip = ({
         ) : (
           <></>
         )}
-      </>
+      </> 
       : <>
         <Chip
           label={children}
@@ -62,7 +62,7 @@ const CTChip = ({
       </>
     }
   </div>
-
+  
 )};
 
 export default CTChip;

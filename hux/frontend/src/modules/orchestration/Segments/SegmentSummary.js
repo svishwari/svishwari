@@ -44,7 +44,7 @@ const CUSTOMERS_COLUMN = [
         field: "age",
         headerName: "Age",
         width: 150,
-    },
+    },   
     {
         field: "gender",
         headerName: "Gender",
@@ -54,7 +54,7 @@ const CUSTOMERS_COLUMN = [
         field: "incomeRange",
         headerName: "Income Range",
         width: 250,
-    },
+    }, 
 ];
 
 const DESTINATION_COLUMN = [
@@ -126,7 +126,7 @@ const DESTINATION_COLUMN = [
           </>
         ),
     },
-
+    
 ];
 
 const FILTER_TYPES = {
@@ -134,15 +134,15 @@ const FILTER_TYPES = {
       selectMultiple: true,
       values: ["Mobile", "Desktop"]
     },
-    "Age": {
+    "Age": { 
       selectMultiple: true,
       values: ["<18","18-25","25-50",">50"]
     },
-    "Gender": {
+    "Gender": { 
         selectMultiple: true,
         values: ["Male","Female","Other"]
     },
-    "Result": {
+    "Result": { 
         selectMultiple: true,
         values: ["High","Medium","Low"]
     },
@@ -269,11 +269,11 @@ const SegmentSummary = (props) => {
                         <span className="cd-customer-name"> {segmentName}</span>
                     </div>
                     <div className="cd-customer-acc-id">
-                        <span className="cd-customer-acc-id-label">Time Created </span>
+                        <span className="cd-customer-acc-id-label">Time Created </span> 
                         <span className="cd-customer-acc-id">{created}</span>
-                        <span className="cd-customer-acc-id-label">Models(s) </span>
+                        <span className="cd-customer-acc-id-label">Models(s) </span> 
                         <span className="cd-customer-acc-id">{models && models[0]}</span>
-                        <span className="cd-customer-acc-id-label">File Source </span>
+                        <span className="cd-customer-acc-id-label">File Source </span> 
                         <span className="cd-customer-acc-id">
                             <Link to={() => false}>
                                 MyAmazing

@@ -12,3 +12,4 @@ export const slugs = {
 };
 
 export default slugs;
+

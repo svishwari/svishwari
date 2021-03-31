@@ -25,7 +25,7 @@ export default function CTNewList(props) {
       <List {...props}>
         {props.showHeading && <ListItem style={styles.heading}>{props.heading}</ListItem>}
         <Divider />
-        {props.items.map(item =>
+        {props.items.map(item => 
           <>
             <ListItem style={styles.listItem} key={item.id}>{item.title}</ListItem>
             <Divider />
@@ -35,3 +35,4 @@ export default function CTNewList(props) {
     </>
   );
 }
+

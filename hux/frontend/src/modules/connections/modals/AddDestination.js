@@ -85,7 +85,7 @@ const AddDestination = () => {
             <CTInput placeholder="Account Name" />
           </div>
           <div className="ct-destination-fields">
-            {
+            { 
               REQUIRED_FIELDS[selectedDestination].map(each=>(
                 <span key={each.label} className="ct-destination-field-card">
                   <CTLabel>{each.label}</CTLabel>
@@ -99,7 +99,7 @@ const AddDestination = () => {
     return (
         <CTModal
             modalTitle="Add Destination"
-            modalSubtitle={`Connect a destination so that you can get a deeper insight into your
+            modalSubtitle={`Connect a destination so that you can get a deeper insight into your 
             customers, segments, and audiences.`}
             modalBody={addDestinationContent}
             mainCTAText="Verify and Add"

@@ -9,7 +9,7 @@ const CTSelect = ({ customClass="", selectOptions=[],selectLabel="label",onChang
         setselectedValue(e.target.value);
         onChange(e);
     }
-
+    
     return (
         <Select
             value={selectedValue}
@@ -22,7 +22,7 @@ const CTSelect = ({ customClass="", selectOptions=[],selectLabel="label",onChang
                 selectOptions.map(value=>(
                     <option key={value} value={value}>{value}</option>
                 ))
-            }
+            }  
         </Select>
     )
 }

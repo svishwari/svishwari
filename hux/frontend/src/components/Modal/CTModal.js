@@ -112,7 +112,7 @@ const CTModal = React.forwardRef((props, ref) => {
                 {activeScreenIndex === 0 ? "Close" : props.backButton}
               </CTSecondaryButton>
             )}
-            {props.footerLeftButtons.map(each => {
+            {props.footerLeftButtons.map(each => { 
               if( activeScreenIndex === each.props.activeindex){
                 return each;
               }
@@ -122,8 +122,8 @@ const CTModal = React.forwardRef((props, ref) => {
           <div className="modal-footer-right">
             {props.footerRightButtons}
             {IS_MULTI_MODAL && (
-              <CTPrimaryButton
-                {...props.screens.rightButtonProps[activeScreenIndex]}
+              <CTPrimaryButton 
+                {...props.screens.rightButtonProps[activeScreenIndex]} 
                 onClick={handleNextScreen}
                 >
                 {props.screens.righButtonNames[activeScreenIndex]}
@@ -154,7 +154,7 @@ CTModal.defaultProps = {
   onComplete: () => undefined,
   screens: {
     // ************************
-    // This prop accepts the following items and each item is a required one
+    // This prop accepts the following items and each item is a required one 
     // and all the sub props need to be of same length
     // ************************
     // screenComponents: [],

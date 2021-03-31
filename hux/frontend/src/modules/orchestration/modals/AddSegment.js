@@ -189,7 +189,7 @@ const AddSegment = (props) => {
           field: "account",
           headerName: "Account Name",
           width: 200,
-        },
+        }, 
     ];
 
     useEffect(() => {
@@ -214,11 +214,11 @@ const AddSegment = (props) => {
         <CTCardGroup>
             {
                AVAILABLE_MODELS.map(model => (
-                <CTImageCard
+                <CTImageCard 
                     key={model.title}
                     customClass={selectedModels.indexOf(model.title) !== -1 ? "model-selected" : "" }
                     cardImage={<span className="ct-add-segment-image">{model.image}</span>}
-                    cardTitle={model.title}
+                    cardTitle={model.title} 
                     onClick={()=> {toggleSelectedModels(model.title)}  }
                     cardDescription={model.desc}
                 />
@@ -261,7 +261,7 @@ const AddSegment = (props) => {
                             ))
                         }
                     </div>
-            ))
+            )) 
             }
         <div>
             <span className="add-condition-icon" onClick={addNewSegment} onKeyPress={addNewSegment}>
@@ -274,12 +274,12 @@ const AddSegment = (props) => {
     <div className="ct-segment-screen3-wrapper">
         <div className="ct-segment-screen3-title">Select Destination(s)</div>
         <div className="ct-segment-screen3-table">
-            <CTDataGrid
+            <CTDataGrid 
                 isTopVisible={false}
                 isEditingEnabled
                 columns={columns}
                 data={props.destinations}
-                // TO DO ON SELECTED ROWS DO SOMETHING HERE
+                // TO DO ON SELECTED ROWS DO SOMETHING HERE 
                 onRowSelect={()=> {}}
             />
         </div>
@@ -303,10 +303,10 @@ const AddSegment = (props) => {
             screens={screens}
             footerLeftButtons={[
                 (<CTSecondaryButton customClass="segment-btn-later" key="1" activeindex={1}  onClick={onCloseAndCompleteLater}>
-                    Close &amp; Complete Later
+                    Close &amp; Complete Later 
                 </CTSecondaryButton>),
                 (<CTSecondaryButton customClass="segment-btn-later" key="2" activeindex={2}  onClick={onCloseAndCompleteLater}>
-                Close &amp; Complete Later
+                Close &amp; Complete Later 
             </CTSecondaryButton>)]}
             maxWidth="md"
         />

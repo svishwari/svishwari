@@ -18,7 +18,7 @@ const FILTER_TYPES = {
     selectMultiple: false,
     values: ["Starred", "Not Starred"]
   },
-  "Connection Status": {
+  "Connection Status": { 
     selectMultiple: true,
     values: ["Connected", "Not Connected"]
   },
@@ -137,8 +137,8 @@ const DataSources = (props) => {
       headerName: "Empty",
       flex: 0.1,
       renderCell: (params) =>
-        params.getValue("connectionStatus") === "Connected" &&
-        params.getValue("ingested") &&
+        params.getValue("connectionStatus") === "Connected" && 
+        params.getValue("ingested") && 
         params.getValue("ingestionStatus") !== "InProgess" ? (
           params.getValue("recordsIngested")
         ) : (
@@ -150,8 +150,8 @@ const DataSources = (props) => {
       headerName: "Bogus",
       flex: 0.1,
       renderCell: (params) =>
-        params.getValue("connectionStatus") === "Connected" &&
-        params.getValue("ingested") &&
+        params.getValue("connectionStatus") === "Connected" && 
+        params.getValue("ingested") && 
         params.getValue("ingestionStatus") !== "InProgess" ? (
           params.getValue("recordsIngested")
         ) : (
@@ -163,8 +163,8 @@ const DataSources = (props) => {
       headerName: "Cleansed",
       flex: 0.1,
       renderCell: (params) =>
-        params.getValue("connectionStatus") === "Connected" &&
-        params.getValue("ingested") &&
+        params.getValue("connectionStatus") === "Connected" && 
+        params.getValue("ingested") && 
         params.getValue("ingestionStatus") !== "InProgess" ? (
           params.getValue("recordsIngested")
         ) : (

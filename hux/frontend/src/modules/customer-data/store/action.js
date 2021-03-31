@@ -148,5 +148,5 @@ export {
 // Values like Records, Data Sources, Stitches, Pinned, Avg. Strength
 
 // #TODO
-// Fetch summary of specific customer
+// Fetch summary of specific customer 
 // Values like Customer Length, Strength, Last Event, Value, Conversion Time
