@@ -16,7 +16,6 @@ decision_bp = Blueprint("decision_bp", __name__)
 
 
 @decision_bp.route("/algorithms", methods=["get"])
-@swag_from("../spec/decisioning/algorithms_search.yaml")
 def algorithms_search():
     """
     list all available algorithms
@@ -30,7 +29,6 @@ def algorithms_search():
 
 
 @decision_bp.route("/algorithms/<algorithm_name>", methods=["get"])
-@swag_from("../spec/decisioning/algorithms_get.yaml")
 def algorithm_get(algorithm_name):
     """
     get single algorithm information
@@ -47,7 +45,6 @@ def algorithm_get(algorithm_name):
 
 
 @decision_bp.route("/algorithms", methods=["post"])
-@swag_from("../spec/decisioning/algorithms_post.yaml")
 def invoke_algorithm():
     """
     invoke algorithm
