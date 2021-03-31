@@ -5,7 +5,7 @@ Information the Server Side Flask Project
 ## Installation
 ```
 # cd to the hux/api folder
-cd "/hux-hunified-solution/api"
+cd "/hux-unified-solution/api"
 
 # run pipenv install
 pipenv install
