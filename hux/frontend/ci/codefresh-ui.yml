@@ -95,6 +95,10 @@ steps:
       BUILD_NUMBER: '${{CF_BUILD_NUMBER}}'
       JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
       BUILD_TAG: '${{CF_BUILD_NUMBER}}'
+    when:
+      condition:
+        all:
+          whenVarIsMissing: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'
 
   deployment:
     stage: argo-deploy
@@ -109,3 +113,7 @@ steps:
         --variable APP_NAME="${{APP_NAME}}" --variable
         COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
         COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}""
+    when:
+      condition:
+        all:
+          whenVarIsMissing: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'
