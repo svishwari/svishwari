@@ -11,7 +11,7 @@ sphinx:
 
 # Build all formats
 formats: all
-
+# TODO - use Pipfile in the future to keep consistent with hux API package. not for this PR.
 # Optionally set the version of Python and requirements required to build your docs
 python:
   version: 3.7
