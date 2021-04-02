@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '@/views/Home.vue';
 import Welcome from '@/views/Welcome.vue';
+import Login from '@/views/Login.vue';
 import NotFound from '@/views/NotFound.vue';
 import config from '@/config';
 
@@ -61,7 +62,7 @@ router.beforeEach((to, from, next) => {
 
   if (nearestWithTitle) {
     document.title = nearestWithTitle.meta.title + ' | ' + config.appTitle;
-  } 
+  }
   return next();
 });
 
