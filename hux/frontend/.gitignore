@@ -5,5 +5,4 @@ node_modules
 **-lock.*
 
 .eslintcache
-.vscode
 .env**

@@ -3,14 +3,14 @@ FROM node:14 as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
-RUN npm install --no-optional && npm cache clean --force
+RUN npm install --silent
+RUN npm install @vue/cli@4.5.6 -g
 COPY . /app
-# COPY --from=base /tmp/env_file .env
 RUN npm run build
 
 # production environment
-FROM nginx
-COPY --from=build /app/build /usr/share/nginx/html
+FROM nginx:1.16.0-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d
 EXPOSE 80
