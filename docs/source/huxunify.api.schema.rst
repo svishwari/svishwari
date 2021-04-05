@@ -28,10 +28,10 @@ huxunify.api.schema.cdm module
    :undoc-members:
    :show-inheritance:
 
-huxunify.api.schema.decision module
------------------------------------
+huxunify.api.schema.decisioning module
+--------------------------------------
 
-.. automodule:: huxunify.api.schema.decision
+.. automodule:: huxunify.api.schema.decisioning
    :members:
    :undoc-members:
    :show-inheritance:
@@ -48,6 +48,14 @@ huxunify.api.schema.marketing module
 ------------------------------------
 
 .. automodule:: huxunify.api.schema.marketing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+huxunify.api.schema.utils module
+--------------------------------
+
+.. automodule:: huxunify.api.schema.utils
    :members:
    :undoc-members:
    :show-inheritance:

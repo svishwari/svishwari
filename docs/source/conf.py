@@ -11,18 +11,17 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# sys.path.insert(0, os.path.abspath('.'))
-
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../../"))
+sys.path.insert(0, os.path.abspath("../../hux/api/"))
+
 
 # -- Project information -----------------------------------------------------
 
 project = "HUX Unified Solution"
-copyright = "2021, HUX Unified Team"
-author = "HUX Unified Team"
+copyright = "2021, HUX Team"
+author = "HUX Team"
 
 # The full version, including alpha/beta/rc tags
 release = "1.0.0"
