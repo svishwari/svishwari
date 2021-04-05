@@ -1,8 +1,7 @@
-hux/api
-===========
+huxunify
+========
 
 .. toctree::
    :maxdepth: 4
 
    huxunify
-   setup

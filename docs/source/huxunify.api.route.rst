@@ -28,10 +28,10 @@ huxunify.api.route.cdm module
    :undoc-members:
    :show-inheritance:
 
-huxunify.api.route.decision module
-----------------------------------
+huxunify.api.route.decisioning module
+-------------------------------------
 
-.. automodule:: huxunify.api.route.decision
+.. automodule:: huxunify.api.route.decisioning
    :members:
    :undoc-members:
    :show-inheritance:
