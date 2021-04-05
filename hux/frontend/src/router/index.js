@@ -4,7 +4,7 @@ import Home from '@/views/Home.vue';
 import Welcome from '@/views/Welcome.vue';
 import Login from '@/views/Login.vue';
 import NotFound from '@/views/NotFound.vue';
-import config from '@/config';
+// import config from '@/config';
 
 Vue.use(VueRouter);
 
@@ -55,8 +55,8 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = pageTitle(to.meta.title)
-  next()
+  document.title = to.meta.title;
+  next();
 });
 
 export default router;

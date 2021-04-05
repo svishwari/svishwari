@@ -12,12 +12,12 @@ import '../node_modules/ngprogress/ngProgress.css';
 // Vue.use(VueI18n);
 
 // Layouts
-import AppLayout from '@/layouts/AppLayout'
-import DefaultLayout from '@/layouts/None'
+import AppLayout from '@/layouts/AppLayout';
+import DefaultLayout from '@/layouts/None';
 
 // Layouts as usable components
-Vue.component('AppLayout', AppLayout)
-Vue.component('DefaultLayout', DefaultLayout)
+Vue.component('AppLayout', AppLayout);
+Vue.component('DefaultLayout', DefaultLayout);
 
 Vue.config.productionTip = false;
 

@@ -17,12 +17,6 @@ const getClient = () => {
   // Add a request interceptor
   client.interceptors.request.use(
     config => {
-      const authStorage = JSON.parse(localStorage.getItem("okta-token-storage"));
-      const authToken = authStorage.accessToken.value;
-      const authUserName = authStorage.idToken.claims.name;
-      config.headers['Authorization'] = `Bearer ${authToken}`
-      isOktaEnabled && (user_name = authUserName);
-      
       return config
     },
     error => {
