@@ -7,7 +7,8 @@ stages:
   - git
   - build_tag
   - docker
-  - test
+  - py37_check
+  - safety_style_check
   - artifactory
   - argo-deploy
 
@@ -53,57 +54,86 @@ steps:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
 # Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
-  # VersionTag:
-  #   stage: build_tag
-  #   description: Set docker tag based Git tag
-  #   type: freestyle
-  #   image: alpine
-  #   commands:
-  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
-  #   when:
-  #     condition:
-  #       all:
-  #         masterBranch: '"${{CF_BRANCH}}" == "main"'
-
-# To be used when Dockerfile is available
-  # DockerBuild:
-  #   stage: docker
-  #   title: Building Docker Image for Unified API
-  #   type: build
-  #   image_name: '${{BUILD_NAME_API}}'
-  #   working_directory: ${{CF_REPO_NAME}}
-  #   tag: '${{DOCKER_TAG}}'
-  #   dockerfile: Dockerfile
-
-  TestImage:
-    stage: test
-    title: Running Test Cases
+  VersionTag:
+    stage: build_tag
+    description: Set docker tag based Git tag
     type: freestyle
-    image: "ubuntu:latest"
-    working_directory: ${{CF_REPO_NAME}}
+    image: alpine
     commands:
-      - "ls"
+      - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
+    when:
+      condition:
+        all:
+          masterBranch: '"${{CF_BRANCH}}" == "main"'
 
-  # PublishToArtifactory:
-  #   stage: artifactory
-  #   title: Publish Unified API Image to JFrog Artifactory
-  #   type: deloittehux/jfrog-docker-publish
-  #   arguments:
-  #     BUILD_NAME: '${{BUILD_NAME_API}}'
-  #     BUILD_NUMBER: '${{DOCKER_TAG}}'
-  #     JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
-  #     BUILD_TAG: '${{DOCKER_TAG}}'
+  build_image:
+    stage: "docker"
+    title: "Building Docker Image for Unified API"
+    type: "build"
+    image_name: '${{BUILD_NAME}}'
+    working_directory: '${{CF_REPO_NAME}}'
+    dockerfile: 'hux/Dockerfile'
+    tag: '${{DOCKER_TAG}}'
+    build_arguments:
+      - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
 
-  deployment:
-    stage: argo-deploy
-    description: "Deploy the application"
-    type: freestyle
-    image: codefresh/cli:latest
+  py37_check:
+    stage: "py37_check"
+    title: "Tox - py37"
+    image: "${{build_image}}"
+    working_directory: '/app/hux-unified/api'
+    description: "run tests using tox"
     commands:
-      - >-
-        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
-        DeloitteHux/Hux-Unified-Solution-Deploy -b 'main' --variable
-        DOCKER_TAG=${{DOCKER_TAG}} --variable FILE_NAME="${{FILE_NAME}}"
-        --variable APP_NAME="${{APP_NAME}}" --variable
-        COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
-        COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
+      - pip install tox
+      - tox -e ${TOXENV} -- --skip-model-generate
+    scale:
+      py37:
+        title: 'py37'
+        environment:
+          - TOXENV=py37
+    fail_fast: false
+
+  safety_style_check:
+    stage: "safety_style_check"
+    title: "Tox - safety and style"
+    image: "${{build_image}}"
+    working_directory: '/app/hux-unified/api'
+    description: "run safety and style checks using tox"
+    commands:
+      - pip install tox
+      - tox -e ${TOXENV} -- --skip-model-generate
+    scale:
+      safety:
+        title: 'safety'
+        environment:
+          - TOXENV=safety
+      style:
+        title: 'style'
+        environment:
+          - TOXENV=style
+    fail_fast: false
+
+  PublishToArtifactory:
+    stage: artifactory
+    title: Publish Unified API Image to JFrog Artifactory
+    type: deloittehux/jfrog-docker-publish
+    arguments:
+      BUILD_NAME: '${{BUILD_NAME_API}}'
+      BUILD_NUMBER: '${{DOCKER_TAG}}'
+      JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
+      BUILD_TAG: '${{DOCKER_TAG}}'
+
+#  Left out until api is ready for deployment
+#  deployment:
+#    stage: argo-deploy
+#    description: "Deploy the application"
+#    type: freestyle
+#    image: codefresh/cli:latest
+#    commands:
+#      - >-
+#        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
+#        DeloitteHux/Hux-Unified-Solution-Deploy -b 'main' --variable
+#        DOCKER_TAG=${{DOCKER_TAG}} --variable FILE_NAME="${{FILE_NAME}}"
+#        --variable APP_NAME="${{APP_NAME}}" --variable
+#        COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
+#        COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
