@@ -12,12 +12,12 @@ import '../node_modules/ngprogress/ngProgress.css';
 // Vue.use(VueI18n);
 
 // Layouts
-import DefaultDash from '@/layouts/AppLayout.vue';
-import None from '@/layouts/None.vue';
+import AppLayout from '@/layouts/AppLayout'
+import DefaultLayout from '@/layouts/None'
 
 // Layouts as usable components
-Vue.component('default-dash-layout', DefaultDash);
-Vue.component('none-layout', None);
+Vue.component('AppLayout', AppLayout)
+Vue.component('DefaultLayout', DefaultLayout)
 
 Vue.config.productionTip = false;
 
