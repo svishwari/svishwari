@@ -21,19 +21,8 @@ const getClient = () => {
       const authToken = authStorage.accessToken.value;
       const authUserName = authStorage.idToken.claims.name;
       config.headers['Authorization'] = `Bearer ${authToken}`
-      if (isOktaEnabled == "true") {
-          user_name = authUserName;
-      }
-
-      if(url.endsWith(configEndpoint.serverEndpoint.fetchModels)){
-        config.data.Username = user_name
-      }
-      else if(url.endsWith(configEndpoint.serverEndpoint.performSegmentation)){        
-        config.data.Username = user_name
-      }
-      else if(url.endsWith(configEndpoint.serverEndpoint.performRealtimeSegmentation)){
-        config.data.Username = user_name
-      }
+      isOktaEnabled && (user_name = authUserName);
+      
       return config
     },
     error => {
