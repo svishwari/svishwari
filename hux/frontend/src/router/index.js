@@ -55,15 +55,8 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const nearestWithTitle = to.matched
-    .slice()
-    .reverse()
-    .find((r) => r.meta && r.meta.title);
-
-  if (nearestWithTitle) {
-    document.title = nearestWithTitle.meta.title + ' | ' + config.appTitle;
-  }
-  return next();
+  document.title = pageTitle(to.meta.title)
+  next()
 });
 
 export default router;
