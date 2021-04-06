@@ -24,6 +24,7 @@ steps:
     description: run tests using tox
     commands:
       - pip install tox
+      - rm ./.eggs/setuptools*.egg
       - python -m tox -e ${TOXENV}
     scale:
       py37:
