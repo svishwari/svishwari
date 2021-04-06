@@ -118,6 +118,9 @@ def get_ingested_data(
     data_dict = defaultdict(list)
     next_start_id = None
 
+    # TODO - per Greg Ronin, future we improve it to be a generator to avoid start_id
+    #  and next_start_id. Maybe we need a ticket to evaluate that.
+
     # Read the audience documents and build a dict
     try:
         cursor = (
@@ -178,6 +181,9 @@ def get_audience(
             Pandas format and next_start_id.
 
     """
+
+    # TODO - per Greg Ronin, future we improve it to be a generator to avoid start_id
+    #  and next_start_id. Maybe we need a ticket to evaluate that.
 
     doc = None
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
