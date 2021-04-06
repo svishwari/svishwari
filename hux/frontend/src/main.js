@@ -17,7 +17,7 @@ import DefaultLayout from "@/layouts/None";
 import vuetify from "./plugins/vuetify";
 
 // Layouts as usable components
-Vue.component("AppLayout", AppLayout);
+Vue.component("app-layout", AppLayout);
 Vue.component("DefaultLayout", DefaultLayout);
 
 Vue.config.productionTip = false;

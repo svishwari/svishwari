@@ -23,7 +23,7 @@ const routes = [
     name: "Home",
     component: Home,
     meta: {
-      layout: "default-dash",
+      layout: "app",
       title: "Home",
     },
   },
