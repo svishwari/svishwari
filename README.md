@@ -9,7 +9,7 @@ todo
 ## Table of Contents
 * [Technologies](#Technologies)
 * [Structure](#Structure)
-* [Add pre-commit git hooks](#Add pre commit githooks)
+* [Add pre-commit git hooks](#Add-pre-commit-githooks)
 * [TOX](#TOX)
 * [CI](#CI)
 * [CD](#CD)
@@ -29,7 +29,7 @@ todo
 * [api](hux/api/README.md)
 * [frontend](hux/frontend/README.md)
 * [library](lib/README.md)
-    * [database](lib/database/README.md) (coming soon)
+    * [database](lib/huxunifylib/README.md)
 
 
 # Add pre-commit git hooks
