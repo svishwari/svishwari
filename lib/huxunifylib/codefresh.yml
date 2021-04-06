@@ -25,7 +25,8 @@ steps:
     commands:
       - pip install tox
       - pwd
-      - rm /.eggs/setuptools*.egg
+      - ls -l
+#      - rm /.eggs/setuptools*.egg
       - python -m tox -e ${TOXENV}
     scale:
       py37:
