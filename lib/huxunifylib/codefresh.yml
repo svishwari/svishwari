@@ -1,11 +1,11 @@
 # TODO - HUS-144: publish package to artifactory.
 # TODO - where to put this package in artifactory so that ADPERF can consume
-# TODO - identify if they will build package themselves, or they want the wheel file instead.
 
 version: "1.0"
 stages:
   - clone
   - checks
+  - publish
 
 steps:
 
@@ -36,3 +36,24 @@ steps:
         environment:
           - TOXENV=style
     fail_fast: false
+
+  publish:
+    stage: publish
+    when:
+      condition:
+        any:
+          githubRelease: 'match("${{CF_RELEASE_TAG}}", "^v[0-1].[0-9]+.[0-9]+", false) == true'
+    description: "Publish the package on semver tag creation"
+    image: "python:3.7-buster"
+    working_directory: "${{clone}}"
+    commands:
+      - pip install --upgrade pip
+      - pip install pep517 twine
+      - rm -rf ./dist
+      - python -m pep517.build . --out-dir ./dist
+      - twine upload ./dist/*
+    environment:
+      - TWINE_USERNAME=${{TWINE_USERNAME}} # TODO NEW USERNAME HERE
+      - TWINE_PASSWORD=${{TWINE_PASSWORD}} # TODO NEW PASSWORD HERE
+      - TWINE_REPOSITORY_URL=${{ARTIFACTORY_PYTHON_WRITE}}
+# TODO here need new username and password from Paul for different artifactory bucket
