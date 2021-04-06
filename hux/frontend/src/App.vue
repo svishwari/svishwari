@@ -6,17 +6,17 @@
 
 <script>
 export default {
-  name: 'App',
+  name: "App",
   computed: {
     layout() {
       // none-layout will be used if the meta.layout tag is not set
       // computed may not be best place in vue lifecycle for this but it works ok
-      return `${this.$route.meta.layout || 'none'}-layout`;
+      return `${this.$route.meta.layout || "none"}-layout`;
     },
   },
   mounted() {
-    window.addEventListener('load', () => {
-      document.getElementsByClassName('loader-overlay')[0].remove();
+    window.addEventListener("load", () => {
+      document.getElementsByClassName("loader-overlay")[0].remove();
     });
   },
 };

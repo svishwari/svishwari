@@ -1,55 +1,55 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import Home from '@/views/Home.vue';
-import Welcome from '@/views/Welcome.vue';
-import Login from '@/views/Login.vue';
-import NotFound from '@/views/NotFound.vue';
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Home from "@/views/Home.vue";
+import Welcome from "@/views/Welcome.vue";
+import Login from "@/views/Login.vue";
+import NotFound from "@/views/NotFound.vue";
 // import config from '@/config';
 
 Vue.use(VueRouter);
 
 const NotFoundRoute = {
-  path: '*',
+  path: "*",
   component: NotFound,
   meta: {
-    title: 'OOPs',
-    layout: 'none',
+    title: "OOPs",
+    layout: "none",
   },
 };
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
+    path: "/",
+    name: "Home",
     component: Home,
     meta: {
-      layout: 'default-dash',
-      title: 'Home',
+      layout: "default-dash",
+      title: "Home",
     },
   },
   {
-    path: '/login',
-    name: 'login',
+    path: "/login",
+    name: "login",
     component: Login,
     meta: {
-      layout: 'none',
-      title: 'Login',
+      layout: "none",
+      title: "Login",
     },
   },
   {
-    path: '/welcome',
-    name: 'Welcome',
+    path: "/welcome",
+    name: "Welcome",
     component: Welcome,
     meta: {
-      layout: 'none',
-      title: 'Welcome',
+      layout: "none",
+      title: "Welcome",
     },
   },
 ];
 routes.push(NotFoundRoute);
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
   routes,
 });
