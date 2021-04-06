@@ -136,3 +136,7 @@ steps:
         --variable APP_NAME="${{APP_NAME}}" --variable
         COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
         COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
+    when:
+      branch:
+        only:
+          - main
