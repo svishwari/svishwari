@@ -61,6 +61,7 @@ STATUS_SUCCEEDED = "Succeeded"
 INGESTED_DATA = "data"
 
 # special types and transformations
+S_TYPE_ADDRESS = "address"
 S_TYPE_AGE = "age"  # internal only
 S_TYPE_CITY = "city"
 S_TYPE_COUNTRY_CODE = "country_code"
