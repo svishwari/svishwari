@@ -123,17 +123,20 @@ steps:
       JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
       BUILD_TAG: '${{DOCKER_TAG}}'
 
-#  Left out until api is ready for deployment
-#  deployment:
-#    stage: argo-deploy
-#    description: "Deploy the application"
-#    type: freestyle
-#    image: codefresh/cli:latest
-#    commands:
-#      - >-
-#        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
-#        DeloitteHux/Hux-Unified-Solution-Deploy -b 'main' --variable
-#        DOCKER_TAG=${{DOCKER_TAG}} --variable FILE_NAME="${{FILE_NAME}}"
-#        --variable APP_NAME="${{APP_NAME}}" --variable
-#        COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
-#        COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
+  deployment:
+    stage: argo-deploy
+    description: "Deploy the application"
+    type: freestyle
+    image: codefresh/cli:latest
+    commands:
+      - >-
+        codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
+        DeloitteHux/Hux-Unified-Solution-Deploy -b 'main' --variable
+        DOCKER_TAG=${{DOCKER_TAG}} --variable FILE_NAME="${{FILE_NAME}}"
+        --variable APP_NAME="${{APP_NAME}}" --variable
+        COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
+        COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
+    when:
+      branch:
+        only:
+          - main

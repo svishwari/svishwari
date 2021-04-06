@@ -20,7 +20,7 @@ steps:
   checks:
     stage: "checks"
     image: 'huxhub.repo.mgnt.in/python:3.7-buster'
-    working_directory: ${{CF_REPO_NAME}}/lib/huxunifylib
+    working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib'
     description: run tests using tox
     commands:
       - pip install tox
