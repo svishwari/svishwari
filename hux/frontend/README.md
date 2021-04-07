@@ -1,5 +1,4 @@
-# HUX Unified User Interface
-# 
+# Hux UI
 
 ## Project setup
 ```
