@@ -6,11 +6,17 @@ import logging
 import huxunifylib.database.constants as c
 import huxunifylib.database.data_management as dm
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.db_utils import DataStorage, DataFormat, TransformerNames as t
+from huxunifylib.database.db_utils import (
+    DataStorage,
+    DataFormat,
+    TransformerNames as t,
+)
 
 # Get details on MongoDB configuration
 HOST = os.environ.get("MONGO_DB_HOST", "localhost")
-PORT = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
+PORT = (
+    int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
+)
 USERNAME = os.environ.get("MONGO_DB_USERNAME")
 PASSWORD = os.environ.get("MONGO_DB_PASSWORD")
 

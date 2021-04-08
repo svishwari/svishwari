@@ -18,7 +18,9 @@ class TestAudienceManagement(unittest.TestCase):
     def setUp(self):
 
         # Connect
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
@@ -191,7 +193,9 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertEqual(audience_data.shape[0], 2)
         self.assertEqual(set(audience_data[c.S_TYPE_COUNTRY_CODE]), {"US"})
-        self.assertEqual(set(audience_data[c.S_TYPE_CITY]), {"New York", "Chicago"})
+        self.assertEqual(
+            set(audience_data[c.S_TYPE_CITY]), {"New York", "Chicago"}
+        )
         self.assertEqual(set(audience_data[c.S_TYPE_AGE]), {33, 59})
 
     @mongomock.patch(servers=(("localhost", 27017),))
@@ -199,12 +203,16 @@ class TestAudienceManagement(unittest.TestCase):
         """Test get audiences in batches."""
 
         # Get audience in batches
-        fetch = am.get_audience_batches(self.database, self.audience_doc[c.ID], 1)
+        fetch = am.get_audience_batches(
+            self.database, self.audience_doc[c.ID], 1
+        )
 
         for audience_batch in fetch:
             self.assertEqual(audience_batch.shape[0], 1)
 
-        fetch = am.get_audience_batches(self.database, self.audience_doc[c.ID], 2)
+        fetch = am.get_audience_batches(
+            self.database, self.audience_doc[c.ID], 2
+        )
 
         for audience_batch in fetch:
             self.assertEqual(audience_batch.shape[0], 2)
@@ -214,7 +222,9 @@ class TestAudienceManagement(unittest.TestCase):
         """Test delete audiences."""
 
         # count of audiences documents after soft deletion
-        success_flag = utils.delete_audience(self.database, self.audience_doc[c.ID])
+        success_flag = utils.delete_audience(
+            self.database, self.audience_doc[c.ID]
+        )
         self.assertTrue(success_flag)
 
         count = am.get_audiences_count(database=self.database)
@@ -243,12 +253,16 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(c.S_TYPE_AGE in insights)
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_CITY])
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            c.STATS_COVERAGE in insights[c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_GENDER])
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_AGE])
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_CITY])
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            c.STATS_BREAKDOWN in insights[c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_GENDER])
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_AGE])
         self.assertTrue(c.STATS_BREAKDOWN not in insights[c.S_TYPE_FIRST_NAME])
@@ -318,12 +332,16 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue("custom_field_extra" in insights)
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_CITY])
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            c.STATS_COVERAGE in insights[c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_GENDER])
         self.assertTrue(c.STATS_COVERAGE in insights[c.S_TYPE_AGE])
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_CITY])
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_COUNTRY_CODE])
-        self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_STATE_OR_PROVINCE])
+        self.assertTrue(
+            c.STATS_BREAKDOWN in insights[c.S_TYPE_STATE_OR_PROVINCE]
+        )
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_GENDER])
         self.assertTrue(c.STATS_BREAKDOWN in insights[c.S_TYPE_AGE])
         self.assertTrue(c.STATS_BREAKDOWN in insights["custom_field"])
@@ -472,7 +490,9 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(all_insights is not None)
         self.assertEqual(len(all_insights), 1)
-        self.assertEqual(all_insights[0][c.AUDIENCE_ID], self.audience_doc[c.ID])
+        self.assertEqual(
+            all_insights[0][c.AUDIENCE_ID], self.audience_doc[c.ID]
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_audience_insights(self):
