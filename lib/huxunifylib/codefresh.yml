@@ -15,7 +15,6 @@ steps:
     git: "DeloitteHux_github"
 
   checks:
-    type: "parallel"
     stage: "checks"
     image: 'huxhub.repo.mgnt.in/python:3.7-buster'
     working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib'
