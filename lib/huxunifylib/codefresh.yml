@@ -18,6 +18,7 @@ steps:
     git: "DeloitteHux_github"
 
   checks:
+    type: "parallel"
     stage: "checks"
     image: 'huxhub.repo.mgnt.in/python:3.7-buster'
     working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib'
@@ -43,9 +44,9 @@ steps:
       condition:
         any:
           githubRelease: 'match("${{CF_RELEASE_TAG}}", "^v[0-1].[0-9]+.[0-9]+", false) == true'
-    description: "Publish the package on semver tag creation"
+    description: "Publish the package on server tag creation"
     image: "python:3.7-buster"
-    working_directory: "${{clone}}"
+    working_directory: "/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib"
     commands:
       - pip install --upgrade pip
       - pip install pep517 twine
