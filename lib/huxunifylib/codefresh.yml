@@ -10,7 +10,7 @@ steps:
     stage: "clone"
     title: "Cloning repository"
     type: "git-clone"
-    repo: "DeloitteHux/Hux-Unified-Solution"
+    repo: "DeloitteHux/hux-unified"
     revision: "${{CF_BRANCH}}"
     git: "DeloitteHux_github"
 
