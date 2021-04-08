@@ -13,7 +13,7 @@ steps:
     stage: "clone"
     title: "Cloning repository"
     type: "git-clone"
-    repo: "DeloitteHux/hux-unified-solution"
+    repo: "DeloitteHux/Hux-Unified-Solution"
     revision: "${{CF_BRANCH}}"
     git: "DeloitteHux_github"
 
