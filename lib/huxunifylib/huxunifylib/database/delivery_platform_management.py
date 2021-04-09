@@ -410,7 +410,9 @@ def set_platform_type(
     return doc
 
 
-def get_platform_type(database: DatabaseClient, delivery_platform_id: ObjectId) -> str:
+def get_platform_type(
+    database: DatabaseClient, delivery_platform_id: ObjectId
+) -> str:
     """A function to get the delivery platform type.
 
     Args:
@@ -908,7 +910,9 @@ def set_delivery_job(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivery_job(database: DatabaseClient, delivery_job_id: ObjectId) -> dict:
+def get_delivery_job(
+    database: DatabaseClient, delivery_job_id: ObjectId
+) -> dict:
     """A function to get an audience delivery job.
 
     Args:
@@ -979,7 +983,9 @@ def set_delivery_job_status(
     return doc
 
 
-def get_delivery_job_status(database: DatabaseClient, delivery_job_id: ObjectId) -> str:
+def get_delivery_job_status(
+    database: DatabaseClient, delivery_job_id: ObjectId
+) -> str:
     """A function to get an delivery job status.
 
     Args:
@@ -1121,7 +1127,9 @@ def get_delivery_job_audience_size(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience_delivery_jobs(database: DatabaseClient, audience_id: ObjectId) -> list:
+def get_audience_delivery_jobs(
+    database: DatabaseClient, audience_id: ObjectId
+) -> list:
     """A function to get all audience delivery jobs given an audience.
 
     Args:

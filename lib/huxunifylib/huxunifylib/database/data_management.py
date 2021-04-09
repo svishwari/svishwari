@@ -170,7 +170,9 @@ def set_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_data_source(database: DatabaseClient, data_source_id: ObjectId) -> dict:
+def get_data_source(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> dict:
     """A function to get a data source.
 
     Args:
@@ -617,7 +619,9 @@ def update_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_ingestion_job(database: DatabaseClient, data_source_id: ObjectId) -> dict:
+def set_ingestion_job(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> dict:
     """A function to set an ingestion job.
 
     Args:
@@ -675,7 +679,9 @@ def set_ingestion_job(database: DatabaseClient, data_source_id: ObjectId) -> dic
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_ingestion_job(database: DatabaseClient, ingestion_job_id: ObjectId) -> dict:
+def get_ingestion_job(
+    database: DatabaseClient, ingestion_job_id: ObjectId
+) -> dict:
     """A function to get an ingestion job.
 
     Args:
@@ -738,7 +744,9 @@ def get_data_source_ingestion_jobs(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def is_data_source_mutable(database: DatabaseClient, data_source_id: ObjectId) -> bool:
+def is_data_source_mutable(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> bool:
     """Determine if a data source us mutable.
 
     Args:
@@ -977,9 +985,9 @@ def append_ingested_data(
     if c.S_TYPE_CUSTOMER_ID not in ingested_data.columns:
         ingested_data[c.S_TYPE_CUSTOMER_ID] = None
 
-    ingested_data[c.S_TYPE_CUSTOMER_ID] = ingested_data[c.S_TYPE_CUSTOMER_ID].apply(
-        lambda x: ObjectId() if x is None else x
-    )
+    ingested_data[c.S_TYPE_CUSTOMER_ID] = ingested_data[
+        c.S_TYPE_CUSTOMER_ID
+    ].apply(lambda x: ObjectId() if x is None else x)
 
     # Add docs to the batch
     batch_docs = []

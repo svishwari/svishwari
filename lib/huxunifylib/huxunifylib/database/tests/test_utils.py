@@ -19,7 +19,9 @@ class TestUtils(unittest.TestCase):
     def setUp(self):
 
         # Connect
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
@@ -238,7 +240,9 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(c.DELIVERY_PLATFORM_STATUS in doc)
 
         # Create a delivery job
-        delivery_doc = dpm.set_delivery_job(database, audience_id, delivery_platform_id)
+        delivery_doc = dpm.set_delivery_job(
+            database, audience_id, delivery_platform_id
+        )
 
         self.assertTrue(delivery_doc is not None)
         self.assertTrue(c.ID in delivery_doc)
@@ -274,10 +278,14 @@ class TestUtils(unittest.TestCase):
 
         self.assertTrue(doc is not None)
         self.assertTrue(c.DELIVERY_PLATFORM_LOOKALIKE_AUDS in doc)
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_LOOKALIKE_AUDS], lookalike_audiences)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_LOOKALIKE_AUDS], lookalike_audiences
+        )
 
         # Create another delivery job with no lookalike audiences
-        delivery_doc = dpm.set_delivery_job(database, audience_id, delivery_platform_id)
+        delivery_doc = dpm.set_delivery_job(
+            database, audience_id, delivery_platform_id
+        )
 
         self.assertTrue(delivery_doc is not None)
         self.assertTrue(c.ID in delivery_doc)

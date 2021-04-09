@@ -372,7 +372,9 @@ def delete_data_source_ingestion_jobs(
     """
     success_flag = True
 
-    ingestion_jobs = dm.get_data_source_ingestion_jobs(database, data_source_id)
+    ingestion_jobs = dm.get_data_source_ingestion_jobs(
+        database, data_source_id
+    )
 
     if ingestion_jobs is not None and len(ingestion_jobs) > 0:
         for doc in ingestion_jobs:
@@ -504,13 +506,17 @@ def delete_audiences_bulk(
 
     delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
 
-    success_flag = delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION)
+    success_flag = delete_bulk(
+        database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION
+    )
 
     # Delete dependent lookalike audiences
     if success_flag:
         all_lookalike_ids = []
         for delivery_doc in delivery_jobs:
-            lookalike_ids = delivery_doc.get(c.DELIVERY_PLATFORM_LOOKALIKE_AUDS)
+            lookalike_ids = delivery_doc.get(
+                c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
+            )
             if lookalike_ids is not None:
                 all_lookalike_ids += lookalike_ids
 
@@ -522,7 +528,9 @@ def delete_audiences_bulk(
 
     # Delete audiences
     if success_flag:
-        success_flag = delete_bulk(database, audience_ids, c.AUDIENCES_COLLECTION)
+        success_flag = delete_bulk(
+            database, audience_ids, c.AUDIENCES_COLLECTION
+        )
 
     return success_flag
 
@@ -555,13 +563,17 @@ def delete_delivery_platforms_bulk(
 
     delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
 
-    success_flag = delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION)
+    success_flag = delete_bulk(
+        database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION
+    )
 
     # Delete dependent lookalike audiences
     if success_flag:
         all_lookalike_ids = []
         for delivery_doc in delivery_jobs:
-            lookalike_ids = delivery_doc.get(c.DELIVERY_PLATFORM_LOOKALIKE_AUDS)
+            lookalike_ids = delivery_doc.get(
+                c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
+            )
             if lookalike_ids is not None:
                 all_lookalike_ids += lookalike_ids
 
@@ -609,9 +621,13 @@ def delete_data_sources_bulk(
 
     ingestion_job_ids = [doc[c.ID] for doc in ingestion_jobs]
 
-    success_flag = delete_bulk(database, ingestion_job_ids, c.INGESTION_JOBS_COLLECTION)
+    success_flag = delete_bulk(
+        database, ingestion_job_ids, c.INGESTION_JOBS_COLLECTION
+    )
 
     if success_flag:
-        success_flag = delete_bulk(database, data_source_ids, c.DATA_SOURCES_COLLECTION)
+        success_flag = delete_bulk(
+            database, data_source_ids, c.DATA_SOURCES_COLLECTION
+        )
 
     return success_flag
