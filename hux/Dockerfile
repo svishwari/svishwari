@@ -17,7 +17,7 @@ RUN pip install pipenv
 ARG ARTIFACTORY_PYTHON_READ
 
 # install all dependencies listed in Pipfile
-RUN pipenv install --deploy --pypi-mirror ${ARTIFACTORY_PYTHON_READ}
+RUN pipenv install --ignore-pipfile --deploy --pypi-mirror ${ARTIFACTORY_PYTHON_READ}
 
 WORKDIR /app/hux-unified/api/huxunify
 CMD ["pipenv", "run", "app.py"]
