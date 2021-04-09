@@ -21,8 +21,6 @@ steps:
         image: alpine
         commands:
           - cf_export BUILD_NAME=unified-ui
-          - cf_export CF_REPO_NAME=hux-unified
-          - cf_export CF_REPO_OWNER=DeloitteHux
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
           - cf_export APP_NAME=unified-ui
           - cf_export SUB_REPO=hux/frontend

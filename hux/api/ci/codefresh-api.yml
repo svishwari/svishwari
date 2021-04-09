@@ -25,8 +25,6 @@ steps:
         image: alpine
         commands:
           - cf_export BUILD_NAME_API=unified-api
-          - cf_export CF_REPO_NAME=hux-unified
-          - cf_export CF_REPO_OWNER=DeloitteHux
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
           - cf_export APP_NAME=unified-api
           - cf_export FILE_NAME=values-main-use1-xspdev.yaml
