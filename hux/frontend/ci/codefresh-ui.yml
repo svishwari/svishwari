@@ -20,12 +20,11 @@ steps:
         title: Set build variables
         image: alpine
         commands:
-          - cf_export BUILD_NAME=unified-ui
+          - cf_export BUILD_NAME=hux-unified-ui
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
-          - cf_export APP_NAME=unified-ui
           - cf_export SUB_REPO=hux/frontend
           - cf_export PORT=80
-          - cf_export FILE_NAME=values-main-use1-xspdev.yaml
+          - cf_export FILE_NAME=values-main-use1-hux-unified-dev1.yaml
 
       BuildNumber:
         stage: prepare
@@ -108,9 +107,9 @@ steps:
         codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
         DeloitteHux/hux-unified-deploy -b 'main' --variable
         DOCKER_TAG=${{DOCKER_TAG}} --variable FILE_NAME="${{FILE_NAME}}"
-        --variable APP_NAME="${{APP_NAME}}" --variable
+        --variable APP_NAME="${{BUILD_NAME}}" --variable
         COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
-        COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}""
+        COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
     when:
       condition:
         all:
