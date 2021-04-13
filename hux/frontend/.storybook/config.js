@@ -11,3 +11,7 @@ addDecorator(withTemplate)
 addDecorator(withVuetify)
 
 configure(require.context('./stories', true, /\.stories\.js$/), module)
+
+addDecorator(() => ({
+  template: '<v-app><story/></v-app>',
+}));
