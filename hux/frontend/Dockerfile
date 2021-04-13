@@ -1,3 +1,10 @@
+# application environment variables
+FROM alpine:latest AS base
+ARG OKTA_ISSUER
+ARG OKTA_CLIENT
+RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
+    "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT" \ > /tmp/env_file
+
 # build environment
 FROM node:14 as huxui-build
 WORKDIR /app
@@ -6,6 +13,7 @@ COPY package.json /app/package.json
 RUN npm install
 RUN npm install @vue/cli@4.5.6 -g
 COPY . /app
+COPY --from=base /tmp/env_file .env
 RUN npm run build
 
 # production environment
