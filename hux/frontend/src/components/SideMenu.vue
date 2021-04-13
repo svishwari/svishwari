@@ -33,7 +33,7 @@
                 </v-menu>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list v-for="item in items"
+            <!-- <v-list v-for="item in items"
                     :key="item.title"
                     no-action>
 
@@ -70,8 +70,30 @@
                   </v-list-item>
                 </v-list-group>
                 
-            </v-list>
+            </v-list> -->
             
+
+            <v-list>
+              <v-list-group
+                v-for="item in items" :key="item.title"
+                v-model="item.active"
+                :prepend-icon="item.action"
+                no-action>
+                <v-list-item slot="activator" :to="item.link">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item v-for="subItem in item.items" :key="subItem.title" :to="subItem.link">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ subItem.title }}</v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-icon>{{ subItem.action }}</v-icon>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list-group>
+            </v-list>
 
             <template v-slot:append v-if="!toggle">
               <div class="nav-footer">
@@ -108,7 +130,44 @@ export default {
   },
   data: () => ({
     sidebarMenu: true,
-    items: menuConfig.menu
+    // items: menuConfig.menu
+    items: [{
+        action: 'mdi-home-outline',
+        title: 'Overview',
+        link: "overview",
+        heading: null
+      }, {
+        action: 'mdi-bullhorn-outline',
+        title: 'Hux Campaigns',
+        active: false,
+        link: "campaign",
+        heading: "ORCHESTRATION"
+      }, {
+        action: 'mdi-flip-h mdi-account-plus-outline',
+        title: 'Audiences',
+        link: "audiences",
+        heading: null
+      }, {
+        action: 'mdi-tune',
+        title: 'Models',
+        link: "models",
+        heading: null
+      }, {
+        action: 'mdi-connection',
+        title: 'Connections',
+        link: "/connection",
+        heading: null
+      }, {
+        action: 'mdi-account-search-outline',
+        title: 'Indentity',
+        link: "/indentity",
+        heading: null
+      }, {
+        action: 'mdi-account-details-outline',
+        title: 'Profiles',
+        heading: null,
+        items: [{ title: 'Settings', link: "settings" }, { title: 'Logout', link: "logout" }]
+      }]
   }),
 };
 </script>

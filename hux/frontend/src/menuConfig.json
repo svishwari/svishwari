@@ -5,7 +5,7 @@
       "icon": "mdi-home-outline",
       "title": "Overview",
       "link": "overview",
-      "active": false
+      "active": true
     },
     {
       "label" : "ORCHESTRATION",
