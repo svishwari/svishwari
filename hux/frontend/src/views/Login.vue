@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import Logo from "../assets/images/logo.svg";
-import auth from "@/auth";
+import Logo from "../assets/images/logo.svg"
+import auth from "@/auth"
 export default {
   name: "Login",
   data() {
@@ -77,7 +77,7 @@ export default {
         required: (value) => !!value || "Required.",
         min: (v) => v.length >= 8 || "Min 8 characters",
       },
-    };
+    }
   },
   components: {
     Logo,
@@ -86,16 +86,16 @@ export default {
     initiateLogin() {
       auth.login(this.username, this.password, (loggedIn) => {
         if (!loggedIn) {
-          this.loginFailed = true;
+          this.loginFailed = true
         } else {
-          this.$router.replace(this.$route.query.redirect || "/home");
+          this.$router.replace(this.$route.query.redirect || "/home")
         }
-      });
+      })
     },
     forgotUsername() {},
     forgotPassword() {},
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

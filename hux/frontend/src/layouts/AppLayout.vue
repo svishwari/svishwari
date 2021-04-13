@@ -13,5 +13,5 @@
 export default {
   name: "app-layout",
   //   components: { AppHeader, BreadCrumb },
-};
+}
 </script>

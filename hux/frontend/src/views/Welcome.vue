@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import Logo from "../assets/images/logo.svg";
+import Logo from "../assets/images/logo.svg"
 // import auth from "./auth/auth";
 
 export default {
@@ -37,17 +37,17 @@ export default {
   data() {
     return {
       PATH_TO_PROTECTED_ROUTE: "/home",
-    };
+    }
   },
   components: {
     Logo,
   },
   methods: {
     login() {
-      this.$router.push("home");
+      this.$router.push("home")
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
