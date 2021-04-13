@@ -4,12 +4,13 @@ import App from "@/App"
 import router from "./router"
 import store from "./store"
 
-// NG Progress
-import "../node_modules/ngprogress/ngProgress.css"
+// Styles
+import "@mdi/font/css/materialdesignicons.css"
+import "ngprogress/ngProgress.css"
 
 // Layouts
 import AppLayout from "@/layouts/AppLayout"
-import DefaultLayout from "@/layouts/None"
+import DefaultLayout from "@/layouts/DefaultLayout"
 import vuetify from "./plugins/vuetify"
 
 // Layouts as usable components

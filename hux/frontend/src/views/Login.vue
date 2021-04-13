@@ -137,7 +137,7 @@ export default {
       }
     }
     p {
-      font-family: Open Sans;
+      font-family: "Open Sans";
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
@@ -146,7 +146,7 @@ export default {
       margin-bottom: 20px;
     }
     .error {
-      font-family: Open Sans;
+      font-family: "Open Sans";
       font-style: normal;
       font-weight: normal;
       font-size: 10px;
