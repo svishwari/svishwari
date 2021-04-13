@@ -1,22 +1,13 @@
 <template>
   <v-container fluid class="login-wrap">
     <v-row no-gutters>
-      <v-col
-        cols="6"
-        :style="{
-          'background-image':
-            'url(' + require('../assets/images/logon_background.png') + ')',
-        }"
-        class="left-section"
-      >
+      <v-col cols="6" class="left-section">
         <span class="overlay"></span>
       </v-col>
       <v-col cols="6" class="right-section">
         <Logo />
         <h1>Access your <span class="altcolor">360°</span> view</h1>
-        <pre>
- Jump right in where you left off, and leave the hard work on us!</pre
-        >
+        <p>Jump right in where you left off, and leave the hard work on us!</p>
         <div class="login-form">
           <v-form ref="form" v-model="isFormValid" lazy-validation>
             <v-text-field
@@ -43,23 +34,26 @@
               @click.native="forgotUsername"
               to="#"
               class="link-button"
-              >Forgot Username?</router-link
             >
+              Forgot Username?
+            </router-link>
             <router-link
               @click.native="forgotPassword"
               to="#"
               class="link-button"
-              >Forgot Password?</router-link
             >
+              Forgot Password?
+            </router-link>
 
             <!-- disable if form is not valid -->
             <v-btn
               :disabled="!isFormValid"
               x-large
-              class="mt-4"
+              class="mt-4 loginBtn"
               @click="initiateLogin()"
-              >Login</v-btn
             >
+              Login
+            </v-btn>
           </v-form>
         </div>
       </v-col>
@@ -112,6 +106,7 @@ export default {
     height: 100vh;
     position: relative;
     background-size: cover;
+    background-image: url("../assets/images/logon_background.png");
     .overlay {
       background: #b54acf;
       opacity: 0.3;
@@ -141,13 +136,14 @@ export default {
         color: #f03bc8;
       }
     }
-    pre {
+    p {
       font-family: Open Sans;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
       line-height: 22px;
       color: #757b7b;
+      margin-bottom: 20px;
     }
     .error {
       font-family: Open Sans;
@@ -161,6 +157,9 @@ export default {
     .link-button {
       display: block;
       margin-top: 17px;
+    }
+    .loginBtn {
+      margin-top: 30px;
     }
   }
 }
