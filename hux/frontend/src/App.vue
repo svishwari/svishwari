@@ -11,7 +11,7 @@ export default {
     layout() {
       // none-layout will be used if the meta.layout tag is not set
       // computed may not be best place in vue lifecycle for this but it works ok
-      return `${this.$route.meta.layout || "none"}-layout`;
+      return `${this.$route.meta.layout || "default"}-layout`;
     },
   },
   mounted() {
@@ -29,6 +29,7 @@ body {
   width: 100%;
   height: 100vh;
   background: #f8f9fa !important;
+  font-family: Open Sans SemiBold;
   #nprogress .bar {
     height: 6px;
   }

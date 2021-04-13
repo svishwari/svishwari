@@ -4,6 +4,9 @@ import Home from "@/views/Home.vue";
 import Welcome from "@/views/Welcome.vue";
 import Login from "@/views/Login.vue";
 import NotFound from "@/views/NotFound.vue";
+
+// Authentication Plugin
+import auth from "@/auth";
 // import config from '@/config';
 
 Vue.use(VueRouter);
@@ -13,18 +16,29 @@ const NotFoundRoute = {
   component: NotFound,
   meta: {
     title: "OOPs",
-    layout: "none",
+    layout: "default",
   },
+};
+
+const requireAuth = (to, from, next) => {
+  if (!auth.loggedIn()) {
+    next({
+      path: "/login",
+      query: { redirect: to.fullPath },
+    });
+  } else {
+    next();
+  }
 };
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "Welcome",
+    component: Welcome,
     meta: {
-      layout: "app",
-      title: "Home",
+      layout: "default",
+      title: "Welcome to Hux",
     },
   },
   {
@@ -32,17 +46,25 @@ const routes = [
     name: "login",
     component: Login,
     meta: {
-      layout: "none",
+      layout: "default",
       title: "Login",
     },
   },
   {
-    path: "/welcome",
-    name: "Welcome",
-    component: Welcome,
+    path: "/logout",
+    beforeEnter(to, from, next) {
+      auth.logout();
+      next("/");
+    },
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: Home,
+    beforeEnter: requireAuth,
     meta: {
-      layout: "none",
-      title: "Welcome",
+      layout: "app",
+      title: "Overview | Hux Unified UI",
     },
   },
 ];

@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="container-fluid">
+      <h1>App Layout</h1>
       <slot />
     </div>
   </div>
