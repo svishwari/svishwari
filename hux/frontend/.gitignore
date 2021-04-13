@@ -6,7 +6,6 @@ node_modules
 yarn-error.log
 
 .eslintcache
-.env**
 
 # editors
 # https://github.com/github/gitignore/blob/master/Global/VisualStudioCode.gitignore
