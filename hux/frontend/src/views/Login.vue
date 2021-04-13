@@ -18,13 +18,13 @@
             ></v-text-field>
             <v-text-field
               v-model="password"
-              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-icon="toggleShowPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="[rules.required]"
-              :type="show1 ? 'text' : 'password'"
+              :type="toggleShowPassword ? 'text' : 'password'"
               name="input-10-1"
               label="Password"
               autocomplete="newPassword"
-              @click:append="show1 = !show1"
+              @click:append="toggleShowPassword = !toggleShowPassword"
             ></v-text-field>
             <div v-if="loginFailed" class="error">
               Uh-oh, your email and password don’t match.
@@ -70,7 +70,7 @@ export default {
     return {
       username: "",
       password: "",
-      show1: false,
+      toggleShowPassword: false,
       loginFailed: false,
       isFormValid: false,
       rules: {
