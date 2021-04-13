@@ -1,5 +1,5 @@
 import { OktaAuth } from "@okta/okta-auth-js";
-import config from "../../config";
+import config from "./config";
 
 const authClient = new OktaAuth({ issuer: config.default.oidc.issuer });
 

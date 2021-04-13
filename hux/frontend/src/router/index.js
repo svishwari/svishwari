@@ -6,7 +6,7 @@ import Login from "@/views/Login.vue";
 import NotFound from "@/views/NotFound.vue";
 
 // Authentication Plugin
-import auth from "@/views/auth/auth";
+import auth from "@/auth";
 // import config from '@/config';
 
 Vue.use(VueRouter);

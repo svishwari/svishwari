@@ -63,7 +63,7 @@
 
 <script>
 import Logo from "../assets/images/logo.svg";
-import auth from "./auth/auth";
+import auth from "@/auth";
 export default {
   name: "Login",
   data() {
