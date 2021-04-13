@@ -33,46 +33,6 @@
                 </v-menu>
             </v-list-item>
             <v-divider></v-divider>
-            <!-- <v-list v-for="item in items"
-                    :key="item.title"
-                    no-action>
-
-                <span class="list-group" v-if="item.label && !toggle"> {{ item.label }} </span>
-                <v-list-item v-if="item.title">
-                    <v-list-item-icon>
-                        <v-icon color="primary"> {{ item.icon }} </v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                        <v-list-item-title class="primary--text"> {{ item.title }} </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-
-                <v-list-group
-                  v-for="item in item.menu"
-                  :key="item.title"
-                  v-model="item.active"
-                  :prepend-icon="item.icon"
-                  no-action >
-                  <template v-slot:activator>
-                    <v-list-item :to="item.link" class="link-list">
-                      <v-list-item-content>
-                        <v-list-item-title v-text="item.title"></v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-
-                  <v-list-item
-                    v-for="child in item.menu"
-                    :key="child.title"  :to="child.link">
-                    <v-list-item-content>
-                      <v-list-item-title v-text="child.title"></v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-group>
-                
-            </v-list> -->
-            
-
             <v-list>
               <v-list-group
                 v-for="item in items" :key="item.title"
@@ -178,7 +138,7 @@ export default {
     margin: 0;
     width: 100%;
     height: 100vh;
-    background: #f8f9fa !important;
+    background: #f8f9fa;
     #nprogress .bar {
       height: 6px;
     }
@@ -193,8 +153,8 @@ export default {
   .v-navigation-drawer {
     width: 220px;
   }
-  .theme--light.v-navigation-drawer {
-    background-color: #005587 !important;
+  .v-application--wrap > .theme--light.v-navigation-drawer {
+    background-color: #005587;
   }
   .v-list-item__title {
     font-size: 13px;
@@ -206,24 +166,20 @@ export default {
     letter-spacing: 0px;
     text-align: left;
   }
-  div.v-list-item__title.primary--text, i.v-icon.notranslate.mdi {
-    color: #ffffff !important;
-    caret-color: #ffffff !important;
-  }
-  .v-list .v-list-item--active {
-    color: inherit;
-  }
-  div .v-list .v-list-item--active::before {
-    background-color: #A0DCFF !important;
-    opacity: 0.2 !important;
+  div.v-list-item__icon.v-list-group__header__prepend-icon{
+    div.v-list-item__title.primary--text, i.v-icon.notranslate.mdi {
+      color: #ffffff;
+      caret-color: #ffffff;
+    }
   }
   .v-navigation-drawer .v-list {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 10px;
   }
-      
-  div.v-list-item__icon.v-list-group__header__prepend-icon {
-    margin-right: 8.75px !important;
+  div.v-list-group__header.v-list-item.v-list-item--link{
+    div.v-list-item__icon.v-list-group__header__prepend-icon {
+      margin-right: 8.75px;
+    }
   }
   .list-group {
     margin-left: 17px;
@@ -244,7 +200,8 @@ export default {
   .v-list-item.v-list-item--link.theme--light {
     padding-left: 25px;
   }
-  .v-navigation-drawer--mini-variant {
+
+  .v-application--wrap > nav.v-navigation-drawer--mini-variant {
     width: 90px !important;
   }
   .v-btn.v-btn--icon.v-btn--round.theme--light.v-size--small {
@@ -290,19 +247,23 @@ export default {
   .profile-name {
     background: rgba(0, 0, 0, 0.25);
   }
-  div.v-list-item__content {
-    color: #ffffff !important;
+  .v-list-item.v-list-item--link {
+    div.v-list-item__content {
+      color: #ffffff;
+    }
   }
   .v-list.v-sheet.theme--light {
     i.v-icon.notranslate.mdi.mdi-chevron-down.theme--light {
       display: none;
     }
   }
-  .profile-chevron-icon {
-    margin-right: 25px !important;
-    color: #FFFFFF !important;
+  div.profile-name{
+    .profile-chevron-icon {
+      margin-right: 25px;
+      color: #FFFFFF;
+    }
   }
-  a.v-list-item--active {
-    background-color: unset !important;
+  .v-list-group--active {
+    background: rgba(255, 255, 255, 0.1);
   }
 </style>

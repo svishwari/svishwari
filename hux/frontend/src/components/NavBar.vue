@@ -31,15 +31,12 @@ export default {
 <style lang="scss">
 .v-application--wrap {
   .v-toolbar__content {
-    background-color: white !important;
-    border-bottom: 1px solid rgb(208, 208, 206) !important;
-    color: #FFFFFF !important;
+    background-color: white ;
+    border-bottom: 1px solid rgb(208, 208, 206) ;
+    color: #FFFFFF ;
   }
 }
-.theme--dark.v-btn.v-btn--icon {
-    color: #0e0e0e !important;
-}
-.v-app-bar__nav-icon {
+button.v-app-bar__nav-icon.nav-back-burger {
   margin-left: 30px !important;
 }
 .v-icon.notranslate.mdi.mdi-backburger.theme--dark::before {
