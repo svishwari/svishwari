@@ -4,14 +4,17 @@ module.exports = {
   lintOnSave: true,
   filenameHashing: true,
   productionSourceMap: false,
+
   configureWebpack: {
     performance: {
       hints: false,
     },
   },
+
   css: {
     sourceMap: false,
   },
+
   chainWebpack(config) {
     config.plugins.delete("prefetch");
 
@@ -35,4 +38,6 @@ module.exports = {
         name: "assets/[name].[hash:8].[ext]",
       });
   },
+
+  transpileDependencies: ["vuetify"],
 };

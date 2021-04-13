@@ -14,6 +14,7 @@ import "../node_modules/ngprogress/ngProgress.css";
 // Layouts
 import AppLayout from "@/layouts/AppLayout";
 import DefaultLayout from "@/layouts/None";
+import vuetify from "./plugins/vuetify";
 
 // Layouts as usable components
 Vue.component("AppLayout", AppLayout);
@@ -24,5 +25,6 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
+  vuetify,
   render: (h) => h(App),
 }).$mount("#app");

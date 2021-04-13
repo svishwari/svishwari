@@ -1,12 +1,12 @@
 <template>
   <v-app>
-      <div>audiences</div>
+      <div>Campaign</div>
   </v-app>
 </template>
 
 <script>
 export default {
-  name: "audiences",
+  name: "campaign",
 };
 </script>
 

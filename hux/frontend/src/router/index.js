@@ -23,8 +23,26 @@ const routes = [
     name: "Home",
     component: Home,
     meta: {
-      layout: "default-dash",
+      layout: "app",
       title: "Home",
+    }
+  },
+  {
+    path: "/audiences",
+    name: "audiences",
+    component: () => import('@/views/audiences/index.vue'),
+    meta: {
+      layout: "app",
+      title: "audiences",
+    },
+  },
+  {
+    path: "/campaign",
+    name: "campaign",
+    component: () => import('@/views/campaign.vue'),
+    meta: {
+      layout: "app",
+      title: "campaign",
     },
   },
   {

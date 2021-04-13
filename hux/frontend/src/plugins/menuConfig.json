@@ -1,0 +1,66 @@
+{
+  "menu" : [
+    {
+      "label" : null,
+      "icon": "mdi-home-outline",
+      "title": "Overview",
+      "link": "overview",
+      "active": false
+    },
+    {
+      "label" : "ORCHESTRATION",
+      "menu": [
+        { 
+          "icon": "mdi-bullhorn-outline", 
+          "title": "Hux Campaigns", 
+          "link": "/campaign",
+          "active": false
+        },
+        { 
+          "icon": "mdi-flip-h mdi-account-plus-outline", 
+          "title": "Audiences", 
+          "link": "/audiences",
+          "active": false 
+        }
+      ] 
+    },
+    {
+      "label" : "DECISIONING",
+      "menu": [
+        { 
+          "icon": "mdi-tune", 
+          "title": "Models", 
+          "link": "/models",
+          "active": false
+        }
+      ] 
+    },
+    {
+      "label" : "DATA MANAGEMENT",
+      "menu": [
+        { 
+          "icon": "mdi-connection", 
+          "title": "Connections", 
+          "link": "/connection",
+          "active": false
+        },
+        { 
+          "icon": "mdi-account-search-outline", 
+          "title": "Indentity", 
+          "link": "/indentity",
+          "active": false 
+        },
+        { 
+          "icon": "mdi-account-details-outline", 
+          "title": "Profiles", 
+          "link": "/profiles",
+          "active": false,
+          "menu": [
+            { "title": "Settings", "link": "settings", "active": false },
+            { "title": "Logout", "link": "Logout", "active": false }
+          ]
+        }
+      ] 
+    }
+  ]
+}
