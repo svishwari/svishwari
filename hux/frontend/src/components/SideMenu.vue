@@ -12,49 +12,73 @@
                 <v-list-item> </v-list-item>
             </v-list>
             <v-list-item class="px-2 profile-name">
-                <v-list-item-content class="text-truncate">
+                <!-- <v-list-item-content class="text-truncate">
                     Pendieton
-                </v-list-item-content>
-                <v-menu bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon v-bind="attrs" v-on="on" class="chevron-icon profile-chevron-icon">mdi-chevron-down</v-icon>
-                  </template>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-title> Profile </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title> Settings </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title> Log-out </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
+                </v-list-item-content> -->
+                <!-- <v-select class="user-dropdown"
+                  :items="selectItems"
+                ></v-select> -->
+                <v-select
+                  v-model="select"
+                  :items="userDropdown"
+                  item-text="state"
+                  item-value="abbr"
+                  return-object
+                  single-line
+                ></v-select>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list>
-              <v-list-group
-                v-for="item in items" :key="item.title"
-                v-model="item.active"
-                :prepend-icon="item.action"
-                no-action>
-                <v-list-item slot="activator" :to="item.link">
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item v-for="subItem in item.items" :key="subItem.title" :to="subItem.link">
-                  <v-list-item-content>
-                    <v-list-item-title>{{ subItem.title }}</v-list-item-title>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-icon>{{ subItem.action }}</v-icon>
-                  </v-list-item-action>
-                </v-list-item>
-              </v-list-group>
-            </v-list>
+            <v-list v-for="item in items"
+                    :key="item.title"
+                    no-action>
 
+                <span class="list-group" v-if="item.label && !toggle"> {{ item.label }} </span>
+                <v-list-item v-if="!item.menu" :to="item.link">
+                    <v-list-item-icon>
+                        <v-icon color="primary"> {{ item.icon }} </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title class="primary--text"> {{ item.title }} </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <div v-if="item.menu">
+                  <v-list-item v-for="menu in item.menu" :key="menu.title" :to="menu.link">
+                      <v-list-item-icon>
+                          <v-icon color="primary"> {{ menu.icon }} </v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                          <v-list-item-title class="primary--text"> {{ menu.title }} </v-list-item-title>
+                      </v-list-item-content>
+                  </v-list-item>
+                
+                </div>
+
+                <!-- <v-list-group
+                  v-for="item in item.menu"
+                  :key="item.title"
+                  v-model="item.active"
+                  :prepend-icon="item.icon"
+                  no-action >
+                  <template v-slot:activator>
+                    <v-list-item :to="item.link" class="link-list">
+                      <v-list-item-content>
+                        <v-list-item-title v-text="item.title"></v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+
+                  <v-list-item
+                    v-for="child in item.menu"
+                    :key="child.title"  :to="child.link">
+                    <v-list-item-content>
+                      <v-list-item-title v-text="child.title"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-group> -->
+                
+            </v-list>
+            
             <template v-slot:append v-if="!toggle">
               <div class="nav-footer">
                 Hux by Deloitte Digital
@@ -90,44 +114,15 @@ export default {
   },
   data: () => ({
     sidebarMenu: true,
-    // items: menuConfig.menu
-    items: [{
-        action: 'mdi-home-outline',
-        title: 'Overview',
-        link: "overview",
-        heading: null
-      }, {
-        action: 'mdi-bullhorn-outline',
-        title: 'Hux Campaigns',
-        active: false,
-        link: "campaign",
-        heading: "ORCHESTRATION"
-      }, {
-        action: 'mdi-flip-h mdi-account-plus-outline',
-        title: 'Audiences',
-        link: "audiences",
-        heading: null
-      }, {
-        action: 'mdi-tune',
-        title: 'Models',
-        link: "models",
-        heading: null
-      }, {
-        action: 'mdi-connection',
-        title: 'Connections',
-        link: "/connection",
-        heading: null
-      }, {
-        action: 'mdi-account-search-outline',
-        title: 'Indentity',
-        link: "/indentity",
-        heading: null
-      }, {
-        action: 'mdi-account-details-outline',
-        title: 'Profiles',
-        heading: null,
-        items: [{ title: 'Settings', link: "settings" }, { title: 'Logout', link: "logout" }]
-      }]
+    items: menuConfig.menu,
+    select: { state: 'Pendieton', abbr: 'FL' },
+    userDropdown: [
+      { state: 'Pendieton', abbr: 'FL' },
+      { state: 'Georgia', abbr: 'GA' },
+      { state: 'Nebraska', abbr: 'NE' },
+      { state: 'California', abbr: 'CA' },
+      { state: 'New York', abbr: 'NY' },
+    ],
   }),
 };
 </script>
@@ -138,7 +133,7 @@ export default {
     margin: 0;
     width: 100%;
     height: 100vh;
-    background: #f8f9fa;
+    background: #f8f9fa !important;
     #nprogress .bar {
       height: 6px;
     }
@@ -153,8 +148,8 @@ export default {
   .v-navigation-drawer {
     width: 220px;
   }
-  .v-application--wrap > .theme--light.v-navigation-drawer {
-    background-color: #005587;
+  .theme--light.v-navigation-drawer {
+    background-color: #005587 !important;
   }
   .v-list-item__title {
     font-size: 13px;
@@ -166,20 +161,24 @@ export default {
     letter-spacing: 0px;
     text-align: left;
   }
-  div.v-list-item__icon.v-list-group__header__prepend-icon{
-    div.v-list-item__title.primary--text, i.v-icon.notranslate.mdi {
-      color: #ffffff;
-      caret-color: #ffffff;
-    }
+  div.v-list-item__title.primary--text, i.v-icon.notranslate.mdi {
+    color: #ffffff !important;
+    caret-color: #ffffff !important;
+  }
+  .v-list .v-list-item--active {
+    color: inherit;
+  }
+  div .v-list .v-list-item--active::before {
+    background-color: #A0DCFF !important;
+    opacity: 0.2 !important;
   }
   .v-navigation-drawer .v-list {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 10px;
   }
-  div.v-list-group__header.v-list-item.v-list-item--link{
-    div.v-list-item__icon.v-list-group__header__prepend-icon {
-      margin-right: 8.75px;
-    }
+      
+  div.v-list-item__icon.v-list-group__header__prepend-icon {
+    margin-right: 8.75px !important;
   }
   .list-group {
     margin-left: 17px;
@@ -200,8 +199,7 @@ export default {
   .v-list-item.v-list-item--link.theme--light {
     padding-left: 25px;
   }
-
-  .v-application--wrap > nav.v-navigation-drawer--mini-variant {
+  .v-navigation-drawer--mini-variant {
     width: 90px !important;
   }
   .v-btn.v-btn--icon.v-btn--round.theme--light.v-size--small {
@@ -247,23 +245,19 @@ export default {
   .profile-name {
     background: rgba(0, 0, 0, 0.25);
   }
-  .v-list-item.v-list-item--link {
-    div.v-list-item__content {
-      color: #ffffff;
-    }
+  div.v-list-item__content {
+    color: #ffffff !important;
   }
   .v-list.v-sheet.theme--light {
     i.v-icon.notranslate.mdi.mdi-chevron-down.theme--light {
       display: none;
     }
   }
-  div.profile-name{
-    .profile-chevron-icon {
-      margin-right: 25px;
-      color: #FFFFFF;
-    }
+  .profile-chevron-icon {
+    margin-right: 25px !important;
+    color: #FFFFFF !important;
   }
-  .v-list-group--active {
-    background: rgba(255, 255, 255, 0.1);
+  a.v-list-item--active {
+    background-color: unset !important;
   }
 </style>

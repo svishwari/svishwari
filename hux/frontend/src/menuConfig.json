@@ -4,8 +4,7 @@
       "label" : null,
       "icon": "mdi-home-outline",
       "title": "Overview",
-      "link": "overview",
-      "active": true
+      "link": "overview"
     },
     {
       "label" : "ORCHESTRATION",
@@ -13,14 +12,12 @@
         { 
           "icon": "mdi-bullhorn-outline", 
           "title": "Hux Campaigns", 
-          "link": "campaign",
-          "active": false
+          "link": "campaign"
         },
         { 
           "icon": "mdi-flip-h mdi-account-plus-outline", 
           "title": "Audiences", 
-          "link": "audiences",
-          "active": false 
+          "link": "audiences"
         }
       ] 
     },
@@ -30,8 +27,7 @@
         { 
           "icon": "mdi-tune", 
           "title": "Models", 
-          "link": "models",
-          "active": false
+          "link": "models"
         }
       ] 
     },
@@ -41,23 +37,20 @@
         { 
           "icon": "mdi-connection", 
           "title": "Connections", 
-          "link": "/connection",
-          "active": false
+          "link": "/connection"
         },
         { 
           "icon": "mdi-account-search-outline", 
           "title": "Indentity", 
-          "link": "/indentity",
-          "active": false 
+          "link": "/indentity"
         },
         { 
           "icon": "mdi-account-details-outline", 
           "title": "Profiles", 
           "link": "/profiles",
-          "active": false,
           "menu": [
-            { "title": "Settings", "link": "settings", "active": false },
-            { "title": "Logout", "link": "Logout", "active": false }
+            { "title": "Settings", "link": "settings" },
+            { "title": "Logout", "link": "Logout" }
           ]
         }
       ] 
