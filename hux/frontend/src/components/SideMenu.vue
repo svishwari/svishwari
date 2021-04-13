@@ -38,7 +38,7 @@
                     no-action>
 
                 <span class="list-group" v-if="item.label && !toggle"> {{ item.label }} </span>
-                <v-list-item :to="item.link" v-if="item.title">
+                <v-list-item v-if="item.title">
                     <v-list-item-icon>
                         <v-icon color="primary"> {{ item.icon }} </v-icon>
                     </v-list-item-icon>
@@ -54,9 +54,11 @@
                   :prepend-icon="item.icon"
                   no-action >
                   <template v-slot:activator>
-                    <v-list-item-content>
-                      <v-list-item-title v-text="item.title"></v-list-item-title>
-                    </v-list-item-content>
+                    <v-list-item :to="item.link" class="link-list">
+                      <v-list-item-content>
+                        <v-list-item-title v-text="item.title"></v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
                   </template>
 
                   <v-list-item
@@ -81,7 +83,7 @@
 </template>
 
 <script>
-import menuConfig from '@/plugins/menuConfig.json'
+import menuConfig from '@/menuConfig.json'
 
 export default {
   name: "SideMenu",
@@ -240,5 +242,8 @@ export default {
   .profile-chevron-icon {
     margin-right: 25px !important;
     color: #FFFFFF !important;
+  }
+  a.v-list-item--active {
+    background-color: unset !important;
   }
 </style>

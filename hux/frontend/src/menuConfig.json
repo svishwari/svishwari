@@ -13,13 +13,13 @@
         { 
           "icon": "mdi-bullhorn-outline", 
           "title": "Hux Campaigns", 
-          "link": "/campaign",
+          "link": "campaign",
           "active": false
         },
         { 
           "icon": "mdi-flip-h mdi-account-plus-outline", 
           "title": "Audiences", 
-          "link": "/audiences",
+          "link": "audiences",
           "active": false 
         }
       ] 
@@ -30,7 +30,7 @@
         { 
           "icon": "mdi-tune", 
           "title": "Models", 
-          "link": "/models",
+          "link": "models",
           "active": false
         }
       ] 

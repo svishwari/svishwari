@@ -28,12 +28,12 @@ const routes = [
     }
   },
   {
-    path: "/audiences",
-    name: "audiences",
-    component: () => import('@/views/audiences/index.vue'),
+    path: "/overview",
+    name: "overview",
+    component: () => import('@/views/overview.vue'),
     meta: {
       layout: "app",
-      title: "audiences",
+      title: "overview",
     },
   },
   {
@@ -43,6 +43,33 @@ const routes = [
     meta: {
       layout: "app",
       title: "campaign",
+    },
+  },
+  {
+    path: "/audiences",
+    name: "audiences",
+    component: () => import('@/views/audiences/index.vue'),
+    meta: {
+      layout: "app",
+      title: "audiences",
+    },
+  },
+  {
+    path: "/models",
+    name: "models",
+    component: () => import('@/views/models.vue'),
+    meta: {
+      layout: "app",
+      title: "models",
+    },
+  },
+  {
+    path: "/settings",
+    name: "settings",
+    component: () => import('@/views/settings.vue'),
+    meta: {
+      layout: "app",
+      title: "settings",
     },
   },
   {
