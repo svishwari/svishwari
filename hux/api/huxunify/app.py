@@ -45,6 +45,7 @@ def create_app():
 
     # register the blueprints
     flask_app.register_blueprint(cdm_bp, url_prefix="/cdm")
+    flask_app.register_blueprint(cdm_bp, url_prefix="/connections")
     _ = Swagger(flask_app)
 
     # register the blueprint and route

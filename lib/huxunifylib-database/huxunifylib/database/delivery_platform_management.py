@@ -41,6 +41,7 @@ def set_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -386,6 +387,7 @@ def set_platform_type(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -463,6 +465,7 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 

@@ -8,10 +8,10 @@ from flask import Blueprint
 from marshmallow.exceptions import ValidationError
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
-from huxunify.api.model.cdm import CdmModel
-from huxunify.api.schema.errors import NotFoundError, RequestError
-from huxunify.api.schema.cdm import Datafeed, Fieldmapping, ProcessedData
-from huxunify.api.route.utils import add_view_to_blueprint
+from hux.api.huxunify.api.model.cdm import CdmModel
+from hux.api.huxunify.api.schema.errors import NotFoundError, RequestError
+from hux.api.huxunify.api.schema.cdm import Datafeed, Fieldmapping, ProcessedData
+from hux.api.huxunify.api.utils import add_view_to_blueprint
 
 
 CDM_TAG = "cdm"
@@ -42,9 +42,7 @@ class DatafeedSearch(SwaggerView):
     @marshal_with(Datafeed(many=True))
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves the data feed catalog.
-
         ---
-
         Returns:
             Response: List of datafeeds.
 
