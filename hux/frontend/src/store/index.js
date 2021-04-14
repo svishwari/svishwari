@@ -11,7 +11,7 @@ const debug = process.env.NODE_ENV !== "production";
 
 const store = new Vuex.Store({
   modules: {
-    user: userStore
+    user: userStore,
   },
   strict: debug,
   plugins: debug ? [] : [],

@@ -1,81 +1,85 @@
 <template>
-    <v-app>
-        <v-navigation-drawer 
-            v-model="sidebarMenu" 
-            app
-            floating
-            :permanent="sidebarMenu"
-            :mini-variant.sync="mini"
-            >
-            <v-list dense color="primary" dark class="logo-holder">
-                <div class="hux_logo"> </div>
-                <v-list-item> </v-list-item>
-            </v-list>
-            <v-list-item class="px-2 profile-name">
-                <v-select
-                  v-model="select"
-                  :items="userDropdown"
-                  item-text="state"
-                  item-value="abbr"
-                  return-object
-                  single-line
-                  class="user-profile"
-                ></v-select>
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-list v-for="item in items"
-                    :key="item.title"
-                    no-action>
+  <v-app>
+    <v-navigation-drawer
+      v-model="sidebarMenu"
+      app
+      floating
+      :permanent="sidebarMenu"
+      :mini-variant.sync="mini"
+    >
+      <v-list dense color="primary" dark class="logo-holder">
+        <div class="hux_logo"></div>
+        <v-list-item> </v-list-item>
+      </v-list>
+      <v-list-item class="px-2 profile-name">
+        <v-select
+          v-model="select"
+          :items="userDropdown"
+          item-text="state"
+          item-value="abbr"
+          return-object
+          single-line
+          class="user-profile"
+        ></v-select>
+      </v-list-item>
+      <v-divider></v-divider>
+      <v-list v-for="item in items" :key="item.title" no-action>
+        <span class="list-group" v-if="item.label && !toggle">
+          {{ item.label }}
+        </span>
+        <v-list-item v-if="!item.menu" :to="item.link">
+          <v-list-item-icon>
+            <v-icon color="primary"> {{ item.icon }} </v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title class="primary--text">
+              {{ item.title }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
 
-                <span class="list-group" v-if="item.label && !toggle"> {{ item.label }} </span>
-                <v-list-item v-if="!item.menu" :to="item.link">
-                    <v-list-item-icon>
-                        <v-icon color="primary"> {{ item.icon }} </v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                        <v-list-item-title class="primary--text"> {{ item.title }} </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
+        <div v-if="item.menu">
+          <v-list-item
+            v-for="menu in item.menu"
+            :key="menu.title"
+            :to="menu.link"
+          >
+            <v-list-item-icon>
+              <v-icon color="primary"> {{ menu.icon }} </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="primary--text">
+                {{ menu.title }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+      </v-list>
 
-                <div v-if="item.menu">
-                  <v-list-item v-for="menu in item.menu" :key="menu.title" :to="menu.link">
-                      <v-list-item-icon>
-                          <v-icon color="primary"> {{ menu.icon }} </v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-content>
-                          <v-list-item-title class="primary--text"> {{ menu.title }} </v-list-item-title>
-                      </v-list-item-content>
-                  </v-list-item>
-                </div>
-                
-            </v-list>
-
-            <template v-slot:append v-if="!toggle">
-              <div class="nav-footer">
-                Hux by Deloitte Digital
-              </div>
-            </template>
-        </v-navigation-drawer>
-    </v-app>
+      <template v-slot:append v-if="!toggle">
+        <div class="nav-footer">Hux by Deloitte Digital</div>
+      </template>
+    </v-navigation-drawer>
+  </v-app>
 </template>
 
 <script>
-import menuConfig from '@/menuConfig.json'
+import menuConfig from "@/menuConfig.json";
 
 export default {
   name: "SideMenu",
-  props: ['toggle'],
+  props: ["toggle"],
   computed: {
     layout() {
-        // none-layout will be used if the meta.layout tag is not set
-        // computed may not be best place in vue lifecycle for this but it works ok
-        return `${this.$route.meta.layout || "none"}-layout`;
+      // none-layout will be used if the meta.layout tag is not set
+      // computed may not be best place in vue lifecycle for this but it works ok
+      return `${this.$route.meta.layout || "none"}-layout`;
     },
     mini() {
-        return (this.$vuetify.breakpoint.smAndDown) || this.toggle
+      return this.$vuetify.breakpoint.smAndDown || this.toggle;
     },
     buttonText() {
-        return !this.$vuetify.theme.dark ? 'Go Dark' : 'Go Light'
+      return !this.$vuetify.theme.dark ? "Go Dark" : "Go Light";
     },
   },
   mounted() {
@@ -86,13 +90,13 @@ export default {
   data: () => ({
     sidebarMenu: true,
     items: menuConfig.menu,
-    select: { state: 'Pendieton', abbr: 'FL' },
+    select: { state: "Pendieton", abbr: "FL" },
     userDropdown: [
-      { state: 'Pendieton', abbr: 'FL' },
-      { state: 'Georgia', abbr: 'GA' },
-      { state: 'Nebraska', abbr: 'NE' },
-      { state: 'California', abbr: 'CA' },
-      { state: 'New York', abbr: 'NY' },
+      { state: "Pendieton", abbr: "FL" },
+      { state: "Georgia", abbr: "GA" },
+      { state: "Nebraska", abbr: "NE" },
+      { state: "California", abbr: "CA" },
+      { state: "New York", abbr: "NY" },
     ],
   }),
 };
@@ -133,7 +137,7 @@ export default {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 10px;
   }
-      
+
   div.v-list-item__icon.v-list-group__header__prepend-icon {
     margin-right: 8.75px !important;
   }
@@ -202,50 +206,42 @@ export default {
   .profile-name {
     background: rgba(0, 0, 0, 0.25);
   }
+}
+.profile-chevron-icon {
+  margin-right: 25px !important;
+  color: #ffffff !important;
+}
+a.v-list-item--active {
+  background-color: unset !important;
+}
+.v-list.v-select-list.v-sheet {
   div.v-list-item__content {
+    color: #0c0b0b !important;
+  }
+}
+.profile-name {
+  .v-select__selections {
     color: #ffffff !important;
   }
-  .v-list.v-sheet.theme--light {
-    i.v-icon.notranslate.mdi.mdi-chevron-down.theme--light {
-      display: none;
-    }
-  }
-  .profile-chevron-icon {
-    margin-right: 25px !important;
-    color: #FFFFFF !important;
-  }
-  a.v-list-item--active {
-    background-color: unset !important;
-  }
-  .v-list.v-select-list.v-sheet {
-    div.v-list-item__content {
-        color: #0c0b0b !important;
-    }
-  }
-  .profile-name {
-    .v-select__selections {
-      color: #FFFFFF !important;
-    }
-  }
-  .theme--light.v-text-field > .v-input__control > .v-input__slot:before {
-    border: none;
-  }
-  .v-text-field.v-input--is-focused > .v-input__control > .v-input__slot:after {
-    border: none;
-  }
-  .v-select__selection.v-select__selection--comma {
-    width: 148px;
-    height: 15px;
-    left: calc(50% - 148px/2 - 11px);
-    top: 117px;
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 22px;
-    display: flex;
-    align-items: center;
-    color: #FFFFFF;
-  }
+}
+.theme--light.v-text-field > .v-input__control > .v-input__slot:before {
+  border: none;
+}
+.v-text-field.v-input--is-focused > .v-input__control > .v-input__slot:after {
+  border: none;
+}
+.v-select__selection.v-select__selection--comma {
+  width: 148px;
+  height: 15px;
+  left: calc(50% - 148px / 2 - 11px);
+  top: 117px;
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 22px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
 </style>
-
