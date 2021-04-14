@@ -8,7 +8,13 @@ import vuetifyConfig from "../src/plugins/vuetify"
 
 addDecorator(() => ({
   vuetify: vuetifyConfig,
-  template: "<v-app><v-main><story/></v-main></v-app>",
+  template: `
+    <v-app>
+      <v-main>
+        <story/>
+      </v-main>
+    </v-app>
+  `,
 }))
 
 addDecorator(withA11y)
@@ -16,4 +22,5 @@ addDecorator(withKnobs)
 addDecorator(withTemplate)
 addDecorator(withVuetify)
 
-configure(require.context("./stories", true, /\.stories\.js$/), module)
+const stories = require.context("./stories", true, /\.stories\.js$/)
+configure(stories, module)
