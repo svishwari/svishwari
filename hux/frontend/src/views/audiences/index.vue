@@ -1,7 +1,5 @@
 <template>
-  <v-app>
-    <div>audiences</div>
-  </v-app>
+  <div>audiences</div>
 </template>
 
 <script>

@@ -1,7 +1,5 @@
 <template>
-  <v-app>
-    <div>Campaign</div>
-  </v-app>
+  <div>Campaign</div>
 </template>
 
 <script>

@@ -1,66 +1,64 @@
 <template>
-  <v-app>
-    <v-navigation-drawer
-      v-model="sidebarMenu"
-      app
-      floating
-      :permanent="sidebarMenu"
-      :mini-variant.sync="mini"
-    >
-      <v-list dense color="primary" dark class="logo-holder">
-        <div class="hux_logo"></div>
-        <v-list-item> </v-list-item>
-      </v-list>
-      <v-list-item class="px-2 profile-name">
-        <v-select
-          v-model="select"
-          :items="userDropdown"
-          item-text="state"
-          item-value="abbr"
-          return-object
-          single-line
-          class="user-profile"
-        ></v-select>
+  <v-navigation-drawer
+    v-model="sidebarMenu"
+    app
+    floating
+    :permanent="sidebarMenu"
+    :mini-variant.sync="mini"
+  >
+    <v-list dense color="primary" dark class="logo-holder">
+      <div class="hux_logo"></div>
+      <v-list-item> </v-list-item>
+    </v-list>
+    <v-list-item class="px-2 profile-name">
+      <v-select
+        v-model="select"
+        :items="userDropdown"
+        item-text="state"
+        item-value="abbr"
+        return-object
+        single-line
+        class="user-profile"
+      ></v-select>
+    </v-list-item>
+    <v-divider></v-divider>
+    <v-list v-for="item in items" :key="item.title" no-action>
+      <span class="list-group" v-if="item.label && !toggle">
+        {{ item.label }}
+      </span>
+      <v-list-item v-if="!item.menu" :to="item.link">
+        <v-list-item-icon>
+          <v-icon color="primary"> {{ item.icon }} </v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title class="primary--text">
+            {{ item.title }}
+          </v-list-item-title>
+        </v-list-item-content>
       </v-list-item>
-      <v-divider></v-divider>
-      <v-list v-for="item in items" :key="item.title" no-action>
-        <span class="list-group" v-if="item.label && !toggle">
-          {{ item.label }}
-        </span>
-        <v-list-item v-if="!item.menu" :to="item.link">
+
+      <div v-if="item.menu">
+        <v-list-item
+          v-for="menu in item.menu"
+          :key="menu.title"
+          :to="menu.link"
+        >
           <v-list-item-icon>
-            <v-icon color="primary"> {{ item.icon }} </v-icon>
+            <v-icon color="primary"> {{ menu.icon }} </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title class="primary--text">
-              {{ item.title }}
+              {{ menu.title }}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+      </div>
+    </v-list>
 
-        <div v-if="item.menu">
-          <v-list-item
-            v-for="menu in item.menu"
-            :key="menu.title"
-            :to="menu.link"
-          >
-            <v-list-item-icon>
-              <v-icon color="primary"> {{ menu.icon }} </v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="primary--text">
-                {{ menu.title }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-      </v-list>
-
-      <template v-slot:append v-if="!toggle">
-        <div class="nav-footer">Hux by Deloitte Digital</div>
-      </template>
-    </v-navigation-drawer>
-  </v-app>
+    <template v-slot:append v-if="!toggle">
+      <div class="nav-footer">Hux by Deloitte Digital</div>
+    </template>
+  </v-navigation-drawer>
 </template>
 
 <script>
