@@ -1,5 +1,5 @@
 <template>
-  <v-badge content="2" value="2" color="red" overlap>
+  <v-badge content="2" value="2" color="red" overlap class="notification-badge">
     <v-btn icon class="icon-btn">
       <v-icon class="mdi-bell-outline"> mdi-bell-outline </v-icon>
     </v-btn>
@@ -12,7 +12,9 @@ export default {
 };
 </script>
 <style lang="scss">
-.v-application--is-ltr .v-badge__badge {
-  inset: auto auto calc(100% - 32px) calc(100% - 32px) !important;
+.notification-badge {
+  .v-badge__badge {
+    inset: auto auto calc(100% - 32px) calc(100% - 32px) !important;
+  }
 }
 </style>

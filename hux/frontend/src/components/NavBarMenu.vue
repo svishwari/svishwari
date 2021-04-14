@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">
+  <div class="d-flex navbar-menu">
     <v-btn icon class="icon-btn">
       <v-icon class="mdi-plus">mdi-plus</v-icon>
     </v-btn>
@@ -23,26 +23,34 @@ export default {
 </script>
 
 <style lang="scss">
-.v-application--wrap {
-  min-height: unset !important;
-  flex-direction: row !important;
-  button {
-    margin: 5px;
+.navbar-menu {
+  .v-application--wrap {
+    min-height: unset !important;
+    flex-direction: row !important;
+    button {
+      margin: 5px;
+    }
   }
-}
-.icon-btn {
-  box-shadow: 0px 1px 5px rgb(0 0 0 / 25%);
-  i.v-icon.notranslate.mdi {
-    color: #005587 !important;
+  .icon-btn {
+    box-shadow: 0px 1px 5px rgb(0 0 0 / 25%);
+    i.v-icon.notranslate.mdi {
+      color: #005587 !important;
+    }
+    &.v-btn {
+      &.v-btn--icon { 
+        &.v-btn--round { 
+          margin-right: 9px;
+          margin-left: 9px;
+        }
+      }
+    }
   }
-}
-.icon-btn.v-btn.v-btn--icon.v-btn--round {
-  margin-right: 9px;
-  margin-left: 9px;
-}
-.v-divider.v-divider--vertical {
-  border: 1px solid #d0d0ce;
-  margin-right: 9px;
-  margin-left: 9px;
+  .v-divider {
+    &.v-divider--vertical {
+      border: 1px solid #d0d0ce;
+      margin-right: 9px;
+      margin-left: 9px;
+    }
+  }
 }
 </style>
