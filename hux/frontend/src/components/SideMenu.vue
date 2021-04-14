@@ -23,7 +23,7 @@
                 ></v-select>
             </v-list-item>
             <v-divider></v-divider>
-            <!-- <v-list v-for="item in items"
+            <v-list v-for="item in items"
                     :key="item.title"
                     no-action>
 
@@ -48,52 +48,7 @@
                   </v-list-item>
                 </div>
                 
-            </v-list> -->
-             
-
-             <v-list v-for="item in items"
-                    :key="item.title"
-                    no-action>
-
-                <span class="list-group" v-if="item.label && !toggle"> {{ item.label }} </span>
-                <v-list-item v-if="item.title">
-                    <v-list-item-icon>
-                        <v-icon color="primary"> {{ item.icon }} </v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                        <v-list-item-title class="primary--text"> {{ item.title }} </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-
-                <v-list-group
-                  v-for="item in item.menu"
-                  :key="item.title"
-                  v-model="item.active"
-                  :prepend-icon="item.icon"
-                  no-action >
-                  <template v-slot:activator>
-                    <v-list-item v-if="!item.menu" :to="item.link">
-                      <v-list-item-content>
-                        <v-list-item-title v-text="item.title"></v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item v-if="item.menu">
-                      <v-list-item-content>
-                        <v-list-item-title v-text="item.title"></v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-
-                  <v-list-item
-                    v-for="child in item.menu"
-                    :key="child.title"  :to="child.link">
-                    <v-list-item-content>
-                      <v-list-item-title v-text="child.title"></v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-group>
-                
-            </v-list> 
+            </v-list>
 
             <template v-slot:append v-if="!toggle">
               <div class="nav-footer">
@@ -144,20 +99,6 @@ export default {
 </script>
 
 <style lang="scss">
-  body {
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 100vh;
-    background: #f8f9fa !important;
-    #nprogress .bar {
-      height: 6px;
-    }
-  }
-  /* All delay classes will take half the time to start */
-  :root {
-    --animate-delay: 0.1s;
-  }
   .logo-holder {
     height: 105px;
   }
@@ -237,7 +178,7 @@ export default {
     background: rgba(0, 0, 0, 0.25);
   }
   .hux_logo {
-    background-image: url('../assets/hux _logo_2 .svg');
+    background-image: url("../assets/images/hux_logo_2.svg");
     width: 55px;
     height: 55px;
     margin-top: 17px;
