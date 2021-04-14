@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-y close-on-click>
-    <template v-slot:activator="{on}">
+    <template v-slot:activator="{ on }">
       <span v-on="on" class="d-flex">
         <v-btn icon class="icon-btn">
           <v-avatar>
@@ -10,9 +10,7 @@
         <div class="vertical-center">
           <p class="font-weight-bold short-name">SH</p>
         </div>
-        <v-icon color="black">
-          mdi-chevron-down
-        </v-icon>
+        <v-icon color="black"> mdi-chevron-down </v-icon>
       </span>
     </template>
     <v-list>
