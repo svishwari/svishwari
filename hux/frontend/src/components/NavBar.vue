@@ -33,6 +33,9 @@ export default {
     border-bottom: 1px solid rgb(208, 208, 206);
     color: #ffffff;
   }
+  .theme--dark.v-divider {
+    border-color: #D0D0CE;
+  }
 }
 button.v-app-bar__nav-icon.nav-back-burger {
   margin-left: 30px !important;
