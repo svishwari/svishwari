@@ -1,4 +1,5 @@
 """This module enables functionality related to delivery platform management."""
+# pylint: disable=C0302
 
 import logging
 import datetime
@@ -7,11 +8,11 @@ from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.db_exceptions as de
-import huxunifylib.database.constants as c
-from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.db_utils import name_exists
-import huxunifylib.database.audience_management as am
+import database.db_exceptions as de
+import database.constants as c
+from database.client import DatabaseClient
+from database.utils import name_exists, get_collection_count
+import database.audience_management as am
 
 
 @retry(
@@ -542,27 +543,21 @@ def create_delivery_platform_lookalike_audience(
     collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     # Validate delivery platform id
-    tmp_doc = get_delivery_platform(database, delivery_platform_id)
-
-    if tmp_doc is None:
+    if get_delivery_platform(database, delivery_platform_id) is None:
         raise de.InvalidID(delivery_platform_id)
 
     # Validate source audience id
-    tmp_doc = am.get_audience_config(database, source_audience_id)
-
-    if tmp_doc is None:
+    if am.get_audience_config(database, source_audience_id) is None:
         raise de.InvalidID(source_audience_id)
 
     # Make sure the name will be unique
-    exists_flag = name_exists(
+    if name_exists(
         database,
         c.DATA_MANAGEMENT_DATABASE,
         c.LOOKALIKE_AUDIENCE_COLLECTION,
         c.LOOKALIKE_AUD_NAME,
         name,
-    )
-
-    if exists_flag:
+    ):
         raise de.DuplicateName(name)
 
     # Get current time
@@ -1427,6 +1422,7 @@ def get_delivery_platform_delivery_jobs(
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+        raise
 
     return list(cursor)
 
@@ -1445,20 +1441,9 @@ def get_delivery_platforms_count(database: DatabaseClient) -> int:
         int: Count of delivery platforms documents.
 
     """
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
-    count = 0
-
-    try:
-        count = collection.count_documents(
-            {
-                c.ENABLED: True,
-            }
-        )
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return count
+    return get_collection_count(
+        database, c.DATA_MANAGEMENT_DATABASE, c.DELIVERY_PLATFORM_COLLECTION
+    )
 
 
 @retry(
@@ -1475,20 +1460,9 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
         int: Count of lookalike audiences documents.
 
     """
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
-    count = 0
-
-    try:
-        count = collection.count_documents(
-            {
-                c.ENABLED: True,
-            }
-        )
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return count
+    return get_collection_count(
+        database, c.DATA_MANAGEMENT_DATABASE, c.LOOKALIKE_AUDIENCE_COLLECTION
+    )
 
 
 @retry(

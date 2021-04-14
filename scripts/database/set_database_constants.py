@@ -6,9 +6,11 @@ import logging
 import huxunifylib.database.constants as c
 import huxunifylib.database.data_management as dm
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.db_utils import (
+from huxunifylib.database.general_constants import (
     DataStorage,
     DataFormat,
+)
+from huxunifylib.database.customer_data_transformer_constants import (
     TransformerNames as t,
 )
 
@@ -235,26 +237,10 @@ CONSTANTS_LIST = [
                     c.DESTINATION_COLUMN: c.S_TYPE_CUSTOMER_ID,
                 },
             ],
-            c.CUSTOM_TYPE_BOOL: [
-                {
-                    c.TRANSFORMER: t.TO_BOOLEAN.name,
-                }
-            ],
-            c.CUSTOM_TYPE_CAT: [
-                {
-                    c.TRANSFORMER: t.PASS_THROUGH.name,
-                }
-            ],
-            c.CUSTOM_TYPE_INT: [
-                {
-                    c.TRANSFORMER: t.TO_INTEGER.name,
-                }
-            ],
-            c.CUSTOM_TYPE_FLOAT: [
-                {
-                    c.TRANSFORMER: t.TO_FLOAT.name,
-                }
-            ],
+            c.CUSTOM_TYPE_BOOL: [{c.TRANSFORMER: t.TO_BOOLEAN.name,}],
+            c.CUSTOM_TYPE_CAT: [{c.TRANSFORMER: t.PASS_THROUGH.name,}],
+            c.CUSTOM_TYPE_INT: [{c.TRANSFORMER: t.TO_INTEGER.name,}],
+            c.CUSTOM_TYPE_FLOAT: [{c.TRANSFORMER: t.TO_FLOAT.name,}],
         },
     ),
     (

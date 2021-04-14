@@ -6,10 +6,10 @@ name = "pypi"
 [packages]
 pymongo = "*"
 pandas = "*"
-mongomock = "*"
 tenacity = "*"
 
 [dev-packages]
+mongomock = "*"
 pytest = "*"
 pylint = "*"
 black = { version = "*", pre="true"}
