@@ -1,6 +1,6 @@
 <template>
   <v-app>
-      <div>models</div>
+    <div>models</div>
   </v-app>
 </template>
 

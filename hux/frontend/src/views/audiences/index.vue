@@ -1,6 +1,6 @@
 <template>
   <v-app>
-      <div>audiences</div>
+    <div>audiences</div>
   </v-app>
 </template>
 

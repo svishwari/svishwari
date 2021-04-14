@@ -1,15 +1,15 @@
 <template>
-    <v-app>
-        <v-btn icon class="icon-btn">
-          <v-icon class="mdi-plus">mdi-plus</v-icon>
-        </v-btn>
-        <Notification></Notification>
-        <v-btn icon class="icon-btn">
-          <v-icon class="mdi-help">mdi-help</v-icon>
-        </v-btn>
-        <v-divider vertical></v-divider>
-        <UserAvatar></UserAvatar>
-    </v-app>
+  <v-app>
+    <v-btn icon class="icon-btn">
+      <v-icon class="mdi-plus">mdi-plus</v-icon>
+    </v-btn>
+    <Notification></Notification>
+    <v-btn icon class="icon-btn">
+      <v-icon class="mdi-help">mdi-help</v-icon>
+    </v-btn>
+    <v-divider vertical></v-divider>
+    <UserAvatar></UserAvatar>
+  </v-app>
 </template>
 
 <script>
@@ -40,8 +40,8 @@ export default {
   margin-right: 9px;
   margin-left: 9px;
 }
-.v-divider.v-divider--vertical{
-  border: 1px solid #D0D0CE;
+.v-divider.v-divider--vertical {
+  border: 1px solid #d0d0ce;
   margin-right: 9px;
   margin-left: 9px;
 }

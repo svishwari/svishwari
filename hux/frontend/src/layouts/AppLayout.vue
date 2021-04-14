@@ -19,13 +19,13 @@ import SideMenu from "@/components/SideMenu";
 export default {
   name: "app-layout",
   components: { SideMenu, NavBar },
-   data: () => ({ 
-     toggleMini: false
-   }),
+  data: () => ({
+    toggleMini: false,
+  }),
   methods: {
     toggleSidebar() {
       this.toggleMini = !this.toggleMini;
-    }
-  }
+    },
+  },
 };
 </script>

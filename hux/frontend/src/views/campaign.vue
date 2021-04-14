@@ -1,6 +1,6 @@
 <template>
   <v-app>
-      <div>Campaign</div>
+    <div>Campaign</div>
   </v-app>
 </template>
 

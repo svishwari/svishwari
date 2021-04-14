@@ -1,6 +1,6 @@
 <template>
   <v-app>
-      <div>settings</div>
+    <div>settings</div>
   </v-app>
 </template>
 
