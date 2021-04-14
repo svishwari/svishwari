@@ -56,11 +56,11 @@ class AdvertisingModel:
         obj = requests.put(url, json=data, headers=CODE_HEADERS)
         return obj.json()
 
-    def delete_data_source(self, data_source_id):
+    def delete_data_source(self, data_source_id: int):
         """
         # TODO method is not ready in Audience Builder yet.
         purpose of this function is to delete a data source
-        :param data:
+        :param data_source_id: id of the data source
         :return:
         """
         # push the request
@@ -68,26 +68,26 @@ class AdvertisingModel:
 
     @staticmethod
     # pylint: disable=W0613
-    def star_data_source(data_source_id):
+    def star_data_source(data_source_id: int) -> str:
         """
         # TODO method is not ready in Audience Builder yet.
         purpose of this function is to star a data source
-        :param data:
+        :param data_source_id: id of the data source
         :return:
         """
         # return requests.get(f'{self.API}/data-sources/{data_source_id}?star={star}').json()
         return "star data source mock, not available in Audience builder yet"
 
-    def validate_data_source(self, data_source_id):
+    def validate_data_source(self, data_source_id: int) -> str:
         """
         purpose of this function is to validate a data source
-        :param data:
+        :param data_source_id: id of the data source
         :return:
         """
         # push the request, perhaps this is a post/put, or this is Update Datasource??
         return requests.get(f"{self.API}/data-sources/{data_source_id}").json()
 
-    def get_destination_count(self):
+    def get_destination_count(self) -> int:
         """
         # TODO method is not ready in Audience Builder yet.
         purpose of this function is to get delivery platform count
@@ -99,17 +99,16 @@ class AdvertisingModel:
         ).json()
         return len(destinations)
 
-    def get_delivery_platforms(self):
+    def get_delivery_platforms(self) -> str:
         """
         purpose of this function is to get all delivery platforms
-        :param data:
         :return:
         """
         return requests.get(
             f"{self.API}/delivery-platforms", headers=CODE_HEADERS
         ).json()
 
-    def create_delivery_platform(self, data):
+    def create_delivery_platform(self, data: str) -> str:
         """
         purpose of this function is to create a delivery platform
         :param data:
@@ -119,9 +118,10 @@ class AdvertisingModel:
         obj = requests.post(url, json=data, headers=CODE_HEADERS)
         return obj.json()
 
-    def update_delivery_platform(self, delivery_platform_id, data):
+    def update_delivery_platform(self, delivery_platform_id: int, data: str) -> str:
         """
         purpose of this function is to update a delivery platform
+        :param delivery_platform_id: id of the delivery platform
         :param data:
         :return:
         """
@@ -133,7 +133,7 @@ class AdvertisingModel:
 
     @staticmethod
     # pylint: disable=W0613
-    def star_delivery_platform(data):
+    def star_delivery_platform(data: str) -> str:
         """
         # TODO method is not ready in Audience Builder yet.
         purpose of this function is to update a delivery platform
@@ -143,10 +143,10 @@ class AdvertisingModel:
         # return requests.put(f'{self.API}/delivery-platforms', data=data).json()
         return "star_delivery_platform mock, not available in Audience builder yet"
 
-    def validate_delivery_platform(self, delivery_platform_id):
+    def validate_delivery_platform(self, delivery_platform_id: int) -> str:
         """
         purpose of this function is to validate a delivery platform
-        :param data:
+        :param delivery_platform_id: id of the delivery platform
         :return:
         """
         return requests.put(

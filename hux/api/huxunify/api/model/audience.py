@@ -40,7 +40,6 @@ class AudienceModel:
     def get_audience_count(self):
         """
         purpose of this function is to get audience count
-        :param data:
         :return:
         """
         # push the request
@@ -49,7 +48,6 @@ class AudienceModel:
     def get_audiences(self):
         """
         purpose of this function is to get audiences
-        :param data:
         :return:
         """
         # Make a request to audience service
@@ -58,10 +56,10 @@ class AudienceModel:
         )
         return response.json()
 
-    def get_audience_by_id(self, audience_id):
+    def get_audience_by_id(self, audience_id) -> str:
         """
         purpose of this function is to get audiences
-        :param data:
+        :param audience_id: id of audience
         :return:
         """
         # Make a request to audience service
@@ -73,10 +71,10 @@ class AudienceModel:
         )
         return response.json()
 
-    def create_audiences(self, data):
+    def create_audiences(self, data: str) -> str:
         """
         purpose of this function is to create audiences
-        :param data:
+        :param data: json data for audience
         :return:
         """
         # push the request
@@ -85,10 +83,10 @@ class AudienceModel:
         )
         return response.json()
 
-    def update_audiences(self, data):
+    def update_audiences(self, data: str) -> str:
         """
         purpose of this function is to update audiences
-        :param data:
+        :param data: json data for audience
         :return:
         """
         # push the request
@@ -97,10 +95,10 @@ class AudienceModel:
         )
         return response.json()
 
-    def delete_audiences(self, audience_id):
+    def delete_audiences(self, audience_id: int) -> str:
         """
         purpose of this function is to update audiences
-        :param data:
+        :param audience_id: id of audience
         :return:
         """
         # push the request
@@ -110,10 +108,10 @@ class AudienceModel:
         )
         return response.json()
 
-    def get_audience_delivery_jobs(self, audience_id):
+    def get_audience_delivery_jobs(self, audience_id: int) -> str:
         """
         purpose of this function is to get audience delivery jobs for an audience
-        :param data:
+        :param audience_id: id of audience
         :return:
         """
         # push the request
@@ -121,13 +119,13 @@ class AudienceModel:
             f"{self.API}/{audience_id}/deliveries",
             headers={"Authorization": f"Bearer {self.TOKEN}"},
         )
-        print(response)
         return response.json()
 
-    def create_audience_delivery_job(self, audience_id, data):
+    def create_audience_delivery_job(self, audience_id: int, data: str) -> str:
         """
         purpose of this function is to create audiences
-        :param data:
+        :param data: json data for audience
+        :param audience_id: id of audience
         :return:
         """
         # push the request
@@ -138,10 +136,10 @@ class AudienceModel:
         )
         return response.json()
 
-    def get_audience_insights(self, audience_id):
+    def get_audience_insights(self, audience_id: int) -> str:
         """
         purpose of this function is to get audience insights for an audience
-        :param data:
+        :param audience_id: id of audience
         :return:
         """
         # push the request
@@ -150,10 +148,11 @@ class AudienceModel:
             headers={"Authorization": f"Bearer {self.TOKEN}"},
         ).json()
 
-    def get_delivery_job_by_audience_id(self, audience_id, delivery_job_id):
+    def get_delivery_job_by_audience_id(self, audience_id: int, delivery_job_id: int) -> str:
         """
         purpose of this function is to get audience delivery jobs for an audience
-        :param data:
+        :param audience_id: id of audience
+        :param delivery_job_id: id of delivery job
         :return:
         """
         # push the request
@@ -162,10 +161,11 @@ class AudienceModel:
             headers={"Authorization": f"Bearer {self.TOKEN}"},
         ).json()
 
-    def get_insights_delivery_job_audience_id(self, audience_id, delivery_job_id):
+    def get_insights_delivery_job_audience_id(self, audience_id: int, delivery_job_id: int) -> str:
         """
         purpose of this function is to get audience delivery jobs for an audience
-        :param data:
+        :param audience_id: id of audience
+        :param delivery_job_id: id of delivery job
         :return:
         """
         # push the request
