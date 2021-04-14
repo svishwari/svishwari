@@ -23,7 +23,7 @@
                 ></v-select>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list v-for="item in items"
+            <!-- <v-list v-for="item in items"
                     :key="item.title"
                     no-action>
 
@@ -48,8 +48,53 @@
                   </v-list-item>
                 </div>
                 
-            </v-list>
-            
+            </v-list> -->
+             
+
+             <v-list v-for="item in items"
+                    :key="item.title"
+                    no-action>
+
+                <span class="list-group" v-if="item.label && !toggle"> {{ item.label }} </span>
+                <v-list-item v-if="item.title">
+                    <v-list-item-icon>
+                        <v-icon color="primary"> {{ item.icon }} </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title class="primary--text"> {{ item.title }} </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <v-list-group
+                  v-for="item in item.menu"
+                  :key="item.title"
+                  v-model="item.active"
+                  :prepend-icon="item.icon"
+                  no-action >
+                  <template v-slot:activator>
+                    <v-list-item v-if="!item.menu" :to="item.link">
+                      <v-list-item-content>
+                        <v-list-item-title v-text="item.title"></v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item v-if="item.menu">
+                      <v-list-item-content>
+                        <v-list-item-title v-text="item.title"></v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+
+                  <v-list-item
+                    v-for="child in item.menu"
+                    :key="child.title"  :to="child.link">
+                    <v-list-item-content>
+                      <v-list-item-title v-text="child.title"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-group>
+                
+            </v-list> 
+
             <template v-slot:append v-if="!toggle">
               <div class="nav-footer">
                 Hux by Deloitte Digital
