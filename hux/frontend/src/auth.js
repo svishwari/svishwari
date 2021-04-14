@@ -29,6 +29,8 @@ export default {
             .then((response) => {
               localStorage.token = response.tokens.accessToken.value;
               localStorage.idToken = response.tokens.idToken.value;
+              localStorage.firstName = transaction.user.profile.firstName;
+              localStorage.lastName = transaction.user.profile.lastName;
               if (cb) cb(true);
               this.onChange(true);
             });
