@@ -123,7 +123,6 @@ export default {
 div.v-list-item__title.primary--text,
 i.v-icon.notranslate.mdi {
   color: #ffffff !important;
-  caret-color: #ffffff !important;
 }
 .v-list .v-list-item--active {
   color: inherit;
