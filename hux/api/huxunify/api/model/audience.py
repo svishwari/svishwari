@@ -37,7 +37,7 @@ class AudienceModel:
         self.audience_name = ""
         self.audience_type = ""
 
-    def get_audience_count(self):
+    def get_audience_count(self) -> int:
         """
         purpose of this function is to get audience count
         :return:
@@ -45,7 +45,7 @@ class AudienceModel:
         # push the request
         return requests.get(f"{self.API}/count").json()
 
-    def get_audiences(self):
+    def get_audiences(self) -> str:
         """
         purpose of this function is to get audiences
         :return:
