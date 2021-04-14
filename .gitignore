@@ -20,7 +20,7 @@ pip-wheel-metadata
 node_modules/
 
 # Environments
-.env**
+.env
 env.**
 .venv
 env/

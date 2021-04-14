@@ -24,12 +24,9 @@ steps:
         title: Set build variables
         image: alpine
         commands:
-          - cf_export BUILD_NAME_API=unified-api
-          - cf_export CF_REPO_NAME=Hux-Unified-Solution
-          - cf_export CF_REPO_OWNER=DeloitteHux
+          - cf_export BUILD_NAME=hux-unified-api
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
-          - cf_export APP_NAME=unified-api
-          - cf_export FILE_NAME=values-main-use1-xspdev.yaml
+          - cf_export FILE_NAME=values-main-use1-hux-unified-dev1.yaml
 
       BuildNumber:
         stage: prepare
@@ -54,17 +51,18 @@ steps:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
 # Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
-  VersionTag:
-    stage: build_tag
-    description: Set docker tag based Git tag
-    type: freestyle
-    image: alpine
-    commands:
-      - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
-    when:
-      condition:
-        all:
-          masterBranch: '"${{CF_BRANCH}}" == "main"'
+# No releases present currently, to be uncommented once releases will be present.
+  # VersionTag:
+  #   stage: build_tag
+  #   description: Set docker tag based Git tag
+  #   type: freestyle
+  #   image: alpine
+  #   commands:
+  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
+  #   when:
+  #     condition:
+  #       all:
+  #         masterBranch: '"${{CF_BRANCH}}" == "main"'
 
   build_image:
     stage: "docker"
@@ -118,7 +116,7 @@ steps:
     title: Publish Unified API Image to JFrog Artifactory
     type: deloittehux/jfrog-docker-publish
     arguments:
-      BUILD_NAME: '${{BUILD_NAME_API}}'
+      BUILD_NAME: '${{BUILD_NAME}}'
       BUILD_NUMBER: '${{DOCKER_TAG}}'
       JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
       BUILD_TAG: '${{DOCKER_TAG}}'
@@ -131,12 +129,12 @@ steps:
     commands:
       - >-
         codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
-        DeloitteHux/Hux-Unified-Solution-Deploy -b 'main' --variable
+        DeloitteHux/hux-unified-deploy -b 'main' --variable
         DOCKER_TAG=${{DOCKER_TAG}} --variable FILE_NAME="${{FILE_NAME}}"
-        --variable APP_NAME="${{APP_NAME}}" --variable
+        --variable APP_NAME="${{BUILD_NAME}}" --variable
         COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
         COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
     when:
-      branch:
-        only:
-          - main
+      condition:
+        all:
+          whenVarIsMissing: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'

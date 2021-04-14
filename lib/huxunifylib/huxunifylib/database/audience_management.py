@@ -294,7 +294,9 @@ def get_audience(
     mongo_query = {"$and": filter_queries}
 
     # Get the ingested data in data frame format
-    audience_data, next_start_id = get_ingested_data(database, mongo_query, batch_size)
+    audience_data, next_start_id = get_ingested_data(
+        database, mongo_query, batch_size
+    )
 
     return (audience_data, next_start_id)
 
@@ -354,7 +356,9 @@ def get_audience_config(
     collection = am_db[c.AUDIENCES_COLLECTION]
 
     try:
-        doc = collection.find_one({c.ID: audience_id, c.ENABLED: True}, {c.ENABLED: 0})
+        doc = collection.find_one(
+            {c.ID: audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -365,7 +369,9 @@ def get_audience_config(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience_insights(database: DatabaseClient, audience_id: ObjectId) -> dict:
+def get_audience_insights(
+    database: DatabaseClient, audience_id: ObjectId
+) -> dict:
     """A function to get audience statistics based on audience id.
 
     Args:

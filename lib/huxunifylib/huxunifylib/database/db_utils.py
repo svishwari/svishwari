@@ -188,7 +188,10 @@ def add_stats_to_update_dict(
             new_cov_ratio = col_count * new_count_inv
 
             # Get the coverage ratio from the existig doc
-            if item in old_stats_doc and c.STATS_COVERAGE in old_stats_doc[item]:
+            if (
+                item in old_stats_doc
+                and c.STATS_COVERAGE in old_stats_doc[item]
+            ):
                 old_cov_ratio = old_stats_doc[item][c.STATS_COVERAGE]
             else:
                 old_cov_ratio = 0.0
@@ -205,17 +208,25 @@ def add_stats_to_update_dict(
         else:
             # Calculate the coverage and breakdown from new data
             new_cov_ratio = col_count * new_count_inv
-            new_break_dict = dict(new_data[item].value_counts() * col_count_inv)
+            new_break_dict = dict(
+                new_data[item].value_counts() * col_count_inv
+            )
             new_break_dict = defaultdict(float, new_break_dict)
 
             # Calculate the coverage from the existing doc
-            if item in old_stats_doc and c.STATS_COVERAGE in old_stats_doc[item]:
+            if (
+                item in old_stats_doc
+                and c.STATS_COVERAGE in old_stats_doc[item]
+            ):
                 old_cov_ratio = old_stats_doc[item][c.STATS_COVERAGE]
             else:
                 old_cov_ratio = 0.0
 
             # Calculate the breakdown from the existing doc
-            if item in old_stats_doc and c.STATS_BREAKDOWN in old_stats_doc[item]:
+            if (
+                item in old_stats_doc
+                and c.STATS_BREAKDOWN in old_stats_doc[item]
+            ):
                 old_break_dict = old_stats_doc[item][c.STATS_BREAKDOWN]
             else:
                 old_break_dict = defaultdict(float)
@@ -237,7 +248,9 @@ def add_stats_to_update_dict(
             # breakdowns. We loop through teh union of keys of old and
             # new breakdown dicts and calculate the overal breakdown.
             break_dict = {}
-            all_vals = set(new_break_dict.keys()).union(set(old_break_dict.keys()))
+            all_vals = set(new_break_dict.keys()).union(
+                set(old_break_dict.keys())
+            )
             for val in all_vals:
                 break_dict[val] = tmp_inv * (
                     old_count * old_cov_ratio * old_break_dict[val]
@@ -369,13 +382,18 @@ def validate_data_source_fields(fields: list) -> None:
     types_dict = {"special_type_dict": dict(), "field_mapping_dict": dict()}
 
     for field_item in fields:
-        if c.FIELD_SPECIAL_TYPE in field_item or c.FIELD_CUSTOM_TYPE in field_item:
+        if (
+            c.FIELD_SPECIAL_TYPE in field_item
+            or c.FIELD_CUSTOM_TYPE in field_item
+        ):
             if (
                 field_item[c.FIELD_SPECIAL_TYPE]
                 not in types_dict["special_type_dict"].keys()
                 and field_item[c.FIELD_SPECIAL_TYPE]
             ):
-                types_dict["special_type_dict"][field_item[c.FIELD_SPECIAL_TYPE]] = True
+                types_dict["special_type_dict"][
+                    field_item[c.FIELD_SPECIAL_TYPE]
+                ] = True
 
             elif (
                 field_item[c.FIELD_SPECIAL_TYPE]
@@ -403,7 +421,9 @@ def validate_data_source_fields(fields: list) -> None:
                     ):
                         pass
                     else:
-                        raise DuplicateDataSourceFieldType(c.FIELD_FIELD_MAPPING)
+                        raise DuplicateDataSourceFieldType(
+                            c.FIELD_FIELD_MAPPING
+                        )
             else:
                 raise DuplicateDataSourceFieldType(c.FIELD_SPECIAL_TYPE)
 

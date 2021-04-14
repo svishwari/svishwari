@@ -1,11 +1,8 @@
-# TODO - HUS-144: publish package to artifactory.
-# TODO - where to put this package in artifactory so that ADPERF can consume
-# TODO - identify if they will build package themselves, or they want the wheel file instead.
-
 version: "1.0"
 stages:
   - clone
   - checks
+  - publish
 
 steps:
 
@@ -13,7 +10,7 @@ steps:
     stage: "clone"
     title: "Cloning repository"
     type: "git-clone"
-    repo: "DeloitteHux/Hux-Unified-Solution"
+    repo: "DeloitteHux/hux-unified"
     revision: "${{CF_BRANCH}}"
     git: "DeloitteHux_github"
 
@@ -36,3 +33,23 @@ steps:
         environment:
           - TOXENV=style
     fail_fast: false
+
+  publish:
+    stage: publish
+    when:
+      condition:
+        any:
+          githubRelease: 'match("${{CF_RELEASE_TAG}}", "^v[0-1].[0-9]+.[0-9]+", false) == true'
+    description: "Publish the package on server tag creation"
+    image: "python:3.7-buster"
+    working_directory: "/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib"
+    commands:
+      - pip install --upgrade pip
+      - pip install build twine
+      - rm -rf ./dist
+      - python -m build -s -w . --outdir ./dist
+      - twine upload ./dist/*
+    environment:
+      - TWINE_USERNAME=${{TWINE_USERNAME}}
+      - TWINE_PASSWORD=${{TWINE_PASSWORD}}
+      - TWINE_REPOSITORY_URL=${{ARTIFACTORY_PYTHON_WRITE}}
