@@ -1,7 +1,5 @@
 <template>
-  <v-app>
-    <div>Overview</div>
-  </v-app>
+  <div>Overview</div>
 </template>
 
 <script>

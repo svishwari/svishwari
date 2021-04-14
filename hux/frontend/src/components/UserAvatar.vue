@@ -10,7 +10,9 @@
     </div>
     <v-menu bottom>
       <template v-slot:activator="{ on, attrs }">
-        <v-icon v-bind="attrs" v-on="on" class="chevron-icon">mdi-chevron-down</v-icon>
+        <v-icon v-bind="attrs" v-on="on" class="chevron-icon"
+          >mdi-chevron-down</v-icon
+        >
       </template>
       <v-list>
         <v-list-item>

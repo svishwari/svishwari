@@ -1,11 +1,9 @@
 <template>
-  <v-app>
-    <v-badge content="2" value="2" color="red" overlap>
-      <v-btn icon class="icon-btn">
-        <v-icon class="mdi-bell-outline"> mdi-bell-outline </v-icon>
-      </v-btn>
-    </v-badge>
-  </v-app>
+  <v-badge content="2" value="2" color="red" overlap>
+    <v-btn icon class="icon-btn">
+      <v-icon class="mdi-bell-outline"> mdi-bell-outline </v-icon>
+    </v-btn>
+  </v-badge>
 </template>
 
 <script>

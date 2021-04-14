@@ -1,16 +1,11 @@
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark elevation="0">
-      <v-app-bar-nav-icon
-        @click.stop="toggleSidebarMenu"
-        class="nav-back-burger"
-      >
-        <v-icon :class="{ 'rotate-icon': toggleMini }">mdi-backburger</v-icon>
-      </v-app-bar-nav-icon>
-      <v-spacer></v-spacer>
-      <NavBarMenu></NavBarMenu>
-    </v-app-bar>
-  </v-app>
+  <v-app-bar app color="primary" dark elevation="0">
+    <v-app-bar-nav-icon @click.stop="toggleSidebarMenu" class="nav-back-burger">
+      <v-icon :class="{ 'rotate-icon': toggleMini }">mdi-backburger</v-icon>
+    </v-app-bar-nav-icon>
+    <v-spacer></v-spacer>
+    <NavBarMenu></NavBarMenu>
+  </v-app-bar>
 </template>
 
 <script>
@@ -45,7 +40,7 @@ button.v-app-bar__nav-icon.nav-back-burger {
 .v-icon.notranslate.mdi.mdi-backburger.theme--dark {
   &::before {
     color: #232323;
-  } 
+  }
 }
 .rotate-icon {
   transition: 0.7s;

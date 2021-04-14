@@ -1,7 +1,5 @@
 <template>
-  <v-app>
-    <div>settings</div>
-  </v-app>
+  <div>settings</div>
 </template>
 
 <script>
