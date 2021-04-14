@@ -1,9 +1,9 @@
-// globals
+// Globals
 $body-font-family: "Open Sans", sans-serif;
 $heading-font-family: $body-font-family;
 $font-size-root: 14px;
 $border-radius-root: 5px;
 
-// component variables
-// https://vuetifyjs.com/en/api/v-btn/#sass-variables
+// Components
+// https://vuetifyjs.com/en/features/sass-variables/#variable-api
 @import "variables/buttons.variables.scss"
