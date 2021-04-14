@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <div class="d-flex">
     <v-btn icon class="icon-btn">
       <v-icon class="mdi-plus">mdi-plus</v-icon>
     </v-btn>
@@ -9,7 +9,7 @@
     </v-btn>
     <v-divider vertical></v-divider>
     <UserAvatar></UserAvatar>
-  </v-app>
+  </div>
 </template>
 
 <script>

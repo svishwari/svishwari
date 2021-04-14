@@ -120,7 +120,6 @@ export default {
 }
 div.v-list-item__title.primary--text {
   color: #ffffff !important;
-  caret-color: #ffffff !important;
 }
 i.v-icon.notranslate.mdi {
   color: #ffffff !important;

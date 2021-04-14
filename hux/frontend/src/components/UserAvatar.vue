@@ -1,39 +1,37 @@
 <template>
-  <v-app>
-    <v-btn icon class="icon-btn">
-      <v-avatar>
-        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
-      </v-avatar>
-    </v-btn>
-    <div class="vertical-center">
-      <p class="font-weight-bold short-name">SH</p>
-    </div>
-    <v-menu bottom :offset-y="offset" :close-on-content-click="closeOnContentClick">
-      <template v-slot:activator="{ on, attrs }">
-        <v-icon v-bind="attrs" v-on="on" class="chevron-icon">mdi-chevron-down</v-icon>
-      </template>
-      <v-list>
-        <v-list-item>
-          <v-list-item-title> Profile </v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title> Settings </v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title> Log-out </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
-  </v-app>
+  <v-menu offset-y close-on-click>
+    <template v-slot:activator="{on}">
+      <span v-on="on" class="d-flex">
+        <v-btn icon class="icon-btn">
+          <v-avatar>
+            <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+          </v-avatar>
+        </v-btn>
+        <div class="vertical-center">
+          <p class="font-weight-bold short-name">SH</p>
+        </div>
+        <v-icon color="black">
+          mdi-chevron-down
+        </v-icon>
+      </span>
+    </template>
+    <v-list>
+      <v-list-item>
+        <v-list-item-title> Profile </v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-title> Settings </v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-title> Log-out </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>
 export default {
-  name: "UserAvatar",
-  data: () => ({
-    offset: true,
-    closeOnContentClick: true,
-  })
+  name: "UserAvatar"
 };
 </script>
 <style lang="scss">
