@@ -8,11 +8,9 @@
     <div class="vertical-center">
       <p class="font-weight-bold short-name">SH</p>
     </div>
-    <v-menu bottom>
+    <v-menu bottom :offset-y="offset" :close-on-content-click="closeOnContentClick">
       <template v-slot:activator="{ on, attrs }">
-        <v-icon v-bind="attrs" v-on="on" class="chevron-icon"
-          >mdi-chevron-down</v-icon
-        >
+        <v-icon v-bind="attrs" v-on="on" class="chevron-icon">mdi-chevron-down</v-icon>
       </template>
       <v-list>
         <v-list-item>
@@ -32,6 +30,10 @@
 <script>
 export default {
   name: "UserAvatar",
+  data: () => ({
+    offset: true,
+    closeOnContentClick: true,
+  })
 };
 </script>
 <style lang="scss">

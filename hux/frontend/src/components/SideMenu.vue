@@ -14,8 +14,8 @@
       <v-select
         v-model="select"
         :items="userDropdown"
-        item-text="state"
-        item-value="abbr"
+        item-text="name"
+        item-value="name"
         return-object
         single-line
         class="user-profile"
