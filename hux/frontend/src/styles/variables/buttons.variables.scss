@@ -1,0 +1,14 @@
+// buttons
+// https://vuetifyjs.com/en/api/v-btn/#sass-variables
+
+$btn-border-radius: 0;
+$btn-font-weight: 600;
+$btn-font-sizes: (
+  "x-small": .75rem,
+  "small": .875rem,
+  "default": 1rem,
+  "large": 1rem,
+  "x-large": 1.125rem
+);
+$btn-letter-spacing: 0;
+$btn-text-transform: none;
