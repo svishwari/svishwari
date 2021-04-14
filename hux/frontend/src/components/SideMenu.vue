@@ -12,12 +12,6 @@
                 <v-list-item> </v-list-item>
             </v-list>
             <v-list-item class="px-2 profile-name">
-                <!-- <v-list-item-content class="text-truncate">
-                    Pendieton
-                </v-list-item-content> -->
-                <!-- <v-select class="user-dropdown"
-                  :items="selectItems"
-                ></v-select> -->
                 <v-select
                   v-model="select"
                   :items="userDropdown"
@@ -25,6 +19,7 @@
                   item-value="abbr"
                   return-object
                   single-line
+                  class="user-profile"
                 ></v-select>
             </v-list-item>
             <v-divider></v-divider>
@@ -51,31 +46,7 @@
                           <v-list-item-title class="primary--text"> {{ menu.title }} </v-list-item-title>
                       </v-list-item-content>
                   </v-list-item>
-                
                 </div>
-
-                <!-- <v-list-group
-                  v-for="item in item.menu"
-                  :key="item.title"
-                  v-model="item.active"
-                  :prepend-icon="item.icon"
-                  no-action >
-                  <template v-slot:activator>
-                    <v-list-item :to="item.link" class="link-list">
-                      <v-list-item-content>
-                        <v-list-item-title v-text="item.title"></v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-
-                  <v-list-item
-                    v-for="child in item.menu"
-                    :key="child.title"  :to="child.link">
-                    <v-list-item-content>
-                      <v-list-item-title v-text="child.title"></v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-group> -->
                 
             </v-list>
             
@@ -259,6 +230,36 @@ export default {
   }
   a.v-list-item--active {
     background-color: unset !important;
+  }
+  .v-list.v-select-list.v-sheet {
+    div.v-list-item__content {
+        color: #0c0b0b !important;
+    }
+  }
+  .profile-name {
+    .v-select__selections {
+      color: #FFFFFF !important;
+    }
+  }
+  .theme--light.v-text-field > .v-input__control > .v-input__slot:before {
+    border: none;
+  }
+  .v-text-field.v-input--is-focused > .v-input__control > .v-input__slot:after {
+    border: none;
+  }
+  .v-select__selection.v-select__selection--comma {
+    width: 148px;
+    height: 15px;
+    left: calc(50% - 148px/2 - 11px);
+    top: 117px;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    color: #FFFFFF;
   }
 </style>
 
