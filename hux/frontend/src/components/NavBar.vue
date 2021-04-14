@@ -39,8 +39,10 @@ export default {
 button.v-app-bar__nav-icon.nav-back-burger {
   margin-left: 30px !important;
 }
-.v-icon.notranslate.mdi.mdi-backburger.theme--dark::before {
-  color: #232323;
+.v-icon.notranslate.mdi.mdi-backburger.theme--dark {
+  &::before {
+    color: #232323;
+  } 
 }
 .rotate-icon {
   transition: 0.70s;
