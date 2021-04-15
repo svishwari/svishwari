@@ -5,23 +5,42 @@
     floating
     :permanent="sidebarMenu"
     :mini-variant.sync="mini"
-    class="side-nav-bar"
+    width="220"
+    class="side-nav-bar primary"
   >
     <v-list dense color="primary" dark class="logo-holder">
       <div class="hux_logo"></div>
       <v-list-item> </v-list-item>
     </v-list>
-    <v-list-item class="px-2 profile-name">
-      <v-select
-        v-model="select"
-        :items="userDropdown"
-        item-text="name"
-        item-value="name"
-        return-object
-        single-line
-        class="user-profile"
-      ></v-select>
-    </v-list-item>
+
+<v-menu offset-y close-on-click>
+    <template v-slot:activator="{ on }">
+      <span v-on="on" class="d-flex" v-bind:class = "(!toggle)?'avatar-menu':'avatar-menu-toggle'">
+        <div class="vertical-center">
+          <p class="font-weight-bold short-name">
+            Pendleton
+          </p>
+        </div>
+        <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
+      </span>
+    </template>
+    <v-list>
+      <v-list-item>
+        <v-list-item-title>My HUX Profile</v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-title>Change Password</v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-title>Change Username</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="initiateLogout()">
+        <v-list-item-title>Logout</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
+
+
     <v-divider></v-divider>
     <v-list v-for="item in items" :key="item.title" no-action>
       <span class="list-group" v-if="item.label && !toggle">
@@ -67,7 +86,10 @@ import menuConfig from "@/menuConfig.json";
 
 export default {
   name: "SideMenu",
-  props: ["toggle"],
+   props: { 
+     toggle: Boolean
+   },
+  // props: ["toggle"],
   computed: {
     layout() {
       // none-layout will be used if the meta.layout tag is not set
@@ -99,17 +121,45 @@ export default {
 .side-nav-bar {
   .logo-holder {
     height: 105px;
+    >.hux_logo {
+      background-image: url("../assets/images/hux_logo_2.png");
+      width: 55px;
+      height: 55px;
+      margin-top: 17px;
+      margin-left: 17px;
+    }
+  }
+  .v-navigation-drawer__content {
+    .d-flex {
+      &.avatar-menu {
+        margin-left: calc(50% - 148px / 2 - 11px);
+        color: white;
+      }
+      &.avatar-menu-toggle {
+        margin-left: calc(50% - 50px / 2 - 11px);
+        color: white;
+      }
+      >.vertical-center {
+          width: 110px;
+          font-size: 13px;
+          font-weight: 600;
+        >.short-name{
+          color: white;
+        }
+      }
+    }
+    >.profile-name {
+      >.user-profile {
+        &.theme--light.v-text-field > .v-input__control > .v-input__slot:before {
+            border: none !important;
+        }
+      }
+    }
   }
   .v-navigation-drawer {
-    width: 220px;
     .v-list {
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: 10px;
-    }
-  }
-  &.theme--light {
-    &.v-navigation-drawer {
-      background-color: #005587 !important;
     }
   }
   .v-list-item__title {
@@ -125,7 +175,7 @@ export default {
   div {
     &.v-list-item__title {
       &.primary--text {
-        color: #ffffff !important
+        color: #ffffff !important;
       }
     }
   }
@@ -139,7 +189,6 @@ export default {
       }
     }
   }
-
   .v-list {
     .v-list-item--active {
       color: inherit;
@@ -155,6 +204,7 @@ export default {
       }
     }
   }
+
   div {
     &.v-list-item__icon {
       &.v-list-group__header__prepend-icon {
@@ -163,7 +213,7 @@ export default {
     }
   }
 
-  .list-group {
+.list-group {
     margin-left: 17px;
     height: 40px;
     width: 199px;
@@ -305,5 +355,6 @@ export default {
     align-items: center;
     color: #ffffff;
   }
+  
 }
 </style>

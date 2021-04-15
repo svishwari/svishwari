@@ -53,7 +53,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .avatar-menu{
   .vertical-center {
     transform: translateY(20%);

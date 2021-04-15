@@ -11,10 +11,21 @@ export default {
   name: "Notification",
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .notification-badge {
-  .v-badge__badge {
-    inset: auto auto calc(100% - 32px) calc(100% - 32px) !important;
+  .icon-btn {
+    box-shadow: 0px 1px 5px rgb(0 0 0 / 25%);
+    i.v-icon.notranslate.mdi {
+      color: #005587 !important;
+    }
+    &.v-btn {
+      &.v-btn--icon { 
+        &.v-btn--round { 
+          margin-right: 9px;
+          margin-left: 9px;
+        }
+      }
+    }
   }
 }
 </style>

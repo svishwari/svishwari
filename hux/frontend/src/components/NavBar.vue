@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="primary" dark elevation="0">
+  <v-app-bar app color="white" dark elevation="0">
     <v-app-bar-nav-icon @click.stop="toggleSidebarMenu" class="nav-back-burger">
       <v-icon :class="{ 'rotate-icon': toggleMini }">mdi-backburger</v-icon>
     </v-app-bar-nav-icon>
