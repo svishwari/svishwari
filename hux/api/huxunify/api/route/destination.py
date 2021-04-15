@@ -9,13 +9,13 @@ from flasgger import SwaggerView
 from flask import Blueprint, request, Response
 from flask_apispec import marshal_with
 
-from hux.api.huxunify.api.model.destination import DestinationModel
-from hux.api.huxunify.api import utils as util
-from hux.api.huxunify.api.schema.destinations import Destination, DestinationConstants
+from huxunify.api.model.destination import DestinationModel
+from huxunify.api import utils as util
+from huxunify.api.schema.destinations import DestinationSchema, DestinationConstants
 
-from hux.api.huxunify.api.data_connectors.aws import parameter_store
-from hux.api.huxunify.api.utils import add_view_to_blueprint
-import hux.api.huxunify.api.constants as constants
+from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.utils import add_view_to_blueprint
+import huxunify.api.constants as constants
 
 DESTINATIONS_TAG = "destinations"
 DESTINATIONS_DESCRIPTION = "Destinations API"
@@ -24,7 +24,7 @@ DESTINATIONS_ENDPOINT = "destinations"
 api_bp = Blueprint("api", import_name=__name__)
 
 
-@add_view_to_blueprint(api_bp, "destinations/<destination_id>", "Destinations")
+@add_view_to_blueprint(api_bp, "destinations/<destination_id>", "Destination")
 class Destination(SwaggerView):
     """
     Destinations view class.
@@ -41,13 +41,13 @@ class Destination(SwaggerView):
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "schema": Destination,
+            "schema": DestinationSchema,
             "description": "destination details.",
         },
     }
     tags = [DESTINATIONS_TAG]
 
-    @marshal_with(Destination)
+    @marshal_with(DestinationSchema)
     def get(self, destination_id: str) -> Tuple[dict, int]:
         """
         Retrieves destinations properties and connection status.
@@ -56,20 +56,20 @@ class Destination(SwaggerView):
         destinations_get = DestinationModel().get_destination_by_id(destination_id)
         return destinations_get, HTTPStatus.OK
 
-    @marshal_with(Destination)
+    @marshal_with(DestinationSchema)
     def put(self, destination_id: str) -> Tuple[dict, int]:
         """
         Updates existing destinations properties.
         ---
         """
 
-        destinations_put = Destination()
+        destinations_put = DestinationSchema()
         body = destinations_put.load(request.get_json())
 
         if body.get(constants.AUTHENTICATION_DETAILS):
             # store the secrets for the updated authentication details
             authentication_parameters = (
-                parameter_store.set_destinations_authentication_secrets(
+                parameter_store.set_destination_authentication_secrets(
                     authentication_details=body[constants.AUTHENTICATION_DETAILS],
                     is_updated=True,
                     destination_id=destination_id,
@@ -81,7 +81,7 @@ class Destination(SwaggerView):
 
         # update the platform
         updated_destinations = DestinationModel().update_destination(
-            body, authentication_parameters
+            destination_id, body, authentication_parameters
         )
 
         return updated_destinations, HTTPStatus.OK
@@ -136,15 +136,15 @@ class Destinations(SwaggerView):
         ---
         """
 
-        destinations_post = Destination()
+        destinations_post = DestinationSchema()
         body = destinations_post.load(request.get_json())
 
         # create the destinations
-        destinations_id = DestinationModel().create_destination(body)
+        destination_id = DestinationModel().create_destination(body)
 
         # test the destinations connection and update connection status
         created_destinations = util.test_destinations_connection(
-            destinations_id=destinations_id,
+            destination_id=destination_id,
             platform_type=body[constants.DESTINATION_TYPE],
             auth_details=body[constants.AUTHENTICATION_DETAILS],
         )

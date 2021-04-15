@@ -8,7 +8,7 @@ from marshmallow import fields
 from marshmallow.validate import OneOf
 
 
-class Destination(Schema):
+class DestinationSchema(Schema):
     """
     Destinations schema class
     """

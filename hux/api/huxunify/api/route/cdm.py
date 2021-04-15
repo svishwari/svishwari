@@ -8,10 +8,10 @@ from flask import Blueprint
 from marshmallow.exceptions import ValidationError
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
-from hux.api.huxunify.api.model.cdm import CdmModel
-from hux.api.huxunify.api.schema.errors import NotFoundError, RequestError
-from hux.api.huxunify.api.schema.cdm import Datafeed, Fieldmapping, ProcessedData
-from hux.api.huxunify.api.utils import add_view_to_blueprint
+from huxunify.api.model.cdm import CdmModel
+from huxunify.api.schema.errors import NotFoundError, RequestError
+from huxunify.api.schema.cdm import Datafeed, Fieldmapping, ProcessedData
+from huxunify.api.utils import add_view_to_blueprint
 
 
 CDM_TAG = "cdm"

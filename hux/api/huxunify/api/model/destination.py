@@ -2,17 +2,18 @@
 """
 Models for the destinations API
 """
-from bson import ObjectId
 from typing import Union, List
-from hux.api.huxunify.api import utils as util
-from lib.huxunifylib.huxunifylib.database import (
+from bson import ObjectId
+from huxunifylib.database import (
     delivery_platform_management as destination_management,
     utils as db_utils,
+    constants as db_constants,
 )
-from lib.huxunifylib.huxunifylib.database import constants as db_constants
-import hux.api.huxunify.api.constants as constants
-from hux.api.huxunify.api.data_connectors.mongo_client import get_mongo_client
-from hux.api.huxunify.api.data_connectors.aws import parameter_store
+import huxunify.api.constants as constants
+from huxunify.api.data_connectors.mongo_connector import (
+    get_db_client as get_mongo_client,
+)
+from huxunify.api.data_connectors.aws import parameter_store
 
 
 class DestinationModel:

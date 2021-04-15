@@ -3,13 +3,16 @@ purpose of this file is to house route utilities
 """
 
 from bson import ObjectId
-from hux.api.huxunify.api.data_connectors.facebook_connector import FacebookConnector
-from hux.api.huxunify.api.data_connectors.sfmc_connector import SFMCConnector
-from lib.huxunifylib.huxunifylib.database import (
+from huxunify.api.data_connectors.facebook_connector import FacebookConnector
+from huxunify.api.data_connectors.sfmc_connector import SFMCConnector
+from huxunify.api.data_connectors.mongo_connector import (
+    get_db_client as get_mongo_client,
+)
+
+from huxunifylib.database import (
     delivery_platform_management as destination_management,
     constants as db_constants,
 )
-from hux.api.huxunify.api.data_connectors.mongo_client import get_mongo_client
 
 
 def add_view_to_blueprint(self, rule, endpoint, **options):
@@ -78,7 +81,7 @@ def test_destinations_connection(
     """Test the connection to the destinations and update the
     connection status.
     Args:
-        destinations_id (str): The destinations ID.
+        destination_id (str): The destinations ID.
     Returns:
         updated_platform (dict): The updated destinations.
     """

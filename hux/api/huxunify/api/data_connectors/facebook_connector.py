@@ -1,4 +1,6 @@
-"""Facebook Connector functionality."""
+"""Facebook Connector functionality.
+TODO : Move this to common library that can support adperf and other use cases
+"""
 
 import logging
 from facebook_business.adobjects.adaccount import AdAccount
