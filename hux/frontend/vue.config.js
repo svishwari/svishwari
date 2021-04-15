@@ -1,15 +1,8 @@
 module.exports = {
-  lintOnSave: true,
+  lintOnSave: process.env.NODE_ENV !== "production",
   filenameHashing: true,
   productionSourceMap: false,
 
-  css: {
-    sourceMap: false,
-  },
-
-  chainWebpack: (config) => {
-    config.module.rules.delete("svg");
-  },
   configureWebpack: {
     performance: {
       hints: false,
@@ -24,5 +17,13 @@ module.exports = {
     },
   },
 
+  css: {
+    sourceMap: false,
+  },
+
+  chainWebpack: (config) => {
+    config.module.rules.delete("svg")
+  },
+
   transpileDependencies: ["vuetify"],
-};
+}

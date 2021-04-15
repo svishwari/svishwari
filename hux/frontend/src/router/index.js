@@ -1,15 +1,15 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "@/views/Home.vue";
-import Welcome from "@/views/Welcome.vue";
-import Login from "@/views/Login.vue";
-import NotFound from "@/views/NotFound.vue";
+import Vue from "vue"
+import VueRouter from "vue-router"
+import Home from "@/views/Home.vue"
+import Welcome from "@/views/Welcome.vue"
+import Login from "@/views/Login.vue"
+import NotFound from "@/views/NotFound.vue"
 
 // Authentication Plugin
-import auth from "@/auth";
+import auth from "@/auth"
 // import config from '@/config';
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const NotFoundRoute = {
   path: "*",
@@ -18,18 +18,18 @@ const NotFoundRoute = {
     title: "OOPs",
     layout: "default",
   },
-};
+}
 
 const requireAuth = (to, from, next) => {
   if (!auth.loggedIn()) {
     next({
       path: "/login",
       query: { redirect: to.fullPath },
-    });
+    })
   } else {
-    next();
+    next()
   }
-};
+}
 
 const routes = [
   {
@@ -98,8 +98,8 @@ const routes = [
   {
     path: "/logout",
     beforeEnter(to, from, next) {
-      auth.logout();
-      next("/");
+      auth.logout()
+      next("/")
     },
   },
   {
@@ -112,18 +112,18 @@ const routes = [
       title: "Overview | Hux Unified UI",
     },
   },
-];
-routes.push(NotFoundRoute);
+]
+routes.push(NotFoundRoute)
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
-});
+})
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title;
-  next();
-});
+  document.title = to.meta.title
+  next()
+})
 
-export default router;
+export default router

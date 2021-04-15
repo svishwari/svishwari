@@ -2,15 +2,15 @@ import { OktaAuth } from "@okta/okta-auth-js";
 const config = require("@/config");
 import store from './store/index';
 
-const authClient = new OktaAuth({ issuer: config.default.oidc.issuer });
+const authClient = new OktaAuth({ issuer: config.default.oidc.issuer })
 
 export default {
   login(email, pass, cb) {
-    cb = arguments[arguments.length - 1];
+    cb = arguments[arguments.length - 1]
     if (localStorage.token) {
-      if (cb) cb(true);
-      this.onChange(true);
-      return;
+      if (cb) cb(true)
+      this.onChange(true)
+      return
     }
     return authClient
       .signInWithCredentials({
@@ -42,27 +42,27 @@ export default {
         }
       })
       .catch((err) => {
-        console.error(err.message);
-        if (cb) cb(false);
-        this.onChange(false);
-      });
+        console.error(err.message)
+        if (cb) cb(false)
+        this.onChange(false)
+      })
   },
 
   getToken() {
-    return localStorage.token;
+    return localStorage.token
   },
 
   logout(cb) {
-    delete localStorage.token;
-    delete localStorage.idToken;
-    if (cb) cb();
-    this.onChange(false);
-    return authClient.signOut();
+    delete localStorage.token
+    delete localStorage.idToken
+    if (cb) cb()
+    this.onChange(false)
+    return authClient.signOut()
   },
 
   loggedIn() {
-    return !!localStorage.token;
+    return !!localStorage.token
   },
 
   onChange() {},
-};
+}

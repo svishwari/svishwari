@@ -1,11 +1,5 @@
 <template>
-  <div
-    :style="{
-      'background-image':
-        'url(' + require('../assets/images/welcome_background.png') + ')',
-    }"
-    class="welcome-wrap"
-  >
+  <div class="welcome-wrap">
     <div class="content">
       <Logo />
       <h1>Welcome to Hux!</h1>
@@ -29,25 +23,21 @@
 </template>
 
 <script>
-import Logo from "../assets/images/logo.svg";
-// import auth from "./auth/auth";
+import Logo from "@/assets/images/logo.svg"
 
 export default {
   name: "Welcome",
-  data() {
-    return {
-      PATH_TO_PROTECTED_ROUTE: "/home",
-    };
-  },
+
   components: {
     Logo,
   },
+
   methods: {
     login() {
-      this.$router.push("home");
+      this.$router.push("home")
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -55,6 +45,7 @@ export default {
   height: 100vh;
   background-repeat: space;
   background-size: cover;
+  background-image: url("../assets/images/welcome_background.png");
   display: flex;
   justify-content: center;
   align-items: center;
@@ -74,7 +65,7 @@ export default {
     }
     h1 {
       font-style: normal;
-      font-weight: 600;
+      font-weight: 500;
       font-size: 24px;
       line-height: 40px;
       margin-top: 48px;
@@ -91,7 +82,7 @@ export default {
     }
     h2 {
       font-style: normal;
-      font-weight: 600;
+      font-weight: 500;
       font-size: 21px;
       line-height: 40px;
       text-align: center;

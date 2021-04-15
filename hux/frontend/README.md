@@ -29,3 +29,9 @@ yarn test:e2e
 ```
 yarn lint
 ```
+
+# Run storybook
+
+```
+yarn serve:storybook
+````
