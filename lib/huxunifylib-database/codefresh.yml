@@ -17,7 +17,7 @@ steps:
   checks:
     stage: "checks"
     image: 'huxhub.repo.mgnt.in/python:3.7-buster'
-    working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib'
+    working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: run tests using tox
     commands:
       - pip install tox
@@ -42,7 +42,7 @@ steps:
           githubRelease: 'match("${{CF_RELEASE_TAG}}", "^v[0-1].[0-9]+.[0-9]+", false) == true'
     description: "Publish the package on server tag creation"
     image: "python:3.7-buster"
-    working_directory: "/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib"
+    working_directory: "/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib-database"
     commands:
       - pip install --upgrade pip
       - pip install build twine
