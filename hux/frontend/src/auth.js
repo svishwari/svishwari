@@ -28,14 +28,10 @@ export default {
               redirectUri: window.location.origin + "/login/callback",
             })
             .then((response) => {
-              store.commit('SET_USER_NAME', transaction.user.profile)
-              console.log(store.state);
               localStorage.token = response.tokens.accessToken.value;
               localStorage.idToken = response.tokens.idToken.value;
               localStorage.firstName = transaction.user.profile.firstName;
-              // localStorage.firstName = store.state.userName.firstName;
               localStorage.lastName = transaction.user.profile.lastName;
-              // localStorage.lastName = store.state.userName.lastName;
               if (cb) cb(true);
               this.onChange(true);
             });

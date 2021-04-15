@@ -10,7 +10,6 @@
         <div class="vertical-center">
           <p class="font-weight-bold short-name">
             {{ firstName[0] }}{{ lastName[0] }}
-            <!-- SH -->
           </p>
         </div>
         <v-icon color="black"> mdi-chevron-down </v-icon>
