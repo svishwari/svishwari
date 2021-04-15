@@ -33,19 +33,23 @@ class CdmTest(TestCase):
     ]
     mapping_fields = ["field_id", "field_name", "field_variation", "modified"]
 
-    def setUp(self):
-        """
-        Setup initial model and database connection
+    def setUp(self) -> None:
+        """ Setup initial model and database connection
+        Args:
+
+        Returns:
+            None
         """
         mock_client = Mock(spec=SnowflakeClient)
         self.model = CdmModel(mock_client)
 
-    def test_get_processed_data(self):
+    def test_get_processed_data(self) -> None:
         """Test Retrieving the processed data sources.
 
-        Returns:
-            Response: bool - pass/fail.
+        Args:
 
+        Returns:
+            None
         """
         # fields only used for this test
         test_fields = ("created", "modified", "source_name")
@@ -66,12 +70,13 @@ class CdmTest(TestCase):
         # pull the keys we need and test to ensure it pulled them
         self.assertEqual(returned_sources, processed_data)
 
-    def test_get_processed_data_by_name(self):
+    def test_get_processed_data_by_name(self) -> None:
         """Test Retrieving the processed data source by name.
 
-        Returns:
-            Response: bool - pass/fail.
+        Args:
 
+        Returns:
+            None
         """
         # get synth data
         processed_data = generate_synthetic_marshmallow_data(ProcessedData)
@@ -85,9 +90,12 @@ class CdmTest(TestCase):
         # ensure dict is the same
         self.assertDictEqual(returned_source, processed_data)
 
-    def test_read_datafeeds(self):
-        """
-        Successfully retrieve datafeeds
+    def test_read_datafeeds(self) -> None:
+        """ Successfully retrieve datafeeds
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchall.return_value = CdmTest.datafeeds
         returned_feeds = self.model.read_datafeeds()
@@ -99,9 +107,12 @@ class CdmTest(TestCase):
         self.assertEqual("Batch", returned_feeds[0]["feed_type"])
         self.assertEqual("adobe", returned_feeds[1]["feed_type"])
 
-    def test_read_datafeeds_by_id(self):
-        """
-        Successfully retrieve single datafeed
+    def test_read_datafeeds_by_id(self) -> None:
+        """ Successfully retrieve single datafeed
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchone.return_value = CdmTest.datafeeds[0]
 
@@ -109,9 +120,12 @@ class CdmTest(TestCase):
         self.assertCountEqual(returned_feed, CdmTest.datafeed_fields)
         self.assertEqual("Batch", returned_feed["feed_type"])
 
-    def test_read_fieldmappings(self):
-        """
-        Successfully retrieve field mappings
+    def test_read_fieldmappings(self) -> None:
+        """ Successfully retrieve field mappings
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchall.return_value = CdmTest.mappings
 
@@ -123,9 +137,12 @@ class CdmTest(TestCase):
         self.assertEqual(1, returned_mappings[0]["field_id"])
         self.assertEqual(2, returned_mappings[1]["field_id"])
 
-    def test_read_fieldmappings_by_id(self):
-        """
-        Successfully retrieve field mappings by id
+    def test_read_fieldmappings_by_id(self) -> None:
+        """ Successfully retrieve field mappings by id
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchone.return_value = CdmTest.mappings[0]
 

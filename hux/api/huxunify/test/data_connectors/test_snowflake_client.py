@@ -32,7 +32,7 @@ class TestSnowflakeClient(TestCase):
     def test_connection_good(self, mock_connect: MagicMock) -> None:
         """Tests a good connection to snowflake database
         Args:
-            mock_connect
+            mock_connect: MagicMock of snowflake connection
         Returns:
             None
         """
@@ -45,7 +45,7 @@ class TestSnowflakeClient(TestCase):
     def test_connection_bad(self, mock_connect: MagicMock) -> None:
         """Tests a bad connection to snowflake database
         Args:
-            mock_connect
+            mock_connect: MagicMock of snowflake connection
         Returns:
             None
         """
