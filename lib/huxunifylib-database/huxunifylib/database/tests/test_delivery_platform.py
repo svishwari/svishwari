@@ -9,7 +9,7 @@ import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
-from database import delete_util
+from huxunifylib.database import delete_util
 from huxunifylib.database.client import DatabaseClient
 
 
