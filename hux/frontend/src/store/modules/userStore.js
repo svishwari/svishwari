@@ -14,8 +14,8 @@ const userStore = {
       state.isLoading = data
     },
     setUserProfile(state, userProfile) {
-      state.userProfile.firstName = userProfile.firstName;
-      state.userProfile.lastName = userProfile.lastName;
+      state.userProfile.firstName = userProfile.userProfile.firstName;
+      state.userProfile.lastName = userProfile.userProfile.lastName;
     },
     setUserToken(state, token) {
       state.userProfile.token = token.accessToken.value;
@@ -23,8 +23,8 @@ const userStore = {
     }
   },
   actions: {
-    setUserProfile: ({ commit }) => commit('setUserProfile'),
-    setUserToken: ({ commit }) => commit('setUserToken')
+    setUserProfile: ({ commit }, userProfile) => commit('setUserProfile', userProfile),
+    setUserToken: ({ commit }, token) => commit('setUserToken', token)
    },
   getters: {
     getFirstname: state => {

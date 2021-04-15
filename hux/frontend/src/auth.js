@@ -30,8 +30,9 @@ export default {
             .then((response) => {
               localStorage.token = response.tokens.accessToken.value;
               localStorage.idToken = response.tokens.idToken.value;
-              store.commit('setUserToken', response.tokens);
-              store.commit('setUserProfile', transaction.user.profile);
+              store.dispatch('setUserProfile', {
+                userProfile: transaction.user.profile
+              })
               if (cb) cb(true);
               this.onChange(true);
             });
