@@ -112,7 +112,7 @@ def set_delivery_platform(
 
     # Add user object only if it is available
     if user is not None:
-        doc[c.CREATED_BY] = (user,)
+        doc[c.CREATED_BY] = user
         doc[c.UPDATED_BY]: user
 
     try:
