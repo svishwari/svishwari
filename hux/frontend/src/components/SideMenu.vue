@@ -21,7 +21,9 @@
             Pendleton
           </p>
         </div>
-        <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
+        <div class="vertical-center">
+          <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
+        </div>
       </span>
     </template>
     <v-list>

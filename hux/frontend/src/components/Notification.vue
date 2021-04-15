@@ -1,5 +1,12 @@
 <template>
-  <v-badge content="2" value="2" color="red" overlap class="notification-badge">
+  <v-badge
+        bottom
+        color="red"
+        content="2" value="2"
+        offset-x="30"
+        offset-y="40"
+        class="notification-badge"
+      >
     <v-btn icon class="icon-btn">
       <v-icon class="mdi-bell-outline"> mdi-bell-outline </v-icon>
     </v-btn>
