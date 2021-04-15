@@ -4,6 +4,7 @@ database setup code for the huxunify package
 from setuptools import setup, find_namespace_packages
 
 setup(
+    name="huxunifylib",
     use_scm_version={
         "root": "../..",
         "relative_to": __file__,
