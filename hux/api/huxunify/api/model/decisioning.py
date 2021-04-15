@@ -41,10 +41,12 @@ class AlgorithmiaModel:
         # initialize the algorithmia connection object
         self.client = Algorithmia.client(ALGORITHMIA_KEY, ALGORITHMIA_API)
 
-    def get_algorithms(self):
-        """
-        get algos from api.
-        :return: list of algo
+    def get_algorithms(self) -> list:
+        """get algos from api.
+        Args:
+
+        Returns:
+            list: list of algorithmia dictionary object
         """
         # get info for each one
         algos = [self.get_algorithm(algo) for algo in ALGORITHMS]
@@ -52,10 +54,14 @@ class AlgorithmiaModel:
         # remove none values if any
         return [i for i in algos if i]
 
-    def get_algorithm(self, algorithm_name):
-        """
-        get information for a specific algorithm
-        :return: algorithmia dictionary object
+    def get_algorithm(self, algorithm_name: str) -> str:
+        """get information for a specific algorithm
+        Args:
+            algorithm_name: id of data source
+
+        Returns:
+            str: json data of algorithmia dictionary object
+
         """
         try:
             # get algorithm details
@@ -71,11 +77,16 @@ class AlgorithmiaModel:
             algo_cleaned_dict["compilation"].pop("output", None)
         return algo_cleaned_dict
 
-    def translate_version_info(self, algo_response):
-        """
-        translate algo to dict
-        I am going to submit a PR to algorithmia to add this.
-        I will update their __dict__ VersionInfo function.
+    def translate_version_info(self, algo_response: dict) -> dict:
+        """translate algo to dict
+        TODO I am going to submit a PR to algorithmia to add this.
+        TODO I will update their __dict__ VersionInfo function.
+        Args:
+            algo_response: algorimia dictionary object
+
+        Returns:
+            str: json data of algorithmia dictionary object
+
         """
         return_dict = {}
         for key in algo_response.attribute_map.keys():
@@ -87,10 +98,18 @@ class AlgorithmiaModel:
                 return_dict[key] = getattr(algo_response, key)
         return return_dict
 
-    def invoke_algorithm(self, algorithm_name, body, timeout_seconds=60):
-        """
-        invoke an algorithm
-        :return:
+    def invoke_algorithm(
+        self, algorithm_name: str, body: str, timeout_seconds: int = 60
+    ):
+        """invoke an algorithm
+        Args:
+            algorithm_name: algorithm name
+            body: json data of scores
+            timeout_seconds: timeout length
+
+        Returns:
+            str: algorithm result
+
         """
         # band-aid solution for this model,
         # algorithmia is currently missing a package needed
@@ -109,11 +128,15 @@ class AlgorithmiaModel:
         return algo.pipe(body).result
 
 
-def prep_data_h2o_scores_to_stream(data):
+def prep_data_h2o_scores_to_stream(data: str) -> str:
     """
     convert incoming data into JSON for streaming
-    :param data:
-    :return:
+    Args:
+        data: hto scores
+
+    Returns:
+        str: algorithm result
+
     """
     # pull parquet file from s3
     s3_client = get_aws_client()
@@ -148,10 +171,11 @@ class CustomerFeatureModel:
         self.features = []
         self.predictions = []
 
-    def get_features(self):
-        """
-        purpose of this function is for getting the features back for a customer
-        :return:
+    def get_features(self) -> None:
+        """purpose of this function is for getting the features back for a customer
+        Args:
+
+        Returns:
         """
         # fake the request for now until we have access
         # response = requests.post
@@ -159,10 +183,11 @@ class CustomerFeatureModel:
         # /get-features', headers=TECTON_API_HEADERS, data=data).json()
         self.features = ["imps_count_14d_1d", "imps_count_28d_1d", "imps_count_60d_1d"]
 
-    def get_feature_vectors(self):
-        """
-        purpose of this function is for getting the feature vectors
-        :return:
+    def get_feature_vectors(self) -> None:
+        """purpose of this function is for getting the feature vectors
+        Args:
+
+        Returns:
         """
         # check if any features to get vectors for
         if not self.features:
