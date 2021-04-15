@@ -4,7 +4,7 @@
       <span v-on="on" class="d-flex avatar-menu">
         <v-btn icon class="icon-btn">
           <v-avatar>
-            <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+            <img src="../assets/images/profile.jpg" alt="profile" />
           </v-avatar>
         </v-btn>
         <div class="vertical-center">
