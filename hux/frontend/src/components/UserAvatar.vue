@@ -9,7 +9,7 @@
         </v-btn>
         <div class="vertical-center">
           <p class="font-weight-bold short-name">
-            {{ firstName[0] }}{{ lastName[0] }}
+           {{ firstName }} {{ lastName }}
           </p>
         </div>
         <v-icon color="black"> mdi-chevron-down </v-icon>
@@ -34,23 +34,22 @@
 
 <script>
 import auth from "@/auth";
+
 export default {
   name: "UserAvatar",
-  data() {
-    return {
-      firstName: "",
-      lastName: "",
-    };
-  },
   methods: {
     initiateLogout() {
       auth.logout();
     },
   },
-  created() {
-    this.firstName = localStorage.firstName;
-    this.lastName = localStorage.lastName;
-  },
+  computed: {
+    firstName() {
+      return this.$store.getters.getFirstname;
+    },
+    lastName() {
+      return this.$store.getters.getLastName;
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

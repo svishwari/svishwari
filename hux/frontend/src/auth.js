@@ -1,6 +1,6 @@
 import { OktaAuth } from "@okta/okta-auth-js";
 const config = require("@/config");
-import store from './store/index';
+import store from "@/store/index";
 
 const authClient = new OktaAuth({ issuer: config.default.oidc.issuer })
 
@@ -30,8 +30,8 @@ export default {
             .then((response) => {
               localStorage.token = response.tokens.accessToken.value;
               localStorage.idToken = response.tokens.idToken.value;
-              localStorage.firstName = transaction.user.profile.firstName;
-              localStorage.lastName = transaction.user.profile.lastName;
+              store.commit('setUserToken', response.tokens);
+              store.commit('setUserProfile', transaction.user.profile);
               if (cb) cb(true);
               this.onChange(true);
             });
