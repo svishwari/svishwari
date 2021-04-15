@@ -5,10 +5,10 @@ const userStore = {
   },
   mutations: {
     LOADING: (state, data) => {
-      state.isLoading = data;
+      state.isLoading = data
     },
   },
   actions: {},
   getters: {},
-};
-export default userStore;
+}
+export default userStore
