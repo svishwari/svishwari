@@ -4,7 +4,6 @@ purpose of this file is for interacting with aws
 from os import getenv
 import boto3
 
-
 # get aws connection params
 AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
@@ -12,10 +11,10 @@ AWS_REGION = getenv("AWS_REGION")
 
 
 def get_aws_client(
-    client="s3",
-    aws_access_key=AWS_ACCESS_KEY_ID,
-    aws_secret_key=AWS_SECRET_ACCESS_KEY,
-    region_name=AWS_REGION,
+        client: str = "s3",
+        aws_access_key: str = AWS_ACCESS_KEY_ID,
+        aws_secret_key: str = AWS_SECRET_ACCESS_KEY,
+        region_name: str = AWS_REGION,
 ):
     """
     quick and dirty function for getting most AWS clients
