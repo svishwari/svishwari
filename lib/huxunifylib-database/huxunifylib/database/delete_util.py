@@ -174,10 +174,6 @@ def delete_ingestion_job_audiences(
     return True
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def delete_delivery_job_lookalike_audiences(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
