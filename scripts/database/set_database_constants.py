@@ -16,9 +16,7 @@ from huxunifylib.database.customer_data_transformer_constants import (
 
 # Get details on MongoDB configuration
 HOST = os.environ.get("MONGO_DB_HOST", "localhost")
-PORT = (
-    int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
-)
+PORT = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
 USERNAME = os.environ.get("MONGO_DB_USERNAME")
 PASSWORD = os.environ.get("MONGO_DB_PASSWORD")
 
@@ -237,10 +235,26 @@ CONSTANTS_LIST = [
                     c.DESTINATION_COLUMN: c.S_TYPE_CUSTOMER_ID,
                 },
             ],
-            c.CUSTOM_TYPE_BOOL: [{c.TRANSFORMER: t.TO_BOOLEAN.name,}],
-            c.CUSTOM_TYPE_CAT: [{c.TRANSFORMER: t.PASS_THROUGH.name,}],
-            c.CUSTOM_TYPE_INT: [{c.TRANSFORMER: t.TO_INTEGER.name,}],
-            c.CUSTOM_TYPE_FLOAT: [{c.TRANSFORMER: t.TO_FLOAT.name,}],
+            c.CUSTOM_TYPE_BOOL: [
+                {
+                    c.TRANSFORMER: t.TO_BOOLEAN.name,
+                }
+            ],
+            c.CUSTOM_TYPE_CAT: [
+                {
+                    c.TRANSFORMER: t.PASS_THROUGH.name,
+                }
+            ],
+            c.CUSTOM_TYPE_INT: [
+                {
+                    c.TRANSFORMER: t.TO_INTEGER.name,
+                }
+            ],
+            c.CUSTOM_TYPE_FLOAT: [
+                {
+                    c.TRANSFORMER: t.TO_FLOAT.name,
+                }
+            ],
         },
     ),
     (

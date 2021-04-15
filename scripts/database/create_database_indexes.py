@@ -21,9 +21,7 @@ from huxunifylib.database.client import DatabaseClient
 
 # Get details on MongoDB configuration.
 HOST = os.environ.get("MONGO_DB_HOST")
-PORT = (
-    int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
-)
+PORT = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
 USERNAME = os.environ.get("MONGO_DB_USERNAME")
 PASSWORD = os.environ.get("MONGO_DB_PASSWORD")
 
@@ -69,6 +67,11 @@ INDEX_LIST = [
         c.DATA_MANAGEMENT_DATABASE,
         c.PERFORMANCE_METRICS_COLLECTION,
         [(c.DELIVERY_JOB_ID, ASCENDING)],
+    ),
+    (
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        [(c.OKTA_ID, ASCENDING)],
     ),
 ]
 
