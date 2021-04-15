@@ -22,7 +22,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .navbar-menu {
   .v-application--wrap {
     min-height: unset !important;

@@ -95,7 +95,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .side-nav-bar {
   .logo-holder {
     height: 105px;
