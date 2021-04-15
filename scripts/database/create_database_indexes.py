@@ -68,7 +68,7 @@ INDEX_LIST = [
     (
         c.DATA_MANAGEMENT_DATABASE,
         c.PERFORMANCE_METRICS_COLLECTION,
-        [(c.DELIVERY_JOB_ID, pymongo.ASCENDING)],
+        [(c.DELIVERY_JOB_ID, ASCENDING)],
     ),
 ]
 
