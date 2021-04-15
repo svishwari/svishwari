@@ -1,15 +1,15 @@
-import { OktaAuth } from "@okta/okta-auth-js";
-const config = require("@/config");
+import { OktaAuth } from "@okta/okta-auth-js"
+const config = require("@/config")
 
-const authClient = new OktaAuth({ issuer: config.default.oidc.issuer });
+const authClient = new OktaAuth({ issuer: config.default.oidc.issuer })
 
 export default {
   login(email, pass, cb) {
-    cb = arguments[arguments.length - 1];
+    cb = arguments[arguments.length - 1]
     if (localStorage.token) {
-      if (cb) cb(true);
-      this.onChange(true);
-      return;
+      if (cb) cb(true)
+      this.onChange(true)
+      return
     }
     return authClient
       .signInWithCredentials({
@@ -27,35 +27,35 @@ export default {
               redirectUri: window.location.origin + "/login/callback",
             })
             .then((response) => {
-              localStorage.token = response.tokens.accessToken.value;
-              localStorage.idToken = response.tokens.idToken.value;
-              if (cb) cb(true);
-              this.onChange(true);
-            });
+              localStorage.token = response.tokens.accessToken.value
+              localStorage.idToken = response.tokens.idToken.value
+              if (cb) cb(true)
+              this.onChange(true)
+            })
         }
       })
       .catch((err) => {
-        console.error(err.message);
-        if (cb) cb(false);
-        this.onChange(false);
-      });
+        console.error(err.message)
+        if (cb) cb(false)
+        this.onChange(false)
+      })
   },
 
   getToken() {
-    return localStorage.token;
+    return localStorage.token
   },
 
   logout(cb) {
-    delete localStorage.token;
-    delete localStorage.idToken;
-    if (cb) cb();
-    this.onChange(false);
-    return authClient.signOut();
+    delete localStorage.token
+    delete localStorage.idToken
+    if (cb) cb()
+    this.onChange(false)
+    return authClient.signOut()
   },
 
   loggedIn() {
-    return !!localStorage.token;
+    return !!localStorage.token
   },
 
   onChange() {},
-};
+}

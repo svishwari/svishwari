@@ -1,7 +1,5 @@
-const CompressionPlugin = require("compression-webpack-plugin");
-
 module.exports = {
-  lintOnSave: true,
+  lintOnSave: process.env.NODE_ENV !== "production",
   filenameHashing: true,
   productionSourceMap: false,
 
@@ -9,25 +7,23 @@ module.exports = {
     performance: {
       hints: false,
     },
+    module: {
+      rules: [
+        {
+          test: /\.svg$/,
+          loader: "vue-svg-loader",
+        },
+      ],
+    },
   },
 
   css: {
     sourceMap: false,
   },
 
-  chainWebpack: config => {
-    config.module.rules.delete("svg");
-  },
-  configureWebpack: {
-    module: {
-      rules: [
-        {
-          test: /\.svg$/, 
-          loader: 'vue-svg-loader', 
-        },
-      ],
-    }      
+  chainWebpack: (config) => {
+    config.module.rules.delete("svg")
   },
 
   transpileDependencies: ["vuetify"],
-};
+}
