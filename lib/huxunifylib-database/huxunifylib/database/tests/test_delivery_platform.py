@@ -1,4 +1,4 @@
-"""Database client tests."""
+"""Delivery Platform management tests."""
 
 import datetime
 import unittest
@@ -9,10 +9,11 @@ import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
-from huxunifylib.database import utils
+from huxunifylib.database import delete_util
 from huxunifylib.database.client import DatabaseClient
 
 
+# pylint: disable=R0904
 class TestDeliveryPlatform(unittest.TestCase):
     """Test delivery platform management module."""
 
@@ -668,7 +669,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(count, 1)
 
         # count of delivery platforms documents after soft deletion
-        success_flag = utils.delete_delivery_platform(
+        success_flag = delete_util.delete_delivery_platform(
             self.database, delivery_platform_id
         )
         self.assertTrue(success_flag)
@@ -723,7 +724,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(count, 3)
 
         # count of lookalike audiences documents after soft deletion
-        success_flag = utils.delete_lookalike_audience(
+        success_flag = delete_util.delete_lookalike_audience(
             self.database, lookalike_audience_new[c.ID]
         )
         self.assertTrue(success_flag)

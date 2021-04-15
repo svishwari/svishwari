@@ -3,7 +3,9 @@ from unittest import TestCase
 
 import huxunifylib.database.constants as c
 from huxunifylib.database.db_exceptions import DuplicateDataSourceFieldType
-from huxunifylib.database.db_utils import validate_data_source_fields
+from huxunifylib.database.audience_data_management_util import (
+    validate_data_source_fields,
+)
 
 
 class TestDBUtils(TestCase):

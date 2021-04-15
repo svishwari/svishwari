@@ -1,90 +1,54 @@
-"""This module utility functions for database libraries."""
+"""Audience and Data management utils."""
 
 import logging
-from enum import Enum
 from collections import defaultdict
-import pandas as pd
 from bson import ObjectId
 import pymongo
+import pandas as pd
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
-from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.db_exceptions import DuplicateDataSourceFieldType
+from huxunifylib.database.client import DatabaseClient
 
 
-class DataStorage(Enum):
-    """Data storage definitions."""
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def audience_name_exists(
+    database: DatabaseClient,
+    ingestion_job_id: ObjectId,
+    name: str,
+) -> bool:
+    """A function to ensure uniqueness of audience names for an ingestion job.
 
-    S3 = object()
-    MONGODB = object()
+    Args:
+        database (DatabaseClient): A database client.
+        ingestion_job_id (ObjectId): Mongo ID of the corresponding ingestion job.
+        name (str): Name of the entity.
 
+    Returns:
+        bool: A flag indicating existence of an audience name for an ingestion job.
 
-class DataLocationS3Config(Enum):
-    """S3 configuration."""
+    """
 
-    BUCKET = object()
-    KEY = object()
-    FILENAME = object()
-    FOLDER = object()
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCES_COLLECTION]
 
+    try:
+        doc = collection.find_one(
+            {"$and": [{c.JOB_ID: ingestion_job_id}, {c.AUDIENCE_NAME: name}]}
+        )
+        if doc:
+            return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
 
-class DataFormat(Enum):
-    """Data format definitions and their file extentions."""
-
-    CSV = "csv"
-    TSV = "tsv"
-    JSON = "json"
-
-
-class TransformerNames(Enum):
-    """Transformer names."""
-
-    PASS_THROUGH = object()
-    PASS_THROUGH_HASHED = object()
-
-    STRIP_SPACE_LOWER_CASE = object()
-    STRIP_SPACE_LOWER_CASE_HASHED = object()
-
-    STRIP_SPACE_UPPER_CASE = object()
-    STRIP_SPACE_UPPER_CASE_HASHED = object()
-
-    FIRST_LAST_NAME = object()
-    FIRST_NAME_INITIAL = object()
-
-    CUSTOMER_ID = object()
-
-    DOB_TO_AGE = object()
-    DOB_YEAR_TO_AGE = object()
-
-    DOB_TO_DOB_DAY = object()
-    DOB_TO_DOB_MONTH = object()
-    DOB_TO_DOB_YEAR = object()
-
-    DOB_DAY = object()
-    DOB_MONTH = object()
-    DOB_YEAR = object()
-
-    FACEBOOK_CITY = object()
-    FACEBOOK_COUNTRY_CODE = object()
-    FACEBOOK_GENDER = object()
-    FACEBOOK_PHONE_NUMBER = object()
-    FACEBOOK_POSTAL_CODE = object()
-    FACEBOOK_STATE_OR_PROVINCE = object()
-
-    GOOGLE_PHONE_NUMBER = object()
-
-    GENDER = object()
-
-    MOBILE_DEVICE_ID = object()
-    POSTAL_CODE = object()
-    STATE_OR_PROVINCE = object()
-
-    TO_INTEGER = object()
-    TO_FLOAT = object()
-    TO_BOOLEAN = object()
+    return False
 
 
+# pylint: disable=R0914,R0912,R0915
 def add_stats_to_update_dict(
     update_dict: dict,
     new_data: pd.DataFrame,
@@ -265,113 +229,6 @@ def add_stats_to_update_dict(
     return update_dict
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def name_exists(
-    database: DatabaseClient,
-    database_name: str,
-    collection_name: str,
-    name_field: str,
-    name: str,
-) -> bool:
-    """A function to ensure uniqueness of an entity name.
-
-    Args:
-        database (DatabaseClient): A database client.
-        database_name (str): Name of database.
-        collection_name (str): Name of collection.
-        name_field (str): Field used to store name of the entity.
-        name (str): Name of the entity.
-
-    Returns:
-        bool: A flag indicating existence of an entity name in database.
-
-    """
-
-    exists_flag = False
-    doc = None
-    dm_db = database[database_name]
-    collection = dm_db[collection_name]
-
-    try:
-        doc = collection.find_one({name_field: name})
-        if doc is not None:
-            exists_flag = True
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return exists_flag
-
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def audience_name_exists(
-    database: DatabaseClient,
-    ingestion_job_id: ObjectId,
-    name: str,
-) -> bool:
-    """A function to ensure uniqueness of audience names for an ingestion job.
-
-    Args:
-        database (DatabaseClient): A database client.
-        ingestion_job_id (ObjectId): Mongo ID of the corresponding ingestion job.
-        name (str): Name of the entity.
-
-    Returns:
-        bool: A flag indicating existence of an audience name for an ingestion job.
-
-    """
-
-    exists_flag = False
-    doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
-
-    try:
-        doc = collection.find_one(
-            {"$and": [{c.JOB_ID: ingestion_job_id}, {c.AUDIENCE_NAME: name}]}
-        )
-        if doc is not None:
-            exists_flag = True
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return exists_flag
-
-
-def detect_non_breakdown_fields(
-    new_data: pd.DataFrame,
-    fields: list,
-) -> list:
-    """A function to detect non breakdown fields based on a batch of
-       data. These are fields with values that contain "$" or ".". As MongoDB
-       does not allow keys that contain these two characters, we cannot store
-       breakdowns for them.
-
-    Args:
-        new_data (pd.DataFrame): New data in Pandas DataFrame format.
-        fields (list): List of fields to check.
-
-    Returns:
-        list: List of detected no breakdown fields.
-
-    """
-
-    new_non_breakdown_fields = []
-
-    fields = list(set(fields).intersection(set(new_data.columns)))
-
-    for field in fields:
-        if new_data[field].dropna().str.contains("\\$|\\.").any():
-            new_non_breakdown_fields.append(field)
-
-    return new_non_breakdown_fields
-
-
 def validate_data_source_fields(fields: list) -> None:
     """A function to validate data source fields.
 
@@ -428,49 +285,57 @@ def validate_data_source_fields(fields: list) -> None:
                 raise DuplicateDataSourceFieldType(c.FIELD_SPECIAL_TYPE)
 
 
+def clean_dataframe_types(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Resolve Mongo unfriendly types.
+
+    Args:
+        dataframe (pd.DataFrame): input dataframe.
+
+    Returns:
+        pd.DataFrame: output dataframe
+    """
+    dataframe[dataframe.select_dtypes(include=["int64"]).columns] = dataframe[
+        dataframe.select_dtypes(include=["int64"]).columns
+    ].astype("int32")
+    dataframe[
+        dataframe.select_dtypes(include=["float64"]).columns
+    ] = dataframe[dataframe.select_dtypes(include=["float64"]).columns].astype(
+        "float32"
+    )
+
+    return dataframe
+
+
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_docs_bulk(
+def update_audience_doc(
     database: DatabaseClient,
-    mongo_ids: list,
-    collection_name: str,
-    field_name: str,
-    ids_only: bool = False,
-) -> list:
-    """A function to get a list of documents.
+    audience_id: ObjectId,
+    update_dict: dict,
+) -> dict:
+    """Update MongoDb document.
 
     Args:
-        database (DatabaseClient): A database client.
-        mongo_ids (list): A list of MongoDB IDs.
-        collection_name (str): Name of collection.
-        field_name (str): Name of corresponding field.
-        ids_only (bool): If True, only include IDs in the documents.
+        database (DatabaseClient): database client.
+        audience_id (ObjectId): MongoDB audience ID.
+        update_dict (dict): updating dictionary.
 
     Returns:
-        list: A list of documents.
-
+        dict: updated document.
     """
 
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[collection_name]
-    ret_list = None
-
-    proj_dict = {c.ENABLED: 0}
-
-    if ids_only:
-        proj_dict[c.ID] = 1
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     try:
-        cursor = collection.find(
-            {field_name: {"$in": mongo_ids}, c.ENABLED: True},
-            projection=proj_dict,
+        return collection.find_one_and_update(
+            {c.ID: audience_id, c.ENABLED: True},
+            {"$set": update_dict},
+            upsert=False,
+            return_document=pymongo.ReturnDocument.AFTER,
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    if cursor is not None:
-        ret_list = list(cursor)
-
-    return ret_list
+    return None

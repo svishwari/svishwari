@@ -1,4 +1,4 @@
-"""Database client tests."""
+"""Database util tests."""
 
 import os
 import unittest
@@ -7,11 +7,12 @@ import huxunifylib.database.constants as c
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.delivery_platform_management as dpm
-import huxunifylib.database.utils as utils
+import huxunifylib.database.delete_util as delete_util
 
 from huxunifylib.database.client import DatabaseClient
 
 
+# pylint: disable=R0902,R0914,R0915
 class TestUtils(unittest.TestCase):
     """Test utils module."""
 
@@ -293,34 +294,36 @@ class TestUtils(unittest.TestCase):
         delivery_id_2 = delivery_doc[c.ID]
 
         # Test soft delete functions
-        success_flag = utils.delete_audience(database, audience_id)
+        success_flag = delete_util.delete_audience(database, audience_id)
 
         self.assertTrue(success_flag)
 
-        success_flag = utils.delete_ingestion_job(database, ingestion_job_id)
+        success_flag = delete_util.delete_ingestion_job(
+            database, ingestion_job_id
+        )
 
         self.assertTrue(success_flag)
 
-        success_flag = utils.delete_data_source(database, data_source_id)
+        success_flag = delete_util.delete_data_source(database, data_source_id)
 
         self.assertTrue(success_flag)
 
-        success_flag = utils.delete_lookalike_audience(
+        success_flag = delete_util.delete_lookalike_audience(
             database,
             lookalike_audience_id,
         )
 
         self.assertTrue(success_flag)
 
-        success_flag = utils.delete_delivery_job(database, delivery_id)
+        success_flag = delete_util.delete_delivery_job(database, delivery_id)
 
         self.assertTrue(success_flag)
 
-        success_flag = utils.delete_delivery_job(database, delivery_id_2)
+        success_flag = delete_util.delete_delivery_job(database, delivery_id_2)
 
         self.assertTrue(success_flag)
 
-        success_flag = utils.delete_delivery_platform(
+        success_flag = delete_util.delete_delivery_platform(
             database,
             delivery_platform_id,
         )
@@ -331,7 +334,7 @@ class TestUtils(unittest.TestCase):
     def test_delete_lookalike_audiences_bulk(self):
         """Test bulk deletion of lookalike audiences."""
 
-        success_flag = utils.delete_lookalike_audiences_bulk(
+        success_flag = delete_util.delete_lookalike_audiences_bulk(
             self.database,
             [self.lookalike_doc_1[c.ID], self.lookalike_doc_2[c.ID]],
         )
@@ -353,7 +356,7 @@ class TestUtils(unittest.TestCase):
     def test_delete_audiences_bulk(self):
         """Test bulk deletion of audiences."""
 
-        success_flag = utils.delete_audiences_bulk(
+        success_flag = delete_util.delete_audiences_bulk(
             self.database,
             [self.audience_doc_1[c.ID], self.audience_doc_2[c.ID]],
         )
@@ -375,7 +378,7 @@ class TestUtils(unittest.TestCase):
     def test_delete_delivery_platforms_bulk(self):
         """Test bulk deletion of delivery platforms."""
 
-        success_flag = utils.delete_delivery_platforms_bulk(
+        success_flag = delete_util.delete_delivery_platforms_bulk(
             self.database,
             [
                 self.delivery_platform_doc_1[c.ID],
@@ -400,7 +403,7 @@ class TestUtils(unittest.TestCase):
     def test_delete_data_sources_bulk(self):
         """Test bulk deletion of delivery platforms."""
 
-        success_flag = utils.delete_data_sources_bulk(
+        success_flag = delete_util.delete_data_sources_bulk(
             self.database,
             [self.data_source_doc_1[c.ID], self.data_source_doc_2[c.ID]],
         )

@@ -1,4 +1,5 @@
 """This module enables functionality related to audience management."""
+# pylint: disable=C0302
 
 import time
 import logging
@@ -14,10 +15,12 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
 import huxunifylib.database.data_management as dm
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.db_utils import (
+from huxunifylib.database.audience_data_management_util import (
     add_stats_to_update_dict,
     audience_name_exists,
+    update_audience_doc,
 )
+from huxunifylib.database.utils import get_collection_count
 
 
 @retry(
@@ -94,6 +97,7 @@ def create_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=R0914
 def get_ingested_data(
     database: DatabaseClient,
     query: dict,
@@ -133,8 +137,7 @@ def get_ingested_data(
         )
 
         data_cols = []
-        count = 0
-        for item in cursor:
+        for count, item in enumerate(cursor):
             ingested_data = item[c.INGESTED_DATA]
 
             for name in data_cols:
@@ -144,13 +147,12 @@ def get_ingested_data(
             for name in new_cols:
                 data_dict[name] += count * [None] + [ingested_data[name]]
 
-            count += 1
             data_cols += new_cols
             next_start_id = item[c.ID]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
-        cursor = []
+        raise
 
     # Build a data frame
     audience_data = pd.DataFrame(data_dict)
@@ -162,6 +164,7 @@ def get_ingested_data(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=R0912,R0914,R0915
 def get_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -733,10 +736,6 @@ def is_default_audience(
     return is_default_flag
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def update_audience_name(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -753,10 +752,7 @@ def update_audience_name(
         dict: Updated audience configuration dict.
 
     """
-    doc = None
     ingestion_job_id = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
 
     # Make sure this is not a default audience
     default_flag = is_default_audience(
@@ -790,18 +786,7 @@ def update_audience_name(
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
-    # Update the doc.
-    try:
-        doc = collection.find_one_and_update(
-            {c.ID: audience_id, c.ENABLED: True},
-            {"$set": update_dict},
-            upsert=False,
-            return_document=pymongo.ReturnDocument.AFTER,
-        )
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return doc
+    return update_audience_doc(database, audience_id, update_dict)
 
 
 @retry(
@@ -897,6 +882,7 @@ def get_ingestion_job_audience_ids(
         cursor = collection.find({c.JOB_ID: ingestion_job_id, c.ENABLED: True})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+        raise
 
     audience_ids = [doc[c.ID] for doc in cursor]
 
@@ -1029,10 +1015,6 @@ def get_all_audiences(
     return audiences
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def favorite_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -1047,9 +1029,6 @@ def favorite_audience(
         dict: Updated audience configuration dict.
 
     """
-    doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
 
     # Update dict
     update_dict = {
@@ -1057,24 +1036,9 @@ def favorite_audience(
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
-    # Update the doc.
-    try:
-        doc = collection.find_one_and_update(
-            {c.ID: audience_id, c.ENABLED: True},
-            {"$set": update_dict},
-            upsert=False,
-            return_document=pymongo.ReturnDocument.AFTER,
-        )
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return doc
+    return update_audience_doc(database, audience_id, update_dict)
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def unfavorite_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -1089,34 +1053,15 @@ def unfavorite_audience(
         dict: Updated audience configuration dict.
 
     """
-    doc = None
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
 
-    # Update dict
     update_dict = {
         c.FAVORITE: False,
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
-    # Update the doc.
-    try:
-        doc = collection.find_one_and_update(
-            {c.ID: audience_id, c.ENABLED: True},
-            {"$set": update_dict},
-            upsert=False,
-            return_document=pymongo.ReturnDocument.AFTER,
-        )
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return doc
+    return update_audience_doc(database, audience_id, update_dict)
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def get_audiences_count(database: DatabaseClient) -> int:
     """A function to retrieve count of audiences documents.
 
@@ -1127,17 +1072,42 @@ def get_audiences_count(database: DatabaseClient) -> int:
         int: Count of audiences documents.
 
     """
-    am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[c.AUDIENCES_COLLECTION]
-    count = 0
+    return get_collection_count(
+        database, c.DATA_MANAGEMENT_DATABASE, c.AUDIENCES_COLLECTION
+    )
 
-    try:
-        count = collection.count_documents(
-            {
-                c.ENABLED: True,
-            }
+
+def set_ingestion_job_status(
+    database: DatabaseClient,
+    ingestion_job_id: ObjectId,
+    job_status: str,
+    status_msg: str = "",
+) -> dict:
+
+    """Set an ingestion job status and add default audience if ingestion
+    succeeded.
+
+    Args:
+        database (DatabaseClient): A database client.
+        ingestion_job_id (ObjectId): MongoDB document ID of ingestion job.
+        job_status (str): Status of ingestion job. Can be Pending,
+            In Progress, Failed, or Succeeded.
+        status_msg (str): Additional details related to the current job status.
+
+    Returns:
+        dict: Updated ingestion job document.
+    """
+
+    if job_status == c.STATUS_SUCCEEDED:
+        get_default_audience_id(
+            database=database,
+            ingestion_job_id=ingestion_job_id,
         )
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
 
-    return count
+    ingestion_job_id_doc = dm.set_ingestion_job_status_no_default_audience(
+        database,
+        ingestion_job_id,
+        job_status,
+        status_msg,
+    )
+    return ingestion_job_id_doc

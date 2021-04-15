@@ -1,14 +1,15 @@
-"""Database client tests."""
+"""Data Management tests."""
 
 import unittest
 import mongomock
 import pandas as pd
 import huxunifylib.database.data_management as dm
+import huxunifylib.database.audience_management as am
 import huxunifylib.database.constants as c
-from huxunifylib.database import utils
+from huxunifylib.database import delete_util
 
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.db_utils import detect_non_breakdown_fields
+from huxunifylib.database.utils import detect_non_breakdown_fields
 from huxunifylib.database.db_exceptions import DataSourceLocked
 
 
@@ -196,7 +197,7 @@ class TestDataManagement(unittest.TestCase):
     def test_delete_data_source(self):
         """Test delete_data_source routine."""
 
-        success_flag = utils.delete_data_source(
+        success_flag = delete_util.delete_data_source(
             self.database, self.data_source_doc[c.ID]
         )
         self.assertTrue(success_flag)
@@ -212,7 +213,7 @@ class TestDataManagement(unittest.TestCase):
         status = c.STATUS_FAILED
         status_msg = "Ingestion job failed!"
 
-        doc = dm.set_ingestion_job_status(
+        doc = am.set_ingestion_job_status(
             self.database, self.ingestion_job_doc[c.ID], status, status_msg
         )
 
@@ -320,7 +321,7 @@ class TestDataManagement(unittest.TestCase):
         status = c.STATUS_SUCCEEDED
         status_msg = "Ingestion job succeeded!"
 
-        doc = dm.set_ingestion_job_status(
+        doc = am.set_ingestion_job_status(
             self.database, self.ingestion_job_doc[c.ID], status, status_msg
         )
 
@@ -368,7 +369,7 @@ class TestDataManagement(unittest.TestCase):
         status = c.STATUS_IN_PROGRESS
         status_msg = "This is a test."
 
-        doc = dm.set_ingestion_job_status(
+        doc = am.set_ingestion_job_status(
             self.database,
             self.ingestion_job_doc[c.ID],
             status,
@@ -389,7 +390,7 @@ class TestDataManagement(unittest.TestCase):
         status = c.STATUS_IN_PROGRESS
         status_msg = "This is a test."
 
-        doc = dm.set_ingestion_job_status(
+        doc = am.set_ingestion_job_status(
             self.database,
             self.ingestion_job_doc[c.ID],
             status,
@@ -526,6 +527,7 @@ class TestDataManagement(unittest.TestCase):
             self.assertTrue(c.INGESTED_DATA in item)
             self.assertTrue(c.S_TYPE_CUSTOMER_ID in item[c.INGESTED_DATA])
 
+    # pylint: disable=R0904,R0915
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_append_ingested_job_data_stats(self):
         """Test append_ingested_job_data_stats."""

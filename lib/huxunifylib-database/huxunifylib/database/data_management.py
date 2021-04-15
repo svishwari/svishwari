@@ -1,4 +1,5 @@
 """This module enables functionality related to data management."""
+# pylint: disable=C0302
 
 import logging
 import datetime
@@ -10,12 +11,12 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
-from huxunifylib.database import audience_management
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.db_utils import (
+from huxunifylib.database.utils import name_exists
+from huxunifylib.database.audience_data_management_util import (
     add_stats_to_update_dict,
-    name_exists,
     validate_data_source_fields,
+    clean_dataframe_types,
 )
 
 
@@ -567,23 +568,19 @@ def update_data_source(
         validate_data_source_fields(fields)
 
     # Make sure the name will be unique
-    exists_flag = name_exists(
+    if name_exists(
         database,
         c.DATA_MANAGEMENT_DATABASE,
         c.DATA_SOURCES_COLLECTION,
         c.DATA_SOURCE_NAME,
         name,
-    )
-
-    if exists_flag:
+    ):
         cur_doc = get_data_source(database, data_source_id)
         if cur_doc[c.DATA_SOURCE_NAME] != name:
             raise de.DuplicateName(name)
 
     # Do not update if data source is associated to an ingestion job
-    mutable = is_data_source_mutable(database, data_source_id)
-
-    if not mutable:
+    if not is_data_source_mutable(database, data_source_id):
         raise de.DataSourceLocked(data_source_id)
 
     update_doc = {
@@ -784,14 +781,15 @@ def is_data_source_mutable(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_ingestion_job_status(
+def set_ingestion_job_status_no_default_audience(
     database: DatabaseClient,
     ingestion_job_id: ObjectId,
     job_status: str,
-    status_msg: str = "",
+    status_msg: str,
 ) -> dict:
 
-    """A function to set an ingestion job status.
+    """Set ingestion job status, but do not create default adience when
+    ingestion job succeeded.
 
     Args:
         database (DatabaseClient): A database client.
@@ -821,12 +819,6 @@ def set_ingestion_job_status(
     update_dict[c.JOB_STATUS] = job_status
 
     update_dict[c.STATUS_MESSAGE] = status_msg
-
-    if job_status == c.STATUS_SUCCEEDED:
-        audience_management.get_default_audience_id(
-            database=database,
-            ingestion_job_id=ingestion_job_id,
-        )
 
     data_source_id = get_ingestion_job(
         database,
@@ -976,8 +968,8 @@ def append_ingested_data(
     Returns:
         bool: Success flag.
     """
+    ingested_data = clean_dataframe_types(ingested_data)
 
-    success_flag = False
     dm_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = dm_db[c.INGESTED_DATA_COLLECTION]
 
@@ -1010,7 +1002,7 @@ def append_ingested_data(
         )
         collection.insert_many(batch_docs, ordered=False)
         collection.create_index([(c.JOB_ID, pymongo.ASCENDING)])
-        success_flag = True
+        return True
     except pymongo.errors.BulkWriteError as exc:
         for err in exc.details["writeErrors"]:
             if err["code"] == c.DUPLICATE_ERR_CODE:
@@ -1018,16 +1010,15 @@ def append_ingested_data(
                     "Ignoring %s due to duplicate unique field!",
                     str(err["op"]),
                 )
-                success_flag = True
-            else:
-                logging.error(exc)
-                success_flag = False
-                break
+                continue
+
+            logging.error(exc)
+            return False
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
-        success_flag = False
+        return False
 
-    return success_flag
+    return True
 
 
 @retry(

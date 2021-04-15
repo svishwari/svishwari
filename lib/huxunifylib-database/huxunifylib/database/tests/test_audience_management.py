@@ -1,4 +1,4 @@
-"""Database client tests."""
+"""Audience Management tests."""
 
 import unittest
 import mongomock
@@ -6,53 +6,32 @@ import pandas as pd
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
-from huxunifylib.database import utils
-
+from huxunifylib.database import delete_util
 from huxunifylib.database.client import DatabaseClient
 
 
+# pylint: disable=R0904
 class TestAudienceManagement(unittest.TestCase):
     """Test audience management module."""
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
 
-        # Connect
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
-
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
-        # Set ingestion job
-        data_source_doc = dm.set_data_source(
-            self.database,
+        self.data_source_params = [
             "My data source",
             1,
             "CSV",
             "S3",
             None,
             None,
-        )
-        self.ingestion_job_doc = dm.set_ingestion_job(
-            self.database, data_source_doc[c.ID]
-        )
+        ]
 
-        self.assertTrue(self.ingestion_job_doc is not None)
-        self.assertTrue(c.ID in self.ingestion_job_doc)
-
-        ingestion_job_id = self.ingestion_job_doc[c.ID]
-
-        doc = dm.set_ingestion_job_status(
-            self.database, ingestion_job_id, c.STATUS_SUCCEEDED
-        )
-
-        self.assertTrue(doc is not None)
-        self.assertTrue(c.JOB_STATUS in doc)
-        self.assertTrue(c.JOB_END_TIME in doc)
-
-        # Store ingested data and create an audience
-        ingested_data_frame = pd.DataFrame(
+        self.ingested_data_frame = pd.DataFrame(
             {
                 c.S_TYPE_FIRST_NAME: [
                     "first_name_10",
@@ -86,14 +65,7 @@ class TestAudienceManagement(unittest.TestCase):
             }
         )
 
-        success_flag = dm.append_ingested_data(
-            self.database, ingestion_job_id, ingested_data_frame
-        )
-
-        self.assertTrue(success_flag)
-
-        # Append records with different fields
-        new_data_frame = pd.DataFrame(
+        self.new_data_frame = pd.DataFrame(
             {
                 c.S_TYPE_FIRST_NAME: [
                     "first_name_50",
@@ -111,12 +83,6 @@ class TestAudienceManagement(unittest.TestCase):
                 "new_custom_field": ["new_val_50", "new_val_60"],
             }
         )
-
-        success_flag = dm.append_ingested_data(
-            self.database, ingestion_job_id, new_data_frame
-        )
-
-        self.assertTrue(success_flag)
 
         self.audience_filters = [
             {
@@ -136,6 +102,51 @@ class TestAudienceManagement(unittest.TestCase):
             },
         ]
 
+        self.ingestion_job_doc = None
+        self.audience_doc = None
+
+    def _setup_ingestion_job(self) -> dict:
+        data_source_doc = dm.set_data_source(
+            self.database, *self.data_source_params
+        )
+        ingestion_job_doc = dm.set_ingestion_job(
+            self.database, data_source_doc[c.ID]
+        )
+        return ingestion_job_doc
+
+    def _setup_audience(self) -> dict:
+
+        ingestion_job_doc = self._setup_ingestion_job()
+        ingestion_job_id = ingestion_job_doc[c.ID]
+
+        dm.append_ingested_data(
+            self.database, ingestion_job_id, self.ingested_data_frame
+        )
+        dm.append_ingested_data(
+            self.database, ingestion_job_id, self.new_data_frame
+        )
+        audience_doc = am.create_audience(
+            self.database,
+            ingestion_job_id,
+            "My Audience",
+            self.audience_filters,
+        )
+        return audience_doc, ingestion_job_doc
+
+    def _setup_ingestion_succeeded_and_audience(self) -> dict:
+
+        ingestion_job_doc = self._setup_ingestion_job()
+        ingestion_job_id = ingestion_job_doc[c.ID]
+
+        dm.append_ingested_data(
+            self.database, ingestion_job_id, self.ingested_data_frame
+        )
+        dm.append_ingested_data(
+            self.database, ingestion_job_id, self.new_data_frame
+        )
+        self.ingestion_job_doc = am.set_ingestion_job_status(
+            self.database, ingestion_job_id, c.STATUS_SUCCEEDED
+        )
         self.audience_doc = am.create_audience(
             self.database,
             ingestion_job_id,
@@ -143,29 +154,71 @@ class TestAudienceManagement(unittest.TestCase):
             self.audience_filters,
         )
 
-        self.assertTrue(self.audience_doc is not None)
-        self.assertTrue(c.ID in self.audience_doc)
+    def test_set_ingestion_job(self):
+        """Ingestion job created and status is set."""
 
-    @mongomock.patch(servers=(("localhost", 27017),))
-    def test_create_count_audience(self):
-        """Test create and count audiences."""
+        ingestion_job_doc = self._setup_ingestion_job()
+
+        self.assertTrue(ingestion_job_doc is not None)
+        self.assertTrue(c.ID in ingestion_job_doc)
+
+        ingestion_job_id = ingestion_job_doc[c.ID]
+        doc = am.set_ingestion_job_status(
+            self.database, ingestion_job_id, c.STATUS_SUCCEEDED
+        )
+        self.assertTrue(doc is not None)
+        self.assertTrue(c.JOB_STATUS in doc)
+        self.assertTrue(c.JOB_END_TIME in doc)
+
+        success_flag = dm.append_ingested_data(
+            self.database, ingestion_job_id, self.ingested_data_frame
+        )
+        self.assertTrue(success_flag)
+
+        success_flag = dm.append_ingested_data(
+            self.database, ingestion_job_id, self.new_data_frame
+        )
+        self.assertTrue(success_flag)
+
+    def test_set_audience(self):
+        """Audience is set."""
+
+        audience_doc, _ = self._setup_audience()
+
+        self.assertTrue(audience_doc is not None)
+        self.assertTrue(c.ID in audience_doc)
+
+    def test_audience_count(self):
+        """Created audiences are counted properly."""
+
+        _, ingestion_job_doc = self._setup_audience()
+        ingestion_job_id = ingestion_job_doc[c.ID]
 
         doc = am.create_audience(
             self.database,
-            self.ingestion_job_doc[c.ID],
+            ingestion_job_id,
             "My Audience new",
             self.audience_filters,
         )
 
         self.assertTrue(doc is not None)
 
+        # Two explicitly created audiences before ingestion job success
         count = am.get_audiences_count(database=self.database)
+        self.assertEqual(count, 2)
 
+        doc = am.set_ingestion_job_status(
+            self.database, ingestion_job_id, c.STATUS_SUCCEEDED
+        )
+
+        # One default audience added after status success was set
+        count = am.get_audiences_count(database=self.database)
         self.assertEqual(count, 3)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_audience(self):
         """Test get audiences."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         audience_data_1, next_start_id = am.get_audience(
             self.database,
@@ -198,11 +251,11 @@ class TestAudienceManagement(unittest.TestCase):
         )
         self.assertEqual(set(audience_data[c.S_TYPE_AGE]), {33, 59})
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_audience_batches(self):
         """Test get audiences in batches."""
 
-        # Get audience in batches
+        self._setup_ingestion_succeeded_and_audience()
+
         fetch = am.get_audience_batches(
             self.database, self.audience_doc[c.ID], 1
         )
@@ -217,12 +270,13 @@ class TestAudienceManagement(unittest.TestCase):
         for audience_batch in fetch:
             self.assertEqual(audience_batch.shape[0], 2)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_audience(self):
         """Test delete audiences."""
 
+        self._setup_ingestion_succeeded_and_audience()
+
         # count of audiences documents after soft deletion
-        success_flag = utils.delete_audience(
+        success_flag = delete_util.delete_audience(
             self.database, self.audience_doc[c.ID]
         )
         self.assertTrue(success_flag)
@@ -230,9 +284,11 @@ class TestAudienceManagement(unittest.TestCase):
         count = am.get_audiences_count(database=self.database)
         self.assertEqual(count, 1)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
+    # pylint: disable=R0915
     def test_append_audience_insights(self):
         """Test append audience insights."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         audience_data, _ = am.get_audience(
             self.database,
@@ -372,9 +428,10 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(stored_insights is not None)
         self.assertEqual(stored_insights, insights)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_audience_config(self):
         """Test get audience config."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Get audience configuration
         doc = am.get_audience_config(
@@ -384,9 +441,10 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(doc is not None)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_audience_name(self):
         """Test get audience name."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Get audience name
         audience_name = am.get_audience_name(
@@ -397,9 +455,10 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(audience_name is not None)
         self.assertEqual(audience_name, "My Audience")
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_audience_name(self):
         """Test update audience name."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Update audience name
         new_name = "New name"
@@ -413,9 +472,10 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(c.AUDIENCE_NAME in doc)
         self.assertEqual(doc[c.AUDIENCE_NAME], new_name)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_update_audience_filters(self):
         """Test update audience filters."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Update audience filters
         new_filters = []
@@ -429,9 +489,10 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(c.AUDIENCE_FILTERS in doc)
         self.assertEqual(doc[c.AUDIENCE_FILTERS], new_filters)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_default_audience_id(self):
         """Test get_default_audience_id."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Get the default audience ID given an ingestion job
         default_audience_id = am.get_default_audience_id(
@@ -441,9 +502,10 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(default_audience_id is not None)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_ingestion_job_audience_ids(self):
         """Test get_ingestion_job_audience_ids."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Get all audience IDs given an ingestion job
         audience_ids = am.get_ingestion_job_audience_ids(
@@ -464,9 +526,10 @@ class TestAudienceManagement(unittest.TestCase):
             {default_audience_id, self.audience_doc[c.ID]},
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_ingestion_job_audience_insights(self):
         """Test get_ingestion_job_audience_insights."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Create insights
         audience_data, _ = am.get_audience(
@@ -494,9 +557,10 @@ class TestAudienceManagement(unittest.TestCase):
             all_insights[0][c.AUDIENCE_ID], self.audience_doc[c.ID]
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_audience_insights(self):
         """Test delete_job_audience_insights."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Create insights
         audience_data, _ = am.get_audience(
@@ -519,9 +583,10 @@ class TestAudienceManagement(unittest.TestCase):
         )
         self.assertTrue(success_flag)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_refresh_audience_insights(self):
         """Test refresh_job_audience_insights."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Create insights
         audience_data, _ = am.get_audience(
@@ -542,9 +607,10 @@ class TestAudienceManagement(unittest.TestCase):
         )
         self.assertTrue(doc is not None)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_recent_audiences(self):
         """Test get_all_recent_audiences."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Get audiences of all most recent ingestion jobs
         audiences = am.get_all_recent_audiences(self.database)
@@ -552,9 +618,10 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(audiences is not None)
         self.assertEqual(len(audiences), 2)
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         # Get all existing audiences
         audiences = am.get_all_audiences(self.database)
@@ -566,6 +633,8 @@ class TestAudienceManagement(unittest.TestCase):
     def test_favorite_audience(self):
         """Test favorite_audience."""
 
+        self._setup_ingestion_succeeded_and_audience()
+
         doc = am.favorite_audience(self.database, self.audience_doc[c.ID])
 
         self.assertTrue(doc is not None)
@@ -575,6 +644,8 @@ class TestAudienceManagement(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_unfavorite_audience(self):
         """Test unfavorite_audience."""
+
+        self._setup_ingestion_succeeded_and_audience()
 
         doc = am.unfavorite_audience(self.database, self.audience_doc[c.ID])
 
