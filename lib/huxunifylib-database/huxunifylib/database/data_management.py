@@ -777,6 +777,10 @@ def is_data_source_mutable(
     return mutable
 
 
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def set_ingestion_job_status_no_default_audience(
     database: DatabaseClient,
     ingestion_job_id: ObjectId,

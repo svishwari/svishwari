@@ -736,10 +736,6 @@ def is_default_audience(
     return is_default_flag
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def update_audience_name(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -1019,10 +1015,6 @@ def get_all_audiences(
     return audiences
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def favorite_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -1047,10 +1039,6 @@ def favorite_audience(
     return update_audience_doc(database, audience_id, update_dict)
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def unfavorite_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -1074,10 +1062,6 @@ def unfavorite_audience(
     return update_audience_doc(database, audience_id, update_dict)
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def get_audiences_count(database: DatabaseClient) -> int:
     """A function to retrieve count of audiences documents.
 
@@ -1093,10 +1077,6 @@ def get_audiences_count(database: DatabaseClient) -> int:
     )
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def set_ingestion_job_status(
     database: DatabaseClient,
     ingestion_job_id: ObjectId,

@@ -1427,10 +1427,6 @@ def get_delivery_platform_delivery_jobs(
     return list(cursor)
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def get_delivery_platforms_count(database: DatabaseClient) -> int:
     """A function to retrieve count of delivery platforms documents.
 
@@ -1446,10 +1442,6 @@ def get_delivery_platforms_count(database: DatabaseClient) -> int:
     )
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def get_lookalike_audiences_count(database: DatabaseClient) -> int:
     """A function to retrieve count of lookalike audiences documents.
 

@@ -77,6 +77,10 @@ def detect_non_breakdown_fields(
     return new_non_breakdown_fields
 
 
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_collection_count(
     database: DatabaseClient, database_name: str, collection_name: str
 ) -> int:
