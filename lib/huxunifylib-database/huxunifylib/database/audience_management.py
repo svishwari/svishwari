@@ -11,16 +11,16 @@ from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import database.db_exceptions as de
-import database.constants as c
-import database.data_management as dm
-from database.client import DatabaseClient
-from database.audience_data_management_util import (
+import huxunifylib.database.db_exceptions as de
+import huxunifylib.database.constants as c
+import huxunifylib.database.data_management as dm
+from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.audience_data_management_util import (
     add_stats_to_update_dict,
     audience_name_exists,
     update_audience_doc,
 )
-from database.utils import get_collection_count
+from huxunifylib.database.utils import get_collection_count
 
 
 @retry(

@@ -3,14 +3,14 @@
 import unittest
 import mongomock
 import pandas as pd
-import database.data_management as dm
-import database.audience_management as am
-import database.constants as c
-from database import delete_util
+import huxunifylib.database.data_management as dm
+import huxunifylib.database.audience_management as am
+import huxunifylib.database.constants as c
+from huxunifylib.database import delete_util
 
-from database.client import DatabaseClient
-from database.utils import detect_non_breakdown_fields
-from database.db_exceptions import DataSourceLocked
+from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.utils import detect_non_breakdown_fields
+from huxunifylib.database.db_exceptions import DataSourceLocked
 
 
 class TestDataManagement(unittest.TestCase):

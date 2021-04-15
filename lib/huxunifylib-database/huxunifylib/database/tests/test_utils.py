@@ -3,13 +3,13 @@
 import os
 import unittest
 import mongomock
-import database.constants as c
-import database.data_management as dm
-import database.audience_management as am
-import database.delivery_platform_management as dpm
-import database.delete_util as delete_util
+import huxunifylib.database.constants as c
+import huxunifylib.database.data_management as dm
+import huxunifylib.database.audience_management as am
+import huxunifylib.database.delivery_platform_management as dpm
+import huxunifylib.database.delete_util as delete_util
 
-from database.client import DatabaseClient
+from huxunifylib.database.client import DatabaseClient
 
 
 # pylint: disable=R0902,R0914,R0915

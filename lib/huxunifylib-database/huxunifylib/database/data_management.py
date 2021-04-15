@@ -9,11 +9,11 @@ from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import database.db_exceptions as de
-import database.constants as c
-from database.client import DatabaseClient
-from database.utils import name_exists
-from database.audience_data_management_util import (
+import huxunifylib.database.db_exceptions as de
+import huxunifylib.database.constants as c
+from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.utils import name_exists
+from huxunifylib.database.audience_data_management_util import (
     add_stats_to_update_dict,
     validate_data_source_fields,
     clean_dataframe_types,

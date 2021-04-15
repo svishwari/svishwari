@@ -5,12 +5,12 @@ import unittest
 import mongomock
 from bson import ObjectId
 
-import database.delivery_platform_management as dpm
-import database.audience_management as am
-import database.data_management as dm
-import database.constants as c
+import huxunifylib.database.delivery_platform_management as dpm
+import huxunifylib.database.audience_management as am
+import huxunifylib.database.data_management as dm
+import huxunifylib.database.constants as c
 from database import delete_util
-from database.client import DatabaseClient
+from huxunifylib.database.client import DatabaseClient
 
 
 # pylint: disable=R0904

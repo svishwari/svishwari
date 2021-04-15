@@ -2,7 +2,7 @@
 
 import unittest
 import mongomock
-from database.client import DatabaseClient
+from huxunifylib.database.client import DatabaseClient
 
 
 class TestClient(unittest.TestCase):

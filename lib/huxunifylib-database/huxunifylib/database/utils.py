@@ -5,8 +5,8 @@ import pymongo
 import pandas as pd
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import database.constants as c
-from database.client import DatabaseClient
+import huxunifylib.database.constants as c
+from huxunifylib.database.client import DatabaseClient
 
 
 @retry(
