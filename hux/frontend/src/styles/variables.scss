@@ -1,9 +1,8 @@
 // Globals
-$body-font-family: "Open Sans", sans-serif;
-$heading-font-family: $body-font-family;
-$font-size-root: 14px;
-$border-radius-root: 5px;
+@import "variables/globals.variables.scss";
 
 // Components
 // https://vuetifyjs.com/en/features/sass-variables/#variable-api
-@import "variables/buttons.variables.scss"
+@import "variables/buttons.variables.scss";
+@import "variables/cards.variables.scss";
+@import "variables/elevations.variables.scss";
