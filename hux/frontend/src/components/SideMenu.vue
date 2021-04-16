@@ -13,35 +13,36 @@
       <v-list-item> </v-list-item>
     </v-list>
 
-<v-menu offset-y close-on-click>
-    <template v-slot:activator="{ on }">
-      <span v-on="on" class="d-flex" v-bind:class = "(!toggle)?'avatar-menu':'avatar-menu-toggle'">
-        <div class="vertical-center">
-          <p class="font-weight-bold short-name">
-            Pendleton
-          </p>
-        </div>
-        <div class="vertical-center">
-          <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
-        </div>
-      </span>
-    </template>
-    <v-list>
-      <v-list-item>
-        <v-list-item-title>My HUX Profile</v-list-item-title>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-title>Change Password</v-list-item-title>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-title>Change Username</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="initiateLogout()">
-        <v-list-item-title>Logout</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
-
+    <v-menu offset-y close-on-click>
+      <template v-slot:activator="{ on }">
+        <span
+          v-on="on"
+          class="d-flex"
+          v-bind:class="!toggle ? 'avatar-menu' : 'avatar-menu-toggle'"
+        >
+          <div class="vertical-center">
+            <p class="font-weight-bold short-name">Pendleton</p>
+          </div>
+          <div class="vertical-center">
+            <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
+          </div>
+        </span>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-list-item-title>My HUX Profile</v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>Change Password</v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>Change Username</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="initiateLogout()">
+          <v-list-item-title>Logout</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
 
     <v-divider></v-divider>
     <v-list v-for="item in items" :key="item.title" no-action>
@@ -84,31 +85,31 @@
 </template>
 
 <script>
-import menuConfig from "@/menuConfig.json";
+import menuConfig from "@/menuConfig.json"
 
 export default {
   name: "SideMenu",
-   props: { 
-     toggle: Boolean
-   },
+  props: {
+    toggle: Boolean,
+  },
   // props: ["toggle"],
   computed: {
     layout() {
       // none-layout will be used if the meta.layout tag is not set
       // computed may not be best place in vue lifecycle for this but it works ok
-      return `${this.$route.meta.layout || "none"}-layout`;
+      return `${this.$route.meta.layout || "none"}-layout`
     },
     mini() {
-      return this.$vuetify.breakpoint.smAndDown || this.toggle;
+      return this.$vuetify.breakpoint.smAndDown || this.toggle
     },
     buttonText() {
-      return !this.$vuetify.theme.dark ? "Go Dark" : "Go Light";
+      return !this.$vuetify.theme.dark ? "Go Dark" : "Go Light"
     },
   },
   mounted() {
     window.addEventListener("load", () => {
-      document.getElementsByClassName("loader-overlay")[0].remove();
-    });
+      document.getElementsByClassName("loader-overlay")[0].remove()
+    })
   },
   data: () => ({
     sidebarMenu: true,
@@ -116,14 +117,14 @@ export default {
     select: { name: "Pendieton" },
     userDropdown: [{ name: "Pendieton" }],
   }),
-};
+}
 </script>
 
 <style lang="scss" scoped>
 .side-nav-bar {
   .logo-holder {
     height: 105px;
-    >.hux_logo {
+    > .hux_logo {
       background-image: url("../assets/images/hux_logo_2.png");
       width: 55px;
       height: 55px;
@@ -141,19 +142,21 @@ export default {
         margin-left: calc(50% - 50px / 2 - 11px);
         color: white;
       }
-      >.vertical-center {
-          width: 110px;
-          font-size: 13px;
-          font-weight: 600;
-        >.short-name{
+      > .vertical-center {
+        width: 110px;
+        font-size: 13px;
+        font-weight: 600;
+        > .short-name {
           color: white;
         }
       }
     }
-    >.profile-name {
-      >.user-profile {
-        &.theme--light.v-text-field > .v-input__control > .v-input__slot:before {
-            border: none !important;
+    > .profile-name {
+      > .user-profile {
+        &.theme--light.v-text-field
+          > .v-input__control
+          > .v-input__slot:before {
+          border: none !important;
         }
       }
     }
@@ -215,7 +218,7 @@ export default {
     }
   }
 
-.list-group {
+  .list-group {
     margin-left: 17px;
     height: 40px;
     width: 199px;
@@ -242,10 +245,10 @@ export default {
     width: 90px !important;
   }
   .v-btn {
-    &.v-btn--icon { 
+    &.v-btn--icon {
       &.v-btn--round {
-        &.theme--light { 
-          &.v-size--small { 
+        &.theme--light {
+          &.v-size--small {
             margin-right: 25px;
           }
         }
@@ -270,7 +273,7 @@ export default {
     &.v-list-item {
       &.v-list-item--link {
         &.theme--light {
-          background: rgba(0, 0, 0, 0.25) 
+          background: rgba(0, 0, 0, 0.25);
         }
       }
     }
@@ -314,7 +317,7 @@ export default {
       &.v-sheet {
         div {
           &.v-list-item__content {
-            color: #0c0b0b !important 
+            color: #0c0b0b !important;
           }
         }
       }
@@ -357,6 +360,5 @@ export default {
     align-items: center;
     color: #ffffff;
   }
-  
 }
 </style>
