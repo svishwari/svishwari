@@ -46,23 +46,15 @@ def set_user(
         dict: MongoDB document for a user.
 
     """
-    user_doc = None
-
-    if subscriptions is None:
-        subscriptions = []
 
     # validate okta_id and email_address
-    if not isinstance(okta_id, str) or not isinstance(email_address, str):
-        return user_doc
-
-    # validate okta id
-    # TODO - add a better validation once we have seen a few example OKTA id's
-    if not okta_id:
-        return user_doc
-
-    # validate email address
-    if not re.search(c.EMAIL_REGEX, email_address):
-        return user_doc
+    if (
+        not isinstance(okta_id, str)
+        or not isinstance(email_address, str)
+        or not re.search(c.EMAIL_REGEX, email_address)
+        or not okta_id
+    ):
+        return None
 
     # get collection
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
@@ -74,7 +66,7 @@ def set_user(
         c.OKTA_ID: okta_id,
         c.USER_ROLE: role,
         c.USER_ORGANIZATION: organization,
-        c.USER_SUBSCRIPTION: subscriptions,
+        c.USER_SUBSCRIPTION: [] if subscriptions is None else subscriptions,
         c.S_TYPE_EMAIL: email_address,
         c.USER_DISPLAY_NAME: display_name,
         c.UPDATE_TIME: curr_time,
@@ -105,8 +97,7 @@ def set_user(
         user_id = collection.insert_one(doc).inserted_id
         if user_id is not None:
             return collection.find_one({c.ID: user_id})
-        else:
-            logging.error("Failed to create a new user!")
+        logging.error("Failed to create a new user!")
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -131,7 +122,7 @@ def get_user(database: DatabaseClient, okta_id: str) -> dict:
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
-        return user_doc = collection.find_one({c.OKTA_ID: okta_id})
+        return collection.find_one({c.OKTA_ID: okta_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -152,15 +143,14 @@ def get_all_users(database: DatabaseClient) -> list:
         list: List of all user documents.
 
     """
-    docs = []
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
-        docs = list(collection.find({}))
+        return list(collection.find({}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return docs
+    return []
 
 
 @retry(
@@ -194,9 +184,7 @@ def delete_user(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def update_user(
-    database: DatabaseClient, user_id: ObjectId, update_doc: dict
-) -> dict:
+def update_user(database: DatabaseClient, user_id: ObjectId, update_doc: dict) -> dict:
     """A function to update a user.
 
     Args:
@@ -209,15 +197,14 @@ def update_user(
 
     """
 
-    doc = None
-
     # validate user input id
-    if not user_id or not isinstance(user_id, ObjectId):
-        return doc
-
-    # validate update dict
-    if not update_doc or not isinstance(update_doc, dict):
-        return doc
+    if (
+        not user_id
+        or not isinstance(user_id, ObjectId)
+        or not update_doc
+        or not isinstance(update_doc, dict)
+    ):
+        return None
 
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
@@ -241,7 +228,7 @@ def update_user(
     update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
 
     try:
-        doc = collection.find_one_and_update(
+        return collection.find_one_and_update(
             {c.ID: user_id},
             {"$set": update_doc},
             upsert=False,
@@ -250,7 +237,7 @@ def update_user(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(
@@ -272,23 +259,20 @@ def manage_user_favorites(
         component_name (ObjectId): name of the component (i.e campaigns, destinations, etc.).
         component_id (ObjectId): MongoDB ID of the input component
         delete_flag (bool): Boolean that specifies to add/remove a favorite component,
-                            defaults to false.
+            defaults to false.
 
     Returns:
         dict: Updated MongoDB document for a user.
 
     """
-    doc = None
 
     # validate user input id and campaign id
-    if not isinstance(user_id, ObjectId) or not isinstance(
-        component_id, ObjectId
+    if (
+        not isinstance(user_id, ObjectId)
+        or not isinstance(component_id, ObjectId)
+        or component_name not in c.FAVORITE_COMPONENTS
     ):
-        return doc
-
-    # validate the component is an acceptable one
-    if component_name not in c.FAVORITE_COMPONENTS:
-        return doc
+        return None
 
     # TODO - validate input component ID if it exists
     #      - fill out when we have campaigns/audiences/destinations
@@ -303,7 +287,7 @@ def manage_user_favorites(
     config_field = f"{c.USER_FAVORITES}.{component_name}"
 
     try:
-        doc = collection.find_one_and_update(
+        return collection.find_one_and_update(
             {
                 c.ID: user_id,
                 config_field: {element_query: component_id},
@@ -320,7 +304,7 @@ def manage_user_favorites(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(
@@ -348,11 +332,9 @@ def manage_user_dashboard_config(
 
     """
 
-    doc = None
-
     # validate user input id and config param
     if not isinstance(user_id, ObjectId) or not isinstance(config_key, str):
-        return doc
+        return None
 
     # grab the collection
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
@@ -368,7 +350,7 @@ def manage_user_dashboard_config(
         update_dict["$set"][config_field] = config_value
 
     try:
-        doc = collection.find_one_and_update(
+        return collection.find_one_and_update(
             {c.ID: user_id},
             update_dict,
             upsert=False,
@@ -377,4 +359,4 @@ def manage_user_dashboard_config(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
