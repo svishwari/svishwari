@@ -79,3 +79,9 @@ class DuplicateDataSourceFieldType(HuxAdvException):
     """Exception for duplicate data source field type."""
 
     exception_message = "Data source with duplicate <{}> cannot be created!"
+
+
+class DuplicateFieldType(HuxAdvException):
+    """Exception for duplicate data source field type."""
+
+    exception_message = "Invalid Input Field(s) <{}>!"

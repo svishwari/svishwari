@@ -21,7 +21,9 @@ from huxunifylib.database.client import DatabaseClient
 
 # Get details on MongoDB configuration.
 HOST = os.environ.get("MONGO_DB_HOST")
-PORT = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
+PORT = (
+    int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
+)
 USERNAME = os.environ.get("MONGO_DB_USERNAME")
 PASSWORD = os.environ.get("MONGO_DB_PASSWORD")
 

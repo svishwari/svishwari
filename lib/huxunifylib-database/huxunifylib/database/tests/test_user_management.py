@@ -11,8 +11,8 @@ import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 
 
-class TestDataManagement(unittest.TestCase):
-    """Test data management module."""
+class TestUserManagement(unittest.TestCase):
+    """Test user management module."""
 
     def setUp(self) -> None:
         # init mongo patch initially
@@ -26,7 +26,7 @@ class TestDataManagement(unittest.TestCase):
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
-        # data source to be created
+        # user to be created
         self.sample_user = {
             c.OKTA_ID: "00ub0oNGTSWTBKOLGLNR",
             c.S_TYPE_EMAIL: "joe@deloitte.com",
@@ -129,7 +129,7 @@ class TestDataManagement(unittest.TestCase):
         self.assertIsNotNone(user_docs)
 
     def test_delete_user(self) -> None:
-        """Test delete_data_source routine.
+        """Test delete_user routine.
 
         Returns:
             Response: None
@@ -158,7 +158,7 @@ class TestDataManagement(unittest.TestCase):
         self.assertIsNone(user_doc)
 
     def test_add_favorite(self) -> None:
-        """Test function for adding manage_user_favorite routine.
+        """Test function for adding manage_user_favorites routine.
 
         Returns:
             Response: None
@@ -186,7 +186,7 @@ class TestDataManagement(unittest.TestCase):
             )
 
     def test_delete_favorite(self) -> None:
-        """Test function for deleting manage_user_favorite
+        """Test function for deleting via manage_user_favorites routine
 
         Returns:
             Response: None

@@ -36,7 +36,7 @@ def set_user(
         database (DatabaseClient): A database client.
         okta_id (str): Okta user id.
         email_address (str): email address of a user.
-        role (str): user role, default to a viewer role.
+        role (str): user role, defaults to a viewer role.
         organization (str): organization the user belongs to, defaults an empty string.
         subscriptions (list): subscription list, defaults to an empty list.
         display_name (str): display name for a user, defaults to the entered email address.
@@ -237,7 +237,7 @@ def update_user(
     # validate allowed fields, any invalid returns, raise error
     key_check = [key for key in update_doc.keys() if key not in allowed_fields]
     if any(key_check):
-        raise de.DataSourceLocked(",".join(key_check))
+        raise de.DuplicateFieldType(",".join(key_check))
 
     # set the update time
     update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
@@ -273,7 +273,8 @@ def manage_user_favorites(
         user_id (ObjectId): MongoDB ID of a user doc.
         component_name (ObjectId): name of the component (i.e campaigns, destinations, etc.).
         component_id (ObjectId): MongoDB ID of the input component
-        delete_flag (bool): Boolean that identifies to add/remove a campaign id, defaults to false.
+        delete_flag (bool): Boolean that specifies to add/remove a favorite component,
+                            defaults to false.
 
     Returns:
         dict: Updated MongoDB document for a user.
