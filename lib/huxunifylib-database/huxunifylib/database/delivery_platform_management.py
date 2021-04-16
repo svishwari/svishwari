@@ -114,18 +114,17 @@ def get_delivery_platform(
         dict: Delivery platform configuration.
     """
 
-    doc = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        doc = collection.find_one(
+        return collection.find_one(
             {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(

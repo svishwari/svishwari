@@ -162,7 +162,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_platform_facebook_with_user(self):
-        """Test set_delivery_platform for facebook."""
+        """Test set_delivery_platform for facebook with user."""
 
         doc = dpm.set_delivery_platform(
             self.database,
