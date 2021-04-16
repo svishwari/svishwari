@@ -128,7 +128,6 @@ def get_user(database: DatabaseClient, okta_id: str) -> dict:
         dict: MongoDB document for a user.
 
     """
-    user_doc = None
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
