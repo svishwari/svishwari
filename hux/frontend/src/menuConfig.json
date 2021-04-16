@@ -37,7 +37,7 @@
         { 
           "icon": "mdi-connection", 
           "title": "Connections", 
-          "link": "/connection"
+          "link": "/connections"
         },
         { 
           "icon": "mdi-account-search-outline", 
