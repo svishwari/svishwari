@@ -184,11 +184,11 @@ def delete_user(
     delete_count = 0
 
     try:
-        delete_count = collection.delete_one({c.ID: user_id}).deleted_count
+        return collection.delete_one({c.ID: user_id}).deleted_count > 0
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return delete_count > 0
+    return False
 
 
 @retry(
