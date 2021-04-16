@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page Header Page header displays both slots and props content 1`] = `
+<div class="page-header--wrap d-flex justify-space-between align-center" style="background-color: red;">
+  <div class="page-header--left">
+    <div class="page-header-container d-flex">
+      <v-icon-stub size="20" color="black">
+        mdi-plus
+      </v-icon-stub>
+      <div class="page-header-title pl-1">
+        Welcome back, User
+      </div>
+    </div>
+    <div class="page-header-description">
+      <div>Description</div>
+    </div>
+    <div>Left slot</div>
+  </div>
+  <div class="page-header--right">
+    <div>Right slot</div>
+  </div>
+</div>
+`;
+
+exports[`Page Header Page header displays props content 1`] = `
+<div class="page-header--wrap d-flex justify-space-between align-center" style="background-color: red;">
+  <div class="page-header--left">
+    <div class="page-header-container d-flex">
+      <v-icon-stub size="20" color="black">
+        mdi-plus
+      </v-icon-stub>
+      <div class="page-header-title pl-1">
+        Welcome back, User
+      </div>
+    </div>
+    <div class="page-header-description"></div>
+  </div>
+  <div class="page-header--right"></div>
+</div>
+`;
+
+exports[`Page Header Page header displays slots content 1`] = `
+<div class="page-header--wrap d-flex justify-space-between align-center" style="background-color: white;">
+  <div class="page-header--left">
+    <div class="page-header-container d-flex">
+      <v-icon-stub size="20" color="black">
+
+      </v-icon-stub>
+      <div class="page-header-title pl-1">
+
+      </div>
+    </div>
+    <div class="page-header-description">
+      <div>Description</div>
+    </div>
+    <div>Left slot</div>
+  </div>
+  <div class="page-header--right">
+    <div>Right slot</div>
+  </div>
+</div>
+`;
