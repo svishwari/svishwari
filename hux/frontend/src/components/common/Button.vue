@@ -32,18 +32,3 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-.v-btn {
-  &.added-button {
-    background: rgba(0, 118, 168, 0.05);
-  }
-  &.add-button {
-    border: 1px solid #d0d0ce;
-  }
-  &.main-button {
-    border: 1px solid #ececec;
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-    color: #005587;
-  }
-}
-</style>
