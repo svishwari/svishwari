@@ -181,7 +181,6 @@ def delete_user(
         bool: A flag indicating successful deletion.
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
-    delete_count = 0
 
     try:
         return collection.delete_one({c.ID: user_id}).deleted_count > 0
