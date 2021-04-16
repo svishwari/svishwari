@@ -9,19 +9,21 @@
       </span>
     </template>
     <v-card class="mx-auto">
-      <v-list flat min-width="300" max-width="300" tile>
-        <v-list-item>
-          <v-list-item-title>1 - 10</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>11 - 25</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>26 - 50</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>50+</v-list-item-title>
-        </v-list-item>
+      <v-list min-width="300" max-width="300" tile>
+        <v-list-item-group>
+          <v-list-item>
+            <v-list-item-title>1 - 10</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>11 - 25</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>26 - 50</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>50+</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-card>
   </v-menu>
