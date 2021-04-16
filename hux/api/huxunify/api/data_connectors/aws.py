@@ -2,7 +2,10 @@
 purpose of this file is for interacting with aws
 """
 from os import getenv
+from typing import Any
+
 import boto3
+# import boto3.session.Session.client
 
 # get aws connection params
 AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
@@ -15,7 +18,7 @@ def get_aws_client(
     aws_access_key: str = AWS_ACCESS_KEY_ID,
     aws_secret_key: str = AWS_SECRET_ACCESS_KEY,
     region_name: str = AWS_REGION,
-):
+) -> Any:
     """ quick and dirty function for getting most AWS clients
 
     Args:
