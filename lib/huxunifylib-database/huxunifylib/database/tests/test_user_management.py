@@ -78,7 +78,7 @@ class TestUserManagement(unittest.TestCase):
         """
 
         # set a user document, use a different okta id and email
-        _ = um.set_user(
+       um.set_user(
             database=self.database,
             okta_id="hf7hr43f7hfr7h7",
             email_address="dave@deloitte.com",
