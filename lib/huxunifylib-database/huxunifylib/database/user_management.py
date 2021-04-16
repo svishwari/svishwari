@@ -136,7 +136,7 @@ def get_user(database: DatabaseClient, okta_id: str) -> dict:
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return user_doc
+    return None
 
 
 @retry(
