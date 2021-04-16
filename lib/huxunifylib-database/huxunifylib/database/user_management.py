@@ -132,7 +132,7 @@ def get_user(database: DatabaseClient, okta_id: str) -> dict:
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
-        user_doc = collection.find_one({c.OKTA_ID: okta_id})
+        return user_doc = collection.find_one({c.OKTA_ID: okta_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
