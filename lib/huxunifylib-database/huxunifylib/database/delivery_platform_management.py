@@ -24,7 +24,7 @@ def set_delivery_platform(
     delivery_platform_type: str,
     name: str,
     authentication_details: dict,
-    user_object_id: str = None,
+    user_id: str = None,
 ) -> dict:
     """A function to create a delivery platform.
 
@@ -32,7 +32,7 @@ def set_delivery_platform(
         database (DatabaseClient): A database client.
         delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
-        user_object_id (str): User object ID.
+        user_id (str): User object ID.
         authentication_details (dict): A dict containing delivery platform authentication details.
 
     Returns:
@@ -79,9 +79,9 @@ def set_delivery_platform(
     }
 
     # Add user object only if it is available
-    if user_object_id is not None:
-        doc[c.CREATED_BY] = user_object_id
-        doc[c.UPDATED_BY] = user_object_id
+    if user_id is not None:
+        doc[c.CREATED_BY] = user_id
+        doc[c.UPDATED_BY] = user_id
 
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
