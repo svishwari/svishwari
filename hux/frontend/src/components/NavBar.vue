@@ -1,7 +1,10 @@
 <template>
   <div class="app-nav-bar">
     <v-app-bar app color="white" dark elevation="0">
-      <v-app-bar-nav-icon @click.stop="toggleSidebarMenu" class="nav-back-burger">
+      <v-app-bar-nav-icon
+        @click.stop="toggleSidebarMenu"
+        class="nav-back-burger"
+      >
         <v-icon :class="{ 'rotate-icon': toggleMini }">mdi-backburger</v-icon>
       </v-app-bar-nav-icon>
       <v-spacer></v-spacer>
@@ -28,9 +31,9 @@ export default {
 }
 </script>
 <style lang="scss">
- .v-toolbar__content {
-      border-bottom: 1px solid rgb(208, 208, 206);
-  }
+.v-toolbar__content {
+  border-bottom: 1px solid rgb(208, 208, 206);
+}
 </style>
 <style lang="scss" scoped>
 .app-nav-bar {
@@ -44,8 +47,8 @@ export default {
   .v-icon {
     &.notranslate {
       &.mdi {
-        &.mdi-backburger{
-          &.theme--dark{
+        &.mdi-backburger {
+          &.theme--dark {
             &::before {
               color: #232323;
             }

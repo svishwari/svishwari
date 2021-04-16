@@ -1,12 +1,13 @@
 <template>
   <v-badge
-        bottom
-        color="red"
-        content="2" value="2"
-        offset-x="30"
-        offset-y="40"
-        class="notification-badge"
-      >
+    bottom
+    color="red"
+    content="2"
+    value="2"
+    offset-x="30"
+    offset-y="40"
+    class="notification-badge"
+  >
     <v-btn icon class="icon-btn">
       <v-icon class="mdi-bell-outline"> mdi-bell-outline </v-icon>
     </v-btn>
@@ -16,7 +17,7 @@
 <script>
 export default {
   name: "Notification",
-};
+}
 </script>
 <style lang="scss" scoped>
 .notification-badge {
@@ -26,8 +27,8 @@ export default {
       color: #005587;
     }
     &.v-btn {
-      &.v-btn--icon { 
-        &.v-btn--round { 
+      &.v-btn--icon {
+        &.v-btn--round {
           margin-right: 9px;
           margin-left: 9px;
         }

@@ -1,6 +1,6 @@
-import { OktaAuth } from "@okta/okta-auth-js";
-const config = require("@/config");
-import store from "@/store/index";
+import { OktaAuth } from "@okta/okta-auth-js"
+const config = require("@/config")
+import store from "@/store/index"
 
 const authClient = new OktaAuth({ issuer: config.default.oidc.issuer })
 
@@ -28,14 +28,14 @@ export default {
               redirectUri: window.location.origin + "/login/callback",
             })
             .then((response) => {
-              localStorage.token = response.tokens.accessToken.value;
-              localStorage.idToken = response.tokens.idToken.value;
-              store.dispatch('setUserProfile', {
-                userProfile: transaction.user.profile
+              localStorage.token = response.tokens.accessToken.value
+              localStorage.idToken = response.tokens.idToken.value
+              store.dispatch("setUserProfile", {
+                userProfile: transaction.user.profile,
               })
-              if (cb) cb(true);
-              this.onChange(true);
-            });
+              if (cb) cb(true)
+              this.onChange(true)
+            })
         }
       })
       .catch((err) => {
