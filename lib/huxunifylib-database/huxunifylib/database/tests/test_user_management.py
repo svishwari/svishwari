@@ -20,7 +20,9 @@ class TestUserManagement(unittest.TestCase):
         mongo_patch.start()
 
         # Connect
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
@@ -87,7 +89,9 @@ class TestUserManagement(unittest.TestCase):
             profile_photo=self.sample_user[c.USER_PROFILE_PHOTO],
         )
 
-        with self.assertRaises(huxunifylib.database.db_exceptions.DuplicateName):
+        with self.assertRaises(
+            huxunifylib.database.db_exceptions.DuplicateName
+        ):
             um.set_user(
                 database=self.database,
                 okta_id="hf7hr43f7hfr7h7",
@@ -177,7 +181,9 @@ class TestUserManagement(unittest.TestCase):
             self.assertTrue(update_doc[c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
-            self.assertTrue(component_id in update_doc[c.USER_FAVORITES][component])
+            self.assertTrue(
+                component_id in update_doc[c.USER_FAVORITES][component]
+            )
 
     def test_delete_favorite(self) -> None:
         """Test function for deleting via manage_user_favorites routine
@@ -239,7 +245,9 @@ class TestUserManagement(unittest.TestCase):
             self.assertTrue(update_doc[c.USER_FAVORITES][component])
 
             # test to ensure the ID we added exists
-            self.assertTrue(component_id in update_doc[c.USER_FAVORITES][component])
+            self.assertTrue(
+                component_id in update_doc[c.USER_FAVORITES][component]
+            )
 
             # test to ensure the ID we added exists, only once!
             self.assertEqual(
@@ -308,4 +316,6 @@ class TestUserManagement(unittest.TestCase):
         )
 
         # test pinned value key does not exist
-        self.assertNotIn(pinned_key, updated_doc[c.USER_DASHBOARD_CONFIGURATION])
+        self.assertNotIn(
+            pinned_key, updated_doc[c.USER_DASHBOARD_CONFIGURATION]
+        )

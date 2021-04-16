@@ -182,7 +182,9 @@ def delete_user(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def update_user(database: DatabaseClient, user_id: ObjectId, update_doc: dict) -> dict:
+def update_user(
+    database: DatabaseClient, user_id: ObjectId, update_doc: dict
+) -> dict:
     """A function to update a user.
 
     Args:
