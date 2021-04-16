@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pymongo = "*"
+pandas = "*"
+tenacity = "*"
+
+[dev-packages]
+mongomock = "*"
+pytest = "*"
+pylint = "*"
+black = { version = "*", pre="true"}
+safety = "*"
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

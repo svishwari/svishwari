@@ -1,5 +1,3 @@
-Pipfile.lock
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
@@ -20,7 +18,7 @@ pip-wheel-metadata
 node_modules/
 
 # Environments
-.env**
+.env
 env.**
 .venv
 env/
@@ -31,3 +29,6 @@ venv.bak/
 
 # docs
 docs/build/*
+
+# IDE
+.vscode/

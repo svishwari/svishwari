@@ -1,30 +1,44 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "@/views/Home.vue";
-import Welcome from "@/views/Welcome.vue";
-import Login from "@/views/Login.vue";
-import NotFound from "@/views/NotFound.vue";
+import Vue from "vue"
+import VueRouter from "vue-router"
+import Home from "@/views/Home.vue"
+import Welcome from "@/views/Welcome.vue"
+import Login from "@/views/Login.vue"
+import NotFound from "@/views/NotFound.vue"
+
+// Authentication Plugin
+import auth from "@/auth"
 // import config from '@/config';
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const NotFoundRoute = {
   path: "*",
   component: NotFound,
   meta: {
     title: "OOPs",
-    layout: "none",
+    layout: "default",
   },
-};
+}
+
+const requireAuth = (to, from, next) => {
+  if (!auth.loggedIn()) {
+    next({
+      path: "/login",
+      query: { redirect: to.fullPath },
+    })
+  } else {
+    next()
+  }
+}
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "Welcome",
+    component: Welcome,
     meta: {
-      layout: "app",
-      title: "Home",
+      layout: "default",
+      title: "Welcome to Hux",
     },
   },
   {
@@ -32,31 +46,39 @@ const routes = [
     name: "login",
     component: Login,
     meta: {
-      layout: "none",
+      layout: "default",
       title: "Login",
     },
   },
   {
-    path: "/welcome",
-    name: "Welcome",
-    component: Welcome,
-    meta: {
-      layout: "none",
-      title: "Welcome",
+    path: "/logout",
+    beforeEnter(to, from, next) {
+      auth.logout()
+      next("/")
     },
   },
-];
-routes.push(NotFoundRoute);
+  {
+    path: "/home",
+    name: "Home",
+    component: Home,
+    beforeEnter: requireAuth,
+    meta: {
+      layout: "app",
+      title: "Overview | Hux Unified UI",
+    },
+  },
+]
+routes.push(NotFoundRoute)
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
-});
+})
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title;
-  next();
-});
+  document.title = to.meta.title
+  next()
+})
 
-export default router;
+export default router
