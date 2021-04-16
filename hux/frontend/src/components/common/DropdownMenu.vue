@@ -27,7 +27,6 @@
   </v-menu>
 </template>
 
-
 <script>
 export default {
   name: "dropdown-menu",
