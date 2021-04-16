@@ -11,19 +11,22 @@ AWS_REGION = getenv("AWS_REGION")
 
 
 def get_aws_client(
-        client: str = "s3",
-        aws_access_key: str = AWS_ACCESS_KEY_ID,
-        aws_secret_key: str = AWS_SECRET_ACCESS_KEY,
-        region_name: str = AWS_REGION,
+    client: str = "s3",
+    aws_access_key: str = AWS_ACCESS_KEY_ID,
+    aws_secret_key: str = AWS_SECRET_ACCESS_KEY,
+    region_name: str = AWS_REGION,
 ):
-    """
-    quick and dirty function for getting most AWS clients
-    :param client:
-    :param resource:
-    :param aws_access_key:
-    :param aws_secret_key:
-    :param region_name:
-    :return: aws client
+    """ quick and dirty function for getting most AWS clients
+
+    Args:
+        client (str): client string
+        aws_access_key (str): AWS access key
+        aws_secret_key (str): AWS secret key
+        region_name (str): Region Name
+
+    Returns:
+        Response: decorator
+
     """
     return boto3.client(
         client,

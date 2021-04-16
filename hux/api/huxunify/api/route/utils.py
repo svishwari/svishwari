@@ -3,7 +3,7 @@ purpose of this file is to house route utilities
 """
 
 
-def add_view_to_blueprint(self, rule, endpoint, **options):
+def add_view_to_blueprint(self, rule: str, endpoint: str, **options):
     """
     This decorator takes a blueprint and assigns the view function directly
     the alternative to this is having to manually define this in app.py
