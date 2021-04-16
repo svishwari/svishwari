@@ -19,44 +19,11 @@ import huxunifylib.database.audience_management as am
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivery_platform(
-    database: DatabaseClient,
-    delivery_platform_id: ObjectId,
-) -> dict:
-    """A function to get a delivery platform.
-
-    Args:
-        database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): The MongoDB ID of the delivery platform.
-
-    Returns:
-        dict: Delivery platform configuration.
-    """
-
-    doc = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
-
-    try:
-        doc = collection.find_one(
-            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: 0}
-        )
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
-
-    return doc
-
-
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
 def set_delivery_platform(
     database: DatabaseClient,
     delivery_platform_type: str,
     name: str,
     authentication_details: dict,
-    user: str = None,
 ) -> dict:
     """A function to create a delivery platform.
 
@@ -64,7 +31,6 @@ def set_delivery_platform(
         database (DatabaseClient): A database client.
         delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
-        user (str): User object ID or email.
         authentication_details (dict): A dict containing delivery platform authentication details.
 
     Returns:
@@ -75,7 +41,6 @@ def set_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -110,11 +75,6 @@ def set_delivery_platform(
         c.FAVORITE: False,
     }
 
-    # Add user object only if it is available
-    if user is not None:
-        doc[c.CREATED_BY] = user
-        doc[c.UPDATED_BY]: user
-
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
@@ -126,6 +86,38 @@ def set_delivery_platform(
         logging.error(exc)
 
     return delivery_platform_doc
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_delivery_platform(
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+) -> dict:
+    """A function to get a delivery platform.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_id (ObjectId): The MongoDB ID of the delivery platform.
+
+    Returns:
+        dict: Delivery platform configuration.
+    """
+
+    doc = None
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+
+    try:
+        doc = collection.find_one(
+            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: 0}
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return doc
 
 
 @retry(
@@ -394,7 +386,6 @@ def set_platform_type(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -472,7 +463,6 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
