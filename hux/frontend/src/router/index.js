@@ -78,6 +78,33 @@ const routes = [
     },
   },
   {
+    path: "/connections",
+    name: "connections",
+    component: () => import("@/views/connections.vue"),
+    meta: {
+      layout: "app",
+      title: "connections",
+    },
+  },
+  {
+    path: "/indentity",
+    name: "indentity",
+    component: () => import("@/views/indentity.vue"),
+    meta: {
+      layout: "app",
+      title: "indentity",
+    },
+  },
+  {
+    path: "/profiles",
+    name: "profiles",
+    component: () => import("@/views/profiles.vue"),
+    meta: {
+      layout: "app",
+      title: "profiles",
+    },
+  },
+  {
     path: "/settings",
     name: "settings",
     component: () => import("@/views/settings.vue"),
@@ -110,6 +137,15 @@ const routes = [
     meta: {
       layout: "app",
       title: "Overview | Hux Unified UI",
+    },
+  },
+  {
+    path: "/components",
+    name: "components",
+    component: () => import("@/components/common/CommonComponent"),
+    meta: {
+      layout: "default",
+      title: "components",
     },
   },
 ]
