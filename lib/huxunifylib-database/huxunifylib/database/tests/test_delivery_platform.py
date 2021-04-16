@@ -11,6 +11,7 @@ import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
 from huxunifylib.database import delete_util
 from huxunifylib.database.client import DatabaseClient
+import huxunifylib.database.db_exceptions as de
 
 
 # pylint: disable=R0904
@@ -47,7 +48,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.delivery_platform_doc = dpm.set_delivery_platform(
             self.database,
             c.DELIVERY_PLATFORM_FACEBOOK,
-            "My delivery platform",
+            "My delivery platform for Facebook",
             self.auth_details_facebook,
         )
 
@@ -123,6 +124,28 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
         self.assertTrue(doc[c.ID] is not None)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_duplicate_delivery_platform_facebook(self):
+        """Test set_delivery_platform for facebook."""
+
+        doc1 = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform for Facebook",
+            self.auth_details_facebook,
+        )
+
+        self.assertTrue(doc1 is not None)
+        self.assertTrue(doc1[c.ID] is not None)
+
+        with self.assertRaises(de.DuplicateName):
+            dpm.set_delivery_platform(
+                self.database,
+                c.DELIVERY_PLATFORM_FACEBOOK,
+                "My delivery platform for Facebook",
+                self.auth_details_facebook,
+            )
 
     def test_set_delivery_platform_sfmc(self):
         """Test set_delivery_platform for sfmc."""
