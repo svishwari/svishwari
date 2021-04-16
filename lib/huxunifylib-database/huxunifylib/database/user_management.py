@@ -90,15 +90,13 @@ def set_user(
     }
 
     # validate okta
-    exists_flag = name_exists(
+    if name_exists(
         database,
         c.DATA_MANAGEMENT_DATABASE,
         c.USER_COLLECTION,
         c.OKTA_ID,
         okta_id,
-    )
-
-    if exists_flag:
+    ):
         raise de.DuplicateName(okta_id)
 
     try:
