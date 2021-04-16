@@ -5,7 +5,6 @@ from os import getenv
 from typing import Any
 
 import boto3
-# import boto3.session.Session.client
 
 # get aws connection params
 AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
