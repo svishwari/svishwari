@@ -104,7 +104,7 @@ def set_user(
     try:
         user_id = collection.insert_one(doc).inserted_id
         if user_id is not None:
-            user_doc = collection.find_one({c.ID: user_id})
+            return collection.find_one({c.ID: user_id})
         else:
             logging.error("Failed to create a new user!")
     except pymongo.errors.OperationFailure as exc:
