@@ -92,7 +92,7 @@ class TestUserManagement(unittest.TestCase):
         with self.assertRaises(
             huxunifylib.database.db_exceptions.DuplicateName
         ):
-            _ = um.set_user(
+            um.set_user(
                 database=self.database,
                 okta_id="hf7hr43f7hfr7h7",
                 email_address="joesmith@deloitte.com",
