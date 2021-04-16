@@ -38,7 +38,52 @@ const routes = [
     component: Welcome,
     meta: {
       layout: "default",
-      title: "Welcome to Hux",
+      title: "Home",
+    },
+  },
+  {
+    path: "/overview",
+    name: "overview",
+    component: () => import("@/views/overview.vue"),
+    meta: {
+      layout: "app",
+      title: "overview",
+    },
+  },
+  {
+    path: "/campaign",
+    name: "campaign",
+    component: () => import("@/views/campaign.vue"),
+    meta: {
+      layout: "app",
+      title: "campaign",
+    },
+  },
+  {
+    path: "/audiences",
+    name: "audiences",
+    component: () => import("@/views/audiences/index.vue"),
+    meta: {
+      layout: "app",
+      title: "audiences",
+    },
+  },
+  {
+    path: "/models",
+    name: "models",
+    component: () => import("@/views/models.vue"),
+    meta: {
+      layout: "app",
+      title: "models",
+    },
+  },
+  {
+    path: "/settings",
+    name: "settings",
+    component: () => import("@/views/settings.vue"),
+    meta: {
+      layout: "app",
+      title: "settings",
     },
   },
   {
