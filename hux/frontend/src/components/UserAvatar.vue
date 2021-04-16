@@ -9,7 +9,7 @@
         </v-btn>
         <div class="vertical-center">
           <p class="font-weight-bold short-name">
-           {{ firstName }} {{ lastName }}
+            {{ firstName }} {{ lastName }}
           </p>
         </div>
         <v-icon color="black"> mdi-chevron-down </v-icon>
@@ -33,27 +33,27 @@
 </template>
 
 <script>
-import auth from "@/auth";
+import auth from "@/auth"
 
 export default {
   name: "UserAvatar",
   methods: {
     initiateLogout() {
-      auth.logout();
+      auth.logout()
     },
   },
   computed: {
     firstName() {
-      return this.$store.getters.getFirstname;
+      return this.$store.getters.getFirstname
     },
     lastName() {
-      return this.$store.getters.getLastName;
-    }
-  }
-};
+      return this.$store.getters.getLastName
+    },
+  },
+}
 </script>
 <style lang="scss" scoped>
-.avatar-menu{
+.avatar-menu {
   .vertical-center {
     transform: translateY(20%);
     font-family: Open Sans;

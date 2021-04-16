@@ -13,13 +13,13 @@
 </template>
 
 <script>
-import Notification from "@/components/Notification";
-import UserAvatar from "@/components/UserAvatar";
+import Notification from "@/components/Notification"
+import UserAvatar from "@/components/UserAvatar"
 
 export default {
   name: "NavBarMenu",
   components: { Notification, UserAvatar },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -35,8 +35,8 @@ export default {
       color: #005587;
     }
     &.v-btn {
-      &.v-btn--icon { 
-        &.v-btn--round { 
+      &.v-btn--icon {
+        &.v-btn--round {
           margin-right: 9px;
           margin-left: 9px;
         }
