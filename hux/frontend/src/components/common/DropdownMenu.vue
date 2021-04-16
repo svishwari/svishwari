@@ -1,5 +1,5 @@
 <template>
-  <v-menu offset-y close-on-click max-width="300" tile>
+  <v-menu offset-y close-on-click max-width="300" tile nudge-bottom="5">
     <template v-slot:activator="{ on }">
       <span v-on="on" class="d-flex avatar-menu">
         <v-btn tile class="main-button" color="#FFFFFF">
@@ -8,7 +8,6 @@
         </v-btn>
       </span>
     </template>
-
     <v-card class="mx-auto">
       <v-list flat min-width="300" max-width="300" tile>
         <v-list-item>
