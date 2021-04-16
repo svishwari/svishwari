@@ -110,7 +110,7 @@ def set_user(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return user_doc
+    return None
 
 
 @retry(
