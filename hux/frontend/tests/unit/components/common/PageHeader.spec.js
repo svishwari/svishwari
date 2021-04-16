@@ -13,9 +13,6 @@ describe("Page Header", () => {
     })
 
     expect(wrapper.text()).toContain(props.title)
-    expect(wrapper.attributes("style")).toBe(
-      `background-color: ${props.bgColor};`
-    )
     expect(wrapper).toMatchSnapshot()
   })
 
@@ -59,9 +56,6 @@ describe("Page Header", () => {
     expect(wrapper.text()).toContain(leftSlotContent)
     expect(wrapper.text()).toContain(rightSlotContent)
     expect(wrapper.text()).toContain(props.title)
-    expect(wrapper.attributes("style")).toBe(
-      `background-color: ${props.bgColor};`
-    )
     expect(wrapper).toMatchSnapshot()
   })
 })

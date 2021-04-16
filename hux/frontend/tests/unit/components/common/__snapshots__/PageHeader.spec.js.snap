@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page Header Page header displays both slots and props content 1`] = `
-<div class="page-header--wrap d-flex justify-space-between align-center" style="background-color: red;">
-  <div class="page-header--left">
+<v-card-stub loaderheight="4" tag="div" color="red" elevation="0" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-6 py-5">
+  <div>
     <div class="page-header-container d-flex">
       <v-icon-stub size="20" color="black">
         mdi-plus
       </v-icon-stub>
-      <div class="page-header-title pl-1">
+      <div class="text-h5 pl-1">
         Welcome back, User
       </div>
     </div>
-    <div class="page-header-description">
+    <div>
       <div>Description</div>
     </div>
     <div>Left slot</div>
@@ -19,38 +19,38 @@ exports[`Page Header Page header displays both slots and props content 1`] = `
   <div class="page-header--right">
     <div>Right slot</div>
   </div>
-</div>
+</v-card-stub>
 `;
 
 exports[`Page Header Page header displays props content 1`] = `
-<div class="page-header--wrap d-flex justify-space-between align-center" style="background-color: red;">
-  <div class="page-header--left">
+<v-card-stub loaderheight="4" tag="div" color="red" elevation="0" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-6 py-5">
+  <div>
     <div class="page-header-container d-flex">
       <v-icon-stub size="20" color="black">
         mdi-plus
       </v-icon-stub>
-      <div class="page-header-title pl-1">
+      <div class="text-h5 pl-1">
         Welcome back, User
       </div>
     </div>
-    <div class="page-header-description"></div>
+    <div></div>
   </div>
   <div class="page-header--right"></div>
-</div>
+</v-card-stub>
 `;
 
 exports[`Page Header Page header displays slots content 1`] = `
-<div class="page-header--wrap d-flex justify-space-between align-center" style="background-color: white;">
-  <div class="page-header--left">
+<v-card-stub loaderheight="4" tag="div" color="white" elevation="0" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-6 py-5">
+  <div>
     <div class="page-header-container d-flex">
       <v-icon-stub size="20" color="black">
 
       </v-icon-stub>
-      <div class="page-header-title pl-1">
+      <div class="text-h5 pl-1">
 
       </div>
     </div>
-    <div class="page-header-description">
+    <div>
       <div>Description</div>
     </div>
     <div>Left slot</div>
@@ -58,5 +58,5 @@ exports[`Page Header Page header displays slots content 1`] = `
   <div class="page-header--right">
     <div>Right slot</div>
   </div>
-</div>
+</v-card-stub>
 `;

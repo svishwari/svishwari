@@ -1,18 +1,20 @@
 <template>
-  <div
-    :style="{ 'background-color': bgColor }"
-    class="page-header--wrap d-flex justify-space-between align-center"
+  <v-card
+    class="page-header--wrap d-flex justify-space-between align-center px-6 py-5"
+    elevation=0
+    tile
+    :color="bgColor"
   >
-    <div class="page-header--left">
+    <div>
       <div class="page-header-container d-flex">
         <v-icon size="20" color="black">
           {{ icon }}
         </v-icon>
-        <div class="page-header-title pl-1">
+        <div class="text-h5 pl-1">
           {{ title }}
         </div>
       </div>
-      <div class="page-header-description">
+      <div>
         <slot name="description"></slot>
       </div>
       <slot name="left"></slot>
@@ -20,7 +22,7 @@
     <div class="page-header--right">
       <slot name="right"></slot>
     </div>
-  </div>
+  </v-card>
 </template>
 
 <script>
@@ -39,27 +41,9 @@ export default {
     },
 
     bgColor: {
-      type: String,
       required: false,
       default: "white",
     },
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.page-header--wrap {
-  padding: 20px 30px;
-  .page-header--left {
-    .page-header-title {
-      font-size: 24px;
-      font-weight: 600;
-      line-height: 40px;
-    }
-    .page-header-description {
-      font-size: 14px;
-      line-height: 22px;
-    }
-  }
-}
-</style>
