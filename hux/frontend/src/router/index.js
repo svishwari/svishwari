@@ -1,6 +1,5 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-import Home from "@/views/Home.vue"
 import Welcome from "@/views/Welcome.vue"
 import Login from "@/views/Login.vue"
 import NotFound from "@/views/NotFound.vue"
@@ -38,79 +37,87 @@ const routes = [
     component: Welcome,
     meta: {
       layout: "default",
-      title: "Home",
+      title: "Welcome | Hux Unified UI",
     },
   },
   {
     path: "/overview",
     name: "overview",
+    beforeEnter: requireAuth,
     component: () => import("@/views/overview.vue"),
     meta: {
       layout: "app",
-      title: "overview",
+      title: "Overview  | Hux Unified UI",
     },
   },
   {
     path: "/campaign",
     name: "campaign",
+    beforeEnter: requireAuth,
     component: () => import("@/views/campaign.vue"),
     meta: {
       layout: "app",
-      title: "campaign",
+      title: "Campaign | Hux Unified UI",
     },
   },
   {
     path: "/audiences",
     name: "audiences",
+    beforeEnter: requireAuth,
     component: () => import("@/views/audiences/index.vue"),
     meta: {
       layout: "app",
-      title: "audiences",
+      title: "Audiences | Hux Unified UI",
     },
   },
   {
     path: "/models",
     name: "models",
+    beforeEnter: requireAuth,
     component: () => import("@/views/models.vue"),
     meta: {
       layout: "app",
-      title: "models",
+      title: "Models | Hux Unified UI",
     },
   },
   {
     path: "/connections",
     name: "connections",
+    beforeEnter: requireAuth,
     component: () => import("@/views/connections.vue"),
     meta: {
       layout: "app",
-      title: "connections",
+      title: "Connections | Hux Unified UI",
     },
   },
   {
     path: "/indentity",
     name: "indentity",
+    beforeEnter: requireAuth,
     component: () => import("@/views/indentity.vue"),
     meta: {
       layout: "app",
-      title: "indentity",
+      title: "Indentity | Hux Unified UI",
     },
   },
   {
     path: "/profiles",
     name: "profiles",
+    beforeEnter: requireAuth,
     component: () => import("@/views/profiles.vue"),
     meta: {
       layout: "app",
-      title: "profiles",
+      title: "Profiles | Hux Unified UI",
     },
   },
   {
     path: "/settings",
     name: "settings",
+    beforeEnter: requireAuth,
     component: () => import("@/views/settings.vue"),
     meta: {
       layout: "app",
-      title: "settings",
+      title: "Settings | Hux Unified UI",
     },
   },
   {
@@ -119,24 +126,14 @@ const routes = [
     component: Login,
     meta: {
       layout: "default",
-      title: "Login",
+      title: "Login | Hux Unified UI",
     },
   },
   {
     path: "/logout",
     beforeEnter(to, from, next) {
       auth.logout()
-      next("/")
-    },
-  },
-  {
-    path: "/home",
-    name: "Home",
-    component: Home,
-    beforeEnter: requireAuth,
-    meta: {
-      layout: "app",
-      title: "Overview | Hux Unified UI",
+      next("/login")
     },
   },
   {
@@ -144,7 +141,7 @@ const routes = [
     name: "components",
     component: () => import("@/components/common/CommonComponent"),
     meta: {
-      layout: "default",
+      layout: "app",
       title: "components",
     },
   },
