@@ -3,11 +3,8 @@ purpose of this file is to house route utilities
 """
 
 from bson import ObjectId
-from huxunify.api.data_connectors.facebook_connector import FacebookConnector
-from huxunify.api.data_connectors.sfmc_connector import SFMCConnector
-from huxunify.api.data_connectors.mongo_connector import (
-    get_db_client as get_mongo_client,
-)
+
+# TODO: Fetch connectors from connector lib
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -44,6 +41,7 @@ def add_view_to_blueprint(self, rule, endpoint, **options):
 
         Args:
             cls (object): a function to decorate
+
         Returns:
             Response: Returns the decorated object.
 
@@ -55,23 +53,25 @@ def add_view_to_blueprint(self, rule, endpoint, **options):
     return decorator
 
 
-def get_connector(platform_type, auth_details_secrets):
+# pylint: disable=W0613
+def get_connector(platform_type, auth_details_secrets) -> object:
     """Returns a destinations connector.
+
     Args:
         platform_type (str): Platform type.
         auth_details_secrets (dict): Authentication details.
+
     Returns:
         destinations connector.
     """
     connector = None
+    # TODO : Update to use connectors from connector lib
     if platform_type == db_constants.DELIVERY_PLATFORM_FACEBOOK:
-        connector = FacebookConnector(
-            auth_details=auth_details_secrets,
-        )
+        connector = None
+        # connector = FacebookConnector(auth_details=auth_details_secrets)
     elif platform_type == db_constants.DELIVERY_PLATFORM_SFMC:
-        connector = SFMCConnector(
-            auth_details=auth_details_secrets,
-        )
+        connector = None
+        # connector = SFMCConnector(auth_details=auth_details_secrets,)
     return connector
 
 
@@ -98,7 +98,7 @@ def test_destinations_connection(
         connection_status = db_constants.STATUS_FAILED
 
     updated_platform = destination_management.set_connection_status(
-        database=get_mongo_client(),
+        database=None,  # TODO : use mongo connector library to get mongo db client
         delivery_platform_id=ObjectId(destination_id),
         connection_status=connection_status,
     )

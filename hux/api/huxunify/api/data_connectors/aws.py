@@ -33,7 +33,7 @@ class ParameterStore:
         # TODO: Have a better way to fetch 'region_name'
         ssm_client = boto3.client(
             "ssm",
-            region_name="us-east-1",
+            region_name=AWS_REGION,
             endpoint_url=AWS_SERVICE_URL,
         )
         try:
@@ -50,16 +50,18 @@ class ParameterStore:
     def get_secret(name: str, path: str = None):
         """
         Retrieve parameter value/secret.
+
         Args:
             name (str): Name of the parameter.
-            path (str): Hierarchy of the parameter. (e.g: /Dev/DBServer/MySQL/db-string13)
+            path (str): Hierarchy of the parameter.
+
         Returns:
             str: Parameter value/secret.
         """
         # TODO: Have a better way to fetch 'region_name'
         ssm_client = boto3.client(
             "ssm",
-            region_name="us-east-1",
+            region_name=AWS_REGION,
             endpoint_url=AWS_SERVICE_URL,
         )
         try:
@@ -78,16 +80,18 @@ class ParameterStore:
     def get_parameter_name(name: str, path: str = None):
         """
         Retrieve parameter name.
+
         Args:
             name (str): Name of the parameter.
             path (str): Hierarchy of the parameter. (e.g: /Dev/DBServer/MySQL/db-string13)
+
         Returns:
             str: Parameter name.
         """
         # TODO: Have a better way to fetch 'region_name'
         ssm_client = boto3.client(
             "ssm",
-            region_name="us-east-1",
+            region_name=AWS_REGION,
             endpoint_url=AWS_SERVICE_URL,
         )
         try:
@@ -110,11 +114,13 @@ class ParameterStore:
         destination_name: str,
     ) -> dict:
         """Save authentication details in AWS Parameter Store.
+
         Args:
             authentication_details (dict): The key/secret pair to store away.
             is_updated (bool): Flag to update the secrets in the AWS Parameter Store.
             destination_id (str): destinations ID.
             destination_name (str): destinations name.
+
         Returns:
             ssm_params (dict): The key/path to where the parameters are stored.
         """

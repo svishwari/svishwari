@@ -6,13 +6,10 @@ from typing import Union, List
 from bson import ObjectId
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
-    utils as db_utils,
+    delete_util as db_delete_utils,
     constants as db_constants,
 )
 import huxunify.api.constants as constants
-from huxunify.api.data_connectors.mongo_connector import (
-    get_db_client as get_mongo_client,
-)
 from huxunify.api.data_connectors.aws import parameter_store
 
 
@@ -30,7 +27,7 @@ class DestinationModel:
 
         try:
             all_destinations = destination_management.get_all_delivery_platforms(
-                get_mongo_client()
+                None  # TODO : use mongo connector library to get mongo db client
             )
             return all_destinations
 
@@ -49,7 +46,8 @@ class DestinationModel:
 
         try:
             destination = destination_management.get_delivery_platform(
-                get_mongo_client(), ObjectId(destination_id)
+                None,  # TODO : use mongo connector library to get mongo db client,
+                ObjectId(destination_id),
             )
             return destination
 
@@ -69,7 +67,7 @@ class DestinationModel:
         try:
             # create destination
             destination_id = destination_management.set_delivery_platform(
-                database=get_mongo_client(),
+                database=None,  # TODO : use mongo connector library to get mongo db client,
                 delivery_platform_type=body[constants.DESTINATION_TYPE],
                 name=body[constants.DESTINATION_NAME],
                 authentication_details=None,
@@ -87,7 +85,7 @@ class DestinationModel:
 
             # store the secrets paths in database
             destination_management.set_authentication_details(
-                database=get_mongo_client(),
+                database=None,  # TODO : use mongo connector library to get mongo db client,
                 delivery_platform_id=destination_id,
                 authentication_details=authentication_parameters,
             )
@@ -114,7 +112,7 @@ class DestinationModel:
         try:
             # update the platform
             destination_management.update_delivery_platform(
-                database=get_mongo_client(),
+                database=None,  # TODO : use mongo connector library to get mongo db client,
                 delivery_platform_id=ObjectId(destination_id),
                 name=body[constants.DESTINATION_NAME],
                 delivery_platform_type=body[constants.DESTINATION_TYPE],
@@ -133,8 +131,8 @@ class DestinationModel:
         Returns:
             dict: The destination in the database
         """
-        return db_utils.delete_delivery_platform(
-            database=get_mongo_client(),
+        return db_delete_utils.delete_delivery_platform(
+            database=None,  # TODO : use mongo connector library to get mongo db client
             delivery_platform_id=ObjectId(destination_id),
         )
 
