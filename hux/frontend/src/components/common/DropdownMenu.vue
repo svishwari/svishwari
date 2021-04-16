@@ -2,7 +2,7 @@
   <v-menu offset-y close-on-click max-width="300" tile nudge-bottom="5">
     <template v-slot:activator="{ on }">
       <span v-on="on" class="d-flex avatar-menu">
-        <v-btn tile class="main-button" color="#FFFFFF">
+        <v-btn tile class="main-button" color="tertiary">
           Campaigns
           <v-icon right dark color="#005587"> mdi-chevron-down </v-icon>
         </v-btn>
@@ -41,5 +41,3 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-</style>

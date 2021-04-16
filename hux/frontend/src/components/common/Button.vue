@@ -1,17 +1,15 @@
 <template>
   <div>
-    <v-btn outlined color="#0076A8" class="ma-2 added-button">
+    <v-btn outlined color="primaryInfo" class="ma-2 added-button">
       <v-icon left dark> mdi-check </v-icon>
       {{ AddedButtonText }}
     </v-btn>
-    <v-btn outlined color="#232323" class="ma-2 add-button">
+    <v-btn outlined color="darkGrey" class="ma-2 add-button">
       {{ AddButtonText }}
     </v-btn>
-    <v-btn tile color="primary">
-      Leave configuration
-    </v-btn>
-    <v-btn tile class="main-button" color="#FFFFFF">
-        Cancel & Return
+    <v-btn tile color="primary"> Leave configuration </v-btn>
+    <v-btn tile class="main-button" color="tertiary">
+      Cancel &amp; Return
     </v-btn>
   </div>
 </template>
@@ -30,7 +28,7 @@ export default {
       type: String,
       required: false,
       default: "Add",
-    }
+    },
   },
 }
 </script>
@@ -40,10 +38,10 @@ export default {
     background: rgba(0, 118, 168, 0.05);
   }
   &.add-button {
-    border: 1px solid #D0D0CE;
+    border: 1px solid #d0d0ce;
   }
   &.main-button {
-    border: 1px solid #ECECEC;
+    border: 1px solid #ececec;
     box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
     color: #005587;
   }
