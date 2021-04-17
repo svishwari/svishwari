@@ -1,10 +1,10 @@
 <template>
-  <div>audiences</div>
+  <div>Campaign</div>
 </template>
 
 <script>
 export default {
-  name: "audiences",
+  name: "campaign",
 }
 </script>
 

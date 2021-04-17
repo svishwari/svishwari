@@ -38,7 +38,79 @@ const routes = [
     component: Welcome,
     meta: {
       layout: "default",
-      title: "Welcome to Hux",
+      title: "Home",
+    },
+  },
+  {
+    path: "/overview",
+    name: "overview",
+    component: () => import("@/views/overview.vue"),
+    meta: {
+      layout: "app",
+      title: "overview",
+    },
+  },
+  {
+    path: "/campaign",
+    name: "campaign",
+    component: () => import("@/views/campaign.vue"),
+    meta: {
+      layout: "app",
+      title: "campaign",
+    },
+  },
+  {
+    path: "/audiences",
+    name: "audiences",
+    component: () => import("@/views/audiences/index.vue"),
+    meta: {
+      layout: "app",
+      title: "audiences",
+    },
+  },
+  {
+    path: "/models",
+    name: "models",
+    component: () => import("@/views/models.vue"),
+    meta: {
+      layout: "app",
+      title: "models",
+    },
+  },
+  {
+    path: "/connections",
+    name: "connections",
+    component: () => import("@/views/connections.vue"),
+    meta: {
+      layout: "app",
+      title: "connections",
+    },
+  },
+  {
+    path: "/indentity",
+    name: "indentity",
+    component: () => import("@/views/indentity.vue"),
+    meta: {
+      layout: "app",
+      title: "indentity",
+    },
+  },
+  {
+    path: "/profiles",
+    name: "profiles",
+    component: () => import("@/views/profiles.vue"),
+    meta: {
+      layout: "app",
+      title: "profiles",
+    },
+  },
+  {
+    path: "/settings",
+    name: "settings",
+    component: () => import("@/views/settings.vue"),
+    meta: {
+      layout: "app",
+      title: "settings",
     },
   },
   {
@@ -65,6 +137,15 @@ const routes = [
     meta: {
       layout: "app",
       title: "Overview | Hux Unified UI",
+    },
+  },
+  {
+    path: "/components",
+    name: "components",
+    component: () => import("@/components/common/CommonComponent"),
+    meta: {
+      layout: "default",
+      title: "components",
     },
   },
 ]

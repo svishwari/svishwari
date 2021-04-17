@@ -8,4 +8,6 @@ export default {
   info: colors.blue,
   success: colors.green,
   warning: colors.yellow,
+  black: colors.black,
+  white: colors.white,
 }
