@@ -628,13 +628,15 @@ class TestDeliveryPlatform(unittest.TestCase):
         start_time = end_time - datetime.timedelta(days=7)
 
         doc = dpm.set_delivered_audience_performance_metrics(
-            self.database,
-            delivery_job_id,
-            "my_campaign_id",
-            "my_ad_set_id",
-            {"Clicks": 10000, "Conversions": 50},
-            start_time,
-            end_time,
+            database=self.database,
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 10000, "Conversions": 50},
+            start_time=start_time,
+            end_time=end_time,
+            delivery_platform_ad_sets=[
+                ("my_campaign_id_1", "my_ad_set_id_1"),
+                ("my_campaign_id_2", "my_ad_set_id_2"),
+            ],
         )
 
         self.assertTrue(doc is not None)
@@ -651,12 +653,11 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
         self.assertTrue(c.DELIVERY_JOB_ID in doc)
-        self.assertTrue(c.DELIVERY_PLATFORM_CAMPAIGN_ID in doc)
-        self.assertTrue(c.DELIVERY_PLATFORM_AD_SET_ID in doc)
         self.assertTrue(c.CREATE_TIME in doc)
         self.assertTrue(c.PERFORMANCE_METRICS in doc)
         self.assertTrue(c.METRICS_START_TIME in doc)
         self.assertTrue(c.METRICS_END_TIME in doc)
+        self.assertTrue(c.DELIVERY_PLATFORM_AD_SETS in doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):

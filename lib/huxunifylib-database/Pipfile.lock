@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8f4b43de86c678bc7084b3497f9e9ee04c9d056658b23c582b7ccf3eb6d8e6ab"
+            "sha256": "284cb8ba770b4256cd1317d29f41089280969b4ee3d012b1a0b4ba5e49406596"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,10 @@
         ]
     },
     "default": {
+        "huxunifylib": {
+            "path": ".",
+            "version": "==0.1"
+        },
         "numpy": {
             "hashes": [
                 "sha256:2428b109306075d89d21135bdd6b785f132a1f5a3260c371cee1fae427e12727",
