@@ -14,7 +14,8 @@
               v-model="username"
               label="Username"
               autocomplete="username"
-              single-line outlined
+              single-line
+              outlined
               required
             ></v-text-field>
             <v-text-field
@@ -26,7 +27,8 @@
               label="Password"
               autocomplete="newPassword"
               @click:append="toggleShowPassword = !toggleShowPassword"
-              single-line outlined
+              single-line
+              outlined
             ></v-text-field>
             <div v-if="loginFailed" class="error">
               Uh-oh, your email and password don’t match.
@@ -162,7 +164,7 @@ export default {
     }
     .loginBtn {
       margin-top: 30px;
-      background-color: #ECECEC;
+      background-color: #ececec;
       width: 89px;
       height: 40px;
     }
