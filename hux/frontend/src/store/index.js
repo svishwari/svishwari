@@ -15,9 +15,11 @@ const store = new Vuex.Store({
     user: userStore,
   },
   strict: debug,
-  plugins: [createPersistedState({
-    paths: ['user']
-  })]
+  plugins: [
+    createPersistedState({
+      paths: ["user"],
+    }),
+  ],
 })
 
 export default store
