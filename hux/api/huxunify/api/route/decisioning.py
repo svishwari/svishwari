@@ -66,7 +66,8 @@ def invoke_algorithm():
 
 
 @decision_bp.route(
-    "/features/<cluster_id>/<feature_service_name>/" "<customer_id>", methods=["GET"]
+    "/features/<cluster_id>/<feature_service_name>/" "<customer_id>",
+    methods=["GET"],
 )
 @swag_from(
     {

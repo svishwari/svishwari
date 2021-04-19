@@ -1,10 +1,11 @@
 # pylint: disable=no-self-use
 """
-Routes for destinations api
+Paths for destinations api
 """
 from http import HTTPStatus
 from typing import Tuple
-from connexion import ProblemException
+from enum import Enum
+from connexion.exceptions import ProblemException
 from flasgger import SwaggerView
 from flask import Blueprint, request, Response
 from flask_apispec import marshal_with
@@ -24,36 +25,55 @@ DESTINATIONS_TAG = "destinations"
 DESTINATIONS_DESCRIPTION = "Destinations API"
 DESTINATIONS_ENDPOINT = "destinations"
 
-api_bp = Blueprint("api", import_name=__name__)
+# setup the cdm blueprint
+dest_bp = Blueprint("destinations", import_name=__name__)
 
 
-@add_view_to_blueprint(api_bp, "destinations/<destination_id>", "Destination")
-class Destination(SwaggerView):
+@add_view_to_blueprint(
+    dest_bp, f"{DESTINATIONS_ENDPOINT}/<destination_id>", "DestinationView"
+)
+class DestinationView(SwaggerView):
     """
-    Destinations view class.
+    Destinations view class. Ability to process a single Destination.
     """
 
     parameters = [
         {
             "name": "destination_id",
-            "description": "destination ID",
+            "description": "ID of the destination",
             "type": "string",
             "in": "path",
             "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
         }
     ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": DestinationSchema,
-            "description": "destination details.",
+            "description": "Success",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "schema": DestinationSchema,
+            "description": "Failed",
+        },
+        HTTPStatus.UNAUTHORIZED.value: {
+            "schema": DestinationSchema,
+            "description": "Access token is missing or invalid",
         },
     }
     tags = [DESTINATIONS_TAG]
 
     @marshal_with(DestinationSchema)
-    def get(self, destination_id: str) -> Tuple[dict, int]:
-        """
-        Retrieves destinations properties and connection status.
+    def get(self, destination_id: str) -> Tuple[dict, Enum]:
+        """Get a destination by destination ID.
+
+        ---
+
+        Args:
+            destination_id (str): Destination ID.
+
+        Returns:
+            Tuple[Destination, Enum]: Destination, HTTP status.
         """
 
         destinations_get = DestinationModel().get_destination_by_id(destination_id)
@@ -61,9 +81,15 @@ class Destination(SwaggerView):
 
     @marshal_with(DestinationSchema)
     def put(self, destination_id: str) -> Tuple[dict, int]:
-        """
-        Updates existing destinations properties.
+        """Updates an existing destination
+
         ---
+
+        Args:
+            destination_id (str): Destination ID.
+
+        Returns:
+            Tuple[Destination, Enum]: Destination, HTTP status.
         """
 
         destinations_put = DestinationSchema()
@@ -89,11 +115,19 @@ class Destination(SwaggerView):
 
         return updated_destinations, HTTPStatus.OK
 
+    @marshal_with(DestinationSchema)
     def delete(self, destination_id: str) -> Response:
-        """
-        Deletes a destinations and its dependencies by ID.
+        """Deletes a destination and its dependencies by ID.
+
         ---
+
+        Args:
+            destination_id (str): Destination ID.
+
+        Returns:
+             HTTPStatus: HTTP status.
         """
+
         try:
             if DestinationModel().delete_destination_by_id(destination_id):
                 return Response(status=HTTPStatus.OK)
@@ -109,34 +143,15 @@ class Destination(SwaggerView):
                 detail=f"{constants.CANNOT_DELETE_DESTINATIONS}.",
             ) from exc
 
-
-@add_view_to_blueprint(api_bp, "destinations", "Destinations")
-class Destinations(SwaggerView):
-    """
-    Destinations view class.
-    """
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "List of destinations.",
-            "schema": {"type": "array", "items": Destination},
-        },
-    }
-    tags = [DESTINATIONS_TAG]
-
-    @marshal_with(Destination(many=True))
-    def get(self) -> Tuple[list, int]:
-        """
-        Retrieves all destinations.
-        """
-        all_destinations_collection = DestinationModel().get_destinations()
-        return all_destinations_collection, HTTPStatus.OK
-
-    @marshal_with(Destination)
+    @marshal_with(DestinationSchema)
     def post(self) -> Tuple[dict, int]:
-        """
-        Creates a new destinations.
+        """Creates a new destination and tests the connection.
+
         ---
+
+        Returns:
+            Response: List of processed data sources.
+
         """
 
         destinations_post = DestinationSchema()
@@ -155,7 +170,37 @@ class Destinations(SwaggerView):
         return created_destinations, HTTPStatus.OK
 
 
-@add_view_to_blueprint(api_bp, "destinations/constants", "DestinationsConstants")
+@add_view_to_blueprint(dest_bp, f"/{DESTINATIONS_ENDPOINT}", "DestinationsView")
+class DestinationsView(SwaggerView):
+    """
+    Destinations view class. Ability to process multiple Destinations.
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of destinations.",
+            "schema": {"type": "array", "items": DestinationSchema},
+        },
+    }
+    tags = [DESTINATIONS_TAG]
+
+    @marshal_with(DestinationSchema(many=True))
+    def get(self) -> Tuple[list, int]:
+        """Retrieves all the destinations
+
+        ---
+
+        Returns:
+            Response: List of destinations.
+
+        """
+        all_destinations_collection = DestinationModel().get_destinations()
+        return all_destinations_collection, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    dest_bp, f"{DESTINATIONS_ENDPOINT}/constants", "DestinationsConstants"
+)
 class DestinationsConstants(SwaggerView):
     """
     DestinationsConstants view class.
@@ -171,6 +216,38 @@ class DestinationsConstants(SwaggerView):
 
     @marshal_with(DestinationConstants)
     def get(self) -> Tuple[dict, int]:
-        """Retrieves all destinations related constants."""
+        """Retrieves all destination related constants."""
 
         return DestinationModel().get_destination_constants(), HTTPStatus.OK
+
+
+# get record count
+@add_view_to_blueprint(
+    dest_bp,
+    f"/{DESTINATIONS_ENDPOINT}/record-count",
+    "DestinationRecordCountView",
+)
+class DestinationRecordCountView(SwaggerView):
+    """
+    Destination record count view class.
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Total count of all destinations",
+            "schema": {"type": "int"},
+        },
+    }
+    tags = [DESTINATIONS_TAG]
+
+    def get(self) -> Tuple[int, Enum]:
+        """Retrieves the total record count of destinations
+
+        ---
+
+        Returns:
+            Response: Count of Destinations
+
+        """
+        all_destinations_collection = DestinationModel().get_destinations()
+        return all_destinations_collection, HTTPStatus.OK

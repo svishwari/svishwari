@@ -3,10 +3,7 @@ Purpose of this file is to house the main application code.
 """
 from flask import Flask
 from flasgger import Swagger
-from huxunify.api.route.advertising import advertising_bp
-from huxunify.api.route.decisioning import decision_bp
-from huxunify.api.route.audience import audience_bp
-from huxunify.api.route.marketing import marketing_bp
+from huxunify.api.route.destination import dest_bp
 from huxunify.api.route.cdm import cdm_bp
 
 
@@ -45,14 +42,8 @@ def create_app():
 
     # register the blueprints
     flask_app.register_blueprint(cdm_bp, url_prefix="/cdm")
-    flask_app.register_blueprint(cdm_bp, url_prefix="/connections")
-    _ = Swagger(flask_app)
-
-    # register the blueprint and route
-    flask_app.register_blueprint(advertising_bp, url_prefix="/api/advertising")
-    flask_app.register_blueprint(audience_bp, url_prefix="/api/audience")
-    flask_app.register_blueprint(decision_bp, url_prefix="/api/decisioning")
-    flask_app.register_blueprint(marketing_bp, url_prefix="/api/marketing")
+    flask_app.register_blueprint(dest_bp, url_prefix="/")
+    Swagger(flask_app)
 
     return flask_app
 

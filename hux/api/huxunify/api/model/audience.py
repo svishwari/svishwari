@@ -81,7 +81,9 @@ class AudienceModel:
         """
         # push the request
         response = requests.post(
-            f"{self.API}", json=data, headers={"Authorization": f"Bearer {self.TOKEN}"}
+            f"{self.API}",
+            json=data,
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
         )
         return response.json()
 
@@ -93,7 +95,9 @@ class AudienceModel:
         """
         # push the request
         response = requests.put(
-            f"{self.API}", json=data, headers={"Authorization": f"Bearer {self.TOKEN}"}
+            f"{self.API}",
+            json=data,
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
         )
         return response.json()
 

@@ -13,7 +13,7 @@ class DestinationSchema(Schema):
     Destinations schema class
     """
 
-    destinations_id = fields.String(attribute="_id")
+    destinations_id = fields.String(attribute="_id", example="5f5f7262997acad4bac4373b")
     destinations_type = fields.String(attribute="destinations_type")
     destinations_name = fields.String(attribute="name")
     destinations_status = fields.String(
@@ -35,14 +35,6 @@ class FacebookAuthConstants(Schema):
     facebook_access_token = fields.String()
 
 
-class DestinationConstants(Schema):
-    """
-    Destination constants schema class
-    """
-
-    Facebook = fields.Nested(FacebookAuthConstants)
-
-
 class SFMCAuthConstants(Schema):
     """
     SFMC Auth constants schema class
@@ -53,3 +45,12 @@ class SFMCAuthConstants(Schema):
     sfmc_app_secret = fields.String()
     sfmc_rest_uri = fields.String()
     sfmc_soap_uri = fields.String()
+
+
+class DestinationConstants(Schema):
+    """
+    Destination constants schema class
+    """
+
+    Facebook = fields.Nested(FacebookAuthConstants)
+    SFMC = fields.Nested(SFMCAuthConstants)

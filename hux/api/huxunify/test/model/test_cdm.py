@@ -71,6 +71,7 @@ class CdmTest(TestCase):
             generate_synthetic_marshmallow_data(ProcessedData).fromkeys(test_fields)
             for i in range(4)
         ]
+
         self.model.ctx.cursor().fetchall.return_value = processed_data
 
         # get the returned sources
