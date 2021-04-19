@@ -1,5 +1,6 @@
 import Vue from "vue"
 import Vuex from "vuex"
+import createPersistedState from "vuex-persistedstate"
 
 /**
  * Module Based store imports
@@ -14,7 +15,9 @@ const store = new Vuex.Store({
     user: userStore,
   },
   strict: debug,
-  plugins: debug ? [] : [],
+  plugins: [createPersistedState({
+    paths: ['user']
+  })]
 })
 
 export default store

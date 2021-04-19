@@ -45,6 +45,7 @@ const routes = [
     path: "/overview",
     name: "overview",
     component: () => import("@/views/overview.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "overview",
@@ -54,6 +55,7 @@ const routes = [
     path: "/campaign",
     name: "campaign",
     component: () => import("@/views/campaign.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "campaign",
@@ -63,6 +65,7 @@ const routes = [
     path: "/audiences",
     name: "audiences",
     component: () => import("@/views/audiences/index.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "audiences",
@@ -72,6 +75,7 @@ const routes = [
     path: "/models",
     name: "models",
     component: () => import("@/views/models.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "models",
@@ -81,6 +85,7 @@ const routes = [
     path: "/connections",
     name: "connections",
     component: () => import("@/views/connections.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "connections",
@@ -90,6 +95,7 @@ const routes = [
     path: "/indentity",
     name: "indentity",
     component: () => import("@/views/indentity.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "indentity",
@@ -99,6 +105,7 @@ const routes = [
     path: "/profiles",
     name: "profiles",
     component: () => import("@/views/profiles.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "profiles",
@@ -108,6 +115,7 @@ const routes = [
     path: "/settings",
     name: "settings",
     component: () => import("@/views/settings.vue"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "app",
       title: "settings",
@@ -143,6 +151,7 @@ const routes = [
     path: "/components",
     name: "components",
     component: () => import("@/components/common/CommonComponent"),
+    beforeEnter: requireAuth,
     meta: {
       layout: "default",
       title: "components",
