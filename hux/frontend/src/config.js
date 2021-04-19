@@ -6,4 +6,5 @@ export default {
   resourceUrl: process.env.VUE_APP_APIHOST,
   appTitle: "HUX Unified",
   endpoints: {},
+  userDetails: "https://deloittedigital-ms.okta.com/enduser/settings",
 }

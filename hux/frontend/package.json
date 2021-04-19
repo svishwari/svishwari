@@ -23,11 +23,11 @@
     "vue-svg-loader": "^0.16.0",
     "vuetify": "^2.4.0",
     "vuex": "^3.4.0",
-    "vuex-persistedstate": "^4.0.0-beta.3"
+    "vuex-persistedstate": "3.2.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.6.3",
-    "@mdi/font": "^4.5.95",
+    "@mdi/font": "5.9.55",
     "@storybook/addon-a11y": "^5.2",
     "@storybook/addon-actions": "^5.2",
     "@storybook/addon-knobs": "^5.2",
