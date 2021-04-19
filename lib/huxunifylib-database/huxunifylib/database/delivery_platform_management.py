@@ -1145,7 +1145,7 @@ def get_delivery_jobs(
             {c.AUDIENCE_ID: audience_id, c.ENABLED: True}
             if audience_id
             else {c.ENABLED: True},
-            {c.ENABLED: 0},
+            {c.ENABLED: True},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
