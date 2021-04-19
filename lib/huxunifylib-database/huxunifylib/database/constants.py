@@ -169,8 +169,7 @@ AUDIENCES = "audiences"
 FAVORITE_COMPONENTS = [CAMPAIGNS, DESTINATIONS, AUDIENCES]
 
 DELIVERY_JOB_ID = "delivery_job_id"
-DELIVERY_PLATFORM_CAMPAIGN_ID = "delivery_platform_campaign_id"
-DELIVERY_PLATFORM_AD_SET_ID = "delivery_platform_ad_set_id"
+DELIVERY_PLATFORM_AD_SETS = "delivery_platform_ad_sets"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"
