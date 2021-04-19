@@ -18,6 +18,8 @@ import huxunifylib.database.db_exceptions as de
 class TestDeliveryPlatform(unittest.TestCase):
     """Test delivery platform management module."""
 
+    # pylint: disable=too-many-instance-attributes
+
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
 
