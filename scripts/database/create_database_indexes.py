@@ -70,6 +70,11 @@ INDEX_LIST = [
         c.PERFORMANCE_METRICS_COLLECTION,
         [(c.DELIVERY_JOB_ID, ASCENDING)],
     ),
+    (
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        [(c.OKTA_ID, ASCENDING)],
+    ),
 ]
 
 # Setup logging

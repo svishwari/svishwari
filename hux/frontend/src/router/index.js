@@ -33,7 +33,7 @@ const routes = [
   {
     path: "/overview",
     name: "overview",
-    component: () => import("@/views/overview.vue"),
+    component: () => import("@/views/Overview.vue"),
     meta: {
       layout: "app",
       title: "Overview  | Hux Unified UI",
@@ -43,7 +43,7 @@ const routes = [
   {
     path: "/campaign",
     name: "campaign",
-    component: () => import("@/views/campaign.vue"),
+    component: () => import("@/views/Campaign.vue"),
     meta: {
       layout: "app",
       title: "Campaign | Hux Unified UI",
@@ -53,7 +53,7 @@ const routes = [
   {
     path: "/audiences",
     name: "audiences",
-    component: () => import("@/views/audiences/index.vue"),
+    component: () => import("@/views/audiences/Index.vue"),
     meta: {
       layout: "app",
       title: "Audiences | Hux Unified UI",
@@ -63,7 +63,7 @@ const routes = [
   {
     path: "/models",
     name: "models",
-    component: () => import("@/views/models.vue"),
+    component: () => import("@/views/Models.vue"),
     meta: {
       layout: "app",
       title: "Models | Hux Unified UI",
@@ -73,7 +73,7 @@ const routes = [
   {
     path: "/connections",
     name: "connections",
-    component: () => import("@/views/connections.vue"),
+    component: () => import("@/views/Connections.vue"),
     meta: {
       layout: "app",
       title: "Connections | Hux Unified UI",
@@ -93,7 +93,7 @@ const routes = [
   {
     path: "/profiles",
     name: "profiles",
-    component: () => import("@/views/profiles.vue"),
+    component: () => import("@/views/Profiles.vue"),
     meta: {
       layout: "app",
       title: "Profiles | Hux Unified UI",
@@ -103,7 +103,7 @@ const routes = [
   {
     path: "/settings",
     name: "settings",
-    component: () => import("@/views/settings.vue"),
+    component: () => import("@/views/Settings.vue"),
     meta: {
       layout: "app",
       title: "Settings | Hux Unified UI",

@@ -1,11 +1,11 @@
 <template>
-  <div>Campaign</div>
+  <div>audiences</div>
 </template>
 
 <script>
 export default {
-  name: "campaign",
-};
+  name: "audiences",
+}
 </script>
 
 <style lang="scss" scoped></style>

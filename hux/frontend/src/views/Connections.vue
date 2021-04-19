@@ -1,11 +1,11 @@
 <template>
-  <div>settings</div>
+  <div>Connections</div>
 </template>
 
 <script>
 export default {
-  name: "settings",
-};
+  name: "connections",
+}
 </script>
 
 <style lang="scss" scoped></style>

@@ -11,8 +11,8 @@
       <h2>All Together, Entirely</h2>
       <v-btn
         elevation="2"
-        outlined
         small
+        tile
         class="mt-8"
         color="primary"
         @click="login()"
