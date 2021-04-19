@@ -13,7 +13,7 @@ from huxunifylib.database import delete_util
 from huxunifylib.database.client import DatabaseClient
 
 
-# pylint: disable=R0904,R0904
+# pylint: disable=R0902,R0904
 class TestDeliveryPlatform(unittest.TestCase):
     """Test delivery platform management module."""
 
