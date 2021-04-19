@@ -35,7 +35,10 @@ class DatafeedSearch(SwaggerView):
 
     parameters = []
     responses = {
-        HTTPStatus.OK.value: {"description": "List of datafeeds.", "schema": Datafeed}
+        HTTPStatus.OK.value: {
+            "description": "List of datafeeds.",
+            "schema": Datafeed,
+        }
     }
     tags = [DATAFEEDS_TAG]
 
