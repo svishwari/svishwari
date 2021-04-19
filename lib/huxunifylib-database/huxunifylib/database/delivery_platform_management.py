@@ -1484,7 +1484,7 @@ def set_delivered_audience_performance_metrics(
         metrics_dict (dict): A dict containing performance metrics.
         start_time (datetime): Start time of metrics.
         end_time (datetime): End time of metrics.
-        delivery_platform_ad_sets (List[Tuple]): list of following dictituplesonaries:
+        delivery_platform_ad_sets (List[Tuple]): list of following tuples:
             (<campaign ID>, <ad set ID>)
 
     Returns:

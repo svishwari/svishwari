@@ -146,9 +146,9 @@ LOOKALIKE_AUD_COUNTRY = "country"
 LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
 
 DELIVERY_JOB_ID = "delivery_job_id"
+DELIVERY_PLATFORM_AD_SETS = "delivery_platform_ad_sets"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
-DELIVERY_PLATFORM_AD_SETS = "delivery_platform_ad_sets"
 PERFORMANCE_METRICS = "performance_metrics"
 
 # Data source constants
