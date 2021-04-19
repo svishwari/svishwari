@@ -32,3 +32,15 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     return {
         field: SPEC_TYPE_LOOKUP[type(val)] for field, val in schema_obj().fields.items()
     }
+
+
+class UnAuth401Schema(Schema):
+    """Datafeed schema."""
+
+    # data_source = Str(required=True)
+    # data_type = Str(required=True, validate=validate.OneOf(DATA_TYPES))
+    # feed_id = Int(required=True, description="ID of the datafeed")
+    # feed_type = Str(required=True, validate=validate.OneOf(FEED_TYPES))
+    # file_extension = Str(required=True, validate=validate.OneOf(FILE_EXTENSIONS))
+    code = Int(name="code", example=401)
+    message = Str(name="message", example="Access token is missing or invalid")

@@ -16,6 +16,7 @@ from huxunify.api.schema.destinations import (
     DestinationSchema,
     DestinationConstants,
 )
+from huxunify.api.schema.utils import UnAuth401Schema
 
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.route.utils import add_view_to_blueprint
@@ -48,16 +49,8 @@ class DestinationView(SwaggerView):
         }
     ]
     responses = {
-        HTTPStatus.OK.value: {
-            "schema": DestinationSchema,
-            "description": "Success",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "schema": DestinationSchema,
-            "description": "Failed",
-        },
         HTTPStatus.UNAUTHORIZED.value: {
-            "schema": DestinationSchema,
+            "schema": UnAuth401Schema,
             "description": "Access token is missing or invalid",
         },
     }
@@ -67,29 +60,42 @@ class DestinationView(SwaggerView):
     def get(self, destination_id: str) -> Tuple[dict, Enum]:
         """Get a destination by destination ID.
 
-        ---
-
         Args:
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[Destination, Enum]: Destination, HTTP status.
+            Tuple[dict, Enum]: Destination dict, HTTP status.
+
+        ---
+           responses:
+             200:
+               description: Retrieved destination details.
+               schema:
+                    id: DestinationSchema
+             400:
+               description: failed to retrieve the destination
+               schema: Null
         """
 
         destinations_get = DestinationModel().get_destination_by_id(destination_id)
         return destinations_get, HTTPStatus.OK
 
     @marshal_with(DestinationSchema)
-    def put(self, destination_id: str) -> Tuple[dict, int]:
+    def put(self, destination_id: str) -> Tuple[dict, Enum]:
         """Updates an existing destination
-
-        ---
 
         Args:
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[Destination, Enum]: Destination, HTTP status.
+            Tuple[dict, Enum]: Destination doc, HTTP status.
+
+        ---
+           responses:
+             200:
+               description: Destination Updated
+             400:
+               description: failed to update the destination
         """
 
         destinations_put = DestinationSchema()
@@ -115,17 +121,22 @@ class DestinationView(SwaggerView):
 
         return updated_destinations, HTTPStatus.OK
 
-    @marshal_with(DestinationSchema)
     def delete(self, destination_id: str) -> Response:
         """Deletes a destination and its dependencies by ID.
-
-        ---
 
         Args:
             destination_id (str): Destination ID.
 
         Returns:
              HTTPStatus: HTTP status.
+        ---
+           responses:
+             200:
+               description: Deleted destination by ID
+               schema: Null
+             400:
+               description: failed to delete the destination
+               schema: Null
         """
 
         try:
@@ -144,14 +155,18 @@ class DestinationView(SwaggerView):
             ) from exc
 
     @marshal_with(DestinationSchema)
-    def post(self) -> Tuple[dict, int]:
+    def post(self) -> Tuple[dict, Enum]:
         """Creates a new destination and tests the connection.
 
-        ---
-
         Returns:
-            Response: List of processed data sources.
+            Tuple[dict, Enum]: Destination Created, HTTP status.
 
+        ---
+           responses:
+             201:
+               description: Destination Created
+               schema:
+                    id: DestinationSchema
         """
 
         destinations_post = DestinationSchema()
@@ -181,6 +196,10 @@ class DestinationsView(SwaggerView):
             "description": "List of destinations.",
             "schema": {"type": "array", "items": DestinationSchema},
         },
+        HTTPStatus.UNAUTHORIZED.value: {
+            "schema": UnAuth401Schema,
+            "description": "Access token is missing or invalid",
+        },
     }
     tags = [DESTINATIONS_TAG]
 
@@ -191,7 +210,7 @@ class DestinationsView(SwaggerView):
         ---
 
         Returns:
-            Response: List of destinations.
+            Tuple[list, int]: list of destinations, HTTP status.
 
         """
         all_destinations_collection = DestinationModel().get_destinations()
@@ -216,8 +235,14 @@ class DestinationsConstants(SwaggerView):
 
     @marshal_with(DestinationConstants)
     def get(self) -> Tuple[dict, int]:
-        """Retrieves all destination related constants."""
+        """Retrieves all destination related constants.
 
+        ---
+
+        Returns:
+            Tuple[dict, int]: dict of destination constants, HTTP status.
+
+        """
         return DestinationModel().get_destination_constants(), HTTPStatus.OK
 
 
@@ -235,7 +260,7 @@ class DestinationRecordCountView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Total count of all destinations",
-            "schema": {"type": "int"},
+            "schema": {"type": "integer"},
         },
     }
     tags = [DESTINATIONS_TAG]
@@ -246,7 +271,7 @@ class DestinationRecordCountView(SwaggerView):
         ---
 
         Returns:
-            Response: Count of Destinations
+            Tuple[int, Enum]: total count of destinations, HTTP status.
 
         """
         all_destinations_collection = DestinationModel().get_destinations()

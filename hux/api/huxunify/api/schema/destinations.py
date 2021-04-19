@@ -14,11 +14,14 @@ class DestinationSchema(Schema):
     """
 
     destinations_id = fields.String(attribute="_id", example="5f5f7262997acad4bac4373b")
-    destinations_type = fields.String(attribute="destinations_type")
-    destinations_name = fields.String(attribute="name")
+    destinations_type = fields.String(attribute="destinations_type", example="Facebook")
+    destinations_name = fields.String(attribute="name", example="My destination")
     destinations_status = fields.String(
         attribute="connection_status",
         validate=[OneOf(choices=["Pending", "In progress", "Failed", "Succeeded"])],
+    )
+    campaigns = fields.Int(
+        attribute="campaign_count", example="My destination", read_only=True
     )
     created = fields.DateTime(attribute="create_time", allow_none=True)
     updated = fields.DateTime(attribute="update_time", allow_none=True)
