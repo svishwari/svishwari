@@ -79,7 +79,13 @@ def set_delivery_platform(
     }
 
     # Add user object only if it is available
-    if user_id is not None:
+    if user_id is not None and name_exists(
+        database,
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        c.OKTA_ID,
+        user_id,
+    ):
         doc[c.CREATED_BY] = user_id
         doc[c.UPDATED_BY] = user_id
 
@@ -503,7 +509,13 @@ def update_delivery_platform(
     }
 
     # Add user object only if it is available
-    if user_id is not None:
+    if user_id is not None and name_exists(
+        database,
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        c.OKTA_ID,
+        user_id,
+    ):
         update_doc[c.UPDATED_BY] = user_id
 
     for item in list(update_doc):
