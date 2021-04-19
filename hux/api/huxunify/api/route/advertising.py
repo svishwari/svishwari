@@ -51,7 +51,7 @@ def get_data_sources_count():
     ---
     """
     result = AdvertisingModel()
-    data_sources = result.get_data_sources_count()
+    data_sources = result.get_data_sources(count=True)
     return json.dumps(data_sources), 200
 
 
