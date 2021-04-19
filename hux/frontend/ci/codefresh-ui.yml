@@ -20,7 +20,7 @@ steps:
         title: Set build variables
         image: alpine
         commands:
-          - cf_export BUILD_NAME=hux-unified-ui
+          - cf_export BUILD_NAME=unified-ui
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
           - cf_export SUB_REPO=hux/frontend
           - cf_export PORT=80
