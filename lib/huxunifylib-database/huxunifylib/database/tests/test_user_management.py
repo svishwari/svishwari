@@ -234,7 +234,7 @@ class TestUserManagement(unittest.TestCase):
 
             # add favorite component x2
             for _ in range(2):
-                _ = um.manage_user_favorites(
+                um.manage_user_favorites(
                     self.database, user_doc[c.ID], component, component_id
                 )
 
