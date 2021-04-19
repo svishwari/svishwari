@@ -8,7 +8,6 @@
       :gridOptions="gridOptions"
       :overlayLoadingTemplate="overlayLoadingTemplate"
       :overlayNoRowsTemplate="overlayNoRowsTemplate"
-      @gridReady="tableReady"
     >
     </ag-grid-vue>
   </div>
@@ -69,13 +68,15 @@ export default {
   },
   computed: {
     appliedColumns() {
-      if (!this.hasCheckBox) return this.columnDef
+      let columnDefinitiions = [...this.columnDef]
+      if (!this.hasCheckBox) return columnDefinitiions
 
-      this.columnDef[0]["headerCheckboxSelection"] = true
-      this.columnDef[0]["headerCheckboxSelectionFilteredOnly"] = true
-      this.columnDef[0]["checkboxSelection"] = true
+      columnDefinitiions[0]["headerCheckboxSelection"] = true
+      columnDefinitiions[0]["headerCheckboxSelectionFilteredOnly"] = true
+      columnDefinitiions[0]["checkboxSelection"] = true
 
-      return this.columnDef
+      columnDefinitiions.forEach((col) => (col["suppressMovable"] = true))
+      return columnDefinitiions
     },
     filterRows() {
       return this.tableData
@@ -86,15 +87,15 @@ export default {
       let vo = this
       try {
         vo.gridOptions.api.redrawRows()
-      } catch (err) {}
-    },
-    tableReady: function (params) {
-      console.log("methods agReady", params)
+      } catch (err) {
+        console.error(err)
+      }
     },
   },
   beforeMount() {
     this.gridOptions = {
       rowSelection: "multiple",
+      headerHeight: 32,
     }
     this.overlayLoadingTemplate =
       "<span class='ag-overlay-loading-center'>Please wait while your rows are loading</span>"
@@ -105,4 +106,64 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.hux-table {
+  &.ag-theme-alpine {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+  }
+  background: red;
+  font-family: inherit;
+  font-size: 12px;
+  ::v-deep .ag-root-wrapper {
+    border: none;
+    border-top: solid 1px;
+    border-color: #babfc7;
+    .ag-root-wrapper-body {
+      .ag-header {
+        height: 32px !important;
+        font-size: 12px;
+        font-family: inherit;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 16px;
+        background: transparent;
+      }
+      .ag-row-hover {
+        background: rgba(0, 118, 168, 0.05);
+        .ag-checkbox {
+          .ag-input-wrapper {
+            display: block;
+          }
+        }
+      }
+      .ag-row-selected {
+        background: rgba(0, 118, 168, 0.05);
+        .ag-checkbox {
+          .ag-input-wrapper {
+            display: block;
+          }
+        }
+      }
+      .ag-header-row {
+        .ag-checkbox {
+          .ag-input-wrapper {
+            display: block;
+          }
+        }
+      }
+
+      .ag-checkbox {
+        .ag-input-wrapper {
+          display: none;
+        }
+      }
+      .ag-center-cols-container {
+        min-width: inherit !important;
+      }
+    }
+  }
+}
+</style>

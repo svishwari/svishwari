@@ -19,17 +19,6 @@ const NotFoundRoute = {
   },
 }
 
-const requireAuth = (to, from, next) => {
-  if (!auth.loggedIn()) {
-    next({
-      path: "/login",
-      query: { redirect: to.fullPath },
-    })
-  } else {
-    next()
-  }
-}
-
 const routes = [
   {
     path: "/",
@@ -38,86 +27,87 @@ const routes = [
     meta: {
       layout: "default",
       title: "Welcome | Hux Unified UI",
+      requiresAuth: false,
     },
   },
   {
     path: "/overview",
     name: "overview",
-    beforeEnter: requireAuth,
     component: () => import("@/views/overview.vue"),
     meta: {
       layout: "app",
       title: "Overview  | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/campaign",
     name: "campaign",
-    beforeEnter: requireAuth,
     component: () => import("@/views/campaign.vue"),
     meta: {
       layout: "app",
       title: "Campaign | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/audiences",
     name: "audiences",
-    beforeEnter: requireAuth,
     component: () => import("@/views/audiences/index.vue"),
     meta: {
       layout: "app",
       title: "Audiences | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/models",
     name: "models",
-    beforeEnter: requireAuth,
     component: () => import("@/views/models.vue"),
     meta: {
       layout: "app",
       title: "Models | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/connections",
     name: "connections",
-    beforeEnter: requireAuth,
     component: () => import("@/views/connections.vue"),
     meta: {
       layout: "app",
       title: "Connections | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
-    path: "/indentity",
-    name: "indentity",
-    beforeEnter: requireAuth,
-    component: () => import("@/views/indentity.vue"),
+    path: "/identity",
+    name: "identity",
+    component: () => import("@/views/Identity.vue"),
     meta: {
       layout: "app",
-      title: "Indentity | Hux Unified UI",
+      title: "Identity | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/profiles",
     name: "profiles",
-    beforeEnter: requireAuth,
     component: () => import("@/views/profiles.vue"),
     meta: {
       layout: "app",
       title: "Profiles | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/settings",
     name: "settings",
-    beforeEnter: requireAuth,
     component: () => import("@/views/settings.vue"),
     meta: {
       layout: "app",
       title: "Settings | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
@@ -127,6 +117,7 @@ const routes = [
     meta: {
       layout: "default",
       title: "Login | Hux Unified UI",
+      requiresAuth: false,
     },
   },
   {
@@ -141,8 +132,9 @@ const routes = [
     name: "components",
     component: () => import("@/components/common/CommonComponent"),
     meta: {
-      layout: "app",
+      layout: "default",
       title: "components",
+      requiresAuth: false,
     },
   },
 ]
@@ -156,7 +148,14 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
-  next()
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  // Check for protected route
+  if (requiresAuth && !auth.loggedIn()) {
+    next({
+      path: "/login",
+      query: { redirect: to.fullPath },
+    })
+  } else next()
 })
 
 export default router

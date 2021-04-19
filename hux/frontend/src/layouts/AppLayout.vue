@@ -4,7 +4,7 @@
       <NavBar @toggleSidebarMenu="toggleSidebar"></NavBar>
       <SideMenu v-bind:toggle="toggleMini"></SideMenu>
       <v-main>
-        <v-container>
+        <v-container fluid>
           <slot />
         </v-container>
       </v-main>
@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import NavBar from "@/components/NavBar";
-import SideMenu from "@/components/SideMenu";
+import NavBar from "@/components/NavBar"
+import SideMenu from "@/components/SideMenu"
 
 export default {
   name: "app-layout",
@@ -24,8 +24,8 @@ export default {
   }),
   methods: {
     toggleSidebar() {
-      this.toggleMini = !this.toggleMini;
+      this.toggleMini = !this.toggleMini
     },
   },
-};
+}
 </script>
