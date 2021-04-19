@@ -393,6 +393,7 @@ def set_platform_type(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -452,6 +453,7 @@ def update_delivery_platform(
     name: str = None,
     delivery_platform_type: str = None,
     authentication_details: dict = None,
+    user_id: str = None,
 ) -> dict:
     """A function to update delivery platform configuration.
 
@@ -461,6 +463,7 @@ def update_delivery_platform(
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
+        user_id (str): User id of user updating delivery platform.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -470,6 +473,7 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -497,6 +501,10 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_AUTH: authentication_details,
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
+
+    # Add user object only if it is available
+    if user_id is not None:
+        update_doc[c.UPDATED_BY] = user_id
 
     for item in list(update_doc):
         if update_doc[item] is None:
