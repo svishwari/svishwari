@@ -676,7 +676,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.PERFORMANCE_METRICS in doc)
         self.assertTrue(c.METRICS_START_TIME in doc)
         self.assertTrue(c.METRICS_END_TIME in doc)
-        self.assertTrue(c.DELIVERY_PLATFORM_AD_SETS in doc)
+        self.assertIn(c.DELIVERY_PLATFORM_AD_SETS, doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):
