@@ -53,6 +53,13 @@ class TestDeliveryPlatform(unittest.TestCase):
             [],
         )
 
+        self.audience_2_doc = am.create_audience(
+            self.database,
+            self.ingestion_job_doc[c.ID],
+            "My Audience 2",
+            [],
+        )
+
         doc = dpm.set_connection_status(
             self.database,
             self.delivery_platform_doc[c.ID],
@@ -64,6 +71,12 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.delivery_job_doc = dpm.set_delivery_job(
             self.database,
             self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+        )
+
+        self.delivery_job_2_doc = dpm.set_delivery_job(
+            self.database,
+            self.audience_2_doc[c.ID],
             self.delivery_platform_doc[c.ID],
         )
 
@@ -388,18 +401,24 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.delivery_job_doc[c.ID], most_recent_delivery[c.ID]
         )
 
-    @mongomock.patch(servers=(("localhost", 27017),))
-    def test_get_audience_delivery_jobs(self):
+    def test_get_delivery_jobs(self):
         """Test get_audience_delivery_job."""
 
         # Get all delivery jobs for an audience
-        delivery_jobs = dpm.get_audience_delivery_jobs(
+        delivery_jobs = dpm.get_delivery_jobs(
             self.database,
             self.source_audience_doc[c.ID],
         )
 
         self.assertTrue(delivery_jobs is not None)
         self.assertEqual(len(delivery_jobs), 1)
+
+    def test_get_all_delivery_jobs(self):
+        """All delivery jobs are retrieved."""
+
+        all_delivery_jobs = dpm.get_delivery_jobs(self.database)
+
+        self.assertEqual(len(all_delivery_jobs), 2)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_ingestion_job_audience_delivery_jobs(self):

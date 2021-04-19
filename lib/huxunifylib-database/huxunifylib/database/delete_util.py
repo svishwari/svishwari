@@ -236,12 +236,11 @@ def delete_audience_delivery_jobs(
         bool: A flag indicating successful deletion.
 
     """
-    delivery_jobs = dpm.get_audience_delivery_jobs(database, audience_id)
-
-    for delivery_job in delivery_jobs:
-        if not delete_delivery_job(database, delivery_job[c.ID]):
-            return False
-    return True
+    delivery_jobs = dpm.get_delivery_jobs(database, audience_id)
+    return all(
+        delete_delivery_job(database, delivery_job[c.ID])
+        for delivery_job in delivery_jobs
+    )
 
 
 @retry(

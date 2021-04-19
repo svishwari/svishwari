@@ -1123,29 +1123,33 @@ def get_delivery_job_audience_size(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience_delivery_jobs(
-    database: DatabaseClient, audience_id: ObjectId
+def get_delivery_jobs(
+    database: DatabaseClient, audience_id: ObjectId = None
 ) -> list:
-    """A function to get all audience delivery jobs given an audience.
+    """Get audience delivery jobs if audience_id is specified, otherwise,
+    get all delivery jobs.
 
     Args:
-        database (DatabaseClient): A database client.
-        audience_id (ObjectId): Audience id.
+        database (DatabaseClient): database client.
+        audience_id (ObjectId, optional): audience ID. Defaults to None.
 
     Returns:
-        list: List of delivery jobs for an audience.
+        list: List of delivery jobs.
 
     """
-
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
         cursor = collection.find(
-            {c.AUDIENCE_ID: audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.AUDIENCE_ID: audience_id, c.ENABLED: True}
+            if audience_id
+            else {c.ENABLED: True},
+            {c.ENABLED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+        raise
 
     return list(cursor)
 
@@ -1227,13 +1231,13 @@ def get_ingestion_job_audience_delivery_jobs(
         ingestion_job_id,
     )
 
-    if audience_ids is not None:
+    if audience_ids:
         for audience_id in audience_ids:
-            delivery_jobs = get_audience_delivery_jobs(
+            delivery_jobs = get_delivery_jobs(
                 database,
                 audience_id,
             )
-            if delivery_jobs is not None:
+            if delivery_jobs:
                 all_delivery_jobs += delivery_jobs
 
     return all_delivery_jobs
