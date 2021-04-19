@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-btn outlined color="primary" class="ma-2 added-button">
+    <v-btn outlined color="primary v-btn--active" class="ma-2">
       <v-icon left dark> mdi-check </v-icon>
       {{ AddedButtonText }}
     </v-btn>
-    <v-btn outlined color="darkGrey" class="ma-2 add-button">
+    <v-btn outlined color="darkGrey" class="ma-2">
       {{ AddButtonText }}
     </v-btn>
     <v-btn tile color="primary"> Leave configuration </v-btn>
