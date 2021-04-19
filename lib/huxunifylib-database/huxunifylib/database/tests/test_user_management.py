@@ -201,7 +201,7 @@ class TestUserManagement(unittest.TestCase):
             component_id = ObjectId()
 
             # add favorite component
-            _ = um.manage_user_favorites(
+            um.manage_user_favorites(
                 self.database, user_doc[c.ID], component, component_id
             )
 
