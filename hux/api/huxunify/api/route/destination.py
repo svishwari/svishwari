@@ -10,11 +10,14 @@ from flask import Blueprint, request, Response
 from flask_apispec import marshal_with
 
 from huxunify.api.model.destination import DestinationModel
-from huxunify.api import utils as util
-from huxunify.api.schema.destinations import DestinationSchema, DestinationConstants
+from huxunify.api.route import utils as util
+from huxunify.api.schema.destinations import (
+    DestinationSchema,
+    DestinationConstants,
+)
 
 from huxunify.api.data_connectors.aws import parameter_store
-from huxunify.api.utils import add_view_to_blueprint
+from huxunify.api.route.utils import add_view_to_blueprint
 import huxunify.api.constants as constants
 
 DESTINATIONS_TAG = "destinations"
@@ -53,7 +56,9 @@ class Destination(SwaggerView):
         Retrieves destinations properties and connection status.
         """
 
-        destinations_get = DestinationModel().get_destination_by_id(destination_id)
+        destinations_get = DestinationModel().get_destination_by_id(
+            destination_id
+        )
         return destinations_get, HTTPStatus.OK
 
     @marshal_with(DestinationSchema)
@@ -70,7 +75,9 @@ class Destination(SwaggerView):
             # store the secrets for the updated authentication details
             authentication_parameters = (
                 parameter_store.set_destination_authentication_secrets(
-                    authentication_details=body[constants.AUTHENTICATION_DETAILS],
+                    authentication_details=body[
+                        constants.AUTHENTICATION_DETAILS
+                    ],
                     is_updated=True,
                     destination_id=destination_id,
                     destination_name=body[constants.DESTINATION_NAME],
@@ -152,7 +159,9 @@ class Destinations(SwaggerView):
         return created_destinations, HTTPStatus.OK
 
 
-@add_view_to_blueprint(api_bp, "destinations/constants", "DestinationsConstants")
+@add_view_to_blueprint(
+    api_bp, "destinations/constants", "DestinationsConstants"
+)
 class DestinationsConstants(SwaggerView):
     """
     DestinationsConstants view class.

@@ -76,7 +76,9 @@ class DestinationModel:
             # store the secrets in AWS parameter store
             authentication_parameters = (
                 parameter_store.set_destination_authentication_secrets(
-                    authentication_details=body[constants.AUTHENTICATION_DETAILS],
+                    authentication_details=body[
+                        constants.AUTHENTICATION_DETAILS
+                    ],
                     is_updated=False,
                     destination_id=str(destination_id),
                     destination_name=body[constants.DESTINATION_NAME],
@@ -111,7 +113,7 @@ class DestinationModel:
 
         try:
             # update the platform
-            destination_management.update_delivery_platform(
+            return destination_management.update_delivery_platform(
                 database=None,  # TODO : use mongo connector library to get mongo db client,
                 delivery_platform_id=ObjectId(destination_id),
                 name=body[constants.DESTINATION_NAME],
@@ -121,8 +123,11 @@ class DestinationModel:
 
         except Exception as exc:
             raise Exception(f"Something went wrong. Details {exc}") from exc
+        return None
 
-    def delete_destination_by_id(self, destination_id: str) -> Union[dict, None]:
+    def delete_destination_by_id(
+        self, destination_id: str
+    ) -> Union[dict, None]:
         """Finds a destination in the delivery platform table.
 
         Args:

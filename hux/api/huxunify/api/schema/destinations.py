@@ -18,18 +18,12 @@ class DestinationSchema(Schema):
     destinations_name = fields.String(attribute="name")
     destinations_status = fields.String(
         attribute="connection_status",
-        validate=[OneOf(choices=["Pending", "In progress", "Failed", "Succeeded"])],
+        validate=[
+            OneOf(choices=["Pending", "In progress", "Failed", "Succeeded"])
+        ],
     )
     created = fields.DateTime(attribute="create_time", allow_none=True)
     updated = fields.DateTime(attribute="update_time", allow_none=True)
-
-
-class DestinationConstants(Schema):
-    """
-    Destination constants schema class
-    """
-
-    Facebook = fields.Nested(lambda: FacebookAuthConstants())
 
 
 class FacebookAuthConstants(Schema):
@@ -41,6 +35,14 @@ class FacebookAuthConstants(Schema):
     facebook_app_id = fields.String()
     facebook_app_secret = fields.String()
     facebook_access_token = fields.String()
+
+
+class DestinationConstants(Schema):
+    """
+    Destination constants schema class
+    """
+
+    Facebook = fields.Nested(FacebookAuthConstants)
 
 
 class SFMCAuthConstants(Schema):
