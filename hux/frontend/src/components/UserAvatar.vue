@@ -21,7 +21,8 @@
             class="text-decoration-none text--primary"
             :href="changeDetailsLink"
             target="_blank"
-            >My Hux Profile</a>
+            >My Hux Profile</a
+          >
         </v-list-item-title>
       </v-list-item>
       <v-divider />

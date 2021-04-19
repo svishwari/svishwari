@@ -8,17 +8,17 @@
     <v-subheader> Text Feild </v-subheader>
     <v-divider></v-divider>
     <TextField></TextField>
-    <br>
+    <br />
 
     <v-subheader> Button </v-subheader>
     <v-divider></v-divider>
     <Button></Button>
-    <br>
+    <br />
 
     <v-subheader> Select Dropdown </v-subheader>
     <v-divider></v-divider>
     <DropdownMenu></DropdownMenu>
-    <br>
+    <br />
 
     <v-subheader> Page Header </v-subheader>
     <v-divider></v-divider>
@@ -32,7 +32,6 @@
       </template>
     </PageHeader>
     <br />
-    
   </div>
 </template>
 
@@ -50,7 +49,7 @@ export default {
     TextField,
     Button,
     DropdownMenu,
-    PageHeader
+    PageHeader,
   },
 }
 </script>
