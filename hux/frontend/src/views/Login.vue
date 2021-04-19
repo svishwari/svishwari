@@ -50,7 +50,7 @@
             <!-- disable if form is not valid -->
             <v-btn
               :disabled="!isFormValid"
-              x-large
+              large
               class="mt-4 loginBtn"
               @click="initiateLogin()"
             >
@@ -162,6 +162,9 @@ export default {
     }
     .loginBtn {
       margin-top: 30px;
+      background-color: #ECECEC;
+      width: 89px;
+      height: 40px;
     }
   }
 }
