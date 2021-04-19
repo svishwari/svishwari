@@ -56,9 +56,7 @@ class Destination(SwaggerView):
         Retrieves destinations properties and connection status.
         """
 
-        destinations_get = DestinationModel().get_destination_by_id(
-            destination_id
-        )
+        destinations_get = DestinationModel().get_destination_by_id(destination_id)
         return destinations_get, HTTPStatus.OK
 
     @marshal_with(DestinationSchema)
@@ -75,9 +73,7 @@ class Destination(SwaggerView):
             # store the secrets for the updated authentication details
             authentication_parameters = (
                 parameter_store.set_destination_authentication_secrets(
-                    authentication_details=body[
-                        constants.AUTHENTICATION_DETAILS
-                    ],
+                    authentication_details=body[constants.AUTHENTICATION_DETAILS],
                     is_updated=True,
                     destination_id=destination_id,
                     destination_name=body[constants.DESTINATION_NAME],
@@ -159,9 +155,7 @@ class Destinations(SwaggerView):
         return created_destinations, HTTPStatus.OK
 
 
-@add_view_to_blueprint(
-    api_bp, "destinations/constants", "DestinationsConstants"
-)
+@add_view_to_blueprint(api_bp, "destinations/constants", "DestinationsConstants")
 class DestinationsConstants(SwaggerView):
     """
     DestinationsConstants view class.

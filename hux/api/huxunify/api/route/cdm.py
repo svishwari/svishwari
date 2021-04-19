@@ -54,9 +54,7 @@ class DatafeedSearch(SwaggerView):
         return datafeeds, HTTPStatus.OK.value
 
 
-@add_view_to_blueprint(
-    cdm_bp, f"/{DATAFEEDS_ENDPOINT}/<feed_id>", "DatafeedView"
-)
+@add_view_to_blueprint(cdm_bp, f"/{DATAFEEDS_ENDPOINT}/<feed_id>", "DatafeedView")
 class DatafeedView(SwaggerView):
     """
     Datafeed view class
@@ -93,9 +91,7 @@ class DatafeedView(SwaggerView):
         """
         try:
             valid_id = (
-                Datafeed()
-                .load({"feed_id": feed_id}, partial=True)
-                .get("feed_id")
+                Datafeed().load({"feed_id": feed_id}, partial=True).get("feed_id")
             )
             data = CdmModel().read_datafeed_by_id(valid_id)
 
@@ -110,9 +106,7 @@ class DatafeedView(SwaggerView):
             return error, error["code"]
 
 
-@add_view_to_blueprint(
-    cdm_bp, f"/{FIELDMAPPINGS_ENDPOINT}", "FieldmappingSearch"
-)
+@add_view_to_blueprint(cdm_bp, f"/{FIELDMAPPINGS_ENDPOINT}", "FieldmappingSearch")
 class FieldmappingSearch(SwaggerView):
     """
     Fieldmapping Search class
@@ -187,9 +181,7 @@ class FieldmappingView(SwaggerView):
             data = CdmModel().read_fieldmapping_by_id(valid_id)
 
             if not data:
-                error = NotFoundError().dump(
-                    {"message": "Fieldmapping not found"}
-                )
+                error = NotFoundError().dump({"message": "Fieldmapping not found"})
                 return error, error["code"]
 
             return data, HTTPStatus.OK.value
@@ -199,9 +191,7 @@ class FieldmappingView(SwaggerView):
             return error, error["code"]
 
 
-@add_view_to_blueprint(
-    cdm_bp, f"/{PROCESSED_ITEMS_ENDPOINT}", "ProcessedDataSearch"
-)
+@add_view_to_blueprint(cdm_bp, f"/{PROCESSED_ITEMS_ENDPOINT}", "ProcessedDataSearch")
 class ProcessedDataSearch(SwaggerView):
     """
     ProcessedData search class

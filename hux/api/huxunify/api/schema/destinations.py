@@ -18,9 +18,7 @@ class DestinationSchema(Schema):
     destinations_name = fields.String(attribute="name")
     destinations_status = fields.String(
         attribute="connection_status",
-        validate=[
-            OneOf(choices=["Pending", "In progress", "Failed", "Succeeded"])
-        ],
+        validate=[OneOf(choices=["Pending", "In progress", "Failed", "Succeeded"])],
     )
     created = fields.DateTime(attribute="create_time", allow_none=True)
     updated = fields.DateTime(attribute="update_time", allow_none=True)
