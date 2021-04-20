@@ -242,7 +242,10 @@ class TestUtils(unittest.TestCase):
 
         # Create a delivery job
         delivery_doc = dpm.set_delivery_job(
-            database, audience_id, delivery_platform_id
+            database,
+            audience_id,
+            delivery_platform_id,
+            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
         )
 
         self.assertTrue(delivery_doc is not None)
@@ -285,7 +288,10 @@ class TestUtils(unittest.TestCase):
 
         # Create another delivery job with no lookalike audiences
         delivery_doc = dpm.set_delivery_job(
-            database, audience_id, delivery_platform_id
+            database,
+            audience_id,
+            delivery_platform_id,
+            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
         )
 
         self.assertTrue(delivery_doc is not None)
