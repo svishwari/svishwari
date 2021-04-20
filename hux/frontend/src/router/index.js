@@ -44,7 +44,7 @@ const routes = [
   {
     path: "/overview",
     name: "overview",
-    component: () => import("@/views/overview.vue"),
+    component: () => import("@/views/Overview.vue"),
     meta: {
       layout: "app",
       title: "overview",
@@ -53,7 +53,7 @@ const routes = [
   {
     path: "/campaign",
     name: "campaign",
-    component: () => import("@/views/campaign.vue"),
+    component: () => import("@/views/Campaign.vue"),
     meta: {
       layout: "app",
       title: "campaign",
@@ -62,7 +62,7 @@ const routes = [
   {
     path: "/audiences",
     name: "audiences",
-    component: () => import("@/views/audiences/index.vue"),
+    component: () => import("@/views/Audiences/Index.vue"),
     meta: {
       layout: "app",
       title: "audiences",
@@ -71,7 +71,7 @@ const routes = [
   {
     path: "/models",
     name: "models",
-    component: () => import("@/views/models.vue"),
+    component: () => import("@/views/Models.vue"),
     meta: {
       layout: "app",
       title: "models",
@@ -80,7 +80,7 @@ const routes = [
   {
     path: "/connections",
     name: "connections",
-    component: () => import("@/views/connections.vue"),
+    component: () => import("@/views/Connections.vue"),
     meta: {
       layout: "app",
       title: "connections",
@@ -89,7 +89,7 @@ const routes = [
   {
     path: "/indentity",
     name: "indentity",
-    component: () => import("@/views/indentity.vue"),
+    component: () => import("@/views/Indentity.vue"),
     meta: {
       layout: "app",
       title: "indentity",
@@ -98,7 +98,7 @@ const routes = [
   {
     path: "/profiles",
     name: "profiles",
-    component: () => import("@/views/profiles.vue"),
+    component: () => import("@/views/Profiles.vue"),
     meta: {
       layout: "app",
       title: "profiles",
@@ -107,7 +107,7 @@ const routes = [
   {
     path: "/settings",
     name: "settings",
-    component: () => import("@/views/settings.vue"),
+    component: () => import("@/views/Settings.vue"),
     meta: {
       layout: "app",
       title: "settings",

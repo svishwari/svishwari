@@ -1,6 +1,7 @@
 """This module enables functionality related to delivery platform management."""
 # pylint: disable=C0302
 
+from typing import List, Tuple
 import logging
 import datetime
 from operator import itemgetter
@@ -1122,29 +1123,33 @@ def get_delivery_job_audience_size(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience_delivery_jobs(
-    database: DatabaseClient, audience_id: ObjectId
+def get_delivery_jobs(
+    database: DatabaseClient, audience_id: ObjectId = None
 ) -> list:
-    """A function to get all audience delivery jobs given an audience.
+    """Get audience delivery jobs if audience_id is specified, otherwise,
+    get all delivery jobs.
 
     Args:
-        database (DatabaseClient): A database client.
-        audience_id (ObjectId): Audience id.
+        database (DatabaseClient): database client.
+        audience_id (ObjectId, optional): audience ID. Defaults to None.
 
     Returns:
-        list: List of delivery jobs for an audience.
+        list: List of delivery jobs.
 
     """
-
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
         cursor = collection.find(
-            {c.AUDIENCE_ID: audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.AUDIENCE_ID: audience_id, c.ENABLED: True}
+            if audience_id
+            else {c.ENABLED: True},
+            {c.ENABLED: True},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
+        raise
 
     return list(cursor)
 
@@ -1226,13 +1231,13 @@ def get_ingestion_job_audience_delivery_jobs(
         ingestion_job_id,
     )
 
-    if audience_ids is not None:
+    if audience_ids:
         for audience_id in audience_ids:
-            delivery_jobs = get_audience_delivery_jobs(
+            delivery_jobs = get_delivery_jobs(
                 database,
                 audience_id,
             )
-            if delivery_jobs is not None:
+            if delivery_jobs:
                 all_delivery_jobs += delivery_jobs
 
     return all_delivery_jobs
@@ -1464,11 +1469,10 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
 def set_delivered_audience_performance_metrics(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
-    delivery_platform_campaign_id: str,
-    delivery_platform_ad_set_id: str,
     metrics_dict: dict,
     start_time: datetime.datetime,
     end_time: datetime.datetime,
+    delivery_platform_ad_sets: List[Tuple],
 ) -> dict:
     """A function to store the delivered audience performance metrics.
 
@@ -1480,19 +1484,18 @@ def set_delivered_audience_performance_metrics(
         metrics_dict (dict): A dict containing performance metrics.
         start_time (datetime): Start time of metrics.
         end_time (datetime): End time of metrics.
+        delivery_platform_ad_sets (List[Tuple]): list of following tuples:
+            (<campaign ID>, <ad set ID>)
 
     Returns:
         dict: MongoDB metrics doc.
     """
 
-    metrics_doc = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
 
     # Check validity of delivery job ID
-    doc = get_delivery_job(database, delivery_job_id)
-
-    if doc is None:
+    if not get_delivery_job(database, delivery_job_id):
         raise de.InvalidID(delivery_job_id)
 
     # Get current time
@@ -1500,23 +1503,22 @@ def set_delivered_audience_performance_metrics(
 
     doc = {
         c.DELIVERY_JOB_ID: delivery_job_id,
-        c.DELIVERY_PLATFORM_CAMPAIGN_ID: delivery_platform_campaign_id,
-        c.DELIVERY_PLATFORM_AD_SET_ID: delivery_platform_ad_set_id,
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
         c.METRICS_END_TIME: end_time,
+        c.DELIVERY_PLATFORM_AD_SETS: delivery_platform_ad_sets,
         c.PERFORMANCE_METRICS: metrics_dict,
     }
 
     try:
         metrics_id = collection.insert_one(doc).inserted_id
         collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
-        if metrics_id is not None:
-            metrics_doc = collection.find_one({c.ID: metrics_id})
+        if metrics_id:
+            return collection.find_one({c.ID: metrics_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return metrics_doc
+    return None
 
 
 @retry(

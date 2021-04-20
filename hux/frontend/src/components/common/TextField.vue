@@ -1,7 +1,10 @@
 <template>
   <v-row>
     <v-col cols="12" sm="6">
-      <label>{{ labelText }}</label>
+      <label>
+        {{ labelText }}
+        <v-icon color="primary"> mdi-alert-circle-outline </v-icon>
+      </label>
       <v-text-field :label="placeholderText" single-line outlined>
       </v-text-field>
     </v-col>
@@ -26,3 +29,10 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.row {
+  .mdi {
+    margin-bottom: 7px;
+  }
+}
+</style>
