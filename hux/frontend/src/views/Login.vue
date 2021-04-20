@@ -14,6 +14,8 @@
               v-model="username"
               label="Username"
               autocomplete="username"
+              single-line
+              outlined
               required
             ></v-text-field>
             <v-text-field
@@ -25,6 +27,8 @@
               label="Password"
               autocomplete="newPassword"
               @click:append="toggleShowPassword = !toggleShowPassword"
+              single-line
+              outlined
             ></v-text-field>
             <div v-if="loginFailed" class="error">
               Uh-oh, your email and password don’t match.
@@ -48,7 +52,7 @@
             <!-- disable if form is not valid -->
             <v-btn
               :disabled="!isFormValid"
-              x-large
+              large
               class="mt-4 loginBtn"
               @click="initiateLogin()"
             >
@@ -88,7 +92,7 @@ export default {
         if (!loggedIn) {
           this.loginFailed = true
         } else {
-          this.$router.replace(this.$route.query.redirect || "/home")
+          this.$router.replace(this.$route.query.redirect || "/overview")
         }
       })
     },
@@ -160,6 +164,9 @@ export default {
     }
     .loginBtn {
       margin-top: 30px;
+      background-color: #ececec;
+      width: 89px;
+      height: 40px;
     }
   }
 }
