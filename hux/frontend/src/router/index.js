@@ -81,9 +81,9 @@ const routes = [
     },
   },
   {
-    path: "/indentity",
-    name: "indentity",
-    component: () => import("@/views/Indentity.vue"),
+    path: "/identity",
+    name: "identity",
+    component: () => import("@/views/Identity.vue"),
     meta: {
       layout: "app",
       title: "Identity | Hux Unified UI",
