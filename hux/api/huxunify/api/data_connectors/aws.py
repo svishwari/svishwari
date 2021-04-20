@@ -8,6 +8,7 @@ import boto3
 import botocore
 
 
+# TODO - HUS-281
 # get aws connection params
 AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
@@ -125,6 +126,7 @@ class ParameterStore:
             ssm_params (dict): The key/path to where the parameters are stored.
         """
         ssm_params = {}
+        # TODO: verify this is with ad-perf for ORCH-94 / HUS-262
         path = "/huxunify/%s" % destination_id
 
         for parameter_name, secret in authentication_details.items():

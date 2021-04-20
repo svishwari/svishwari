@@ -12,7 +12,6 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, Response, jsonify
 from flask_apispec import marshal_with
-from botocore.exceptions import ClientError
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -75,52 +74,6 @@ def test_destination_connection(
         if status
         else db_constants.STATUS_FAILED,
     )
-
-
-def set_destination_authentication_secrets(
-    authentication_details: dict,
-    is_updated: bool,
-    destination_id: str,
-    destination_name: str,
-) -> dict:
-    """Save authentication details in AWS Parameter Store.
-
-    Args:
-        authentication_details (dict): The key/secret pair to store away.
-        is_updated (bool): Flag to update the secrets in the AWS Parameter Store.
-        destination_id (str): Destination ID.
-        destination_name (str): Destination name.
-
-    Returns:
-        ssm_params (dict): The key/path to where the parameters are stored.
-    """
-    ssm_params = {}
-
-    # TODO - clarify the secret store with adperf team
-    path = f"/adperf/{destination_id}"
-
-    for parameter_name, secret in authentication_details.items():
-        ssm_params[parameter_name] = (
-            path + "/" + parameter_name if path else parameter_name
-        )
-        try:
-            parameter_store.store_secret(
-                name=parameter_name,
-                secret=secret,
-                overwrite=is_updated,
-                path=path,
-            )
-        except ClientError as exc:
-            logging.error("%s: %s", exc.__class__, exc)
-            raise ProblemException(
-                status=int(HTTPStatus.BAD_REQUEST.value),
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"There was a problem saving your authentication details for"
-                f" Destination: '{destination_name}'. Details:"
-                f" {api_c.CANNOT_STORE_SECRETS_PARAMETER_STORE}",
-            ) from exc
-
-    return ssm_params
 
 
 @add_view_to_blueprint(
@@ -253,11 +206,13 @@ class DestinationPostView(SwaggerView):
         )[db_constants.ID]
 
         # store the secrets in AWS parameter store
-        authentication_parameters = set_destination_authentication_secrets(
-            authentication_details=body[api_c.AUTHENTICATION_DETAILS],
-            is_updated=False,
-            destination_id=str(destination_id),
-            destination_name=body[api_c.DESTINATION_NAME],
+        authentication_parameters = (
+            parameter_store.set_destination_authentication_secrets(
+                authentication_details=body[api_c.AUTHENTICATION_DETAILS],
+                is_updated=False,
+                destination_id=str(destination_id),
+                destination_name=body[api_c.DESTINATION_NAME],
+            )
         )
 
         # store the secrets paths in database
@@ -425,11 +380,13 @@ class DestinationPutView(SwaggerView):
         try:
             if auth_details:
                 # store the secrets for the updated authentication details
-                authentication_parameters = set_destination_authentication_secrets(
-                    authentication_details=auth_details,
-                    is_updated=True,
-                    destination_id=destination_id,
-                    destination_name=body.get(api_c.DESTINATION_NAME),
+                authentication_parameters = (
+                    parameter_store.set_destination_authentication_secrets(
+                        authentication_details=auth_details,
+                        is_updated=True,
+                        destination_id=destination_id,
+                        destination_name=body.get(api_c.DESTINATION_NAME),
+                    )
                 )
 
                 # TODO - implement when ORCH-94 and HUS-262 are ready
