@@ -849,7 +849,7 @@ def set_delivery_job(
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the delivered audience.
         delivery_platform_id (ObjectId): Delivery platform ID.
-        delivery_platform_generic_campaigns (list): generic campagn IDs.
+        delivery_platform_generic_campaigns (list): generic campaign IDs.
     Returns:
         dict: Delivery job configuration.
 
