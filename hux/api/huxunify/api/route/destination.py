@@ -5,7 +5,6 @@ Paths for destinations api
 import logging
 from http import HTTPStatus
 from typing import Tuple
-from enum import Enum
 from mongomock import MongoClient
 from connexion.exceptions import ProblemException
 from flasgger import SwaggerView
@@ -110,7 +109,7 @@ class DestinationGetView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationGetSchema)
-    def get(self, destination_id: str) -> Tuple[dict, Enum]:
+    def get(self, destination_id: str) -> Tuple[dict, int]:
         """Get a destination by destination ID and connection status.
 
         ---
@@ -118,7 +117,7 @@ class DestinationGetView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, Enum]: Destination dict, HTTP status.
+            Tuple[dict, int]: Destination dict, HTTP status.
 
         """
 
@@ -183,12 +182,12 @@ class DestinationPostView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationPostSchema)
-    def post(self) -> Tuple[dict, Enum]:
+    def post(self) -> Tuple[dict, int]:
         """Creates a new destination and test the connection.
 
         ---
         Returns:
-            Tuple[dict, Enum]: Destination created, HTTP status.
+            Tuple[dict, int]: Destination created, HTTP status.
 
         """
         # TODO - implement after HUS-254 is done to grab user/okta_id
@@ -355,7 +354,7 @@ class DestinationPutView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationPutSchema)
-    def put(self, destination_id: str) -> Tuple[dict, Enum]:
+    def put(self, destination_id: str) -> Tuple[dict, int]:
         """Updates an existing destination.
 
         ---
@@ -363,7 +362,7 @@ class DestinationPutView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, Enum]: Destination doc, HTTP status.
+            Tuple[dict, int]: Destination doc, HTTP status.
 
         """
 
@@ -447,12 +446,12 @@ class DestinationsView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationGetSchema(many=True))
-    def get(self) -> Tuple[list, Enum]:
+    def get(self) -> Tuple[list, int]:
         """Retrieves all the destinations.
 
         ---
         Returns:
-            Tuple[list, Enum]: list of destinations, HTTP status.
+            Tuple[list, int]: list of destinations, HTTP status.
 
         """
 
@@ -506,12 +505,12 @@ class DestinationsBulkDeleteView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    def post(self) -> Tuple[list, Enum]:
+    def post(self) -> Tuple[list, int]:
         """Bulk Deletes destinations by a list of IDs.
 
         ---
         Returns:
-            Tuple[list, Enum]: list of deleted destination ids, HTTP status.
+            Tuple[list, int]: list of deleted destination ids, HTTP status.
 
         """
 
@@ -578,12 +577,12 @@ class DestinationsConstants(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationConstants)
-    def get(self) -> Tuple[dict, Enum]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves all destination constants.
 
         ---
         Returns:
-            Tuple[dict, Enum]: dict of destination constants, HTTP status.
+            Tuple[dict, int]: dict of destination constants, HTTP status.
 
         """
 
