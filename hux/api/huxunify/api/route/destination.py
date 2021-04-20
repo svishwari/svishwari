@@ -206,7 +206,7 @@ class DestinationPostView(SwaggerView):
             "type": "object",
             "description": "Input destination body.",
             "example": {
-                api_c.DESTINATION_NAME: "My destination platform",
+                api_c.DESTINATION_NAME: "My destination",
                 api_c.DESTINATION_TYPE: "Facebook",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
