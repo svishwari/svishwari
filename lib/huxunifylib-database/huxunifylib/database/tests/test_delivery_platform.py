@@ -27,6 +27,10 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
+        self.generic_campaigns = [
+            {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
+        ]
+
         # Set delivery platform
         self.auth_details = {
             "facebook_access_token": "path1",
@@ -72,14 +76,14 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             self.source_audience_doc[c.ID],
             self.delivery_platform_doc[c.ID],
-            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
+            self.generic_campaigns,
         )
 
         self.delivery_job_2_doc = dpm.set_delivery_job(
             self.database,
             self.audience_2_doc[c.ID],
             self.delivery_platform_doc[c.ID],
-            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
+            self.generic_campaigns,
         )
 
         self.lookalike_audience_doc = (
@@ -299,7 +303,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             self.delivery_platform_doc[c.ID],
             self.delivery_platform_doc[c.ID],
-            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
+            self.generic_campaigns,
         )
 
         self.assertTrue(doc is not None)
@@ -468,7 +472,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             source_audience_id,
             delivery_platform_id,
-            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
+            self.generic_campaigns,
         )
 
         # create lookalike audience with delivery job associated with
@@ -721,7 +725,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             source_audience_id,
             delivery_platform_id,
-            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
+            self.generic_campaigns,
         )
 
         # create lookalike audience

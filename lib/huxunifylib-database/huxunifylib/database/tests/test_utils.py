@@ -26,6 +26,10 @@ class TestUtils(unittest.TestCase):
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
+        self.generic_campaigns = [
+            {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
+        ]
+
         # Create data sources
         self.data_source_doc_1 = dm.set_data_source(
             database=self.database,
@@ -245,7 +249,7 @@ class TestUtils(unittest.TestCase):
             database,
             audience_id,
             delivery_platform_id,
-            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
+            self.generic_campaigns,
         )
 
         self.assertTrue(delivery_doc is not None)
@@ -291,7 +295,7 @@ class TestUtils(unittest.TestCase):
             database,
             audience_id,
             delivery_platform_id,
-            [{"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}],
+            self.generic_campaigns,
         )
 
         self.assertTrue(delivery_doc is not None)
