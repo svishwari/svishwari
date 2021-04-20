@@ -4,7 +4,7 @@
       <NavBar @toggleSidebarMenu="toggleSidebar"></NavBar>
       <SideMenu v-bind:toggle="toggleMini"></SideMenu>
       <v-main>
-        <v-container>
+        <v-container fluid>
           <slot />
         </v-container>
       </v-main>
