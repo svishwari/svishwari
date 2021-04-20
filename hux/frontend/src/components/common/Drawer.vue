@@ -1,23 +1,43 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
+    v-model="localDrawer"
     :right="toRight"
     :width="width"
-    @input="onChange"
     temporary
     floating
     app
   >
+    <v-card
+      tile
+      elevation="5"
+      height="70"
+      class="d-flex justify-space-between align-center px-6 py-5"
+    >
+      <slot name="header-left"></slot>
+      <slot name="header-right"></slot>
+    </v-card>
+    <slot></slot>
+    <v-footer absolute padless color="white" elevation="5">
+      <v-card
+        tile
+        height="70"
+        class="d-flex justify-space-between align-center px-6 py-5"
+        min-width="100%"
+      >
+        <slot name="footer-left"></slot>
+        <slot name="footer-right"></slot>
+      </v-card>
+    </v-footer>
   </v-navigation-drawer>
 </template>
 
 <script>
 export default {
-  name: "drawer",
+  name: "Drawer",
 
   data() {
     return {
-      drawer: this.isOpen,
+      localDrawer: this.value,
     }
   },
 
@@ -28,9 +48,9 @@ export default {
       default: true,
     },
 
-    isOpen: {
+    value: {
       type: Boolean,
-      required: false,
+      required: true,
       default: false,
     },
 
@@ -40,13 +60,17 @@ export default {
       default: "600",
     },
   },
-  methods: {
-    onChange(x) {
-      console.log(x)
+
+  watch: {
+    value: function () {
+      this.localDrawer = this.value
     },
-    toggleDrawer() {
-      this.drawer = !this.drawer
-    }
+    localDrawer: function () {
+      this.$emit("input", this.localDrawer)
+      if (!this.localDrawer) {
+        this.$emit("onClose")
+      }
+    },
   },
 }
 </script>
