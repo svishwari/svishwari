@@ -4,6 +4,7 @@
 import logging
 import datetime
 from operator import itemgetter
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -24,7 +25,7 @@ def set_delivery_platform(
     delivery_platform_type: str,
     name: str,
     authentication_details: dict,
-    user_id: str = None,
+    user_id: ObjectId = None,
 ) -> dict:
     """A function to create a delivery platform.
 
@@ -32,7 +33,7 @@ def set_delivery_platform(
         database (DatabaseClient): A database client.
         delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
-        user_id (str): User object ID.
+        user_id (ObjectId): User object ID.
         authentication_details (dict): A dict containing delivery platform authentication details.
 
     Returns:
@@ -79,7 +80,7 @@ def set_delivery_platform(
     }
 
     # Add user object only if it is available
-    if user_id is not None and name_exists(
+    if ObjectId.is_valid(user_id) and name_exists(
         database,
         c.DATA_MANAGEMENT_DATABASE,
         c.USER_COLLECTION,
@@ -125,7 +126,7 @@ def get_delivery_platform(
 
     try:
         return collection.find_one(
-            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: True}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -459,7 +460,7 @@ def update_delivery_platform(
     name: str = None,
     delivery_platform_type: str = None,
     authentication_details: dict = None,
-    user_id: str = None,
+    user_id: ObjectId = None,
 ) -> dict:
     """A function to update delivery platform configuration.
 
@@ -469,7 +470,7 @@ def update_delivery_platform(
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
-        user_id (str): User id of user updating delivery platform.
+        user_id (ObjectId): User id of user updating delivery platform.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -509,7 +510,7 @@ def update_delivery_platform(
     }
 
     # Add user object only if it is available
-    if user_id is not None and name_exists(
+    if ObjectId.is_valid(user_id) and name_exists(
         database,
         c.DATA_MANAGEMENT_DATABASE,
         c.USER_COLLECTION,
