@@ -17,9 +17,13 @@ SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 # error messages
 CANNOT_DELETE_DESTINATIONS = "Error deleting delivery platform"
 
-# Delivery Platform API fields
+# Destination API fields
 DESTINATION_ID = "destination_id"
 DESTINATION_TYPE = "destination_type"
 DESTINATION_NAME = "destination_name"
 DESTINATION_STATUS = "destination_status"
+DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
+
+
+CANNOT_STORE_SECRETS_PARAMETER_STORE = "Trouble storing secrets in the parameter store"

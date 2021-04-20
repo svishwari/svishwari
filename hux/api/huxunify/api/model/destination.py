@@ -2,7 +2,7 @@
 """
 Models for the destinations API
 """
-from typing import Union, List
+from typing import Union
 from bson import ObjectId
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -17,22 +17,6 @@ class DestinationModel:
     """
     destinations model class
     """
-
-    def get_destinations(self) -> List[dict]:
-        """Reads the destination / delivery platform table.
-
-        Returns:
-            list(dict): The list of destinations / delivery platforms.
-        """
-
-        try:
-            all_destinations = destination_management.get_all_delivery_platforms(
-                None  # TODO : use mongo connector library to get mongo db client
-            )
-            return all_destinations
-
-        except Exception as exc:
-            raise Exception(f"Something went wrong. Details {exc}") from exc
 
     def get_destination_by_id(self, destination_id: str) -> Union[dict, None]:
         """Finds a destination in the delivery platform table.
@@ -84,8 +68,9 @@ class DestinationModel:
             )
 
             # store the secrets paths in database
+            # TODO - implement mongo connector when ORCH-94 and HUS-262 are ready
             destination_management.set_authentication_details(
-                database=None,  # TODO : use mongo connector library to get mongo db client,
+                database=None,
                 delivery_platform_id=destination_id,
                 authentication_details=authentication_parameters,
             )
@@ -136,29 +121,3 @@ class DestinationModel:
             database=None,  # TODO : use mongo connector library to get mongo db client
             delivery_platform_id=ObjectId(destination_id),
         )
-
-    def get_destination_constants(self) -> List[dict]:
-        """Return auth constants.
-
-        Returns:
-            int: The destination id in the database
-        """
-
-        auth_details = {
-            db_constants.DELIVERY_PLATFORM_FACEBOOK: {
-                constants.FACEBOOK_AD_ACCOUNT_ID: "Ad Account ID",
-                constants.FACEBOOK_APP_ID: "Facebook App ID",
-                constants.FACEBOOK_APP_SECRET: "App Secret",
-                constants.FACEBOOK_ACCESS_TOKEN: "Access Token",
-            },
-            db_constants.DELIVERY_PLATFORM_SFMC: {
-                constants.SFMC_CLIENT_ID: "Client ID",
-                constants.SFMC_ACCOUNT_ID: "Account ID",
-                constants.SFMC_CLIENT_SECRET: "Client Secret",
-                constants.SFMC_AUTH_BASE_URI: "Auth Base URI",
-                constants.SFMC_REST_BASE_URI: "REST Base URI",
-                constants.SFMC_SOAP_BASE_URI: "SOAP Base URI",
-            },
-        }
-
-        return auth_details
