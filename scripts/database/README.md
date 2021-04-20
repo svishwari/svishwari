@@ -1,7 +1,9 @@
 # Standup Scripts
-Draft of process to run when standing up a new DB.
+Draft process to run when standing up a new DB.
 
 ## Assumptions
+PYTHON 3.7 Is Installed
+
 Following Mongo ENV Settings are Set
   - MONGO_DB_HOST
   - MONGO_DB_PORT
@@ -16,8 +18,6 @@ git clone https://github.com/DeloitteHux/hux-unified.git
 cd hux-unified/lib/huxunifylib-database
 python -m pip install --upgrade pip
 python -m pip install build twine
-rm -rf ./dist
-python -m build -s -w . --outdir ./dist
 python -m pip install .
 ```
 
