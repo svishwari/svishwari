@@ -19,9 +19,7 @@ class ParameterStore:
     """Interact with AWS Parameter Store."""
 
     @staticmethod
-    def store_secret(
-        name: str, secret: str, overwrite: bool, path: str = None
-    ):
+    def store_secret(name: str, secret: str, overwrite: bool, path: str = None):
         """
         Store secrets.
         Args:
