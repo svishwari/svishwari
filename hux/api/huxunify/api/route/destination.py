@@ -14,6 +14,11 @@ from flask import Blueprint, request, Response, jsonify
 from flask_apispec import marshal_with
 from botocore.exceptions import ClientError
 
+from huxunifylib.database import (
+    delivery_platform_management as destination_management,
+    constants as db_constants,
+    delete_util,
+)
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
@@ -22,15 +27,8 @@ from huxunify.api.schema.destinations import (
     DestinationConstants,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-
-
 from huxunify.api.route.utils import add_view_to_blueprint
 import huxunify.api.constants as api_c
-from huxunifylib.database import (
-    delivery_platform_management as destination_management,
-    constants as db_constants,
-    delete_util,
-)
 
 
 # setup the destination blueprint

@@ -7,8 +7,8 @@ from flask_marshmallow import Schema
 from marshmallow import fields, post_load
 from marshmallow.validate import OneOf
 from bson import ObjectId
-from huxunify.api import constants as api_c
 from huxunifylib.database import constants as db_c
+from huxunify.api import constants as api_c
 
 
 class DestinationGetSchema(Schema):
