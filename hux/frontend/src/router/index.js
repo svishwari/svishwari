@@ -94,6 +94,7 @@ const routes = [
     path: "/profiles",
     name: "profiles",
     component: () => import("@/views/Profiles.vue"),
+
     meta: {
       layout: "app",
       title: "Profiles | Hux Unified UI",
@@ -104,6 +105,7 @@ const routes = [
     path: "/settings",
     name: "settings",
     component: () => import("@/views/Settings.vue"),
+
     meta: {
       layout: "app",
       title: "Settings | Hux Unified UI",
