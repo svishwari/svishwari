@@ -196,7 +196,7 @@ class DestinationGetView(SwaggerView):
 )
 class DestinationPostView(SwaggerView):
     """
-    Single Destination Delete view class
+    Single Destination Post view class
     """
 
     parameters = [
