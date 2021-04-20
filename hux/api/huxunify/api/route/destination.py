@@ -33,7 +33,7 @@ from huxunifylib.database import (
 )
 
 
-# setup the cdm blueprint
+# setup the destination blueprint
 dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
 
 
@@ -196,7 +196,7 @@ class DestinationGetView(SwaggerView):
 )
 class DestinationPostView(SwaggerView):
     """
-    Single Destination Delete view class
+    Single Destination Post view class
     """
 
     parameters = [
@@ -206,7 +206,7 @@ class DestinationPostView(SwaggerView):
             "type": "object",
             "description": "Input destination body.",
             "example": {
-                api_c.DESTINATION_NAME: "My destination platform",
+                api_c.DESTINATION_NAME: "My destination",
                 api_c.DESTINATION_TYPE: "Facebook",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
@@ -267,7 +267,7 @@ class DestinationPostView(SwaggerView):
             authentication_details=authentication_parameters,
         )
 
-        # test the delivery platform connection and update connection status
+        # test the destination connection and update connection status
         return (
             test_destination_connection(
                 destination_id=destination_id,
@@ -374,7 +374,7 @@ class DestinationPutView(SwaggerView):
             "description": "Destination Object.",
             "type": "object",
             "example": {
-                api_c.DESTINATION_NAME: "My Delivery platform",
+                api_c.DESTINATION_NAME: "My destination",
                 api_c.DESTINATION_TYPE: "Facebook",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
