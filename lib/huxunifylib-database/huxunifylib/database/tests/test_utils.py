@@ -26,6 +26,10 @@ class TestUtils(unittest.TestCase):
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
+        self.generic_campaigns = [
+            {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
+        ]
+
         # Create data sources
         self.data_source_doc_1 = dm.set_data_source(
             database=self.database,
@@ -242,7 +246,10 @@ class TestUtils(unittest.TestCase):
 
         # Create a delivery job
         delivery_doc = dpm.set_delivery_job(
-            database, audience_id, delivery_platform_id
+            database,
+            audience_id,
+            delivery_platform_id,
+            self.generic_campaigns,
         )
 
         self.assertTrue(delivery_doc is not None)
@@ -285,7 +292,10 @@ class TestUtils(unittest.TestCase):
 
         # Create another delivery job with no lookalike audiences
         delivery_doc = dpm.set_delivery_job(
-            database, audience_id, delivery_platform_id
+            database,
+            audience_id,
+            delivery_platform_id,
+            self.generic_campaigns,
         )
 
         self.assertTrue(delivery_doc is not None)
