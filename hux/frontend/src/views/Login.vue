@@ -92,7 +92,7 @@ export default {
         if (!loggedIn) {
           this.loginFailed = true
         } else {
-          this.$router.replace(this.$route.query.redirect || "/home")
+          this.$router.replace(this.$route.query.redirect || "/overview")
         }
       })
     },

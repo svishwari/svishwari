@@ -106,11 +106,6 @@ export default {
       return !this.$vuetify.theme.dark ? "Go Dark" : "Go Light"
     },
   },
-  mounted() {
-    window.addEventListener("load", () => {
-      document.getElementsByClassName("loader-overlay")[0].remove()
-    })
-  },
   data: () => ({
     sidebarMenu: true,
     items: menuConfig.menu,
