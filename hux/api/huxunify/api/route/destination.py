@@ -33,7 +33,7 @@ from huxunifylib.database import (
 )
 
 
-# setup the cdm blueprint
+# setup the destination blueprint
 dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
 
 
