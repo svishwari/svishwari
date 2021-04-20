@@ -4,8 +4,7 @@ Schemas for the User API
 
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, validate, List, DateTime, Boolean, Nested
-
-ROLES = ["user", "super-admin", "admin", "viewer"]
+from huxunifylib.database.constants import USER_ROLES
 
 
 class Favorites(Schema):
@@ -31,9 +30,9 @@ class User(Schema):
 
     email = Str(required=True)
     display_name = Str(required=True)
-    role = Str(required=True, validate=validate.OneOf(ROLES))
+    role = Str(required=True, validate=validate.OneOf(USER_ROLES))
     organization = Str(required=True)
-    # subscriptions = List(Str())
+    subscriptions = List(Str())
     dashboard_configuration = Nested(DashBoardConfiguration, required=True)
     favorites = Nested(Favorites, required=True)
     profile_photo = Str()

@@ -1,29 +1,44 @@
 """
 Paths for the User API
 """
-
+from enum import Enum
 from http import HTTPStatus
 from typing import List, Tuple
 
 from bson import ObjectId
+import json
 from flask import Blueprint, request
-from marshmallow.exceptions import ValidationError
 from flask_apispec import marshal_with
 from flasgger import SwaggerView, swag_from
-from huxunify.api.model.cdm import CdmModel
+from marshmallow.fields import Int
+from pymongo import MongoClient
+
 from huxunify.api.model.user import UserModel
-from huxunify.api.schema.errors import NotFoundError, RequestError
-from huxunify.api.schema.cdm import Datafeed, Fieldmapping, ProcessedData
+from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.user import User
+from huxunifylib.database.user_management import *
 
 USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
-USER_TAG = "user"
 USER_ENDPOINT = "user"
 
 # setup the cdm blueprint
 user_bp = Blueprint("user", import_name=__name__)
+
+
+# TODO convert posts/puts to swagger views
+# TODO use user_id (ObjectId) for all requests, check if valid and convert from string to object ID
+# TODO get rid of UserModel and use user_mgmt directly
+
+
+def get_db_client() -> MongoClient:
+    """Get DB client.
+    Returns:
+        MongoClient: DB client
+    """
+    # TODO - hook-up when ORCH-94 HUS-262 are completed
+    return MongoClient()
 
 
 @add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}", "UserSearch")
@@ -49,7 +64,7 @@ class UserSearch(SwaggerView):
 
         """
         try:
-            data = UserModel().get_all_users()
+            data = get_all_users(get_db_client())
 
             if not data:
                 error = NotFoundError().dump({"message": "No Users found"})
@@ -79,147 +94,251 @@ class IndividualUserSearch(SwaggerView):
     }
     tags = [USER_TAG]
 
+    # TODO doc str fix
     @marshal_with(User)
-    def get(self, okta_id: ObjectId) -> User:
+    def get(self, okta_id: str) -> Tuple[dict, int]:
         """Retrieves a user by ID.
 
         ---
 
         Returns:
-            Response: Returns a user
+            Tuple[dict, Enum]: dict of user and user enum
 
         """
         try:
-            # TODO validation for id?
-            data = UserModel().get_user(okta_id=okta_id)
+            data = get_user(get_db_client(), okta_id=okta_id)
 
             if not data:
                 error = NotFoundError().dump({"message": "User not found"})
                 return error, error["code"]
 
-            return data, HTTPStatus.OK.value
+            return data, HTTPStatus.OK
 
         except error:
             return error, error["code"]
 
 
-@user_bp.route("/users/update-dashboard", methods=["POST"])
-@swag_from(
-    {
-        "parameters": [
-            {"user_id": "user_id", "config_key": "key name", "config_value": "value"}
-        ]
-    }
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/update-dashboard", "UpdateUserDashboardConfiguration"
 )
-def update_user_dashboard_configuration():
+class UpdateUserDashboardConfiguration(SwaggerView):
     """
     Update user's dashboard configuration
     """
-    try:
-        # TODO validation?
-        request_data = request.get_json()
 
-        user_id = request_data["user_id"]
-        config_key = request_data["config_key"]
-        config_value = request_data["config_value"]
+    parameters = [
+        {"user_id": "user_id", "config_key": "key name", "config_value": "value"}
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User dashboard configuration updated",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update user dashboard configuration",
+        },
+    }
 
-        data = UserModel().update_user_dashboard(
-            user_id=user_id, config_key=config_key, config_value=config_value
+    tags = [USER_TAG]
+
+    def put(self, user_id: str, config_key: str, config_value: Any) -> Tuple[dict, int]:
+        """Put a user's dashboard configuration
+
+        ---
+        Args:
+            user_id (str): User id
+            config_key (str): Key for configuration parameter
+            config_value (Any): Value for configuration parameter
+
+        Returns:
+            Tuple[dict, Enum]: Configuration dict, HTTP status
+
+        """
+        if ObjectId.is_valid(user_id):
+            user_id = ObjectId(user_id)
+        else:
+            return {
+                "message": "Invalid user ID received {user_id}."
+            }, HTTPStatus.BAD_REQUEST
+
+        response = manage_user_dashboard_config(
+            get_db_client(),
+            user_id=user_id,
+            config_key=config_key,
+            config_value=config_value,
         )
 
-        return data, HTTPStatus.OK.value
-    except:
-        pass
+        return response, HTTPStatus.OK
 
 
-# TODO update-profile vs update user. Whats the different user cases?
-@user_bp.route("/users/update-profile", methods=["POSTS"])
-@swag_from({"parameters": [{"user_id": "user_id", "update_doc": "update doc"}]})
-def update_user_profile():
+@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/update-profile", "UpdateUserProfile")
+class UpdateUserProfile:
     """
-    Update User Profile
+    Update user profile
     """
-    try:
-        # TODO validation?
-        request_data = request.get_json()
 
-        user_id = request_data["user_id"]
-        update_doc = request_data["user_id"]
+    parameters = [{"user_id": "user_id", "update_doc": "update doc"}]
 
-        data = UserModel().update_user(user_id=user_id, update_doc=update_doc)
-
-        return data, HTTPStatus.OK.value
-    except:
-        pass
-
-
-@user_bp.route("/users/add-favorite", methods=["POSTS"])
-@swag_from(
-    {
-        "parameters": [
-            {
-                "user_id": "user_id",
-                "component_name": "component name",
-                "component_id": "component_id",
-            }
-        ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User profile updated",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update user profile",
+        },
     }
-)
-def add_user_favorite():
+
+    tags = [USER_TAG]
+
+    def put(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
+        """Put a user's dashboard configuration
+
+        ---
+        Args:
+            user_id (str): User id
+            update_doc (str): update document for user profile
+
+        Returns:
+            Tuple[dict, Enum]: profile dict, HTTP status
+
+        """
+        if ObjectId.is_valid(user_id):
+            user_id = ObjectId(user_id)
+        else:
+            return {
+                "message": "Invalid user ID received {user_id}."
+            }, HTTPStatus.BAD_REQUEST
+
+        update_doc = json.loads(update_doc)
+
+        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+
+        return response, HTTPStatus.OK
+
+
+@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/add-favorite", "AddUserFavorite")
+class AddUserFavorite:
     """
     Add a new favorite for a user
     """
-    try:
-        # TODO validation?
-        request_data = request.get_json()
 
-        user_id = request_data["user_id"]
-        component_name = request_data["component_name"]
-        component_id = request_data["component_id"]
-
-        data = UserModel().update_user_favorites(
-            user_id=user_id,
-            component_name=component_name,
-            component_id=component_id,
-            delete=False,
-        )
-
-        return data, HTTPStatus.OK.value
-    except:
-        pass
-
-
-@user_bp.route("/users/remove-favorite", methods=["POSTS"])
-@swag_from(
-    {
-        "parameters": [
-            {
-                "user_id": "user_id",
-                "component_name": "component name",
-                "component_id": "component_id",
-            }
-        ]
+    parameters = [
+        {
+            "user_id": "user_id",
+            "component_name": "component name",
+            "component_id": "id of favorite component",
+        }
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "description": "User favorite added",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to add user favorite",
+        },
     }
-)
-def remove_user_favorite():
-    """
-    Remove a favorite for a user
-    """
-    try:
-        # TODO validation?
-        request_data = request.get_json()
 
-        user_id = request_data["user_id"]
-        component_name = request_data["component_name"]
-        component_id = request_data["component_id"]
+    tags = [USER_TAG]
 
-        data = UserModel().update_user_favorites(
+    def post(
+        self, user_id: str, component_name: str, component_id: str
+    ) -> Tuple[dict, int]:
+        """Add a new favorite for a user
+
+        ---
+        Args:
+            user_id (str): User id
+            component_name (str): name of component
+            component_id (str): id of the new favorite component
+
+        Returns:
+            Tuple[dict, Enum]: Configuration dict, HTTP status
+
+        """
+
+        if ObjectId.is_valid(user_id):
+            user_id = ObjectId(user_id)
+        else:
+            return {
+                "message": "Invalid user ID received {user_id}."
+            }, HTTPStatus.BAD_REQUEST
+
+        if ObjectId.is_valid(component_id):
+            component_id = ObjectId(component_id)
+        else:
+            return {
+                "message": "Invalid component ID received {component_id}."
+            }, HTTPStatus.BAD_REQUEST
+
+        response = manage_user_favorites(
+            get_db_client(),
             user_id=user_id,
             component_name=component_name,
             component_id=component_id,
-            delete=True,
         )
 
-        return data, HTTPStatus.OK.value
-    except:
-        pass
+        return response, HTTPStatus.CREATED
+
+
+@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/add-favorite", "RemoveUserFavorite")
+class RemoveUserFavorite:
+    """
+    Remove favorite for a user
+    """
+
+    parameters = [
+        {
+            "user_id": "user_id",
+            "component_name": "component name",
+            "component_id": "id of favorite component",
+        }
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "description": "User favorite removed",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to remove user favorite",
+        },
+    }
+
+    tags = [USER_TAG]
+
+    def post(
+        self, user_id: str, component_name: str, component_id: str
+    ) -> Tuple[dict, int]:
+        """Remove a favorite for a user
+
+        ---
+        Args:
+            user_id (str): User id
+            component_name (str): name of component
+            component_id (str): id of the new favorite component
+
+        Returns:
+            Tuple[dict, Enum]: Configuration dict, HTTP status
+
+        """
+
+        if ObjectId.is_valid(user_id):
+            user_id = ObjectId(user_id)
+        else:
+            return {
+                "message": "Invalid user ID received {user_id}."
+            }, HTTPStatus.BAD_REQUEST
+
+        if ObjectId.is_valid(component_id):
+            component_id = ObjectId(component_id)
+        else:
+            return {
+                "message": "Invalid component ID received {component_id}."
+            }, HTTPStatus.BAD_REQUEST
+
+        response = manage_user_favorites(
+            get_db_client(),
+            user_id=user_id,
+            component_name=component_name,
+            component_id=component_id,
+            delete_flag=True,
+        )
+
+        return response, HTTPStatus.OK
