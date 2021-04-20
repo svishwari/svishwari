@@ -5,6 +5,7 @@
     floating
     :permanent="sidebarMenu"
     :mini-variant.sync="mini"
+    mini-variant-width="90"
     width="220"
     class="side-nav-bar primary"
   >
