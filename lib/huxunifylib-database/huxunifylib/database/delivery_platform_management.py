@@ -1,7 +1,6 @@
 """This module enables functionality related to delivery platform management."""
 # pylint: disable=C0302
 
-from typing import List, Tuple
 import logging
 import datetime
 from operator import itemgetter
@@ -842,6 +841,7 @@ def set_delivery_job(
     database: DatabaseClient,
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
+    delivery_platform_generic_campaigns: list,
 ) -> dict:
     """A function to set an audience delivery job.
 
@@ -849,7 +849,7 @@ def set_delivery_job(
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the delivered audience.
         delivery_platform_id (ObjectId): Delivery platform ID.
-
+        delivery_platform_generic_campaigns (list): generic campaign IDs.
     Returns:
         dict: Delivery job configuration.
 
@@ -879,6 +879,9 @@ def set_delivery_job(
         c.UPDATE_TIME: curr_time,
         c.JOB_STATUS: c.STATUS_PENDING,
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
+            delivery_platform_generic_campaigns
+        ),
         c.ENABLED: True,
     }
 
@@ -1469,23 +1472,20 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
 def set_delivered_audience_performance_metrics(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
+    generic_campaign_id: list,
     metrics_dict: dict,
     start_time: datetime.datetime,
     end_time: datetime.datetime,
-    delivery_platform_ad_sets: List[Tuple],
 ) -> dict:
     """A function to store the delivered audience performance metrics.
 
     Args:
         database (DatabaseClient): A database client.
         delivery_job_id (ObjectId): The delivery job ID of audience.
-        delivery_platform_campaign_id (str): ID of corresponding campaign on delivery platform.
-        delivery_ad_set_id (str): ID of corresponding ad set on delivery platform.
+        generic_campaign_id: (dict): generic campaign ID
         metrics_dict (dict): A dict containing performance metrics.
         start_time (datetime): Start time of metrics.
         end_time (datetime): End time of metrics.
-        delivery_platform_ad_sets (List[Tuple]): list of following tuples:
-            (<campaign ID>, <ad set ID>)
 
     Returns:
         dict: MongoDB metrics doc.
@@ -1506,7 +1506,7 @@ def set_delivered_audience_performance_metrics(
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
         c.METRICS_END_TIME: end_time,
-        c.DELIVERY_PLATFORM_AD_SETS: delivery_platform_ad_sets,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
         c.PERFORMANCE_METRICS: metrics_dict,
     }
 

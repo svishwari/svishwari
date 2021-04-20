@@ -27,6 +27,10 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
+        self.generic_campaigns = [
+            {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
+        ]
+
         # Set delivery platform
         self.auth_details = {
             "facebook_access_token": "path1",
@@ -72,12 +76,14 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             self.source_audience_doc[c.ID],
             self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
         )
 
         self.delivery_job_2_doc = dpm.set_delivery_job(
             self.database,
             self.audience_2_doc[c.ID],
             self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
         )
 
         self.lookalike_audience_doc = (
@@ -297,6 +303,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             self.delivery_platform_doc[c.ID],
             self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
         )
 
         self.assertTrue(doc is not None)
@@ -462,7 +469,10 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
 
         delivery_job_doc = dpm.set_delivery_job(
-            self.database, source_audience_id, delivery_platform_id
+            self.database,
+            source_audience_id,
+            delivery_platform_id,
+            self.generic_campaigns,
         )
 
         # create lookalike audience with delivery job associated with
@@ -652,9 +662,11 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            delivery_platform_ad_sets=[
-                ("my_campaign_id_1", "my_ad_set_id_1"),
-                ("my_campaign_id_2", "my_ad_set_id_2"),
+            generic_campaign_id=[
+                {
+                    "campaign_id": "my_campaign_id_1",
+                    "ad_set_id": "my_ad_set_id_1",
+                }
             ],
         )
 
@@ -676,7 +688,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.PERFORMANCE_METRICS in doc)
         self.assertTrue(c.METRICS_START_TIME in doc)
         self.assertTrue(c.METRICS_END_TIME in doc)
-        self.assertIn(c.DELIVERY_PLATFORM_AD_SETS, doc)
+        self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):
@@ -710,7 +722,10 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         dpm.set_delivery_job(
-            self.database, source_audience_id, delivery_platform_id
+            self.database,
+            source_audience_id,
+            delivery_platform_id,
+            self.generic_campaigns,
         )
 
         # create lookalike audience
