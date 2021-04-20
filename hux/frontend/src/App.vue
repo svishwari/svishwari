@@ -1,7 +1,9 @@
 <template>
-  <component :is="layout">
-    <router-view />
-  </component>
+  <v-app>
+    <component :is="layout">
+      <router-view />
+    </component>
+  </v-app>
 </template>
 
 <script>
@@ -9,17 +11,15 @@ export default {
   name: "App",
   computed: {
     layout() {
-      // none-layout will be used if the meta.layout tag is not set
-      // computed may not be best place in vue lifecycle for this but it works ok
-      return `${this.$route.meta.layout || "default"}-layout`;
+      return `${this.$route.meta.layout || "default"}-layout`
     },
   },
   mounted() {
     window.addEventListener("load", () => {
-      document.getElementsByClassName("loader-overlay")[0].remove();
-    });
+      document.getElementsByClassName("loader-overlay")[0].remove()
+    })
   },
-};
+}
 </script>
 
 <style lang="scss">
@@ -29,7 +29,8 @@ body {
   width: 100%;
   height: 100vh;
   background: #f8f9fa !important;
-  font-family: Open Sans SemiBold;
+  font-family: "Open Sans";
+  font-weight: 600;
   #nprogress .bar {
     height: 6px;
   }
@@ -38,4 +39,6 @@ body {
 :root {
   --animate-delay: 0.1s;
 }
+@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 </style>

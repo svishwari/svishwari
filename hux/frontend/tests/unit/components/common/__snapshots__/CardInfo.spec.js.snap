@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Card Info Card info displays a default 1`] = `
+<v-card-stub loaderheight="4" tag="div" maxwidth="220px" class="text-center">
+  <v-btn-stub color="tertiary" elevation="2" tag="button" activeclass="" fab="true" type="button" class="mt-4">
+    <v-icon-stub color="primary" xlarge="" x-large="">
+      mdi-plus
+    </v-icon-stub>
+  </v-btn-stub>
+  <v-card-title-stub class="justify-center primary--text">
+    Info card title
+  </v-card-title-stub>
+  <v-card-subtitle-stub>
+    Info card description
+  </v-card-subtitle-stub>
+</v-card-stub>
+`;
+
+exports[`Card Info Card info displays custom properties 1`] = `
+<v-card-stub loaderheight="4" tag="div" maxwidth="220px" class="text-center">
+  <v-btn-stub color="tertiary" elevation="2" tag="button" activeclass="" fab="true" type="button" class="mt-4">
+    <v-icon-stub color="primary" xlarge="" x-large="">
+      mdi-facebook
+    </v-icon-stub>
+  </v-btn-stub>
+  <v-card-title-stub class="justify-center primary--text">
+    Add a Destination
+  </v-card-title-stub>
+  <v-card-subtitle-stub>
+    Choose a destination where your actionable intelligence will be consumed.
+  </v-card-subtitle-stub>
+</v-card-stub>
+`;
