@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="page-header--wrap d-flex justify-space-between align-center px-6 py-5"
+    class="page-header--wrap d-flex justify-space-between align-center px-8 py-5"
     elevation="0"
     tile
     :color="bgColor"
