@@ -266,7 +266,7 @@ class DestinationPostView(SwaggerView):
             authentication_details=authentication_parameters,
         )
 
-        # test the delivery platform connection and update connection status
+        # test the destination connection and update connection status
         return (
             test_destination_connection(
                 destination_id=destination_id,
