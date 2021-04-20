@@ -1,4 +1,4 @@
-# This script is to setup an SSH tunnel to access databse
+# This script is to setup an SSH tunnel to access database
 #!/bin/bash
 
 BASTION_HOST="ops001.mgnt.us-east-1.mgnt-xspdev.in"
