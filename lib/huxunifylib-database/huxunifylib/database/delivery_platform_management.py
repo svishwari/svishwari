@@ -33,8 +33,8 @@ def set_delivery_platform(
         database (DatabaseClient): A database client.
         delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
-        user_id (ObjectId): User object ID.
         authentication_details (dict): A dict containing delivery platform authentication details.
+        user_id (ObjectId): User id of user creating delivery platform. This is Optional.
 
     Returns:
         dict: MongoDB audience doc.
@@ -470,7 +470,7 @@ def update_delivery_platform(
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
-        user_id (ObjectId): User id of user updating delivery platform.
+        user_id (ObjectId): User id of user updating delivery platform. This is Optional.
 
     Returns:
         dict: Updated delivery platform configuration.
