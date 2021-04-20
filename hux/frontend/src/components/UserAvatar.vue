@@ -36,13 +36,12 @@
 <script>
 import auth from "@/auth"
 import config from "@/config"
+import { mapGetters } from "vuex"
 
 export default {
   name: "UserAvatar",
   data() {
     return {
-      firstName: this.$store.getters.getFirstname,
-      lastName: this.$store.getters.getLastName,
       changeDetailsLink: config.userDetails,
     }
   },
@@ -52,6 +51,10 @@ export default {
     },
   },
   computed: {
+    ...mapGetters({
+      firstName: "getFirstname",
+      lastName: "getLastName",
+    }),
     initials() {
       return this.firstName[0] + this.lastName[0]
     },
