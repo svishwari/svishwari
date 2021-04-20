@@ -243,7 +243,8 @@ class DestinationPostView(SwaggerView):
         destinations_post = DestinationPostSchema()
         body = destinations_post.load(request.get_json())
 
-        # create the destination
+        # TODO - provide input user-id to delivery platform
+        #       create the destination after the PR 171 is merged
         destination_id = destination_management.set_delivery_platform(
             database=get_db_client(),
             delivery_platform_type=body[api_c.DESTINATION_TYPE],
@@ -436,6 +437,8 @@ class DestinationPutView(SwaggerView):
                     auth_details=auth_details,
                 )
 
+            # TODO - provide input user-id to delivery platform
+            #       create the destination after the PR 171 is merged
             # update the destination
             return (
                 destination_management.update_delivery_platform(
@@ -640,43 +643,3 @@ class DestinationsConstants(SwaggerView):
         }
 
         return auth_details, HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    dest_bp,
-    f"/{api_c.DESTINATIONS_ENDPOINT}/record-count",
-    "DestinationRecordCountView",
-)
-class DestinationRecordCountView(SwaggerView):
-    """
-    Destination record count view class.
-    """
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Total count of all destinations.",
-            "schema": {"type": "integer"},
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to retrieve the destination count.",
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DESTINATIONS_TAG]
-
-    def get(self) -> Tuple[str, Enum]:
-        """Retrieves the total record count of destinations.
-
-        ---
-
-        Returns:
-            Tuple[str, Enum]: total count of destinations, HTTP status.
-
-        """
-        # TODO - implement when ORCH-94 and HUS-262 are ready
-        #        bulk delete resides in the huxadv.utils lib
-        destinations = destination_management.get_all_delivery_platforms(
-            get_db_client()
-        )
-
-        return str(len(destinations) if destinations else 0), HTTPStatus.OK
