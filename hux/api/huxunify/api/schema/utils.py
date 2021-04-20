@@ -2,10 +2,12 @@
 purpose of this file is to house schema utilities
 """
 import uuid
+from http import HTTPStatus
 from datetime import datetime, timedelta
 import random
 from flask_marshmallow import Schema
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
+from huxunify.api import constants as api_c
 
 
 # get random data back based on marshmallow field type
@@ -35,12 +37,15 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
 
 
 class UnAuth401Schema(Schema):
-    """Datafeed schema."""
+    """401 schema."""
 
-    # data_source = Str(required=True)
-    # data_type = Str(required=True, validate=validate.OneOf(DATA_TYPES))
-    # feed_id = Int(required=True, description="ID of the datafeed")
-    # feed_type = Str(required=True, validate=validate.OneOf(FEED_TYPES))
-    # file_extension = Str(required=True, validate=validate.OneOf(FILE_EXTENSIONS))
     code = Int(name="code", example=401)
     message = Str(name="message", example="Access token is missing or invalid")
+
+
+AUTH401_RESPONSE = {
+    HTTPStatus.UNAUTHORIZED.value: {
+        "schema": UnAuth401Schema,
+        "description": api_c.AUTH401_ERROR_MESSAGE,
+    },
+}

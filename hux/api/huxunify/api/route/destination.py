@@ -10,19 +10,18 @@ from mongomock import MongoClient
 from connexion.exceptions import ProblemException
 from flasgger import SwaggerView
 from bson import ObjectId
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, jsonify
 from flask_apispec import marshal_with
 from botocore.exceptions import ClientError
 
 from huxunify.api.data_connectors.aws import parameter_store
-from huxunify.api.model.destination import DestinationModel
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPutSchema,
     DestinationPostSchema,
     DestinationConstants,
 )
-from huxunify.api.schema.utils import UnAuth401Schema
+from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 
 from huxunify.api.route.utils import add_view_to_blueprint
@@ -30,14 +29,12 @@ import huxunify.api.constants as api_c
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     constants as db_constants,
+    delete_util,
 )
 
-DESTINATIONS_TAG = "destinations"
-DESTINATIONS_DESCRIPTION = "Destinations API"
-DESTINATIONS_ENDPOINT = "destinations"
 
 # setup the cdm blueprint
-dest_bp = Blueprint("destinations", import_name=__name__)
+dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
 
 
 def get_db_client() -> MongoClient:
@@ -53,11 +50,14 @@ def get_db_client() -> MongoClient:
 # pylint: disable=unused-argument,
 def test_destination_connection(
     destination_id: str, destination_type: str, auth_details: dict
-):
+) -> dict:
     """Test the connection to the destination and update the
     connection status.
+
     Args:
         destination_id (str): The destination ID.
+        destination_type (str): The destination type.
+        auth_details (dict): The auth details dict.
     Returns:
         updated_destination (dict): The updated destination.
     """
@@ -86,15 +86,18 @@ def set_destination_authentication_secrets(
     destination_name: str,
 ) -> dict:
     """Save authentication details in AWS Parameter Store.
+
     Args:
         authentication_details (dict): The key/secret pair to store away.
         is_updated (bool): Flag to update the secrets in the AWS Parameter Store.
         destination_id (str): Destination ID.
         destination_name (str): Destination name.
+
     Returns:
         ssm_params (dict): The key/path to where the parameters are stored.
     """
     ssm_params = {}
+
     # TODO - clarify the secret store with adperf team
     path = f"/adperf/{destination_id}"
 
@@ -123,17 +126,19 @@ def set_destination_authentication_secrets(
 
 
 @add_view_to_blueprint(
-    dest_bp, f"{DESTINATIONS_ENDPOINT}/<destination_id>", "DestinationView"
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
+    "DestinationGetView",
 )
-class DestinationView(SwaggerView):
+class DestinationGetView(SwaggerView):
     """
-    Single Destination view class
+    Single Destination Get view class
     """
 
     parameters = [
         {
             "name": api_c.DESTINATION_ID,
-            "description": "Destination ID",
+            "description": "Destination ID.",
             "type": "string",
             "in": "path",
             "required": "true",
@@ -141,199 +146,327 @@ class DestinationView(SwaggerView):
         }
     ]
     responses = {
-        HTTPStatus.UNAUTHORIZED.value: {
-            "schema": UnAuth401Schema,
-            "description": "Access token is missing or invalid",
+        HTTPStatus.OK.value: {
+            "schema": DestinationGetSchema,
+            "description": "Retrieved destination details.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve the destination.",
         },
     }
-    tags = [DESTINATIONS_TAG]
+    responses.update(AUTH401_RESPONSE)
+
+    tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationGetSchema)
-    def get(self, destination_id: str) -> Tuple[dict, int]:
-        """Get a destination by destination ID and connection status
+    def get(self, destination_id: str) -> Tuple[dict, Enum]:
+        """Get a destination by destination ID and connection status.
 
+        ---
         Args:
             destination_id (str): Destination ID.
 
         Returns:
             Tuple[dict, Enum]: Destination dict, HTTP status.
 
-        ---
-        responses:
-          200:
-            description: Retrieved destination details.
-            schema:
-              id: DestinationSchema
-          400:
-             description: failed to retrieve the destination
-             schema: Null
         """
+
+        # validate the id
+        valid_id = (
+            DestinationGetSchema()
+            .load({api_c.DESTINATION_ID: destination_id}, partial=True)
+            .get(api_c.DESTINATION_ID)
+        )
+
+        # return a bad request if invalid objectID
+        if not valid_id:
+            return f"Invalid ID {destination_id}.", HTTPStatus.BAD_REQUEST
+
+        # grab the destination
         destination = destination_management.get_delivery_platform(
-            get_db_client(), ObjectId(destination_id)
+            get_db_client(), valid_id
         )
         return destination, HTTPStatus.OK
 
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}",
+    "DestinationPostView",
+)
+class DestinationPostView(SwaggerView):
+    """
+    Single Destination Delete view class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input destination body.",
+            "example": {
+                api_c.DESTINATION_NAME: "My destination platform",
+                api_c.DESTINATION_TYPE: "Facebook",
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
+                    api_c.FACEBOOK_APP_ID: "2951925002021888",
+                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
+                },
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": DestinationGetSchema,
+            "description": "Destination created.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete the destination.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @marshal_with(DestinationPostSchema)
+    def post(self) -> Tuple[dict, Enum]:
+        """Creates a new destination and test the connection.
+
+        ---
+        Returns:
+            Tuple[dict, Enum]: Destination created, HTTP status.
+
+        """
+        destinations_post = DestinationPostSchema()
+        body = destinations_post.load(request.get_json())
+
+        # create the destination
+        destination_id = destination_management.set_delivery_platform(
+            database=get_db_client(),
+            delivery_platform_type=body[api_c.DESTINATION_TYPE],
+            name=body[api_c.DESTINATION_NAME],
+            authentication_details=None,
+        )[db_constants.ID]
+
+        # store the secrets in AWS parameter store
+        authentication_parameters = set_destination_authentication_secrets(
+            authentication_details=body[api_c.AUTHENTICATION_DETAILS],
+            is_updated=False,
+            destination_id=str(destination_id),
+            destination_name=body[api_c.DESTINATION_NAME],
+        )
+
+        # store the secrets paths in database
+        destination_management.set_authentication_details(
+            database=get_db_client(),
+            delivery_platform_id=destination_id,
+            authentication_details=authentication_parameters,
+        )
+
+        # test the delivery platform connection and update connection status
+        return (
+            test_destination_connection(
+                destination_id=destination_id,
+                destination_type=body[api_c.DESTINATION_TYPE],
+                auth_details=body[api_c.AUTHENTICATION_DETAILS],
+            ),
+            HTTPStatus.CREATED,
+        )
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
+    "DestinationDeleteView",
+)
+class DestinationDeleteView(SwaggerView):
+    """
+    Single Destination Delete view class
+    """
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": DestinationGetSchema,
+            "description": "Deleted destination by ID.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete the destination.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @marshal_with(DestinationGetSchema)
+    def delete(self, destination_id: str) -> Response:
+        """Deletes a destination and its dependencies by ID.
+
+        ---
+        Args:
+            destination_id (str): Destination ID.
+
+        Returns:
+             HTTPStatus: HTTP status.
+        """
+
+        try:
+            # validate the id
+            valid_id = (
+                DestinationGetSchema()
+                .load({api_c.DESTINATION_ID: destination_id}, partial=True)
+                .get(api_c.DESTINATION_ID)
+            )
+
+            if delete_util.delete_delivery_platform(
+                database=get_db_client(),
+                delivery_platform_id=valid_id,
+            ):
+                return Response(status=HTTPStatus.OK)
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=api_c.CANNOT_DELETE_DESTINATIONS,
+            )
+        except Exception as exc:
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=api_c.CANNOT_DELETE_DESTINATIONS,
+            ) from exc
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
+    "DestinationPutView",
+)
+class DestinationPutView(SwaggerView):
+    """
+    Destination Put view class
+    """
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "description": "Destination Object.",
+            "type": "object",
+            "example": {
+                api_c.DESTINATION_NAME: "My Delivery platform",
+                api_c.DESTINATION_TYPE: "Facebook",
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
+                    api_c.FACEBOOK_APP_ID: "2951925002021888",
+                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
+                },
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": DestinationGetSchema,
+            "description": "Updated destination.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update the destination.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
     @marshal_with(DestinationPutSchema)
     def put(self, destination_id: str) -> Tuple[dict, Enum]:
-        """Updates an existing destination
+        """Updates an existing destination.
 
+        ---
         Args:
             destination_id (str): Destination ID.
 
         Returns:
             Tuple[dict, Enum]: Destination doc, HTTP status.
 
-        ---
-        parameters: [
-            {
-                name: body,
-                in: body,
-                required: true,
-                schema: {
-                    id: DestinationPutSchema,
-                    "required": "true",
-                    "example": {
-                        "destination_name": "My Destination,
-                        "destination_type": "Facebook",
-                        "authentication_details": {
-                            "access_token": "MkU!3Ojgwm",
-                            "app_secret": "717bdOQqZO99",
-                            "app_id": "2951925002021888",
-                            "ad_account_id": "111333777",
-                        },
-                    },
-                },
-            },
-        ]
-        responses:
-             200:
-               description: Destination updated
-             400:
-               description: failed to update the destination
         """
-        # TODO - handle serialization
-        destinations_put = DestinationPutSchema()
-        body = destinations_put.load(request.get_json())
+        # load into the schema object
+        body = DestinationPutSchema().load(request.get_json(), partial=True)
 
-        if body.get(api_c.AUTHENTICATION_DETAILS):
-            # store the secrets for the updated authentication details
-            authentication_parameters = set_destination_authentication_secrets(
-                authentication_details=body[api_c.AUTHENTICATION_DETAILS],
-                is_updated=True,
-                destination_id=destination_id,
-                destination_name=body[db_constants.DELIVERY_PLATFORM_NAME],
-            )
-
-            # test the destination connection and update connection status
-            test_destination_connection(
-                destination_id=destination_id,
-                destination_type=body[db_constants.DELIVERY_PLATFORM_TYPE],
-                auth_details=body[api_c.AUTHENTICATION_DETAILS],
-            )
-        else:
-            authentication_parameters = None
-
-        # update the destination
-        updated_destination = destination_management.update_delivery_platform(
-            database=get_db_client(),
-            delivery_platform_id=ObjectId(destination_id),
-            name=body[db_constants.DELIVERY_PLATFORM_NAME],
-            delivery_platform_type=body[db_constants.DELIVERY_PLATFORM_TYPE],
-            authentication_details=authentication_parameters,
-        )
-
-        return updated_destination, HTTPStatus.OK
-
-    def delete(self, destination_id: str) -> Response:
-        """Deletes a destination and its dependencies by ID.
-
-        Args:
-            destination_id (str): Destination ID.
-
-        Returns:
-             HTTPStatus: HTTP status.
-        ---
-           responses:
-             200:
-               description: Deleted destination by ID
-               schema: Null
-             400:
-               description: failed to delete the destination
-               schema: Null
-        """
+        # grab the auth details
+        auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
+        authentication_parameters = None
 
         try:
-            # TODO - handle serialization
-            if DestinationModel().delete_destination_by_id(destination_id):
-                return Response(status=HTTPStatus.OK)
-            raise ProblemException(
-                status=int(HTTPStatus.BAD_REQUEST.value),
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"{api_c.CANNOT_DELETE_DESTINATIONS}.",
+            if auth_details:
+                # store the secrets for the updated authentication details
+                authentication_parameters = set_destination_authentication_secrets(
+                    authentication_details=auth_details,
+                    is_updated=True,
+                    destination_id=destination_id,
+                    destination_name=body.get(api_c.DESTINATION_NAME),
+                )
+
+                # TODO - implement when ORCH-94 and HUS-262 are ready
+                #        need to sort out auth for parameter store.
+                # test the destination connection and update connection status
+                test_destination_connection(
+                    destination_id=destination_id,
+                    destination_type=body.get(api_c.DESTINATION_TYPE),
+                    auth_details=auth_details,
+                )
+
+            # update the destination
+            return (
+                destination_management.update_delivery_platform(
+                    database=get_db_client(),
+                    delivery_platform_id=ObjectId(destination_id),
+                    name=body.get(api_c.DESTINATION_NAME),
+                    delivery_platform_type=body.get(api_c.DESTINATION_TYPE),
+                    authentication_details=authentication_parameters,
+                ),
+                HTTPStatus.OK,
             )
+
         except Exception as exc:
+            logging.error(
+                "%s: %s. Reason:[%s: %s].",
+                api_c.CANNOT_UPDATE_DESTINATIONS,
+                destination_id,
+                exc.__class__,
+                exc,
+            )
             raise ProblemException(
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"{api_c.CANNOT_DELETE_DESTINATIONS}.",
+                detail=api_c.CANNOT_UPDATE_DESTINATIONS,
             ) from exc
 
-    @marshal_with(DestinationPostSchema)
-    def post(self) -> Tuple[dict, Enum]:
-        """Creates a new destination and test the connection.
 
-        Returns:
-            Tuple[dict, Enum]: Destination created, HTTP status.
-
-        ---
-        parameters: [
-            {
-                name: "body",
-                in: "body",
-                required: true,
-                schema: {
-                    id: DestinationPostSchema,
-                    required: true,
-                    example: {
-                        "destination_name": "My Destination",
-                        "destination_type": "Facebook",
-                        "authentication_details": {
-                            "access_token": "MkU!3Ojgwm",
-                            "app_secret": "717bdOQqZO99",
-                            "app_id": "2951925002021888",
-                            "ad_account_id": "111333777",
-                        },
-                    },
-                },
-            },
-        ]
-        responses:
-            201:
-                description: Destination created
-                schema:
-                    id: DestinationSchema
-        """
-        # TODO - handle serialization
-        destinations_post = DestinationPostSchema()
-        body = destinations_post.load(request.get_json())
-
-        # create the destinations
-        destination_id = DestinationModel().create_destination(body)
-
-        # test the destination connection and update connection status
-        created_destinations = test_destination_connection(
-            destination_id=destination_id,
-            destination_type=body[api_c.DESTINATION_TYPE],
-            auth_details=body[api_c.AUTHENTICATION_DETAILS],
-        )
-
-        return created_destinations, HTTPStatus.OK
-
-
-@add_view_to_blueprint(dest_bp, f"/{DESTINATIONS_ENDPOINT}", "DestinationsView")
+@add_view_to_blueprint(dest_bp, f"/{api_c.DESTINATIONS_ENDPOINT}", "DestinationsView")
 class DestinationsView(SwaggerView):
     """
-    Multiple Destinations view class.
+    Multiple Destinations view class
     """
 
     responses = {
@@ -341,46 +474,45 @@ class DestinationsView(SwaggerView):
             "description": "List of destinations.",
             "schema": {"type": "array", "items": DestinationGetSchema},
         },
-        HTTPStatus.UNAUTHORIZED.value: {
-            "schema": UnAuth401Schema,
-            "description": "Access token is missing or invalid",
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all destinations."
         },
     }
-    tags = [DESTINATIONS_TAG]
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationGetSchema(many=True))
-    def get(self) -> Tuple[list, int]:
-        """Retrieves all the destinations
+    def get(self) -> Tuple[list, Enum]:
+        """Retrieves all the destinations.
 
         ---
-
         Returns:
-            Tuple[list, int]: list of destinations, HTTP status.
+            Tuple[list, Enum]: list of destinations, HTTP status.
 
         """
 
-        all_destinations = destination_management.get_all_delivery_platforms(
-            get_db_client()
+        return (
+            destination_management.get_all_delivery_platforms(get_db_client()),
+            HTTPStatus.OK,
         )
-
-        return all_destinations, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
-    dest_bp, f"/{DESTINATIONS_ENDPOINT}/bulk-delete", "DestinationsDeleteView"
+    dest_bp,
+    f"/{api_c.DESTINATIONS_ENDPOINT}/bulk-delete",
+    "DestinationsDeleteView",
 )
-class DestinationsDeleteView(SwaggerView):
+class DestinationsBulkDeleteView(SwaggerView):
     """
-    DestinationsDeleteView view class.
-    delete multiple destinations at once
+    DestinationsDeleteView view class
+    Delete multiple destinations at once.
     """
 
     parameters = [
         {
-            "type": "array",
             "in": "body",
+            "name": "destination_ids",
             "description": "List of destination IDs to be deleted.",
-            "required": "true",
             "schema": {
                 "type": "array",
                 "items": {"type": "string"},
@@ -405,37 +537,63 @@ class DestinationsDeleteView(SwaggerView):
             },
         },
         HTTPStatus.BAD_REQUEST.value: {"description": "Failed to delete destinations."},
-        HTTPStatus.UNAUTHORIZED.value: {
-            "schema": UnAuth401Schema,
-            "description": "Access token is missing or invalid",
-        },
     }
-    tags = [DESTINATIONS_TAG]
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
 
-    def post(self) -> Tuple[list, int]:
+    def post(self) -> Tuple[list, Enum]:
         """Bulk Deletes destinations by a list of IDs.
 
         ---
-
         Returns:
-            Tuple[list, int]: list of deleted destination ids, HTTP status.
+            Tuple[list, Enum]: list of deleted destination ids, HTTP status.
 
         """
-        # TODO - handle serialization
-        destination_ids = request.get_json()
-        mongo_ids = [
-            ObjectId(destination_id)
-            for destination_id in destination_ids
-            if destination_ids
-        ]
+
+        # validate the destination ids
+        body = request.get_json()
+
+        if not body:
+            return [], HTTPStatus.BAD_REQUEST
+
+        # load the IDs and validate using the destination schema
+        destination_ids = [ObjectId(x) for x in body if ObjectId.is_valid(x)]
 
         # TODO - implement when ORCH-94 and HUS-262 are ready
-        #   bulk delete resides in the huxadv.utils lib
-        return mongo_ids, HTTPStatus.OK
+        #        bulk delete resides in the huxadv.utils lib
+        try:
+            if delete_util.delete_delivery_platforms_bulk(
+                database=get_db_client(), delivery_platform_ids=destination_ids
+            ):
+                # return list of string IDs
+                return (
+                    jsonify([str(x) for x in destination_ids]),
+                    HTTPStatus.OK,
+                )
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=api_c.CANNOT_DELETE_DESTINATIONS,
+            )
+        except Exception as exc:
+            logging.error(
+                "%s: %s. Reason:[%s: %s].",
+                api_c.CANNOT_DELETE_DESTINATIONS,
+                destination_ids,
+                exc.__class__,
+                exc,
+            )
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=api_c.CANNOT_DELETE_DESTINATIONS,
+            ) from exc
 
 
 @add_view_to_blueprint(
-    dest_bp, f"{DESTINATIONS_ENDPOINT}/constants", "DestinationsConstants"
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/constants",
+    "DestinationsConstants",
 )
 class DestinationsConstants(SwaggerView):
     """
@@ -447,17 +605,20 @@ class DestinationsConstants(SwaggerView):
             "schema": DestinationConstants,
             "description": "Retrieved destination constants.",
         },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve the destination constants.",
+        },
     }
-    tags = [DESTINATIONS_TAG]
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationConstants)
-    def get(self) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, Enum]:
         """Retrieves all destination constants.
 
         ---
-
         Returns:
-            Tuple[dict, int]: dict of destination constants, HTTP status.
+            Tuple[dict, Enum]: dict of destination constants, HTTP status.
 
         """
 
@@ -481,10 +642,9 @@ class DestinationsConstants(SwaggerView):
         return auth_details, HTTPStatus.OK
 
 
-# get record count
 @add_view_to_blueprint(
     dest_bp,
-    f"/{DESTINATIONS_ENDPOINT}/record-count",
+    f"/{api_c.DESTINATIONS_ENDPOINT}/record-count",
     "DestinationRecordCountView",
 )
 class DestinationRecordCountView(SwaggerView):
@@ -494,23 +654,29 @@ class DestinationRecordCountView(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Total count of all destinations",
+            "description": "Total count of all destinations.",
             "schema": {"type": "integer"},
         },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve the destination count.",
+        },
     }
-    tags = [DESTINATIONS_TAG]
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
 
-    def get(self) -> Tuple[int, Enum]:
-        """Retrieves the total record count of destinations
+    def get(self) -> Tuple[str, Enum]:
+        """Retrieves the total record count of destinations.
 
         ---
 
         Returns:
-            Tuple[int, Enum]: total count of destinations, HTTP status.
+            Tuple[str, Enum]: total count of destinations, HTTP status.
 
         """
-        all_destinations = destination_management.get_all_delivery_platforms(
+        # TODO - implement when ORCH-94 and HUS-262 are ready
+        #        bulk delete resides in the huxadv.utils lib
+        destinations = destination_management.get_all_delivery_platforms(
             get_db_client()
         )
 
-        return all_destinations, HTTPStatus.OK
+        return str(len(destinations) if destinations else 0), HTTPStatus.OK

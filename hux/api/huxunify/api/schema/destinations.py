@@ -4,8 +4,9 @@ Schemas for the Destinations API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import fields
+from marshmallow import fields, post_load
 from marshmallow.validate import OneOf
+from bson import ObjectId
 from huxunify.api import constants as api_c
 from huxunifylib.database import constants as db_c
 
@@ -15,16 +16,18 @@ class DestinationGetSchema(Schema):
     Destinations schema class
     """
 
-    destinations_id = fields.String(
-        attribute=api_c.DESTINATION_ID, example="5f5f7262997acad4bac4373b"
+    destination_id = fields.String(
+        attribute=api_c.DESTINATION_ID,
+        example="5f5f7262997acad4bac4373b",
+        required=True,
     )
-    destinations_type = fields.String(
+    destination_type = fields.String(
         attribute=api_c.DESTINATION_TYPE, example="Facebook"
     )
-    destinations_name = fields.String(
+    destination_name = fields.String(
         attribute=api_c.DESTINATION_NAME, example="My destination"
     )
-    destinations_status = fields.String(
+    destination_status = fields.String(
         attribute=api_c.DESTINATION_STATUS,
         validate=[
             OneOf(
@@ -40,13 +43,38 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    campaigns = fields.Int(
-        attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
-    )
     created = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.DateTime(attribute=db_c.CREATED_BY, allow_none=True)
     updated = fields.DateTime(attribute=db_c.UPDATED_BY, allow_none=True)
     updated_by = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+
+    @post_load()
+    # pylint: disable=unused-argument
+    def process_modified(
+        self,
+        data: dict,
+        many: bool = False,
+        pass_original=False,
+        partial=False,
+    ) -> dict:
+        """process the schema before deserializing.
+
+        Args:
+            data (dict): The destination object
+            many (bool): If there are many to process
+        Returns:
+            Response: Returns a destination object
+
+        """
+        # set the input ID to an object ID
+        if api_c.DESTINATION_ID in data:
+            # if a valid ID, map it
+            if ObjectId.is_valid(data[api_c.DESTINATION_ID]):
+                data.update(destination_id=ObjectId(data[api_c.DESTINATION_ID]))
+            else:
+                # otherwise map to None
+                data.update(destination_id=None)
+        return data
 
 
 class DestinationPutSchema(Schema):

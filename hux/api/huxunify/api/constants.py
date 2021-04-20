@@ -15,9 +15,14 @@ SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 
 # error messages
-CANNOT_DELETE_DESTINATIONS = "Error deleting delivery platform"
+CANNOT_DELETE_DESTINATIONS = "Error deleting destination(s)."
+CANNOT_UPDATE_DESTINATIONS = "Error updating destination."
+AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 
 # Destination API fields
+DESTINATIONS_TAG = "destinations"
+DESTINATIONS_DESCRIPTION = "Destinations API"
+DESTINATIONS_ENDPOINT = "destinations"
 DESTINATION_ID = "destination_id"
 DESTINATION_TYPE = "destination_type"
 DESTINATION_NAME = "destination_name"
