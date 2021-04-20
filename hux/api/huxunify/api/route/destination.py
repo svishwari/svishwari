@@ -238,16 +238,18 @@ class DestinationPostView(SwaggerView):
             Tuple[dict, Enum]: Destination created, HTTP status.
 
         """
+        # TODO - implement after HUS-254 is done to grab user/okta_id
+        user_id = ObjectId()
+
         destinations_post = DestinationPostSchema()
         body = destinations_post.load(request.get_json())
 
-        # TODO - provide input user-id to delivery platform
-        #       create the destination after the PR 171 is merged
         destination_id = destination_management.set_delivery_platform(
             database=get_db_client(),
             delivery_platform_type=body[api_c.DESTINATION_TYPE],
             name=body[api_c.DESTINATION_NAME],
             authentication_details=None,
+            user_id=user_id,
         )[db_constants.ID]
 
         # store the secrets in AWS parameter store
@@ -409,6 +411,10 @@ class DestinationPutView(SwaggerView):
             Tuple[dict, Enum]: Destination doc, HTTP status.
 
         """
+
+        # TODO - implement after HUS-254 is done to grab user/okta_id
+        user_id = ObjectId()
+
         # load into the schema object
         body = DestinationPutSchema().load(request.get_json(), partial=True)
 
@@ -445,6 +451,7 @@ class DestinationPutView(SwaggerView):
                     name=body.get(api_c.DESTINATION_NAME),
                     delivery_platform_type=body.get(api_c.DESTINATION_TYPE),
                     authentication_details=authentication_parameters,
+                    user_id=user_id,
                 ),
                 HTTPStatus.OK,
             )
