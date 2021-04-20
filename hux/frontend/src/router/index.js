@@ -53,7 +53,7 @@ const routes = [
   {
     path: "/audiences",
     name: "audiences",
-    component: () => import("@/views/audiences/Index.vue"),
+    component: () => import("@/views/Audiences/Index.vue"),
     meta: {
       layout: "app",
       title: "Audiences | Hux Unified UI",
