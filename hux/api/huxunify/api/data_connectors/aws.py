@@ -2,7 +2,6 @@
 purpose of this file is for interacting with aws
 """
 from os import getenv
-from typing import Any
 
 import boto3
 
