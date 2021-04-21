@@ -439,7 +439,8 @@ class DestinationsDeleteView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     def delete(self) -> Tuple[list, int]:
-        """Bulk Deletes destinations by a list of IDs.
+        """Delete destination by a list of ID(s).
+        Ability to delete one or multiple.
 
         ---
         Returns:
