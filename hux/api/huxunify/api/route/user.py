@@ -49,12 +49,12 @@ class UserSearch(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of destinations.",
-            "schema": {"type": "array", "items": User},
+            "schema": {"type": "array", "items": UserSchema},
         },
     }
     tags = [USER_TAG]
 
-    @marshal_with(User)
+    @marshal_with(UserSchema)
     def get(self) -> Tuple[dict, int]:
         """Retrieves all users.
 
@@ -92,7 +92,7 @@ class IndividualUserSearch(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Retrieve Individual User",
-            "schema": User,
+            "schema": UserSchema,
         },
         HTTPStatus.NOT_FOUND.value: {
             "schema": NotFoundError,
@@ -100,7 +100,7 @@ class IndividualUserSearch(SwaggerView):
     }
     tags = [USER_TAG]
 
-    @marshal_with(User)
+    @marshal_with(UserSchema)
     def get(self, user_id: str) -> Tuple[dict, int]:
         """Retrieves a user by ID.
 
