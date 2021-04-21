@@ -17,7 +17,7 @@ def get_aws_client(
     aws_access_key: str = AWS_ACCESS_KEY_ID,
     aws_secret_key: str = AWS_SECRET_ACCESS_KEY,
     region_name: str = AWS_REGION,
-) -> Any:
+) -> boto3.client:
     """quick and dirty function for getting most AWS clients
 
     Args:
