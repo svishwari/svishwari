@@ -5,6 +5,7 @@ from http import HTTPStatus
 from typing import List, Tuple
 
 import json
+from bson import ObjectId
 from flask import Blueprint
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
@@ -13,7 +14,13 @@ from pymongo import MongoClient
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.user import User
-from huxunifylib.database.user_management import *
+from huxunifylib.database.user_management import (
+    get_all_users,
+    get_user,
+    update_user,
+    manage_user_favorites,
+    manage_user_dashboard_config,
+)
 
 USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
@@ -21,9 +28,6 @@ USER_ENDPOINT = "user"
 
 # setup the cdm blueprint
 user_bp = Blueprint("user", import_name=__name__)
-
-
-# TODO convert posts/puts to swagger views
 
 
 def get_db_client() -> MongoClient:
@@ -73,9 +77,7 @@ class UserSearch(SwaggerView):
             return error, error["code"]
 
 
-@add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<id>", "IndividualUserSearch"
-)
+@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>", "IndividualUserSearch")
 class IndividualUserSearch(SwaggerView):
     """
     Individual User Search Class
@@ -93,7 +95,6 @@ class IndividualUserSearch(SwaggerView):
     }
     tags = [USER_TAG]
 
-    # TODO doc str fix
     @marshal_with(User)
     def get(self, user_id: str) -> Tuple[dict, int]:
         """Retrieves a user by ID.
@@ -119,9 +120,7 @@ class IndividualUserSearch(SwaggerView):
             return error, error["code"]
 
 
-@add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<id>/preferences", "Preferences"
-)
+@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/preferences", "Preferences")
 class Preferences(SwaggerView):
     """
     Update user preferences
@@ -161,9 +160,7 @@ class Preferences(SwaggerView):
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(
-            get_db_client(), user_id=user_id, update_doc=update_doc
-        )
+        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
 
         return response, HTTPStatus.OK
 
@@ -188,9 +185,7 @@ class Preferences(SwaggerView):
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(
-            get_db_client(), user_id=user_id, update_doc=update_doc
-        )
+        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
 
         return response, HTTPStatus.OK
 
@@ -219,9 +214,7 @@ class Preferences(SwaggerView):
         return response, HTTPStatus.OK
 
 
-@add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<id>/favorites", "AddUserFavorite"
-)
+@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/favorites", "AddUserFavorite")
 class UserFavorite(SwaggerView):
     """
     Add a new favorite for a user
