@@ -48,7 +48,7 @@ class UserSearch(SwaggerView):
     parameters = []
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of destinations.",
+            "description": "List of users.",
             "schema": {"type": "array", "items": UserSchema},
         },
     }
