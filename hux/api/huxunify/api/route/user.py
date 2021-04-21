@@ -19,7 +19,6 @@ from huxunifylib.database.user_management import (
     get_user,
     update_user,
     manage_user_favorites,
-    manage_user_dashboard_config,
 )
 
 USER_TAG = "user"
