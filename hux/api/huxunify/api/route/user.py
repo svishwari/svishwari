@@ -247,7 +247,7 @@ class Preferences:
 
         return response, HTTPStatus.OK
 
-    def delete(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
+    def delete(self, user_id: str) -> Tuple[dict, int]:
         """Put a user's dashboard configuration
 
         ---
@@ -266,10 +266,8 @@ class Preferences:
                 "message": "Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
-        update_doc = json.loads(update_doc)
-
         # TODO update user will need to be updated to support delete functionality
-        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+        response = update_user(get_db_client(), user_id=user_id)
 
         return response, HTTPStatus.OK
 
