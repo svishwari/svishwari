@@ -32,7 +32,7 @@ class ParameterStore:
 
         Args:
         Returns:
-            dict: boto3 response.
+            boto3.client: a boto3 client.
         """
         return boto3.client(
             SSM_NAME,
