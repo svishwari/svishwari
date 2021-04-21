@@ -110,7 +110,7 @@ class DestinationGetView(SwaggerView):
 
     @marshal_with(DestinationGetSchema)
     def get(self, destination_id: str) -> Tuple[dict, int]:
-        """Get a destination by destination ID and connection status.
+        """Get a destination by destination ID.
 
         ---
         Args:
