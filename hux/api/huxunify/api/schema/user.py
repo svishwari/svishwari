@@ -19,7 +19,8 @@ class User(Schema):
     """User Schema"""
 
     email = Str(required=True)
-    display_name = Str()
+    first_name = Str()
+    last_name = Str()
     role = Str(required=True, validate=validate.OneOf(USER_ROLES))
     organization = Str()
     subscriptions = List(Str())
