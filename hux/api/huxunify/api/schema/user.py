@@ -15,16 +15,6 @@ class Favorites(Schema):
     destinations = List(Str())
 
 
-class DashboardConfiguration(Schema):
-    """Dashboard Schema"""
-
-    configure_hux = Boolean(required=True)
-    activity = Boolean(required=True)
-    data_mgmt_overview = Boolean(required=True)
-    key_perf_insights = Boolean(required=True)
-    customer_insights = Boolean(required=True)
-
-
 class User(Schema):
     """User Schema"""
 
