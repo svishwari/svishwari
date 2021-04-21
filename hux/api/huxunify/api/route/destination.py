@@ -456,8 +456,6 @@ class DestinationsDeleteView(SwaggerView):
         # load the IDs and validate using the destination schema
         destination_ids = [ObjectId(x) for x in body if ObjectId.is_valid(x)]
 
-        # TODO - implement when ORCH-94 and HUS-262 are ready
-        #        bulk delete resides in the huxadv.utils lib
         try:
             if delete_util.delete_delivery_platforms_bulk(
                 database=get_db_client(), delivery_platform_ids=destination_ids
