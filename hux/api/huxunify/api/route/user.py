@@ -61,7 +61,7 @@ class UserSearch(SwaggerView):
         ---
 
         Returns:
-            Response: Returns all users
+            Tuple[dict, int] dict of users and http code
 
         """
         try:
@@ -109,7 +109,7 @@ class IndividualUserSearch(SwaggerView):
             user_id (str): id of user
 
         Returns:
-            Tuple[dict, int]: dict of user and user enum
+            Tuple[dict, int]: dict of user and http code
 
         """
         try:
@@ -133,7 +133,7 @@ class IndividualUserSearch(SwaggerView):
 @add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/preferences", "Preferences")
 class Preferences(SwaggerView):
     """
-    Update user preferences
+    User preferences class
     """
 
     parameters = [{"user_id": "user_id", "update_doc": "update doc"}]
@@ -200,7 +200,7 @@ class Preferences(SwaggerView):
         return response, HTTPStatus.OK
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
-        """Remove a user's preferences
+        """Delete a user's preferences
 
         ---
         Args:
@@ -331,7 +331,7 @@ class UserFavorite(SwaggerView):
     def delete(
         self, user_id: str, component_name: str, component_id: str
     ) -> Tuple[dict, int]:
-        """Remove a favorite for a user
+        """Delete a favorite for a user
 
         ---
         Args:
