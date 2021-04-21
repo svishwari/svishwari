@@ -4,7 +4,10 @@ purpose of this file is to house schema utilities
 import uuid
 from datetime import datetime, timedelta
 import random
+
+from bson import ObjectId
 from flask_marshmallow import Schema
+from marshmallow import ValidationError
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
 
 
@@ -32,3 +35,16 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     return {
         field: SPEC_TYPE_LOOKUP[type(val)] for field, val in schema_obj().fields.items()
     }
+
+
+def validate_object_id(data) -> bool:
+    """This function validates for a valid object id
+    Args:
+        data (object): incoming python object, could be anything
+    Returns:
+        bool: pass or fail
+    """
+    if not ObjectId.is_valid(data):
+        raise ValidationError("Object ID is not valid.")
+    else:
+        return True

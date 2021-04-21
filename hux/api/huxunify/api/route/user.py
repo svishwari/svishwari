@@ -6,14 +6,15 @@ from typing import List, Tuple
 
 import json
 from bson import ObjectId
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
+from marshmallow import ValidationError
 from pymongo import MongoClient
 
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
-from huxunify.api.schema.user import User
+from huxunify.api.schema.user import User, UserSchema
 from huxunifylib.database.user_management import (
     get_all_users,
     get_user,
@@ -64,6 +65,11 @@ class UserSearch(SwaggerView):
 
         """
         try:
+            body = UserSchema.load(request.get_json())
+        except ValidationError as ve:
+            return ve.messages, HTTPStatus.BAD_REQUEST
+        
+        try:
             data = get_all_users(get_db_client())
 
             if not data:
@@ -106,6 +112,11 @@ class IndividualUserSearch(SwaggerView):
             Tuple[dict, int]: dict of user and user enum
 
         """
+        try:
+            body = UserSchema.load(request.get_json())
+        except ValidationError as ve:
+            return ve.messages, HTTPStatus.BAD_REQUEST
+
         try:
             data = get_user(get_db_client(), okta_id=user_id)
 
@@ -194,7 +205,6 @@ class Preferences(SwaggerView):
         ---
         Args:
             user_id (str): User id
-            update_doc (str): update document for user profile
 
         Returns:
             Tuple[dict, int]: profile dict, HTTP status
