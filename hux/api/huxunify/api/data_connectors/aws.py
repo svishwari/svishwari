@@ -27,7 +27,7 @@ def get_aws_client(
         region_name (str): Region Name
 
     Returns:
-        Response: decorator
+        Response: boto3 client
 
     """
     return boto3.client(
