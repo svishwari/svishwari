@@ -7,12 +7,22 @@
 
     <v-subheader> Text Feild </v-subheader>
     <v-divider></v-divider>
-    <TextField></TextField>
+    <TextField
+      v-model="TextFieldValue"
+      labelText="Add Account ID"
+      icon="mdi-alert-circle-outline"
+      placeholderText="Account name"
+    ></TextField>
+    {{ TextFieldValue }}
     <br />
 
     <v-subheader> Button </v-subheader>
     <v-divider></v-divider>
-    <Button></Button>
+    <huxButton ButtonText="Added" isOutlined="true" icon="mdi-check" iconPosition="left" ></huxButton>
+    <huxButton ButtonText="Add" isOutlined="true" variant="darkGrey"></huxButton>
+    <huxButton ButtonText="Leave configuration" variant="primary" isTile="true"></huxButton>
+    <huxButton ButtonText="Success" icon="mdi-check" iconPosition="left" variant="success" isTile="true"></huxButton>
+    <huxButton ButtonText="Cancel & Return" variant="tertiary" isTile="true"></huxButton>
     <br />
 
     <v-subheader> Select Dropdown </v-subheader>
@@ -49,7 +59,7 @@
 import CardInfo from "@/components/common/CardInfo"
 import TextField from "@/components/common/TextField"
 import HuxTable from "@/components/common/huxTable.vue"
-import Button from "@/components/common/Button"
+import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
 
@@ -58,13 +68,19 @@ export default {
   components: {
     CardInfo,
     TextField,
-    Button,
+    huxButton,
     DropdownMenu,
     PageHeader,
     HuxTable,
   },
+  methods: {
+    monthChanged() {
+      console.log("Month changed. Selected ID: ", this.selectedMonth)
+    },
+  },
   data() {
     return {
+      TextFieldValue: null,
       columnDefs: [
         {
           headerName: "Audience Name",
