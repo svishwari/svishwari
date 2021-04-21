@@ -18,7 +18,7 @@ def get_aws_client(
     aws_secret_key: str = AWS_SECRET_ACCESS_KEY,
     region_name: str = AWS_REGION,
 ) -> Any:
-    """ quick and dirty function for getting most AWS clients
+    """quick and dirty function for getting most AWS clients
 
     Args:
         client (str): client string

@@ -34,7 +34,7 @@ class CdmTest(TestCase):
     mapping_fields = ["field_id", "field_name", "field_variation", "modified"]
 
     def setUp(self):
-        """ Setup initial model and database connection
+        """Setup initial model and database connection
         Args:
 
         Returns:
@@ -91,7 +91,7 @@ class CdmTest(TestCase):
         self.assertDictEqual(returned_source, processed_data)
 
     def test_read_datafeeds(self):
-        """ Successfully retrieve datafeeds
+        """Successfully retrieve datafeeds
         Args:
 
         Returns:
@@ -108,7 +108,7 @@ class CdmTest(TestCase):
         self.assertEqual("adobe", returned_feeds[1]["feed_type"])
 
     def test_read_datafeeds_by_id(self):
-        """ Successfully retrieve single datafeed
+        """Successfully retrieve single datafeed
         Args:
 
         Returns:
@@ -121,7 +121,7 @@ class CdmTest(TestCase):
         self.assertEqual("Batch", returned_feed["feed_type"])
 
     def test_read_fieldmappings(self):
-        """ Successfully retrieve field mappings
+        """Successfully retrieve field mappings
         Args:
 
         Returns:
@@ -138,7 +138,7 @@ class CdmTest(TestCase):
         self.assertEqual(2, returned_mappings[1]["field_id"])
 
     def test_read_fieldmappings_by_id(self):
-        """ Successfully retrieve field mappings by id
+        """Successfully retrieve field mappings by id
         Args:
 
         Returns:
