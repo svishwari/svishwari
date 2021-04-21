@@ -183,7 +183,7 @@ class DestinationPostView(SwaggerView):
 
     @marshal_with(DestinationPostSchema)
     def post(self) -> Tuple[dict, int]:
-        """Creates a new destination and test the connection.
+        """Creates a new destination and tests the connection.
 
         ---
         Returns:
