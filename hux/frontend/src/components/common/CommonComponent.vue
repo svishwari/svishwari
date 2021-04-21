@@ -24,7 +24,7 @@
     <v-divider></v-divider>
     <PageHeader>
       <template slot="left">
-        <Breadcrumb :items="items"/>
+        <Breadcrumb :items="items" />
       </template>
     </PageHeader>
     <br />

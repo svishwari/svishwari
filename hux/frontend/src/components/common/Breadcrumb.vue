@@ -1,7 +1,11 @@
 <template>
   <v-breadcrumbs :items="items" class="pl-0">
     <template v-slot:item="{ item }">
-      <v-breadcrumbs-item :href="item.href" :disabled="item.disabled" class="font-weight-light">
+      <v-breadcrumbs-item
+        :href="item.href"
+        :disabled="item.disabled"
+        class="font-weight-light"
+      >
         <v-icon color="black" size="21" class="pr-1">
           {{ item.icon }}
         </v-icon>
