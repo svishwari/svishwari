@@ -139,7 +139,7 @@ class Preferences(SwaggerView):
     tags = [USER_TAG]
 
     def put(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
-        """Edit a user's dashboard configuration
+        """Edit a user's preferences
 
         ---
         Args:
@@ -164,7 +164,7 @@ class Preferences(SwaggerView):
         return response, HTTPStatus.OK
 
     def post(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
-        """Add a user's dashboard configuration
+        """Add a user's preferences
 
         ---
         Args:
@@ -189,7 +189,7 @@ class Preferences(SwaggerView):
         return response, HTTPStatus.OK
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
-        """Remove a user's dashboard configuration
+        """Remove a user's preferences
 
         ---
         Args:
