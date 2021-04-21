@@ -9,7 +9,7 @@ from mongomock import MongoClient
 from connexion.exceptions import ProblemException
 from flasgger import SwaggerView
 from bson import ObjectId
-from flask import Blueprint, request, Response, jsonify
+from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 
 from huxunifylib.database import (
@@ -174,7 +174,7 @@ class DestinationPostView(SwaggerView):
             "description": "Destination created.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to delete the destination.",
+            "description": "Failed to create the destination.",
         },
     }
 
@@ -230,77 +230,6 @@ class DestinationPostView(SwaggerView):
             ),
             HTTPStatus.CREATED,
         )
-
-
-@add_view_to_blueprint(
-    dest_bp,
-    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
-    "DestinationDeleteView",
-)
-class DestinationDeleteView(SwaggerView):
-    """
-    Single Destination Delete view class
-    """
-
-    parameters = [
-        {
-            "name": api_c.DESTINATION_ID,
-            "description": "Destination ID.",
-            "type": "string",
-            "in": "path",
-            "required": "true",
-            "example": "5f5f7262997acad4bac4373b",
-        }
-    ]
-    responses = {
-        HTTPStatus.OK.value: {
-            "schema": DestinationGetSchema,
-            "description": "Deleted destination by ID.",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to delete the destination.",
-        },
-    }
-
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DESTINATIONS_TAG]
-
-    @marshal_with(DestinationGetSchema)
-    def delete(self, destination_id: str) -> Response:
-        """Deletes a destination and its dependencies by ID.
-
-        ---
-        Args:
-            destination_id (str): Destination ID.
-
-        Returns:
-             HTTPStatus: HTTP status.
-        """
-
-        try:
-            # validate the id
-            valid_id = (
-                DestinationGetSchema()
-                .load({api_c.DESTINATION_ID: destination_id}, partial=True)
-                .get(api_c.DESTINATION_ID)
-            )
-
-            if delete_util.delete_delivery_platform(
-                database=get_db_client(),
-                delivery_platform_id=valid_id,
-            ):
-                return Response(status=HTTPStatus.OK)
-            raise ProblemException(
-                status=int(HTTPStatus.BAD_REQUEST.value),
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=api_c.CANNOT_DELETE_DESTINATIONS,
-            )
-        except Exception as exc:
-            raise ProblemException(
-                status=int(HTTPStatus.BAD_REQUEST.value),
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=api_c.CANNOT_DELETE_DESTINATIONS,
-            ) from exc
 
 
 @add_view_to_blueprint(
@@ -427,7 +356,9 @@ class DestinationPutView(SwaggerView):
             ) from exc
 
 
-@add_view_to_blueprint(dest_bp, f"/{api_c.DESTINATIONS_ENDPOINT}", "DestinationsView")
+@add_view_to_blueprint(
+    dest_bp, f"/{api_c.DESTINATIONS_ENDPOINT}", "DestinationsView"
+)
 class DestinationsView(SwaggerView):
     """
     Multiple Destinations view class
@@ -463,10 +394,10 @@ class DestinationsView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"/{api_c.DESTINATIONS_ENDPOINT}/bulk-delete",
+    f"/{api_c.DESTINATIONS_ENDPOINT}/delete",
     "DestinationsDeleteView",
 )
-class DestinationsBulkDeleteView(SwaggerView):
+class DestinationsDeleteView(SwaggerView):
     """
     DestinationsDeleteView view class
     Delete multiple destinations at once.
@@ -500,12 +431,14 @@ class DestinationsBulkDeleteView(SwaggerView):
                 ],
             },
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to delete destinations."},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to delete destinations."
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    def post(self) -> Tuple[list, int]:
+    def delete(self) -> Tuple[list, int]:
         """Bulk Deletes destinations by a list of IDs.
 
         ---

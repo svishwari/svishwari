@@ -31,4 +31,7 @@ DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
 
 
-CANNOT_STORE_SECRETS_PARAMETER_STORE = "An error occurred while attempting to store secrets in the parameter store"
+CANNOT_STORE_SECRETS_PARAMETER_STORE = (
+    "An error occurred while attempting to"
+    " store secrets in the parameter store"
+)

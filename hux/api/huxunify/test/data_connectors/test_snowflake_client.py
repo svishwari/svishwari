@@ -53,7 +53,9 @@ class TestSnowflakeClient(TestCase):
             None
         """
         # apply side effect
-        connector.connect.side_effect = connector.errors.DatabaseError("DB ERROR")
+        connector.connect.side_effect = connector.errors.DatabaseError(
+            "DB ERROR"
+        )
 
         # test that base exception is raised
         with self.assertRaises(BaseException):

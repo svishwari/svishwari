@@ -44,9 +44,9 @@ class DestinationGetSchema(Schema):
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
     created = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
-    created_by = fields.DateTime(attribute=db_c.CREATED_BY, allow_none=True)
-    updated = fields.DateTime(attribute=db_c.UPDATED_BY, allow_none=True)
-    updated_by = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
+    updated = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
     @post_load()
     # pylint: disable=unused-argument
@@ -70,7 +70,9 @@ class DestinationGetSchema(Schema):
         if api_c.DESTINATION_ID in data:
             # if a valid ID, map it
             if ObjectId.is_valid(data[api_c.DESTINATION_ID]):
-                data.update(destination_id=ObjectId(data[api_c.DESTINATION_ID]))
+                data.update(
+                    destination_id=ObjectId(data[api_c.DESTINATION_ID])
+                )
             else:
                 # otherwise map to None
                 data.update(destination_id=None)

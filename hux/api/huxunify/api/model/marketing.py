@@ -138,7 +138,9 @@ class MarketingModel:
 
         """
         data = {"url": s3_url, "Models": models}
-        return requests.post(f"{self.SEGMENT_ENGINE}/segmentation", data=data).json()
+        return requests.post(
+            f"{self.SEGMENT_ENGINE}/segmentation", data=data
+        ).json()
 
     def get_segment_count(self):
         """Fetch the Segmentation Model Scores
@@ -150,7 +152,9 @@ class MarketingModel:
             Returns the post result
 
         """
-        return requests.get(f"{self.SEGMENT_ENGINE}/retrieveJourneyCount").json()
+        return requests.get(
+            f"{self.SEGMENT_ENGINE}/retrieveJourneyCount"
+        ).json()
 
     def get_scores_on_the_fly(self, data):
         """Fetch the Segmentation Model Scores on the fly

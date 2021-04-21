@@ -68,7 +68,9 @@ class CdmTest(TestCase):
 
         # get synth data
         processed_data = [
-            generate_synthetic_marshmallow_data(ProcessedData).fromkeys(test_fields)
+            generate_synthetic_marshmallow_data(ProcessedData).fromkeys(
+                test_fields
+            )
             for i in range(4)
         ]
 

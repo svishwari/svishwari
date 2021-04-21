@@ -14,15 +14,41 @@ AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = getenv("AWS_REGION")
 AWS_SERVICE_URL = getenv("AWS_SERVICE_URL")
+SSM_NAME = "ssm"
+PARAM_STORE_PREFIX = "huxunify"
+PARAM_STORE_ERROR_MSG = (
+    "There was a problem saving your authentication details for "
+    "destinations: '{destination_name}'. Details: Trouble storing secrets in the "
+    "parameter store"
+)
 
 
 class ParameterStore:
     """Interact with AWS Parameter Store."""
 
     @staticmethod
-    def store_secret(name: str, secret: str, overwrite: bool, path: str = None):
+    def get_ssm_client() -> boto3.client:
+        """Get the SSM client
+
+        Args:
+        Returns:
+            dict: boto3 response.
         """
-        Store secrets.
+        return boto3.client(
+            SSM_NAME,
+            region_name=AWS_REGION,
+            endpoint_url=AWS_SERVICE_URL,
+        )
+
+    @staticmethod
+    def store_secret(
+        name: str,
+        secret: str,
+        overwrite: bool,
+        path: str = None,
+    ) -> dict:
+        """Store secrets.
+
         Args:
             name (str): Name of the parameter.
             secret (str): The parameter value that you want to add to the store.
@@ -31,78 +57,44 @@ class ParameterStore:
         Returns:
             dict: boto3 response.
         """
-        # TODO: Have a better way to fetch 'region_name'
-        ssm_client = boto3.client(
-            "ssm",
-            region_name=AWS_REGION,
-            endpoint_url=AWS_SERVICE_URL,
-        )
-        try:
-            return ssm_client.put_parameter(
-                Name=path + "/" + name if path else name,
-                Value=secret,
-                Type="SecureString",
-                Overwrite=overwrite,
-            )
-        except botocore.exceptions.ClientError as error:
-            raise error
-
-    @staticmethod
-    def get_secret(name: str, path: str = None):
-        """
-        Retrieve parameter value/secret.
-
-        Args:
-            name (str): Name of the parameter.
-            path (str): Hierarchy of the parameter.
-
-        Returns:
-            str: Parameter value/secret.
-        """
-        # TODO: Have a better way to fetch 'region_name'
-        ssm_client = boto3.client(
-            "ssm",
-            region_name=AWS_REGION,
-            endpoint_url=AWS_SERVICE_URL,
-        )
         try:
             return (
-                ssm_client.get_parameter(
-                    Name=path + "/" + name if path else name,
-                    WithDecryption=True,
+                ParameterStore()
+                .get_ssm_client()
+                .put_parameter(
+                    Name=f"{path}/{name}" if path else name,
+                    Value=secret,
+                    Type="SecureString",
+                    Overwrite=overwrite,
                 )
-                .get("Parameter")
-                .get("Value")
             )
         except botocore.exceptions.ClientError as error:
             raise error
 
     @staticmethod
-    def get_parameter_name(name: str, path: str = None):
+    def get_store_value(
+        name: str, path: str = None, value: str = "Value"
+    ) -> str:
         """
-        Retrieve parameter name.
+        Retrieve a parameter/value from the param store.
 
         Args:
             name (str): Name of the parameter.
             path (str): Hierarchy of the parameter. (e.g: /Dev/DBServer/MySQL/db-string13)
-
+            value (str): Name of the value to get (i.e. Name or Value)
         Returns:
-            str: Parameter name.
+            str: Parameter Value.
         """
-        # TODO: Have a better way to fetch 'region_name'
-        ssm_client = boto3.client(
-            "ssm",
-            region_name=AWS_REGION,
-            endpoint_url=AWS_SERVICE_URL,
-        )
         try:
             return (
-                ssm_client.get_parameter(
-                    Name=path + "/" + name if path else name,
+                ParameterStore()
+                .get_ssm_client()
+                .get_parameter(
+                    Name=f"{path}/{name}" if path else name,
                     WithDecryption=True,
                 )
                 .get("Parameter")
-                .get("Name")
+                .get(value)
             )
         except botocore.exceptions.ClientError as error:
             raise error
@@ -126,12 +118,14 @@ class ParameterStore:
             ssm_params (dict): The key/path to where the parameters are stored.
         """
         ssm_params = {}
-        # TODO: verify this is with ad-perf for ORCH-94 / HUS-262
-        path = "/huxunify/%s" % destination_id
+        path = f"/{PARAM_STORE_PREFIX}/{destination_id}"
 
-        for parameter_name, secret in authentication_details.items():
+        for (
+            parameter_name,
+            secret,
+        ) in authentication_details.items():
             ssm_params[parameter_name] = (
-                path + "/" + parameter_name if path else parameter_name
+                f"{path}/{parameter_name}" if path else parameter_name
             )
             try:
                 parameter_store.store_secret(
@@ -144,9 +138,9 @@ class ParameterStore:
                 raise ProblemException(
                     status=int(HTTPStatus.BAD_REQUEST.value),
                     title=HTTPStatus.BAD_REQUEST.description,
-                    detail=f"There was a problem saving your authentication details for"
-                    f" destinations: '{destination_name}'. Details:"
-                    f" Trouble storing secrets in the parameter store",
+                    detail=PARAM_STORE_ERROR_MSG.format(
+                        destination_name=destination_name
+                    ),
                 ) from exc
 
         return ssm_params

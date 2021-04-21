@@ -123,7 +123,9 @@ def prep_data_h2o_scores_to_stream(data):
 
     # get the file object,
     # ignore first character from url path to get s3 key
-    s3_obj = s3_client.get_object(Bucket=s3_url_obj.netloc, Key=s3_url_obj.path[1:])
+    s3_obj = s3_client.get_object(
+        Bucket=s3_url_obj.netloc, Key=s3_url_obj.path[1:]
+    )
 
     # read the initial parquet data
     datafile = pd.read_parquet(BytesIO(s3_obj["Body"].read()))
@@ -177,4 +179,6 @@ class CustomerFeatureModel:
         # (f'https://{self.cluster_id}.tecton.ai/api/v1/feature-service
         # /get_feature_vector', headers=TECTON_API_HEADERS, data=data).json()
         for feat in self.features:
-            self.predictions.append({"feature": feat, "user_clicks": randint(1, 60)})
+            self.predictions.append(
+                {"feature": feat, "user_clicks": randint(1, 60)}
+            )

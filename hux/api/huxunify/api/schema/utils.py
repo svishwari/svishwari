@@ -32,7 +32,8 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     """
     # get random data based on marshmallow type
     return {
-        field: SPEC_TYPE_LOOKUP[type(val)] for field, val in schema_obj().fields.items()
+        field: SPEC_TYPE_LOOKUP[type(val)]
+        for field, val in schema_obj().fields.items()
     }
 
 

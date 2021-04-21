@@ -166,7 +166,9 @@ class AudienceModel:
             headers={"Authorization": f"Bearer {self.TOKEN}"},
         ).json()
 
-    def get_insights_delivery_job_audience_id(self, audience_id, delivery_job_id):
+    def get_insights_delivery_job_audience_id(
+        self, audience_id, delivery_job_id
+    ):
         """
         purpose of this function is to get audience delivery jobs for an audience
         :param data:
