@@ -1,16 +1,13 @@
 """
 Paths for the User API
 """
-from enum import Enum
 from http import HTTPStatus
 from typing import List, Tuple
 
-from bson import ObjectId
 import json
-from flask import Blueprint, request
+from flask import Blueprint
 from flask_apispec import marshal_with
-from flasgger import SwaggerView, swag_from
-from marshmallow.fields import Int
+from flasgger import SwaggerView
 from pymongo import MongoClient
 
 from huxunify.api.schema.errors import NotFoundError
@@ -46,7 +43,10 @@ class UserSearch(SwaggerView):
 
     parameters = []
     responses = {
-        HTTPStatus.OK.value: {"description": "List of users.", "schema": List[User]},
+        HTTPStatus.OK.value: {
+            "description": "List of destinations.",
+            "schema": {"type": "array", "items": User},
+        },
     }
     tags = [USER_TAG]
 
@@ -73,7 +73,9 @@ class UserSearch(SwaggerView):
             return error, error["code"]
 
 
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>", "IndividualUserSearch")
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<id>", "IndividualUserSearch"
+)
 class IndividualUserSearch(SwaggerView):
     """
     Individual User Search Class
@@ -118,68 +120,9 @@ class IndividualUserSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/update-dashboard", "UserDashboardConfiguration"
+    user_bp, f"/{USER_ENDPOINT}/<id>/preferences", "Preferences"
 )
-class UserDashboardConfiguration(SwaggerView):
-    """
-    Update user's dashboard configuration
-    """
-
-    parameters = [
-        {"user_id": "user_id", "config_key": "key name", "config_value": "value"}
-    ]
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "User dashboard configuration updated",
-        },
-        HTTPStatus.CREATED.value: {
-            "description": "User dashboard configuration created",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to update user dashboard configuration",
-        },
-    }
-
-    tags = [USER_TAG]
-
-    def put(self, user_id: str, config_key: str, config_value: Any) -> Tuple[dict, int]:
-        """Put a user's dashboard configuration
-
-        ---
-        Args:
-            user_id (str): User id
-            config_key (str): Key for configuration parameter
-            config_value (Any): Value for configuration parameter
-
-        Returns:
-            Tuple[dict, int]: Configuration dict, HTTP status
-
-        """
-        if ObjectId.is_valid(user_id):
-            user_id = ObjectId(user_id)
-        else:
-            return {
-                "message": "Invalid user ID received {user_id}."
-            }, HTTPStatus.BAD_REQUEST
-
-        response = manage_user_dashboard_config(
-            get_db_client(),
-            user_id=user_id,
-            config_key=config_key,
-            config_value=config_value,
-        )
-
-        return response, HTTPStatus.OK
-
-    def post(self) -> Tuple[dict, int]:
-        pass
-
-    def delete(self) -> Tuple[dict, int]:
-        pass
-
-
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/preferences", "Preferences")
-class Preferences:
+class Preferences(SwaggerView):
     """
     Update user preferences
     """
@@ -218,7 +161,9 @@ class Preferences:
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+        response = update_user(
+            get_db_client(), user_id=user_id, update_doc=update_doc
+        )
 
         return response, HTTPStatus.OK
 
@@ -243,7 +188,9 @@ class Preferences:
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+        response = update_user(
+            get_db_client(), user_id=user_id, update_doc=update_doc
+        )
 
         return response, HTTPStatus.OK
 
@@ -272,8 +219,10 @@ class Preferences:
         return response, HTTPStatus.OK
 
 
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/favorites", "AddUserFavorite")
-class UserFavorite:
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<id>/favorites", "AddUserFavorite"
+)
+class UserFavorite(SwaggerView):
     """
     Add a new favorite for a user
     """
