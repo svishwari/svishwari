@@ -30,8 +30,8 @@ DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
 
-
-CANNOT_STORE_SECRETS_PARAMETER_STORE = (
+PARAM_STORE_PREFIX = "huxunify"
+PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
-    " store secrets in the parameter store"
+    " store secrets in the parameter store."
 )

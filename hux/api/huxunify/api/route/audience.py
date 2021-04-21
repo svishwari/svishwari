@@ -64,7 +64,7 @@ def get_audiences():
         "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
-                "description": "get audience by id  ",
+                "description": "get audience by id",
                 "schema": AudienceSchema,
             }
         },
@@ -182,7 +182,7 @@ def update_audience():
         ],
         "tags": [ORCHESTRATION_TAG],
         "responses": {
-            HTTPStatus.OK.value: {"description": "delete audience by id  "}
+            HTTPStatus.OK.value: {"description": "delete audience by id"}
         },
     }
 )

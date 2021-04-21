@@ -6,6 +6,7 @@ from http import HTTPStatus
 from connexion import ProblemException
 import boto3
 import botocore
+from huxunify.api import constants as api_c
 
 
 # TODO - HUS-281
@@ -15,12 +16,6 @@ AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = getenv("AWS_REGION")
 AWS_SERVICE_URL = getenv("AWS_SERVICE_URL")
 SSM_NAME = "ssm"
-PARAM_STORE_PREFIX = "huxunify"
-PARAM_STORE_ERROR_MSG = (
-    "There was a problem saving your authentication details for "
-    "destinations: '{destination_name}'. Details: Trouble storing secrets in the "
-    "parameter store"
-)
 
 
 class ParameterStore:
@@ -118,7 +113,7 @@ class ParameterStore:
             ssm_params (dict): The key/path to where the parameters are stored.
         """
         ssm_params = {}
-        path = f"/{PARAM_STORE_PREFIX}/{destination_id}"
+        path = f"/{api_c.PARAM_STORE_PREFIX}/{destination_id}"
 
         for (
             parameter_name,
@@ -138,9 +133,8 @@ class ParameterStore:
                 raise ProblemException(
                     status=int(HTTPStatus.BAD_REQUEST.value),
                     title=HTTPStatus.BAD_REQUEST.description,
-                    detail=PARAM_STORE_ERROR_MSG.format(
-                        destination_name=destination_name
-                    ),
+                    detail=f"{api_c.PARAMETER_STORE_ERROR_MSG}"
+                    f" destination_name: {destination_name}.",
                 ) from exc
 
         return ssm_params
