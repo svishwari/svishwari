@@ -12,22 +12,52 @@
       labelText="Add Account ID"
       icon="mdi-alert-circle-outline"
       placeholderText="Account name"
+      v-bind:required=true
     ></TextField>
     {{ TextFieldValue }}
     <br />
 
     <v-subheader> Button </v-subheader>
     <v-divider></v-divider>
-    <huxButton ButtonText="Added" isOutlined="true" icon="mdi-check" iconPosition="left" ></huxButton>
-    <huxButton ButtonText="Add" isOutlined="true" variant="darkGrey"></huxButton>
-    <huxButton ButtonText="Leave configuration" variant="primary" isTile="true"></huxButton>
-    <huxButton ButtonText="Success" icon="mdi-check" iconPosition="left" variant="success" isTile="true"></huxButton>
-    <huxButton ButtonText="Cancel & Return" variant="tertiary" isTile="true"></huxButton>
+    <huxButton
+      ButtonText="Added"
+      v-bind:isOutlined="true"
+      icon="mdi-check"
+      iconPosition="left"
+    ></huxButton>
+    <huxButton
+      ButtonText="Add"
+      v-bind:isOutlined="true"
+      variant="darkGrey"
+    ></huxButton>
+    <huxButton
+      ButtonText="Leave configuration"
+      variant="primary"
+      v-bind:isTile="true"
+    ></huxButton>
+    <huxButton
+      ButtonText="Success!"
+      icon="mdi-check"
+      iconPosition="left"
+      variant="success"
+      v-bind:isTile="true"
+    ></huxButton>
+    <huxButton
+      ButtonText="Cancel & Return"
+      variant="tertiary"
+      v-bind:isTile="true"
+    ></huxButton>
     <br />
 
     <v-subheader> Select Dropdown </v-subheader>
     <v-divider></v-divider>
-    <DropdownMenu></DropdownMenu>
+    <DropdownMenu
+      v-model="DropdownValue"
+      v-bind:labelText="labelText"
+      v-bind:menuItem="DropdownData"
+      @updatelabelText="onupdatelabelText"
+    ></DropdownMenu>
+    {{ DropdownValue }}
     <br />
 
     <v-subheader> Page Header </v-subheader>
@@ -77,10 +107,20 @@ export default {
     monthChanged() {
       console.log("Month changed. Selected ID: ", this.selectedMonth)
     },
+    onupdatelabelText(newValue) {
+      this.labelText = newValue
+    },
   },
   data() {
     return {
       TextFieldValue: null,
+      DropdownValue: null,
+      labelText: "Select",
+      DropdownData: [
+        { value: "1 - 25" },
+        { value: "26 - 50" },
+        { value: "50+" },
+      ],
       columnDefs: [
         {
           headerName: "Audience Name",

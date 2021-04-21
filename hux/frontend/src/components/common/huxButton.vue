@@ -34,9 +34,7 @@ export default {
       default: "primary",
     },
     isOutlined: {
-      type: Boolean,
-      required: false,
-      default: false,
+      type: Boolean
     },
     isTile: {
       type: Boolean,
