@@ -14,8 +14,15 @@
       <template slot="right" class="paheHeadRightPanel">
         <v-menu offset-y :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary configBtn" v-bind="attrs" v-on="on">
-              <v-icon large color="white darken-2">mdi-cog</v-icon>
+            <v-btn
+              min-width="40"
+              height="40"
+              width="40"
+              color="primary"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon size="23" color="white">mdi-cog</v-icon>
             </v-btn>
           </template>
           <v-list>
@@ -38,8 +45,8 @@
       </template>
     </PageHeader>
     <div class="quickAccessMenu" v-if="this.configureOptions['configureHux']">
-      <h6>Configure Hux</h6>
-      <div class="card-wrap">
+      <h6 class="mb-5">Configure Hux</h6>
+      <div class="card-wrap d-flex">
         <CardInfo
           v-for="(item, i) in configureHuxOptions"
           :key="i"
@@ -106,14 +113,6 @@ export default {
       ],
     }
   },
-  filters: {
-    TitleCase(value) {
-      return value
-        .replace(/([A-Z])/g, (match) => ` ${match}`)
-        .replace(/^./, (match) => match.toUpperCase())
-        .trim()
-    },
-  },
   computed: {
     firstName() {
       return this.$store.getters.getFirstname
@@ -127,18 +126,6 @@ export default {
 
 <style lang="scss" scoped>
 .overview-wrap {
-  .page-header--right {
-    .configBtn {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      .v-icon {
-        font-size: 23px !important;
-        color: white !important;
-      }
-    }
-  }
-
   .quickAccessMenu {
     background: #ecf4f9;
     min-height: 265px;
@@ -148,17 +135,10 @@ export default {
       font-weight: normal;
       font-size: 14px;
       line-height: 19px;
-      /* identical to box height */
-
       letter-spacing: 0.5px;
-
-      /* Text/Dark - D */
-
       color: #1e1e1e;
-      margin-bottom: 20px;
     }
     .card-wrap {
-      display: flex;
       .v-card {
         margin-right: 15px;
         &.v-card--disabled {
