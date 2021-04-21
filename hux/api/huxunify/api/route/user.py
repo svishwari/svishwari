@@ -2,7 +2,7 @@
 Paths for the User API
 """
 from http import HTTPStatus
-from typing import List, Tuple
+from typing import Tuple
 
 import json
 from bson import ObjectId
@@ -14,7 +14,7 @@ from pymongo import MongoClient
 
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
-from huxunify.api.schema.user import User, UserSchema
+from huxunify.api.schema.user import UserSchema
 from huxunifylib.database.user_management import (
     get_all_users,
     get_user,
@@ -55,7 +55,7 @@ class UserSearch(SwaggerView):
     tags = [USER_TAG]
 
     @marshal_with(User)
-    def get(self) -> List[User]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves all users.
 
         ---
@@ -68,7 +68,7 @@ class UserSearch(SwaggerView):
             body = UserSchema.load(request.get_json())
         except ValidationError as ve:
             return ve.messages, HTTPStatus.BAD_REQUEST
-        
+
         try:
             data = get_all_users(get_db_client())
 
