@@ -139,7 +139,7 @@ class Preferences(SwaggerView):
     tags = [USER_TAG]
 
     def put(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
-        """Put a user's dashboard configuration
+        """Edit a user's dashboard configuration
 
         ---
         Args:
@@ -164,7 +164,7 @@ class Preferences(SwaggerView):
         return response, HTTPStatus.OK
 
     def post(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
-        """Put a user's dashboard configuration
+        """Add a user's dashboard configuration
 
         ---
         Args:
@@ -189,7 +189,7 @@ class Preferences(SwaggerView):
         return response, HTTPStatus.OK
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
-        """Put a user's dashboard configuration
+        """Remove a user's dashboard configuration
 
         ---
         Args:
@@ -216,7 +216,7 @@ class Preferences(SwaggerView):
 @add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/favorites", "AddUserFavorite")
 class UserFavorite(SwaggerView):
     """
-    Add a new favorite for a user
+    User favorites class
     """
 
     parameters = [
@@ -282,7 +282,7 @@ class UserFavorite(SwaggerView):
     def put(
         self, user_id: str, component_name: str, component_id: str
     ) -> Tuple[dict, int]:
-        """Add a new favorite for a user
+        """Edit favorite for a user
 
         ---
         Args:
