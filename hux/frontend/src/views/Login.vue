@@ -10,14 +10,11 @@
         <p>Jump right in where you left off, and leave the hard work on us!</p>
         <div class="login-form">
           <v-form ref="form" v-model="isFormValid" lazy-validation>
-            <v-text-field
+             <TextField
               v-model="username"
-              label="Username"
-              autocomplete="username"
-              single-line
-              outlined
-              required
-            ></v-text-field>
+              placeholderText="Username"
+              v-bind:required=true
+             ></TextField>
             <v-text-field
               v-model="password"
               :append-icon="toggleShowPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -68,6 +65,7 @@
 <script>
 import Logo from "../assets/images/logo.svg"
 import auth from "@/auth"
+import TextField from "@/components/common/TextField"
 export default {
   name: "Login",
   data() {
@@ -85,6 +83,7 @@ export default {
   },
   components: {
     Logo,
+    TextField,
   },
   methods: {
     initiateLogin() {

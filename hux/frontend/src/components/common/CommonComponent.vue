@@ -22,17 +22,20 @@
     <huxButton
       ButtonText="Added"
       v-bind:isOutlined="true"
+      size="large"
       icon="mdi-check"
       iconPosition="left"
     ></huxButton>
     <huxButton
       ButtonText="Add"
       v-bind:isOutlined="true"
+      size="x-small"
       variant="darkGrey"
     ></huxButton>
     <huxButton
       ButtonText="Leave configuration"
       variant="primary"
+      size="large"
       v-bind:isTile="true"
     ></huxButton>
     <huxButton
@@ -40,6 +43,7 @@
       icon="mdi-check"
       iconPosition="left"
       variant="success"
+      size="x-large"
       v-bind:isTile="true"
     ></huxButton>
     <huxButton

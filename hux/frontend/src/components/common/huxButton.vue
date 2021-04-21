@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn :outlined="isOutlined" :tile="isTile" :color="variant"  class="ma-2">
+    <v-btn :disabled="isDisabled" :outlined="isOutlined" :tile="isTile" :color="variant"  class="ma-2" :class="buttonSize">
       <v-icon v-show="iconPosition == 'left'" dark class="mr-1"> {{ icon }} </v-icon>
       {{ ButtonText }}
       <v-icon v-show="iconPosition == 'right'" dark class="mr-1">  {{ icon }} </v-icon>
@@ -11,7 +11,6 @@
 <script>
 export default {
   name: "huxButton",
-
   props: {
     ButtonText: {
       type: String,
@@ -36,11 +35,24 @@ export default {
     isOutlined: {
       type: Boolean
     },
+    isDisabled: {
+      type: Boolean
+    },
     isTile: {
       type: Boolean,
       required: false,
       default: false,
     },
+    size: {
+      type: String,
+      required: false,
+      default: null,
+    },
+  },
+  computed: {
+    buttonSize: function () {
+      return 'v-size--' + this.size
+    }
   },
 }
 </script>

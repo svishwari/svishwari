@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="12" sm="6">
+    <v-col>
       <label>
         {{ labelText }}
         <v-icon color="primary"> {{ icon }} </v-icon>
@@ -30,26 +30,24 @@ export default {
     labelText: {
       type: String,
       required: false,
-      default: "Add Account ID",
+      default: null,
     },
     placeholderText: {
       type: String,
       required: false,
-      default: "Account name",
+      default: null,
     },
     icon: {
       type: String,
       required: false,
-      default: "mdi-alert-circle-outline",
+      default: null,
     },
   },
 
   methods: {
     change: function (value) {
-      console.log(value)
     },
     input: function (value) {
-      console.log(value)
       this.$emit("input", this.TextFieldValue)
     },
   },
