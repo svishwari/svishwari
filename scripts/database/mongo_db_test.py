@@ -1,39 +1,18 @@
 """MongoDB Access tests."""
 
-import os
 import logging
-
+from share import get_mongo_client
 import huxunifylib.database.constants as c
-from huxunifylib.database.client import DatabaseClient
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
-# Get database info
-DATABASE_LOCAL_HOST = os.environ.get("DATABASE_LOCAL_HOST")
-DATABASE_LOCAL_PORT = (
-    int(os.environ["DATABASE_LOCAL_PORT"])
-    if "DATABASE_LOCAL_PORT" in os.environ
-    else None
-)
-DATABASE_USERNAME = os.environ.get("DATABASE_USERNAME")
-DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
+# Get details on MongoDB configuration.
+DATABASE = get_mongo_client()
 
 # Some defines
 DATABASE_NAME = "sample_database"
 COLLECTION_NAME = "sample_collection"
-
-# Connect to Document DB
-CLIENT = DatabaseClient(
-    DATABASE_LOCAL_HOST,
-    DATABASE_LOCAL_PORT,
-    DATABASE_USERNAME,
-    DATABASE_PASSWORD,
-)
-
-assert CLIENT is not None
-
-DATABASE = CLIENT.connect()
 
 assert DATABASE is not None
 
