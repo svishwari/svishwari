@@ -11,13 +11,33 @@
           <a>Learn More ></a>
         </div>
       </template>
-      <template slot="right">
-        <v-btn>
-          <v-icon large color="white darken-2">mdi-cogs</v-icon>
-        </v-btn>
+      <template slot="right" class="paheHeadRightPanel">
+        <v-menu offset-y :close-on-content-click="false">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary configBtn" v-bind="attrs" v-on="on">
+              <v-icon large color="white darken-2">mdi-cog</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item class="drop-wrap">
+              <div class="title-wrap">
+                <span class="heading">Configure Dashboard</span>
+                <span class="description">Show or hide element panels.</span>
+              </div>
+              <v-checkbox
+                v-for="(item, ix) in Object.keys(configureOptions)"
+                :key="ix"
+                :label="item | TitleCase"
+                v-model="configureOptions[item]"
+                hide-details
+              >
+              </v-checkbox>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </PageHeader>
-    <div class="quickAccessMenu">
+    <div class="quickAccessMenu" v-if="this.configureOptions['configureHux']">
       <h6>Configure Hux</h6>
       <div class="card-wrap">
         <CardInfo
@@ -86,6 +106,14 @@ export default {
       ],
     }
   },
+  filters: {
+    TitleCase(value) {
+      return value
+        .replace(/([A-Z])/g, (match) => ` ${match}`)
+        .replace(/^./, (match) => match.toUpperCase())
+        .trim()
+    },
+  },
   computed: {
     firstName() {
       return this.$store.getters.getFirstname
@@ -99,6 +127,18 @@ export default {
 
 <style lang="scss" scoped>
 .overview-wrap {
+  .page-header--right {
+    .configBtn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      .v-icon {
+        font-size: 23px !important;
+        color: white !important;
+      }
+    }
+  }
+
   .quickAccessMenu {
     background: #ecf4f9;
     min-height: 265px;
@@ -124,6 +164,39 @@ export default {
         &.v-card--disabled {
           background: #f9fafb;
         }
+      }
+    }
+  }
+}
+.drop-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 19px 18px 19px 25px;
+  min-height: inherit;
+  .title-wrap {
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    min-height: 64px;
+    .heading {
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      color: #005587;
+    }
+    .description {
+      color: inherit;
+    }
+  }
+  .v-input {
+    margin: 0;
+    .v-input__control {
+      background: red;
+      .v-messages {
+        display: none !important;
       }
     }
   }
