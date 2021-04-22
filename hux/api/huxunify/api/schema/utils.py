@@ -40,7 +40,7 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
 
 
 def must_not_be_blank(data) -> bool:
-    """This function validates an empty strings
+    """This function validates an empty object.
 
     Args:
         data (object): any object
