@@ -1,10 +1,10 @@
 """This module enables functionality related to delivery platform management."""
 # pylint: disable=C0302
 
-from typing import List, Tuple
 import logging
 import datetime
 from operator import itemgetter
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -25,6 +25,7 @@ def set_delivery_platform(
     delivery_platform_type: str,
     name: str,
     authentication_details: dict,
+    user_id: ObjectId = None,
 ) -> dict:
     """A function to create a delivery platform.
 
@@ -33,6 +34,7 @@ def set_delivery_platform(
         delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
         authentication_details (dict): A dict containing delivery platform authentication details.
+        user_id (ObjectId): User id of user creating delivery platform. This is Optional.
 
     Returns:
         dict: MongoDB audience doc.
@@ -42,6 +44,7 @@ def set_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -76,6 +79,17 @@ def set_delivery_platform(
         c.FAVORITE: False,
     }
 
+    # Add user object only if it is available
+    if ObjectId.is_valid(user_id) and name_exists(
+        database,
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        c.OKTA_ID,
+        user_id,
+    ):
+        doc[c.CREATED_BY] = user_id
+        doc[c.UPDATED_BY] = user_id
+
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
@@ -107,18 +121,17 @@ def get_delivery_platform(
         dict: Delivery platform configuration.
     """
 
-    doc = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        doc = collection.find_one(
-            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: 0}
+        return collection.find_one(
+            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: True}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(
@@ -387,6 +400,7 @@ def set_platform_type(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -446,6 +460,7 @@ def update_delivery_platform(
     name: str = None,
     delivery_platform_type: str = None,
     authentication_details: dict = None,
+    user_id: ObjectId = None,
 ) -> dict:
     """A function to update delivery platform configuration.
 
@@ -455,6 +470,7 @@ def update_delivery_platform(
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
+        user_id (ObjectId): User id of user updating delivery platform. This is Optional.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -464,6 +480,7 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -491,6 +508,16 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_AUTH: authentication_details,
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
+
+    # Add user object only if it is available
+    if ObjectId.is_valid(user_id) and name_exists(
+        database,
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        c.OKTA_ID,
+        user_id,
+    ):
+        update_doc[c.UPDATED_BY] = user_id
 
     for item in list(update_doc):
         if update_doc[item] is None:
@@ -842,6 +869,7 @@ def set_delivery_job(
     database: DatabaseClient,
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
+    delivery_platform_generic_campaigns: list,
 ) -> dict:
     """A function to set an audience delivery job.
 
@@ -849,7 +877,7 @@ def set_delivery_job(
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the delivered audience.
         delivery_platform_id (ObjectId): Delivery platform ID.
-
+        delivery_platform_generic_campaigns (list): generic campaign IDs.
     Returns:
         dict: Delivery job configuration.
 
@@ -879,6 +907,9 @@ def set_delivery_job(
         c.UPDATE_TIME: curr_time,
         c.JOB_STATUS: c.STATUS_PENDING,
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
+            delivery_platform_generic_campaigns
+        ),
         c.ENABLED: True,
     }
 
@@ -1469,23 +1500,20 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
 def set_delivered_audience_performance_metrics(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
+    generic_campaign_id: list,
     metrics_dict: dict,
     start_time: datetime.datetime,
     end_time: datetime.datetime,
-    delivery_platform_ad_sets: List[Tuple],
 ) -> dict:
     """A function to store the delivered audience performance metrics.
 
     Args:
         database (DatabaseClient): A database client.
         delivery_job_id (ObjectId): The delivery job ID of audience.
-        delivery_platform_campaign_id (str): ID of corresponding campaign on delivery platform.
-        delivery_ad_set_id (str): ID of corresponding ad set on delivery platform.
+        generic_campaign_id: (dict): generic campaign ID
         metrics_dict (dict): A dict containing performance metrics.
         start_time (datetime): Start time of metrics.
         end_time (datetime): End time of metrics.
-        delivery_platform_ad_sets (List[Tuple]): list of following tuples:
-            (<campaign ID>, <ad set ID>)
 
     Returns:
         dict: MongoDB metrics doc.
@@ -1506,7 +1534,7 @@ def set_delivered_audience_performance_metrics(
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
         c.METRICS_END_TIME: end_time,
-        c.DELIVERY_PLATFORM_AD_SETS: delivery_platform_ad_sets,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
         c.PERFORMANCE_METRICS: metrics_dict,
     }
 

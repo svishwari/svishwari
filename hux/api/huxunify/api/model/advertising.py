@@ -31,7 +31,9 @@ class AdvertisingModel:
         :return:
         """
         # push the request
-        result = requests.get(f"{self.API}/data-sources", headers=CODE_HEADERS).json()
+        result = requests.get(
+            f"{self.API}/data-sources", headers=CODE_HEADERS
+        ).json()
         return len(result) if count else result
 
     def create_data_source(self, data):
@@ -64,7 +66,9 @@ class AdvertisingModel:
         :return:
         """
         # push the request
-        return requests.delete(f"{self.API}/data-sources/{data_source_id}").json()
+        return requests.delete(
+            f"{self.API}/data-sources/{data_source_id}"
+        ).json()
 
     @staticmethod
     # pylint: disable=W0613

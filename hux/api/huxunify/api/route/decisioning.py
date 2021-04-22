@@ -39,7 +39,9 @@ def algorithm_get(algorithm_name):
 
     """
     return (
-        json.dumps(AlgorithmiaModel().get_algorithm(algorithm_name.replace(":", "/"))),
+        json.dumps(
+            AlgorithmiaModel().get_algorithm(algorithm_name.replace(":", "/"))
+        ),
         200,
     )
 
@@ -66,7 +68,8 @@ def invoke_algorithm():
 
 
 @decision_bp.route(
-    "/features/<cluster_id>/<feature_service_name>/" "<customer_id>", methods=["GET"]
+    "/features/<cluster_id>/<feature_service_name>/" "<customer_id>",
+    methods=["GET"],
 )
 @swag_from(
     {
@@ -110,7 +113,9 @@ def customer_features(cluster_id, feature_service_name, customer_id):
     get customer features
     ---
     """
-    result = CustomerFeatureModel(cluster_id, feature_service_name, customer_id)
+    result = CustomerFeatureModel(
+        cluster_id, feature_service_name, customer_id
+    )
     result.get_features()
     result.get_feature_vectors()
     return CustomerFeatureSchema().dump(result), 200

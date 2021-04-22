@@ -15,8 +15,24 @@ class CdmTest(TestCase):
     """
 
     datafeeds = [
-        [1, "Batch", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
-        [1, "adobe", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
+        [
+            1,
+            "Batch",
+            "Salesforce",
+            "Customers",
+            ".csv",
+            "Y",
+            "2021-01-21 05:30:48.301",
+        ],
+        [
+            1,
+            "adobe",
+            "Salesforce",
+            "Customers",
+            ".csv",
+            "Y",
+            "2021-01-21 05:30:48.301",
+        ],
     ]
     mappings = [
         [1, "FNAME", "FIRST", "2021-01-21 05:31:36.094"],
@@ -34,8 +50,11 @@ class CdmTest(TestCase):
     mapping_fields = ["field_id", "field_name", "field_variation", "modified"]
 
     def setUp(self):
-        """
-        Setup initial model and database connection
+        """Setup initial model and database connection
+        Args:
+
+        Returns:
+            None
         """
         mock_client = Mock(spec=SnowflakeClient)
         self.model = CdmModel(mock_client)
@@ -43,18 +62,22 @@ class CdmTest(TestCase):
     def test_get_processed_data(self):
         """Test Retrieving the processed data sources.
 
-        Returns:
-            Response: bool - pass/fail.
+        Args:
 
+        Returns:
+            None
         """
         # fields only used for this test
         test_fields = ("created", "modified", "source_name")
 
         # get synth data
         processed_data = [
-            generate_synthetic_marshmallow_data(ProcessedData).fromkeys(test_fields)
+            generate_synthetic_marshmallow_data(ProcessedData).fromkeys(
+                test_fields
+            )
             for i in range(4)
         ]
+
         self.model.ctx.cursor().fetchall.return_value = processed_data
 
         # get the returned sources
@@ -69,9 +92,10 @@ class CdmTest(TestCase):
     def test_get_processed_data_by_name(self):
         """Test Retrieving the processed data source by name.
 
-        Returns:
-            Response: bool - pass/fail.
+        Args:
 
+        Returns:
+            None
         """
         # get synth data
         processed_data = generate_synthetic_marshmallow_data(ProcessedData)
@@ -86,8 +110,11 @@ class CdmTest(TestCase):
         self.assertDictEqual(returned_source, processed_data)
 
     def test_read_datafeeds(self):
-        """
-        Successfully retrieve datafeeds
+        """Successfully retrieve datafeeds
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchall.return_value = CdmTest.datafeeds
         returned_feeds = self.model.read_datafeeds()
@@ -100,8 +127,11 @@ class CdmTest(TestCase):
         self.assertEqual("adobe", returned_feeds[1]["feed_type"])
 
     def test_read_datafeeds_by_id(self):
-        """
-        Successfully retrieve single datafeed
+        """Successfully retrieve single datafeed
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchone.return_value = CdmTest.datafeeds[0]
 
@@ -110,8 +140,11 @@ class CdmTest(TestCase):
         self.assertEqual("Batch", returned_feed["feed_type"])
 
     def test_read_fieldmappings(self):
-        """
-        Successfully retrieve field mappings
+        """Successfully retrieve field mappings
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchall.return_value = CdmTest.mappings
 
@@ -124,8 +157,11 @@ class CdmTest(TestCase):
         self.assertEqual(2, returned_mappings[1]["field_id"])
 
     def test_read_fieldmappings_by_id(self):
-        """
-        Successfully retrieve field mappings by id
+        """Successfully retrieve field mappings by id
+        Args:
+
+        Returns:
+            None
         """
         self.model.ctx.cursor().fetchone.return_value = CdmTest.mappings[0]
 

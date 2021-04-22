@@ -1,21 +1,18 @@
 """This script sets constants in the database"""
 
-import os
 import logging
 from enum import Enum
 
-import huxunifylib.database.constants as c
+from share import get_mongo_client
 import huxunifylib.database.data_management as dm
-from huxunifylib.database.client import DatabaseClient
+import huxunifylib.database.constants as c
 
 
-# Get details on MongoDB configuration
-HOST = os.environ.get("MONGO_DB_HOST", "localhost")
-PORT = (
-    int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
-)
-USERNAME = os.environ.get("MONGO_DB_USERNAME")
-PASSWORD = os.environ.get("MONGO_DB_PASSWORD")
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+
+# Set up the database client
+DB_CLIENT = get_mongo_client()
 
 
 class DataStorage(Enum):
@@ -441,12 +438,6 @@ CONSTANTS_LIST = [
         },
     ),
 ]
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-
-# Set up the database client
-DB_CLIENT = DatabaseClient(HOST, PORT, USERNAME, PASSWORD).connect()
 
 # Loop through the list and set constants
 for item in CONSTANTS_LIST:

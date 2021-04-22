@@ -6,4 +6,7 @@ export default {
   resourceUrl: process.env.VUE_APP_APIHOST,
   appTitle: "HUX Unified",
   endpoints: {},
+  userDetails:
+    process.env.VUE_APP_OKTA_ISSUER +
+    process.env.VUE_APP_OKTA_USER_EDIT_DETAILS,
 }
