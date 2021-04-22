@@ -1,6 +1,6 @@
 <template>
   <div class="app-nav-bar">
-    <v-app-bar app color="white" dark elevation="0">
+    <v-app-bar app color="white" dark elevation="0" pa-0>
       <v-app-bar-nav-icon
         @click.stop="toggleSidebarMenu"
         class="nav-back-burger"
@@ -33,6 +33,7 @@ export default {
 <style lang="scss">
 .v-toolbar__content {
   border-bottom: 1px solid rgb(208, 208, 206);
+  padding: 0 !important;
 }
 </style>
 <style lang="scss" scoped>
@@ -40,7 +41,7 @@ export default {
   button {
     &.v-app-bar__nav-icon {
       &.nav-back-burger {
-        margin-left: 30px !important;
+        margin-left: 20px !important;
       }
     }
   }

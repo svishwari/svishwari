@@ -19,6 +19,13 @@ Vue.component("default-Layout", DefaultLayout)
 
 Vue.config.productionTip = false
 
+Vue.filter("TitleCase", function (value) {
+  return value
+    .replace(/([A-Z])/g, (match) => ` ${match}`)
+    .replace(/^./, (match) => match.toUpperCase())
+    .trim()
+})
+
 new Vue({
   router,
   store,
