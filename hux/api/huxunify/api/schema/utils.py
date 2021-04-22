@@ -40,10 +40,10 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
 
 
 def must_not_be_blank(data) -> bool:
-    """This function validates for empty strings
+    """This function validates an empty strings
 
     Args:
-        data (object): incoming python object, could be anything
+        data (object): any object
 
     Returns:
         bool: pass or fail
@@ -54,10 +54,10 @@ def must_not_be_blank(data) -> bool:
 
 
 def validate_object_id(data) -> bool:
-    """This function validates for a valid object id
+    """This function validates an object id
 
     Args:
-        data (object): incoming python object, could be anything
+        data (object): any object
 
     Returns:
         bool: pass or fail
@@ -71,7 +71,7 @@ def validate_dest_constants(data) -> bool:
     """This function validates destination auth details
 
     Args:
-        data (object): incoming python object, could be anything
+        data (object): any object
 
     Returns:
         bool: pass or fail
