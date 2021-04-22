@@ -1,36 +1,28 @@
 <template>
-  <div class="grey lighten-5 ml-8 mr-8">
+  <div class="connections-wrap grey lighten-5 pt-10 pr-7 pb-7 pl-7">
     <v-row>
-      <v-col cols="6 pb-0">
-        <div>
-          <div class="float-left">
-            <v-icon> mdi-cloud-download-outline </v-icon>
-          </div>
-          <p class="font-weight-light float-left ml-2 mt-1">Data Sources</p>
-          <v-icon class="ml-2" color="primary"> mdi-plus-circle </v-icon>
-        </div>
+      <v-col cols="6" class="d-flex align-end">
+          <v-icon> mdi-cloud-download-outline </v-icon>
+          <span class="font-weight-light ml-2 mt-1">Data Sources</span>
+          <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
       </v-col>
-      <v-col cols="6">
-        <div>
-          <div class="float-left">
-            <v-icon> mdi-map-marker-circle </v-icon>
-          </div>
-          <p class="font-weight-light float-left ml-2 mt-1">Destinations</p>
-          <v-icon class="ml-2" color="primary"> mdi-plus-circle </v-icon>
-          <div class="float-right">
-            <p class="font-weight-light float-left ml-2 mt-1">
-              View Destinations Details
-            </p>
-          </div>
-        </div>
+      <v-col cols="6" class="align-end">
+          <v-icon> mdi-map-marker-circle </v-icon>
+          <span class="font-weight-light ml-2 mt-1">Destinations</span>
+          <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
+          <span class="font-weight-light ml-2 mt-1 float-right">
+            View Destinations Details
+            <v-icon class="mr-2" color="primary"> mdi-plus-circle </v-icon>
+          </span>
       </v-col>
 
       <v-col cols="6 pt-0">
         <v-card
-          class="text-center pt-16"
+          class="text-center pt-16 connection-sources"
           elevation="1"
           tile
           height="340px"
+          color="#ecf4f9"
         >
           <v-icon color="primary" x-large> mdi-alert-circle-outline </v-icon>
           <v-card-title class="justify-center font-weight-light">
@@ -44,7 +36,7 @@
         </v-card>
       </v-col>
       <v-col cols="6 pt-0">
-        <v-card class="mx-auto" min-height="60" tile>
+        <v-card class="mx-auto mb-2" min-height="60" tile>
           <v-card-actions class="">
             <v-list-item class="grow">
               <v-list-item-avatar color="grey darken-3" width="26" height="26" min-width="26">
@@ -71,4 +63,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.connections-wrap {
+  .add-icon {
+    cursor: pointer;
+  }
+}
+</style>
