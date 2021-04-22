@@ -64,7 +64,7 @@ def get_audiences():
         "tags": [ORCHESTRATION_TAG],
         "responses": {
             HTTPStatus.OK.value: {
-                "description": "get audience by id  ",
+                "description": "get audience by id",
                 "schema": AudienceSchema,
             }
         },
@@ -181,7 +181,9 @@ def update_audience():
             },
         ],
         "tags": [ORCHESTRATION_TAG],
-        "responses": {HTTPStatus.OK.value: {"description": "delete audience by id  "}},
+        "responses": {
+            HTTPStatus.OK.value: {"description": "delete audience by id"}
+        },
     }
 )
 def delete_audience(audience_id):
@@ -260,11 +262,15 @@ def create_audience_delivery_job(audience_id):
     ---
     """
     result = AudienceModel()
-    data_source = result.create_audience_delivery_job(audience_id, request.json)
+    data_source = result.create_audience_delivery_job(
+        audience_id, request.json
+    )
     return jsonify(audience_delivery_schema.dump(data_source)), 200
 
 
-@audience_bp.route("/<audience_id>/deliveries/<delivery_job_id>", methods=["GET"])
+@audience_bp.route(
+    "/<audience_id>/deliveries/<delivery_job_id>", methods=["GET"]
+)
 @swag_from(
     {
         "parameters": [
@@ -300,7 +306,9 @@ def get_delivery_job_by_audience_id(audience_id, delivery_job_id):
     ---
     """
     result = AudienceModel()
-    data_source = result.get_delivery_job_by_audience_id(audience_id, delivery_job_id)
+    data_source = result.get_delivery_job_by_audience_id(
+        audience_id, delivery_job_id
+    )
     return jsonify(audience_delivery_schema.dump(data_source)), 200
 
 

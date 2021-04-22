@@ -317,7 +317,9 @@ def create_delivery_platforms():
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route("/delivery-platforms/<delivery_platform_id>", methods=["PUT"])
+@advertising_bp.route(
+    "/delivery-platforms/<delivery_platform_id>", methods=["PUT"]
+)
 @swag_from(
     {
         "parameters": [
@@ -360,7 +362,9 @@ def update_delivery_platforms(delivery_platform_id):
     ---
     """
     result = AdvertisingModel()
-    data_source = result.update_delivery_platform(delivery_platform_id, request.json)
+    data_source = result.update_delivery_platform(
+        delivery_platform_id, request.json
+    )
     return json.dumps(data_source), 200
 
 
@@ -388,7 +392,9 @@ def star_delivery_platforms():
     return json.dumps(data_source), 200
 
 
-@advertising_bp.route("/delivery-platforms/<delivery_platform_id>", methods=["GET"])
+@advertising_bp.route(
+    "/delivery-platforms/<delivery_platform_id>", methods=["GET"]
+)
 @swag_from(
     {
         "parameters": [

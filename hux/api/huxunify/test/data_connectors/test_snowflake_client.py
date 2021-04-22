@@ -25,7 +25,10 @@ class TestSnowflakeClient(TestCase):
             None
         """
         self.client = SnowflakeClient(
-            account=ACCOUNT, warehouse=WAREHOUSE, username=USER, password=PASSWORD
+            account=ACCOUNT,
+            warehouse=WAREHOUSE,
+            username=USER,
+            password=PASSWORD,
         )
 
     @patch("snowflake.connector.connect")
@@ -50,7 +53,9 @@ class TestSnowflakeClient(TestCase):
             None
         """
         # apply side effect
-        connector.connect.side_effect = connector.errors.DatabaseError("DB ERROR")
+        connector.connect.side_effect = connector.errors.DatabaseError(
+            "DB ERROR"
+        )
 
         # test that base exception is raised
         with self.assertRaises(BaseException):
