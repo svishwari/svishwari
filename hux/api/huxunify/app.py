@@ -46,7 +46,6 @@ def create_app():
     flask_app.register_blueprint(dest_bp, url_prefix="/")
     flask_app.register_blueprint(user_bp, url_prefix="/")
     Swagger(flask_app)
-    _ = Swagger(flask_app)
 
     return flask_app
 

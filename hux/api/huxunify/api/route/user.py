@@ -29,7 +29,7 @@ from huxunifylib.database.user_management import (
 
 USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
-USER_ENDPOINT = "user"
+USER_ENDPOINT = "users"
 
 # setup the cdm blueprint
 user_bp = Blueprint(USER_ENDPOINT, import_name=__name__)
@@ -87,7 +87,9 @@ class UserSearch(SwaggerView):
             ) from exc
 
 
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<user_id>", "IndividualUserSearch")
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>", "IndividualUserSearch"
+)
 class IndividualUserSearch(SwaggerView):
     """
     Individual User Search Class
@@ -206,7 +208,9 @@ class Preferences(SwaggerView):
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+        response = update_user(
+            get_db_client(), user_id=user_id, update_doc=update_doc
+        )
 
         return response, HTTPStatus.OK
 
@@ -231,7 +235,9 @@ class Preferences(SwaggerView):
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+        response = update_user(
+            get_db_client(), user_id=user_id, update_doc=update_doc
+        )
 
         return response, HTTPStatus.OK
 
