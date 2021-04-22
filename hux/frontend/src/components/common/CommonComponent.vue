@@ -51,6 +51,12 @@
       variant="tertiary"
       v-bind:isTile="true"
     ></huxButton>
+    <huxButton
+      ButtonText="Disabled"
+      variant="tertiary"
+      v-bind:isTile="true"
+      v-bind:isDisabled="true"
+    ></huxButton>
     <br />
 
     <v-subheader> Select Dropdown </v-subheader>

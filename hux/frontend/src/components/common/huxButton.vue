@@ -1,11 +1,9 @@
 <template>
-  <div>
     <v-btn :disabled="isDisabled" :outlined="isOutlined" :tile="isTile" :color="variant"  class="ma-2" :class="buttonSize">
       <v-icon v-show="iconPosition == 'left'" dark class="mr-1"> {{ icon }} </v-icon>
       {{ ButtonText }}
       <v-icon v-show="iconPosition == 'right'" dark class="mr-1">  {{ icon }} </v-icon>
     </v-btn>
-  </div>
 </template>
 
 <script>
@@ -36,7 +34,8 @@ export default {
       type: Boolean
     },
     isDisabled: {
-      type: Boolean
+      type: Boolean,
+      default: false,
     },
     isTile: {
       type: Boolean,

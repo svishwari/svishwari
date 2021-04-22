@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <label>
+      <label class="ml-2">
         {{ labelText }}
         <v-icon color="primary"> {{ icon }} </v-icon>
       </label>
@@ -10,8 +10,13 @@
         @input="input($event)"
         @change="change($event)"
         v-model="TextFieldValue"
+        :append-icon="appendIcon"
+        :rules="rules"
+        :type="InputType"
+        @click:append="$emit('clickAppend')"
         single-line
         outlined
+        :background-color="backgroundColor"
       >
       </v-text-field>
     </v-col>
@@ -42,11 +47,29 @@ export default {
       required: false,
       default: null,
     },
+    appendIcon: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    InputType: {
+      type: String,
+      required: false,
+      default: "text",
+    },
+    backgroundColor: {
+      type: String,
+      required: false,
+      default: "white",
+    },
+    rules: {
+      type: Array,
+      required: false,
+    },
   },
 
   methods: {
-    change: function (value) {
-    },
+    change: function (value) {},
     input: function (value) {
       this.$emit("input", this.TextFieldValue)
     },
