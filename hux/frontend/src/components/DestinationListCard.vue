@@ -1,6 +1,6 @@
 <template>
   <v-card class="card-wrapper" height="60" tile>
-    <v-card-actions class="">
+    <v-card-actions>
       <v-list-item class="grow">
         <v-list-item-avatar
           color="grey darken-3"
