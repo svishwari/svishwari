@@ -68,11 +68,11 @@ def validate_object_id(data: AnyStr) -> bool:
         raise ValidationError(api_c.INVALID_OBJECT_ID)
 
 
-def validate_dest_constants(data: AnyStr) -> bool:
+def validate_dest_constants(data: dict) -> bool:
     """This function validates destination auth details.
 
     Args:
-        data (AnyStr): any string
+        data (dict): input dict
 
     Returns:
         bool: pass or fail
