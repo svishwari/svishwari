@@ -47,7 +47,7 @@
       v-bind:isTile="true"
     ></huxButton>
     <huxButton
-      ButtonText="Cancel & Return"
+      ButtonText="Cancel &amp; Return"
       variant="tertiary"
       v-bind:isTile="true"
     ></huxButton>
