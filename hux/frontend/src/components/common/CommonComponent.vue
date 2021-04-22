@@ -47,7 +47,7 @@
     <v-divider></v-divider>
     <br />
     <button @click="drawer = !drawer">Toggle</button>
-    <drawer v-model="drawer" @onClose="onclose">
+    <drawer v-model="drawer">
       <template v-slot:header-left>
         <h2>Heading</h2>
       </template>
@@ -267,11 +267,6 @@ export default {
     }
   },
   mounted() {},
-  methods: {
-    onclose() {
-      // console.log("closed")
-    },
-  },
 }
 </script>
 <style lang="scss" scoped>
