@@ -79,7 +79,7 @@
     <v-subheader> Page Header </v-subheader>
     <v-divider></v-divider>
     <PageHeader title="Welcome back, User!" icon="mdi-bullhorn-outline">
-      <template slot="description">
+      <template v-slot:description>
         <div>
           Hux is here to help you make better, faster decisions to improve your
           Customer Experiences.
@@ -98,6 +98,29 @@
       height="250px"
       hasCheckBox
     ></hux-table>
+
+    <v-subheader> Drawer</v-subheader>
+    <v-divider></v-divider>
+    <br />
+    <button @click="drawer = !drawer">Toggle</button>
+    <drawer v-model="drawer">
+      <template v-slot:header-left>
+        <h2>Heading</h2>
+      </template>
+      <template v-slot:header-right>
+        <v-icon color="black"> mdi-dots-vertical </v-icon>
+      </template>
+      <template v-slot:default>
+        <Button />
+      </template>
+      <template v-slot:footer-left>
+        <h2>Heading</h2>
+      </template>
+      <template v-slot:footer-right>
+        <v-icon color="black"> mdi-dots-vertical </v-icon>
+      </template>
+    </drawer>
+    <br />
   </div>
 </template>
 
@@ -108,6 +131,7 @@ import HuxTable from "@/components/common/huxTable.vue"
 import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
+import Drawer from "@/components/common/Drawer"
 
 export default {
   name: "CommonComponent",
@@ -118,6 +142,7 @@ export default {
     DropdownMenu,
     PageHeader,
     HuxTable,
+    Drawer,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -306,6 +331,8 @@ export default {
           createdBy: "RG",
         },
       ],
+
+      drawer: false,
     }
   },
   mounted() {},
