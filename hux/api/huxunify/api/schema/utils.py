@@ -2,6 +2,7 @@
 purpose of this file is to house schema utilities
 """
 import uuid
+from typing import AnyStr
 from http import HTTPStatus
 from datetime import datetime, timedelta
 import random
@@ -39,11 +40,11 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     }
 
 
-def must_not_be_blank(data) -> bool:
+def must_not_be_blank(data: AnyStr) -> bool:
     """This function validates an empty strings
 
     Args:
-        data (object): any object
+        data (AnyStr): any string
 
     Returns:
         bool: pass or fail
@@ -53,11 +54,11 @@ def must_not_be_blank(data) -> bool:
         raise ValidationError(api_c.EMPTY_OBJECT_ERROR_MESSAGE)
 
 
-def validate_object_id(data) -> bool:
+def validate_object_id(data: AnyStr) -> bool:
     """This function validates an object id
 
     Args:
-        data (object): any object
+        data (AnyStr): any string
 
     Returns:
         bool: pass or fail
@@ -67,11 +68,11 @@ def validate_object_id(data) -> bool:
         raise ValidationError(api_c.INVALID_OBJECT_ID)
 
 
-def validate_dest_constants(data) -> bool:
+def validate_dest_constants(data: AnyStr) -> bool:
     """This function validates destination auth details
 
     Args:
-        data (object): any object
+        data (AnyStr): any string
 
     Returns:
         bool: pass or fail
