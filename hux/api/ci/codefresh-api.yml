@@ -24,7 +24,7 @@ steps:
         title: Set build variables
         image: alpine
         commands:
-          - cf_export BUILD_NAME=hux-unified-api
+          - cf_export BUILD_NAME=unified-api
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
           - cf_export FILE_NAME=values-main-use1-hux-unified-dev1.yaml
 
@@ -70,7 +70,7 @@ steps:
     type: "build"
     image_name: '${{BUILD_NAME}}'
     working_directory: '${{CF_REPO_NAME}}'
-    dockerfile: 'hux/Dockerfile'
+    dockerfile: 'hux/api/Dockerfile'
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
@@ -120,6 +120,10 @@ steps:
       BUILD_NUMBER: '${{DOCKER_TAG}}'
       JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
       BUILD_TAG: '${{DOCKER_TAG}}'
+    when:
+      branch:
+        only:
+          - main
 
   deployment:
     stage: argo-deploy
@@ -135,6 +139,6 @@ steps:
         COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
         COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
     when:
-      condition:
-        all:
-          whenVarIsMissing: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'
+      branch:
+        only:
+          - main

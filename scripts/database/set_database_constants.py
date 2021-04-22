@@ -1,26 +1,82 @@
 """This script sets constants in the database"""
 
-import os
 import logging
+from enum import Enum
 
-import huxunifylib.database.constants as c
+from share import get_mongo_client
 import huxunifylib.database.data_management as dm
-from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.general_constants import (
-    DataStorage,
-    DataFormat,
-)
-from huxunifylib.database.customer_data_transformer_constants import (
-    TransformerNames as t,
-)
+import huxunifylib.database.constants as c
 
-# Get details on MongoDB configuration
-HOST = os.environ.get("MONGO_DB_HOST", "localhost")
-PORT = (
-    int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
-)
-USERNAME = os.environ.get("MONGO_DB_USERNAME")
-PASSWORD = os.environ.get("MONGO_DB_PASSWORD")
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+
+# Set up the database client
+DB_CLIENT = get_mongo_client()
+
+
+class DataStorage(Enum):
+    """Data storage definitions."""
+
+    S3 = object()
+    MONGODB = object()
+
+
+class DataFormat(Enum):
+    """Data format definitions and their file extentions."""
+
+    CSV = "csv"
+    TSV = "tsv"
+    JSON = "json"
+
+
+class TransformerNames(Enum):
+    """Transformer names."""
+
+    PASS_THROUGH = object()
+    PASS_THROUGH_HASHED = object()
+
+    STRIP_SPACE_LOWER_CASE = object()
+    STRIP_SPACE_LOWER_CASE_HASHED = object()
+
+    STRIP_SPACE_UPPER_CASE = object()
+    STRIP_SPACE_UPPER_CASE_HASHED = object()
+
+    FIRST_LAST_NAME = object()
+    FIRST_NAME_INITIAL = object()
+
+    CUSTOMER_ID = object()
+
+    DOB_TO_AGE = object()
+    DOB_YEAR_TO_AGE = object()
+
+    DOB_TO_DOB_DAY = object()
+    DOB_TO_DOB_MONTH = object()
+    DOB_TO_DOB_YEAR = object()
+
+    DOB_DAY = object()
+    DOB_MONTH = object()
+    DOB_YEAR = object()
+
+    FACEBOOK_CITY = object()
+    FACEBOOK_COUNTRY_CODE = object()
+    FACEBOOK_GENDER = object()
+    FACEBOOK_PHONE_NUMBER = object()
+    FACEBOOK_POSTAL_CODE = object()
+    FACEBOOK_STATE_OR_PROVINCE = object()
+
+    GOOGLE_PHONE_NUMBER = object()
+
+    GENDER = object()
+
+    MOBILE_DEVICE_ID = object()
+    POSTAL_CODE = object()
+    STATE_OR_PROVINCE = object()
+
+    TO_INTEGER = object()
+    TO_FLOAT = object()
+    TO_BOOLEAN = object()
+
 
 # Set the list of constants and values
 CONSTANTS_LIST = [
@@ -103,144 +159,160 @@ CONSTANTS_LIST = [
         {
             c.S_TYPE_CITY: [
                 {
-                    c.TRANSFORMER: t.PASS_THROUGH.name,
+                    c.TRANSFORMER: TransformerNames.PASS_THROUGH.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_CITY,
                 },
                 {
-                    c.TRANSFORMER: t.STRIP_SPACE_LOWER_CASE_HASHED.name,
+                    c.TRANSFORMER: TransformerNames.STRIP_SPACE_LOWER_CASE_HASHED.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_CITY,
                 },
             ],
             c.S_TYPE_COUNTRY_CODE: [
                 {
-                    c.TRANSFORMER: t.STRIP_SPACE_UPPER_CASE.name,
+                    c.TRANSFORMER: TransformerNames.STRIP_SPACE_UPPER_CASE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_COUNTRY_CODE,
                 },
                 {
-                    c.TRANSFORMER: t.STRIP_SPACE_UPPER_CASE_HASHED.name,
+                    c.TRANSFORMER: TransformerNames.STRIP_SPACE_UPPER_CASE_HASHED.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_COUNTRY_CODE,
                 },
             ],
             c.S_TYPE_DOB: [
                 {
-                    c.TRANSFORMER: t.DOB_TO_AGE.name,
+                    c.TRANSFORMER: TransformerNames.DOB_TO_AGE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_AGE,
                 },
                 {
-                    c.TRANSFORMER: t.DOB_TO_DOB_DAY.name,
+                    c.TRANSFORMER: TransformerNames.DOB_TO_DOB_DAY.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_DOB_DAY,
                 },
                 {
-                    c.TRANSFORMER: t.DOB_TO_DOB_MONTH.name,
+                    c.TRANSFORMER: TransformerNames.DOB_TO_DOB_MONTH.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_DOB_MONTH,
                 },
                 {
-                    c.TRANSFORMER: t.DOB_TO_DOB_YEAR.name,
+                    c.TRANSFORMER: TransformerNames.DOB_TO_DOB_YEAR.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_DOB_YEAR,
                 },
             ],
             c.S_TYPE_DOB_DAY: [
                 {
-                    c.TRANSFORMER: t.DOB_DAY.name,
+                    c.TRANSFORMER: TransformerNames.DOB_DAY.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_DOB_DAY,
                 },
             ],
             c.S_TYPE_DOB_MONTH: [
                 {
-                    c.TRANSFORMER: t.DOB_MONTH.name,
+                    c.TRANSFORMER: TransformerNames.DOB_MONTH.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_DOB_MONTH,
                 },
             ],
             c.S_TYPE_DOB_YEAR: [
                 {
-                    c.TRANSFORMER: t.DOB_YEAR.name,
+                    c.TRANSFORMER: TransformerNames.DOB_YEAR.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_DOB_YEAR,
                 },
                 {
-                    c.TRANSFORMER: t.DOB_YEAR_TO_AGE.name,
+                    c.TRANSFORMER: TransformerNames.DOB_YEAR_TO_AGE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_AGE,
                 },
             ],
             c.S_TYPE_EMAIL: [
                 {
-                    c.TRANSFORMER: t.STRIP_SPACE_LOWER_CASE_HASHED.name,
+                    c.TRANSFORMER: TransformerNames.STRIP_SPACE_LOWER_CASE_HASHED.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_EMAIL,
                 },
             ],
             c.S_TYPE_FIRST_NAME: [
                 {
-                    c.TRANSFORMER: t.FIRST_LAST_NAME.name,
+                    c.TRANSFORMER: TransformerNames.FIRST_LAST_NAME.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FIRST_NAME,
                 },
             ],
             c.S_TYPE_FIRST_NAME_INITIAL: [
                 {
-                    c.TRANSFORMER: t.FIRST_NAME_INITIAL.name,
+                    c.TRANSFORMER: TransformerNames.FIRST_NAME_INITIAL.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FIRST_NAME_INITIAL,
                 },
             ],
             c.S_TYPE_GENDER: [
                 {
-                    c.TRANSFORMER: t.GENDER.name,
+                    c.TRANSFORMER: TransformerNames.GENDER.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_GENDER,
                 },
                 {
-                    c.TRANSFORMER: t.FACEBOOK_GENDER.name,
+                    c.TRANSFORMER: TransformerNames.FACEBOOK_GENDER.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_GENDER,
                 },
             ],
             c.S_TYPE_LAST_NAME: [
                 {
-                    c.TRANSFORMER: t.FIRST_LAST_NAME.name,
+                    c.TRANSFORMER: TransformerNames.FIRST_LAST_NAME.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_LAST_NAME,
                 },
             ],
             c.S_TYPE_MOBILE_DEVICE_ID: [
                 {
-                    c.TRANSFORMER: t.STRIP_SPACE_LOWER_CASE.name,
+                    c.TRANSFORMER: TransformerNames.STRIP_SPACE_LOWER_CASE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_MOBILE_DEVICE_ID,
                 },
             ],
             c.S_TYPE_PHONE_NUMBER: [
                 {
-                    c.TRANSFORMER: t.FACEBOOK_PHONE_NUMBER.name,
+                    c.TRANSFORMER: TransformerNames.FACEBOOK_PHONE_NUMBER.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_PHONE_NUMBER,
                 },
                 {
-                    c.TRANSFORMER: t.GOOGLE_PHONE_NUMBER.name,
+                    c.TRANSFORMER: TransformerNames.GOOGLE_PHONE_NUMBER.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_GOOGLE_PHONE_NUMBER,
                 },
             ],
             c.S_TYPE_POSTAL_CODE: [
                 {
-                    c.TRANSFORMER: t.POSTAL_CODE.name,
+                    c.TRANSFORMER: TransformerNames.POSTAL_CODE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_POSTAL_CODE,
                 },
                 {
-                    c.TRANSFORMER: t.FACEBOOK_POSTAL_CODE.name,
+                    c.TRANSFORMER: TransformerNames.FACEBOOK_POSTAL_CODE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_POSTAL_CODE,
                 },
             ],
             c.S_TYPE_STATE_OR_PROVINCE: [
                 {
-                    c.TRANSFORMER: t.STATE_OR_PROVINCE.name,
+                    c.TRANSFORMER: TransformerNames.STATE_OR_PROVINCE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_STATE_OR_PROVINCE,
                 },
                 {
-                    c.TRANSFORMER: t.FACEBOOK_STATE_OR_PROVINCE.name,
+                    c.TRANSFORMER: TransformerNames.FACEBOOK_STATE_OR_PROVINCE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_STATE_OR_PROVINCE,
                 },
             ],
             c.S_TYPE_CUSTOMER_ID: [
                 {
-                    c.TRANSFORMER: t.CUSTOMER_ID.name,
+                    c.TRANSFORMER: TransformerNames.CUSTOMER_ID.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_CUSTOMER_ID,
                 },
             ],
-            c.CUSTOM_TYPE_BOOL: [{c.TRANSFORMER: t.TO_BOOLEAN.name,}],
-            c.CUSTOM_TYPE_CAT: [{c.TRANSFORMER: t.PASS_THROUGH.name,}],
-            c.CUSTOM_TYPE_INT: [{c.TRANSFORMER: t.TO_INTEGER.name,}],
-            c.CUSTOM_TYPE_FLOAT: [{c.TRANSFORMER: t.TO_FLOAT.name,}],
+            c.CUSTOM_TYPE_BOOL: [
+                {
+                    c.TRANSFORMER: TransformerNames.TO_BOOLEAN.name,
+                }
+            ],
+            c.CUSTOM_TYPE_CAT: [
+                {
+                    c.TRANSFORMER: TransformerNames.PASS_THROUGH.name,
+                }
+            ],
+            c.CUSTOM_TYPE_INT: [
+                {
+                    c.TRANSFORMER: TransformerNames.TO_INTEGER.name,
+                }
+            ],
+            c.CUSTOM_TYPE_FLOAT: [
+                {
+                    c.TRANSFORMER: TransformerNames.TO_FLOAT.name,
+                }
+            ],
         },
     ),
     (
@@ -366,12 +438,6 @@ CONSTANTS_LIST = [
         },
     ),
 ]
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-
-# Set up the database client
-DB_CLIENT = DatabaseClient(HOST, PORT, USERNAME, PASSWORD).connect()
 
 # Loop through the list and set constants
 for item in CONSTANTS_LIST:

@@ -11,21 +11,17 @@
    MONGO_DB_PASSWORD: The password of the database.
 """
 
-import os
 import logging
-
 from pymongo import ASCENDING
 
+from share import get_mongo_client
 import huxunifylib.database.constants as c
-from huxunifylib.database.client import DatabaseClient
 
-# Get details on MongoDB configuration.
-HOST = os.environ.get("MONGO_DB_HOST")
-PORT = (
-    int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
-)
-USERNAME = os.environ.get("MONGO_DB_USERNAME")
-PASSWORD = os.environ.get("MONGO_DB_PASSWORD")
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+
+# Set up the database client
+DB_CLIENT = get_mongo_client()
 
 # Set the list of indexes; each element is a tuple (database name,
 # collection name, and list of field/order pairs to be indexed)
@@ -70,13 +66,12 @@ INDEX_LIST = [
         c.PERFORMANCE_METRICS_COLLECTION,
         [(c.DELIVERY_JOB_ID, ASCENDING)],
     ),
+    (
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        [(c.OKTA_ID, ASCENDING)],
+    ),
 ]
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-
-# Set up the database client
-DB_CLIENT = DatabaseClient(HOST, PORT, USERNAME, PASSWORD).connect()
 
 # Get database
 DM_DB = DB_CLIENT[c.DATA_MANAGEMENT_DATABASE]
@@ -113,6 +108,5 @@ logging.info(
     c.JOB_ID,
     collection.full_name,
 )
-
 
 logging.info("Done with creating indexes!")

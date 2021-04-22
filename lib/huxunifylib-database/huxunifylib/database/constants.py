@@ -6,6 +6,7 @@ CONNECT_RETRY_INTERVAL = 1
 DUPLICATE_ERR_CODE = 11000
 FAVORITE = "favorite"
 ENABLED = "enabled"
+OKTA_ID = "okta_id"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
@@ -20,6 +21,7 @@ DELIVERY_JOBS_COLLECTION = "delivery_jobs"
 DELIVERY_PLATFORM_COLLECTION = "delivery_platforms"
 LOOKALIKE_AUDIENCE_COLLECTION = "lookalike_audiences"
 PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
+USER_COLLECTION = "users"
 
 CONSTANT_NAME = "constant"
 CONSTANT_VALUE = "value"
@@ -49,6 +51,8 @@ STATUS_MESSAGE = "status_message"
 RECENT_INGESTION_JOB_STATUS = "recent_ingestion_job_status"
 CREATE_TIME = "create_time"
 UPDATE_TIME = "update_time"
+CREATED_BY = "created_by"
+UPDATED_BY = "updated_by"
 JOB_START_TIME = "start_time"
 JOB_END_TIME = "end_time"
 JOB_ID = "ingestion_job_id"
@@ -139,11 +143,32 @@ DELIVERY_PLATFORM_STATUS = "connection_status"
 DELIVERY_PLATFORM_FACEBOOK = "Facebook"
 DELIVERY_PLATFORM_AMAZON = "Amazon"
 DELIVERY_PLATFORM_GOOGLE = "Google"
+DELIVERY_PLATFORM_SFMC = "SFMC"
 
 LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
 LOOKALIKE_AUD_COUNTRY = "country"
 LOOKALIKE_SOURCE_AUD_ID = "source_audience_id"
+
+USER_ROLE = "role"
+USER_ID = "user_id"
+USER_ORGANIZATION = "organization"
+USER_SUBSCRIPTION = "subscription"
+USER_FAVORITES = "favorites"
+USER_DISPLAY_NAME = "display_name"
+USER_LAST_LOGIN = "last_login"
+USER_PROFILE_PHOTO = "profile_photo"
+USER_LOGIN_COUNT = "login_count"
+USER_DASHBOARD_CONFIGURATION = "dashboard_configuration"
+USER_ROLE_ADMIN = "admin"
+USER_ROLE_EDITOR = "editor"
+USER_ROLE_VIEWER = "viewer"
+USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
+
+CAMPAIGNS = "campaigns"
+DESTINATIONS = "destinations"
+AUDIENCES = "audiences"
+FAVORITE_COMPONENTS = [CAMPAIGNS, DESTINATIONS, AUDIENCES]
 
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
@@ -177,3 +202,5 @@ CUSTOM_TYPE_FIELD_MAPPING = "custom_field_mapping"
 
 FIELD_MAP_ORDER_QUANTITY_12M = "order_quantity_12m"
 FIELD_MAP_ORDER_QUANTITY_13M_24M = "order_quantity_13m_24m"
+
+EMAIL_REGEX = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"

@@ -4,6 +4,7 @@
 import logging
 import datetime
 from operator import itemgetter
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -24,6 +25,7 @@ def set_delivery_platform(
     delivery_platform_type: str,
     name: str,
     authentication_details: dict,
+    user_id: ObjectId = None,
 ) -> dict:
     """A function to create a delivery platform.
 
@@ -32,6 +34,7 @@ def set_delivery_platform(
         delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
         authentication_details (dict): A dict containing delivery platform authentication details.
+        user_id (ObjectId): User id of user creating delivery platform. This is Optional.
 
     Returns:
         dict: MongoDB audience doc.
@@ -41,6 +44,7 @@ def set_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -75,6 +79,17 @@ def set_delivery_platform(
         c.FAVORITE: False,
     }
 
+    # Add user object only if it is available
+    if ObjectId.is_valid(user_id) and name_exists(
+        database,
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        c.OKTA_ID,
+        user_id,
+    ):
+        doc[c.CREATED_BY] = user_id
+        doc[c.UPDATED_BY] = user_id
+
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
@@ -106,18 +121,17 @@ def get_delivery_platform(
         dict: Delivery platform configuration.
     """
 
-    doc = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        doc = collection.find_one(
-            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: 0}
+        return collection.find_one(
+            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: True}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(
@@ -386,6 +400,7 @@ def set_platform_type(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -445,6 +460,7 @@ def update_delivery_platform(
     name: str = None,
     delivery_platform_type: str = None,
     authentication_details: dict = None,
+    user_id: ObjectId = None,
 ) -> dict:
     """A function to update delivery platform configuration.
 
@@ -454,6 +470,7 @@ def update_delivery_platform(
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
+        user_id (ObjectId): User id of user updating delivery platform. This is Optional.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -463,6 +480,7 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_FACEBOOK,
         c.DELIVERY_PLATFORM_AMAZON,
         c.DELIVERY_PLATFORM_GOOGLE,
+        c.DELIVERY_PLATFORM_SFMC,
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -490,6 +508,16 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_AUTH: authentication_details,
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
+
+    # Add user object only if it is available
+    if ObjectId.is_valid(user_id) and name_exists(
+        database,
+        c.DATA_MANAGEMENT_DATABASE,
+        c.USER_COLLECTION,
+        c.OKTA_ID,
+        user_id,
+    ):
+        update_doc[c.UPDATED_BY] = user_id
 
     for item in list(update_doc):
         if update_doc[item] is None:

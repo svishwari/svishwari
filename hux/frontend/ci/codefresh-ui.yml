@@ -20,7 +20,7 @@ steps:
         title: Set build variables
         image: alpine
         commands:
-          - cf_export BUILD_NAME=hux-unified-ui
+          - cf_export BUILD_NAME=unified-ui
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
           - cf_export SUB_REPO=hux/frontend
           - cf_export PORT=80
@@ -93,9 +93,9 @@ steps:
       JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
       BUILD_TAG: '${{CF_BUILD_NUMBER}}'
     when:
-      condition:
-        all:
-          whenVarIsMissing: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'
+      branch:
+        only:
+          - main
 
   deployment:
     stage: argo-deploy
@@ -111,6 +111,6 @@ steps:
         COMMIT_MESSAGE="${{CF_COMMIT_MESSAGE}}" --variable
         COMMIT_AUTHOR="${{CF_COMMIT_AUTHOR}}"
     when:
-      condition:
-        all:
-          whenVarIsMissing: 'includes("${{CF_PULL_REQUEST_TARGET}}", "{{CF_PULL_REQUEST_TARGET}}") == true'
+      branch:
+        only:
+          - main

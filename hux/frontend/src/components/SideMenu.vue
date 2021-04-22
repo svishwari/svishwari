@@ -5,6 +5,7 @@
     floating
     :permanent="sidebarMenu"
     :mini-variant.sync="mini"
+    mini-variant-width="90"
     width="220"
     class="side-nav-bar primary"
   >
@@ -105,11 +106,6 @@ export default {
     buttonText() {
       return !this.$vuetify.theme.dark ? "Go Dark" : "Go Light"
     },
-  },
-  mounted() {
-    window.addEventListener("load", () => {
-      document.getElementsByClassName("loader-overlay")[0].remove()
-    })
   },
   data: () => ({
     sidebarMenu: true,

@@ -41,8 +41,8 @@
         },
         { 
           "icon": "mdi-account-search-outline", 
-          "title": "Indentity", 
-          "link": "/indentity"
+          "title": "Identity", 
+          "link": "/identity"
         },
         { 
           "icon": "mdi-account-details-outline", 
