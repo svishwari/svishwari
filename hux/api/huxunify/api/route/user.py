@@ -32,7 +32,7 @@ USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "user"
 
 # setup the cdm blueprint
-user_bp = Blueprint("user", import_name=__name__)
+user_bp = Blueprint(USER_ENDPOINT, import_name=__name__)
 
 
 def get_db_client() -> MongoClient:
@@ -87,9 +87,7 @@ class UserSearch(SwaggerView):
             ) from exc
 
 
-@add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>", "IndividualUserSearch"
-)
+@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<user_id>", "IndividualUserSearch")
 class IndividualUserSearch(SwaggerView):
     """
     Individual User Search Class
@@ -133,8 +131,8 @@ class IndividualUserSearch(SwaggerView):
         try:
             valid_id = (
                 UserSchema()
-                .load({"user_id": user_id}, partial=True)
-                .get("user_id")
+                .load({db_constants.USER_ID: user_id}, partial=True)
+                .get(db_constants.USER_ID)
             )
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
@@ -208,9 +206,7 @@ class Preferences(SwaggerView):
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(
-            get_db_client(), user_id=user_id, update_doc=update_doc
-        )
+        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
 
         return response, HTTPStatus.OK
 
@@ -235,9 +231,7 @@ class Preferences(SwaggerView):
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(
-            get_db_client(), user_id=user_id, update_doc=update_doc
-        )
+        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
 
         return response, HTTPStatus.OK
 
@@ -274,9 +268,9 @@ class UserFavorite(SwaggerView):
 
     parameters = [
         {
-            "user_id": "user_id",
-            "component_name": "component name",
-            "component_id": "id of favorite component",
+            db_constants.USER_ID: db_constants.USER_ID,
+            db_constants.COMPONENT_NAME: "component name",
+            db_constants.COMPONENT_ID: "id of favorite component",
         }
     ]
     responses = {
