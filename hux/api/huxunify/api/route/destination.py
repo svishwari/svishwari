@@ -11,6 +11,7 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
+from marshmallow import ValidationError
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -181,7 +182,6 @@ class DestinationPostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    @marshal_with(DestinationPostSchema)
     def post(self) -> Tuple[dict, int]:
         """Creates a new destination and tests the connection.
 
@@ -193,8 +193,10 @@ class DestinationPostView(SwaggerView):
         # TODO - implement after HUS-254 is done to grab user/okta_id
         user_id = ObjectId()
 
-        destinations_post = DestinationPostSchema()
-        body = destinations_post.load(request.get_json())
+        try:
+            body = DestinationPostSchema().load(request.get_json())
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         destination_id = destination_management.set_delivery_platform(
             database=get_db_client(),
@@ -299,7 +301,12 @@ class DestinationPutView(SwaggerView):
         user_id = ObjectId()
 
         # load into the schema object
-        body = DestinationPutSchema().load(request.get_json(), partial=True)
+        try:
+            body = DestinationPutSchema().load(
+                request.get_json(), partial=True
+            )
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
@@ -517,22 +524,4 @@ class DestinationsConstants(SwaggerView):
             Tuple[dict, int]: dict of destination constants, HTTP status.
 
         """
-
-        auth_details = {
-            db_constants.DELIVERY_PLATFORM_FACEBOOK: {
-                api_c.FACEBOOK_AD_ACCOUNT_ID: "Ad Account ID",
-                api_c.FACEBOOK_APP_ID: "Facebook App ID",
-                api_c.FACEBOOK_APP_SECRET: "App Secret",
-                api_c.FACEBOOK_ACCESS_TOKEN: "Access Token",
-            },
-            db_constants.DELIVERY_PLATFORM_SFMC: {
-                api_c.SFMC_CLIENT_ID: "Client ID",
-                api_c.SFMC_ACCOUNT_ID: "Account ID",
-                api_c.SFMC_CLIENT_SECRET: "Client Secret",
-                api_c.SFMC_AUTH_BASE_URI: "Auth Base URI",
-                api_c.SFMC_REST_BASE_URI: "REST Base URI",
-                api_c.SFMC_SOAP_BASE_URI: "SOAP Base URI",
-            },
-        }
-
-        return auth_details, HTTPStatus.OK
+        return api_c.DESTINATION_CONSTANTS, HTTPStatus.OK

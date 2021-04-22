@@ -9,6 +9,11 @@ from marshmallow.validate import OneOf
 from bson import ObjectId
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
+from huxunify.api.schema.utils import (
+    must_not_be_blank,
+    validate_object_id,
+    validate_dest_constants,
+)
 
 
 class DestinationGetSchema(Schema):
@@ -20,6 +25,7 @@ class DestinationGetSchema(Schema):
         attribute=api_c.DESTINATION_ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
+        validate=validate_object_id,
     )
     destination_type = fields.String(
         attribute=api_c.DESTINATION_TYPE, example="Facebook"
@@ -94,9 +100,13 @@ class DestinationPostSchema(DestinationPutSchema):
     Destination post schema class
     """
 
-    destination_type = fields.String(required=True)
-    destination_name = fields.String(required=True)
-    authentication_details = fields.Field(required=True)
+    destination_type = fields.String(validate=must_not_be_blank)
+    destination_name = fields.String(validate=must_not_be_blank)
+    authentication_details = fields.Dict(
+        keys=fields.Str(),
+        values=fields.Str(),
+        validate=validate_dest_constants,
+    )
 
 
 class FacebookAuthConstants(Schema):
@@ -104,10 +114,16 @@ class FacebookAuthConstants(Schema):
     Facebook Auth constants schema class
     """
 
-    facebook_ad_account_id = fields.String()
-    facebook_app_id = fields.String()
-    facebook_app_secret = fields.String()
-    facebook_access_token = fields.String()
+    facebook_ad_account_id = fields.String(
+        required=True, validate=must_not_be_blank
+    )
+    facebook_app_id = fields.String(required=True, validate=must_not_be_blank)
+    facebook_app_secret = fields.String(
+        required=True, validate=must_not_be_blank
+    )
+    facebook_access_token = fields.String(
+        required=True, validate=must_not_be_blank
+    )
 
 
 class SFMCAuthConstants(Schema):
@@ -115,11 +131,20 @@ class SFMCAuthConstants(Schema):
     SFMC Auth constants schema class
     """
 
-    sfmc_account_id = fields.String()
-    sfmc_app_id = fields.String()
-    sfmc_app_secret = fields.String()
-    sfmc_rest_uri = fields.String()
-    sfmc_soap_uri = fields.String()
+    sfmc_client_id = fields.String(required=True, validate=must_not_be_blank)
+    sfmc_account_id = fields.String(required=True, validate=must_not_be_blank)
+    sfmc_client_secret = fields.String(
+        required=True, validate=must_not_be_blank
+    )
+    sfmc_auth_base_uri = fields.String(
+        required=True, validate=must_not_be_blank
+    )
+    sfmc_rest_base_uri = fields.String(
+        required=True, validate=must_not_be_blank
+    )
+    sfmc_soap_base_uri = fields.String(
+        required=True, validate=must_not_be_blank
+    )
 
 
 class DestinationConstants(Schema):

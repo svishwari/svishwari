@@ -22,20 +22,6 @@ class ParameterStore:
     """Interact with AWS Parameter Store."""
 
     @staticmethod
-    def get_ssm_client() -> boto3.client:
-        """Get the SSM client
-
-        Args:
-        Returns:
-            boto3.client: a boto3 client.
-        """
-        return boto3.client(
-            SSM_NAME,
-            region_name=AWS_REGION,
-            endpoint_url=AWS_SERVICE_URL,
-        )
-
-    @staticmethod
     def store_secret(
         name: str,
         secret: str,
@@ -53,15 +39,11 @@ class ParameterStore:
             dict: boto3 response.
         """
         try:
-            return (
-                ParameterStore()
-                .get_ssm_client()
-                .put_parameter(
-                    Name=f"{path}/{name}" if path else name,
-                    Value=secret,
-                    Type="SecureString",
-                    Overwrite=overwrite,
-                )
+            return get_aws_client(SSM_NAME).put_parameter(
+                Name=f"{path}/{name}" if path else name,
+                Value=secret,
+                Type="SecureString",
+                Overwrite=overwrite,
             )
         except botocore.exceptions.ClientError as error:
             raise error
@@ -82,8 +64,7 @@ class ParameterStore:
         """
         try:
             return (
-                ParameterStore()
-                .get_ssm_client()
+                get_aws_client(SSM_NAME)
                 .get_parameter(
                     Name=f"{path}/{name}" if path else name,
                     WithDecryption=True,
@@ -148,7 +129,7 @@ def get_aws_client(
     aws_access_key=AWS_ACCESS_KEY_ID,
     aws_secret_key=AWS_SECRET_ACCESS_KEY,
     region_name=AWS_REGION,
-):
+) -> boto3.client:
     """
     quick and dirty function for getting most AWS clients
     :param client:
