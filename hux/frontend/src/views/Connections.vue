@@ -29,7 +29,6 @@
         <v-card
           class="text-center pt-16"
           elevation="1"
-          min-width="551px"
           tile
           height="340px"
         >
@@ -45,7 +44,7 @@
         </v-card>
       </v-col>
       <v-col cols="6 pt-0">
-        <v-card class="mx-auto" min-width="550" min-height="60" tile>
+        <v-card class="mx-auto" min-height="60" tile>
           <v-card-actions class="">
             <v-list-item class="grow">
               <v-list-item-avatar color="grey darken-3" width="26" height="26" min-width="26">
