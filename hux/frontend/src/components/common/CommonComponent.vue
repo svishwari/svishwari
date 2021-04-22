@@ -114,9 +114,6 @@ export default {
     HuxTable,
   },
   methods: {
-    monthChanged() {
-      console.log("Month changed. Selected ID: ", this.selectedMonth)
-    },
     onupdatelabelText(newValue) {
       this.labelText = newValue
     },
