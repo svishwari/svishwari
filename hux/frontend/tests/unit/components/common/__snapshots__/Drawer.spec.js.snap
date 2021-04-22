@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Drawer Drawer calls function on close 1`] = `
+<nav class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--floating v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light" style="height: 100vh; top: 0px; transform: translateX(0%); width: 600px;">
+  <div class="v-navigation-drawer__content">
+    <div class="d-flex justify-space-between align-center px-6 py-5 v-card v-sheet theme--light elevation-5 rounded-0" style="height: 70px;"></div>
+    <footer class="v-footer v-sheet theme--light elevation-5 v-footer--absolute v-footer--padless white" style="left: 0px; right: 0px; bottom: 0px;">
+      <div class="d-flex justify-space-between align-center px-6 py-5 v-card v-sheet theme--light rounded-0" style="height: 70px; min-width: 100%;"></div>
+    </footer>
+  </div>
+  <div class="v-navigation-drawer__border"></div>
+</nav>
+`;

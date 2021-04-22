@@ -7,7 +7,6 @@ import requests
 class AudienceModel:
     """
     audience model class
-
     Here is a sample model response from audience service
         [
             {
