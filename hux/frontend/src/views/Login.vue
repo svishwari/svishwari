@@ -55,7 +55,7 @@
               ButtonText="Login"
               variant="tertiary"
               class="ml-0 mt-4 loginBtn"
-              @click="initiateLogin()"
+              @click.native="initiateLogin()"
             ></huxButton>
           </v-form>
         </div>

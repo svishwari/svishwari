@@ -57,6 +57,12 @@
       v-bind:isTile="true"
       v-bind:isDisabled="true"
     ></huxButton>
+    <huxButton
+      ButtonText="Loader"
+      variant="tertiary"
+      v-bind:isTile="true"
+      v-bind:enableLoading="true"
+    ></huxButton>
     <br />
 
     <v-subheader> Select Dropdown </v-subheader>

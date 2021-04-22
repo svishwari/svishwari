@@ -65,6 +65,7 @@ export default {
     rules: {
       type: Array,
       required: false,
+      default: () => []
     },
   },
 
