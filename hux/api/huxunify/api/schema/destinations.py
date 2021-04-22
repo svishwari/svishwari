@@ -103,8 +103,8 @@ class DestinationPostSchema(DestinationPutSchema):
     destination_type = fields.String(validate=must_not_be_blank)
     destination_name = fields.String(validate=must_not_be_blank)
     authentication_details = fields.Dict(
-        keys=fields.Str(),
-        values=fields.Str(),
+        keys=fields.String(),
+        values=fields.String(),
         validate=validate_dest_constants,
     )
 
