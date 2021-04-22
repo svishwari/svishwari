@@ -25,14 +25,17 @@ class TestSnowflakeClient(TestCase):
             None
         """
         self.client = SnowflakeClient(
-            account=ACCOUNT, warehouse=WAREHOUSE, username=USER, password=PASSWORD
+            account=ACCOUNT,
+            warehouse=WAREHOUSE,
+            username=USER,
+            password=PASSWORD,
         )
 
     @patch("snowflake.connector.connect")
-    def test_connection_good(self, mock_connect: MagicMock) -> None:
+    def test_connection_good(self, mock_connect: MagicMock):
         """Tests a good connection to snowflake database
         Args:
-            mock_connect
+            mock_connect (MagicMock): MagicMock of snowflake connection
         Returns:
             None
         """
@@ -42,15 +45,17 @@ class TestSnowflakeClient(TestCase):
         )
 
     @patch("snowflake.connector.connect")
-    def test_connection_bad(self, mock_connect: MagicMock) -> None:
+    def test_connection_bad(self, mock_connect: MagicMock):
         """Tests a bad connection to snowflake database
         Args:
-            mock_connect
+            mock_connect (MagicMock): MagicMock of snowflake connection
         Returns:
             None
         """
         # apply side effect
-        connector.connect.side_effect = connector.errors.DatabaseError("DB ERROR")
+        connector.connect.side_effect = connector.errors.DatabaseError(
+            "DB ERROR"
+        )
 
         # test that base exception is raised
         with self.assertRaises(BaseException):

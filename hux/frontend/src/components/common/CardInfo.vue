@@ -1,5 +1,10 @@
 <template>
-  <v-card class="text-center" max-width="220px" @click="$emit('click')">
+  <v-card
+    class="text-center"
+    max-width="220px"
+    @click="$emit('click')"
+    :disabled="!active"
+  >
     <v-btn fab :ripple="false" elevation="2" color="tertiary" class="mt-4">
       <v-icon color="primary" x-large>
         {{ icon }}
@@ -35,6 +40,12 @@ export default {
       type: String,
       required: false,
       default: "Info card description",
+    },
+
+    active: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
 }

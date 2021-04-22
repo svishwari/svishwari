@@ -1,12 +1,15 @@
+# pylint: disable=no-self-use
 """
 Paths for the User API
 """
+import logging
 from http import HTTPStatus
 from typing import Tuple
 
 import json
 from bson import ObjectId
-from flask import Blueprint, request
+from connexion.exceptions import ProblemException
+from flask import Blueprint
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
@@ -15,19 +18,21 @@ from pymongo import MongoClient
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.user import UserSchema
+from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
     get_all_users,
     get_user,
+    delete_user,
     update_user,
     manage_user_favorites,
 )
 
 USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
-USER_ENDPOINT = "user"
+USER_ENDPOINT = "users"
 
 # setup the cdm blueprint
-user_bp = Blueprint("user", import_name=__name__)
+user_bp = Blueprint(USER_ENDPOINT, import_name=__name__)
 
 
 def get_db_client() -> MongoClient:
@@ -65,30 +70,41 @@ class UserSearch(SwaggerView):
 
         """
         try:
-            body = UserSchema.load(request.get_json())
-        except ValidationError as ve:
-            return ve.messages, HTTPStatus.BAD_REQUEST
+            return get_all_users(get_db_client()), HTTPStatus.OK.value
 
-        try:
-            data = get_all_users(get_db_client())
+        except Exception as exc:
 
-            if not data:
-                error = NotFoundError().dump({"message": "No Users found"})
-                return error, error["code"]
+            logging.error(
+                "%s: %s.",
+                exc.__class__,
+                exc,
+            )
 
-            return data, HTTPStatus.OK.value
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail="Unable to get users.",
+            ) from exc
 
-        except error:
-            return error, error["code"]
 
-
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>", "IndividualUserSearch")
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>", "IndividualUserSearch"
+)
 class IndividualUserSearch(SwaggerView):
     """
     Individual User Search Class
     """
 
-    parameters = [{"id": "id of user"}]
+    parameters = [
+        {
+            "name": db_constants.USER_ID,
+            "description": "User ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "Retrieve Individual User",
@@ -112,31 +128,53 @@ class IndividualUserSearch(SwaggerView):
             Tuple[dict, int]: dict of user and http code
 
         """
+
+        # validate the id
         try:
-            body = UserSchema.load(request.get_json())
-        except ValidationError as ve:
-            return ve.messages, HTTPStatus.BAD_REQUEST
+            valid_id = (
+                UserSchema()
+                .load({db_constants.USER_ID: user_id}, partial=True)
+                .get(db_constants.USER_ID)
+            )
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
-            data = get_user(get_db_client(), okta_id=user_id)
+            return get_user(get_db_client(), okta_id=valid_id), HTTPStatus.OK
 
-            if not data:
-                error = NotFoundError().dump({"message": "User not found"})
-                return error, error["code"]
+        except Exception as exc:
 
-            return data, HTTPStatus.OK
+            logging.error(
+                "%s: %s.",
+                exc.__class__,
+                exc,
+            )
 
-        except error:
-            return error, error["code"]
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=f"Unable to get user {user_id}.",
+            ) from exc
 
 
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/preferences", "Preferences")
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "Preferences"
+)
 class Preferences(SwaggerView):
     """
     User preferences class
     """
 
-    parameters = [{"user_id": "user_id", "update_doc": "update doc"}]
+    parameters = [
+        {
+            "name": db_constants.USER_ID,
+            "description": "User ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+    ]
 
     responses = {
         HTTPStatus.OK.value: {
@@ -170,7 +208,9 @@ class Preferences(SwaggerView):
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+        response = update_user(
+            get_db_client(), user_id=user_id, update_doc=update_doc
+        )
 
         return response, HTTPStatus.OK
 
@@ -190,12 +230,14 @@ class Preferences(SwaggerView):
             user_id = ObjectId(user_id)
         else:
             return {
-                "message": "Invalid user ID received {user_id}."
+                "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
         update_doc = json.loads(update_doc)
 
-        response = update_user(get_db_client(), user_id=user_id, update_doc=update_doc)
+        response = update_user(
+            get_db_client(), user_id=user_id, update_doc=update_doc
+        )
 
         return response, HTTPStatus.OK
 
@@ -214,16 +256,17 @@ class Preferences(SwaggerView):
             user_id = ObjectId(user_id)
         else:
             return {
-                "message": "Invalid user ID received {user_id}."
+                "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
-        # TODO update user will need to be updated to support delete functionality
-        response = update_user(get_db_client(), user_id=user_id)
+        response = delete_user(get_db_client(), user_id=user_id)
 
         return response, HTTPStatus.OK
 
 
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}/<id>/favorites", "AddUserFavorite")
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>/favorites", "AddUserFavorite"
+)
 class UserFavorite(SwaggerView):
     """
     User favorites class
@@ -231,9 +274,9 @@ class UserFavorite(SwaggerView):
 
     parameters = [
         {
-            "user_id": "user_id",
-            "component_name": "component name",
-            "component_id": "id of favorite component",
+            db_constants.USER_ID: db_constants.USER_ID,
+            db_constants.COMPONENT_NAME: "component name",
+            db_constants.COMPONENT_ID: "id of favorite component",
         }
     ]
     responses = {
@@ -270,14 +313,14 @@ class UserFavorite(SwaggerView):
             user_id = ObjectId(user_id)
         else:
             return {
-                "message": "Invalid user ID received {user_id}."
+                "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
         if ObjectId.is_valid(component_id):
             component_id = ObjectId(component_id)
         else:
             return {
-                "message": "Invalid component ID received {component_id}."
+                "message": f"Invalid component ID received {component_id}."
             }, HTTPStatus.BAD_REQUEST
 
         response = manage_user_favorites(
@@ -309,14 +352,14 @@ class UserFavorite(SwaggerView):
             user_id = ObjectId(user_id)
         else:
             return {
-                "message": "Invalid user ID received {user_id}."
+                "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
         if ObjectId.is_valid(component_id):
             component_id = ObjectId(component_id)
         else:
             return {
-                "message": "Invalid component ID received {component_id}."
+                "message": f"Invalid component ID received {component_id}."
             }, HTTPStatus.BAD_REQUEST
 
         response = manage_user_favorites(
@@ -348,14 +391,14 @@ class UserFavorite(SwaggerView):
             user_id = ObjectId(user_id)
         else:
             return {
-                "message": "Invalid user ID received {user_id}."
+                "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
         if ObjectId.is_valid(component_id):
             component_id = ObjectId(component_id)
         else:
             return {
-                "message": "Invalid component ID received {component_id}."
+                "message": f"Invalid component ID received {component_id}."
             }, HTTPStatus.BAD_REQUEST
 
         response = manage_user_favorites(

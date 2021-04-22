@@ -51,6 +51,8 @@ STATUS_MESSAGE = "status_message"
 RECENT_INGESTION_JOB_STATUS = "recent_ingestion_job_status"
 CREATE_TIME = "create_time"
 UPDATE_TIME = "update_time"
+CREATED_BY = "created_by"
+UPDATED_BY = "updated_by"
 JOB_START_TIME = "start_time"
 JOB_END_TIME = "end_time"
 JOB_ID = "ingestion_job_id"
@@ -79,9 +81,7 @@ S_TYPE_FACEBOOK_COUNTRY_CODE = "facebook_country_code"  # internal only
 S_TYPE_FACEBOOK_GENDER = "facebook_gender"  # internal only
 S_TYPE_FACEBOOK_PHONE_NUMBER = "facebook_phone_number"  # internal only
 S_TYPE_FACEBOOK_POSTAL_CODE = "facebook_postal_code"  # internal only
-S_TYPE_FACEBOOK_STATE_OR_PROVINCE = (
-    "facebook_state_or_province"  # internal only
-)
+S_TYPE_FACEBOOK_STATE_OR_PROVINCE = "facebook_state_or_province"  # internal only
 S_TYPE_FIRST_NAME = "first_name"
 S_TYPE_FIRST_NAME_INITIAL = "first_name_initial"
 S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"  # internal only
@@ -141,6 +141,7 @@ DELIVERY_PLATFORM_STATUS = "connection_status"
 DELIVERY_PLATFORM_FACEBOOK = "Facebook"
 DELIVERY_PLATFORM_AMAZON = "Amazon"
 DELIVERY_PLATFORM_GOOGLE = "Google"
+DELIVERY_PLATFORM_SFMC = "SFMC"
 
 LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
@@ -161,6 +162,8 @@ USER_ROLE_ADMIN = "admin"
 USER_ROLE_EDITOR = "editor"
 USER_ROLE_VIEWER = "viewer"
 USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
+COMPONENT_ID = "component_id"
+COMPONENT_NAME = "component_name"
 
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
@@ -168,7 +171,8 @@ AUDIENCES = "audiences"
 FAVORITE_COMPONENTS = [CAMPAIGNS, DESTINATIONS, AUDIENCES]
 
 DELIVERY_JOB_ID = "delivery_job_id"
-DELIVERY_PLATFORM_AD_SETS = "delivery_platform_ad_sets"
+DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
+DELIVERY_PLATFORM_GENERIC_CAMPAIGNS = "delivery_platform_generic_campaigns"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"

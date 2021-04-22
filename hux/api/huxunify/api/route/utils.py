@@ -1,9 +1,10 @@
 """
 purpose of this file is to house route utilities
 """
+from typing import Any
 
 
-def add_view_to_blueprint(self, rule, endpoint, **options):
+def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
     """
     This decorator takes a blueprint and assigns the view function directly
     the alternative to this is having to manually define this in app.py
@@ -27,11 +28,12 @@ def add_view_to_blueprint(self, rule, endpoint, **options):
 
     """
 
-    def decorator(cls):
+    def decorator(cls) -> Any:
         """decorator function
 
         Args:
             cls (object): a function to decorate
+
         Returns:
             Response: Returns the decorated object.
 

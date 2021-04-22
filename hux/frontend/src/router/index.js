@@ -1,6 +1,5 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-import Home from "@/views/Home.vue"
 import Welcome from "@/views/Welcome.vue"
 import Login from "@/views/Login.vue"
 import NotFound from "@/views/NotFound.vue"
@@ -20,17 +19,6 @@ const NotFoundRoute = {
   },
 }
 
-const requireAuth = (to, from, next) => {
-  if (!auth.loggedIn()) {
-    next({
-      path: "/login",
-      query: { redirect: to.fullPath },
-    })
-  } else {
-    next()
-  }
-}
-
 const routes = [
   {
     path: "/",
@@ -38,7 +26,8 @@ const routes = [
     component: Welcome,
     meta: {
       layout: "default",
-      title: "Home",
+      title: "Welcome | Hux Unified UI",
+      requiresAuth: false,
     },
   },
   {
@@ -47,7 +36,8 @@ const routes = [
     component: () => import("@/views/Overview.vue"),
     meta: {
       layout: "app",
-      title: "overview",
+      title: "Overview  | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
@@ -56,7 +46,8 @@ const routes = [
     component: () => import("@/views/Campaign.vue"),
     meta: {
       layout: "app",
-      title: "campaign",
+      title: "Campaign | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
@@ -65,7 +56,8 @@ const routes = [
     component: () => import("@/views/Audiences/Index.vue"),
     meta: {
       layout: "app",
-      title: "audiences",
+      title: "Audiences | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
@@ -74,7 +66,8 @@ const routes = [
     component: () => import("@/views/Models.vue"),
     meta: {
       layout: "app",
-      title: "models",
+      title: "Models | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
@@ -83,34 +76,40 @@ const routes = [
     component: () => import("@/views/Connections.vue"),
     meta: {
       layout: "app",
-      title: "connections",
+      title: "Connections | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
-    path: "/indentity",
-    name: "indentity",
-    component: () => import("@/views/Indentity.vue"),
+    path: "/identity",
+    name: "identity",
+    component: () => import("@/views/Identity.vue"),
     meta: {
       layout: "app",
-      title: "indentity",
+      title: "Identity | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/profiles",
     name: "profiles",
     component: () => import("@/views/Profiles.vue"),
+
     meta: {
       layout: "app",
-      title: "profiles",
+      title: "Profiles | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
     path: "/settings",
     name: "settings",
     component: () => import("@/views/Settings.vue"),
+
     meta: {
       layout: "app",
-      title: "settings",
+      title: "Settings | Hux Unified UI",
+      requiresAuth: true,
     },
   },
   {
@@ -119,24 +118,15 @@ const routes = [
     component: Login,
     meta: {
       layout: "default",
-      title: "Login",
+      title: "Login | Hux Unified UI",
+      requiresAuth: false,
     },
   },
   {
     path: "/logout",
     beforeEnter(to, from, next) {
       auth.logout()
-      next("/")
-    },
-  },
-  {
-    path: "/home",
-    name: "Home",
-    component: Home,
-    beforeEnter: requireAuth,
-    meta: {
-      layout: "app",
-      title: "Overview | Hux Unified UI",
+      next("/login")
     },
   },
   {
@@ -146,6 +136,7 @@ const routes = [
     meta: {
       layout: "default",
       title: "components",
+      requiresAuth: false,
     },
   },
 ]
@@ -159,7 +150,14 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
-  next()
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  // Check for protected route
+  if (requiresAuth && !auth.loggedIn()) {
+    next({
+      path: "/login",
+      query: { redirect: to.fullPath },
+    })
+  } else next()
 })
 
 export default router

@@ -77,7 +77,10 @@ class MarketingModel:
         return {
             "Scales": {
                 "Propensity": {
-                    "Segments": {"0.0-0.2": "Unlikely", "0.81-1.0": "Very likely"},
+                    "Segments": {
+                        "0.0-0.2": "Unlikely",
+                        "0.81-1.0": "Very likely",
+                    },
                     "Values": {
                         "Min": round(0 + (0.1 - 0) * random(), 2),
                         "Max": round(0.8 + (1 - 0.8) * random(), 2),
@@ -135,7 +138,9 @@ class MarketingModel:
 
         """
         data = {"url": s3_url, "Models": models}
-        return requests.post(f"{self.SEGMENT_ENGINE}/segmentation", data=data).json()
+        return requests.post(
+            f"{self.SEGMENT_ENGINE}/segmentation", data=data
+        ).json()
 
     def get_segment_count(self):
         """Fetch the Segmentation Model Scores
@@ -147,7 +152,9 @@ class MarketingModel:
             Returns the post result
 
         """
-        return requests.get(f"{self.SEGMENT_ENGINE}/retrieveJourneyCount").json()
+        return requests.get(
+            f"{self.SEGMENT_ENGINE}/retrieveJourneyCount"
+        ).json()
 
     def get_scores_on_the_fly(self, data):
         """Fetch the Segmentation Model Scores on the fly
@@ -160,7 +167,10 @@ class MarketingModel:
             Returns the post result
 
         """
-        headers = {"content-type": "application/json", "cache-control": "no-cache"}
+        headers = {
+            "content-type": "application/json",
+            "cache-control": "no-cache",
+        }
         return requests.post(
             f"{self.SEGMENT_ENGINE}/segmentOnFly", data=data, headers=headers
         ).json()
