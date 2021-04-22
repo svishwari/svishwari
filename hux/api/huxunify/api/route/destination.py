@@ -122,16 +122,15 @@ class DestinationGetView(SwaggerView):
 
         """
 
-        # validate the id
-        valid_id = (
-            DestinationGetSchema()
-            .load({api_c.DESTINATION_ID: destination_id}, partial=True)
-            .get(api_c.DESTINATION_ID)
-        )
-
-        # return a bad request if invalid objectID
-        if not valid_id:
-            return f"Invalid ID {destination_id}.", HTTPStatus.BAD_REQUEST
+        try:
+            # validate the id
+            valid_id = (
+                DestinationGetSchema()
+                .load({api_c.DESTINATION_ID: destination_id}, partial=True)
+                .get(api_c.DESTINATION_ID)
+            )
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         # grab the destination
         destination = destination_management.get_delivery_platform(
