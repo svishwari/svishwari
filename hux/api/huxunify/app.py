@@ -6,7 +6,6 @@ from flasgger import Swagger
 from huxunify.api.route.advertising import advertising_bp
 from huxunify.api.route.decisioning import decision_bp
 from huxunify.api.route.audience import audience_bp
-from huxunify.api.route.marketing import marketing_bp
 from huxunify.api.route.cdm import cdm_bp
 from huxunify.api.route.user import user_bp
 
@@ -52,7 +51,7 @@ def create_app():
     flask_app.register_blueprint(advertising_bp, url_prefix="/api/advertising")
     flask_app.register_blueprint(audience_bp, url_prefix="/api/audience")
     flask_app.register_blueprint(decision_bp, url_prefix="/api/decisioning")
-    flask_app.register_blueprint(user_bp, url_prefix="/api/user")
+    flask_app.register_blueprint(user_bp, url_prefix="/api/")
 
     return flask_app
 
