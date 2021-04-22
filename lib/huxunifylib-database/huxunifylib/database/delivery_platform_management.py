@@ -1130,7 +1130,8 @@ def get_delivery_jobs(
     database: DatabaseClient, audience_id: ObjectId = None
 ) -> list:
     """Get audience delivery jobs if audience_id is specified, otherwise,
-    get all delivery jobs.
+    get all delivery jobs. In the latter case only ID field is returned
+    per delivery job.
 
     Args:
         database (DatabaseClient): database client.
@@ -1148,7 +1149,7 @@ def get_delivery_jobs(
             {c.AUDIENCE_ID: audience_id, c.ENABLED: True}
             if audience_id
             else {c.ENABLED: True},
-            {c.ENABLED: True},
+            {c.ENABLED: False} if audience_id else {c.ID: True},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
