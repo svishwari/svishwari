@@ -33,6 +33,7 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
 
         Args:
             cls (object): a function to decorate
+
         Returns:
             Response: Returns the decorated object.
 

@@ -15,8 +15,24 @@ class CdmTest(TestCase):
     """
 
     datafeeds = [
-        [1, "Batch", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
-        [1, "adobe", "Salesforce", "Customers", ".csv", "Y", "2021-01-21 05:30:48.301"],
+        [
+            1,
+            "Batch",
+            "Salesforce",
+            "Customers",
+            ".csv",
+            "Y",
+            "2021-01-21 05:30:48.301",
+        ],
+        [
+            1,
+            "adobe",
+            "Salesforce",
+            "Customers",
+            ".csv",
+            "Y",
+            "2021-01-21 05:30:48.301",
+        ],
     ]
     mappings = [
         [1, "FNAME", "FIRST", "2021-01-21 05:31:36.094"],
@@ -56,9 +72,12 @@ class CdmTest(TestCase):
 
         # get synth data
         processed_data = [
-            generate_synthetic_marshmallow_data(ProcessedData).fromkeys(test_fields)
+            generate_synthetic_marshmallow_data(ProcessedData).fromkeys(
+                test_fields
+            )
             for i in range(4)
         ]
+
         self.model.ctx.cursor().fetchall.return_value = processed_data
 
         # get the returned sources

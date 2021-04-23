@@ -6,30 +6,29 @@
       </v-col>
       <v-col cols="6" class="right-section">
         <Logo />
-        <h1>Access your <span class="altcolor">360°</span> view</h1>
+        <h1 class="font-weight-light">Access your <span class="altcolor">360°</span> view</h1>
         <p>Jump right in where you left off, and leave the hard work on us!</p>
         <div class="login-form">
-          <v-form ref="form" v-model="isFormValid" lazy-validation>
-            <v-text-field
+          <v-form ref="form" v-model="isFormValid">
+            <TextField
               v-model="username"
-              label="Username"
-              autocomplete="username"
-              single-line
-              outlined
-              required
-            ></v-text-field>
-            <v-text-field
+              placeholderText="Enter Username"
+              labelText="Username"
+              backgroundColor="white"
+              v-bind:required="true"
+            ></TextField>
+            <TextField
               v-model="password"
-              :append-icon="toggleShowPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[rules.required]"
-              :type="toggleShowPassword ? 'text' : 'password'"
-              name="input-10-1"
-              label="Password"
-              autocomplete="newPassword"
-              @click:append="toggleShowPassword = !toggleShowPassword"
-              single-line
-              outlined
-            ></v-text-field>
+              placeholderText="Enter Password"
+              labelText="Password"
+              v-bind:appendIcon="toggleShowPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              v-bind:rules="[rules.required]"
+              v-bind:InputType="toggleShowPassword ? 'text' : 'password'"
+              @clickAppend="toggleShowPassword = !toggleShowPassword"
+              backgroundColor="white"
+              v-bind:required="true"
+            ></TextField>
+
             <div v-if="loginFailed" class="error">
               Uh-oh, your email and password don’t match.
             </div>
@@ -37,27 +36,27 @@
             <router-link
               @click.native="forgotUsername"
               to="#"
-              class="link-button"
+              class="link-button font-weight-regular"
             >
               Forgot Username?
             </router-link>
             <router-link
               @click.native="forgotPassword"
               to="#"
-              class="link-button"
+              class="link-button font-weight-regular"
             >
               Forgot Password?
             </router-link>
 
             <!-- disable if form is not valid -->
-            <v-btn
-              :disabled="!isFormValid"
-              large
-              class="mt-4 loginBtn"
-              @click="initiateLogin()"
-            >
-              Login
-            </v-btn>
+            <huxButton
+              v-bind:isDisabled="!isFormValid"
+              size="large"
+              ButtonText="Login"
+              variant="tertiary"
+              class="ml-0 mt-4 loginBtn"
+              @click.native="initiateLogin()"
+            ></huxButton>
           </v-form>
         </div>
       </v-col>
@@ -68,6 +67,8 @@
 <script>
 import Logo from "../assets/images/logo.svg"
 import auth from "@/auth"
+import TextField from "@/components/common/TextField"
+import huxButton from "@/components/common/huxButton"
 export default {
   name: "Login",
   data() {
@@ -85,6 +86,8 @@ export default {
   },
   components: {
     Logo,
+    TextField,
+    huxButton,
   },
   methods: {
     initiateLogin() {
@@ -161,6 +164,7 @@ export default {
     .link-button {
       display: block;
       margin-top: 17px;
+      text-decoration: none;
     }
     .loginBtn {
       margin-top: 30px;
