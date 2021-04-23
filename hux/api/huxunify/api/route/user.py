@@ -59,7 +59,7 @@ class UserSearch(SwaggerView):
     }
     tags = [USER_TAG]
 
-    @marshal_with(UserSchema)
+    @marshal_with(UserSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves all users.
 
