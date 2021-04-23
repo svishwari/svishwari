@@ -18,6 +18,7 @@ from pymongo import MongoClient
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.user import UserSchema
+from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
     get_all_users,
@@ -57,6 +58,7 @@ class UserSearch(SwaggerView):
             "schema": {"type": "array", "items": UserSchema},
         },
     }
+    responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
     @marshal_with(UserSchema(many=True))
@@ -66,7 +68,7 @@ class UserSearch(SwaggerView):
         ---
 
         Returns:
-            Response: Returns all users
+            Tuple[dict, int] dict of users and http code
 
         """
         try:
@@ -114,6 +116,7 @@ class IndividualUserSearch(SwaggerView):
             "schema": NotFoundError,
         },
     }
+    responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
     @marshal_with(UserSchema)
@@ -125,7 +128,7 @@ class IndividualUserSearch(SwaggerView):
             user_id (str): id of user
 
         Returns:
-            Tuple[dict, int]: dict of user and user enum
+            Tuple[dict, int]: dict of user and http code
 
         """
 
@@ -158,11 +161,69 @@ class IndividualUserSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "Preferences"
+    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "AddPreferences"
 )
-class Preferences(SwaggerView):
+class AddPreferences(SwaggerView):
     """
-    Update user preferences
+    Add user preferences class
+    """
+
+    parameters = [
+        {
+            "name": db_constants.USER_ID,
+            "description": "User ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "description": "User preferences added",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update user preferences",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [USER_TAG]
+
+    def post(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
+        """Add a user's preferences
+
+        ---
+        Args:
+            user_id (str): User id
+            update_doc (str): update document for user profile
+
+        Returns:
+            Tuple[dict, int]: profile dict, HTTP status
+
+        """
+        if ObjectId.is_valid(user_id):
+            user_id = ObjectId(user_id)
+        else:
+            return {
+                "message": f"Invalid user ID received {user_id}."
+            }, HTTPStatus.BAD_REQUEST
+
+        update_doc = json.loads(update_doc)
+
+        response = update_user(
+            get_db_client(), user_id=user_id, update_doc=update_doc
+        )
+
+        return response, HTTPStatus.CREATED
+
+
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "EditPreferences"
+)
+class EditPreferences(SwaggerView):
+    """
+    Edit user preferences class
     """
 
     parameters = [
@@ -184,7 +245,7 @@ class Preferences(SwaggerView):
             "description": "Failed to update user preferences",
         },
     }
-
+    responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
     def put(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
@@ -214,35 +275,39 @@ class Preferences(SwaggerView):
 
         return response, HTTPStatus.OK
 
-    def post(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
-        """Add a user's preferences
 
-        ---
-        Args:
-            user_id (str): User id
-            update_doc (str): update document for user profile
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "DeletePreferences"
+)
+class DeletePreferences(SwaggerView):
+    """
+    Delete user preferences class
+    """
 
-        Returns:
-            Tuple[dict, int]: profile dict, HTTP status
+    parameters = [
+        {
+            "name": db_constants.USER_ID,
+            "description": "User ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+    ]
 
-        """
-        if ObjectId.is_valid(user_id):
-            user_id = ObjectId(user_id)
-        else:
-            return {
-                "message": f"Invalid user ID received {user_id}."
-            }, HTTPStatus.BAD_REQUEST
-
-        update_doc = json.loads(update_doc)
-
-        response = update_user(
-            get_db_client(), user_id=user_id, update_doc=update_doc
-        )
-
-        return response, HTTPStatus.OK
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User preferences deleted",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update user preferences",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [USER_TAG]
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
-        """Remove a user's preferences
+        """Delete a user's preferences
 
         ---
         Args:
@@ -267,13 +332,22 @@ class Preferences(SwaggerView):
 @add_view_to_blueprint(
     user_bp, f"/{USER_ENDPOINT}/<user_id>/favorites", "AddUserFavorite"
 )
-class UserFavorite(SwaggerView):
+class AddUserFavorite(SwaggerView):
     """
-    User favorites class
+    Add user favorites class
     """
 
     parameters = [
         {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input destination body.",
+            "example": {
+                db_constants.USER_ID: "07324507235",
+                db_constants.COMPONENT_NAME: "Campaign",
+                db_constants.COMPONENT_ID: "985342890626",
+            },
             db_constants.USER_ID: db_constants.USER_ID,
             db_constants.COMPONENT_NAME: "component name",
             db_constants.COMPONENT_ID: "id of favorite component",
@@ -290,7 +364,7 @@ class UserFavorite(SwaggerView):
             "description": "Failed to add user favorite",
         },
     }
-
+    responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
     def post(
@@ -332,6 +406,42 @@ class UserFavorite(SwaggerView):
 
         return response, HTTPStatus.CREATED
 
+
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>/favorites", "EditUserFavorite"
+)
+class EditUserFavorite(SwaggerView):
+    """
+    Edit user favorites class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input destination body.",
+            "example": {
+                db_constants.USER_ID: "07324507235",
+                db_constants.COMPONENT_NAME: "Campaign",
+                db_constants.COMPONENT_ID: "985342890626",
+            },
+            db_constants.USER_ID: db_constants.USER_ID,
+            db_constants.COMPONENT_NAME: "component name",
+            db_constants.COMPONENT_ID: "id of favorite component",
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "User favorite edited",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to edit user favorite",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [USER_TAG]
+
     def put(
         self, user_id: str, component_name: str, component_id: str
     ) -> Tuple[dict, int]:
@@ -371,10 +481,49 @@ class UserFavorite(SwaggerView):
 
         return response, HTTPStatus.OK
 
+
+@add_view_to_blueprint(
+    user_bp, f"/{USER_ENDPOINT}/<user_id>/favorites", "DeleteUserFavorite"
+)
+class DeleteUserFavorite(SwaggerView):
+    """
+    Delete user favorites class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input destination body.",
+            "example": {
+                db_constants.USER_ID: "07324507235",
+                db_constants.COMPONENT_NAME: "Campaign",
+                db_constants.COMPONENT_ID: "985342890626",
+            },
+            db_constants.USER_ID: db_constants.USER_ID,
+            db_constants.COMPONENT_NAME: "component name",
+            db_constants.COMPONENT_ID: "id of favorite component",
+        }
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "description": "User favorite created",
+        },
+        HTTPStatus.OK.value: {
+            "description": "User favorite edited",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to add user favorite",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [USER_TAG]
+
     def delete(
         self, user_id: str, component_name: str, component_id: str
     ) -> Tuple[dict, int]:
-        """Remove a favorite for a user
+        """Delete a favorite for a user
 
         ---
         Args:
