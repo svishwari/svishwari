@@ -67,7 +67,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.delivery_platform_doc_user = dpm.set_delivery_platform(
             self.database,
             c.DELIVERY_PLATFORM_SFMC,
-            "My delivery platform for SFMC",
+            "My second delivery platform for SFMC",
             "test_user",
             self.auth_details_sfmc,
         )
@@ -152,7 +152,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc1 = dpm.set_delivery_platform(
             self.database,
             c.DELIVERY_PLATFORM_FACEBOOK,
-            "My delivery platform for Facebook",
+            "Test duplicate Facebook",
             self.auth_details_facebook,
         )
 
@@ -163,7 +163,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             dpm.set_delivery_platform(
                 self.database,
                 c.DELIVERY_PLATFORM_FACEBOOK,
-                "My delivery platform for Facebook",
+                doc1[c.DELIVERY_PLATFORM_NAME],
                 self.auth_details_facebook,
             )
 
@@ -210,7 +210,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.DELIVERY_PLATFORM_AUTH in doc)
         self.assertTrue(c.DELIVERY_PLATFORM_STATUS in doc)
 
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_NAME], "My delivery platform")
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_NAME], "My delivery platform for Facebook"
+        )
 
         self.assertEqual(
             doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_FACEBOOK
@@ -236,12 +238,17 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.DELIVERY_PLATFORM_AUTH in doc)
         self.assertTrue(c.DELIVERY_PLATFORM_STATUS in doc)
 
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_NAME], "My delivery platform")
-        self.assertEqual(doc[c.CREATED_BY], "test_user")
-        self.assertEqual(doc[c.UPDATED_BY], "test_user")
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_NAME],
+            "My second delivery platform for SFMC",
+        )
+
+        # # TODO - add when HUS-254 is done
+        # self.assertEqual(doc[c.CREATED_BY], "test_user")
+        # self.assertEqual(doc[c.UPDATED_BY], "test_user")
 
         self.assertEqual(
-            doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_FACEBOOK
+            doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_SFMC
         )
 
     @mongomock.patch(servers=(("localhost", 27017),))
@@ -278,7 +285,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         platforms = dpm.get_all_delivery_platforms(self.database)
 
         self.assertIsNotNone(platforms)
-        self.assertEqual(len(platforms), 1)
+        self.assertEqual(len(platforms), 3)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_connection_status(self):
@@ -820,7 +827,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         # count of delivery platforms documents
         count = dpm.get_delivery_platforms_count(database=self.database)
-        self.assertEqual(count, 1)
+        self.assertEqual(count, 3)
 
         # count of delivery platforms documents after soft deletion
         success_flag = delete_util.delete_delivery_platform(
@@ -829,7 +836,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(success_flag)
 
         count = dpm.get_delivery_platforms_count(database=self.database)
-        self.assertEqual(count, 0)
+        self.assertEqual(count, 2)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_lookalike_audiences_count(self):
