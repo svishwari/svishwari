@@ -9,4 +9,5 @@ export default {
   red: "#DA291C",
   white: "#FFFFFF",
   yellow: "#FFCD00",
+  lightBlue: "#007CB0",
 }

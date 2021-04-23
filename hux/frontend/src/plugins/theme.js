@@ -11,4 +11,5 @@ export default {
   black: colors.black,
   white: colors.white,
   AliceBlue: colors.aliceBlue,
+  anchor: colors.lightBlue,
 }

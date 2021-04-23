@@ -12,7 +12,7 @@
       labelText="Add Account ID"
       icon="mdi-alert-circle-outline"
       placeholderText="Account name"
-      v-bind:required=true
+      v-bind:required="true"
     ></TextField>
     {{ TextFieldValue }}
     <br />
@@ -78,13 +78,9 @@
 
     <v-subheader> Page Header </v-subheader>
     <v-divider></v-divider>
-    <PageHeader title="Welcome back, User!" icon="mdi-bullhorn-outline">
-      <template v-slot:description>
-        <div>
-          Hux is here to help you make better, faster decisions to improve your
-          Customer Experiences.
-          <a>Learn More ></a>
-        </div>
+    <PageHeader>
+      <template slot="left">
+        <Breadcrumb :items="items" />
       </template>
     </PageHeader>
     <br />
@@ -126,6 +122,7 @@
 
 <script>
 import CardInfo from "@/components/common/CardInfo"
+import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
 import HuxTable from "@/components/common/huxTable.vue"
 import huxButton from "@/components/common/huxButton"
@@ -137,6 +134,7 @@ export default {
   name: "CommonComponent",
   components: {
     CardInfo,
+    Breadcrumb,
     TextField,
     huxButton,
     DropdownMenu,
@@ -329,6 +327,26 @@ export default {
           lastUpdatedBy: "HR",
           created: "Today, 12:00 PM",
           createdBy: "RG",
+        },
+      ],
+      items: [
+        {
+          text: "Home",
+          disabled: false,
+          href: "overview",
+          icon: "mdi-home-outline",
+        },
+        {
+          text: "Connections",
+          disabled: false,
+          href: "connections",
+          icon: "mdi-bullhorn-outline",
+        },
+        {
+          text: "Destinations",
+          disabled: true,
+          href: "connections/destinations",
+          icon: "mdi-flip-h mdi-account-plus-outline",
         },
       ],
 
