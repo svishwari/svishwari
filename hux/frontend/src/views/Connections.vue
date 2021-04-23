@@ -23,13 +23,10 @@
       </v-col>
 
       <v-col cols="6 pt-0">
-        <DestinationListCard v-for="item in destinationLists" :key="item.title">
+        <!-- <DestinationListCard v-for="item in destinationLists" :key="item.title"> -->
+        <DestinationListCard v-for="item in destinations" :key="item.title">
           <template v-slot:logo>
-            <v-img
-              class="elevation-6"
-              alt=""
-              :src="getImgUrl(item)"
-            ></v-img>
+            <v-img class="elevation-6" :alt="item.title" :src="getImgUrl(item)"></v-img>
           </template>
           <template v-slot:title>
             {{ item.title }}
@@ -41,31 +38,47 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import DestinationListCard from "@/components/DestinationListCard"
 import EmptyDataSource from "@/components/EmptyDataSource"
 
 export default {
   name: "connections",
   components: { DestinationListCard, EmptyDataSource },
-  data() {
-    return {
-      destinationLists: [
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Adobe Experience" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Facebook" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Google" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Twilio" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Amazon" },
-      ],
+  computed: {
+    ...mapGetters({
+      destinations: 'AllDestinations'
+    }),
+
+    // This can be used, in-case, data required logic/filter
+    // destinations () {
+    //   return this.AllDestinations.map(destination => {
+    //     return destination
+    //   })
+    // },
+
+    hasDestinations () {
+      return Boolean(
+        this.destinations &&
+        this.destinations.length > 1
+      )
     }
+  
   },
   methods: {
+    ...mapActions([
+      'getAllDestinations'
+    ]),
     getImgUrl(item) {
       return item.logoUrl;
     },
   },
+  async mounted () {
+    await this.getAllDestinations()
+  },
 }
 </script>
-
 <style lang="scss" scoped>
 .connections-wrap {
   .add-icon {
