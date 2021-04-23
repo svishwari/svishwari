@@ -23,7 +23,6 @@ class TestDeliveryPlatform(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
 
-        # Connect
         self.database = DatabaseClient(
             "localhost", 27017, None, None
         ).connect()
@@ -790,12 +789,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=[
-                {
-                    "campaign_id": "my_campaign_id_1",
-                    "ad_set_id": "my_ad_set_id_1",
-                }
-            ],
+            generic_campaign_id=self.generic_campaigns[0],
         )
 
         self.assertTrue(doc is not None)
