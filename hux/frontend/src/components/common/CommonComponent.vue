@@ -7,17 +7,73 @@
 
     <v-subheader> Text Feild </v-subheader>
     <v-divider></v-divider>
-    <TextField></TextField>
+    <TextField
+      v-model="TextFieldValue"
+      labelText="Add Account ID"
+      icon="mdi-alert-circle-outline"
+      placeholderText="Account name"
+      v-bind:required="true"
+    ></TextField>
+    {{ TextFieldValue }}
     <br />
 
     <v-subheader> Button </v-subheader>
     <v-divider></v-divider>
-    <Button></Button>
+    <huxButton
+      ButtonText="Added"
+      v-bind:isOutlined="true"
+      size="large"
+      icon="mdi-check"
+      iconPosition="left"
+    ></huxButton>
+    <huxButton
+      ButtonText="Add"
+      v-bind:isOutlined="true"
+      size="x-small"
+      variant="darkGrey"
+    ></huxButton>
+    <huxButton
+      ButtonText="Leave configuration"
+      variant="primary"
+      size="large"
+      v-bind:isTile="true"
+    ></huxButton>
+    <huxButton
+      ButtonText="Success!"
+      icon="mdi-check"
+      iconPosition="left"
+      variant="success"
+      size="x-large"
+      v-bind:isTile="true"
+    ></huxButton>
+    <huxButton
+      ButtonText="Cancel &amp; Return"
+      variant="tertiary"
+      v-bind:isTile="true"
+    ></huxButton>
+    <huxButton
+      ButtonText="Disabled"
+      variant="tertiary"
+      v-bind:isTile="true"
+      v-bind:isDisabled="true"
+    ></huxButton>
+    <huxButton
+      ButtonText="Loader"
+      variant="tertiary"
+      v-bind:isTile="true"
+      v-bind:enableLoading="true"
+    ></huxButton>
     <br />
 
     <v-subheader> Select Dropdown </v-subheader>
     <v-divider></v-divider>
-    <DropdownMenu></DropdownMenu>
+    <DropdownMenu
+      v-model="DropdownValue"
+      v-bind:labelText="labelText"
+      v-bind:menuItem="DropdownData"
+      @updatelabelText="onupdatelabelText"
+    ></DropdownMenu>
+    {{ DropdownValue }}
     <br />
 
     <v-subheader> Page Header </v-subheader>
@@ -38,6 +94,29 @@
       height="250px"
       hasCheckBox
     ></hux-table>
+
+    <v-subheader> Drawer</v-subheader>
+    <v-divider></v-divider>
+    <br />
+    <button @click="drawer = !drawer">Toggle</button>
+    <drawer v-model="drawer">
+      <template v-slot:header-left>
+        <h2>Heading</h2>
+      </template>
+      <template v-slot:header-right>
+        <v-icon color="black"> mdi-dots-vertical </v-icon>
+      </template>
+      <template v-slot:default>
+        <Button />
+      </template>
+      <template v-slot:footer-left>
+        <h2>Heading</h2>
+      </template>
+      <template v-slot:footer-right>
+        <v-icon color="black"> mdi-dots-vertical </v-icon>
+      </template>
+    </drawer>
+    <br />
   </div>
 </template>
 
@@ -46,9 +125,10 @@ import CardInfo from "@/components/common/CardInfo"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
 import HuxTable from "@/components/common/huxTable.vue"
-import Button from "@/components/common/Button"
+import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
+import Drawer from "@/components/common/Drawer"
 
 export default {
   name: "CommonComponent",
@@ -56,13 +136,27 @@ export default {
     CardInfo,
     Breadcrumb,
     TextField,
-    Button,
+    huxButton,
     DropdownMenu,
     PageHeader,
     HuxTable,
+    Drawer,
+  },
+  methods: {
+    onupdatelabelText(newValue) {
+      this.labelText = newValue
+    },
   },
   data() {
     return {
+      TextFieldValue: null,
+      DropdownValue: null,
+      labelText: "Select",
+      DropdownData: [
+        { value: "1 - 25" },
+        { value: "26 - 50" },
+        { value: "50+" },
+      ],
       columnDefs: [
         {
           headerName: "Audience Name",
@@ -255,6 +349,8 @@ export default {
           icon: "mdi-flip-h mdi-account-plus-outline",
         },
       ],
+
+      drawer: false,
     }
   },
   mounted() {},

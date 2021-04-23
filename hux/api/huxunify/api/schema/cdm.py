@@ -76,7 +76,9 @@ class Datafeed(Schema):
     data_type = Str(required=True, validate=validate.OneOf(DATA_TYPES))
     feed_id = Int(required=True, description="ID of the datafeed")
     feed_type = Str(required=True, validate=validate.OneOf(FEED_TYPES))
-    file_extension = Str(required=True, validate=validate.OneOf(FILE_EXTENSIONS))
+    file_extension = Str(
+        required=True, validate=validate.OneOf(FILE_EXTENSIONS)
+    )
     is_pii = Boolean(required=True)
     modified = DateTime(required=True)
 

@@ -154,7 +154,10 @@ class SegmentFlySchema(Schema):
                     ]
                 }
             ],
-            "PredictionData": [{"User": "1", "Segment": "Most Likely"}, {"User": "2"}],
+            "PredictionData": [
+                {"User": "1", "Segment": "Most Likely"},
+                {"User": "2"},
+            ],
         },
     )
 

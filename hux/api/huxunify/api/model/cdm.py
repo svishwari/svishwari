@@ -99,7 +99,9 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_processed_source_by_name(self, processed_data_source: str) -> dict:
+    def read_processed_source_by_name(
+        self, processed_data_source: str
+    ) -> dict:
         """Finds a processed client data source in the CDP_LTD database table.
 
         Args:
@@ -288,7 +290,9 @@ class CdmModel:
         finally:
             cursor.close()
 
-    def read_fieldmapping_by_id(self, fieldmapping_id: int) -> Union[dict, None]:
+    def read_fieldmapping_by_id(
+        self, fieldmapping_id: int
+    ) -> Union[dict, None]:
         """Finds a fieldmapping in the fieldmapping table.
 
         Args:

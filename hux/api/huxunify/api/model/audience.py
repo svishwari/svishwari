@@ -7,7 +7,6 @@ import requests
 class AudienceModel:
     """
     audience model class
-
     Here is a sample model response from audience service
         [
             {
@@ -81,7 +80,9 @@ class AudienceModel:
         """
         # push the request
         response = requests.post(
-            f"{self.API}", json=data, headers={"Authorization": f"Bearer {self.TOKEN}"}
+            f"{self.API}",
+            json=data,
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
         )
         return response.json()
 
@@ -93,7 +94,9 @@ class AudienceModel:
         """
         # push the request
         response = requests.put(
-            f"{self.API}", json=data, headers={"Authorization": f"Bearer {self.TOKEN}"}
+            f"{self.API}",
+            json=data,
+            headers={"Authorization": f"Bearer {self.TOKEN}"},
         )
         return response.json()
 
@@ -162,7 +165,9 @@ class AudienceModel:
             headers={"Authorization": f"Bearer {self.TOKEN}"},
         ).json()
 
-    def get_insights_delivery_job_audience_id(self, audience_id, delivery_job_id):
+    def get_insights_delivery_job_audience_id(
+        self, audience_id, delivery_job_id
+    ):
         """
         purpose of this function is to get audience delivery jobs for an audience
         :param data:
