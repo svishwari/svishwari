@@ -7,7 +7,7 @@
       <v-col cols="6" class="right-section">
         <Logo />
         <h1 class="font-weight-light">
-          Access your <span class="altcolor">360°</span> view
+          Access your <span class="altcolor">360&deg;</span> view
         </h1>
         <p>Jump right in where you left off, and leave the hard work on us!</p>
         <div class="login-form">
