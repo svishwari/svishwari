@@ -61,7 +61,7 @@ class UserSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
-    @marshal_with(UserSchema)
+    @marshal_with(UserSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves all users.
 
