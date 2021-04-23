@@ -1,5 +1,5 @@
 <template>
-  <v-card class="card-wrapper" height="60" tile>
+  <v-card class="card-wrapper mb-3" height="60" tile>
     <v-card-actions>
       <v-list-item class="grow">
         <v-list-item-avatar
@@ -24,8 +24,4 @@ export default {
   name: "DestinationListCard",
 }
 </script>
-<style lang="scss" scoped>
-.card-wrapper {
-  margin-bottom:10px;
-}
-</style>
+<style lang="scss" scoped> </style>

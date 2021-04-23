@@ -4,7 +4,7 @@
     elevation="1"
     tile
     height="340"
-    color="#ecf4f9"
+    color="AliceBlue"
   >
     <v-icon color="primary" x-large> mdi-alert-circle-outline </v-icon>
     <v-card-title class="justify-center font-weight-light">
@@ -19,7 +19,7 @@
 </template>
 <script>
 export default {
-  name: "EmptyDataSource",
+  name: "EmptyState",
 }
 </script>
 <style lang="scss" scoped></style>

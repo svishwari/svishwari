@@ -19,7 +19,7 @@
       </v-col>
 
       <v-col cols="6 pt-0">
-        <EmptyDataSource />
+        <EmptyState />
       </v-col>
 
       <v-col cols="6 pt-0">
@@ -41,11 +41,11 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import DestinationListCard from "@/components/DestinationListCard"
-import EmptyDataSource from "@/components/EmptyDataSource"
+import EmptyState from "@/components/EmptyState"
 
 export default {
   name: "connections",
-  components: { DestinationListCard, EmptyDataSource },
+  components: { DestinationListCard, EmptyState },
   computed: {
     ...mapGetters({
       destinations: 'AllDestinations'
