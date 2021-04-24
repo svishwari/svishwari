@@ -6,14 +6,14 @@
     height="340"
     color="AliceBlue"
   >
-    <v-icon color="primary" x-large> mdi-alert-circle-outline </v-icon>
+    <v-icon color="primary" x-large>
+      <slot name="icon"></slot>
+    </v-icon>
     <v-card-title class="justify-center font-weight-light">
-      Oops! There’s nothing here yet
+      <slot name="title"></slot>
     </v-card-title>
     <v-card-subtitle>
-      To create a connection, a data source must be imported!
-      <br />
-      Begin by selecting the plus button above.
+      <slot name="subtitle"></slot>
     </v-card-subtitle>
   </v-card>
 </template>

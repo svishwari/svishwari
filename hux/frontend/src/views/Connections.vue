@@ -19,14 +19,25 @@
       </v-col>
 
       <v-col cols="6 pt-0">
-        <EmptyState />
+        <EmptyState>
+          <template v-slot:icon> mdi-alert-circle-outline </template>
+          <template v-slot:title> Oops! There’s nothing here yet </template>
+          <template v-slot:subtitle>
+            To create a connection, a data source must be imported!
+            <br />
+            Begin by selecting the plus button above.
+          </template>
+        </EmptyState>
       </v-col>
 
       <v-col cols="6 pt-0">
-        <!-- <DestinationListCard v-for="item in destinationLists" :key="item.title"> -->
         <DestinationListCard v-for="item in destinations" :key="item.title">
           <template v-slot:logo>
-            <v-img class="elevation-6" :alt="item.title" :src="getImgUrl(item)"></v-img>
+            <v-img
+              class="elevation-6"
+              :alt="item.title"
+              :src="getImgUrl(item)"
+            ></v-img>
           </template>
           <template v-slot:title>
             {{ item.title }}
@@ -38,7 +49,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from "vuex"
 
 import DestinationListCard from "@/components/DestinationListCard"
 import EmptyState from "@/components/EmptyState"
@@ -48,7 +59,7 @@ export default {
   components: { DestinationListCard, EmptyState },
   computed: {
     ...mapGetters({
-      destinations: 'AllDestinations'
+      destinations: "AllDestinations",
     }),
 
     // This can be used, in-case, data required logic/filter
@@ -58,23 +69,17 @@ export default {
     //   })
     // },
 
-    hasDestinations () {
-      return Boolean(
-        this.destinations &&
-        this.destinations.length > 1
-      )
-    }
-  
-  },
-  methods: {
-    ...mapActions([
-      'getAllDestinations'
-    ]),
-    getImgUrl(item) {
-      return item.logoUrl;
+    hasDestinations() {
+      return Boolean(this.destinations && this.destinations.length > 1)
     },
   },
-  async mounted () {
+  methods: {
+    ...mapActions(["getAllDestinations"]),
+    getImgUrl(item) {
+      return item.logoUrl
+    },
+  },
+  async mounted() {
     await this.getAllDestinations()
   },
 }
