@@ -1,6 +1,11 @@
 <template>
-  <div class="connections-wrap grey lighten-5 pt-10 pr-7 pb-7 pl-7">
-    <v-row>
+  <div class="connections-wrap grey lighten-5">
+    <PageHeader>
+      <template slot="left">
+        <Breadcrumb :items="items" />
+      </template>
+    </PageHeader>
+    <v-row class="pt-10 pr-7 pb-7 pl-7">
       <v-col cols="6" class="d-flex align-end">
         <v-icon> mdi-cloud-download-outline </v-icon>
         <span class="font-weight-light ml-2 mt-1">Data Sources</span>
@@ -12,7 +17,7 @@
         <span class="font-weight-light ml-2 mt-1">Destinations</span>
         <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
         <v-spacer></v-spacer>
-        <span class="add-icon font-weight-light ml-2 mt-1 float-right">
+        <span class="add-icon font-weight-light ml-2 mt-1 float-right primary--text">
           View Destinations Details
           <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
         </span>
@@ -53,10 +58,24 @@ import { mapGetters, mapActions } from "vuex"
 
 import DestinationListCard from "@/components/DestinationListCard"
 import EmptyState from "@/components/EmptyState"
+import PageHeader from "@/components/PageHeader"
+import Breadcrumb from "@/components/common/Breadcrumb"
 
 export default {
   name: "connections",
-  components: { DestinationListCard, EmptyState },
+  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb },
+  data() {
+    return {
+      items: [
+        {
+          text: "Connections",
+          disabled: false,
+          href: this.$route.path,
+          icon: "mdi-connection",
+        },
+      ],
+    }
+  },
   computed: {
     ...mapGetters({
       destinations: "AllDestinations",
