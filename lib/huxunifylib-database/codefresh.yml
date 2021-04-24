@@ -39,7 +39,7 @@ steps:
     when:
       condition:
         any:
-          whenVarExists: 'includes("${{CF_RELEASE_TAG}}", "{{CF_RELEASE_TAG}}" ) == true'
+          whenVarExists: 'includes("${{CF_RELEASE_TAG}}", "{{CF_RELEASE_TAG}}" ) == false'
     description: "Publish the package on server tag creation"
     image: "python:3.7-buster"
     working_directory: "/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib-database"
