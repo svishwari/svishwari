@@ -9,7 +9,7 @@ from typing import Tuple
 import json
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
@@ -27,6 +27,7 @@ from huxunifylib.database.user_management import (
     update_user,
     manage_user_favorites,
 )
+from hux.api.huxunify.api.constants import OPERATION_FAILED, OPERATION_SUCCESS
 
 USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
@@ -339,16 +340,22 @@ class AddUserFavorite(SwaggerView):
 
     parameters = [
         {
+            "name": db_constants.USER_ID,
+            "description": "User ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
             "description": "Input destination body.",
             "example": {
-                db_constants.USER_ID: "07324507235",
                 db_constants.COMPONENT_NAME: "Campaign",
-                db_constants.COMPONENT_ID: "985342890626",
+                db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
-            db_constants.USER_ID: db_constants.USER_ID,
             db_constants.COMPONENT_NAME: "component name",
             db_constants.COMPONENT_ID: "id of favorite component",
         }
@@ -367,21 +374,20 @@ class AddUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
-    def post(
-        self, user_id: str, component_name: str, component_id: str
-    ) -> Tuple[dict, int]:
+    def post(self, user_id: str) -> Tuple[dict, int]:
         """Add a new favorite for a user
 
         ---
         Args:
             user_id (str): User id
-            component_name (str): name of component
-            component_id (str): id of the new favorite component
 
         Returns:
             Tuple[dict, int]: Configuration dict, HTTP status
 
         """
+        request_data = request.get_json()
+        component_id = request_data['component_id']
+        component_name = request_data['component_name']
 
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
@@ -417,16 +423,22 @@ class EditUserFavorite(SwaggerView):
 
     parameters = [
         {
+            "name": db_constants.USER_ID,
+            "description": "User ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
             "description": "Input destination body.",
             "example": {
-                db_constants.USER_ID: "07324507235",
                 db_constants.COMPONENT_NAME: "Campaign",
-                db_constants.COMPONENT_ID: "985342890626",
+                db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
-            db_constants.USER_ID: db_constants.USER_ID,
             db_constants.COMPONENT_NAME: "component name",
             db_constants.COMPONENT_ID: "id of favorite component",
         }
@@ -442,21 +454,20 @@ class EditUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
-    def put(
-        self, user_id: str, component_name: str, component_id: str
-    ) -> Tuple[dict, int]:
+    def put(self, user_id: str) -> Tuple[dict, int]:
         """Edit favorite for a user
 
         ---
         Args:
             user_id (str): User id
-            component_name (str): name of component
-            component_id (str): id of the new favorite component
 
         Returns:
             Tuple[dict, int]: Configuration dict, HTTP status
 
         """
+        request_data = request.get_json()
+        component_id = request_data['component_id']
+        component_name = request_data['component_name']
 
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
@@ -476,7 +487,7 @@ class EditUserFavorite(SwaggerView):
             get_db_client(),
             user_id=user_id,
             component_name=component_name,
-            component_id=component_id,
+            component_id=component_id
         )
 
         return response, HTTPStatus.OK
@@ -492,16 +503,22 @@ class DeleteUserFavorite(SwaggerView):
 
     parameters = [
         {
+            "name": db_constants.USER_ID,
+            "description": "User ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
             "description": "Input destination body.",
             "example": {
-                db_constants.USER_ID: "07324507235",
                 db_constants.COMPONENT_NAME: "Campaign",
-                db_constants.COMPONENT_ID: "985342890626",
+                db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
-            db_constants.USER_ID: db_constants.USER_ID,
             db_constants.COMPONENT_NAME: "component name",
             db_constants.COMPONENT_ID: "id of favorite component",
         }
@@ -520,21 +537,20 @@ class DeleteUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
-    def delete(
-        self, user_id: str, component_name: str, component_id: str
-    ) -> Tuple[dict, int]:
+    def delete(self, user_id: str) -> Tuple[dict, int]:
         """Delete a favorite for a user
 
         ---
         Args:
             user_id (str): User id
-            component_name (str): name of component
-            component_id (str): id of the new favorite component
 
         Returns:
             Tuple[dict, int]: Configuration dict, HTTP status
 
         """
+        request_data = request.get_json()
+        component_id = request_data['component_id']
+        component_name = request_data['component_name']
 
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
@@ -558,4 +574,4 @@ class DeleteUserFavorite(SwaggerView):
             delete_flag=True,
         )
 
-        return response, HTTPStatus.OK
+        return {"message": OPERATION_SUCCESS}, HTTPStatus.OK

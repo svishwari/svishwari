@@ -16,6 +16,9 @@ SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 
+OPERATION_SUCCESS = "SUCCESS"
+OPERATION_FAILED = "FAILED"
+
 DESTINATION_CONSTANTS = {
     FACEBOOK_NAME: {
         FACEBOOK_AD_ACCOUNT_ID: "Ad Account ID",
