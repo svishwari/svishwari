@@ -133,6 +133,11 @@ export default {
     border: none;
     border-top: solid 1px;
     border-color: #babfc7;
+    .menu-cells {
+      .ag-cell-value {
+        width: 100%;
+      }
+    }
     .ag-root-wrapper-body {
       .ag-header {
         height: 32px !important;

@@ -1,19 +1,15 @@
 <template>
-  <v-row class="menu-cell-wrapper">
+  <v-row class="destination-cell-wrapper">
     <v-col class="d-flex pr-0">
       {{ cellValue }}
-      <v-spacer></v-spacer>
-      <span class="action-icon font-weight-light float-right">
-        <v-icon class="mr-2 action-favroite" color="primary" @click="addToFavorite($event)"> mdi-star </v-icon>
-        <v-icon class="mr-2 more-action" color="primary" @click="takeActions($event)"> mdi-dots-vertical </v-icon>
-      </span>
+      <!-- <img src="../../../assets/images/mailchimp.png" alt="Girl in a jacket" width="18" height="18"> -->
     </v-col>
   </v-row>
 </template>
 <script>
 import Vue from "vue"
 export default Vue.extend({
-  name: "MenuCell",
+  name: "DestinationCell",
   data() {
     return {
       cellValue: null,
@@ -36,17 +32,7 @@ export default Vue.extend({
 })
 </script>
 <style lang="scss" scoped>
-.menu-cell-wrapper {
-  &:hover {
-    .action-icon {
-      display: block;
-      .action-favroite, .more-actions {
-        cursor: pointer;
-      }
-    }
-  }
-  .action-icon {
-    display: none;
-  }
+.destination-cell-wrapper {
+
 }
 </style>

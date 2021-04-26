@@ -49,10 +49,11 @@ import HuxTable from "@/components/common/huxTable.vue"
 import StatusCell from "@/components/common/huxTable/StatusCell"
 import UserAvatarCell from "@/components/common/huxTable/UserAvatarCell"
 import MenuCell from "@/components/common/huxTable/MenuCell"
+import DestinationCell from "@/components/common/huxTable/DestinationCell"
 
 export default {
   name: "audiences",
-  components: { PageHeader, Breadcrumb, huxButton, HuxTable, StatusCell, UserAvatarCell, MenuCell },
+  components: { PageHeader, Breadcrumb, huxButton, HuxTable, StatusCell, UserAvatarCell, MenuCell, DestinationCell },
   data() {
     return {
       frameworkComponents: this.frameworkComponents,
@@ -69,7 +70,7 @@ export default {
         { headerName: "Audience Name", field: "audienceName", sortable: true, sort: "desc", pinned: 'left', width: '300', cellRendererFramework: 'MenuCell', cellClass: 'menu-cells' },
         { headerName: "Status", field: "status", sortable: true, cellRendererFramework: 'StatusCell' },
         { headerName: "Size", field: "size", sortable: true },
-        { headerName: "Destinations", field: "destinations", sortable: true },
+        { headerName: "Destinations", field: "destinations", sortable: true, cellRendererFramework: 'DestinationCell' },
         { headerName: "Attributes", field: "attributes", sortable: true },
         { headerName: "Last Delivered", field: "lastDelivered", sortable: true, },
         { headerName: "Last Updated", field: "lastUpdated", sortable: true },
