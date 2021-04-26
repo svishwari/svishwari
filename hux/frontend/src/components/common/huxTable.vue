@@ -8,6 +8,8 @@
       :gridOptions="gridOptions"
       :overlayLoadingTemplate="overlayLoadingTemplate"
       :overlayNoRowsTemplate="overlayNoRowsTemplate"
+      :frameworkComponents="frameworkComponents"
+      :rowHeight="rowHeight"
     >
     </ag-grid-vue>
   </div>
@@ -55,6 +57,16 @@ export default {
     hasCheckBox: {
       type: Boolean,
       default: false,
+    },
+
+    frameworkComponents: {
+      type: Object,
+      default: null,
+    },
+
+    rowHeight: {
+      type: Number,
+      default: 60,
     },
   },
   data() {
