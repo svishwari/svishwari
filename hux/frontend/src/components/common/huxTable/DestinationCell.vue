@@ -1,8 +1,19 @@
 <template>
   <v-row class="destination-cell-wrapper">
-    <v-col class="d-flex pr-0">
-      {{ cellValue }}
-      <!-- <img src="../../../assets/images/mailchimp.png" alt="Girl in a jacket" width="18" height="18"> -->
+    <v-col class="d-flex align-center pr-0 mt-2">
+      <v-btn class="mr-1" width="18" height="18" outlined fab>
+        <img
+          src="../../../assets/images/facebook.png"
+          alt="mailchimp"
+        />
+      </v-btn>
+      <v-btn class="mr-1" width="18" height="18" outlined fab>
+        <img
+          src="../../../assets/images/mailchimp.png"
+          alt="mailchimp"
+        />
+      </v-btn>
+      <div class="extra-icon mr-1"> +2 </div>
     </v-col>
   </v-row>
 </template>
@@ -23,16 +34,15 @@ export default Vue.extend({
       return params.valueFormatted ? params.valueFormatted : params.value
     },
     addToFavorite(evnt) {
-      evnt.preventDefault();
+      evnt.preventDefault()
     },
     takeActions(evnt) {
-      evnt.preventDefault();
-    }
+      evnt.preventDefault()
+    },
   },
 })
 </script>
 <style lang="scss" scoped>
 .destination-cell-wrapper {
-
 }
 </style>
