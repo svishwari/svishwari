@@ -12,4 +12,5 @@ export default {
   white: colors.white,
   aliceBlue: colors.aliceBlue,
   anchor: colors.lightBlue,
+  background: colors.backgroundBlue,
 }
