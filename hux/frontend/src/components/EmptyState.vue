@@ -4,7 +4,7 @@
     elevation="1"
     tile
     height="340"
-    color="AliceBlue"
+    color="aliceBlue"
   >
     <v-icon color="primary" x-large>
       <slot name="icon"></slot>
