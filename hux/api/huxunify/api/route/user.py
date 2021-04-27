@@ -6,7 +6,6 @@ import logging
 from http import HTTPStatus
 from typing import Tuple
 
-import json
 from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint, request
@@ -19,15 +18,14 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api import constants as api_c
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
     get_all_users,
     get_user,
-    delete_user,
-    update_user,
+    manage_user_dashboard_config,
     manage_user_favorites,
 )
-from hux.api.huxunify.api.constants import OPERATION_FAILED, OPERATION_SUCCESS
 
 USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
@@ -178,31 +176,44 @@ class AddPreferences(SwaggerView):
             "required": True,
             "example": "5f5f7262997acad4bac4373b",
         },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input destination body.",
+            "example": {
+                api_c.PREFERENCE_KEY: "configure hux",
+                api_c.PREFERENCE_VALUE: True,
+            },
+            api_c.PREFERENCE_KEY: api_c.PREFERENCE_KEY_DESCRIPTION,
+            api_c.PREFERENCE_VALUE: api_c.PREFERENCE_VALUE_DESCRIPTION,
+        },
     ]
 
     responses = {
         HTTPStatus.CREATED.value: {
-            "description": "User preferences added",
+            "description": "User preferences added.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to update user preferences",
+            "description": "Failed to update user preferences.",
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
-    def post(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
+    def post(self, user_id: str) -> Tuple[dict, int]:
         """Add a user's preferences
 
         ---
         Args:
             user_id (str): User id
-            update_doc (str): update document for user profile
 
         Returns:
             Tuple[dict, int]: profile dict, HTTP status
 
         """
+        request_data = request.get_json()
+
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
         else:
@@ -210,13 +221,14 @@ class AddPreferences(SwaggerView):
                 "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
-        update_doc = json.loads(update_doc)
-
-        response = update_user(
-            get_db_client(), user_id=user_id, update_doc=update_doc
+        response = manage_user_dashboard_config(
+            get_db_client(),
+            user_id=user_id,
+            config_key=request_data[api_c.PREFERENCE_KEY],
+            config_value=request_data[api_c.PREFERENCE_VALUE],
         )
 
-        return response, HTTPStatus.CREATED
+        return response, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -236,6 +248,18 @@ class EditPreferences(SwaggerView):
             "required": True,
             "example": "5f5f7262997acad4bac4373b",
         },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input destination body.",
+            "example": {
+                api_c.PREFERENCE_KEY: "configure hux",
+                api_c.PREFERENCE_VALUE: True,
+            },
+            api_c.PREFERENCE_KEY: api_c.PREFERENCE_KEY_DESCRIPTION,
+            api_c.PREFERENCE_VALUE: api_c.PREFERENCE_VALUE_DESCRIPTION,
+        },
     ]
 
     responses = {
@@ -249,29 +273,31 @@ class EditPreferences(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [USER_TAG]
 
-    def put(self, user_id: str, update_doc: str) -> Tuple[dict, int]:
+    def put(self, user_id: str) -> Tuple[dict, int]:
         """Edit a user's preferences
 
         ---
         Args:
             user_id (str): User id
-            update_doc (str): update document for user profile
 
         Returns:
             Tuple[dict, int]: profile dict, HTTP status
 
         """
+        request_data = request.get_json()
+
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
         else:
             return {
-                "message": "Invalid user ID received {user_id}."
+                "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
-        update_doc = json.loads(update_doc)
-
-        response = update_user(
-            get_db_client(), user_id=user_id, update_doc=update_doc
+        response = manage_user_dashboard_config(
+            get_db_client(),
+            user_id=user_id,
+            config_key=request_data[api_c.PREFERENCE_KEY],
+            config_value=request_data[api_c.PREFERENCE_VALUE],
         )
 
         return response, HTTPStatus.OK
@@ -293,6 +319,18 @@ class DeletePreferences(SwaggerView):
             "in": "path",
             "required": True,
             "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input destination body.",
+            "example": {
+                api_c.PREFERENCE_KEY: "configure hux",
+                api_c.PREFERENCE_VALUE: True,
+            },
+            api_c.PREFERENCE_KEY: api_c.PREFERENCE_KEY_DESCRIPTION,
+            api_c.PREFERENCE_VALUE: api_c.PREFERENCE_VALUE_DESCRIPTION,
         },
     ]
 
@@ -318,6 +356,8 @@ class DeletePreferences(SwaggerView):
             Tuple[dict, int]: profile dict, HTTP status
 
         """
+        request_data = request.get_json()
+
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
         else:
@@ -325,9 +365,15 @@ class DeletePreferences(SwaggerView):
                 "message": f"Invalid user ID received {user_id}."
             }, HTTPStatus.BAD_REQUEST
 
-        response = delete_user(get_db_client(), user_id=user_id)
+        manage_user_dashboard_config(
+            get_db_client(),
+            user_id=user_id,
+            config_key=request_data[api_c.PREFERENCE_KEY],
+            config_value=request_data[api_c.PREFERENCE_VALUE],
+            delete_flag=True,
+        )
 
-        return response, HTTPStatus.OK
+        return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -358,7 +404,7 @@ class AddUserFavorite(SwaggerView):
             },
             db_constants.COMPONENT_NAME: "component name",
             db_constants.COMPONENT_ID: "id of favorite component",
-        }
+        },
     ]
     responses = {
         HTTPStatus.CREATED.value: {
@@ -386,8 +432,8 @@ class AddUserFavorite(SwaggerView):
 
         """
         request_data = request.get_json()
-        component_id = request_data['component_id']
-        component_name = request_data['component_name']
+        component_id = request_data["component_id"]
+        component_name = request_data["component_name"]
 
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
@@ -441,7 +487,7 @@ class EditUserFavorite(SwaggerView):
             },
             db_constants.COMPONENT_NAME: "component name",
             db_constants.COMPONENT_ID: "id of favorite component",
-        }
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -466,8 +512,8 @@ class EditUserFavorite(SwaggerView):
 
         """
         request_data = request.get_json()
-        component_id = request_data['component_id']
-        component_name = request_data['component_name']
+        component_id = request_data["component_id"]
+        component_name = request_data["component_name"]
 
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
@@ -487,7 +533,7 @@ class EditUserFavorite(SwaggerView):
             get_db_client(),
             user_id=user_id,
             component_name=component_name,
-            component_id=component_id
+            component_id=component_id,
         )
 
         return response, HTTPStatus.OK
@@ -521,7 +567,7 @@ class DeleteUserFavorite(SwaggerView):
             },
             db_constants.COMPONENT_NAME: "component name",
             db_constants.COMPONENT_ID: "id of favorite component",
-        }
+        },
     ]
     responses = {
         HTTPStatus.CREATED.value: {
@@ -549,8 +595,8 @@ class DeleteUserFavorite(SwaggerView):
 
         """
         request_data = request.get_json()
-        component_id = request_data['component_id']
-        component_name = request_data['component_name']
+        component_id = request_data["component_id"]
+        component_name = request_data["component_name"]
 
         if ObjectId.is_valid(user_id):
             user_id = ObjectId(user_id)
@@ -566,7 +612,7 @@ class DeleteUserFavorite(SwaggerView):
                 "message": f"Invalid component ID received {component_id}."
             }, HTTPStatus.BAD_REQUEST
 
-        response = manage_user_favorites(
+        manage_user_favorites(
             get_db_client(),
             user_id=user_id,
             component_name=component_name,
@@ -574,4 +620,4 @@ class DeleteUserFavorite(SwaggerView):
             delete_flag=True,
         )
 
-        return {"message": OPERATION_SUCCESS}, HTTPStatus.OK
+        return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK

@@ -108,3 +108,7 @@ AUTH401_RESPONSE = {
         "description": api_c.AUTH401_ERROR_MESSAGE,
     },
 }
+
+
+if __name__ == "__main__":
+    pass

@@ -18,7 +18,7 @@ ignore-patterns=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-init-hook="import sys; sys.path.append("."); sys.path.append("./hux/api"); sys.path.append("./lib/huxunifylib-database")"
+init-hook="import sys; sys.path.append("."); sys.path.append("./lib/huxunifylib-database"); sys.path.append("./hux/api")"
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
