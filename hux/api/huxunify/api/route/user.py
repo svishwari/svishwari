@@ -400,7 +400,7 @@ class AddUserFavorite(SwaggerView):
             "type": "object",
             "description": "Input destination body.",
             "example": {
-                db_constants.COMPONENT_NAME: "Campaign",
+                db_constants.COMPONENT_NAME: "Audience",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
             db_constants.COMPONENT_NAME: "component name",
@@ -483,7 +483,7 @@ class EditUserFavorite(SwaggerView):
             "type": "object",
             "description": "Input destination body.",
             "example": {
-                db_constants.COMPONENT_NAME: "Campaign",
+                db_constants.COMPONENT_NAME: "Audience",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
             db_constants.COMPONENT_NAME: "component name",
