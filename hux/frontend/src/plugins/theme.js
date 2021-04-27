@@ -10,6 +10,7 @@ export default {
   warning: colors.yellow,
   black: colors.black,
   white: colors.white,
+  aliceBlue: colors.aliceBlue,
   anchor: colors.lightBlue,
-  disabled: colors.disabledGrey,
+  background: colors.backgroundBlue,
 }

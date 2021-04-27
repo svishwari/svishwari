@@ -5,7 +5,7 @@
     :class="isDisabled ? 'card-horizontal-disabled' : ''"
     :elevation="isDisabled ? '0' : '2'"
     :disabled="isDisabled"
-    :color="isDisabled ? 'disabled' : 'white'"
+    :color="isDisabled ? 'background' : 'white'"
     height=60
   >
     <div class="d-flex align-center">
