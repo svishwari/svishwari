@@ -118,7 +118,7 @@
     </drawer>
     <br />
 
-    <v-subheader> Metric Card</v-subheader>
+    <v-subheader>Metric Card</v-subheader>
     <v-divider></v-divider>
     <MetricCard
       class="ma-4"
