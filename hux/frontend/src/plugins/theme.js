@@ -14,4 +14,5 @@ export default {
   anchor: colors.lightBlue,
   background: colors.backgroundBlue,
   neroBlack: colors.neroBlack,
+  zircon: colors.zircon,
 }
