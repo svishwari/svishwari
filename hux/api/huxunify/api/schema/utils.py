@@ -47,7 +47,7 @@ def must_not_be_blank(data: AnyStr) -> None:
         data (AnyStr): any string
 
     Returns:
-        bool: pass or fail
+        None
 
     """
     if not data:
@@ -61,7 +61,7 @@ def validate_object_id(data: AnyStr) -> None:
         data (AnyStr): any string
 
     Returns:
-        bool: pass or fail
+        None
 
     """
     if not ObjectId.is_valid(data):
@@ -75,7 +75,7 @@ def validate_dest_constants(data: dict) -> None:
         data (dict): input dict
 
     Returns:
-        bool: pass or fail
+        None
 
     """
     # check if dictionary first
