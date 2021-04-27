@@ -563,7 +563,7 @@ class DeleteUserFavorite(SwaggerView):
             "type": "object",
             "description": api_c.FAVORITE_BODY_DESCRIPTION,
             "example": {
-                db_constants.COMPONENT_NAME: "audience",
+                db_constants.COMPONENT_NAME: "Audience",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
             db_constants.COMPONENT_NAME: "component name",
