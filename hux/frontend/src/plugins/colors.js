@@ -12,4 +12,5 @@ export default {
   lightBlue: "#007CB0",
   backgroundBlue: "#F9FAFB",
   zircon: "#E2EAEC",
+  neroBlack: "#1e1e1e",
 }
