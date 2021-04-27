@@ -12,7 +12,7 @@
         <v-list-item-title class="item-headline primary--text mt-1">
           {{ title }}
         </v-list-item-title>
-        <v-list-item-subtitle class="item-subtitle mb-3">
+        <v-list-item-subtitle class="item-subtitle mb-3 neroBlack--text">
           {{ subtitle }}
         </v-list-item-subtitle>
       </v-list-item-content>
@@ -67,11 +67,7 @@ export default {
 .metric-card-wrapper {
   border: 1px solid #e2eaec;
   .item-headline {
-    font-size: 12px !important;
-  }
-  .item-subtitle {
-    line-height: 19px;
-    color: #1e1e1e;
+    font-size: 12px;
   }
 }
 </style>
