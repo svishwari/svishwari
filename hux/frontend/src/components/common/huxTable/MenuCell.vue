@@ -4,10 +4,24 @@
       {{ cellValue }}
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
-        <v-icon class="mr-2 action-favroite" color="primary" @click="addToFavorite($event)"> mdi-star </v-icon>
+        <v-icon
+          class="mr-2 action-favroite"
+          color="primary"
+          @click="addToFavorite($event)"
+        >
+          mdi-star
+        </v-icon>
         <v-menu bottom offset-y>
           <template v-slot:activator="{ on, attrs }">
-             <v-icon v-bind="attrs" v-on="on" class="mr-2 more-action" color="primary" @click="takeActions($event)"> mdi-dots-vertical </v-icon>
+            <v-icon
+              v-bind="attrs"
+              v-on="on"
+              class="mr-2 more-action"
+              color="primary"
+              @click="takeActions($event)"
+            >
+              mdi-dots-vertical
+            </v-icon>
           </template>
           <v-list>
             <v-list-item v-for="(item, index) in items" :key="index">
@@ -27,12 +41,12 @@ export default Vue.extend({
     return {
       cellValue: null,
       items: [
-        { title: 'Export' },
-        { title: 'Edit' },
-        { title: 'Duplicate' },
-        { title: 'Open' },
-        { title: 'Pause delivery' },
-        { title: 'Delete' },
+        { title: "Export" },
+        { title: "Edit" },
+        { title: "Duplicate" },
+        { title: "Open" },
+        { title: "Pause delivery" },
+        { title: "Delete" },
       ],
     }
   },
@@ -44,11 +58,11 @@ export default Vue.extend({
       return params.valueFormatted ? params.valueFormatted : params.value
     },
     addToFavorite(evnt) {
-      evnt.preventDefault();
+      evnt.preventDefault()
     },
     takeActions(evnt) {
-      evnt.preventDefault();
-    }
+      evnt.preventDefault()
+    },
   },
 })
 </script>
@@ -57,7 +71,8 @@ export default Vue.extend({
   &:hover {
     .action-icon {
       display: block;
-      .action-favroite, .more-actions {
+      .action-favroite,
+      .more-actions {
         cursor: pointer;
       }
     }

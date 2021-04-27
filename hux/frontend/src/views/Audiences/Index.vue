@@ -5,34 +5,31 @@
         <Breadcrumb :items="items" />
       </template>
     </PageHeader>
-    <PageHeader class="mt-1" style="height: 71px;">
-
+    <PageHeader class="mt-1" style="height: 71px">
       <template slot="left">
-        <v-icon large @click="refresh"> 
-          mdi-filter-variant 
-        </v-icon>
+        <v-icon large @click="refresh"> mdi-filter-variant </v-icon>
       </template>
 
       <template slot="right">
-        <v-icon color="primary" large @click="refresh"> 
-          mdi-refresh 
-        </v-icon>
-        <huxButton
-          ButtonText="Audience"
-          icon="mdi-plus"
-          iconPosition="left"
-          variant="primary"
-          size="large"
-          v-bind:isTile="true"
-        ></huxButton>
+        <v-icon color="primary" large @click="refresh"> mdi-refresh </v-icon>
+        <!-- <router-link to="/createAudience" > -->
+        <router-link :to="{ path: '/audiences/createAudience' }" append>
+          <huxButton
+            ButtonText="Audience"
+            icon="mdi-plus"
+            iconPosition="left"
+            variant="primary"
+            size="large"
+            v-bind:isTile="true"
+          ></huxButton>
+        </router-link>
       </template>
-
     </PageHeader>
     <v-row class="pt-3 pb-7">
       <hux-table
         :columnDef="columnDefs"
         :tableData="rowData"
-        :frameworkComponents='frameworkComponents'
+        :frameworkComponents="frameworkComponents"
         :rowHeight="60"
         height="350px"
         hasCheckBox
@@ -53,7 +50,12 @@ import DestinationCell from "@/components/common/huxTable/DestinationCell"
 
 export default {
   name: "audiences",
-  components: { PageHeader, Breadcrumb, huxButton, HuxTable, StatusCell, UserAvatarCell, MenuCell, DestinationCell },
+  components: {
+    PageHeader,
+    Breadcrumb,
+    huxButton,
+    HuxTable,
+  },
   data() {
     return {
       frameworkComponents: this.frameworkComponents,
@@ -67,22 +69,56 @@ export default {
       ],
 
       columnDefs: [
-        { headerName: "Audience Name", field: "audienceName", sortable: true, sort: "desc", pinned: 'left', width: '300', cellRendererFramework: 'MenuCell', cellClass: 'menu-cells' },
-        { headerName: "Status", field: "status", sortable: true, cellRendererFramework: 'StatusCell' },
+        {
+          headerName: "Audience Name",
+          field: "audienceName",
+          sortable: true,
+          sort: "desc",
+          pinned: "left",
+          width: "300",
+          cellRendererFramework: MenuCell,
+          cellClass: "menu-cells",
+        },
+        {
+          headerName: "Status",
+          field: "status",
+          sortable: true,
+          cellRendererFramework: StatusCell,
+        },
         { headerName: "Size", field: "size", sortable: true },
-        { headerName: "Destinations", field: "destinations", sortable: true, cellRendererFramework: 'DestinationCell' },
+        {
+          headerName: "Destinations",
+          field: "destinations",
+          sortable: true,
+          cellRendererFramework: DestinationCell,
+        },
         { headerName: "Attributes", field: "attributes", sortable: true },
-        { headerName: "Last Delivered", field: "lastDelivered", sortable: true, },
+        {
+          headerName: "Last Delivered",
+          field: "lastDelivered",
+          sortable: true,
+        },
         { headerName: "Last Updated", field: "lastUpdated", sortable: true },
-        { headerName: "Last Updated By", field: "lastUpdatedBy", sortable: true, cellRendererFramework: 'UserAvatarCell' },
+        {
+          headerName: "Last Updated By",
+          field: "lastUpdatedBy",
+          sortable: true,
+          cellRendererFramework: UserAvatarCell,
+        },
         { headerName: "Created", field: "created", sortable: true },
-        { headerName: "Created By", field: "createdBy", sortable: true, cellRendererFramework: 'UserAvatarCell' },
+        {
+          headerName: "Created By",
+          field: "createdBy",
+          sortable: true,
+          cellRendererFramework: UserAvatarCell,
+        },
       ],
 
       rowData: [
-        { audienceName: "Audience Name 1",
+        {
+          audienceName: "Audience Name 1",
           status: "Active",
-          size: '654K',
+          size: "654K",
           destinations: "SFMC",
           attributes: "Churn",
           lastDelivered: "Today, 12:00 PM",
@@ -94,7 +130,7 @@ export default {
         {
           audienceName: "Audience Name 1",
           status: "Delivering",
-          size: '1000K',
+          size: "1000K",
           destinations: "SFMC",
           attributes: "Churn",
           lastDelivered: "Today, 12:00 PM",
@@ -106,7 +142,7 @@ export default {
         {
           audienceName: "Audience Name 1",
           status: "Active",
-          size: '2K',
+          size: "2K",
           destinations: "SFMC",
           attributes: "Churn",
           lastDelivered: "Today, 12:00 PM",
@@ -118,7 +154,7 @@ export default {
         {
           audienceName: "Audience Name 1",
           status: "Delivering",
-          size: '654K',
+          size: "654K",
           destinations: "SFMC",
           attributes: "Churn",
           lastDelivered: "Today, 12:00 PM",
@@ -130,7 +166,7 @@ export default {
         {
           audienceName: "Audience Name 1",
           status: "Error",
-          size: '1000K',
+          size: "1000K",
           destinations: "SFMC",
           attributes: "Churn",
           lastDelivered: "Today, 12:00 PM",
@@ -142,7 +178,7 @@ export default {
         {
           audienceName: "Audience Name 1",
           status: "Active",
-          size: '2K',
+          size: "2K",
           destinations: "SFMC",
           attributes: "Churn",
           lastDelivered: "Today, 12:00 PM",
@@ -154,7 +190,7 @@ export default {
         {
           audienceName: "Audience Name 1",
           status: "Delivering",
-          size: '654K',
+          size: "654K",
           destinations: "SFMC",
           attributes: "Churn",
           lastDelivered: "Today, 12:00 PM",
@@ -162,21 +198,19 @@ export default {
           lastUpdatedBy: "HR",
           created: "Today, 12:00 PM",
           createdBy: "RG",
-        }
-      ]
+        },
+      ],
     }
   },
-  computed: {
-
-  },
+  computed: {},
   methods: {
-     refresh () { },
+    refresh() {},
   },
-  beforeMount () { 
+  beforeMount() {
     this.frameworkComponents = {
-      StatusCell: StatusCell
+      StatusCell: StatusCell,
     }
-  }
+  },
 }
 </script>
-<style lang="scss" scoped> </style>
+<style lang="scss" scoped></style>

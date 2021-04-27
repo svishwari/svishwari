@@ -17,7 +17,9 @@
         <span class="font-weight-light ml-2 mt-1">Destinations</span>
         <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
         <v-spacer></v-spacer>
-        <span class="add-icon font-weight-light ml-2 mt-1 float-right primary--text">
+        <span
+          class="add-icon font-weight-light ml-2 mt-1 float-right primary--text"
+        >
           View Destinations Details
           <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
         </span>

@@ -61,6 +61,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/createAudience",
+    name: "createAudience",
+    component: () => import("@/views/Audiences/createAudience.vue"),
+    meta: {
+      layout: "app",
+      title: "Audiences | Hux Unified UI",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/models",
     name: "models",
     component: () => import("@/views/Models.vue"),

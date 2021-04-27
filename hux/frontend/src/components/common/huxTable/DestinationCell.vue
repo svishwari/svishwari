@@ -2,18 +2,12 @@
   <v-row class="destination-cell-wrapper">
     <v-col class="d-flex align-center pr-0 mt-2">
       <v-btn class="mr-1" width="18" height="18" outlined fab>
-        <img
-          src="../../../assets/images/facebook.png"
-          alt="mailchimp"
-        />
+        <img src="../../../assets/images/facebook.png" alt="mailchimp" />
       </v-btn>
       <v-btn class="mr-1" width="18" height="18" outlined fab>
-        <img
-          src="../../../assets/images/mailchimp.png"
-          alt="mailchimp"
-        />
+        <img src="../../../assets/images/mailchimp.png" alt="mailchimp" />
       </v-btn>
-      <div class="extra-icon mr-1"> +2 </div>
+      <div class="extra-icon mr-1">+2</div>
     </v-col>
   </v-row>
 </template>
