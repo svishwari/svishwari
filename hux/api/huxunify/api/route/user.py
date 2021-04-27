@@ -181,7 +181,7 @@ class AddPreferences(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input destination body.",
+            "description": api_c.PREFERENCE_BODY_DESCRIPTION,
             "example": {
                 api_c.PREFERENCE_KEY: "configure hux",
                 api_c.PREFERENCE_VALUE: True,
@@ -253,7 +253,7 @@ class EditPreferences(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input destination body.",
+            "description": api_c.PREFERENCE_BODY_DESCRIPTION,
             "example": {
                 api_c.PREFERENCE_KEY: "configure hux",
                 api_c.PREFERENCE_VALUE: True,
@@ -325,7 +325,7 @@ class DeletePreferences(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input destination body.",
+            "description": api_c.PREFERENCE_BODY_DESCRIPTION,
             "example": {
                 api_c.PREFERENCE_KEY: "configure hux",
                 api_c.PREFERENCE_VALUE: True,
@@ -398,7 +398,7 @@ class AddUserFavorite(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input destination body.",
+            "description": api_c.FAVORITE_BODY_DESCRIPTION,
             "example": {
                 db_constants.COMPONENT_NAME: "Audience",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
@@ -481,7 +481,7 @@ class EditUserFavorite(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input destination body.",
+            "description": api_c.FAVORITE_BODY_DESCRIPTION,
             "example": {
                 db_constants.COMPONENT_NAME: "Audience",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
@@ -561,9 +561,9 @@ class DeleteUserFavorite(SwaggerView):
             "name": "body",
             "in": "body",
             "type": "object",
-            "description": "Input destination body.",
+            "description": api_c.FAVORITE_BODY_DESCRIPTION,
             "example": {
-                db_constants.COMPONENT_NAME: "Campaign",
+                db_constants.COMPONENT_NAME: "audience",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
             db_constants.COMPONENT_NAME: "component name",

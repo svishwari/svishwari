@@ -41,6 +41,8 @@ PREFERENCE_KEY = "preference_key"
 PREFERENCE_KEY_DESCRIPTION = "the preference key you want to store."
 PREFERENCE_VALUE = "preference_value"
 PREFERENCE_VALUE_DESCRIPTION = "the value of the preference."
+PREFERENCE_BODY_DESCRIPTION = "Input preference body."
+FAVORITE_BODY_DESCRIPTION = "Input favorite component body."
 
 # error messages
 CANNOT_DELETE_DESTINATIONS = "Error deleting destination(s)."
