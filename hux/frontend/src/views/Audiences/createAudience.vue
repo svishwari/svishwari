@@ -9,7 +9,7 @@
 
     <div class="overview mt-15">Audience overview</div>
     <div class="row overview-list mb-0 ml-0 mt-1">
-      <!-- <MetricCard
+      <MetricCard
         class="list-item mr-3"
         :width="135"
         :height="80"
@@ -19,19 +19,51 @@
         :subtitle="item.subtitle"
         :icon="item.icon"
         :active="true"
-      ></MetricCard> -->
+      ></MetricCard>
     </div>
     <v-divider class="divider mt-5"></v-divider>
+
+    <Footer absolute padless color="white" class="footer">
+      <template v-slot:left>
+        <huxButton
+          ButtonText="Cancel"
+          variant="tertiary"
+          v-bind:isTile="true"
+          width="94"
+          height="40"
+        ></huxButton>
+        <huxButton
+          ButtonText="Save &amp; complete later"
+          variant="tertiary"
+          v-bind:isTile="true"
+          width="201"
+          height="40"
+        ></huxButton>
+      </template>
+      <template v-slot:right>
+        <huxButton
+          ButtonText="Create"
+          variant="primary"
+          v-bind:isTile="true"
+          width="94"
+          height="44"
+        ></huxButton>
+      </template>
+    </Footer>
   </div>
 </template>
 
 <script>
-// import MetricCard from "@/components/common/MetricCard"
+import MetricCard from "@/components/common/MetricCard"
+import Footer from "@/components/common/Footer"
+import huxButton from "@/components/common/huxButton"
 
 export default {
   name: "createAudience",
   components: {
-    // MetricCard,
+    MetricCard,
+    Footer,
+    huxButton,
   },
   data() {
     return {
@@ -66,6 +98,10 @@ export default {
   }
   .divider {
     max-width: 1103px;
+  }
+  .footer {
+    padding-left: 50px;
+    box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important
   }
 }
 </style>
