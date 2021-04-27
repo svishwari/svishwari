@@ -156,7 +156,7 @@ class IndividualUserSearch(SwaggerView):
             raise ProblemException(
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"Unable to get user {user_id}.",
+                detail=f"Unable to get user with ID {user_id}.",
             ) from exc
 
 
@@ -171,11 +171,11 @@ class AddPreferences(SwaggerView):
     parameters = [
         {
             "name": db_constants.USER_ID,
-            "description": "User ID.",
-            "type": "string",
             "in": "path",
-            "required": True,
+            "type": "string",
+            "description": "User ID.",
             "example": "5f5f7262997acad4bac4373b",
+            "required": True,
         },
         {
             "name": "body",
@@ -243,11 +243,11 @@ class EditPreferences(SwaggerView):
     parameters = [
         {
             "name": db_constants.USER_ID,
-            "description": "User ID.",
-            "type": "string",
             "in": "path",
-            "required": True,
+            "type": "string",
+            "description": "User ID.",
             "example": "5f5f7262997acad4bac4373b",
+            "required": True,
         },
         {
             "name": "body",
@@ -315,11 +315,11 @@ class DeletePreferences(SwaggerView):
     parameters = [
         {
             "name": db_constants.USER_ID,
-            "description": "User ID.",
-            "type": "string",
             "in": "path",
-            "required": True,
+            "type": "string",
+            "description": "User ID.",
             "example": "5f5f7262997acad4bac4373b",
+            "required": True,
         },
         {
             "name": "body",
@@ -340,7 +340,7 @@ class DeletePreferences(SwaggerView):
             "description": "User preferences deleted",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to update user preferences",
+            "description": "Failed to delete user preferences",
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -388,11 +388,11 @@ class AddUserFavorite(SwaggerView):
     parameters = [
         {
             "name": db_constants.USER_ID,
-            "description": "User ID.",
-            "type": "string",
             "in": "path",
-            "required": True,
+            "type": "string",
+            "description": "User ID.",
             "example": "5f5f7262997acad4bac4373b",
+            "required": True,
         },
         {
             "name": "body",
@@ -471,11 +471,11 @@ class EditUserFavorite(SwaggerView):
     parameters = [
         {
             "name": db_constants.USER_ID,
-            "description": "User ID.",
-            "type": "string",
             "in": "path",
-            "required": True,
+            "type": "string",
+            "description": "User ID.",
             "example": "5f5f7262997acad4bac4373b",
+            "required": True,
         },
         {
             "name": "body",
@@ -551,11 +551,11 @@ class DeleteUserFavorite(SwaggerView):
     parameters = [
         {
             "name": db_constants.USER_ID,
-            "description": "User ID.",
-            "type": "string",
             "in": "path",
-            "required": True,
+            "type": "string",
+            "description": "User ID.",
             "example": "5f5f7262997acad4bac4373b",
+            "required": True,
         },
         {
             "name": "body",
@@ -571,14 +571,11 @@ class DeleteUserFavorite(SwaggerView):
         },
     ]
     responses = {
-        HTTPStatus.CREATED.value: {
-            "description": "User favorite created",
-        },
         HTTPStatus.OK.value: {
-            "description": "User favorite edited",
+            "description": "User favorite deleted",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to add user favorite",
+            "description": "Failed to delete user favorite",
         },
     }
     responses.update(AUTH401_RESPONSE)

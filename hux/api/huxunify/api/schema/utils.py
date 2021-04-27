@@ -40,7 +40,7 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     }
 
 
-def must_not_be_blank(data: AnyStr) -> bool:
+def must_not_be_blank(data: AnyStr) -> None:
     """This function validates an empty string.
 
     Args:
@@ -54,7 +54,7 @@ def must_not_be_blank(data: AnyStr) -> bool:
         raise ValidationError(api_c.EMPTY_OBJECT_ERROR_MESSAGE)
 
 
-def validate_object_id(data: AnyStr) -> bool:
+def validate_object_id(data: AnyStr) -> None:
     """This function validates an object id.
 
     Args:
@@ -68,7 +68,7 @@ def validate_object_id(data: AnyStr) -> bool:
         raise ValidationError(api_c.INVALID_OBJECT_ID)
 
 
-def validate_dest_constants(data: dict) -> bool:
+def validate_dest_constants(data: dict) -> None:
     """This function validates destination auth details.
 
     Args:
