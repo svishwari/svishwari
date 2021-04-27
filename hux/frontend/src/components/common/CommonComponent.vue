@@ -120,7 +120,17 @@
 
      <v-subheader> Metric Card</v-subheader>
      <v-divider></v-divider>
-     <MetricCard class="ma-4"></MetricCard>
+     <MetricCard
+        class="ma-4"
+        :width="135"
+        :height="80"
+        v-for="(item, i) in overviewListItems"
+        :key="i"
+        :title="item.title"
+        :subtitle="item.subtitle"
+        :icon="item.icon"
+        :active="true"
+      ></MetricCard>
   </div>
 </template>
 
@@ -357,6 +367,10 @@ export default {
       ],
 
       drawer: false,
+
+      overviewListItems: [
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+      ]
     }
   },
   mounted() {},
