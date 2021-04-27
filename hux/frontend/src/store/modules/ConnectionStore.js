@@ -2,13 +2,13 @@
 // import { getAllDestinations } from "@/api/resources/destinations"
 
 const state = {
-    destinations: [
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Adobe Experience" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Facebook" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Google" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Twilio" },
-        { logoUrl: "../assets/images/adobe-icon.png", title: "Amazon" },
-    ]
+  destinations: [
+    { logoUrl: "../assets/images/adobe-icon.png", title: "Adobe Experience" },
+    { logoUrl: "../assets/images/adobe-icon.png", title: "Facebook" },
+    { logoUrl: "../assets/images/adobe-icon.png", title: "Google" },
+    { logoUrl: "../assets/images/adobe-icon.png", title: "Twilio" },
+    { logoUrl: "../assets/images/adobe-icon.png", title: "Amazon" },
+  ],
 }
 
 const getters = {
@@ -20,10 +20,10 @@ const getters = {
 const mutations = {
   SET_ALL_DESTINATIONS(state, destinations) {
     /*
-    *    destinations.forEach((destination) => {
-    *       Vue.set(state.destinations, destination._id, destination)
-    *    })
-    */
+     *    destinations.forEach((destination) => {
+     *       Vue.set(state.destinations, destination._id, destination)
+     *    })
+     */
     state.destinations = destinations
   },
 }
@@ -31,14 +31,12 @@ const mutations = {
 const actions = {
   async getAllDestinations({ commit }) {
     try {
-    /*
-    *    const response = await getAllDestinations()
-    *    commit("SET_ALL_DESTINATIONS", response.data)
-    */
-        commit("SET_ALL_DESTINATIONS", state.destinations)
-    } catch (error) {
-      
-    }
+      /*
+       *    const response = await getAllDestinations()
+       *    commit("SET_ALL_DESTINATIONS", response.data)
+       */
+      commit("SET_ALL_DESTINATIONS", state.destinations)
+    } catch (error) {}
   },
 }
 

@@ -11,9 +11,9 @@
           <slot name="logo"></slot>
         </v-list-item-avatar>
         <v-list-item-content>
-            <v-list-item-title>
-              <slot name="title"></slot>
-            </v-list-item-title>
+          <v-list-item-title>
+            <slot name="title"></slot>
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-card-actions>
@@ -24,4 +24,4 @@ export default {
   name: "DestinationListCard",
 }
 </script>
-<style lang="scss" scoped> </style>
+<style lang="scss" scoped></style>
