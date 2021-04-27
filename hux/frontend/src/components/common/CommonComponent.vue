@@ -117,6 +117,10 @@
       </template>
     </drawer>
     <br />
+
+     <v-subheader> Metric Card</v-subheader>
+     <v-divider></v-divider>
+     <MetricCard class="ma-4"></MetricCard>
   </div>
 </template>
 
@@ -129,6 +133,7 @@ import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
 import Drawer from "@/components/common/Drawer"
+import MetricCard from "@/components/common/MetricCard"
 
 export default {
   name: "CommonComponent",
@@ -141,6 +146,7 @@ export default {
     PageHeader,
     HuxTable,
     Drawer,
+    MetricCard,
   },
   methods: {
     onupdatelabelText(newValue) {
