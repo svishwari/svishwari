@@ -7,26 +7,30 @@
     floating
     app
   >
-    <v-card
-      tile
-      elevation="5"
-      height="70"
+    <v-toolbar
+      style="width: 100%"
       class="d-flex justify-space-between align-center px-6 py-5"
+      height="70"
+      tile
+      absolute
+      padless
+      color="white"
+      elevation="5"
     >
       <slot name="header-left"></slot>
       <slot name="header-right"></slot>
-    </v-card>
-    <slot></slot>
-    <v-footer absolute padless color="white" elevation="5">
-      <v-card
-        tile
-        height="70"
-        class="d-flex justify-space-between align-center px-6 py-5"
-        min-width="100%"
-      >
-        <slot name="footer-left"></slot>
-        <slot name="footer-right"></slot>
-      </v-card>
+    </v-toolbar>
+
+    <div class="drawer-content"><slot></slot></div>
+    <v-footer
+      class="d-flex justify-space-between align-center px-6 py-5"
+      absolute
+      padless
+      color="white"
+      elevation="5"
+    >
+      <slot name="footer-left"></slot>
+      <slot name="footer-right"></slot>
     </v-footer>
   </v-navigation-drawer>
 </template>
@@ -74,3 +78,14 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-navigation-drawer__content {
+  overflow-y: hidden;
+}
+.drawer-content {
+  height: calc(100% - 130px);
+  margin-top: 70px;
+  overflow-y: auto;
+}
+</style>
