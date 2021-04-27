@@ -102,7 +102,7 @@ export default {
   }
   .footer {
     padding-left: 50px;
-    box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important
+    box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
   }
 }
 </style>
