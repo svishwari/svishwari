@@ -22,3 +22,14 @@ $border-radius-root: 12px;
 $material-light: (
   "background": #FAFCFD,
 );
+
+$rounded: (
+  0: 0,
+  'sm': $border-radius-root / 6,
+  'md': $border-radius-root / 4,
+  'lg': $border-radius-root / 3,
+  null: $border-radius-root,
+  'xl': $border-radius-root * 2,
+  'pill': 9999px,
+  'circle': 50%,
+);
