@@ -12,8 +12,11 @@
 
       <template slot="right">
         <v-icon color="primary" large @click="refresh"> mdi-refresh </v-icon>
-        <!-- <router-link to="/createAudience" > -->
-        <router-link :to="{ path: '/audiences/createAudience' }" append>
+        <router-link
+          :to="{ path: '/audiences/createAudience' }"
+          class="route-link"
+          append
+        >
           <huxButton
             ButtonText="Audience"
             icon="mdi-plus"
@@ -213,4 +216,10 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.audiences-wrap {
+  .route-link {
+    text-decoration: none;
+  }
+}
+</style>

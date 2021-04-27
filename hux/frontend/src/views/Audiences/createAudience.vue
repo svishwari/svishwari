@@ -31,6 +31,7 @@
           v-bind:isTile="true"
           width="94"
           height="40"
+          @click.native="$router.go(-1)"
         ></huxButton>
         <huxButton
           ButtonText="Save &amp; complete later"
