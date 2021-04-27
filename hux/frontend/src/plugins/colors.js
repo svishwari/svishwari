@@ -9,4 +9,5 @@ export default {
   white: "#FFFFFF",
   yellow: "#FFCD00",
   lightBlue: "#007CB0",
+  disabledGrey: "#F9FAFB",
 }
