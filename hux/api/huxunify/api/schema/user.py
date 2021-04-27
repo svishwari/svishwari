@@ -5,8 +5,8 @@ Schemas for the User API
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, validate, List, DateTime, Nested, Dict
 
-from huxunify.api.schema.utils import validate_object_id
 from huxunifylib.database.constants import USER_ROLES
+from huxunify.api.schema.utils import validate_object_id
 
 
 class Favorites(Schema):

@@ -14,11 +14,6 @@ from flasgger import SwaggerView
 from marshmallow import ValidationError
 from pymongo import MongoClient
 
-from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import add_view_to_blueprint
-from huxunify.api.schema.user import UserSchema
-from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api import constants as api_c
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
     get_all_users,
@@ -26,6 +21,12 @@ from huxunifylib.database.user_management import (
     manage_user_dashboard_config,
     manage_user_favorites,
 )
+from huxunify.api.schema.errors import NotFoundError
+from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.schema.user import UserSchema
+from huxunify.api.schema.utils import AUTH401_RESPONSE
+from huxunify.api import constants as api_c
+
 
 USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
