@@ -164,6 +164,8 @@ USER_ROLE_ADMIN = "admin"
 USER_ROLE_EDITOR = "editor"
 USER_ROLE_VIEWER = "viewer"
 USER_ROLES = [USER_ROLE_ADMIN, USER_ROLE_EDITOR, USER_ROLE_VIEWER]
+COMPONENT_ID = "component_id"
+COMPONENT_NAME = "component_name"
 
 CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"

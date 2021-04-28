@@ -265,6 +265,7 @@ def manage_user_favorites(
         dict: Updated MongoDB document for a user.
 
     """
+    component_name = component_name.lower()
 
     # validate user input id and campaign id
     if (
