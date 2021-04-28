@@ -32,7 +32,6 @@
       <hux-table
         :columnDef="columnDefs"
         :tableData="rowData"
-        :frameworkComponents="frameworkComponents"
         :rowHeight="60"
         height="350px"
         hasCheckBox
@@ -64,7 +63,6 @@ export default {
   },
   data() {
     return {
-      frameworkComponents: this.frameworkComponents,
       items: [
         {
           text: "Audiences",
@@ -84,7 +82,6 @@ export default {
           width: "300",
           cellRendererFramework: MenuCell,
           cellClass: "menu-cells",
-          suppressHorizontalScroll: true,
         },
         {
           headerName: "Status",
@@ -471,11 +468,7 @@ export default {
   methods: {
     refresh() {},
   },
-  beforeMount() {
-    this.frameworkComponents = {
-      StatusCell: StatusCell,
-    }
-  },
+  beforeMount() { },
 }
 </script>
 <style lang="scss" scoped>
