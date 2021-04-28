@@ -36,7 +36,11 @@ const actions = {
        *    commit("SET_ALL_DESTINATIONS", response.data)
        */
       commit("SET_ALL_DESTINATIONS", state.destinations)
-    } catch (error) {}
+    } catch (error) {
+      /*
+       *    to do item...
+       */
+    }
   },
 }
 
