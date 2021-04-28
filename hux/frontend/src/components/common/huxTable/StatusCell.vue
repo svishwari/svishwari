@@ -42,7 +42,7 @@ export default Vue.extend({
     color: #43b02a;
   }
   .material-icons.alert {
-    color: #DA291C;
+    color: #da291c;
   }
 }
 </style>

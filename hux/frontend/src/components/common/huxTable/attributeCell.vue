@@ -6,7 +6,10 @@
       </div>
     </template>
     <v-list>
-      <v-list-item v-for="(item, index) in cellValue.attributeList" :key="index">
+      <v-list-item
+        v-for="(item, index) in cellValue.attributeList"
+        :key="index"
+      >
         <v-list-item-title>{{ item.attribute }}</v-list-item-title>
       </v-list-item>
     </v-list>

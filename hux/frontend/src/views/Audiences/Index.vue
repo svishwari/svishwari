@@ -150,11 +150,17 @@ export default {
             actualSize: "2,345",
           },
           destinations: {
-            details:[
-              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
-              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
-              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
-            ]
+            details: [
+              { logo: "../../../assets/images/facebook.png", name: "facebook" },
+              {
+                logo: "../../../assets/images/mailchimp.png",
+                name: "MailChimp",
+              },
+              {
+                logo: "../../../assets/images/facebook.png",
+                name: "Salesforce",
+              },
+            ],
           },
           attributes: {
             attribute: "Churn +2",
@@ -189,12 +195,18 @@ export default {
             approxSize: "654K",
             actualSize: "2,345",
           },
-         destinations: {
-            details:[
-              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
-              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
-              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
-            ]
+          destinations: {
+            details: [
+              { logo: "../../../assets/images/facebook.png", name: "facebook" },
+              {
+                logo: "../../../assets/images/mailchimp.png",
+                name: "MailChimp",
+              },
+              {
+                logo: "../../../assets/images/facebook.png",
+                name: "Salesforce",
+              },
+            ],
           },
           attributes: {
             attribute: "Churn +2",
@@ -230,11 +242,17 @@ export default {
             actualSize: "2,345",
           },
           destinations: {
-            details:[
-              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
-              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
-              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
-            ]
+            details: [
+              { logo: "../../../assets/images/facebook.png", name: "facebook" },
+              {
+                logo: "../../../assets/images/mailchimp.png",
+                name: "MailChimp",
+              },
+              {
+                logo: "../../../assets/images/facebook.png",
+                name: "Salesforce",
+              },
+            ],
           },
           attributes: {
             attribute: "Churn +2",
@@ -270,11 +288,17 @@ export default {
             actualSize: "2,345",
           },
           destinations: {
-            details:[
-              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
-              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
-              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
-            ]
+            details: [
+              { logo: "../../../assets/images/facebook.png", name: "facebook" },
+              {
+                logo: "../../../assets/images/mailchimp.png",
+                name: "MailChimp",
+              },
+              {
+                logo: "../../../assets/images/facebook.png",
+                name: "Salesforce",
+              },
+            ],
           },
           attributes: {
             attribute: "Churn +2",
@@ -309,12 +333,18 @@ export default {
             approxSize: "1000K",
             actualSize: "2,345",
           },
-         destinations: {
-            details:[
-              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
-              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
-              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
-            ]
+          destinations: {
+            details: [
+              { logo: "../../../assets/images/facebook.png", name: "facebook" },
+              {
+                logo: "../../../assets/images/mailchimp.png",
+                name: "MailChimp",
+              },
+              {
+                logo: "../../../assets/images/facebook.png",
+                name: "Salesforce",
+              },
+            ],
           },
           attributes: {
             attribute: "Churn +2",
@@ -350,11 +380,17 @@ export default {
             actualSize: "2,345",
           },
           destinations: {
-            details:[
-              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
-              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
-              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
-            ]
+            details: [
+              { logo: "../../../assets/images/facebook.png", name: "facebook" },
+              {
+                logo: "../../../assets/images/mailchimp.png",
+                name: "MailChimp",
+              },
+              {
+                logo: "../../../assets/images/facebook.png",
+                name: "Salesforce",
+              },
+            ],
           },
           attributes: {
             attribute: "Churn +2",
@@ -389,12 +425,18 @@ export default {
             approxSize: "2K",
             actualSize: "2,345",
           },
-         destinations: {
-            details:[
-              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
-              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
-              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
-            ]
+          destinations: {
+            details: [
+              { logo: "../../../assets/images/facebook.png", name: "facebook" },
+              {
+                logo: "../../../assets/images/mailchimp.png",
+                name: "MailChimp",
+              },
+              {
+                logo: "../../../assets/images/facebook.png",
+                name: "Salesforce",
+              },
+            ],
           },
           attributes: {
             attribute: "Churn +2",
