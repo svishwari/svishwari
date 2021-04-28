@@ -1,13 +1,13 @@
 <template>
   <v-menu bottom offset-y open-on-hover>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn color="blue-grey" small outlined fab v-bind="attrs" v-on="on">
-        {{ cellValue.shortName }}
-      </v-btn>
+      <div v-bind="attrs" v-on="on">
+        {{ cellValue.attribute }}
+      </div>
     </template>
     <v-list>
-      <v-list-item>
-        <v-list-item-title>{{ cellValue.fullName }}</v-list-item-title>
+      <v-list-item v-for="(item, index) in cellValue.attributeList" :key="index">
+        <v-list-item-title>{{ item.attribute }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -15,7 +15,7 @@
 <script>
 import Vue from "vue"
 export default Vue.extend({
-  name: "UserAvatarCell",
+  name: "attributeCell",
   data() {
     return {
       cellValue: null,

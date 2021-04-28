@@ -50,6 +50,9 @@ import StatusCell from "@/components/common/huxTable/StatusCell"
 import UserAvatarCell from "@/components/common/huxTable/UserAvatarCell"
 import MenuCell from "@/components/common/huxTable/MenuCell"
 import DestinationCell from "@/components/common/huxTable/DestinationCell"
+import DateTimeCell from "@/components/common/huxTable/DateTimeCell"
+import sizeCell from "@/components/common/huxTable/sizeCell"
+import attributeCell from "@/components/common/huxTable/attributeCell"
 
 export default {
   name: "audiences",
@@ -81,6 +84,7 @@ export default {
           width: "300",
           cellRendererFramework: MenuCell,
           cellClass: "menu-cells",
+          suppressHorizontalScroll: true,
         },
         {
           headerName: "Status",
@@ -88,27 +92,47 @@ export default {
           sortable: true,
           cellRendererFramework: StatusCell,
         },
-        { headerName: "Size", field: "size", sortable: true },
+        {
+          headerName: "Size",
+          field: "size",
+          sortable: true,
+          cellRendererFramework: sizeCell,
+        },
         {
           headerName: "Destinations",
           field: "destinations",
           sortable: true,
           cellRendererFramework: DestinationCell,
         },
-        { headerName: "Attributes", field: "attributes", sortable: true },
+        {
+          headerName: "Attributes",
+          field: "attributes",
+          sortable: true,
+          cellRendererFramework: attributeCell,
+        },
         {
           headerName: "Last Delivered",
           field: "lastDelivered",
           sortable: true,
         },
-        { headerName: "Last Updated", field: "lastUpdated", sortable: true },
+        {
+          headerName: "Last Updated",
+          field: "lastUpdated",
+          sortable: true,
+          cellRendererFramework: DateTimeCell,
+        },
         {
           headerName: "Last Updated By",
           field: "lastUpdatedBy",
           sortable: true,
           cellRendererFramework: UserAvatarCell,
         },
-        { headerName: "Created", field: "created", sortable: true },
+        {
+          headerName: "Created",
+          field: "created",
+          sortable: true,
+          cellRendererFramework: DateTimeCell,
+        },
         {
           headerName: "Created By",
           field: "createdBy",
@@ -121,86 +145,282 @@ export default {
         {
           audienceName: "Audience Name 1",
           status: "Active",
-          size: "654K",
-          destinations: "SFMC",
-          attributes: "Churn",
+          size: {
+            approxSize: "654K",
+            actualSize: "2,345",
+          },
+          destinations: {
+            details:[
+              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
+              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
+              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
+            ]
+          },
+          attributes: {
+            attribute: "Churn +2",
+            attributeList: [
+              { attribute: "LTV" },
+              { attribute: "Propensity" },
+              { attribute: "Demgraphics" },
+            ],
+          },
           lastDelivered: "Today, 12:00 PM",
-          lastUpdated: "Today, 12:00 PM",
-          lastUpdatedBy: "HR",
-          created: "Today, 12:00 PM",
-          createdBy: "RG",
+          lastUpdated: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          lastUpdatedBy: {
+            shortName: "HR",
+            fullName: "John Smith",
+          },
+          created: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          createdBy: {
+            shortName: "RG",
+            fullName: "John Smith",
+          },
         },
         {
           audienceName: "Audience Name 1",
           status: "Delivering",
-          size: "1000K",
-          destinations: "SFMC",
-          attributes: "Churn",
+          size: {
+            approxSize: "654K",
+            actualSize: "2,345",
+          },
+         destinations: {
+            details:[
+              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
+              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
+              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
+            ]
+          },
+          attributes: {
+            attribute: "Churn +2",
+            attributeList: [
+              { attribute: "LTV" },
+              { attribute: "Propensity" },
+              { attribute: "Demgraphics" },
+            ],
+          },
           lastDelivered: "Today, 12:00 PM",
-          lastUpdated: "Today, 12:00 PM",
-          lastUpdatedBy: "HR",
-          created: "Today, 12:00 PM",
-          createdBy: "RG",
+          lastUpdated: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          lastUpdatedBy: {
+            shortName: "HR",
+            fullName: "John Smith",
+          },
+          created: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          createdBy: {
+            shortName: "RG",
+            fullName: "John Smith",
+          },
         },
         {
           audienceName: "Audience Name 1",
           status: "Active",
-          size: "2K",
-          destinations: "SFMC",
-          attributes: "Churn",
+          size: {
+            approxSize: "654K",
+            actualSize: "2,345",
+          },
+          destinations: {
+            details:[
+              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
+              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
+              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
+            ]
+          },
+          attributes: {
+            attribute: "Churn +2",
+            attributeList: [
+              { attribute: "LTV" },
+              { attribute: "Propensity" },
+              { attribute: "Demgraphics" },
+            ],
+          },
           lastDelivered: "Today, 12:00 PM",
-          lastUpdated: "Today, 12:00 PM",
-          lastUpdatedBy: "HR",
-          created: "Today, 12:00 PM",
-          createdBy: "RG",
+          lastUpdated: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          lastUpdatedBy: {
+            shortName: "HR",
+            fullName: "John Smith",
+          },
+          created: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          createdBy: {
+            shortName: "RG",
+            fullName: "John Smith",
+          },
         },
         {
           audienceName: "Audience Name 1",
           status: "Delivering",
-          size: "654K",
-          destinations: "SFMC",
-          attributes: "Churn",
+          size: {
+            approxSize: "654K",
+            actualSize: "2,345",
+          },
+          destinations: {
+            details:[
+              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
+              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
+              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
+            ]
+          },
+          attributes: {
+            attribute: "Churn +2",
+            attributeList: [
+              { attribute: "LTV" },
+              { attribute: "Propensity" },
+              { attribute: "Demgraphics" },
+            ],
+          },
           lastDelivered: "Today, 12:00 PM",
-          lastUpdated: "Today, 12:00 PM",
-          lastUpdatedBy: "HR",
-          created: "Today, 12:00 PM",
-          createdBy: "RG",
+          lastUpdated: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          lastUpdatedBy: {
+            shortName: "HR",
+            fullName: "John Smith",
+          },
+          created: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          createdBy: {
+            shortName: "RG",
+            fullName: "John Smith",
+          },
         },
         {
           audienceName: "Audience Name 1",
           status: "Error",
-          size: "1000K",
-          destinations: "SFMC",
-          attributes: "Churn",
+          size: {
+            approxSize: "1000K",
+            actualSize: "2,345",
+          },
+         destinations: {
+            details:[
+              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
+              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
+              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
+            ]
+          },
+          attributes: {
+            attribute: "Churn +2",
+            attributeList: [
+              { attribute: "LTV" },
+              { attribute: "Propensity" },
+              { attribute: "Demgraphics" },
+            ],
+          },
           lastDelivered: "Today, 12:00 PM",
-          lastUpdated: "Today, 12:00 PM",
-          lastUpdatedBy: "HR",
-          created: "Today, 12:00 PM",
-          createdBy: "RG",
+          lastUpdated: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          lastUpdatedBy: {
+            shortName: "HR",
+            fullName: "John Smith",
+          },
+          created: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          createdBy: {
+            shortName: "RG",
+            fullName: "John Smith",
+          },
         },
         {
           audienceName: "Audience Name 1",
           status: "Active",
-          size: "2K",
-          destinations: "SFMC",
-          attributes: "Churn",
+          size: {
+            approxSize: "2K",
+            actualSize: "2,345",
+          },
+          destinations: {
+            details:[
+              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
+              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
+              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
+            ]
+          },
+          attributes: {
+            attribute: "Churn +2",
+            attributeList: [
+              { attribute: "LTV" },
+              { attribute: "Propensity" },
+              { attribute: "Demgraphics" },
+            ],
+          },
           lastDelivered: "Today, 12:00 PM",
-          lastUpdated: "Today, 12:00 PM",
-          lastUpdatedBy: "HR",
-          created: "Today, 12:00 PM",
-          createdBy: "RG",
+          lastUpdated: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          lastUpdatedBy: {
+            shortName: "HR",
+            fullName: "John Smith",
+          },
+          created: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          createdBy: {
+            shortName: "RG",
+            fullName: "John Smith",
+          },
         },
         {
           audienceName: "Audience Name 1",
           status: "Delivering",
-          size: "654K",
-          destinations: "SFMC",
-          attributes: "Churn",
+          size: {
+            approxSize: "2K",
+            actualSize: "2,345",
+          },
+         destinations: {
+            details:[
+              { logo: '../../../assets/images/facebook.png', name: 'facebook'},
+              { logo: '../../../assets/images/mailchimp.png', name: 'MailChimp'},
+              { logo: '../../../assets/images/facebook.png', name: 'Salesforce'}
+            ]
+          },
+          attributes: {
+            attribute: "Churn +2",
+            attributeList: [
+              { attribute: "LTV" },
+              { attribute: "Propensity" },
+              { attribute: "Demgraphics" },
+            ],
+          },
           lastDelivered: "Today, 12:00 PM",
-          lastUpdated: "Today, 12:00 PM",
-          lastUpdatedBy: "HR",
-          created: "Today, 12:00 PM",
-          createdBy: "RG",
+          lastUpdated: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          lastUpdatedBy: {
+            shortName: "HR",
+            fullName: "John Smith",
+          },
+          created: {
+            shortDate: "Today, 12:00 PM",
+            FullDate: "03/22/2021 12:45 PM",
+          },
+          createdBy: {
+            shortName: "RG",
+            fullName: "John Smith",
+          },
         },
       ],
     }

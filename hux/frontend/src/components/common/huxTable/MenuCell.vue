@@ -11,7 +11,7 @@
         >
           mdi-star
         </v-icon>
-        <v-menu bottom offset-y>
+        <v-menu class="menu-wrapper" bottom offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-icon
               v-bind="attrs"
@@ -23,7 +23,7 @@
               mdi-dots-vertical
             </v-icon>
           </template>
-          <v-list>
+          <v-list class="list-wrapper">
             <v-list-item v-for="(item, index) in items" :key="index">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>

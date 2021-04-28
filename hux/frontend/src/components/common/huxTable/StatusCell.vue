@@ -6,7 +6,7 @@
     <v-icon v-if="cellValue == 'Delivering'" class="material-icons delivering">
       mdi-circle-double
     </v-icon>
-    <v-icon v-if="cellValue == 'Error'" class="material-icons error">
+    <v-icon v-if="cellValue == 'Error'" class="material-icons alert">
       mdi-alert-circle
     </v-icon>
     <span class="value">
@@ -41,8 +41,8 @@ export default Vue.extend({
   .material-icons.delivering {
     color: #43b02a;
   }
-  .material-icons.error {
-    color: #da291c;
+  .material-icons.alert {
+    color: #DA291C;
   }
 }
 </style>
