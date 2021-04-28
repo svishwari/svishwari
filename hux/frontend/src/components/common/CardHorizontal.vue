@@ -6,7 +6,7 @@
     :elevation="isDisabled ? '0' : '2'"
     :disabled="isDisabled"
     :color="isDisabled ? 'background' : 'white'"
-    height=60
+    height="60"
   >
     <div class="d-flex align-center">
       <v-icon color="primary">{{ icon }}</v-icon>
@@ -75,14 +75,14 @@ export default {
 
   computed: {
     isDisabled: function () {
-      return this.isAlreadyAdded || !this.isAvailable;
+      return this.isAlreadyAdded || !this.isAvailable
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-  .card-horizontal-disabled {
-    border: 1px solid #E2EAEC !important;
-  }
+.card-horizontal-disabled {
+  border: 1px solid #e2eaec !important;
+}
 </style>
