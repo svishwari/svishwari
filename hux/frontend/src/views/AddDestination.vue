@@ -22,7 +22,7 @@
           <v-icon dark> mdi-plus </v-icon>
         </v-btn>
       </div>
-      <drawer v-model="drawer">
+      <drawer style="transition-duration: 1s" v-model="drawer">
         <template v-slot:header-left>
           <div class="d-flex align-baseline">
             <h5 class="text-h5 font-weight-light pr-2">Select a destination</h5>
@@ -47,7 +47,7 @@
               "
               :isAvailable="item.isAvailable"
               :isAlreadyAdded="item.isAlreadyAdded"
-              @click="onDestinationClick(index)"
+              @click="onSingleDestinationClick(index)"
               class="my-3"
             />
           </div>
@@ -61,11 +61,37 @@
           v-for="item in destinations[selectedDestinationIndex].auth_details"
           :labelText="item.name"
           :key="item.name"
+          :rules="[rules.required]"
           icon="mdi-alert-circle-outline"
           :placeholderText="item.type == 'text' ? item.name : '**********'"
           :InputType="item.type"
           class="pa-2 validation-field"
         ></TextField>
+      </div>
+      <div
+        v-if="isDestinationSelected"
+        class="d-flex flex-wrap justify-end mt-4"
+      >
+        <huxButton
+          v-if="!isValidating"
+          :ButtonText="
+            isConnectionValidated ? 'Success!' : 'Validate connection'
+          "
+          :icon="isConnectionValidated ? 'mdi-check' : null"
+          :iconPosition="isConnectionValidated ? 'left' : null"
+          :variant="isConnectionValidated ? 'success' : 'primary'"
+          size="large"
+          v-bind:isTile="true"
+          @click="validate()"
+        ></huxButton>
+        <huxButton
+          v-if="isValidating"
+          class="validating-connection"
+          ButtonText="Validating..."
+          variant="primary"
+          size="large"
+          v-bind:isTile="true"
+        ></huxButton>
       </div>
     </div>
     <Footer>
@@ -78,13 +104,15 @@
         ></huxButton>
       </template>
       <template v-slot:right>
-        <huxButton
-          ButtonText="Add &amp; return"
-          variant="primary"
-          size="large"
-          v-bind:isTile="true"
-          v-bind:isDisabled="!isDestinationSelected"
-        ></huxButton>
+        <a href="/connections" class="text-decoration-none">
+          <huxButton
+            ButtonText="Add &amp; return"
+            variant="primary"
+            size="large"
+            v-bind:isTile="true"
+            v-bind:isDisabled="!isConnectionValidated"
+          ></huxButton>
+        </a>
       </template>
     </Footer>
   </div>
@@ -110,6 +138,11 @@ export default {
     return {
       drawer: false,
       selectedDestinationIndex: "-1",
+      isConnectionValidated: false,
+      isValidating: false,
+      rules: {
+        required: (value) => !!value || "This is a required field",
+      },
     }
   },
   computed: {
@@ -124,9 +157,18 @@ export default {
     },
   },
   methods: {
-    onDestinationClick: function (index) {
+    onSingleDestinationClick: function (index) {
       this.selectedDestinationIndex = index
+      this.isConnectionValidated = false
       setTimeout(() => (this.drawer = false), 470)
+    },
+    validate: function () {
+      this.isValidating = true
+      // This is a TODO need to replace with actual API call
+      setTimeout(() => {
+        this.isValidating = false
+        this.isConnectionValidated = true
+      }, 2000)
     },
   },
 }
@@ -140,6 +182,27 @@ export default {
     border: 1px solid #e2eaec !important;
     .validation-field {
       min-width: 50%;
+    }
+  }
+  .validating-connection {
+    background-size: 300%;
+    background-image: linear-gradient(
+      270deg,
+      #43b02a 11.98%,
+      #00a3e0 50%,
+      #005587 88%
+    );
+    animation: bg-animation 2s infinite;
+    @keyframes bg-animation {
+      0% {
+        background-position: left;
+      }
+      50% {
+        background-position: right;
+      }
+      100% {
+        background-position: left;
+      }
     }
   }
 }

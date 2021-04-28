@@ -9,10 +9,26 @@ const state = {
       isAlreadyAdded: false,
       isAvailable: true,
       auth_details: [
-        { name: "Ad account ID", type: "text" },
-        { name: "App ID", type: "password" },
-        { name: "Access token", type: "password" },
-        { name: "App secret", type: "password" },
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
       ],
     },
     {
@@ -21,10 +37,26 @@ const state = {
       isAlreadyAdded: true,
       isAvailable: true,
       auth_details: [
-        { name: "Ad account ID", type: "text" },
-        { name: "App ID", type: "password" },
-        { name: "Access token", type: "password" },
-        { name: "App secret", type: "password" },
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
       ],
     },
     {
@@ -33,9 +65,21 @@ const state = {
       isAlreadyAdded: false,
       isAvailable: true,
       auth_details: [
-        { name: "Account ID", type: "text" },
-        { name: "Access token", type: "password" },
-        { name: "App secret", type: "password" },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
       ],
     },
     {
@@ -44,10 +88,26 @@ const state = {
       isAlreadyAdded: false,
       isAvailable: false,
       auth_details: [
-        { name: "Ad account ID", type: "text" },
-        { name: "App ID", type: "password" },
-        { name: "Access token", type: "password" },
-        { name: "App secret", type: "password" },
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
       ],
     },
     {
@@ -56,10 +116,26 @@ const state = {
       isAlreadyAdded: false,
       isAvailable: false,
       auth_details: [
-        { name: "Ad account ID", type: "text" },
-        { name: "App ID", type: "password" },
-        { name: "Access token", type: "password" },
-        { name: "App secret", type: "password" },
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
       ],
     },
   ],
