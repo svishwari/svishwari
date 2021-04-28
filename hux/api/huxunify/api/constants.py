@@ -16,6 +16,9 @@ SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 
+OPERATION_SUCCESS = "SUCCESS"
+OPERATION_FAILED = "FAILED"
+
 DESTINATION_CONSTANTS = {
     FACEBOOK_NAME: {
         FACEBOOK_AD_ACCOUNT_ID: "Ad Account ID",
@@ -32,6 +35,14 @@ DESTINATION_CONSTANTS = {
         SFMC_SOAP_BASE_URI: "SOAP Base URI",
     },
 }
+
+# user preferences
+PREFERENCE_KEY = "preference_key"
+PREFERENCE_KEY_DESCRIPTION = "the preference key you want to store."
+PREFERENCE_VALUE = "preference_value"
+PREFERENCE_VALUE_DESCRIPTION = "the value of the preference."
+PREFERENCE_BODY_DESCRIPTION = "Input preference body."
+FAVORITE_BODY_DESCRIPTION = "Input favorite component body."
 
 # error messages
 CANNOT_DELETE_DESTINATIONS = "Error deleting destination(s)."

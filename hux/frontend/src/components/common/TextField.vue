@@ -68,8 +68,9 @@ export default {
   },
 
   methods: {
-    change: function (value) {},
-    input: function (value) {
+    // This is a TODO
+    // change: function (value) {},
+    input: function () {
       this.$emit("input", this.TextFieldValue)
     },
   },
