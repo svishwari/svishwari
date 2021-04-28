@@ -1,0 +1,146 @@
+<template>
+  <div class="add-destination--wrap">
+    <div class="pb-10">
+      <h5 class="text-h5 font-weight-light">Add a destination</h5>
+      <div class="font-weight-regular">
+        Please fill out the information below to connect a new destination.
+      </div>
+    </div>
+    <div>
+      Select a destination
+      <div v-if="isDestinationSelected" class="d-flex align-center">
+        <v-btn fab x-small color="primary">
+          <v-icon dark> mdi-check </v-icon>
+        </v-btn>
+        <div class="pl-2">
+          {{ destinations[selectedDestinationIndex].title }}
+        </div>
+        <a class="pl-2" color="primary" @click="drawer = !drawer">Change</a>
+      </div>
+      <div v-else>
+        <v-btn fab x-small color="primary" @click="drawer = !drawer">
+          <v-icon dark> mdi-plus </v-icon>
+        </v-btn>
+      </div>
+      <drawer v-model="drawer">
+        <template v-slot:header-left>
+          <div class="d-flex align-baseline">
+            <h5 class="text-h5 font-weight-light pr-2">Select a destination</h5>
+            <div class="font-weight-regular">(select one)</div>
+          </div>
+        </template>
+        <template v-slot:footer-left>
+          <div class="d-flex align-baseline">
+            <div class="font-weight-regular">
+              {{ destinations.length }} results
+            </div>
+          </div>
+        </template>
+        <template v-slot:default>
+          <div class="ma-5">
+            <CardHorizontal
+              v-for="(item, index) in destinations"
+              :key="item.title"
+              :title="item.title"
+              :isAdded="
+                item.isAlreadyAdded || index == selectedDestinationIndex
+              "
+              :isAvailable="item.isAvailable"
+              :isAlreadyAdded="item.isAlreadyAdded"
+              @click="onDestinationClick(index)"
+              class="my-3"
+            />
+          </div>
+        </template>
+      </drawer>
+      <div
+        v-if="isDestinationSelected"
+        class="d-flex flex-wrap background destination-auth-wrap mt-11 px-7 py-6 rounded-lg"
+      >
+        <TextField
+          v-for="item in destinations[selectedDestinationIndex].auth_details"
+          :labelText="item.name"
+          :key="item.name"
+          icon="mdi-alert-circle-outline"
+          :placeholderText="item.type == 'text' ? item.name : '**********'"
+          :InputType="item.type"
+          class="pa-2 validation-field"
+        ></TextField>
+      </div>
+    </div>
+    <Footer>
+      <template v-slot:left>
+        <huxButton
+          ButtonText="Cancel"
+          variant="tertiary"
+          size="large"
+          v-bind:isTile="true"
+        ></huxButton>
+      </template>
+      <template v-slot:right>
+        <huxButton
+          ButtonText="Add &amp; return"
+          variant="primary"
+          size="large"
+          v-bind:isTile="true"
+          v-bind:isDisabled="!isDestinationSelected"
+        ></huxButton>
+      </template>
+    </Footer>
+  </div>
+</template>
+
+<script>
+import Drawer from "@/components/common/Drawer"
+import CardHorizontal from "@/components/common/CardHorizontal"
+import huxButton from "@/components/common/huxButton"
+import Footer from "@/components/common/Footer"
+import TextField from "@/components/common/TextField"
+import { mapGetters } from "vuex"
+export default {
+  name: "add-destination",
+  components: {
+    Drawer,
+    CardHorizontal,
+    Footer,
+    huxButton,
+    TextField,
+  },
+  data() {
+    return {
+      drawer: false,
+      selectedDestinationIndex: "-1",
+    }
+  },
+  computed: {
+    ...mapGetters({
+      destinations: "AllDestinations",
+    }),
+    isDestinationSelected() {
+      if (this.selectedDestinationIndex === "-1") {
+        return false
+      }
+      return true
+    },
+  },
+  methods: {
+    onDestinationClick: function (index) {
+      this.selectedDestinationIndex = index
+      setTimeout(() => (this.drawer = false), 470)
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.add-destination--wrap {
+  padding: 40px 13vw;
+  .destination-auth-wrap {
+    // This is a temporary fix need to find alternative
+    border: 1px solid #e2eaec !important;
+    .validation-field {
+      min-width: 50%;
+    }
+  }
+}
+</style>

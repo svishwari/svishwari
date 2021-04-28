@@ -1,26 +1,24 @@
 <template>
-  <v-row>
-    <v-col>
-      <label class="ml-2">
-        {{ labelText }}
-        <v-icon color="primary"> {{ icon }} </v-icon>
-      </label>
-      <v-text-field
-        :label="placeholderText"
-        @input="input($event)"
-        @change="change($event)"
-        v-model="TextFieldValue"
-        :append-icon="appendIcon"
-        :rules="rules"
-        :type="InputType"
-        @click:append="$emit('clickAppend')"
-        single-line
-        outlined
-        :background-color="backgroundColor"
-      >
-      </v-text-field>
-    </v-col>
-  </v-row>
+  <div>
+    <label class="ml-2">
+      {{ labelText }}
+      <v-icon color="primary" class="mb-2"> {{ icon }} </v-icon>
+    </label>
+    <v-text-field
+      :label="placeholderText"
+      @input="input($event)"
+      @change="change($event)"
+      v-model="TextFieldValue"
+      :append-icon="appendIcon"
+      :rules="rules"
+      :type="InputType"
+      @click:append="$emit('clickAppend')"
+      single-line
+      outlined
+      :background-color="backgroundColor"
+    >
+    </v-text-field>
+  </div>
 </template>
 
 <script>
@@ -65,7 +63,7 @@ export default {
     rules: {
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
   },
 
@@ -77,10 +75,3 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-.row {
-  .mdi {
-    margin-bottom: 7px;
-  }
-}
-</style>
