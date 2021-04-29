@@ -63,20 +63,6 @@ DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
 
-# Authentication API fields
-AUTHENTICATION_TAG = "authenticate"
-AUTHENTICATION_DESCRIPTION = "Authentication API"
-AUTHENTICATION_ENDPOINT = "authenticate"
-AUTHENTICATION_TOKEN = "access_token"
-CANNOT_AUTHENTICATE_USER = "Error authenticating user."
-
-AUTHENTICATION_DETAILS = "authentication_details"
-AUTHENTICATION_TOKEN = "token"
-AUTHENTICATION_ACCESS_TOKEN = "access_token"
-AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
-AUTHENTICATION_OKTA_CLIENT_ID = "OKTA-CLIENT-ID"
-AUTHENTICATION_OKTA_ISSUER = "OKTA-ISSUER"
-
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
