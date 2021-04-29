@@ -7,7 +7,7 @@
         <v-icon
           class="mr-2 action-favroite"
           :color="favoriteIconColor"
-          @click="addToFavorite($event)"
+          @click="addToFavorite()"
         >
           mdi-star
         </v-icon>
@@ -48,7 +48,7 @@ export default Vue.extend({
         { title: "Pause delivery" },
         { title: "Delete" },
       ],
-      favoriteIconColor: 'default'
+      favoriteIconColor: "default",
     }
   },
   beforeMount() {
@@ -58,11 +58,11 @@ export default Vue.extend({
     getValueToDisplay(params) {
       return params.valueFormatted ? params.valueFormatted : params.value
     },
-    addToFavorite(evnt) {
-      if(this.favoriteIconColor == 'default') {
-        this.favoriteIconColor = 'primary'
-      }else {
-        this.favoriteIconColor = 'default'
+    addToFavorite() {
+      if (this.favoriteIconColor == "default") {
+        this.favoriteIconColor = "primary"
+      } else {
+        this.favoriteIconColor = "default"
       }
     },
     takeActions(evnt) {

@@ -86,7 +86,7 @@ export default {
         {
           text: "Audiences",
           disabled: false,
-          href: '/' + this.$route.path.split('/')[1],
+          href: "/" + this.$route.path.split("/")[1],
           icon: "mdi-flip-h mdi-account-plus-outline",
         },
         {

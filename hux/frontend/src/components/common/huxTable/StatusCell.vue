@@ -3,7 +3,9 @@
     <v-icon v-if="cellValue == 'Active'" class="material-icons delivered">
       mdi-checkbox-blank-circle
     </v-icon>
-    <huxButton class="ma-0" v-if="cellValue == 'Delivering'"
+    <huxButton
+      class="ma-0"
+      v-if="cellValue == 'Delivering'"
       v-bind:isOutlined="true"
       size="small"
       variant="#43b02a"
