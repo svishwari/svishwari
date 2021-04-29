@@ -1,7 +1,6 @@
 """
 The purpose of this file is for housing the Decisioning related API models
 """
-from os import getenv
 from random import randint
 from urllib.parse import urlparse
 from io import BytesIO
@@ -9,16 +8,15 @@ import Algorithmia
 from Algorithmia.errors import AlgorithmException
 import pandas as pd
 from huxunify.api.data_connectors.aws import get_aws_client
+from huxunify.api import config
 
 
 # get tecton api key
 TECTON_API_HEADERS = {
-    "Authorization": f"Tecton-key {getenv('TECTON_API_KEY')}",
+    "Authorization": f"Tecton-key {config.TECTON_API_KEY}",
 }
 
 # set Algorithmia vars
-ALGORITHMIA_KEY = getenv("ALGORITHMIA_API_KEY")
-ALGORITHMIA_API = "https://api.algorithmia.hux-decisioning.in"
 # TODO - get names of algorithms from Decision team
 ALGORITHMS = ["dolong_deloitte_com/h2o_scores_to_stream"]
 
@@ -39,7 +37,9 @@ class AlgorithmiaModel:
 
     def __init__(self):
         # initialize the algorithmia connection object
-        self.client = Algorithmia.client(ALGORITHMIA_KEY, ALGORITHMIA_API)
+        self.client = Algorithmia.client(
+            config.ALGORITHMIA_API_KEY, config.ALGORITHMIA_API
+        )
 
     def get_algorithms(self):
         """
@@ -123,9 +123,7 @@ def prep_data_h2o_scores_to_stream(data):
 
     # get the file object,
     # ignore first character from url path to get s3 key
-    s3_obj = s3_client.get_object(
-        Bucket=s3_url_obj.netloc, Key=s3_url_obj.path[1:]
-    )
+    s3_obj = s3_client.get_object(Bucket=s3_url_obj.netloc, Key=s3_url_obj.path[1:])
 
     # read the initial parquet data
     datafile = pd.read_parquet(BytesIO(s3_obj["Body"].read()))
@@ -179,6 +177,4 @@ class CustomerFeatureModel:
         # (f'https://{self.cluster_id}.tecton.ai/api/v1/feature-service
         # /get_feature_vector', headers=TECTON_API_HEADERS, data=data).json()
         for feat in self.features:
-            self.predictions.append(
-                {"feature": feat, "user_clicks": randint(1, 60)}
-            )
+            self.predictions.append({"feature": feat, "user_clicks": randint(1, 60)})

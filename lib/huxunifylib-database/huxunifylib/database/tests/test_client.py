@@ -25,3 +25,23 @@ class TestClient(unittest.TestCase):
         self.assertTrue(client is not None)
         self.assertEqual(client.host, host)
         self.assertEqual(client.port, port)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_new_client_ssl(self):
+        """Test that a new MongoClient object can be initialized."""
+
+        # details based on a local MongoDB configuration
+        host = "localhost"
+        port = 27017
+        username = ""
+        password = ""
+        ssl_path = "test.pem"
+
+        # set up the database client
+        client = DatabaseClient(host, port, username, password, ssl_path)
+
+        # verify the setup
+        self.assertTrue(client is not None)
+        self.assertEqual(client.host, host)
+        self.assertEqual(client.port, port)
+        self.assertEqual(client.ssl_cert_path, ssl_path)
