@@ -15,5 +15,4 @@ export default {
   background: colors.backgroundBlue,
   zircon: colors.zircon,
   neroBlack: colors.neroBlack,
-  zircon: colors.zircon,
 }

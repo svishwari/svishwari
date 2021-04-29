@@ -468,7 +468,7 @@ export default {
   methods: {
     refresh() {},
   },
-  beforeMount() { },
+  beforeMount() {},
 }
 </script>
 <style lang="scss" scoped>
