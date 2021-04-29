@@ -26,11 +26,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-settings.ini
 
 # docs
 docs/build/*
 
 # IDE
 .vscode/
-/hux/api/rds-combined-ca-bundle.pem
