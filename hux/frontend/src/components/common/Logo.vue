@@ -1,25 +1,35 @@
 <template>
-  <component :is="dynamicIcon" :width="size" :height="size"/>
+  <component :is="svg" :style="style" />
 </template>
 
 <script>
 export default {
   name: "logo",
+
   props: {
-    icon: {
+    type: {
       type: String,
       required: true,
       default: null,
     },
+
     size: {
-      type: String,
+      type: Number,
       required: false,
-      default: "18",
+      default: 24,
     },
   },
+
   computed: {
-    dynamicIcon() {
-      return () => import(`../../assets/logos/${this.icon}.svg`)
+    svg() {
+      return () => import(`../../assets/logos/${this.type}.svg`)
+    },
+
+    style() {
+      return {
+        width: `${this.size}px`,
+        height: `${this.size}px`,
+      }
     },
   },
 }
