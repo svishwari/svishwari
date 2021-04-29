@@ -5,10 +5,10 @@
     :outlined="isOutlined"
     :tile="isTile"
     :color="variant"
-    class="ma-2"
     :class="buttonSize"
     :width="width"
     :height="height"
+    :icon="iconType"
     @click="loader = 'loading'"
   >
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
@@ -49,7 +49,7 @@ export default {
     ButtonText: {
       type: String,
       required: false,
-      default: "Added",
+      default: null,
     },
     icon: {
       type: String,
@@ -90,6 +90,11 @@ export default {
     },
     height: {
       type: String,
+      required: false,
+      default: null,
+    },
+    iconType: {
+      type: Boolean,
       required: false,
       default: null,
     },

@@ -24,6 +24,7 @@
             variant="primary"
             size="large"
             v-bind:isTile="true"
+            class="ma-2"
           ></huxButton>
         </router-link>
       </template>

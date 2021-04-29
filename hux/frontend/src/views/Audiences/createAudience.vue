@@ -31,6 +31,7 @@
           v-bind:isTile="true"
           width="94"
           height="40"
+          class="ma-2"
           @click.native="$router.go(-1)"
         ></huxButton>
         <huxButton
@@ -39,6 +40,7 @@
           v-bind:isTile="true"
           width="201"
           height="40"
+          class="ma-2"
         ></huxButton>
       </template>
       <template v-slot:right>
@@ -48,6 +50,7 @@
           v-bind:isTile="true"
           width="94"
           height="44"
+          class="ma-2"
         ></huxButton>
       </template>
     </Footer>
