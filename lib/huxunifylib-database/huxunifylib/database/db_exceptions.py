@@ -23,6 +23,14 @@ class DuplicateName(HuxAdvException):
     )
 
 
+class InvalidName(HuxAdvException):
+    """Exception for invalid names."""
+
+    exception_message = (
+        "The name <{}> specified is Invalid. The creation/update failed."
+    )
+
+
 class DataSourceLocked(HuxAdvException):
     """Exception for when data source is already associated with an ingestion job."""
 

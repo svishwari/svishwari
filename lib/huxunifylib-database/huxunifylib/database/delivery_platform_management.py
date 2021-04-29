@@ -968,6 +968,35 @@ def get_delivery_job(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def delete_delivery_job_by_audience(
+    database: DatabaseClient, audience_id: ObjectId
+) -> dict:
+    """A function to delete all delivery jobs associated with an audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): Audience id.
+
+    Returns:
+        dict: Delivery job configuration.
+
+    """
+
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+
+    try:
+        delete_result = collection.delete_many({c.AUDIENCE_ID: audience_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return delete_result
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def set_delivery_job_status(
     database: DatabaseClient, delivery_job_id: ObjectId, job_status: str
 ) -> dict:
