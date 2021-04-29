@@ -161,5 +161,11 @@ export default {
   .route-link {
     text-decoration: none;
   }
+  ::v-deep .menu-cell-wrapper .action-icon {
+    display: none;
+  }
+  ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
+    display: initial;
+  }
 }
 </style>

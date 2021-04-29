@@ -71,19 +71,4 @@ export default Vue.extend({
   },
 })
 </script>
-<style lang="scss" scoped>
-.menu-cell-wrapper {
-  &:hover {
-    .action-icon {
-      display: block;
-      .action-favroite,
-      .more-actions {
-        cursor: pointer;
-      }
-    }
-  }
-  .action-icon {
-    display: none;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
