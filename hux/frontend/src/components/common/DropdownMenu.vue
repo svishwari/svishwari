@@ -1,5 +1,12 @@
 <template>
-  <v-menu offset-y close-on-click max-width="300" tile nudge-bottom="5" v-model="DropdownValue">
+  <v-menu
+    offset-y
+    close-on-click
+    max-width="300"
+    tile
+    nudge-bottom="5"
+    v-model="DropdownValue"
+  >
     <template v-slot:activator="{ on }">
       <span v-on="on" class="d-flex avatar-menu">
         <v-btn tile class="main-button" color="tertiary">
@@ -11,7 +18,11 @@
     <v-card class="mx-auto">
       <v-list min-width="300" max-width="300" tile>
         <v-list-item-group>
-          <v-list-item v-for="(item, index) in menuItem" v-bind:key="index"  @click="clicked(item)">
+          <v-list-item
+            v-for="(item, index) in menuItem"
+            v-bind:key="index"
+            @click="clicked(item)"
+          >
             <v-list-item-title>{{ item.value }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
@@ -23,9 +34,9 @@
 <script>
 export default {
   name: "dropdown-menu",
- data: function () {
+  data: function () {
     return {
-      DropdownValue: this.value
+      DropdownValue: this.value,
     }
   },
   props: {
@@ -40,13 +51,13 @@ export default {
       default: "mdi-chevron-down",
     },
     menuItem: {
-      type: Array
+      type: Array,
     },
   },
   methods: {
     clicked: function (item) {
       this.$emit("input", item.value)
-      this.$emit("updatelabelText", item.value) ;
+      this.$emit("updatelabelText", item.value)
     },
   },
 }

@@ -12,7 +12,7 @@
       labelText="Add Account ID"
       icon="mdi-alert-circle-outline"
       placeholderText="Account name"
-      v-bind:required=true
+      v-bind:required="true"
     ></TextField>
     {{ TextFieldValue }}
     <br />
@@ -78,13 +78,9 @@
 
     <v-subheader> Page Header </v-subheader>
     <v-divider></v-divider>
-    <PageHeader title="Welcome back, User!" icon="mdi-bullhorn-outline">
-      <template v-slot:description>
-        <div>
-          Hux is here to help you make better, faster decisions to improve your
-          Customer Experiences.
-          <a>Learn More ></a>
-        </div>
+    <PageHeader>
+      <template slot="left">
+        <Breadcrumb :items="items" />
       </template>
     </PageHeader>
     <br />
@@ -121,28 +117,46 @@
       </template>
     </drawer>
     <br />
+
+    <v-subheader>Metric Card</v-subheader>
+    <v-divider></v-divider>
+    <MetricCard
+      class="ma-4"
+      :width="135"
+      :height="80"
+      v-for="(item, i) in overviewListItems"
+      :key="i"
+      :title="item.title"
+      :subtitle="item.subtitle"
+      :icon="item.icon"
+      :active="true"
+    ></MetricCard>
   </div>
 </template>
 
 <script>
 import CardInfo from "@/components/common/CardInfo"
+import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
 import HuxTable from "@/components/common/huxTable.vue"
 import huxButton from "@/components/common/huxButton"
 import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
 import Drawer from "@/components/common/Drawer"
+import MetricCard from "@/components/common/MetricCard"
 
 export default {
   name: "CommonComponent",
   components: {
     CardInfo,
+    Breadcrumb,
     TextField,
     huxButton,
     DropdownMenu,
     PageHeader,
     HuxTable,
     Drawer,
+    MetricCard,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -331,8 +345,32 @@ export default {
           createdBy: "RG",
         },
       ],
+      items: [
+        {
+          text: "Home",
+          disabled: false,
+          href: "overview",
+          icon: "mdi-home-outline",
+        },
+        {
+          text: "Connections",
+          disabled: false,
+          href: "connections",
+          icon: "mdi-bullhorn-outline",
+        },
+        {
+          text: "Destinations",
+          disabled: true,
+          href: "connections/destinations",
+          icon: "mdi-flip-h mdi-account-plus-outline",
+        },
+      ],
 
       drawer: false,
+
+      overviewListItems: [
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+      ],
     }
   },
   mounted() {},

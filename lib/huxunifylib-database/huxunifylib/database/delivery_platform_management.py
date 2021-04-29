@@ -126,7 +126,7 @@ def get_delivery_platform(
 
     try:
         return collection.find_one(
-            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: True}
+            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: False}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
