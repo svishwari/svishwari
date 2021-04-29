@@ -2,16 +2,9 @@
 purpose of this file is for housing the snowflake database client
 """
 import logging
-from os import getenv
 from typing import Optional
 from snowflake import connector
-
-
-# get snowflake connection params
-USERNAME = getenv("CDM_SNOWFLAKE_USER")
-PASSWORD = getenv("CDM_SNOWFLAKE_PASSWORD")
-ACCOUNT = getenv("CDM_SNOWFLAKE_ACCOUNT")
-WAREHOUSE = "COMPUTE_WH"
+from huxunify.api import config
 
 
 class SnowflakeClient:
@@ -19,10 +12,10 @@ class SnowflakeClient:
 
     def __init__(
         self,
-        account: Optional[str] = ACCOUNT,
-        warehouse: Optional[str] = WAREHOUSE,
-        username: Optional[str] = USERNAME,
-        password: Optional[str] = PASSWORD,
+        account: Optional[str] = config.SNOWFLAKE_ACCOUNT,
+        warehouse: Optional[str] = config.SNOWFLAKE_WAREHOUSE,
+        username: Optional[str] = config.SNOWFLAKE_USERNAME,
+        password: Optional[str] = config.SNOWFLAKE_PASSWORD,
     ) -> None:
         """Initialize a Snowflake database object.
         Args:
