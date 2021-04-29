@@ -2,7 +2,7 @@
   <div class="audiences-wrap grey lighten-5">
     <PageHeader>
       <template slot="left">
-        <Breadcrumb :items="items" />
+        <Breadcrumb :items="breadcrumbItems" />
       </template>
     </PageHeader>
     <PageHeader class="mt-1" style="height: 71px">
@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
+
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
@@ -64,7 +66,7 @@ export default {
   },
   data() {
     return {
-      items: [
+      breadcrumbItems: [
         {
           text: "Audiences",
           disabled: false,
@@ -138,338 +140,20 @@ export default {
           cellRendererFramework: UserAvatarCell,
         },
       ],
-
-      rowData: [
-        {
-          audienceName: "Audience Name 1",
-          status: "Active",
-          size: {
-            approxSize: "654K",
-            actualSize: "2,345",
-          },
-          destinations: {
-            details: [
-              { logo: "../../../assets/images/facebook.png", name: "facebook" },
-              {
-                logo: "../../../assets/images/mailchimp.png",
-                name: "MailChimp",
-              },
-              {
-                logo: "../../../assets/images/facebook.png",
-                name: "Salesforce",
-              },
-            ],
-          },
-          attributes: {
-            attribute: "Churn +2",
-            attributeList: [
-              { attribute: "LTV" },
-              { attribute: "Propensity" },
-              { attribute: "Demgraphics" },
-            ],
-          },
-          lastDelivered: "Today, 12:00 PM",
-          lastUpdated: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          lastUpdatedBy: {
-            shortName: "HR",
-            fullName: "John Smith",
-          },
-          created: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          createdBy: {
-            shortName: "RG",
-            fullName: "John Smith",
-          },
-        },
-        {
-          audienceName: "Audience Name 1",
-          status: "Delivering",
-          size: {
-            approxSize: "654K",
-            actualSize: "2,345",
-          },
-          destinations: {
-            details: [
-              { logo: "../../../assets/images/facebook.png", name: "facebook" },
-              {
-                logo: "../../../assets/images/mailchimp.png",
-                name: "MailChimp",
-              },
-              {
-                logo: "../../../assets/images/facebook.png",
-                name: "Salesforce",
-              },
-            ],
-          },
-          attributes: {
-            attribute: "Churn +2",
-            attributeList: [
-              { attribute: "LTV" },
-              { attribute: "Propensity" },
-              { attribute: "Demgraphics" },
-            ],
-          },
-          lastDelivered: "Today, 12:00 PM",
-          lastUpdated: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          lastUpdatedBy: {
-            shortName: "HR",
-            fullName: "John Smith",
-          },
-          created: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          createdBy: {
-            shortName: "RG",
-            fullName: "John Smith",
-          },
-        },
-        {
-          audienceName: "Audience Name 1",
-          status: "Active",
-          size: {
-            approxSize: "654K",
-            actualSize: "2,345",
-          },
-          destinations: {
-            details: [
-              { logo: "../../../assets/images/facebook.png", name: "facebook" },
-              {
-                logo: "../../../assets/images/mailchimp.png",
-                name: "MailChimp",
-              },
-              {
-                logo: "../../../assets/images/facebook.png",
-                name: "Salesforce",
-              },
-            ],
-          },
-          attributes: {
-            attribute: "Churn +2",
-            attributeList: [
-              { attribute: "LTV" },
-              { attribute: "Propensity" },
-              { attribute: "Demgraphics" },
-            ],
-          },
-          lastDelivered: "Today, 12:00 PM",
-          lastUpdated: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          lastUpdatedBy: {
-            shortName: "HR",
-            fullName: "John Smith",
-          },
-          created: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          createdBy: {
-            shortName: "RG",
-            fullName: "John Smith",
-          },
-        },
-        {
-          audienceName: "Audience Name 1",
-          status: "Delivering",
-          size: {
-            approxSize: "654K",
-            actualSize: "2,345",
-          },
-          destinations: {
-            details: [
-              { logo: "../../../assets/images/facebook.png", name: "facebook" },
-              {
-                logo: "../../../assets/images/mailchimp.png",
-                name: "MailChimp",
-              },
-              {
-                logo: "../../../assets/images/facebook.png",
-                name: "Salesforce",
-              },
-            ],
-          },
-          attributes: {
-            attribute: "Churn +2",
-            attributeList: [
-              { attribute: "LTV" },
-              { attribute: "Propensity" },
-              { attribute: "Demgraphics" },
-            ],
-          },
-          lastDelivered: "Today, 12:00 PM",
-          lastUpdated: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          lastUpdatedBy: {
-            shortName: "HR",
-            fullName: "John Smith",
-          },
-          created: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          createdBy: {
-            shortName: "RG",
-            fullName: "John Smith",
-          },
-        },
-        {
-          audienceName: "Audience Name 1",
-          status: "Error",
-          size: {
-            approxSize: "1000K",
-            actualSize: "2,345",
-          },
-          destinations: {
-            details: [
-              { logo: "../../../assets/images/facebook.png", name: "facebook" },
-              {
-                logo: "../../../assets/images/mailchimp.png",
-                name: "MailChimp",
-              },
-              {
-                logo: "../../../assets/images/facebook.png",
-                name: "Salesforce",
-              },
-            ],
-          },
-          attributes: {
-            attribute: "Churn +2",
-            attributeList: [
-              { attribute: "LTV" },
-              { attribute: "Propensity" },
-              { attribute: "Demgraphics" },
-            ],
-          },
-          lastDelivered: "Today, 12:00 PM",
-          lastUpdated: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          lastUpdatedBy: {
-            shortName: "HR",
-            fullName: "John Smith",
-          },
-          created: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          createdBy: {
-            shortName: "RG",
-            fullName: "John Smith",
-          },
-        },
-        {
-          audienceName: "Audience Name 1",
-          status: "Active",
-          size: {
-            approxSize: "2K",
-            actualSize: "2,345",
-          },
-          destinations: {
-            details: [
-              { logo: "../../../assets/images/facebook.png", name: "facebook" },
-              {
-                logo: "../../../assets/images/mailchimp.png",
-                name: "MailChimp",
-              },
-              {
-                logo: "../../../assets/images/facebook.png",
-                name: "Salesforce",
-              },
-            ],
-          },
-          attributes: {
-            attribute: "Churn +2",
-            attributeList: [
-              { attribute: "LTV" },
-              { attribute: "Propensity" },
-              { attribute: "Demgraphics" },
-            ],
-          },
-          lastDelivered: "Today, 12:00 PM",
-          lastUpdated: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          lastUpdatedBy: {
-            shortName: "HR",
-            fullName: "John Smith",
-          },
-          created: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          createdBy: {
-            shortName: "RG",
-            fullName: "John Smith",
-          },
-        },
-        {
-          audienceName: "Audience Name 1",
-          status: "Delivering",
-          size: {
-            approxSize: "2K",
-            actualSize: "2,345",
-          },
-          destinations: {
-            details: [
-              { logo: "../../../assets/images/facebook.png", name: "facebook" },
-              {
-                logo: "../../../assets/images/mailchimp.png",
-                name: "MailChimp",
-              },
-              {
-                logo: "../../../assets/images/facebook.png",
-                name: "Salesforce",
-              },
-            ],
-          },
-          attributes: {
-            attribute: "Churn +2",
-            attributeList: [
-              { attribute: "LTV" },
-              { attribute: "Propensity" },
-              { attribute: "Demgraphics" },
-            ],
-          },
-          lastDelivered: "Today, 12:00 PM",
-          lastUpdated: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          lastUpdatedBy: {
-            shortName: "HR",
-            fullName: "John Smith",
-          },
-          created: {
-            shortDate: "Today, 12:00 PM",
-            FullDate: "03/22/2021 12:45 PM",
-          },
-          createdBy: {
-            shortName: "RG",
-            fullName: "John Smith",
-          },
-        },
-      ],
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      rowData: "AllAudiences",
+    }),
+  },
   methods: {
+    ...mapActions(["getAllAudiences"]),
     refresh() {},
   },
-  beforeMount() {},
+  async mounted() {
+    await this.getAllAudiences()
+  },
 }
 </script>
 <style lang="scss" scoped>
