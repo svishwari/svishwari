@@ -39,7 +39,4 @@ SNOWFLAKE_WAREHOUSE = config("SNOWFLAKE_WAREHOUSE", default="COMPUTE_WH")
 
 # TECTON
 TECTON_API_KEY = config("TECTON_API_KEY", default="")
-
-# ALGORITHMIA
-ALGORITHMIA_API_KEY = config("ALGORITHMIA_API_KEY", default="")
-ALGORITHMIA_API = config("ALGORITHMIA_API", default="")
+TECTON_API = config("TECTON_API", default="")
