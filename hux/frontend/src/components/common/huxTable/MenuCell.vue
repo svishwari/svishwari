@@ -6,7 +6,7 @@
       <span class="action-icon font-weight-light float-right">
         <v-icon
           class="mr-2 action-favroite"
-          color="primary"
+          :color="favoriteIconColor"
           @click="addToFavorite($event)"
         >
           mdi-star
@@ -48,6 +48,7 @@ export default Vue.extend({
         { title: "Pause delivery" },
         { title: "Delete" },
       ],
+      favoriteIconColor: 'default'
     }
   },
   beforeMount() {
@@ -58,7 +59,11 @@ export default Vue.extend({
       return params.valueFormatted ? params.valueFormatted : params.value
     },
     addToFavorite(evnt) {
-      evnt.preventDefault()
+      if(this.favoriteIconColor == 'default') {
+        this.favoriteIconColor = 'primary'
+      }else {
+        this.favoriteIconColor = 'default'
+      }
     },
     takeActions(evnt) {
       evnt.preventDefault()
