@@ -82,7 +82,7 @@ const routes = [
   },
   {
     path: "/add-destination",
-    name: "connections",
+    name: "add-destination",
     component: () => import("@/views/AddDestination.vue"),
     meta: {
       layout: "app",

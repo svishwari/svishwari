@@ -13,8 +13,10 @@
       :rules="rules"
       :type="InputType"
       @click:append="$emit('clickAppend')"
+      @blur="$emit('blur', TextFieldValue)"
       single-line
       outlined
+      autocomplete="off"
       :background-color="backgroundColor"
     >
     </v-text-field>
@@ -68,8 +70,9 @@ export default {
   },
 
   methods: {
-    // This is a TODO
-    // change: function (value) {},
+    change: function () {
+      // This is a TODO
+    },
     input: function () {
       this.$emit("input", this.TextFieldValue)
     },

@@ -57,16 +57,19 @@
         v-if="isDestinationSelected"
         class="d-flex flex-wrap background destination-auth-wrap mt-11 px-7 py-6 rounded-lg"
       >
-        <TextField
-          v-for="item in destinations[selectedDestinationIndex].auth_details"
-          :labelText="item.name"
-          :key="item.name"
-          :rules="[rules.required]"
-          icon="mdi-alert-circle-outline"
-          :placeholderText="item.type == 'text' ? item.name : '**********'"
-          :InputType="item.type"
-          class="pa-2 validation-field"
-        ></TextField>
+        <v-form v-model="isFormValid" class="d-flex flex-wrap">
+          <TextField
+            v-for="item in destinations[selectedDestinationIndex].auth_details"
+            :labelText="item.name"
+            :key="item.name"
+            :rules="[rules.required]"
+            icon="mdi-alert-circle-outline"
+            :placeholderText="item.type == 'text' ? item.name : '**********'"
+            :InputType="item.type"
+            @blur="changeValidationStatus"
+            class="pa-2 validation-field"
+          ></TextField>
+        </v-form>
       </div>
       <div
         v-if="isDestinationSelected"
@@ -82,6 +85,7 @@
           :variant="isConnectionValidated ? 'success' : 'primary'"
           size="large"
           v-bind:isTile="true"
+          v-bind:isDisabled="!isFormValid"
           @click="validate()"
         ></huxButton>
         <huxButton
@@ -94,7 +98,7 @@
         ></huxButton>
       </div>
     </div>
-    <Footer>
+    <HuxFooter>
       <template v-slot:left>
         <huxButton
           ButtonText="Cancel"
@@ -104,17 +108,16 @@
         ></huxButton>
       </template>
       <template v-slot:right>
-        <a href="/connections" class="text-decoration-none">
-          <huxButton
-            ButtonText="Add &amp; return"
-            variant="primary"
-            size="large"
-            v-bind:isTile="true"
-            v-bind:isDisabled="!isConnectionValidated"
-          ></huxButton>
-        </a>
+        <huxButton
+          ButtonText="Add &amp; return"
+          variant="primary"
+          size="large"
+          v-bind:isTile="true"
+          v-bind:isDisabled="!isConnectionValidated"
+          @click="addDestination"
+        ></huxButton>
       </template>
-    </Footer>
+    </HuxFooter>
   </div>
 </template>
 
@@ -122,7 +125,7 @@
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import huxButton from "@/components/common/huxButton"
-import Footer from "@/components/common/Footer"
+import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 import { mapGetters } from "vuex"
 export default {
@@ -130,7 +133,7 @@ export default {
   components: {
     Drawer,
     CardHorizontal,
-    Footer,
+    HuxFooter,
     huxButton,
     TextField,
   },
@@ -140,6 +143,7 @@ export default {
       selectedDestinationIndex: "-1",
       isConnectionValidated: false,
       isValidating: false,
+      isFormValid: false,
       rules: {
         required: (value) => !!value || "This is a required field",
       },
@@ -169,6 +173,13 @@ export default {
         this.isValidating = false
         this.isConnectionValidated = true
       }, 2000)
+    },
+    changeValidationStatus: function () {
+      this.isConnectionValidated = false
+    },
+    addDestination: function () {
+      // This is a TODO need to replace with actual API call
+      this.$router.push("/connections")
     },
   },
 }
