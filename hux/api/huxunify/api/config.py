@@ -1,6 +1,11 @@
 """
 purpose of this file is for housing the config settings for the API
 Ensure that all config values are pulled in a single spot.
+
+Decouple always searches for Options in this order:
+1. Environment variables
+2. Repository: ini or .env file
+3. Default argument passed to config.
 """
 from decouple import config
 

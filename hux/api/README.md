@@ -23,6 +23,11 @@ The API consumes environment variables from the settings.ini file.
 For more information see link below.
 https://github.com/henriquebastos/python-decouple
 
+Decouple always searches for Options in this order:
+1. Environment variables
+2. Repository: ini or .env file
+3. Default argument passed to config.
+
 #### Setup
 ```
 # cd to the hux/api folder
