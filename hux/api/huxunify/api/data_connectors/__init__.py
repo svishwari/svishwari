@@ -5,4 +5,5 @@ purpose of this directory is for housing data data_connectors
    - aws connectors
    - blob connectors
    - tecton
+   - algorithmia
 """
