@@ -18,6 +18,24 @@ pipenv install tox-pipenv
 pipenv install
 ```
 
+### environmental variables
+The API consumes environment variables from the .env file.
+For more information see here
+https://github.com/henriquebastos/python-decouple
+
+#### Setup
+```
+# cd to the hux/api folder
+cd "/hux-unified/api"
+
+# download the public ssl cert for mongo
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+
+# copy the template-settings.ini file
+cp template-settings.ini settings.ini
+
+# now populate all the env variabels in that file.
+```
 
 ### Software Dependencies
 

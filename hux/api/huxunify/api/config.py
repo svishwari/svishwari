@@ -1,6 +1,6 @@
 """
 purpose of this file is for housing the config settings for the API
-ensure that all config values are pulled in a single spot.
+Ensure that all config values are pulled in a single spot.
 """
 from decouple import config
 
