@@ -25,7 +25,7 @@
       "label" : "Decisioning",
       "menu": [
         { 
-          "icon": "mdi-tune", 
+          "icon": "mdi-tune-vertical-variant", 
           "title": "Models", 
           "link": "models"
         }

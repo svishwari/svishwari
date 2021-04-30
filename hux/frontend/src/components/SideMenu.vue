@@ -3,64 +3,38 @@
     app
     floating
     :permanent="true"
-    :mini-variant.sync="mini"
+    :mini-variant.sync="isMini"
     mini-variant-width="90"
     width="220"
     class="side-nav-bar primary"
   >
-    <v-list dense color="primary" dark class="logo-holder">
-      <div class="hux_logo"></div>
-      <v-list-item> </v-list-item>
+    <v-list class="logo-holder">
+      <div class="logo"></div>
     </v-list>
 
-    <v-menu offset-y close-on-click>
-      <template v-slot:activator="{ on }">
-        <span
-          v-on="on"
-          class="d-flex"
-          v-bind:class="!toggle ? 'avatar-menu' : 'avatar-menu-toggle'"
-        >
-          <div class="vertical-center">
-            <p class="font-weight-bold short-name">
-              {{ clientName }}
-            </p>
-          </div>
-          <div class="vertical-center">
-            <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
-          </div>
-        </span>
-      </template>
-      <v-list>
-        <v-list-item>
-          <v-list-item-title>My HUX Profile</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>Change Password</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>Change Username</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="initiateLogout()">
-          <v-list-item-title>Logout</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+    <div class="client">
+      <span>
+        {{ clientName }}
+      </span>
+      <v-icon v-if="!isMini" color="white"> mdi-chevron-down </v-icon>
+    </div>
 
     <v-divider></v-divider>
 
     <v-list v-for="item in items" :key="item.title" no-action>
-      <span class="list-group" v-if="item.label && !toggle">
-        {{ item.label }}
+      <span class="list-group" v-if="item.label">
+        <template v-if="!isMini">
+          {{ item.label }}
+        </template>
       </span>
+
       <v-list-item v-if="!item.menu" :to="item.link">
         <v-list-item-icon>
-          <v-icon color="primary"> {{ item.icon }} </v-icon>
+          <v-icon :size="iconSize" color="white"> {{ item.icon }} </v-icon>
         </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title class="primary--text">
-            {{ item.title }}
-          </v-list-item-title>
-        </v-list-item-content>
+        <v-list-item-title class="white--text">
+          {{ item.title }}
+        </v-list-item-title>
       </v-list-item>
 
       <div v-if="item.menu">
@@ -70,18 +44,16 @@
           :to="menu.link"
         >
           <v-list-item-icon>
-            <v-icon color="primary"> {{ menu.icon }} </v-icon>
+            <v-icon :size="iconSize" color="white"> {{ menu.icon }} </v-icon>
           </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title class="primary--text">
-              {{ menu.title }}
-            </v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title class="white--text">
+            {{ menu.title }}
+          </v-list-item-title>
         </v-list-item>
       </div>
     </v-list>
 
-    <template v-slot:append v-if="!toggle">
+    <template v-slot:append v-if="!isMini">
       <div class="nav-footer">Hux by Deloitte Digital</div>
     </template>
   </v-navigation-drawer>
@@ -98,14 +70,17 @@ export default {
   },
 
   computed: {
-    mini() {
+    isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
+    },
+
+    iconSize() {
+      return this.isMini ? "x-large" : "large"
     },
   },
 
   data: () => ({
     clientName: "Pendleton",
-
     items: menuConfig.menu,
   }),
 }
@@ -113,243 +88,65 @@ export default {
 
 <style lang="scss" scoped>
 .side-nav-bar {
-  .logo-holder {
-    height: 105px;
-    > .hux_logo {
-      background-image: url("../assets/images/hux_logo_2.png");
-      width: 55px;
-      height: 55px;
-      margin-top: 17px;
-      margin-left: 17px;
-    }
-  }
-  .v-navigation-drawer__content {
-    .d-flex {
-      &.avatar-menu {
-        margin-left: calc(50% - 148px / 2 - 11px);
-        color: white;
-      }
-      &.avatar-menu-toggle {
-        margin-left: calc(50% - 50px / 2 - 11px);
-        color: white;
-      }
-      > .vertical-center {
-        width: 110px;
-        font-size: 13px;
-        font-weight: 600;
-        > .short-name {
-          color: white;
-        }
-      }
-    }
-    > .profile-name {
-      > .user-profile {
-        &.theme--light.v-text-field
-          > .v-input__control
-          > .v-input__slot:before {
-          border: none !important;
-        }
-      }
-    }
-  }
-  .v-navigation-drawer {
-    .v-list {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 10px;
-    }
-  }
-  .v-list-item__title {
-    font-size: 13px;
-    font-weight: 600;
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 22px;
-    letter-spacing: 0px;
-    text-align: left;
-  }
-  div {
-    &.v-list-item__title {
-      &.primary--text {
-        color: #ffffff !important;
-      }
-    }
-  }
-  i {
-    &.v-icon {
-      &.notranslate {
-        &.mdi {
-          color: #ffffff !important;
-          caret-color: #ffffff !important;
-        }
-      }
-    }
-  }
-  .v-list {
-    .v-list-item--active {
-      color: inherit;
-    }
-  }
-  div {
-    .v-list {
-      .v-list-item--active {
-        &::before {
-          background-color: #a0dcff !important;
-          opacity: 0.2 !important;
-        }
-      }
-    }
+  .logo {
+    background-image: url("../assets/images/hux_logo_2.png");
+    height: 55px;
+    margin: 1.125rem;
+    width: 55px;
   }
 
-  div {
-    &.v-list-item__icon {
-      &.v-list-group__header__prepend-icon {
-        margin-right: 8.75px !important;
-      }
+  .client {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.25);
+    color: #fff;
+    display: flex;
+    font-size: 0.93rem;
+    font-weight: normal;
+    justify-content: space-between;
+    padding: 0.75rem 1.125rem;
+  }
+
+  .v-icon {
+    transition: none;
+  }
+
+  .v-list {
+    padding: 0.5rem 0;
+  }
+
+  .v-list-item__icon {
+    margin-right: 0.5rem;
+  }
+
+  .v-list-item__title {
+    font-size: 0.93rem;
+    font-weight: normal;
+  }
+
+  .v-list-item--active {
+    &::before {
+      background-color: #fff;
+      opacity: 0.1;
     }
   }
 
   .list-group {
-    margin-left: 17px;
-    height: 40px;
-    width: 199px;
-    left: 17px;
-    top: 218px;
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
     display: flex;
-    align-items: center;
-    color: #ffffff;
+    font-size: 0.93rem;
+    font-weight: normal;
     opacity: 0.5;
+    padding: 0.5rem 1rem;
+    text-transform: uppercase;
   }
-  .v-list-item {
-    &.v-list-item--link {
-      &.theme--light {
-        padding-left: 25px;
-      }
-    }
-  }
-  &.v-navigation-drawer--mini-variant {
-    width: 90px !important;
-  }
-  .v-btn {
-    &.v-btn--icon {
-      &.v-btn--round {
-        &.theme--light {
-          &.v-size--small {
-            margin-right: 25px;
-          }
-        }
-      }
-    }
-  }
-  .v-list-item__content {
-    &.text-truncate {
-      width: 148px;
-      margin-left: calc(50% - 148px / 2 - 11px);
-      font-family: Open Sans;
-      font-style: normal;
-      font-weight: 600;
-      font-size: 13px;
-      line-height: 22px;
-      display: flex;
-      align-items: center;
-      color: #ffffff;
-    }
-  }
-  .px-2 {
-    &.v-list-item {
-      &.v-list-item--link {
-        &.theme--light {
-          background: rgba(0, 0, 0, 0.25);
-        }
-      }
-    }
-  }
-  .hux_logo {
-    background-image: url("../assets/images/hux_logo_2.png");
-    width: 55px;
-    height: 55px;
-    margin-top: 17px;
-    margin-left: 17px;
-  }
+
   .nav-footer {
-    height: 35px;
-    left: 6.82%;
-    right: 4.55%;
-    bottom: 0px;
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: 600;
+    color: #fff;
     font-size: 12px;
-    line-height: 16px;
-    color: #ffffff;
-    opacity: 0.8;
-    margin-left: 15px;
-    margin-right: 10px;
-  }
-  .profile-name {
-    background: rgba(0, 0, 0, 0.25);
-  }
-  .profile-chevron-icon {
-    margin-right: 25px !important;
-    color: #ffffff !important;
-  }
-  a {
-    &.v-list-item--active {
-      background-color: unset !important;
-    }
-  }
-  .v-list {
-    &.v-select-list {
-      &.v-sheet {
-        div {
-          &.v-list-item__content {
-            color: #0c0b0b !important;
-          }
-        }
-      }
-    }
-  }
-  .profile-name {
-    .v-select__selections {
-      color: #ffffff !important;
-    }
-    .theme--light.v-text-field {
-      > .v-input__control {
-        > .v-input__slot {
-          &:before {
-            border: none;
-          }
-        }
-      }
-    }
-  }
-  .v-text-field.v-input--is-focused {
-    > .v-input__control {
-      > .v-input__slot {
-        &:after {
-          border: none;
-        }
-      }
-    }
-  }
-  .v-select__selection.v-select__selection--comma {
-    width: 148px;
-    height: 15px;
-    left: calc(50% - 148px / 2 - 11px);
-    top: 117px;
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 22px;
-    display: flex;
-    align-items: center;
-    color: #ffffff;
+    font-weight: normal;
+    opacity: 0.5;
+    padding: 1rem;
   }
 }
 </style>

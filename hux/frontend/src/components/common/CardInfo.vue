@@ -1,7 +1,8 @@
 <template>
   <v-card
     class="text-center"
-    max-width="220px"
+    min-width="220px"
+    max-width="260px"
     :disabled="!active"
     :to="to"
     @click="$emit('click')"
