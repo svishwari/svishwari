@@ -7,22 +7,19 @@ import connections from "./modules/connections"
 
 Vue.use(Vuex)
 
+const debug = process.env.NODE_ENV !== "production"
+
 export default new Vuex.Store({
   modules: {
     users,
     connections,
   },
 
-  strict: process.env.NODE_ENV !== "production",
+  strict: debug,
 
-  // Persist and rehydrates Vuex state between page reloads.
-  // paths can be used to persist only specific states
-  // ********TODO****************
-  // Need to test it with API integration(incase of token change)
-  // ****************************
-  // https://github.com/robinvdvleuten/vuex-persistedstate
   plugins: [
     createPersistedState({
+      // TODO: test persisted state with integration incase of token changes
       paths: ["users"],
     }),
   ],
