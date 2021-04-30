@@ -1,21 +1,12 @@
 """
 purpose of this file is for interacting with aws
 """
-from os import getenv
 from http import HTTPStatus
 from connexion import ProblemException
 import boto3
 import botocore
 from huxunify.api import constants as api_c
-
-
-# TODO - HUS-281
-# get aws connection params
-AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = getenv("AWS_REGION")
-AWS_SERVICE_URL = getenv("AWS_SERVICE_URL")
-SSM_NAME = "ssm"
+from huxunify.api import config
 
 
 class ParameterStore:
@@ -39,7 +30,7 @@ class ParameterStore:
             dict: boto3 response.
         """
         try:
-            return get_aws_client(SSM_NAME).put_parameter(
+            return get_aws_client(config.AWS_SSM_NAME).put_parameter(
                 Name=f"{path}/{name}" if path else name,
                 Value=secret,
                 Type="SecureString",
@@ -49,9 +40,7 @@ class ParameterStore:
             raise error
 
     @staticmethod
-    def get_store_value(
-        name: str, path: str = None, value: str = "Value"
-    ) -> str:
+    def get_store_value(name: str, path: str = None, value: str = "Value") -> str:
         """
         Retrieve a parameter/value from the param store.
 
@@ -64,7 +53,7 @@ class ParameterStore:
         """
         try:
             return (
-                get_aws_client(SSM_NAME)
+                get_aws_client(config.AWS_SSM_NAME)
                 .get_parameter(
                     Name=f"{path}/{name}" if path else name,
                     WithDecryption=True,
@@ -126,9 +115,9 @@ parameter_store = ParameterStore()
 
 def get_aws_client(
     client: str = "s3",
-    aws_access_key: str = AWS_ACCESS_KEY_ID,
-    aws_secret_key: str = AWS_SECRET_ACCESS_KEY,
-    region_name: str = AWS_REGION,
+    aws_access_key: str = config.AWS_ACCESS_KEY_ID,
+    aws_secret_key: str = config.AWS_SECRET_ACCESS_KEY,
+    region_name: str = config.AWS_REGION,
 ) -> boto3.client:
     """quick and dirty function for getting most AWS clients
 

@@ -18,6 +18,26 @@ pipenv install tox-pipenv
 pipenv install
 ```
 
+### environment variables
+The API consumes environment variables from the settings.ini file.
+For more information see link below.
+https://github.com/henriquebastos/python-decouple
+
+Decouple always searches for Options in this order:
+1. Environment variables
+2. Repository: ini or .env file
+3. Default argument passed to config.
+
+#### Setup
+```
+# cd to the hux/api folder
+cd "/hux-unified/api"
+# download the public ssl cert for aws
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+# copy the template-settings.ini file
+cp template-settings.ini settings.ini
+# now populate all the env variabels in that file.
+```
 
 ### Software Dependencies
 
