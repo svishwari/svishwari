@@ -1,12 +1,11 @@
 <template>
-  <div class="main">
+  <v-container>
     <v-subheader> Card </v-subheader>
-    <v-divider></v-divider>
     <CardInfo></CardInfo>
-    <br />
 
-    <v-subheader> Text Feild </v-subheader>
-    <v-divider></v-divider>
+    <v-divider class="mt-10" />
+
+    <v-subheader> Text Field </v-subheader>
     <TextField
       v-model="TextFieldValue"
       labelText="Add Account ID"
@@ -15,10 +14,10 @@
       v-bind:required="true"
     ></TextField>
     {{ TextFieldValue }}
-    <br />
+
+    <v-divider class="mt-10" />
 
     <v-subheader> Button </v-subheader>
-    <v-divider></v-divider>
     <huxButton
       ButtonText="Added"
       v-bind:isOutlined="true"
@@ -63,10 +62,10 @@
       v-bind:isTile="true"
       v-bind:enableLoading="true"
     ></huxButton>
-    <br />
+
+    <v-divider class="mt-10" />
 
     <v-subheader> Select Dropdown </v-subheader>
-    <v-divider></v-divider>
     <DropdownMenu
       v-model="DropdownValue"
       v-bind:labelText="labelText"
@@ -74,20 +73,19 @@
       @updatelabelText="onupdatelabelText"
     ></DropdownMenu>
     {{ DropdownValue }}
-    <br />
+
+    <v-divider class="mt-10" />
 
     <v-subheader> Page Header </v-subheader>
-    <v-divider></v-divider>
     <PageHeader>
       <template slot="left">
         <Breadcrumb :items="items" />
       </template>
     </PageHeader>
-    <br />
+
+    <v-divider class="mt-10" />
 
     <v-subheader> Hux Table</v-subheader>
-    <v-divider></v-divider>
-    <br />
     <hux-table
       :columnDef="columnDefs"
       :tableData="rowData"
@@ -95,10 +93,10 @@
       hasCheckBox
     ></hux-table>
 
+    <v-divider class="mt-10" />
+
     <v-subheader> Drawer</v-subheader>
-    <v-divider></v-divider>
-    <br />
-    <button @click="drawer = !drawer">Toggle</button>
+    <v-btn @click="drawer = !drawer">Toggle Drawer</v-btn>
     <drawer v-model="drawer">
       <template v-slot:header-left>
         <h2>Heading</h2>
@@ -116,10 +114,10 @@
         <v-icon color="black"> mdi-dots-vertical </v-icon>
       </template>
     </drawer>
-    <br />
+
+    <v-divider class="mt-10" />
 
     <v-subheader>Metric Card</v-subheader>
-    <v-divider></v-divider>
     <MetricCard
       class="ma-4"
       :width="135"
@@ -131,7 +129,35 @@
       :icon="item.icon"
       :active="true"
     ></MetricCard>
-  </div>
+
+    <v-divider class="mt-10" />
+
+    <v-subheader>Logos</v-subheader>
+    <Logo type="facebook"></Logo>
+    <Logo type="facebook" :size="48"></Logo>
+
+    <Logo type="tableau"></Logo>
+    <Logo type="tableau" :size="48"></Logo>
+    
+    <Logo type="google-ads"></Logo>
+    <Logo type="google-ads" :size="48"></Logo>
+
+    <Logo type="google-analytics"></Logo>
+    <Logo type="google-analytics" :size="48"></Logo>
+
+    <Logo type="aqfer" ></Logo>
+    <Logo type="aqfer" :size="48"></Logo>
+
+    <Logo type="netsuite" ></Logo>
+    <Logo type="netsuite" :size="48"></Logo>
+
+    <Logo type="salesforce" ></Logo>
+    <Logo type="salesforce" :size="48"></Logo>
+
+    <Logo type="twillio" ></Logo>
+    <Logo type="twillio" :size="48"></Logo>
+
+  </v-container>
 </template>
 
 <script>
@@ -144,9 +170,10 @@ import DropdownMenu from "@/components/common/DropdownMenu"
 import PageHeader from "@/components/PageHeader"
 import Drawer from "@/components/common/Drawer"
 import MetricCard from "@/components/common/MetricCard"
+import Logo from "@/components/common/Logo"
 
 export default {
-  name: "CommonComponent",
+  name: "Components",
   components: {
     CardInfo,
     Breadcrumb,
@@ -157,6 +184,7 @@ export default {
     HuxTable,
     Drawer,
     MetricCard,
+    Logo,
   },
   methods: {
     onupdatelabelText(newValue) {
