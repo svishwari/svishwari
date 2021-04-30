@@ -27,7 +27,7 @@ class InvalidName(HuxAdvException):
     """Exception for invalid names."""
 
     exception_message = (
-        "The name <{}> specified is Invalid. The creation/update failed."
+        "The specified name <{}> is invalid."
     )
 
 

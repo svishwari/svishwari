@@ -77,7 +77,7 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(c.ID in audience_doc)
 
     def test_get_audience(self):
-        """Test get audiences."""
+        """Test get audience."""
 
         audience_doc = am.get_audience_doc(self.database, c.ID)
 

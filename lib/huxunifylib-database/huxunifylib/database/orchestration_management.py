@@ -28,7 +28,7 @@ def create_audience(
     engagement_ids: list = None,  # pylint: disable=W0613
     user_id: ObjectId = None,
 ) -> dict:
-    """A function to create and store audience filters.
+    """A function to create an audience.
 
     Args:
         database (DatabaseClient): A database client.
@@ -43,7 +43,6 @@ def create_audience(
         dict: MongoDB audience doc.
     """
 
-    audience_doc = None
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
 
@@ -76,26 +75,26 @@ def create_audience(
                         database, audience_id, destination_id, None
                     )
             # TODO: Set Engagement IDs once the engagement table is ready
-            audience_doc = collection.find_one({c.ID: audience_id})
+            return collection.find_one({c.ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return audience_doc
+    return None
 
 
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience_doc(database: DatabaseClient, audience_id: ObjectId) -> dict:
-    """A function to get an audience doc.
+def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
+    """A function to get an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        dict:  Returns Audience doc.
+        dict:  An audience document.
 
     """
     doc = None
@@ -121,27 +120,26 @@ def get_audience_doc(database: DatabaseClient, audience_id: ObjectId) -> dict:
 def get_all_audiences(
     database: DatabaseClient,
 ) -> list:
-    """A function to get all existing audience docs.
+    """A function to get all existing audiences.
 
     Args:
         database (DatabaseClient): A database client.
 
     Returns:
-        List: A list of all audience docs.
+        List: A list of all audiences.
 
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
-    audiences = None
 
     # Get audience configurations and add to list
     try:
-        audiences = list(collection.find())
+        return list(collection.find())
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return audiences
+    return None
 
 
 @retry(
@@ -157,14 +155,14 @@ def update_audience(
     engagement_ids: list = None,  # pylint: disable=W0613
     user_id: ObjectId = None,
 ) -> dict:
-    """A function to update an audience document data.
+    """A function to update an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the audience.
         name (str): New audience name.
-        audience_filters (list of list): Multiple sections of audience filters.
-        These are aggregated using "OR".
+        audience_filters (list): Optional list of audience filter lists
+            that are aggregated using "OR".
         destination_ids (list): List of destination / delivery platform ids attached to the audience
         engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
@@ -214,7 +212,7 @@ def update_audience(
             # Remove all existing destinations for the given audience id
             delete_delivery_job_by_audience(database, audience_id)
             # And update the new set of ids
-            if destination_ids is not None:
+            if destination_ids:
                 for destination_id in destination_ids:
                     set_delivery_job(
                         database, audience_id, destination_id, None

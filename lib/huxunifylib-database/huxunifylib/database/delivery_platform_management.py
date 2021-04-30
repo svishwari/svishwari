@@ -986,11 +986,11 @@ def delete_delivery_job_by_audience(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        delete_result = collection.delete_many({c.AUDIENCE_ID: audience_id})
+        return collection.delete_many({c.AUDIENCE_ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return delete_result
+    return None
 
 
 @retry(
