@@ -24,19 +24,49 @@
             variant="primary"
             size="large"
             v-bind:isTile="true"
-            class="ma-2"
+            class="ma-2 font-weight-regular"
           ></huxButton>
         </router-link>
       </template>
     </PageHeader>
     <v-row class="pt-3 pb-7">
+
       <hux-table
+        v-if="!isDataExists"
         :columnDef="columnDefs"
         :tableData="rowData"
         :rowHeight="60"
         height="350px"
         hasCheckBox
       ></hux-table>
+
+      <EmptyPage  v-if="isDataExists">
+        <template v-slot:icon> mdi-alert-circle-outline </template>
+        <template v-slot:title> Oops! There’s nothing here yet </template>
+        <template v-slot:subtitle>
+          You currently have no audiences created! You can create the <br />
+          framework first then complete the details later. <br />
+          Begin by selecting the button below.
+        </template>
+        <template v-slot:button>
+          <router-link
+            :to="{ path: '/audiences/createAudience' }"
+            class="route-link"
+            append
+          >
+            <huxButton
+              ButtonText="Audience"
+              icon="mdi-plus"
+              iconPosition="left"
+              variant="primary"
+              size="large"
+              v-bind:isTile="true"
+              class="ma-2 font-weight-regular"
+            ></huxButton>
+          </router-link>
+        </template>
+      </EmptyPage>
+
     </v-row>
   </div>
 </template>
@@ -45,6 +75,7 @@
 import { mapGetters, mapActions } from "vuex"
 
 import PageHeader from "@/components/PageHeader"
+import EmptyPage from "@/components/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxTable from "@/components/common/huxTable.vue"
@@ -63,6 +94,7 @@ export default {
     Breadcrumb,
     huxButton,
     HuxTable,
+    EmptyPage,
   },
   data() {
     return {
@@ -146,6 +178,9 @@ export default {
     ...mapGetters({
       rowData: "AllAudiences",
     }),
+    isDataExists() {
+      return ( this.rowData.length > 0 )
+    }
   },
   methods: {
     ...mapActions(["getAllAudiences"]),

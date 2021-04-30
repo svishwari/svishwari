@@ -28,6 +28,59 @@
         ></MetricCard>
       </div>
       <v-divider class="divider mt-5"></v-divider>
+    </div>
+
+    <div class="timeline-wrapper mt-9 ml-9">
+      <v-timeline align-top dense class="">
+        <v-timeline-item color="blue" class="timeline-section">
+          <template v-slot:icon class="timeline-icon-section">
+            <span>1</span>
+          </template>
+          <v-row class="pt-1">
+            <v-col cols="4">
+              <strong>General information</strong>
+              <TextField
+                placeholderText="What is the name for this audience ?"
+                labelText="Audience name"
+                backgroundColor="white"
+                v-bind:required="true"
+                class="mt-1"
+              ></TextField>
+            </v-col>
+            <v-col cols="8">
+              <div class="mt-8 ml-15">
+                Attach an engagement (we can auto-create an engagement for you)
+                - you must have at least one
+              </div>
+            </v-col>
+          </v-row>
+        </v-timeline-item>
+        <v-timeline-item color="blue" class="timeline-section">
+          <template v-slot:icon class="timeline-icon-section">
+            <span>2</span>
+          </template>
+          <v-row class="pt-1">
+            <v-col cols="12">
+              <strong
+                >Attributes selection (you can always do this later !)</strong
+              >
+            </v-col>
+          </v-row>
+        </v-timeline-item>
+        <v-timeline-item color="blue" class="timeline-section">
+          <template v-slot:icon class="timeline-icon-section">
+            <span>3</span>
+          </template>
+          <v-row class="pt-1">
+            <v-col cols="12">
+              <strong
+                >Select a destination (you can add more than one) -
+                optional</strong
+              >
+            </v-col>
+          </v-row>
+        </v-timeline-item>
+      </v-timeline>
 
       <Footer absolute padless color="white" class="footer">
         <template v-slot:left>
@@ -70,6 +123,7 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import MetricCard from "@/components/common/MetricCard"
 import Footer from "@/components/common/Footer"
 import huxButton from "@/components/common/huxButton"
+import TextField from "@/components/common/TextField"
 
 export default {
   name: "createAudience",
@@ -79,6 +133,7 @@ export default {
     huxButton,
     PageHeader,
     Breadcrumb,
+    TextField,
   },
   data() {
     return {
@@ -90,7 +145,7 @@ export default {
           icon: "mdi-flip-h mdi-account-plus-outline",
         },
         {
-          text: "Creat audiences",
+          text: "Create audiences",
           disabled: false,
           href: this.$route.path,
           icon: "mdi-flip-h mdi-account-plus-outline",
@@ -131,6 +186,22 @@ export default {
   .footer {
     padding-left: 50px;
     box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
+  }
+  ::v-deep .timeline-wrapper {
+    .theme--light.v-timeline:before {
+      border: 1px dashed #00A3E0;
+    }
+    .theme--light.v-timeline-item {
+      .v-timeline-item__divider {
+        .v-timeline-item__dot {
+          background: #00A3E0;
+          .v-timeline-item__inner-dot {
+            background-color: white !important;
+            color: #00A3E0;
+          }
+        }
+      }
+    }
   }
 }
 </style>
