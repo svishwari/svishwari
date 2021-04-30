@@ -8,25 +8,34 @@
     width="220"
     class="side-nav-bar primary"
   >
-    <v-list class="logo-holder">
-      <div class="logo"></div>
-    </v-list>
+    <template v-slot:prepend>
+      <img
+        src="@/assets/images/logo.png"
+        alt="Hux"
+        width="55"
+        height="55"
+        class="d-flex ma-4"
+      />
+      <div class="client">
+        <span>
+          {{ clientName }}
+        </span>
+        <v-icon v-if="!isMini" color="rgba(255, 255, 255, 0.5)">
+          mdi-chevron-down
+        </v-icon>
+      </div>
+    </template>
 
-    <div class="client">
-      <span>
-        {{ clientName }}
-      </span>
-      <v-icon v-if="!isMini" color="white"> mdi-chevron-down </v-icon>
-    </div>
-
-    <v-divider></v-divider>
-
-    <v-list v-for="item in items" :key="item.title" no-action>
-      <span class="list-group" v-if="item.label">
-        <template v-if="!isMini">
+    <v-list
+      v-for="item in items"
+      :key="item.title"
+      color="rgba(0, 85, 135, 0.9)"
+    >
+      <div class="list-group" v-if="item.label">
+        <span v-if="!isMini">
           {{ item.label }}
-        </template>
-      </span>
+        </span>
+      </div>
 
       <v-list-item v-if="!item.menu" :to="item.link">
         <v-list-item-icon>
@@ -88,22 +97,20 @@ export default {
 
 <style lang="scss" scoped>
 .side-nav-bar {
-  .logo {
-    background-image: url("../assets/images/hux_logo_2.png");
-    height: 55px;
-    margin: 1.125rem;
-    width: 55px;
-  }
+  background-image: url("../assets/images/nav-bg.png");
+  background-position: bottom center;
 
   .client {
     align-items: center;
     background-color: rgba(0, 0, 0, 0.25);
     color: #fff;
+    cursor: default;
     display: flex;
     font-size: 0.93rem;
+    line-height: 1.75rem;
     font-weight: normal;
     justify-content: space-between;
-    padding: 0.75rem 1.125rem;
+    padding: 1rem 1.125rem;
   }
 
   .v-icon {
@@ -111,7 +118,7 @@ export default {
   }
 
   .v-list {
-    padding: 0.5rem 0;
+    padding: 0;
   }
 
   .v-list-item__icon {
@@ -132,13 +139,16 @@ export default {
 
   .list-group {
     border-top: 1px solid rgba(255, 255, 255, 0.25);
-    color: #fff;
-    display: flex;
-    font-size: 0.93rem;
-    font-weight: normal;
-    opacity: 0.5;
-    padding: 0.5rem 1rem;
-    text-transform: uppercase;
+
+    span {
+      color: #fff;
+      display: flex;
+      font-size: 0.93rem;
+      font-weight: normal;
+      opacity: 0.5;
+      padding: 0.75rem 1rem;
+      text-transform: uppercase;
+    }
   }
 
   .nav-footer {
