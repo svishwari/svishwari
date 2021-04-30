@@ -199,5 +199,8 @@ export default {
   ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
     display: initial;
   }
+  ::v-deep .ag-horizontal-left-spacer{
+    display: none;
+  }
 }
 </style>

@@ -1,10 +1,5 @@
 <template>
   <div class="create-audience-wrap">
-    <!-- <PageHeader>
-      <template slot="left">
-        <Breadcrumb :items="breadcrumbItems" />
-      </template>
-    </PageHeader> -->
     <div class="mt-10 ml-15">
       <div class="heading font-weight-light">Add an audience</div>
       <div class="sub-heading font-weight-regular">
@@ -51,6 +46,14 @@
               <div class="mt-8 ml-15">
                 Attach an engagement (we can auto-create an engagement for you)
                 - you must have at least one
+                <div>
+                  <v-icon size="30" class="add-icon" color="primary">
+                    mdi-plus-circle
+                  </v-icon>
+                  <v-chip class="ma-2" text-color="primary">
+                    audience name
+                  </v-chip>
+                </div>
               </div>
             </v-col>
           </v-row>
@@ -59,11 +62,34 @@
           <template v-slot:icon class="timeline-icon-section">
             <span>2</span>
           </template>
-          <v-row class="pt-1">
+          <v-row class="pt-1 pr-10 mr-10">
             <v-col cols="12">
               <strong
                 >Attributes selection (you can always do this later !)</strong
               >
+              <v-card
+                color="#F9FAFB"
+                tile
+                elevation="0"
+                style="border: 1px solid #e2eaec"
+                class="mt-2"
+              >
+                <v-card-actions>
+                  <v-list-item class="grow">
+                    <v-list-item-content>
+                      <v-list-item-title
+                        >You have not added any attributes,
+                        yet!</v-list-item-title
+                      >
+                    </v-list-item-content>
+                    <v-row align="center" justify="end">
+                      <v-icon size="30" class="add-icon" color="primary">
+                        mdi-plus-circle
+                      </v-icon>
+                    </v-row>
+                  </v-list-item>
+                </v-card-actions>
+              </v-card>
             </v-col>
           </v-row>
         </v-timeline-item>
@@ -73,10 +99,14 @@
           </template>
           <v-row class="pt-1">
             <v-col cols="12">
-              <strong
-                >Select a destination (you can add more than one) -
-                optional</strong
-              >
+              <strong>
+                Select a destination (you can add more than one) -optional
+              </strong>
+              <div>
+                <v-icon size="30" class="add-icon" color="primary">
+                  mdi-plus-circle
+                </v-icon>
+              </div>
             </v-col>
           </v-row>
         </v-timeline-item>
@@ -137,20 +167,6 @@ export default {
   },
   data() {
     return {
-      // breadcrumbItems: [
-      //   {
-      //     text: "Audiences",
-      //     disabled: false,
-      //     href: "/" + this.$route.path.split("/")[1],
-      //     icon: "mdi-flip-h mdi-account-plus-outline",
-      //   },
-      //   {
-      //     text: "Create audiences",
-      //     disabled: false,
-      //     href: this.$route.path,
-      //     icon: "mdi-flip-h mdi-account-plus-outline",
-      //   },
-      // ],
       overviewListItems: [
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
         { title: "US States", subtitle: "52", icon: "mdi-map" },
@@ -189,15 +205,15 @@ export default {
   }
   ::v-deep .timeline-wrapper {
     .theme--light.v-timeline:before {
-      border: 1px dashed #00A3E0;
+      border: 1px dashed #00a3e0;
     }
     .theme--light.v-timeline-item {
       .v-timeline-item__divider {
         .v-timeline-item__dot {
-          background: #00A3E0;
+          background: #00a3e0;
           .v-timeline-item__inner-dot {
             background-color: white !important;
-            color: #00A3E0;
+            color: #00a3e0;
           }
         }
       }
