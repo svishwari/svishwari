@@ -34,7 +34,9 @@ class DatabaseClient:
         self._username = username
         self._password = password
         self._use_ssl = (
-            Path(ssl_cert_path).exists() if ssl_cert_path is not None else False
+            Path(ssl_cert_path).exists()
+            if ssl_cert_path is not None
+            else False
         )
         self._ssl_cert_path = ssl_cert_path
 
