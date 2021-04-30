@@ -6,7 +6,6 @@ import NotFound from "@/views/NotFound.vue"
 
 // Authentication Plugin
 import auth from "@/auth"
-// import config from '@/config';
 
 Vue.use(VueRouter)
 
@@ -14,7 +13,7 @@ const NotFoundRoute = {
   path: "*",
   component: NotFound,
   meta: {
-    title: "OOPs",
+    title: "Not Found",
     layout: "default",
   },
 }

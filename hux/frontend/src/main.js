@@ -15,7 +15,7 @@ import vuetify from "./plugins/vuetify"
 
 // Layouts as usable components
 Vue.component("app-layout", AppLayout)
-Vue.component("default-Layout", DefaultLayout)
+Vue.component("default-layout", DefaultLayout)
 
 Vue.config.productionTip = false
 
