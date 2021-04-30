@@ -38,16 +38,15 @@
       </v-col>
 
       <v-col cols="6 pt-0">
-        <DestinationListCard v-for="item in destinations" :key="item.title">
+        <DestinationListCard
+          v-for="destination in destinations"
+          :key="destination.title"
+        >
           <template v-slot:logo>
-            <v-img
-              class="elevation-6"
-              :alt="item.title"
-              :src="getImgUrl(item)"
-            ></v-img>
+            <Logo :type="destination.type"></Logo>
           </template>
           <template v-slot:title>
-            {{ item.title }}
+            {{ destination.title }}
           </template>
         </DestinationListCard>
       </v-col>
@@ -62,10 +61,11 @@ import DestinationListCard from "@/components/DestinationListCard"
 import EmptyState from "@/components/EmptyState"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "connections",
-  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb },
+  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb, Logo },
   data() {
     return {
       items: [
@@ -79,16 +79,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      destinations: "AllDestinations",
-    }),
-
-    // This can be used, in-case, data required logic/filter
-    // destinations () {
-    //   return this.AllDestinations.map(destination => {
-    //     return destination
-    //   })
-    // },
+    ...mapGetters(["destinations"]),
 
     hasDestinations() {
       return Boolean(this.destinations && this.destinations.length > 1)
@@ -96,6 +87,7 @@ export default {
   },
   methods: {
     ...mapActions(["getAllDestinations"]),
+
     getImgUrl(item) {
       return item.logoUrl
     },

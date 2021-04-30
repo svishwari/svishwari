@@ -1,45 +1,31 @@
-// import Vue from "vue"
+import Vue from "vue"
 // import { getAllDestinations } from "@/api/resources/destinations"
 
+import axios from "axios"
+
 const state = {
-  destinations: [
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Adobe Experience" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Facebook" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Google" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Twilio" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Amazon" },
-  ],
+  destinations: {},
 }
 
 const getters = {
-  AllDestinations: (state) => {
-    return state.destinations
-  },
+  destinations: (state) => Object.values(state.destinations),
 }
 
 const mutations = {
-  SET_ALL_DESTINATIONS(state, destinations) {
-    /*
-     *    destinations.forEach((destination) => {
-     *       Vue.set(state.destinations, destination._id, destination)
-     *    })
-     */
-    state.destinations = destinations
+  SET_ALL_DESTINATIONS(state, data) {
+    data.forEach((item) => {
+      Vue.set(state.destinations, item.id, item)
+    })
   },
 }
 
 const actions = {
   async getAllDestinations({ commit }) {
     try {
-      /*
-       *    const response = await getAllDestinations()
-       *    commit("SET_ALL_DESTINATIONS", response.data)
-       */
-      commit("SET_ALL_DESTINATIONS", state.destinations)
+      const response = await axios.get("/api/destinations")
+      commit("SET_ALL_DESTINATIONS", response.data)
     } catch (error) {
-      /*
-       *    to do item...
-       */
+      console.error(error)
     }
   },
 }
