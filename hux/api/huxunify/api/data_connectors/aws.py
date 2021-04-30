@@ -40,7 +40,9 @@ class ParameterStore:
             raise error
 
     @staticmethod
-    def get_store_value(name: str, path: str = None, value: str = "Value") -> str:
+    def get_store_value(
+        name: str, path: str = None, value: str = "Value"
+    ) -> str:
         """
         Retrieve a parameter/value from the param store.
 

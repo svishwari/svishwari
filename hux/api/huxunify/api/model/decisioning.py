@@ -62,4 +62,6 @@ class CustomerFeatureModel:
         # (f'https://{self.cluster_id}.tecton.ai/api/v1/feature-service
         # /get_feature_vector', headers=TECTON_API_HEADERS, data=data).json()
         for feat in self.features:
-            self.predictions.append({"feature": feat, "user_clicks": randint(1, 60)})
+            self.predictions.append(
+                {"feature": feat, "user_clicks": randint(1, 60)}
+            )
