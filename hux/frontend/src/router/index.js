@@ -61,7 +61,7 @@ const routes = [
     },
   },
   {
-    path: "/audiences/createAudience",
+    path: "/audiences/create-audience",
     name: "createAudience",
     component: () => import("@/views/Audiences/createAudience.vue"),
     meta: {

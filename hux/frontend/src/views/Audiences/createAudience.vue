@@ -1,10 +1,10 @@
 <template>
   <div class="create-audience-wrap">
-    <PageHeader>
+    <!-- <PageHeader>
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />
       </template>
-    </PageHeader>
+    </PageHeader> -->
     <div class="mt-10 ml-15">
       <div class="heading font-weight-light">Add an audience</div>
       <div class="sub-heading font-weight-regular">
@@ -137,20 +137,20 @@ export default {
   },
   data() {
     return {
-      breadcrumbItems: [
-        {
-          text: "Audiences",
-          disabled: false,
-          href: "/" + this.$route.path.split("/")[1],
-          icon: "mdi-flip-h mdi-account-plus-outline",
-        },
-        {
-          text: "Create audiences",
-          disabled: false,
-          href: this.$route.path,
-          icon: "mdi-flip-h mdi-account-plus-outline",
-        },
-      ],
+      // breadcrumbItems: [
+      //   {
+      //     text: "Audiences",
+      //     disabled: false,
+      //     href: "/" + this.$route.path.split("/")[1],
+      //     icon: "mdi-flip-h mdi-account-plus-outline",
+      //   },
+      //   {
+      //     text: "Create audiences",
+      //     disabled: false,
+      //     href: this.$route.path,
+      //     icon: "mdi-flip-h mdi-account-plus-outline",
+      //   },
+      // ],
       overviewListItems: [
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
         { title: "US States", subtitle: "52", icon: "mdi-map" },

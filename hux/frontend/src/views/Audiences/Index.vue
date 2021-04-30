@@ -13,8 +13,8 @@
       <template slot="right">
         <v-icon color="primary" large @click="refresh"> mdi-refresh </v-icon>
         <router-link
-          :to="{ path: '/audiences/createAudience' }"
-          class="route-link"
+          :to="{ path: '/audiences/create-audience' }"
+          class="text-decoration-none"
           append
         >
           <huxButton
@@ -32,7 +32,7 @@
     <v-row class="pt-3 pb-7">
 
       <hux-table
-        v-if="!isDataExists"
+        v-if="isDataExists"
         :columnDef="columnDefs"
         :tableData="rowData"
         :rowHeight="60"
@@ -40,7 +40,7 @@
         hasCheckBox
       ></hux-table>
 
-      <EmptyPage  v-if="isDataExists">
+      <EmptyPage  v-if="!isDataExists">
         <template v-slot:icon> mdi-alert-circle-outline </template>
         <template v-slot:title> Oops! There’s nothing here yet </template>
         <template v-slot:subtitle>
@@ -50,8 +50,8 @@
         </template>
         <template v-slot:button>
           <router-link
-            :to="{ path: '/audiences/createAudience' }"
-            class="route-link"
+            :to="{ path: '/audiences/create-audience' }"
+            class="route-link text-decoration-none"
             append
           >
             <huxButton
@@ -193,9 +193,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .audiences-wrap {
-  .route-link {
-    text-decoration: none;
-  }
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }
