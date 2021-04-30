@@ -1,5 +1,6 @@
-const userStore = {
+export default {
   namespace: true,
+
   state: {
     isLoading: false,
     userProfile: {
@@ -9,6 +10,7 @@ const userStore = {
       idToken: null,
     },
   },
+
   mutations: {
     LOADING: (state, data) => {
       state.isLoading = data
@@ -22,11 +24,13 @@ const userStore = {
       state.userProfile.idToken = token.idToken.value
     },
   },
+
   actions: {
     setUserProfile: ({ commit }, userProfile) =>
       commit("setUserProfile", userProfile),
     setUserToken: ({ commit }, token) => commit("setUserToken", token),
   },
+
   getters: {
     getFirstname: (state) => {
       return state.userProfile.firstName
@@ -36,4 +40,3 @@ const userStore = {
     },
   },
 }
-export default userStore
