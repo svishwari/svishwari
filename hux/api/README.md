@@ -5,7 +5,7 @@ Information the API Flask Project
 ## Installation
 ```
 # cd to the hux/api folder
-cd "/hux-unified/api"
+cd "/hux/api"
 
 # run pipenv install
 pipenv install
@@ -31,7 +31,7 @@ Decouple always searches for Options in this order:
 #### Setup
 ```
 # cd to the hux/api folder
-cd "/hux-unified/api"
+cd "/hux/api"
 # download the public ssl cert for aws
 wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 # copy the template-settings.ini file
