@@ -2,10 +2,10 @@
 FROM alpine:latest AS base
 ARG OKTA_ISSUER
 ARG OKTA_CLIENT
-ARG APP_APIHOST
+ARG APP_API_BASE_URL
 RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
     "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT" \
-    "\nVUE_APP_APIHOST=$APP_APIHOST" \ > /tmp/env_file
+    "\nVUE_APP_API_BASE_URL=$APP_API_BASE_URL" \ > /tmp/env_file
 
 # build environment
 FROM node:14 as huxui-build
