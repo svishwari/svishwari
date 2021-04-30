@@ -135,6 +135,7 @@ export default {
     background: #ecf4f9;
     min-height: 265px;
     padding: 16px 30px 30px 30px;
+    overflow-x: auto;
     h6 {
       font-style: normal;
       font-weight: normal;
