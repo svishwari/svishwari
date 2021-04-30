@@ -1,9 +1,8 @@
 <template>
   <v-navigation-drawer
-    v-model="sidebarMenu"
     app
     floating
-    :permanent="sidebarMenu"
+    permanent="true"
     :mini-variant.sync="mini"
     mini-variant-width="90"
     width="220"
@@ -22,7 +21,9 @@
           v-bind:class="!toggle ? 'avatar-menu' : 'avatar-menu-toggle'"
         >
           <div class="vertical-center">
-            <p class="font-weight-bold short-name">{{ clientName }}</p>
+            <p class="font-weight-bold short-name">
+              {{ clientName }}
+            </p>
           </div>
           <div class="vertical-center">
             <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
@@ -46,6 +47,7 @@
     </v-menu>
 
     <v-divider></v-divider>
+
     <v-list v-for="item in items" :key="item.title" no-action>
       <span class="list-group" v-if="item.label && !toggle">
         {{ item.label }}
@@ -96,27 +98,15 @@ export default {
   },
 
   computed: {
-    layout() {
-      // none-layout will be used if the meta.layout tag is not set
-      // computed may not be best place in vue lifecycle for this but it works ok
-      return `${this.$route.meta.layout || "none"}-layout`
-    },
-
     mini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
-    },
-
-    buttonText() {
-      return !this.$vuetify.theme.dark ? "Go Dark" : "Go Light"
     },
   },
 
   data: () => ({
     clientName: "Pendleton",
-    sidebarMenu: true,
+
     items: menuConfig.menu,
-    select: { name: "Pendieton" },
-    userDropdown: [{ name: "Pendieton" }],
   }),
 }
 </script>
