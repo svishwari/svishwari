@@ -1,17 +1,14 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-import Welcome from "@/views/Welcome.vue"
-import Login from "@/views/Login.vue"
-import NotFound from "@/views/NotFound.vue"
 
-// Authentication Plugin
 import auth from "@/auth"
+import { pageTitle } from '@/utils'
 
 Vue.use(VueRouter)
 
 const NotFoundRoute = {
   path: "*",
-  component: NotFound,
+  component: () => import("@/views/NotFound"),
   meta: {
     title: "Not Found",
     layout: "default",
@@ -22,122 +19,120 @@ const routes = [
   {
     path: "/",
     name: "Welcome",
-    component: Welcome,
+    component: () => import("@/views/Welcome"),
     meta: {
       layout: "default",
-      title: "Welcome | Hux Unified UI",
+      title: "Welcome",
       requiresAuth: false,
     },
   },
   {
     path: "/overview",
     name: "overview",
-    component: () => import("@/views/Overview.vue"),
+    component: () => import("@/views/Overview"),
     meta: {
       layout: "app",
-      title: "Overview  | Hux Unified UI",
+      title: "Overview ",
       requiresAuth: true,
     },
   },
   {
     path: "/engagements",
     name: "engagements",
-    component: () => import("@/views/Engagements.vue"),
+    component: () => import("@/views/Engagements"),
     meta: {
       layout: "app",
-      title: "Engagements | Hux Unified UI",
+      title: "Engagements",
       requiresAuth: true,
     },
   },
   {
     path: "/audiences",
     name: "audiences",
-    component: () => import("@/views/Audiences/Index.vue"),
+    component: () => import("@/views/Audiences/Index"),
     meta: {
       layout: "app",
-      title: "Audiences | Hux Unified UI",
+      title: "Audiences",
       requiresAuth: true,
     },
   },
   {
     path: "/models",
     name: "models",
-    component: () => import("@/views/Models.vue"),
+    component: () => import("@/views/Models"),
     meta: {
       layout: "app",
-      title: "Models | Hux Unified UI",
+      title: "Models",
       requiresAuth: true,
     },
   },
   {
     path: "/connections",
     name: "connections",
-    component: () => import("@/views/Connections.vue"),
+    component: () => import("@/views/Connections"),
     meta: {
       layout: "app",
-      title: "Connections | Hux Unified UI",
+      title: "Connections",
       requiresAuth: true,
     },
   },
   {
     path: "/datasources",
     name: "datasources",
-    component: () => import("@/views/Connections.vue"),
+    component: () => import("@/views/Connections"),
     meta: {
       layout: "app",
-      title: "Data Sources | Hux Unified UI",
+      title: "Data Sources",
       requiresAuth: true,
     },
   },
   {
     path: "/destinations",
     name: "destinations",
-    component: () => import("@/views/Connections.vue"),
+    component: () => import("@/views/Connections"),
     meta: {
       layout: "app",
-      title: "Destinations | Hux Unified UI",
+      title: "Destinations",
       requiresAuth: true,
     },
   },
   {
     path: "/identity",
     name: "identity",
-    component: () => import("@/views/Identity.vue"),
+    component: () => import("@/views/Identity"),
     meta: {
       layout: "app",
-      title: "Identity | Hux Unified UI",
+      title: "Identity",
       requiresAuth: true,
     },
   },
   {
     path: "/profiles",
     name: "profiles",
-    component: () => import("@/views/Profiles.vue"),
-
+    component: () => import("@/views/Profiles"),
     meta: {
       layout: "app",
-      title: "Profiles | Hux Unified UI",
+      title: "Profiles",
       requiresAuth: true,
     },
   },
   {
     path: "/settings",
     name: "settings",
-    component: () => import("@/views/Settings.vue"),
-
+    component: () => import("@/views/Settings"),
     meta: {
       layout: "app",
-      title: "Settings | Hux Unified UI",
+      title: "Settings",
       requiresAuth: true,
     },
   },
   {
     path: "/login",
     name: "login",
-    component: Login,
+    component: () => import("@/views/Login"),
     meta: {
       layout: "default",
-      title: "Login | Hux Unified UI",
+      title: "Login",
       requiresAuth: false,
     },
   },
@@ -159,6 +154,7 @@ const routes = [
     },
   },
 ]
+
 routes.push(NotFoundRoute)
 
 const router = new VueRouter({
@@ -168,15 +164,18 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title
+  document.title = pageTitle(to.meta.title)
+
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
-  // Check for protected route
+
   if (requiresAuth && !auth.loggedIn()) {
     next({
       path: "/login",
       query: { redirect: to.fullPath },
     })
-  } else next()
+  } else {
+    next()
+  }
 })
 
 export default router
