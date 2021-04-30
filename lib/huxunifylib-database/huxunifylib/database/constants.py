@@ -22,6 +22,7 @@ DELIVERY_PLATFORM_COLLECTION = "delivery_platforms"
 LOOKALIKE_AUDIENCE_COLLECTION = "lookalike_audiences"
 PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 USER_COLLECTION = "users"
+NOTIFICATIONS_COLLECTION = "notifications"
 
 CONSTANT_NAME = "constant"
 CONSTANT_VALUE = "value"
@@ -190,6 +191,20 @@ FIELD_FIELD_MAPPING_DEFAULT = "field_mapping_default"
 DATA_ROUTER_BATCH_SIZE = "data_router_batch_size"
 AUDIENCE_ROUTER_BATCH_SIZE = "audience_router_batch_size"
 AWS_BATCH_MEM_LIMIT = "aws_batch_mem_limit"
+
+# Notifications constants
+NOTIFICATION_TYPE_SUCCESS = "success"
+NOTIFICATION_TYPE_INFORMATIONAL = "informational"
+NOTIFICATION_TYPE_CRITICAL = "critical"
+NOTIFICATION_TYPES = [NOTIFICATION_TYPE_SUCCESS, NOTIFICATION_TYPE_INFORMATIONAL, NOTIFICATION_TYPE_CRITICAL]
+NOTIFICATION_FIELD_TYPE = "type"
+NOTIFICATION_FIELD_DESCRIPTION = "description"
+NOTIFICATION_FIELD_CREATED = "created"
+
+# pagination constants
+ASCENDING_CONSTANTS = ["ascending", "asc"]
+DESCENDING_CONSTANTS = ["descending, des"]
+
 
 # Custom type definitions
 CUSTOM_TYPE_BOOL = "boolean"
