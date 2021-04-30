@@ -2,7 +2,6 @@ export default {
   namespace: true,
 
   state: {
-    isLoading: false,
     userProfile: {
       firstName: null,
       lastName: null,
@@ -12,13 +11,11 @@ export default {
   },
 
   mutations: {
-    LOADING: (state, data) => {
-      state.isLoading = data
-    },
     setUserProfile(state, userProfile) {
       state.userProfile.firstName = userProfile.userProfile.firstName
       state.userProfile.lastName = userProfile.userProfile.lastName
     },
+
     setUserToken(state, token) {
       state.userProfile.token = token.accessToken.value
       state.userProfile.idToken = token.idToken.value
@@ -26,8 +23,10 @@ export default {
   },
 
   actions: {
-    setUserProfile: ({ commit }, userProfile) =>
-      commit("setUserProfile", userProfile),
+    setUserProfile: ({ commit }, userProfile) => {
+      commit("setUserProfile", userProfile)
+    },
+
     setUserToken: ({ commit }, token) => commit("setUserToken", token),
   },
 
@@ -35,6 +34,7 @@ export default {
     getFirstname: (state) => {
       return state.userProfile.firstName
     },
+
     getLastName: (state) => {
       return state.userProfile.lastName
     },
