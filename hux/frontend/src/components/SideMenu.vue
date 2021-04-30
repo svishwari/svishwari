@@ -22,7 +22,7 @@
           v-bind:class="!toggle ? 'avatar-menu' : 'avatar-menu-toggle'"
         >
           <div class="vertical-center">
-            <p class="font-weight-bold short-name">Pendleton</p>
+            <p class="font-weight-bold short-name">{{ clientName }}</p>
           </div>
           <div class="vertical-center">
             <v-icon v-if="!toggle"> mdi-chevron-down </v-icon>
@@ -90,24 +90,29 @@ import menuConfig from "@/menuConfig.json"
 
 export default {
   name: "SideMenu",
+
   props: {
     toggle: Boolean,
   },
-  // props: ["toggle"],
+
   computed: {
     layout() {
       // none-layout will be used if the meta.layout tag is not set
       // computed may not be best place in vue lifecycle for this but it works ok
       return `${this.$route.meta.layout || "none"}-layout`
     },
+
     mini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
     },
+
     buttonText() {
       return !this.$vuetify.theme.dark ? "Go Dark" : "Go Light"
     },
   },
+
   data: () => ({
+    clientName: "Pendleton",
     sidebarMenu: true,
     items: menuConfig.menu,
     select: { name: "Pendieton" },
