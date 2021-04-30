@@ -2,7 +2,7 @@
   <v-navigation-drawer
     app
     floating
-    permanent="true"
+    :permanent="true"
     :mini-variant.sync="mini"
     mini-variant-width="90"
     width="220"

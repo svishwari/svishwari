@@ -41,12 +41,12 @@ const routes = [
     },
   },
   {
-    path: "/campaign",
-    name: "campaign",
-    component: () => import("@/views/Campaign.vue"),
+    path: "/engagements",
+    name: "engagements",
+    component: () => import("@/views/Engagements.vue"),
     meta: {
       layout: "app",
-      title: "Campaign | Hux Unified UI",
+      title: "Engagements | Hux Unified UI",
       requiresAuth: true,
     },
   },
@@ -77,6 +77,26 @@ const routes = [
     meta: {
       layout: "app",
       title: "Connections | Hux Unified UI",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/datasources",
+    name: "datasources",
+    component: () => import("@/views/Connections.vue"),
+    meta: {
+      layout: "app",
+      title: "Data Sources | Hux Unified UI",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/destinations",
+    name: "destinations",
+    component: () => import("@/views/Connections.vue"),
+    meta: {
+      layout: "app",
+      title: "Destinations | Hux Unified UI",
       requiresAuth: true,
     },
   },
