@@ -1,5 +1,6 @@
-"""This module enables functionality related to orchestration (audience/engagement) management."""
-# pylint: disable=C0302
+"""This module enables functionality related
+to orchestration (audience/engagement) management.
+"""
 
 import logging
 import datetime
@@ -10,10 +11,6 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.delivery_platform_management import (
-    set_delivery_job,
-    delete_delivery_job_by_audience,
-)
 
 
 @retry(
@@ -35,7 +32,8 @@ def create_audience(
         name (str): Name of the audience.
         audience_filters (list of list): Multiple sections of audience filters.
         These are aggregated using "OR".
-        destination_ids (list): List of destination / delivery platform ids attached to the audience
+        destination_ids (list): List of destination
+        / delivery platform ids attached to the audience
         engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
 
@@ -60,21 +58,17 @@ def create_audience(
     audience_doc = {
         c.AUDIENCE_NAME: name,
         c.AUDIENCE_FILTERS: audience_filters,
+        c.DESTINATIONS: destination_ids,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.CREATED_BY: user_id,
         c.UPDATED_BY: user_id,
     }
 
+    # TODO: Set Engagement IDs once the engagement table is ready
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id
         if audience_id is not None:
-            if destination_ids is not None:
-                for destination_id in destination_ids:
-                    set_delivery_job(
-                        database, audience_id, destination_id, None
-                    )
-            # TODO: Set Engagement IDs once the engagement table is ready
             return collection.find_one({c.ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -150,7 +144,7 @@ def update_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
     name: str,
-    audience_filters: list,
+    audience_filters: list = None,
     destination_ids: list = None,
     engagement_ids: list = None,  # pylint: disable=W0613
     user_id: ObjectId = None,
@@ -161,9 +155,10 @@ def update_audience(
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the audience.
         name (str): New audience name.
-        audience_filters (list): Optional list of audience filter lists
-            that are aggregated using "OR".
-        destination_ids (list): List of destination / delivery platform ids attached to the audience
+        audience_filters (list of list): Multiple sections of audience filters.
+        These are aggregated using "OR".
+        destination_ids (list): List of destination / delivery platform
+        ids attached to the audience
         engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
 
@@ -197,10 +192,12 @@ def update_audience(
     updated_audience_doc = {
         c.AUDIENCE_NAME: name,
         c.AUDIENCE_FILTERS: audience_filters,
+        c.DESTINATIONS: destination_ids,
         c.UPDATE_TIME: curr_time,
         c.UPDATED_BY: user_id,
     }
 
+    # TODO: Delete and Update Engagement IDs once the engagement table is ready
     try:
         audience_doc = collection.find_one_and_update(
             {c.ID: audience_id},
@@ -208,16 +205,6 @@ def update_audience(
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
         )
-        if audience_doc is not None:
-            # Remove all existing destinations for the given audience id
-            delete_delivery_job_by_audience(database, audience_id)
-            # And update the new set of ids
-            if destination_ids:
-                for destination_id in destination_ids:
-                    set_delivery_job(
-                        database, audience_id, destination_id, None
-                    )
-            # TODO: Delete and Update Engagement IDs once the engagement table is ready
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

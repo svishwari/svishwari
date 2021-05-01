@@ -125,6 +125,8 @@ DEFAULT_AUDIENCE_STR = "Default Audience"
 MAX_AUDIENCE_SIZE_FOR_HASHED_FILE_DOWNLOAD = (
     "max_audience_size_for_hashed_file_download"
 )
+AUDIENCE_FILTER_AGGREGATOR_ANY = "ANY"
+AUDIENCE_FILTER_AGGREGATOR_ALL = "ALL"
 
 # Audience types
 CUSTOM_AUDIENCE = "custom_audience"
