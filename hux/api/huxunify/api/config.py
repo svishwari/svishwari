@@ -40,3 +40,7 @@ SNOWFLAKE_WAREHOUSE = config("SNOWFLAKE_WAREHOUSE", default="COMPUTE_WH")
 # TECTON
 TECTON_API_KEY = config("TECTON_API_KEY", default="")
 TECTON_API = config("TECTON_API", default="")
+TECTON_API_HEADERS = {
+    "Authorization": f"Tecton-key {TECTON_API_KEY}",
+}
+TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"

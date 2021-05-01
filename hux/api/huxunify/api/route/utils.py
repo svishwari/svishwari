@@ -1,7 +1,11 @@
 """
 purpose of this file is to house route utilities
 """
+import logging
 from typing import Any
+from http import HTTPStatus
+
+from connexion.exceptions import ProblemException
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
@@ -43,3 +47,27 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
         return cls
 
     return decorator
+
+
+def handle_api_exception(exc: Exception, description: str = "") -> None:
+    """
+    Purpose of this function is to handle general api exceptions,
+    and reduce code in the route
+    Args:
+        exc (Exception): Exception object to handle
+        description (str): Exception description.
+
+    Returns:
+          None
+    """
+    logging.error(
+        "%s: %s.",
+        exc.__class__,
+        exc,
+    )
+
+    return ProblemException(
+        status=int(HTTPStatus.BAD_REQUEST.value),
+        title=HTTPStatus.BAD_REQUEST.description,
+        detail=description,
+    )

@@ -68,3 +68,16 @@ PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the parameter store."
 )
+
+# Models
+MODEL_NAME = "model_name"
+MODEL_NAME_PARAMS = [
+    {
+        "name": MODEL_NAME,
+        "description": "User ID.",
+        "type": "string",
+        "in": "path",
+        "required": True,
+        "example": "churn",
+    },
+]
