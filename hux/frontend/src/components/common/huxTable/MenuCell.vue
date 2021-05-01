@@ -1,7 +1,7 @@
 <template>
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
-      {{ cellValue }}
+      <span class="primary--text"> {{ cellValue }} </span>
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
         <v-icon
@@ -24,9 +24,11 @@
             </v-icon>
           </template>
           <v-list class="list-wrapper">
-            <v-list-item v-for="(item, index) in items" :key="index">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
+            <v-list-item-group>
+              <v-list-item v-for="(item, index) in items" :key="index" disabled>
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
           </v-list>
         </v-menu>
       </span>
@@ -41,10 +43,12 @@ export default Vue.extend({
     return {
       cellValue: null,
       items: [
+        { title: "Unfavorite" },
         { title: "Export" },
         { title: "Edit" },
         { title: "Duplicate" },
         { title: "Open" },
+        { title: "Create a lookalike" },
         { title: "Pause delivery" },
         { title: "Delete" },
       ],
@@ -71,4 +75,12 @@ export default Vue.extend({
   },
 })
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+::v-deep.v-menu__content {
+  .v-list-item {
+    &.theme--light {
+      min-height: 32px !important;
+    }
+  }
+} 
+</style>

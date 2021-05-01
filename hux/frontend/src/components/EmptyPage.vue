@@ -1,7 +1,7 @@
 <template>
   <div class="empty-audiences">
     <v-row class="empty-icon" align="center" justify="center">
-      <v-icon color="primary" x-large> <slot name="icon"></slot> </v-icon>
+      <v-icon color="blue" x-large> <slot name="icon"></slot> </v-icon>
     </v-row>
     <v-row class="empty-title font-weight-light mt-3 pt-3" align="center" justify="center">
        <slot name="title"></slot>

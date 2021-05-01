@@ -4,6 +4,7 @@
     elevation="1"
     tile
     :color="bgColor"
+    :height="headerHeight"
   >
     <div>
       <div class="page-header-container d-flex">
@@ -43,6 +44,12 @@ export default {
     bgColor: {
       required: false,
       default: "white",
+    },
+
+    headerHeight: {
+      type: Number | String,
+      required: false,
+      default: undefined,
     },
   },
 }

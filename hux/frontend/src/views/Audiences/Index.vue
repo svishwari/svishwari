@@ -5,13 +5,13 @@
         <Breadcrumb :items="breadcrumbItems" />
       </template>
     </PageHeader>
-    <PageHeader class="mt-1" style="height: 71px">
+    <PageHeader class="mt-1" headerHeight="71">
       <template slot="left">
-        <v-icon large @click="refresh"> mdi-filter-variant </v-icon>
+        <v-icon large :disabled="true" @click="refresh"> mdi-filter-variant </v-icon>
       </template>
 
       <template slot="right">
-        <v-icon color="primary" large @click="refresh"> mdi-refresh </v-icon>
+        <v-icon large :disabled="true" color="primary" @click="refresh"> mdi-refresh </v-icon>
         <router-link
           :to="{ path: '/audiences/create-audience' }"
           class="text-decoration-none"
@@ -198,9 +198,6 @@ export default {
   }
   ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
     display: initial;
-  }
-  ::v-deep .ag-horizontal-left-spacer{
-    display: none;
   }
 }
 </style>

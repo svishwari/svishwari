@@ -19,7 +19,7 @@
           :title="item.title"
           :subtitle="item.subtitle"
           :icon="item.icon"
-          :active="true"
+          :active="false"
         ></MetricCard>
       </div>
       <v-divider class="divider mt-5"></v-divider>
@@ -110,6 +110,16 @@
             </v-col>
           </v-row>
         </v-timeline-item>
+        <v-timeline-item class="timeline-section disabled">
+          <template v-slot:icon class="timeline-icon-section">
+            <span>4</span>
+          </template>
+          <v-row class="pt-1">
+            <v-col cols="12">
+              <strong> Create lookalike audience </strong>
+            </v-col>
+          </v-row>
+        </v-timeline-item>
       </v-timeline>
 
       <Footer absolute padless color="white" class="footer">
@@ -168,6 +178,7 @@ export default {
   data() {
     return {
       overviewListItems: [
+        { title: "Target size", subtitle: "34,203,204" },
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
         { title: "US States", subtitle: "52", icon: "mdi-map" },
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
@@ -197,7 +208,7 @@ export default {
     line-height: 20px;
   }
   .divider {
-    max-width: 1103px;
+    max-width: 1170px;
   }
   .footer {
     padding-left: 50px;
@@ -214,6 +225,22 @@ export default {
           .v-timeline-item__inner-dot {
             background-color: white !important;
             color: #00a3e0;
+          }
+        }
+      }
+    }
+    .theme--light.v-timeline-item {
+      &.disabled {
+        .v-timeline-item__body {
+          color: #d0d0ce;
+        }
+        .v-timeline-item__divider {
+          .v-timeline-item__dot {
+            background: #d0d0ce;
+            .v-timeline-item__inner-dot {
+              background-color: white !important;
+              color: #d0d0ce;
+            }
           }
         }
       }

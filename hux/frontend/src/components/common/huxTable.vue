@@ -180,6 +180,12 @@ export default {
       .ag-center-cols-container {
         min-width: inherit !important;
       }
+      .ag-icon.ag-icon-asc, .ag-icon.ag-icon-desc {
+        color: #007CB0;
+      }
+      .ag-horizontal-left-spacer {
+        display: table;
+      }
     }
   }
 }
