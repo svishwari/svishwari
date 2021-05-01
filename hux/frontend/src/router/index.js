@@ -142,7 +142,7 @@ const routes = [
   {
     path: "/components",
     name: "components",
-    component: () => import("@/components/common/CommonComponent"),
+    component: () => import("@/components/common/Index"),
     meta: {
       layout: "default",
       title: "components",
