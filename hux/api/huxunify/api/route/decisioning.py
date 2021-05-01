@@ -2,7 +2,7 @@
 purpose of this script is for housing the decision routes for the API.
 """
 from http import HTTPStatus
-from typing import Tuple
+from typing import Tuple, List
 
 from flask import Blueprint
 from flask_apispec import marshal_with
@@ -21,6 +21,7 @@ from huxunify.api.schema.model import (
     DriftSchema,
     FeatureImportance,
 )
+from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
@@ -49,18 +50,17 @@ class ModelsView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(ModelSchema(many=True))
-    def get(self) -> Tuple[dict, int]:
+    def get(self) -> Tuple[List[dict], int]:
         """Retrieves all models.
 
         ---
 
         Returns:
-            Tuple[dict, int] dict of models and http code
+            Tuple[List[dict], int] dict of models and http code
 
         """
         try:
-            # TODO - stub until available
-            return {}, HTTPStatus.OK.value
+            return tecton.get_models(), HTTPStatus.OK.value
 
         except Exception as exc:
             raise handle_api_exception(exc, "Unable to get models.") from exc
@@ -86,7 +86,7 @@ class ModelVersionView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(ModelVersionSchema(many=True))
-    def get(self, name: str) -> Tuple[dict, int]:
+    def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieve model versions by model name.
 
         ---
@@ -94,12 +94,11 @@ class ModelVersionView(SwaggerView):
             name (str): model name
 
         Returns:
-            Tuple[dict, int]: dict of model versions and http code
+            Tuple[List[dict], int]: dict of model versions and http code
 
         """
         try:
-            # TODO - stub until available
-            return {api_c.MODEL_NAME: name}, HTTPStatus.OK.value
+            return tecton.get_model_version_history(name), HTTPStatus.OK.value
 
         except Exception as exc:
             raise handle_api_exception(
@@ -127,7 +126,7 @@ class ModelFeatureView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(FeatureSchema(many=True))
-    def get(self, name: str) -> Tuple[dict, int]:
+    def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieve model features by model name.
 
         ---
@@ -135,12 +134,11 @@ class ModelFeatureView(SwaggerView):
             name (str): model name
 
         Returns:
-            Tuple[dict, int]: dict of model features and http code
+            Tuple[List[dict], int]: dict of model features and http code
 
         """
         try:
-            # TODO - stub until available
-            return {api_c.MODEL_NAME: name}, HTTPStatus.OK.value
+            return tecton.get_model_features(name), HTTPStatus.OK.value
 
         except Exception as exc:
             raise handle_api_exception(
@@ -170,7 +168,7 @@ class ModelMetricsView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(PerformanceMetricSchema(many=True))
-    def get(self, name: str) -> Tuple[dict, int]:
+    def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieve model performance metrics.
 
         ---
@@ -178,16 +176,18 @@ class ModelMetricsView(SwaggerView):
             name (str): model name
 
         Returns:
-            Tuple[dict, int]: dict of model performance metrics and http code
+            Tuple[List[dict], int]: dict of model performance metrics and http code
 
         """
         try:
-            # TODO - stub until available
-            return {api_c.MODEL_NAME: name}, HTTPStatus.OK.value
+            return (
+                tecton.get_model_performance_metrics(name),
+                HTTPStatus.OK.value,
+            )
 
         except Exception as exc:
             raise handle_api_exception(
-                exc, "Unable to get model peformance metrics."
+                exc, "Unable to get model performance metrics."
             ) from exc
 
 
@@ -213,7 +213,7 @@ class ModelImportanceView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(FeatureImportance(many=True))
-    def get(self, name: str) -> Tuple[dict, int]:
+    def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieve model feature importance.
 
         ---
@@ -221,12 +221,14 @@ class ModelImportanceView(SwaggerView):
             name (str): model name
 
         Returns:
-            Tuple[dict, int]: dict of model feature performance and http code
+            Tuple[List[dict], int]: dict of model feature performance and http code
 
         """
         try:
-            # TODO - stub until available
-            return {api_c.MODEL_NAME: name}, HTTPStatus.OK.value
+            return (
+                tecton.get_model_feature_importance(name),
+                HTTPStatus.OK.value,
+            )
 
         except Exception as exc:
             raise handle_api_exception(
@@ -256,7 +258,7 @@ class ModelLiftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(LiftSchema(many=True))
-    def get(self, name: str) -> Tuple[dict, int]:
+    def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieve model lift.
 
         ---
@@ -264,12 +266,11 @@ class ModelLiftView(SwaggerView):
             name (str): model name
 
         Returns:
-            Tuple[dict, int]: dict of model lift and http code
+            Tuple[List[dict], int]: dict of model lift and http code
 
         """
         try:
-            # TODO - stub until available
-            return {api_c.MODEL_NAME: name}, HTTPStatus.OK.value
+            return tecton.get_model_lift(name), HTTPStatus.OK.value
 
         except Exception as exc:
             raise handle_api_exception(
@@ -299,7 +300,7 @@ class ModelDriftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(DriftSchema(many=True))
-    def get(self, name: str) -> Tuple[dict, int]:
+    def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieve model drift.
 
         ---
@@ -307,12 +308,11 @@ class ModelDriftView(SwaggerView):
             name (str): model name
 
         Returns:
-            Tuple[dict, int]: dict of model drift and http code
+            Tuple[List[dict], int]: dict of model drift and http code
 
         """
         try:
-            # TODO - stub until available
-            return {api_c.MODEL_NAME: name}, HTTPStatus.OK.value
+            return tecton.get_model_drift(name), HTTPStatus.OK.value
 
         except Exception as exc:
             raise handle_api_exception(
