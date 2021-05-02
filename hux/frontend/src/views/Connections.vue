@@ -15,18 +15,26 @@
       <v-col cols="6" class="d-flex align-end">
         <v-icon> mdi-map-marker-circle </v-icon>
         <span class="font-weight-light ml-2 mt-1">Destinations</span>
-        <a href="/add-destination" class="text-decoration-none"
-          ><v-icon class="ml-2 add-icon" color="primary">
+        <router-link
+          :to="{ path: '/connections/add-destination' }"
+          class="text-decoration-none"
+        >
+          <v-icon class="ml-2 add-icon" color="primary">
             mdi-plus-circle
-          </v-icon></a
-        >
+          </v-icon>
+        </router-link>
         <v-spacer></v-spacer>
-        <span
-          class="add-icon font-weight-light ml-2 mt-1 float-right primary--text"
+        <router-link
+          :to="{ path: '/connections/destinations' }"
+          class="text-decoration-none"
         >
-          View Destinations Details
-          <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
-        </span>
+          <span
+            class="add-icon font-weight-light ml-2 mt-1 float-right primary--text"
+          >
+            View Destinations Details
+            <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
+          </span>
+        </router-link>
       </v-col>
 
       <v-col cols="6 pt-0">

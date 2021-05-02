@@ -105,6 +105,7 @@
           variant="tertiary"
           size="large"
           v-bind:isTile="true"
+          @click="cancelDestination()"
         ></huxButton>
       </template>
       <template v-slot:right>
@@ -179,6 +180,10 @@ export default {
     },
     addDestination: function () {
       // This is a TODO need to replace with actual API call
+      this.$router.push("/connections")
+    },
+    cancelDestination: function () {
+      // This is a TODO need to add modal that confirms to leave configuration
       this.$router.push("/connections")
     },
   },

@@ -1,0 +1,17 @@
+// This file contains commonly used design cases 
+
+
+.icon-border {
+    border-radius: 5px;
+    @extend .cursor-pointer;
+    @extend .background-border;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.background-border {
+    border: 1px solid;
+    border-color: #D0D0CE;
+}

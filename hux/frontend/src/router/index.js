@@ -81,12 +81,22 @@ const routes = [
     },
   },
   {
-    path: "/add-destination",
+    path: "/connections/add-destination",
     name: "add-destination",
     component: () => import("@/views/AddDestination.vue"),
     meta: {
       layout: "app",
       title: "Add a Destination | Hux Unified UI",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/connections/destinations",
+    name: "destinations",
+    component: () => import("@/views/Destinations.vue"),
+    meta: {
+      layout: "app",
+      title: "Destinations | Hux Unified UI",
       requiresAuth: true,
     },
   },
