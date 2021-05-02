@@ -9,9 +9,7 @@
     <div>
       Select a destination
       <div v-if="isDestinationSelected" class="d-flex align-center">
-        <v-btn fab x-small color="primary">
-          <v-icon dark> mdi-check </v-icon>
-        </v-btn>
+        <Logo :type="destinations[selectedDestinationIndex].logo" />
         <div class="pl-2">
           {{ destinations[selectedDestinationIndex].title }}
         </div>
@@ -126,6 +124,7 @@
 <script>
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
+import Logo from "@/components/common/Logo"
 import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
@@ -138,6 +137,7 @@ export default {
     HuxFooter,
     huxButton,
     TextField,
+    Logo,
   },
   data() {
     return {
