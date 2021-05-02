@@ -52,11 +52,7 @@
       <v-col cols="6 pt-0">
         <DestinationListCard v-for="item in destinations" :key="item.title">
           <template v-slot:logo>
-            <v-img
-              class="elevation-6"
-              :alt="item.title"
-              :src="getImgUrl(item)"
-            ></v-img>
+            <Logo :type="item.logo" />
           </template>
           <template v-slot:title>
             {{ item.title }}
@@ -71,13 +67,14 @@
 import { mapGetters, mapActions } from "vuex"
 
 import DestinationListCard from "@/components/DestinationListCard"
+import Logo from "@/components/common/Logo"
 import EmptyState from "@/components/EmptyState"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 
 export default {
   name: "connections",
-  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb },
+  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb, Logo },
   data() {
     return {
       items: [
@@ -108,9 +105,6 @@ export default {
   },
   methods: {
     ...mapActions(["getAllDestinations"]),
-    getImgUrl(item) {
-      return item.logoUrl
-    },
   },
   async mounted() {
     await this.getAllDestinations()

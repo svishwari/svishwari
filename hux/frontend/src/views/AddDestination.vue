@@ -42,6 +42,7 @@
               v-for="(item, index) in destinations"
               :key="item.title"
               :title="item.title"
+              :icon="item.logo"
               :isAdded="
                 item.isAlreadyAdded || index == selectedDestinationIndex
               "

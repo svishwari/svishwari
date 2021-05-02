@@ -4,7 +4,7 @@
 const state = {
   destinations: [
     {
-      logoUrl: "../assets/images/adobe-icon.png",
+      logo: "adobe-experience",
       title: "Adobe Experience",
       isAlreadyAdded: false,
       isAvailable: true,
@@ -32,7 +32,7 @@ const state = {
       ],
     },
     {
-      logoUrl: "../assets/images/adobe-icon.png",
+      logo: "facebook",
       title: "Facebook",
       isAlreadyAdded: true,
       isAvailable: true,
@@ -60,8 +60,8 @@ const state = {
       ],
     },
     {
-      logoUrl: "../assets/images/adobe-icon.png",
-      title: "Google",
+      logo: "google-ads",
+      title: "Google Ads",
       isAlreadyAdded: false,
       isAvailable: true,
       auth_details: [
@@ -83,7 +83,7 @@ const state = {
       ],
     },
     {
-      logoUrl: "../assets/images/adobe-icon.png",
+      logo: "twilio",
       title: "Twilio",
       isAlreadyAdded: false,
       isAvailable: false,
@@ -111,8 +111,8 @@ const state = {
       ],
     },
     {
-      logoUrl: "../assets/images/adobe-icon.png",
-      title: "Amazon",
+      logo: "tableau",
+      title: "Tableau",
       isAlreadyAdded: false,
       isAvailable: false,
       auth_details: [
