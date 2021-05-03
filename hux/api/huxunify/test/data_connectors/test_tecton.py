@@ -1,10 +1,13 @@
 """
 purpose of this file is to house all the tecton api tests.
 """
-from json import dumps
+import json
 from unittest import TestCase
-import requests
+import requests_mock
+from requests_mock import Mocker
 from huxunify.api import config
+from huxunify.api import constants
+from huxunify.api.data_connectors import tecton
 
 
 class TectonTest(TestCase):
@@ -12,63 +15,42 @@ class TectonTest(TestCase):
     Test Tecton request methods
     """
 
-    def test_list_models(self):
-        """test list models"""
+    @requests_mock.Mocker()
+    def test_list_models(self, request_mocker: Mocker):
+        """Test list models
 
-        # setup the payload
-        payload = dumps(
-            {
-                "params": {
-                    "feature_service_name": "ui_metadata_models_service",
-                    "join_key_map": {
-                        "model_name": "ltv-model-365-30",
-                        "version_number": "0.0.1",
-                    },
-                }
-            }
-        )
+        Args:
+            request_mocker (str): Request mock object.
 
-        # submit the post request to get the models
-        response = requests.post(
+        Returns:
+
+        """
+
+        # setup the request mock post
+        request_mocker.post(
             config.TECTON_FEATURE_SERVICE,
-            payload,
+            text=json.dumps(constants.MODEL_LIST_PAYLOAD),
             headers=config.TECTON_API_HEADERS,
         )
 
-        # validate the response.
-        self.assertEqual(response.status_code, 200)
+        models = tecton.get_models(constants.MODEL_LIST_PAYLOAD)
 
-        # validate the model response.
-        self.assertDictEqual(response.json(), {})
+        # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        # test correct payload sent
+        self.assertDictEqual(
+            request_mocker.last_request.json(), constants.MODEL_LIST_PAYLOAD
+        )
+        # test correct headers sent.
+        self.assertEqual(models.headers, config.TECTON_API_HEADERS)
 
     def test_model_version_history(self):
         """test model version history"""
 
-        # setup the payload
-        payload = dumps(
-            {
-                "params": {
-                    "feature_service_name": "ui_metadata_models_service",
-                    "join_key_map": {
-                        "model_name": "ltv-model-365-30",
-                        "version_number": "0.0.1",
-                    },
-                }
-            }
-        )
-
-        # submit the post request to get the models
-        response = requests.post(
-            config.TECTON_FEATURE_SERVICE,
-            payload,
-            headers=config.TECTON_API_HEADERS,
-        )
-
-        # validate the response.
-        self.assertEqual(response.status_code, 200)
-
-        # validate the model response.
-        self.assertDictEqual(response.json(), {})
+        # TODO - when available.
+        self.assertEqual(2 + 2, 4)
 
     def test_list_features(self):
         """test list features for a model"""

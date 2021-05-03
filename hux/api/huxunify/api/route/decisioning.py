@@ -60,7 +60,7 @@ class ModelsView(SwaggerView):
 
         """
         try:
-            return tecton.get_models(), HTTPStatus.OK.value
+            return tecton.get_models().json(), HTTPStatus.OK.value
 
         except Exception as exc:
             raise handle_api_exception(exc, "Unable to get models.") from exc

@@ -81,3 +81,12 @@ MODEL_NAME_PARAMS = [
         "example": "churn",
     },
 ]
+MODEL_LIST_PAYLOAD = {
+    "params": {
+        "feature_service_name": "ui_metadata_models_service",
+        "join_key_map": {
+            "model_name": "ltv-model-365-30",
+            "version_number": "0.0.1",
+        },
+    }
+}
