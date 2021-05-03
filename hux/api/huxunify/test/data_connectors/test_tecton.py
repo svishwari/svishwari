@@ -33,7 +33,7 @@ class TectonTest(TestCase):
             headers=config.TECTON_API_HEADERS,
         )
 
-        models = tecton.get_models(constants.MODEL_LIST_PAYLOAD)
+        tecton.get_models(constants.MODEL_LIST_PAYLOAD)
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -43,8 +43,6 @@ class TectonTest(TestCase):
         self.assertDictEqual(
             request_mocker.last_request.json(), constants.MODEL_LIST_PAYLOAD
         )
-        # test correct headers sent.
-        self.assertEqual(models.headers, config.TECTON_API_HEADERS)
 
     def test_model_version_history(self):
         """test model version history"""

@@ -24,6 +24,7 @@ def get_models(
 ) -> List[ModelSchema]:
     """Get models from Tecton.
     Args:
+          payload (dict): Model list payload for the post.
 
     Returns:
         List[ModelSchema]: List of models.
@@ -33,11 +34,14 @@ def get_models(
         payload = constants.MODEL_LIST_PAYLOAD
 
     # submit the post request to get the models
-    return requests.post(
+    response = requests.post(
         config.TECTON_FEATURE_SERVICE,
         dumps(payload),
         headers=config.TECTON_API_HEADERS,
     )
+
+    # TODO - map models to schema objects once decisioning fixed the service.
+    return response.json()
 
 
 # pylint: disable=unused-argument
