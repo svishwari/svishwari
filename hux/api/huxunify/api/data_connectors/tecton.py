@@ -122,7 +122,7 @@ def get_model_performance_metrics(name: str) -> List[PerformanceMetricSchema]:
         name (str): model name.
 
     Returns:
-         List[PerformanceMetricSchema] List of model lift.
+         List[PerformanceMetricSchema] List of model performance metrics.
     """
     # TODO - when available.
     return []
