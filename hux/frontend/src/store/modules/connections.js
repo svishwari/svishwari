@@ -22,7 +22,9 @@ const mutations = {
 const actions = {
   async getAllDestinations({ commit }) {
     try {
-      const response = await axios.get("/api/destinations")
+      const response = await axios.get(
+        "http://localhost:5000/api/v1/destinations"
+      )
       commit("SET_ALL_DESTINATIONS", response.data)
     } catch (error) {
       console.error(error)

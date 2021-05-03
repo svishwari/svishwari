@@ -1,4 +1,7 @@
 import { createServer, Model } from "miragejs"
+
+import config from "@/config"
+
 // import { defineRoutes } from "./resources"
 
 export function makeServer({ environment = "development" } = {}) {
@@ -24,14 +27,17 @@ export function makeServer({ environment = "development" } = {}) {
     },
 
     routes() {
-      const server = this
-      server.namespace = "/api"
+      this.urlPrefix = config.apiUrl
+      this.namespace = "/api/v1"
 
-      // defineRoutes(server)
+      // defineRoutes(this)
 
-      server.get("/destinations", (schema) => {
+      this.get("/destinations", (schema) => {
         return schema.destinations.all().models
       })
+
+      // pass requests to external APIs through
+      this.passthrough(`${config.oktaUrl}/**`)
     },
   })
 
