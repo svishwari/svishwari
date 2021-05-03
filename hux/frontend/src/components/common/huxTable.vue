@@ -107,7 +107,7 @@ export default {
   beforeMount() {
     this.gridOptions = {
       rowSelection: "multiple",
-      headerHeight: 32,
+      headerHeight: "32",
     }
     this.overlayLoadingTemplate =
       "<span class='ag-overlay-loading-center'>Please wait while your rows are loading</span>"
@@ -180,8 +180,9 @@ export default {
       .ag-center-cols-container {
         min-width: inherit !important;
       }
-      .ag-icon.ag-icon-asc, .ag-icon.ag-icon-desc {
-        color: #007CB0;
+      .ag-icon.ag-icon-asc,
+      .ag-icon.ag-icon-desc {
+        color: #007cb0;
       }
       .ag-horizontal-left-spacer {
         display: table;

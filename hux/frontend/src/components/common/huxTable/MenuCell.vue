@@ -82,5 +82,5 @@ export default Vue.extend({
       min-height: 32px !important;
     }
   }
-} 
+}
 </style>

@@ -33,17 +33,18 @@
           </template>
           <v-row class="pt-1">
             <v-col cols="4">
-              <strong>General information</strong>
+              <strong class="text-h6">General information</strong>
+              <!-- <h3 class="text-subtitle-1">General information</h3> -->
               <TextField
                 placeholderText="What is the name for this audience ?"
                 labelText="Audience name"
                 backgroundColor="white"
                 v-bind:required="true"
-                class="mt-1"
+                class="mt-1 text-body-1"
               ></TextField>
             </v-col>
             <v-col cols="8">
-              <div class="mt-8 ml-15">
+              <div class="mt-8 ml-15 text-subtitle-1">
                 Attach an engagement (we can auto-create an engagement for you)
                 - you must have at least one
                 <div>
@@ -64,7 +65,7 @@
           </template>
           <v-row class="pt-1 pr-10 mr-10">
             <v-col cols="12">
-              <strong
+              <strong class="text-h6"
                 >Attributes selection (you can always do this later !)</strong
               >
               <v-card
@@ -77,7 +78,7 @@
                 <v-card-actions>
                   <v-list-item class="grow">
                     <v-list-item-content>
-                      <v-list-item-title
+                      <v-list-item-title class="text-subtitle-1"
                         >You have not added any attributes,
                         yet!</v-list-item-title
                       >
@@ -99,7 +100,7 @@
           </template>
           <v-row class="pt-1">
             <v-col cols="12">
-              <strong>
+              <strong class="text-h6">
                 Select a destination (you can add more than one) -optional
               </strong>
               <div>
@@ -158,8 +159,6 @@
 </template>
 
 <script>
-import PageHeader from "@/components/PageHeader"
-import Breadcrumb from "@/components/common/Breadcrumb"
 import MetricCard from "@/components/common/MetricCard"
 import Footer from "@/components/common/Footer"
 import huxButton from "@/components/common/huxButton"
@@ -171,8 +170,6 @@ export default {
     MetricCard,
     Footer,
     huxButton,
-    PageHeader,
-    Breadcrumb,
     TextField,
   },
   data() {

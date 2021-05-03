@@ -7,11 +7,15 @@
     </PageHeader>
     <PageHeader class="mt-1" headerHeight="71">
       <template slot="left">
-        <v-icon large :disabled="true" @click="refresh"> mdi-filter-variant </v-icon>
+        <v-icon large :disabled="true" @click="refresh">
+          mdi-filter-variant
+        </v-icon>
       </template>
 
       <template slot="right">
-        <v-icon large :disabled="true" color="primary" @click="refresh"> mdi-refresh </v-icon>
+        <v-icon large :disabled="true" color="primary" @click="refresh">
+          mdi-refresh
+        </v-icon>
         <router-link
           :to="{ path: '/audiences/create-audience' }"
           class="text-decoration-none"
@@ -30,7 +34,6 @@
       </template>
     </PageHeader>
     <v-row class="pt-3 pb-7">
-
       <hux-table
         v-if="isDataExists"
         :columnDef="columnDefs"
@@ -40,7 +43,7 @@
         hasCheckBox
       ></hux-table>
 
-      <EmptyPage  v-if="!isDataExists">
+      <EmptyPage v-if="!isDataExists">
         <template v-slot:icon> mdi-alert-circle-outline </template>
         <template v-slot:title> Oops! There’s nothing here yet </template>
         <template v-slot:subtitle>
@@ -66,7 +69,6 @@
           </router-link>
         </template>
       </EmptyPage>
-
     </v-row>
   </div>
 </template>
@@ -179,8 +181,8 @@ export default {
       rowData: "AllAudiences",
     }),
     isDataExists() {
-      return ( this.rowData.length > 0 )
-    }
+      return this.rowData.length > 0
+    },
   },
   methods: {
     ...mapActions(["getAllAudiences"]),
