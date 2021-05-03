@@ -33,7 +33,7 @@ def create_audience(
         audience_filters (list of list): Multiple sections of audience filters.
         These are aggregated using "OR".
         destination_ids (list): List of destination
-        / delivery platform ids attached to the audience
+            / delivery platform ids attached to the audience
         engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
 
@@ -156,9 +156,9 @@ def update_audience(
         audience_id (ObjectId): MongoDB ID of the audience.
         name (str): New audience name.
         audience_filters (list of list): Multiple sections of audience filters.
-        These are aggregated using "OR".
+            These are aggregated using "OR".
         destination_ids (list): List of destination / delivery platform
-        ids attached to the audience
+            ids attached to the audience
         engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
 

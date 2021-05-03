@@ -185,6 +185,8 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_FILTERS in doc)
         self.assertTrue(c.DESTINATIONS in doc)
+        self.assertEqual(doc[c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(doc[c.DESTINATIONS][1], "destination_id2")
 
     def test_update_audience_destination(self):
         """Test update audience destinations."""
