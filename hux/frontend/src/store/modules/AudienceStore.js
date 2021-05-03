@@ -13,8 +13,8 @@ const state = {
       destinations: {
         details: [
           { logo: "facebook", name: "Facebook" },
-          { logo: "mailchimp", name: "Mailchimp"},
-          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "mailchimp", name: "Mailchimp" },
+          { logo: "mailchimp", name: "Mailchimp" },
         ],
       },
       attributes: {
@@ -53,7 +53,7 @@ const state = {
       destinations: {
         details: [
           { logo: "facebook", name: "Facebook" },
-          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "mailchimp", name: "Mailchimp" },
         ],
       },
       attributes: {
@@ -92,9 +92,9 @@ const state = {
       destinations: {
         details: [
           { logo: "facebook", name: "Facebook" },
-          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "mailchimp", name: "Mailchimp" },
           { logo: "salesforce", name: "Salesforce" },
-          { logo: "netsuite", name: "netsuite"},
+          { logo: "netsuite", name: "netsuite" },
         ],
       },
       attributes: {
@@ -133,7 +133,7 @@ const state = {
       destinations: {
         details: [
           { logo: "facebook", name: "Facebook" },
-          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "mailchimp", name: "Mailchimp" },
           { logo: "salesforce", name: "Salesforce" },
         ],
       },
@@ -173,7 +173,7 @@ const state = {
       destinations: {
         details: [
           { logo: "facebook", name: "Facebook" },
-          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "mailchimp", name: "Mailchimp" },
         ],
       },
       attributes: {
@@ -212,9 +212,9 @@ const state = {
       destinations: {
         details: [
           { logo: "facebook", name: "Facebook" },
-          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "mailchimp", name: "Mailchimp" },
           { logo: "salesforce", name: "Salesforce" },
-          { logo: "netsuite", name: "netsuite"},
+          { logo: "netsuite", name: "netsuite" },
         ],
       },
       attributes: {
