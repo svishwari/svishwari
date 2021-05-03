@@ -20,6 +20,7 @@ export default {
   props: {
     type: {
       type: String,
+      required: false,
     },
 
     size: {

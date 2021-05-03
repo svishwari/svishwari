@@ -41,13 +41,11 @@ export default {
     icon: {
       type: String,
       required: false,
-      default: null,
     },
 
     title: {
       type: String,
       required: false,
-      default: null,
     },
 
     isAdded: {

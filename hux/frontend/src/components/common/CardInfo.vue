@@ -33,11 +33,13 @@ export default {
     title: {
       type: String,
       required: false,
+      default: "Info card title",
     },
 
     description: {
       type: String,
       required: false,
+      default: "Info card description",
     },
 
     active: {
