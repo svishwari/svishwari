@@ -13,7 +13,6 @@ from marshmallow import ValidationError
 # pylint: disable=no-name-in-module
 from huxunifylib.database import (
     orchestration_management,
-    constants as db_constants,
 )
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
@@ -163,14 +162,20 @@ class AudiencePostView(SwaggerView):
             "description": "Input Audience body.",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.AUDIENCE_DESTINATIONS: "Facebook",
-                api_c.AUDIENCE_ENGAGEMENTS: "Facebook",
-                api_c.AUDIENCE_FILTERS: {
-                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                    api_c.FACEBOOK_APP_ID: "2951925002021888",
-                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-                },
+                api_c.AUDIENCE_DESTINATIONS: ["id1", "id2"],
+                api_c.AUDIENCE_ENGAGEMENTS: ["id1", "id2", "id3"],
+                api_c.AUDIENCE_FILTERS: [
+                    {
+                        api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                        api_c.AUDIENCE_SECTION_FILTERS: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                                api_c.AUDIENCE_FILTER_TYPE: "type",
+                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                            }
+                        ],
+                    }
+                ],
             },
         },
     ]
@@ -211,7 +216,7 @@ class AudiencePostView(SwaggerView):
             destination_ids=body[api_c.AUDIENCE_DESTINATIONS],
             engagement_ids=body[api_c.AUDIENCE_ENGAGEMENTS],
             user_id=user_id,
-        )[db_constants.ID]
+        )
 
         return audience_doc, HTTPStatus.CREATED
 
@@ -304,6 +309,6 @@ class AudiencePutView(SwaggerView):
             destination_ids=body[api_c.AUDIENCE_DESTINATIONS],
             engagement_ids=body[api_c.AUDIENCE_ENGAGEMENTS],
             user_id=user_id,
-        )[db_constants.ID]
+        )
 
         return audience_doc, HTTPStatus.OK
