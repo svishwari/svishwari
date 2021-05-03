@@ -26,9 +26,7 @@ class DuplicateName(HuxAdvException):
 class InvalidName(HuxAdvException):
     """Exception for invalid names."""
 
-    exception_message = (
-        "The specified name <{}> is invalid."
-    )
+    exception_message = "The specified name <{}> is invalid."
 
 
 class DataSourceLocked(HuxAdvException):
