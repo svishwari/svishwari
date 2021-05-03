@@ -196,7 +196,7 @@ class ModelMetricsView(SwaggerView):
     f"/{MODELS_ENDPOINT}/<name>/feature-importance",
     "ModelImportanceView",
 )
-class ModelImportanceView(SwaggerView):
+class ModelFeatureImportanceView(SwaggerView):
     """
     Model Feature Importance Class
     """
