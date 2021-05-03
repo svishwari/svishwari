@@ -90,7 +90,7 @@ steps:
     image: alpine
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
-    - yarn lint
+    - yarn lint -- --no-fix
   
   PublishToArtifactory:
     stage: artifactory
