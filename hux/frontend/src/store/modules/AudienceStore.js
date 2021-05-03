@@ -12,8 +12,9 @@ const state = {
       },
       destinations: {
         details: [
-          { logo: "../../../assets/images/facebook.png", name: "facebook" },
-          { logo: "../../../assets/images/mailchimp.png", name: "MailChimp" },
+          { logo: "facebook", name: "Facebook" },
+          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "mailchimp", name: "Mailchimp"},
         ],
       },
       attributes: {
@@ -51,8 +52,8 @@ const state = {
       },
       destinations: {
         details: [
-          { logo: "../../../assets/images/facebook.png", name: "facebook" },
-          { logo: "../../../assets/images/mailchimp.png", name: "MailChimp" },
+          { logo: "facebook", name: "Facebook" },
+          { logo: "mailchimp", name: "Mailchimp"},
         ],
       },
       attributes: {
@@ -90,8 +91,10 @@ const state = {
       },
       destinations: {
         details: [
-          { logo: "../../../assets/images/facebook.png", name: "facebook" },
-          { logo: "../../../assets/images/mailchimp.png", name: "MailChimp" },
+          { logo: "facebook", name: "Facebook" },
+          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "salesforce", name: "Salesforce" },
+          { logo: "netsuite", name: "netsuite"},
         ],
       },
       attributes: {
@@ -129,8 +132,9 @@ const state = {
       },
       destinations: {
         details: [
-          { logo: "../../../assets/images/facebook.png", name: "facebook" },
-          { logo: "../../../assets/images/mailchimp.png", name: "MailChimp" },
+          { logo: "facebook", name: "Facebook" },
+          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "salesforce", name: "Salesforce" },
         ],
       },
       attributes: {
@@ -168,8 +172,8 @@ const state = {
       },
       destinations: {
         details: [
-          { logo: "../../../assets/images/facebook.png", name: "facebook" },
-          { logo: "../../../assets/images/mailchimp.png", name: "MailChimp" },
+          { logo: "facebook", name: "Facebook" },
+          { logo: "mailchimp", name: "Mailchimp"},
         ],
       },
       attributes: {
@@ -207,8 +211,10 @@ const state = {
       },
       destinations: {
         details: [
-          { logo: "../../../assets/images/facebook.png", name: "facebook" },
-          { logo: "../../../assets/images/mailchimp.png", name: "MailChimp" },
+          { logo: "facebook", name: "Facebook" },
+          { logo: "mailchimp", name: "Mailchimp"},
+          { logo: "salesforce", name: "Salesforce" },
+          { logo: "netsuite", name: "netsuite"},
         ],
       },
       attributes: {
