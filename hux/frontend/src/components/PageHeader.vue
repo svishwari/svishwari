@@ -47,7 +47,7 @@ export default {
     },
 
     headerHeight: {
-      type: String,
+      type: Number,
       required: false,
       default: undefined,
     },

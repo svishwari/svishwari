@@ -165,7 +165,7 @@ import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
 
 export default {
-  name: "createAudience",
+  name: "Configuration",
   components: {
     MetricCard,
     Footer,

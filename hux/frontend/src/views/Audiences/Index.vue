@@ -5,7 +5,7 @@
         <Breadcrumb :items="breadcrumbItems" />
       </template>
     </PageHeader>
-    <PageHeader class="mt-1" headerHeight="71">
+    <PageHeader class="mt-1" :headerHeight=71>
       <template slot="left">
         <v-icon large :disabled="true" @click="refresh">
           mdi-filter-variant
@@ -17,7 +17,7 @@
           mdi-refresh
         </v-icon>
         <router-link
-          :to="{ path: '/audiences/create-audience' }"
+          :to="{ name: 'createAudience' }"
           class="text-decoration-none"
           append
         >
@@ -53,7 +53,7 @@
         </template>
         <template v-slot:button>
           <router-link
-            :to="{ path: '/audiences/create-audience' }"
+            :to="{ name: 'createAudience' }"
             class="route-link text-decoration-none"
             append
           >

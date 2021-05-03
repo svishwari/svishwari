@@ -4,6 +4,7 @@
 const state = {
   audiences: [
     {
+      audienceId: 1,
       audienceName: "Audience Name 1",
       status: "Active",
       size: {
@@ -44,6 +45,7 @@ const state = {
       },
     },
     {
+      audienceId: 2,
       audienceName: "Audience Name 1",
       status: "Delivering",
       size: {
@@ -83,6 +85,7 @@ const state = {
       },
     },
     {
+      audienceId: 3,
       audienceName: "Audience Name 1",
       status: "Active",
       size: {
@@ -124,6 +127,7 @@ const state = {
       },
     },
     {
+      audienceId: 4,
       audienceName: "Audience Name 1",
       status: "Delivering",
       size: {
@@ -164,6 +168,7 @@ const state = {
       },
     },
     {
+      audienceId: 5,
       audienceName: "Audience Name 1",
       status: "Error",
       size: {
@@ -203,6 +208,7 @@ const state = {
       },
     },
     {
+      audienceId: 6,
       audienceName: "Audience Name 1",
       status: "Active",
       size: {
@@ -248,7 +254,7 @@ const state = {
 
 const getters = {
   AllAudiences: (state) => {
-    return state.audiences
+    return Object.values(state.audiences)
   },
 }
 
@@ -259,7 +265,9 @@ const mutations = {
      *       Vue.set(state.audiences, destination._id, destination)
      *    })
      */
-    state.audiences = audiences
+    audiences.forEach((audience) => {
+      Vue.set(state.audiences, audience.audienceId, audience)
+    })
   },
 }
 
@@ -270,7 +278,10 @@ const actions = {
        *    const response = await getAllAudiences
        *    commit("SET_ALL_AUDIENCES", response.data)
        */
-      commit("SET_ALL_AUDIENCES", state.audiences)
+      const response = {
+        data: [...state.audiences],
+      }
+      commit("SET_ALL_AUDIENCES", response.data)
     } catch (error) {
       /*
        *    to do item...

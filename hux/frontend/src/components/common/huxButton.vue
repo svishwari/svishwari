@@ -49,7 +49,6 @@ export default {
     ButtonText: {
       type: String,
       required: false,
-      default: null,
     },
     icon: {
       type: String,
