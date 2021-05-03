@@ -3,8 +3,10 @@ This module enables functionality related to notification management
 """
 import logging
 from datetime import datetime
+from http import HTTPStatus
 
 import pymongo
+from marshmallow import ValidationError
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
@@ -32,7 +34,9 @@ def create_notification(
 
     # validate type
     if not notification_type.lower() not in c.NOTIFICATION_TYPES:
-        return None
+        raise ValidationError(
+            f"Invalid notification type received: {notification_type}. Must be one of {c.NOTIFICATION_TYPES}"
+        )
 
     # get collection
     collection = database[c.DATA_MANAGEMENT_DATABASE][
@@ -56,7 +60,8 @@ def create_notification(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return {}
+    return None
+
 
 # TODO should this return a list of a dict that contains all the notifications?
 @retry(
@@ -65,7 +70,7 @@ def create_notification(
 )
 def get_notifications(
     database: DatabaseClient,
-    page_num: int,
+    page_number: int,
     page_size: int,
     order_by: str,
     order: int,
@@ -74,10 +79,11 @@ def get_notifications(
 
     Args:
         database (DatabaseClient): A database client.
-        page_num (int): page number.
+        page_number (int): page number.
         page_size (int): number of notifications per page.
         order_by (str): order the notification by 'timestamp' or 'type'
-        order (str): dictate the order of the records that are returned. (pymongo.DESCENDING or pymongo.ASCENDING)
+        order (str): dictate the order of the records that are returned.
+                    (pymongo.DESCENDING or pymongo.ASCENDING)
 
     Returns:
         dict: MongoDB document for a notification.
@@ -88,7 +94,7 @@ def get_notifications(
         c.NOTIFICATIONS_COLLECTION
     ]
 
-    skips = page_size * (page_num - 1)
+    skips = page_size * (page_number - 1)
 
     try:
         return list(
@@ -100,4 +106,4 @@ def get_notifications(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return []
+    return None
