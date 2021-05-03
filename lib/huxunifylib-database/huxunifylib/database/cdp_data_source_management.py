@@ -39,14 +39,14 @@ def create_data_source(
         c.CDP_DATA_SOURCE_FIELD_NAME: name,
         c.CDP_DATA_SOURCE_FIELD_CATEGORY: category,
         c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
-        c.CDP_DATA_SOURCE_FIELD_STATUS: "Pending",
+        c.CDP_DATA_SOURCE_FIELD_STATUS: c.CDP_DATA_SOURCE_STATUS_ACTIVE,
     }
 
     try:
         data_source_id = collection.insert_one(doc).inserted_id
         if data_source_id is not None:
             return collection.find_one({c.ID: data_source_id})
-        logging.error("Failed to create a new user!")
+        logging.error("Failed to create a new data source!")
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

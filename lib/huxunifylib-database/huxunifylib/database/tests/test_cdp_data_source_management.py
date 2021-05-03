@@ -28,7 +28,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             c.CDP_DATA_SOURCE_FIELD_NAME: "Amazon",
             c.CDP_DATA_SOURCE_FIELD_CATEGORY: "Web Events",
             c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
-            c.CDP_DATA_SOURCE_FIELD_STATUS: "Pending",
+            c.CDP_DATA_SOURCE_FIELD_STATUS: c.CDP_DATA_SOURCE_STATUS_ACTIVE,
         }
 
         # set a sample data source
@@ -61,7 +61,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
 
         data_source_docs = dsmgmt.get_all_data_sources(self.database)
 
-        self.assertIsNotNone(dsmgmt)
+        self.assertIsNotNone(data_source_docs)
 
     def test_get_data_source(self) -> None:
         """Test get data source based on id
