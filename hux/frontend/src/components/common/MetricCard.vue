@@ -41,7 +41,7 @@ export default {
     subtitle: {
       type: String,
       required: false,
-      default: "Info card title",
+      default: "Info card description",
     },
 
     active: {
