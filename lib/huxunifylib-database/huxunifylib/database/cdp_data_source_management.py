@@ -2,24 +2,21 @@
 This module enables functionality for data source management
 """
 import logging
-import datetime
-import re
-from typing import Any
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.utils import name_exists
 
 
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def create_data_source(database: DatabaseClient, name: str, category: str) -> dict:
+def create_data_source(
+    database: DatabaseClient, name: str, category: str
+) -> dict:
     """A function that creates a new data source
 
     Args:
@@ -31,15 +28,29 @@ def create_data_source(database: DatabaseClient, name: str, category: str) -> di
         dict: MongoDB document for a data source
 
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE]["SOME COLLECTION NAME HERE"]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    # TODO may need to know what the valid statuses are here
+    # TODO update of statuses will be needed here after 5.0 release
+    # TODO set to 1 for now until after 5.0 release
     doc = {
-        c.FIELD_NAME: name,
-        c.FIELD_CATEGORY: category,
-        c.FIELD_FEED_COUNT: 1,  # TODO set to 1 for now until after 5.0 release
-        c.FIELD_STATUS: "Pending"  # TODO may need to know what the valid statuses are here
+        c.CDP_DATA_SOURCE_FIELD_NAME: name,
+        c.CDP_DATA_SOURCE_FIELD_CATEGORY: category,
+        c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
+        c.CDP_DATA_SOURCE_FIELD_STATUS: "Pending",
     }
 
-    return {}
+    try:
+        data_source_id = collection.insert_one(doc).inserted_id
+        if data_source_id is not None:
+            return collection.find_one({c.ID: data_source_id})
+        logging.error("Failed to create a new user!")
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
 
 
 @retry(
@@ -56,10 +67,71 @@ def get_all_data_sources(database: DatabaseClient) -> list:
         list: List of all data sources
 
     """
-    # TODO create a collection constant to get a db instance
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
-    return []
+    try:
+        return list(collection.find({}))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
 
-# get one data source
+    return None
 
-# delete data source
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_data_source(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> dict:
+    """A function to return a single data source based on a provided id
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_source_id (ObjectId): data source id.
+
+    Returns:
+        dict: MongoDB document for a data source
+
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    try:
+        return collection.find_one({c.ID: data_source_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_data_source(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> bool:
+    """A function to delete a data source
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_source_id (ObjectId): data source id.
+
+    Returns:
+        bool: a flag indicating successful deletion
+
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    try:
+        return collection.delete_one({c.ID: data_source_id}).deleted_count > 0
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
