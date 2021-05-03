@@ -24,6 +24,10 @@ facebook_business= "10.0.0"
 pymongo= "3.11.3"
 mongomock= "3.22.1"
 python-decouple= "3.4"
+huxunifylib-database = {subdirectory = "lib/huxunifylib-database", ref = "main", git = "https://github.com/DeloitteHux/hux-unified.git"}
+# "git+https://github.com/DeloitteHux/hux-unified.git#subdirectory=lib/huxunifylib-database" = "*"
+# "git+https://github.com/DeloitteHux/orchestration.git@mongo-ssl#subdirectory=lib/huxunifylib-connectors" = "*"
+# "git+https://github.com/DeloitteHux/orchestration.git@mongo-ssl#subdirectory=lib/huxunifylib-util" = "*
 
 [dev-packages]
 pytest = "*"
