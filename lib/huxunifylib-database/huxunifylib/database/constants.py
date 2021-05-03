@@ -185,7 +185,10 @@ FIELD_CUSTOM_TYPE = "custom_type"
 FIELD_HEADER = "header"
 FIELD_FIELD_MAPPING = "field_mapping"
 FIELD_FIELD_MAPPING_DEFAULT = "field_mapping_default"
-
+FIELD_NAME = "name"
+FIELD_CATEGORY = "category"
+FIELD_FEED_COUNT = "feed_count"
+FIELD_STATUS = "status"
 
 DATA_ROUTER_BATCH_SIZE = "data_router_batch_size"
 AUDIENCE_ROUTER_BATCH_SIZE = "audience_router_batch_size"
