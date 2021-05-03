@@ -4,6 +4,7 @@ export default {
     issuer: process.env.VUE_APP_OKTA_ISSUER,
   },
   apiUrl: process.env.VUE_APP_API_URL,
+  apiBasePath: "/api/v1",
   oktaUrl: process.env.VUE_APP_OKTA_ISSUER,
   appTitle: "HUX Unified",
   endpoints: {},

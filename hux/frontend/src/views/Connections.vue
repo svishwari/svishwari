@@ -40,13 +40,13 @@
       <v-col cols="6 pt-0">
         <DestinationListCard
           v-for="destination in destinations"
-          :key="destination.title"
+          :key="destination.id"
         >
           <template v-slot:logo>
             <Logo :type="destination.type"></Logo>
           </template>
           <template v-slot:title>
-            {{ destination.title }}
+            {{ destination.name }}
           </template>
         </DestinationListCard>
       </v-col>

@@ -1,40 +1,31 @@
 import { createServer, Model } from "miragejs"
-
 import config from "@/config"
+import { defineRoutes } from "./routes"
+import seeds from "./seeds"
+import destinationFactory from "./factories/destination"
 
-// import { defineRoutes } from "./resources"
+const models = {
+  destination: Model,
+}
+
+const factories = {
+  destination: destinationFactory,
+}
 
 export function makeServer({ environment = "development" } = {}) {
   let server = createServer({
     environment,
 
-    models: {
-      destination: Model,
-    },
+    models: models,
 
-    seeds(server) {
-      server.create("destination", {
-        id: 1,
-        title: "Facebook",
-        type: "facebook",
-      })
-      server.create("destination", {
-        id: 2,
-        title: "Salesforce Marketing",
-        type: "salesforce",
-      })
-      server.create("destination", { id: 3, title: "Twillio", type: "twillio" })
-    },
+    factories: factories,
+
+    seeds: seeds,
 
     routes() {
       this.urlPrefix = config.apiUrl
-      this.namespace = "/api/v1"
-
-      // defineRoutes(this)
-
-      this.get("/destinations", (schema) => {
-        return schema.destinations.all().models
-      })
+      this.namespace = config.apiBasePath
+      defineRoutes(this)
 
       // pass requests to external APIs through
       this.passthrough(`${config.oktaUrl}/**`)

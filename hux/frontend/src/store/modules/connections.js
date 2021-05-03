@@ -1,7 +1,5 @@
 import Vue from "vue"
-// import { getAllDestinations } from "@/api/resources/destinations"
-
-import axios from "axios"
+import api from "@/api/client"
 
 const state = {
   destinations: {},
@@ -22,9 +20,7 @@ const mutations = {
 const actions = {
   async getAllDestinations({ commit }) {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/v1/destinations"
-      )
+      const response = await api.destinations.all()
       commit("SET_ALL_DESTINATIONS", response.data)
     } catch (error) {
       console.error(error)
