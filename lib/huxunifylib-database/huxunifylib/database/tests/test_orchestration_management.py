@@ -8,7 +8,6 @@ from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
 
 
-# pylint: disable=R0904
 class TestAudienceManagement(unittest.TestCase):
     """Test audience management module."""
 
@@ -42,8 +41,8 @@ class TestAudienceManagement(unittest.TestCase):
                 ],
             },
             {
-                "section_aggregator": c.AUDIENCE_FILTER_AGGREGATOR_ANY,
-                "section_filters": [
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR: c.AUDIENCE_FILTER_AGGREGATOR_ANY,
+                c.AUDIENCE_FILTERS_SECTION: [
                     {
                         "field": c.S_TYPE_AGE,
                         "type": c.AUDIENCE_FILTER_MAX,
@@ -88,10 +87,16 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][0]["section_aggregator"], "ALL"
+            audience_doc[c.AUDIENCE_FILTERS][0][
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            ],
+            c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][1]["section_aggregator"], "ANY"
+            audience_doc[c.AUDIENCE_FILTERS][1][
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            ],
+            c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
 
     def test_update_audience_name(self):
@@ -139,15 +144,18 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][0]["section_aggregator"], "ALL"
+            audience_doc[c.AUDIENCE_FILTERS][0][
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            ],
+            c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
         self.assertEqual(len(audience_doc[c.AUDIENCE_FILTERS]), 2)
 
         # Update audience filters
         new_filters = [
             {
-                "section_aggregator": c.AUDIENCE_FILTER_AGGREGATOR_ANY,
-                "section_filters": [
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR: c.AUDIENCE_FILTER_AGGREGATOR_ANY,
+                c.AUDIENCE_FILTERS_SECTION: [
                     {
                         "field": c.S_TYPE_AGE,
                         "type": c.AUDIENCE_FILTER_MAX,
@@ -167,7 +175,8 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(c.AUDIENCE_FILTERS in doc)
         self.assertIsNotNone(doc[c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            doc[c.AUDIENCE_FILTERS][0]["section_aggregator"], "ANY"
+            doc[c.AUDIENCE_FILTERS][0][c.AUDIENCE_FILTERS_SECTION_AGGREGATOR],
+            c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
         self.assertEqual(len(doc[c.AUDIENCE_FILTERS]), 1)
 

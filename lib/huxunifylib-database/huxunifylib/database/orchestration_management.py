@@ -46,8 +46,7 @@ def create_audience(
 
     # Make sure the name will be unique
     try:
-        doc = collection.find_one({c.AUDIENCE_NAME: name})
-        if doc:
+        if collection.find_one({c.AUDIENCE_NAME: name}):
             raise de.DuplicateName(name)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -199,7 +198,7 @@ def update_audience(
 
     # TODO: Delete and Update Engagement IDs once the engagement table is ready
     try:
-        audience_doc = collection.find_one_and_update(
+        return collection.find_one_and_update(
             {c.ID: audience_id},
             {"$set": updated_audience_doc},
             upsert=False,
@@ -208,4 +207,4 @@ def update_audience(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return audience_doc
+    return None
