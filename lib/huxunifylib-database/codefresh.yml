@@ -20,7 +20,6 @@ steps:
     working_directory: '/codefresh/volume/${{CF_REPO_NAME}}/lib/huxunifylib-database'
     description: run tests using tox
     commands:
-      - pip install --upgrade pip
       - pip install tox
       - python -m tox -e ${TOXENV}
     scale:

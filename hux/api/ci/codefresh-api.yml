@@ -82,7 +82,6 @@ steps:
     working_directory: '/app/hux-unified/api'
     description: "run tests using tox"
     commands:
-      - pip install --upgrade pip
       - pip install tox
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
@@ -99,7 +98,6 @@ steps:
     working_directory: '/app/hux-unified/api'
     description: "run safety and style checks using tox"
     commands:
-      - pip install --upgrade pip
       - pip install tox
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
