@@ -1,5 +1,5 @@
 """
-Schemas for the Audience API
+Schemas for the Orchestration API
 """
 
 from flask_marshmallow import Schema
@@ -68,7 +68,7 @@ class AudienceGetSchema(Schema):
         example=[
             {
                 api_c.DESTINATION_ID: "destination id",
-                api_c.DESTINATION_NAME: "destinations name",
+                api_c.DESTINATION_NAME: "destination name",
             }
         ],
     )
