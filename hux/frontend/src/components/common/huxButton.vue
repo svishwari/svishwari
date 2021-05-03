@@ -47,7 +47,6 @@ export default {
     ButtonText: {
       type: String,
       required: false,
-      default: "Added",
     },
     icon: {
       type: String,

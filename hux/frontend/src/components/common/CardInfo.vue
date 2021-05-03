@@ -27,19 +27,16 @@ export default {
     icon: {
       type: String,
       required: false,
-      default: "mdi-plus",
     },
 
     title: {
       type: String,
       required: false,
-      default: "Info card title",
     },
 
     description: {
       type: String,
       required: false,
-      default: "Info card description",
     },
 
     active: {

@@ -47,7 +47,7 @@ export default {
     title: {
       type: String,
       required: false,
-      default: "Info card title",
+      default: null,
     },
 
     isAdded: {
