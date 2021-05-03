@@ -138,25 +138,24 @@
 
     <Logo type="tableau"></Logo>
     <Logo type="tableau" :size="48"></Logo>
-    
+
     <Logo type="google-ads"></Logo>
     <Logo type="google-ads" :size="48"></Logo>
 
     <Logo type="google-analytics"></Logo>
     <Logo type="google-analytics" :size="48"></Logo>
 
-    <Logo type="aqfer" ></Logo>
+    <Logo type="aqfer"></Logo>
     <Logo type="aqfer" :size="48"></Logo>
 
-    <Logo type="netsuite" ></Logo>
+    <Logo type="netsuite"></Logo>
     <Logo type="netsuite" :size="48"></Logo>
 
-    <Logo type="salesforce" ></Logo>
+    <Logo type="salesforce"></Logo>
     <Logo type="salesforce" :size="48"></Logo>
 
-    <Logo type="twillio" ></Logo>
+    <Logo type="twillio"></Logo>
     <Logo type="twillio" :size="48"></Logo>
-
   </v-container>
 </template>
 
