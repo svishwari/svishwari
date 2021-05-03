@@ -74,7 +74,7 @@ MODEL_NAME = "model_name"
 MODEL_NAME_PARAMS = [
     {
         "name": MODEL_NAME,
-        "description": "User ID.",
+        "description": "Model name.",
         "type": "string",
         "in": "path",
         "required": True,

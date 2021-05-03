@@ -194,7 +194,7 @@ class ModelMetricsView(SwaggerView):
 @add_view_to_blueprint(
     model_bp,
     f"/{MODELS_ENDPOINT}/<name>/feature-importance",
-    "ModelImportanceView",
+    "ModelFeatureImportanceView",
 )
 class ModelFeatureImportanceView(SwaggerView):
     """

@@ -82,5 +82,4 @@ class PerformanceMetricSchema(Schema):
     rmse = Float()
     auc = Float()
     precision = Float()
-    precision = Float()
     recall = Float()
