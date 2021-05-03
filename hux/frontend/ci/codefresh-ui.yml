@@ -82,6 +82,14 @@ steps:
   #         image: '${{DockerBuild}}'
   #         ports:
   #           - '${{PORT}}'
+  lint:
+    stage: "tests"
+    title: "Running lint"
+    fail_fast: false
+    image: alpine
+    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
+    commands:
+    - yarn lint --fix
   
   PublishToArtifactory:
     stage: artifactory
