@@ -1,5 +1,5 @@
 """
-Paths for Audience api
+Paths for Orchestration API
 """
 from http import HTTPStatus
 from typing import Tuple
@@ -51,11 +51,11 @@ class AudienceView(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of all Audience",
+            "description": "List of all audiences",
             "schema": {"type": "array", "items": AudienceGetSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all audience."
+            "description": "Failed to get all audiences."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -63,11 +63,11 @@ class AudienceView(SwaggerView):
 
     @marshal_with(AudienceGetSchema(many=True))
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
-        """Retrieves all the audience.
+        """Retrieves all the audiences.
 
         ---
         Returns:
-            Tuple[list, int]: list of audience, HTTP status.
+            Tuple[list, int]: list of audiences, HTTP status.
 
         """
 
@@ -115,14 +115,14 @@ class AudienceGetView(SwaggerView):
     @marshal_with(AudienceGetSchema)
     # pylint: disable=no-self-use
     def get(self, audience_id: str) -> Tuple[dict, int]:
-        """Get a audience doc by  ID.
+        """Get an audience by ID.
 
         ---
         Args:
             audience_id (str): Audience ID.
 
         Returns:
-            Tuple[dict, int]: Audience doc, HTTP status.
+            Tuple[dict, int]: Audience, HTTP status.
 
         """
 
@@ -181,7 +181,7 @@ class AudiencePostView(SwaggerView):
             "description": "Audience created.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to create Audience.",
+            "description": "Failed to create audience.",
         },
     }
 
@@ -189,11 +189,11 @@ class AudiencePostView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     def post(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
-        """Creates a new Audience doc.
+        """Creates a new audience.
 
         ---
         Returns:
-            Tuple[dict, int]: Audience created, HTTP status.
+            Tuple[dict, int]: Created audience, HTTP status.
 
         """
         # TODO - implement after HUS-254 is done to grab user/okta_id
@@ -266,7 +266,7 @@ class AudiencePutView(SwaggerView):
             "description": "Updated Audience.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to update Audience.",
+            "description": "Failed to update audience.",
         },
     }
 
