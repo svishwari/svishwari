@@ -5,6 +5,7 @@ stages:
   - git
   - build_tag
   - docker
+  - lint
   - test
   - artifactory
   - argo-deploy
@@ -83,7 +84,7 @@ steps:
   #         ports:
   #           - '${{PORT}}'
   lint:
-    stage: "test"
+    stage: "lint"
     title: "Running lint"
     fail_fast: false
     image: alpine
