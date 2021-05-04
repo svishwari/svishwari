@@ -13,7 +13,7 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
 RUN npm install
-RUN npm install @vue/cli@4.5.6 -g
+RUN npm install @vue/cli-service
 COPY . /app
 COPY --from=base /tmp/env_file .env
 RUN npm run build
