@@ -2,6 +2,9 @@
 purpose of this file is to house route utilities
 """
 from typing import Any
+from pymongo import MongoClient
+from huxunify.api.config import MONGO_DB_CONFIG
+from huxunifylib.connectors.util.client import db_client_factory
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
@@ -43,3 +46,11 @@ def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
         return cls
 
     return decorator
+
+
+def get_db_client() -> MongoClient:
+    """Get DB client.
+    Returns:
+        MongoClient: MongoDB client.
+    """
+    return db_client_factory.get_resource(**MONGO_DB_CONFIG)
