@@ -50,12 +50,15 @@
       </v-col>
 
       <v-col cols="6 pt-0">
-        <DestinationListCard v-for="item in destinations" :key="item.title">
+        <DestinationListCard
+          v-for="destination in destinations"
+          :key="destination.id"
+        >
           <template v-slot:logo>
-            <Logo :type="item.logo" />
+            <Logo :type="destination.type" />
           </template>
           <template v-slot:title>
-            {{ item.title }}
+            {{ destination.name }}
           </template>
         </DestinationListCard>
       </v-col>
@@ -74,7 +77,9 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 
 export default {
   name: "connections",
+
   components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb, Logo },
+
   data() {
     return {
       items: [
@@ -87,25 +92,19 @@ export default {
       ],
     }
   },
-  computed: {
-    ...mapGetters({
-      destinations: "AllDestinations",
-    }),
 
-    // This can be used, in-case, data required logic/filter
-    // destinations () {
-    //   return this.AllDestinations.map(destination => {
-    //     return destination
-    //   })
-    // },
+  computed: {
+    ...mapGetters(["destinations"]),
 
     hasDestinations() {
       return Boolean(this.destinations && this.destinations.length > 1)
     },
   },
+
   methods: {
     ...mapActions(["getAllDestinations"]),
   },
+
   async mounted() {
     await this.getAllDestinations()
   },
