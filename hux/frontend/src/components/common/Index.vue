@@ -161,13 +161,8 @@
     <Logo type="salesforce"></Logo>
     <Logo type="salesforce" :size="48"></Logo>
 
-<<<<<<< HEAD
-    <Logo type="twillio"></Logo>
-    <Logo type="twillio" :size="48"></Logo>
-=======
     <Logo type="twilio"></Logo>
     <Logo type="twilio" :size="48"></Logo>
->>>>>>> 713fa9a967eb0579e0e3e01dd46570acc7a1eb15
   </v-container>
 </template>
 
