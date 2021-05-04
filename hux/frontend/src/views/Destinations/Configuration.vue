@@ -64,10 +64,13 @@
             :labelText="item.name"
             :key="item.name"
             :rules="[rules.required]"
-            icon="mdi-alert-circle-outline"
-            :placeholderText="item.type == 'text' ? item.name : '**********'"
+            :placeholderText="
+              item.type == 'text' ? `Enter ${item.name}` : `**********`
+            "
             :InputType="item.type"
+            :help-text="item.description"
             @blur="changeValidationStatus"
+            icon="mdi-alert-circle-outline"
             class="pa-2 validation-field"
           ></TextField>
         </v-form>
@@ -124,13 +127,13 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Logo from "@/components/common/Logo"
 import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
-import { mapGetters } from "vuex"
 
 export default {
   name: "add-destination",
@@ -169,6 +172,8 @@ export default {
   },
 
   methods: {
+    ...mapActions(["getAllDestinations"]),
+
     onSingleDestinationClick: function (index) {
       this.selectedDestinationIndex = index
       this.isConnectionValidated = false
@@ -193,6 +198,10 @@ export default {
       // This is a TODO need to add modal that confirms to leave configuration
       this.$router.push("/connections")
     },
+  },
+
+  async mounted() {
+    await this.getAllDestinations()
   },
 }
 </script>

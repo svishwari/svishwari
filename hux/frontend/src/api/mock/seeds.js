@@ -7,27 +7,27 @@ const facebook = {
       name: "Ad Account ID",
       type: "text",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'Ad Account ID'",
     },
     app_id: {
       name: "App ID",
       type: "text",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'App ID'",
     },
     access_token: {
       name: "Access Token",
       type: "password",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'Access Token'",
     },
     app_secret: {
       name: "App Secret",
       type: "password",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'App Secret'",
     },
-  }
+  },
 }
 
 const salesforce = {
@@ -39,39 +39,39 @@ const salesforce = {
       name: "Account ID",
       type: "text",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'Account ID'",
     },
     sfmc_auth_base_uri: {
       name: "Auth Base URI",
       type: "text",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'Auth Base URI'",
     },
     sfmc_client_id: {
       name: "Client ID",
       type: "text",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'Client ID'",
     },
     sfmc_client_secret: {
       name: "Client Secret",
       type: "password",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'Client Secret'",
     },
     sfmc_rest_base_uri: {
       name: "REST Base URI",
       type: "text",
       required: true,
-      description: "This field is required for...",
+      description: "Placeholder information text for 'REST Base URI'",
     },
     sfmc_soap_base_uri: {
       name: "Soap Base URI",
       type: "text",
       required: true,
-      description: "This field is required for...",
-    }
-  }
+      description: "Placeholder information text for 'Soap Base URI",
+    },
+  },
 }
 
 const adobe = {
