@@ -227,7 +227,7 @@ class AudiencePostView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    orchestration_management,
+    orchestration_bp,
     f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>",
     "AudiencePutView",
 )
