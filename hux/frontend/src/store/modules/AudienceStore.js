@@ -1,4 +1,4 @@
-// import Vue from "vue"
+import Vue from "vue"
 // import { getAllAudiences } from "@/api/resources/audiences"
 
 const state = {

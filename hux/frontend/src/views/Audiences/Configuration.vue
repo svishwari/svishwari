@@ -123,7 +123,7 @@
         </v-timeline-item>
       </v-timeline>
 
-      <Footer absolute padless color="white" class="footer">
+      <HuxFooter absolute padless color="white" class="footer">
         <template v-slot:left>
           <huxButton
             ButtonText="Cancel"
@@ -153,14 +153,14 @@
             class="ma-2"
           ></huxButton>
         </template>
-      </Footer>
+      </HuxFooter>
     </div>
   </div>
 </template>
 
 <script>
 import MetricCard from "@/components/common/MetricCard"
-import Footer from "@/components/common/Footer"
+import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
 
@@ -168,7 +168,7 @@ export default {
   name: "Configuration",
   components: {
     MetricCard,
-    Footer,
+    HuxFooter,
     huxButton,
     TextField,
   },

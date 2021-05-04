@@ -92,6 +92,11 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Hux Slider</v-subheader>
+    <huxSlider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Hux Table</v-subheader>
     <hux-table
       :columnDef="columnDefs"
@@ -177,6 +182,7 @@ import PageHeader from "@/components/PageHeader"
 import Drawer from "@/components/common/Drawer"
 import MetricCard from "@/components/common/MetricCard"
 import Logo from "@/components/common/Logo"
+import HuxSlider from "./HuxSlider.vue"
 
 export default {
   name: "Components",
@@ -191,6 +197,7 @@ export default {
     Drawer,
     MetricCard,
     Logo,
+    HuxSlider,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -202,6 +209,7 @@ export default {
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
+      sliderRange: [0.25, 0.65],
       DropdownData: [
         { value: "1 - 25" },
         { value: "26 - 50" },

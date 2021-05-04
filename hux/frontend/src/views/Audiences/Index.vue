@@ -5,7 +5,7 @@
         <Breadcrumb :items="breadcrumbItems" />
       </template>
     </PageHeader>
-    <PageHeader class="mt-1" :headerHeight=71>
+    <PageHeader class="mt-1" :headerHeight="71">
       <template slot="left">
         <v-icon large :disabled="true" @click="refresh">
           mdi-filter-variant
