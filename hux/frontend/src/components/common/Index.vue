@@ -18,7 +18,13 @@
     <v-divider class="mt-10" />
 
     <v-subheader> Alert </v-subheader>
-    <HuxAlert type="primary" title="YAY!" message="This is a success message! It will disappear in 5 seconds on its own." />
+    <v-btn @click="alert = !alert">Toogle alert</v-btn>
+    <HuxAlert
+      v-model="alert"
+      type="success"
+      title="YAY!"
+      message="This is a success message! It will disappear in 5 seconds on its own."
+    />
 
     <v-divider class="mt-10" />
 
@@ -401,6 +407,7 @@ export default {
       ],
 
       drawer: false,
+      alert: false,
 
       overviewListItems: [
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
