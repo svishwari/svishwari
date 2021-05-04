@@ -9,7 +9,7 @@
     :width="width"
     :height="height"
     :icon="iconType"
-    @click="loader = 'loading'"
+    @click="onClick"
   >
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
@@ -101,6 +101,12 @@ export default {
   computed: {
     buttonSize: function () {
       return "v-size--" + this.size
+    },
+  },
+  methods: {
+    onClick: function () {
+      this.$emit("click")
+      this.loader = "loading"
     },
   },
 }

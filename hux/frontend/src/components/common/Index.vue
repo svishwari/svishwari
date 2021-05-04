@@ -161,8 +161,8 @@
     <Logo type="salesforce"></Logo>
     <Logo type="salesforce" :size="48"></Logo>
 
-    <Logo type="twillio"></Logo>
-    <Logo type="twillio" :size="48"></Logo>
+    <Logo type="twilio"></Logo>
+    <Logo type="twilio" :size="48"></Logo>
   </v-container>
 </template>
 
