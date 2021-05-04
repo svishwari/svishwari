@@ -24,18 +24,21 @@
       size="large"
       icon="mdi-check"
       iconPosition="left"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Add"
       v-bind:isOutlined="true"
       size="x-small"
       variant="darkGrey"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Leave configuration"
       variant="primary"
       size="large"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Success!"
@@ -44,23 +47,27 @@
       variant="success"
       size="x-large"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Cancel &amp; Return"
       variant="tertiary"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Disabled"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:isDisabled="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Loader"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:enableLoading="true"
+      class="ma-2"
     ></huxButton>
 
     <v-divider class="mt-10" />
@@ -87,6 +94,7 @@
 
     <v-subheader> Hux Slider</v-subheader>
     <hux-slider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
+    
     <v-divider class="mt-10" />
 
     <v-subheader> Hux Table</v-subheader>
@@ -158,8 +166,8 @@
     <Logo type="salesforce"></Logo>
     <Logo type="salesforce" :size="48"></Logo>
 
-    <Logo type="twillio"></Logo>
-    <Logo type="twillio" :size="48"></Logo>
+    <Logo type="twilio"></Logo>
+    <Logo type="twilio" :size="48"></Logo>
   </v-container>
 </template>
 
