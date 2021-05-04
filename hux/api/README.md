@@ -36,7 +36,7 @@ cd "/hux/api"
 wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 # copy the template-settings.ini file
 cp template-settings.ini settings.ini
-# now populate all the env variabels in that file.
+# now populate all the env variables in that file.
 ```
 
 ### Software Dependencies

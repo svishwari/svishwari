@@ -2,8 +2,9 @@ import Vue from "vue"
 import Vuex from "vuex"
 import createPersistedState from "vuex-persistedstate"
 
-import users from "@/store/modules/users"
+import audiences from "@/store/modules/audiences"
 import connections from "@/store/modules/connections"
+import users from "@/store/modules/users"
 
 Vue.use(Vuex)
 
@@ -14,8 +15,9 @@ const persistedStores = ["users"]
 
 export default new Vuex.Store({
   modules: {
-    users,
+    audiences,
     connections,
+    users,
   },
 
   strict: debug,

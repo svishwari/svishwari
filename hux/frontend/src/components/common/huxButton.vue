@@ -5,9 +5,11 @@
     :outlined="isOutlined"
     :tile="isTile"
     :color="variant"
-    class="ma-2"
     :class="buttonSize"
-    @click="loader = 'loading'"
+    :width="width"
+    :height="height"
+    :icon="iconType"
+    @click="onClick"
   >
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
@@ -47,7 +49,6 @@ export default {
     ButtonText: {
       type: String,
       required: false,
-      default: "Added",
     },
     icon: {
       type: String,
@@ -81,10 +82,31 @@ export default {
       required: false,
       default: null,
     },
+    width: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    height: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    iconType: {
+      type: Boolean,
+      required: false,
+      default: null,
+    },
   },
   computed: {
     buttonSize: function () {
       return "v-size--" + this.size
+    },
+  },
+  methods: {
+    onClick: function () {
+      this.$emit("click")
+      this.loader = "loading"
     },
   },
 }

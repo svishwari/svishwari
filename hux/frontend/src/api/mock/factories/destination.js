@@ -30,7 +30,7 @@ export default Factory.extend({
 
   is_added: false,
 
-  authentication_details: {
+  auth_details: {
     ad_account_id: {
       name: "Ad Account ID",
       type: "password",
