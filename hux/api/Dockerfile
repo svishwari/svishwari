@@ -15,9 +15,11 @@ RUN pip install pipenv
 
 # This line allows the env variable to be picked up from Codefresh
 ARG ARTIFACTORY_PYTHON_READ
+ARG JFROG_USERNAME
+ARG JFROG_PASSWORD
 
 # install all dependencies listed in Pipfile
-RUN pipenv install --ignore-pipfile --deploy --pypi-mirror ${ARTIFACTORY_PYTHON_READ}
+RUN pipenv install --ignore-pipfile --deploy
 
 WORKDIR /app/hux-unified/api/huxunify
 CMD ["pipenv", "run", "app.py"]
