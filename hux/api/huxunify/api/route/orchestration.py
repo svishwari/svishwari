@@ -10,7 +10,6 @@ from flask import Blueprint, request
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
-# pylint: disable=no-name-in-module
 from huxunifylib.database import (
     orchestration_management,
 )
@@ -54,7 +53,7 @@ class AudienceView(SwaggerView):
             "schema": {"type": "array", "items": AudienceGetSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all audiences."
+            "description": "Failed to get all audience."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -62,11 +61,11 @@ class AudienceView(SwaggerView):
 
     @marshal_with(AudienceGetSchema(many=True))
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
-        """Retrieves all the audiences.
+        """Retrieves all audience.
 
         ---
         Returns:
-            Tuple[list, int]: list of audiences, HTTP status.
+            Tuple[list, int]: list of audience, HTTP status.
 
         """
 
@@ -135,7 +134,7 @@ class AudienceGetView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        audience = orchestration_management.get_audience_doc(
+        audience = orchestration_management.get_audience(
             get_db_client(), valid_id
         )
 
@@ -162,8 +161,14 @@ class AudiencePostView(SwaggerView):
             "description": "Input Audience body.",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.AUDIENCE_DESTINATIONS: ["id1", "id2"],
-                api_c.AUDIENCE_ENGAGEMENTS: ["id1", "id2", "id3"],
+                api_c.AUDIENCE_DESTINATIONS: [
+                    "71364317897acad4bac4373b",
+                    "67589317897acad4bac4373b",
+                ],
+                api_c.AUDIENCE_ENGAGEMENTS: [
+                    "84759317897acad4bac4373b",
+                    "46826317897acad4bac4373b",
+                ],
                 api_c.AUDIENCE_FILTERS: [
                     {
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
@@ -205,7 +210,7 @@ class AudiencePostView(SwaggerView):
         user_id = ObjectId()
 
         try:
-            body = AudiencePostSchema().load(request.get_json())
+            body = AudiencePostSchema().load(request.get_json(), partial=True)
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
@@ -247,8 +252,14 @@ class AudiencePutView(SwaggerView):
             "type": "object",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.AUDIENCE_DESTINATIONS: ["id1", "id2", "id3"],
-                api_c.AUDIENCE_ENGAGEMENTS: ["id1", "id2", "id3"],
+                api_c.AUDIENCE_DESTINATIONS: [
+                    "71364317897acad4bac4373b",
+                    "67589317897acad4bac4373b",
+                ],
+                api_c.AUDIENCE_ENGAGEMENTS: [
+                    "76859317897acad4bac4373b",
+                    "46826317897acad4bac4373b",
+                ],
                 api_c.AUDIENCE_FILTERS: [
                     {
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
@@ -301,7 +312,7 @@ class AudiencePutView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        audience_doc = orchestration_management.create_audience(
+        audience_doc = orchestration_management.update_audience(
             database=get_db_client(),
             audience_id=audience_id,
             name=body[api_c.AUDIENCE_NAME],

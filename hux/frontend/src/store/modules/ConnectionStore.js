@@ -3,11 +3,141 @@
 
 const state = {
   destinations: [
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Adobe Experience" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Facebook" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Google" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Twilio" },
-    { logoUrl: "../assets/images/adobe-icon.png", title: "Amazon" },
+    {
+      logo: "adobe-experience",
+      title: "Adobe Experience",
+      isAlreadyAdded: false,
+      isAvailable: true,
+      auth_details: [
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
+      ],
+    },
+    {
+      logo: "facebook",
+      title: "Facebook",
+      isAlreadyAdded: true,
+      isAvailable: true,
+      auth_details: [
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
+      ],
+    },
+    {
+      logo: "google-ads",
+      title: "Google Ads",
+      isAlreadyAdded: false,
+      isAvailable: true,
+      auth_details: [
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
+      ],
+    },
+    {
+      logo: "twilio",
+      title: "Twilio",
+      isAlreadyAdded: false,
+      isAvailable: false,
+      auth_details: [
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
+      ],
+    },
+    {
+      logo: "tableau",
+      title: "Tableau",
+      isAlreadyAdded: false,
+      isAvailable: false,
+      auth_details: [
+        {
+          name: "Ad account ID",
+          type: "text",
+          description: "This field is required for....",
+        },
+        {
+          name: "App ID",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "Access token",
+          type: "password",
+          description: "This field is required for....",
+        },
+        {
+          name: "App secret",
+          type: "password",
+          description: "This field is required for....",
+        },
+      ],
+    },
   ],
 }
 
@@ -37,9 +167,7 @@ const actions = {
        */
       commit("SET_ALL_DESTINATIONS", state.destinations)
     } catch (error) {
-      /*
-       *    to do item...
-       */
+      // this is a TODO item
     }
   },
 }

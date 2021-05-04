@@ -1,0 +1,39 @@
+// This file contains commonly used design cases 
+
+
+.icon-border {
+    border-radius: 5px;
+    @extend .cursor-pointer;
+    @extend .background-border;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.background-border {
+    border: 1px solid;
+    border-color: #D0D0CE;
+}
+
+.processing-button {
+    background-size: 300%;
+    background-image: linear-gradient(
+        270deg,
+        #43b02a 11.98%,
+        #00a3e0 50%,
+        #005587 88%
+    );
+    animation: bg-animation 2s infinite;
+    @keyframes bg-animation {
+        0% {
+        background-position: left;
+        }
+        50% {
+        background-position: right;
+        }
+        100% {
+        background-position: left;
+        }
+    }
+}

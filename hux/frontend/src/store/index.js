@@ -7,6 +7,7 @@ import createPersistedState from "vuex-persistedstate"
  */
 import userStore from "./modules/userStore"
 import ConnectionStore from "./modules/ConnectionStore"
+import AudienceStore from "./modules/AudienceStore"
 
 Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== "production"
@@ -15,6 +16,7 @@ const store = new Vuex.Store({
   modules: {
     user: userStore,
     connection: ConnectionStore,
+    audience: AudienceStore,
   },
   strict: debug,
   // Persist and rehydrates Vuex state between page reloads.

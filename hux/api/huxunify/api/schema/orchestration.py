@@ -97,7 +97,6 @@ class AudienceGetSchema(Schema):
 
         Args:
             data (dict): The audience object
-            many (bool): If there are many to process
         Returns:
             Response: Returns a audience object
 
