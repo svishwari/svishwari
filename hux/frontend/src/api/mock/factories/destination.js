@@ -1,7 +1,6 @@
-import { Factory } from "miragejs"
 import faker from "faker"
 
-export default Factory.extend({
+export default {
   name: "Facebook",
 
   type: "facebook",
@@ -56,4 +55,4 @@ export default Factory.extend({
       description: "This field is required for...",
     },
   },
-})
+}
