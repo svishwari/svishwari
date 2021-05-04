@@ -8,13 +8,13 @@
     <v-row class="pt-10 pr-7 pb-7 pl-7">
       <v-col cols="6" class="d-flex align-end">
         <v-icon> mdi-cloud-download-outline </v-icon>
-        <span class="font-weight-light ml-2 mt-1">Data Sources</span>
+        <h5 class="font-weight-light text-h5 ml-2 mt-1">Data Sources</h5>
         <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
       </v-col>
 
       <v-col cols="6" class="d-flex align-end">
         <v-icon> mdi-map-marker-circle </v-icon>
-        <span class="font-weight-light ml-2 mt-1">Destinations</span>
+        <h5 class="font-weight-light text-h5 ml-2 mt-1">Destinations</h5>
         <router-link
           :to="{ name: 'add-destination' }"
           class="text-decoration-none"
@@ -67,7 +67,7 @@
           <template v-slot:icon> mdi-alert-circle-outline </template>
           <template v-slot:title> Oops! There’s nothing here yet </template>
           <template v-slot:subtitle>
-            To create a connection, a data source must be imported!
+            To create a connection, you need to select a destination!
             <br />
             Begin by selecting the plus button above.
           </template>

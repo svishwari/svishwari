@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="text-center"
+    class="text-center rounded-lg"
     min-width="220px"
     max-width="260px"
     :disabled="!active"
