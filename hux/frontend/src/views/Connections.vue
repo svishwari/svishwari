@@ -16,7 +16,7 @@
         <v-icon> mdi-map-marker-circle </v-icon>
         <span class="font-weight-light ml-2 mt-1">Destinations</span>
         <router-link
-          :to="{ path: '/connections/destinations/new' }"
+          :to="{ name: 'add-destination' }"
           class="text-decoration-none"
         >
           <v-icon class="ml-2 add-icon" color="primary">
@@ -25,7 +25,7 @@
         </router-link>
         <v-spacer></v-spacer>
         <router-link
-          :to="{ path: '/connections/destinations' }"
+          :to="{ name: 'destinations' }"
           class="text-decoration-none"
         >
           <span

@@ -89,7 +89,7 @@
         ></huxButton>
         <huxButton
           v-if="isValidating"
-          class="validating-connection"
+          class="processing-button"
           ButtonText="Validating..."
           variant="primary"
           size="large"
@@ -199,27 +199,6 @@ export default {
     border: 1px solid #e2eaec !important;
     .validation-field {
       min-width: 50%;
-    }
-  }
-  .validating-connection {
-    background-size: 300%;
-    background-image: linear-gradient(
-      270deg,
-      #43b02a 11.98%,
-      #00a3e0 50%,
-      #005587 88%
-    );
-    animation: bg-animation 2s infinite;
-    @keyframes bg-animation {
-      0% {
-        background-position: left;
-      }
-      50% {
-        background-position: right;
-      }
-      100% {
-        background-position: left;
-      }
     }
   }
 }
