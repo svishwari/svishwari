@@ -93,8 +93,8 @@
     <v-divider class="mt-10" />
 
     <v-subheader> Hux Slider</v-subheader>
-    <hux-slider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
-    
+    <huxSlider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
+
     <v-divider class="mt-10" />
 
     <v-subheader> Hux Table</v-subheader>
