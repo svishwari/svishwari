@@ -5,14 +5,14 @@
     :step="step"
     thumb-label="always"
     v-model="localValue"
-    class="huvSlider"
+    class="huxSlider"
+    @end="onFinalValue"
   ></v-range-slider>
 </template>
 
 <script>
 export default {
   name: "huxSlider",
-  components: {},
   props: {
     value: {
       type: Array,
@@ -40,11 +40,16 @@ export default {
       },
     },
   },
+  methods: {
+    onFinalValue: function (value) {
+      this.$emit("onFinalValue", value)
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-.huvSlider {
+.huxSlider {
   ::v-deep .v-input__control {
     .v-input__slot {
       .v-slider__track-container {
