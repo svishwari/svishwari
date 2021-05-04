@@ -71,6 +71,20 @@ CDP_DATA_SOURCE_DESCRIPTION = "Cdp Data Source body"
 CDP_DATA_SOURCE_NAME_DESCRIPTION = "Name of the cdp data source"
 CDP_DATA_SOURCE_CATEGORY_DESCRIPTION = "Category of the cdp data source"
 
+# Authentication API fields
+AUTHENTICATION_TAG = "authenticate"
+AUTHENTICATION_DESCRIPTION = "Authentication API"
+AUTHENTICATION_ENDPOINT = "authenticate"
+AUTHENTICATION_TOKEN = "access_token"
+CANNOT_AUTHENTICATE_USER = "Error authenticating user."
+
+AUTHENTICATION_DETAILS = "authentication_details"
+AUTHENTICATION_TOKEN = "token"
+AUTHENTICATION_ACCESS_TOKEN = "access_token"
+AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
+AUTHENTICATION_OKTA_CLIENT_ID = "OKTA-CLIENT-ID"
+AUTHENTICATION_OKTA_ISSUER = "OKTA-ISSUER"
+
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"

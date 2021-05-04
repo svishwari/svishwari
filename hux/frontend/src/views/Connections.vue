@@ -15,14 +15,26 @@
       <v-col cols="6" class="d-flex align-end">
         <v-icon> mdi-map-marker-circle </v-icon>
         <span class="font-weight-light ml-2 mt-1">Destinations</span>
-        <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
-        <v-spacer></v-spacer>
-        <span
-          class="add-icon font-weight-light ml-2 mt-1 float-right primary--text"
+        <router-link
+          :to="{ name: 'add-destination' }"
+          class="text-decoration-none"
         >
-          View Destinations Details
-          <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
-        </span>
+          <v-icon class="ml-2 add-icon" color="primary">
+            mdi-plus-circle
+          </v-icon>
+        </router-link>
+        <v-spacer></v-spacer>
+        <router-link
+          :to="{ name: 'destinations' }"
+          class="text-decoration-none"
+        >
+          <span
+            class="add-icon font-weight-light ml-2 mt-1 float-right primary--text"
+          >
+            View Destinations Details
+            <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
+          </span>
+        </router-link>
       </v-col>
 
       <v-col cols="6 pt-0">
@@ -40,11 +52,7 @@
       <v-col cols="6 pt-0">
         <DestinationListCard v-for="item in destinations" :key="item.title">
           <template v-slot:logo>
-            <v-img
-              class="elevation-6"
-              :alt="item.title"
-              :src="getImgUrl(item)"
-            ></v-img>
+            <Logo :type="item.logo" />
           </template>
           <template v-slot:title>
             {{ item.title }}
@@ -59,13 +67,14 @@
 import { mapGetters, mapActions } from "vuex"
 
 import DestinationListCard from "@/components/DestinationListCard"
+import Logo from "@/components/common/Logo"
 import EmptyState from "@/components/EmptyState"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 
 export default {
   name: "connections",
-  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb },
+  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb, Logo },
   data() {
     return {
       items: [
@@ -96,9 +105,6 @@ export default {
   },
   methods: {
     ...mapActions(["getAllDestinations"]),
-    getImgUrl(item) {
-      return item.logoUrl
-    },
   },
   async mounted() {
     await this.getAllDestinations()
