@@ -3,8 +3,8 @@ purpose of this file is to house route utilities
 """
 from typing import Any
 from pymongo import MongoClient
-from huxunify.api.config import MONGO_DB_CONFIG
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunify.api.config import MONGO_DB_CONFIG
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
