@@ -27,6 +27,7 @@ steps:
           - cf_export BUILD_NAME=unified-api
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
           - cf_export FILE_NAME=values-main-use1-hux-unified-dev1.yaml
+          - cf_export TECTON_API=https://decisioning-client.tecton.ai/api/v1
 
       BuildNumber:
         stage: prepare
