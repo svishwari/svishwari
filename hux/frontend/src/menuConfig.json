@@ -7,12 +7,12 @@
       "link": "/overview"
     },
     {
-      "label" : "ORCHESTRATION",
+      "label" : "Orchestration",
       "menu": [
         { 
-          "icon": "mdi-bullhorn-outline", 
-          "title": "Hux Campaigns", 
-          "link": "/campaign"
+          "icon": "mdi-bullhorn-outline",
+          "title": "Engagements", 
+          "link": "engagements"
         },
         { 
           "icon": "mdi-flip-h mdi-account-plus-outline", 
@@ -22,39 +22,34 @@
       ] 
     },
     {
-      "label" : "DECISIONING",
+      "label" : "Decisioning",
       "menu": [
         { 
-          "icon": "mdi-tune", 
+          "icon": "mdi-tune-vertical-variant", 
           "title": "Models", 
           "link": "/models"
         }
       ] 
     },
     {
-      "label" : "DATA MANAGEMENT",
+      "label" : "Data Management",
       "menu": [
         { 
-          "icon": "mdi-connection", 
-          "title": "Connections", 
-          "link": "/connections"
+          "icon": "mdi-account-details-outline", 
+          "title": "Customer Profiles", 
+          "link": "/profiles"
         },
         { 
           "icon": "mdi-account-search-outline", 
           "title": "Identity", 
           "link": "/identity"
         },
-        { 
-          "icon": "mdi-account-details-outline", 
-          "title": "Profiles", 
-          "link": "/profiles",
-          "menu": [
-            { "title": "Settings", "link": "/settings" },
-            { "title": "Logout", "link": "/Logout" }
-          ]
+        {
+          "icon": "mdi-connection", 
+          "title": "Connections", 
+          "link": "/connections"
         }
       ] 
     }
   ]
 }
-
