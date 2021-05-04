@@ -22,7 +22,7 @@ steps:
       BuildName:
         stage: prepare
         title: Set build variables
-        image: alpine
+        image: huxhub.repo.mgnt.in/alpine
         commands:
           - cf_export BUILD_NAME=unified-api
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
@@ -46,7 +46,7 @@ steps:
     stage: build_tag
     description: Set docker tag from build number
     type: freestyle
-    image: alpine
+    image: huxhub.repo.mgnt.in/alpine
     commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
@@ -56,7 +56,7 @@ steps:
   #   stage: build_tag
   #   description: Set docker tag based Git tag
   #   type: freestyle
-  #   image: alpine
+  #   image: huxhub.repo.mgnt.in/alpine
   #   commands:
   #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
   #   when:
