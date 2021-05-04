@@ -9,11 +9,6 @@ COPY ./lib /app/lib
 COPY ./hux/api /app/hux-unified/api
 COPY .pylintrc /app
 
-# This line allows the env variable to be picked up from Codefresh
-ARG ARTIFACTORY_PYTHON_READ
-ARG JFROG_USERNAME
-ARG JFROG_PASSWORD
-
 # install pipenv
 RUN pip install --upgrade pip
 RUN pip install pipenv
