@@ -2,7 +2,7 @@ import Vue from "vue"
 import VueRouter from "vue-router"
 
 import auth from "@/auth"
-import { pageTitle } from '@/utils'
+import { pageTitle } from "@/utils"
 
 Vue.use(VueRouter)
 
@@ -62,7 +62,7 @@ const routes = [
     component: () => import("@/views/Audiences/Configuration.vue"),
     meta: {
       layout: "app",
-      title: "Audiences | Hux Unified UI",
+      title: "Audiences",
       requiresAuth: true,
     },
   },
@@ -97,22 +97,12 @@ const routes = [
     },
   },
   {
-    path: "/destinations",
-    name: "destinations",
-    component: () => import("@/views/Connections"),
-    meta: {
-      layout: "app",
-      title: "Destinations",
-      requiresAuth: true,
-    },
-  },
-  {
     path: "/connections/destinations/new",
     name: "add-destination",
     component: () => import("@/views/Destinations/Configuration.vue"),
     meta: {
       layout: "app",
-      title: "Add a Destination | Hux Unified UI",
+      title: "Add a Destination",
       requiresAuth: true,
     },
   },
@@ -122,7 +112,7 @@ const routes = [
     component: () => import("@/views/Destinations/Listing.vue"),
     meta: {
       layout: "app",
-      title: "Destinations | Hux Unified UI",
+      title: "Destinations",
       requiresAuth: true,
     },
   },
