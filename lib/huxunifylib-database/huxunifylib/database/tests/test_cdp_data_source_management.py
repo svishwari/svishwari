@@ -10,7 +10,7 @@ from huxunifylib.database.client import DatabaseClient
 
 
 class TestCdpDataSourceManagement(unittest.TestCase):
-    """ Test cdp data source management module. """
+    """Test cdp data source management module."""
 
     def setUp(self) -> None:
         # init mongo patch initially
