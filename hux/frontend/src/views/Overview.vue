@@ -148,7 +148,7 @@ export default {
       .v-card {
         margin-right: 15px;
         &.v-card--disabled {
-          background: var(--v-background-base);;
+          background: var(--v-background-base);
         }
       }
     }

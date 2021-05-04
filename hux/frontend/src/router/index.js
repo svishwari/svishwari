@@ -2,7 +2,7 @@ import Vue from "vue"
 import VueRouter from "vue-router"
 
 import auth from "@/auth"
-import { pageTitle } from '@/utils'
+import { pageTitle } from "@/utils"
 
 Vue.use(VueRouter)
 

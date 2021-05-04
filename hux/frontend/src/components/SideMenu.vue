@@ -132,7 +132,7 @@ export default {
 
   .v-list-item--active {
     &::before {
-      background-color: var(--v-white-base);;
+      background-color: var(--v-white-base);
       opacity: 0.1;
     }
   }
