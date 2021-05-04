@@ -24,18 +24,21 @@
       size="large"
       icon="mdi-check"
       iconPosition="left"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Add"
       v-bind:isOutlined="true"
       size="x-small"
       variant="darkGrey"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Leave configuration"
       variant="primary"
       size="large"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Success!"
@@ -44,23 +47,27 @@
       variant="success"
       size="x-large"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Cancel &amp; Return"
       variant="tertiary"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Disabled"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:isDisabled="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Loader"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:enableLoading="true"
+      class="ma-2"
     ></huxButton>
 
     <v-divider class="mt-10" />
@@ -82,6 +89,11 @@
         <Breadcrumb :items="items" />
       </template>
     </PageHeader>
+
+    <v-divider class="mt-10" />
+
+    <v-subheader> Hux Slider</v-subheader>
+    <huxSlider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
 
     <v-divider class="mt-10" />
 
@@ -138,25 +150,24 @@
 
     <Logo type="tableau"></Logo>
     <Logo type="tableau" :size="48"></Logo>
-    
+
     <Logo type="google-ads"></Logo>
     <Logo type="google-ads" :size="48"></Logo>
 
     <Logo type="google-analytics"></Logo>
     <Logo type="google-analytics" :size="48"></Logo>
 
-    <Logo type="aqfer" ></Logo>
+    <Logo type="aqfer"></Logo>
     <Logo type="aqfer" :size="48"></Logo>
 
-    <Logo type="netsuite" ></Logo>
+    <Logo type="netsuite"></Logo>
     <Logo type="netsuite" :size="48"></Logo>
 
-    <Logo type="salesforce" ></Logo>
+    <Logo type="salesforce"></Logo>
     <Logo type="salesforce" :size="48"></Logo>
 
-    <Logo type="twillio" ></Logo>
-    <Logo type="twillio" :size="48"></Logo>
-
+    <Logo type="twilio"></Logo>
+    <Logo type="twilio" :size="48"></Logo>
   </v-container>
 </template>
 
@@ -171,6 +182,7 @@ import PageHeader from "@/components/PageHeader"
 import Drawer from "@/components/common/Drawer"
 import MetricCard from "@/components/common/MetricCard"
 import Logo from "@/components/common/Logo"
+import HuxSlider from "./HuxSlider.vue"
 
 export default {
   name: "Components",
@@ -185,6 +197,7 @@ export default {
     Drawer,
     MetricCard,
     Logo,
+    HuxSlider,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -196,6 +209,7 @@ export default {
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
+      sliderRange: [0.25, 0.65],
       DropdownData: [
         { value: "1 - 25" },
         { value: "26 - 50" },

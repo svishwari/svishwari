@@ -25,6 +25,7 @@ pymongo= "3.11.3"
 mongomock= "3.22.1"
 python-decouple= "3.4"
 requests-mock= "1.9.2"
+requests= "2.25.1"
 
 [dev-packages]
 pytest = "*"

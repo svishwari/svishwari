@@ -1,0 +1,205 @@
+<template>
+  <div class="destinations-view-wrap">
+    <PageHeader class="background-border">
+      <template slot="left">
+        <Breadcrumb :items="items" />
+      </template>
+      <template slot="right">
+        <v-icon color="primary" size="22" class="icon-border pa-2">
+          mdi-download
+        </v-icon>
+      </template>
+    </PageHeader>
+    <PageHeader
+      bgColor="background"
+      style="height: 70px; border: 1px solid #d0d0ce !important"
+    >
+      <template slot="left">
+        <v-icon color="primary" class="mr-3 cursor-pointer" large>
+          mdi-filter-variant
+        </v-icon>
+        <v-icon class="mr-3 cursor-pointer" large> mdi-magnify </v-icon>
+      </template>
+
+      <template slot="right">
+        <v-icon color="primary" large class="mr-3 cursor-pointer">
+          mdi-refresh
+        </v-icon>
+        <v-icon color="primary" large class="mr-3 cursor-pointer">
+          mdi-format-list-bulleted
+        </v-icon>
+        <v-icon color="lightGrey" large class="mr-3 cursor-pointer">
+          mdi-dots-grid
+        </v-icon>
+        <router-link
+          :to="{ path: '/connections/destinations/new' }"
+          class="text-decoration-none"
+        >
+          <huxButton
+            ButtonText="Destination"
+            icon="mdi-plus"
+            iconPosition="left"
+            variant="primary"
+            size="large"
+            v-bind:isTile="true"
+          ></huxButton>
+        </router-link>
+      </template>
+    </PageHeader>
+    <PageHeader
+      bgColor="aliceBlue"
+      style="height: 70px; border: 1px solid #d0d0ce !important"
+    >
+      <template slot="left">
+        <div class="d-flex filters-wrapper">
+          <DropdownMenu
+            v-for="(item, index) in filters"
+            :key="item.name"
+            v-model="item.selectedValue"
+            v-bind:labelText="item.name"
+            v-bind:menuItem="item.values"
+            @updatelabelText="onFilterSelection(index)"
+          />
+        </div>
+      </template>
+    </PageHeader>
+    <hux-table
+      :columnDef="columnDefs"
+      :tableData="rowData"
+      height="250px"
+      hasCheckBox
+    />
+  </div>
+</template>
+
+<script>
+import PageHeader from "@/components/PageHeader"
+import Breadcrumb from "@/components/common/Breadcrumb"
+import DropdownMenu from "@/components/common/DropdownMenu"
+import huxButton from "@/components/common/huxButton"
+import HuxTable from "@/components/common/huxTable.vue"
+
+export default {
+  name: "connections",
+  components: { huxButton, PageHeader, Breadcrumb, DropdownMenu, HuxTable },
+  data() {
+    return {
+      items: [
+        {
+          text: "Connections",
+          disabled: false,
+          href: "/connections",
+          icon: "mdi-connection",
+        },
+        {
+          text: "Destinations",
+          disabled: true,
+          href: this.$route.path,
+          icon: "mdi-map-marker-circle",
+        },
+      ],
+      // This is a temporary fix for table components
+      // This is a TODO item
+      filters: [
+        {
+          name: "No. of campaigns",
+          values: [
+            { value: "1-10" },
+            { value: "11-25" },
+            { value: "26-50" },
+            { value: "50+" },
+          ],
+          selectedValue: null,
+        },
+        {
+          name: "Updated by",
+          values: [
+            { value: "Susan Underwood" },
+            { value: "James Smith" },
+            { value: "Dan Thomas" },
+            { value: "Eli Handlebar" },
+          ],
+          selectedValue: null,
+        },
+        {
+          name: "Added by",
+          values: [
+            { value: "Susan Underwood" },
+            { value: "James Smith" },
+            { value: "Dan Thomas" },
+            { value: "Eli Handlebar" },
+          ],
+          selectedValue: null,
+        },
+      ],
+      columnDefs: [
+        {
+          headerName: "Destination",
+          field: "destinationName",
+          sortable: true,
+          width: "500",
+        },
+        { headerName: "Engagement(s)", field: "engagements", sortable: true },
+        {
+          headerName: "Last processed",
+          field: "lastProcessed",
+          sortable: true,
+        },
+        { headerName: "Updated by", field: "updatedBy", sortable: true },
+        { headerName: "Added date", field: "addedDate", sortable: true },
+        { headerName: "Added by", field: "addedBy", sortable: true },
+      ],
+      rowData: [
+        {
+          destinationName: "Facebook",
+          engagements: "5",
+          lastProcessed: "1 week ago",
+          updatedBy: "SU",
+          addedDate: "Yesterday",
+          addedBy: "RB",
+        },
+        {
+          destinationName: "Facebook",
+          engagements: "5",
+          lastProcessed: "1 week ago",
+          updatedBy: "SU",
+          addedDate: "Yesterday",
+          addedBy: "RB",
+        },
+        {
+          destinationName: "Facebook",
+          engagements: "5",
+          lastProcessed: "1 week ago",
+          updatedBy: "SU",
+          addedDate: "Yesterday",
+          addedBy: "RB",
+        },
+        {
+          destinationName: "Facebook",
+          engagements: "5",
+          lastProcessed: "1 week ago",
+          updatedBy: "SU",
+          addedDate: "Yesterday",
+          addedBy: "RB",
+        },
+      ],
+    }
+  },
+  methods: {
+    onFilterSelection: function (index) {
+      this.filters[index].name = this.filters[index].selectedValue
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+// Will be removed once table integrates filter
+.destinations-view-wrap {
+  .filters-wrapper {
+    ::v-deep .avatar-menu {
+      margin-right: 10px;
+    }
+  }
+}
+</style>

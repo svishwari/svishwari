@@ -4,9 +4,9 @@
       <Logo />
       <h1>Welcome to Hux!</h1>
       <pre>
-      An all-purpose tool to transform raw data into powerful market insights and deliberate campaigns:
-      Aggregated Customer Data • Customized CDP • Deep Dive Insights • Personalized Campaigns 
-      Targeted Segmentation • Addressable Audiences • Measure & Optimize
+      An all-purpose tool to transform raw data into powerful market insights and deliberate engagements:
+      Aggregated Customer Data • Customized CDP • Deep Dive Insights • Personalized Engagements 
+      Targeted Segmentation • Addressable Audiences • Measure &amp; Optimize
       </pre>
       <h2>All Together, Entirely</h2>
       <v-btn
