@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  name: "footer",
+  name: "hux-footer",
 }
 </script>
 <style lang="scss" scoped>
