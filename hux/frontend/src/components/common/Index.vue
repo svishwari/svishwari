@@ -85,6 +85,10 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Hux Slider</v-subheader>
+    <hux-slider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
+    <v-divider class="mt-10" />
+
     <v-subheader> Hux Table</v-subheader>
     <hux-table
       :columnDef="columnDefs"
@@ -138,25 +142,24 @@
 
     <Logo type="tableau"></Logo>
     <Logo type="tableau" :size="48"></Logo>
-    
+
     <Logo type="google-ads"></Logo>
     <Logo type="google-ads" :size="48"></Logo>
 
     <Logo type="google-analytics"></Logo>
     <Logo type="google-analytics" :size="48"></Logo>
 
-    <Logo type="aqfer" ></Logo>
+    <Logo type="aqfer"></Logo>
     <Logo type="aqfer" :size="48"></Logo>
 
-    <Logo type="netsuite" ></Logo>
+    <Logo type="netsuite"></Logo>
     <Logo type="netsuite" :size="48"></Logo>
 
-    <Logo type="salesforce" ></Logo>
+    <Logo type="salesforce"></Logo>
     <Logo type="salesforce" :size="48"></Logo>
 
-    <Logo type="twillio" ></Logo>
+    <Logo type="twillio"></Logo>
     <Logo type="twillio" :size="48"></Logo>
-
   </v-container>
 </template>
 
@@ -171,6 +174,7 @@ import PageHeader from "@/components/PageHeader"
 import Drawer from "@/components/common/Drawer"
 import MetricCard from "@/components/common/MetricCard"
 import Logo from "@/components/common/Logo"
+import HuxSlider from "./HuxSlider.vue"
 
 export default {
   name: "Components",
@@ -185,6 +189,7 @@ export default {
     Drawer,
     MetricCard,
     Logo,
+    HuxSlider,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -196,6 +201,7 @@ export default {
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
+      sliderRange: [0.25, 0.65],
       DropdownData: [
         { value: "1 - 25" },
         { value: "26 - 50" },
