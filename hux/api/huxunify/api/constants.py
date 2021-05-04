@@ -63,6 +63,14 @@ DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
 
+# CDP Data Source Constants
+CDP_DATA_SOURCE_NAME = "name"
+CDP_DATA_SOURCE_CATEGORY = "category"
+CDP_DATA_SOURCE_DESCRIPTION = "Cdp Data Source body"
+
+CDP_DATA_SOURCE_NAME_DESCRIPTION = "Name of the cdp data source"
+CDP_DATA_SOURCE_CATEGORY_DESCRIPTION = "Category of the cdp data source"
+
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
