@@ -1,128 +1,129 @@
 <template>
-  <div class="add-destination--wrap">
-    <div class="pb-10">
-      <h5 class="text-h5 font-weight-light">Add a destination</h5>
-      <div class="font-weight-regular">
-        Please fill out the information below to connect a new destination.
-      </div>
+  <div class="add-destination--wrap font-weight-regular white">
+    <div class="mb-10">
+      <h4 class="text-h4 font-weight-light">Add a destination</h4>
+      <p>Please fill out the information below to connect a new destination.</p>
     </div>
-    <div>
-      Select a destination
-      <div v-if="isDestinationSelected" class="d-flex align-center">
+
+    <label class="d-flex mb-2">Select a destination</label>
+
+    <div class="d-flex align-center mb-10">
+      <template v-if="isDestinationSelected">
         <Logo :type="destinations[selectedDestinationIndex].type" />
-        <div class="pl-2">
+        <span class="pl-2">
           {{ destinations[selectedDestinationIndex].name }}
-        </div>
-        <a class="pl-2" color="primary" @click="drawer = !drawer">Change</a>
-      </div>
-      <div v-else>
-        <v-btn fab x-small color="primary" @click="drawer = !drawer">
+        </span>
+        <a class="pl-2" color="primary" @click="toggleDrawer()">Change</a>
+      </template>
+      <template v-else>
+        <v-btn fab x-small color="primary" @click="toggleDrawer()">
           <v-icon dark> mdi-plus </v-icon>
         </v-btn>
-      </div>
-      <drawer v-model="drawer">
-        <template v-slot:header-left>
-          <div class="d-flex align-baseline">
-            <h5 class="text-h5 font-weight-light pr-2">Select a destination</h5>
-            <div class="font-weight-regular">(select one)</div>
-          </div>
-        </template>
-        <template v-slot:footer-left>
-          <div class="d-flex align-baseline">
-            <div class="font-weight-regular">
-              {{ destinations.length }} results
-            </div>
-          </div>
-        </template>
-        <template v-slot:default>
-          <div class="ma-5">
-            <CardHorizontal
-              v-for="(destination, index) in destinations"
-              :key="destination.id"
-              :title="destination.name"
-              :icon="destination.type"
-              :isAdded="
-                destination.is_added || index == selectedDestinationIndex
-              "
-              :isAvailable="destination.is_enabled"
-              :isAlreadyAdded="destination.is_added"
-              @click="onSingleDestinationClick(index)"
-              class="my-3"
-            />
-          </div>
-        </template>
-      </drawer>
-      <div
-        v-if="isDestinationSelected"
-        class="d-flex flex-wrap background destination-auth-wrap mt-11 px-7 py-6 rounded-lg"
-      >
-        <v-form v-model="isFormValid" class="d-flex flex-wrap">
-          <TextField
+      </template>
+    </div>
+
+    <v-form v-model="isFormValid" v-if="isDestinationSelected">
+      <div class="destination-auth-wrap background pa-5 rounded mb-10">
+        <v-row>
+          <v-col
             v-for="item in Object.values(
               destinations[selectedDestinationIndex].auth_details
             )"
-            :labelText="item.name"
+            cols="6"
             :key="item.name"
-            :rules="[rules.required]"
-            :placeholderText="
-              item.type == 'text' ? `Enter ${item.name}` : `**********`
-            "
-            :InputType="item.type"
-            :help-text="item.description"
-            @blur="changeValidationStatus"
-            icon="mdi-alert-circle-outline"
-            class="pa-2 validation-field"
-          ></TextField>
-        </v-form>
+          >
+            <TextField
+              :labelText="item.name"
+              :rules="[rules.required]"
+              :placeholderText="
+                item.type == 'text' ? `Enter ${item.name}` : `**********`
+              "
+              :InputType="item.type"
+              :help-text="item.description"
+              @blur="changeValidationStatus"
+              icon="mdi-alert-circle-outline"
+              class="mb-0"
+            ></TextField>
+          </v-col>
+        </v-row>
       </div>
-      <div
-        v-if="isDestinationSelected"
-        class="d-flex flex-wrap justify-end mt-4"
-      >
-        <huxButton
+      <div class="d-flex flex-wrap justify-end">
+        <hux-button
           v-if="!isValidating"
-          :ButtonText="
+          :button-text="
             isConnectionValidated ? 'Success!' : 'Validate connection'
           "
           :icon="isConnectionValidated ? 'mdi-check' : null"
-          :iconPosition="isConnectionValidated ? 'left' : null"
+          :icon-position="isConnectionValidated ? 'left' : null"
           :variant="isConnectionValidated ? 'success' : 'primary'"
           size="large"
           v-bind:isTile="true"
           v-bind:isDisabled="!isFormValid"
           @click="validate()"
-        ></huxButton>
-        <huxButton
+        ></hux-button>
+        <hux-button
           v-if="isValidating"
           class="processing-button"
-          ButtonText="Validating..."
+          button-text="Validating..."
           variant="primary"
           size="large"
           v-bind:isTile="true"
-        ></huxButton>
+        ></hux-button>
       </div>
-    </div>
-    <HuxFooter>
+    </v-form>
+
+    <hux-footer>
       <template v-slot:left>
-        <huxButton
-          ButtonText="Cancel"
+        <hux-button
+          button-text="Cancel"
           variant="tertiary"
           size="large"
           v-bind:isTile="true"
           @click="cancelDestination()"
-        ></huxButton>
+        ></hux-button>
       </template>
       <template v-slot:right>
-        <huxButton
-          ButtonText="Add &amp; return"
+        <hux-button
+          button-text="Add &amp; return"
           variant="primary"
           size="large"
           v-bind:isTile="true"
           v-bind:isDisabled="!isConnectionValidated"
-          @click="addDestination"
-        ></huxButton>
+          @click="addDestination()"
+        ></hux-button>
       </template>
-    </HuxFooter>
+    </hux-footer>
+
+    <drawer v-model="drawer">
+      <template v-slot:header-left>
+        <div class="d-flex align-baseline">
+          <h5 class="text-h5 font-weight-light pr-2">Select a destination</h5>
+          <div class="font-weight-regular">(select one)</div>
+        </div>
+      </template>
+      <template v-slot:footer-left>
+        <div class="d-flex align-baseline">
+          <div class="font-weight-regular">
+            {{ destinations.length }} results
+          </div>
+        </div>
+      </template>
+      <template v-slot:default>
+        <div class="ma-5">
+          <CardHorizontal
+            v-for="(destination, index) in destinations"
+            :key="destination.id"
+            :title="destination.name"
+            :icon="destination.type"
+            :isAdded="destination.is_added || index == selectedDestinationIndex"
+            :isAvailable="destination.is_enabled"
+            :isAlreadyAdded="destination.is_added"
+            @click="onSingleDestinationClick(index)"
+            class="my-3"
+          />
+        </div>
+      </template>
+    </drawer>
   </div>
 </template>
 
@@ -174,12 +175,17 @@ export default {
   methods: {
     ...mapActions(["getAllDestinations"]),
 
-    onSingleDestinationClick: function (index) {
+    toggleDrawer() {
+      this.drawer = !this.drawer
+    },
+
+    onSingleDestinationClick(index) {
       this.selectedDestinationIndex = index
       this.isConnectionValidated = false
       setTimeout(() => (this.drawer = false), 470)
     },
-    validate: function () {
+
+    validate() {
       this.isValidating = true
       // This is a TODO need to replace with actual API call
       setTimeout(() => {
@@ -187,14 +193,17 @@ export default {
         this.isConnectionValidated = true
       }, 2000)
     },
-    changeValidationStatus: function () {
+
+    changeValidationStatus() {
       this.isConnectionValidated = false
     },
-    addDestination: function () {
+
+    addDestination() {
       // This is a TODO need to replace with actual API call
       this.$router.push("/connections")
     },
-    cancelDestination: function () {
+
+    cancelDestination() {
       // This is a TODO need to add modal that confirms to leave configuration
       this.$router.push("/connections")
     },
@@ -208,13 +217,11 @@ export default {
 
 <style lang="scss" scoped>
 .add-destination--wrap {
-  padding: 40px 13vw;
+  padding: 4rem 10rem;
+
   .destination-auth-wrap {
     // This is a temporary fix need to find alternative
     border: 1px solid #e2eaec !important;
-    .validation-field {
-      min-width: 50%;
-    }
   }
 }
 </style>

@@ -4,10 +4,8 @@
     app
     paddless
     fixed
-    height="80"
     inset
     color="background"
-    elevation="5"
   >
     <div class="footer--left">
       <slot name="left"></slot>
@@ -25,6 +23,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .app-footer-wrap {
-  padding: 14px 169px;
+  padding: 1rem 10rem;
+  box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
 }
 </style>
