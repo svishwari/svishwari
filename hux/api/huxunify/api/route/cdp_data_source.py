@@ -11,8 +11,7 @@ from connexion.exceptions import ProblemException
 from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
-# from pymongo import MongoClient
-from mongomock import MongoClient
+from pymongo import MongoClient
 
 from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
 from huxunifylib.database import constants as db_constants
@@ -205,9 +204,7 @@ class CreateCdpDataSource(SwaggerView):
                 "message": f"Did not receive data source name or data source category"
                 }, HTTPStatus.BAD_REQUEST
 
-        print("Running query")
         response = create_data_source(get_db_client(), name=data_source_name, category=data_source_category)
-        print("query returned: " + str(response))
 
         return response, HTTPStatus.OK
 
