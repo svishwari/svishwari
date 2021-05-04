@@ -8,7 +8,7 @@ WORKDIR /app/hux-unified/api
 COPY ./lib /app/lib
 COPY ./hux/api /app/hux-unified/api
 COPY .pylintrc /app
-COPY Pipfile* /app/hux-unified/api
+COPY ./hux/api/Pipfile* /app/hux-unified/api
 
 # This line allows the env variable to be picked up from Codefresh
 ARG ARTIFACTORY_PYTHON_READ
