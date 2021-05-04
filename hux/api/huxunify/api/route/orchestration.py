@@ -10,7 +10,6 @@ from flask import Blueprint, request
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
-# pylint: disable=no-name-in-module
 from huxunifylib.database import (
     orchestration_management,
 )
@@ -135,7 +134,7 @@ class AudienceGetView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        audience = orchestration_management.get_audience_doc(
+        audience = orchestration_management.get_audience(
             get_db_client(), valid_id
         )
 
@@ -313,7 +312,7 @@ class AudiencePutView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        audience_doc = orchestration_management.create_audience(
+        audience_doc = orchestration_management.update_audience(
             database=get_db_client(),
             audience_id=audience_id,
             name=body[api_c.AUDIENCE_NAME],
