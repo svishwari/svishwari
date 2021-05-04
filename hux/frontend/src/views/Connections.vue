@@ -50,17 +50,28 @@
       </v-col>
 
       <v-col cols="6 pt-0">
-        <DestinationListCard
-          v-for="destination in destinations"
-          :key="destination.id"
-        >
-          <template v-slot:logo>
-            <Logo :type="destination.type" />
+        <template v-if="hasAddedDestinations">
+          <DestinationListCard
+            v-for="destination in addedDestinations"
+            :key="destination.id"
+          >
+            <template v-slot:logo>
+              <Logo :type="destination.type" />
+            </template>
+            <template v-slot:title>
+              {{ destination.name }}
+            </template>
+          </DestinationListCard>
+        </template>
+        <EmptyState v-else>
+          <template v-slot:icon> mdi-alert-circle-outline </template>
+          <template v-slot:title> Oops! There’s nothing here yet </template>
+          <template v-slot:subtitle>
+            To create a connection, a data source must be imported!
+            <br />
+            Begin by selecting the plus button above.
           </template>
-          <template v-slot:title>
-            {{ destination.name }}
-          </template>
-        </DestinationListCard>
+        </EmptyState>
       </v-col>
     </v-row>
   </div>
@@ -96,8 +107,12 @@ export default {
   computed: {
     ...mapGetters(["destinations"]),
 
-    hasDestinations() {
-      return Boolean(this.destinations && this.destinations.length > 1)
+    addedDestinations() {
+      return this.destinations.filter((destination) => destination.is_added)
+    },
+
+    hasAddedDestinations() {
+      return Boolean(this.addedDestinations && this.addedDestinations.length)
     },
   },
 
