@@ -57,6 +57,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/new",
+    name: "createAudience",
+    component: () => import("@/views/Audiences/Configuration.vue"),
+    meta: {
+      layout: "app",
+      title: "Audiences | Hux Unified UI",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/models",
     name: "models",
     component: () => import("@/views/Models"),
@@ -93,6 +103,26 @@ const routes = [
     meta: {
       layout: "app",
       title: "Destinations",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/connections/destinations/new",
+    name: "add-destination",
+    component: () => import("@/views/Destinations/Configuration.vue"),
+    meta: {
+      layout: "app",
+      title: "Add a Destination | Hux Unified UI",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/connections/destinations",
+    name: "destinations",
+    component: () => import("@/views/Destinations/Listing.vue"),
+    meta: {
+      layout: "app",
+      title: "Destinations | Hux Unified UI",
       requiresAuth: true,
     },
   },

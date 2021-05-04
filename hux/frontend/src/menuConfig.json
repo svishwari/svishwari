@@ -4,20 +4,20 @@
       "label" : null,
       "icon": "mdi-home-outline",
       "title": "Overview",
-      "link": "overview"
+      "link": "/overview"
     },
     {
       "label" : "Orchestration",
       "menu": [
         { 
-          "icon": "mdi-bullhorn-outline", 
+          "icon": "mdi-bullhorn-outline",
           "title": "Engagements", 
           "link": "engagements"
         },
         { 
           "icon": "mdi-flip-h mdi-account-plus-outline", 
           "title": "Audiences", 
-          "link": "audiences"
+          "link": "/audiences"
         }
       ] 
     },
@@ -27,7 +27,7 @@
         { 
           "icon": "mdi-tune-vertical-variant", 
           "title": "Models", 
-          "link": "models"
+          "link": "/models"
         }
       ] 
     },
@@ -44,7 +44,7 @@
           "title": "Identity", 
           "link": "/identity"
         },
-        { 
+        {
           "icon": "mdi-connection", 
           "title": "Connections", 
           "link": "/connections"
