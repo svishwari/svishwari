@@ -22,6 +22,7 @@
         size="large"
         :isDisabled="isAlreadyAdded"
         iconPosition="left"
+        class="ma-2"
       ></huxButton>
     </div>
   </v-card>

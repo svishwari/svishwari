@@ -24,18 +24,21 @@
       size="large"
       icon="mdi-check"
       iconPosition="left"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Add"
       v-bind:isOutlined="true"
       size="x-small"
       variant="darkGrey"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Leave configuration"
       variant="primary"
       size="large"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Success!"
@@ -44,23 +47,27 @@
       variant="success"
       size="x-large"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Cancel &amp; Return"
       variant="tertiary"
       v-bind:isTile="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Disabled"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:isDisabled="true"
+      class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Loader"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:enableLoading="true"
+      class="ma-2"
     ></huxButton>
 
     <v-divider class="mt-10" />
