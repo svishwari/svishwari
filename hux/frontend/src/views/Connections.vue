@@ -108,7 +108,8 @@ export default {
     ...mapGetters(["destinations"]),
 
     addedDestinations() {
-      return this.destinations.filter((destination) => destination.is_added)
+      return this.destinations
+      // return this.destinations.filter((destination) => destination.is_added)
     },
 
     hasAddedDestinations() {

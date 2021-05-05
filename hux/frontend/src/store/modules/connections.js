@@ -26,9 +26,34 @@ const actions = {
       console.error(error)
     }
   },
+
+  async addDestination({ commit }, destination) {
+    try {
+      const response = await api.destinations.update(
+        destination.id,
+        destination.auth_details
+      )
+      commit("SET_DESTINATIONS", response.data)
+    } catch (error) {
+      console.error(error)
+    }
+  },
+
+  async validateDestination({ commit }, destination) {
+    try {
+      const response = await api.destinations.validate(
+        destination.id,
+        destination.auth_details
+      )
+      commit("SET_ALL_DESTINATIONS", response.data)
+    } catch (error) {
+      console.error(error)
+    }
+  },
 }
 
 export default {
+  namespace: true,
   state,
   getters,
   mutations,

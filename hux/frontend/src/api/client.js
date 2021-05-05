@@ -20,4 +20,8 @@ Object.keys(resources).forEach((resource) => {
   }
 })
 
+client["destinations"].validate = (data) => {
+  http.post("/destinations/validate", data)
+}
+
 export default client

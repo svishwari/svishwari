@@ -24,7 +24,7 @@
       :label="placeholderText"
       :append-icon="appendIcon"
       :rules="rules"
-      :type="inputType"
+      :type="InputType"
       :background-color="backgroundColor"
       single-line
       outlined
@@ -68,7 +68,7 @@ export default {
       required: false,
       default: null,
     },
-    inputType: {
+    InputType: {
       type: String,
       required: false,
       default: "text",
