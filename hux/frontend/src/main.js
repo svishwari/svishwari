@@ -3,6 +3,7 @@ import Vue from "vue"
 import App from "@/App"
 import router from "./router"
 import store from "./store"
+import { makeServer } from "./api/mock/server"
 
 // Styles
 import "@mdi/font/css/materialdesignicons.css"
@@ -15,7 +16,7 @@ import vuetify from "./plugins/vuetify"
 
 // Layouts as usable components
 Vue.component("app-layout", AppLayout)
-Vue.component("default-Layout", DefaultLayout)
+Vue.component("default-layout", DefaultLayout)
 
 Vue.config.productionTip = false
 
@@ -25,6 +26,10 @@ Vue.filter("TitleCase", function (value) {
     .replace(/^./, (match) => match.toUpperCase())
     .trim()
 })
+
+if (process.env.NODE_ENV === "development") {
+  makeServer()
+}
 
 new Vue({
   router,

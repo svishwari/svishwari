@@ -12,6 +12,7 @@ OKTA_ID = "okta_id"
 DATA_MANAGEMENT_DATABASE = "data_management"
 CONSTANTS_COLLECTION = "constants"
 DATA_SOURCES_COLLECTION = "data_sources"
+CDP_DATA_SOURCES_COLLECTION = "cdp_data_sources"
 INGESTION_JOBS_COLLECTION = "ingestion_jobs"
 INGESTED_DATA_COLLECTION = "ingested_data"
 INGESTED_DATA_STATS_COLLECTION = "ingested_data_stats"
@@ -109,6 +110,10 @@ DATA_COUNT = "count"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_NAME = "name"
 AUDIENCE_FILTERS = "filters"
+AUDIENCE_FILTERS_AGGREGATOR = "filters_aggregator"
+AUDIENCE_FILTERS_SECTION_AGGREGATOR = "section_aggregator"
+AUDIENCE_FILTERS_SECTION = "section_filters"
+AUDIENCE_STATUS = "status"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
@@ -123,6 +128,8 @@ DEFAULT_AUDIENCE_STR = "Default Audience"
 MAX_AUDIENCE_SIZE_FOR_HASHED_FILE_DOWNLOAD = (
     "max_audience_size_for_hashed_file_download"
 )
+AUDIENCE_FILTER_AGGREGATOR_ANY = "any"
+AUDIENCE_FILTER_AGGREGATOR_ALL = "all"
 
 # Audience types
 CUSTOM_AUDIENCE = "custom_audience"
@@ -187,6 +194,14 @@ FIELD_HEADER = "header"
 FIELD_FIELD_MAPPING = "field_mapping"
 FIELD_FIELD_MAPPING_DEFAULT = "field_mapping_default"
 
+# CDP Data Source constants
+CDP_DATA_SOURCE_FIELD_NAME = "name"
+CDP_DATA_SOURCE_FIELD_CATEGORY = "category"
+CDP_DATA_SOURCE_FIELD_FEED_COUNT = "feed_count"
+CDP_DATA_SOURCE_FIELD_STATUS = "status"
+
+CDP_DATA_SOURCE_STATUS_ACTIVE = "Active"
+CDP_DATA_SOURCE_STATUS_PENDING = "Pending"
 
 DATA_ROUTER_BATCH_SIZE = "data_router_batch_size"
 AUDIENCE_ROUTER_BATCH_SIZE = "audience_router_batch_size"

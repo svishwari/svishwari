@@ -9,7 +9,10 @@
   >
     <v-list-item three-line>
       <v-list-item-content>
-        <v-list-item-title class="item-headline primary--text mt-1">
+        <v-list-item-title
+          class="item-headline mt-1"
+          v-bind:class="active ? 'primary--text ' : 'gray--text '"
+        >
           {{ title }}
         </v-list-item-title>
         <v-list-item-subtitle class="item-subtitle mb-3 neroBlack--text">
@@ -29,7 +32,6 @@ export default {
     icon: {
       type: String,
       required: false,
-      default: "mdi-plus",
     },
 
     title: {
@@ -65,9 +67,18 @@ export default {
 
 <style lang="scss" scoped>
 .metric-card-wrapper {
-  border: 1px solid #e2eaec;
+  border: 1px solid var(--v-zircon-base);
   .item-headline {
     font-size: 12px;
+  }
+  .v-list-item__title {
+    font-weight: 400;
+  }
+  &.v-card--disabled {
+    background-color: unset;
+    .v-list-item__title {
+      color: var(--v-gray-base);
+    }
   }
 }
 </style>

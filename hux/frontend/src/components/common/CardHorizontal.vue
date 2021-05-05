@@ -9,7 +9,7 @@
     height="60"
   >
     <div class="d-flex align-center">
-      <v-icon color="primary">{{ icon }}</v-icon>
+      <Logo :type="icon" />
       <div class="pl-2 font-weight-regular">{{ title }}</div>
     </div>
     <slot></slot>
@@ -22,6 +22,7 @@
         size="large"
         :isDisabled="isAlreadyAdded"
         iconPosition="left"
+        class="ma-2"
       ></huxButton>
     </div>
   </v-card>
@@ -29,23 +30,23 @@
 
 <script>
 import huxButton from "@/components/common/huxButton"
+import Logo from "@/components/common/Logo"
 export default {
   name: "card-horizontal",
   components: {
     huxButton,
+    Logo,
   },
 
   props: {
     icon: {
       type: String,
       required: false,
-      default: "mdi-plus",
     },
 
     title: {
       type: String,
       required: false,
-      default: "Info card title",
     },
 
     isAdded: {
@@ -83,6 +84,6 @@ export default {
 
 <style lang="scss" scoped>
 .card-horizontal-disabled {
-  border: 1px solid #e2eaec !important;
+  border: 1px solid var(--v-error-base) !important;
 }
 </style>
