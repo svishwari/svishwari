@@ -18,7 +18,7 @@ steps:
       BuildName:
         stage: prepare
         title: Set build variables
-        image: alpine
+        image: huxhub.repo.mgnt.in/alpine
         commands:
           - cf_export BUILD_NAME=unified-ui
           - cf_export JFROG_REGISTRY=unified-docker-dev-local
@@ -36,14 +36,14 @@ steps:
     title: Cloning ${{CF_REPO_NAME}} repository...
     type: git-clone
     repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
-    revision: '${{CF_BRANCH}}' 
+    revision: '${{CF_BRANCH}}'
 
   NumberTag:
     stage: build_tag
     description: Set docker tag from build number
     type: freestyle
-    image: alpine
-    commands: 
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
 # Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
@@ -52,8 +52,8 @@ steps:
   #   description: Set docker tag based Git tag
   #   type: freestyle
   #   image: alpine
-  #   commands: 
-  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}      
+  #   commands:
+  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
   #   when:
   #     condition:
   #       all:
@@ -82,7 +82,7 @@ steps:
   #         image: '${{DockerBuild}}'
   #         ports:
   #           - '${{PORT}}'
-  
+
   PublishToArtifactory:
     stage: artifactory
     title: Publish artifact and codefresh build info to Artifactory
