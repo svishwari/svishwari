@@ -45,7 +45,9 @@ class NotificationsSearch(SwaggerView):
     """
 
     # TODO how to put in Keyword url args into parameters here
-    parameters = []
+    parameters = [
+        
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of notifications.",
@@ -65,15 +67,11 @@ class NotificationsSearch(SwaggerView):
             Tuple[dict, int] dict of notifications and http code
         """
 
-        page_num = request.args.get("page_num")
         page_size = request.args.get("page_size")
-        order_by = request.args.get("order_by")
         order = request.args.get("order")
 
         if (
-            page_num is None
-            or page_size is None
-            or order_by is None
+            page_size is None
             or (
                 order.lower() != db_constants.PAGINATION_ASCENDING
                 and order.lower() != db_constants.PAGINATION_DESCENDING
@@ -90,7 +88,7 @@ class NotificationsSearch(SwaggerView):
         )
 
         response = notification_management.get_notifications(
-            get_db_client(), page_num, page_size, order_by, order
+            get_db_client(), page_size, order,
         )
 
         return response, HTTPStatus.OK
