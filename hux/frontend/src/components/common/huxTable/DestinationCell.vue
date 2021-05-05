@@ -13,7 +13,7 @@
               v-for="(item, index) in 2"
               :key="index"
             >
-              <Logo :type="cellValue.details[index].logo" :size="18"></Logo>
+              <Logo :type="cellValue.details[index].type" :size="18"></Logo>
             </v-btn>
             <div class="extra-icon mr-1" v-show="cellValue.details.length > 2">
               +{{ cellValue.details.length - 2 }}
@@ -30,7 +30,7 @@
       >
         <v-list-item-title>
           <v-btn class="mr-1" width="18" height="18" outlined fab>
-            <Logo :type="item.logo" :size="18"></Logo>
+            <Logo :type="item.type" :size="18"></Logo>
           </v-btn>
           {{ item.name }}
         </v-list-item-title>
