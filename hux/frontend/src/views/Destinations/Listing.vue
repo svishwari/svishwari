@@ -32,7 +32,7 @@
           mdi-dots-grid
         </v-icon>
         <router-link
-          :to="{ path: '/connections/destinations/new' }"
+          :to="{ name: 'add-destination' }"
           class="text-decoration-none"
         >
           <huxButton

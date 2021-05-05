@@ -9,9 +9,9 @@
 
     <div class="d-flex align-center mb-10">
       <template v-if="isDestinationSelected">
-        <Logo :type="destinations[selectedDestinationIndex].type" />
+        <Logo :type="destination.type" />
         <span class="pl-2">
-          {{ destinations[selectedDestinationIndex].name }}
+          {{ destination.name }}
         </span>
         <a class="pl-2" color="primary" @click="toggleDrawer()">Change</a>
       </template>
@@ -26,9 +26,7 @@
       <div class="destination-auth-wrap background pa-5 rounded mb-10">
         <v-row>
           <v-col
-            v-for="item in Object.values(
-              destinations[selectedDestinationIndex].auth_details
-            )"
+            v-for="item in Object.values(destination.auth_details)"
             cols="6"
             :key="item.name"
           >
@@ -97,15 +95,15 @@
     <drawer v-model="drawer">
       <template v-slot:header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h5 font-weight-light pr-2">Select a destination</h5>
-          <div class="font-weight-regular">(select one)</div>
+          <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
+          <p class="mb-0">(select one)</p>
         </div>
       </template>
       <template v-slot:footer-left>
         <div class="d-flex align-baseline">
-          <div class="font-weight-regular">
+          <p class="font-weight-regular mb-0">
             {{ destinations.length }} results
-          </div>
+          </p>
         </div>
       </template>
       <template v-slot:default>
@@ -151,7 +149,7 @@ export default {
   data() {
     return {
       drawer: false,
-      selectedDestinationIndex: "-1",
+      selectedDestinationIndex: -1,
       isConnectionValidated: false,
       isValidating: false,
       isFormValid: false,
@@ -166,11 +164,12 @@ export default {
       destinations: "destinations/list",
     }),
 
+    destination() {
+      return this.destinations[this.selectedDestinationIndex] || null
+    },
+
     isDestinationSelected() {
-      if (this.selectedDestinationIndex === "-1") {
-        return false
-      }
-      return true
+      return Boolean(this.destination)
     },
   },
 

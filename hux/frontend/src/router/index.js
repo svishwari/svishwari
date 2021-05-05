@@ -97,7 +97,7 @@ const routes = [
     },
   },
   {
-    path: "/connections/destinations/new",
+    path: "/connections/destinations/add",
     name: "add-destination",
     component: () => import("@/views/Destinations/Configuration.vue"),
     meta: {
