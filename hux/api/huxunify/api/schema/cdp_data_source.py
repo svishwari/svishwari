@@ -36,10 +36,10 @@ class CdpDataSourceSchema(Schema):
         """process the schema before serializing.
 
         Args:
-            data (dict): The cdp data source object
+            data (dict): The CDP data source object
             many (bool): If there are many to process
         Returns:
-            Response: Returns a cdp data source object
+            Response: Returns a CDP data source object
 
         """
         # map id to data_source_id
