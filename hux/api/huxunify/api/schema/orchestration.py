@@ -3,7 +3,7 @@ Schemas for the Orchestration API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, post_dump
 from marshmallow.validate import OneOf
 from bson import ObjectId
 from huxunifylib.database import constants as db_c
@@ -90,13 +90,14 @@ class AudienceGetSchema(Schema):
     @post_load()
     # pylint: disable=unused-argument, no-self-use
     def process_modified(
-        self,
-        data: dict,
+        self, data: dict, many: bool = False, partial: bool = False
     ) -> dict:
         """process the schema before deserializing.
 
         Args:
             data (dict): The audience object
+            many (bool): If there are many to process
+            partial (bool): Partially deserialize fields.
         Returns:
             Response: Returns a audience object
 
@@ -109,6 +110,24 @@ class AudienceGetSchema(Schema):
             else:
                 # otherwise map to None
                 data.update(audience_id=None)
+        return data
+
+    @post_dump
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def post_serialize(self, data: dict, many=False) -> dict:
+        """process the schema before serializing.
+        Args:
+            data (dict): The audience object
+            many (bool): If there are many to process
+        Returns:
+            Response: Returns an audience object
+        """
+        # map id to data_source_id
+        if db_c.ID in data:
+            data[api_c.AUDIENCE_ID] = str(data[db_c.ID])
+            del data[db_c.ID]
+
         return data
 
 

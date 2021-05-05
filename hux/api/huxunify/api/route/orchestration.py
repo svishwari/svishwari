@@ -223,7 +223,7 @@ class AudiencePostView(SwaggerView):
             user_id=user_id,
         )
 
-        return audience_doc, HTTPStatus.CREATED
+        return AudienceGetSchema().dumps(audience_doc), HTTPStatus.CREATED
 
 
 @add_view_to_blueprint(
@@ -309,6 +309,7 @@ class AudiencePutView(SwaggerView):
         # load into the schema object
         try:
             body = AudiencePutSchema().load(request.get_json(), partial=True)
+            audience_id = ObjectId(audience_id)
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
