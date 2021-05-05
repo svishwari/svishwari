@@ -64,6 +64,7 @@ class NotificationsSearch(SwaggerView):
         Returns:
             Tuple[dict, int] dict of notifications and http code
         """
+
         page_num = request.args.get("page_num")
         page_size = request.args.get("page_size")
         order_by = request.args.get("order_by")

@@ -3,7 +3,6 @@ This module enables functionality related to notification management
 """
 import logging
 from datetime import datetime
-from http import HTTPStatus
 
 import pymongo
 from marshmallow import ValidationError
@@ -70,20 +69,18 @@ def create_notification(
 )
 def get_notifications(
     database: DatabaseClient,
-    page_number: int,
     page_size: int,
-    order_by: str,
     order: int,
+    start_id: str = None,
 ) -> list:
     """A function to get notifications
 
     Args:
         database (DatabaseClient): A database client.
-        page_number (int): page number.
         page_size (int): number of notifications per page.
-        order_by (str): order the notification by 'timestamp' or 'type'
-        order (str): dictate the order of the records that are returned.
+        order (int): dictate the order of the records that are returned.
                     (pymongo.DESCENDING or pymongo.ASCENDING)
+        start_id (str): start id for pagination
 
     Returns:
         dict: MongoDB document for a notification.
@@ -94,15 +91,15 @@ def get_notifications(
         c.NOTIFICATIONS_COLLECTION
     ]
 
-    skips = page_size * (page_number - 1)
-
     try:
-        return list(
-            collection.find()
-            .sort(order_by, order)
-            .skip(skips)
-            .limit(page_size)
-        )
+        if start_id is None:
+            return list(collection.find().sort({c.ID: order}).limit(page_size + 1))
+        else:
+            return list(
+                collection.find({{c.ID: {"$gt": start_id}}, {c.ID: True}})
+                .sort({c.ID: order})
+                .limit(page_size + 1)
+            )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
