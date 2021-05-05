@@ -10,6 +10,7 @@ from huxunify.api.route import (
     model_bp,
     auth_bp,
     orchestration_bp,
+    cdp_data_sources_bp,
 )
 
 
@@ -50,6 +51,7 @@ def create_app():
     flask_app.register_blueprint(cdm_bp, url_prefix="/cdm")
     flask_app.register_blueprint(dest_bp, url_prefix="/")
     flask_app.register_blueprint(user_bp, url_prefix="/")
+    flask_app.register_blueprint(cdp_data_sources_bp, url_prefix="/cdp")
     flask_app.register_blueprint(auth_bp, url_prefix="/")
     flask_app.register_blueprint(model_bp, url_prefix="/")
     flask_app.register_blueprint(orchestration_bp, url_prefix="/")
