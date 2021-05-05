@@ -14,8 +14,11 @@ COPY .pylintrc /app
 RUN pip install --upgrade pip
 RUN pip install pipenv
 
-# lock current deps to make it easier/faster for docker to build
-RUN pipenv lock --keep-outdated --requirements > requirements.txt
+# pipenv sync to ensure pipenv pkgs are aligned with pipfile.lock
+RUN pipenv sync
+
+# generate requirements.txt for the pipefile env
+RUN pipenv run pip freeze > requirements.txt
 
 # use pip for docker to generate the list of requirements.
 RUN pip install -r requirements.txt
