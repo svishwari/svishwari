@@ -12,8 +12,7 @@ from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
-# from pymongo import MongoClient
-from mongomock import MongoClient
+from pymongo import MongoClient
 
 from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema, CdpDataSourcePostSchema
 from huxunifylib.database import constants as db_constants
