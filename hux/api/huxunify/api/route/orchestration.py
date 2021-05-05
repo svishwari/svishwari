@@ -95,7 +95,7 @@ class AudienceGetView(SwaggerView):
             "type": "string",
             "in": "path",
             "required": "true",
-            "example": "71364317897acad4bac4373b",
+            "example": "5f5f7262997acad4bac4373b",
         }
     ]
     responses = {
