@@ -109,6 +109,10 @@ DATA_COUNT = "count"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_NAME = "name"
 AUDIENCE_FILTERS = "filters"
+AUDIENCE_FILTERS_AGGREGATOR = "filters_aggregator"
+AUDIENCE_FILTERS_SECTION_AGGREGATOR = "section_aggregator"
+AUDIENCE_FILTERS_SECTION = "section_filters"
+AUDIENCE_STATUS = "status"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
@@ -123,6 +127,8 @@ DEFAULT_AUDIENCE_STR = "Default Audience"
 MAX_AUDIENCE_SIZE_FOR_HASHED_FILE_DOWNLOAD = (
     "max_audience_size_for_hashed_file_download"
 )
+AUDIENCE_FILTER_AGGREGATOR_ANY = "any"
+AUDIENCE_FILTER_AGGREGATOR_ALL = "all"
 
 # Audience types
 CUSTOM_AUDIENCE = "custom_audience"
@@ -188,6 +194,7 @@ FIELD_FIELD_MAPPING = "field_mapping"
 FIELD_FIELD_MAPPING_DEFAULT = "field_mapping_default"
 
 # CDP Data Source constants
+CDP_DATA_SOURCE_ID = "data_source_id"
 CDP_DATA_SOURCE_FIELD_NAME = "name"
 CDP_DATA_SOURCE_FIELD_CATEGORY = "category"
 CDP_DATA_SOURCE_FIELD_FEED_COUNT = "feed_count"

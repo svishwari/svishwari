@@ -73,15 +73,14 @@ class DatabaseClient:
         # authentication information and using the default
         # write concern to ensure acknowledgement of the write
         # to at least one database member (w=1)
-        client = pymongo.MongoClient(
-            self._host,
-            self._port,
-            w=1,
-            username=self._username,
-            password=self._password,
-        )
+        mongo_args = {
+            "host": self._host,
+            "port": self._port,
+            "w": 1,
+            "username": self._username,
+            "password": self._password,
+        }
         if self._use_ssl:
-            client.ssl = self._use_ssl
-            client.ssl_ca_certs = self._ssl_cert_path
-
-        return client
+            mongo_args["ssl"] = True
+            mongo_args["ssl_ca_certs"] = self._ssl_cert_path
+        return pymongo.MongoClient(**mongo_args)
