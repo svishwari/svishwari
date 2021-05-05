@@ -31,9 +31,9 @@ from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
-CDP_DATA_SOURCES_TAG = "CDP data sources"
+CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
-CDP_DATA_SOURCES_ENDPOINT = "cdp_data_source"
+CDP_DATA_SOURCES_ENDPOINT = "data_sources"
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
