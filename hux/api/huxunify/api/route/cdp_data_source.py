@@ -12,7 +12,8 @@ from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
-from pymongo import MongoClient
+# from pymongo import MongoClient
+from mongomock import MongoClient
 
 from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema, CdpDataSourcePostSchema
 from huxunifylib.database import constants as db_constants
@@ -220,7 +221,7 @@ class CreateCdpDataSource(SwaggerView):
 
 @add_view_to_blueprint(
     cdp_data_sources_bp,
-    f"{CDP_DATA_SOURCES_ENDPOINT}/<id>",
+    f"{CDP_DATA_SOURCES_ENDPOINT}/<data_source_id>",
     "DeleteCdpDataSource",
 )
 class DeleteCdpDataSource(SwaggerView):
@@ -248,22 +249,22 @@ class DeleteCdpDataSource(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [CDP_DATA_SOURCES_TAG]
 
-    def delete(self, id: str) -> Tuple[dict, int]:
+    def delete(self, data_source_id: str) -> Tuple[dict, int]:
         """Delete a CDP data source
 
         ---
         Args:
-            id (str): CDP data source id
+            data_source_id (str): CDP data source id
 
         Returns:
             Tuple[dict, int]: CDP data source dict, http code
         """
 
-        if ObjectId.is_valid(id):
-            data_source_id = ObjectId(id)
+        if ObjectId.is_valid(data_source_id):
+            data_source_id = ObjectId(data_source_id)
         else:
             return {
-                "message": f"Invalid CDP data source ID received {id}."
+                "message": f"Invalid CDP data source ID received {data_source_id}."
             }, HTTPStatus.BAD_REQUEST
 
         success_flag = delete_data_source(get_db_client(), data_source_id)
