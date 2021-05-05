@@ -142,13 +142,13 @@ export default {
       font-size: 14px;
       line-height: 19px;
       letter-spacing: 0.5px;
-      color: #1e1e1e;
+      color: var(--v-neroBlack-base);
     }
     .card-wrap {
       .v-card {
         margin-right: 15px;
         &.v-card--disabled {
-          background: #f9fafb;
+          background: var(--v-background-base);
         }
       }
     }
@@ -171,7 +171,7 @@ export default {
     .heading {
       text-transform: uppercase;
       margin-bottom: 5px;
-      color: #005587;
+      color: var(--v-primary-base);
     }
     .description {
       color: inherit;
@@ -180,7 +180,7 @@ export default {
   .v-input {
     margin: 0;
     .v-input__control {
-      background: red;
+      background: var(--v-error-base);
       .v-messages {
         display: none !important;
       }

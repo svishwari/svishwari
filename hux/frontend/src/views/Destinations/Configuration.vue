@@ -9,9 +9,9 @@
     <div>
       Select a destination
       <div v-if="isDestinationSelected" class="d-flex align-center">
-        <Logo :type="destinations[selectedDestinationIndex].logo" />
+        <Logo :type="destinations[selectedDestinationIndex].type" />
         <div class="pl-2">
-          {{ destinations[selectedDestinationIndex].title }}
+          {{ destinations[selectedDestinationIndex].name }}
         </div>
         <a class="pl-2" color="primary" @click="drawer = !drawer">Change</a>
       </div>
@@ -37,15 +37,15 @@
         <template v-slot:default>
           <div class="ma-5">
             <CardHorizontal
-              v-for="(item, index) in destinations"
-              :key="item.title"
-              :title="item.title"
-              :icon="item.logo"
+              v-for="(destination, index) in destinations"
+              :key="destination.id"
+              :title="destination.name"
+              :icon="destination.type"
               :isAdded="
-                item.isAlreadyAdded || index == selectedDestinationIndex
+                destination.is_added || index == selectedDestinationIndex
               "
-              :isAvailable="item.isAvailable"
-              :isAlreadyAdded="item.isAlreadyAdded"
+              :isAvailable="destination.is_enabled"
+              :isAlreadyAdded="destination.is_added"
               @click="onSingleDestinationClick(index)"
               class="my-3"
             />
@@ -58,7 +58,9 @@
       >
         <v-form v-model="isFormValid" class="d-flex flex-wrap">
           <TextField
-            v-for="item in destinations[selectedDestinationIndex].auth_details"
+            v-for="item in Object.values(
+              destinations[selectedDestinationIndex].auth_details
+            )"
             :labelText="item.name"
             :key="item.name"
             :rules="[rules.required]"
@@ -129,8 +131,10 @@ import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 import { mapGetters } from "vuex"
+
 export default {
   name: "add-destination",
+
   components: {
     Drawer,
     CardHorizontal,
@@ -139,6 +143,7 @@ export default {
     TextField,
     Logo,
   },
+
   data() {
     return {
       drawer: false,
@@ -151,10 +156,10 @@ export default {
       },
     }
   },
+
   computed: {
-    ...mapGetters({
-      destinations: "AllDestinations",
-    }),
+    ...mapGetters(["destinations"]),
+
     isDestinationSelected() {
       if (this.selectedDestinationIndex === "-1") {
         return false
@@ -162,6 +167,7 @@ export default {
       return true
     },
   },
+
   methods: {
     onSingleDestinationClick: function (index) {
       this.selectedDestinationIndex = index

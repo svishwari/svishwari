@@ -103,7 +103,7 @@ export default {
   .client {
     align-items: center;
     background-color: rgba(0, 0, 0, 0.25);
-    color: #fff;
+    color: var(--v-white-base);
     cursor: default;
     display: flex;
     font-size: 0.93rem;
@@ -132,7 +132,7 @@ export default {
 
   .v-list-item--active {
     &::before {
-      background-color: #fff;
+      background-color: var(--v-white-base);
       opacity: 0.1;
     }
   }
@@ -141,7 +141,7 @@ export default {
     border-top: 1px solid rgba(255, 255, 255, 0.25);
 
     span {
-      color: #fff;
+      color: var(--v-white-base);
       display: flex;
       font-size: 0.93rem;
       font-weight: normal;
@@ -152,7 +152,7 @@ export default {
   }
 
   .nav-footer {
-    color: #fff;
+    color: var(--v-white-base);
     font-size: 12px;
     font-weight: normal;
     opacity: 0.5;

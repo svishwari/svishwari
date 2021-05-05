@@ -24,7 +24,7 @@ export default {
   .icon-btn {
     box-shadow: 0px 1px 5px rgb(0 0 0 / 25%);
     i.v-icon.notranslate.mdi {
-      color: #005587;
+      color: var(--v-primary-base);
     }
     &.v-btn {
       &.v-btn--icon {
