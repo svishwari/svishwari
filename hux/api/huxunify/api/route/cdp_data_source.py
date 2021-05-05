@@ -12,15 +12,20 @@ from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
-from pymongo import MongoClient
 
-from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema, CdpDataSourcePostSchema
+# from pymongo import MongoClient
+from mongomock import MongoClient
+
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
     get_data_source,
     create_data_source,
     delete_data_source,
+)
+from huxunify.api.schema.cdp_data_source import (
+    CdpDataSourceSchema,
+    CdpDataSourcePostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint
@@ -76,7 +81,11 @@ class DataSourceSearch(SwaggerView):
         """
 
         try:
-            return get_all_data_sources(get_db_client()), HTTPStatus.OK.value
+            data_sources = get_all_data_sources(get_db_client())
+            return (
+                CdpDataSourceSchema().dumps(data_sources),
+                HTTPStatus.OK.value,
+            )
 
         except Exception as exc:
 
@@ -95,7 +104,7 @@ class DataSourceSearch(SwaggerView):
 
 @add_view_to_blueprint(
     cdp_data_sources_bp,
-    f"/{CDP_DATA_SOURCES_ENDPOINT}/<id>",
+    f"/{CDP_DATA_SOURCES_ENDPOINT}/<{db_constants.CDP_DATA_SOURCE_ID}>",
     "IndividualDataSourceSearch",
 )
 class IndividualDataSourceSearch(SwaggerView):
@@ -144,8 +153,12 @@ class IndividualDataSourceSearch(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         try:
-            return get_data_source(
+            data_source = get_data_source(
                 get_db_client(), data_source_id=data_source_id
+            )
+            return (
+                CdpDataSourceSchema().dumps(data_source),
+                HTTPStatus.OK.value,
             )
         except Exception as exc:
 
@@ -187,7 +200,7 @@ class CreateCdpDataSource(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of CDP data sources.",
-            "schema": CdpDataSourceSchema,
+            # "schema": CdpDataSourceSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create CDP data source",
@@ -215,7 +228,7 @@ class CreateCdpDataSource(SwaggerView):
             category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
         )
 
-        return str(response[api_c.ID]), HTTPStatus.OK
+        return CdpDataSourceSchema().dumps(response), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -270,7 +283,7 @@ class DeleteCdpDataSource(SwaggerView):
 
         if success_flag:
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
-        else:
-            return {
-                "message": api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        return {
+            "message": api_c.OPERATION_FAILED
+        }, HTTPStatus.INTERNAL_SERVER_ERROR
