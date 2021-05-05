@@ -38,7 +38,7 @@
               "
               :InputType="item.type"
               :help-text="item.description"
-              @blur="changeValidationStatus"
+              @blur="resetValidation"
               icon="mdi-alert-circle-outline"
               class="mb-0"
             ></TextField>
@@ -48,12 +48,10 @@
       <div class="d-flex flex-wrap justify-end">
         <hux-button
           v-if="!isValidating"
-          :button-text="
-            isConnectionValidated ? 'Success!' : 'Validate connection'
-          "
-          :icon="isConnectionValidated ? 'mdi-check' : null"
-          :icon-position="isConnectionValidated ? 'left' : null"
-          :variant="isConnectionValidated ? 'success' : 'primary'"
+          :button-text="isValidated ? 'Success!' : 'Validate connection'"
+          :icon="isValidated ? 'mdi-check' : null"
+          :icon-position="isValidated ? 'left' : null"
+          :variant="isValidated ? 'success' : 'primary'"
           size="large"
           v-bind:isTile="true"
           v-bind:isDisabled="!isFormValid"
@@ -77,7 +75,7 @@
           variant="tertiary"
           size="large"
           v-bind:isTile="true"
-          @click="cancelDestination()"
+          @click="cancel()"
         ></hux-button>
       </template>
       <template v-slot:right>
@@ -86,8 +84,8 @@
           variant="primary"
           size="large"
           v-bind:isTile="true"
-          v-bind:isDisabled="!isConnectionValidated"
-          @click="addDestination()"
+          v-bind:isDisabled="!isValidated"
+          @click="add()"
         ></hux-button>
       </template>
     </hux-footer>
@@ -116,7 +114,7 @@
             :isAdded="destination.is_added || index == selectedDestinationIndex"
             :isAvailable="destination.is_enabled"
             :isAlreadyAdded="destination.is_added"
-            @click="onSingleDestinationClick(index)"
+            @click="onSelectDestination(index)"
             class="my-3"
           />
         </div>
@@ -150,7 +148,7 @@ export default {
     return {
       drawer: false,
       selectedDestinationIndex: -1,
-      isConnectionValidated: false,
+      isValidated: false,
       isValidating: false,
       isFormValid: false,
       rules: {
@@ -176,39 +174,48 @@ export default {
   methods: {
     ...mapActions({
       getDestinations: "destinations/getAll",
+      getDestination: "destinations/get",
+      addDestination: "destinations/add",
+      validateDestination: "destinations/validate",
     }),
 
     toggleDrawer() {
       this.drawer = !this.drawer
     },
 
-    onSingleDestinationClick(index) {
+    onSelectDestination(index) {
       this.selectedDestinationIndex = index
-      this.isConnectionValidated = false
+      this.isValidated = false
       setTimeout(() => (this.drawer = false), 470)
     },
 
-    validate() {
+    resetValidation() {
+      this.isValidated = false
+    },
+
+    async validate() {
       this.isValidating = true
-      // This is a TODO need to replace with actual API call
-      setTimeout(() => {
+      try {
+        await this.validateDestination(this.destination)
         this.isValidating = false
-        this.isConnectionValidated = true
-      }, 2000)
+        this.isValidated = true
+      } catch (error) {
+        console.error(error)
+      }
     },
 
-    changeValidationStatus() {
-      this.isConnectionValidated = false
+    async add() {
+      try {
+        await this.addDestination(this.destination)
+        this.$router.push({ name: "connections" })
+      } catch (error) {
+        console.error(error)
+      }
     },
 
-    addDestination() {
-      // This is a TODO need to replace with actual API call
-      this.$router.push("/connections")
-    },
-
-    cancelDestination() {
-      // This is a TODO need to add modal that confirms to leave configuration
-      this.$router.push("/connections")
+    cancel() {
+      // TODO: need to add modal that confirms to leave configuration
+      this.$router.push({ name: "connections" })
     },
   },
 

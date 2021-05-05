@@ -33,8 +33,18 @@ const actions = {
     }
   },
 
+  async get({ commit }, id) {
+    try {
+      const response = await api.destinations.find(id)
+      commit("SET_ONE", response.data)
+    } catch (error) {
+      console.error(error)
+    }
+  },
+
   async add({ commit }, destination) {
     try {
+      debugger
       const response = await api.destinations.update(
         destination.id,
         destination.auth_details
