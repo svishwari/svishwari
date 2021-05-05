@@ -68,7 +68,4 @@ export default Vue.extend({
   },
 })
 </script>
-<style lang="scss" scoped>
-.destination-cell-wrapper {
-}
-</style>
+<style lang="scss" scoped></style>
