@@ -5,6 +5,7 @@ stages:
   - git
   - build_tag
   - docker
+  - lint
   - test
   - artifactory
   - argo-deploy
@@ -82,7 +83,16 @@ steps:
   #         image: '${{DockerBuild}}'
   #         ports:
   #           - '${{PORT}}'
-
+  lint:
+    stage: "lint"
+    title: "Running lint"
+    fail_fast: false
+    image: node:14-alpine
+    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
+    commands:
+    - npm install
+    - npm run lint -- --no-fix
+  
   PublishToArtifactory:
     stage: artifactory
     title: Publish artifact and codefresh build info to Artifactory
