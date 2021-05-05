@@ -20,7 +20,7 @@
           <v-icon dark> mdi-plus </v-icon>
         </v-btn>
       </div>
-      <drawer style="transition-duration: 1s" v-model="drawer">
+      <drawer v-model="drawer">
         <template v-slot:header-left>
           <div class="d-flex align-baseline">
             <h5 class="text-h5 font-weight-light pr-2">Select a destination</h5>
@@ -36,6 +36,7 @@
         </template>
         <template v-slot:default>
           <div class="ma-5">
+            <div class="font-weight-light">Destinations</div>
             <CardHorizontal
               v-for="(destination, index) in destinations"
               :key="destination.id"

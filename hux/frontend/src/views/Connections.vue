@@ -8,8 +8,9 @@
     <v-row class="pt-10 pr-7 pb-7 pl-7">
       <v-col cols="6" class="d-flex align-end">
         <v-icon> mdi-cloud-download-outline </v-icon>
+        <AddDataSource v-model="drawer"/>
         <span class="font-weight-light ml-2 mt-1">Data Sources</span>
-        <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
+        <v-icon @click="drawer=!drawer" class="ml-2 cursor-pointer" color="primary"> mdi-plus-circle </v-icon>
       </v-col>
 
       <v-col cols="6" class="d-flex align-end">
@@ -19,7 +20,7 @@
           :to="{ name: 'add-destination' }"
           class="text-decoration-none"
         >
-          <v-icon class="ml-2 add-icon" color="primary">
+          <v-icon class="ml-2 cursor-pointer" color="primary">
             mdi-plus-circle
           </v-icon>
         </router-link>
@@ -29,7 +30,7 @@
           class="text-decoration-none"
         >
           <span
-            class="add-icon font-weight-light ml-2 mt-1 float-right primary--text"
+            class="cursor-pointer font-weight-light ml-2 mt-1 float-right primary--text"
           >
             View Destinations Details
             <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
@@ -74,11 +75,12 @@ import Logo from "@/components/common/Logo"
 import EmptyState from "@/components/EmptyState"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import AddDataSource from "@/views/DataSources/Configuration"
 
 export default {
   name: "connections",
 
-  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb, Logo },
+  components: { DestinationListCard, EmptyState, PageHeader, Breadcrumb, Logo, AddDataSource },
 
   data() {
     return {
@@ -90,6 +92,7 @@ export default {
           icon: "mdi-connection",
         },
       ],
+      drawer: false,
     }
   },
 
@@ -110,10 +113,3 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-.connections-wrap {
-  .add-icon {
-    cursor: pointer;
-  }
-}
-</style>
