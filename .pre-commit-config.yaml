@@ -20,3 +20,11 @@ repos:
         - --rcfile=.pylintrc
         - --ignore-imports=yes
         - -d duplicate-code
+
+-   repo: local
+    hooks:
+    -   id: mypy
+        name: mypy
+        entry: mypy
+        language: system
+        types: [python]
