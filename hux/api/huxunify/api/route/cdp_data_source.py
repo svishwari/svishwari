@@ -70,7 +70,7 @@ class DataSourceSearch(SwaggerView):
 
     @marshal_with(CdpDataSourceSchema(many=True))
     def get(self) -> Tuple[list, int]:
-        """Retrieves all data sources
+        """Retrieves all CDP data sources
 
         ---
 
@@ -133,7 +133,7 @@ class IndividualDataSourceSearch(SwaggerView):
 
     @marshal_with(CdpDataSourceSchema)
     def get(self, data_source_id: str):
-        """Retrieves a CDP data source by id
+        """Retrieves a CDP data source by ID
 
         ---
         Args:
@@ -209,7 +209,7 @@ class CreateCdpDataSource(SwaggerView):
     tags = [CDP_DATA_SOURCES_TAG]
 
     def post(self) -> Tuple[str, int]:
-        """Create a new CDP Data Source
+        """Create a new CDP data source
 
         ---
         Returns:
@@ -237,7 +237,7 @@ class CreateCdpDataSource(SwaggerView):
 )
 class DeleteCdpDataSource(SwaggerView):
     """
-    Delete CDP data source class
+    Deletes a CDP data source class
     """
 
     parameters = [
