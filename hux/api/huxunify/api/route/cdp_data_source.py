@@ -199,7 +199,7 @@ class CreateCdpDataSource(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "CDP data source created.",
-            "schema": CdpDataSourceSchema
+            "schema": CdpDataSourceSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create CDP data source",
@@ -253,7 +253,7 @@ class DeleteCdpDataSource(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Deletes a CDP data source.",
-            "schema": CdpDataSourceSchema
+            "schema": CdpDataSourceSchema,
         },
         HTTPStatus.NOT_FOUND.value: {"schema": NotFoundError},
     }
