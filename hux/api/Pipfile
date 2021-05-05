@@ -32,6 +32,7 @@ python-decouple= {version="3.4", index="pypi"}
 requests-mock= {version="1.9.2", index="pypi"}
 requests= {version="2.25.1", index="pypi"}
 huxunifylib-database = {version="*", index="jfrog"}
+huxunifylib-connectors = {version="*", index="jfrog"}
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
