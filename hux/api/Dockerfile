@@ -24,4 +24,4 @@ RUN pipenv lock --keep-outdated --requirements > requirements.txt
 RUN pip install -r requirements.txt
 
 WORKDIR /app/hux-unified/api/huxunify
-CMD ["flask", "run", "app.py"]
+CMD ["pipenv", "run", "app.py"]
