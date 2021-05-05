@@ -63,6 +63,14 @@ DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
 
+# CDP Data Source Constants
+CDP_DATA_SOURCE_NAME = "name"
+CDP_DATA_SOURCE_CATEGORY = "category"
+CDP_DATA_SOURCE_DESCRIPTION = "CDP data source body"
+
+CDP_DATA_SOURCE_NAME_DESCRIPTION = "Name of the CDP data source"
+CDP_DATA_SOURCE_CATEGORY_DESCRIPTION = "Category of the CDP data source"
+
 # Authentication API fields
 AUTHENTICATION_TAG = "authenticate"
 AUTHENTICATION_DESCRIPTION = "Authentication API"
