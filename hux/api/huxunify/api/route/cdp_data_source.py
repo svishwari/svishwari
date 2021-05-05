@@ -11,9 +11,10 @@ from connexion.exceptions import ProblemException
 from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
+from marshmallow import ValidationError
 from pymongo import MongoClient
 
-from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
+from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema, CdpDataSourcePostSchema
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -195,31 +196,26 @@ class CreateCdpDataSource(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [CDP_DATA_SOURCES_TAG]
 
-    def post(self) -> Tuple[dict, int]:
+    def post(self) -> Tuple[str, int]:
         """Create a new CDP Data Source
 
         ---
         Returns:
-            Tuple[dict, int]: CDP Data source dict, http code
+            Tuple[str, int]: ID of CDP Data source, http code
 
         """
-
-        request_data = request.get_json()
-        data_source_name = request_data[api_c.CDP_DATA_SOURCE_NAME]
-        data_source_category = request_data[api_c.CDP_DATA_SOURCE_CATEGORY]
-
-        if data_source_name is None or data_source_category is None:
-            return {
-                "message": f"Did not receive data source name or data source category"
-            }, HTTPStatus.BAD_REQUEST
+        try:
+            body = CdpDataSourcePostSchema().load(request.get_json())
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         response = create_data_source(
             get_db_client(),
-            name=data_source_name,
-            category=data_source_category,
+            name=body[api_c.CDP_DATA_SOURCE_NAME],
+            category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
         )
 
-        return response, HTTPStatus.OK
+        return str(response[api_c.ID]), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -252,22 +248,22 @@ class DeleteCdpDataSource(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [CDP_DATA_SOURCES_TAG]
 
-    def delete(self, data_source_id: str) -> Tuple[dict, int]:
+    def delete(self, id: str) -> Tuple[dict, int]:
         """Delete a CDP data source
 
         ---
         Args:
-            data_source_id (str): CDP data source id
+            id (str): CDP data source id
 
         Returns:
             Tuple[dict, int]: CDP data source dict, http code
         """
 
-        if ObjectId.is_valid(data_source_id):
-            data_source_id = ObjectId(data_source_id)
+        if ObjectId.is_valid(id):
+            data_source_id = ObjectId(id)
         else:
             return {
-                "message": f"Invalid CDP data source ID received {data_source_id}."
+                "message": f"Invalid CDP data source ID received {id}."
             }, HTTPStatus.BAD_REQUEST
 
         success_flag = delete_data_source(get_db_client(), data_source_id)

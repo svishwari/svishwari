@@ -1,5 +1,8 @@
 """This module contains connector defines."""
 
+# Mongo Constants
+ID = "_id"
+
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
