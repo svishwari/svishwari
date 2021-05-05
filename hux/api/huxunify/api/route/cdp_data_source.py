@@ -261,7 +261,7 @@ class DeleteCdpDataSource(SwaggerView):
     tags = [CDP_DATA_SOURCES_TAG]
 
     def delete(self, data_source_id: str) -> Tuple[dict, int]:
-        """Delete a CDP data source
+        """Deletes a CDP data source
 
         ---
         Args:
