@@ -48,13 +48,13 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .status-wrapper {
   .material-icons.delivered {
-    color: #43b02a;
+    color: var(--v-success-lighten1);
   }
   .material-icons.delivering {
-    color: #43b02a;
+    color: var(--v-success-lighten2);
   }
   .material-icons.alert {
-    color: #da291c;
+    color: var(--v-error-base);
   }
 }
 </style>

@@ -51,7 +51,7 @@ export default {
         &.mdi-backburger {
           &.theme--dark {
             &::before {
-              color: #232323;
+              color: var(--v-darkGrey-base);
             }
           }
         }
