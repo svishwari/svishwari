@@ -79,7 +79,7 @@ const routes = [
   {
     path: "/connections",
     name: "connections",
-    component: () => import("@/views/Connections"),
+    component: () => import("@/views/Connections/Index"),
     meta: {
       layout: "app",
       title: "Connections",
@@ -89,7 +89,7 @@ const routes = [
   {
     path: "/datasources",
     name: "datasources",
-    component: () => import("@/views/Connections"),
+    component: () => import("@/views/Connections/Index"),
     meta: {
       layout: "app",
       title: "Data Sources",
