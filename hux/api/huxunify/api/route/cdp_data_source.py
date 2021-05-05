@@ -209,7 +209,7 @@ class CreateCdpDataSource(SwaggerView):
     tags = [CDP_DATA_SOURCES_TAG]
 
     def post(self) -> Tuple[str, int]:
-        """Create a new CDP data source
+        """Creates a new CDP data source
 
         ---
         Returns:
