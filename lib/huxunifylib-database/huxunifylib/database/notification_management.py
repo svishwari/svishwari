@@ -34,7 +34,8 @@ def create_notification(
     # validate type
     if not notification_type.lower() not in c.NOTIFICATION_TYPES:
         raise ValidationError(
-            f"Invalid notification type received: {notification_type}. Must be one of {c.NOTIFICATION_TYPES}"
+            f"Invalid notification type received: {notification_type}. "
+            f"Must be one of {c.NOTIFICATION_TYPES}"
         )
 
     # get collection
@@ -93,11 +94,13 @@ def get_notifications(
 
     try:
         if start_id is None:
-            return list(collection.find().sort({c.ID: order}).limit(page_size + 1))
+            return list(
+                collection.find().sort([(c.ID, order)]).limit(page_size + 1)
+            )
         else:
             return list(
                 collection.find({{c.ID: {"$gt": start_id}}, {c.ID: True}})
-                .sort({c.ID: order})
+                .sort([(c.ID, order)])
                 .limit(page_size + 1)
             )
     except pymongo.errors.OperationFailure as exc:
