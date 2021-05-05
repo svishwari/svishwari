@@ -252,8 +252,8 @@ class DeleteCdpDataSource(SwaggerView):
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Delete single CDP data source.",
-            "schema": CdpDataSourceSchema,
+            "description": "Deletes a CDP data source.",
+            "schema": CdpDataSourceSchema
         },
         HTTPStatus.NOT_FOUND.value: {"schema": NotFoundError},
     }
