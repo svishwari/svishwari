@@ -309,13 +309,12 @@ class AudiencePutView(SwaggerView):
         # load into the schema object
         try:
             body = AudiencePutSchema().load(request.get_json(), partial=True)
-            audience_id = ObjectId(audience_id)
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         audience_doc = orchestration_management.update_audience(
             database=get_db_client(),
-            audience_id=audience_id,
+            audience_id=ObjectId(audience_id),
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body[api_c.AUDIENCE_FILTERS],
             destination_ids=body[api_c.AUDIENCE_DESTINATIONS],

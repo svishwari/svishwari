@@ -123,7 +123,7 @@ class AudienceGetSchema(Schema):
         Returns:
             Response: Returns an audience object
         """
-        # map id to data_source_id
+        # map id to audience_id
         if db_c.ID in data:
             data[api_c.AUDIENCE_ID] = str(data[db_c.ID])
             del data[db_c.ID]
