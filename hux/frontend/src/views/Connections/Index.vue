@@ -1,24 +1,24 @@
 <template>
-  <div class="connections-wrap grey lighten-5">
-    <PageHeader>
+  <div>
+    <page-header>
       <template slot="left">
-        <Breadcrumb :items="breadcrumbItems" />
+        <breadcrumb :items="breadcrumbs" />
       </template>
-    </PageHeader>
+    </page-header>
     <v-row class="pa-10">
       <v-col cols="6">
-        <data-sources></data-sources>
+        <data-sources-list></data-sources-list>
       </v-col>
       <v-col cols="6">
-        <destinations></destinations>
+        <destinations-list></destinations-list>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import DataSources from "./DataSources"
-import Destinations from "./Destinations"
+import DataSourcesList from "./DataSourcesList"
+import DestinationsList from "./DestinationsList"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 
@@ -26,15 +26,15 @@ export default {
   name: "connections",
 
   components: {
-    DataSources,
-    Destinations,
+    DataSourcesList,
+    DestinationsList,
     PageHeader,
     Breadcrumb,
   },
 
   data() {
     return {
-      breadcrumbItems: [
+      breadcrumbs: [
         {
           text: "Connections",
           disabled: false,

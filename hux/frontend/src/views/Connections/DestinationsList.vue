@@ -9,15 +9,6 @@
       >
         <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
       </router-link>
-      <v-spacer></v-spacer>
-      <router-link :to="{ name: 'destinations' }" class="text-decoration-none">
-        <span
-          class="add-icon font-weight-light ml-2 mt-1 float-right primary--text"
-        >
-          View Destinations Details
-          <v-icon class="mr-2" color="primary"> mdi-chevron-right </v-icon>
-        </span>
-      </router-link>
     </div>
     <template v-if="hasAddedDestinations">
       <DestinationListCard
@@ -52,7 +43,7 @@ import Logo from "@/components/common/Logo"
 import EmptyState from "@/components/EmptyState"
 
 export default {
-  name: "connections-destinations",
+  name: "destinations-list",
 
   components: {
     DestinationListCard,

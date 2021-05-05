@@ -3,7 +3,9 @@
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-cloud-download-outline </v-icon>
       <h5 class="font-weight-light text-h5 ml-2 mt-1">Data Sources</h5>
-      <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
+      <v-icon class="ml-2 add-icon" color="primary" disabled>
+        mdi-plus-circle
+      </v-icon>
     </div>
 
     <EmptyState>
@@ -22,7 +24,7 @@
 import EmptyState from "@/components/EmptyState"
 
 export default {
-  name: "connections-datasources",
+  name: "data-sources-list",
 
   components: { EmptyState },
 }
