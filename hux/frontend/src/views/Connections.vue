@@ -105,11 +105,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["destinations"]),
+    ...mapGetters({
+      destinations: "destinations/list",
+    }),
 
     addedDestinations() {
-      return this.destinations
-      // return this.destinations.filter((destination) => destination.is_added)
+      return this.destinations.filter((destination) => destination.is_added)
     },
 
     hasAddedDestinations() {
@@ -118,11 +119,13 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getAllDestinations"]),
+    ...mapActions({
+      getDestinations: "destinations/getAll",
+    }),
   },
 
   async mounted() {
-    await this.getAllDestinations()
+    await this.getDestinations()
   },
 }
 </script>

@@ -1,51 +1,57 @@
 import Vue from "vue"
 import api from "@/api/client"
 
+const namespaced = true
+
 const state = {
-  destinations: {},
+  items: {},
 }
 
 const getters = {
-  destinations: (state) => Object.values(state.destinations),
+  list: (state) => Object.values(state.items),
 }
 
 const mutations = {
-  SET_ALL_DESTINATIONS(state, data) {
-    data.forEach((item) => {
-      Vue.set(state.destinations, item.id, item)
+  SET_ALL(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.items, item.id, item)
     })
+  },
+
+  SET_ONE(state, item) {
+    Vue.set(state.items, item.id, item)
   },
 }
 
 const actions = {
-  async getAllDestinations({ commit }) {
+  async getAll({ commit }) {
     try {
       const response = await api.destinations.all()
-      commit("SET_ALL_DESTINATIONS", response.data)
+      commit("SET_ALL", response.data)
     } catch (error) {
       console.error(error)
     }
   },
 
-  async addDestination({ commit }, destination) {
+  async add({ commit }, destination) {
     try {
       const response = await api.destinations.update(
         destination.id,
         destination.auth_details
       )
-      commit("SET_DESTINATIONS", response.data)
+      commit("SET_ONE", response.data)
     } catch (error) {
       console.error(error)
     }
   },
 
-  async validateDestination({ commit }, destination) {
+  async validate({ commit }, destination) {
     try {
       const response = await api.destinations.validate(
         destination.id,
         destination.auth_details
       )
-      commit("SET_ALL_DESTINATIONS", response.data)
+      commit("SET_ONE", response.data)
     } catch (error) {
       console.error(error)
     }
@@ -53,7 +59,7 @@ const actions = {
 }
 
 export default {
-  namespace: true,
+  namespaced,
   state,
   getters,
   mutations,

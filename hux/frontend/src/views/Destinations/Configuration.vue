@@ -162,7 +162,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["destinations"]),
+    ...mapGetters({
+      destinations: "destinations/list",
+    }),
 
     isDestinationSelected() {
       if (this.selectedDestinationIndex === "-1") {
@@ -173,7 +175,9 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getAllDestinations"]),
+    ...mapActions({
+      getDestinations: "destinations/getAll",
+    }),
 
     toggleDrawer() {
       this.drawer = !this.drawer
@@ -210,7 +214,7 @@ export default {
   },
 
   async mounted() {
-    await this.getAllDestinations()
+    await this.getDestinations()
   },
 }
 </script>
