@@ -186,7 +186,7 @@ class CreateCdpDataSource(SwaggerView):
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of CDP data sources.",
+            "description": "CDP data source created.",
             "schema": CdpDataSourceSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -215,7 +215,7 @@ class CreateCdpDataSource(SwaggerView):
             category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
         )
 
-        return str(response[api_c.ID]), HTTPStatus.OK
+        return str(response[db_constants.ID]), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
