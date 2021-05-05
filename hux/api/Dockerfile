@@ -3,7 +3,7 @@
 FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
 
 # variables used for consuming orchestration pkgs from jfrog
-ARG ARTRIFACTORY_PYTHON_READ
+ARG ARTIFACTORY_PYTHON_READ
 
 WORKDIR /app/hux-unified/api
 COPY ./lib /app/lib
