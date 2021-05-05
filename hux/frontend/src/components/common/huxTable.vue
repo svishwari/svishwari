@@ -8,6 +8,8 @@
       :gridOptions="gridOptions"
       :overlayLoadingTemplate="overlayLoadingTemplate"
       :overlayNoRowsTemplate="overlayNoRowsTemplate"
+      :frameworkComponents="frameworkComponents"
+      :rowHeight="rowHeight"
     >
     </ag-grid-vue>
   </div>
@@ -56,6 +58,16 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    frameworkComponents: {
+      type: Object,
+      default: null,
+    },
+
+    rowHeight: {
+      type: Number,
+      default: 60,
+    },
   },
   data() {
     return {
@@ -95,7 +107,7 @@ export default {
   beforeMount() {
     this.gridOptions = {
       rowSelection: "multiple",
-      headerHeight: 32,
+      headerHeight: "32",
     }
     this.overlayLoadingTemplate =
       "<span class='ag-overlay-loading-center'>Please wait while your rows are loading</span>"
@@ -121,6 +133,11 @@ export default {
     border: none;
     border-top: solid 1px;
     border-color: #babfc7;
+    .menu-cells {
+      .ag-cell-value {
+        width: 100%;
+      }
+    }
     .ag-root-wrapper-body {
       .ag-header {
         height: 32px !important;
@@ -162,6 +179,13 @@ export default {
       }
       .ag-center-cols-container {
         min-width: inherit !important;
+      }
+      .ag-icon.ag-icon-asc,
+      .ag-icon.ag-icon-desc {
+        color: var(--v-anchor-base);
+      }
+      .ag-horizontal-left-spacer {
+        display: table;
       }
     }
   }

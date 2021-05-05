@@ -11,6 +11,7 @@ export default {
   yellow: "#FFCD00",
   lightBlue: "#007CB0",
   backgroundBlue: "#F9FAFB",
-  neroBlack: "#1e1e1e",
   zircon: "#E2EAEC",
+  neroBlack: "#1e1e1e",
+  gray: "4F4F4F",
 }

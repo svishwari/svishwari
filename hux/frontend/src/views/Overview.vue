@@ -53,6 +53,7 @@
           :title="item.title"
           :description="item.description"
           :active="item.active"
+          :to="item.route"
         ></CardInfo>
       </div>
     </div>
@@ -74,40 +75,44 @@ export default {
       configureOptions: {
         configureHux: true,
         activeCustomers: true,
-        currentCampaigns: true,
-        upcomingCampaigns: true,
+        currentEngagements: true,
+        upcomingEngagements: true,
         dataManagement: false,
       },
       configureHuxOptions: [
         {
+          title: "Connect data source",
+          description:
+            "Choose your data source from various customer touchpoint systems.",
+          route: "datasources",
+          active: true,
+        },
+        {
           title: "Add a destination",
           description:
             "Choose a destination where your actionable intelligence will be consumed.",
-          path: "/connections",
-          active: true,
-        },
-        {
-          title: "Create a campaign",
-          description: "Descriptive text for the action item.",
-          path: "/campaign",
-          active: true,
-        },
-        {
-          title: "Create an audience",
-          description: "Descriptive text for the action item.",
-          path: "/audiences",
+          route: "destinations",
           active: true,
         },
         {
           title: "Build your models",
-          description: "Descriptive text for the action item.",
-          path: "/audiences",
+          description:
+            "Build predictive models that intelligently characterize customer opportunities.",
+          route: "models",
           active: false,
         },
         {
-          title: "Connect data source",
-          description: "Descriptive text for the action item.",
-          path: "/audiences",
+          title: "Create an audience",
+          description:
+            "Create an audience based on customized orchestrated choices..",
+          route: "audiences",
+          active: true,
+        },
+        {
+          title: "Create an engagement",
+          description:
+            "Put all this great data and information to good use by creating an engagement.",
+          route: "engagements",
           active: true,
         },
       ],
@@ -130,19 +135,20 @@ export default {
     background: #ecf4f9;
     min-height: 265px;
     padding: 16px 30px 30px 30px;
+    overflow-x: auto;
     h6 {
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
       line-height: 19px;
       letter-spacing: 0.5px;
-      color: #1e1e1e;
+      color: var(--v-neroBlack-base);
     }
     .card-wrap {
       .v-card {
         margin-right: 15px;
         &.v-card--disabled {
-          background: #f9fafb;
+          background: var(--v-background-base);
         }
       }
     }
@@ -165,7 +171,7 @@ export default {
     .heading {
       text-transform: uppercase;
       margin-bottom: 5px;
-      color: #005587;
+      color: var(--v-primary-base);
     }
     .description {
       color: inherit;
@@ -174,7 +180,7 @@ export default {
   .v-input {
     margin: 0;
     .v-input__control {
-      background: red;
+      background: var(--v-error-base);
       .v-messages {
         display: none !important;
       }

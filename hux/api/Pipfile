@@ -3,6 +3,12 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[[source]]
+url = "$ARTIFACTORY_PYTHON_READ"
+verify_ssl = true
+name = "jfrog"
+
+
 [packages]
 flasgger= "0.9.5"
 Flask= "1.1.2"
@@ -24,6 +30,10 @@ facebook_business= "10.0.0"
 pymongo= "3.11.3"
 mongomock= "3.22.1"
 python-decouple= "3.4"
+requests= "2.25.1"
+huxunifylib-database = {version="*", index="jfrog"}
+huxunifylib-util = {version="*", index="jfrog"}
+huxunifylib-connectors = {version="*", index="jfrog"}
 
 [dev-packages]
 pytest = "*"

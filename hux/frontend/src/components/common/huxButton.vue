@@ -5,8 +5,10 @@
     :outlined="isOutlined"
     :tile="isTile"
     :color="variant"
-    class="ma-2"
     :class="buttonSize"
+    :width="width"
+    :height="height"
+    :icon="iconType"
     @click="onClick"
   >
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
@@ -77,6 +79,21 @@ export default {
     },
     size: {
       type: String,
+      required: false,
+      default: null,
+    },
+    width: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    height: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    iconType: {
+      type: Boolean,
       required: false,
       default: null,
     },
