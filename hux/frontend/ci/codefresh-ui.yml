@@ -87,7 +87,7 @@ steps:
     stage: "lint"
     title: "Running lint"
     fail_fast: false
-    image: codefresh/cli:latest
+    image: node:14
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
     - npm run lint -- --no-fix

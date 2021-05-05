@@ -12,8 +12,8 @@ FROM node:14 as huxui-build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
-RUN npm install @vue/cli-plugin-e2e-cypress cypress
 RUN npm install
+RUN npm install @vue/cli@4.5.6 -g
 COPY . /app
 COPY --from=base /tmp/env_file .env
 RUN npm run build
