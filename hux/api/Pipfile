@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [[source]]
-url = "https://$JFROG_USERNAME:${JFROG_PASSWORD}@repo.mgnt.in/artifactory/api/pypi/python/simple"
+url = "$ARTIFACTORY_PYTHON_READ"
 verify_ssl = true
 name = "jfrog"
 

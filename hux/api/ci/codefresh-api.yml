@@ -74,8 +74,6 @@ steps:
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
-      - JFROG_USERNAME=${{JFROG_USERNAME}}
-      - JFROG_PASSWORD=${{JFROG_PASSWORD}}
 
   py37_check:
     stage: "py37_check"

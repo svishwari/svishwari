@@ -2,11 +2,8 @@
 
 FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
 
-MAINTAINER hux-unified team
-
 # variables used for consuming orchestration pkgs from jfrog
-ARG JFROG_USERNAME
-ARG JFROG_PASSWORD
+ARG ARTRIFACTORY_PYTHON_READ
 
 WORKDIR /app/hux-unified/api
 COPY ./lib /app/lib
