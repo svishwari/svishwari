@@ -6,6 +6,9 @@ from typing import Any
 from http import HTTPStatus
 
 from connexion.exceptions import ProblemException
+from pymongo import MongoClient
+from huxunifylib.connectors.util.client import db_client_factory
+from huxunify.api.config import MONGO_DB_CONFIG
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
@@ -71,3 +74,11 @@ def handle_api_exception(exc: Exception, description: str = "") -> None:
         title=HTTPStatus.BAD_REQUEST.description,
         detail=description,
     )
+
+
+def get_db_client() -> MongoClient:
+    """Get DB client.
+    Returns:
+        MongoClient: MongoDB client.
+    """
+    return db_client_factory.get_resource(**MONGO_DB_CONFIG)

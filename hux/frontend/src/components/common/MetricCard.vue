@@ -67,7 +67,7 @@ export default {
 
 <style lang="scss" scoped>
 .metric-card-wrapper {
-  border: 1px solid #e2eaec;
+  border: 1px solid var(--v-zircon-base);
   .item-headline {
     font-size: 12px;
   }
@@ -77,7 +77,7 @@ export default {
   &.v-card--disabled {
     background-color: unset;
     .v-list-item__title {
-      color: #4f4f4f;
+      color: var(--v-gray-base);
     }
   }
 }

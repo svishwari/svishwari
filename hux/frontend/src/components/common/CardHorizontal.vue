@@ -84,6 +84,6 @@ export default {
 
 <style lang="scss" scoped>
 .card-horizontal-disabled {
-  border: 1px solid #e2eaec !important;
+  border: 1px solid var(--v-error-base) !important;
 }
 </style>
