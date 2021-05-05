@@ -33,7 +33,7 @@ from huxunify.api import constants as api_c
 
 CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
-CDP_DATA_SOURCES_ENDPOINT = "data_sources"
+CDP_DATA_SOURCES_ENDPOINT = "data-sources"
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
