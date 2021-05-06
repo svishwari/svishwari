@@ -10,6 +10,7 @@ WORKDIR /app/hux-unified/api
 
 # copy over the hux/api folder from the host to the container
 COPY ./hux/api /app/hux-unified/api
+COPY .pylintrc /app
 
 # upgrade pip to the latest
 RUN pip install --upgrade pip
