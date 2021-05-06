@@ -19,4 +19,3 @@ export default {
   name: "DestinationListCard",
 }
 </script>
-<style lang="scss" scoped></style>

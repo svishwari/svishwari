@@ -17,6 +17,8 @@ package-lock.json
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+jsconfig.json
+tsconfig.json
 
 # Local History for Visual Studio Code
 .history/
