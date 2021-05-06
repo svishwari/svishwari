@@ -1,7 +1,7 @@
 <template>
   <v-snackbar
     height="56"
-    :timeout="autoHide ? '5000' : '-1'"
+    :timeout="timeout"
     v-model="isOpen"
     app
     top
@@ -72,6 +72,9 @@ export default {
     },
     typeClass() {
       return `${this.type}--text`
+    },
+    timeout() {
+      return this.autoHide ? 5000 : 0
     },
   },
 
