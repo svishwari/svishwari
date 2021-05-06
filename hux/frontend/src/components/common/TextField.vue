@@ -28,7 +28,7 @@
       :background-color="backgroundColor"
       single-line
       outlined
-      autocomplete="nope"
+      autocomplete="off"
       @input="input($event)"
       @change="change($event)"
       @click:append="$emit('clickAppend')"
