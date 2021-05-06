@@ -23,8 +23,7 @@ RUN pipenv lock --keep-outdated --requirements > requirements.txt
 # use pip for docker to generate the list of requirements.
 RUN pip install -r requirements.txt
 
-# TODO - this was the only way I could fix it.
-# need to show for demo, can revisit after.
+# TODO - encountered error here, will revist after.
 RUN pip uninstall bson -y
 RUN pip uninstall pymongo -y
 RUN pip install bson
