@@ -70,18 +70,18 @@ def create_notification(
 )
 def get_notifications(
     database: DatabaseClient,
-    page_size: int,
-    order: int,
-    start_id: str = None,
+    batch_size: int,
+    sort_order: int,
+    batch_number: int,
 ) -> list:
     """A function to get notifications
 
     Args:
         database (DatabaseClient): A database client.
-        page_size (int): number of notifications per page.
-        order (int): dictate the order of the records that are returned.
+        batch_size (int): Number of notifications per batch.
+        sort_order (int): dictate the order of the records that are returned.
                     (pymongo.DESCENDING or pymongo.ASCENDING)
-        start_id (str): start id for pagination
+        batch_number (int): Number of which batch should be returned
 
     Returns:
         dict: MongoDB document for a notification.
@@ -92,17 +92,15 @@ def get_notifications(
         c.NOTIFICATIONS_COLLECTION
     ]
 
+    skips = batch_size * (batch_number - 1)
+
     try:
-        if start_id is None:
-            return list(
-                collection.find().sort([(c.ID, order)]).limit(page_size + 1)
-            )
-        else:
-            return list(
-                collection.find({{c.ID: {"$gt": start_id}}, {c.ID: True}})
-                .sort([(c.ID, order)])
-                .limit(page_size + 1)
-            )
+        return list(
+            collection.find()
+            .sort([(c.ID, sort_order)])
+            .skip(skips)
+            .limit(batch_size)
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

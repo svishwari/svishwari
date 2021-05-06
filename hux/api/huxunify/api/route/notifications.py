@@ -6,11 +6,9 @@ from http import HTTPStatus
 from typing import Tuple
 
 import pymongo
-from bson import ObjectId
 from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
-
 from pymongo import MongoClient
 
 from huxunify.api.schema.notifications import NotificationSchema
@@ -46,10 +44,9 @@ class NotificationsSearch(SwaggerView):
     Notifications search class
     """
 
-    # TODO how to put in Keyword url args into parameters here
     parameters = [
         {
-            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_PAGE_SIZE,
+            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
             "type": "integer",
             "description": "Max number of notifications to be returned.",
@@ -57,20 +54,20 @@ class NotificationsSearch(SwaggerView):
             "required": True,
         },
         {
-            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_ORDER,
+            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_SORT_ORDER,
             "in": "query",
             "type": "string",
-            "description": "Order of the records to be returned.",
+            "description": "Sort order of the records to be returned.",
             "example": "ascending",
             "required": True,
         },
         {
-            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_START_ID,
+            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
             "type": "string",
-            "description": "Start ID of notification to begin the next query from.",
+            "description": "Number of which batch of notifications should be returned.",
             "example": "10",
-            "required": False,
+            "required": True,
         },
     ]
     responses = {
@@ -92,35 +89,33 @@ class NotificationsSearch(SwaggerView):
             Tuple[dict, int] dict of notifications and http code
         """
 
-        page_size = request.args.get("page_size")
-        order = request.args.get("order")
-        start_id = request.args.get("start_id")
+        batch_size = request.args.get("batch_size")
+        sort_order = request.args.get("sort_order")
+        batch_number = request.args.get("batch_number")
 
-        if page_size is None or (
-            order.lower() != db_constants.PAGINATION_ASCENDING
-            and order.lower() != db_constants.PAGINATION_DESCENDING
+        if (
+            batch_size is None
+            or batch_number is None
+            or (
+                sort_order.lower() != db_constants.PAGINATION_ASCENDING
+                and sort_order.lower() != db_constants.PAGINATION_DESCENDING
+            )
         ):
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
 
-        order = (
+        sort_order = (
             pymongo.ASCENDING
-            if order.lower() == db_constants.PAGINATION_ASCENDING
+            if sort_order.lower() == db_constants.PAGINATION_ASCENDING
             else pymongo.DESCENDING
         )
 
-        if start_id is not None:
-            if not ObjectId.is_valid(start_id):
-                return {
-                    "message": "Invalid start_id received."
-                }, HTTPStatus.BAD_REQUEST
-
         response = notification_management.get_notifications(
             get_db_client(),
-            page_size=int(page_size),
-            order=order,
-            start_id=start_id,
+            batch_size=int(batch_size),
+            sort_order=sort_order,
+            batch_number=int(batch_number),
         )
 
         return response, HTTPStatus.OK
