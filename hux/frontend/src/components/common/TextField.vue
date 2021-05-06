@@ -1,23 +1,38 @@
 <template>
   <div>
-    <label class="ml-2">
+    <label class="d-flex align-items-center mb-2">
       {{ labelText }}
-      <v-icon color="primary" class="mb-2"> {{ icon }} </v-icon>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+            color="primary"
+            size="small"
+            class="ml-2"
+            v-bind="attrs"
+            v-on="on"
+          >
+            {{ icon }}
+          </v-icon>
+        </template>
+        <span>
+          {{ helpText }}
+        </span>
+      </v-tooltip>
     </label>
     <v-text-field
-      :label="placeholderText"
-      @input="input($event)"
-      @change="change($event)"
       v-model="TextFieldValue"
+      :label="placeholderText"
       :append-icon="appendIcon"
       :rules="rules"
       :type="InputType"
-      @click:append="$emit('clickAppend')"
-      @blur="$emit('blur', TextFieldValue)"
+      :background-color="backgroundColor"
       single-line
       outlined
       autocomplete="off"
-      :background-color="backgroundColor"
+      @input="input($event)"
+      @change="change($event)"
+      @click:append="$emit('clickAppend')"
+      @blur="$emit('blur', TextFieldValue)"
     >
     </v-text-field>
   </div>
@@ -35,17 +50,18 @@ export default {
     labelText: {
       type: String,
       required: false,
-      default: null,
     },
     placeholderText: {
       type: String,
       required: false,
-      default: null,
+    },
+    helpText: {
+      type: String,
+      required: false,
     },
     icon: {
       type: String,
       required: false,
-      default: null,
     },
     appendIcon: {
       type: String,

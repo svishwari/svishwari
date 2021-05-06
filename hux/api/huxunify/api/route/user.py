@@ -12,7 +12,6 @@ from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
-from pymongo import MongoClient
 
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
@@ -22,7 +21,7 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -34,15 +33,6 @@ USER_ENDPOINT = "users"
 
 # setup the user blueprint
 user_bp = Blueprint(USER_ENDPOINT, import_name=__name__)
-
-
-def get_db_client() -> MongoClient:
-    """Get DB client.
-    Returns:
-        MongoClient: DB client
-    """
-    # TODO - hook-up when ORCH-94 HUS-262 are completed
-    return MongoClient()
 
 
 @add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}", "UserSearch")
