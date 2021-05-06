@@ -19,7 +19,6 @@ flask-swagger-ui= {version="3.36.0", index="pypi"}
 Flask-RESTful= {version="0.3.8", index="pypi"}
 apispec= {version="4.3.0", index="pypi"}
 apispec-webframeworks= {version="0.5.2", index="pypi"}
-snowflake-connector-python= {version="2.3.10", index="pypi"}
 boto3= {version="1.17.5", index="pypi"}
 pandas= {version="1.2.3", index="pypi"}
 tenacity= {version="7.0.0", index="pypi"}
@@ -34,6 +33,7 @@ requests-mock= {version="1.9.2", index="pypi"}
 requests= {version="2.25.1", index="pypi"}
 huxunifylib-database = {version="*", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
+huxunifylib-util = {version="*", index="jfrog"}
 
 [dev-packages]
 pytest = {version="*", index="pypi"}

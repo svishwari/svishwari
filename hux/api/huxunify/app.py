@@ -1,35 +1,87 @@
 """
 Purpose of this file is to house the main application code.
 """
+from typing import Union, List
 from flask import Flask
 from flasgger import Swagger
-from huxunify.api.route import (
-    dest_bp,
-    cdm_bp,
-    user_bp,
-    model_bp,
-    auth_bp,
-    orchestration_bp,
-    cdp_data_sources_bp,
-)
+from werkzeug import Response
+from werkzeug.wsgi import ClosingIterator
+
+from huxunify.api.route import ROUTES
 
 
 # set config variables
-SWAGGER_URL = "/api/docs"
-API_URL = "/api/swagger.json"
-TITLE = "Hux API"
-VERSION = "0.0.1"
-OPENAPI_VERSION = "3.0.2"
+SWAGGER_CONFIG = {
+    "headers": [],
+    "openapi": "3.0.2",
+    "components": {
+        "securitySchemes": {
+            "oAuthSample": {
+                "type": "oauth2",
+                "flows": {
+                    "clientCredentials": {
+                        "tokenUrl": "",
+                    }
+                },
+            }
+        },
+    },
+    "servers": [
+        {"url": "http://localhost:5000/api/v1", "description": ""},
+    ],
+    "specs": [
+        {
+            "endpoint": "ui",
+            "route": "/openapi.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/swagger",
+    "title": "Hux Unified API",
+    "version": "1.0.0",
+    "swagger_ui": True,
+    "specs_route": "/ui/",
+    "description": "",
+    "termsOfService": "",
+}
 
-# define openapi spec to later load into YAML
-# here we can define servers, and all other common api spec items.
-OPENAPI_SPEC = f"""
-openapi: {OPENAPI_VERSION}
-info:
-  description: Hux API Documentation
-  title: {TITLE}
-  version: {VERSION}
-"""
+
+class PrefixMiddleware:
+    """PrefixMiddleware class"""
+
+    def __init__(self, wsgi_app: Flask.wsgi_app, prefix: str = ""):
+        """Creates middleware for serving flask under a url prefix.
+
+        Args:
+              wsgi_app (Flask.wsgi_app): flask wsgi_app.
+              prefix (str): Url prefix.
+
+        Returns:
+
+        """
+        self.app = wsgi_app
+        self.prefix = prefix
+
+    def __call__(
+        self, environ: dict, response: Response
+    ) -> Union[ClosingIterator, List[str]]:
+        """Method when the class is called that binds the url prefix.
+
+        Args:
+              environ (dict): flask env dict.
+              response (Response): flask wsgi response.
+
+        Returns:
+             ClosingIterator: return wsgi closing iterator.
+        """
+        if environ["PATH_INFO"].startswith(self.prefix):
+            environ["PATH_INFO"] = environ["PATH_INFO"][len(self.prefix) :]
+            environ["SCRIPT_NAME"] = self.prefix
+            return self.app(environ, response)
+
+        response("404", [("Content-Type", "text/plain")])
+        return ["This url does not belong to the app.".encode()]
 
 
 def create_app():
@@ -44,18 +96,16 @@ def create_app():
     # setup the flask app
     flask_app = Flask(__name__)
 
-    # setup the configuration
-    # flask_app.config.from_object(environ['APP_SETTINGS'])
+    # register the routes
+    for route in ROUTES:
+        print(f"Registering {route.name}.")
+        flask_app.register_blueprint(route)
 
-    # register the blueprints
-    flask_app.register_blueprint(cdm_bp, url_prefix="/cdm")
-    flask_app.register_blueprint(dest_bp, url_prefix="/")
-    flask_app.register_blueprint(user_bp, url_prefix="/")
-    flask_app.register_blueprint(cdp_data_sources_bp, url_prefix="/cdp")
-    flask_app.register_blueprint(auth_bp, url_prefix="/")
-    flask_app.register_blueprint(model_bp, url_prefix="/")
-    flask_app.register_blueprint(orchestration_bp, url_prefix="/")
-    Swagger(flask_app)
+    # setup the swagger docs
+    Swagger(flask_app, config=SWAGGER_CONFIG)
+
+    # set middleware so we can assign the prefixed url.
+    flask_app.wsgi_app = PrefixMiddleware(flask_app.wsgi_app, prefix="/api/v1")
 
     return flask_app
 

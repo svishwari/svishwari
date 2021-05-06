@@ -350,7 +350,7 @@ class DestinationPutView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    dest_bp, f"/{api_c.DESTINATIONS_ENDPOINT}", "DestinationsView"
+    dest_bp, f"{api_c.DESTINATIONS_ENDPOINT}", "DestinationsView"
 )
 class DestinationsView(SwaggerView):
     """
@@ -387,7 +387,7 @@ class DestinationsView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"/{api_c.DESTINATIONS_ENDPOINT}/delete",
+    api_c.DESTINATIONS_ENDPOINT,
     "DestinationsDeleteView",
 )
 class DestinationsDeleteView(SwaggerView):
