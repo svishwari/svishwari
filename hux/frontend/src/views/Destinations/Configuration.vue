@@ -1,5 +1,5 @@
 <template>
-  <div class="add-destination--wrap font-weight-regular white">
+  <div class="add-destination--wrap font-weight-regular">
     <div class="mb-10">
       <h4 class="text-h4 font-weight-light">Add a destination</h4>
       <p>Please fill out the information below to connect a new destination.</p>
