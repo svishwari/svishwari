@@ -1,7 +1,6 @@
 # 1. Build the API
 
-#FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
-FROM python:3.7-slim-buster AS hux-unified
+FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
 
 # variables used for consuming orchestration pkgs from jfrog
 ARG ARTIFACTORY_PYTHON_READ
