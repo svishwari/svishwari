@@ -2,9 +2,7 @@ import { Response } from "miragejs"
 
 export const defineRoutes = (server) => {
   // destinations
-  server.get("/destinations", (schema) => {
-    return schema.destinations.all().models
-  })
+  server.get("/destinations")
 
   server.put("/destinations/:id", (schema, request) => {
     const id = request.params.id
