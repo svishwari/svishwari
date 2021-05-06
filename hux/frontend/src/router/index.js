@@ -67,6 +67,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/insight",
+    name: "audienceInsight",
+    component: () => import("@/views/Audiences/Insight.vue"),
+    meta: {
+      layout: "app",
+      title: "Audiences",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/models",
     name: "models",
     component: () => import("@/views/Models"),
