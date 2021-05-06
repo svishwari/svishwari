@@ -26,8 +26,8 @@
       <div class="destination-auth-wrap background pa-5 rounded mb-10">
         <v-row>
           <v-col
-            v-for="item in Object.values(destination.auth_details)"
             cols="6"
+            v-for="item in Object.values(destination.auth_details)"
             :key="item.name"
           >
             <TextField

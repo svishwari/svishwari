@@ -47,7 +47,6 @@ const actions = {
 
   async add({ commit }, destination) {
     try {
-      debugger
       const response = await api.destinations.update(
         destination.id,
         destination.auth_details

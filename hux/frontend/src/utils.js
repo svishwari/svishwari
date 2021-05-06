@@ -18,6 +18,6 @@ export function pageTitle(title) {
  * @param {string} error
  */
 export function handleError(error) {
-  // TODO: do more with the error that log it to the console
+  // TODO: do more with the error than just logging it to the console
   console.error(error)
 }
