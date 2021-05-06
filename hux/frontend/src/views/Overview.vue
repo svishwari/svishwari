@@ -98,7 +98,7 @@ export default {
           title: "Add a destination",
           description:
             "Choose a destination where your actionable intelligence will be consumed.",
-          route: "destinations",
+          route: "add-destination",
           active: true,
         },
         {
@@ -112,7 +112,7 @@ export default {
           title: "Create an audience",
           description:
             "Create an audience based on customized orchestrated choices..",
-          route: "audiences",
+          route: "createAudience",
           active: true,
         },
         {
