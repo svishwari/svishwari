@@ -1,6 +1,6 @@
 <template>
   <v-footer
-    class="app-footer-wrap d-flex justify-space-between align-center"
+    class="app-footer-wrap d-flex justify-space-between align-center shadow"
     app
     paddless
     fixed
@@ -24,6 +24,5 @@ export default {
 <style lang="scss" scoped>
 .app-footer-wrap {
   padding: 1rem 10rem;
-  box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
 }
 </style>
