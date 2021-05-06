@@ -5,7 +5,6 @@ Paths for destinations api
 import logging
 from http import HTTPStatus
 from typing import Tuple
-from mongomock import MongoClient
 from connexion.exceptions import ProblemException
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -26,22 +25,12 @@ from huxunify.api.schema.destinations import (
     DestinationConstants,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 import huxunify.api.constants as api_c
 
 
 # setup the destination blueprint
 dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
-
-
-def get_db_client() -> MongoClient:
-    """Get DB client.
-
-    Returns:
-        MongoClient: DB client
-    """
-    # TODO - hook-up when ORCH-94 HUS-262 are completed
-    return MongoClient()
 
 
 # pylint: disable=unused-argument,
@@ -59,7 +48,7 @@ def test_destination_connection(
         updated_destination (dict): The updated destination.
     """
 
-    # TODO - hook-up when ORCH-94 HUS-262 are completed
+    # TODO - create a generic connector for SFMC as well.
     status = True
     # dp_connector = get_connector(
     #     destination_type=destination_type,
@@ -323,8 +312,6 @@ class DestinationPutView(SwaggerView):
                     )
                 )
 
-                # TODO - implement when ORCH-94 and HUS-262 are ready
-                #        need to sort out auth for parameter store.
                 # test the destination connection and update connection status
                 test_destination_connection(
                     destination_id=destination_id,

@@ -194,6 +194,7 @@ FIELD_FIELD_MAPPING = "field_mapping"
 FIELD_FIELD_MAPPING_DEFAULT = "field_mapping_default"
 
 # CDP Data Source constants
+CDP_DATA_SOURCE_ID = "data_source_id"
 CDP_DATA_SOURCE_FIELD_NAME = "name"
 CDP_DATA_SOURCE_FIELD_CATEGORY = "category"
 CDP_DATA_SOURCE_FIELD_FEED_COUNT = "feed_count"

@@ -2,7 +2,8 @@
 
 FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
 
-MAINTAINER Jim McMahon <jimcmahon@deloitte.com>
+# variables used for consuming orchestration pkgs from jfrog
+ARG ARTIFACTORY_PYTHON_READ
 
 WORKDIR /app/hux-unified/api
 COPY ./lib /app/lib
@@ -13,11 +14,11 @@ COPY .pylintrc /app
 RUN pip install --upgrade pip
 RUN pip install pipenv
 
-# This line allows the env variable to be picked up from Codefresh
-ARG ARTIFACTORY_PYTHON_READ
+# lock current deps to make it easier/faster for docker to build
+RUN pipenv lock --keep-outdated --requirements > requirements.txt
 
-# install all dependencies listed in Pipfile
-RUN pipenv install --ignore-pipfile --deploy --pypi-mirror ${ARTIFACTORY_PYTHON_READ}
+# use pip for docker to generate the list of requirements.
+RUN pip install -r requirements.txt
 
 WORKDIR /app/hux-unified/api/huxunify
 CMD ["pipenv", "run", "app.py"]

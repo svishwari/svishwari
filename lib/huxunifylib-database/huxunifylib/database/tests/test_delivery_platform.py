@@ -243,10 +243,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             "My second delivery platform for SFMC",
         )
 
-        # # TODO - add when HUS-254 is done
-        # self.assertEqual(doc[c.CREATED_BY], "test_user")
-        # self.assertEqual(doc[c.UPDATED_BY], "test_user")
-
         self.assertEqual(
             doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_SFMC
         )
