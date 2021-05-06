@@ -53,7 +53,7 @@
           :title="item.title"
           :description="item.description"
           :active="item.active"
-          :to="{ name: item.route }"
+          :to="item.route"
         ></CardInfo>
       </div>
     </div>

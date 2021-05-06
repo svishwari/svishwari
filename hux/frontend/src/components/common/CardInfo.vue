@@ -4,7 +4,7 @@
     min-width="220px"
     max-width="260px"
     :disabled="!active"
-    :to="to"
+    :to="{ name: to }"
     @click="$emit('click')"
   >
     <v-btn fab :ripple="false" elevation="2" color="tertiary" class="mt-4">
