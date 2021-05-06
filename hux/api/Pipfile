@@ -32,7 +32,7 @@ pylint = "*"
 black = { version = "*", pre="true"}
 safety = "*"
 moto = "*"
-mypy="*"
+mypy={version = "*", pre="true"}
 
 [requires]
 python_version = "3.7"
