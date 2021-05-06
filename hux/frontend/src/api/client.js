@@ -20,10 +20,10 @@ Object.keys(resources).forEach((resource) => {
     update: (resourceId, data) => http.put(`${endpoint}/${resourceId}`, data),
   }
 
-  // Custom one-off endpoints
+  // Custom one-off resource endpoints
   if (resource === "destinations") {
     client[resource].validate = (data) => {
-      http.post("/destinations/validate", data)
+      return http.post("/destinations/validate", data)
     }
   }
 })

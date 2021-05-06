@@ -1,5 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
+import { handleError } from "@/utils"
 
 const namespaced = true
 
@@ -29,7 +30,8 @@ const actions = {
       const response = await api.destinations.all()
       commit("SET_ALL", response.data)
     } catch (error) {
-      console.error(error)
+      handleError(error)
+      throw error
     }
   },
 
@@ -38,7 +40,8 @@ const actions = {
       const response = await api.destinations.find(id)
       commit("SET_ONE", response.data)
     } catch (error) {
-      console.error(error)
+      handleError(error)
+      throw error
     }
   },
 
@@ -51,19 +54,17 @@ const actions = {
       )
       commit("SET_ONE", response.data)
     } catch (error) {
-      console.error(error)
+      handleError(error)
+      throw error
     }
   },
 
-  async validate({ commit }, destination) {
+  async validate(_, destination) {
     try {
-      const response = await api.destinations.validate(
-        destination.id,
-        destination.auth_details
-      )
-      commit("SET_ONE", response.data)
+      await api.destinations.validate(destination.auth_details)
     } catch (error) {
-      console.error(error)
+      handleError(error)
+      throw error
     }
   },
 }

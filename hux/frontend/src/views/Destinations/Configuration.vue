@@ -195,12 +195,15 @@ export default {
 
     async validate() {
       this.isValidating = true
+
       try {
         await this.validateDestination(this.destination)
-        this.isValidating = false
         this.isValidated = true
       } catch (error) {
+        // TODO we probably want to do more here when things arent valid
         console.error(error)
+      } finally {
+        this.isValidating = false
       }
     },
 
