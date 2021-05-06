@@ -1,4 +1,4 @@
-import { createServer, Factory, Model } from "miragejs"
+import { createServer, Factory, Model, Serializer } from "miragejs"
 import config from "@/config"
 import { defineRoutes } from "./routes"
 import seeds from "./seeds"
@@ -25,6 +25,12 @@ export function makeServer({ environment = "development" } = {}) {
 
       // pass requests to external APIs through
       this.passthrough(`${config.oktaUrl}/**`)
+    },
+    serializers: {
+      application: Serializer.extend({
+        embed: true,
+        root: false,
+      }),
     },
   })
 
