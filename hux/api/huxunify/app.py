@@ -6,6 +6,7 @@ from flask import Flask
 from flasgger import Swagger
 from werkzeug import Response
 from werkzeug.wsgi import ClosingIterator
+from flask_cors import CORS
 
 from huxunify.api.route import ROUTES
 
@@ -84,17 +85,18 @@ class PrefixMiddleware:
         return ["This url does not belong to the app.".encode()]
 
 
-def create_app():
+def create_app() -> Flask:
     """creates the flask app and blueprints
 
     Args:
 
     Returns:
-        Response: Returns a flask object
+        Flask: Returns a flask object.
 
     """
     # setup the flask app
     flask_app = Flask(__name__)
+    CORS(flask_app, resources={r"/api/*": {"origins": "*"}})
 
     # register the routes
     for route in ROUTES:
