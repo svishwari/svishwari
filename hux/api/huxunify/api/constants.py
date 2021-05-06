@@ -115,3 +115,25 @@ PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the parameter store."
 )
+
+# Models
+MODEL_NAME = "model_name"
+MODEL_NAME_PARAMS = [
+    {
+        "name": MODEL_NAME,
+        "description": "Model name.",
+        "type": "string",
+        "in": "path",
+        "required": True,
+        "example": "churn",
+    },
+]
+MODEL_LIST_PAYLOAD = {
+    "params": {
+        "feature_service_name": "ui_metadata_models_service",
+        "join_key_map": {
+            "model_name": "ltv-model-365-30",
+            "version_number": "0.0.1",
+        },
+    }
+}

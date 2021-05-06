@@ -3,13 +3,15 @@ Purpose of this file is to house the main application code.
 """
 from flask import Flask
 from flasgger import Swagger
-
-from huxunify.api.route.cdp_data_source import cdp_data_sources_bp
-from huxunify.api.route.destination import dest_bp
-from huxunify.api.route.cdm import cdm_bp
-from huxunify.api.route.user import user_bp
-from huxunify.api.route.authenticate import auth_bp
-from huxunify.api.route.orchestration import orchestration_bp
+from huxunify.api.route import (
+    dest_bp,
+    cdm_bp,
+    user_bp,
+    model_bp,
+    auth_bp,
+    orchestration_bp,
+    cdp_data_sources_bp,
+)
 
 
 # set config variables
@@ -51,6 +53,7 @@ def create_app():
     flask_app.register_blueprint(user_bp, url_prefix="/")
     flask_app.register_blueprint(cdp_data_sources_bp, url_prefix="/cdp")
     flask_app.register_blueprint(auth_bp, url_prefix="/")
+    flask_app.register_blueprint(model_bp, url_prefix="/")
     flask_app.register_blueprint(orchestration_bp, url_prefix="/")
     Swagger(flask_app)
 
