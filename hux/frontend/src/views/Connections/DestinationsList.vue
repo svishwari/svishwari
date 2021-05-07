@@ -23,7 +23,7 @@
         </template>
       </DestinationListCard>
     </template>
-    <EmptyState v-else>
+    <EmptyStateData v-else>
       <template v-slot:icon> mdi-alert-circle-outline </template>
       <template v-slot:title> Oops! There’s nothing here yet </template>
       <template v-slot:subtitle>
@@ -31,7 +31,7 @@
         <br />
         Begin by selecting the plus button above.
       </template>
-    </EmptyState>
+    </EmptyStateData>
   </div>
 </template>
 
@@ -40,14 +40,14 @@ import { mapGetters, mapActions } from "vuex"
 
 import DestinationListCard from "@/components/DestinationListCard"
 import Logo from "@/components/common/Logo"
-import EmptyState from "@/components/EmptyState"
+import EmptyStateData from "@/components/common/EmptyStateData"
 
 export default {
   name: "destinations-list",
 
   components: {
     DestinationListCard,
-    EmptyState,
+    EmptyStateData,
     Logo,
   },
 

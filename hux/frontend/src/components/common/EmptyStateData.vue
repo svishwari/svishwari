@@ -13,7 +13,7 @@
 </template>
 <script>
 export default {
-  name: "EmptyState",
+  name: "EmptyStateData",
 }
 </script>
 <style lang="scss" scoped>
