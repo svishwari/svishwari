@@ -5,7 +5,7 @@ export default {
   aliceBlue: "#ECF4F9",
   darkGrey: "#232323",
   lightGrey: "#D0D0CE",
-  green: "#009A44",
+  green: "#43B02A",
   red: "#DA291C",
   white: "#FFFFFF",
   yellow: "#FFCD00",
