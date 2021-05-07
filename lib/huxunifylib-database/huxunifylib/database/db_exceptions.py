@@ -18,7 +18,9 @@ class HuxAdvException(Exception):
 class DuplicateName(HuxAdvException):
     """Exception for duplicate names."""
 
-    exception_message = "The name <{}> already exists. The creation/update failed."
+    exception_message = (
+        "The name <{}> already exists. The creation/update failed."
+    )
 
 
 class InvalidName(HuxAdvException):
@@ -30,7 +32,10 @@ class InvalidName(HuxAdvException):
 class DataSourceLocked(HuxAdvException):
     """Exception for when data source is already associated with an ingestion job."""
 
-    exception_message = "Data source with ID <{}> is associated to an ingestion job and cannot be updated!"
+    exception_message = (
+        "Data source with ID <{}> is associated to an ingestion job "
+        "and cannot be updated!"
+    )
 
 
 class NoUpdatesSpecified(HuxAdvException):
@@ -54,19 +59,26 @@ class UnknownDeliveryPlatformType(HuxAdvException):
 class NoDeliveryPlatformConnection(HuxAdvException):
     """Exception for when a delivery platform has not established connection."""
 
-    exception_message = "Delivery platform with ID <{}> has not established a successful connection!"
+    exception_message = (
+        "Delivery platform with ID <{}> has not established a "
+        "successful connection!"
+    )
 
 
 class IncorrectFilterValue(HuxAdvException):
     """Exception for incorrect audience filter values."""
 
-    exception_message = "Incorrect filter value of type <{}> for filter of type <{}>!"
+    exception_message = (
+        "Incorrect filter value of type <{}> for filter of type <{}>!"
+    )
 
 
 class DefaultAudienceLocked(HuxAdvException):
     """Exception for updating default audiences."""
 
-    exception_message = "Audience <{}> cannot be updated as it is a default audience!"
+    exception_message = (
+        "Audience <{}> cannot be updated as it is a default audience!"
+    )
 
 
 class DuplicateDataSourceFieldType(HuxAdvException):
