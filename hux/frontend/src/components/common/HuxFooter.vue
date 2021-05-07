@@ -1,13 +1,11 @@
 <template>
   <v-footer
-    class="app-footer-wrap d-flex justify-space-between align-center"
+    class="app-footer-wrap d-flex justify-space-between align-center shadow"
     app
     paddless
     fixed
-    height="80"
     inset
     color="background"
-    elevation="5"
   >
     <div class="footer--left">
       <slot name="left"></slot>
@@ -25,6 +23,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .app-footer-wrap {
-  padding: 14px 169px;
+  padding: 1rem 10rem;
 }
 </style>

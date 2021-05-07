@@ -123,7 +123,7 @@
         </v-timeline-item>
       </v-timeline>
 
-      <HuxFooter absolute padless color="white" class="footer">
+      <HuxFooter>
         <template v-slot:left>
           <huxButton
             ButtonText="Cancel"
@@ -206,10 +206,6 @@ export default {
   }
   .divider {
     max-width: 1170px;
-  }
-  .footer {
-    padding-left: 50px;
-    box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
   }
   ::v-deep .timeline-wrapper {
     .theme--light.v-timeline:before {
