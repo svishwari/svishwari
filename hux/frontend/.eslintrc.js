@@ -14,6 +14,7 @@ module.exports = {
     semi: ["error", "never"],
     quotes: ["error", "double"],
     "comma-dangle": ["error", "always-multiline"],
+    "prettier/prettier": "error",
   },
   overrides: [
     {
