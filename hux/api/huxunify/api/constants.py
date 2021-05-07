@@ -13,7 +13,7 @@ AWS_HEALTH_TESTS = {
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
-FACEBOOK_APP_ID = "FACEBOOK_APP_ID"
+FACEBOOK_APP_ID = "facebook_app_id"
 FACEBOOK_APP_SECRET = "facebook_app_secret"
 FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 
