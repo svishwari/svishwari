@@ -13,38 +13,26 @@ from huxunify.api.route import ROUTES
 
 # set config variables
 SWAGGER_CONFIG = {
-    "headers": [],
-    "openapi": "3.0.2",
-    "components": {
-        "securitySchemes": {
-            "oAuthSample": {
-                "type": "oauth2",
-                "flows": {
-                    "clientCredentials": {
-                        "tokenUrl": "",
-                    }
-                },
-            }
-        },
-    },
-    "servers": [
-        {"url": "http://localhost:5000/api/v1", "description": ""},
-    ],
-    "specs": [
-        {
-            "endpoint": "ui",
-            "route": "/openapi.json",
-            "rule_filter": lambda rule: True,
-            "model_filter": lambda tag: True,
-        }
-    ],
+    "openapi": "3.0.3",
+    "uiversion": "3",
     "static_url_path": "/swagger",
-    "title": "Hux Unified API",
+    "title": "HUX API",
     "version": "1.0.0",
     "swagger_ui": True,
     "specs_route": "/ui/",
     "description": "",
     "termsOfService": "",
+    "servers": [
+        {"url": "http://localhost:5000/api/v1", "description": ""},
+    ],
+    "components": [],
+    "securityDefinitions": {
+        "oAuthSample": {
+            "type": "oauth2",
+            "flow": "application",
+            "tokenUrl": "",
+        }
+    },
 }
 
 
@@ -104,7 +92,7 @@ def create_app() -> Flask:
         flask_app.register_blueprint(route)
 
     # setup the swagger docs
-    Swagger(flask_app, config=SWAGGER_CONFIG)
+    Swagger(flask_app, config=SWAGGER_CONFIG, merge=True)
 
     # set middleware so we can assign the prefixed url.
     flask_app.wsgi_app = PrefixMiddleware(flask_app.wsgi_app, prefix="/api/v1")
