@@ -578,7 +578,7 @@ class DestinationValidatePostView(SwaggerView):
             raise ProblemException(
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=api_c.CANNOT_DELETE_DESTINATIONS,
+                detail=api_c.DESTINATION_AUTHENTICATION_FAILED,
             ) from exc
 
         return {
