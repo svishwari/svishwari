@@ -23,7 +23,7 @@ SWAGGER_CONFIG = {
     "description": "",
     "termsOfService": "",
     "servers": [
-        {"url": "http://localhost:5000/api/v1", "description": ""},
+        {"url": "http://localhost:5000/api/v1", "description": "test"},
     ],
     "components": [],
     "securityDefinitions": {

@@ -58,9 +58,9 @@
       </div>
     </div>
     <EmptyState>
-       <template v-slot:chart-image> 
-         <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
-       </template>
+      <template v-slot:chart-image>
+        <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
+      </template>
     </EmptyState>
   </div>
 </template>
