@@ -36,7 +36,9 @@ def create_notification(
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     # get current time
     current_time = datetime.utcnow()
@@ -83,13 +85,18 @@ def get_notifications(
 
     """
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     skips = batch_size * (batch_number - 1)
 
     try:
         return list(
-            collection.find().sort([(c.ID, sort_order)]).skip(skips).limit(batch_size)
+            collection.find()
+            .sort([(c.ID, sort_order)])
+            .skip(skips)
+            .limit(batch_size)
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
