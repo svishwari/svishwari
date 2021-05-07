@@ -22,7 +22,7 @@
             v-bind:isTile="true"
             class="mr-2"
             @click="closeAddDataSource"
-        ></huxButton>
+          ></huxButton>
           <huxButton
             :ButtonText="dataSourcesBtnText"
             variant="primary"
@@ -61,7 +61,7 @@ import huxButton from "@/components/common/huxButton"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import { mapGetters } from "vuex"
 export default {
-  name: "add-data-source",
+  name: "add-datasource",
   components: {
     Drawer,
     CardHorizontal,
@@ -84,32 +84,34 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["destinations"]),
+    ...mapGetters({
+      destinations: "destinations/list",
+    }),
+
     isDataSourceSelected() {
       return this.selectedDataSources.length > 0
     },
     dataSourcesBtnText() {
-      return `Add ${this.selectedDataSources.length} data source` ;
-    }
+      return `Add ${this.selectedDataSources.length} data source`
+    },
   },
   methods: {
-    onDataSourceClick: function(index) {
-      if ( this.selectedDataSources.includes(index) ) {
+    onDataSourceClick: function (index) {
+      if (this.selectedDataSources.includes(index)) {
         let deselecteRowIndex = this.selectedDataSources.indexOf(index)
-        this.selectedDataSources.splice( deselecteRowIndex , 1);
-      }
-      else {
+        this.selectedDataSources.splice(deselecteRowIndex, 1)
+      } else {
         this.selectedDataSources.push(index)
       }
     },
-    addDataSources: function() {
+    addDataSources: function () {
       // Make a api call here
       this.closeAddDataSource()
     },
-    closeAddDataSource: function() {
+    closeAddDataSource: function () {
       this.localDrawer = false
       this.selectedDataSources = []
-    }
+    },
   },
   watch: {
     value: function () {

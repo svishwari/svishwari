@@ -99,7 +99,7 @@ const routes = [
   {
     path: "/connections/destinations/add",
     name: "add-destination",
-    component: () => import("@/views/Destinations/Configuration.vue"),
+    component: () => import("@/views/Destinations/Configuration"),
     meta: {
       layout: "app",
       title: "Add a Destination",
@@ -109,7 +109,7 @@ const routes = [
   {
     path: "/connections/destinations",
     name: "destinations",
-    component: () => import("@/views/Destinations/Listing.vue"),
+    component: () => import("@/views/Destinations/Listing"),
     meta: {
       layout: "app",
       title: "Destinations",

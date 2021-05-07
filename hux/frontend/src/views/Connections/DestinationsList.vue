@@ -11,17 +11,14 @@
       </router-link>
     </div>
     <template v-if="hasAddedDestinations">
-      <DestinationListCard
+      <CardHorizontal
         v-for="destination in addedDestinations"
         :key="destination.id"
-      >
-        <template v-slot:logo>
-          <Logo :type="destination.type" />
-        </template>
-        <template v-slot:title>
-          {{ destination.name }}
-        </template>
-      </DestinationListCard>
+        :title="destination.name"
+        :icon="destination.type"
+        hideButton
+        class="mb-3"
+      />
     </template>
     <EmptyState v-else>
       <template v-slot:icon> mdi-alert-circle-outline </template>
@@ -38,17 +35,15 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import DestinationListCard from "@/components/DestinationListCard"
-import Logo from "@/components/common/Logo"
+import CardHorizontal from "@/components/common/CardHorizontal"
 import EmptyState from "@/components/EmptyState"
 
 export default {
   name: "destinations-list",
 
   components: {
-    DestinationListCard,
+    CardHorizontal,
     EmptyState,
-    Logo,
   },
 
   computed: {
