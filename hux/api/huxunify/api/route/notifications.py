@@ -11,13 +11,13 @@ from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from pymongo import MongoClient
 
-from huxunify.api.schema.notifications import NotificationSchema
-from huxunify.api.route.utils import add_view_to_blueprint
-from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunifylib.database import (
     constants as db_constants,
     notification_management,
 )
+from huxunify.api.schema.notifications import NotificationSchema
+from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 NOTIFICATIONS_TAG = "notifications"
 NOTIFICATIONS_DESCRIPTION = "Notifications API"

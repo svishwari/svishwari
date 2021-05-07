@@ -9,18 +9,14 @@ class HuxAdvException(Exception):
     def __init__(self, *args):
         """Initialize the exception class."""
         super().__init__(
-            self.exception_message.format(*args)
-            if args
-            else self.exception_message
+            self.exception_message.format(*args) if args else self.exception_message
         )
 
 
 class DuplicateName(HuxAdvException):
     """Exception for duplicate names."""
 
-    exception_message = (
-        "The name <{}> already exists. The creation/update failed."
-    )
+    exception_message = "The name <{}> already exists. The creation/update failed."
 
 
 class InvalidName(HuxAdvException):
@@ -60,25 +56,20 @@ class NoDeliveryPlatformConnection(HuxAdvException):
     """Exception for when a delivery platform has not established connection."""
 
     exception_message = (
-        "Delivery platform with ID <{}> has not established "
-        "a successful connection!"
+        "Delivery platform with ID <{}> has not established " "a successful connection!"
     )
 
 
 class IncorrectFilterValue(HuxAdvException):
     """Exception for incorrect audience filter values."""
 
-    exception_message = (
-        "Incorrect filter value of type <{}> for filter of type <{}>!"
-    )
+    exception_message = "Incorrect filter value of type <{}> for filter of type <{}>!"
 
 
 class DefaultAudienceLocked(HuxAdvException):
     """Exception for updating default audiences."""
 
-    exception_message = (
-        "Audience <{}> cannot be updated as it is a default audience!"
-    )
+    exception_message = "Audience <{}> cannot be updated as it is a default audience!"
 
 
 class DuplicateDataSourceFieldType(HuxAdvException):
@@ -91,3 +82,9 @@ class DuplicateFieldType(HuxAdvException):
     """Exception for duplicate field type."""
 
     exception_message = "Invalid Input Field(s) <{}>!"
+
+
+class InvalidNotificationType(HuxAdvException):
+    """Exception for invalid notification type."""
+
+    exception_message = "Invalid Notification type <{}>!"

@@ -5,11 +5,11 @@ import logging
 from datetime import datetime
 
 import pymongo
-from marshmallow import ValidationError
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.db_exceptions import InvalidNotificationType
 
 
 @retry(
@@ -33,15 +33,10 @@ def create_notification(
 
     # validate type
     if not notification_type.lower() not in c.NOTIFICATION_TYPES:
-        raise ValidationError(
-            f"Invalid notification type received: {notification_type}. "
-            f"Must be one of {c.NOTIFICATION_TYPES}"
-        )
+        raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     # get current time
     current_time = datetime.utcnow()
@@ -88,18 +83,13 @@ def get_notifications(
 
     """
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.NOTIFICATIONS_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
 
     skips = batch_size * (batch_number - 1)
 
     try:
         return list(
-            collection.find()
-            .sort([(c.ID, sort_order)])
-            .skip(skips)
-            .limit(batch_size)
+            collection.find().sort([(c.ID, sort_order)]).skip(skips).limit(batch_size)
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
