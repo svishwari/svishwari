@@ -19,7 +19,7 @@
           :title="item.title"
           :subtitle="item.subtitle"
           :icon="item.icon"
-          :active="false"
+          :ripple="true"
         ></MetricCard>
       </div>
       <v-divider class="divider mt-5"></v-divider>

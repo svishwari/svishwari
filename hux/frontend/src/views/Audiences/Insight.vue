@@ -8,25 +8,60 @@
         <v-icon size="22" class="icon-border pa-2"> mdi-download </v-icon>
       </template>
     </PageHeader>
-    <div class="px-15 my-8">
+    <div class="row px-15 my-1">
+      <MetricCard
+        v-for="(item, i) in infoListItems"
+        class="ma-4"
+        :width="165"
+        :height="80"
+        :key="i"
+        :title="item.title"
+        :subtitle="item.subtitle"
+        :icon="item.icon"
+        :ripple="false"
+      >
+        <template slot="short-name">
+          <v-menu bottom offset-y open-on-hover>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="blue-grey"
+                small
+                outlined
+                fab
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{ item.shortName }}
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title>{{ item.fullName }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </MetricCard>
+    </div>
+    <div class="px-15 my-1">
       <v-card
         height="150"
         width="fit-content"
-        elevation="2"
+        elevation="1"
         class="rounded px-5 pt-5"
       >
         <div class="overview">Audience overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard
+            v-for="(item, i) in overviewListItems"
             class="list-item mr-3"
             :width="135"
             :height="80"
-            v-for="(item, i) in overviewListItems"
             :key="i"
             :title="item.title"
             :subtitle="item.subtitle"
             :icon="item.icon"
-            :active="false"
+            :ripple="false"
           ></MetricCard>
         </div>
       </v-card>
@@ -78,6 +113,20 @@ export default {
         { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+      ],
+      infoListItems: [
+        {
+          title: "Last updated",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+        {
+          title: "Created",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
       ],
     }
   },

@@ -1,7 +1,13 @@
 <template>
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
-      <span class="primary--text"> {{ cellValue }} </span>
+      <router-link
+        :to="{ name: 'audienceInsight' }"
+        class="text-decoration-none"
+        append
+      >
+        <span class="primary--text"> {{ cellValue }} </span>
+      </router-link>
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
         <v-icon
