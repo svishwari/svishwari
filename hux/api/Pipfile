@@ -8,7 +8,6 @@ url = "$ARTIFACTORY_PYTHON_READ"
 verify_ssl = true
 name = "jfrog"
 
-
 [packages]
 flasgger= {version="0.9.5", index="pypi"}
 Flask= {version="1.1.2", index="pypi"}
@@ -34,6 +33,7 @@ requests-mock= {version="1.9.2", index="pypi"}
 requests= {version="2.25.1", index="pypi"}
 huxunifylib-database = {version="*", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
+tox-pipenv = "*"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}

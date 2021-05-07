@@ -9,7 +9,9 @@ class HuxAdvException(Exception):
     def __init__(self, *args):
         """Initialize the exception class."""
         super().__init__(
-            self.exception_message.format(*args) if args else self.exception_message
+            self.exception_message.format(*args)
+            if args
+            else self.exception_message
         )
 
 
@@ -28,10 +30,7 @@ class InvalidName(HuxAdvException):
 class DataSourceLocked(HuxAdvException):
     """Exception for when data source is already associated with an ingestion job."""
 
-    exception_message = (
-        "Data source with ID <{}> is associated to an ingestion job "
-        "and cannot be updated!"
-    )
+    exception_message = "Data source with ID <{}> is associated to an ingestion job and cannot be updated!"
 
 
 class NoUpdatesSpecified(HuxAdvException):
@@ -55,9 +54,7 @@ class UnknownDeliveryPlatformType(HuxAdvException):
 class NoDeliveryPlatformConnection(HuxAdvException):
     """Exception for when a delivery platform has not established connection."""
 
-    exception_message = (
-        "Delivery platform with ID <{}> has not established " "a successful connection!"
-    )
+    exception_message = "Delivery platform with ID <{}> has not established a successful connection!"
 
 
 class IncorrectFilterValue(HuxAdvException):
