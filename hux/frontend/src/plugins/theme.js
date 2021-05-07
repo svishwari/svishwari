@@ -16,4 +16,6 @@ export default {
   zircon: colors.zircon,
   neroBlack: colors.neroBlack,
   gray: colors.gray,
+  darkGrey: colors.darkGrey,
+  lightGrey: colors.lightGrey,
 }

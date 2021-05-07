@@ -11,12 +11,20 @@ const client = {}
 Object.keys(resources).forEach((resource) => {
   const endpoint = resources[resource]
 
+  // Common resource endpoints
   client[resource] = {
     all: () => http.get(endpoint),
     create: (data) => http.post(endpoint, data),
     delete: (resourceId) => http.delete(`${endpoint}/${resourceId}`),
     find: (resourceId) => http.get(`${endpoint}/${resourceId}`),
     update: (resourceId, data) => http.put(`${endpoint}/${resourceId}`, data),
+  }
+
+  // Custom one-off resource endpoints
+  if (resource === "destinations") {
+    client[resource].validate = (data) => {
+      return http.post("/destinations/validate", data)
+    }
   }
 })
 

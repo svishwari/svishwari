@@ -123,7 +123,7 @@
         </v-timeline-item>
       </v-timeline>
 
-      <HuxFooter absolute padless color="white" class="footer">
+      <HuxFooter>
         <template v-slot:left>
           <huxButton
             ButtonText="Cancel"
@@ -207,21 +207,17 @@ export default {
   .divider {
     max-width: 1170px;
   }
-  .footer {
-    padding-left: 50px;
-    box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
-  }
   ::v-deep .timeline-wrapper {
     .theme--light.v-timeline:before {
-      border: 1px dashed #00a3e0;
+      border: 1px dashed var(--v-info-base);
     }
     .theme--light.v-timeline-item {
       .v-timeline-item__divider {
         .v-timeline-item__dot {
-          background: #00a3e0;
+          background: var(--v-info-base);
           .v-timeline-item__inner-dot {
-            background-color: white !important;
-            color: #00a3e0;
+            background-color: var(--v-white-base) !important;
+            color: var(--v-info-base);
           }
         }
       }
@@ -229,14 +225,14 @@ export default {
     .theme--light.v-timeline-item {
       &.disabled {
         .v-timeline-item__body {
-          color: #d0d0ce;
+          color: var(--v-lightGrey-base);
         }
         .v-timeline-item__divider {
           .v-timeline-item__dot {
-            background: #d0d0ce;
+            color: var(--v-lightGrey-base);
             .v-timeline-item__inner-dot {
-              background-color: white !important;
-              color: #d0d0ce;
+              background-color: var(--v-white-base) !important;
+              color: var(--v-lightGrey-base);
             }
           }
         }

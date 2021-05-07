@@ -68,8 +68,24 @@ apispec is a pluggable API specification generator. Currently, supports the **ex
 
 ### Dev
 
+### Docker
+For building the docker locally, follow the steps below
+```
+# starting from the parent folder of the repo
+# assumes docker is installed
 
-### Makefile
+# pull python3.7-slim-buster
+docker pull python@sha256:5375725c3c0a0215279c1c5ddb33f91d31f0eb37010140397e5c7e5530073d2c
+
+# change the repo line in hux/api/Dockerfile to the following.
+FROM python:3.7-slim-buster AS hux-unified
+
+# build the docker
+sudo docker build . -f ./hux/api/Dockerfile --build-arg ARTIFACTORY_PYTHON_READ=https://{user_name@deloitte.com}:{jfrog_key}@repo.mgnt.in/artifactory/api/pypi/python/simple --tag hux-unifed-test
+
+# after it is built, run it to test
+sudo docker run -p 5000 hux-unifed-test
+```
 
 
 ### Prerequisites
