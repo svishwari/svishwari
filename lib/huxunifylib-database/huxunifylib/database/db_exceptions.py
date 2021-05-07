@@ -60,8 +60,8 @@ class NoDeliveryPlatformConnection(HuxAdvException):
     """Exception for when a delivery platform has not established connection."""
 
     exception_message = (
-        "Delivery platform with ID <{}> has not established a "
-        "successful connection!"
+        "Delivery platform with ID <{}> has not established "
+        "a successful connection!"
     )
 
 
