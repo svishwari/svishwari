@@ -8,21 +8,17 @@
     app
     style="transition-duration: 0.5s"
   >
-    <v-toolbar
-      style="width: 100%"
-      class="d-flex justify-space-between align-center px-6 py-5"
-      height="70"
-      tile
-      absolute
-      padless
-      color="white"
-      elevation="5"
-    >
-      <slot name="header-left"></slot>
-      <slot name="header-right"></slot>
+    <v-toolbar width="100%">
+      <v-toolbar-title class="px-6">
+        <slot name="header-left"></slot>
+        <slot name="header-right"></slot>
+      </v-toolbar-title>
     </v-toolbar>
 
-    <div class="drawer-content"><slot></slot></div>
+    <div class="drawer-content">
+      <slot></slot>
+    </div>
+
     <v-footer
       class="d-flex justify-space-between align-center px-6 py-5"
       absolute
@@ -60,9 +56,9 @@ export default {
     },
 
     width: {
-      type: String,
+      type: Number,
       required: false,
-      default: "600",
+      default: 600,
     },
   },
 
@@ -70,6 +66,7 @@ export default {
     value: function () {
       this.localDrawer = this.value
     },
+
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
       if (!this.localDrawer) {
@@ -86,7 +83,6 @@ export default {
 }
 .drawer-content {
   height: calc(100% - 130px);
-  margin-top: 70px;
   overflow-y: auto;
 }
 </style>

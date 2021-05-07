@@ -1,5 +1,5 @@
-// This file contains commonly used design cases 
-
+// Utils
+// Contains commonly used and reusable utility design styles
 
 .icon-border {
     border-radius: 5px;
@@ -36,4 +36,8 @@
         background-position: left;
         }
     }
+}
+
+.shadow {
+    box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15) !important;
 }
