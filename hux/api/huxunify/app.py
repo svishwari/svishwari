@@ -13,7 +13,7 @@ from huxunify.api.route import ROUTES
 
 # set config variables
 SWAGGER_CONFIG = {
-    "openapi": "3.0.3",
+    # "openapi": "3.0.3",
     "uiversion": "3",
     "static_url_path": "/swagger",
     "title": "HUX API",
