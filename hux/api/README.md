@@ -59,9 +59,6 @@ and **[marshmallow](http://marshmallow.readthedocs.io/)** (an object serializati
 that adds additional features to marshmallow, including URL and Hyperlinks fields for HATEOAS-ready APIs.
 It also (optionally) integrates with **[Flask-SQLAlchemy](http://marshmallow.readthedocs.io/)**.
 
-#### Moto
-Moto is a library that allows your tests to easily mock out AWS Services.
-
 #### apispec
 
 apispec is a pluggable API specification generator. Currently, supports the **extract [OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#operation-object)**
