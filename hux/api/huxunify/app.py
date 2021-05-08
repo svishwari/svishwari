@@ -23,14 +23,15 @@ SWAGGER_CONFIG = {
     "description": "",
     "termsOfService": "",
     "servers": [
-        {"url": "http://localhost:5000/api/v1", "description": "test"},
+        {"url": "http://localhost:5000/api/v1", "description": "api/v1"},
     ],
-    "components": [],
-    "securityDefinitions": {
-        "oAuthSample": {
-            "type": "oauth2",
-            "flow": "application",
-            "tokenUrl": "",
+    "components": {
+        "securitySchemes": {
+            "Bearer Auth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+            },
         }
     },
 }

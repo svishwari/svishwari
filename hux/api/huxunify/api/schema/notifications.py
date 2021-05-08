@@ -8,6 +8,7 @@ from marshmallow.fields import Str, Int
 
 class NotificationSchema(Schema):
     """Notifications Schema"""
+
     notification_type = Str(required=True)
     description = Str(required=True)
     created = Int(required=True)
