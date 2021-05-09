@@ -42,6 +42,33 @@
           </v-menu>
         </template>
       </MetricCard>
+
+      <MetricCard
+        class="ma-4"
+        width="59%"
+        :height="80"
+        :ripple="false"
+        :title="'Attributes'"
+      >
+        <template slot="extra-item">
+          <div class="container pl-0">
+            <ul>
+              <li>
+                <img src="../../assets/images/value.svg" />
+                Lifetime Value
+              </li>
+              <li>
+                <img src="../../assets/images/churn.svg" />
+                Churn
+              </li>
+              <li>
+                <v-icon size="20" color="primary"> mdi-plus </v-icon>
+                Age, Email, Zipcode
+              </li>
+            </ul>
+          </div>
+        </template>
+      </MetricCard>
     </div>
     <div class="px-15 my-1">
       <v-card
@@ -132,4 +159,24 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.audience-insight-wrap {
+  .container {
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+  }
+  .container {
+    ul {
+      li {
+        width: fit-content;
+        height: auto;
+        float: left;
+        margin-left: 2%;
+      }
+    }
+  }
+}
+</style>

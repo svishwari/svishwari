@@ -17,6 +17,7 @@
         >
           {{ title }}
         </v-list-item-title>
+        <slot name="extra-item"></slot>
         <v-list-item-subtitle class="item-subtitle mb-3 neroBlack--text">
           {{ subtitle }}
         </v-list-item-subtitle>
@@ -46,7 +47,6 @@ export default {
     subtitle: {
       type: String,
       required: false,
-      default: "Info card description",
     },
 
     active: {
@@ -62,7 +62,7 @@ export default {
     },
 
     width: {
-      type: Number,
+      type: Number | String,
       required: false,
       default: 135,
     },
