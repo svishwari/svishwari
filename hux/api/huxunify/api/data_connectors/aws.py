@@ -144,7 +144,8 @@ def get_aws_client(
 
 def check_aws_connection(client="s3") -> Tuple[bool, str]:
     """Validate an AWS connection.
-        client (str): name of the boto3 client to use.
+        Args:
+            client (str): name of the boto3 client to use.
     Returns:
         tuple[bool, str]: Returns if the AWS connection is valid, and the message.
     """
