@@ -29,6 +29,15 @@ Decouple always searches for Options in this order:
 3. Default argument passed to config.
 
 #### Setup ENV vars
+The SSL certificate is currently added in the repository,
+however if you need to download it again, simply run
+```
+# cd to "/hux/api/huxunify"
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+```
+
+For the settings, copy the template-settings.ini file below
+and input your local env settings.
 ```
 # cd to the hux/api folder
 cd "/hux/api"
