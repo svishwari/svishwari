@@ -4,7 +4,7 @@ Purpose of this file is to house the main application code.
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
-from healthcheck import HealthCheck, EnvironmentDump
+from healthcheck import HealthCheck
 
 from huxunify.api.route import ROUTES
 from huxunify.api import constants
@@ -45,8 +45,6 @@ def create_app() -> Flask:
     health.add_check(lambda: check_aws_connection(constants.AWS_SSM_NAME))
     health.add_check(lambda: check_aws_connection(constants.AWS_BATCH_NAME))
 
-    env_dump = EnvironmentDump()
-
     CORS(flask_app, resources={r"/api/*": {"origins": "*"}})
 
     # register the routes
@@ -55,15 +53,11 @@ def create_app() -> Flask:
         flask_app.register_blueprint(route, url_prefix="/api/v1")
 
     # add health check URLs
+    # pylint: disable=unnecessary-lambda)
     flask_app.add_url_rule(
         f"/{constants.HEALTH_CHECK}",
         constants.HEALTH_CHECK,
-        view_func=health.run(),
-    )
-    flask_app.add_url_rule(
-        f"/{constants.ENVIRONMENT_CHECK}",
-        constants.ENVIRONMENT_CHECK,
-        view_func=env_dump.run(),
+        view_func=lambda: health.run(),
     )
 
     # setup the swagger docs
