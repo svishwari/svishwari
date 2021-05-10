@@ -2,7 +2,7 @@
 purpose of this file is to house route utilities
 """
 import logging
-from typing import Any
+from typing import Any, Tuple
 from http import HTTPStatus
 
 from connexion.exceptions import ProblemException
@@ -82,3 +82,17 @@ def get_db_client() -> MongoClient:
         MongoClient: MongoDB client.
     """
     return db_client_factory.get_resource(**MONGO_DB_CONFIG)
+
+
+def check_mongo_connection() -> Tuple[bool, str]:
+    """Validate mongo DB connection.
+    Returns:
+        tuple[bool, str]: Returns if the connection is valid, and the message.
+    """
+    try:
+        db_client_factory.get_resource(**MONGO_DB_CONFIG).server_info()
+        return True, "Mongo available."
+    # pylint: disable=broad-except
+    # pylint: disable=unused-variable
+    except Exception as exception:
+        return False, "Mongo not available."

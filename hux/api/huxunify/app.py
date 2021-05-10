@@ -4,8 +4,13 @@ Purpose of this file is to house the main application code.
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
+from healthcheck import HealthCheck, EnvironmentDump
 
 from huxunify.api.route import ROUTES
+from huxunify.api import constants
+from huxunify.api.route.utils import check_mongo_connection
+from huxunify.api.data_connectors.tecton import check_tecton_connection
+from huxunify.api.data_connectors.aws import check_aws_connection
 
 
 # set config variables
@@ -32,12 +37,34 @@ def create_app() -> Flask:
     """
     # setup the flask app
     flask_app = Flask(__name__)
+    health = HealthCheck()
+
+    # add health checks
+    health.add_check(check_mongo_connection)
+    health.add_check(check_tecton_connection)
+    health.add_check(lambda: check_aws_connection(constants.AWS_SSM_NAME))
+    health.add_check(lambda: check_aws_connection(constants.AWS_BATCH_NAME))
+
+    env_dump = EnvironmentDump()
+
     CORS(flask_app, resources={r"/api/*": {"origins": "*"}})
 
     # register the routes
     for route in ROUTES:
         print(f"Registering {route.name}.")
         flask_app.register_blueprint(route, url_prefix="/api/v1")
+
+    # add health check URLs
+    flask_app.add_url_rule(
+        f"/{constants.HEALTH_CHECK}",
+        constants.HEALTH_CHECK,
+        view_func=health.run(),
+    )
+    flask_app.add_url_rule(
+        f"/{constants.ENVIRONMENT_CHECK}",
+        constants.ENVIRONMENT_CHECK,
+        view_func=env_dump.run(),
+    )
 
     # setup the swagger docs
     Swagger(flask_app, config=SWAGGER_CONFIG, merge=True)

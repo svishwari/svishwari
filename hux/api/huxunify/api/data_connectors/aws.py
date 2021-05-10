@@ -1,6 +1,7 @@
 """
 purpose of this file is for interacting with aws
 """
+from typing import Tuple
 from http import HTTPStatus
 from connexion import ProblemException
 import boto3
@@ -30,7 +31,7 @@ class ParameterStore:
             dict: boto3 response.
         """
         try:
-            return get_aws_client(config.AWS_SSM_NAME).put_parameter(
+            return get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
                 Name=f"{path}/{name}" if path else name,
                 Value=secret,
                 Type="SecureString",
@@ -55,7 +56,7 @@ class ParameterStore:
         """
         try:
             return (
-                get_aws_client(config.AWS_SSM_NAME)
+                get_aws_client(api_c.AWS_SSM_NAME)
                 .get_parameter(
                     Name=f"{path}/{name}" if path else name,
                     WithDecryption=True,
@@ -139,3 +140,24 @@ def get_aws_client(
         aws_secret_access_key=aws_secret_key,
         region_name=region_name,
     )
+
+
+def check_aws_connection(client="s3") -> Tuple[bool, str]:
+    """Validate an AWS connection.
+        client (str): name of the boto3 client to use.
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid, and the message.
+    """
+    try:
+        aws_client = get_aws_client(client)
+        if client == "ssm":
+            # test params with ssm
+            aws_client.describe_parameters()
+        elif client == "batch":
+            # test list jobs with batch
+            aws_client.list_jobs()
+
+        # TODO - test more in the future that we will need.
+        return True, f"{client} available."
+    except Exception as exception:  # pylint: disable=broad-except
+        return False, getattr(exception, "message", repr(exception))
