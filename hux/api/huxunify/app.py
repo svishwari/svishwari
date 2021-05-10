@@ -32,7 +32,7 @@ def create_app() -> Flask:
     """
     # setup the flask app
     flask_app = Flask(__name__)
-    CORS(flask_app, resources={r"/api/*": {"origins": "*"}})
+    CORS(flask_app)
 
     # register the routes
     for route in ROUTES:
