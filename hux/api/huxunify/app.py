@@ -45,7 +45,7 @@ def create_app() -> Flask:
     health.add_check(lambda: check_aws_connection(constants.AWS_SSM_NAME))
     health.add_check(lambda: check_aws_connection(constants.AWS_BATCH_NAME))
 
-    CORS(flask_app, resources={r"/api/*": {"origins": "*"}})
+    CORS(flask_app)
 
     # register the routes
     for route in ROUTES:
