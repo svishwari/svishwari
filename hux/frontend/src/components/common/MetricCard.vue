@@ -62,7 +62,7 @@ export default {
     },
 
     width: {
-      type: Number,
+      type: [String, Number],
       required: false,
       default: 135,
     },
