@@ -7,6 +7,7 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 """
+from pathlib import Path
 from decouple import config
 
 
@@ -22,7 +23,10 @@ MONGO_DB_HOST = config("MONGO_DB_HOST", default="localhost")
 MONGO_DB_PORT = config("MONGO_DB_PORT", default=27017, cast=int)
 MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="")
 MONGO_DB_PASSWORD = config("MONGO_DB_PASSWORD", default="")
-MONGO_SSL_CERT = config("MONGO_SSL_CERT", default="")
+# grab the SSL cert path
+MONGO_SSL_CERT = str(
+    Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
+)
 MONGO_DB_CONFIG = {
     "host": MONGO_DB_HOST,
     "port": MONGO_DB_HOST,
