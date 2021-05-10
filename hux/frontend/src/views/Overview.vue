@@ -57,18 +57,25 @@
         ></CardInfo>
       </div>
     </div>
+    <EmptyState>
+      <template v-slot:chart-image>
+        <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
+      </template>
+    </EmptyState>
   </div>
 </template>
 
 <script>
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
+import EmptyState from "@/components/common/EmptyState"
 
 export default {
   name: "overview",
   components: {
     PageHeader,
     CardInfo,
+    EmptyState,
   },
   data() {
     return {
@@ -91,7 +98,7 @@ export default {
           title: "Add a destination",
           description:
             "Choose a destination where your actionable intelligence will be consumed.",
-          route: "destinations",
+          route: "add-destination",
           active: true,
         },
         {
@@ -105,7 +112,7 @@ export default {
           title: "Create an audience",
           description:
             "Create an audience based on customized orchestrated choices..",
-          route: "audiences",
+          route: "createAudience",
           active: true,
         },
         {
@@ -142,13 +149,13 @@ export default {
       font-size: 14px;
       line-height: 19px;
       letter-spacing: 0.5px;
-      color: #1e1e1e;
+      color: var(--v-neroBlack-base);
     }
     .card-wrap {
       .v-card {
         margin-right: 15px;
         &.v-card--disabled {
-          background: #f9fafb;
+          background: var(--v-background-base);
         }
       }
     }
@@ -171,7 +178,7 @@ export default {
     .heading {
       text-transform: uppercase;
       margin-bottom: 5px;
-      color: #005587;
+      color: var(--v-primary-base);
     }
     .description {
       color: inherit;
@@ -180,7 +187,7 @@ export default {
   .v-input {
     margin: 0;
     .v-input__control {
-      background: red;
+      background: var(--v-error-base);
       .v-messages {
         display: none !important;
       }

@@ -23,6 +23,7 @@ DELIVERY_PLATFORM_COLLECTION = "delivery_platforms"
 LOOKALIKE_AUDIENCE_COLLECTION = "lookalike_audiences"
 PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 USER_COLLECTION = "users"
+NOTIFICATIONS_COLLECTION = "notifications"
 
 CONSTANT_NAME = "constant"
 CONSTANT_VALUE = "value"
@@ -194,6 +195,7 @@ FIELD_FIELD_MAPPING = "field_mapping"
 FIELD_FIELD_MAPPING_DEFAULT = "field_mapping_default"
 
 # CDP Data Source constants
+CDP_DATA_SOURCE_ID = "data_source_id"
 CDP_DATA_SOURCE_FIELD_NAME = "name"
 CDP_DATA_SOURCE_FIELD_CATEGORY = "category"
 CDP_DATA_SOURCE_FIELD_FEED_COUNT = "feed_count"
@@ -205,6 +207,29 @@ CDP_DATA_SOURCE_STATUS_PENDING = "Pending"
 DATA_ROUTER_BATCH_SIZE = "data_router_batch_size"
 AUDIENCE_ROUTER_BATCH_SIZE = "audience_router_batch_size"
 AWS_BATCH_MEM_LIMIT = "aws_batch_mem_limit"
+
+# Notifications constants
+NOTIFICATION_TYPE_SUCCESS = "success"
+NOTIFICATION_TYPE_INFORMATIONAL = "informational"
+NOTIFICATION_TYPE_CRITICAL = "critical"
+NOTIFICATION_TYPES = [
+    NOTIFICATION_TYPE_SUCCESS,
+    NOTIFICATION_TYPE_INFORMATIONAL,
+    NOTIFICATION_TYPE_CRITICAL,
+]
+NOTIFICATION_FIELD_TYPE = "type"
+NOTIFICATION_FIELD_DESCRIPTION = "description"
+NOTIFICATION_FIELD_CREATED = "created"
+
+NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
+NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
+NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
+
+# pagination constants
+PAGINATION_ASCENDING = "ascending"
+PAGINATION_DESCENDING = "descending"
+
 
 # Custom type definitions
 CUSTOM_TYPE_BOOL = "boolean"

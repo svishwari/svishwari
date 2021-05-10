@@ -160,7 +160,7 @@ export default {
       font-weight: normal;
       font-size: 10px;
       line-height: 14px;
-      color: #da291c;
+      color: var(--v-error-base);
       margin-top: -15px;
     }
     .link-button {
