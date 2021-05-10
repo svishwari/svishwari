@@ -40,6 +40,7 @@
                 labelText="Audience name"
                 backgroundColor="white"
                 v-bind:required="true"
+                v-model="audienceName"
                 class="mt-1 text-body-1"
               ></TextField>
             </v-col>
@@ -184,6 +185,7 @@ export default {
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
+      audienceName: ''
     }
   },
 }
