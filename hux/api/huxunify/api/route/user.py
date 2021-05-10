@@ -27,15 +27,11 @@ from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
 
-USER_TAG = "user"
-USER_DESCRIPTION = "USER API"
-USER_ENDPOINT = "users"
-
-# setup the user blueprint
-user_bp = Blueprint(USER_ENDPOINT, import_name=__name__)
+# setup the cdm blueprint
+user_bp = Blueprint(api_c.USER_ENDPOINT, import_name=__name__)
 
 
-@add_view_to_blueprint(user_bp, f"/{USER_ENDPOINT}", "UserSearch")
+@add_view_to_blueprint(user_bp, api_c.USER_ENDPOINT, "UserSearch")
 class UserSearch(SwaggerView):
     """
     User Search Class
@@ -49,7 +45,7 @@ class UserSearch(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     @marshal_with(UserSchema(many=True))
     def get(self) -> Tuple[dict, int]:
@@ -80,7 +76,7 @@ class UserSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>", "IndividualUserSearch"
+    user_bp, f"{api_c.USER_ENDPOINT}/<user_id>", "IndividualUserSearch"
 )
 class IndividualUserSearch(SwaggerView):
     """
@@ -107,7 +103,7 @@ class IndividualUserSearch(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     @marshal_with(UserSchema)
     def get(self, user_id: str) -> Tuple[dict, int]:
@@ -151,7 +147,7 @@ class IndividualUserSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "AddPreferences"
+    user_bp, f"{api_c.USER_ENDPOINT}/<user_id>/preferences", "AddPreferences"
 )
 class AddPreferences(SwaggerView):
     """
@@ -190,7 +186,7 @@ class AddPreferences(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     def post(self, user_id: str) -> Tuple[dict, int]:
         """Add a user's preferences
@@ -223,7 +219,7 @@ class AddPreferences(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "EditPreferences"
+    user_bp, f"{api_c.USER_ENDPOINT}/<user_id>/preferences", "EditPreferences"
 )
 class EditPreferences(SwaggerView):
     """
@@ -262,7 +258,7 @@ class EditPreferences(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     def put(self, user_id: str) -> Tuple[dict, int]:
         """Edit a user's preferences
@@ -295,7 +291,9 @@ class EditPreferences(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>/preferences", "DeletePreferences"
+    user_bp,
+    f"{api_c.USER_ENDPOINT}/<user_id>/preferences",
+    "DeletePreferences",
 )
 class DeletePreferences(SwaggerView):
     """
@@ -334,7 +332,7 @@ class DeletePreferences(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
         """Delete a user's preferences
@@ -368,7 +366,7 @@ class DeletePreferences(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>/favorites", "AddUserFavorite"
+    user_bp, f"{api_c.USER_ENDPOINT}/<user_id>/favorites", "AddUserFavorite"
 )
 class AddUserFavorite(SwaggerView):
     """
@@ -409,7 +407,7 @@ class AddUserFavorite(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     def post(self, user_id: str) -> Tuple[dict, int]:
         """Add a new favorite for a user
@@ -451,7 +449,7 @@ class AddUserFavorite(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>/favorites", "EditUserFavorite"
+    user_bp, f"{api_c.USER_ENDPOINT}/<user_id>/favorites", "EditUserFavorite"
 )
 class EditUserFavorite(SwaggerView):
     """
@@ -489,7 +487,7 @@ class EditUserFavorite(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     def put(self, user_id: str) -> Tuple[dict, int]:
         """Edit favorite for a user
@@ -531,7 +529,7 @@ class EditUserFavorite(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"/{USER_ENDPOINT}/<user_id>/favorites", "DeleteUserFavorite"
+    user_bp, f"{api_c.USER_ENDPOINT}/<user_id>/favorites", "DeleteUserFavorite"
 )
 class DeleteUserFavorite(SwaggerView):
     """
@@ -569,7 +567,7 @@ class DeleteUserFavorite(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [USER_TAG]
+    tags = [api_c.USER_TAG]
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
         """Delete a favorite for a user

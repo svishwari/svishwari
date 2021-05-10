@@ -40,7 +40,7 @@ def get_db_client() -> MongoClient:
 
 
 @add_view_to_blueprint(
-    orchestration_bp, f"/{api_c.AUDIENCE_ENDPOINT}", "AudienceView"
+    orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
 )
 class AudienceView(SwaggerView):
     """
@@ -145,7 +145,7 @@ class AudienceGetView(SwaggerView):
 
 @add_view_to_blueprint(
     orchestration_bp,
-    f"{api_c.AUDIENCE_ENDPOINT}",
+    api_c.AUDIENCE_ENDPOINT,
     "AudiencePostView",
 )
 class AudiencePostView(SwaggerView):

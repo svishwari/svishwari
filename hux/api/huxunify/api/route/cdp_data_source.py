@@ -31,13 +31,10 @@ from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
-CDP_DATA_SOURCES_TAG = "data sources"
-CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
-CDP_DATA_SOURCES_ENDPOINT = "data-sources"
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
-    CDP_DATA_SOURCES_ENDPOINT, import_name=__name__
+    api_c.CDP_DATA_SOURCES_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
 
 
@@ -51,7 +48,7 @@ def get_db_client() -> MongoClient:
 
 
 @add_view_to_blueprint(
-    cdp_data_sources_bp, f"/{CDP_DATA_SOURCES_ENDPOINT}", "DataSourceSearch"
+    cdp_data_sources_bp, api_c.CDP_DATA_SOURCES_ENDPOINT, "DataSourceSearch"
 )
 class DataSourceSearch(SwaggerView):
     """
@@ -66,7 +63,7 @@ class DataSourceSearch(SwaggerView):
         }
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [CDP_DATA_SOURCES_TAG]
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @marshal_with(CdpDataSourceSchema(many=True))
     def get(self) -> Tuple[list, int]:
@@ -103,7 +100,7 @@ class DataSourceSearch(SwaggerView):
 
 @add_view_to_blueprint(
     cdp_data_sources_bp,
-    f"/{CDP_DATA_SOURCES_ENDPOINT}/<{db_constants.CDP_DATA_SOURCE_ID}>",
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{db_constants.CDP_DATA_SOURCE_ID}>",
     "IndividualDataSourceSearch",
 )
 class IndividualDataSourceSearch(SwaggerView):
@@ -129,7 +126,7 @@ class IndividualDataSourceSearch(SwaggerView):
         HTTPStatus.NOT_FOUND.value: {"schema": NotFoundError},
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [CDP_DATA_SOURCES_TAG]
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     @marshal_with(CdpDataSourceSchema)
     def get(self, data_source_id: str):
@@ -175,7 +172,7 @@ class IndividualDataSourceSearch(SwaggerView):
 
 
 @add_view_to_blueprint(
-    cdp_data_sources_bp, f"/{CDP_DATA_SOURCES_ENDPOINT}", "CreateCdpDataSource"
+    cdp_data_sources_bp, api_c.CDP_DATA_SOURCES_ENDPOINT, "CreateCdpDataSource"
 )
 class CreateCdpDataSource(SwaggerView):
     """
@@ -206,7 +203,7 @@ class CreateCdpDataSource(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [CDP_DATA_SOURCES_TAG]
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def post(self) -> Tuple[str, int]:
         """Creates a new CDP data source
@@ -232,7 +229,7 @@ class CreateCdpDataSource(SwaggerView):
 
 @add_view_to_blueprint(
     cdp_data_sources_bp,
-    f"{CDP_DATA_SOURCES_ENDPOINT}/<data_source_id>",
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<data_source_id>",
     "DeleteCdpDataSource",
 )
 class DeleteCdpDataSource(SwaggerView):
@@ -258,7 +255,7 @@ class DeleteCdpDataSource(SwaggerView):
         HTTPStatus.NOT_FOUND.value: {"schema": NotFoundError},
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [CDP_DATA_SOURCES_TAG]
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def delete(self, data_source_id: str) -> Tuple[dict, int]:
         """Deletes a CDP data source
