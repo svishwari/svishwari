@@ -56,8 +56,12 @@ steps:
     tag: '${{CF_BUILD_NUMBER}}'
     dockerfile: "Dockerfile"
     stage: "docker"
+    build_arguments:
+      - OKTA_ISSUER=${{OKTA_ISSUER}}
+      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
+      - API_URL=${{API_URL}}
 
-  lint:
+  Lint:
     stage: "lint"
     title: "Running lint"
     image: node:14-alpine
@@ -80,7 +84,7 @@ steps:
         only:
           - main
 
-  deployment:
+  Deployment:
     stage: argo-deploy
     description: "Deploy the application"
     type: freestyle
