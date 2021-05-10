@@ -30,7 +30,7 @@ def check_tecton_connection() -> Tuple[bool, str]:
         dumps(constants.MODEL_LIST_PAYLOAD),
         headers=config.TECTON_API_HEADERS,
     )
-    return response.status_code != 200, response.reason
+    return response.status_code == 200, response.reason
 
 
 def get_models(
