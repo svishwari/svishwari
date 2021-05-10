@@ -9,17 +9,17 @@
       <template v-slot:footer-left>
         <div class="d-flex align-baseline">
           <div class="font-weight-regular">
-            {{ destinations.length }} results
+            {{ dataSources.length }} results
           </div>
         </div>
       </template>
       <template v-slot:footer-right>
-        <div v-if="isDataSourceSelected" class="d-flex align-baseline">
+        <div v-if="isDataSourcesSelected" class="d-flex align-baseline">
           <huxButton
             ButtonText="Cancel"
             variant="tertiary"
             size="large"
-            v-bind:isTile="true"
+            :isTile="true"
             class="mr-2"
             @click="closeAddDataSource"
           ></huxButton>
@@ -27,8 +27,8 @@
             :ButtonText="dataSourcesBtnText"
             variant="primary"
             size="large"
-            v-bind:isTile="true"
-            :isDisabled="!isDataSourceSelected"
+            :isTile="true"
+            :isDisabled="!isDataSourcesSelected"
             @click="addDataSources"
           ></huxButton>
         </div>
@@ -37,16 +37,17 @@
         <div class="ma-5">
           <div class="font-weight-light">Data sources</div>
           <CardHorizontal
-            v-for="(destination, index) in destinations"
-            :key="destination.id"
-            :title="destination.name"
-            :icon="destination.type"
+            v-for="dataSource in dataSources"
+            :key="dataSource.id"
+            :title="dataSource.name"
+            :icon="dataSource.type"
             :isAdded="
-              destination.is_added || selectedDataSources.includes(index)
+              dataSource.is_added ||
+              selectedDataSourceIds.includes(dataSource.id)
             "
-            :isAvailable="destination.is_enabled"
-            :isAlreadyAdded="destination.is_added"
-            @click="onDataSourceClick(index)"
+            :isAvailable="dataSource.is_enabled"
+            :isAlreadyAdded="dataSource.is_added"
+            @click="onDataSourceClick(dataSource.id)"
             class="my-3"
           />
         </div>
@@ -59,7 +60,7 @@
 import Drawer from "@/components/common/Drawer"
 import huxButton from "@/components/common/huxButton"
 import CardHorizontal from "@/components/common/CardHorizontal"
-import { mapGetters } from "vuex"
+// import { mapGetters } from "vuex"
 export default {
   name: "add-datasource",
   components: {
@@ -71,7 +72,8 @@ export default {
   data() {
     return {
       localDrawer: this.value,
-      selectedDataSources: [],
+      selectedDataSourceIds: [],
+      dataSources: [],
     }
   },
 
@@ -84,24 +86,26 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      destinations: "destinations/list",
-    }),
+    // ...mapGetters({
+    //   TODO get datasources list from api
+    //   dataSources: "destinations/list",
+    // }),
 
-    isDataSourceSelected() {
-      return this.selectedDataSources.length > 0
+    isDataSourcesSelected() {
+      return this.selectedDataSourceIds.length > 0
     },
     dataSourcesBtnText() {
-      return `Add ${this.selectedDataSources.length} data source`
+      let count = this.selectedDataSourceIds.length
+      return `Add ${count} data source${count > 1 ? "s" : ""}`
     },
   },
   methods: {
-    onDataSourceClick: function (index) {
-      if (this.selectedDataSources.includes(index)) {
-        let deselecteRowIndex = this.selectedDataSources.indexOf(index)
-        this.selectedDataSources.splice(deselecteRowIndex, 1)
+    onDataSourceClick: function (id) {
+      if (this.selectedDataSourceIds.includes(id)) {
+        let deselecteRowIndex = this.selectedDataSourceIds.indexOf(id)
+        this.selectedDataSourceIds.splice(deselecteRowIndex, 1)
       } else {
-        this.selectedDataSources.push(index)
+        this.selectedDataSourceIds.push(id)
       }
     },
     addDataSources: function () {
@@ -110,7 +114,7 @@ export default {
     },
     closeAddDataSource: function () {
       this.localDrawer = false
-      this.selectedDataSources = []
+      this.selectedDataSourceIds = []
     },
   },
   watch: {

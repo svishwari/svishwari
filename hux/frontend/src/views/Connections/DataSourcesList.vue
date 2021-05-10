@@ -10,14 +10,14 @@
 
     <template v-if="hasAddedDatasources">
       <CardHorizontal
-        v-for="datasource in addedDataSources"
-        :key="datasource.id"
-        :title="datasource.name"
-        :icon="datasource.type"
+        v-for="dataSource in addedDataSources"
+        :key="dataSource.id"
+        :title="dataSource.name"
+        :icon="dataSource.type"
         hideButton
         class="mb-3"
       >
-        <Status status="active" />
+        <Status :status="dataSource.status" />
       </CardHorizontal>
     </template>
 
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+// import { mapGetters } from "vuex"
 
 import EmptyState from "@/components/EmptyState"
 import AddDatasource from "@/views/DataSources/Configuration"
@@ -50,16 +50,18 @@ export default {
   data() {
     return {
       drawer: false,
+      dataSources: [],
     }
   },
 
   computed: {
-    ...mapGetters({
-      datasources: "destinations/list",
-    }),
+    // ...mapGetters({
+    // TODO integreate with data sources list
+    //   dataSources: "destinations/list",
+    // }),
 
     addedDataSources() {
-      return this.datasources.filter((datasources) => datasources.is_added)
+      return this.dataSources.filter((dataSource) => dataSource.is_added)
     },
 
     hasAddedDatasources() {

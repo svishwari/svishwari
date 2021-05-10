@@ -14,4 +14,5 @@ export default {
   zircon: "#E2EAEC",
   neroBlack: "#1e1e1e",
   gray: "4F4F4F",
+  columbiaBlue: "#A0DCFF",
 }
