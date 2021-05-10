@@ -51,6 +51,7 @@ INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
+INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -62,6 +63,12 @@ DESTINATION_NAME = "destination_name"
 DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
+
+# Engagement fieldsy
+ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_NAME = "engagement_name"
+ENGAGEMENT_AUDIENCES = "engagement_audiences"
+ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
