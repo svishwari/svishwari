@@ -31,7 +31,7 @@ USER_TAG = "user"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "users"
 
-# setup the cdm blueprint
+# setup the user blueprint
 user_bp = Blueprint(USER_ENDPOINT, import_name=__name__)
 
 
