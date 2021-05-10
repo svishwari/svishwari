@@ -37,6 +37,8 @@ def create_app() -> Flask:
     """
     # setup the flask app
     flask_app = Flask(__name__)
+    CORS(flask_app)
+
     health = HealthCheck()
 
     # add health checks
@@ -44,8 +46,6 @@ def create_app() -> Flask:
     health.add_check(check_tecton_connection)
     health.add_check(lambda: check_aws_connection(constants.AWS_SSM_NAME))
     health.add_check(lambda: check_aws_connection(constants.AWS_BATCH_NAME))
-
-    CORS(flask_app)
 
     # register the routes
     for route in ROUTES:
