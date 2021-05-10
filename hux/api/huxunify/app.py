@@ -53,7 +53,7 @@ def create_app() -> Flask:
         flask_app.register_blueprint(route, url_prefix="/api/v1")
 
     # add health check URLs
-    # pylint: disable=unnecessary-lambda)
+    # pylint: disable=unnecessary-lambda
     flask_app.add_url_rule(
         f"/{constants.HEALTH_CHECK}",
         constants.HEALTH_CHECK,

@@ -148,16 +148,11 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
     Returns:
         tuple[bool, str]: Returns if the AWS connection is valid, and the message.
     """
-    try:
-        aws_client = get_aws_client(client)
-        if client == "ssm":
-            # test params with ssm
-            aws_client.describe_parameters()
-        elif client == "batch":
-            # test list jobs with batch
-            aws_client.list_jobs()
 
-        # TODO - test more in the future that we will need.
+    try:
+        # lookup the health test to run from api constants
+        getattr(get_aws_client(client), api_c.AWS_HEALTH_TESTS[client])()
         return True, f"{client} available."
     except Exception as exception:  # pylint: disable=broad-except
+        # report the generic error message
         return False, getattr(exception, "message", repr(exception))

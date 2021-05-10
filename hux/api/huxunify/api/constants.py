@@ -1,9 +1,13 @@
 """This module contains connector defines."""
+HEALTH_CHECK = "healthcheck"
+
+# AWS defines
 AWS_SSM_NAME = "ssm"
 AWS_BATCH_NAME = "batch"
-
-HEALTH_CHECK = "healthcheck"
-ENVIRONMENT_CHECK = "environmentcheck"
+AWS_HEALTH_TESTS = {
+    AWS_SSM_NAME: "describe_parameters",
+    AWS_BATCH_NAME: "list_jobs",
+}
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
