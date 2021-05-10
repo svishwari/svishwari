@@ -54,7 +54,7 @@ export default {
       required: false,
       default: true,
     },
-    
+
     ripple: {
       type: Boolean,
       required: false,
@@ -62,7 +62,7 @@ export default {
     },
 
     width: {
-      type: Number | String,
+      type: Number,
       required: false,
       default: 135,
     },
