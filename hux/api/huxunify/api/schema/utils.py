@@ -78,8 +78,8 @@ def validate_object_id_list(data: list) -> None:
         None
 
     """
-    for id in data:
-        validate_object_id(id)
+    for object_id in data:
+        validate_object_id(object_id)
 
 
 def validate_delivery_schedule(data: list):
@@ -87,8 +87,8 @@ def validate_delivery_schedule(data: list):
     if len(data) != 2:
         raise ValidationError(api_c.INVALID_DELIVERY_SCHEDULE)
 
-    for dt in data:
-        if not isinstance(dt, DateTime):
+    for date_time in data:
+        if not isinstance(date_time, DateTime):
             raise ValidationError(api_c.INVALID_DELIVERY_SCHEDULE)
 
 

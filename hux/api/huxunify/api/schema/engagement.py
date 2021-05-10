@@ -27,12 +27,15 @@ class EngagementGetSchema(Schema):
     )
     name = fields.String(attribute=api_c.ENGAGEMENT_NAME, required=True)
     audiences = fields.List(
+        cls_or_instance=fields.String,
         attribute=api_c.ENGAGEMENT_AUDIENCES,
         required=True,
         validate=validate_object_id_list,
     )
     delivery_schedule = fields.List(
-        attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE, allow_none=True
+        cls_or_instance=fields.String,
+        attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+        allow_none=True,
     )
     created = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
@@ -86,5 +89,5 @@ class EngagementPutSchema(Schema):
     """
 
     name = fields.String()
-    audiences = fields.List()
-    delivery_schedule = fields.List()
+    audiences = fields.List(cls_or_instance=fields.String)
+    delivery_schedule = fields.List(cls_or_instance=fields.String)
