@@ -21,6 +21,8 @@ from huxunify.api.schema.model import (
 
 def check_tecton_connection() -> Tuple[bool, str]:
     """Validate the tecton connection.
+    Args:
+
     Returns:
         tuple[bool, str]: Returns if the connection is valid, and the message.
     """

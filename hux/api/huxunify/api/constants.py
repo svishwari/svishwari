@@ -1,4 +1,5 @@
 """This module contains connector defines."""
+HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
 # AWS defines
