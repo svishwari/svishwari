@@ -47,18 +47,6 @@ steps:
     commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
-# Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
-  # VersionTag:
-  #   stage: build_tag
-  #   description: Set docker tag based Git tag
-  #   type: freestyle
-  #   image: alpine
-  #   commands:
-  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
-  #   when:
-  #     condition:
-  #       all:
-  #         masterBranch: '"${{CF_BRANCH}}" == "main"'
 
   DockerBuild:
     title: "Building Docker image"
@@ -69,20 +57,6 @@ steps:
     dockerfile: "Dockerfile"
     stage: "docker"
 
-# Below step can be used if development team has some endpoint like healthcheck for unittesting
-  # Unittest:
-  #   stage: test
-  #   title: Unittesting Unified UI
-  #   image: huxhub.repo.mgnt.in/codefresh/cli
-  #   commands:
-  #     - sleep 30
-  #     - curl http://unifiedui:${{PORT}}/healthcheck
-  #   services:
-  #     composition:
-  #       unifiedui:
-  #         image: '${{DockerBuild}}'
-  #         ports:
-  #           - '${{PORT}}'
   lint:
     stage: "lint"
     title: "Running lint"
@@ -91,7 +65,7 @@ steps:
     commands:
     - npm install
     - npm run lint -- --no-fix
-  
+
   PublishToArtifactory:
     stage: artifactory
     title: Publish artifact and codefresh build info to Artifactory
