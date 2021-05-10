@@ -15,7 +15,7 @@ from huxunify.api.route import ROUTES
 SWAGGER_CONFIG = {
     "uiversion": "3",
     "static_url_path": "/swagger",
-    "title": "HUX API",
+    "title": "Hux API",
     "version": "1.0.0",
     "swagger_ui": True,
     "specs_route": "/api/v1/ui/",
