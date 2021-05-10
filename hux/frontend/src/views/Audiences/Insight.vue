@@ -5,7 +5,10 @@
         <Breadcrumb :items="items" />
       </template>
       <template slot="right">
-        <v-icon size="22" class="icon-border pa-2"> mdi-download </v-icon>
+        <v-icon large :disabled="true"> mdi-refresh </v-icon>
+        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-plus-circle-multiple-outline </v-icon>
+        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-pencil </v-icon>
+        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
       </template>
     </PageHeader>
     <div class="row px-15 my-1">
@@ -54,15 +57,15 @@
           <div class="container pl-0">
             <ul>
               <li>
-                <img src="../../assets/images/value.svg" />
+                <lifetimeValue />
                 Lifetime Value
               </li>
               <li>
-                <img src="../../assets/images/churn.svg" />
+                <churn />
                 Churn
               </li>
               <li>
-                <v-icon size="20" color="primary"> mdi-plus </v-icon>
+                <plus />
                 Age, Email, Zipcode
               </li>
             </ul>
@@ -107,7 +110,9 @@ import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyState from "@/components/common/EmptyState"
-
+import lifetimeValue from "@/assets/images/lifetimeValue.svg"
+import churn from "@/assets/images/churn.svg"
+import plus from "@/assets/images/plus.svg"
 export default {
   name: "AudienceInsight",
   components: {
@@ -115,6 +120,9 @@ export default {
     EmptyState,
     PageHeader,
     Breadcrumb,
+    lifetimeValue,
+    churn,
+    plus,
   },
   data() {
     return {
