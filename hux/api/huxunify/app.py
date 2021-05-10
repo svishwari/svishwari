@@ -1,11 +1,8 @@
 """
 Purpose of this file is to house the main application code.
 """
-from typing import Union, List
 from flask import Flask
 from flasgger import Swagger
-from werkzeug import Response
-from werkzeug.wsgi import ClosingIterator
 from flask_cors import CORS
 
 from huxunify.api.route import ROUTES
@@ -22,43 +19,6 @@ SWAGGER_CONFIG = {
     "description": "",
     "termsOfService": "",
 }
-
-
-class PrefixMiddleware:
-    """PrefixMiddleware class"""
-
-    def __init__(self, wsgi_app: Flask.wsgi_app, prefix: str = ""):
-        """Creates middleware for serving flask under a url prefix.
-
-        Args:
-              wsgi_app (Flask.wsgi_app): flask wsgi_app.
-              prefix (str): Url prefix.
-
-        Returns:
-
-        """
-        self.app = wsgi_app
-        self.prefix = prefix
-
-    def __call__(
-        self, environ: dict, response: Response
-    ) -> Union[ClosingIterator, List[str]]:
-        """Method when the class is called that binds the url prefix.
-
-        Args:
-              environ (dict): flask env dict.
-              response (Response): flask wsgi response.
-
-        Returns:
-             ClosingIterator: return wsgi closing iterator.
-        """
-        if environ["PATH_INFO"].startswith(self.prefix):
-            environ["PATH_INFO"] = environ["PATH_INFO"][len(self.prefix) :]
-            environ["SCRIPT_NAME"] = self.prefix
-            return self.app(environ, response)
-
-        response("404", [("Content-Type", "text/plain")])
-        return ["This url does not belong to the app.".encode()]
 
 
 def create_app() -> Flask:
@@ -81,9 +41,6 @@ def create_app() -> Flask:
 
     # setup the swagger docs
     Swagger(flask_app, config=SWAGGER_CONFIG, merge=True)
-
-    # # set middleware so we can assign the prefixed url.
-    # flask_app.wsgi_app = PrefixMiddleware(flask_app.wsgi_app, prefix="/api/v1")
 
     return flask_app
 
