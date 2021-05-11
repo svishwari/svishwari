@@ -104,9 +104,17 @@
                 Select a destination (you can add more than one) -optional
               </strong>
               <div>
-                <v-icon size="30" class="add-icon" color="primary">
+                <v-icon
+                  size="30"
+                  class="add-icon"
+                  color="primary"
+                  @click="toggleDrawer()"
+                >
                   mdi-plus-circle
                 </v-icon>
+                <!-- <v-btn fab x-small color="primary" @click="toggleDrawer()">
+                  <v-icon dark> mdi-plus-circle </v-icon>
+                </v-btn> -->
               </div>
             </v-col>
           </v-row>
@@ -154,15 +162,58 @@
           ></huxButton>
         </template>
       </HuxFooter>
+
+      <drawer v-model="drawer">
+        <template v-slot:header-left>
+          <div class="d-flex align-baseline">
+            <h5 class="text-h5 font-weight-regular pr-2">
+              Select a destination to add
+            </h5>
+          </div>
+        </template>
+        <template v-slot:footer-left>
+          <div class="d-flex align-baseline">
+            <p class="font-weight-regular mb-0">
+              {{ destinations.length }} results
+            </p>
+          </div>
+        </template>
+        <template v-slot:default>
+          <div class="ma-5" v-if="step1">
+            <CardHorizontal
+              v-for="(destination, index) in destinations"
+              :key="destination.id"
+              :title="destination.name"
+              :icon="destination.type"
+              :isAdded="
+                destination.is_added || index == selectedDestinationIndex
+              "
+              :isAvailable="destination.is_enabled"
+              :isAlreadyAdded="destination.is_added"
+              @click="onSelectDestination(index)"
+              class="my-3"
+            />
+          </div>
+          <div  class="ma-5" v-if="step2">
+            <AddDestination />
+          </div>
+        </template>
+      </drawer>
+      
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
 import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
+import Drawer from "@/components/common/Drawer"
+import CardHorizontal from "@/components/common/CardHorizontal"
+import AddDestination from "@/views/Audiences/AddDestination"
+
 
 export default {
   name: "Configuration",
@@ -171,9 +222,16 @@ export default {
     HuxFooter,
     huxButton,
     TextField,
+    Drawer,
+    CardHorizontal,
+    AddDestination,
   },
   data() {
     return {
+      step1: true,
+      step2: false,
+      drawer: false,
+      selectedDestinationIndex: -1,
       overviewListItems: [
         { title: "Target size", subtitle: "34,203,204" },
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
@@ -185,6 +243,40 @@ export default {
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      destinations: "destinations/list",
+    }),
+
+    destination() {
+      return this.destinations[this.selectedDestinationIndex] || null
+    },
+
+    isDestinationSelected() {
+      return Boolean(this.destination)
+    },
+  },
+
+  methods: {
+    ...mapActions({
+      getDestinations: "destinations/getAll",
+    }),
+
+    toggleDrawer() {
+      this.drawer = !this.drawer
+    },
+
+    onSelectDestination(index) {
+      this.selectedDestinationIndex = index
+      // setTimeout(() => (this.drawer = false), 470)
+      this.step1 = false;
+      this.step2 = true;
+    },
+  },
+  async mounted() {
+    await this.getDestinations()
   },
 }
 </script>
