@@ -13,6 +13,7 @@ DATA_MANAGEMENT_DATABASE = "data_management"
 CONSTANTS_COLLECTION = "constants"
 DATA_SOURCES_COLLECTION = "data_sources"
 CDP_DATA_SOURCES_COLLECTION = "cdp_data_sources"
+ENGAGEMENTS_COLLECTION = "engagements"
 INGESTION_JOBS_COLLECTION = "ingestion_jobs"
 INGESTED_DATA_COLLECTION = "ingested_data"
 INGESTED_DATA_STATS_COLLECTION = "ingested_data_stats"
@@ -224,6 +225,14 @@ NOTIFICATION_FIELD_CREATED = "created"
 NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
+# Engagement constants
+ENGAGEMENT_NAME = "name"
+ENGAGMENT_AUDIENCES = "audiences"
+ENGAGEMENT_CREATED = "created"
+ENGAGEMENT_CREATED_BY = "created_by"
+ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
+ENGAGEMENT_LAST_UPDATED = "last_updated"
 
 
 # pagination constants
