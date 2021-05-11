@@ -164,42 +164,81 @@
       </HuxFooter>
 
       <drawer v-model="drawer">
+
         <template v-slot:header-left>
-          <div class="d-flex align-baseline">
+          <div class="d-flex align-baseline" v-if="e1 == 1">
             <h5 class="text-h5 font-weight-regular pr-2">
               Select a destination to add
             </h5>
           </div>
-        </template>
-        <template v-slot:footer-left>
-          <div class="d-flex align-baseline">
-            <p class="font-weight-regular mb-0">
-              {{ destinations.length }} results
-            </p>
+          <div class="d-flex align-baseline" v-if="e1 == 2">
+            <h5 class="text-h5 font-weight-regular pr-2">
+              salesforce
+            </h5>
           </div>
         </template>
+
         <template v-slot:default>
-          <div class="ma-5" v-if="step1">
-            <CardHorizontal
-              v-for="(destination, index) in destinations"
-              :key="destination.id"
-              :title="destination.name"
-              :icon="destination.type"
-              :isAdded="
-                destination.is_added || index == selectedDestinationIndex
-              "
-              :isAvailable="destination.is_enabled"
-              :isAlreadyAdded="destination.is_added"
-              @click="onSelectDestination(index)"
-              class="my-3"
-            />
-          </div>
-          <div  class="ma-5" v-if="step2">
-            <AddDestination />
+          <v-stepper v-model="e1">
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <div class="ma-5">
+                  <CardHorizontal
+                    v-for="(destination, index) in destinations"
+                    :key="destination.id"
+                    :title="destination.name"
+                    :icon="destination.type"
+                    :isAdded="
+                      destination.is_added || index == selectedDestinationIndex
+                    "
+                    :isAvailable="destination.is_enabled"
+                    :isAlreadyAdded="destination.is_added"
+                    @click="
+                      onSelectDestination(index)
+                      e1 = 2
+                    "
+                    class="my-3"
+                  />
+                </div>
+              </v-stepper-content>
+              <v-stepper-content step="2">
+                <AddDestination />
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </template>
+
+        <template v-slot:footer-right>
+          <div class="d-flex align-baseline" v-if="e1 == 2">
+            <huxButton
+              ButtonText="Add"
+              variant="primary"
+              v-bind:isTile="true"
+              width="80"
+              height="40"
+              class="ma-2"
+            ></huxButton>
           </div>
         </template>
+
+        <template v-slot:footer-left>
+          <div class="d-flex align-baseline" v-if="e1 == 1">
+           {{ destinations.length }} results
+          </div>
+          <div class="d-flex align-baseline" v-if="e1 == 2">
+            <huxButton
+              ButtonText="Back"
+              variant="white"
+              v-bind:isTile="true"
+              width="80"
+              height="40"
+              class="ma-2"
+              @click.native="e1 = 1"
+            ></huxButton>
+          </div>
+        </template>
+
       </drawer>
-      
     </div>
   </div>
 </template>
@@ -214,7 +253,6 @@ import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import AddDestination from "@/views/Audiences/AddDestination"
 
-
 export default {
   name: "Configuration",
   components: {
@@ -228,8 +266,7 @@ export default {
   },
   data() {
     return {
-      step1: true,
-      step2: false,
+      e1: 1,
       drawer: false,
       selectedDestinationIndex: -1,
       overviewListItems: [
@@ -270,9 +307,6 @@ export default {
 
     onSelectDestination(index) {
       this.selectedDestinationIndex = index
-      // setTimeout(() => (this.drawer = false), 470)
-      this.step1 = false;
-      this.step2 = true;
     },
   },
   async mounted() {
@@ -330,6 +364,9 @@ export default {
         }
       }
     }
+  }
+  .v-stepper {
+    box-shadow: none;
   }
 }
 </style>

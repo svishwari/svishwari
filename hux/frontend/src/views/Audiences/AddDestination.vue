@@ -7,8 +7,18 @@
         v-bind:class="[isActive ? 'active' : '']"
         @click="toggleClass($event)"
       >
-        <div class="child mt-8">
-          <div class="icon">block 1</div>
+        <div class="child mt-4">
+          <div class="icon">
+            <v-icon
+                color="info"
+                size="44"
+                class="ml-2"
+                v-if="isActive"
+              >
+                mdi-check-circle
+              </v-icon>
+          </div>
+          <extensionInactive1  v-if="!isActive" />
           <div class="label">New data extension</div>
         </div>
       </diV>
@@ -17,8 +27,18 @@
         v-bind:class="[!isActive ? 'active' : '']"
         @click="toggleClass($event)"
       >
-        <div class="child mt-8">
-          <div class="icon">block 2</div>
+        <div class="child mt-4">
+          <div class="icon">
+            <v-icon
+                color="info"
+                size="44"
+                class="ml-2"
+                v-if="!isActive"
+              >
+                mdi-check-circle
+              </v-icon>
+          </div>
+          <extensionInactive2  v-if="isActive" />
           <div class="label">Existing data extension</div>
         </div>
       </diV>
@@ -64,25 +84,33 @@
       <label class="d-flex align-items-center mb-2">
         Existing data extension
       </label>
+
+      <v-card elevation="1">
+        <v-card-text>
+          <v-row align="center" class="mx-0">
+            <v-icon color="info" size="15" class="mr-2"> mdi-message-alert </v-icon>
+            <div class="feedback info--text">FEEDBACK</div>
+            <div class="mx-2">
+              Modifying this data extension may impact any independent journey.
+            </div>
+          </v-row>
+        </v-card-text>
+      </v-card>
     </div>
   </diV>
 </template>
 <script>
 import TextField from "@/components/common/TextField"
-
+import extensionInactive1 from "../../assets/logos/extension-inactive-1.svg"
+import extensionInactive2 from "../../assets/logos/extension-inactive-2.svg"
 export default {
   name: "AddDestination",
-  components: { TextField },
+  components: { TextField, extensionInactive1, extensionInactive2 },
   data() {
     return {
       isActive: true,
       journeyType: null,
       Extension: null,
-      DropdownData: [
-        { value: "1 - 25" },
-        { value: "26 - 50" },
-        { value: "50+" },
-      ],
     }
   },
   methods: {
