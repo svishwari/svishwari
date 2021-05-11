@@ -10,7 +10,7 @@ The API is UI-driven.
 * [Hux Unified API](#hux-unified-api)
    * [Installation](#installation)
    * [Environment Variables](#environment-variables)
-         * [Setup](#setup)
+      * [Setup](#setup)
       * [Connecting to the UNIFIED Environment.](#connecting-to-the-unified-environment)
       * [Generating AWS Credentials](#generating-aws-credentials)
       * [Software Dependencies](#software-dependencies)
@@ -66,7 +66,8 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 
-#### Setup
+### Setup
+
 ```
 # cd to the hux/api folder
 cd hux-unified/hux/api
