@@ -1,10 +1,10 @@
 # application environment variables
 FROM alpine:latest AS base
 ARG OKTA_ISSUER
-ARG OKTA_CLIENT
+ARG OKTA_CLIENT_ID
 ARG API_URL
 RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
-    "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT" \
+    "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT_ID" \
     "\nVUE_APP_API_URL=$API_URL" \ > /tmp/env_file
 
 # build environment

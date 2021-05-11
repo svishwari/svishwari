@@ -1,4 +1,14 @@
 """This module contains connector defines."""
+HEALTH_CHECK_ENDPOINT = "/health-check"
+HEALTH_CHECK = "healthcheck"
+
+# AWS defines
+AWS_SSM_NAME = "ssm"
+AWS_BATCH_NAME = "batch"
+AWS_HEALTH_TESTS = {
+    AWS_SSM_NAME: "describe_parameters",
+    AWS_BATCH_NAME: "list_jobs",
+}
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
@@ -55,7 +65,7 @@ EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
 DESTINATIONS_DESCRIPTION = "Destinations API"
-DESTINATIONS_ENDPOINT = "destinations"
+DESTINATIONS_ENDPOINT = "/destinations"
 DESTINATION_ID = "destination_id"
 DESTINATION_TYPE = "destination_type"
 DESTINATION_NAME = "destination_name"
@@ -74,7 +84,7 @@ CDP_DATA_SOURCE_CATEGORY_DESCRIPTION = "Category of the CDP data source"
 # Authentication API fields
 AUTHENTICATION_TAG = "authenticate"
 AUTHENTICATION_DESCRIPTION = "Authentication API"
-AUTHENTICATION_ENDPOINT = "authenticate"
+AUTHENTICATION_ENDPOINT = "/authenticate"
 AUTHENTICATION_TOKEN = "access_token"
 CANNOT_AUTHENTICATE_USER = "Error authenticating user."
 
@@ -86,8 +96,8 @@ AUTHENTICATION_OKTA_CLIENT_ID = "OKTA-CLIENT-ID"
 AUTHENTICATION_OKTA_ISSUER = "OKTA-ISSUER"
 
 # Orchestration API fields
-ORCHESTRATION_ENDPOINT = "orchestration"
-AUDIENCE_ENDPOINT = "audience"
+ORCHESTRATION_ENDPOINT = "/orchestration"
+AUDIENCE_ENDPOINT = "/audiences"
 ORCHESTRATION_TAG = "orchestration"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_NAME = "audience_name"
@@ -116,7 +126,15 @@ PARAMETER_STORE_ERROR_MSG = (
     " store secrets in the parameter store."
 )
 
+# users
+USER_TAG = "user"
+USER_DESCRIPTION = "USER API"
+USER_ENDPOINT = "/users"
+
 # Models
+MODELS_TAG = "model"
+MODELS_DESCRIPTION = "MODEL API"
+MODELS_ENDPOINT = "/models"
 MODEL_NAME = "model_name"
 MODEL_NAME_PARAMS = [
     {
@@ -131,9 +149,11 @@ MODEL_NAME_PARAMS = [
 MODEL_LIST_PAYLOAD = {
     "params": {
         "feature_service_name": "ui_metadata_models_service",
-        "join_key_map": {
-            "model_name": "ltv-model-365-30",
-            "version_number": "0.0.1",
-        },
+        "join_key_map": {"model_id": "1"},
     }
 }
+
+# CDP DATA SOURCES
+CDP_DATA_SOURCES_TAG = "data sources"
+CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
+CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
