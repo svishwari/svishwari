@@ -28,14 +28,23 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 
-#### Setup
+#### Setup ENV vars
+The SSL certificate is currently added in the repository,
+however if you need to download it again, simply run
+```
+# cd to "/hux/api/huxunify"
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+```
+
+For the settings, copy the template-settings.ini file below
+and input your local env settings.
 ```
 # cd to the hux/api folder
 cd "/hux/api"
-# download the public ssl cert for aws
-wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+
 # copy the template-settings.ini file
 cp template-settings.ini settings.ini
+
 # now populate all the env variables in that file.
 ```
 
