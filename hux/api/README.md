@@ -1,26 +1,33 @@
 # Hux Unified API
 
-Information the API Flask Project
+[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_api_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605a45789f86ae45939bfec3&pipeline=unified_solution_api_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0)
+
+Hux Unified API is an API that will be primarily consumed by the
+Hux Unified Front-end application.
+
+The API is UI-driven.
 
 ## Installation
 ```
-# cd to the hux/api folder
-cd "/hux/api"
+# clone the repo
+git clone https://github.com/DeloitteHux/hux-unified.git
+
+# cd to the hux/api repo
+cd hux-unified/hux/api
+
+# install pipenv
+pip install pipenv
 
 # run pipenv install
 pipenv install
 
 # activate the virtual environment
 pipenv shell
-
-# install the dependencies
-pipenv install tox-pipenv
-pipenv install
 ```
 
-### environment variables
+## Environment Variables
 The API consumes environment variables from the settings.ini file.
-For more information see link below.
+For more information, see the link below.
 https://github.com/henriquebastos/python-decouple
 
 Decouple always searches for Options in this order:
@@ -28,25 +35,29 @@ Decouple always searches for Options in this order:
 2. Repository: ini or .env file
 3. Default argument passed to config.
 
-#### Setup ENV vars
-The SSL certificate is currently added in the repository,
-however if you need to download it again, simply run
-```
-# cd to "/hux/api/huxunify"
-wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
-```
-
-For the settings, copy the template-settings.ini file below
-and input your local env settings.
+#### Setup
 ```
 # cd to the hux/api folder
-cd "/hux/api"
+cd hux-unified/hux/api
+
+# download the public ssl cert for aws
+wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 
 # copy the template-settings.ini file
 cp template-settings.ini settings.ini
 
 # now populate all the env variables in that file.
 ```
+
+### Connecting to the UNIFIED Environment.
+A user must be connected to the AWS VPN for accessing the database and unified domains.
+Instructions for connection can be followed here
+ - [AWS Client VPN](https://confluence.marketingservices.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-AWSClientVPNapp)
+
+### Generating AWS Credentials
+For connecting to AWS, a user must generate AWS credentials via OKTA.
+Instructions can be found here
+ - [Accessing AWS Console](https://confluence.marketingservices.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-AWSConsoleAccessapp)
 
 ### Software Dependencies
 
@@ -72,8 +83,6 @@ It also (optionally) integrates with **[Flask-SQLAlchemy](http://marshmallow.rea
 
 apispec is a pluggable API specification generator. Currently, supports the **extract [OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#operation-object)**
 
-### Dev
-
 ### Docker
 For building the docker locally, follow the steps below
 ```
@@ -93,30 +102,61 @@ sudo docker build . -f ./hux/api/Dockerfile --build-arg ARTIFACTORY_PYTHON_READ=
 sudo docker run -p 5000 hux-unifed-test
 ```
 
-
-### Prerequisites
-
 ## Usage
 
-### HuxUnify
-
-Start the API
+Here's an example of basic usage
 ```
-FLASK_APP=huxunify.app pipenv run python -m flask run
+# cd to the hux/api folder
+cd hux-unified/hux/api
+
+# add the current directory to python path
+PYTHONPATH=$PYTHONPATH:`pwd`
+
+# run the flask app
+python huxunify/app.py
 ```
 
-For viewing the API Documentation, simply go to the following URL
-.../apidocs
+API Usage
+ - SWAGGER DOCS: http://0.0.0.0:5000/api/v1/ui
+ - HEALTH CHECK: http://0.0.0.0:5000/health-check
+
 
 ![apidocs.png](apidocs.png)
 
-### Style Guide
-PEP8
+## Style Guide
 
+### pylint
+We use a series of pylint checks for this project.
+They can be found [here](https://github.com/DeloitteHux/hux-unified/blob/main/.pylintrc)
+
+pylint can be configured within your IDE.
+here is how to configure for the common IDEs
+
+#### Visual Studio Code
+https://code.visualstudio.com/docs/python/linting#:~:text=Specific%20linters%20%23%20%20%20%20Linter%20,%20%20pydocstyleArgs%20%204%20more%20rows%20
+
+#### PyCharm
+https://www.jetbrains.com/help/pycharm/configuring-third-party-tools.html
+https://plugins.jetbrains.com/plugin/11084-pylint
+
+### Black
+python Black enforces formatting, for more information see the black [homepage](https://black.readthedocs.io/en/stable/installation_and_usage.html#:~:text=Black%20can%20be%20installed%20by%20running%20pip%20install,hotness%20and%20want%20to%20install%20from%20GitHub%2C%20use%3A)
+We configure Black within our project by using pyproject.toml files.
+
+With IDE integration, a user can configure black so that it automatically runs on file save.
+
+here is how to configure for the common IDEs
+
+#### PyCharm
+https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-idea
+
+#### Visual Studio Code
+https://black.readthedocs.io/en/stable/editor_integration.html#visual-studio-code
+
+### Docstrings
 Google Python Docstrings
 https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
-Typehinting Example
 ```
 def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     """This function generates synthetic data for marshmallow
@@ -134,10 +174,45 @@ def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     }
 ```
 
-### Test
+### Typehinting and Docstrings
 ```
-pipenv run python -m unittest
+def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
+    """This function generates synthetic data for marshmallow
+
+    Args:
+        schema_obj (Schema): a marshmallow schema object
+
+    Returns:
+        dict: a dictionary that simulates the passed in marshmallow schema obj
+
+    """
+    # get random data based on marshmallow type
+    return {
+        field: SPEC_TYPE_LOOKUP[type(val)] for field, val in schema_obj().fields.items()
+    }
 ```
+
+### Testing
+```
+# cd to the hux/api folder
+cd hux-unified/hux/api
+
+# add current directory to python path
+PYTHONPATH=$PYTHONPATH:`pwd`
+
+# run the unittest
+python -m unittest
+```
+
+## Database
+Huxunify connects to a DocumentDB via [pymongo](https://pymongo.readthedocs.io/en/stable/index.html)
+
+### Connection to the database
+There are two primary ways for connecting to the database
+
+1. Using the command line - instructions [here](https://docs.mongodb.com/manual/mongo/#:~:text=You%20can%20use%20the%20command-line%20option%20--host%20%3Chost%3E%3A%3Cport%3E.,the%20--host%20%3Chost%3E%20and%20--port%20%3Cport%3E%20command-line%20options.)
+2. Using a GUI such as MongoDB Compass [here](https://www.mongodb.com/products/compass)
+
 
 ### How to implement a new endpoint
 * Define marshmallow Schema: create a schema by defining a class with variables
@@ -248,23 +323,4 @@ class ProcessedDataSearch(SwaggerView):
             Response: List of processed data sources.
         """
         return CdmModel().read_processed_sources(), HTTPStatus.OK.value
-
 ```
-
-
-
-### Data
-
-### Search
-
-### Web interface
-
-### Evaluation
-
-[comment]: <> (You will need assessments log file, obtained from server.  )
-
-## Report
-
-## License
-
-Private
