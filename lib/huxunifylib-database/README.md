@@ -1,9 +1,7 @@
-# hux-unified lib
+# huxunifylib-database
+[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_library?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=606bf0961ca52d74786e76ef&pipeline=unified_solution_library&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0)
 
-# todo - update codefresh link
-[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/advertising_performance%2Fdatabase?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=5f3d2ac0acded2bc696a7e10&pipeline=database&projects=advertising_performance&projectId=5f3c2c985ed18a34eb76775a)
-
-The `huxunifylib` houses all huxunified python libs used.
+huxunifylib-database is a library for managing the huxunify database.
 
 ## Usage
 
