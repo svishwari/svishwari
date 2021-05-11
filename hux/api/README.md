@@ -130,7 +130,7 @@ We use a series of pylint checks for this project.
 They can be found [here](https://github.com/DeloitteHux/hux-unified/blob/main/.pylintrc)
 
 pylint can be configured within your IDE.
-here is how to configure for the common IDEs
+Here is how to configure for the common IDEs:
 
 #### Visual Studio Code
 https://code.visualstudio.com/docs/python/linting#:~:text=Specific%20linters%20%23%20%20%20%20Linter%20,%20%20pydocstyleArgs%20%204%20more%20rows%20
