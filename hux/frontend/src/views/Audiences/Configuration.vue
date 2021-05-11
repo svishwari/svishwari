@@ -40,7 +40,7 @@
                 labelText="Audience name"
                 backgroundColor="white"
                 v-bind:required="true"
-                v-model="audienceName"
+                v-model="audience.audienceName"
                 class="mt-1 text-body-1"
               ></TextField>
             </v-col>
@@ -65,7 +65,7 @@
             <span>2</span>
           </template>
           <v-row class="pt-1 pr-10 mr-10">
-            <v-col cols="12">
+            <v-col cols="12" v-if="audience.attributeRules.length == 0">
               <strong class="text-h6"
                 >Attributes selection (you can always do this later !)</strong
               >
@@ -85,13 +85,43 @@
                       >
                     </v-list-item-content>
                     <v-row align="center" justify="end">
-                      <v-icon size="30" class="add-icon" color="primary">
+                      <v-icon
+                        size="30"
+                        class="add-icon"
+                        color="primary"
+                        @click="addNewSection()"
+                      >
                         mdi-plus-circle
                       </v-icon>
                     </v-row>
                   </v-list-item>
                 </v-card-actions>
               </v-card>
+            </v-col>
+            <v-col col="12" v-if="audience.attributeRules.length > 0">
+              <div
+                v-for="(rule, index) in audience.attributeRules"
+                :key="`rule-${index}`"
+              >
+                <span
+                  >Match <v-switch v-model="switch1" inset></v-switch> of the
+                  following
+                </span>
+                <div
+                  class="col-12 row"
+                  v-for="(condition, ixcondition) in rule.conditions"
+                  :key="`${index}-ruleCondition-${ixcondition}`"
+                >
+                  <div class="condition-card col-10">
+                    <DropdownMenu
+                      v-model="condition.attribute"
+                      :labelText="fetchDropdownLabel(condition, 'attribute')"
+                      :menuItem="attributeOptions"
+                    ></DropdownMenu>
+                  </div>
+                  <div class="condition-summary col-2"></div>
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-timeline-item>
@@ -164,6 +194,8 @@ import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
+import { mapGetters, mapActions } from "vuex"
+import DropdownMenu from '../../components/common/DropdownMenu.vue'
 
 export default {
   name: "Configuration",
@@ -172,6 +204,7 @@ export default {
     HuxFooter,
     huxButton,
     TextField,
+    DropdownMenu,
   },
   data() {
     return {
@@ -185,7 +218,22 @@ export default {
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
-      audienceName: ''
+      attributeOptions: 
+    }
+  },
+  computed: {
+    ...mapGetters({
+      audience: "audiences/current",
+    }),
+  },
+  methods: {
+    addSection: () => {},
+    ...mapActions({
+      addNewSection: "audiences/initiateNewRuleSection",
+    }),
+    fetchDropdownLabel(condition, type) {
+      const prefix = "Select ";
+      return condition[type] ? condition[type] : prefix + type;
     }
   },
 }

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+  import { mapGetters, mapActions } from "vuex"
 
 import DestinationListCard from "@/components/DestinationListCard"
 import Logo from "@/components/common/Logo"
