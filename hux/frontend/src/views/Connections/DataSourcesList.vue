@@ -8,7 +8,7 @@
       </v-icon>
     </div>
 
-    <EmptyState>
+    <EmptyStateData>
       <template v-slot:icon> mdi-alert-circle-outline </template>
       <template v-slot:title> Oops! There’s nothing here yet </template>
       <template v-slot:subtitle>
@@ -16,16 +16,16 @@
         <br />
         Begin by selecting the plus button above.
       </template>
-    </EmptyState>
+    </EmptyStateData>
   </div>
 </template>
 
 <script>
-import EmptyState from "@/components/EmptyState"
+import EmptyStateData from "@/components/common/EmptyStateData"
 
 export default {
   name: "data-sources-list",
 
-  components: { EmptyState },
+  components: { EmptyStateData },
 }
 </script>
