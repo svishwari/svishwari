@@ -145,7 +145,7 @@ We configure Black within our project by using pyproject.toml files.
 
 With IDE integration, a user can configure black so that it automatically runs on file save.
 
-here is how to configure for the common IDEs
+Here is how to configure for the common IDEs:
 
 #### PyCharm
 https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-idea
