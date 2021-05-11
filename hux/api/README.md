@@ -133,7 +133,7 @@ pylint can be configured within your IDE.
 Here is how to configure for the common IDEs:
 
 #### Visual Studio Code
-https://code.visualstudio.com/docs/python/linting#:~:text=Specific%20linters%20%23%20%20%20%20Linter%20,%20%20pydocstyleArgs%20%204%20more%20rows%20
+https://code.visualstudio.com/docs/python/linting
 
 #### PyCharm
 https://www.jetbrains.com/help/pycharm/configuring-third-party-tools.html
