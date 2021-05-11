@@ -140,7 +140,7 @@ https://www.jetbrains.com/help/pycharm/configuring-third-party-tools.html
 https://plugins.jetbrains.com/plugin/11084-pylint
 
 ### Black
-python Black enforces formatting, for more information see the black [homepage](https://black.readthedocs.io/en/stable/installation_and_usage.html#:~:text=Black%20can%20be%20installed%20by%20running%20pip%20install,hotness%20and%20want%20to%20install%20from%20GitHub%2C%20use%3A)
+python Black enforces formatting, for more information see the black [homepage](https://black.readthedocs.io/en/stable/installation_and_usage.html)
 We configure Black within our project by using pyproject.toml files.
 
 With IDE integration, a user can configure black so that it automatically runs on file save.
