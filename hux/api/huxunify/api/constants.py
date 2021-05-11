@@ -1,4 +1,14 @@
 """This module contains connector defines."""
+HEALTH_CHECK_ENDPOINT = "/health-check"
+HEALTH_CHECK = "healthcheck"
+
+# AWS defines
+AWS_SSM_NAME = "ssm"
+AWS_BATCH_NAME = "batch"
+AWS_HEALTH_TESTS = {
+    AWS_SSM_NAME: "describe_parameters",
+    AWS_BATCH_NAME: "list_jobs",
+}
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
@@ -139,10 +149,7 @@ MODEL_NAME_PARAMS = [
 MODEL_LIST_PAYLOAD = {
     "params": {
         "feature_service_name": "ui_metadata_models_service",
-        "join_key_map": {
-            "model_name": "ltv-model-365-30",
-            "version_number": "0.0.1",
-        },
+        "join_key_map": {"model_id": "1"},
     }
 }
 

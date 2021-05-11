@@ -6,6 +6,8 @@ from flasgger import Swagger
 from flask_cors import CORS
 
 from huxunify.api.route import ROUTES
+from huxunify.api import constants
+from huxunify.api.route.utils import get_health_check
 
 
 # set config variables
@@ -38,6 +40,14 @@ def create_app() -> Flask:
     for route in ROUTES:
         print(f"Registering {route.name}.")
         flask_app.register_blueprint(route, url_prefix="/api/v1")
+
+    # add health check URLs
+    # pylint: disable=unnecessary-lambda
+    flask_app.add_url_rule(
+        constants.HEALTH_CHECK_ENDPOINT,
+        constants.HEALTH_CHECK,
+        view_func=lambda: get_health_check().run(),
+    )
 
     # setup the swagger docs
     Swagger(flask_app, config=SWAGGER_CONFIG, merge=True)

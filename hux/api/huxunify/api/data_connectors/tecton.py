@@ -2,7 +2,7 @@
 Purpose of this file is for holding methods to query and pull data from Tecton.
 """
 from json import dumps
-from typing import List
+from typing import List, Tuple
 
 import requests
 
@@ -17,6 +17,22 @@ from huxunify.api.schema.model import (
     LiftSchema,
     PerformanceMetricSchema,
 )
+
+
+def check_tecton_connection() -> Tuple[bool, str]:
+    """Validate the tecton connection.
+    Args:
+
+    Returns:
+        tuple[bool, str]: Returns if the connection is valid, and the message.
+    """
+    # submit the post request to get models
+    response = requests.post(
+        config.TECTON_FEATURE_SERVICE,
+        dumps(constants.MODEL_LIST_PAYLOAD),
+        headers=config.TECTON_API_HEADERS,
+    )
+    return response.status_code == 200, response.reason
 
 
 def get_models(
