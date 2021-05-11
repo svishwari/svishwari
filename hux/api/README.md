@@ -7,6 +7,37 @@ Hux Unified Front-end application.
 
 The API is UI-driven.
 
+* [Hux Unified API](#hux-unified-api)
+   * [Installation](#installation)
+   * [Environment Variables](#environment-variables)
+         * [Setup](#setup)
+      * [Connecting to the UNIFIED Environment.](#connecting-to-the-unified-environment)
+      * [Generating AWS Credentials](#generating-aws-credentials)
+      * [Software Dependencies](#software-dependencies)
+         * [Flasgger](#flasgger)
+         * [flask-marshmallow](#flask-marshmallow)
+         * [apispec](#apispec)
+      * [Docker](#docker)
+   * [Usage](#usage)
+   * [Style Guide](#style-guide)
+      * [pylint](#pylint)
+         * [Visual Studio Code](#visual-studio-code)
+         * [PyCharm](#pycharm)
+      * [Black](#black)
+         * [PyCharm](#pycharm-1)
+         * [Visual Studio Code](#visual-studio-code-1)
+      * [MYPY](#mypy)
+         * [PyCharm](#pycharm-2)
+         * [Visual Studio Code](#visual-studio-code-2)
+      * [Docstrings](#docstrings)
+      * [Typehinting and Docstrings](#typehinting-and-docstrings)
+      * [Testing](#testing)
+   * [Database](#database)
+      * [Connection to the database](#connection-to-the-database)
+      * [How to implement a new endpoint](#how-to-implement-a-new-endpoint)
+
+
+
 ## Installation
 ```
 # clone the repo
@@ -154,8 +185,14 @@ https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-
 https://black.readthedocs.io/en/stable/editor_integration.html#visual-studio-code
   
  ### MYPY
+Mypy is an optional static type checker for Python. You can add type hints (PEP 484) to your Python programs,
+and use mypy to type check them statically. Find bugs in your programs without even running them!
 
+#### PyCharm
+https://github.com/dropbox/mypy-PyCharm-plugin
 
+#### Visual Studio Code
+https://code.visualstudio.com/docs/python/linting#_mypy
 
 ### Docstrings
 Google Python Docstrings
