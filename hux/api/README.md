@@ -152,11 +152,21 @@ https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-
 
 #### Visual Studio Code
 https://black.readthedocs.io/en/stable/editor_integration.html#visual-studio-code
+  
+ ### MYPY
+
+
 
 ### Docstrings
 Google Python Docstrings
 https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
+Example of the docstring format we are following which contains the following
+ - description
+ - args
+     - arg name (arg type): arg description.
+ - returns
+     - return type: description of the return value. 
 ```
 def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     """This function generates synthetic data for marshmallow
