@@ -64,9 +64,11 @@ DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
 
-# Engagement fieldsy
+# Engagement fields
 ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_NAME = "engagement_name"
+ENGAGEMENT_DESCRIPTION = "description"
+ENGAGEMENT_SIZE = "size"
 ENGAGEMENT_AUDIENCES = "engagement_audiences"
 ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 
@@ -114,8 +116,7 @@ AUDIENCE_STATUS_DELIVERING = "Delivering"
 AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
-ENGAGEMENT_ID = "engagement_id"
-ENGAGEMENT_NAME = "engagement_name"
+
 
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (

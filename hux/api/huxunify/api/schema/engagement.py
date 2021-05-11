@@ -26,12 +26,15 @@ class EngagementGetSchema(Schema):
         validate=validate_object_id,
     )
     name = fields.String(attribute=api_c.ENGAGEMENT_NAME, required=True)
+    description = fields.String(attribute=api_c.ENGAGEMENT_DESCRIPTION)
     audiences = fields.List(
         cls_or_instance=fields.String,
         attribute=api_c.ENGAGEMENT_AUDIENCES,
         required=True,
         validate=validate_object_id_list,
     )
+    size = fields.Int(attribute=api_c.ENGAGEMENT_SIZE, allow_none=True)
+    # TODO note, what does this delivery schedule need to look like?
     delivery_schedule = fields.List(
         cls_or_instance=fields.String,
         attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE,
@@ -79,8 +82,14 @@ class EngagementPostSchema(Schema):
     Engagement post schema class
     """
 
-    name = fields.String(validate=must_not_be_blank)
-    created_by = fields.String(validate=must_not_be_blank)
+    name = fields.String(required=True, validate=must_not_be_blank)
+    description = fields.String()
+    created_by = fields.String(required=True, validate=must_not_be_blank)
+    # TODO delivery schedule needs to be here as well after structure is addressed
+    audiences = fields.List(
+        cls_or_instance=fields.String,
+        validate=validate_object_id_list
+    )
 
 
 class EngagementPutSchema(Schema):
