@@ -1,6 +1,26 @@
 import Vue from "vue"
 // import { getAllAudiences } from "@/api/resources/audiences"
 
+const namespaced = true
+
+const NEW_AUDIENCE = {
+  name: "",
+  engagements: [],
+  attributeRules: [],
+  destinations: [],
+}
+const NEW_RULE_SECTION = {
+  operand: "ALL",
+  conditions: [],
+}
+const NEW_CONDITION = {
+  id: "",
+  attribute: "",
+  condition: "",
+  value: "",
+  outputSummary: "-",
+}
+
 const state = {
   audiences: [
     {
@@ -250,11 +270,15 @@ const state = {
       },
     },
   ],
+  newAudience: NEW_AUDIENCE,
 }
 
 const getters = {
   AllAudiences: (state) => {
     return Object.values(state.audiences)
+  },
+  current: (state) => {
+    return state.newAudience
   },
 }
 
@@ -268,6 +292,11 @@ const mutations = {
     audiences.forEach((audience) => {
       Vue.set(state.audiences, audience.audienceId, audience)
     })
+  },
+  SET_NEW_RULESECTION(state) {
+    const newSection = { ...NEW_RULE_SECTION }
+    newSection.conditions.push(NEW_CONDITION)
+    state.newAudience.attributeRules.push(newSection)
   },
 }
 
@@ -288,9 +317,13 @@ const actions = {
        */
     }
   },
+  initiateNewRuleSection({ commit }) {
+    commit("SET_NEW_RULESECTION")
+  },
 }
 
 export default {
+  namespaced,
   state,
   getters,
   mutations,
