@@ -20,4 +20,13 @@ export const defineRoutes = (server) => {
 
     return new Response(code, headers, body)
   })
+
+  // data sources
+  server.get("/data_sources")
+
+  server.put("/data_sources", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+
+    return schema.dataSources.find(requestData).update({ is_added: true })
+  })
 }

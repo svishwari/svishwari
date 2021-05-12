@@ -60,7 +60,7 @@
 import Drawer from "@/components/common/Drawer"
 import huxButton from "@/components/common/huxButton"
 import CardHorizontal from "@/components/common/CardHorizontal"
-// import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 export default {
   name: "add-datasource",
   components: {
@@ -73,7 +73,6 @@ export default {
     return {
       localDrawer: this.value,
       selectedDataSourceIds: [],
-      dataSources: [],
     }
   },
 
@@ -86,10 +85,9 @@ export default {
   },
 
   computed: {
-    // ...mapGetters({
-    //   TODO get datasources list from api
-    //   dataSources: "destinations/list",
-    // }),
+    ...mapGetters({
+      dataSources: "dataSources/list",
+    }),
 
     isDataSourcesSelected() {
       return this.selectedDataSourceIds.length > 0
@@ -100,6 +98,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      addData: "dataSources/add",
+    }),
     onDataSourceClick: function (id) {
       if (this.selectedDataSourceIds.includes(id)) {
         let deselecteRowIndex = this.selectedDataSourceIds.indexOf(id)
@@ -109,7 +110,7 @@ export default {
       }
     },
     addDataSources: function () {
-      // Make a api call here
+      this.addData(this.selectedDataSourceIds)
       this.closeAddDataSource()
     },
     closeAddDataSource: function () {

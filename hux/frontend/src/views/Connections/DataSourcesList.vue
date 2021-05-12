@@ -35,7 +35,7 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 
 import EmptyState from "@/components/EmptyState"
 import AddDatasource from "@/views/DataSources/Configuration"
@@ -50,15 +50,13 @@ export default {
   data() {
     return {
       drawer: false,
-      dataSources: [],
     }
   },
 
   computed: {
-    // ...mapGetters({
-    // TODO integreate with data sources list
-    //   dataSources: "destinations/list",
-    // }),
+    ...mapGetters({
+      dataSources: "dataSources/list",
+    }),
 
     addedDataSources() {
       return this.dataSources.filter((dataSource) => dataSource.is_added)
@@ -73,6 +71,13 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
+    ...mapActions({
+      getDataSources: "dataSources/getAll",
+    }),
+  },
+
+  async mounted() {
+    await this.getDataSources()
   },
 }
 </script>
