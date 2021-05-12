@@ -15,7 +15,10 @@
         >
           {{ title }}
         </v-list-item-title>
-        <v-list-item-subtitle class="item-subtitle mb-3 neroBlack--text" v-if="subtitle">
+        <v-list-item-subtitle
+          class="item-subtitle mb-3 neroBlack--text"
+          v-if="subtitle"
+        >
           {{ subtitle }}
         </v-list-item-subtitle>
       </v-list-item-content>

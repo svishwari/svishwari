@@ -1,12 +1,20 @@
 <template>
-  <v-switch v-model="localValue" inset :label="operandLabel(rule)" @change="onFinalValue"></v-switch>
+  <v-switch
+    v-model="localValue"
+    inset
+    :label="operandLabel"
+    v-on:input="updateValue($event.target.value)"
+    class="hux-slider"
+  ></v-switch>
 </template>
 
 <script>
 export default {
-  name: "switch",
+  name: "huxSwitch",
   props: {
-      
+    value: {
+      type: Boolean,
+    },
   },
   computed: {
     localValue: {
@@ -17,13 +25,77 @@ export default {
         this.$emit("input", value)
       },
     },
+    operandLabel() {
+      return this.value ? "AND" : "ANY"
+    },
   },
   methods: {
-    onFinalValue: function (value) {
-      this.$emit("onFinalValue", value)
+    updateValue(value) {
+      console.log("change")
+      this.$emit("input", value)
     },
   },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.v-input {
+  ::v-deep .v-input__slot {
+    height: 24px;
+    margin: 0;
+    .v-input--selection-controls__input {
+      width: 61px;
+      position: relative;
+      .v-input--switch__track {
+        width: 61px;
+        height: 24px;
+        background: #ffffff;
+        border: 1px solid #00a3e0;
+        box-sizing: border-box;
+        border-radius: 21px;
+      }
+      .v-input--switch__thumb {
+        background: #00a3e0;
+        border: 1px solid #ffffff;
+        box-sizing: border-box;
+        width: 20px;
+        height: 20px;
+        top: 0;
+        transform: translate(0, 0) !important;
+      }
+    }
+    .v-label {
+      position: absolute !important;
+      font-family: Open Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      top: 2px !important;
+      left: 25px !important;
+      color: #00a3e0;
+    }
+  }
+  &.v-input--is-dirty {
+    ::v-deep .v-input__slot {
+      .v-input--selection-controls__input {
+        .v-input--switch__thumb,
+        .v-input--selection-controls__ripple {
+          transform: translate(34px, 0) !important;
+        }
+      }
+      .v-label {
+        position: absolute !important;
+        font-family: Open Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        top: 2px !important;
+        left: 2px !important;
+        color: #80d1ef;
+      }
+    }
+  }
+}
+</style>

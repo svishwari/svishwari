@@ -38,13 +38,9 @@
         :key="`rule-${index}`"
         class="rule-section"
       >
-        <span class="section-title"
+        <span class="section-title mb-2"
           >Match
-          <v-switch
-            v-model="rule.operand"
-            inset
-            :label="operandLabel(rule)"
-          ></v-switch>
+          <huxSwitch v-model="rule.operand"></huxSwitch>
           of the following
         </span>
         <div
@@ -92,7 +88,7 @@
             </div>
           </div>
         </div>
-        <div class="col-12 row seperator" v-if="index != lastIndex">
+        <div class="col-12 row seperator mt-5 mb-1" v-if="index != lastIndex">
           <hr />
           <v-chip :ripple="false">OR</v-chip>
         </div>
@@ -119,6 +115,7 @@
 
 <script>
 import DropdownMenu from "../../components/common/DropdownMenu.vue"
+import huxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 
 const NEW_RULE_SECTION = {
@@ -139,6 +136,7 @@ export default {
   components: {
     DropdownMenu,
     TextField,
+    huxSwitch,
   },
   props: {
     rules: {

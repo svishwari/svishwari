@@ -13,7 +13,7 @@
       placeholderText="Account name"
       v-bind:required="true"
     ></TextField>
-    {{ TextFieldValue }}  
+    {{ TextFieldValue }}
 
     <v-divider class="mt-10" />
 
