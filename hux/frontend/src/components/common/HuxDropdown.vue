@@ -20,14 +20,18 @@
         <div class="flex-grow-1"></div>
         <v-icon>mdi-chevron-right</v-icon>
       </v-list-item>
-      <huxButton v-else v-bind:v-on="on" @click="openMenu = true" text
-        v-bind:ButtonText=name
+      <huxButton
+        v-else
+        v-bind:v-on="on"
+        @click="openMenu = true"
+        text
+        v-bind:ButtonText="name"
         v-bind:isOutlined="true"
         width="200"
         icon=" mdi-chevron-down"
         iconPosition="right"
         class="ma-2"
-        ></huxButton>
+      ></huxButton>
     </template>
     <v-list>
       <template v-for="(item, index) in menuItems">
@@ -45,10 +49,12 @@
           :selected="selected"
         />
         <v-list-item v-else :key="index" @click="emitClickEvent(item)">
-            <v-list-item-title>
-              {{ item.name }}
-              <v-icon :color="color" v-if="selected == item.name">mdi-check</v-icon>
-            </v-list-item-title>
+          <v-list-item-title>
+            {{ item.name }}
+            <v-icon :color="color" v-if="selected == item.name"
+              >mdi-check</v-icon
+            >
+          </v-list-item-title>
         </v-list-item>
       </template>
     </v-list>
@@ -58,8 +64,8 @@
 import huxButton from "@/components/common/huxButton"
 export default {
   name: "hux-dropdown",
-  components: { 
-    huxButton
+  components: {
+    huxButton,
   },
   props: {
     selected: String,
