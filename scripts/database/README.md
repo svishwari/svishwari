@@ -26,5 +26,6 @@ Run the database create scripts
 cd ../../../hux-unified/scripts/database
 python create_database_indexes.py
 python set_database_constants.py
+python initialize_pilot_data.py
 pytest mongo_db_test.py
 ```
