@@ -8,11 +8,11 @@
     :value="openMenu"
   >
     <template v-slot:activator="{ on }">
-      <v-btn v-if="icon" :color="color" v-on="on">
+      <!-- <v-btn v-if="icon" :color="color" v-on="on">
         <v-icon>{{ icon }}</v-icon>
-      </v-btn>
+      </v-btn> -->
       <v-list-item
-        v-else-if="isSubMenu"
+        v-if="isSubMenu"
         class="d-flex justify-space-between"
         v-on="on"
       >
@@ -50,6 +50,7 @@
         />
         <v-list-item v-else :key="index" @click="emitClickEvent(item)">
           <v-list-item-title>
+            <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
             {{ item.name }}
             <v-icon :color="color" v-if="selected == item.name"
               >mdi-check</v-icon

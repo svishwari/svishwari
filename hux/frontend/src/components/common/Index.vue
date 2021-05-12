@@ -455,18 +455,19 @@ export default {
 
       fileMenuItems: [
         {
+          icon: "mdi-home-outline",
           name: "Menu Item 1",
           action: () => {
             console.log("menu-item-1")
           },
         },
         { isDivider: true },
-        { name: "Menu Item 2" },
+        { icon: "mdi-bullhorn-outline", name: "Menu Item 2" },
         {
           name: "Sub 1",
           menu: [
-            { name: "1.1" },
-            { name: "1.2" },
+            { icon: "mdi-home-outline", name: "1.1" },
+            { icon: "mdi-bullhorn-outline", name: "1.2" },
             {
               name: "Sub-menu 2",
               menu: [
@@ -488,15 +489,17 @@ export default {
           ],
         },
 
-        { name: "Menu Item 3" },
+        { icon: "mdi-flip-h mdi-account-plus-outline", name: "Menu Item 3" },
         { isDivider: true },
-        {
+        { 
+          icon: "mdi-tune-vertical-variant",
           name: "Menu Item 4",
           action: () => {
             console.log("menu-item-4")
           },
         },
         {
+          icon: "mdi-account-details-outline",
           name: "Menu Item 5",
           action: () => {
             console.log("menu-item-5")
