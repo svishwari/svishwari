@@ -41,6 +41,36 @@ DATA_SOURCES = [
         c.ENABLED: False,
         "added": False,
     },
+    {
+        c.DELIVERY_PLATFORM_NAME: "Twilio",
+        c.JOB_STATUS: "Pending",
+        c.ENABLED: False,
+        "added": False,
+    },
+    {
+        c.DELIVERY_PLATFORM_NAME: "Google Ads",
+        c.JOB_STATUS: "Pending",
+        c.ENABLED: False,
+        "added": False,
+    },
+    {
+        c.DELIVERY_PLATFORM_NAME: "Tableau",
+        c.JOB_STATUS: "Pending",
+        c.ENABLED: False,
+        "added": False,
+    },
+    {
+        c.DELIVERY_PLATFORM_NAME: "Adobe Experience",
+        c.JOB_STATUS: "Pending",
+        c.ENABLED: False,
+        "added": False,
+    },
+    {
+        c.DELIVERY_PLATFORM_NAME: "Mailchimp",
+        c.JOB_STATUS: "Pending",
+        c.ENABLED: False,
+        "added": False,
+    },
 ]
 
 # Inserting Data Sources into Data Sources Collection
