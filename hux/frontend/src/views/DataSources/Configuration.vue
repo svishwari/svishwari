@@ -62,7 +62,7 @@ import huxButton from "@/components/common/huxButton"
 import CardHorizontal from "@/components/common/CardHorizontal"
 // import { mapGetters } from "vuex"
 export default {
-  name: "add-datasource",
+  name: "add-data-source",
   components: {
     Drawer,
     CardHorizontal,
