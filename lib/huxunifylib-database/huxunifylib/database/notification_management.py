@@ -32,7 +32,7 @@ def create_notification(
     """
 
     # validate type
-    if not notification_type.lower() not in c.NOTIFICATION_TYPES:
+    if notification_type.lower() not in c.NOTIFICATION_TYPES:
         raise InvalidNotificationType(notification_type)
 
     # get collection
