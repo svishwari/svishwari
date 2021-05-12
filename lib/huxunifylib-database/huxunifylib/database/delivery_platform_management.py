@@ -459,9 +459,7 @@ def set_platform_type(
     return doc
 
 
-def get_platform_type(
-    database: DatabaseClient, delivery_platform_id: ObjectId
-) -> str:
+def get_platform_type(database: DatabaseClient, delivery_platform_id: ObjectId) -> str:
     """A function to get the delivery platform type.
 
     Args:
@@ -939,9 +937,7 @@ def set_delivery_job(
         c.UPDATE_TIME: curr_time,
         c.JOB_STATUS: c.STATUS_PENDING,
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
-            delivery_platform_generic_campaigns
-        ),
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (delivery_platform_generic_campaigns),
         c.ENABLED: True,
     }
     if engagement_id is not None:
@@ -1050,9 +1046,7 @@ def set_delivery_job_status(
     return doc
 
 
-def get_delivery_job_status(
-    database: DatabaseClient, delivery_job_id: ObjectId
-) -> str:
+def get_delivery_job_status(database: DatabaseClient, delivery_job_id: ObjectId) -> str:
     """A function to get an delivery job status.
 
     Args:

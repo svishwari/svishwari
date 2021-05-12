@@ -74,9 +74,7 @@ class DestinationGetSchema(Schema):
         if api_c.DESTINATION_ID in data:
             # if a valid ID, map it
             if ObjectId.is_valid(data[api_c.DESTINATION_ID]):
-                data.update(
-                    destination_id=ObjectId(data[api_c.DESTINATION_ID])
-                )
+                data.update(destination_id=ObjectId(data[api_c.DESTINATION_ID]))
             else:
                 # otherwise map to None
                 data.update(destination_id=None)
@@ -112,16 +110,10 @@ class FacebookAuthConstants(Schema):
     Facebook Auth constants schema class
     """
 
-    facebook_ad_account_id = fields.String(
-        required=True, validate=must_not_be_blank
-    )
+    facebook_ad_account_id = fields.String(required=True, validate=must_not_be_blank)
     facebook_app_id = fields.String(required=True, validate=must_not_be_blank)
-    facebook_app_secret = fields.String(
-        required=True, validate=must_not_be_blank
-    )
-    facebook_access_token = fields.String(
-        required=True, validate=must_not_be_blank
-    )
+    facebook_app_secret = fields.String(required=True, validate=must_not_be_blank)
+    facebook_access_token = fields.String(required=True, validate=must_not_be_blank)
 
 
 class SFMCAuthConstants(Schema):
@@ -131,18 +123,10 @@ class SFMCAuthConstants(Schema):
 
     sfmc_client_id = fields.String(required=True, validate=must_not_be_blank)
     sfmc_account_id = fields.String(required=True, validate=must_not_be_blank)
-    sfmc_client_secret = fields.String(
-        required=True, validate=must_not_be_blank
-    )
-    sfmc_auth_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
-    )
-    sfmc_rest_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
-    )
-    sfmc_soap_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
-    )
+    sfmc_client_secret = fields.String(required=True, validate=must_not_be_blank)
+    sfmc_auth_base_uri = fields.String(required=True, validate=must_not_be_blank)
+    sfmc_rest_base_uri = fields.String(required=True, validate=must_not_be_blank)
+    sfmc_soap_base_uri = fields.String(required=True, validate=must_not_be_blank)
 
 
 class DestinationConstants(Schema):
