@@ -3,59 +3,54 @@ Purpose of this file is to house the main application code.
 """
 from flask import Flask
 from flasgger import Swagger
-from huxunify.api.route import (
-    dest_bp,
-    cdm_bp,
-    user_bp,
-    model_bp,
-    auth_bp,
-    orchestration_bp,
-    cdp_data_sources_bp,
-)
+from flask_cors import CORS
+
+from huxunify.api.route import ROUTES
+from huxunify.api import constants
+from huxunify.api.route.utils import get_health_check
 
 
 # set config variables
-SWAGGER_URL = "/api/docs"
-API_URL = "/api/swagger.json"
-TITLE = "Hux API"
-VERSION = "0.0.1"
-OPENAPI_VERSION = "3.0.2"
-
-# define openapi spec to later load into YAML
-# here we can define servers, and all other common api spec items.
-OPENAPI_SPEC = f"""
-openapi: {OPENAPI_VERSION}
-info:
-  description: Hux API Documentation
-  title: {TITLE}
-  version: {VERSION}
-"""
+SWAGGER_CONFIG = {
+    "uiversion": "3",
+    "static_url_path": "/swagger",
+    "title": "Hux API",
+    "version": "1.0.0",
+    "swagger_ui": True,
+    "specs_route": "/api/v1/ui/",
+    "description": "",
+    "termsOfService": "",
+}
 
 
-def create_app():
+def create_app() -> Flask:
     """creates the flask app and blueprints
 
     Args:
 
     Returns:
-        Response: Returns a flask object
+        Flask: Returns a flask object.
 
     """
     # setup the flask app
     flask_app = Flask(__name__)
+    CORS(flask_app)
 
-    # setup the configuration
-    # flask_app.config.from_object(environ['APP_SETTINGS'])
+    # register the routes
+    for route in ROUTES:
+        print(f"Registering {route.name}.")
+        flask_app.register_blueprint(route, url_prefix="/api/v1")
 
-    # register the blueprints
-    flask_app.register_blueprint(cdm_bp, url_prefix="/cdm")
-    flask_app.register_blueprint(dest_bp, url_prefix="/")
-    flask_app.register_blueprint(user_bp, url_prefix="/")
-    flask_app.register_blueprint(cdp_data_sources_bp, url_prefix="/cdp")
-    flask_app.register_blueprint(auth_bp, url_prefix="/")
-    flask_app.register_blueprint(model_bp, url_prefix="/")
-    flask_app.register_blueprint(orchestration_bp, url_prefix="/")
-    Swagger(flask_app)
+    # add health check URLs
+    # pylint: disable=unnecessary-lambda
+    flask_app.add_url_rule(
+        constants.HEALTH_CHECK_ENDPOINT,
+        constants.HEALTH_CHECK,
+        view_func=lambda: get_health_check().run(),
+    )
+
+    # setup the swagger docs
+    Swagger(flask_app, config=SWAGGER_CONFIG, merge=True)
 
     return flask_app
 

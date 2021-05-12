@@ -8,7 +8,6 @@ url = "$ARTIFACTORY_PYTHON_READ"
 verify_ssl = true
 name = "jfrog"
 
-
 [packages]
 flasgger= {version="0.9.5", index="pypi"}
 Flask= {version="1.1.2", index="pypi"}
@@ -19,28 +18,26 @@ flask-swagger-ui= {version="3.36.0", index="pypi"}
 Flask-RESTful= {version="0.3.8", index="pypi"}
 apispec= {version="4.3.0", index="pypi"}
 apispec-webframeworks= {version="0.5.2", index="pypi"}
-snowflake-connector-python= {version="2.3.10", index="pypi"}
 boto3= {version="1.17.5", index="pypi"}
-pandas= {version="1.2.3", index="pypi"}
-tenacity= {version="7.0.0", index="pypi"}
 pre-commit= {version="2.11.1", index="pypi"}
 connexion= {version="2.7.0", index="pypi"}
 bson= {version="4.2.0", index="pypi"}
-facebook_business= {version="10.0.0", index="pypi"}
 pymongo= {version="3.11.3", index="pypi"}
 mongomock= {version="3.22.1", index="pypi"}
 python-decouple= {version="3.4", index="pypi"}
-requests-mock= {version="1.9.2", index="pypi"}
 requests= {version="2.25.1", index="pypi"}
+flask-cors = {version="3.0.10", index="pypi"}
+py-healthcheck = {version="1.10.1", index="pypi"}
 huxunifylib-database = {version="*", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
+huxunifylib-util = {version="*", index="jfrog"}
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
 pylint = {version="*", index="pypi"}
 black = { version = "*", pre="true"}
 safety = {version="*", index="pypi"}
-moto = {version="*", index="pypi"}
+requests-mock= {version="1.9.2", index="pypi"}
 
 [requires]
 python_version = "3.7"

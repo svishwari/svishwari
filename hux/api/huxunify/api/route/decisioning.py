@@ -25,15 +25,12 @@ from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
-MODELS_TAG = "model"
-MODELS_DESCRIPTION = "MODEL API"
-MODELS_ENDPOINT = "models"
 
 # setup the models blueprint
-model_bp = Blueprint(MODELS_ENDPOINT, import_name=__name__)
+model_bp = Blueprint(api_c.MODELS_ENDPOINT, import_name=__name__)
 
 
-@add_view_to_blueprint(model_bp, f"/{MODELS_ENDPOINT}", "ModelsView")
+@add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "ModelsView")
 class ModelsView(SwaggerView):
     """
     Models Class
@@ -46,7 +43,7 @@ class ModelsView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [MODELS_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(ModelSchema(many=True))
@@ -67,7 +64,9 @@ class ModelsView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    model_bp, f"/{MODELS_ENDPOINT}/<name>/version-history", "ModelVersionView"
+    model_bp,
+    f"{api_c.MODELS_ENDPOINT}/<name>/version-history",
+    "ModelVersionView",
 )
 class ModelVersionView(SwaggerView):
     """
@@ -82,7 +81,7 @@ class ModelVersionView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [MODELS_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(ModelVersionSchema(many=True))
@@ -107,7 +106,7 @@ class ModelVersionView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    model_bp, f"/{MODELS_ENDPOINT}/<name>/features", "ModelFeatureView"
+    model_bp, f"{api_c.MODELS_ENDPOINT}/<name>/features", "ModelFeatureView"
 )
 class ModelFeatureView(SwaggerView):
     """
@@ -122,7 +121,7 @@ class ModelFeatureView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [MODELS_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(FeatureSchema(many=True))
@@ -148,7 +147,7 @@ class ModelFeatureView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"/{MODELS_ENDPOINT}/<name>/performance-metrics",
+    f"{api_c.MODELS_ENDPOINT}/<name>/performance-metrics",
     "ModelMetricsView",
 )
 class ModelMetricsView(SwaggerView):
@@ -164,7 +163,7 @@ class ModelMetricsView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [MODELS_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(PerformanceMetricSchema(many=True))
@@ -193,7 +192,7 @@ class ModelMetricsView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"/{MODELS_ENDPOINT}/<name>/feature-importance",
+    f"{api_c.MODELS_ENDPOINT}/<name>/feature-importance",
     "ModelFeatureImportanceView",
 )
 class ModelFeatureImportanceView(SwaggerView):
@@ -209,7 +208,7 @@ class ModelFeatureImportanceView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [MODELS_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(FeatureImportance(many=True))
@@ -238,7 +237,7 @@ class ModelFeatureImportanceView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"/{MODELS_ENDPOINT}/<name>/lift",
+    f"{api_c.MODELS_ENDPOINT}/<name>/lift",
     "ModelLiftView",
 )
 class ModelLiftView(SwaggerView):
@@ -254,7 +253,7 @@ class ModelLiftView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [MODELS_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(LiftSchema(many=True))
@@ -280,7 +279,7 @@ class ModelLiftView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"/{MODELS_ENDPOINT}/<name>/drift",
+    f"{api_c.MODELS_ENDPOINT}/<name>/drift",
     "ModelDriftView",
 )
 class ModelDriftView(SwaggerView):
@@ -296,7 +295,7 @@ class ModelDriftView(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [MODELS_TAG]
+    tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(DriftSchema(many=True))

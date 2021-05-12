@@ -62,7 +62,7 @@ import huxButton from "@/components/common/huxButton"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import { mapGetters, mapActions } from "vuex"
 export default {
-  name: "add-datasource",
+  name: "add-data-source",
   components: {
     Drawer,
     CardHorizontal,
@@ -103,8 +103,8 @@ export default {
     }),
     onDataSourceClick: function (id) {
       if (this.selectedDataSourceIds.includes(id)) {
-        let deselecteRowIndex = this.selectedDataSourceIds.indexOf(id)
-        this.selectedDataSourceIds.splice(deselecteRowIndex, 1)
+        const deselectedId = this.selectedDataSourceIds.indexOf(id)
+        this.selectedDataSourceIds.splice(deselectedId, 1)
       } else {
         this.selectedDataSourceIds.push(id)
       }

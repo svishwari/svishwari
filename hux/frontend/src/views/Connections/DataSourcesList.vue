@@ -21,7 +21,7 @@
       </CardHorizontal>
     </template>
 
-    <EmptyState v-else>
+    <EmptyStateData v-else>
       <template v-slot:icon> mdi-alert-circle-outline </template>
       <template v-slot:title> Oops! There’s nothing here yet </template>
       <template v-slot:subtitle>
@@ -29,23 +29,23 @@
         <br />
         Begin by selecting the plus button above.
       </template>
-    </EmptyState>
-    <AddDatasource v-model="drawer" />
+    </EmptyStateData>
+    <AddDataSource v-model="drawer" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
 
-import EmptyState from "@/components/EmptyState"
-import AddDatasource from "@/views/DataSources/Configuration"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Status from "@/components/common/Status"
+import EmptyStateData from "@/components/common/EmptyStateData"
+import AddDataSource from "@/views/DataSources/Configuration"
 
 export default {
   name: "data-sources-list",
 
-  components: { EmptyState, AddDatasource, CardHorizontal, Status },
+  components: { EmptyStateData, AddDataSource, CardHorizontal, Status },
 
   data() {
     return {

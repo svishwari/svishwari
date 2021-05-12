@@ -65,13 +65,21 @@
 </template>
 
 <script>
-import Statuses from "@/statuses.js"
 export default {
   name: "status",
 
   data() {
     return {
-      Statuses: Statuses,
+      Statuses: {
+        Active: "success",
+        Inactive: "caution",
+        Activating: "activating",
+        Draft: "draft",
+        Disabled: "disabled",
+        Error: "error",
+        Pending: "pending",
+        Delivering: "delivering",
+      },
     }
   },
 
