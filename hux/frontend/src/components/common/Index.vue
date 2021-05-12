@@ -94,6 +94,12 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Multilevel Select Dropdown </v-subheader>
+    <hux-dropdown :name='dropDownLabel' :selected='dropDownLabel' :menu-items='fileMenuItems' @hux-menu-click='onMenuItemClick' />
+    {{ DropdownValue }}
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Page Header </v-subheader>
     <PageHeader>
       <template slot="left">
@@ -195,6 +201,7 @@ import Drawer from "@/components/common/Drawer"
 import MetricCard from "@/components/common/MetricCard"
 import Logo from "@/components/common/Logo"
 import HuxSlider from "./HuxSlider.vue"
+import HuxDropdown from "@/components/common/HuxDropdown"
 
 export default {
   name: "Components",
@@ -211,6 +218,7 @@ export default {
     MetricCard,
     Logo,
     HuxSlider,
+    HuxDropdown,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -219,6 +227,7 @@ export default {
   },
   data() {
     return {
+      dropDownLabel: 'Select a value...',
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
@@ -427,6 +436,70 @@ export default {
       overviewListItems: [
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
       ],
+
+      fileMenuItems: [
+      {
+        name: "Menu Item 1",
+        action: () => {
+          console.log("menu-item-1");
+        }
+      },
+      { isDivider: true },
+      { name: "Menu Item 2" },
+      {
+        name: "Sub 1",
+        menu: [
+          { name: "1.1" },
+          { name: "1.2" },
+          {
+            name: "Sub-menu 2",
+            menu: [
+              { name: "2.1" },
+              { name: "2.2" },
+              {
+                name: "Sub-menu 3",
+                menu: [
+                  { name: "3.1" },
+                  { name: "3.2" },
+                  {
+                    name: "Sub-menu 4",
+                    menu: [{ name: "4.1" }, { name: "4.2" }, { name: "4.3" }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      { name: "Menu Item 3" },
+      { isDivider: true },
+      {
+        name: "Menu Item 4",
+        action: () => {
+          console.log("menu-item-4");
+        }
+      },
+      {
+        name: "Menu Item 5",
+        action: () => {
+          console.log("menu-item-5");
+        }
+      }
+      ]
+    }
+  },
+   methods: {
+    onMenuItemClick(item) {
+      console.log(item.name)
+      if(this.dropDownLabel == item.name) {
+        this.dropDownLabel = 'Select a value...';
+      }else {
+        this.dropDownLabel = item.name;
+      }
+      if (item.action) {
+        item.action();
+      }
     }
   },
   mounted() {},
