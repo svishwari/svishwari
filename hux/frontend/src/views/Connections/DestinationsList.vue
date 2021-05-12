@@ -15,9 +15,7 @@
         v-for="destination in addedDestinations"
         :key="destination.id"
       >
-        <template v-slot:logo>
-          <Logo :type="destination.type" />
-        </template>
+        <template v-slot:logo> <Logo :type="destination.type" />∏ </template>
         <template v-slot:title>
           {{ destination.name }}
         </template>
@@ -36,7 +34,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 
 import DestinationListCard from "@/components/DestinationListCard"
 import Logo from "@/components/common/Logo"

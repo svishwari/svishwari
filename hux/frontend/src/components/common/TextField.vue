@@ -25,6 +25,7 @@
       :append-icon="appendIcon"
       :rules="rules"
       :type="InputType"
+      :placeholder="placeholder"
       :background-color="backgroundColor"
       single-line
       outlined
@@ -48,6 +49,10 @@ export default {
   },
   props: {
     labelText: {
+      type: String,
+      required: false,
+    },
+    placeholder: {
       type: String,
       required: false,
     },

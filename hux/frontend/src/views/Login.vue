@@ -110,7 +110,7 @@ export default {
 <style lang="scss" scoped>
 .login-wrap {
   padding: 0;
-  background: #F9FAFB;
+  background: #f9fafb;
   .left-section {
     height: 100vh;
     position: relative;
