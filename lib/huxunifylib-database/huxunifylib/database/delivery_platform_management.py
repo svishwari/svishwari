@@ -114,8 +114,8 @@ def get_delivery_platforms(
     """A function to get a list of delivery platforms.
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_ids (List of ObjectId):
-            List of Delivery platform objects.
+        delivery_platform_ids (list):
+            List of Delivery platform object ids.
     Returns:
         dict: Delivery platform configuration.
     """
@@ -124,15 +124,8 @@ def get_delivery_platforms(
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        object_ids = list(
-            # pylint: disable=W0108
-            map(
-                lambda delivery_platform_id: ObjectId(delivery_platform_id),
-                delivery_platform_ids,
-            )
-        )
-        data = list(collection.find({c.ID: {"$in": object_ids}}))
-        return data
+        object_ids = [ObjectId(x) for x in delivery_platform_ids]
+        return list(collection.find({c.ID: {"$in": object_ids}}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
