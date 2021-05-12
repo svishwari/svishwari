@@ -1,15 +1,16 @@
 <template>
   <v-col cols="12" class="attribute-rule pt-0">
-    <v-col cols="12" >
+    <v-col cols="12">
       <strong class="text-h6"
-        >Select attribute(s) - <i style="font-size:12px;">Optional</i></strong
+        >Select attribute(s) - <i style="font-size: 12px">Optional</i></strong
       >
       <v-card
         color="#F9FAFB"
         tile
         elevation="0"
         style="border: 1px solid #e2eaec"
-        class="mt-2" v-if="rules.length == 0"
+        class="mt-2"
+        v-if="rules.length == 0"
       >
         <v-card-actions>
           <v-list-item class="grow">

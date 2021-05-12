@@ -75,7 +75,7 @@
           <v-row class="pt-1">
             <v-col cols="12">
               <strong class="text-h6">
-                Select destination(s) - <i style="font-size:12px;">Optional</i> 
+                Select destination(s) - <i style="font-size: 12px">Optional</i>
               </strong>
               <div>
                 <v-icon size="30" class="add-icon" color="primary">
