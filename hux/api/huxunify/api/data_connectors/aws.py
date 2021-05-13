@@ -1,6 +1,7 @@
 """
 purpose of this file is for interacting with aws
 """
+from typing import Tuple
 from http import HTTPStatus
 from connexion import ProblemException
 import boto3
@@ -30,7 +31,7 @@ class ParameterStore:
             dict: boto3 response.
         """
         try:
-            return get_aws_client(config.AWS_SSM_NAME).put_parameter(
+            return get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
                 Name=f"{path}/{name}" if path else name,
                 Value=secret,
                 Type="SecureString",
@@ -55,7 +56,7 @@ class ParameterStore:
         """
         try:
             return (
-                get_aws_client(config.AWS_SSM_NAME)
+                get_aws_client(api_c.AWS_SSM_NAME)
                 .get_parameter(
                     Name=f"{path}/{name}" if path else name,
                     WithDecryption=True,
@@ -139,3 +140,21 @@ def get_aws_client(
         aws_secret_access_key=aws_secret_key,
         region_name=region_name,
     )
+
+
+def check_aws_connection(client="s3") -> Tuple[bool, str]:
+    """Validate an AWS connection.
+
+    Args:
+        client (str): name of the boto3 client to use.
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid, and the message.
+    """
+
+    try:
+        # lookup the health test to run from api constants
+        getattr(get_aws_client(client), api_c.AWS_HEALTH_TESTS[client])()
+        return True, f"{client} available."
+    except Exception as exception:  # pylint: disable=broad-except
+        # report the generic error message
+        return False, getattr(exception, "message", repr(exception))

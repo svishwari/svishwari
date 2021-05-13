@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="d-flex justify-space-between align-center px-5 py-2 rounded-lg"
+    class="d-flex justify-space-between align-center px-5 py-2 rounded"
     @click="$emit('click')"
     :class="isDisabled ? 'card-horizontal-disabled' : ''"
     :elevation="isDisabled ? '0' : '2'"

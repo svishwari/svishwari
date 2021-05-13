@@ -15,6 +15,6 @@
 
 <script>
 export default {
-  name: "empty-state",
+  name: "empty-state-chart",
 }
 </script>

@@ -57,25 +57,25 @@
         ></CardInfo>
       </div>
     </div>
-    <EmptyState>
+    <EmptyStateChart>
       <template v-slot:chart-image>
         <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
       </template>
-    </EmptyState>
+    </EmptyStateChart>
   </div>
 </template>
 
 <script>
 import PageHeader from "@/components/PageHeader"
 import CardInfo from "@/components/common/CardInfo"
-import EmptyState from "@/components/common/EmptyState"
+import EmptyStateChart from "@/components/common/EmptyStateChart"
 
 export default {
   name: "overview",
   components: {
     PageHeader,
     CardInfo,
-    EmptyState,
+    EmptyStateChart,
   },
   data() {
     return {

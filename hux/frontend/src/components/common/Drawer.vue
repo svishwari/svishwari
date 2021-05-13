@@ -6,6 +6,7 @@
     temporary
     floating
     app
+    style="transition-duration: 0.5s"
   >
     <v-toolbar width="100%">
       <v-toolbar-title class="px-6">
