@@ -102,11 +102,11 @@
       </v-card>
     </div>
     <v-divider class="my-8"></v-divider>
-    <EmptyState>
+    <EmptyStateChart>
       <template v-slot:chart-image>
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
-    </EmptyState>
+    </EmptyStateChart>
   </div>
 </template>
 
@@ -116,7 +116,7 @@ import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import MetricCard from "@/components/common/MetricCard"
-import EmptyState from "@/components/common/EmptyState"
+import EmptyStateChart from "@/components/common/EmptyStateChart"
 import lifetimeValue from "@/assets/images/lifetimeValue.svg"
 import churn from "@/assets/images/churn.svg"
 import plus from "@/assets/images/plus.svg"
@@ -124,7 +124,7 @@ export default {
   name: "AudienceInsight",
   components: {
     MetricCard,
-    EmptyState,
+    EmptyStateChart,
     PageHeader,
     Breadcrumb,
     lifetimeValue,
