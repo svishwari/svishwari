@@ -474,10 +474,7 @@ export default {
                 { name: "2.2" },
                 {
                   name: "Sub-menu 3",
-                  menu: [
-                    { name: "3.1" },
-                    { name: "3.2" },
-                  ],
+                  menu: [{ name: "3.1" }, { name: "3.2" }],
                 },
               ],
             },
@@ -486,7 +483,7 @@ export default {
 
         { icon: "mdi-flip-h mdi-account-plus-outline", name: "Menu Item 3" },
         { isDivider: true },
-        { 
+        {
           icon: "mdi-tune-vertical-variant",
           name: "Menu Item 4",
           action: () => {
