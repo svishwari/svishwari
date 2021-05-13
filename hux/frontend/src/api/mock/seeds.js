@@ -98,6 +98,9 @@ const mailchimp = {
   name: "Mailchimp",
   type: "mailchimp",
 }
+const defaultEngagement = {
+  name: "Default",
+}
 
 export default function (server) {
   // seed destinations
@@ -108,4 +111,6 @@ export default function (server) {
   server.create("destination", tableau)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
+  // seed engagements
+  server.create("engagement", defaultEngagement)
 }

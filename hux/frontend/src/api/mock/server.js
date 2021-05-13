@@ -3,14 +3,17 @@ import config from "@/config"
 import { defineRoutes } from "./routes"
 import seeds from "./seeds"
 import destinationFactory from "./factories/destination"
+import engagementFactory from "./factories/engagement"
 
 export function makeServer({ environment = "development" } = {}) {
   const models = {
     destination: Model,
+    engagement: Model,
   }
 
   const factories = {
     destination: Factory.extend(destinationFactory),
+    engagement: Factory.extend(engagementFactory),
   }
 
   const server = createServer({

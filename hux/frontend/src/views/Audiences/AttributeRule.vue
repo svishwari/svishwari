@@ -76,7 +76,6 @@
                 icon
                 color="primary"
                 @click="removeCondition(rule, ixcondition)"
-                :disabled="rule.conditions.length === 1"
               >
                 <v-icon>mdi-delete-outline</v-icon>
               </v-btn>
@@ -173,7 +172,12 @@ export default {
       if (sectionFound.length > 0) sectionFound[0].conditions.push(newCondition)
     },
     removeCondition(parent, child) {
-      parent.conditions.splice(child, 1)
+      if (parent.conditions.length === 1) {
+        const indx = this.rules.findIndex((rul) => rul.id === parent.id)
+        this.rules.splice(indx, 1)
+      } else {
+        parent.conditions.splice(child, 1)
+      }
     },
     addNewSection() {
       const newSection = JSON.parse(JSON.stringify(NEW_RULE_SECTION))

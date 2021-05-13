@@ -20,4 +20,15 @@ export const defineRoutes = (server) => {
 
     return new Response(code, headers, body)
   })
+  // destinations
+  server.get("/engagements")
+
+  server.put("/engagements/:id", (schema, request) => {
+    const id = request.params.id
+
+    // here we assume if we added the destination and its validated
+    // the destination is successfully updated
+
+    return schema.destinations.find(id).update({ is_added: true })
+  })
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <label class="d-flex align-items-center mb-2">
-      {{ labelText }}
+      <span v-html="labelText"></span>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
           <v-icon
