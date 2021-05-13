@@ -51,11 +51,9 @@ export default {
   justify-content: center;
   align-items: center;
   .content {
-    min-width: 72.291666666666667%;
-    min-height: 77.777777777777778%;
     max-width: 72.291666666666667%;
     max-height: 77.777777777777778%;
-    background: #ffffff;
+    background: var(--v-white-base);
     box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.15);
     border-radius: 5px;
     display: flex;
@@ -85,7 +83,7 @@ export default {
       font-size: 14px;
       line-height: 22px;
       text-align: center;
-      color: #4f4f4f;
+      color: var(--v-gray-base);
       margin-top: 8px;
       max-width: 80%;
     }
@@ -96,7 +94,7 @@ export default {
       line-height: 40px;
       text-align: center;
       letter-spacing: 0.1px;
-      color: #86bc25;
+      color: var(--v-greenLight-base);
       margin-top: 8px;
     }
     button {

@@ -79,7 +79,7 @@
             <span>2</span>
           </template>
           <v-row class="pt-1 pr-10 mr-10">
-            <attribute-rule :rules="attributeRules"></attribute-rule>
+            <attribute-rules :rules="attributeRules"></attribute-rules>
           </v-row>
         </v-timeline-item>
         <v-timeline-item color="blue" class="timeline-section">
@@ -239,7 +239,7 @@
             v-if="engagementDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Create & add"
+              ButtonText="Create &amp; add"
               variant="primary"
               v-bind:isTile="true"
               height="40"
@@ -261,7 +261,7 @@
             v-if="engagementDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Cancel & back"
+              ButtonText="Cancel &amp; back"
               variant="white"
               v-bind:isTile="true"
               height="40"
@@ -280,7 +280,7 @@ import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
-import AttributeRule from "./AttributeRule.vue"
+import AttributeRules from "./AttributeRules.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "../../components/common/huxButton.vue"
 import CardHorizontal from "../../components/common/CardHorizontal.vue"
@@ -293,7 +293,7 @@ export default {
     HuxFooter,
     huxButton,
     TextField,
-    AttributeRule,
+    AttributeRules,
     Drawer,
     HuxButton,
     CardHorizontal,
@@ -344,12 +344,7 @@ export default {
     }),
     selectEngagement(engagement) {
       const keys = ["id"]
-      const filtered = this.selectedEngagements.filter(
-        ((s) => (o) =>
-          ((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|")))(
-          new Set()
-        )
-      )
+      const filtered = [...this.selectedEngagements]
       const existingIndex = filtered.findIndex(
         (eng) => eng.id === engagement.id
       )
@@ -364,7 +359,7 @@ export default {
     isSelected(id) {
       return this.selectedEngagements.filter((eng) => eng.id === id).length > 0
     },
-    dettachEngagement(id) {
+    detachEngagement(id) {
       const existingIndex = this.selectedEngagements.findIndex(
         (eng) => eng.id === id
       )

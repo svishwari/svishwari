@@ -1,19 +1,23 @@
 import faker from "faker"
 
 export default {
-  name: "Default",
+  name: "New York Engagement",
+  description: "Engagement for New York",
+  delivery_schedule: {
+    schedule_type: "recurring",
+    start_date: "01/05/2021",
+    end_date: "01/14/2021",
+  },
 
-  type: "default",
-
-  engagements() {
+  audiences() {
     return faker.datatype.number({ min: 0, max: 9 })
   },
 
-  added() {
+  created() {
     return faker.date.past()
   },
 
-  added_by() {
+  created_by() {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
 
@@ -25,16 +29,4 @@ export default {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
 
-  is_enabled: true,
-
-  is_added: false,
-
-  auth_details: {
-    access_token: {
-      name: "Access Token",
-      type: "password",
-      required: true,
-      description: "This field is required for...",
-    },
-  },
 }

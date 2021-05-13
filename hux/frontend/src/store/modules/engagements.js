@@ -45,22 +45,14 @@ const actions = {
     }
   },
 
-  async update({ commit }, destination) {
+  async update({ commit }, engagement) {
     try {
       const response = await api.engagements.update(
-        destination.id,
-        destination.auth_details
+        engagement.id,
+        engagement.name,
+        engagement.desciption
       )
       commit("SET_ONE", response.data)
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
-
-  async validate(_, engagement) {
-    try {
-      await api.engagements.validate(engagement.auth_details)
     } catch (error) {
       handleError(error)
       throw error

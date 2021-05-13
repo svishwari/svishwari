@@ -132,7 +132,7 @@ const NEW_CONDITION = {
 }
 
 export default {
-  name: "AttributeRule",
+  name: "AttributeRules",
   components: {
     DropdownMenu,
     TextField,

@@ -99,7 +99,13 @@ const mailchimp = {
   type: "mailchimp",
 }
 const defaultEngagement = {
-  name: "Default",
+  name: "Default engagement",
+  description: "Default Description",
+  delivery_schedule: {
+    schedule_type: "recurring",
+    start_date: "01/05/2021",
+    end_date: "01/14/2021",
+  },
 }
 
 export default function (server) {

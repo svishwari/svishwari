@@ -7,9 +7,6 @@ export const defineRoutes = (server) => {
   server.put("/destinations/:id", (schema, request) => {
     const id = request.params.id
 
-    // here we assume if we added the destination and its validated
-    // the destination is successfully updated
-
     return schema.destinations.find(id).update({ is_added: true })
   })
 
@@ -20,15 +17,14 @@ export const defineRoutes = (server) => {
 
     return new Response(code, headers, body)
   })
-  // destinations
+
+  // engagements
   server.get("/engagements")
 
-  server.put("/engagements/:id", (schema, request) => {
-    const id = request.params.id
+  // Add new engagement
+  server.post("/engagements/:id", (schema, request) => {
+    let attrs = this.normalizedRequestAttrs()
 
-    // here we assume if we added the destination and its validated
-    // the destination is successfully updated
-
-    return schema.destinations.find(id).update({ is_added: true })
+    return schema.engagements.create(attrs)
   })
 }
