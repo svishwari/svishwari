@@ -68,30 +68,6 @@ def validate_object_id(data: AnyStr) -> None:
         raise ValidationError(api_c.INVALID_OBJECT_ID)
 
 
-def validate_object_id_list(data: list) -> None:
-    """This function validates a list of object ids.
-
-    Args:
-        data (list): list of object ids
-
-    Returns:
-        None
-
-    """
-    for object_id in data:
-        validate_object_id(object_id)
-
-
-def validate_delivery_schedule(data: list):
-    """This function validates that a delivery schedule"""
-    if len(data) != 2:
-        raise ValidationError(api_c.INVALID_DELIVERY_SCHEDULE)
-
-    for date_time in data:
-        if not isinstance(date_time, DateTime):
-            raise ValidationError(api_c.INVALID_DELIVERY_SCHEDULE)
-
-
 def validate_dest_constants(data: dict) -> None:
     """This function validates destination auth details.
 
