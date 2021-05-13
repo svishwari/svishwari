@@ -83,7 +83,10 @@
         class="rounded px-5 pt-5"
       >
         <div class="overview">Audience overview</div>
-        <div class="row overview-list mb-0 ml-0 mt-1"  v-if="isOverviewAvailable">
+        <div
+          class="row overview-list mb-0 ml-0 mt-1"
+          v-if="isOverviewAvailable"
+        >
           <MetricCard
             v-for="(item, i) in overviewListItems"
             class="list-item mr-3"
