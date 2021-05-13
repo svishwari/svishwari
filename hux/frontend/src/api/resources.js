@@ -4,6 +4,6 @@
 
 export default {
   audiences: "/audiences",
-  dataSources: "/data_sources",
+  dataSources: "/data-sources",
   destinations: "/destinations",
 }

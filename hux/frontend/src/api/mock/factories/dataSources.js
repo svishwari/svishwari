@@ -1,7 +1,7 @@
 export default {
-  name: "Facebook",
+  name: "Bluecore",
 
-  type: "facebook",
+  type: "bluecore",
 
   is_enabled: false,
 

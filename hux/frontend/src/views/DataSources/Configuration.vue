@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      addData: "dataSources/add",
+      batchAddDataSources: "dataSources/batchAdd",
     }),
     onDataSourceClick: function (id) {
       if (this.selectedDataSourceIds.includes(id)) {
@@ -110,7 +110,7 @@ export default {
       }
     },
     addDataSources: function () {
-      this.addData(this.selectedDataSourceIds)
+      this.batchAddDataSources(this.selectedDataSourceIds)
       this.closeAddDataSource()
     },
     closeAddDataSource: function () {
