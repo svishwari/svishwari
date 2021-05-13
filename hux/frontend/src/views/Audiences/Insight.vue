@@ -83,9 +83,7 @@
         class="rounded px-5 pt-5"
       >
         <div class="overview">Audience overview</div>
-        <div
-          class="row overview-list mb-0 ml-0 mt-1"
-        >
+        <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard
             v-for="(item, i) in audience.overview"
             class="list-item mr-3"
@@ -110,8 +108,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import MetricCard from "@/components/common/MetricCard"

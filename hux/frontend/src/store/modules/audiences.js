@@ -53,7 +53,7 @@ const state = {
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
-    
+
       insightInfo: [
         {
           title: "Last updated",
@@ -118,7 +118,7 @@ const state = {
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
-    
+
       insightInfo: [
         {
           title: "Last updated",
@@ -185,7 +185,7 @@ const state = {
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
-    
+
       insightInfo: [
         {
           title: "Last updated",
@@ -251,7 +251,7 @@ const state = {
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
-    
+
       insightInfo: [
         {
           title: "Last updated",
@@ -316,7 +316,7 @@ const state = {
         { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
-    
+
       insightInfo: [
         {
           title: "Last updated",
@@ -399,7 +399,6 @@ const state = {
       ],
     },
   ],
-
 }
 
 const getters = {
@@ -407,8 +406,8 @@ const getters = {
     return Object.values(state.audiences)
   },
   AudienceById: (state) => (id) => {
-    return state.audiences.find(audience => audience.audienceId === id)
-  }
+    return state.audiences.find((audience) => audience.audienceId === id)
+  },
 }
 
 const mutations = {
@@ -440,8 +439,9 @@ const actions = {
       const response = state.audiences.find(id)
       commit("SET_AUDIENCE", response.data)
     } catch (error) {
-      handleError(error)
-      throw error
+      /*
+       *    to do item...
+       */
     }
   },
 }
