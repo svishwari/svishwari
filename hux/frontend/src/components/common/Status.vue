@@ -36,30 +36,28 @@
   <div v-else-if="status == Statuses.Pending">
     <span v-if="!collapsed">
       <v-btn
-        style="border-style: dashed"
-        width="18"
-        height="18"
+        width="15"
+        height="15"
         icon
         outlined
         color="success"
-        class="mr-2"
+        class="dotted mr-2"
       />
       <span>Pending</span>
     </span>
-    <v-menu v-else bottom offset-y open-on-hover>
+    <v-menu v-else bottom offset-y offset-x open-on-hover>
       <template v-slot:activator="{ on }">
         <v-btn
-          style="border-style: dashed"
-          width="18"
-          height="18"
+          width="15"
+          height="15"
           icon
           outlined
           color="success"
-          class="mr-2"
+          class="dotted"
           v-on="on"
         />
       </template>
-      <div class="px-4 py-2 white">Pending</div>
+      <div class="px-4 py-2 text-caption white">Pending</div>
     </v-menu>
   </div>
 </template>
@@ -106,5 +104,22 @@ export default {
   height: 18px;
   width: 9px;
   border-radius: 18px 0 0 18px;
+}
+.dotted {
+  border-style: dotted;
+  border-width: 2px;
+
+  &:hover {
+    animation: spin 3s infinite linear;
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
 }
 </style>

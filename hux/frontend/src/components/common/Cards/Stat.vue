@@ -1,0 +1,41 @@
+<template>
+  <v-menu
+    bottom
+    offset-y
+    offset-x
+    nudge-left="40px"
+    nudge-top="10px"
+    open-on-hover
+  >
+    <template v-slot:activator="{ on }">
+      <div class="px-4 border-start border-zircon" :class="statClass" v-on="on">
+        <h4 class="text-h4 mb-0">{{ value }}</h4>
+        <span class="text-caption gray--text">{{ label }}</span>
+      </div>
+    </template>
+    <div class="px-4 py-3 text-caption white" v-if="$slots.default">
+      <slot name="default" />
+    </div>
+  </v-menu>
+</template>
+
+<script>
+export default {
+  name: "stat",
+
+  props: {
+    label: {
+      type: String,
+      required: false,
+    },
+    value: {
+      type: String,
+      required: false,
+    },
+    statClass: {
+      type: String,
+      required: false,
+    },
+  },
+}
+</script>
