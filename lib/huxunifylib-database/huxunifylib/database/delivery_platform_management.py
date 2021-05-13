@@ -107,17 +107,19 @@ def set_delivery_platform(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivery_platforms(
+def get_delivery_platforms_by_id(
     database: DatabaseClient,
     delivery_platform_ids: list,
-) -> dict:
-    """A function to get a list of delivery platforms.
+) -> list:
+    """A function to get a list of delivery platforms by id.
+
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_ids (list):
+        delivery_platform_ids (list[str]):
             List of Delivery platform object ids.
+
     Returns:
-        dict: Delivery platform configuration.
+        list: Delivery platform configuration.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]

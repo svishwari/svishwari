@@ -224,12 +224,12 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[c.DELIVERY_PLATFORM_STATUS], c.STATUS_PENDING)
 
     @mongomock.patch(servers=(("localhost", 27017),))
-    def test_get_multiple_delivery_platforms(self):
+    def test_get_delivery_platforms_by_id(self):
         """Test get_delivery_platforms list"""
 
         # Get delivery platform
         ids = [str(self.delivery_platform_doc[c.ID])]
-        docs = dpm.get_delivery_platforms(self.database, ids)
+        docs = dpm.get_delivery_platforms_by_id(self.database, ids)
 
         self.assertIsNotNone(docs[0])
         self.assertTrue(c.DELIVERY_PLATFORM_NAME in docs[0])
