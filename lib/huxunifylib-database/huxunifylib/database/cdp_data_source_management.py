@@ -30,7 +30,7 @@ def create_data_source(
         category (str): category of the data source.
         added (bool): data source is added.
         enabled (bool): data source is enabled.
-        status (str): status of the datasource.
+        status (str): status of the data source.
     Returns:
         dict: MongoDB document for a data source
 
