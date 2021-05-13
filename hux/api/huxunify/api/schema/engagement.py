@@ -4,7 +4,7 @@ Schemas for the Engagements API
 """
 from bson import ObjectId
 from flask_marshmallow import Schema
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, validate
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
@@ -14,13 +14,58 @@ from huxunify.api.schema.utils import (
 )
 
 
+class DeliverySchedule(Schema):
+    """
+    Delivery Schedule schema
+    """
+
+    start_date = fields.DateTime(allow_none=True)
+    end_date = fields.DateTime(allow_none=True)
+
+
+class EngagementSchema(Schema):
+    """
+    engagement schema class, return serialized messages back
+    """
+
+    class Meta:
+        """expose the fields for serialization"""
+
+        # Fields to expose
+        fields = [
+            "name",
+            "description",
+            "audiences",
+            "status",
+            "delivery_schedule",
+            "created_time",
+            "created_by",
+            "updated_time",
+            "updated_by"
+        ]
+
+    name = fields.Str()
+    description = fields.Str()
+    audiences = fields.List(cls_or_instance=fields.Str())
+    status = fields.Str()
+    delivery_schedule = fields.Nested(DeliverySchedule)
+    created_time = fields.DateTime()
+    created_by = fields.DateTime()
+    update_time = fields.DateTime()
+    updated_by = fields.DateTime()
+
+
+engagement_schema = EngagementSchema()
+engagements_schema = EngagementSchema(many=True)
+
+
 class EngagementGetSchema(Schema):
     """
     Engagement get schema class
     """
 
-    engagement_id = fields.String(
-        attribute=api_c.ENGAGEMENT_ID,
+    e_id = fields.String(
+        attribute=db_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
@@ -33,16 +78,20 @@ class EngagementGetSchema(Schema):
         required=True,
         validate=validate_object_id_list,
     )
-    size = fields.Int(attribute=api_c.ENGAGEMENT_SIZE, allow_none=True)
-    # TODO note, what does this delivery schedule need to look like?
-    delivery_schedule = fields.List(
-        cls_or_instance=fields.String,
-        attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE,
-        allow_none=True,
+    status = fields.String(
+        attribute=api_c.ENGAGEMENT_STATUS,
+        required=True,
+        validate=validate.OneOf(api_c.ENGAGEMENT_STATUSES),
     )
-    created = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
-    created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
-    updated = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    delivery_schedule = fields.Nested(
+        DeliverySchedule,
+        required=True,
+        attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+    )
+    created_time = fields.DateTime(attribute=db_c.CREATE_TIME)
+    created_by = fields.String(attribute=db_c.CREATED_BY)
+    updated_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = fields.DateTime(attribute=db_c.UPDATED_BY, allow_none=True)
 
     @post_load()
     def process_modified(self, data: dict) -> dict:
@@ -65,15 +114,6 @@ class EngagementGetSchema(Schema):
                 # otherwise map to None
                 data.update(engagement_id=None)
 
-        # set the audiences list str list to an object id list
-        if api_c.ENGAGEMENT_AUDIENCES in data:
-            id_list = []
-            for audience_id in data[api_c.ENGAGEMENT_AUDIENCES]:
-                id_list.append(ObjectId(audience_id))
-            data.update(audiences=id_list)
-        else:
-            data.update(audiences=None)
-
         return data
 
 
@@ -85,10 +125,9 @@ class EngagementPostSchema(Schema):
     name = fields.String(required=True, validate=must_not_be_blank)
     description = fields.String()
     created_by = fields.String(required=True, validate=must_not_be_blank)
-    # TODO delivery schedule needs to be here as well after structure is addressed
+    delivery_schedule = fields.Nested(DeliverySchedule)
     audiences = fields.List(
-        cls_or_instance=fields.String,
-        validate=validate_object_id_list
+        cls_or_instance=fields.String, validate=validate_object_id_list
     )
 
 
@@ -97,6 +136,7 @@ class EngagementPutSchema(Schema):
     Engagement put schema class
     """
 
-    name = fields.String()
-    audiences = fields.List(cls_or_instance=fields.String)
-    delivery_schedule = fields.List(cls_or_instance=fields.String)
+    name = fields.String(required=False)
+    description = fields.String(required=False)
+    audiences = fields.List(cls_or_instance=fields.String, required=False)
+    delivery_schedule = fields.Nested(DeliverySchedule, required=False)
