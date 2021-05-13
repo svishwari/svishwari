@@ -22,7 +22,6 @@ def create_audience(
     name: str,
     audience_filters: list,
     destination_ids: list = None,
-    engagement_ids: list = None,  # pylint: disable=W0613
     user_id: ObjectId = None,
 ) -> dict:
     """A function to create an audience.
@@ -34,7 +33,6 @@ def create_audience(
         These are aggregated using "OR".
         destination_ids (list): List of destination
             / delivery platform ids attached to the audience
-        engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
 
     Returns:
@@ -64,7 +62,6 @@ def create_audience(
         c.UPDATED_BY: user_id,
     }
 
-    # TODO: Set Engagement IDs once the engagement table is ready
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id
         if audience_id is not None:
@@ -145,7 +142,6 @@ def update_audience(
     name: str = None,
     audience_filters: list = None,
     destination_ids: list = None,
-    engagement_ids: list = None,  # pylint: disable=W0613
     user_id: ObjectId = None,
 ) -> dict:
     """A function to update an audience.
@@ -157,7 +153,6 @@ def update_audience(
             These are aggregated using "OR".
         destination_ids (list): List of destination / delivery platform
             ids attached to the audience
-        engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
     Returns:
         dict: Updated audience configuration dict.
@@ -193,7 +188,6 @@ def update_audience(
     updated_audience_doc[c.UPDATED_BY] = user_id
     updated_audience_doc[c.UPDATE_TIME] = curr_time
 
-    # TODO: Delete and Update Engagement IDs once the engagement table is ready
     try:
         return collection.find_one_and_update(
             {c.ID: audience_id},
