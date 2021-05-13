@@ -10,7 +10,7 @@
     <template v-slot:activator="{ on }">
       <div class="px-4 border-start border-zircon" :class="statClass" v-on="on">
         <h4 class="text-h4 mb-0">{{ value }}</h4>
-        <span class="text-caption gray--text">{{ label }}</span>
+        <div class="text-caption gray--text">{{ label }}</div>
       </div>
     </template>
     <div class="px-4 py-3 text-caption white" v-if="$slots.default">

@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cards Descriptive Card Displays custom properties 1`] = `
+<v-card-stub loaderheight="4" tag="div" minheight="255px" width="255px" class="descriptive-card align-center text-center rounded-lg">
+  <!---->
+  <div class="d-flex justify-center pb-4">
+    <icon-stub type="model-unsubscribe" size="60" color="primary" class="d-block"></icon-stub>
+  </div>
+  <div class="text-h4 pb-2">
+    Propensity to Unsubscribe
+  </div>
+  <div class="text-caption">
+    Propensity of a customer making a purchase after receiving an email.
+  </div>
+  <!---->
+</v-card-stub>
+`;
+
+exports[`Cards Descriptive Card Displays custom slots 1`] = `
+<v-card-stub loaderheight="4" tag="div" minheight="255px" width="255px" class="descriptive-card align-center text-center rounded-lg">
+  <div class="pa-3 pb-0">
+    <div>Top spot</div>
+  </div>
+  <!---->
+  <div class="text-h4 pb-2">
+    Model Name
+  </div>
+  <div class="text-caption">
+    Descriptive text for the model item chosen above
+  </div>
+  <div class="pt-2">
+    <p>Default content</p>
+  </div>
+</v-card-stub>
+`;
