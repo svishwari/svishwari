@@ -1,4 +1,6 @@
-"""This module enables functionality related to delivery platform management."""
+"""
+This module enables functionality related to delivery platform management.
+"""
 # pylint: disable=C0302
 
 import logging
@@ -24,32 +26,31 @@ def set_delivery_platform(
     database: DatabaseClient,
     delivery_platform_type: str,
     name: str,
-    authentication_details: dict,
+    authentication_details: dict = None,
+    status: str = c.STATUS_PENDING,
+    enabled: bool = False,
+    added: bool = False,
     user_id: ObjectId = None,
 ) -> dict:
     """A function to create a delivery platform.
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
+        delivery_platform_type (str): The type of delivery platform
+            (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
-        authentication_details (dict): A dict containing delivery platform authentication details.
-        user_id (ObjectId): User id of user creating delivery platform. This is Optional.
+        authentication_details (dict): A dict containing delivery platform
+            authentication details.
+        status (str): status of the delivery platform.
+        enabled (bool): if the delivery platform is enabled.
+        added (bool): if the delivery platform is added.
+        user_id (ObjectId): User id of user creating delivery platform.
+            This is Optional.
 
     Returns:
         dict: MongoDB audience doc.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
-    ]:
-        raise de.UnknownDeliveryPlatformType(delivery_platform_type)
-
-    delivery_platform_doc = None
-    delivery_platform_id = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
@@ -71,13 +72,15 @@ def set_delivery_platform(
     doc = {
         c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_PLATFORM_NAME: name,
-        c.DELIVERY_PLATFORM_STATUS: c.STATUS_PENDING,
-        c.DELIVERY_PLATFORM_AUTH: authentication_details,
-        c.ENABLED: True,
+        c.DELIVERY_PLATFORM_STATUS: status,
+        c.ENABLED: enabled,
+        c.ADDED: added,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
     }
+    if authentication_details is not None:
+        doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
     # Add user object only if it is available
     if ObjectId.is_valid(user_id) and name_exists(
@@ -93,14 +96,14 @@ def set_delivery_platform(
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
-            delivery_platform_doc = collection.find_one(
-                {c.ID: delivery_platform_id, c.ENABLED: True},
+            return collection.find_one(
+                {c.ID: delivery_platform_id, c.ENABLED: enabled},
                 {c.ENABLED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return delivery_platform_doc
+    return None
 
 
 @retry(
@@ -115,7 +118,8 @@ def get_delivery_platform(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): The MongoDB ID of the delivery platform.
+        delivery_platform_id (ObjectId): The MongoDB ID of the
+            delivery platform.
 
     Returns:
         dict: Delivery platform configuration.
@@ -176,9 +180,10 @@ def set_connection_status(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): MongoDB document ID of delivery platform.
-        connection_status: Status of connection to delivery platform. Can be Pending,
-            In progress, Failed, or Succeeded.
+        delivery_platform_id (ObjectId): MongoDB document ID of the
+            delivery platform.
+        connection_status: Status of connection to delivery platform.
+            Can be Pending, In progress, Failed, or Succeeded.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -244,7 +249,8 @@ def set_authentication_details(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): The MongoDB ID of delivery platform.
-        authentication_details (dict): A dict containing delivery platform authentication details.
+        authentication_details (dict): A dict containing delivery platform
+            authentication details.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -469,8 +475,10 @@ def update_delivery_platform(
         delivery_platform_id (ObjectId): The MongoDB ID of delivery platform.
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
-        authentication_details (dict): A dict containing delivery platform authentication details.
-        user_id (ObjectId): User id of user updating delivery platform. This is Optional.
+        authentication_details (dict): A dict containing delivery platform
+            authentication details.
+        user_id (ObjectId): User id of user updating delivery platform.
+            This is Optional.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -559,7 +567,8 @@ def create_delivery_platform_lookalike_audience(
         delivery_platform_id (ObjectId): The Mongo ID of delivery platform.
         source_audience_id (ObjectId): The Mongo ID of source audience.
         name (str): Name of the lookalike audience.
-        audience_size_percentage (float): Size percentage of the lookalike audience.
+        audience_size_percentage (float): Size percentage of the lookalike
+            audience.
         country (str): Country of the lookalike audience.
 
     Returns:
@@ -762,7 +771,8 @@ def update_lookalike_audience_size_percentage(
     Args:
         database (DatabaseClient): A database client.
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
-        audience_size_percentage (float): The new size percentage of the lookalike audience.
+        audience_size_percentage (float): The new size percentage of the lookalike
+            audience.
 
     Returns:
         dict: The updated lookalike audience configuration.
@@ -807,7 +817,8 @@ def update_lookalike_audience(
         database (DatabaseClient): A database client.
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
         name (str): The new name of the lookalike audience.
-        audience_size_percentage (float): The new size percentage of the lookalike audience.
+        audience_size_percentage (float): The new size percentage of the lookalike
+            audience.
         country (str): Updated lookalike audience country.
 
     Returns:

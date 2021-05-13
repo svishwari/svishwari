@@ -3,6 +3,7 @@ purpose of this file is housing any shared scripts for the
 mongo stand-up scripts
 """
 import os
+from pathlib import Path
 from pymongo import MongoClient
 
 
@@ -15,14 +16,11 @@ def get_mongo_client() -> MongoClient:
     """
     # Get details on MongoDB configuration.
     host = os.environ.get("MONGO_DB_HOST")
-    port = (
-        int(os.environ["MONGO_DB_PORT"])
-        if "MONGO_DB_PORT" in os.environ
-        else None
-    )
+    port = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
     user_name = os.environ.get("MONGO_DB_USERNAME")
     password = os.environ.get("MONGO_DB_PASSWORD")
-    ssl_cert_path = os.environ.get("MONGO_SSL_CERT_PATH")
+    # grab the SSL cert path
+    ssl_cert_path = str(Path(__file__).parent.joinpath("rds-combined-ca-bundle.pem"))
 
     # Set up the database client
     return MongoClient(

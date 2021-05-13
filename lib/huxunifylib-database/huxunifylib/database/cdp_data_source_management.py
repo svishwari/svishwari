@@ -15,15 +15,22 @@ from huxunifylib.database.client import DatabaseClient
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_data_source(
-    database: DatabaseClient, name: str, category: str
+    database: DatabaseClient,
+    name: str,
+    category: str,
+    added: bool = False,
+    enabled: bool = False,
+    status: str = c.CDP_DATA_SOURCE_STATUS_ACTIVE,
 ) -> dict:
     """A function that creates a new data source
 
     Args:
         database (DatabaseClient): A database client.
-        name (str): name of a data source
-        category (str): category of the data source
-
+        name (str): name of a data source.
+        category (str): category of the data source.
+        added (bool): data source is added.
+        enabled (bool): data source is enabled.
+        status (str): status of the datasource.
     Returns:
         dict: MongoDB document for a data source
 
@@ -32,14 +39,14 @@ def create_data_source(
         c.CDP_DATA_SOURCES_COLLECTION
     ]
 
-    # TODO may need to know what the valid statuses are here
-    # TODO update of statuses will be needed here after 5.0 release
-    # TODO set to 1 for now until after 5.0 release
+    # TODO - feed count to be updated per CDM in future tickets.
     doc = {
         c.CDP_DATA_SOURCE_FIELD_NAME: name,
         c.CDP_DATA_SOURCE_FIELD_CATEGORY: category,
         c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
-        c.CDP_DATA_SOURCE_FIELD_STATUS: c.CDP_DATA_SOURCE_STATUS_ACTIVE,
+        c.CDP_DATA_SOURCE_FIELD_STATUS: status,
+        c.ADDED: added,
+        c.ENABLED: enabled,
     }
 
     try:
