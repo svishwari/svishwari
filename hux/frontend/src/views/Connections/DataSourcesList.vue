@@ -3,12 +3,25 @@
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-cloud-download-outline </v-icon>
       <h5 class="font-weight-light text-h5 ml-2 mt-1">Data Sources</h5>
-      <v-icon class="ml-2 add-icon" color="primary" disabled>
+      <v-icon @click="toggleDrawer" class="ml-2 add-icon" color="primary">
         mdi-plus-circle
       </v-icon>
     </div>
 
-    <EmptyStateData>
+    <template v-if="hasAddedDatasources">
+      <CardHorizontal
+        v-for="dataSource in addedDataSources"
+        :key="dataSource.id"
+        :title="dataSource.name"
+        :icon="dataSource.type"
+        hideButton
+        class="mb-3"
+      >
+        <Status :status="dataSource.status" />
+      </CardHorizontal>
+    </template>
+
+    <EmptyStateData v-else>
       <template v-slot:icon> mdi-alert-circle-outline </template>
       <template v-slot:title> Oops! There’s nothing here yet </template>
       <template v-slot:subtitle>
@@ -17,15 +30,49 @@
         Begin by selecting the plus button above.
       </template>
     </EmptyStateData>
+    <AddDataSource v-model="drawer" />
   </div>
 </template>
 
 <script>
+// import { mapGetters } from "vuex"
+
+import CardHorizontal from "@/components/common/CardHorizontal"
+import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
+import AddDataSource from "@/views/DataSources/Configuration"
 
 export default {
   name: "data-sources-list",
 
-  components: { EmptyStateData },
+  components: { EmptyStateData, AddDataSource, CardHorizontal, Status },
+
+  data() {
+    return {
+      drawer: false,
+      dataSources: [],
+    }
+  },
+
+  computed: {
+    // ...mapGetters({
+    // TODO integreate with data sources list
+    //   dataSources: "destinations/list",
+    // }),
+
+    addedDataSources() {
+      return this.dataSources.filter((dataSource) => dataSource.is_added)
+    },
+
+    hasAddedDatasources() {
+      return Boolean(this.addedDataSources && this.addedDataSources.length)
+    },
+  },
+
+  methods: {
+    toggleDrawer() {
+      this.drawer = !this.drawer
+    },
+  },
 }
 </script>
