@@ -343,7 +343,6 @@ export default {
       fetchEngagements: "engagements/getAll",
     }),
     selectEngagement(engagement) {
-      const keys = ["id"]
       const filtered = [...this.selectedEngagements]
       const existingIndex = filtered.findIndex(
         (eng) => eng.id === engagement.id
