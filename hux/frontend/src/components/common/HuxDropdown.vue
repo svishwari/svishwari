@@ -16,7 +16,7 @@
         class="d-flex justify-space-between"
         v-on="on"
       >
-        {{ name }}
+        {{ label }}
         <div class="flex-grow-1"></div>
         <v-icon>mdi-chevron-right</v-icon>
       </v-list-item>
@@ -25,7 +25,7 @@
         v-bind:v-on="on"
         @click="openMenu = true"
         text
-        v-bind:ButtonText="name"
+        v-bind:ButtonText="label"
         v-bind:isOutlined="true"
         width="200"
         icon=" mdi-chevron-down"
@@ -34,21 +34,21 @@
       ></huxButton>
     </template>
     <v-list>
-      <template v-for="(item, index) in menuItems">
+      <template v-for="(item, index) in items">
         <v-divider v-if="item.isDivider" :key="index" />
         <hux-dropdown
           v-else-if="item.menu"
           :key="index"
-          :name="item.name"
-          :menu-items="item.menu"
-          @hux-menu-click="emitClickEvent"
+          :label="item.name"
+          :items="item.menu"
+          @on-select="onSelect"
           :is-open-on-hover="false"
           :is-offset-x="true"
           :is-offset-y="false"
           :is-sub-menu="true"
           :selected="selected"
         />
-        <v-list-item v-else :key="index" @click="emitClickEvent(item)">
+        <v-list-item v-else :key="index" @click="onSelect(item)">
           <v-list-item-title>
             <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
             {{ item.name }}
@@ -70,9 +70,9 @@ export default {
   },
   props: {
     selected: String,
-    name: String,
+    label: String,
     icon: String,
-    menuItems: Array,
+    items: Array,
     color: { type: String, default: "primary" },
     isOffsetX: { type: Boolean, default: false },
     isOffsetY: { type: Boolean, default: true },
@@ -81,8 +81,8 @@ export default {
     transition: { type: String, default: "scale-transition" },
   },
   methods: {
-    emitClickEvent(item) {
-      this.$emit("hux-menu-click", item)
+    onSelect(item) {
+      this.$emit("on-select", item)
       this.openMenu = false
     },
   },

@@ -96,12 +96,11 @@
 
     <v-subheader> Multilevel Select Dropdown </v-subheader>
     <hux-dropdown
-      :name="dropDownLabel"
-      :selected="dropDownLabel"
-      :menu-items="fileMenuItems"
-      @hux-menu-click="onMenuItemClick"
+      :label="selectedMenuItem"
+      :selected="selectedMenuItem"
+      :items="menuItems"
+      @on-select="onSelectMenuItem"
     />
-    {{ DropdownValue }}
 
     <v-divider class="mt-10" />
 
@@ -229,12 +228,12 @@ export default {
     onupdatelabelText(newValue) {
       this.labelText = newValue
     },
-    onMenuItemClick(item) {
+    onSelectMenuItem(item) {
       console.log(item.name)
-      if (this.dropDownLabel == item.name) {
-        this.dropDownLabel = "Select a value..."
+      if (this.selectedMenuItem == item.name) {
+        this.selectedMenuItem = "Select a value..."
       } else {
-        this.dropDownLabel = item.name
+        this.selectedMenuItem = item.name
       }
       if (item.action) {
         item.action()
@@ -243,7 +242,7 @@ export default {
   },
   data() {
     return {
-      dropDownLabel: "Select a value...",
+      selectedMenuItem: "Select a value...",
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
@@ -453,7 +452,7 @@ export default {
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
       ],
 
-      fileMenuItems: [
+      menuItems: [
         {
           icon: "mdi-home-outline",
           name: "Menu Item 1",
@@ -478,10 +477,6 @@ export default {
                   menu: [
                     { name: "3.1" },
                     { name: "3.2" },
-                    {
-                      name: "Sub-menu 4",
-                      menu: [{ name: "4.1" }, { name: "4.2" }, { name: "4.3" }],
-                    },
                   ],
                 },
               ],
