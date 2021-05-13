@@ -15,7 +15,7 @@
     </PageHeader>
     <div class="row px-15 my-1">
       <MetricCard
-        v-for="(item, i) in infoListItems"
+        v-for="(item, i) in audience.insightInfo"
         class="ma-4"
         :width="165"
         :height="80"
@@ -85,10 +85,9 @@
         <div class="overview">Audience overview</div>
         <div
           class="row overview-list mb-0 ml-0 mt-1"
-          v-if="isOverviewAvailable"
         >
           <MetricCard
-            v-for="(item, i) in overviewListItems"
+            v-for="(item, i) in audience.overview"
             class="list-item mr-3"
             :width="135"
             :height="80"
@@ -149,17 +148,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      overviewListItems: "AllOverviews",
-      infoListItems: "AllInsightInfo",
-    }),
-    isOverviewAvailable() {
-      return this.overviewListItems.length > 0
+    audience() {
+      return this.$store.getters.AudienceById(this.$route.params.id)
     },
-  },
-  methods: {
-    ...mapActions(["getAllOverview", "getAllInsightInfo"]),
-    refresh() {},
   },
 }
 </script>

@@ -4,7 +4,7 @@
       <router-link
         :to="{
           name: 'audienceInsight',
-          params: { id: audienceId, audienceName: audienceName },
+          params: { id: audienceId },
         }"
         class="text-decoration-none"
         append
@@ -51,7 +51,6 @@ export default Vue.extend({
   data() {
     return {
       audienceId: null,
-      audienceName: null,
       cellValue: null,
       items: [
         { title: "Unfavorite" },
@@ -86,7 +85,6 @@ export default Vue.extend({
   },
   async mounted() {
     this.audienceId = this.params.data.audienceId
-    this.audienceName = this.params.data.audienceName
   },
 })
 </script>
