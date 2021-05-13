@@ -28,6 +28,8 @@ NOTIFICATIONS_COLLECTION = "notifications"
 CONSTANT_NAME = "constant"
 CONSTANT_VALUE = "value"
 
+ADDED = "added"
+
 STATE_ALPHA_CODE_MAPPING = "state_alpha_code_mapping"
 
 DATA_SOURCE_NAME = "name"
@@ -83,9 +85,7 @@ S_TYPE_FACEBOOK_COUNTRY_CODE = "facebook_country_code"  # internal only
 S_TYPE_FACEBOOK_GENDER = "facebook_gender"  # internal only
 S_TYPE_FACEBOOK_PHONE_NUMBER = "facebook_phone_number"  # internal only
 S_TYPE_FACEBOOK_POSTAL_CODE = "facebook_postal_code"  # internal only
-S_TYPE_FACEBOOK_STATE_OR_PROVINCE = (
-    "facebook_state_or_province"  # internal only
-)
+S_TYPE_FACEBOOK_STATE_OR_PROVINCE = "facebook_state_or_province"  # internal only
 S_TYPE_FIRST_NAME = "first_name"
 S_TYPE_FIRST_NAME_INITIAL = "first_name_initial"
 S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"  # internal only
