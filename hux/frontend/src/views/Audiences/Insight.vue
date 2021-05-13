@@ -23,7 +23,7 @@
         :title="item.title"
         :subtitle="item.subtitle"
         :icon="item.icon"
-        :ripple="false"
+        :interactable="false"
       >
         <template slot="short-name">
           <v-menu bottom offset-y open-on-hover>
@@ -52,7 +52,7 @@
         class="ma-4"
         width="59%"
         :height="80"
-        :ripple="false"
+        :interactable="false"
         :title="'Attributes'"
       >
         <template slot="extra-item">
@@ -83,7 +83,7 @@
         class="rounded px-5 pt-5"
       >
         <div class="overview">Audience overview</div>
-        <div class="row overview-list mb-0 ml-0 mt-1">
+        <div class="row overview-list mb-0 ml-0 mt-1"  v-if="isOverviewAvailable">
           <MetricCard
             v-for="(item, i) in overviewListItems"
             class="list-item mr-3"
@@ -93,7 +93,7 @@
             :title="item.title"
             :subtitle="item.subtitle"
             :icon="item.icon"
-            :ripple="false"
+            :interactable="false"
           ></MetricCard>
         </div>
       </v-card>
@@ -108,6 +108,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
+
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import MetricCard from "@/components/common/MetricCard"
@@ -136,36 +138,25 @@ export default {
           icon: "mdi-flip-h mdi-account-plus-outline",
         },
         {
-          text: "Audience name",
+          text: this.$route.params.audienceName,
           disabled: true,
           href: this.$route.path,
         },
       ],
-      overviewListItems: [
-        { title: "Target size", subtitle: "34,203,204" },
-        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
-        { title: "US States", subtitle: "52", icon: "mdi-map" },
-        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
-        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
-        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
-        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
-        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
-      ],
-      infoListItems: [
-        {
-          title: "Last updated",
-          subtitle: "Yesterday by",
-          shortName: "JS",
-          fullName: "John Smith",
-        },
-        {
-          title: "Created",
-          subtitle: "Yesterday by",
-          shortName: "JS",
-          fullName: "John Smith",
-        },
-      ],
     }
+  },
+  computed: {
+    ...mapGetters({
+      overviewListItems: "AllOverviews",
+      infoListItems: "AllInsightInfo",
+    }),
+    isOverviewAvailable() {
+      return this.overviewListItems.length > 0
+    },
+  },
+  methods: {
+    ...mapActions(["getAllOverview", "getAllInsightInfo"]),
+    refresh() {},
   },
 }
 </script>

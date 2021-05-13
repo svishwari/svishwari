@@ -67,7 +67,7 @@ const routes = [
     },
   },
   {
-    path: "/audiences/insight",
+    path: "/audiences/:id/insight",
     name: "audienceInsight",
     component: () => import("@/views/Audiences/Insight.vue"),
     meta: {

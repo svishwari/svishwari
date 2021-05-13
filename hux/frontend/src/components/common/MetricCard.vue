@@ -1,19 +1,19 @@
 <template>
   <v-card
     class="metric-card-wrapper"
-    :class="{ 'no-click': !ripple }"
+    :class="{ 'no-click': !interactable }"
     @click="$emit('click')"
     :disabled="!active"
     :width="width"
     :height="height"
     elevation="0"
-    :ripple="ripple"
+    :ripple="interactable"
   >
     <v-list-item three-line>
       <v-list-item-content>
         <v-list-item-title
           class="item-headline mt-1"
-          v-bind:class="ripple ? 'primary--text ' : 'gray--text '"
+          v-bind:class="interactable ? 'primary--text ' : 'gray--text '"
         >
           {{ title }}
         </v-list-item-title>
@@ -55,7 +55,7 @@ export default {
       default: true,
     },
 
-    ripple: {
+    interactable: {
       type: Boolean,
       required: false,
       default: true,

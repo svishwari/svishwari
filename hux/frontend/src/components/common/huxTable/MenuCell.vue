@@ -2,7 +2,7 @@
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
       <router-link
-        :to="{ name: 'audienceInsight' }"
+        :to="{ name: 'audienceInsight', params: { id: audienceId, audienceName: audienceName } }"
         class="text-decoration-none"
         append
       >
@@ -47,6 +47,8 @@ export default Vue.extend({
   name: "MenuCell",
   data() {
     return {
+      audienceId: null,
+      audienceName: null,
       cellValue: null,
       items: [
         { title: "Unfavorite" },
@@ -79,6 +81,10 @@ export default Vue.extend({
       evnt.preventDefault()
     },
   },
+  async mounted(){
+    this.audienceId = this.params.data.audienceId;
+    this.audienceName = this.params.data.audienceName;
+  }
 })
 </script>
 <style lang="scss" scoped>
