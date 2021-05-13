@@ -14,7 +14,9 @@
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
     </v-icon>
+    <v-spacer> </v-spacer>
     {{ ButtonText }}
+    <v-spacer> </v-spacer>
     <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
       {{ icon }}
     </v-icon>
