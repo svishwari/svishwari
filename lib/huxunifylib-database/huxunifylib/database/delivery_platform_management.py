@@ -28,7 +28,7 @@ def set_delivery_platform(
     name: str,
     authentication_details: dict = None,
     status: str = c.STATUS_PENDING,
-    enabled: bool = False,
+    enabled: bool = True,
     added: bool = False,
     user_id: ObjectId = None,
 ) -> dict:
@@ -45,7 +45,7 @@ def set_delivery_platform(
         enabled (bool): if the delivery platform is enabled.
         added (bool): if the delivery platform is added.
         user_id (ObjectId): User id of user creating delivery platform.
-            This is Optional.
+            This  is Optional.
 
     Returns:
         dict: MongoDB audience doc.
@@ -118,8 +118,7 @@ def get_delivery_platform(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): The MongoDB ID of the
-            delivery platform.
+        delivery_platform_id (ObjectId): The MongoDB ID of the delivery platform.
 
     Returns:
         dict: Delivery platform configuration.
@@ -180,10 +179,9 @@ def set_connection_status(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_id (ObjectId): MongoDB document ID of the
-            delivery platform.
-        connection_status: Status of connection to delivery platform.
-            Can be Pending, In progress, Failed, or Succeeded.
+        delivery_platform_id (ObjectId): MongoDB document ID of delivery platform.
+        connection_status: Status of connection to delivery platform. Can be Pending,
+            In progress, Failed, or Succeeded.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -249,8 +247,7 @@ def set_authentication_details(
     Args:
         database (DatabaseClient): A database client.
         delivery_platform_id (ObjectId): The MongoDB ID of delivery platform.
-        authentication_details (dict): A dict containing delivery platform
-            authentication details.
+        authentication_details (dict): A dict containing delivery platform authentication details.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -475,10 +472,8 @@ def update_delivery_platform(
         delivery_platform_id (ObjectId): The MongoDB ID of delivery platform.
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
-        authentication_details (dict): A dict containing delivery platform
-            authentication details.
-        user_id (ObjectId): User id of user updating delivery platform.
-            This is Optional.
+        authentication_details (dict): A dict containing delivery platform authentication details.
+        user_id (ObjectId): User id of user updating delivery platform. This is Optional.
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -567,8 +562,7 @@ def create_delivery_platform_lookalike_audience(
         delivery_platform_id (ObjectId): The Mongo ID of delivery platform.
         source_audience_id (ObjectId): The Mongo ID of source audience.
         name (str): Name of the lookalike audience.
-        audience_size_percentage (float): Size percentage of the lookalike
-            audience.
+        audience_size_percentage (float): Size percentage of the lookalike audience.
         country (str): Country of the lookalike audience.
 
     Returns:
@@ -771,8 +765,7 @@ def update_lookalike_audience_size_percentage(
     Args:
         database (DatabaseClient): A database client.
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
-        audience_size_percentage (float): The new size percentage of the lookalike
-            audience.
+        audience_size_percentage (float): The new size percentage of the lookalike audience.
 
     Returns:
         dict: The updated lookalike audience configuration.
@@ -817,8 +810,7 @@ def update_lookalike_audience(
         database (DatabaseClient): A database client.
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
         name (str): The new name of the lookalike audience.
-        audience_size_percentage (float): The new size percentage of the lookalike
-            audience.
+        audience_size_percentage (float): The new size percentage of the lookalike audience.
         country (str): Updated lookalike audience country.
 
     Returns:
