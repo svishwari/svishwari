@@ -115,7 +115,7 @@ def get_delivery_platforms_by_id(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_ids (list[str]):
+        delivery_platform_ids (list[ObjectId]):
             List of Delivery platform object ids.
 
     Returns:
@@ -126,8 +126,7 @@ def get_delivery_platforms_by_id(
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        object_ids = [ObjectId(x) for x in delivery_platform_ids]
-        return list(collection.find({c.ID: {"$in": object_ids}}))
+        return list(collection.find({c.ID: {"$in": delivery_platform_ids}}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
