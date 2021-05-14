@@ -28,7 +28,7 @@ class EngagementSchemaTest(TestCase):
 
         """
         doc = {
-            db_c.ID: "5f5f7262997acad4bac4373b",
+            api_c.ENGAGEMENT_ID: "5f5f7262997acad4bac4373b",
             api_c.ENGAGEMENT_NAME: "Engagement 1",
             api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
             api_c.ENGAGEMENT_AUDIENCES: [],
@@ -38,6 +38,7 @@ class EngagementSchemaTest(TestCase):
         print(json.dumps(doc))
 
         val = EngagementGetSchema().validate(doc)
+        val = EngagementGetSchema().load(doc)
         print(json.dumps(val))
 
         assert EngagementGetSchema().validate(doc) == {}

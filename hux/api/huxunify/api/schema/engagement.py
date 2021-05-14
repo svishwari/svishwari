@@ -57,17 +57,19 @@ class EngagementGetSchema(Schema):
     updated_by = fields.DateTime(attribute=db_c.UPDATED_BY, allow_none=True)
 
     @post_load()
-    def process_modified(self, data: dict) -> dict:
+    # pylint: disable=unused-argument
+    def process_modified(self, data: dict, many: bool, pass_original=False, partial=False) -> dict:
         """Process the schema before deserialization
 
         Args:
             data (dict): the engagement object
+            many (bool): If there are many to process
 
         Returns:
             Response: Returns an engagement object
 
         """
-
+        
         # set the input ID to an object ID
         if db_c.ID in data:
             # if a valid ID, map it
