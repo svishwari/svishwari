@@ -652,3 +652,19 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(doc is not None)
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(not doc[c.FAVORITE])
+
+    def test_update_audience_status(self):
+        """Test update audience status."""
+
+        self._setup_ingestion_succeeded_and_audience()
+
+        # Update audience name
+        doc = am.update_audience_status_for_delivery(
+            self.database,
+            self.audience_doc[c.ID],
+            c.AUDIENCE_STATUS_DELIVERING,
+        )
+
+        self.assertIsNotNone(doc)
+        self.assertIn(c.AUDIENCE_STATUS, doc)
+        self.assertEqual(doc[c.AUDIENCE_STATUS], c.AUDIENCE_STATUS_DELIVERING)

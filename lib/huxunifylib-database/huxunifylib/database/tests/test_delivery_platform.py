@@ -14,7 +14,7 @@ from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
 
 
-# pylint: disable=R0902,R0904
+# pylint: disable=R0902,R0904,C0302
 class TestDeliveryPlatform(unittest.TestCase):
     """Test delivery platform management module."""
 
@@ -891,3 +891,168 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         count = dpm.get_lookalike_audiences_count(database=self.database)
         self.assertEqual(count, 2)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_delivery_job_for_destination(self):
+        """Test set_delivery_job with engagement id."""
+
+        # set the engagement id
+        engagement_id = ObjectId()
+
+        # set status
+        self.assertIsNotNone(
+            dpm.set_connection_status(
+                self.database,
+                self.delivery_platform_doc[c.ID],
+                c.STATUS_SUCCEEDED,
+            )
+        )
+
+        # set the delivery job
+        doc = dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+            engagement_id,
+        )
+
+        self.assertIsNotNone(doc)
+        self.assertIn(c.ID, doc)
+        self.assertIsNotNone(doc[c.ID])
+        self.assertIn(c.ENGAGEMENT_ID, doc)
+        self.assertEqual(doc[c.ENGAGEMENT_ID], engagement_id)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_multiple_delivery_jobs_for_destination(self):
+        """Test set_delivery_job for multiple destinations."""
+
+        # set the engagement id
+        engagement_id = ObjectId()
+
+        # simulate processing multiple at a time.
+        for destination in [
+            self.delivery_platform_doc,
+            self.delivery_platform_doc_sfmc,
+        ]:
+
+            # set status
+            self.assertIsNotNone(
+                dpm.set_connection_status(
+                    self.database,
+                    destination[c.ID],
+                    c.STATUS_SUCCEEDED,
+                )
+            )
+
+            # set the delivery job
+            doc = dpm.set_delivery_job(
+                self.database,
+                self.source_audience_doc[c.ID],
+                destination[c.ID],
+                self.generic_campaigns,
+                engagement_id,
+            )
+
+            self.assertIsNotNone(doc)
+            self.assertIn(c.ID, doc)
+            self.assertIsNotNone(doc[c.ID])
+            self.assertIn(c.ENGAGEMENT_ID, doc)
+            self.assertEqual(doc[c.ENGAGEMENT_ID], engagement_id)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_delivery_job_with_engagement(self):
+        """Test get_delivery_job has engagement id."""
+
+        # set engagement id
+        engagement_id = ObjectId()
+
+        # set status
+        self.assertIsNotNone(
+            dpm.set_connection_status(
+                self.database,
+                self.delivery_platform_doc[c.ID],
+                c.STATUS_SUCCEEDED,
+            )
+        )
+
+        # set delivery job
+        doc = dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+            engagement_id,
+        )
+
+        self.assertIsNotNone(doc)
+
+        delivery_job = dpm.get_delivery_job(
+            self.database, doc[c.ID], engagement_id
+        )
+
+        self.assertIsNotNone(delivery_job)
+        self.assertIn(c.AUDIENCE_ID, delivery_job)
+        self.assertIn(c.CREATE_TIME, delivery_job)
+        self.assertIn(c.JOB_STATUS, delivery_job)
+        self.assertIn(c.DELIVERY_PLATFORM_ID, delivery_job)
+        self.assertEqual(
+            delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
+        )
+        self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
+        self.assertIn(c.ENGAGEMENT_ID, delivery_job)
+        self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_delivery_jobs_with_engagement(self):
+        """Test get_delivery_jobs has engagement id."""
+
+        # set engagement id
+        engagement_id = ObjectId()
+
+        for destination in [
+            self.delivery_platform_doc,
+            self.delivery_platform_doc_sfmc,
+        ]:
+
+            # set status
+            self.assertIsNotNone(
+                dpm.set_connection_status(
+                    self.database,
+                    destination[c.ID],
+                    c.STATUS_SUCCEEDED,
+                )
+            )
+
+            # set delivery job
+            doc = dpm.set_delivery_job(
+                self.database,
+                self.source_audience_doc[c.ID],
+                destination[c.ID],
+                self.generic_campaigns,
+                engagement_id,
+            )
+
+            self.assertIsNotNone(doc)
+
+        delivery_jobs = dpm.get_delivery_jobs(
+            self.database, self.source_audience_doc[c.ID], engagement_id
+        )
+
+        # test list
+        self.assertTrue(delivery_jobs)
+        self.assertEqual(2, len(delivery_jobs))
+
+        # test all
+        for delivery_job in delivery_jobs:
+            self.assertIsNotNone(delivery_job)
+            self.assertIn(c.AUDIENCE_ID, delivery_job)
+            self.assertIn(c.CREATE_TIME, delivery_job)
+            self.assertIn(c.JOB_STATUS, delivery_job)
+            self.assertIn(c.DELIVERY_PLATFORM_ID, delivery_job)
+            self.assertEqual(
+                delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
+            )
+            self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
+            self.assertIn(c.ENGAGEMENT_ID, delivery_job)
+            self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])

@@ -1111,3 +1111,41 @@ def set_ingestion_job_status(
         status_msg,
     )
     return ingestion_job_id_doc
+
+
+def update_audience_status_for_delivery(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    status: str,
+) -> dict:
+    """A function to update audience status
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        status (str): audience status.
+
+    Returns:
+        dict: Updated audience configuration dict.
+
+    """
+    # Make sure this is not a default audience
+    default_flag = is_default_audience(
+        database,
+        audience_id,
+    )
+    if default_flag:
+        audience_name = get_audience_name(database, audience_id)
+        raise de.DefaultAudienceLocked(audience_name)
+
+    # Update dict
+    update_dict = {
+        c.AUDIENCE_STATUS: status,
+        c.UPDATE_TIME: datetime.datetime.utcnow(),
+    }
+
+    # set the last delivered time if status is successful
+    if status == c.AUDIENCE_STATUS_DELIVERED:
+        update_dict[c.AUDIENCE_LAST_DELIVERED] = update_dict[c.UPDATE_TIME]
+
+    return update_audience_doc(database, audience_id, update_dict)

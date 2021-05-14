@@ -870,6 +870,7 @@ def set_delivery_job(
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
+    engagement_id: ObjectId = None,
 ) -> dict:
     """A function to set an audience delivery job.
 
@@ -878,13 +879,11 @@ def set_delivery_job(
         audience_id (ObjectId): MongoDB ID of the delivered audience.
         delivery_platform_id (ObjectId): Delivery platform ID.
         delivery_platform_generic_campaigns (list): generic campaign IDs.
+        engagement_id (ObjectId): Engagement ID.
     Returns:
         dict: Delivery job configuration.
 
     """
-
-    delivery_job_doc = None
-    delivery_job_id = None
 
     dp_doc = get_delivery_platform(database, delivery_platform_id)
 
@@ -912,6 +911,8 @@ def set_delivery_job(
         ),
         c.ENABLED: True,
     }
+    if engagement_id is not None:
+        doc[c.ENGAGEMENT_ID] = engagement_id
 
     try:
         delivery_job_id = collection.insert_one(doc).inserted_id
@@ -923,14 +924,14 @@ def set_delivery_job(
         )
 
         if delivery_job_id is not None:
-            delivery_job_doc = collection.find_one(
+            return collection.find_one(
                 {c.ID: delivery_job_id, c.ENABLED: True}, {c.ENABLED: 0}
             )
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return delivery_job_doc
+    return None
 
 
 @retry(
@@ -938,13 +939,16 @@ def set_delivery_job(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_job(
-    database: DatabaseClient, delivery_job_id: ObjectId
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    engagement_id: ObjectId = None,
 ) -> dict:
     """A function to get an audience delivery job.
 
     Args:
         database (DatabaseClient): A database client.
         delivery_job_id (ObjectId): Delivery job id.
+        engagement_id (ObjectId): Engagement id.
 
     Returns:
         dict: Delivery job configuration.
@@ -955,13 +959,16 @@ def get_delivery_job(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        doc = collection.find_one(
-            {c.ID: delivery_job_id, c.ENABLED: True}, {c.ENABLED: 0}
-        )
+        # set mongo_filter based on engagement id
+        mongo_filter = {c.ID: delivery_job_id, c.ENABLED: True}
+        if engagement_id is not None:
+            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+
+        return collection.find_one(mongo_filter, {c.ENABLED: 0})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(
@@ -1155,7 +1162,9 @@ def get_delivery_job_audience_size(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_jobs(
-    database: DatabaseClient, audience_id: ObjectId = None
+    database: DatabaseClient,
+    audience_id: ObjectId = None,
+    engagement_id: ObjectId = None,
 ) -> list:
     """Get audience delivery jobs if audience_id is specified, otherwise,
     get all delivery jobs. In the latter case only ID field is returned
@@ -1164,6 +1173,7 @@ def get_delivery_jobs(
     Args:
         database (DatabaseClient): database client.
         audience_id (ObjectId, optional): audience ID. Defaults to None.
+        engagement_id (ObjectId, optional): engagement ID. Defaults to None.
 
     Returns:
         list: List of delivery jobs.
@@ -1173,10 +1183,14 @@ def get_delivery_jobs(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
+        mongo_filter = {c.ENABLED: True}
+        if audience_id:
+            mongo_filter[c.AUDIENCE_ID] = audience_id
+        if engagement_id:
+            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+
         cursor = collection.find(
-            {c.AUDIENCE_ID: audience_id, c.ENABLED: True}
-            if audience_id
-            else {c.ENABLED: True},
+            mongo_filter,
             {c.ENABLED: False} if audience_id else {c.ID: True},
         )
     except pymongo.errors.OperationFailure as exc:
