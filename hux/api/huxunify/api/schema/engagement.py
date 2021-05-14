@@ -28,7 +28,7 @@ class EngagementGetSchema(Schema):
     """
 
     engagement_id = fields.String(
-        attribute=db_c.ID,
+        attribute=api_c.ENGAGEMENT_ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
@@ -69,9 +69,9 @@ class EngagementGetSchema(Schema):
         """
 
         # set the input ID to an object ID
-        if api_c.ENGAGEMENT_ID in data:
+        if db_c.ID in data:
             # if a valid ID, map it
-            if ObjectId.is_valid(data[api_c.ENGAGEMENT_ID]):
+            if ObjectId.is_valid(data[db_c.ID]):
                 data.update(engagement_id=ObjectId(data[api_c.ENGAGEMENT_ID]))
             else:
                 # otherwise map to None
