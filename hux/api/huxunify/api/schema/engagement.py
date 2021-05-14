@@ -9,8 +9,7 @@ from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
     must_not_be_blank,
-    validate_object_id,
-    validate_object_id_list,
+    validate_object_id
 )
 
 
@@ -23,48 +22,12 @@ class DeliverySchedule(Schema):
     end_date = fields.DateTime(allow_none=True)
 
 
-class EngagementSchema(Schema):
-    """
-    engagement schema class, return serialized messages back
-    """
-
-    class Meta:
-        """expose the fields for serialization"""
-
-        # Fields to expose
-        fields = [
-            "name",
-            "description",
-            "audiences",
-            "status",
-            "delivery_schedule",
-            "created_time",
-            "created_by",
-            "updated_time",
-            "updated_by"
-        ]
-
-    name = fields.Str()
-    description = fields.Str()
-    audiences = fields.List(cls_or_instance=fields.Str())
-    status = fields.Str()
-    delivery_schedule = fields.Nested(DeliverySchedule)
-    created_time = fields.DateTime()
-    created_by = fields.DateTime()
-    update_time = fields.DateTime()
-    updated_by = fields.DateTime()
-
-
-engagement_schema = EngagementSchema()
-engagements_schema = EngagementSchema(many=True)
-
-
 class EngagementGetSchema(Schema):
     """
     Engagement get schema class
     """
 
-    e_id = fields.String(
+    engagement_id = fields.String(
         attribute=db_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
@@ -72,11 +35,11 @@ class EngagementGetSchema(Schema):
     )
     name = fields.String(attribute=api_c.ENGAGEMENT_NAME, required=True)
     description = fields.String(attribute=api_c.ENGAGEMENT_DESCRIPTION)
+    # TODO return empty list for now
     audiences = fields.List(
         cls_or_instance=fields.String,
         attribute=api_c.ENGAGEMENT_AUDIENCES,
-        required=True,
-        validate=validate_object_id_list,
+        required=True
     )
     status = fields.String(
         attribute=api_c.ENGAGEMENT_STATUS,
@@ -124,10 +87,9 @@ class EngagementPostSchema(Schema):
 
     name = fields.String(required=True, validate=must_not_be_blank)
     description = fields.String()
-    created_by = fields.String(required=True, validate=must_not_be_blank)
     delivery_schedule = fields.Nested(DeliverySchedule)
     audiences = fields.List(
-        cls_or_instance=fields.String, validate=validate_object_id_list
+        cls_or_instance=fields.String
     )
 
 
