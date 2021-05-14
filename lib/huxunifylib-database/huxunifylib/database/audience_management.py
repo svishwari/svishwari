@@ -636,106 +636,6 @@ def get_audience_name(
     return audience_name
 
 
-@retry(
-    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
-    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
-)
-def get_default_audience_id(
-    database: DatabaseClient,
-    ingestion_job_id: ObjectId,
-) -> ObjectId:
-    """A function to get the default audience ID given an ingestion job.
-
-    Args:
-        database (DatabaseClient): A database client.
-        ingestion_job_id (ObjectId): The Mongo DB ID of the ingestion job.
-
-    Returns:
-        ObjectId: Default audience ID.
-
-    """
-
-    dm_db = database[c.DATA_MANAGEMENT_DATABASE]
-    ingestion_jobs_collection = dm_db[c.INGESTION_JOBS_COLLECTION]
-
-    ingestion_job = dm.get_ingestion_job(database, ingestion_job_id)
-
-    if ingestion_job is None:
-        raise de.InvalidID(ingestion_job_id)
-
-    if (
-        c.DEFAULT_AUDIENCE_ID not in ingestion_job
-        or ingestion_job[c.DEFAULT_AUDIENCE_ID] is None
-    ):
-
-        data_source_id = ingestion_job[c.DATA_SOURCE_ID]
-
-        data_source = dm.get_data_source(database, data_source_id)
-
-        audience_name = "%s (%s)" % (
-            data_source[c.DATA_SOURCE_NAME],
-            c.DEFAULT_AUDIENCE_STR,
-        )
-
-        default_audience_doc = create_audience(
-            database, ingestion_job_id, audience_name, []
-        )
-
-        default_audience_id = default_audience_doc.get(c.ID)
-
-        if default_audience_id is None:
-            logging.error(
-                "The default audience was not created for ingestion job %s",
-                str(ingestion_job_id),
-            )
-        else:
-            try:
-                ingestion_jobs_collection.find_one_and_update(
-                    {c.ID: ingestion_job_id, c.ENABLED: True},
-                    {"$set": {c.DEFAULT_AUDIENCE_ID: default_audience_id}},
-                    upsert=False,
-                    new=True,
-                )
-            except pymongo.errors.OperationFailure as exc:
-                logging.error(exc)
-    else:
-        default_audience_id = ingestion_job[c.DEFAULT_AUDIENCE_ID]
-
-    return default_audience_id
-
-
-def is_default_audience(
-    database: DatabaseClient,
-    audience_id: ObjectId,
-) -> bool:
-    """A function to detect if an audience is default.
-
-    Args:
-        database (DatabaseClient): A database client.
-        audience_id (ObjectId): MongoDB ID of the audience.
-
-    Returns: bool: A flag indicating if an audience if the default
-        audience of the corresponding ingestion job.
-
-    """
-    doc = None
-    is_default_flag = False
-
-    doc = get_audience_config(database, audience_id)
-
-    if doc is not None:
-        ingestion_job_id = doc[c.JOB_ID]
-        default_audience_id = get_default_audience_id(
-            database,
-            ingestion_job_id,
-        )
-
-        if default_audience_id == audience_id:
-            is_default_flag = True
-
-    return is_default_flag
-
-
 def update_audience_name(
     database: DatabaseClient,
     audience_id: ObjectId,
@@ -753,15 +653,6 @@ def update_audience_name(
 
     """
     ingestion_job_id = None
-
-    # Make sure this is not a default audience
-    default_flag = is_default_audience(
-        database,
-        audience_id,
-    )
-    if default_flag:
-        audience_name = get_audience_name(database, audience_id)
-        raise de.DefaultAudienceLocked(audience_name)
 
     # Make sure the name will be unique
     job_doc = get_audience_config(database, audience_id)
@@ -817,15 +708,6 @@ def update_audience_filters(
     doc = None
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
-
-    # Make sure this is not a default audience
-    default_flag = is_default_audience(
-        database,
-        audience_id,
-    )
-    if default_flag:
-        audience_name = get_audience_name(database, audience_id)
-        raise de.DefaultAudienceLocked(audience_name)
 
     # Update dict
     update_dict = {
@@ -1084,8 +966,7 @@ def set_ingestion_job_status(
     status_msg: str = "",
 ) -> dict:
 
-    """Set an ingestion job status and add default audience if ingestion
-    succeeded.
+    """Set an ingestion job status.
 
     Args:
         database (DatabaseClient): A database client.
@@ -1097,12 +978,6 @@ def set_ingestion_job_status(
     Returns:
         dict: Updated ingestion job document.
     """
-
-    if job_status == c.STATUS_SUCCEEDED:
-        get_default_audience_id(
-            database=database,
-            ingestion_job_id=ingestion_job_id,
-        )
 
     ingestion_job_id_doc = dm.set_ingestion_job_status_no_default_audience(
         database,
@@ -1129,14 +1004,6 @@ def update_audience_status_for_delivery(
         dict: Updated audience configuration dict.
 
     """
-    # Make sure this is not a default audience
-    default_flag = is_default_audience(
-        database,
-        audience_id,
-    )
-    if default_flag:
-        audience_name = get_audience_name(database, audience_id)
-        raise de.DefaultAudienceLocked(audience_name)
 
     # Update dict
     update_dict = {
