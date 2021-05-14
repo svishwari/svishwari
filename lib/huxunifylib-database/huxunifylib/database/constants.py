@@ -225,6 +225,7 @@ NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
 # Engagement constants
 ENGAGEMENT_NAME = "name"
+ENGAGEMENT_DESCRIPTION = "description"
 ENGAGEMENT_AUDIENCES = "audiences"
 ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 

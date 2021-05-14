@@ -8,40 +8,51 @@ from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-import huxunifylib.database.constants as db_constants
+import huxunifylib.database.db_exceptions as de
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 
 
 @retry(
-    wait=wait_fixed(db_constants.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def create_engagement(database: DatabaseClient, engagement_name: str) -> str:
+def set_engagement(
+    database: DatabaseClient,
+    name: str,
+    description: str,
+    audiences: list,
+    delivery_schedule: dict,
+) -> str:
     """A function to create an engagement
 
     Args:
         database (DatabaseClient): A database client.
-        engagement_name (str): Name of the engagement.
+        name (str): Name of the engagement.
+        description (str): Description of the engagement.
+        audiences (list): List of audience ObjectIds assigned to the engagement.
+        delivery_schedule (dict): Delivery Schedule dict
 
     Returns:
         str: id of the newly created engagement
 
     """
 
-    collection = database[db_constants.DATA_MANAGEMENT_DATABASE][
-        db_constants.ENGAGEMENTS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
     ]
 
     # TODO - implement after HUS-254 is done to grab user/okta_id
     user_id = ObjectId()
 
     doc = {
-        db_constants.ENGAGEMENT_NAME: engagement_name,
-        db_constants.ENGAGEMENT_AUDIENCES: [],
-        db_constants.CREATE_TIME: datetime.datetime.utcnow(),
-        db_constants.CREATED_BY: user_id,
-        db_constants.ENGAGEMENT_DELIVERY_SCHEDULE: {},
-        db_constants.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.ENGAGEMENT_NAME: name,
+        db_c.ENGAGEMENT_DESCRIPTION: description,
+        db_c.ENGAGEMENT_AUDIENCES: audiences,
+        db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
+        db_c.CREATE_TIME: datetime.datetime.utcnow(),
+        db_c.CREATED_BY: user_id,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
     try:
@@ -56,7 +67,7 @@ def create_engagement(database: DatabaseClient, engagement_name: str) -> str:
 
 
 @retry(
-    wait=wait_fixed(db_constants.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_engagements(database: DatabaseClient) -> list:
@@ -70,8 +81,8 @@ def get_all_engagements(database: DatabaseClient) -> list:
 
     """
 
-    collection = database[db_constants.DATA_MANAGEMENT_DATABASE][
-        db_constants.ENGAGEMENTS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
     ]
 
     try:
@@ -83,10 +94,12 @@ def get_all_engagements(database: DatabaseClient) -> list:
 
 
 @retry(
-    wait=wait_fixed(db_constants.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
+def get_engagement_by_id(
+    database: DatabaseClient, engagement_id: ObjectId
+) -> dict:
     """A function to get an engagement based on ID
 
     Args:
@@ -98,12 +111,12 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
 
     """
 
-    collection = database[db_constants.DATA_MANAGEMENT_DATABASE][
-        db_constants.ENGAGEMENTS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
     ]
 
     try:
-        return collection.find_one({db_constants.ID: engagement_id})
+        return collection.find_one({db_c.ID: engagement_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -111,7 +124,7 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
 
 
 @retry(
-    wait=wait_fixed(db_constants.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def delete_engagement(
@@ -128,16 +141,13 @@ def delete_engagement(
 
     """
 
-    collection = database[db_constants.DATA_MANAGEMENT_DATABASE][
-        db_constants.ENGAGEMENTS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
     ]
 
     try:
         return (
-            collection.delete_one(
-                {db_constants.ID: engagement_id}
-            ).deleted_count
-            > 0
+            collection.delete_one({db_c.ID: engagement_id}).deleted_count > 0
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -146,12 +156,12 @@ def delete_engagement(
 
 
 @retry(
-    wait=wait_fixed(db_constants.CONNECT_RETRY_INTERVAL),
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_engagement(
     database: DatabaseClient,
-    id: ObjectId,
+    engagement_id: ObjectId,
     name: str = None,
     description: str = None,
     audiences: list = None,
@@ -161,7 +171,7 @@ def update_engagement(
 
     Args:
         database (DatabaseClient): A database client.
-        id (ObjectId): ID of the engagement to be updated.
+        engagement_id (ObjectId): ID of the engagement to be updated.
         name (str): Name of the engagement.
         description (str): Descriptions of the engagement.
         audiences (list): list of audience ObjectIds.
@@ -171,8 +181,35 @@ def update_engagement(
         dict: dict object of the engagement that has been updated
     """
 
-    collection = database[db_constants.DATA_MANAGEMENT_DATABASE][
-        db_constants.ENGAGEMENTS_COLLECTION
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    
+    doc = None
+    update_doc = {
+        db_c.ENGAGEMENT_NAME: name,
+        db_c.ENGAGEMENT_DESCRIPTION: description,
+        db_c.ENGAGEMENT_AUDIENCES: audiences,
+        db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
+        db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+    }
+
+    for item in list(update_doc):
+        if update_doc[item] is None:
+            del update_doc[item]
+
+    try:
+        if update_doc:
+            doc = collection.find_one_and_update(
+                {db_c.ID: engagement_id},
+                {"$set": update_doc},
+                upsert=False,
+                new=True,
+            )
+        else:
+            raise de.NoUpdatesSpecified("engagement")
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return doc
