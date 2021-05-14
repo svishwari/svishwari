@@ -119,6 +119,21 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(c.AUDIENCE_NAME in doc)
         self.assertEqual(doc[c.AUDIENCE_NAME], new_name)
 
+    def test_update_audience_name_unchanged(self):
+        """Test update audience and check name remains unchanged"""
+
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[c.ID])
+
+        self.assertIsNotNone(audience_doc)
+
+        doc = am.update_audience(
+            self.database, set_audience[c.ID], None, None, self.destination_ids
+        )
+        self.assertTrue(doc is not None)
+        self.assertTrue(c.AUDIENCE_NAME in doc)
+        self.assertEqual(doc[c.AUDIENCE_NAME], set_audience[c.AUDIENCE_NAME])
+
     def test_duplicate_audience_name(self):
         """Test duplicate audience name."""
 

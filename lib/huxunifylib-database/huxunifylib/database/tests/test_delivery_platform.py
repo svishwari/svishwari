@@ -224,6 +224,25 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[c.DELIVERY_PLATFORM_STATUS], c.STATUS_PENDING)
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_delivery_platforms_by_id(self):
+        """Test get_delivery_platforms list"""
+
+        # Get delivery platform
+        ids = [self.delivery_platform_doc[c.ID]]
+        docs = dpm.get_delivery_platforms_by_id(self.database, ids)
+
+        self.assertIsNotNone(docs[0])
+        self.assertTrue(c.DELIVERY_PLATFORM_NAME in docs[0])
+        self.assertTrue(c.DELIVERY_PLATFORM_TYPE in docs[0])
+        self.assertTrue(c.DELIVERY_PLATFORM_AUTH in docs[0])
+        self.assertTrue(c.DELIVERY_PLATFORM_STATUS in docs[0])
+
+        self.assertEqual(
+            docs[0][c.DELIVERY_PLATFORM_NAME],
+            "My delivery platform for Facebook",
+        )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform_with_user(self):
         """Test get_delivery_platform."""
 

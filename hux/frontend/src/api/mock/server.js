@@ -1,16 +1,23 @@
 import { createServer, Factory, Model, Serializer } from "miragejs"
 import config from "@/config"
 import { defineRoutes } from "./routes"
+
+//seeds
 import seeds from "./seeds"
+
+//factories
 import destinationFactory from "./factories/destination"
+import dataSourcesFactory from "./factories/dataSources"
 
 export function makeServer({ environment = "development" } = {}) {
   const models = {
     destination: Model,
+    dataSource: Model,
   }
 
   const factories = {
     destination: Factory.extend(destinationFactory),
+    dataSource: Factory.extend(dataSourcesFactory),
   }
 
   const server = createServer({
