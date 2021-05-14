@@ -27,4 +27,12 @@ export const defineRoutes = (server) => {
 
     return schema.engagements.create(attrs)
   })
+  // data sources
+  server.get("/data-sources")
+
+  server.put("/data-sources", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+
+    return schema.dataSources.find(requestData).update({ is_added: true })
+  })
 }

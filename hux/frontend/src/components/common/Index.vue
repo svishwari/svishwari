@@ -94,6 +94,16 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Multilevel Select Dropdown </v-subheader>
+    <hux-dropdown
+      :label="selectedMenuItem"
+      :selected="selectedMenuItem"
+      :items="menuItems"
+      @on-select="onSelectMenuItem"
+    />
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Page Header </v-subheader>
     <PageHeader>
       <template slot="left">
@@ -195,6 +205,7 @@ import Drawer from "@/components/common/Drawer"
 import MetricCard from "@/components/common/MetricCard"
 import Logo from "@/components/common/Logo"
 import HuxSlider from "./HuxSlider.vue"
+import HuxDropdown from "@/components/common/HuxDropdown"
 
 export default {
   name: "Components",
@@ -211,14 +222,27 @@ export default {
     MetricCard,
     Logo,
     HuxSlider,
+    HuxDropdown,
   },
   methods: {
     onupdatelabelText(newValue) {
       this.labelText = newValue
     },
+    onSelectMenuItem(item) {
+      console.log(item.name)
+      if (this.selectedMenuItem == item.name) {
+        this.selectedMenuItem = "Select a value..."
+      } else {
+        this.selectedMenuItem = item.name
+      }
+      if (item.action) {
+        item.action()
+      }
+    },
   },
   data() {
     return {
+      selectedMenuItem: "Select a value...",
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
@@ -426,6 +450,53 @@ export default {
 
       overviewListItems: [
         { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+      ],
+
+      menuItems: [
+        {
+          icon: "mdi-home-outline",
+          name: "Menu Item 1",
+          action: () => {
+            console.log("menu-item-1")
+          },
+        },
+        { isDivider: true },
+        { icon: "mdi-bullhorn-outline", name: "Menu Item 2" },
+        {
+          name: "Sub 1",
+          menu: [
+            { icon: "mdi-home-outline", name: "1.1" },
+            { icon: "mdi-bullhorn-outline", name: "1.2" },
+            {
+              name: "Sub-menu 2",
+              menu: [
+                { name: "2.1" },
+                { name: "2.2" },
+                {
+                  name: "Sub-menu 3",
+                  menu: [{ name: "3.1" }, { name: "3.2" }],
+                },
+              ],
+            },
+          ],
+        },
+
+        { icon: "mdi-flip-h mdi-account-plus-outline", name: "Menu Item 3" },
+        { isDivider: true },
+        {
+          icon: "mdi-tune-vertical-variant",
+          name: "Menu Item 4",
+          action: () => {
+            console.log("menu-item-4")
+          },
+        },
+        {
+          icon: "mdi-account-details-outline",
+          name: "Menu Item 5",
+          action: () => {
+            console.log("menu-item-5")
+          },
+        },
       ],
     }
   },

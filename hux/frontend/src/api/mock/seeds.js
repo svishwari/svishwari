@@ -108,6 +108,23 @@ const defaultEngagement = {
   },
 }
 
+const googleAds = {
+  name: "Google Ads",
+  type: "google-ads",
+  is_enabled: true,
+}
+
+const netsuite = {
+  name: "Netsuite",
+  type: "netsuite",
+  is_enabled: true,
+}
+
+const aqfer = {
+  name: "Aqfer",
+  type: "aqfer",
+  is_enabled: true,
+}
 export default function (server) {
   // seed destinations
   server.create("destination", facebook)
@@ -119,4 +136,8 @@ export default function (server) {
   server.create("destination", mailchimp)
   // seed engagements
   server.create("engagement", defaultEngagement)
+  // seed dataSources
+  server.create("dataSource", googleAds)
+  server.create("dataSource", netsuite)
+  server.create("dataSource", aqfer)
 }

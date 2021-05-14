@@ -9,17 +9,6 @@ const NEW_AUDIENCE = {
   attributeRules: [],
   destinations: [],
 }
-const NEW_RULE_SECTION = {
-  operand: "ALL",
-  conditions: [],
-}
-const NEW_CONDITION = {
-  id: "",
-  attribute: "",
-  condition: "",
-  value: "",
-  outputSummary: "-",
-}
 
 const state = {
   audiences: [
@@ -293,11 +282,6 @@ const mutations = {
       Vue.set(state.audiences, audience.audienceId, audience)
     })
   },
-  SET_NEW_RULESECTION(state) {
-    const newSection = { ...NEW_RULE_SECTION }
-    newSection.conditions.push(NEW_CONDITION)
-    state.newAudience.attributeRules.push(newSection)
-  },
 }
 
 const actions = {
@@ -316,9 +300,6 @@ const actions = {
        *    to do item...
        */
     }
-  },
-  initiateNewRuleSection({ commit }) {
-    commit("SET_NEW_RULESECTION")
   },
 }
 

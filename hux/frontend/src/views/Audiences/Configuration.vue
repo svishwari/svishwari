@@ -62,7 +62,7 @@
                   <v-chip
                     class="ma-2"
                     close
-                    @click:close="dettachEngagement(item.id)"
+                    @click:close="detachEngagement(item.id)"
                     text-color="primary"
                     v-for="(item, index) in selectedEngagements"
                     :key="`engagement-${index}`"
