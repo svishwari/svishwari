@@ -22,7 +22,7 @@ export const defineRoutes = (server) => {
   server.get("/engagements")
 
   // Add new engagement
-  server.post("/engagements/:id", (schema, request) => {
+  server.post("/engagements/:id", (schema) => {
     let attrs = this.normalizedRequestAttrs()
 
     return schema.engagements.create(attrs)

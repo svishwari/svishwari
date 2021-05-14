@@ -28,5 +28,4 @@ export default {
   updated_by() {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
-
 }
