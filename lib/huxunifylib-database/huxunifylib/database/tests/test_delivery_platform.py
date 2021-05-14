@@ -228,7 +228,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         """Test get_delivery_platforms list"""
 
         # Get delivery platform
-        ids = [str(self.delivery_platform_doc[c.ID])]
+        ids = [self.delivery_platform_doc[c.ID]]
         docs = dpm.get_delivery_platforms_by_id(self.database, ids)
 
         self.assertIsNotNone(docs[0])
