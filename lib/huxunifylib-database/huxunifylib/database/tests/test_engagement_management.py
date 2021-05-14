@@ -1,8 +1,8 @@
 """Engagement Management Tests"""
 
 import unittest
-import mongomock
 import datetime
+import mongomock
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
@@ -56,36 +56,36 @@ class TestEngagementManagement(unittest.TestCase):
             delivery_schedule={},
         )
 
-        self.assertTrue(engagement_doc is not None)
+        self.assertIsNotNone(engagement_doc)
 
     def test_get_engagements(self) -> None:
-        """Test get_all_engagements routine
+        """Test get_engagements routine
 
         Returns:
             Response: None
 
         """
 
-        engagement_docs = em.get_all_engagements(database=self.database)
+        engagement_docs = em.get_engagements(database=self.database)
 
-        self.assertTrue(engagement_docs is not None)
+        self.assertIsNotNone(engagement_docs)
 
-    def test_get_engagement_by_id(self) -> None:
-        """Test get_all_engagements routine
+    def test_get_engagement(self) -> None:
+        """Test get_engagement routine
 
         Returns:
             Response: None
 
         """
 
-        engagement_docs = em.get_all_engagements(database=self.database)
+        engagement_docs = em.get_engagements(database=self.database)
         engagement_id = engagement_docs[0]["_id"]
 
-        engagement_doc = em.get_engagement_by_id(
+        engagement_doc = em.get_engagement(
             database=self.database, engagement_id=engagement_id
         )
 
-        self.assertTrue(engagement_doc is not None)
+        self.assertIsNotNone(engagement_doc)
 
     def test_update_engagement(self) -> None:
         """Test update_engagement routine
@@ -96,13 +96,16 @@ class TestEngagementManagement(unittest.TestCase):
         """
 
         new_name = "Engagement 3"
-        engagement_docs = em.get_all_engagements(database=self.database)
+        new_description = "Engagement 3 description"
+        engagement_docs = em.get_engagements(database=self.database)
         engagement_id = engagement_docs[0]["_id"]
         engagement_doc = em.update_engagement(
-            database=self.database, engagement_id=engagement_id, name=new_name
+            database=self.database, engagement_id=engagement_id, name=new_name, description=new_description
         )
 
-        self.assertTrue(engagement_doc[c.ENGAGEMENT_NAME] == new_name)
+        self.assertEqual(engagement_doc[c.ENGAGEMENT_NAME], new_name)
+        self.assertEqual(engagement_doc[c.ENGAGEMENT_DESCRIPTION], new_description)
+        self.assertEqual(engagement_doc[c.ENGAGEMENT_DELIVERY_SCHEDULE], {})
 
     def test_delete_engagement(self) -> None:
         """Test delete_engagement routine
@@ -112,7 +115,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         """
 
-        engagement_docs = em.get_all_engagements(database=self.database)
+        engagement_docs = em.get_engagements(database=self.database)
         engagement_id = engagement_docs[0]["_id"]
 
         delete_flag = em.delete_engagement(

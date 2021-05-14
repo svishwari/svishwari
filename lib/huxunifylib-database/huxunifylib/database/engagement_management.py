@@ -70,7 +70,7 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_all_engagements(database: DatabaseClient) -> list:
+def get_engagements(database: DatabaseClient) -> list:
     """A function to get all engagements
 
     Args:
@@ -97,7 +97,7 @@ def get_all_engagements(database: DatabaseClient) -> list:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagement_by_id(
+def get_engagement(
     database: DatabaseClient, engagement_id: ObjectId
 ) -> dict:
     """A function to get an engagement based on ID
@@ -134,10 +134,10 @@ def delete_engagement(
 
     Args:
         database (DatabaseClient): A database client.
-        engagement_id (str): Object Id of the engagement
+        engagement_id (ObjectId): Object Id of the engagement
 
     Returns:
-        dict: Dict of an engagement.
+        bool: Flag indicating successful operation.
 
     """
 
@@ -185,7 +185,6 @@ def update_engagement(
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    doc = None
     update_doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
@@ -206,10 +205,11 @@ def update_engagement(
                 upsert=False,
                 new=True,
             )
+            return doc
         else:
             raise de.NoUpdatesSpecified("engagement")
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None

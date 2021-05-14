@@ -224,6 +224,7 @@ NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
 # Engagement constants
+ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_NAME = "name"
 ENGAGEMENT_DESCRIPTION = "description"
 ENGAGEMENT_AUDIENCES = "audiences"
