@@ -93,9 +93,6 @@ S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"  # internal only
 S_TYPE_LAST_NAME = "last_name"
 S_TYPE_MOBILE_DEVICE_ID = "mobile_device_id"
 S_TYPE_PHONE_NUMBER = "phone_number"
-S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"
-S_TYPE_FACEBOOK_PHONE_NUMBER = "facebook_phone_number"
-S_TYPE_PHONE_NUMBER = "phone_number"
 S_TYPE_POSTAL_CODE = "postal_code"
 S_TYPE_STATE_OR_PROVINCE = "state_or_province"
 
@@ -228,11 +225,8 @@ NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
 
 # Engagement constants
 ENGAGEMENT_NAME = "name"
-ENGAGMENT_AUDIENCES = "audiences"
-ENGAGEMENT_CREATED = "created"
-ENGAGEMENT_CREATED_BY = "created_by"
+ENGAGEMENT_AUDIENCES = "audiences"
 ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
-ENGAGEMENT_LAST_UPDATED = "last_updated"
 
 
 # pagination constants
