@@ -5,7 +5,8 @@
         <div class="font-weight-regular">
           Hux is here to help you make better, faster decisions to improve your
           Customer Experiences.
-          <a class="text-decoration-none"
+          <a
+            class="text-decoration-none"
             href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
             >Learn More ></a
           >

@@ -12,12 +12,22 @@
         :hover="true"
         :outlined="!active"
       >
-        <v-btn fab :ripple="false" elevation="0" outlined color="zircon" class="mt-4">
+        <v-btn
+          fab
+          :ripple="false"
+          elevation="0"
+          outlined
+          color="zircon"
+          class="mt-4"
+        >
           <v-icon color="primary" x-large>
             {{ icon }}
           </v-icon>
         </v-btn>
-        <v-card-title class="justify-center font-weight-regular" v-bind:class="{ 'primary--text': active }">
+        <v-card-title
+          class="justify-center font-weight-regular"
+          v-bind:class="{ 'primary--text': active }"
+        >
           {{ title }}
         </v-card-title>
         <v-card-subtitle v-bind:class="{ 'neroBlack--text': active }">
