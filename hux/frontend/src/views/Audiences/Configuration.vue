@@ -172,8 +172,9 @@
             </h5>
           </div>
           <div class="d-flex align-baseline" v-if="e1 == 2">
-            <h5 class="text-h5 font-weight-regular pr-2">
-              salesforce
+            <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
+              <Logo :type="selectedDestination.type" />
+              <div class="pl-2 font-weight-regular">{{ selectedDestination.name }}</div>
             </h5>
           </div>
         </template>
@@ -194,7 +195,7 @@
                     :isAvailable="destination.is_enabled"
                     :isAlreadyAdded="destination.is_added"
                     @click="
-                      onSelectDestination(index)
+                      onSelectDestination(index, destination)
                       e1 = 2
                     "
                     class="my-3"
@@ -252,6 +253,7 @@ import TextField from "@/components/common/TextField"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import AddDestination from "@/views/Audiences/AddDestination"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "Configuration",
@@ -263,12 +265,14 @@ export default {
     Drawer,
     CardHorizontal,
     AddDestination,
+    Logo,
   },
   data() {
     return {
       e1: 1,
       drawer: false,
       selectedDestinationIndex: -1,
+      selectedDestination: null,
       overviewListItems: [
         { title: "Target size", subtitle: "34,203,204" },
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
@@ -305,8 +309,10 @@ export default {
       this.drawer = !this.drawer
     },
 
-    onSelectDestination(index) {
+    onSelectDestination(index, selected) {
       this.selectedDestinationIndex = index
+      this.selectedDestination = selected
+      console.log(this.selectedDestination)
     },
   },
   async mounted() {

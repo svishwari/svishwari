@@ -1,5 +1,5 @@
 <template>
-  <diV class="add-destination-wrapper">
+  <diV class="add-destination-wrapper font-weight-regular">
     Extension type
     <div class="d-flex align-center mt-2">
       <diV
@@ -68,6 +68,7 @@
           <v-radio
             label="Triggered (API) - coming soon"
             value="radio-2"
+            :disabled="true"
           ></v-radio>
         </v-radio-group>
       </div>
@@ -84,6 +85,12 @@
       <label class="d-flex align-items-center mb-2">
         Existing data extension
       </label>
+      <v-select
+        :items="items"
+        placeholder="Select an existing data extension "
+        dense
+        outlined
+      ></v-select>
 
       <v-card elevation="1">
         <v-card-text>
@@ -111,6 +118,7 @@ export default {
       isActive: true,
       journeyType: null,
       Extension: null,
+      items: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
     }
   },
   methods: {
@@ -141,6 +149,10 @@ export default {
         color: #005587;
       }
     }
+  }
+  .feedback {
+    font-weight: 800;
+    font-size: 16px;
   }
 }
 </style>
