@@ -18,7 +18,7 @@ export default {
         clientId: config.default.oidc.clientId,
         redirectUri: window.location.origin + "/login/callback",
         logo: require("@/assets/images/logo.png"),
-        language: "en", 
+        language: "en",
         i18n: {
           en: {
             "primaryauth.title": "Login | HUX Unified UI",
@@ -34,10 +34,7 @@ export default {
 
       this.widget.renderEl(
         { el: "#okta-signin-container" },
-        (res) => {
-          if (res.status === "SUCCESS") {
-          }
-        },
+        () => {},
         (err) => {
           throw err
         }
