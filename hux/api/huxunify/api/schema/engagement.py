@@ -7,10 +7,7 @@ from flask_marshmallow import Schema
 from marshmallow import fields, post_load, validate
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.utils import (
-    must_not_be_blank,
-    validate_object_id
-)
+from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
 
 
 class DeliverySchedule(Schema):
@@ -39,7 +36,7 @@ class EngagementGetSchema(Schema):
     audiences = fields.List(
         cls_or_instance=fields.String,
         attribute=api_c.ENGAGEMENT_AUDIENCES,
-        required=True
+        required=True,
     )
     status = fields.String(
         attribute=api_c.ENGAGEMENT_STATUS,
@@ -58,7 +55,9 @@ class EngagementGetSchema(Schema):
 
     @post_load()
     # pylint: disable=unused-argument
-    def process_modified(self, data: dict, many: bool, pass_original=False, partial=False) -> dict:
+    def process_modified(
+        self, data: dict, many: bool, pass_original=False, partial=False
+    ) -> dict:
         """Process the schema before deserialization
 
         Args:
@@ -69,7 +68,7 @@ class EngagementGetSchema(Schema):
             Response: Returns an engagement object
 
         """
-        
+
         # set the input ID to an object ID
         if db_c.ID in data:
             # if a valid ID, map it
@@ -90,9 +89,7 @@ class EngagementPostSchema(Schema):
     name = fields.String(required=True, validate=must_not_be_blank)
     description = fields.String()
     delivery_schedule = fields.Nested(DeliverySchedule)
-    audiences = fields.List(
-        cls_or_instance=fields.String
-    )
+    audiences = fields.List(cls_or_instance=fields.String)
 
 
 class EngagementPutSchema(Schema):
