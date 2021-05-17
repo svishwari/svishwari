@@ -535,7 +535,7 @@ class DestinationValidatePostView(SwaggerView):
         ---
         Returns:
             Tuple[dict, int]: Message indicating connection
-                            success/failure, HTTP Status.
+                success/failure, HTTP Status.
 
         """
 
