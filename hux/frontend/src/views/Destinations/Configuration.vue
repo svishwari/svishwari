@@ -1,11 +1,13 @@
 <template>
   <div class="add-destination--wrap font-weight-regular">
     <div class="mb-10">
-      <h4 class="text-h4 font-weight-light">Add a destination</h4>
-      <p>Please fill out the information below to connect a new destination.</p>
+      <h4 class="text-h2 neroBlack--text">Add a destination</h4>
+      <p class="neroBlack--text">
+        Please fill out the information below to connect a new destination.
+      </p>
     </div>
 
-    <label class="d-flex mb-2">Select a destination</label>
+    <label class="d-flex mb-2 neroBlack--text">Select a destination</label>
 
     <div class="d-flex align-center mb-10">
       <template v-if="isDestinationSelected">
@@ -105,9 +107,9 @@
         </div>
       </template>
       <template v-slot:default>
-        <div class="ma-5">
+        <div class="ma-5 font-weight-light">
           <CardHorizontal
-            v-for="(destination, index) in destinations"
+            v-for="(destination, index) in enabledDestinations"
             :key="destination.id"
             :title="destination.name"
             :icon="destination.type"
@@ -117,6 +119,24 @@
             @click="onSelectDestination(index)"
             class="my-3"
           />
+
+          <v-divider style="border-color: var(--v-zircon-base)" />
+
+          <CardHorizontal
+            v-for="(destination, index) in disabledDestinations"
+            :key="destination.id"
+            :title="destination.name"
+            :icon="destination.type"
+            :isAdded="destination.is_added || index == selectedDestinationIndex"
+            hideButton
+            :isAvailable="destination.is_enabled"
+            :isAlreadyAdded="destination.is_added"
+            class="my-3"
+          >
+            <span class="font-weight-light letter-spacing-sm"
+              ><i>Coming soon</i></span
+            >
+          </CardHorizontal>
         </div>
       </template>
     </drawer>
@@ -168,6 +188,14 @@ export default {
 
     isDestinationSelected() {
       return Boolean(this.destination)
+    },
+
+    enabledDestinations() {
+      return this.destinations.filter((each) => each.is_enabled)
+    },
+
+    disabledDestinations() {
+      return this.destinations.filter((each) => !each.is_enabled)
     },
   },
 
@@ -233,8 +261,7 @@ export default {
   padding: 4rem 10rem;
 
   .destination-auth-wrap {
-    // This is a temporary fix need to find alternative
-    border: 1px solid #e2eaec !important;
+    border: 1px solid var(--v-zircon-base) !important;
   }
 }
 </style>

@@ -37,7 +37,7 @@
         <div class="ma-5">
           <div class="font-weight-light">Data sources</div>
           <CardHorizontal
-            v-for="dataSource in dataSources"
+            v-for="dataSource in enabledDataSources"
             :key="dataSource.id"
             :title="dataSource.name"
             :icon="dataSource.type"
@@ -50,6 +50,27 @@
             @click="onDataSourceClick(dataSource.id)"
             class="my-3"
           />
+
+          <v-divider style="border-color: var(--v-zircon-base)" />
+
+          <CardHorizontal
+            v-for="dataSource in disabledDataSources"
+            :key="dataSource.id"
+            :title="dataSource.name"
+            :icon="dataSource.type"
+            :isAdded="
+              dataSource.is_added ||
+              selectedDataSourceIds.includes(dataSource.id)
+            "
+            :isAvailable="dataSource.is_enabled"
+            :isAlreadyAdded="dataSource.is_added"
+            class="my-3"
+            hideButton
+          >
+            <span class="font-weight-light letter-spacing-sm"
+              ><i>Coming soon</i></span
+            >
+          </CardHorizontal>
         </div>
       </template>
     </drawer>
@@ -60,7 +81,7 @@
 import Drawer from "@/components/common/Drawer"
 import huxButton from "@/components/common/huxButton"
 import CardHorizontal from "@/components/common/CardHorizontal"
-// import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 export default {
   name: "add-data-source",
   components: {
@@ -73,7 +94,6 @@ export default {
     return {
       localDrawer: this.value,
       selectedDataSourceIds: [],
-      dataSources: [],
     }
   },
 
@@ -86,10 +106,9 @@ export default {
   },
 
   computed: {
-    // ...mapGetters({
-    //   TODO get datasources list from api
-    //   dataSources: "destinations/list",
-    // }),
+    ...mapGetters({
+      dataSources: "dataSources/list",
+    }),
 
     isDataSourcesSelected() {
       return this.selectedDataSourceIds.length > 0
@@ -98,8 +117,19 @@ export default {
       let count = this.selectedDataSourceIds.length
       return `Add ${count} data source${count > 1 ? "s" : ""}`
     },
+
+    enabledDataSources() {
+      return this.dataSources.filter((each) => each.is_enabled)
+    },
+
+    disabledDataSources() {
+      return this.dataSources.filter((each) => !each.is_enabled)
+    },
   },
   methods: {
+    ...mapActions({
+      batchAddDataSources: "dataSources/batchAdd",
+    }),
     onDataSourceClick: function (id) {
       if (this.selectedDataSourceIds.includes(id)) {
         const deselectedId = this.selectedDataSourceIds.indexOf(id)
@@ -109,7 +139,7 @@ export default {
       }
     },
     addDataSources: function () {
-      // Make a api call here
+      this.batchAddDataSources(this.selectedDataSourceIds)
       this.closeAddDataSource()
     },
     closeAddDataSource: function () {

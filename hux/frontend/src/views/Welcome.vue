@@ -1,13 +1,14 @@
 <template>
-  <div class="welcome-wrap">
+  <div class="welcome-wrap" v-if="!authenticated">
     <div class="content">
       <Logo />
       <h1>Welcome to Hux!</h1>
-      <pre>
-      An all-purpose tool to transform raw data into powerful market insights and deliberate engagements:
-      Aggregated Customer Data • Customized CDP • Deep Dive Insights • Personalized Engagements 
-      Targeted Segmentation • Addressable Audiences • Measure &amp; Optimize
-      </pre>
+      <span>
+        An all-purpose tool to transform raw data into powerful market insights
+        and deliberate engagements: Aggregated Customer Data • Customized CDP •
+        Deep Dive Insights • Personalized Engagements Targeted Segmentation •
+        Addressable Audiences • Measure &amp; Optimize
+      </span>
       <h2>All Together, Entirely</h2>
       <v-btn
         elevation="2"
@@ -31,10 +32,40 @@ export default {
   components: {
     Logo,
   },
-
+  data() {
+    return {
+      authenticated: false,
+    }
+  },
+  beforeMount() {
+    this.setup()
+  },
   methods: {
     login() {
       this.$router.push("overview")
+    },
+    async setup() {
+      this.isAuthenticated()
+      this.claims = await this.$auth.getUser()
+      if (this.claims) {
+        this.$store.dispatch("setUserProfile", {
+          userProfile: this.claims,
+        })
+        const authStorage = JSON.parse(
+          localStorage.getItem("okta-token-storage")
+        )
+        this.$store.dispatch("setUserToken", {
+          accessToken: authStorage.accessToken,
+          idToken: authStorage.idToken,
+        })
+        this.$router.replace(this.$route.query.redirect || "/overview")
+      } else {
+        this.$store.dispatch("setUserProfile", {})
+        this.$store.dispatch("setUserToken", {})
+      }
+    },
+    async isAuthenticated() {
+      this.authenticated = await this.$auth.isAuthenticated()
     },
   },
 }
@@ -50,9 +81,9 @@ export default {
   justify-content: center;
   align-items: center;
   .content {
-    width: 72.291666666666667%;
-    height: 77.777777777777778%;
-    background: #ffffff;
+    max-width: 72.291666666666667%;
+    max-height: 77.777777777777778%;
+    background: var(--v-white-base);
     box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.15);
     border-radius: 5px;
     display: flex;
@@ -60,25 +91,31 @@ export default {
     flex-direction: column;
     align-items: center;
     svg {
+      min-width: 150px;
+      min-height: 150px;
       width: 150px;
       height: 150px;
     }
     h1 {
+      font-family: Open Sans;
+      font-style: normal;
+      font-weight: normal;
       font-style: normal;
       font-weight: 500;
       font-size: 24px;
       line-height: 40px;
       margin-top: 48px;
     }
-    pre {
+    span {
       font-family: Open Sans;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
       line-height: 22px;
       text-align: center;
-      color: #757b7b;
+      color: var(--v-gray-base);
       margin-top: 8px;
+      max-width: 80%;
     }
     h2 {
       font-style: normal;
@@ -87,8 +124,13 @@ export default {
       line-height: 40px;
       text-align: center;
       letter-spacing: 0.1px;
-      color: #86bc25;
+      color: var(--v-greenLight-base);
       margin-top: 8px;
+    }
+    button {
+      min-height: 40px;
+      min-width: 95px;
+      font-size: 14px;
     }
   }
 }

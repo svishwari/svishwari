@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-cloud-download-outline </v-icon>
-      <h5 class="font-weight-light text-h5 ml-2 mt-1">Data Sources</h5>
+      <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <v-icon @click="toggleDrawer" class="ml-2 add-icon" color="primary">
         mdi-plus-circle
       </v-icon>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex"
+import { mapGetters } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Status from "@/components/common/Status"
@@ -50,15 +50,13 @@ export default {
   data() {
     return {
       drawer: false,
-      dataSources: [],
     }
   },
 
   computed: {
-    // ...mapGetters({
-    // TODO integreate with data sources list
-    //   dataSources: "destinations/list",
-    // }),
+    ...mapGetters({
+      dataSources: "dataSources/list",
+    }),
 
     addedDataSources() {
       return this.dataSources.filter((dataSource) => dataSource.is_added)

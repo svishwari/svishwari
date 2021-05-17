@@ -81,3 +81,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.card-horizontal-disabled {
+  border: 1px solid var(--v-zircon-base) !important;
+}
+</style>

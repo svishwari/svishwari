@@ -1,8 +1,6 @@
 <template>
   <v-card
     class="descriptive-card align-center text-center rounded-lg"
-    width="255px"
-    min-height="255px"
     :disabled="disabled"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
@@ -70,7 +68,9 @@ export default {
   color: var(--v-neroblack-base);
   cursor: default;
   font-weight: normal;
+  min-height: 255px;
   transition: box-shadow 0.2s;
+  width: 255px;
 
   &:hover {
     box-shadow: 0px 0px 10px 2px rgba(117, 123, 123, 0.3) !important;
