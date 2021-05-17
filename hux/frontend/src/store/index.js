@@ -4,6 +4,7 @@ import createPersistedState from "vuex-persistedstate"
 
 import audiences from "@/store/modules/audiences"
 import destinations from "@/store/modules/destinations"
+import engagements from "@/store/modules/engagements"
 import dataSources from "@/store/modules/dataSources"
 import users from "@/store/modules/users"
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
   modules: {
     audiences,
     destinations,
+    engagements,
     dataSources,
     users,
   },

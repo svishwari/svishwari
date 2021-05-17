@@ -178,10 +178,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      rowData: "AllAudiences",
+      rowData: "audiences/AllAudiences",
     }),
     isDataExists() {
-      return this.rowData.length > 0
+      if (this.rowData) return this.rowData.length > 0
+      return false
     },
   },
   methods: {

@@ -108,16 +108,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+//var(--v-white-base)
 .login-wrap {
   padding: 0;
-  background: #e5e5e5;
+  background: var(--v--backgroundBlue-base);
   .left-section {
     height: 100vh;
     position: relative;
     background-size: cover;
     background-image: url("../assets/images/logon_background.png");
     .overlay {
-      background: #b54acf;
+      background: var(--v--pink-base);
       opacity: 0.3;
       position: absolute;
       top: 0px;
@@ -140,9 +141,9 @@ export default {
       font-weight: 600;
       font-size: 24px;
       line-height: 43px;
-      color: #333333;
+      color: var(--v--darkGreyHeading-base);
       .altcolor {
-        color: #f03bc8;
+        color: var(--v--pinkLittleDark-base);
       }
     }
     p {
@@ -151,7 +152,7 @@ export default {
       font-weight: normal;
       font-size: 14px;
       line-height: 22px;
-      color: #757b7b;
+      color: var(--v--lightGreyAnotherVariant-base);
       margin-bottom: 20px;
     }
     .error {
