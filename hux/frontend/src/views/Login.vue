@@ -151,7 +151,7 @@ export default {
                   font-weight: normal;
                   font-size: 12px;
                   line-height: 16px;
-                  padding-top:4px;
+                  padding-top: 4px;
                   padding-left: 0;
                 }
               }
