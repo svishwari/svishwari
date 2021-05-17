@@ -972,13 +972,9 @@ def set_delivery_job(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_job(
-<<<<<<< HEAD
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     engagement_id: ObjectId = None,
-=======
-    database: DatabaseClient, delivery_job_id: ObjectId
->>>>>>> f400e0b (revert db changes)
 ) -> dict:
     """A function to get an audience delivery job.
 
