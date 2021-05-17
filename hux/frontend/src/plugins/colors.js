@@ -20,4 +20,5 @@ export default {
   pinkLittleDark: "#f03bc8",
   darkGreyHeading: "#333333",
   lightGreyAnotherVariant: "#757b7b",
+  offWhite: "#e5e5e5",
 }

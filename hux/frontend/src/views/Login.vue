@@ -69,14 +69,14 @@ export default {
 <style lang="scss" scoped>
 .login-wrap {
   padding: 0;
-  background: #e5e5e5;
+  background: #f9fafb;
   .left-section {
     height: 100vh;
     position: relative;
     background-size: cover;
     background-image: url("../assets/images/logon_background.png");
     .overlay {
-      background: #b54acf;
+      background: var(--v-pink-base);
       opacity: 0.3;
       position: absolute;
       top: 0px;
@@ -99,9 +99,9 @@ export default {
       font-weight: 600;
       font-size: 24px;
       line-height: 43px;
-      color: #333333;
+      color: var(--v-darkGreyHeading-base);
       .altcolor {
-        color: #f03bc8;
+        color: var(--v-pinkLittleDark-base);
       }
     }
     p {
@@ -110,23 +110,88 @@ export default {
       font-weight: normal;
       font-size: 14px;
       line-height: 22px;
-      color: #757b7b;
+      color: var(--v-gray-base);
       margin-bottom: 20px;
     }
     .login-form {
       #okta-signin-container {
         ::v-deep .auth-container {
+          border: 0;
           margin: 0;
           background: transparent;
+          width: 100%;
+          padding-left: 5px;
           .okta-sign-in-header {
             display: none;
           }
           .auth-content {
             padding-left: 0;
             border: none;
+            .icon {
+              visibility: hidden;
+            }
             .okta-form-title {
               display: none;
             }
+            .o-form-label {
+              label {
+                font-family: Open Sans;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 12px;
+                line-height: 16px;
+                color: var(--v-neroBlack-base);
+              }
+            }
+            .o-form-input {
+              &.o-form-has-errors {
+                .okta-form-input-error {
+                  font-family: Open Sans;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-size: 12px;
+                  line-height: 16px;
+                  padding-top:4px;
+                  padding-left: 0;
+                }
+              }
+            }
+            .okta-form-input-field {
+              border: none;
+              background: transparent;
+              input {
+                padding: 10px 16px;
+                background: var(--v-white-base);
+                border: 1px solid var(--v-lightGrey-base);
+                box-sizing: border-box;
+                border-radius: 4px;
+              }
+              &.o-form-has-errors {
+                input {
+                  border-color: #da291c;
+                }
+                .okta-form-input-error {
+                  padding-left: 5px;
+                }
+              }
+              &.focused-input {
+                box-shadow: 0 0 8px var(--v-darkBlue-base);
+              }
+            }
+            .o-form-button-bar {
+              width: 90px;
+              input {
+                width: 90px;
+                height: 40px;
+                box-sizing: border-box;
+                background: #005587;
+                box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+                content: "Log in";
+              }
+            }
+          }
+          .auth-footer {
+            display: none;
           }
         }
       }
