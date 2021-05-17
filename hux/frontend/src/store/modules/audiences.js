@@ -52,10 +52,35 @@ const state = {
         shortName: "RG",
         fullName: "John Smith",
       },
+      overview: [
+        { title: "Target size", subtitle: "34,203,204" },
+        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
+        { title: "US States", subtitle: "52", icon: "mdi-map" },
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+      ],
+
+      insightInfo: [
+        {
+          title: "Last updated",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+        {
+          title: "Created",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+      ],
     },
     {
       audienceId: 2,
-      audienceName: "Audience Name 1",
+      audienceName: "Audience Name 2",
       status: "Delivering",
       size: {
         approxSize: "654K",
@@ -92,10 +117,35 @@ const state = {
         shortName: "RG",
         fullName: "John Smith",
       },
+      overview: [
+        { title: "Target size", subtitle: "34,203,204" },
+        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
+        { title: "US States", subtitle: "52", icon: "mdi-map" },
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+      ],
+
+      insightInfo: [
+        {
+          title: "Last updated",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+        {
+          title: "Created",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+      ],
     },
     {
       audienceId: 3,
-      audienceName: "Audience Name 1",
+      audienceName: "Audience Name 3",
       status: "Active",
       size: {
         approxSize: "654K",
@@ -134,10 +184,35 @@ const state = {
         shortName: "RG",
         fullName: "John Smith",
       },
+      overview: [
+        { title: "Target size", subtitle: "34,203,204" },
+        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
+        { title: "US States", subtitle: "52", icon: "mdi-map" },
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+      ],
+
+      insightInfo: [
+        {
+          title: "Last updated",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+        {
+          title: "Created",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+      ],
     },
     {
       audienceId: 4,
-      audienceName: "Audience Name 1",
+      audienceName: "Audience Name 4",
       status: "Delivering",
       size: {
         approxSize: "654K",
@@ -175,10 +250,35 @@ const state = {
         shortName: "RG",
         fullName: "John Smith",
       },
+      overview: [
+        { title: "Target size", subtitle: "34,203,204" },
+        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
+        { title: "US States", subtitle: "52", icon: "mdi-map" },
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+      ],
+
+      insightInfo: [
+        {
+          title: "Last updated",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+        {
+          title: "Created",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+      ],
     },
     {
       audienceId: 5,
-      audienceName: "Audience Name 1",
+      audienceName: "Audience Name 5",
       status: "Error",
       size: {
         approxSize: "1000K",
@@ -215,10 +315,35 @@ const state = {
         shortName: "RG",
         fullName: "John Smith",
       },
+      overview: [
+        { title: "Target size", subtitle: "34,203,204" },
+        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
+        { title: "US States", subtitle: "52", icon: "mdi-map" },
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+      ],
+
+      insightInfo: [
+        {
+          title: "Last updated",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+        {
+          title: "Created",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+      ],
     },
     {
       audienceId: 6,
-      audienceName: "Audience Name 1",
+      audienceName: "Audience Name 6",
       status: "Active",
       size: {
         approxSize: "2K",
@@ -257,6 +382,30 @@ const state = {
         shortName: "RG",
         fullName: "John Smith",
       },
+      overview: [
+        { title: "Target size", subtitle: "34,203,204" },
+        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
+        { title: "US States", subtitle: "52", icon: "mdi-map" },
+        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+      ],
+      info: [
+        {
+          title: "Last updated",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+        {
+          title: "Created",
+          subtitle: "Yesterday by",
+          shortName: "JS",
+          fullName: "John Smith",
+        },
+      ],
     },
   ],
   newAudience: NEW_AUDIENCE,
@@ -266,6 +415,9 @@ const getters = {
   AllAudiences: (state) => {
     return Object.values(state.audiences)
   },
+  AudienceById: (state) => (id) => {
+    return state.audiences.find((audience) => audience.audienceId === id)
+  },
   current: (state) => {
     return state.newAudience
   },
@@ -273,28 +425,32 @@ const getters = {
 
 const mutations = {
   SET_ALL_AUDIENCES(state, audiences) {
-    /*
-     *    audiences.forEach((destination) => {
-     *       Vue.set(state.audiences, destination._id, destination)
-     *    })
-     */
     audiences.forEach((audience) => {
       Vue.set(state.audiences, audience.audienceId, audience)
     })
+  },
+  SET_AUDIENCE(state, data) {
+    Vue.set(state.audiences, data.audienceId, data)
   },
 }
 
 const actions = {
   async getAllAudiences({ commit }) {
     try {
-      /*
-       *    const response = await getAllAudiences
-       *    commit("SET_ALL_AUDIENCES", response.data)
-       */
       const response = {
         data: [...state.audiences],
       }
       commit("SET_ALL_AUDIENCES", response.data)
+    } catch (error) {
+      /*
+       *    to do item...
+       */
+    }
+  },
+  async getAudienceById({ commit }, id) {
+    try {
+      const response = state.audiences.find(id)
+      commit("SET_AUDIENCE", response.data)
     } catch (error) {
       /*
        *    to do item...
