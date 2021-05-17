@@ -55,7 +55,7 @@ def set_engagement(
     doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
-        db_c.ENGAGEMENT_AUDIENCES: audiences,
+        db_c.AUDIENCES: audiences,
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.CREATE_TIME: datetime.datetime.utcnow(),
         # TODO - implement after HUS-254 is done to grab user/okta_id
@@ -136,10 +136,10 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def disable_engagement(
+def delete_engagement(
     database: DatabaseClient, engagement_id: ObjectId
 ) -> bool:
-    """A function to disable an engagement based on ID
+    """A function to delete an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
@@ -203,7 +203,7 @@ def update_engagement(
     update_doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
-        db_c.ENGAGEMENT_AUDIENCES: audiences,
+        db_c.AUDIENCES: audiences,
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }

@@ -35,7 +35,7 @@ class TestEngagementManagement(unittest.TestCase):
             database=self.database,
             name=self.sample_engagement[c.ENGAGEMENT_NAME],
             description=self.sample_engagement[c.ENGAGEMENT_DESCRIPTION],
-            audiences=self.sample_engagement[c.ENGAGEMENT_AUDIENCES],
+            audiences=self.sample_engagement[c.AUDIENCES],
             delivery_schedule=self.sample_engagement[
                 c.ENGAGEMENT_DELIVERY_SCHEDULE
             ],
@@ -116,10 +116,10 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(
             engagement_doc[c.ENGAGEMENT_DESCRIPTION], new_description
         )
-        self.assertEqual(engagement_doc[c.ENGAGEMENT_AUDIENCES], [])
+        self.assertEqual(engagement_doc[c.AUDIENCES], [])
         self.assertEqual(engagement_doc[c.ENGAGEMENT_DELIVERY_SCHEDULE], {})
 
-    def test_disable_engagement(self) -> None:
+    def test_delete_engagement(self) -> None:
         """Test delete_engagement routine
 
         Returns:
@@ -132,7 +132,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         self.assertIsInstance(engagement_id, ObjectId)
 
-        delete_flag = em.disable_engagement(
+        delete_flag = em.delete_engagement(
             database=self.database, engagement_id=engagement_id
         )
 
