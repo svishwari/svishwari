@@ -265,7 +265,7 @@ def get_delivery_route(
         destinations = audience[db_const.DESTINATIONS]
 
         if destination_ids:
-            # grab matches destinations
+            # grab matching destinations
             destination_ids = [d for d in destinations if d in destination_ids]
         else:
             destination_ids = destinations
