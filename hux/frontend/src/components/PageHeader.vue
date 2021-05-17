@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="page-header--wrap d-flex justify-space-between align-center px-8 py-5"
+    class="page-header--wrap d-flex justify-space-between align-center px-8 py-8"
     elevation="1"
     tile
     :color="bgColor"
@@ -11,7 +11,7 @@
         <v-icon size="20" color="black">
           {{ icon }}
         </v-icon>
-        <div class="text-h5 pl-1">
+        <div class="header-title pl-1">
           {{ title }}
         </div>
       </div>
@@ -54,3 +54,11 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.page-header--wrap {
+  .header-title {
+    font-weight: 300;
+    font-size: 24px;
+  }
+}
+</style>

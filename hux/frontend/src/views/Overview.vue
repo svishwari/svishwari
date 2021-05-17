@@ -1,14 +1,14 @@
 <template>
   <div class="overview-wrap">
-    <PageHeader
-      :title="'Welcome back, ' + firstName + ' ' + lastName + '!'"
-      icon="mdi-bullhorn-outline"
-    >
+    <PageHeader :title="'Welcome back, ' + firstName + ' ' + lastName + '!'">
       <template slot="description">
-        <div>
+        <div class="font-weight-regular">
           Hux is here to help you make better, faster decisions to improve your
           Customer Experiences.
-          <a>Learn More ></a>
+          <a class="text-decoration-none"
+            href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
+            >Learn More ></a
+          >
         </div>
       </template>
       <template slot="right" class="paheHeadRightPanel">
@@ -21,6 +21,7 @@
               color="primary"
               v-bind="attrs"
               v-on="on"
+              :disabled="true"
             >
               <v-icon size="23" color="white">mdi-cog</v-icon>
             </v-btn>
@@ -45,7 +46,7 @@
       </template>
     </PageHeader>
     <div class="quickAccessMenu" v-if="this.configureOptions['configureHux']">
-      <h6 class="mb-5">Configure Hux</h6>
+      <h6 class="mb-3">Configure Hux</h6>
       <div class="card-wrap d-flex">
         <CardInfo
           v-for="(item, i) in configureHuxOptions"
@@ -141,7 +142,7 @@ export default {
   .quickAccessMenu {
     background: #ecf4f9;
     min-height: 265px;
-    padding: 16px 30px 30px 30px;
+    padding: 16px 30px 40px 30px;
     overflow-x: auto;
     h6 {
       font-style: normal;
