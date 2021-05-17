@@ -107,6 +107,36 @@ def set_delivery_platform(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_delivery_platforms_by_id(
+    database: DatabaseClient,
+    delivery_platform_ids: list,
+) -> list:
+    """A function to get a list of delivery platforms by id.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_ids (list[ObjectId]):
+            List of Delivery platform object ids.
+
+    Returns:
+        list: Delivery platform configuration.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+
+    try:
+        return list(collection.find({c.ID: {"$in": delivery_platform_ids}}))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
