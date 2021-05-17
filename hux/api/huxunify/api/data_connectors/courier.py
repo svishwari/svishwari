@@ -57,6 +57,7 @@ class DestinationBatchJob:
             audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
             aws_secrets (dict): The AWS secret dict for a batch job.
             aws_envs (dict): The AWS env dict for a batch job.
+
         Returns:
 
         """
@@ -79,7 +80,7 @@ class DestinationBatchJob:
             job_head_name (str): The aws batch job head name.
             aws_batch_mem_limit (int): AWS Batch RAM limit.
             aws_batch_connector (AWSBatchConnector): AWS batch connector.
-            submit (bool): Submit job to AWS bool.
+
         Returns:
 
         """
@@ -124,7 +125,11 @@ class DestinationBatchJob:
 
         """
         # Connect to AWS Batch
-        if self.aws_batch_connector is None:
+        if (
+            self.aws_batch_connector is None
+            and self.aws_batch_connector.job_def_name is not None
+            and not isinstance(self.aws_batch_connector, AWSBatchConnector)
+        ):
             raise Exception("Must register a job first.")
 
         # Submit the AWS batch job
