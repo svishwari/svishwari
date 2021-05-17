@@ -158,6 +158,7 @@ def delete_engagement(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 # pylint: disable=too-many-arguments
+# pylint: disable=no-else-return
 def update_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
