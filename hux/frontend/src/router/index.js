@@ -1,8 +1,17 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 
-import auth from "@/auth"
+import Auth from "@okta/okta-vue"
 import { pageTitle } from "@/utils"
+const config = require("@/config")
+
+Vue.use(Auth, {
+  issuer: config.default.oidc.issuer,
+  clientId: config.default.oidc.clientId,
+  redirectUri: window.location.origin + "/login/callback",
+  scopes: ["openid", "profile", "email"],
+  pkce: true,
+})
 
 Vue.use(VueRouter)
 
@@ -157,6 +166,10 @@ const routes = [
     },
   },
   {
+    path: "/login/callback",
+    component: Auth.handleCallback(),
+  },
+  {
     path: "/logout",
     beforeEnter(to, from, next) {
       auth.logout()
@@ -183,12 +196,12 @@ const router = new VueRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   document.title = pageTitle(to.meta.title)
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
-  if (requiresAuth && !auth.loggedIn()) {
+  if (requiresAuth && !(await Vue.prototype.$auth.isAuthenticated())) {
     next({
       path: "/login",
       query: { redirect: to.fullPath },

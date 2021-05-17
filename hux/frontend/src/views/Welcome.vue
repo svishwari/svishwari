@@ -1,5 +1,5 @@
 <template>
-  <div class="welcome-wrap">
+  <div class="welcome-wrap" v-if="!authenticated">
     <div class="content">
       <Logo />
       <h1>Welcome to Hux!</h1>
@@ -31,10 +31,40 @@ export default {
   components: {
     Logo,
   },
-
+  data() {
+    return {
+      authenticated: false,
+    }
+  },
+  beforeMount() {
+    this.setup()
+  },
   methods: {
     login() {
       this.$router.push("overview")
+    },
+    async setup() {
+      this.isAuthenticated()
+      this.claims = await this.$auth.getUser()
+      if (this.claims) {
+        this.$store.dispatch("setUserProfile", {
+          userProfile: this.claims,
+        })
+        const authStorage = JSON.parse(
+          localStorage.getItem("okta-token-storage")
+        )
+        const tokens = this.$store.dispatch("setUserToken", {
+          accessToken: authStorage.accessToken,
+          idToken: authStorage.idToken,
+        })
+        this.$router.replace(this.$route.query.redirect || "/overview")
+      } else {
+        this.$store.dispatch("setUserProfile", {})
+        this.$store.dispatch("setUserToken", {})
+      }
+    },
+    async isAuthenticated() {
+      this.authenticated = await this.$auth.isAuthenticated()
     },
   },
 }
