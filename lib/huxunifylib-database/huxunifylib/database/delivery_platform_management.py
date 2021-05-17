@@ -45,7 +45,7 @@ def set_delivery_platform(
         enabled (bool): if the delivery platform is enabled.
         added (bool): if the delivery platform is added.
         user_id (ObjectId): User id of user creating delivery platform.
-            This  is Optional.
+            This is Optional.
 
     Returns:
         dict: MongoDB audience doc.
