@@ -3,17 +3,16 @@
     offset-y
     close-on-click
     max-width="300"
-    tile
     nudge-bottom="5"
     v-model="DropdownValue"
   >
     <template v-slot:activator="{ on }">
-      <span v-on="on" class="d-flex avatar-menu">
+      <div v-on="on" class="d-flex avatar-menu">
         <v-btn tile class="main-button" color="tertiary">
           {{ labelText }}
           <v-icon right dark color="#005587"> {{ iconType }} </v-icon>
         </v-btn>
-      </span>
+      </div>
     </template>
     <v-card class="mx-auto">
       <v-list min-width="300" max-width="300" tile>

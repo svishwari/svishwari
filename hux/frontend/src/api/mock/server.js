@@ -7,16 +7,19 @@ import seeds from "./seeds"
 
 //factories
 import destinationFactory from "./factories/destination"
+import engagementFactory from "./factories/engagement"
 import dataSourcesFactory from "./factories/dataSources"
 
 export function makeServer({ environment = "development" } = {}) {
   const models = {
     destination: Model,
+    engagement: Model,
     dataSource: Model,
   }
 
   const factories = {
     destination: Factory.extend(destinationFactory),
+    engagement: Factory.extend(engagementFactory),
     dataSource: Factory.extend(dataSourcesFactory),
   }
 
