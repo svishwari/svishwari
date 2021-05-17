@@ -5,70 +5,126 @@
         <breadcrumb
           :items="[
             {
-              text: 'Models',
-              disabled: false,
+              text: $options.name,
               icon: 'mdi-tune-vertical-variant',
             },
           ]"
         />
       </template>
     </page-header>
-    <v-row class="pa-14">
-      <DescriptiveCard
-        icon="model-unsubscribe"
-        title="Propensity to Unsubscribe"
-        description="Propensity of a customer making a purchase after receiving an email."
-      >
-        <template slot="top">
-          <Status status="pending" collapsed class="d-flex" />
-        </template>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
 
-        <template slot="default">
-          <p class="text-caption gray--text">Sarah Miller</p>
+    <v-row class="pa-14" v-if="!loading">
+      <template v-if="hasModels">
+        <DescriptiveCard
+          v-for="model in models"
+          :key="model.id"
+          :icon="model.type || 'model-unsubscribe'"
+          :title="model.name"
+          :description="model.description"
+          class="mr-10"
+        >
+          <template slot="top">
+            <Status :status="model.status" collapsed class="d-flex" />
+          </template>
 
-          <div class="d-flex justify-center mb-6">
-            <CardStat label="Version" value="0.02" stat-class="border-0">
-              <div class="mb-3">
-                Trained date<br />
-                12/22/2021 at 12:45pm
-              </div>
-              <div class="mb-3">
-                Fulcrum date<br />
-                12/20/2021
-              </div>
-              <div class="mb-3">
-                Lookback period (days)<br />
-                365
-              </div>
-              <div>
-                Lookback period (days)<br />
-                60
-              </div>
-            </CardStat>
-            <CardStat label="Last trained" value="2 hrs ago">12:45pm</CardStat>
-          </div>
-        </template>
-      </DescriptiveCard>
+          <template slot="default">
+            <p class="text-caption gray--text">
+              {{ model.owner }}
+            </p>
+
+            <div class="d-flex justify-center mb-6">
+              <CardStat
+                label="Version"
+                :value="model.latest_version"
+                stat-class="border-0"
+              >
+                <div class="mb-3">
+                  Trained date<br />
+                  {{ model.last_trained }}
+                </div>
+                <div class="mb-3">
+                  Fulcrum date<br />
+                  {{ model.fulcrum_date }}
+                </div>
+                <div class="mb-3">
+                  Lookback period (days)<br />
+                  {{ model.lookback_window }}
+                </div>
+                <div>
+                  Prediction period (days)<br />
+                  {{ model.prediction_window }}
+                </div>
+              </CardStat>
+              <CardStat label="Last trained" value="2 hrs ago">
+                {{ model.last_trained }}
+              </CardStat>
+            </div>
+          </template>
+        </DescriptiveCard>
+      </template>
+
+      <template v-else>
+        <EmptyPage>
+          <template v-slot:icon> mdi-alert-circle-outline </template>
+          <template v-slot:title> Oops! There’s nothing here yet </template>
+          <template v-slot:subtitle>
+            Our team is still working hard activating your models. But they
+            should be up and running soon! Please be patient in the meantime!
+          </template>
+        </EmptyPage>
+      </template>
     </v-row>
   </div>
 </template>
 
 <script>
-import PageHeader from "@/components/PageHeader"
+import { mapGetters, mapActions } from "vuex"
 import Breadcrumb from "@/components/common/Breadcrumb"
-import Status from "@/components/common/Status"
-import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import CardStat from "@/components/common/Cards/Stat"
+import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
+import EmptyPage from "@/components/common/EmptyPage"
+import PageHeader from "@/components/PageHeader"
+import Status from "@/components/common/Status"
 
 export default {
-  name: "models",
+  name: "Models",
 
   components: {
-    PageHeader,
     Breadcrumb,
-    Status,
-    DescriptiveCard,
     CardStat,
+    DescriptiveCard,
+    EmptyPage,
+    PageHeader,
+    Status,
+  },
+
+  data() {
+    return {
+      loading: false,
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      models: "models/list",
+    }),
+
+    hasModels() {
+      return this.models.length ? Object.entries(this.models[0]).length : false
+    },
+  },
+
+  methods: {
+    ...mapActions({
+      getModels: "models/getAll",
+    }),
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getModels()
+    this.loading = false
   },
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="descriptive-card align-center text-center rounded-lg"
+    class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
     :disabled="disabled"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
