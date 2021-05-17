@@ -78,6 +78,7 @@ DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful"
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed"
+DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"

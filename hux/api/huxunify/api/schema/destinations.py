@@ -152,12 +152,3 @@ class DestinationConstants(Schema):
 
     Facebook = fields.Nested(FacebookAuthConstants)
     SFMC = fields.Nested(SFMCAuthConstants)
-
-
-class DestinationValidationSchema(Schema):
-    """
-    Destination validation schema class
-    """
-
-    destination_type = fields.String()
-    authentication_details = fields.Field()

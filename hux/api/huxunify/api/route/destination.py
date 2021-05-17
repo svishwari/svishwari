@@ -25,7 +25,6 @@ from huxunify.api.schema.destinations import (
     DestinationPutSchema,
     DestinationPostSchema,
     DestinationConstants,
-    DestinationValidationSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
@@ -512,10 +511,18 @@ class DestinationValidatePostView(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Validated destination successfully."
+            "description": "Validated destination successfully.",
+            "schema": {
+                "example": {
+                    "message": "Destination is validated successfully"
+                },
+            },
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to validate the destination.",
+            "schema": {
+                "example": {"message": "Destination can not be validated"},
+            },
         },
     }
 
@@ -527,12 +534,13 @@ class DestinationValidatePostView(SwaggerView):
 
         ---
         Returns:
-            Tuple[dict, int]: Message indicating connection success/failure, HTTP Status.
+            Tuple[dict, int]: Message indicating connection
+                            success/failure, HTTP Status.
 
         """
 
         try:
-            body = DestinationValidationSchema().load(request.get_json())
+            body = DestinationPostSchema().load(request.get_json())
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
@@ -562,6 +570,10 @@ class DestinationValidatePostView(SwaggerView):
                         ),
                     },
                 )
+            else:
+                return {
+                    "message": api_c.DESTINATION_NOT_SUPPORTED
+                }, HTTPStatus.BAD_REQUEST
             # TODO : Add support for other connectors like SFMC
             if destination_connector.check_connection():
                 return {
