@@ -11,6 +11,7 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.utils import name_exists
 
 
 @retry(
@@ -41,6 +42,15 @@ def set_engagement(
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
+
+    if name_exists(
+        database,
+        db_c.DATA_MANAGEMENT_DATABASE,
+        db_c.ENGAGEMENTS_COLLECTION,
+        db_c.ENGAGEMENT_NAME,
+        name,
+    ):
+        raise de.DuplicateName(name)
 
     # TODO - implement after HUS-254 is done to grab user/okta_id
     user_id = ObjectId()
