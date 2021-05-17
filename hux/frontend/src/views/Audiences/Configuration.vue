@@ -164,7 +164,6 @@
       </HuxFooter>
 
       <drawer v-model="drawer">
-
         <template v-slot:header-left>
           <div class="d-flex align-baseline" v-if="e1 == 1">
             <h5 class="text-h5 font-weight-regular pr-2">
@@ -174,7 +173,9 @@
           <div class="d-flex align-baseline" v-if="e1 == 2">
             <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
               <Logo :type="selectedDestination.type" />
-              <div class="pl-2 font-weight-regular">{{ selectedDestination.name }}</div>
+              <div class="pl-2 font-weight-regular">
+                {{ selectedDestination.name }}
+              </div>
             </h5>
           </div>
         </template>
@@ -224,7 +225,7 @@
 
         <template v-slot:footer-left>
           <div class="d-flex align-baseline" v-if="e1 == 1">
-           {{ destinations.length }} results
+            {{ destinations.length }} results
           </div>
           <div class="d-flex align-baseline" v-if="e1 == 2">
             <huxButton
@@ -238,7 +239,6 @@
             ></huxButton>
           </div>
         </template>
-
       </drawer>
     </div>
   </div>
