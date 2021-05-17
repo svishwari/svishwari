@@ -6,11 +6,18 @@ from unittest import TestCase, mock
 import mongomock
 from bson import ObjectId
 
-import huxunifylib.database.delivery_platform_management as dpm
-import huxunifylib.database.audience_management as am
-import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.delivery_platform_management import (
+    set_delivery_platform,
+    get_delivery_job_status,
+    set_connection_status,
+)
+from huxunifylib.database.audience_management import create_audience
+from huxunifylib.database.data_management import (
+    set_data_source,
+    set_ingestion_job,
+)
 from huxunifylib.database.audience_data_management_util import (
     update_audience_doc,
 )
@@ -71,7 +78,7 @@ class CourierTest(TestCase):
             (api_c.SFMC_NAME, self.auth_details_sfmc),
         ]:
             # TODO - remove when we remove delivery-platform types
-            destination_doc = dpm.set_delivery_platform(
+            destination_doc = set_delivery_platform(
                 self.database,
                 destination[0],
                 destination[0],
@@ -82,7 +89,7 @@ class CourierTest(TestCase):
             self.assertIsNotNone(destination_doc)
 
             # set status
-            destination_doc = dpm.set_connection_status(
+            destination_doc = set_connection_status(
                 self.database, destination_doc[c.ID], c.STATUS_SUCCEEDED
             )
             self.assertEqual(
@@ -92,7 +99,7 @@ class CourierTest(TestCase):
             destinations.append(destination_doc)
 
         # create first audience
-        self.audience_one = am.create_audience(
+        self.audience_one = create_audience(
             self.database,
             self._setup_ingestion_job("ds1")[c.ID],
             "audience one",
@@ -101,7 +108,7 @@ class CourierTest(TestCase):
         self.assertIsNotNone(self.audience_one)
 
         # create second audience
-        self.audience_two = am.create_audience(
+        self.audience_two = create_audience(
             self.database,
             self._setup_ingestion_job("ds2")[c.ID],
             "audience two",
@@ -166,10 +173,8 @@ class CourierTest(TestCase):
             None,
         ]
 
-        data_source_doc = dm.set_data_source(
-            self.database, *data_source_params
-        )
-        ingestion_job_doc = dm.set_ingestion_job(
+        data_source_doc = set_data_source(self.database, *data_source_params)
+        ingestion_job_doc = set_ingestion_job(
             self.database, data_source_doc[c.ID]
         )
         return ingestion_job_doc
@@ -263,7 +268,7 @@ class CourierTest(TestCase):
                 self.assertEqual(self.database, batch_destination.database)
 
                 # validate the audience delivery job id exists
-                audience_delivery_status = dpm.get_delivery_job_status(
+                audience_delivery_status = get_delivery_job_status(
                     self.database, batch_destination.audience_delivery_job_id
                 )
                 self.assertEqual(audience_delivery_status, c.STATUS_PENDING)
