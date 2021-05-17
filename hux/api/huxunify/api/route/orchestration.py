@@ -23,10 +23,14 @@ from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 
 
 # setup the orchestration blueprint
-orchestration_bp = Blueprint(api_c.ORCHESTRATION_ENDPOINT, import_name=__name__)
+orchestration_bp = Blueprint(
+    api_c.ORCHESTRATION_ENDPOINT, import_name=__name__
+)
 
 
-@add_view_to_blueprint(orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView")
+@add_view_to_blueprint(
+    orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
+)
 class AudienceView(SwaggerView):
     """
     Audience view class
@@ -37,7 +41,9 @@ class AudienceView(SwaggerView):
             "description": "List of all audiences",
             "schema": {"type": "array", "items": AudienceGetSchema},
         },
-        HTTPStatus.BAD_REQUEST.value: {"description": "Failed to get all audience."},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all audience."
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
@@ -54,10 +60,11 @@ class AudienceView(SwaggerView):
         audiences = orchestration_management.get_all_audiences(get_db_client())
         for audience in audiences:
             if audience["destinations"] is not None:
+                object_ids = [ObjectId(x) for x in audience["destinations"]]
                 audience[
                     "destinations"
-                ] = destination_management.get_delivery_platforms(
-                    get_db_client(), audience["destinations"]
+                ] = destination_management.get_delivery_platforms_by_id(
+                    get_db_client(), object_ids
                 )
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         return (
@@ -116,11 +123,17 @@ class AudienceGetView(SwaggerView):
         )
 
         if audience["destinations"] is not None:
-            audience["destinations"] = destination_management.get_delivery_platforms(
-                get_db_client(), audience["destinations"]
+            object_ids = [ObjectId(x) for x in audience["destinations"]]
+            audience[
+                "destinations"
+            ] = destination_management.get_delivery_platforms_by_id(
+                get_db_client(), object_ids
             )
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-        return (AudienceGetSchema(unknown=INCLUDE).dump(audience), HTTPStatus.OK)
+        return (
+            AudienceGetSchema(unknown=INCLUDE).dump(audience),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -199,7 +212,6 @@ class AudiencePostView(SwaggerView):
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body.get(api_c.AUDIENCE_FILTERS, None),
             destination_ids=body.get(api_c.AUDIENCE_DESTINATIONS, None),
-            engagement_ids=body.get(api_c.AUDIENCE_ENGAGEMENTS, None),
             user_id=user_id,
         )
 
@@ -296,7 +308,6 @@ class AudiencePutView(SwaggerView):
             name=body.get(api_c.AUDIENCE_NAME, None),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS, None),
             destination_ids=body.get(api_c.AUDIENCE_DESTINATIONS, None),
-            engagement_ids=body.get(api_c.AUDIENCE_ENGAGEMENTS, None),
             user_id=user_id,
         )
 
