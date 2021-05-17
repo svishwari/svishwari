@@ -36,16 +36,16 @@
             <div class="d-flex justify-center mb-6">
               <CardStat
                 label="Version"
-                :value="model.latest_version"
+                :value="model.latest_version | Empty"
                 stat-class="border-0"
               >
                 <div class="mb-3">
                   Trained date<br />
-                  {{ model.last_trained }}
+                  {{ model.last_trained | Date | Empty }}
                 </div>
                 <div class="mb-3">
                   Fulcrum date<br />
-                  {{ model.fulcrum_date }}
+                  {{ model.fulcrum_date | Date | Empty }}
                 </div>
                 <div class="mb-3">
                   Lookback period (days)<br />
@@ -56,8 +56,11 @@
                   {{ model.prediction_window }}
                 </div>
               </CardStat>
-              <CardStat label="Last trained" value="2 hrs ago">
-                {{ model.last_trained }}
+              <CardStat
+                label="Last trained"
+                :value="model.last_trained | Date('relative') | Empty"
+              >
+                {{ model.last_trained | Date | Empty }}
               </CardStat>
             </div>
           </template>
