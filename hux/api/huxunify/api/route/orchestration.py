@@ -118,6 +118,12 @@ class AudienceGetView(SwaggerView):
 
         """
 
+        try:
+            # validate the id
+            ObjectId(audience_id)
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
+
         audience = orchestration_management.get_audience(
             get_db_client(), ObjectId(audience_id)
         )
