@@ -249,7 +249,12 @@ def get_delivery_route(
             raise Exception(
                 "Some of the provided audiences are not in the engagement."
             )
-    audience_ids = engagement[db_const.AUDIENCES]
+        # grab matching audiences
+        audience_ids = [
+            a for a in engagement[db_const.AUDIENCES] if a in audience_ids
+        ]
+    else:
+        audience_ids = engagement[db_const.AUDIENCES]
 
     # build route
     delivery_route = {}
@@ -265,7 +270,7 @@ def get_delivery_route(
         destinations = audience[db_const.DESTINATIONS]
 
         if destination_ids:
-            # grab matches destinations
+            # grab matching destinations
             destination_ids = [d for d in destinations if d in destination_ids]
         else:
             destination_ids = destinations
