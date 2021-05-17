@@ -11,8 +11,8 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job_status,
 )
+from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
-from huxunify.api.route.utils import get_db_client
 from huxunify.api import config, constants as api_const
 
 
@@ -201,64 +201,79 @@ def get_destination_config(
     )
 
 
-class Courier:
+def get_engagement(db_client: MongoClient, engagement_id: ObjectId) -> dict:
+    """Temp get engagement.
+
+    Args:
+        database (MongoClient): Mongo database client.
+        engagement_id (ObjectId): The engagement ObjectId.
+
+    Returns:
+        dict: Returns an engagement.
     """
-    Courier that delivers audiences. Tips optional.
+    # TODO - set engagement object when engagements are in Database Library
+    # simulate for now
+    engagements = db_client[db_const.DATA_MANAGEMENT_DATABASE]["engagements"]
+    return engagements.find_one(engagement_id)
+
+
+def get_delivery_route(
+    database: MongoClient,
+    engagement_id: ObjectId,
+    audience_ids: list = None,
+    destination_ids: list = None,
+) -> dict:
+    """Deliver engagements
+
+    Args:
+        database (MongoClient): Mongo database client.
+        engagement_id (ObjectId): The engagement ObjectId.
+        audience_ids (list): Optional Audience ID list.
+        destination_ids (list): Optional Destination ID list.
+
+    Returns:
+        dict: Returns the delivery route.
     """
 
-    def __init__(
-        self, engagement_id: ObjectId, db_client=get_db_client()
-    ) -> None:
-        """Init method for the courier object
+    if not ObjectId.is_valid(engagement_id):
+        raise Exception("Invalid engagement id.")
 
-        Args:
-            engagement_id (ObjectId): The engagement ObjectId.
-            db_client (MongoClient): Mongo database client.
+    # get the engagements
+    engagement = get_engagement(database, engagement_id)
+    if not engagement[db_const.AUDIENCES]:
+        raise Exception("No audiences present on the engagement.")
 
-        Returns:
+    # ensure provided audiences are in the engagement
+    if audience_ids:
+        if not set(audience_ids).issubset(engagement[db_const.AUDIENCES]):
+            raise Exception(
+                "Some of the provided audiences are not in the engagement."
+            )
+    audience_ids = engagement[db_const.AUDIENCES]
 
-        """
-        self.db_client = db_client
-        self.engagement_id = engagement_id
+    # build route
+    delivery_route = {}
+    for audience_id in audience_ids:
+        # get the audience object
+        delivery_route[audience_id] = []
 
-    def get_delivery_route(self, audience_ids: list = None) -> dict:
-        """Set up the delivery route for an engagement's audiences.
+        # process each destination listed in the audience
+        audience = get_audience(database, audience_id)
+        if db_const.DESTINATIONS not in audience:
+            continue
 
-        Args:
-            audience_ids (list): List of audience IDs.
+        destinations = audience[db_const.DESTINATIONS]
 
-        Returns:
-            dict: Returns the delivery route.
-        """
+        if destination_ids:
+            # grab matches destinations
+            destination_ids = [d for d in destinations if d in destination_ids]
+        else:
+            destination_ids = destinations
 
-        # use audiences unless passed in
-        if not audience_ids:
-            # TODO - set engagement object when engagements are in Database Library
-            # simulate for now
-            engagements = self.db_client[db_const.DATA_MANAGEMENT_DATABASE][
-                "engagements"
-            ]
-            audience_ids = engagements.find_one(self.engagement_id)[
-                db_const.AUDIENCES
-            ]
+        # assign the destinations
+        delivery_route[audience_id] = destination_ids
 
-        # TODO - add database function to simplify getting an audience.
-        audiences = self.db_client[db_const.DATA_MANAGEMENT_DATABASE][
-            db_const.AUDIENCES
-        ]
-
-        # prep all the audiences for delivery
-        delivery_route = {}
-        for audience_id in audience_ids:
-            # get the audience object
-            audience = audiences.find_one(audience_id)
-            delivery_route[audience_id] = []
-
-            # process each destination listed in the audience
-            for destination_id in audience[db_const.DESTINATIONS]:
-                delivery_route[audience_id].append(destination_id)
-
-        return delivery_route
+    return delivery_route
 
 
 if __name__ == "__main__":

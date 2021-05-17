@@ -13,18 +13,11 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_job_status,
     set_connection_status,
 )
-from huxunifylib.database.audience_management import create_audience
-from huxunifylib.database.data_management import (
-    set_data_source,
-    set_ingestion_job,
-)
-from huxunifylib.database.audience_data_management_util import (
-    update_audience_doc,
-)
+from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.courier import (
-    Courier,
+    get_delivery_route,
     map_destination_credentials_to_dict,
     get_destination_config,
 )
@@ -38,9 +31,6 @@ class CourierTest(TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
         """Setup method for unit tests.
-        This setup method needs to be reduced, at time of writing it is clear
-        we have a few backlog items that need to be addressed, so I have flagged
-        as TODOs as relevant tickets will be created for each.
 
         Args:
 
@@ -98,45 +88,21 @@ class CourierTest(TestCase):
 
             destinations.append(destination_doc)
 
+        destination_ids = [d[c.ID] for d in destinations]
+
         # create first audience
         self.audience_one = create_audience(
-            self.database,
-            self._setup_ingestion_job("ds1")[c.ID],
-            "audience one",
-            [],
+            self.database, "audience one", [], destination_ids
         )
         self.assertIsNotNone(self.audience_one)
 
         # create second audience
         self.audience_two = create_audience(
-            self.database,
-            self._setup_ingestion_job("ds2")[c.ID],
-            "audience two",
-            [],
+            self.database, "audience two", [], destination_ids
         )
         self.assertIsNotNone(self.audience_two)
 
-        # TODO - assign the audiences to the destinations
-        # need to discuss this one, I don't know where we
-        # assign this currently, we have to assign it.
-        destination_ids = [d[c.ID] for d in destinations]
-        update_dict = {c.DESTINATIONS: destination_ids}
-        self.audience_one = update_audience_doc(
-            self.database, self.audience_one[c.ID], update_dict
-        )
-        self.assertListEqual(
-            self.audience_one[c.DESTINATIONS], destination_ids
-        )
-
-        self.audience_two = update_audience_doc(
-            self.database, self.audience_two[c.ID], update_dict
-        )
-        self.assertListEqual(
-            self.audience_two[c.DESTINATIONS], destination_ids
-        )
-
         # TODO - set engagement object when engagements are in Database Library
-        # simulate for now
         engagements = self.database[c.DATA_MANAGEMENT_DATABASE]["engagements"]
 
         # define a sample engagement, with prepopulated engagements
@@ -154,30 +120,6 @@ class CourierTest(TestCase):
         for key, value in engagement_doc.items():
             self.assertIn(key, engagement)
             self.assertEqual(value, engagement[key])
-
-    def _setup_ingestion_job(self, data_source_name: str) -> dict:
-        """Setup ingestion jobs so we can test audience delivery
-
-        Args:
-            data_source_name (str): Name of a data source.
-
-        Returns:
-           dict: Return an ingestion job dict.
-        """
-        data_source_params = [
-            data_source_name,
-            1,
-            "CSV",
-            "S3",
-            None,
-            None,
-        ]
-
-        data_source_doc = set_data_source(self.database, *data_source_params)
-        ingestion_job_doc = set_ingestion_job(
-            self.database, data_source_doc[c.ID]
-        )
-        return ingestion_job_doc
 
     def test_map_destination_credentials(self):
         """Test mapping of destination credentials for submitting to AWS Batch.
@@ -208,37 +150,66 @@ class CourierTest(TestCase):
             cred_dict, destination[api_c.AUTHENTICATION_DETAILS]
         )
 
-    def test_courier_init(self):
-        """Test Courier class init
+    def test_get_delivery_route(self):
+        """Test get delivery route
 
         Args:
 
         Returns:
 
         """
-        courier = Courier(self.engagement_id, self.database)
-        self.assertIsInstance(courier, Courier)
-        self.assertEqual(courier.engagement_id, self.engagement_id)
-        self.assertEqual(courier.db_client, self.database)
 
-    def test_courier_delivery_route(self):
-        """Test Courier get delivery route
+        delivery_route = get_delivery_route(self.database, self.engagement_id)
 
-        Args:
-
-        Returns:
-
-        """
-        courier = Courier(self.engagement_id, self.database)
-        self.assertIsInstance(courier, Courier)
-
-        delivery_route = courier.get_delivery_route()
         self.assertIsNotNone(delivery_route)
 
         expected_route = {
             self.audience_one[c.ID]: self.audience_one[c.DESTINATIONS],
             self.audience_two[c.ID]: self.audience_two[c.DESTINATIONS],
         }
+        self.assertDictEqual(expected_route, delivery_route)
+
+    def test_get_delivery_route_audience(self):
+        """Test get delivery route with specific audience
+
+        Args:
+
+        Returns:
+
+        """
+
+        delivery_route = get_delivery_route(
+            self.database, self.engagement_id, [self.audience_one[c.ID]]
+        )
+
+        self.assertIsNotNone(delivery_route)
+
+        expected_route = {
+            self.audience_one[c.ID]: self.audience_one[c.DESTINATIONS]
+        }
+        self.assertDictEqual(expected_route, delivery_route)
+
+    def test_get_delivery_route_destination(self):
+        """Test get delivery route with specific destination
+
+        Args:
+
+        Returns:
+
+        """
+
+        destination_id = self.audience_one[c.DESTINATIONS][0]
+
+        delivery_route = get_delivery_route(
+            self.database,
+            self.engagement_id,
+            [self.audience_one[c.ID]],
+            [destination_id],
+        )
+
+        self.assertIsNotNone(delivery_route)
+
+        expected_route = {self.audience_one[c.ID]: [destination_id]}
         self.assertDictEqual(expected_route, delivery_route)
 
     def test_destination_batch_init(self):
@@ -249,10 +220,7 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        courier = Courier(self.engagement_id, self.database)
-        self.assertIsInstance(courier, Courier)
-
-        delivery_route = courier.get_delivery_route()
+        delivery_route = get_delivery_route(self.database, self.engagement_id)
         self.assertIsNotNone(delivery_route)
 
         for audience_id, destination_ids in delivery_route.items():
@@ -281,10 +249,7 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        courier = Courier(self.engagement_id, self.database)
-        self.assertIsInstance(courier, Courier)
-
-        delivery_route = courier.get_delivery_route()
+        delivery_route = get_delivery_route(self.database, self.engagement_id)
         self.assertIsNotNone(delivery_route)
 
         # walk the delivery route
@@ -317,10 +282,7 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        courier = Courier(self.engagement_id, self.database)
-        self.assertIsInstance(courier, Courier)
-
-        delivery_route = courier.get_delivery_route()
+        delivery_route = get_delivery_route(self.database, self.engagement_id)
         self.assertIsNotNone(delivery_route)
 
         # walk the delivery route
