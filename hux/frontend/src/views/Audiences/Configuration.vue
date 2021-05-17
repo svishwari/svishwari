@@ -153,12 +153,18 @@
 
       <drawer v-model="destinationDrawer.insideFlow">
         <template v-slot:header-left>
-          <div class="d-flex align-baseline" v-if="destinationDrawer.viewStep == 1">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
             <h5 class="text-h5 font-weight-regular pr-2">
               Select a destination to add
             </h5>
           </div>
-          <div class="d-flex align-baseline" v-if="destinationDrawer.viewStep == 2">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
             <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
               <Logo :type="selectedDestination.type" />
               <div class="pl-2 font-weight-regular">
@@ -199,7 +205,10 @@
         </template>
 
         <template v-slot:footer-right>
-          <div class="d-flex align-baseline" v-if="destinationDrawer.viewStep == 2">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
             <huxButton
               ButtonText="Add"
               variant="primary"
@@ -212,10 +221,16 @@
         </template>
 
         <template v-slot:footer-left>
-          <div class="d-flex align-baseline" v-if="destinationDrawer.viewStep == 1">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
             {{ destinations.length }} results
           </div>
-          <div class="d-flex align-baseline" v-if="destinationDrawer.viewStep == 2">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
             <huxButton
               ButtonText="Back"
               variant="white"
