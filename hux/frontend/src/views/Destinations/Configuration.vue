@@ -2,7 +2,9 @@
   <div class="add-destination--wrap font-weight-regular">
     <div class="mb-10">
       <h4 class="fs-24 font-weight-light neroBlack--text">Add a destination</h4>
-      <p class="neroBlack--text">Please fill out the information below to connect a new destination.</p>
+      <p class="neroBlack--text">
+        Please fill out the information below to connect a new destination.
+      </p>
     </div>
 
     <label class="d-flex mb-2 neroBlack--text">Select a destination</label>

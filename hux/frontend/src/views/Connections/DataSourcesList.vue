@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapGetters } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Status from "@/components/common/Status"
@@ -71,13 +71,6 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
-    ...mapActions({
-      getDataSources: "dataSources/getAll",
-    }),
-  },
-
-  async mounted() {
-    await this.getDataSources()
   },
 }
 </script>
