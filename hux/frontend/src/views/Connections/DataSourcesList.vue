@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-cloud-download-outline </v-icon>
-      <h5 class="font-weight-light fs-18 ml-2 mt-1">Data Sources</h5>
+      <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <v-icon @click="toggleDrawer" class="ml-2 add-icon" color="primary">
         mdi-plus-circle
       </v-icon>

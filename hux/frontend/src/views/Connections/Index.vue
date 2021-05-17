@@ -15,7 +15,7 @@
     </v-row>
     <div class="empty-state-wrap text-center" v-else>
       <v-icon color="secondary" x-large> mdi-alert-circle-outline </v-icon>
-      <div class="fs-21 font-weight-light">Oops! There’s nothing here yet</div>
+      <div class="text-h3">Oops! There’s nothing here yet</div>
       <div class="font-weight-regular text-h6 my-2">
         To create a connection, you need to add a destination or a data source!
         <br />
