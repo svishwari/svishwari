@@ -5,7 +5,7 @@
         <breadcrumb :items="breadcrumbs" />
       </template>
     </page-header>
-    <v-row class="pa-10" v-if="isSomethingAdded">
+    <v-row class="pa-10" v-if="isConnectionStarted">
       <v-col cols="6">
         <data-sources-list></data-sources-list>
       </v-col>
@@ -79,7 +79,7 @@ export default {
       destinations: "destinations/list",
     }),
 
-    isSomethingAdded() {
+    isConnectionStarted() {
       const availableDataSources = this.dataSources.filter(
         (each) => each.is_added
       )
