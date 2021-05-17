@@ -1,25 +1,32 @@
 <template>
   <v-card
     class="metric-card-wrapper"
+    :class="{ 'no-click': !interactable }"
     @click="$emit('click')"
     :disabled="!active"
     :width="width"
     :height="height"
     elevation="0"
+    :ripple="interactable"
   >
     <v-list-item three-line>
       <v-list-item-content>
         <v-list-item-title
           class="item-headline mt-1"
-          v-bind:class="active ? 'primary--text ' : 'gray--text '"
+          v-bind:class="interactable ? 'primary--text ' : 'gray--text '"
         >
           {{ title }}
         </v-list-item-title>
-        <v-list-item-subtitle class="item-subtitle mb-3 neroBlack--text">
+        <slot name="extra-item"></slot>
+        <v-list-item-subtitle
+          class="item-subtitle mb-3 neroBlack--text"
+          v-if="subtitle"
+        >
           {{ subtitle }}
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-icon color="zircon" x-large> {{ icon }} </v-icon>
+      <slot name="short-name"></slot>
     </v-list-item>
   </v-card>
 </template>
@@ -43,7 +50,6 @@ export default {
     subtitle: {
       type: String,
       required: false,
-      default: "Info card description",
     },
 
     active: {
@@ -51,11 +57,19 @@ export default {
       required: false,
       default: true,
     },
+
+    interactable: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+
     width: {
-      type: Number,
+      type: [String, Number],
       required: false,
       default: 135,
     },
+
     height: {
       type: Number,
       required: false,
@@ -68,6 +82,9 @@ export default {
 <style lang="scss" scoped>
 .metric-card-wrapper {
   border: 1px solid var(--v-zircon-base);
+  &.no-click {
+    background-color: transparent;
+  }
   .item-headline {
     font-size: 12px;
   }
@@ -75,7 +92,7 @@ export default {
     font-weight: 400;
   }
   &.v-card--disabled {
-    background-color: unset;
+    background-color: transparent;
     .v-list-item__title {
       color: var(--v-gray-base);
     }

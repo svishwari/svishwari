@@ -1,16 +1,18 @@
 <template>
   <svg-as-component
-    :src="`assets/logos/${type}`"
+    :src="`assets/icons/${type}`"
     :width="size"
     :height="size"
+    :color="theme[color]"
   />
 </template>
 
 <script>
 import svgAsComponent from "./SVG"
+import theme from "@/plugins/theme"
 
 export default {
-  name: "logo",
+  name: "icon",
 
   components: {
     svgAsComponent,
@@ -25,8 +27,18 @@ export default {
     size: {
       type: Number,
       required: false,
-      default: 24,
+      default: 60,
+    },
+
+    color: {
+      type: String,
+      required: false,
+      default: "primary",
     },
   },
+
+  data: () => ({
+    theme: theme,
+  }),
 }
 </script>
