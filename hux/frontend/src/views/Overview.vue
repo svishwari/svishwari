@@ -141,7 +141,7 @@ export default {
 <style lang="scss" scoped>
 .overview-wrap {
   .quickAccessMenu {
-    background: #ecf4f9;
+    background: var(--v-aliceBlue-base);
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
