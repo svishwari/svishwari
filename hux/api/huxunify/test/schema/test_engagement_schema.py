@@ -2,7 +2,6 @@
 """
 Purpose of this file is to test the engagement schemas
 """
-
 from unittest import TestCase
 
 from huxunify.api.schema.engagement import (
@@ -30,6 +29,7 @@ class EngagementSchemaTest(TestCase):
             api_c.ENGAGEMENT_AUDIENCES: [],
             api_c.ENGAGEMENT_STATUS: api_c.ENGAGEMENT_STATUS_ACTIVE,
             api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+            api_c.ENABLED: True,
         }
 
         assert EngagementGetSchema().validate(doc) == {}
@@ -82,7 +82,9 @@ class EngagementSchemaTest(TestCase):
 
         assert EngagementGetSchema().validate(doc) != {}
 
-    def test_unsuccessful_engagement_get_schema_missing_audiences(self) -> None:
+    def test_unsuccessful_engagement_get_schema_missing_audiences(
+        self,
+    ) -> None:
         """Test unsuccessful EngagementGetSchema Serialization
 
         Returns:
@@ -95,6 +97,7 @@ class EngagementSchemaTest(TestCase):
             api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
             api_c.ENGAGEMENT_STATUS: api_c.ENGAGEMENT_STATUS_ACTIVE,
             api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+            api_c.ENABLED: True
         }
 
         assert EngagementGetSchema().validate(doc) != {}
