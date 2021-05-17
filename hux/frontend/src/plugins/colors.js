@@ -15,4 +15,9 @@ export default {
   neroBlack: "#1e1e1e",
   gray: "4F4F4F",
   columbiaBlue: "#A0DCFF",
+  greenLight: "#86BC25",
+  pink: "#b54acf",
+  pinkLittleDark: "#f03bc8",
+  darkGreyHeading: "#333333",
+  lightGreyAnotherVariant: "#757b7b",
 }

@@ -129,6 +129,46 @@ class DestinationGetView(SwaggerView):
 
 
 @add_view_to_blueprint(
+    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView"
+)
+class DestinationsView(SwaggerView):
+    """
+    Destinations view class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of all destinations",
+            "schema": {"type": "array", "items": DestinationGetSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all destinations."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @marshal_with(DestinationGetSchema(many=True))
+    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+        """Retrieves all destinations.
+
+        ---
+        Returns:
+            Tuple[list, int]: list of destinations, HTTP status.
+
+        """
+
+        destinations = destination_management.get_all_delivery_platforms(
+            get_db_client()
+        )
+
+        return (
+            destinations,
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
     dest_bp,
     f"{api_c.DESTINATIONS_ENDPOINT}",
     "DestinationPostView",
@@ -347,42 +387,6 @@ class DestinationPutView(SwaggerView):
                 title=HTTPStatus.BAD_REQUEST.description,
                 detail=api_c.CANNOT_UPDATE_DESTINATIONS,
             ) from exc
-
-
-@add_view_to_blueprint(
-    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView"
-)
-class DestinationsView(SwaggerView):
-    """
-    Multiple Destinations view class
-    """
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "List of destinations.",
-            "schema": {"type": "array", "items": DestinationGetSchema},
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all destinations."
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DESTINATIONS_TAG]
-
-    @marshal_with(DestinationGetSchema(many=True))
-    def get(self) -> Tuple[list, int]:
-        """Retrieves all the destinations.
-
-        ---
-        Returns:
-            Tuple[list, int]: list of destinations, HTTP status.
-
-        """
-
-        return (
-            destination_management.get_all_delivery_platforms(get_db_client()),
-            HTTPStatus.OK,
-        )
 
 
 @add_view_to_blueprint(

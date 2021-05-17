@@ -25,6 +25,8 @@ SFMC_ACCOUNT_ID = "sfmc_account_id"
 SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
+SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
+SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -43,6 +45,8 @@ DESTINATION_CONSTANTS = {
         SFMC_AUTH_BASE_URI: "Auth Base URI",
         SFMC_REST_BASE_URI: "REST Base URI",
         SFMC_SOAP_BASE_URI: "SOAP Base URI",
+        SFMC_PERFORMANCE_EXT_NAME: "Performance metric data extension name",
+        SFMC_PERFORMANCE_EXT_VALUES: [],
     },
 }
 

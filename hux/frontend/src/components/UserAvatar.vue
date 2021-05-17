@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import auth from "@/auth"
 import config from "@/config"
 import { mapGetters } from "vuex"
 
@@ -47,7 +46,7 @@ export default {
   },
   methods: {
     initiateLogout() {
-      auth.logout()
+      this.$auth.logout()
     },
   },
   computed: {

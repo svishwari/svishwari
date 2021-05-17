@@ -1,6 +1,15 @@
 import Vue from "vue"
 // import { getAllAudiences } from "@/api/resources/audiences"
 
+const namespaced = true
+
+const NEW_AUDIENCE = {
+  name: "",
+  engagements: [],
+  attributeRules: [],
+  destinations: [],
+}
+
 const state = {
   audiences: [
     {
@@ -399,6 +408,7 @@ const state = {
       ],
     },
   ],
+  newAudience: NEW_AUDIENCE,
 }
 
 const getters = {
@@ -407,6 +417,9 @@ const getters = {
   },
   AudienceById: (state) => (id) => {
     return state.audiences.find((audience) => audience.audienceId === id)
+  },
+  current: (state) => {
+    return state.newAudience
   },
 }
 
@@ -447,6 +460,7 @@ const actions = {
 }
 
 export default {
+  namespaced,
   state,
   getters,
   mutations,
