@@ -12,9 +12,9 @@ export default {
 
   mutations: {
     setUserProfile(state, userProfile) {
-      if(Object.keys(userProfile).length > 0) {
-      state.userProfile.firstName = userProfile.userProfile.given_name
-      state.userProfile.lastName = userProfile.userProfile.family_name
+      if (Object.keys(userProfile).length > 0) {
+        state.userProfile.firstName = userProfile.userProfile.given_name
+        state.userProfile.lastName = userProfile.userProfile.family_name
       } else {
         state.userProfile.firstName = null
         state.userProfile.lastName = null
@@ -22,9 +22,9 @@ export default {
     },
 
     setUserToken(state, token) {
-      if(Object.keys(token).length > 0) {
-      state.userProfile.token = token.accessToken.value
-      state.userProfile.idToken = token.idToken.value
+      if (Object.keys(token).length > 0) {
+        state.userProfile.token = token.accessToken.value
+        state.userProfile.idToken = token.idToken.value
       } else {
         state.userProfile.token = null
         state.userProfile.idToken = null

@@ -170,13 +170,6 @@ const routes = [
     component: Auth.handleCallback(),
   },
   {
-    path: "/logout",
-    beforeEnter(to, from, next) {
-      auth.logout()
-      next("/login")
-    },
-  },
-  {
     path: "/components",
     name: "components",
     component: () => import("@/components/common/Index"),

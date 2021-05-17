@@ -53,7 +53,7 @@ export default {
         const authStorage = JSON.parse(
           localStorage.getItem("okta-token-storage")
         )
-        const tokens = this.$store.dispatch("setUserToken", {
+        this.$store.dispatch("setUserToken", {
           accessToken: authStorage.accessToken,
           idToken: authStorage.idToken,
         })
