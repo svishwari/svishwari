@@ -130,15 +130,15 @@ export default {
     left: 24px;
     top: 126px;
     border-radius: 4px;
-    background: #ffffff;
-    border: 1px solid #d0d0ce;
+    background: var(--v-white-base);
+    border: 1px solid var(--v-lightGrey-base);
     box-sizing: border-box;
     &.active {
-      border: 1px solid #005587;
+      border: 1px solid var(--v-darkBlue-base);
     }
     .child {
       .label {
-        color: #005587;
+        color: var(--v-darkBlue-base);
       }
     }
   }
