@@ -12,7 +12,10 @@ from operator import attrgetter
 from bson import ObjectId
 from typing import Tuple, List
 from huxunifylib.database import constants as db_const
-from huxunifylib.database.delivery_platform_management import set_delivery_job, get_delivery_platform
+from huxunifylib.database.delivery_platform_management import (
+    set_delivery_job,
+    get_delivery_platform,
+)
 from huxunifylib.database.data_management import get_constant
 from huxunify.api.route.utils import get_db_client
 
@@ -20,7 +23,7 @@ from huxunify.api.route.utils import get_db_client
 # from connexion import ProblemException
 # from huxadv.util.general.const import FacebookCredentials
 # from huxadv.connectors import constants as conn_const
-# 
+#
 # from huxunifylib.database import (
 #     constants,
 #     audience_management,
@@ -28,7 +31,7 @@ from huxunify.api.route.utils import get_db_client
 #     delivery_platform_management,
 # )
 # from huxadv.connectors.aws_batch_connector import AWSBatchConnector
-# 
+#
 # from huxadv.util.general.const import (
 #     MongoDBCredentials,
 #     AudienceRouterInfrastructure,
@@ -36,7 +39,7 @@ from huxunify.api.route.utils import get_db_client
 #     MonitoringAlerting,
 # )
 # from huxadv.util.general.connector_util import get_delivery_platform_connector
-# 
+#
 # from api import const, transform_api
 # from api.controllers.util import time_diff_hours, fetch_auth_secrets
 # from api.models import (
@@ -44,8 +47,8 @@ from huxunify.api.route.utils import get_db_client
 #     AudienceDeliveryJobPost,
 # )
 # from api.controllers import util
-# 
-# 
+#
+#
 # def fetch_audience_config_dp(
 #     delivery_platform_id: ObjectId, audience_id: ObjectId
 # ) -> dict:
@@ -53,7 +56,7 @@ from huxunify.api.route.utils import get_db_client
 #     Args:
 #         delivery_platform_id (ObjectId): The ID of the delivery platform.
 #         audience_id (ObjectId): The ID of the audience.
-# 
+#
 #      Returns:
 #          dict: Retrieved audience configuration from delivery platform.
 #     """
@@ -61,13 +64,13 @@ from huxunify.api.route.utils import get_db_client
 #         database=util.get_db_client(),
 #         delivery_platform_id=delivery_platform_id,
 #     )
-# 
+#
 #     audience = audience_management.get_audience_config(
 #         database=util.get_db_client(), audience_id=audience_id
 #     )
-# 
+#
 #     auth_details_secrets = fetch_auth_secrets(delivery_platform)
-# 
+#
 #     dp_connector = get_delivery_platform_connector(
 #         platform_type=delivery_platform[constants.DELIVERY_PLATFORM_TYPE],
 #         auth_details_secrets=auth_details_secrets,
@@ -76,7 +79,7 @@ from huxunify.api.route.utils import get_db_client
 #         audience_config = dp_connector.get_audience_config(
 #             audience[constants.AUDIENCE_NAME]
 #         )
-# 
+#
 #     except HuxAdvException as exc:
 #         logging.error(
 #             "%s: [%s: %s]",
@@ -101,24 +104,24 @@ from huxunify.api.route.utils import get_db_client
 #             title=HTTPStatus.BAD_REQUEST.description,
 #             detail=f"{const.CANNOT_FETCH_AUD_CONFIG_DP_API}.",
 #         ) from exc
-# 
+#
 #     return audience_config
-# 
-# 
+#
+#
 # def get_all_audience_delivery_jobs(
 #     audience_id: str,
 # ) -> Tuple[List[AudienceDeliveryJob], HTTPStatus]:
 #     """Get all audience delivery jobs.
-# 
+#
 #     Args:
 #         audience_id (str): The ID of the audience.
-# 
+#
 #     Returns:
 #         Tuple[List[AudienceDeliveryJob], HTTPStatus]:
 #             List of audience delivery jobs, HTTP Status.
 #     """
 #     find = connexion.request.args.get("find")
-# 
+#
 #     if not find:
 #         audience_delivery_jobs = (
 #             delivery_platform_management.get_delivery_jobs(
@@ -126,7 +129,7 @@ from huxunify.api.route.utils import get_db_client
 #                 audience_id=ObjectId(audience_id),
 #             )
 #         )
-# 
+#
 #     if find == "recent":
 #         delivery_platform_ids = (
 #             delivery_platform[constants.ID]
@@ -136,7 +139,7 @@ from huxunify.api.route.utils import get_db_client
 #                 )
 #             )
 #         )
-# 
+#
 #         audience_delivery_jobs = []
 #         for delivery_platform_id in delivery_platform_ids:
 #             recent_job = (
@@ -146,12 +149,12 @@ from huxunify.api.route.utils import get_db_client
 #                     delivery_platform_id=delivery_platform_id,
 #                 )
 #             )
-# 
+#
 #             curr_time = datetime.datetime.utcnow()
-# 
+#
 #             if not recent_job:
 #                 continue
-# 
+#
 #             # fetch audience in delivery platform when the delivery job has
 #             # delivery status of "Succeeded" AND
 #             # some time has elapsed since delivering (eg. 24 hours)
@@ -168,13 +171,13 @@ from huxunify.api.route.utils import get_db_client
 #                     audience_config = fetch_audience_config_dp(
 #                         delivery_platform_id, ObjectId(audience_id)
 #                     )
-# 
+#
 #                     # check the audience status code and return the delivery
 #                     # status for the audience in the platform
 #                     status_code = audience_config[
 #                         conn_const.AUDIENCE_DELIVERY_STATUS
 #                     ][conn_const.AUDIENCE_DELIVERY_STATUS_CODE]
-# 
+#
 #                     if (
 #                         status_code
 #                         == conn_const.AUDIENCE_DELIVERY_STATUS_CODE_READY
@@ -187,7 +190,7 @@ from huxunify.api.route.utils import get_db_client
 #                                 conn_const.AUDIENCE_SIZE
 #                             ],
 #                         )
-# 
+#
 #                         status = conn_const.AUDIENCE_DELIVERY_STATUS_READY
 #                     elif (
 #                         status_code
@@ -203,40 +206,40 @@ from huxunify.api.route.utils import get_db_client
 #                         status = (
 #                             conn_const.AUDIENCE_DELIVERY_STATUS_UNAVAILABLE
 #                         )
-# 
+#
 #                     recent_job[const.AUDIENCE_DELIVERY_STATUS] = status
-# 
+#
 #             audience_delivery_jobs.append(recent_job)
-# 
+#
 #     response = [
 #         transform_api.audience_delivery_job_api(audience_delivery_job)
 #         for audience_delivery_job in audience_delivery_jobs
 #         if audience_delivery_job
 #     ]
-# 
+#
 #     return response, HTTPStatus.OK
-# 
-# 
+#
+#
 # def get_audience_delivery_job(
 #     audience_id: str, delivery_job_id: str  # pylint: disable=W0613
 # ) -> Tuple[AudienceDeliveryJob, HTTPStatus]:
 #     """Get an audience delivery job by ID.
-# 
+#
 #     Args:
 #         delivery_job_id (str): The ID of the delivery job.
-# 
+#
 #     Returns:
 #         Tuple[AudienceDeliveryJob, HTTPStatus]:
 #             Audience delivery job, HTTP Status.
 #     """
-# 
+#
 #     audience_delivery_job = delivery_platform_management.get_delivery_job(
 #         database=util.get_db_client(),
 #         delivery_job_id=ObjectId(delivery_job_id),
 #     )
-# 
+#
 #     response = transform_api.audience_delivery_job_api(audience_delivery_job)
-# 
+#
 #     return response, HTTPStatus.OK
 
 
@@ -247,12 +250,14 @@ def get_env_dict():
         **util.get_monitoring_env_dict(),
     }
 
+
 def get_env_vars():
     return {
         **util.get_mongo_db_env_dict(),
         **util.get_audience_router_env_dict(),
         **util.get_monitoring_env_dict(),
     }
+
 
 class Courier:
     """
@@ -269,7 +274,7 @@ class Courier:
         self.audience_ids = [ObjectId, ObjectId]
         self.db_client = db_client
 
-    def delivery_route(self, audience_ids: list=[]):
+    def delivery_route(self, audience_ids: list = []):
         """
         deliver
         Returns:
@@ -288,11 +293,9 @@ class Courier:
     def _process_destination(self, destination_id, audience_id):
         # assign the delivery job
         audience_delivery_job = set_delivery_job(
-            self.db_client,
-            audience_id,
-            destination_id
+            self.db_client, audience_id, destination_id
         )
-        
+
         response_set_job = transform_api.audience_delivery_job_api(
             audience_delivery_job
         )
@@ -312,14 +315,15 @@ class Courier:
             destination_id,
         )
 
-
     def _deliver(self, audience_id):
-        audience_delivery_job = set_delivery_job(self.db_client,
-            self.engagement_id, audience_id,
+        audience_delivery_job = set_delivery_job(
+            self.db_client,
+            self.engagement_id,
+            audience_id,
             delivery_platform_id=ObjectId(delivery_platform_id),
             delivery_platform_generic_campaigns=None,
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
