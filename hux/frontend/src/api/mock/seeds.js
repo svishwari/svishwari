@@ -98,6 +98,15 @@ const mailchimp = {
   name: "Mailchimp",
   type: "mailchimp",
 }
+const defaultEngagement = {
+  name: "Default engagement",
+  description: "Default Description",
+  delivery_schedule: {
+    schedule_type: "recurring",
+    start_date: "01/05/2021",
+    end_date: "01/14/2021",
+  },
+}
 
 const googleAds = {
   name: "Google Ads",
@@ -125,6 +134,8 @@ export default function (server) {
   server.create("destination", tableau)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
+  // seed engagements
+  server.create("engagement", defaultEngagement)
   // seed dataSources
   server.create("dataSource", googleAds)
   server.create("dataSource", netsuite)

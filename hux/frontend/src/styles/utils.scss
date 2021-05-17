@@ -31,13 +31,13 @@
     animation: bg-animation 2s infinite;
     @keyframes bg-animation {
         0% {
-        background-position: left;
+            background-position: left;
         }
         50% {
-        background-position: right;
+            background-position: right;
         }
         100% {
-        background-position: left;
+            background-position: left;
         }
     }
 }
@@ -82,4 +82,30 @@
 
 .fs-24 {
     font-size: 24px;
+.border-start {
+    border-left-style: solid;
+    border-left-width: 1px;
+}
+
+.border-end {
+    border-right-style: solid;
+    border-right-width: 1px;
+}
+
+.border-top {
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+.border-bottom {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+
+.border-0 {
+    border-width: 0;
+}
+
+.border-zircon {
+    border-color: #E2EAEC;
 }
