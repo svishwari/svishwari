@@ -18,6 +18,7 @@ Object.keys(resources).forEach((resource) => {
     delete: (resourceId) => http.delete(`${endpoint}/${resourceId}`),
     find: (resourceId) => http.get(`${endpoint}/${resourceId}`),
     update: (resourceId, data) => http.put(`${endpoint}/${resourceId}`, data),
+    batchUpdate: (data) => http.put(`${endpoint}`, data),
   }
 
   // Custom one-off resource endpoints
