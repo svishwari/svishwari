@@ -141,6 +141,14 @@ AUDIENCE_TYPE = "audience_type"
 AUDIENCE_TYPE_NAME = "name"
 AUDIENCE_TYPE_DESC = "description"
 
+AUDIENCE_LAST_DELIVERED = "last_delivered"
+AUDIENCE_STATUS_DELIVERED = "Delivered"
+AUDIENCE_STATUS_DELIVERING = "Delivering"
+AUDIENCE_STATUS_NOT_DELIVERED = "Not delivered"
+AUDIENCE_STATUS_DRAFT = "Draft"
+AUDIENCE_STATUS_ERROR = "Error"
+AUDIENCE_STATUS_PAUSED = "Paused"
+
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_AUD_SIZE = "delivery_platform_audience_size"
 DELIVERY_PLATFORM_LOOKALIKE_AUDS = "delivery_platform_lookalike_audiences"
@@ -152,6 +160,9 @@ DELIVERY_PLATFORM_FACEBOOK = "Facebook"
 DELIVERY_PLATFORM_AMAZON = "Amazon"
 DELIVERY_PLATFORM_GOOGLE = "Google"
 DELIVERY_PLATFORM_SFMC = "SFMC"
+
+# Engagements
+ENGAGEMENT_ID = "engagement_id"
 
 LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
