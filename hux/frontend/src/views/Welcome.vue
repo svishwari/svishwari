@@ -131,7 +131,7 @@ export default {
       min-height: 40px;
       min-width: 95px;
       font-size: 14px;
-    }
+      }
   }
 }
 </style>
