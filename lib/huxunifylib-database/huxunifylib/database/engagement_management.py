@@ -52,17 +52,16 @@ def set_engagement(
     ):
         raise de.DuplicateName(name)
 
-    # TODO - implement after HUS-254 is done to grab user/okta_id
-    user_id = ObjectId()
-
     doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
         db_c.ENGAGEMENT_AUDIENCES: audiences,
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.CREATE_TIME: datetime.datetime.utcnow(),
-        db_c.CREATED_BY: user_id,
+        # TODO - implement after HUS-254 is done to grab user/okta_id
+        db_c.CREATED_BY: None,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+        db_c.ENABLED: True,
     }
 
     try:
@@ -96,7 +95,7 @@ def get_engagements(database: DatabaseClient) -> list:
     ]
 
     try:
-        return list(collection.find())
+        return list(collection.find({db_c.ENABLED: True}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -124,7 +123,9 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     ]
 
     try:
-        return collection.find_one({db_c.ID: engagement_id})
+        return collection.find_one(
+            {db_c.ID: engagement_id, db_c.ENABLED: True}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -135,10 +136,10 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def delete_engagement(
+def disable_engagement(
     database: DatabaseClient, engagement_id: ObjectId
 ) -> bool:
-    """A function to delete an engagement based on ID
+    """A function to disable an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
@@ -154,9 +155,13 @@ def delete_engagement(
     ]
 
     try:
-        return (
-            collection.delete_one({db_c.ID: engagement_id}).deleted_count > 0
+        doc = collection.find_one_and_update(
+            {db_c.ID: engagement_id},
+            {"$set": {db_c.ENABLED: False}},
+            upsert=False,
+            new=True,
         )
+        return not doc[db_c.ENABLED]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

@@ -28,6 +28,7 @@ class TestEngagementManagement(unittest.TestCase):
             c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
             c.CREATE_TIME: datetime.datetime.utcnow(),
             c.CREATED_BY: ObjectId(),
+            c.ENABLED: True,
         }
 
         self.engagement_doc = em.set_engagement(
@@ -118,7 +119,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(engagement_doc[c.ENGAGEMENT_AUDIENCES], [])
         self.assertEqual(engagement_doc[c.ENGAGEMENT_DELIVERY_SCHEDULE], {})
 
-    def test_delete_engagement(self) -> None:
+    def test_disable_engagement(self) -> None:
         """Test delete_engagement routine
 
         Returns:
@@ -131,7 +132,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         self.assertIsInstance(engagement_id, ObjectId)
 
-        delete_flag = em.delete_engagement(
+        delete_flag = em.disable_engagement(
             database=self.database, engagement_id=engagement_id
         )
 
