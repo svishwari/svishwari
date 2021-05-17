@@ -1,7 +1,16 @@
 <template>
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
-      <span class="primary--text"> {{ cellValue }} </span>
+      <router-link
+        :to="{
+          name: 'audienceInsight',
+          params: { id: audienceId },
+        }"
+        class="text-decoration-none"
+        append
+      >
+        <span class="primary--text"> {{ cellValue }} </span>
+      </router-link>
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
         <v-icon
@@ -41,6 +50,7 @@ export default Vue.extend({
   name: "MenuCell",
   data() {
     return {
+      audienceId: null,
       cellValue: null,
       items: [
         { title: "Unfavorite" },
@@ -72,6 +82,9 @@ export default Vue.extend({
     takeActions(evnt) {
       evnt.preventDefault()
     },
+  },
+  async mounted() {
+    this.audienceId = this.params.data.audienceId
   },
 })
 </script>

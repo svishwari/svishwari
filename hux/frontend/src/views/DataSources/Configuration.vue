@@ -37,7 +37,7 @@
         <div class="ma-5">
           <div class="font-weight-light">Data sources</div>
           <CardHorizontal
-            v-for="dataSource in dataSources"
+            v-for="dataSource in enabledDataSources"
             :key="dataSource.id"
             :title="dataSource.name"
             :icon="dataSource.type"
@@ -50,6 +50,27 @@
             @click="onDataSourceClick(dataSource.id)"
             class="my-3"
           />
+
+          <v-divider style="border-color: var(--v-zircon-base)" />
+
+          <CardHorizontal
+            v-for="dataSource in disabledDataSources"
+            :key="dataSource.id"
+            :title="dataSource.name"
+            :icon="dataSource.type"
+            :isAdded="
+              dataSource.is_added ||
+              selectedDataSourceIds.includes(dataSource.id)
+            "
+            :isAvailable="dataSource.is_enabled"
+            :isAlreadyAdded="dataSource.is_added"
+            class="my-3"
+            hideButton
+          >
+            <span class="font-weight-light letter-spacing-sm"
+              ><i>Coming soon</i></span
+            >
+          </CardHorizontal>
         </div>
       </template>
     </drawer>
@@ -95,6 +116,14 @@ export default {
     dataSourcesBtnText() {
       let count = this.selectedDataSourceIds.length
       return `Add ${count} data source${count > 1 ? "s" : ""}`
+    },
+
+    enabledDataSources() {
+      return this.dataSources.filter((each) => each.is_enabled)
+    },
+
+    disabledDataSources() {
+      return this.dataSources.filter((each) => !each.is_enabled)
     },
   },
   methods: {
