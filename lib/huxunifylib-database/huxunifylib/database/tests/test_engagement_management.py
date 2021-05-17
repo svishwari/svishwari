@@ -81,6 +81,8 @@ class TestEngagementManagement(unittest.TestCase):
         engagement_docs = em.get_engagements(database=self.database)
         engagement_id = engagement_docs[0]["_id"]
 
+        self.assertIsInstance(engagement_id, ObjectId)
+
         engagement_doc = em.get_engagement(
             database=self.database, engagement_id=engagement_id
         )
@@ -99,12 +101,21 @@ class TestEngagementManagement(unittest.TestCase):
         new_description = "Engagement 3 description"
         engagement_docs = em.get_engagements(database=self.database)
         engagement_id = engagement_docs[0]["_id"]
+
+        self.assertIsInstance(engagement_id, ObjectId)
+
         engagement_doc = em.update_engagement(
-            database=self.database, engagement_id=engagement_id, name=new_name, description=new_description
+            database=self.database,
+            engagement_id=engagement_id,
+            name=new_name,
+            description=new_description,
         )
 
         self.assertEqual(engagement_doc[c.ENGAGEMENT_NAME], new_name)
-        self.assertEqual(engagement_doc[c.ENGAGEMENT_DESCRIPTION], new_description)
+        self.assertEqual(
+            engagement_doc[c.ENGAGEMENT_DESCRIPTION], new_description
+        )
+        self.assertEqual(engagement_doc[c.ENGAGEMENT_AUDIENCES], [])
         self.assertEqual(engagement_doc[c.ENGAGEMENT_DELIVERY_SCHEDULE], {})
 
     def test_delete_engagement(self) -> None:
@@ -117,6 +128,8 @@ class TestEngagementManagement(unittest.TestCase):
 
         engagement_docs = em.get_engagements(database=self.database)
         engagement_id = engagement_docs[0]["_id"]
+
+        self.assertIsInstance(engagement_id, ObjectId)
 
         delete_flag = em.delete_engagement(
             database=self.database, engagement_id=engagement_id

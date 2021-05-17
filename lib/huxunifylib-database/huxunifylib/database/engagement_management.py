@@ -23,7 +23,7 @@ def set_engagement(
     description: str,
     audiences: list,
     delivery_schedule: dict,
-) -> str:
+) -> ObjectId:
     """A function to create an engagement
 
     Args:
@@ -34,7 +34,7 @@ def set_engagement(
         delivery_schedule (dict): Delivery Schedule dict
 
     Returns:
-        str: id of the newly created engagement
+        ObjectId: id of the newly created engagement
 
     """
 
@@ -97,14 +97,12 @@ def get_engagements(database: DatabaseClient) -> list:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagement(
-    database: DatabaseClient, engagement_id: ObjectId
-) -> dict:
+def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     """A function to get an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
-        engagement_id (str): Object Id of the engagement
+        engagement_id (ObjectId): ObjectId of the engagement
 
     Returns:
         dict: Dict of an engagement.
@@ -159,6 +157,7 @@ def delete_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=too-many-arguments
 def update_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
@@ -171,7 +170,7 @@ def update_engagement(
 
     Args:
         database (DatabaseClient): A database client.
-        engagement_id (ObjectId): ID of the engagement to be updated.
+        engagement_id (ObjectId): ObjectID of the engagement to be updated.
         name (str): Name of the engagement.
         description (str): Descriptions of the engagement.
         audiences (list): list of audience ObjectIds.
@@ -193,19 +192,17 @@ def update_engagement(
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
-    for item in list(update_doc):
-        if update_doc[item] is None:
-            del update_doc[item]
+    # remove dict entries that are None
+    update_doc = {k: v for k, v in update_doc.items() if v is not None}
 
     try:
         if update_doc:
-            doc = collection.find_one_and_update(
+            return collection.find_one_and_update(
                 {db_c.ID: engagement_id},
                 {"$set": update_doc},
                 upsert=False,
                 new=True,
             )
-            return doc
         else:
             raise de.NoUpdatesSpecified("engagement")
 
