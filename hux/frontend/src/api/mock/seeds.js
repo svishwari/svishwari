@@ -108,13 +108,13 @@ const googleAds = {
 const netsuite = {
   name: "Netsuite",
   type: "netsuite",
-  is_enabled: true,
+  is_enabled: false,
 }
 
 const aqfer = {
   name: "Aqfer",
   type: "aqfer",
-  is_enabled: true,
+  is_enabled: false,
 }
 export default function (server) {
   // seed destinations

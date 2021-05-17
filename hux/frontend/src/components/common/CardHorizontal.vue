@@ -7,6 +7,9 @@
     :disabled="isDisabled"
     :color="isDisabled ? 'background' : 'white'"
     height="60"
+    :style="
+      isDisabled ? 'border: 1px solid var(--v-zircon-base)!important;' : ''
+    "
   >
     <div class="d-flex align-center">
       <Logo :type="icon" />

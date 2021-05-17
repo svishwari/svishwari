@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-map-marker-circle </v-icon>
-      <h5 class="font-weight-light text-h5 ml-2 mt-1">Destinations</h5>
+      <h5 class="font-weight-light fs-18 ml-2 mt-1">Destinations</h5>
       <router-link
         :to="{ name: 'add-destination' }"
         class="text-decoration-none"

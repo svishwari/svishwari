@@ -37,8 +37,6 @@ export default {
       breadcrumbs: [
         {
           text: "Connections",
-          disabled: false,
-          href: this.$route.path,
           icon: "mdi-connection",
         },
       ],
