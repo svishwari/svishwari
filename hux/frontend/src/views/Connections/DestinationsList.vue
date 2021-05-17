@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-map-marker-circle </v-icon>
-      <h5 class="font-weight-light text-h5 ml-2 mt-1">Destinations</h5>
+      <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
       <router-link
         :to="{ name: 'add-destination' }"
         class="text-decoration-none"
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapGetters } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
 import EmptyStateData from "@/components/common/EmptyStateData"
@@ -58,16 +58,6 @@ export default {
     hasAddedDestinations() {
       return Boolean(this.addedDestinations && this.addedDestinations.length)
     },
-  },
-
-  methods: {
-    ...mapActions({
-      getDestinations: "destinations/getAll",
-    }),
-  },
-
-  async mounted() {
-    await this.getDestinations()
   },
 }
 </script>

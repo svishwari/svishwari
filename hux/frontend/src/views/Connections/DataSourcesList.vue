@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-cloud-download-outline </v-icon>
-      <h5 class="font-weight-light text-h5 ml-2 mt-1">Data Sources</h5>
+      <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <v-icon @click="toggleDrawer" class="ml-2 add-icon" color="primary">
         mdi-plus-circle
       </v-icon>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapGetters } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Status from "@/components/common/Status"
@@ -71,13 +71,6 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
-    ...mapActions({
-      getDataSources: "dataSources/getAll",
-    }),
-  },
-
-  async mounted() {
-    await this.getDataSources()
   },
 }
 </script>
