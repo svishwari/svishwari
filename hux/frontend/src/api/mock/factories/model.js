@@ -1,8 +1,7 @@
 import faker from "faker"
 
 export default {
-  description: `Propensity of a customer making a purchase after receiving an
-    email.`,
+  description: "Propensity of a customer unsubscribing to emails.",
   fulcrum_date: () => faker.date.past(),
   last_trained: () => faker.date.recent(),
   latest_version: "0.0.2",
