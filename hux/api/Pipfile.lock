@@ -312,7 +312,9 @@
         "huxunifylib-connectors": {
             "hashes": [
                 "sha256:19de6acdad8a79e9b6def874a3173711f1e543c72e17dba8c5a8d97a2781209f",
-                "sha256:1f32027137f9e8b5f511bb72175966ccb000fb9e36066ec69e5a22c6f61a113f"
+                "sha256:1f32027137f9e8b5f511bb72175966ccb000fb9e36066ec69e5a22c6f61a113f",
+                "sha256:2f1e9d445175a0fff70e72c9005227e02f5bb45f0e5853e0f969d8d4c44e521c",
+                "sha256:fcc9645c0ea66c6521075ad9b3bf7c77f6ca4ee51920666a8db12c16098cc91d"
             ],
             "index": "jfrog",
             "version": "==0.1.0"
