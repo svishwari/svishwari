@@ -4,12 +4,12 @@ Purpose of this file is to test the engagement schemas
 """
 from unittest import TestCase
 
+from huxunifylib.database import constants as db_c
 from huxunify.api.schema.engagement import (
     EngagementGetSchema,
     EngagementPostSchema,
     EngagementPutSchema,
 )
-from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 
 

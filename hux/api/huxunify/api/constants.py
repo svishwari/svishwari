@@ -100,6 +100,7 @@ DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_NAME = "engagement_name"
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
