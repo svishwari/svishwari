@@ -16,7 +16,7 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          width="11.065%"
+          :width="135"
           :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
@@ -31,96 +31,97 @@
 
     <div class="timeline-wrapper mt-9 ml-9">
       <v-form ref="form" class="mx-2" v-model="isFormValid" lazy-validation>
-      <v-timeline align-top dense class="">
-        <v-timeline-item color="blue" class="timeline-section mb-7">
-          <template v-slot:icon class="timeline-icon-section">
-            <span>1</span>
-          </template>
-          <v-row class="pt-1">
-            <v-col cols="4">
-              <strong class="text-h5 neroBlack--text"
-                >General information</strong
-              >
-              <TextField
-                placeholderText="What is the name for this audience ?"
-                height="40"
-                labelText="Audience name"
-                backgroundColor="white"
-                v-bind:required="true"
-                v-model="audience.audienceName"
-                class="mt-1 aud-name-field text-caption neroBlack--text"
-                :rules="audienceNamesRules"
-              ></TextField>
-            </v-col>
-            <v-col cols="8">
-              <div class="mt-8 ml-15 text-caption neroBlack--text">
-                Add to an engagement -
-                <span style="tilt">you must have at least one</span>
+        <v-timeline align-top dense class="">
+          <v-timeline-item color="blue" class="timeline-section mb-7">
+            <template v-slot:icon class="timeline-icon-section">
+              <span>1</span>
+            </template>
+            <v-row class="pt-1">
+              <v-col cols="4">
+                <strong class="text-h5 neroBlack--text"
+                  >General information</strong
+                >
+                <TextField
+                  placeholderText="What is the name for this audience ?"
+                  height="40"
+                  labelText="Audience name"
+                  backgroundColor="white"
+                  v-bind:required="true"
+                  v-model="audience.audienceName"
+                  class="mt-1 aud-name-field text-caption neroBlack--text"
+                  :rules="audienceNamesRules"
+                ></TextField>
+              </v-col>
+              <v-col cols="8">
+                <div class="mt-8 ml-15 text-caption neroBlack--text">
+                  Add to an engagement -
+                  <span style="tilt">you must have at least one</span>
+                  <div>
+                    <v-icon
+                      size="30"
+                      class="add-icon"
+                      color="primary"
+                      @click="
+                        engagementDrawer.insideFlow = !engagementDrawer.insideFlow
+                      "
+                    >
+                      mdi-plus-circle
+                    </v-icon>
+                    <v-chip
+                      class="ma-2"
+                      close
+                      @click:close="detachEngagement(item.id)"
+                      text-color="primary"
+                      v-for="(item, index) in selectedEngagements"
+                      :key="`engagement-${index}`"
+                    >
+                      {{ item.name }}
+                    </v-chip>
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
+          </v-timeline-item>
+          <v-timeline-item color="blue" class="timeline-section mb-7">
+            <template v-slot:icon class="timeline-icon-section">
+              <span>2</span>
+            </template>
+            <v-row class="pt-1 pr-10">
+              <attribute-rules :rules="attributeRules"></attribute-rules>
+            </v-row>
+          </v-timeline-item>
+          <v-timeline-item
+            color="blue"
+            class="timeline-section disable-down-timeline mb-15"
+          >
+            <template v-slot:icon class="timeline-icon-section">
+              <span>3</span>
+            </template>
+            <v-row class="pt-1">
+              <v-col cols="12">
+                <strong class="text-h5 neroBlack--text">
+                  Select destination(s) -
+                  <i style="font-size: 12px">Optional</i>
+                </strong>
                 <div>
-                  <v-icon
-                    size="30"
-                    class="add-icon"
-                    color="primary"
-                    @click="
-                      engagementDrawer.insideFlow = !engagementDrawer.insideFlow
-                    "
-                  >
+                  <v-icon size="30" class="add-icon" color="primary">
                     mdi-plus-circle
                   </v-icon>
-                  <v-chip
-                    class="ma-2"
-                    close
-                    @click:close="detachEngagement(item.id)"
-                    text-color="primary"
-                    v-for="(item, index) in selectedEngagements"
-                    :key="`engagement-${index}`"
-                  >
-                    {{ item.name }}
-                  </v-chip>
                 </div>
-              </div>
-            </v-col>
-          </v-row>
-        </v-timeline-item>
-        <v-timeline-item color="blue" class="timeline-section mb-7">
-          <template v-slot:icon class="timeline-icon-section">
-            <span>2</span>
-          </template>
-          <v-row class="pt-1 pr-10">
-            <attribute-rules :rules="attributeRules"></attribute-rules>
-          </v-row>
-        </v-timeline-item>
-        <v-timeline-item
-          color="blue"
-          class="timeline-section disable-down-timeline mb-15"
-        >
-          <template v-slot:icon class="timeline-icon-section">
-            <span>3</span>
-          </template>
-          <v-row class="pt-1">
-            <v-col cols="12">
-              <strong class="text-h5 neroBlack--text">
-                Select destination(s) - <i style="font-size: 12px">Optional</i>
-              </strong>
-              <div>
-                <v-icon size="30" class="add-icon" color="primary">
-                  mdi-plus-circle
-                </v-icon>
-              </div>
-            </v-col>
-          </v-row>
-        </v-timeline-item>
-        <v-timeline-item class="timeline-section disabled">
-          <template v-slot:icon class="timeline-icon-section">
-            <span>4</span>
-          </template>
-          <v-row class="pt-1">
-            <v-col cols="12">
-              <strong> Create lookalike audience </strong>
-            </v-col>
-          </v-row>
-        </v-timeline-item>
-      </v-timeline>
+              </v-col>
+            </v-row>
+          </v-timeline-item>
+          <v-timeline-item class="timeline-section disabled">
+            <template v-slot:icon class="timeline-icon-section">
+              <span>4</span>
+            </template>
+            <v-row class="pt-1">
+              <v-col cols="12">
+                <strong> Create lookalike audience </strong>
+              </v-col>
+            </v-row>
+          </v-timeline-item>
+        </v-timeline>
       </v-form>
 
       <HuxFooter>
@@ -157,7 +158,7 @@
             height="44"
             class="ma-2"
             @click="createAudience()"
-            v-bind:isDisabled="!isAudienceFormValid"
+            :isDisabled="!isAudienceFormValid"
           ></huxButton>
         </template>
       </HuxFooter>
@@ -347,9 +348,7 @@ export default {
         description: "",
         deliveryType: 0,
       },
-      audienceNamesRules: [
-        v => !!v || 'Audience name is required',
-      ],
+      audienceNamesRules: [(v) => !!v || "Audience name is required"],
       isFormValid: false,
     }
   },
@@ -364,13 +363,14 @@ export default {
       return this.selectedEngagements.length > 0
     },
     isAudienceFormValid() {
-      return !!this.audience.name && this.audience.engagements.length > 0
-    }
+      return !!this.audience.audienceName && this.selectedEngagements.length > 0
+    },
   },
   methods: {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
     }),
+
     selectEngagement(engagement) {
       const filtered = [...this.selectedEngagements]
       const existingIndex = filtered.findIndex(
@@ -393,7 +393,7 @@ export default {
       )
       if (existingIndex > -1) this.selectedEngagements.splice(existingIndex, 1)
     },
-    createAudience(){ }
+    createAudience() {},
   },
   async mounted() {
     await this.fetchEngagements()
