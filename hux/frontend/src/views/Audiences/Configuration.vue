@@ -104,7 +104,12 @@
                   <i style="font-size: 12px">Optional</i>
                 </strong>
                 <div>
-                  <v-icon size="30" class="add-icon" color="primary">
+                  <v-icon
+                    size="30"
+                    class="add-icon"
+                    color="primary"
+                    @click="toggleDrawer()"
+                  >
                     mdi-plus-circle
                   </v-icon>
                 </div>
@@ -135,19 +140,6 @@
             class="ma-2"
             @click.native="$router.go(-1)"
           ></huxButton>
-
-          <!-- 
-            Not required in P1 
-          -->
-
-          <!-- <huxButton
-            ButtonText="Save &amp; complete later"
-            variant="tertiary"
-            v-bind:isTile="true"
-            width="201"
-            height="40"
-            class="ma-2"
-          ></huxButton> -->
         </template>
         <template v-slot:right>
           <huxButton
