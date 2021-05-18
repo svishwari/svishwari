@@ -15,6 +15,20 @@ export default {
     value: {
       type: Boolean,
     },
+    switchLabels: {
+      type: Array,
+      required: true,
+      default: () => [
+        {
+          condition: true,
+          label: "ALL",
+        },
+        {
+          condition: false,
+          label: "ANY",
+        },
+      ],
+    },
   },
   computed: {
     localValue: {
@@ -26,7 +40,9 @@ export default {
       },
     },
     operandLabel() {
-      return this.value ? "AND" : "ANY"
+      return this.switchLabels.filter(
+        (label) => label.condition === this.value
+      )[0].label
     },
   },
   methods: {
@@ -41,7 +57,7 @@ export default {
 <style lang="scss" scoped>
 .v-input {
   ::v-deep .v-input__slot {
-    height: 24px;
+    height: 26px;
     margin: 0;
     .v-input--selection-controls__input {
       width: 61px;
@@ -49,14 +65,14 @@ export default {
       .v-input--switch__track {
         width: 61px;
         height: 24px;
-        background: #ffffff;
-        border: 1px solid #00a3e0;
+        background: var(--v-white-base);
+        border: 1px solid var(--v-skyBlueDark-base);
         box-sizing: border-box;
         border-radius: 21px;
       }
       .v-input--switch__thumb {
-        background: #00a3e0;
-        border: 1px solid #ffffff;
+        background: var(--v-skyBlueDark-base);
+        border: 1px solid var(--v-white-base);
         box-sizing: border-box;
         width: 20px;
         height: 20px;
@@ -66,14 +82,14 @@ export default {
     }
     .v-label {
       position: absolute !important;
-      font-family: Open Sans;
+      font-family: Open Sans SemiBold;
       font-style: normal;
       font-weight: normal;
       font-size: 12px;
       line-height: 16px;
-      top: 2px !important;
+      top: 3px !important;
       left: 25px !important;
-      color: #00a3e0;
+      color: var(--v-secondary-base);
     }
   }
   &.v-input--is-dirty {
@@ -84,16 +100,21 @@ export default {
           transform: translate(34px, 0) !important;
         }
       }
+      .v-input--switch__track {
+        border: 1px solid var(--v-skyBlue-base);
+      }
+      .v-input--switch__thumb {
+        background: var(--v-skyBlue-base);
+      }
       .v-label {
         position: absolute !important;
-        font-family: Open Sans;
         font-style: normal;
         font-weight: normal;
         font-size: 12px;
         line-height: 16px;
-        top: 2px !important;
-        left: 2px !important;
-        color: #80d1ef;
+        top: 3px !important;
+        left: 3px !important;
+        color: var(--v-skyBlue-base);
       }
     }
   }
