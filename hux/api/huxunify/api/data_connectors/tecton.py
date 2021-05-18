@@ -41,7 +41,7 @@ def map_model_response(response: dict) -> dict:
         response (dict): Input Tecton API response.
 
     Returns:
-        dict: Return a cleaned model dict.
+        dict: A cleaned model dict.
 
     """
     if response.status_code != 200:
