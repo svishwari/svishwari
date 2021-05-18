@@ -23,6 +23,28 @@ SWAGGER_CONFIG = {
 }
 
 
+def configure_flask(app: Flask) -> None:
+    """Set configuration and variables for Flask.
+
+    Args:
+        app (Flask): Flask application. 
+
+    Returns:
+
+    """
+    # setup the environment config
+    try:
+        if app.config["ENV"] == constants.PRODUCTION_MODE:
+            app.config.from_object("config.ProductionConfig")
+        elif app.config["ENV"] == constants.DEVELOPMENT_MODE:
+            app.config.from_object("config.DevelopmentConfig")
+        else:
+            app.config.from_object("config.Base")
+    except KeyError as error:
+        desc = f"Environment not configured: {error} is required."
+        raise Exception(desc) from error
+
+
 def create_app() -> Flask:
     """creates the flask app and blueprints
 
@@ -51,6 +73,9 @@ def create_app() -> Flask:
 
     # setup the swagger docs
     Swagger(flask_app, config=SWAGGER_CONFIG, merge=True)
+    
+    # configure flask
+    configure_flask(flask_app)
 
     return flask_app
 

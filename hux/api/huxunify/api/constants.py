@@ -1,4 +1,6 @@
 """This module contains connector defines."""
+DEVELOPMENT_MODE = "development"
+PRODUCTION_MODE = "production"
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 

@@ -3,11 +3,11 @@ purpose of this file is for interacting with aws
 """
 from typing import Tuple
 from http import HTTPStatus
+from flask import current_app as app
 from connexion import ProblemException
 import boto3
 import botocore
 from huxunify.api import constants as api_c
-from huxunify.api import config
 
 
 class ParameterStore:
@@ -118,9 +118,9 @@ parameter_store = ParameterStore()
 
 def get_aws_client(
     client: str = "s3",
-    aws_access_key: str = config.AWS_ACCESS_KEY_ID,
-    aws_secret_key: str = config.AWS_SECRET_ACCESS_KEY,
-    region_name: str = config.AWS_REGION,
+    aws_access_key: str = app.config["AWS_ACCESS_KEY_ID"],
+    aws_secret_key: str = app.config["AWS_SECRET_ACCESS_KEY"],
+    region_name: str = app.config["AWS_REGION"],
 ) -> boto3.client:
     """quick and dirty function for getting most AWS clients
 
