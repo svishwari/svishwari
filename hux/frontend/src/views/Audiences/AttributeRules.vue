@@ -1,7 +1,7 @@
 <template>
   <v-col cols="12" class="attribute-rule pt-0">
     <v-col cols="12">
-      <strong class="text-h6"
+      <strong class="text-h5 neroBlack--text"
         >Select attribute(s) - <i style="font-size: 12px">Optional</i></strong
       >
       <v-card
