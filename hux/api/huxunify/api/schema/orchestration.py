@@ -89,7 +89,7 @@ class AudienceGetSchema(Schema):
             api_c.INSIGHTS_COUNTRIES: 2,
             api_c.INSIGHTS_STATES: 28,
             api_c.INSIGHTS_CITIES: 246,
-            api_c.INSIGHTS_AGE: "34",
+            api_c.INSIGHTS_AGE: "34 to 43",
             api_c.INSIGHTS_WOMEN: "46%",
             api_c.INSIGHTS_MEN: "48%",
             api_c.INSIGHTS_OTHER: "2%",
