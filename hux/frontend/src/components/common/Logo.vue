@@ -3,6 +3,7 @@
     :src="`assets/logos/${type}`"
     :width="size"
     :height="size"
+    v-if="type"
   />
 </template>
 
