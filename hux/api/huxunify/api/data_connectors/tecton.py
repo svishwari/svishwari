@@ -90,14 +90,14 @@ def map_model_response(response: dict) -> dict:
 def get_models(model_ids: list = None) -> List[dict]:
     """Get models from Tecton.
     Args:
-        model_ids (list): List of model ids to quer.
+        model_ids (list): List of model ids to query.
 
     Returns:
         List[ModelSchema]: List of models.
     """
 
     if model_ids is None:
-        # TODO - update when Jingjing makes the list available to get.
+        # TODO - update tecton makes the list available to get.
         model_ids = [1]
 
     # submit the post request to get the models
