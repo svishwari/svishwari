@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="login-wrap">
+  <v-container fluid class="login-wrap pa-0">
     <v-row no-gutters>
       <v-col cols="6" class="left-section">
         <span class="overlay"></span>
@@ -9,7 +9,7 @@
         <h1 class="font-weight-light">
           Access your <span class="altcolor">360&deg;</span> view
         </h1>
-        <p>Jump right in where you left off, and leave the hard work on us!</p>
+        <p class="text-h6">Jump right in where you left off, and leave the hard work on us!</p>
         <div class="login-form">
           <div id="okta-signin-container" class="okta-container"></div>
         </div>
@@ -68,8 +68,7 @@ export default {
 
 <style lang="scss" scoped>
 .login-wrap {
-  padding: 0;
-  background: #f9fafb;
+  background: var(--v-background-base);
   .left-section {
     height: 100vh;
     position: relative;
@@ -105,10 +104,6 @@ export default {
       }
     }
     p {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
       line-height: 22px;
       color: var(--v-gray-base);
       margin-bottom: 20px;
@@ -168,7 +163,7 @@ export default {
               }
               &.o-form-has-errors {
                 input {
-                  border-color: #da291c;
+                  border-color: var(--v-error-base);
                 }
                 .okta-form-input-error {
                   padding-left: 5px;
