@@ -494,27 +494,23 @@ export default {
   }
   .new-engament-wrap {
     h2 {
-      font-family: Open Sans;
-      font-style: normal;
       font-weight: normal;
       font-size: 14px;
       line-height: 22px;
-      color: #1e1e1e;
+      color: var(--v-neroBlack-base);
     }
     ::v-deep label {
-      font-family: Open Sans;
-      font-style: normal;
       font-weight: normal;
       font-size: 12px;
       line-height: 16px;
-      color: #1e1e1e;
+      color: var(--v-neroBlack-base);
     }
     .delivery-options {
       display: flex;
       flex-direction: column;
       ::v-deep button {
-        background: #ffffff;
-        border: 1px solid #d0d0ce;
+        background: var(--v-tertiary-base);
+        border: 1px solid var(--v-lightGrey-base);
         box-sizing: border-box;
         border-radius: 4px;
         border-left-width: 1px !important;
@@ -522,7 +518,7 @@ export default {
         height: 40px;
         padding: 10px;
         margin-right: 10px;
-        color: #d0d0ce;
+        color: var(--v-lightGrey-base);
         .v-icon {
           &.ico {
             width: 13.44px;
@@ -534,21 +530,21 @@ export default {
           justify-content: start;
         }
         .theme--light {
-          color: #d0d0ce !important;
+          color: var(--v-lightGrey-base) !important;
         }
         &.v-btn--active {
-          border: 1px solid #005587 !important;
-          color: #005587 !important;
+          border: 1px solid var(--v-primary-base) !important;
+          color: var(--v-primary-base) !important;
           .v-icon {
             &.ico {
               width: 13.44px;
               height: 12.5px;
-              color: #00a3e0 !important;
+              color: var(--v-skyBlueDark-base) !important;
               margin-right: 9px;
             }
           }
           .theme--light {
-            color: #005587 !important;
+            color: var(--v-primary-base) !important;
           }
         }
       }
