@@ -1,4 +1,6 @@
-"""This module enables functionality related to delivery platform management."""
+"""
+This module enables functionality related to delivery platform management.
+"""
 # pylint: disable=C0302
 
 import logging
@@ -24,32 +26,31 @@ def set_delivery_platform(
     database: DatabaseClient,
     delivery_platform_type: str,
     name: str,
-    authentication_details: dict,
+    authentication_details: dict = None,
+    status: str = c.STATUS_PENDING,
+    enabled: bool = True,
+    added: bool = False,
     user_id: ObjectId = None,
 ) -> dict:
     """A function to create a delivery platform.
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
+        delivery_platform_type (str): The type of delivery platform
+            (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
-        authentication_details (dict): A dict containing delivery platform authentication details.
-        user_id (ObjectId): User id of user creating delivery platform. This is Optional.
+        authentication_details (dict): A dict containing delivery platform
+            authentication details.
+        status (str): status of the delivery platform.
+        enabled (bool): if the delivery platform is enabled.
+        added (bool): if the delivery platform is added.
+        user_id (ObjectId): User id of user creating delivery platform.
+            This is Optional.
 
     Returns:
         dict: MongoDB audience doc.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
-    ]:
-        raise de.UnknownDeliveryPlatformType(delivery_platform_type)
-
-    delivery_platform_doc = None
-    delivery_platform_id = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
@@ -71,13 +72,15 @@ def set_delivery_platform(
     doc = {
         c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_PLATFORM_NAME: name,
-        c.DELIVERY_PLATFORM_STATUS: c.STATUS_PENDING,
-        c.DELIVERY_PLATFORM_AUTH: authentication_details,
-        c.ENABLED: True,
+        c.DELIVERY_PLATFORM_STATUS: status,
+        c.ENABLED: enabled,
+        c.ADDED: added,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
     }
+    if authentication_details is not None:
+        doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
     # Add user object only if it is available
     if ObjectId.is_valid(user_id) and name_exists(
@@ -93,14 +96,14 @@ def set_delivery_platform(
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
-            delivery_platform_doc = collection.find_one(
-                {c.ID: delivery_platform_id, c.ENABLED: True},
+            return collection.find_one(
+                {c.ID: delivery_platform_id, c.ENABLED: enabled},
                 {c.ENABLED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return delivery_platform_doc
+    return None
 
 
 @retry(
