@@ -1,5 +1,5 @@
 <template>
-  <div class="add-destination--wrap font-weight-regular">
+  <page class="white" max-width="850px">
     <div class="mb-10">
       <h4 class="text-h2 neroBlack--text">Add a destination</h4>
       <p class="neroBlack--text">
@@ -70,7 +70,7 @@
       </div>
     </v-form>
 
-    <hux-footer>
+    <hux-footer slot="footer">
       <template v-slot:left>
         <hux-button
           button-text="Cancel"
@@ -140,11 +140,12 @@
         </div>
       </template>
     </drawer>
-  </div>
+  </page>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import Page from "@/components/Page"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Logo from "@/components/common/Logo"
@@ -156,6 +157,7 @@ export default {
   name: "add-destination",
 
   components: {
+    Page,
     Drawer,
     CardHorizontal,
     HuxFooter,
@@ -257,11 +259,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.add-destination--wrap {
-  padding: 4rem 10rem;
-
-  .destination-auth-wrap {
-    border: 1px solid var(--v-zircon-base) !important;
-  }
+.destination-auth-wrap {
+  border: 1px solid var(--v-zircon-base) !important;
 }
 </style>

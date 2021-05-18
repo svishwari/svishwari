@@ -1,6 +1,6 @@
 <template>
-  <div class="create-audience-wrap">
-    <div class="mt-10 ml-15">
+  <page class="white create-audience-wrap">
+    <div>
       <div class="heading font-weight-light neroBlack--text">
         Add an audience
       </div>
@@ -16,7 +16,7 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          :width="135"
+          :width="130"
           :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
@@ -26,10 +26,10 @@
           :interactable="true"
         ></MetricCard>
       </div>
-      <v-divider class="divider mt-5"></v-divider>
+      <v-divider class="divider my-10"></v-divider>
     </div>
 
-    <div class="timeline-wrapper mt-9 ml-9">
+    <div class="timeline-wrapper">
       <v-form ref="form" class="mx-2" v-model="isFormValid" lazy-validation>
         <v-timeline align-top dense class="">
           <v-timeline-item color="blue" class="timeline-section mb-7">
@@ -292,10 +292,11 @@
         </template>
       </drawer>
     </div>
-  </div>
+  </page>
 </template>
 
 <script>
+import Page from "@/components/Page"
 import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
@@ -309,6 +310,7 @@ import { mapGetters, mapActions } from "vuex"
 export default {
   name: "Configuration",
   components: {
+    Page,
     MetricCard,
     HuxFooter,
     huxButton,
@@ -403,7 +405,6 @@ export default {
 
 <style lang="scss" scoped>
 .create-audience-wrap {
-  padding-right: 60px;
   .heading {
     font-size: 24px;
     line-height: 40px;
