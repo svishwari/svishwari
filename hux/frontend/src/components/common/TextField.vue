@@ -21,6 +21,8 @@
     </label>
     <v-text-field
       v-model="TextFieldValue"
+      :required="required"
+      :height="height"
       :label="placeholderText"
       :append-icon="appendIcon"
       :rules="rules"
@@ -48,6 +50,14 @@ export default {
     }
   },
   props: {
+    required: {
+      type: Boolean,
+      required: false,
+    },
+    height: {
+      type: String,
+      required: false,
+    },
     labelText: {
       type: String,
       required: false,
