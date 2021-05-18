@@ -1,6 +1,14 @@
 """This module contains connector defines."""
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
+# general defines
+ID = "id"
+NAME = "name"
+OWNER = "owner"
+STATUS = "status"
+TYPE = "type"
+DESCRIPTION = "description"
+
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
@@ -158,12 +166,24 @@ MODEL_NAME_PARAMS = [
 ]
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service",
+        "feature_service_name": "ui_metadata_model_history_service",
         "join_key_map": {"model_id": "1"},
     }
 }
+FEATURES = "features"
+JOIN_KEYS = "joinKeys"
+RESULTS = "results"
+LATEST_VERSION = "latest_version"
+FULCRUM_DATE = "fulcrum_date"
+LAST_TRAINED = "last_trained"
+LOOKBACK_WINDOW = "lookback_window"
+PREDICTION_WINDOW = "prediction_window"
+PAST_VERSION_COUNT = "past_version_count"
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
+
+# AWS BATCH
+BATCH_SIZE = "batch_size"

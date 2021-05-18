@@ -15,6 +15,14 @@ from decouple import config
 from huxunify.api import constants as api_c
 
 
+# MONGO CONFIG VARS
+HOST = "host"
+PORT = "port"
+USER_NAME = "username"
+PASSWORD = "password"
+SSL_CERT_PATH = "ssl_cert_path"
+
+
 LOAD_VAR_DICT = {
     "TECTON_API_KEY": "TECTON_API_KEY",
     "MONGO_DB_HOST": "unifieddb_host_alias",
@@ -51,6 +59,23 @@ class Config:
         "ssl_cert_path": MONGO_SSL_CERT,
     }
 
+    # grab params
+    MONGO_DB_HOST = config("MONGO_DB_HOST", default="localhost")
+    MONGO_DB_PORT = config("MONGO_DB_PORT", default=27017, cast=int)
+    MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="")
+    MONGO_DB_PASSWORD = config("MONGO_DB_PASSWORD", default="")
+    # grab the SSL cert path
+    MONGO_SSL_CERT = str(
+        Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
+    )
+    MONGO_DB_CONFIG = {
+        HOST: MONGO_DB_HOST,
+        PORT: MONGO_DB_PORT,
+        USER_NAME: MONGO_DB_USERNAME,
+        PASSWORD: MONGO_DB_PASSWORD,
+        SSL_CERT_PATH: MONGO_SSL_CERT,
+    }
+
     OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="")
     OKTA_ISSUER = config("OKTA_ISSUER", default="")
 
@@ -65,6 +90,22 @@ class Config:
         "Authorization": f"Tecton-key {TECTON_API_KEY}",
     }
     TECTON_FEATURE_SERVICE = f"{TECTON_API}/feature-service/query-features"
+
+    # MONITORING VARS
+    MONITORING_CONFIG_CONST = "MONITORING-CONFIG"
+    MONITORING_CONFIG = config(MONITORING_CONFIG_CONST, default="")
+
+    # AWS BATCH
+    AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
+    AUDIENCE_ROUTER_JOB_ROLE_ARN = config(
+        AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST, default=""
+    )
+    AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
+    AUDIENCE_ROUTER_EXECUTION_ROLE_ARN = config(
+        AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST, default=""
+    )
+    AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
+    AUDIENCE_ROUTER_IMAGE = config(AUDIENCE_ROUTER_IMAGE_CONST, default="")
 
 
 class ProductionConfig(Config):

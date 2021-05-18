@@ -13,6 +13,7 @@ DATA_MANAGEMENT_DATABASE = "data_management"
 CONSTANTS_COLLECTION = "constants"
 DATA_SOURCES_COLLECTION = "data_sources"
 CDP_DATA_SOURCES_COLLECTION = "cdp_data_sources"
+ENGAGEMENTS_COLLECTION = "engagements"
 INGESTION_JOBS_COLLECTION = "ingestion_jobs"
 INGESTED_DATA_COLLECTION = "ingested_data"
 INGESTED_DATA_STATS_COLLECTION = "ingested_data_stats"
@@ -92,9 +93,6 @@ S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"  # internal only
 S_TYPE_LAST_NAME = "last_name"
 S_TYPE_MOBILE_DEVICE_ID = "mobile_device_id"
 S_TYPE_PHONE_NUMBER = "phone_number"
-S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"
-S_TYPE_FACEBOOK_PHONE_NUMBER = "facebook_phone_number"
-S_TYPE_PHONE_NUMBER = "phone_number"
 S_TYPE_POSTAL_CODE = "postal_code"
 S_TYPE_STATE_OR_PROVINCE = "state_or_province"
 
@@ -160,6 +158,8 @@ DELIVERY_PLATFORM_FACEBOOK = "Facebook"
 DELIVERY_PLATFORM_AMAZON = "Amazon"
 DELIVERY_PLATFORM_GOOGLE = "Google"
 DELIVERY_PLATFORM_SFMC = "SFMC"
+DELIVERY_PLATFORM_TWILIO = "Twilio"
+DELIVERY_PLATFORM_QUALTRICS = "Qualtrics"
 
 # Engagements
 ENGAGEMENT_ID = "engagement_id"
@@ -235,6 +235,12 @@ NOTIFICATION_FIELD_CREATED = "created"
 NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
+# Engagement constants
+ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_NAME = "name"
+ENGAGEMENT_DESCRIPTION = "description"
+ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 
 
 # pagination constants

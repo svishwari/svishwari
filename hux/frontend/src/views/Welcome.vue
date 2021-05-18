@@ -82,7 +82,6 @@ export default {
   align-items: center;
   .content {
     max-width: 72.291666666666667%;
-    max-height: 77.777777777777778%;
     background: var(--v-white-base);
     box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.15);
     border-radius: 5px;
