@@ -177,7 +177,7 @@ DATA_SOURCES = [
     },
 ]
 
-# Destinations List
+# Delivery Platforms List
 DELIVERY_PLATFORMS = [
     {
         c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
