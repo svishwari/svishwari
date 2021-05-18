@@ -87,10 +87,10 @@ def map_model_response(response: dict) -> dict:
     return model
 
 
-def get_models(model_ids: list = None) -> List[dict]:
+def get_models(model_ids: List[int] = None) -> List[dict]:
     """Get models from Tecton.
     Args:
-        model_ids (list): List of model ids to query.
+        model_ids (List[int]): List of model ids to query.
 
     Returns:
         List[ModelSchema]: List of models.
