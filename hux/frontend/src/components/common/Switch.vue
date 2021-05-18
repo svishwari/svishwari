@@ -1,0 +1,122 @@
+<template>
+  <v-switch
+    v-model="localValue"
+    inset
+    :label="operandLabel"
+    v-on:input="updateValue($event.target.value)"
+    class="hux-slider"
+  ></v-switch>
+</template>
+
+<script>
+export default {
+  name: "huxSwitch",
+  props: {
+    value: {
+      type: Boolean,
+    },
+    switchLabels: {
+      type: Array,
+      required: true,
+      default: () => [
+        {
+          condition: true,
+          label: "ALL",
+        },
+        {
+          condition: false,
+          label: "ANY",
+        },
+      ],
+    },
+  },
+  computed: {
+    localValue: {
+      get() {
+        return this.value
+      },
+      set(value) {
+        this.$emit("input", value)
+      },
+    },
+    operandLabel() {
+      return this.switchLabels.filter(
+        (label) => label.condition === this.value
+      )[0].label
+    },
+  },
+  methods: {
+    updateValue(value) {
+      console.log("change")
+      this.$emit("input", value)
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.v-input {
+  ::v-deep .v-input__slot {
+    height: 26px;
+    margin: 0;
+    .v-input--selection-controls__input {
+      width: 61px;
+      position: relative;
+      .v-input--switch__track {
+        width: 61px;
+        height: 24px;
+        background: var(--v-white-base);
+        border: 1px solid var(--v-skyBlueDark-base);
+        box-sizing: border-box;
+        border-radius: 21px;
+      }
+      .v-input--switch__thumb {
+        background: var(--v-skyBlueDark-base);
+        border: 1px solid var(--v-white-base);
+        box-sizing: border-box;
+        width: 20px;
+        height: 20px;
+        top: 0;
+        transform: translate(0, 0) !important;
+      }
+    }
+    .v-label {
+      position: absolute !important;
+      font-family: Open Sans SemiBold;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      top: 3px !important;
+      left: 25px !important;
+      color: var(--v-secondary-base);
+    }
+  }
+  &.v-input--is-dirty {
+    ::v-deep .v-input__slot {
+      .v-input--selection-controls__input {
+        .v-input--switch__thumb,
+        .v-input--selection-controls__ripple {
+          transform: translate(34px, 0) !important;
+        }
+      }
+      .v-input--switch__track {
+        border: 1px solid var(--v-skyBlue-base);
+      }
+      .v-input--switch__thumb {
+        background: var(--v-skyBlue-base);
+      }
+      .v-label {
+        position: absolute !important;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        top: 3px !important;
+        left: 3px !important;
+        color: var(--v-skyBlue-base);
+      }
+    }
+  }
+}
+</style>

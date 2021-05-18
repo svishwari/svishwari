@@ -1,7 +1,7 @@
 <template>
   <div>
     <label class="d-flex align-items-center mb-2">
-      {{ labelText }}
+      <span v-html="labelText"></span>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
           <v-icon
@@ -21,10 +21,13 @@
     </label>
     <v-text-field
       v-model="TextFieldValue"
+      :required="required"
+      :height="height"
       :label="placeholderText"
       :append-icon="appendIcon"
       :rules="rules"
       :type="InputType"
+      :placeholder="placeholder"
       :background-color="backgroundColor"
       single-line
       outlined
@@ -47,7 +50,19 @@ export default {
     }
   },
   props: {
+    required: {
+      type: Boolean,
+      required: false,
+    },
+    height: {
+      type: String,
+      required: false,
+    },
     labelText: {
+      type: String,
+      required: false,
+    },
+    placeholder: {
       type: String,
       required: false,
     },

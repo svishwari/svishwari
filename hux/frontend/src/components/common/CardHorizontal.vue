@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="d-flex justify-space-between align-center px-5 py-2 rounded-lg"
+    class="d-flex justify-space-between align-center px-5 py-2 rounded"
     @click="$emit('click')"
     :class="isDisabled ? 'card-horizontal-disabled' : ''"
     :elevation="isDisabled ? '0' : '2'"
@@ -81,3 +81,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.card-horizontal-disabled {
+  border: 1px solid var(--v-zircon-base) !important;
+}
+</style>

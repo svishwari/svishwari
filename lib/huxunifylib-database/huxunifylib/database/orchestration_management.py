@@ -22,7 +22,6 @@ def create_audience(
     name: str,
     audience_filters: list,
     destination_ids: list = None,
-    engagement_ids: list = None,  # pylint: disable=W0613
     user_id: ObjectId = None,
 ) -> dict:
     """A function to create an audience.
@@ -34,7 +33,6 @@ def create_audience(
         These are aggregated using "OR".
         destination_ids (list): List of destination
             / delivery platform ids attached to the audience
-        engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
 
     Returns:
@@ -64,7 +62,6 @@ def create_audience(
         c.UPDATED_BY: user_id,
     }
 
-    # TODO: Set Engagement IDs once the engagement table is ready
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id
         if audience_id is not None:
@@ -142,14 +139,12 @@ def get_all_audiences(
 def update_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
-    name: str,
+    name: str = None,
     audience_filters: list = None,
     destination_ids: list = None,
-    engagement_ids: list = None,  # pylint: disable=W0613
     user_id: ObjectId = None,
 ) -> dict:
     """A function to update an audience.
-
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): MongoDB ID of the audience.
@@ -158,12 +153,9 @@ def update_audience(
             These are aggregated using "OR".
         destination_ids (list): List of destination / delivery platform
             ids attached to the audience
-        engagement_ids (list): List of engagement ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
-
     Returns:
         dict: Updated audience configuration dict.
-
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -173,30 +165,29 @@ def update_audience(
         audience_doc = collection.find_one({c.ID: audience_id})
         if not audience_doc:
             raise de.InvalidID()
-        if name is None:
-            raise de.InvalidName()
-
-        duplicate_name_doc = collection.find_one({c.AUDIENCE_NAME: name})
-        if (
-            duplicate_name_doc is not None
-            and duplicate_name_doc[c.ID] != audience_id
-        ):
-            raise de.DuplicateName(name)
+        if name is not None:
+            duplicate_name_doc = collection.find_one({c.AUDIENCE_NAME: name})
+            if (
+                duplicate_name_doc is not None
+                and duplicate_name_doc[c.ID] != audience_id
+            ):
+                raise de.DuplicateName(name)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
-    updated_audience_doc = {
-        c.AUDIENCE_NAME: name,
-        c.AUDIENCE_FILTERS: audience_filters,
-        c.DESTINATIONS: destination_ids,
-        c.UPDATE_TIME: curr_time,
-        c.UPDATED_BY: user_id,
-    }
+    updated_audience_doc = audience_doc
+    if name is not None:
+        updated_audience_doc[c.AUDIENCE_NAME] = name
+    if audience_filters is not None:
+        updated_audience_doc[c.AUDIENCE_FILTERS] = audience_filters
+    if destination_ids is not None:
+        updated_audience_doc[c.DESTINATIONS] = destination_ids
+    updated_audience_doc[c.UPDATED_BY] = user_id
+    updated_audience_doc[c.UPDATE_TIME] = curr_time
 
-    # TODO: Delete and Update Engagement IDs once the engagement table is ready
     try:
         return collection.find_one_and_update(
             {c.ID: audience_id},

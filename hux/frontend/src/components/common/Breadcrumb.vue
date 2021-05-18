@@ -6,10 +6,10 @@
         :disabled="item.disabled"
         class="font-weight-light"
       >
-        <v-icon color="black" size="21" class="pr-1">
+        <v-icon color="neroBlack" size="21" class="pr-1">
           {{ item.icon }}
         </v-icon>
-        {{ item.text }}
+        <span class="neroBlack--text">{{ item.text }}</span>
       </v-breadcrumbs-item>
     </template>
     <template v-slot:divider>
