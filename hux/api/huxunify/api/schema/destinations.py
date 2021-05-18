@@ -32,7 +32,7 @@ class DestinationGetSchema(Schema):
         attribute=api_c.DESTINATION_NAME, example="My destination"
     )
     status = fields.String(
-        attribute=api_c.DESTINATION_STATUS,
+        attribute=api_c.CONNECTION_STATUS,
         validate=[
             OneOf(
                 choices=[

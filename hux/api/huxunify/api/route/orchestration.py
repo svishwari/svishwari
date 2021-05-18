@@ -118,7 +118,7 @@ class AudienceGetView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve audience details.",
             "schema": {
-                "example": {"message": "Destination can not be validated"},
+                "example": {"message": "Destination cannot be validated"},
             },
         },
     }
