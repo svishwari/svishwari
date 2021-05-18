@@ -81,7 +81,7 @@ class AudienceView(SwaggerView):
         audiences = orchestration_management.get_all_audiences(get_db_client())
         for audience in audiences:
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
-                audience[api_c.DESTINATIONS_TAG]
+                audience.get(api_c.DESTINATIONS_TAG)
             )
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         return (
@@ -146,7 +146,7 @@ class AudienceGetView(SwaggerView):
         )
 
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
-            audience[api_c.DESTINATIONS_TAG]
+            audience.get(api_c.DESTINATIONS_TAG)
         )
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         return (

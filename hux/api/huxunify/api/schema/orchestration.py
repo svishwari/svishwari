@@ -70,10 +70,11 @@ class AudienceGetSchema(Schema):
             api_c.GENDER_OTHER: 0.25219,
         },
     )
-    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
-    created_by = fields.DateTime(attribute=db_c.CREATED_BY, allow_none=True)
-    update_time = fields.String(attribute=db_c.UPDATE_TIME, allow_none=True)
-    updated_by = fields.DateTime(attribute=db_c.UPDATED_BY, allow_none=True)
+
+    create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
+    created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
+    update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
 
 class AudiencePutSchema(Schema):
