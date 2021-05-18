@@ -28,6 +28,27 @@ orchestration_bp = Blueprint(
 )
 
 
+def add_destinations(destination_ids) -> list:
+    """Fetch destinations data using destination ids.
+
+    ---
+
+        Args:
+            destination_ids (list): Destinations Ids.
+
+        Returns:
+            destinations (list): Destination objects.
+
+    """
+
+    if destination_ids is not None:
+        object_ids = [ObjectId(x) for x in destination_ids]
+        return destination_management.get_delivery_platforms_by_id(
+            get_db_client(), object_ids
+        )
+    return None
+
+
 @add_view_to_blueprint(
     orchestration_bp, api_c.AUDIENCE_ENDPOINT, "AudienceView"
 )
@@ -59,13 +80,9 @@ class AudienceView(SwaggerView):
 
         audiences = orchestration_management.get_all_audiences(get_db_client())
         for audience in audiences:
-            if audience["destinations"] is not None:
-                object_ids = [ObjectId(x) for x in audience["destinations"]]
-                audience[
-                    "destinations"
-                ] = destination_management.get_delivery_platforms_by_id(
-                    get_db_client(), object_ids
-                )
+            audience[api_c.DESTINATIONS_TAG] = add_destinations(
+                audience[api_c.DESTINATIONS_TAG]
+            )
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
@@ -100,6 +117,9 @@ class AudienceGetView(SwaggerView):
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve audience details.",
+            "schema": {
+                "example": {"message": "Destination can not be validated"},
+            },
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -118,23 +138,16 @@ class AudienceGetView(SwaggerView):
 
         """
 
-        try:
-            # validate the id
-            ObjectId(audience_id)
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        if not ObjectId.is_valid(audience_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         audience = orchestration_management.get_audience(
             get_db_client(), ObjectId(audience_id)
         )
 
-        if audience["destinations"] is not None:
-            object_ids = [ObjectId(x) for x in audience["destinations"]]
-            audience[
-                "destinations"
-            ] = destination_management.get_delivery_platforms_by_id(
-                get_db_client(), object_ids
-            )
+        audience[api_c.DESTINATIONS_TAG] = add_destinations(
+            audience[api_c.DESTINATIONS_TAG]
+        )
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
@@ -160,7 +173,7 @@ class AudiencePostView(SwaggerView):
             "description": "Input Audience body.",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.AUDIENCE_DESTINATIONS: [
+                api_c.DESTINATIONS_TAG: [
                     "71364317897acad4bac4373b",
                     "67589317897acad4bac4373b",
                 ],
@@ -216,8 +229,8 @@ class AudiencePostView(SwaggerView):
         audience_doc = orchestration_management.create_audience(
             database=get_db_client(),
             name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS, None),
-            destination_ids=body.get(api_c.AUDIENCE_DESTINATIONS, None),
+            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            destination_ids=body.get(api_c.DESTINATIONS_TAG),
             user_id=user_id,
         )
 
@@ -250,7 +263,7 @@ class AudiencePutView(SwaggerView):
             "type": "object",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.AUDIENCE_DESTINATIONS: [
+                api_c.DESTINATIONS_TAG: [
                     "71364317897acad4bac4373b",
                     "67589317897acad4bac4373b",
                 ],
@@ -311,9 +324,9 @@ class AudiencePutView(SwaggerView):
         audience_doc = orchestration_management.update_audience(
             database=get_db_client(),
             audience_id=ObjectId(audience_id),
-            name=body.get(api_c.AUDIENCE_NAME, None),
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS, None),
-            destination_ids=body.get(api_c.AUDIENCE_DESTINATIONS, None),
+            name=body.get(api_c.AUDIENCE_NAME),
+            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            destination_ids=body.get(api_c.DESTINATIONS_TAG),
             user_id=user_id,
         )
 
