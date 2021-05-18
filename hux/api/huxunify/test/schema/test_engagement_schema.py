@@ -97,7 +97,7 @@ class EngagementSchemaTest(TestCase):
             api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
             api_c.ENGAGEMENT_STATUS: api_c.ENGAGEMENT_STATUS_ACTIVE,
             api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
-            api_c.ENABLED: True
+            api_c.ENABLED: True,
         }
 
         assert EngagementGetSchema().validate(doc) != {}

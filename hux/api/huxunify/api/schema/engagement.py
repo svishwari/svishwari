@@ -27,7 +27,7 @@ class EngagementGetSchema(Schema):
         data_key=api_c.ENGAGEMENT_ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
-        validate=validate_object_id
+        validate=validate_object_id,
     )
     name = fields.String(attribute=api_c.ENGAGEMENT_NAME, required=True)
     description = fields.String(attribute=api_c.ENGAGEMENT_DESCRIPTION)
@@ -35,17 +35,17 @@ class EngagementGetSchema(Schema):
     audiences = fields.List(
         cls_or_instance=fields.String,
         attribute=api_c.ENGAGEMENT_AUDIENCES,
-        required=True
+        required=True,
     )
     status = fields.String(
         attribute=api_c.ENGAGEMENT_STATUS,
         required=True,
-        validate=validate.OneOf(api_c.ENGAGEMENT_STATUSES)
+        validate=validate.OneOf(api_c.ENGAGEMENT_STATUSES),
     )
     delivery_schedule = fields.Nested(
         DeliverySchedule,
         required=True,
-        attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE
+        attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE,
     )
     created_time = fields.DateTime(attribute=db_c.CREATE_TIME)
     created_by = fields.String(attribute=db_c.CREATED_BY)
