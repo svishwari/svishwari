@@ -169,7 +169,6 @@ AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
 
 
-
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
