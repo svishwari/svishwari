@@ -2,6 +2,16 @@
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
+TOTAL_CUSTOMERS = "total_customers"
+COUNTRIES = "countries"
+STATES = "states"
+CITIES = "cities"
+MIN_AGE = "min_age"
+MAX_AGE = "max_age"
+GENDER_WOMEN = "women"
+GENDER_MEN = "men"
+GENDER_OTHER = "other"
+
 # AWS defines
 AWS_SSM_NAME = "ssm"
 AWS_BATCH_NAME = "batch"
@@ -127,15 +137,6 @@ AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
 ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_NAME = "engagement_name"
-INSIGHTS_TOTAL_CUSTOMERS = "total_customers"
-INSIGHTS_TOTAL_COUNTRIES = "countries"
-INSIGHTS_TOTAL_US_STATES = "states"
-INSIGHTS_TOTAL_CITIES = "cities"
-INSIGHTS_MIN_AGE = "min_age"
-INSIGHTS_MAX_AGE = "max_age"
-INSIGHTS_GENDER_WOMEN = "women"
-INSIGHTS_GENDER_MEN = "men"
-INSIGHTS_GENDER_OTHER = "other"
 
 
 PARAM_STORE_PREFIX = "huxunify"
