@@ -19,4 +19,8 @@ export default {
   darkGrey: colors.darkGrey,
   lightGrey: colors.lightGrey,
   columbiaBlue: colors.columbiaBlue,
+  pinkLittleDark: colors.pinkLittleDark,
+  darkGreyHeading: colors.darkGreyHeading,
+  lightGreyAnotherVariant: colors.lightGreyAnotherVariant,
+  offWhite: colors.offWhite,
 }

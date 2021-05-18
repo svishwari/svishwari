@@ -6,10 +6,12 @@
       </v-col>
       <v-col cols="6" class="right-section">
         <Logo />
-        <h1 class="font-weight-light">
+        <h1 class="text-h4 font-weight-regular">
           Access your <span class="altcolor">360&deg;</span> view
         </h1>
-        <p class="text-h6">Jump right in where you left off, and leave the hard work on us!</p>
+        <p class="font-weight-regular">
+          Jump right in where you left off, and leave the hard work on us!
+        </p>
         <div class="login-form">
           <div id="okta-signin-container" class="okta-container"></div>
         </div>
@@ -93,10 +95,8 @@ export default {
       height: 95px;
     }
     h1 {
+      font-family: Open Sans Light !important;
       margin-top: 30px;
-      font-style: normal;
-      font-weight: 600;
-      font-size: 24px;
       line-height: 43px;
       color: var(--v-darkGreyHeading-base);
       .altcolor {
@@ -104,6 +104,7 @@ export default {
       }
     }
     p {
+      font-size: 14px !important;
       line-height: 22px;
       color: var(--v-gray-base);
       margin-bottom: 20px;
