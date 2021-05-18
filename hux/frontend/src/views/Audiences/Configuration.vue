@@ -30,6 +30,7 @@
     </div>
 
     <div class="timeline-wrapper mt-9 ml-9">
+      <v-form ref="form" class="mx-2" v-model="isFormValid" lazy-validation>
       <v-timeline align-top dense class="">
         <v-timeline-item color="blue" class="timeline-section mb-7">
           <template v-slot:icon class="timeline-icon-section">
@@ -48,6 +49,7 @@
                 v-bind:required="true"
                 v-model="audience.audienceName"
                 class="mt-1 text-caption neroBlack--text"
+                :rules="audienceNamesRules"
               ></TextField>
             </v-col>
             <v-col cols="8">
@@ -119,6 +121,7 @@
           </v-row>
         </v-timeline-item>
       </v-timeline>
+      </v-form>
 
       <HuxFooter>
         <template v-slot:left>
@@ -153,6 +156,8 @@
             width="94"
             height="44"
             class="ma-2"
+            @click="createAudience()"
+            v-bind:isDisabled="!isAudienceFormValid"
           ></huxButton>
         </template>
       </HuxFooter>
@@ -330,7 +335,7 @@ export default {
         viewStep: 1,
       },
       audience: {
-        name: "",
+        name: null,
         engagements: [],
         attributeRules: [],
         destinations: [],
@@ -342,6 +347,10 @@ export default {
         description: "",
         deliveryType: 0,
       },
+      audienceNamesRules: [
+        v => !!v || 'Audience name is required',
+      ],
+      isFormValid: false,
     }
   },
   computed: {
@@ -351,6 +360,12 @@ export default {
     attributeRules() {
       return this.audience ? this.audience.attributeRules : []
     },
+    isEngagementSelected() {
+      return this.selectedEngagements.length > 0
+    },
+    isAudienceFormValid() {
+      return !!this.audience.name && this.audience.engagements.length > 0
+    }
   },
   methods: {
     ...mapActions({
@@ -378,6 +393,7 @@ export default {
       )
       if (existingIndex > -1) this.selectedEngagements.splice(existingIndex, 1)
     },
+    createAudience(){ }
   },
   async mounted() {
     await this.fetchEngagements()
