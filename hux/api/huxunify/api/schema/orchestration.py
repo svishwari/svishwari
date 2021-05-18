@@ -82,17 +82,18 @@ class AudienceGetSchema(Schema):
             }
         ],
     )
-    insights = fields.Dict(
+    audience_insights = fields.Dict(
         attribute=api_c.AUDIENCE_INSIGHTS,
         example={
-            api_c.INSIGHTS_TARGET_SIZE: 121321321,
-            api_c.INSIGHTS_COUNTRIES: 2,
-            api_c.INSIGHTS_STATES: 28,
-            api_c.INSIGHTS_CITIES: 246,
-            api_c.INSIGHTS_AGE: "34 to 43",
-            api_c.INSIGHTS_WOMEN: "46%",
-            api_c.INSIGHTS_MEN: "48%",
-            api_c.INSIGHTS_OTHER: "2%",
+            api_c.INSIGHTS_TOTAL_CUSTOMERS: 121321321,
+            api_c.INSIGHTS_TOTAL_COUNTRIES: 2,
+            api_c.INSIGHTS_TOTAL_US_STATES: 28,
+            api_c.INSIGHTS_TOTAL_CITIES: 246,
+            api_c.INSIGHTS_MIN_AGE: 34,
+            api_c.INSIGHTS_MAX_AGE: 100,
+            api_c.INSIGHTS_GENDER_WOMEN: 0.4651031,
+            api_c.INSIGHTS_GENDER_MEN: 0.481924,
+            api_c.INSIGHTS_GENDER_OTHER: 0.25219,
         },
     )
     created = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
