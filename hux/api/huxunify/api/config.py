@@ -37,10 +37,7 @@ class Config:
     DEBUG = False
 
     # AWS_CONFIG
-    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
-    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
     AWS_REGION = config("AWS_REGION", default="us-east-2")
-    AWS_SERVICE_URL = config("AWS_SERVICE_URL", default="")
 
     # MONGO CONFIG
     MONGO_DB_HOST = config("MONGO_DB_HOST", default="localhost")
