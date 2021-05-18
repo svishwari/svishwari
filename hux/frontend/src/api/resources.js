@@ -7,4 +7,5 @@ export default {
   dataSources: "/data-sources",
   destinations: "/destinations",
   engagements: "/engagements",
+  models: "/models",
 }

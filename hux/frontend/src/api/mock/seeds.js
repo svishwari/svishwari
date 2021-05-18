@@ -1,3 +1,23 @@
+// data sources
+const googleAds = {
+  name: "Google Ads",
+  type: "google-ads",
+  is_enabled: true,
+}
+
+const netsuite = {
+  name: "Netsuite",
+  type: "netsuite",
+  is_enabled: false,
+}
+
+const aqfer = {
+  name: "Aqfer",
+  type: "aqfer",
+  is_enabled: false,
+}
+
+// destinations
 const facebook = {
   name: "Facebook",
   type: "facebook",
@@ -98,6 +118,8 @@ const mailchimp = {
   name: "Mailchimp",
   type: "mailchimp",
 }
+
+// engagements
 const defaultEngagement = {
   name: "Default engagement",
   description: "Default Description",
@@ -108,24 +130,18 @@ const defaultEngagement = {
   },
 }
 
-const googleAds = {
-  name: "Google Ads",
-  type: "google-ads",
-  is_enabled: true,
+// models
+const unsubscribeModel = {
+  name: "Propensity to Unsubscribe",
+  status: "pending",
 }
 
-const netsuite = {
-  name: "Netsuite",
-  type: "netsuite",
-  is_enabled: false,
-}
-
-const aqfer = {
-  name: "Aqfer",
-  type: "aqfer",
-  is_enabled: false,
-}
 export default function (server) {
+  // seed data sources
+  server.create("dataSource", googleAds)
+  server.create("dataSource", netsuite)
+  server.create("dataSource", aqfer)
+
   // seed destinations
   server.create("destination", facebook)
   server.create("destination", salesforce)
@@ -134,10 +150,10 @@ export default function (server) {
   server.create("destination", tableau)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
+
   // seed engagements
   server.create("engagement", defaultEngagement)
-  // seed dataSources
-  server.create("dataSource", googleAds)
-  server.create("dataSource", netsuite)
-  server.create("dataSource", aqfer)
+
+  // seed models
+  server.create("model", unsubscribeModel)
 }

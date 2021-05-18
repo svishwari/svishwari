@@ -1,6 +1,7 @@
 import Vue from "vue"
 
 import App from "@/App"
+import filters from "@/filters"
 import router from "./router"
 import store from "./store"
 import { makeServer } from "./api/mock/server"
@@ -18,14 +19,12 @@ import vuetify from "./plugins/vuetify"
 Vue.component("app-layout", AppLayout)
 Vue.component("default-layout", DefaultLayout)
 
-Vue.config.productionTip = false
-
-Vue.filter("TitleCase", function (value) {
-  return value
-    .replace(/([A-Z])/g, (match) => ` ${match}`)
-    .replace(/^./, (match) => match.toUpperCase())
-    .trim()
+// Filters
+Object.keys(filters).forEach((filterName) => {
+  Vue.filter(filterName, filters[filterName])
 })
+
+Vue.config.productionTip = false
 
 if (process.env.NODE_ENV === "development") {
   makeServer()
