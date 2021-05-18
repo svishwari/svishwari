@@ -1,6 +1,15 @@
 import { Response } from "miragejs"
 
 export const defineRoutes = (server) => {
+  // data sources
+  server.get("/data-sources")
+
+  server.put("/data-sources", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+
+    return schema.dataSources.find(requestData).update({ is_added: true })
+  })
+
   // destinations
   server.get("/destinations")
 
@@ -20,19 +29,12 @@ export const defineRoutes = (server) => {
 
   // engagements
   server.get("/engagements")
-
-  // Add new engagement
   server.post("/engagements/:id", (schema) => {
     let attrs = this.normalizedRequestAttrs()
 
     return schema.engagements.create(attrs)
   })
-  // data sources
-  server.get("/data-sources")
 
-  server.put("/data-sources", (schema, request) => {
-    const requestData = JSON.parse(request.requestBody)
-
-    return schema.dataSources.find(requestData).update({ is_added: true })
-  })
+  // models
+  server.get("/models")
 }

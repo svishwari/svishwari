@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="descriptive-card align-center text-center rounded-lg"
+    class="descriptive-card align-center text-center rounded-lg mr-10 mb-10"
     :disabled="disabled"
   >
     <div v-if="$slots.top" class="pa-3 pb-0">
@@ -11,15 +11,15 @@
       <Icon :type="icon" :size="60" color="primary" class="d-block" />
     </div>
 
-    <div class="text-h4 pb-2">
+    <div class="text-h4 px-3 pb-2">
       {{ title }}
     </div>
 
-    <div class="text-caption">
+    <div class="text-caption px-3">
       {{ description }}
     </div>
 
-    <div class="pt-2" v-if="$slots.default">
+    <div class="px-3 pt-2" v-if="$slots.default">
       <slot />
     </div>
   </v-card>

@@ -1,26 +1,32 @@
 import { createServer, Factory, Model, Serializer } from "miragejs"
 import config from "@/config"
+
+// routes
 import { defineRoutes } from "./routes"
 
-//seeds
+// seeds
 import seeds from "./seeds"
 
-//factories
+// factories
+import dataSourceFactory from "./factories/dataSource"
 import destinationFactory from "./factories/destination"
 import engagementFactory from "./factories/engagement"
-import dataSourcesFactory from "./factories/dataSources"
+import modelFactory from "./factories/model"
 
 export function makeServer({ environment = "development" } = {}) {
+  // models
   const models = {
+    dataSource: Model,
     destination: Model,
     engagement: Model,
-    dataSource: Model,
+    model: Model,
   }
 
   const factories = {
+    dataSource: Factory.extend(dataSourceFactory),
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
-    dataSource: Factory.extend(dataSourcesFactory),
+    model: Factory.extend(modelFactory),
   }
 
   const server = createServer({
@@ -31,6 +37,7 @@ export function makeServer({ environment = "development" } = {}) {
     routes() {
       this.urlPrefix = config.apiUrl
       this.namespace = config.apiBasePath
+      this.timing = 1000
       defineRoutes(this)
 
       // pass requests to external APIs through
