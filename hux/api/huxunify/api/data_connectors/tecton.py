@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 import requests
 
-from huxunify.api import config
+from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.schema.model import (
     ModelSchema,
@@ -26,6 +26,9 @@ def check_tecton_connection() -> Tuple[bool, str]:
     Returns:
         tuple[bool, str]: Returns if the connection is valid, and the message.
     """
+    # get config
+    config = get_config()
+
     # submit the post request to get models
     response = requests.post(
         config.TECTON_FEATURE_SERVICE,
@@ -45,6 +48,9 @@ def get_models(
     Returns:
         List[ModelSchema]: List of models.
     """
+
+    # get config
+    config = get_config()
 
     if payload is None:
         payload = constants.MODEL_LIST_PAYLOAD

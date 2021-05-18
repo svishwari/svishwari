@@ -5,6 +5,7 @@ HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
 # AWS defines
+AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
 AWS_BATCH_NAME = "batch"
 AWS_HEALTH_TESTS = {

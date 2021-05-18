@@ -5,7 +5,7 @@ import json
 from unittest import TestCase
 import requests_mock
 from requests_mock import Mocker
-from huxunify.api import config
+from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors import tecton
 
@@ -14,6 +14,14 @@ class TectonTest(TestCase):
     """
     Test Tecton request methods
     """
+
+    def setUp(self) -> None:
+        """Setup tests
+
+        Returns:
+
+        """
+        self.config = get_config()
 
     @requests_mock.Mocker()
     def test_list_models(self, request_mocker: Mocker):
@@ -28,9 +36,9 @@ class TectonTest(TestCase):
 
         # setup the request mock post
         request_mocker.post(
-            config.TECTON_FEATURE_SERVICE,
+            self.config.TECTON_FEATURE_SERVICE,
             text=json.dumps(constants.MODEL_LIST_PAYLOAD),
-            headers=config.TECTON_API_HEADERS,
+            headers=self.config.TECTON_API_HEADERS,
         )
 
         tecton.get_models(constants.MODEL_LIST_PAYLOAD)

@@ -5,6 +5,7 @@ from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
 
+from huxunify.api.config import load_env_vars
 from huxunify.api.route import ROUTES
 from huxunify.api import constants
 from huxunify.api.route.utils import get_health_check
@@ -23,23 +24,27 @@ SWAGGER_CONFIG = {
 }
 
 
-def configure_flask(app: Flask) -> None:
+def configure_flask(flask_app: Flask) -> None:
     """Set configuration and variables for Flask.
 
     Args:
-        app (Flask): Flask application. 
+        flask_app (Flask): Flask application.
 
     Returns:
 
     """
     # setup the environment config
     try:
-        if app.config["ENV"] == constants.PRODUCTION_MODE:
-            app.config.from_object("config.ProductionConfig")
-        elif app.config["ENV"] == constants.DEVELOPMENT_MODE:
-            app.config.from_object("config.DevelopmentConfig")
+        if flask_app.config["ENV"] == constants.PRODUCTION_MODE:
+            flask_app.config.from_object(
+                "huxunify.api.config.ProductionConfig"
+            )
+        elif flask_app.config["ENV"] == constants.DEVELOPMENT_MODE:
+            flask_app.config.from_object(
+                "huxunify.api.config.DevelopmentConfig"
+            )
         else:
-            app.config.from_object("config.Base")
+            flask_app.config.from_object("huxunify.api.config.Config")
     except KeyError as error:
         desc = f"Environment not configured: {error} is required."
         raise Exception(desc) from error
@@ -54,8 +59,11 @@ def create_app() -> Flask:
         Flask: Returns a flask object.
 
     """
+    load_env_vars()
+
     # setup the flask app
     flask_app = Flask(__name__)
+
     CORS(flask_app)
 
     # register the routes
@@ -73,7 +81,7 @@ def create_app() -> Flask:
 
     # setup the swagger docs
     Swagger(flask_app, config=SWAGGER_CONFIG, merge=True)
-    
+
     # configure flask
     configure_flask(flask_app)
 
