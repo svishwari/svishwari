@@ -219,7 +219,6 @@ class AudiencePostView(SwaggerView):
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body[api_c.AUDIENCE_FILTERS],
             destination_ids=body[api_c.AUDIENCE_DESTINATIONS],
-            engagement_ids=body[api_c.AUDIENCE_ENGAGEMENTS],
             user_id=user_id,
         )
 
@@ -318,7 +317,6 @@ class AudiencePutView(SwaggerView):
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body[api_c.AUDIENCE_FILTERS],
             destination_ids=body[api_c.AUDIENCE_DESTINATIONS],
-            engagement_ids=body[api_c.AUDIENCE_ENGAGEMENTS],
             user_id=user_id,
         )
 

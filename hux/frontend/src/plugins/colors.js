@@ -14,4 +14,13 @@ export default {
   zircon: "#E2EAEC",
   neroBlack: "#1e1e1e",
   gray: "4F4F4F",
+  columbiaBlue: "#A0DCFF",
+  greenLight: "#86BC25",
+  pink: "#b54acf",
+  pinkLittleDark: "#f03bc8",
+  darkGreyHeading: "#333333",
+  lightGreyAnotherVariant: "#757b7b",
+  skyBlue: "#80D1EF",
+  skyBlueDark: "#00A3E0",
+  offWhite: "#e5e5e5",
 }

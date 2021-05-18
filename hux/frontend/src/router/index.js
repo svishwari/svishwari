@@ -1,8 +1,17 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 
-import auth from "@/auth"
+import Auth from "@okta/okta-vue"
 import { pageTitle } from "@/utils"
+const config = require("@/config")
+
+Vue.use(Auth, {
+  issuer: config.default.oidc.issuer,
+  clientId: config.default.oidc.clientId,
+  redirectUri: window.location.origin + "/login/callback",
+  scopes: ["openid", "profile", "email"],
+  pkce: true,
+})
 
 Vue.use(VueRouter)
 
@@ -67,6 +76,16 @@ const routes = [
     },
   },
   {
+    path: "/audiences/:id/insight",
+    name: "audienceInsight",
+    component: () => import("@/views/Audiences/Insight.vue"),
+    meta: {
+      layout: "app",
+      title: "Audiences",
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/models",
     name: "models",
     component: () => import("@/views/Models"),
@@ -99,7 +118,7 @@ const routes = [
   {
     path: "/connections/destinations/add",
     name: "add-destination",
-    component: () => import("@/views/Destinations/Configuration.vue"),
+    component: () => import("@/views/Destinations/Configuration"),
     meta: {
       layout: "app",
       title: "Add a Destination",
@@ -109,7 +128,7 @@ const routes = [
   {
     path: "/connections/destinations",
     name: "destinations",
-    component: () => import("@/views/Destinations/Listing.vue"),
+    component: () => import("@/views/Destinations/Listing"),
     meta: {
       layout: "app",
       title: "Destinations",
@@ -157,11 +176,8 @@ const routes = [
     },
   },
   {
-    path: "/logout",
-    beforeEnter(to, from, next) {
-      auth.logout()
-      next("/login")
-    },
+    path: "/login/callback",
+    component: Auth.handleCallback(),
   },
   {
     path: "/components",
@@ -183,12 +199,12 @@ const router = new VueRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   document.title = pageTitle(to.meta.title)
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
-  if (requiresAuth && !auth.loggedIn()) {
+  if (requiresAuth && !(await Vue.prototype.$auth.isAuthenticated())) {
     next({
       path: "/login",
       query: { redirect: to.fullPath },

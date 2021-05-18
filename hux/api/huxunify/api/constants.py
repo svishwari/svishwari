@@ -1,4 +1,14 @@
 """This module contains connector defines."""
+HEALTH_CHECK_ENDPOINT = "/health-check"
+HEALTH_CHECK = "healthcheck"
+
+# AWS defines
+AWS_SSM_NAME = "ssm"
+AWS_BATCH_NAME = "batch"
+AWS_HEALTH_TESTS = {
+    AWS_SSM_NAME: "describe_parameters",
+    AWS_BATCH_NAME: "list_jobs",
+}
 
 NAME = "name"
 DESCRIPTION = "description"
@@ -32,6 +42,8 @@ SFMC_ACCOUNT_ID = "sfmc_account_id"
 SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
+SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
+SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -50,6 +62,8 @@ DESTINATION_CONSTANTS = {
         SFMC_AUTH_BASE_URI: "Auth Base URI",
         SFMC_REST_BASE_URI: "REST Base URI",
         SFMC_SOAP_BASE_URI: "SOAP Base URI",
+        SFMC_PERFORMANCE_EXT_NAME: "Performance metric data extension name",
+        SFMC_PERFORMANCE_EXT_VALUES: [],
     },
 }
 
@@ -80,6 +94,9 @@ DESTINATION_NAME = "destination_name"
 DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
+DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
+DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
+DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
@@ -158,10 +175,7 @@ MODEL_NAME_PARAMS = [
 MODEL_LIST_PAYLOAD = {
     "params": {
         "feature_service_name": "ui_metadata_models_service",
-        "join_key_map": {
-            "model_name": "ltv-model-365-30",
-            "version_number": "0.0.1",
-        },
+        "join_key_map": {"model_id": "1"},
     }
 }
 
@@ -169,3 +183,6 @@ MODEL_LIST_PAYLOAD = {
 CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
+
+# AWS BATCH
+BATCH_SIZE = "batch_size"

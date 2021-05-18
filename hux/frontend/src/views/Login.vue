@@ -1,65 +1,19 @@
 <template>
-  <v-container fluid class="login-wrap">
+  <v-container fluid class="login-wrap pa-0">
     <v-row no-gutters>
       <v-col cols="6" class="left-section">
         <span class="overlay"></span>
       </v-col>
       <v-col cols="6" class="right-section">
         <Logo />
-        <h1 class="font-weight-light">
+        <h1 class="text-h4 font-weight-regular">
           Access your <span class="altcolor">360&deg;</span> view
         </h1>
-        <p>Jump right in where you left off, and leave the hard work on us!</p>
+        <p class="font-weight-regular">
+          Jump right in where you left off, and leave the hard work on us!
+        </p>
         <div class="login-form">
-          <v-form ref="form" v-model="isFormValid">
-            <TextField
-              v-model="username"
-              placeholderText="Enter Username"
-              labelText="Username"
-              backgroundColor="white"
-              v-bind:required="true"
-            ></TextField>
-            <TextField
-              v-model="password"
-              placeholderText="Enter Password"
-              labelText="Password"
-              v-bind:appendIcon="toggleShowPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              v-bind:rules="[rules.required]"
-              v-bind:InputType="toggleShowPassword ? 'text' : 'password'"
-              @clickAppend="toggleShowPassword = !toggleShowPassword"
-              backgroundColor="white"
-              v-bind:required="true"
-            ></TextField>
-
-            <div v-if="loginFailed" class="error">
-              Uh-oh, your email and password don’t match.
-            </div>
-
-            <router-link
-              @click.native="forgotUsername"
-              to="#"
-              class="link-button font-weight-regular"
-            >
-              Forgot Username?
-            </router-link>
-            <router-link
-              @click.native="forgotPassword"
-              to="#"
-              class="link-button font-weight-regular"
-            >
-              Forgot Password?
-            </router-link>
-
-            <!-- disable if form is not valid -->
-            <huxButton
-              v-bind:isDisabled="!isFormValid"
-              size="large"
-              ButtonText="Login"
-              variant="tertiary"
-              class="ml-0 mt-4 loginBtn"
-              @click.native="initiateLogin()"
-            ></huxButton>
-          </v-form>
+          <div id="okta-signin-container" class="okta-container"></div>
         </div>
       </v-col>
     </v-row>
@@ -68,56 +22,62 @@
 
 <script>
 import Logo from "../assets/images/logo.svg"
-import auth from "@/auth"
-import TextField from "@/components/common/TextField"
-import huxButton from "@/components/common/huxButton"
+import OktaSignIn from "@okta/okta-signin-widget"
+import "@okta/okta-signin-widget/dist/css/okta-sign-in.min.css"
+const config = require("@/config")
+
 export default {
   name: "Login",
-  data() {
-    return {
-      username: "",
-      password: "",
-      toggleShowPassword: false,
-      loginFailed: false,
-      isFormValid: false,
-      rules: {
-        required: (value) => !!value || "Required.",
-        min: (v) => v.length >= 8 || "Min 8 characters",
-      },
-    }
-  },
   components: {
     Logo,
-    TextField,
-    huxButton,
   },
-  methods: {
-    initiateLogin() {
-      auth.login(this.username, this.password, (loggedIn) => {
-        if (!loggedIn) {
-          this.loginFailed = true
-        } else {
-          this.$router.replace(this.$route.query.redirect || "/overview")
-        }
+  mounted: function () {
+    this.$nextTick(function () {
+      this.widget = new OktaSignIn({
+        baseUrl: config.default.oidc.issuer.split("/oauth2")[0],
+        clientId: config.default.oidc.clientId,
+        redirectUri: window.location.origin + "/login/callback",
+        logo: require("@/assets/images/logo.png"),
+        language: "en",
+        i18n: {
+          en: {
+            "primaryauth.title": "Login | HUX Unified UI",
+          },
+        },
+        authParams: {
+          pkce: true,
+          issuer: config.default.oidc.issuer,
+          display: "page",
+          scopes: ["openid", "email", "profile"],
+        },
       })
-    },
-    forgotUsername() {},
-    forgotPassword() {},
+
+      this.widget.renderEl(
+        { el: "#okta-signin-container" },
+        () => {},
+        (err) => {
+          throw err
+        }
+      )
+    })
+  },
+  destroyed() {
+    // Remove the widget from the DOM on path change
+    this.widget.remove()
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .login-wrap {
-  padding: 0;
-  background: #e5e5e5;
+  background: var(--v-background-base);
   .left-section {
     height: 100vh;
     position: relative;
     background-size: cover;
     background-image: url("../assets/images/logon_background.png");
     .overlay {
-      background: #b54acf;
+      background: var(--v-pink-base);
       opacity: 0.3;
       position: absolute;
       top: 0px;
@@ -135,44 +95,102 @@ export default {
       height: 95px;
     }
     h1 {
+      font-family: Open Sans Light !important;
       margin-top: 30px;
-      font-style: normal;
-      font-weight: 600;
-      font-size: 24px;
       line-height: 43px;
-      color: #333333;
+      color: var(--v-darkGreyHeading-base);
       .altcolor {
-        color: #f03bc8;
+        color: var(--v-pinkLittleDark-base);
       }
     }
     p {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
+      font-size: 14px !important;
       line-height: 22px;
-      color: #757b7b;
+      color: var(--v-gray-base);
       margin-bottom: 20px;
     }
-    .error {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: normal;
-      font-size: 10px;
-      line-height: 14px;
-      color: var(--v-error-base);
-      margin-top: -15px;
-    }
-    .link-button {
-      display: block;
-      margin-top: 17px;
-      text-decoration: none;
-    }
-    .loginBtn {
-      margin-top: 30px;
-      background-color: #ececec;
-      width: 89px;
-      height: 40px;
+    .login-form {
+      #okta-signin-container {
+        ::v-deep .auth-container {
+          border: 0;
+          margin: 0;
+          background: transparent;
+          width: 100%;
+          padding-left: 5px;
+          .okta-sign-in-header {
+            display: none;
+          }
+          .auth-content {
+            padding-left: 0;
+            border: none;
+            .icon {
+              visibility: hidden;
+            }
+            .okta-form-title {
+              display: none;
+            }
+            .o-form-label {
+              label {
+                font-family: Open Sans;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 12px;
+                line-height: 16px;
+                color: var(--v-neroBlack-base);
+              }
+            }
+            .o-form-input {
+              &.o-form-has-errors {
+                .okta-form-input-error {
+                  font-family: Open Sans;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-size: 12px;
+                  line-height: 16px;
+                  padding-top: 4px;
+                  padding-left: 0;
+                }
+              }
+            }
+            .okta-form-input-field {
+              border: none;
+              background: transparent;
+              input {
+                padding: 10px 16px;
+                background: var(--v-white-base);
+                border: 1px solid var(--v-lightGrey-base);
+                box-sizing: border-box;
+                border-radius: 4px;
+              }
+              &.o-form-has-errors {
+                input {
+                  border-color: var(--v-error-base);
+                }
+                .okta-form-input-error {
+                  padding-left: 5px;
+                }
+              }
+              &.focused-input {
+                box-shadow: 0 0 8px var(--v-darkBlue-base);
+              }
+            }
+            .o-form-button-bar {
+              width: 90px;
+              input {
+                width: 90px;
+                height: 40px;
+                box-sizing: border-box;
+                background: #005587;
+                box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+                content: "Log in";
+              }
+            }
+          }
+          .auth-footer {
+            display: none;
+          }
+        }
+      }
     }
   }
 }

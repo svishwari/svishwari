@@ -207,14 +207,6 @@ class TestAudienceManagement(unittest.TestCase):
         count = am.get_audiences_count(database=self.database)
         self.assertEqual(count, 2)
 
-        doc = am.set_ingestion_job_status(
-            self.database, ingestion_job_id, c.STATUS_SUCCEEDED
-        )
-
-        # One default audience added after status success was set
-        count = am.get_audiences_count(database=self.database)
-        self.assertEqual(count, 3)
-
     def test_get_audience(self):
         """Test get audiences."""
 
@@ -280,9 +272,6 @@ class TestAudienceManagement(unittest.TestCase):
             self.database, self.audience_doc[c.ID]
         )
         self.assertTrue(success_flag)
-
-        count = am.get_audiences_count(database=self.database)
-        self.assertEqual(count, 1)
 
     # pylint: disable=R0915
     def test_append_audience_insights(self):
@@ -489,19 +478,6 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(c.AUDIENCE_FILTERS in doc)
         self.assertEqual(doc[c.AUDIENCE_FILTERS], new_filters)
 
-    def test_get_default_audience_id(self):
-        """Test get_default_audience_id."""
-
-        self._setup_ingestion_succeeded_and_audience()
-
-        # Get the default audience ID given an ingestion job
-        default_audience_id = am.get_default_audience_id(
-            self.database,
-            self.ingestion_job_doc[c.ID],
-        )
-
-        self.assertTrue(default_audience_id is not None)
-
     def test_get_ingestion_job_audience_ids(self):
         """Test get_ingestion_job_audience_ids."""
 
@@ -514,17 +490,6 @@ class TestAudienceManagement(unittest.TestCase):
         )
 
         self.assertTrue(audience_ids is not None)
-
-        default_audience_id = am.get_default_audience_id(
-            self.database,
-            self.ingestion_job_doc[c.ID],
-        )
-
-        self.assertEqual(len(audience_ids), 2)
-        self.assertEqual(
-            set(audience_ids),
-            {default_audience_id, self.audience_doc[c.ID]},
-        )
 
     def test_get_ingestion_job_audience_insights(self):
         """Test get_ingestion_job_audience_insights."""
@@ -615,8 +580,8 @@ class TestAudienceManagement(unittest.TestCase):
         # Get audiences of all most recent ingestion jobs
         audiences = am.get_all_recent_audiences(self.database)
 
-        self.assertTrue(audiences is not None)
-        self.assertEqual(len(audiences), 2)
+        self.assertIsNotNone(audiences)
+        self.assertEqual(len(audiences), 1)
 
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
@@ -626,8 +591,8 @@ class TestAudienceManagement(unittest.TestCase):
         # Get all existing audiences
         audiences = am.get_all_audiences(self.database)
 
-        self.assertTrue(audiences is not None)
-        self.assertEqual(len(audiences), 2)
+        self.assertIsNotNone(audiences)
+        self.assertEqual(len(audiences), 1)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_favorite_audience(self):
@@ -652,3 +617,19 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(doc is not None)
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(not doc[c.FAVORITE])
+
+    def test_update_audience_status(self):
+        """Test update audience status."""
+
+        self._setup_ingestion_succeeded_and_audience()
+
+        # Update audience name
+        doc = am.update_audience_status_for_delivery(
+            self.database,
+            self.audience_doc[c.ID],
+            c.AUDIENCE_STATUS_DELIVERING,
+        )
+
+        self.assertIsNotNone(doc)
+        self.assertIn(c.AUDIENCE_STATUS, doc)
+        self.assertEqual(doc[c.AUDIENCE_STATUS], c.AUDIENCE_STATUS_DELIVERING)

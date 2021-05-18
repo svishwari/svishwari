@@ -17,6 +17,8 @@ from huxunifylib.database import (
     constants as db_constants,
     delete_util,
 )
+from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.util.general.const import FacebookCredentials
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
@@ -31,38 +33,6 @@ import huxunify.api.constants as api_c
 
 # setup the destination blueprint
 dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
-
-
-# pylint: disable=unused-argument,
-def test_destination_connection(
-    destination_id: str, destination_type: str, auth_details: dict
-) -> dict:
-    """Test the connection to the destination and update the
-    connection status.
-
-    Args:
-        destination_id (str): The destination ID.
-        destination_type (str): The destination type.
-        auth_details (dict): The auth details dict.
-    Returns:
-        updated_destination (dict): The updated destination.
-    """
-
-    # TODO - create a generic connector for SFMC as well.
-    status = True
-    # dp_connector = get_connector(
-    #     destination_type=destination_type,
-    #     auth_details_secrets=auth_details,
-    # )
-    # status = dp_connector.check_connection()
-
-    return destination_management.set_connection_status(
-        database=get_db_client(),
-        delivery_platform_id=ObjectId(destination_id),
-        connection_status=db_constants.STATUS_SUCCEEDED
-        if status
-        else db_constants.STATUS_FAILED,
-    )
 
 
 @add_view_to_blueprint(
@@ -126,6 +96,46 @@ class DestinationGetView(SwaggerView):
             get_db_client(), valid_id
         )
         return destination, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView"
+)
+class DestinationsView(SwaggerView):
+    """
+    Destinations view class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of all destinations",
+            "schema": {"type": "array", "items": DestinationGetSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all destinations."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    @marshal_with(DestinationGetSchema(many=True))
+    def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
+        """Retrieves all destinations.
+
+        ---
+        Returns:
+            Tuple[list, int]: list of destinations, HTTP status.
+
+        """
+
+        destinations = destination_management.get_all_delivery_platforms(
+            get_db_client()
+        )
+
+        return (
+            destinations,
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -211,12 +221,13 @@ class DestinationPostView(SwaggerView):
             authentication_details=authentication_parameters,
         )
 
-        # test the destination connection and update connection status
+        # A destination can only be created if the authentication is validated.
+        # So update the connection status to SUCCESS.
         return (
-            test_destination_connection(
-                destination_id=destination_id,
-                destination_type=body[api_c.DESTINATION_TYPE],
-                auth_details=body[api_c.AUTHENTICATION_DETAILS],
+            destination_management.set_connection_status(
+                database=get_db_client(),
+                delivery_platform_id=ObjectId(destination_id),
+                connection_status=db_constants.STATUS_SUCCEEDED,
             ),
             HTTPStatus.CREATED,
         )
@@ -312,13 +323,6 @@ class DestinationPutView(SwaggerView):
                     )
                 )
 
-                # test the destination connection and update connection status
-                test_destination_connection(
-                    destination_id=destination_id,
-                    destination_type=body.get(api_c.DESTINATION_TYPE),
-                    auth_details=auth_details,
-                )
-
             # TODO - provide input user-id to delivery platform
             #       create the destination after the PR 171 is merged
             # update the destination
@@ -347,42 +351,6 @@ class DestinationPutView(SwaggerView):
                 title=HTTPStatus.BAD_REQUEST.description,
                 detail=api_c.CANNOT_UPDATE_DESTINATIONS,
             ) from exc
-
-
-@add_view_to_blueprint(
-    dest_bp, api_c.DESTINATIONS_ENDPOINT, "DestinationsView"
-)
-class DestinationsView(SwaggerView):
-    """
-    Multiple Destinations view class
-    """
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "List of destinations.",
-            "schema": {"type": "array", "items": DestinationGetSchema},
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all destinations."
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DESTINATIONS_TAG]
-
-    @marshal_with(DestinationGetSchema(many=True))
-    def get(self) -> Tuple[list, int]:
-        """Retrieves all the destinations.
-
-        ---
-        Returns:
-            Tuple[list, int]: list of destinations, HTTP status.
-
-        """
-
-        return (
-            destination_management.get_all_delivery_platforms(get_db_client()),
-            HTTPStatus.OK,
-        )
 
 
 @add_view_to_blueprint(
@@ -511,3 +479,120 @@ class DestinationsConstants(SwaggerView):
 
         """
         return api_c.DESTINATION_CONSTANTS, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/validate",
+    "DestinationValidatePostView",
+)
+class DestinationValidatePostView(SwaggerView):
+    """
+    Destination Validation Post view class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Validate destination body.",
+            "example": {
+                api_c.DESTINATION_TYPE: "Facebook",
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
+                    api_c.FACEBOOK_APP_ID: "2951925002021888",
+                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
+                },
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Validated destination successfully.",
+            "schema": {
+                "example": {
+                    "message": "Destination is validated successfully"
+                },
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to validate the destination.",
+            "schema": {
+                "example": {"message": "Destination can not be validated"},
+            },
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    def post(self) -> Tuple[dict, int]:
+        """Authenticates the destination with given credentials.
+
+        ---
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        try:
+            body = DestinationPostSchema().load(request.get_json())
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
+
+        try:
+            # test the destination connection and update connection status
+            if (
+                body.get(api_c.DESTINATION_TYPE)
+                == db_constants.DELIVERY_PLATFORM_FACEBOOK
+            ):
+                destination_connector = FacebookConnector(
+                    auth_details={
+                        FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(
+                            api_c.FACEBOOK_AD_ACCOUNT_ID
+                        ),
+                        FacebookCredentials.FACEBOOK_APP_ID.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.FACEBOOK_APP_ID),
+                        FacebookCredentials.FACEBOOK_APP_SECRET.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.FACEBOOK_APP_SECRET),
+                        FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(
+                            api_c.FACEBOOK_ACCESS_TOKEN
+                        ),
+                    },
+                )
+            else:
+                return {
+                    "message": api_c.DESTINATION_NOT_SUPPORTED
+                }, HTTPStatus.BAD_REQUEST
+            # TODO : Add support for other connectors like SFMC
+            if destination_connector.check_connection():
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                }, HTTPStatus.OK
+
+        except Exception as exc:
+            logging.error(
+                "%s. Reason:[%s: %s].",
+                api_c.DESTINATION_AUTHENTICATION_FAILED,
+                exc.__class__,
+                exc,
+            )
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=api_c.DESTINATION_AUTHENTICATION_FAILED,
+            ) from exc
+
+        return {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }, HTTPStatus.BAD_REQUEST

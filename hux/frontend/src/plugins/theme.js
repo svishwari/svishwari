@@ -18,4 +18,11 @@ export default {
   gray: colors.gray,
   darkGrey: colors.darkGrey,
   lightGrey: colors.lightGrey,
+  columbiaBlue: colors.columbiaBlue,
+  skyBlue: colors.skyBlue,
+  skyBlueDark: colors.skyBlueDark,
+  pinkLittleDark: colors.pinkLittleDark,
+  darkGreyHeading: colors.darkGreyHeading,
+  lightGreyAnotherVariant: colors.lightGreyAnotherVariant,
+  offWhite: colors.offWhite,
 }
