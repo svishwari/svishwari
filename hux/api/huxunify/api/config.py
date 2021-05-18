@@ -15,9 +15,6 @@ from decouple import config
 from huxunify.api import constants as api_c
 
 
-SECRET_STORE_INVOKE = "aws.parameter_store.get_store_value"
-
-
 LOAD_VAR_DICT = {
     "TECTON_API_KEY": "TECTON_API_KEY",
     "MONGO_DB_HOST": "unifieddb_host_alias",
