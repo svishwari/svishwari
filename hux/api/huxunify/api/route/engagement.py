@@ -5,13 +5,13 @@ import logging
 from http import HTTPStatus
 from typing import Tuple
 
-from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
+from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -36,19 +36,16 @@ class EngagementSearch(SwaggerView):
     """
 
     parameters = []
-    responses = (
-        {
-            HTTPStatus.OK.value: {
-                "description": "List of engagements.",
-                # TODO EngagementGetSchema
-                # "schema": {"type": "array", "items": EngagementGetSchema}, TODO
-            },
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "List of engagements.",
+            "schema": {"type": "array", "items": EngagementGetSchema},
         },
-    )
+    }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    # @marshal_with(EngagementGetSchema(many=True)) TODO
+    @marshal_with(EngagementGetSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieve all engagements
 
@@ -100,7 +97,7 @@ class IndividualEngagementSearch(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Retrieve Individual Engagement",
-            # "schema": EngagementGetSchema, TODO
+            "schema": EngagementGetSchema,
         },
         HTTPStatus.NOT_FOUND.value: {
             "schema": NotFoundError,
@@ -109,7 +106,7 @@ class IndividualEngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    # @marshal_with(EngagementGetSchema) TODO
+    @marshal_with(EngagementGetSchema)
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves an engagement by ID
 
@@ -122,12 +119,11 @@ class IndividualEngagementSearch(SwaggerView):
         """
 
         try:
-            # valid_id = ( TODO
-            #     EngagementGetSchema()
-            #     .load({db_c.USER_ID: engagement_id}, partial=True)
-            #     .get(db_c.USER_ID)
-            # )
-            valid_id = ObjectId()  # TODO remove
+            valid_id = (
+                EngagementGetSchema()
+                .load({db_c.USER_ID: engagement_id}, partial=True)
+                .get(db_c.USER_ID)
+            )
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
@@ -177,7 +173,7 @@ class SetEngagement(SwaggerView):
 
     responses = {
         HTTPStatus.CREATED.value: {
-            # "schema": EngagementGetSchema, TODO
+            "schema": EngagementGetSchema,
             "description": "Engagement created.",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -198,8 +194,7 @@ class SetEngagement(SwaggerView):
         """
 
         try:
-            # body = EngagementGetSchema().load(request.get_json()) TODO
-            body = {}  # TODO remove
+            body = EngagementGetSchema().load(request.get_json())
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
@@ -255,7 +250,7 @@ class DeleteEngagement(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Delete Individual Engagement",
-            # "schema": EngagementGetSchema, TODO
+            "schema": EngagementGetSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "schema": NotFoundError,
@@ -277,12 +272,11 @@ class DeleteEngagement(SwaggerView):
         """
 
         try:
-            # valid_id = ( TODO
-            #     EngagementGetSchema()
-            #     .load({db_c.USER_ID: engagement_id}, partial=True)
-            #     .get(db_c.USER_ID)
-            # )
-            valid_id = ObjectId()  # TODO remove
+            valid_id = (
+                EngagementGetSchema()
+                .load({db_c.USER_ID: engagement_id}, partial=True)
+                .get(db_c.USER_ID)
+            )
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
