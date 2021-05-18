@@ -36,6 +36,9 @@ WORKDIR /app/hux-unified/api
 # append huxunify path to python path.
 ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/api"
 
+# set to dev
+ENV FLASK_ENV=development
+
 # run the python application
 EXPOSE 80
 EXPOSE 8080

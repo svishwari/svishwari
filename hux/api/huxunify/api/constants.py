@@ -1,4 +1,6 @@
 """This module contains connector defines."""
+DEVELOPMENT_MODE = "development"
+PRODUCTION_MODE = "production"
 # general defines
 ID = "id"
 NAME = "name"
@@ -21,11 +23,12 @@ GENDER_MEN = "men"
 GENDER_OTHER = "other"
 
 # AWS defines
+AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
 AWS_BATCH_NAME = "batch"
 AWS_HEALTH_TESTS = {
-    AWS_SSM_NAME: "describe_parameters",
-    AWS_BATCH_NAME: "list_jobs",
+    AWS_SSM_NAME: ["describe_parameters", {"MaxResults": 1}],
+    AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 
 NAME = "name"
