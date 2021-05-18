@@ -22,4 +22,5 @@ export default {
   lightGreyAnotherVariant: "#757b7b",
   skyBlue: "#80D1EF",
   skyBlueDark: "#00A3E0",
+  offWhite: "#e5e5e5",
 }
