@@ -28,6 +28,23 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: "list_jobs",
 }
 
+NAME = "name"
+DESCRIPTION = "description"
+DELIVERY_SCHEDULE = "delivery_schedule"
+START_DATE = "start_date"
+END_DATE = "end_date"
+STATUS = "status"
+ENABLED = "enabled"
+
+STATUS_ACTIVE = "active"
+STATUS_INACTIVE = "inactive"
+STATUS_DRAFT = "draft"
+ENGAGEMENT_STATUSES = [
+    STATUS_ACTIVE,
+    STATUS_INACTIVE,
+    STATUS_DRAFT,
+]
+
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -83,6 +100,7 @@ INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
+INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -97,6 +115,10 @@ AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
+
+# Engagement fields
+ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_NAME = "engagement_name"
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
@@ -113,7 +135,6 @@ AUTHENTICATION_ENDPOINT = "/authenticate"
 AUTHENTICATION_TOKEN = "access_token"
 CANNOT_AUTHENTICATE_USER = "Error authenticating user."
 
-AUTHENTICATION_DETAILS = "authentication_details"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
@@ -143,8 +164,7 @@ AUDIENCE_STATUS_DELIVERING = "Delivering"
 AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
-ENGAGEMENT_ID = "engagement_id"
-ENGAGEMENT_NAME = "engagement_name"
+
 
 
 PARAM_STORE_PREFIX = "huxunify"
