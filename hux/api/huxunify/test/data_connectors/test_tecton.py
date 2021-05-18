@@ -16,13 +16,13 @@ MOCK_MODEL_RESPONSE = {
         {
             "features": [
                 "2021-05-04 00:00:00",
-                "LTV prediction of Pendleton Customers over 30 days "
+                "LTV prediction of Customers over 30 days"
                 "proxy from 2021-04-04 using Hux Blueprints",
                 "2021-04-04 00:00:00",
                 "365",
                 "ltv-model-365-30",
                 "Dave Smith",
-                "mlaclavik@deloitte.com",
+                "dsmith@domain.com",
                 None,
             ],
             "joinKeys": ["0.2.1"],
@@ -30,13 +30,13 @@ MOCK_MODEL_RESPONSE = {
         {
             "features": [
                 "2021-05-05 00:00:00",
-                "LTV prediction of Pendleton Customers over 30 days "
+                "LTV prediction of Customers over 30 days"
                 "proxy from 2021-04-05 using Hux Blueprints",
                 "2021-04-05 00:00:00",
                 "365",
                 "ltv-model-365-30",
                 "Dave Smith",
-                "dsmith@deloitte.com",
+                "dsmith@domain.com",
                 None,
             ],
             "joinKeys": ["0.2.2"],
@@ -44,13 +44,13 @@ MOCK_MODEL_RESPONSE = {
         {
             "features": [
                 "2021-05-06 00:00:00",
-                "LTV prediction of Pendleton Customers over 30 days"
+                "LTV prediction of Customers over 30 days"
                 " proxy from 2021-04-06 using Hux Blueprints",
                 "2021-04-06 00:00:00",
                 "365",
                 "ltv-model-365-30",
                 "Dave Smith",
-                "dsmith@deloitte.com",
+                "dsmith@domain.com",
                 None,
             ],
             "joinKeys": ["0.2.3"],
@@ -58,13 +58,13 @@ MOCK_MODEL_RESPONSE = {
         {
             "features": [
                 "2021-05-07 00:00:00",
-                "LTV prediction of Pendleton Customers over 30 days"
+                "LTV prediction of Customers over 30 days"
                 " proxy from 2021-04-07 using Hux Blueprints",
                 "2021-04-07 00:00:00",
                 "365",
                 "ltv-model-365-30",
-                "Michal Laclavik",
-                "mlaclavik@deloitte.com",
+                "Dave Smith",
+                "dsmith@domain.com",
                 None,
             ],
             "joinKeys": ["0.2.4"],
