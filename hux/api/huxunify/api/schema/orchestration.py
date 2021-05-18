@@ -84,18 +84,16 @@ class AudienceGetSchema(Schema):
     )
     insights = fields.Dict(
         attribute=api_c.AUDIENCE_INSIGHTS,
-        example=[
-            {
-                api_c.INSIGHTS_TARGET_SIZE: 121321321,
-                api_c.INSIGHTS_COUNTRIES: 2,
-                api_c.INSIGHTS_STATES: 28,
-                api_c.INSIGHTS_CITIES: 246,
-                api_c.INSIGHTS_AGE: "34",
-                api_c.INSIGHTS_WOMEN: "46%",
-                api_c.INSIGHTS_MEN: "48%",
-                api_c.INSIGHTS_OTHER: "2%",
-            }
-        ],
+        example={
+            api_c.INSIGHTS_TARGET_SIZE: 121321321,
+            api_c.INSIGHTS_COUNTRIES: 2,
+            api_c.INSIGHTS_STATES: 28,
+            api_c.INSIGHTS_CITIES: 246,
+            api_c.INSIGHTS_AGE: "34",
+            api_c.INSIGHTS_WOMEN: "46%",
+            api_c.INSIGHTS_MEN: "48%",
+            api_c.INSIGHTS_OTHER: "2%",
+        },
     )
     created = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
