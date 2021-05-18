@@ -10,6 +10,6 @@ export default {
   owner: () => `${faker.name.firstName()} ${faker.name.lastName()}`,
   past_version_count: 0,
   prediction_window: 60,
-  status: "pending",
+  status: null,
   type: "model-unsubscribe",
 }
