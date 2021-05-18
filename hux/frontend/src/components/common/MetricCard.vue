@@ -4,7 +4,7 @@
     :class="{ 'no-click': !interactable }"
     @click="$emit('click')"
     :disabled="!active"
-    :width="width"
+    :min-width="width"
     :height="height"
     elevation="0"
     :ripple="interactable"

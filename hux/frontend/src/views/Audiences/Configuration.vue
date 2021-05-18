@@ -12,7 +12,7 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          :width="135"
+          width="11.065%"
           :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
@@ -41,7 +41,7 @@
                 backgroundColor="white"
                 v-bind:required="true"
                 v-model="audience.audienceName"
-                class="mt-1 text-body-1"
+                class="mt-1 text-body-1 aud-name-field"
               ></TextField>
             </v-col>
             <v-col cols="8">
@@ -373,6 +373,7 @@ export default {
 
 <style lang="scss" scoped>
 .create-audience-wrap {
+  padding-right: 60px;
   .heading {
     font-size: 24px;
     line-height: 40px;
@@ -387,11 +388,23 @@ export default {
     line-height: 20px;
   }
   .divider {
-    max-width: 1170px;
+    width: 100%;
   }
   ::v-deep .timeline-wrapper {
     .theme--light.v-timeline:before {
       border: 1px dashed var(--v-info-base);
+    }
+    .aud-name-field {
+      .v-input__control {
+        .v-input__slot {
+          min-height: 40px;
+          .v-text-field__slot {
+            .v-label {
+              top: 9px;
+            }
+          }
+        }
+      }
     }
     .theme--light.v-timeline-item {
       .v-timeline-item__divider {
