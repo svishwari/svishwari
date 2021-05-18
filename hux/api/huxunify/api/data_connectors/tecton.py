@@ -97,7 +97,7 @@ def get_models(model_ids: list = None) -> List[dict]:
     """
 
     if model_ids is None:
-        # TODO - update tecton makes the list available to get.
+        # TODO - update when tecton makes the list available to get.
         model_ids = [1]
 
     # submit the post request to get the models
