@@ -163,14 +163,20 @@
         </template>
       </HuxFooter>
 
-      <drawer v-model="drawer">
+      <drawer v-model="destinationDrawer.insideFlow">
         <template v-slot:header-left>
-          <div class="d-flex align-baseline" v-if="e1 == 1">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
             <h5 class="text-h5 font-weight-regular pr-2">
               Select a destination to add
             </h5>
           </div>
-          <div class="d-flex align-baseline" v-if="e1 == 2">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
             <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
               <Logo :type="selectedDestination.type" />
               <div class="pl-2 font-weight-regular">
@@ -181,7 +187,7 @@
         </template>
 
         <template v-slot:default>
-          <v-stepper v-model="e1">
+          <v-stepper v-model="destinationDrawer.viewStep">
             <v-stepper-items>
               <v-stepper-content step="1">
                 <div class="ma-5">
@@ -197,7 +203,7 @@
                     :isAlreadyAdded="destination.is_added"
                     @click="
                       onSelectDestination(index, destination)
-                      e1 = 2
+                      destinationDrawer.viewStep = 2
                     "
                     class="my-3"
                   />
@@ -211,7 +217,10 @@
         </template>
 
         <template v-slot:footer-right>
-          <div class="d-flex align-baseline" v-if="e1 == 2">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
             <huxButton
               ButtonText="Add"
               variant="primary"
@@ -224,10 +233,16 @@
         </template>
 
         <template v-slot:footer-left>
-          <div class="d-flex align-baseline" v-if="e1 == 1">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
             {{ destinations.length }} results
           </div>
-          <div class="d-flex align-baseline" v-if="e1 == 2">
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
             <huxButton
               ButtonText="Back"
               variant="white"
@@ -235,7 +250,7 @@
               width="80"
               height="40"
               class="ma-2"
-              @click.native="e1 = 1"
+              @click.native="destinationDrawer.viewStep = 1"
             ></huxButton>
           </div>
         </template>
@@ -401,8 +416,6 @@ export default {
   },
   data() {
     return {
-      e1: 1,
-      drawer: false,
       selectedDestinationIndex: -1,
       selectedDestination: null,
       overviewListItems: [
@@ -435,6 +448,10 @@ export default {
       },
       audienceNamesRules: [(v) => !!v || "Audience name is required"],
       isFormValid: false,
+      destinationDrawer: {
+        insideFlow: false,
+        viewStep: 1,
+      },
     }
   },
 
@@ -492,7 +509,7 @@ export default {
     },
 
     toggleDrawer() {
-      this.drawer = !this.drawer
+      this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
     },
 
     onSelectDestination(index, selected) {
