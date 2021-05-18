@@ -77,7 +77,7 @@
 import { mapGetters, mapActions } from "vuex"
 
 import PageHeader from "@/components/PageHeader"
-import EmptyPage from "@/components/EmptyPage"
+import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxTable from "@/components/common/huxTable.vue"
@@ -178,10 +178,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      rowData: "AllAudiences",
+      rowData: "audiences/AllAudiences",
     }),
     isDataExists() {
-      return this.rowData.length > 0
+      if (this.rowData) return this.rowData.length > 0
+      return false
     },
   },
   methods: {

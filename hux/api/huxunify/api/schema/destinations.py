@@ -21,19 +21,17 @@ class DestinationGetSchema(Schema):
     Destinations schema class
     """
 
-    destination_id = fields.String(
-        attribute=api_c.DESTINATION_ID,
+    _id = fields.String(
+        data_key=api_c.DESTINATION_ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
     )
-    destination_type = fields.String(
-        attribute=api_c.DESTINATION_TYPE, example="Facebook"
-    )
-    destination_name = fields.String(
+    type = fields.String(attribute=api_c.DESTINATION_TYPE, example="Facebook")
+    name = fields.String(
         attribute=api_c.DESTINATION_NAME, example="My destination"
     )
-    destination_status = fields.String(
+    status = fields.String(
         attribute=api_c.DESTINATION_STATUS,
         validate=[
             OneOf(
@@ -49,9 +47,9 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    created = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
+    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
-    updated = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    update_time = fields.String(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
     @post_load()

@@ -1,4 +1,6 @@
-"""This module enables functionality related to delivery platform management."""
+"""
+This module enables functionality related to delivery platform management.
+"""
 # pylint: disable=C0302
 
 import logging
@@ -24,32 +26,31 @@ def set_delivery_platform(
     database: DatabaseClient,
     delivery_platform_type: str,
     name: str,
-    authentication_details: dict,
+    authentication_details: dict = None,
+    status: str = c.STATUS_PENDING,
+    enabled: bool = True,
+    added: bool = False,
     user_id: ObjectId = None,
 ) -> dict:
     """A function to create a delivery platform.
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_type (str): The type of delivery platform (Facebook, Amazon, or Google).
+        delivery_platform_type (str): The type of delivery platform
+            (Facebook, Amazon, or Google).
         name (str): Name of the delivery platform.
-        authentication_details (dict): A dict containing delivery platform authentication details.
-        user_id (ObjectId): User id of user creating delivery platform. This is Optional.
+        authentication_details (dict): A dict containing delivery platform
+            authentication details.
+        status (str): status of the delivery platform.
+        enabled (bool): if the delivery platform is enabled.
+        added (bool): if the delivery platform is added.
+        user_id (ObjectId): User id of user creating delivery platform.
+            This is Optional.
 
     Returns:
         dict: MongoDB audience doc.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
-    ]:
-        raise de.UnknownDeliveryPlatformType(delivery_platform_type)
-
-    delivery_platform_doc = None
-    delivery_platform_id = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
@@ -71,13 +72,15 @@ def set_delivery_platform(
     doc = {
         c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_PLATFORM_NAME: name,
-        c.DELIVERY_PLATFORM_STATUS: c.STATUS_PENDING,
-        c.DELIVERY_PLATFORM_AUTH: authentication_details,
-        c.ENABLED: True,
+        c.DELIVERY_PLATFORM_STATUS: status,
+        c.ENABLED: enabled,
+        c.ADDED: added,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
     }
+    if authentication_details is not None:
+        doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
     # Add user object only if it is available
     if ObjectId.is_valid(user_id) and name_exists(
@@ -93,14 +96,44 @@ def set_delivery_platform(
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
-            delivery_platform_doc = collection.find_one(
-                {c.ID: delivery_platform_id, c.ENABLED: True},
+            return collection.find_one(
+                {c.ID: delivery_platform_id, c.ENABLED: enabled},
                 {c.ENABLED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return delivery_platform_doc
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_delivery_platforms_by_id(
+    database: DatabaseClient,
+    delivery_platform_ids: list,
+) -> list:
+    """A function to get a list of delivery platforms by id.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_ids (list[ObjectId]):
+            List of Delivery platform object ids.
+
+    Returns:
+        list: Delivery platform configuration.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+
+    try:
+        return list(collection.find({c.ID: {"$in": delivery_platform_ids}}))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
 
 
 @retry(
@@ -870,6 +903,7 @@ def set_delivery_job(
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
+    engagement_id: ObjectId = None,
 ) -> dict:
     """A function to set an audience delivery job.
 
@@ -878,13 +912,11 @@ def set_delivery_job(
         audience_id (ObjectId): MongoDB ID of the delivered audience.
         delivery_platform_id (ObjectId): Delivery platform ID.
         delivery_platform_generic_campaigns (list): generic campaign IDs.
+        engagement_id (ObjectId): Engagement ID.
     Returns:
         dict: Delivery job configuration.
 
     """
-
-    delivery_job_doc = None
-    delivery_job_id = None
 
     dp_doc = get_delivery_platform(database, delivery_platform_id)
 
@@ -912,6 +944,8 @@ def set_delivery_job(
         ),
         c.ENABLED: True,
     }
+    if engagement_id is not None:
+        doc[c.ENGAGEMENT_ID] = engagement_id
 
     try:
         delivery_job_id = collection.insert_one(doc).inserted_id
@@ -923,14 +957,14 @@ def set_delivery_job(
         )
 
         if delivery_job_id is not None:
-            delivery_job_doc = collection.find_one(
+            return collection.find_one(
                 {c.ID: delivery_job_id, c.ENABLED: True}, {c.ENABLED: 0}
             )
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return delivery_job_doc
+    return None
 
 
 @retry(
@@ -938,13 +972,16 @@ def set_delivery_job(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_job(
-    database: DatabaseClient, delivery_job_id: ObjectId
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    engagement_id: ObjectId = None,
 ) -> dict:
     """A function to get an audience delivery job.
 
     Args:
         database (DatabaseClient): A database client.
         delivery_job_id (ObjectId): Delivery job id.
+        engagement_id (ObjectId): Engagement id.
 
     Returns:
         dict: Delivery job configuration.
@@ -955,13 +992,16 @@ def get_delivery_job(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        doc = collection.find_one(
-            {c.ID: delivery_job_id, c.ENABLED: True}, {c.ENABLED: 0}
-        )
+        # set mongo_filter based on engagement id
+        mongo_filter = {c.ID: delivery_job_id, c.ENABLED: True}
+        if engagement_id is not None:
+            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+
+        return collection.find_one(mongo_filter, {c.ENABLED: 0})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(
@@ -1155,7 +1195,9 @@ def get_delivery_job_audience_size(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_delivery_jobs(
-    database: DatabaseClient, audience_id: ObjectId = None
+    database: DatabaseClient,
+    audience_id: ObjectId = None,
+    engagement_id: ObjectId = None,
 ) -> list:
     """Get audience delivery jobs if audience_id is specified, otherwise,
     get all delivery jobs. In the latter case only ID field is returned
@@ -1164,6 +1206,7 @@ def get_delivery_jobs(
     Args:
         database (DatabaseClient): database client.
         audience_id (ObjectId, optional): audience ID. Defaults to None.
+        engagement_id (ObjectId, optional): engagement ID. Defaults to None.
 
     Returns:
         list: List of delivery jobs.
@@ -1173,10 +1216,14 @@ def get_delivery_jobs(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
+        mongo_filter = {c.ENABLED: True}
+        if audience_id:
+            mongo_filter[c.AUDIENCE_ID] = audience_id
+        if engagement_id:
+            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+
         cursor = collection.find(
-            {c.AUDIENCE_ID: audience_id, c.ENABLED: True}
-            if audience_id
-            else {c.ENABLED: True},
+            mongo_filter,
             {c.ENABLED: False} if audience_id else {c.ID: True},
         )
     except pymongo.errors.OperationFailure as exc:

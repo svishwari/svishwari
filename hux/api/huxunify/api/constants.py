@@ -1,4 +1,49 @@
 """This module contains connector defines."""
+# general defines
+ID = "id"
+NAME = "name"
+OWNER = "owner"
+STATUS = "status"
+TYPE = "type"
+DESCRIPTION = "description"
+
+HEALTH_CHECK_ENDPOINT = "/health-check"
+HEALTH_CHECK = "healthcheck"
+
+TOTAL_CUSTOMERS = "total_customers"
+COUNTRIES = "countries"
+STATES = "states"
+CITIES = "cities"
+MIN_AGE = "min_age"
+MAX_AGE = "max_age"
+GENDER_WOMEN = "women"
+GENDER_MEN = "men"
+GENDER_OTHER = "other"
+
+# AWS defines
+AWS_SSM_NAME = "ssm"
+AWS_BATCH_NAME = "batch"
+AWS_HEALTH_TESTS = {
+    AWS_SSM_NAME: "describe_parameters",
+    AWS_BATCH_NAME: "list_jobs",
+}
+
+NAME = "name"
+DESCRIPTION = "description"
+DELIVERY_SCHEDULE = "delivery_schedule"
+START_DATE = "start_date"
+END_DATE = "end_date"
+STATUS = "status"
+ENABLED = "enabled"
+
+STATUS_ACTIVE = "active"
+STATUS_INACTIVE = "inactive"
+STATUS_DRAFT = "draft"
+ENGAGEMENT_STATUSES = [
+    STATUS_ACTIVE,
+    STATUS_INACTIVE,
+    STATUS_DRAFT,
+]
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
@@ -15,6 +60,8 @@ SFMC_ACCOUNT_ID = "sfmc_account_id"
 SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
+SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
+SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -33,6 +80,8 @@ DESTINATION_CONSTANTS = {
         SFMC_AUTH_BASE_URI: "Auth Base URI",
         SFMC_REST_BASE_URI: "REST Base URI",
         SFMC_SOAP_BASE_URI: "SOAP Base URI",
+        SFMC_PERFORMANCE_EXT_NAME: "Performance metric data extension name",
+        SFMC_PERFORMANCE_EXT_VALUES: [],
     },
 }
 
@@ -51,6 +100,7 @@ INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
+INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -62,6 +112,13 @@ DESTINATION_NAME = "destination_name"
 DESTINATION_STATUS = "destination_status"
 DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
 AUTHENTICATION_DETAILS = "authentication_details"
+DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
+DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
+DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
+
+# Engagement fields
+ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_NAME = "engagement_name"
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
@@ -78,7 +135,6 @@ AUTHENTICATION_ENDPOINT = "/authenticate"
 AUTHENTICATION_TOKEN = "access_token"
 CANNOT_AUTHENTICATE_USER = "Error authenticating user."
 
-AUTHENTICATION_DETAILS = "authentication_details"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
@@ -99,6 +155,7 @@ AUDIENCE_FILTER_TYPE = "filter_type"
 AUDIENCE_FILTER_VALUE = "filter_value"
 AUDIENCE_DESTINATIONS = "audience_destinations"
 AUDIENCE_ENGAGEMENTS = "audience_engagements"
+AUDIENCE_INSIGHTS = "audience_insights"
 AUDIENCE_SIZE = "audience_size"
 AUDIENCE_STATUS = "audience_status"
 AUDIENCE_STATUS_PENDING = "Pending"
@@ -107,8 +164,8 @@ AUDIENCE_STATUS_DELIVERING = "Delivering"
 AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
-ENGAGEMENT_ID = "engagement_id"
-ENGAGEMENT_NAME = "engagement_name"
+
+
 
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (
@@ -138,15 +195,24 @@ MODEL_NAME_PARAMS = [
 ]
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_models_service",
-        "join_key_map": {
-            "model_name": "ltv-model-365-30",
-            "version_number": "0.0.1",
-        },
+        "feature_service_name": "ui_metadata_model_history_service",
+        "join_key_map": {"model_id": "1"},
     }
 }
+FEATURES = "features"
+JOIN_KEYS = "joinKeys"
+RESULTS = "results"
+LATEST_VERSION = "latest_version"
+FULCRUM_DATE = "fulcrum_date"
+LAST_TRAINED = "last_trained"
+LOOKBACK_WINDOW = "lookback_window"
+PREDICTION_WINDOW = "prediction_window"
+PAST_VERSION_COUNT = "past_version_count"
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
+
+# AWS BATCH
+BATCH_SIZE = "batch_size"

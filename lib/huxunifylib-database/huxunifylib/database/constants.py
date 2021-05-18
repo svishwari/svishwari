@@ -7,12 +7,16 @@ DUPLICATE_ERR_CODE = 11000
 FAVORITE = "favorite"
 ENABLED = "enabled"
 OKTA_ID = "okta_id"
+ADDED = "added"
+STATUS = "status"
+PENDING = "Pending"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
 CONSTANTS_COLLECTION = "constants"
 DATA_SOURCES_COLLECTION = "data_sources"
 CDP_DATA_SOURCES_COLLECTION = "cdp_data_sources"
+ENGAGEMENTS_COLLECTION = "engagements"
 INGESTION_JOBS_COLLECTION = "ingestion_jobs"
 INGESTED_DATA_COLLECTION = "ingested_data"
 INGESTED_DATA_STATS_COLLECTION = "ingested_data_stats"
@@ -92,9 +96,6 @@ S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"  # internal only
 S_TYPE_LAST_NAME = "last_name"
 S_TYPE_MOBILE_DEVICE_ID = "mobile_device_id"
 S_TYPE_PHONE_NUMBER = "phone_number"
-S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"
-S_TYPE_FACEBOOK_PHONE_NUMBER = "facebook_phone_number"
-S_TYPE_PHONE_NUMBER = "phone_number"
 S_TYPE_POSTAL_CODE = "postal_code"
 S_TYPE_STATE_OR_PROVINCE = "state_or_province"
 
@@ -141,6 +142,14 @@ AUDIENCE_TYPE = "audience_type"
 AUDIENCE_TYPE_NAME = "name"
 AUDIENCE_TYPE_DESC = "description"
 
+AUDIENCE_LAST_DELIVERED = "last_delivered"
+AUDIENCE_STATUS_DELIVERED = "Delivered"
+AUDIENCE_STATUS_DELIVERING = "Delivering"
+AUDIENCE_STATUS_NOT_DELIVERED = "Not delivered"
+AUDIENCE_STATUS_DRAFT = "Draft"
+AUDIENCE_STATUS_ERROR = "Error"
+AUDIENCE_STATUS_PAUSED = "Paused"
+
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_AUD_SIZE = "delivery_platform_audience_size"
 DELIVERY_PLATFORM_LOOKALIKE_AUDS = "delivery_platform_lookalike_audiences"
@@ -152,6 +161,11 @@ DELIVERY_PLATFORM_FACEBOOK = "Facebook"
 DELIVERY_PLATFORM_AMAZON = "Amazon"
 DELIVERY_PLATFORM_GOOGLE = "Google"
 DELIVERY_PLATFORM_SFMC = "SFMC"
+DELIVERY_PLATFORM_TWILIO = "Twilio"
+DELIVERY_PLATFORM_QUALTRICS = "Qualtrics"
+
+# Engagements
+ENGAGEMENT_ID = "engagement_id"
 
 LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
@@ -224,6 +238,12 @@ NOTIFICATION_FIELD_CREATED = "created"
 NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
+# Engagement constants
+ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_NAME = "name"
+ENGAGEMENT_DESCRIPTION = "description"
+ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 
 
 # pagination constants

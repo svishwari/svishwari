@@ -9,6 +9,7 @@ from marshmallow.fields import Str, Int, Float, DateTime
 class ModelSchema(Schema):
     """Model Schema"""
 
+    id = Int()
     name = Str(required=True)
     description = Str()
     status = Str()
@@ -16,9 +17,10 @@ class ModelSchema(Schema):
     past_version_count = Int()
     last_trained = DateTime()
     owner = Str()
-    lookback_window = Str()
-    prediction_window = Str()
+    lookback_window = Int()
+    prediction_window = Int()
     fulcrum_date = DateTime()
+    type = Str()
 
 
 class ModelVersionSchema(Schema):
