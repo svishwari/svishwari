@@ -29,23 +29,23 @@ class EngagementGetSchema(Schema):
         required=True,
         validate=validate_object_id,
     )
-    name = fields.String(attribute=api_c.ENGAGEMENT_NAME, required=True)
-    description = fields.String(attribute=api_c.ENGAGEMENT_DESCRIPTION)
+    name = fields.String(attribute=api_c.NAME, required=True)
+    description = fields.String(attribute=api_c.DESCRIPTION)
     # TODO return empty list for now
     audiences = fields.List(
         cls_or_instance=fields.String,
-        attribute=api_c.ENGAGEMENT_AUDIENCES,
+        attribute=db_c.AUDIENCES,
         required=True,
     )
     status = fields.String(
-        attribute=api_c.ENGAGEMENT_STATUS,
+        attribute=api_c.STATUS,
         required=True,
         validate=validate.OneOf(api_c.ENGAGEMENT_STATUSES),
     )
     delivery_schedule = fields.Nested(
         DeliverySchedule,
         required=True,
-        attribute=api_c.ENGAGEMENT_DELIVERY_SCHEDULE,
+        attribute=api_c.DELIVERY_SCHEDULE,
     )
     created_time = fields.DateTime(attribute=db_c.CREATE_TIME)
     created_by = fields.String(attribute=db_c.CREATED_BY)

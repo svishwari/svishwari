@@ -9,6 +9,7 @@ from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementPutSchema,
 )
+from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 
 
@@ -24,11 +25,11 @@ class EngagementSchemaTest(TestCase):
         """
         doc = {
             api_c.ENGAGEMENT_ID: "5f5f7262997acad4bac4373b",
-            api_c.ENGAGEMENT_NAME: "Engagement 1",
-            api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
-            api_c.ENGAGEMENT_AUDIENCES: [],
-            api_c.ENGAGEMENT_STATUS: api_c.ENGAGEMENT_STATUS_ACTIVE,
-            api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+            api_c.NAME: "Engagement 1",
+            api_c.DESCRIPTION: "Engagement 1 description",
+            db_c.AUDIENCES: [],
+            api_c.STATUS: api_c.STATUS_ACTIVE,
+            api_c.DELIVERY_SCHEDULE: {},
             api_c.ENABLED: True,
         }
 
@@ -42,10 +43,10 @@ class EngagementSchemaTest(TestCase):
 
         """
         doc = {
-            api_c.ENGAGEMENT_NAME: "Engagement 1",
-            api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
-            api_c.ENGAGEMENT_AUDIENCES: [],
-            api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+            api_c.NAME: "Engagement 1",
+            api_c.DESCRIPTION: "Engagement 1 description",
+            db_c.AUDIENCES: [],
+            api_c.DELIVERY_SCHEDULE: {},
         }
 
         assert EngagementPostSchema().validate(doc) == {}
@@ -58,8 +59,8 @@ class EngagementSchemaTest(TestCase):
 
         """
         doc = {
-            api_c.ENGAGEMENT_NAME: "Engagement 1",
-            api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
+            api_c.NAME: "Engagement 1",
+            api_c.DESCRIPTION: "Engagement 1 description",
         }
 
         assert EngagementPutSchema().validate(doc) == {}
@@ -73,11 +74,11 @@ class EngagementSchemaTest(TestCase):
         """
         doc = {
             api_c.ENGAGEMENT_ID: "5f5f7262997acad4bac4373b",
-            api_c.ENGAGEMENT_NAME: 3,
-            api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
-            api_c.ENGAGEMENT_AUDIENCES: [],
-            api_c.ENGAGEMENT_STATUS: api_c.ENGAGEMENT_STATUS_ACTIVE,
-            api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+            api_c.NAME: 3,
+            api_c.DESCRIPTION: "Engagement 1 description",
+            db_c.AUDIENCES: [],
+            api_c.STATUS: api_c.STATUS_ACTIVE,
+            api_c.DELIVERY_SCHEDULE: {},
         }
 
         assert EngagementGetSchema().validate(doc) != {}
@@ -93,10 +94,10 @@ class EngagementSchemaTest(TestCase):
         """
         doc = {
             api_c.ENGAGEMENT_ID: "5f5f7262997acad4bac4373b",
-            api_c.ENGAGEMENT_NAME: "Engagement 1",
-            api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
-            api_c.ENGAGEMENT_STATUS: api_c.ENGAGEMENT_STATUS_ACTIVE,
-            api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+            api_c.NAME: "Engagement 1",
+            api_c.DESCRIPTION: "Engagement 1 description",
+            api_c.STATUS: api_c.STATUS_ACTIVE,
+            api_c.DELIVERY_SCHEDULE: {},
             api_c.ENABLED: True,
         }
 
@@ -110,10 +111,10 @@ class EngagementSchemaTest(TestCase):
 
         """
         doc = {
-            api_c.ENGAGEMENT_NAME: 3,
-            api_c.ENGAGEMENT_DESCRIPTION: "Engagement 1 description",
-            api_c.ENGAGEMENT_AUDIENCES: [],
-            api_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+            api_c.NAME: 3,
+            api_c.DESCRIPTION: "Engagement 1 description",
+            db_c.AUDIENCES: [],
+            api_c.DELIVERY_SCHEDULE: {},
         }
 
         assert EngagementPostSchema().validate(doc) != {}

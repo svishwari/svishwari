@@ -1,5 +1,22 @@
 """This module contains connector defines."""
 
+NAME = "name"
+DESCRIPTION = "description"
+DELIVERY_SCHEDULE = "delivery_schedule"
+START_DATE = "start_date"
+END_DATE = "end_date"
+STATUS = "status"
+ENABLED = "enabled"
+
+STATUS_ACTIVE = "active"
+STATUS_INACTIVE = "inactive"
+STATUS_DRAFT = "draft"
+ENGAGEMENT_STATUSES = [
+    STATUS_ACTIVE,
+    STATUS_INACTIVE,
+    STATUS_DRAFT,
+]
+
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -66,23 +83,6 @@ AUTHENTICATION_DETAILS = "authentication_details"
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
-ENGAGEMENT_NAME = "name"
-ENGAGEMENT_DESCRIPTION = "description"
-ENGAGEMENT_AUDIENCES = "audiences"
-ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
-ENGAGEMENT_START_DATE = "start_date"
-ENGAGEMENT_END_DATE = "end_date"
-ENGAGEMENT_STATUS = "status"
-ENABLED = "enabled"
-
-ENGAGEMENT_STATUS_ACTIVE = "active"
-ENGAGEMENT_STATUS_INACTIVE = "inactive"
-ENGAGEMENT_STATUS_DRAFT = "draft"
-ENGAGEMENT_STATUSES = [
-    ENGAGEMENT_STATUS_ACTIVE,
-    ENGAGEMENT_STATUS_INACTIVE,
-    ENGAGEMENT_STATUS_DRAFT,
-]
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
