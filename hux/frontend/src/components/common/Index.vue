@@ -216,6 +216,9 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Logos</v-subheader>
+    <Logo type="bluecore"></Logo>
+    <Logo type="bluecore" :size="48"></Logo>
+
     <Logo type="facebook"></Logo>
     <Logo type="facebook" :size="48"></Logo>
 

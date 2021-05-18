@@ -7,6 +7,9 @@ DUPLICATE_ERR_CODE = 11000
 FAVORITE = "favorite"
 ENABLED = "enabled"
 OKTA_ID = "okta_id"
+ADDED = "added"
+STATUS = "status"
+PENDING = "Pending"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
@@ -158,6 +161,8 @@ DELIVERY_PLATFORM_FACEBOOK = "Facebook"
 DELIVERY_PLATFORM_AMAZON = "Amazon"
 DELIVERY_PLATFORM_GOOGLE = "Google"
 DELIVERY_PLATFORM_SFMC = "SFMC"
+DELIVERY_PLATFORM_TWILIO = "Twilio"
+DELIVERY_PLATFORM_QUALTRICS = "Qualtrics"
 
 # Engagements
 ENGAGEMENT_ID = "engagement_id"
