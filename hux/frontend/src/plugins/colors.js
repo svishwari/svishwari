@@ -20,4 +20,6 @@ export default {
   pinkLittleDark: "#f03bc8",
   darkGreyHeading: "#333333",
   lightGreyAnotherVariant: "#757b7b",
+  skyBlue: "#80D1EF",
+  skyBlueDark: "#00A3E0",
 }
