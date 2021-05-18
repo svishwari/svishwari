@@ -1,5 +1,5 @@
 <template>
-  <page class="white" max-width="850px">
+  <page class="white" max-width="970px">
     <div class="mb-10">
       <h4 class="text-h2 neroBlack--text">Add a destination</h4>
       <p class="neroBlack--text">
@@ -70,7 +70,7 @@
       </div>
     </v-form>
 
-    <hux-footer slot="footer">
+    <hux-footer slot="footer" max-width="850px">
       <template v-slot:left>
         <hux-button
           button-text="Cancel"
