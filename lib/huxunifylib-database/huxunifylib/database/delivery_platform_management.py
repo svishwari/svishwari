@@ -1609,7 +1609,7 @@ def get_performance_metrics(
     delivery_job_id: ObjectId,
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
-    transferred_for_feedback_only: bool = False,
+    transferred_for_feedback: bool = False,
 ) -> list:
     """Retrieve campaign performance metrics.
 
