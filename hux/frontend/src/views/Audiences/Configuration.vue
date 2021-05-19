@@ -113,6 +113,11 @@
                     mdi-plus-circle
                   </v-icon>
                 </div>
+                <Logo
+                  v-for="destination in audience.destinations"
+                  :key="destination.id"
+                  :type="destination.type"
+                />
               </v-col>
             </v-row>
           </v-timeline-item>
@@ -154,7 +159,7 @@
           ></huxButton>
         </template>
       </HuxFooter>
-
+      <!-- Add destination workflow -->
       <drawer v-model="destinationDrawer.insideFlow">
         <template v-slot:header-left>
           <div
@@ -170,9 +175,9 @@
             v-if="destinationDrawer.viewStep == 2"
           >
             <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
-              <Logo :type="selectedDestination.type" />
+              <Logo :type="destinationDrawer.selectedDestination[0].type" />
               <div class="pl-2 font-weight-regular">
-                {{ selectedDestination.name }}
+                {{ destinationDrawer.selectedDestination[0].name }}
               </div>
             </h5>
           </div>
@@ -188,15 +193,10 @@
                     :key="destination.id"
                     :title="destination.name"
                     :icon="destination.type"
-                    :isAdded="
-                      destination.is_added || index == selectedDestinationIndex
-                    "
+                    :isAdded="destination.is_added || isDestinationAdded(destination.type)"
                     :isAvailable="destination.is_enabled"
                     :isAlreadyAdded="destination.is_added"
-                    @click="
-                      onSelectDestination(index, destination)
-                      destinationDrawer.viewStep = 2
-                    "
+                    @click="onSelectDestination(index, destination)"
                     class="my-3"
                   />
                 </div>
@@ -220,6 +220,7 @@
               width="80"
               height="40"
               class="ma-2"
+              @click="addDestinationToAudience()"
             ></huxButton>
           </div>
         </template>
@@ -408,8 +409,8 @@ export default {
   },
   data() {
     return {
-      selectedDestinationIndex: -1,
-      selectedDestination: null,
+      // selectedDestinationIndex: -1,
+      // selectedDestination: null,
       overviewListItems: [
         { title: "Target size", subtitle: "34,203,204" },
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
@@ -443,6 +444,7 @@ export default {
       destinationDrawer: {
         insideFlow: false,
         viewStep: 1,
+        selectedDestination: [],
       },
     }
   },
@@ -505,10 +507,27 @@ export default {
     },
 
     onSelectDestination(index, selected) {
-      this.selectedDestinationIndex = index
-      this.selectedDestination = selected
-      console.log(this.selectedDestination)
+      if(selected && selected.type === "salesforce"){
+        this.destinationDrawer.selectedDestination.push(selected)
+        this.destinationDrawer.viewStep = 2
+      }else {
+        this.audience.destinations.push(selected)
+        this.toggleDrawer()
+      }
     },
+    addDestinationToAudience() {
+      this.audience.destinations.push(...this.destinationDrawer.selectedDestination)
+      this.destinationDrawer.insideFlow = false
+      this.destinationDrawer.viewStep = 1
+    },
+    isDestinationAdded(title) {
+      if(this.audience && this.audience.destinations) {
+        const existingIndex = this.audience.destinations.findIndex(
+          (destination) => destination.type === title
+        )
+        return (existingIndex > -1)
+      }
+    }
   },
   async mounted() {
     await this.getDestinations()

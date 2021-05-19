@@ -1,9 +1,9 @@
 <template>
   <svg-as-component
+    v-if="type"
     :src="`assets/logos/${type}`"
     :width="size"
     :height="size"
-    v-if="type"
   />
 </template>
 

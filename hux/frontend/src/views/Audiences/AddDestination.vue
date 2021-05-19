@@ -1,8 +1,8 @@
 <template>
-  <diV class="add-destination-wrapper font-weight-regular">
+  <div class="add-destination-wrapper font-weight-regular">
     Extension type
     <div class="d-flex align-center mt-2">
-      <diV
+      <div
         class="extension-type mr-4 text-center"
         v-bind:class="[isActive ? 'active' : '']"
         @click="toggleClass($event)"
@@ -16,7 +16,7 @@
           <extensionInactive1 v-if="!isActive" />
           <div class="label">New data extension</div>
         </div>
-      </diV>
+      </div>
       <diV
         class="extension-type mr-4 text-center"
         v-bind:class="[!isActive ? 'active' : '']"
@@ -63,7 +63,7 @@
         </v-radio-group>
       </div>
       <TextField
-        v-model="Extension"
+        v-model="extension"
         labelText="Data extension name"
         icon="mdi-alert-circle-outline"
         placeholderText="What is the name for this new data extension?"
@@ -96,7 +96,7 @@
         </v-card-text>
       </v-card>
     </div>
-  </diV>
+  </div>
 </template>
 <script>
 import TextField from "@/components/common/TextField"
@@ -109,7 +109,7 @@ export default {
     return {
       isActive: true,
       journeyType: null,
-      Extension: null,
+      extension: null,
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     }
   },
