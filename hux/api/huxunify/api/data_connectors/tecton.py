@@ -61,9 +61,9 @@ def map_model_response(response: dict) -> dict:
         model = {
             constants.ID: 1,
             constants.LATEST_VERSION: version,
-            constants.FULCRUM_DATE: parser.parse(feature[0]),
+            constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.DESCRIPTION: feature[1],
-            constants.LAST_TRAINED: parser.parse(feature[2]),
+            constants.LAST_TRAINED: parser.parse(feature[0]),
             constants.LOOKBACK_WINDOW: feature[3],
             constants.NAME: feature[4],
             constants.OWNER: feature[5],
