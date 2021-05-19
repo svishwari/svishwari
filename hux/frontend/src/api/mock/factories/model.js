@@ -11,5 +11,5 @@ export default {
   past_version_count: 0,
   prediction_window: 60,
   status: "pending",
-  type: "model-unsubscribe",
+  type: "unsubscribe",
 }
