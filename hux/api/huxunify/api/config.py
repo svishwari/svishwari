@@ -122,6 +122,13 @@ class DevelopmentConfig(Config):
 
     DEBUG = False
     MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="read_write_user")
+    MONGO_DB_CONFIG = {
+        "host": Config.MONGO_DB_HOST,
+        "port": Config.MONGO_DB_PORT,
+        "username": MONGO_DB_USERNAME,
+        "password": Config.MONGO_DB_PASSWORD,
+        "ssl_cert_path": Config.MONGO_SSL_CERT,
+    }
 
 
 def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
