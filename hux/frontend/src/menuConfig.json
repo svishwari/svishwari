@@ -4,7 +4,9 @@
       "label" : null,
       "icon": "mdi-home-outline",
       "title": "Overview",
-      "link": "/overview"
+      "link": {
+        "name": "Overview"
+      }
     },
     {
       "label" : "Orchestration",
@@ -12,12 +14,16 @@
         { 
           "icon": "mdi-bullhorn-outline",
           "title": "Engagements", 
-          "link": "engagements"
+          "link": {
+            "name": "Engagements"
+          }
         },
         { 
           "icon": "mdi-flip-h mdi-account-plus-outline", 
           "title": "Audiences", 
-          "link": "/audiences"
+          "link": {
+            "name": "Audiences"
+          }
         }
       ] 
     },
@@ -27,7 +33,9 @@
         { 
           "icon": "mdi-tune-vertical-variant", 
           "title": "Models", 
-          "link": "/models"
+          "link": {
+            "name": "Models"
+          }
         }
       ] 
     },
@@ -37,17 +45,23 @@
         { 
           "icon": "mdi-account-details-outline", 
           "title": "Customer Profiles", 
-          "link": "/profiles"
+          "link": {
+            "name": "Profiles"
+          }
         },
         { 
           "icon": "mdi-account-search-outline", 
           "title": "Identity", 
-          "link": "/identity"
+          "link": {
+            "name": "Identity"
+          }
         },
         {
           "icon": "mdi-connection", 
           "title": "Connections", 
-          "link": "/connections"
+          "link": {
+            "name": "Connections"
+          }
         }
       ] 
     }
