@@ -1,4 +1,6 @@
 """This module contains connector defines."""
+DEVELOPMENT_MODE = "development"
+PRODUCTION_MODE = "production"
 # general defines
 ID = "id"
 NAME = "name"
@@ -10,13 +12,41 @@ DESCRIPTION = "description"
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
+TOTAL_CUSTOMERS = "total_customers"
+COUNTRIES = "countries"
+STATES = "states"
+CITIES = "cities"
+MIN_AGE = "min_age"
+MAX_AGE = "max_age"
+GENDER_WOMEN = "women"
+GENDER_MEN = "men"
+GENDER_OTHER = "other"
+
 # AWS defines
+AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
 AWS_BATCH_NAME = "batch"
 AWS_HEALTH_TESTS = {
-    AWS_SSM_NAME: "describe_parameters",
-    AWS_BATCH_NAME: "list_jobs",
+    AWS_SSM_NAME: ["describe_parameters", {"MaxResults": 1}],
+    AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
+
+NAME = "name"
+DESCRIPTION = "description"
+DELIVERY_SCHEDULE = "delivery_schedule"
+START_DATE = "start_date"
+END_DATE = "end_date"
+STATUS = "status"
+ENABLED = "enabled"
+
+STATUS_ACTIVE = "active"
+STATUS_INACTIVE = "inactive"
+STATUS_DRAFT = "draft"
+ENGAGEMENT_STATUSES = [
+    STATUS_ACTIVE,
+    STATUS_INACTIVE,
+    STATUS_DRAFT,
+]
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
@@ -73,20 +103,26 @@ INVALID_DESTINATION_AUTH = "Invalid authentication details entered."
 AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
+INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
 DESTINATIONS_DESCRIPTION = "Destinations API"
 DESTINATIONS_ENDPOINT = "/destinations"
 DESTINATION_ID = "destination_id"
-DESTINATION_TYPE = "destination_type"
-DESTINATION_NAME = "destination_name"
-DESTINATION_STATUS = "destination_status"
-DESTINATION_CAMPAIGN_COUNT = "destination_campaign_count"
+DESTINATION_TYPE = "type"
+DESTINATION_NAME = "name"
+DESTINATION_CAMPAIGN_COUNT = "campaign_count"
+CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
+INVALID_ID = "Invalid Object ID."
+
+# Engagement fields
+ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_NAME = "engagement_name"
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
@@ -103,7 +139,6 @@ AUTHENTICATION_ENDPOINT = "/authenticate"
 AUTHENTICATION_TOKEN = "access_token"
 CANNOT_AUTHENTICATE_USER = "Error authenticating user."
 
-AUTHENTICATION_DETAILS = "authentication_details"
 AUTHENTICATION_TOKEN = "token"
 AUTHENTICATION_ACCESS_TOKEN = "access_token"
 AUTHENTICATION_TOKEN_TYPE_HINT = "token_type_hint"
@@ -115,15 +150,15 @@ ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
 ORCHESTRATION_TAG = "orchestration"
 AUDIENCE_ID = "audience_id"
-AUDIENCE_NAME = "audience_name"
-AUDIENCE_FILTERS = "audience_filters"
+AUDIENCE_NAME = "name"
+AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
 AUDIENCE_SECTION_FILTERS = "section_filters"
-AUDIENCE_FILTER_FIELD = "filter_field"
-AUDIENCE_FILTER_TYPE = "filter_type"
-AUDIENCE_FILTER_VALUE = "filter_value"
-AUDIENCE_DESTINATIONS = "audience_destinations"
-AUDIENCE_ENGAGEMENTS = "audience_engagements"
+AUDIENCE_INSIGHTS = "audience_insights"
+AUDIENCE_FILTER_FIELD = "field"
+AUDIENCE_FILTER_TYPE = "type"
+AUDIENCE_FILTER_VALUE = "value"
+AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE = "audience_size"
 AUDIENCE_STATUS = "audience_status"
 AUDIENCE_STATUS_PENDING = "Pending"
@@ -132,8 +167,7 @@ AUDIENCE_STATUS_DELIVERING = "Delivering"
 AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
-ENGAGEMENT_ID = "engagement_id"
-ENGAGEMENT_NAME = "engagement_name"
+
 
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (
