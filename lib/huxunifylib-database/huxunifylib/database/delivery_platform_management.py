@@ -4,6 +4,7 @@ This module enables functionality related to delivery platform management.
 # pylint: disable=C0302
 
 import logging
+from functools import partial
 import datetime
 from operator import itemgetter
 
@@ -1584,8 +1585,8 @@ def set_performance_metrics(
         c.METRICS_END_TIME: end_time,
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
         c.PERFORMANCE_METRICS: metrics_dict,
-        # By default not transferred to CDM yet
-        c.PERFORMANCE_METRICS_STATUS: c.STATUS_NON_TRANSFERRED,
+        # By default not transferred for feedback to CDM yet
+        c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
     }
 
     try:
@@ -1608,7 +1609,7 @@ def get_performance_metrics(
     delivery_job_id: ObjectId,
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
-    status_filter: str = None,
+    transferred_for_feedback_only: bool = False,
 ) -> list:
     """Retrieve campaign performance metrics.
 
@@ -1644,9 +1645,9 @@ def get_performance_metrics(
     if max_end_time:
         metric_queries.append({c.METRICS_END_TIME: {"$lte": max_end_time}})
 
-    if status_filter:
+    if transferred_for_feedback_only:
         metric_queries.append(
-            {c.PERFORMANCE_METRICS_STATUS: {"$eq": status_filter}}
+            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": True}}
         )
 
     mongo_query = {"$and": metric_queries}
@@ -1664,7 +1665,7 @@ def get_performance_metrics(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_performance_metrics_status(
+def _set_performance_metrics_status(
     database: DatabaseClient,
     performance_metrics_id: ObjectId,
     performance_metrics_status: str,
@@ -1682,17 +1683,28 @@ def set_performance_metrics_status(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
 
-    update_doc = {c.PERFORMANCE_METRICS_STATUS: performance_metrics_status}
+    # TODO Below is also designed to accommodate
+    # "transferred for reporting" status in the future
+    update_doc = {}
+    if performance_metrics_status == c.STATUS_TRANSFERRED_FOR_FEEDBACK:
+        update_doc.update({c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
 
-    try:
-        doc = collection.find_one_and_update(
-            {c.ID: performance_metrics_id},
-            {"$set": update_doc},
-            upsert=False,
-            new=True,
-        )
-        return doc
-    except pymongo.errors.OperationFailure as exc:
-        logging.error(exc)
+    if update_doc:
+        try:
+            doc = collection.find_one_and_update(
+                {c.ID: performance_metrics_id},
+                {"$set": update_doc},
+                upsert=False,
+                new=True,
+            )
+            return doc
+        except pymongo.errors.OperationFailure as exc:
+            logging.error(exc)
 
     return None
+
+
+set_transferred_for_feedback = partial(
+    _set_performance_metrics_status,
+    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+)

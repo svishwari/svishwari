@@ -67,9 +67,7 @@ STATUS_PENDING = "Pending"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"
-STATUS_TRANSFERRED = "Transferred"
-STATUS_NON_TRANSFERRED = "Non transferred"
-
+STATUS_TRANSFERRED_FOR_FEEDBACK = "Transferred for feedback"
 
 INGESTED_DATA = "data"
 
@@ -203,7 +201,6 @@ DELIVERY_PLATFORM_GENERIC_CAMPAIGNS = "delivery_platform_generic_campaigns"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"
-PERFORMANCE_METRICS_STATUS = "performance_metrics_status"
 
 # Data source constants
 FIELD_SPECIAL_TYPE = "special_type"

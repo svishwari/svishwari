@@ -832,9 +832,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
 
         # Status is to be set to non-transferred automatically
-        self.assertEqual(
-            doc[c.PERFORMANCE_METRICS_STATUS], c.STATUS_NON_TRANSFERRED
-        )
+        self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
 
     def test_set_performance_metrics_status(self):
         """Performance metrics status is set properly."""
@@ -852,22 +850,17 @@ class TestDeliveryPlatform(unittest.TestCase):
             generic_campaign_id=self.generic_campaigns[0],
         )
 
-        doc = dpm.set_performance_metrics_status(
+        doc = dpm.set_transferred_for_feedback(
             database=self.database,
             performance_metrics_id=metrics_init_doc[c.ID],
-            performance_metrics_status=c.STATUS_TRANSFERRED,
         )
-        self.assertEqual(
-            doc[c.PERFORMANCE_METRICS_STATUS], c.STATUS_TRANSFERRED
-        )
+        self.assertTrue(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
         # Read metrics separately of setting
         metrics_list = dpm.get_performance_metrics(
             self.database, delivery_job_id
         )
-        self.assertEqual(
-            metrics_list[0][c.PERFORMANCE_METRICS_STATUS], c.STATUS_TRANSFERRED
-        )
+        self.assertTrue(metrics_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):
