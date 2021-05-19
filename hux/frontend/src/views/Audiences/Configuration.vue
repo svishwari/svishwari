@@ -510,12 +510,15 @@ export default {
     },
 
     onSelectDestination(index, selected) {
-      if (selected && selected.type === "salesforce") {
-        this.destinationDrawer.selectedDestination.push(selected)
-        this.destinationDrawer.viewStep = 2
-      } else {
-        this.audience.destinations.push(selected)
-        this.toggleDrawer()
+      // check to avoid duplicate destination
+      if(!this.isDestinationAdded(selected.type)) {
+        if (selected && selected.type === "salesforce") {
+          this.destinationDrawer.selectedDestination.push(selected)
+          this.destinationDrawer.viewStep = 2
+        } else {
+          this.audience.destinations.push(selected)
+          this.toggleDrawer()
+        }
       }
     },
     addDestinationToAudience() {
