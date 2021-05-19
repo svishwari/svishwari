@@ -17,6 +17,25 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Modal </v-subheader>
+    <ConfirmModal
+      v-model="modal"
+      type="error"
+      title="Action Word (i.e. Remove) ___________?"
+      body="Are you sure you want to stop the configuration and go to another page? You will not be able to recover it but will need to start the process again."
+    >
+      <template v-slot:activator>
+        <huxButton
+          ButtonText="Open modal"
+          size="large"
+          class="ma-2"
+          @click="modal = !modal"
+        ></huxButton>
+      </template>
+    </ConfirmModal>
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Alert </v-subheader>
     <v-btn @click="alert = !alert">Toogle alert</v-btn>
     <HuxAlert
@@ -247,6 +266,7 @@
 
 <script>
 import CardInfo from "@/components/common/CardInfo"
+import ConfirmModal from "@/components/common/ConfirmModal"
 import HuxAlert from "@/components/common/HuxAlert"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import TextField from "@/components/common/TextField"
@@ -268,6 +288,7 @@ export default {
   name: "Components",
   components: {
     CardInfo,
+    ConfirmModal,
     HuxAlert,
     Breadcrumb,
     TextField,
@@ -507,6 +528,7 @@ export default {
       ],
 
       drawer: false,
+      modal: false,
       alert: false,
 
       overviewListItems: [

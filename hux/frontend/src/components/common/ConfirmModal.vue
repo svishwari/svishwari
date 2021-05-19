@@ -1,0 +1,112 @@
+<template>
+  <v-dialog v-model="localModal" :width="width">
+    <template v-slot:activator="{ on, attrs }">
+      <slot name="activator" v-on="on" v-bind="attrs"></slot>
+    </template>
+    <div class="white text-center pt-10">
+      <div class="px-15 modal-content">
+        <v-icon :color="type" size="44">mdi-information-outline</v-icon>
+        <div class="neroBlack--text text-h3 py-3">{{ title }}</div>
+        <div class="neroBlack--text text-h6 pt-3 pb-10">{{ body }}</div>
+      </div>
+      <div
+        class="modal-footer background d-flex justify-space-between align-center px-10 py-5"
+      >
+        <huxButton
+          :ButtonText="leftBtnText"
+          size="large"
+          variant="tertiary"
+          height="40"
+          isTile
+        />
+        <huxButton
+          :ButtonText="rightBtnText"
+          size="large"
+          :variant="type"
+          height="40"
+          isTile
+        />
+      </div>
+    </div>
+  </v-dialog>
+</template>
+
+<script>
+import huxButton from "@/components/common/huxButton"
+export default {
+  name: "confirm-modal",
+
+  components: {
+    huxButton,
+  },
+
+  props: {
+    type: {
+      type: String,
+      required: false,
+      default: "secondary",
+    },
+
+    title: {
+      type: String,
+      required: false,
+      default: "title",
+    },
+
+    body: {
+      type: String,
+      required: false,
+      default: "body",
+    },
+
+    leftBtnText: {
+      type: String,
+      required: false,
+      default: "Cancel",
+    },
+
+    rightBtnText: {
+      type: String,
+      required: false,
+      default: "Add",
+    },
+
+    value: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+
+    width: {
+      type: Number,
+      required: false,
+      default: 600,
+    },
+  },
+
+  data() {
+    return {
+      localModal: this.value,
+    }
+  },
+
+  watch: {
+    value: function () {
+      this.localModal = this.value
+    },
+
+    localModal: function () {
+      this.$emit("input", this.localModal)
+      if (!this.localModal) {
+        this.$emit("onClose")
+      }
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.modal-footer {
+  box-shadow: 0px -0.5px 5px 1px rgba(0, 0, 0, 0.15);
+}
+</style>
