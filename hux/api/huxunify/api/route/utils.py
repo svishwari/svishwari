@@ -6,9 +6,13 @@ from typing import Any, Tuple
 from http import HTTPStatus
 
 from healthcheck import HealthCheck
+from decouple import config
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.database.cdp_data_source_management import (
+    get_all_data_sources,
+)
 
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.tecton import check_tecton_connection
@@ -96,9 +100,8 @@ def check_mongo_connection() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the connection is valid, and the message.
     """
     try:
-        db_client_factory.get_resource(
-            **get_config().MONGO_DB_CONFIG
-        ).server_info()
+        # test finding documents
+        get_all_data_sources(get_db_client())
         return True, "Mongo available."
     # pylint: disable=broad-except
     # pylint: disable=unused-variable
@@ -116,6 +119,9 @@ def get_health_check() -> HealthCheck:
 
     """
     health = HealthCheck()
+
+    # check variable
+    health.add_section("flask_env", config("FLASK_ENV", default="UNKNOWN"))
 
     # add health checks
     health.add_check(check_mongo_connection)
