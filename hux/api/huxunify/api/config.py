@@ -26,6 +26,7 @@ SSL_CERT_PATH = "ssl_cert_path"
 LOAD_VAR_DICT = {
     "TECTON_API_KEY": "TECTON_API_KEY",
     "MONGO_DB_HOST": "unifieddb_host_alias",
+    "MONGO_DB_PASSWORD": "unifieddb_rw",
 }
 
 
