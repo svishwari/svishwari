@@ -153,3 +153,21 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         return False, getattr(exception, "message", repr(exception))
+
+
+def check_aws_ssm() -> check_aws_connection:
+    """Validate AWS ssm Function
+
+    Returns:
+        check_aws_connection: function for testing.
+    """
+    return check_aws_connection(api_c.AWS_SSM_NAME)
+
+
+def check_aws_batch() -> check_aws_connection:
+    """Validate AWS batch Function
+
+    Returns:
+        check_aws_connection: function for testing.
+    """
+    return check_aws_connection(api_c.AWS_BATCH_NAME)

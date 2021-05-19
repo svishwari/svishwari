@@ -10,10 +10,9 @@ from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from huxunifylib.connectors.util.client import db_client_factory
 
-from huxunify.api import constants
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.tecton import check_tecton_connection
-from huxunify.api.data_connectors.aws import check_aws_connection
+from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> Any:
@@ -121,7 +120,7 @@ def get_health_check() -> HealthCheck:
     # add health checks
     health.add_check(check_mongo_connection)
     health.add_check(check_tecton_connection)
-    health.add_check(lambda: check_aws_connection(constants.AWS_SSM_NAME))
-    health.add_check(lambda: check_aws_connection(constants.AWS_BATCH_NAME))
+    health.add_check(check_aws_ssm)
+    health.add_check(check_aws_batch)
 
     return health

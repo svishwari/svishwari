@@ -30,12 +30,17 @@ def check_tecton_connection() -> Tuple[bool, str]:
     config = get_config()
 
     # submit the post request to get models
-    response = requests.post(
-        config.TECTON_FEATURE_SERVICE,
-        dumps(constants.MODEL_LIST_PAYLOAD),
-        headers=config.TECTON_API_HEADERS,
-    )
-    return response.status_code == 200, response.reason
+    try:
+        response = requests.post(
+            config.TECTON_FEATURE_SERVICE,
+            dumps(constants.MODEL_LIST_PAYLOAD),
+            headers=config.TECTON_API_HEADERS,
+        )
+        return response.status_code, "Tecton available."
+
+    except Exception as exception:  # pylint: disable=broad-except
+        # report the generic error message
+        return False, getattr(exception, "message", repr(exception))
 
 
 def map_model_response(response: dict) -> dict:
