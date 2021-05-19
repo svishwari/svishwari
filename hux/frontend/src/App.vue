@@ -30,7 +30,6 @@ body {
   height: 100vh;
   background: #f8f9fa !important;
   font-family: "Open Sans";
-  font-weight: 600;
   #nprogress .bar {
     height: 6px;
   }

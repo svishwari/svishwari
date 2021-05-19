@@ -1,5 +1,6 @@
 <template>
   <svg-as-component
+    v-if="type"
     :src="`assets/logos/${type}`"
     :width="size"
     :height="size"
