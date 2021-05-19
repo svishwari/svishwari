@@ -1611,6 +1611,22 @@ def get_performance_metrics(
     max_end_time: datetime.datetime = None,
     transferred_for_feedback: bool = False,
 ) -> list:
+    """[summary]
+
+    Args:
+        database (DatabaseClient): [description]
+        delivery_job_id (ObjectId): [description]
+        min_start_time (datetime.datetime, optional): [description]. Defaults to None.
+        max_end_time (datetime.datetime, optional): [description]. Defaults to None.
+        transferred_for_feedback (bool, optional): [description]. Defaults to False.
+
+    Raises:
+        de.InvalidID: [description]
+
+    Returns:
+        list: [description]
+    """
+
     """Retrieve campaign performance metrics.
 
     Args:
@@ -1620,8 +1636,9 @@ def get_performance_metrics(
             Min start time of metrics. Defaults to None.
         max_end_time (datetime.datetime, optional):
             Max start time of metrics. Defaults to None.
-        status_filter (str, optional):
-            Status to filter by. If None, do not filter. Defaults to None.
+        transferred_for_feedback (bool, optional):
+            If True, retrieve only merics transferred for feedback.
+            Defaults to None.
 
     Raises:
         de.InvalidID: Invalid ID for delivery job.
@@ -1629,6 +1646,7 @@ def get_performance_metrics(
     Returns:
         list: list of metrics.
     """
+
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
 
@@ -1645,7 +1663,7 @@ def get_performance_metrics(
     if max_end_time:
         metric_queries.append({c.METRICS_END_TIME: {"$lte": max_end_time}})
 
-    if transferred_for_feedback_only:
+    if transferred_for_feedback:
         metric_queries.append(
             {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": True}}
         )
