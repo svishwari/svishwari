@@ -104,7 +104,8 @@
                   <i style="font-size: 12px">Optional</i>
                 </strong>
                 <div class="d-flex">
-                  <Logo class="mt-1"
+                  <Logo
+                    class="mt-1"
                     v-for="destination in audience.destinations"
                     :key="destination.id"
                     :type="destination.type"
@@ -513,7 +514,7 @@ export default {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
         if (selected && selected.type === "salesforce") {
-          if(!this.isDestinationAddedOnDrawer(selected)){
+          if (!this.isDestinationAddedOnDrawer(selected)) {
             this.destinationDrawer.selectedDestination.push(selected)
           }
           this.destinationDrawer.viewStep = 2
@@ -531,7 +532,10 @@ export default {
       this.destinationDrawer.viewStep = 1
     },
     isDestinationAddedOnDrawer(selected) {
-      if (this.destinationDrawer && this.destinationDrawer.selectedDestination) {
+      if (
+        this.destinationDrawer &&
+        this.destinationDrawer.selectedDestination
+      ) {
         const existingIndex = this.destinationDrawer.selectedDestination.findIndex(
           (destination) => destination.type === selected.type
         )
