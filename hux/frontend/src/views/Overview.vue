@@ -1,6 +1,6 @@
 <template>
   <div class="overview-wrap">
-    <PageHeader :title="'Welcome back, ' + firstName + ' ' + lastName + '!'">
+    <PageHeader :title="`Welcome back, ${fullName}!`" class="py-7">
       <template slot="description">
         <div class="font-weight-regular">
           Hux is here to help you make better, faster decisions to improve your
@@ -135,6 +135,9 @@ export default {
     },
     lastName() {
       return this.$store.getters.getLastName
+    },
+    fullName() {
+      return `${this.firstName} ${this.lastName}`
     },
   },
 }
