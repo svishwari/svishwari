@@ -1,3 +1,4 @@
+# pylint: disable=no-self-use
 """
 Paths for engagement API
 """
@@ -11,7 +12,10 @@ from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
-from huxunify.api.schema.engagement import EngagementGetSchema
+from huxunify.api.schema.engagement import (
+    EngagementGetSchema,
+    EngagementPostSchema,
+)
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -121,8 +125,8 @@ class IndividualEngagementSearch(SwaggerView):
         try:
             valid_id = (
                 EngagementGetSchema()
-                .load({db_c.USER_ID: engagement_id}, partial=True)
-                .get(db_c.USER_ID)
+                .load({db_c.ENGAGEMENT_ID: engagement_id}, partial=True)
+                .get(db_c.ENGAGEMENT_ID)
             )
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
@@ -194,7 +198,7 @@ class SetEngagement(SwaggerView):
         """
 
         try:
-            body = EngagementGetSchema().load(request.get_json())
+            body = EngagementPostSchema().load(request.get_json())
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
@@ -223,7 +227,7 @@ class SetEngagement(SwaggerView):
             raise ProblemException(
                 status=HTTPStatus.BAD_REQUEST.value,
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"Unable to create a new engagement.",
+                detail="Unable to create a new engagement.",
             ) from exc
 
 
@@ -274,24 +278,21 @@ class DeleteEngagement(SwaggerView):
         try:
             valid_id = (
                 EngagementGetSchema()
-                .load({db_c.USER_ID: engagement_id}, partial=True)
-                .get(db_c.USER_ID)
+                .load({db_c.ENGAGEMENT_ID: engagement_id}, partial=True)
+                .get(db_c.ENGAGEMENT_ID)
             )
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
-            success_flag = delete_engagement(
-                get_db_client(), engagement_id=valid_id
-            )
-            if success_flag:
+            if delete_engagement(get_db_client(), engagement_id=valid_id):
                 return {
                     "message": api_c.OPERATION_SUCCESS
                 }, HTTPStatus.OK.value
-            else:
-                return {
-                    "message": api_c.OPERATION_FAILED
-                }, HTTPStatus.INTERNAL_SERVER_ERROR.value
+
+            return {
+                "message": api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR.value
 
         except Exception as exc:
 
@@ -304,5 +305,5 @@ class DeleteEngagement(SwaggerView):
             raise ProblemException(
                 status=HTTPStatus.BAD_REQUEST.value,
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"Unable to create a new engagement.",
+                detail="Unable to create a new engagement.",
             ) from exc

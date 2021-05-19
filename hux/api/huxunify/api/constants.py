@@ -216,7 +216,7 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 
 # Engagement
 ENGAGEMENT_ENDPOINT = "/engagements"
-ENGAGEMENT_TAG = "engagement"
+ENGAGEMENT_TAG = "engagements"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
