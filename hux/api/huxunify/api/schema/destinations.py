@@ -32,7 +32,7 @@ class DestinationGetSchema(Schema):
         attribute=api_c.DESTINATION_NAME, example="My destination"
     )
     status = fields.String(
-        attribute=api_c.DESTINATION_STATUS,
+        attribute=api_c.CONNECTION_STATUS,
         validate=[
             OneOf(
                 choices=[
@@ -88,8 +88,8 @@ class DestinationPutSchema(Schema):
     Destination put schema class
     """
 
-    destination_type = fields.String()
-    destination_name = fields.String()
+    type = fields.String()
+    name = fields.String()
     authentication_details = fields.Field()
 
 
@@ -98,8 +98,8 @@ class DestinationPostSchema(DestinationPutSchema):
     Destination post schema class
     """
 
-    destination_type = fields.String(validate=must_not_be_blank)
-    destination_name = fields.String(validate=must_not_be_blank)
+    type = fields.String(validate=must_not_be_blank)
+    name = fields.String(validate=must_not_be_blank)
     authentication_details = fields.Dict(
         keys=fields.String(),
         values=fields.String(),

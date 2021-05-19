@@ -3,14 +3,13 @@ Paths for Orchestration API
 """
 from http import HTTPStatus
 from typing import Tuple
-from mongomock import MongoClient
 from flasgger import SwaggerView
 from bson import ObjectId
-from flask import Blueprint, request
-from flask_apispec import marshal_with
-from marshmallow import ValidationError
+from flask import Blueprint, request, jsonify
+from marshmallow import ValidationError, INCLUDE
 
 from huxunifylib.database import (
+    delivery_platform_management as destination_management,
     orchestration_management,
 )
 from huxunify.api.schema.orchestration import (
@@ -19,8 +18,8 @@ from huxunify.api.schema.orchestration import (
     AudiencePostSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.route.utils import add_view_to_blueprint
 import huxunify.api.constants as api_c
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 
 
 # setup the orchestration blueprint
@@ -29,14 +28,25 @@ orchestration_bp = Blueprint(
 )
 
 
-def get_db_client() -> MongoClient:
-    """Get DB client.
+def add_destinations(destination_ids) -> list:
+    """Fetch destinations data using destination ids.
 
-    Returns:
-        MongoClient: DB client
+    ---
+
+        Args:
+            destination_ids (list): Destinations Ids.
+
+        Returns:
+            destinations (list): Destination objects.
+
     """
-    # TODO - hook-up when ORCH-94 HUS-262 are completed
-    return MongoClient()
+
+    if destination_ids is not None:
+        object_ids = [ObjectId(x) for x in destination_ids]
+        return destination_management.get_delivery_platforms_by_id(
+            get_db_client(), object_ids
+        )
+    return None
 
 
 @add_view_to_blueprint(
@@ -59,7 +69,6 @@ class AudienceView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    @marshal_with(AudienceGetSchema(many=True))
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all audience.
 
@@ -70,10 +79,13 @@ class AudienceView(SwaggerView):
         """
 
         audiences = orchestration_management.get_all_audiences(get_db_client())
-        # TODO: For each audience, set audience data like size, etc..
-
+        for audience in audiences:
+            audience[api_c.DESTINATIONS_TAG] = add_destinations(
+                audience.get(api_c.DESTINATIONS_TAG)
+            )
+        # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         return (
-            audiences,
+            jsonify(AudienceGetSchema().dump(audiences, many=True)),
             HTTPStatus.OK,
         )
 
@@ -105,12 +117,14 @@ class AudienceGetView(SwaggerView):
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve audience details.",
+            "schema": {
+                "example": {"message": "Destination cannot be validated"},
+            },
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    @marshal_with(AudienceGetSchema)
     # pylint: disable=no-self-use
     def get(self, audience_id: str) -> Tuple[dict, int]:
         """Get an audience by ID.
@@ -124,23 +138,21 @@ class AudienceGetView(SwaggerView):
 
         """
 
-        try:
-            # validate the id
-            valid_id = (
-                AudienceGetSchema()
-                .load({api_c.AUDIENCE_ID: audience_id}, partial=True)
-                .get(api_c.AUDIENCE_ID)
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        if not ObjectId.is_valid(audience_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         audience = orchestration_management.get_audience(
-            get_db_client(), valid_id
+            get_db_client(), ObjectId(audience_id)
         )
 
-        # TODO - Fetch Audience data (size,..) from CDM based on the audience filters
-
-        return audience, HTTPStatus.OK
+        audience[api_c.DESTINATIONS_TAG] = add_destinations(
+            audience.get(api_c.DESTINATIONS_TAG)
+        )
+        # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
+        return (
+            AudienceGetSchema(unknown=INCLUDE).dump(audience),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -161,7 +173,7 @@ class AudiencePostView(SwaggerView):
             "description": "Input Audience body.",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.AUDIENCE_DESTINATIONS: [
+                api_c.DESTINATIONS_TAG: [
                     "71364317897acad4bac4373b",
                     "67589317897acad4bac4373b",
                 ],
@@ -217,12 +229,12 @@ class AudiencePostView(SwaggerView):
         audience_doc = orchestration_management.create_audience(
             database=get_db_client(),
             name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body[api_c.AUDIENCE_FILTERS],
-            destination_ids=body[api_c.AUDIENCE_DESTINATIONS],
+            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            destination_ids=body.get(api_c.DESTINATIONS_TAG),
             user_id=user_id,
         )
 
-        return AudienceGetSchema().dumps(audience_doc), HTTPStatus.CREATED
+        return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
 
 @add_view_to_blueprint(
@@ -251,7 +263,7 @@ class AudiencePutView(SwaggerView):
             "type": "object",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.AUDIENCE_DESTINATIONS: [
+                api_c.DESTINATIONS_TAG: [
                     "71364317897acad4bac4373b",
                     "67589317897acad4bac4373b",
                 ],
@@ -288,7 +300,6 @@ class AudiencePutView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    @marshal_with(AudiencePutSchema)
     # pylint: disable=no-self-use
     def put(self, audience_id: str) -> Tuple[dict, int]:
         """Updates an existing audience.
@@ -304,7 +315,6 @@ class AudiencePutView(SwaggerView):
 
         # TODO - implement after HUS-254 is done to grab user/okta_id
         user_id = ObjectId()
-
         # load into the schema object
         try:
             body = AudiencePutSchema().load(request.get_json(), partial=True)
@@ -314,10 +324,10 @@ class AudiencePutView(SwaggerView):
         audience_doc = orchestration_management.update_audience(
             database=get_db_client(),
             audience_id=ObjectId(audience_id),
-            name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body[api_c.AUDIENCE_FILTERS],
-            destination_ids=body[api_c.AUDIENCE_DESTINATIONS],
+            name=body.get(api_c.AUDIENCE_NAME),
+            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            destination_ids=body.get(api_c.DESTINATIONS_TAG),
             user_id=user_id,
         )
 
-        return audience_doc, HTTPStatus.OK
+        return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
