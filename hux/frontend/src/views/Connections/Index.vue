@@ -25,7 +25,7 @@
           Begin by selecting a button below.
         </div>
         <router-link
-          :to="{ name: 'add-destination' }"
+          :to="{ name: 'DestinationConfiguration' }"
           class="text-decoration-none"
         >
           <huxButton

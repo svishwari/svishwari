@@ -17,7 +17,7 @@
           mdi-refresh
         </v-icon>
         <router-link
-          :to="{ name: 'createAudience' }"
+          :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
           append
         >
@@ -53,7 +53,7 @@
         </template>
         <template v-slot:button>
           <router-link
-            :to="{ name: 'createAudience' }"
+            :to="{ name: 'AudienceConfiguration' }"
             class="route-link text-decoration-none"
             append
           >

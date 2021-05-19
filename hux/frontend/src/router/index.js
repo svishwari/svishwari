@@ -37,7 +37,7 @@ const routes = [
   },
   {
     path: "/overview",
-    name: "overview",
+    name: "Overview",
     component: () => import("@/views/Overview"),
     meta: {
       layout: "app",
@@ -47,7 +47,7 @@ const routes = [
   },
   {
     path: "/engagements",
-    name: "engagements",
+    name: "Engagements",
     component: () => import("@/views/Engagements"),
     meta: {
       layout: "app",
@@ -57,7 +57,7 @@ const routes = [
   },
   {
     path: "/audiences",
-    name: "audiences",
+    name: "Audiences",
     component: () => import("@/views/Audiences/Index"),
     meta: {
       layout: "app",
@@ -66,28 +66,28 @@ const routes = [
     },
   },
   {
-    path: "/audiences/new",
-    name: "createAudience",
+    path: "/audiences/add",
+    name: "AudienceConfiguration",
     component: () => import("@/views/Audiences/Configuration.vue"),
     meta: {
       layout: "app",
-      title: "Audiences",
+      title: "Add an Audience",
       requiresAuth: true,
     },
   },
   {
     path: "/audiences/:id/insight",
-    name: "audienceInsight",
+    name: "AudienceInsight",
     component: () => import("@/views/Audiences/Insight.vue"),
     meta: {
       layout: "app",
-      title: "Audiences",
+      title: "Audience Insight",
       requiresAuth: true,
     },
   },
   {
     path: "/models",
-    name: "models",
+    name: "Models",
     component: () => import("@/views/Models"),
     meta: {
       layout: "app",
@@ -97,7 +97,7 @@ const routes = [
   },
   {
     path: "/connections",
-    name: "connections",
+    name: "Connections",
     component: () => import("@/views/Connections/Index"),
     meta: {
       layout: "app",
@@ -106,18 +106,18 @@ const routes = [
     },
   },
   {
-    path: "/datasources/:openDrawer?",
-    name: "datasources",
+    path: "/datasources/add",
+    name: "DataSourceConfiguration",
     component: () => import("@/views/Connections/Index"),
     meta: {
       layout: "app",
-      title: "Data Sources",
+      title: "Add a Data Source",
       requiresAuth: true,
     },
   },
   {
-    path: "/connections/destinations/add/:openDrawer?",
-    name: "add-destination",
+    path: "/destinations/add",
+    name: "DestinationConfiguration",
     component: () => import("@/views/Destinations/Configuration"),
     meta: {
       layout: "app",
@@ -126,18 +126,8 @@ const routes = [
     },
   },
   {
-    path: "/connections/destinations",
-    name: "destinations",
-    component: () => import("@/views/Destinations/Listing"),
-    meta: {
-      layout: "app",
-      title: "Destinations",
-      requiresAuth: true,
-    },
-  },
-  {
     path: "/identity",
-    name: "identity",
+    name: "Identity",
     component: () => import("@/views/Identity"),
     meta: {
       layout: "app",
@@ -147,7 +137,7 @@ const routes = [
   },
   {
     path: "/profiles",
-    name: "profiles",
+    name: "Profiles",
     component: () => import("@/views/Profiles"),
     meta: {
       layout: "app",
@@ -157,7 +147,7 @@ const routes = [
   },
   {
     path: "/settings",
-    name: "settings",
+    name: "Settings",
     component: () => import("@/views/Settings"),
     meta: {
       layout: "app",
@@ -167,7 +157,7 @@ const routes = [
   },
   {
     path: "/login",
-    name: "login",
+    name: "Login",
     component: () => import("@/views/Login"),
     meta: {
       layout: "default",
@@ -181,11 +171,11 @@ const routes = [
   },
   {
     path: "/components",
-    name: "components",
+    name: "Components",
     component: () => import("@/components/common/Index"),
     meta: {
       layout: "default",
-      title: "components",
+      title: "Common Components",
       requiresAuth: false,
     },
   },

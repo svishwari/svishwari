@@ -238,7 +238,7 @@ export default {
     async add() {
       try {
         await this.addDestination(this.destination)
-        this.$router.push({ name: "connections" })
+        this.$router.push({ name: "Connections" })
       } catch (error) {
         console.error(error)
       }
@@ -246,7 +246,7 @@ export default {
 
     cancel() {
       // TODO: need to add modal that confirms to leave configuration
-      this.$router.push({ name: "connections" })
+      this.$router.push({ name: "Connections" })
     },
   },
 

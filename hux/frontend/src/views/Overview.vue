@@ -2,16 +2,15 @@
   <div class="overview-wrap">
     <PageHeader :title="`Welcome back, ${fullName}!`" class="py-7">
       <template slot="description">
-        <div class="font-weight-regular">
-          Hux is here to help you make better, faster decisions to improve your
-          Customer Experiences.
-          <a
-            class="text-decoration-none"
-            href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
-            target="_blank"
-            >Learn More &gt;</a
-          >
-        </div>
+        Hux is here to help you make better, faster decisions to improve your
+        Customer Experiences.
+        <a
+          class="text-decoration-none"
+          href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
+          target="_blank"
+        >
+          Learn More &gt;
+        </a>
       </template>
       <template slot="right" class="paheHeadRightPanel">
         <v-menu offset-y :close-on-content-click="false">
@@ -95,28 +94,28 @@ export default {
           title: "Connect data source",
           description:
             "Choose your data source from various customer touchpoint systems.",
-          route: "datasources",
+          route: "DataSourceConfiguration",
           active: true,
         },
         {
           title: "Add a destination",
           description:
             "Choose a destination where your actionable intelligence will be consumed.",
-          route: "add-destination",
+          route: "DestinationConfiguration",
           active: true,
         },
         {
           title: "Build your models",
           description:
             "Build predictive models that intelligently characterize customer opportunities.",
-          route: "models",
+          route: "Models",
           active: false,
         },
         {
           title: "Create an audience",
           description:
             "Create an audience based on customized orchestrated choices..",
-          route: "createAudience",
+          route: "AudienceConfiguration",
           active: true,
         },
         {
