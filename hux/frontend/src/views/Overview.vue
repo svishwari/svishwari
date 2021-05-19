@@ -1,16 +1,15 @@
 <template>
   <div class="overview-wrap">
-    <PageHeader :title="'Welcome back, ' + firstName + ' ' + lastName + '!'">
+    <PageHeader :title="`Welcome back, ${fullName}!`" class="py-7">
       <template slot="description">
-        <div class="font-weight-regular">
-          Hux is here to help you make better, faster decisions to improve your
-          Customer Experiences.
-          <a
-            class="text-decoration-none"
-            href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
-            >Learn More ></a
-          >
-        </div>
+        Hux is here to help you make better, faster decisions to improve your
+        Customer Experiences.
+        <a
+          class="text-decoration-none"
+          href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
+        >
+          Learn More &gt;
+        </a>
       </template>
       <template slot="right" class="paheHeadRightPanel">
         <v-menu offset-y :close-on-content-click="false">
@@ -133,6 +132,9 @@ export default {
     },
     lastName() {
       return this.$store.getters.getLastName
+    },
+    fullName() {
+      return `${this.firstName} ${this.lastName}`
     },
   },
 }

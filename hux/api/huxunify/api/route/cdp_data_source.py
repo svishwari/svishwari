@@ -8,12 +8,10 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request
-from flask_apispec import marshal_with
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
-from pymongo import MongoClient
 
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.cdp_data_source_management import (
@@ -27,7 +25,7 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourcePostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
@@ -36,15 +34,6 @@ from huxunify.api import constants as api_c
 cdp_data_sources_bp = Blueprint(
     api_c.CDP_DATA_SOURCES_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
-
-
-def get_db_client() -> MongoClient:
-    """Get DB client.
-    Returns:
-        MongoClient: DB client
-    """
-    # TODO - hook-up when ORCH-94 HUS-262 are completed
-    return MongoClient()
 
 
 @add_view_to_blueprint(
@@ -65,7 +54,6 @@ class DataSourceSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @marshal_with(CdpDataSourceSchema(many=True))
     def get(self) -> Tuple[list, int]:
         """Retrieves all CDP data sources
 
@@ -79,7 +67,7 @@ class DataSourceSearch(SwaggerView):
         try:
             data_sources = get_all_data_sources(get_db_client())
             return (
-                CdpDataSourceSchema().dumps(data_sources),
+                jsonify(CdpDataSourceSchema().dump(data_sources, many=True)),
                 HTTPStatus.OK.value,
             )
 
@@ -128,7 +116,6 @@ class IndividualDataSourceSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
-    @marshal_with(CdpDataSourceSchema)
     def get(self, data_source_id: str):
         """Retrieves a CDP data source by ID
 
@@ -153,7 +140,7 @@ class IndividualDataSourceSearch(SwaggerView):
                 get_db_client(), data_source_id=data_source_id
             )
             return (
-                CdpDataSourceSchema().dumps(data_source),
+                CdpDataSourceSchema().dump(data_source),
                 HTTPStatus.OK.value,
             )
         except Exception as exc:
