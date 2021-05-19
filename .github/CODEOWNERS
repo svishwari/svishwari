@@ -5,7 +5,7 @@ hux/frontend/ @Abdullah-Azad @mohitbans @rahgoel @henrikr
 hux/api/ @seahawks8 @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @henrikr
 
 # CI/CD processes
-*codefresh.yml @pfleetwood1 @JyotiSingh7 @seahawks8 @bernieblab
+*codefresh.yml @pfleetwood1 @JyotiSingh7 @seahawks8 @bernieblab @henrikr
 
 # huxunifylib-database
 scripts/ @jazzblue @seahawks8 @anoop0m @bernieblab @jimcmahon @panch-mukesh @rajkcon1
