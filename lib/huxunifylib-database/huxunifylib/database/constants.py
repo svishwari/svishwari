@@ -67,7 +67,7 @@ STATUS_PENDING = "Pending"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"
-STATUS_TRANSFERRED_FOR_FEEDBACK = "Transferred for feedback"
+STATUS_TRANSFERRED_FOR_FEEDBACK = "transferred_for_feedback"
 
 INGESTED_DATA = "data"
 
