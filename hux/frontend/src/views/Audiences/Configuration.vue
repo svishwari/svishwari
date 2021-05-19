@@ -103,7 +103,12 @@
                   Select destination(s) -
                   <i style="font-size: 12px">Optional</i>
                 </strong>
-                <div>
+                <div class="d-flex">
+                  <Logo class="mt-1"
+                    v-for="destination in audience.destinations"
+                    :key="destination.id"
+                    :type="destination.type"
+                  />
                   <v-icon
                     size="30"
                     class="add-icon"
@@ -113,11 +118,6 @@
                     mdi-plus-circle
                   </v-icon>
                 </div>
-                <Logo
-                  v-for="destination in audience.destinations"
-                  :key="destination.id"
-                  :type="destination.type"
-                />
               </v-col>
             </v-row>
           </v-timeline-item>
@@ -513,7 +513,9 @@ export default {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
         if (selected && selected.type === "salesforce") {
-          this.destinationDrawer.selectedDestination.push(selected)
+          if(!this.isDestinationAddedOnDrawer(selected)){
+            this.destinationDrawer.selectedDestination.push(selected)
+          }
           this.destinationDrawer.viewStep = 2
         } else {
           this.audience.destinations.push(selected)
@@ -527,6 +529,14 @@ export default {
       )
       this.destinationDrawer.insideFlow = false
       this.destinationDrawer.viewStep = 1
+    },
+    isDestinationAddedOnDrawer(selected) {
+      if (this.destinationDrawer && this.destinationDrawer.selectedDestination) {
+        const existingIndex = this.destinationDrawer.selectedDestination.findIndex(
+          (destination) => destination.type === selected.type
+        )
+        return existingIndex > -1
+      }
     },
     isDestinationAdded(title) {
       if (this.audience && this.audience.destinations) {
