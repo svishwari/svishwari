@@ -4,10 +4,10 @@ purpose of this file is for interacting with aws
 from typing import Tuple
 from http import HTTPStatus
 from connexion import ProblemException
-from decouple import config
 import boto3
 import botocore
 from huxunify.api import constants as api_c
+from huxunify.api import config
 
 
 class ParameterStore:
@@ -118,7 +118,7 @@ parameter_store = ParameterStore()
 
 def get_aws_client(
     client: str = "s3",
-    region_name: str = config("AWS_REGION"),
+    region_name: str = config.get_config().AWS_REGION,
 ) -> boto3.client:
     """quick and dirty function for getting most AWS clients
 
