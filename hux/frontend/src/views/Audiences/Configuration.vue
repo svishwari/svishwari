@@ -511,7 +511,7 @@ export default {
 
     onSelectDestination(index, selected) {
       // check to avoid duplicate destination
-      if(!this.isDestinationAdded(selected.type)) {
+      if (!this.isDestinationAdded(selected.type)) {
         if (selected && selected.type === "salesforce") {
           this.destinationDrawer.selectedDestination.push(selected)
           this.destinationDrawer.viewStep = 2
