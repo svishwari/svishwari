@@ -8,7 +8,8 @@
           <a
             class="text-decoration-none"
             href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
-            >Learn More ></a
+            target="_blank"
+            >Learn More &gt;</a
           >
         </div>
       </template>
@@ -148,7 +149,7 @@ export default {
     h6 {
       font-style: normal;
       font-weight: normal;
-      font-size: 14px;
+      font-size: 15px;
       line-height: 19px;
       letter-spacing: 0.5px;
       color: var(--v-neroBlack-base);

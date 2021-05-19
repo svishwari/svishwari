@@ -2,7 +2,7 @@
   <v-hover>
     <template v-slot:default="{ hover }">
       <v-card
-        class="text-center rounded-lg"
+        class="text-center rounded-lg card-info-wrapper"
         min-width="220px"
         max-width="260px"
         :disabled="!active"
@@ -16,11 +16,11 @@
           fab
           :ripple="false"
           elevation="0"
-          outlined
+          :outlined="active"
           color="zircon"
           class="mt-4"
         >
-          <v-icon color="primary" x-large>
+          <v-icon :color="active ? 'primary' : 'white'" x-large>
             {{ icon }}
           </v-icon>
         </v-btn>
@@ -74,3 +74,10 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.card-info-wrapper {
+  .v-card__title {
+    margin-bottom: 10px;
+  }
+}
+</style>
