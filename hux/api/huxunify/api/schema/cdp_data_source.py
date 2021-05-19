@@ -4,7 +4,7 @@ Schemas for cdp data sources API
 
 from flask_marshmallow import Schema
 from marshmallow import post_dump
-from marshmallow.fields import Str, Int
+from marshmallow.fields import Str, Int, Bool
 from huxunifylib.database.constants import ID, CDP_DATA_SOURCE_ID
 from huxunify.api.schema.utils import validate_object_id, must_not_be_blank
 
@@ -23,11 +23,13 @@ class CdpDataSourceSchema(Schema):
     CdpDataSourceSchema
     """
 
-    data_source_id = Str(required=True, validate=validate_object_id)
+    _id = Str(required=True, validate=validate_object_id)
     name = Str(required=True)
     category = Str(required=True)
     feed_count = Int()
     status = Str()
+    is_added = Bool(attribute="added")
+    is_enabled = Bool(attribute="enabled")
 
     @post_dump
     # pylint: disable=unused-argument
