@@ -1611,22 +1611,6 @@ def get_performance_metrics(
     max_end_time: datetime.datetime = None,
     transferred_for_feedback: bool = False,
 ) -> list:
-    """[summary]
-
-    Args:
-        database (DatabaseClient): [description]
-        delivery_job_id (ObjectId): [description]
-        min_start_time (datetime.datetime, optional): [description]. Defaults to None.
-        max_end_time (datetime.datetime, optional): [description]. Defaults to None.
-        transferred_for_feedback (bool, optional): [description]. Defaults to False.
-
-    Raises:
-        de.InvalidID: [description]
-
-    Returns:
-        list: [description]
-    """
-
     """Retrieve campaign performance metrics.
 
     Args:
