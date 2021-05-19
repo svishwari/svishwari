@@ -6,7 +6,6 @@ from os import getenv
 from http import HTTPStatus
 from typing import Tuple
 import requests
-from mongomock import MongoClient
 from flasgger import SwaggerView
 from flask import Blueprint
 
@@ -15,7 +14,7 @@ from connexion.exceptions import ProblemException
 
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 import huxunify.api.constants as api_c
 
 ISSUER = getenv(api_c.AUTHENTICATION_OKTA_ISSUER)
@@ -23,15 +22,6 @@ CLIENT_ID = getenv(api_c.AUTHENTICATION_OKTA_CLIENT_ID)
 
 # setup authentication blueprint
 auth_bp = Blueprint(api_c.AUTHENTICATION_ENDPOINT, import_name=__name__)
-
-
-def get_db_client() -> MongoClient:
-    """Get DB client.
-    Returns:
-        MongoClient: DB client
-    """
-    # TODO - hook-up when ORCH-94 HUS-262 are completed
-    return MongoClient()
 
 
 def introspect_token(access_token: str, issuer: str, client_id: str) -> dict:
