@@ -86,7 +86,7 @@
             <template v-slot:icon class="timeline-icon-section">
               <span>2</span>
             </template>
-            <v-row class="pt-1 pr-10">
+            <v-row class="pt-1 pr-0">
               <attribute-rules :rules="attributeRules"></attribute-rules>
             </v-row>
           </v-timeline-item>
@@ -103,10 +103,22 @@
                   Select destination(s) -
                   <i style="font-size: 12px">Optional</i>
                 </strong>
-                <div>
-                  <v-icon size="30" class="add-icon" color="primary">
+                <div class="d-flex">
+                  <v-icon
+                    size="30"
+                    class="add-icon"
+                    color="primary"
+                    @click="toggleDrawer()"
+                  >
                     mdi-plus-circle
                   </v-icon>
+                  <Logo
+                    class="added-logo"
+                    v-for="destination in audience.destinations"
+                    :key="destination.id"
+                    :type="destination.type"
+                    :size="18"
+                  />
                 </div>
               </v-col>
             </v-row>
@@ -135,19 +147,6 @@
             class="ma-2"
             @click.native="$router.go(-1)"
           ></huxButton>
-
-          <!-- 
-            Not required in P1 
-          -->
-
-          <!-- <huxButton
-            ButtonText="Save &amp; complete later"
-            variant="tertiary"
-            v-bind:isTile="true"
-            width="201"
-            height="40"
-            class="ma-2"
-          ></huxButton> -->
         </template>
         <template v-slot:right>
           <huxButton
@@ -162,6 +161,99 @@
           ></huxButton>
         </template>
       </HuxFooter>
+      <!-- Add destination workflow -->
+      <drawer v-model="destinationDrawer.insideFlow">
+        <template v-slot:header-left>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
+            <h5 class="text-h5 font-weight-regular pr-2">
+              Select a destination to add
+            </h5>
+          </div>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
+            <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
+              <Logo :type="destinationDrawer.selectedDestination[0].type" />
+              <div class="pl-2 font-weight-regular">
+                {{ destinationDrawer.selectedDestination[0].name }}
+              </div>
+            </h5>
+          </div>
+        </template>
+
+        <template v-slot:default>
+          <v-stepper v-model="destinationDrawer.viewStep">
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <div class="ma-5">
+                  <CardHorizontal
+                    v-for="(destination, index) in destinations"
+                    :key="destination.id"
+                    :title="destination.name"
+                    :icon="destination.type"
+                    :isAdded="
+                      destination.is_added ||
+                      isDestinationAdded(destination.type)
+                    "
+                    :isAvailable="destination.is_enabled"
+                    :isAlreadyAdded="destination.is_added"
+                    @click="onSelectDestination(index, destination)"
+                    class="my-3"
+                  />
+                </div>
+              </v-stepper-content>
+              <v-stepper-content step="2">
+                <AddDestination />
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </template>
+
+        <template v-slot:footer-right>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
+            <huxButton
+              ButtonText="Add"
+              variant="primary"
+              v-bind:isTile="true"
+              width="80"
+              height="40"
+              class="ma-2"
+              @click="addDestinationToAudience()"
+            ></huxButton>
+          </div>
+        </template>
+
+        <template v-slot:footer-left>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
+            {{ destinations.length }} results
+          </div>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
+            <huxButton
+              ButtonText="Back"
+              variant="white"
+              v-bind:isTile="true"
+              width="80"
+              height="40"
+              class="ma-2"
+              @click.native="destinationDrawer.viewStep = 1"
+            ></huxButton>
+          </div>
+        </template>
+      </drawer>
+      <!-- Engagement workflow -->
       <drawer v-model="engagementDrawer.insideFlow">
         <template v-slot:header-left>
           <div class="p-4 d-flex align-items-center">
@@ -220,7 +312,7 @@
                       placeholder="What is the purpose of this engagement?"
                       v-model="engagement.description"
                     />
-                    <div class="delivery-options">
+                    <div class="d-flex flex-column">
                       <span class="my-1">Delivery schedule</span>
                       <v-btn-toggle v-model="engagement.deliveryType">
                         <v-btn>
@@ -296,15 +388,16 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
 import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
+import Drawer from "@/components/common/Drawer"
 import AttributeRules from "./AttributeRules.vue"
-import Drawer from "@/components/common/Drawer.vue"
-import HuxButton from "../../components/common/huxButton.vue"
-import CardHorizontal from "../../components/common/CardHorizontal.vue"
-import { mapGetters, mapActions } from "vuex"
+import CardHorizontal from "@/components/common/CardHorizontal"
+import AddDestination from "@/views/Audiences/AddDestination"
+import Logo from "@/components/common/Logo"
 
 export default {
   name: "Configuration",
@@ -313,13 +406,16 @@ export default {
     HuxFooter,
     huxButton,
     TextField,
-    AttributeRules,
     Drawer,
-    HuxButton,
+    AttributeRules,
     CardHorizontal,
+    AddDestination,
+    Logo,
   },
   data() {
     return {
+      // selectedDestinationIndex: -1,
+      // selectedDestination: null,
       overviewListItems: [
         { title: "Target size", subtitle: "34,203,204" },
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
@@ -350,12 +446,27 @@ export default {
       },
       audienceNamesRules: [(v) => !!v || "Audience name is required"],
       isFormValid: false,
+      destinationDrawer: {
+        insideFlow: false,
+        viewStep: 1,
+        selectedDestination: [],
+      },
     }
   },
+
   computed: {
     ...mapGetters({
+      destinations: "destinations/list",
       engagements: "engagements/list",
     }),
+
+    destination() {
+      return this.destinations[this.selectedDestinationIndex] || null
+    },
+
+    isDestinationSelected() {
+      return Boolean(this.destination)
+    },
     attributeRules() {
       return this.audience ? this.audience.attributeRules : []
     },
@@ -366,8 +477,10 @@ export default {
       return !!this.audience.audienceName && this.selectedEngagements.length > 0
     },
   },
+
   methods: {
     ...mapActions({
+      getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
     }),
 
@@ -393,9 +506,54 @@ export default {
       )
       if (existingIndex > -1) this.selectedEngagements.splice(existingIndex, 1)
     },
-    createAudience() {},
+
+    toggleDrawer() {
+      this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
+    },
+
+    onSelectDestination(index, selected) {
+      // check to avoid duplicate destination
+      if (!this.isDestinationAdded(selected.type)) {
+        if (selected && selected.type === "salesforce") {
+          if (!this.isDestinationAddedOnDrawer(selected)) {
+            this.destinationDrawer.selectedDestination.push(selected)
+          }
+          this.destinationDrawer.viewStep = 2
+        } else {
+          this.audience.destinations.push(selected)
+          this.toggleDrawer()
+        }
+      }
+    },
+    addDestinationToAudience() {
+      this.audience.destinations.push(
+        ...this.destinationDrawer.selectedDestination
+      )
+      this.destinationDrawer.insideFlow = false
+      this.destinationDrawer.viewStep = 1
+    },
+    isDestinationAddedOnDrawer(selected) {
+      if (
+        this.destinationDrawer &&
+        this.destinationDrawer.selectedDestination
+      ) {
+        const existingIndex = this.destinationDrawer.selectedDestination.findIndex(
+          (destination) => destination.type === selected.type
+        )
+        return existingIndex > -1
+      }
+    },
+    isDestinationAdded(title) {
+      if (this.audience && this.audience.destinations) {
+        const existingIndex = this.audience.destinations.findIndex(
+          (destination) => destination.type === title
+        )
+        return existingIndex > -1
+      }
+    },
   },
   async mounted() {
+    await this.getDestinations()
     await this.fetchEngagements()
   },
 }
@@ -487,6 +645,9 @@ export default {
           }
         }
       }
+    }
+    .added-logo {
+      margin-top: 6px;
     }
   }
   .v-stepper {
