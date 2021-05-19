@@ -56,7 +56,6 @@
           :description="item.description"
           :active="item.active"
           :to="item.route"
-          v-bind:openDrawer="true"
         ></CardInfo>
       </div>
     </div>
@@ -94,35 +93,41 @@ export default {
           title: "Connect data source",
           description:
             "Choose your data source from various customer touchpoint systems.",
-          route: "DataSourceConfiguration",
+          route: {
+            name: "DataSourceConfiguration",
+            query: { select: true },
+          },
           active: true,
         },
         {
           title: "Add a destination",
           description:
             "Choose a destination where your actionable intelligence will be consumed.",
-          route: "DestinationConfiguration",
+          route: {
+            name: "DestinationConfiguration",
+            query: { select: true },
+          },
           active: true,
         },
         {
           title: "Build your models",
           description:
             "Build predictive models that intelligently characterize customer opportunities.",
-          route: "Models",
+          route: { name: "Models" },
           active: false,
         },
         {
           title: "Create an audience",
           description:
-            "Create an audience based on customized orchestrated choices..",
-          route: "AudienceConfiguration",
+            "Create an audience based on customized orchestrated choices.",
+          route: { name: "AudienceConfiguration" },
           active: true,
         },
         {
           title: "Create an engagement",
           description:
             "Put all this great data and information to good use by creating an engagement.",
-          route: "engagements",
+          route: { name: "Engagements" },
           active: true,
         },
       ],

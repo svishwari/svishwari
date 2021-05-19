@@ -92,7 +92,7 @@
       </template>
     </hux-footer>
 
-    <drawer v-model="drawer">
+    <Drawer v-model="drawer">
       <template v-slot:header-left>
         <div class="d-flex align-baseline">
           <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
@@ -139,7 +139,7 @@
           </CardHorizontal>
         </div>
       </template>
-    </drawer>
+    </Drawer>
   </div>
 </template>
 
@@ -252,7 +252,7 @@ export default {
 
   async mounted() {
     await this.getDestinations()
-    if (this.$route.params.openDrawer) {
+    if (this.$route.query.select) {
       this.drawer = true
     }
   },

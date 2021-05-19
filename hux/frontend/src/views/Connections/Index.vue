@@ -35,23 +35,27 @@
             variant="primary"
             size="small"
             iconSize="small"
-            v-bind:isTile="true"
+            :isTile="true"
             class="ma-2 text-h6 font-weight-regular"
           />
         </router-link>
-        <huxButton
-          ButtonText="Data source"
-          icon="mdi-plus"
-          iconPosition="left"
-          variant="primary"
-          size="small"
-          v-bind:isTile="true"
-          class="ma-2 text-h6 font-weight-regular"
-          @click="toggleDrawer"
-        />
+        <router-link
+          :to="{ name: 'DataSourceConfiguration', query: { select: true } }"
+          class="text-decoration-none"
+        >
+          <huxButton
+            ButtonText="Data source"
+            icon="mdi-plus"
+            iconPosition="left"
+            variant="primary"
+            size="small"
+            :isTile="true"
+            class="ma-2 text-h6 font-weight-regular"
+          />
+        </router-link>
       </div>
-      <AddDataSource v-model="drawer" />
     </div>
+    <DataSourceConfiguration v-model="drawer" />
   </div>
 </template>
 
@@ -63,7 +67,7 @@ import DestinationsList from "./DestinationsList"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import AddDataSource from "@/views/DataSources/Configuration"
+import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
   name: "connections",
@@ -74,7 +78,7 @@ export default {
     PageHeader,
     Breadcrumb,
     huxButton,
-    AddDataSource,
+    DataSourceConfiguration,
   },
 
   computed: {
@@ -107,6 +111,22 @@ export default {
     }
   },
 
+  watch: {
+    $route() {
+      if (this.$route.query.select) {
+        this.drawer = true
+      } else {
+        this.drawer = false
+      }
+    },
+
+    drawer() {
+      if (!this.drawer) {
+        this.$router.replace({ query: null })
+      }
+    },
+  },
+
   methods: {
     ...mapActions({
       getDataSources: "dataSources/getAll",
@@ -122,7 +142,8 @@ export default {
     await this.getDataSources()
     await this.getDestinations()
     this.loading = false
-    if (this.$route.params.openDrawer) {
+
+    if (this.$route.query.select) {
       this.drawer = true
     }
   },
