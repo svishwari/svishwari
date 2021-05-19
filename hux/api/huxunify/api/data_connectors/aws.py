@@ -142,7 +142,8 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
     Args:
         client (str): name of the boto3 client to use.
     Returns:
-        tuple[bool, str]: Returns if the AWS connection is valid, and the message.
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
     """
 
     try:
@@ -155,19 +156,21 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def check_aws_ssm() -> check_aws_connection:
+def check_aws_ssm() -> Tuple[bool, str]:
     """Validate AWS ssm Function
 
     Returns:
-        check_aws_connection: function for testing.
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
     """
     return check_aws_connection(api_c.AWS_SSM_NAME)
 
 
-def check_aws_batch() -> check_aws_connection:
+def check_aws_batch() -> Tuple[bool, str]:
     """Validate AWS batch Function
 
     Returns:
-        check_aws_connection: function for testing.
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
     """
     return check_aws_connection(api_c.AWS_BATCH_NAME)
