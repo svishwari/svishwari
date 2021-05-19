@@ -23,11 +23,13 @@ class CdpDataSourceSchema(Schema):
     CdpDataSourceSchema
     """
 
-    data_source_id = Str(required=True, validate=validate_object_id)
+    _id = Str(required=True, validate=validate_object_id)
     name = Str(required=True)
     category = Str(required=True)
     feed_count = Int()
     status = Str()
+    added = Str()
+    enabled = Str()
 
     @post_dump
     # pylint: disable=unused-argument

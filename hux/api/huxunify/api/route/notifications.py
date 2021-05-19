@@ -9,14 +9,13 @@ import pymongo
 from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
-from pymongo import MongoClient
 
 from huxunifylib.database import (
     constants as db_constants,
     notification_management,
 )
 from huxunify.api.schema.notifications import NotificationSchema
-from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 NOTIFICATIONS_TAG = "notifications"
@@ -25,15 +24,6 @@ NOTIFICATIONS_ENDPOINT = "notifications"
 
 # setup the notifications blueprint
 notifications_bp = Blueprint(NOTIFICATIONS_ENDPOINT, import_name=__name__)
-
-
-def get_db_client() -> MongoClient:
-    """Get DB client.
-    Returns:
-        MongoClient: DB client
-    """
-    # TODO - hook-up when ORCH-94 HUS-262 are completed
-    return MongoClient()
 
 
 @add_view_to_blueprint(
