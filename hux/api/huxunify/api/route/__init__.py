@@ -16,5 +16,5 @@ ROUTES = [
     orchestration_bp,
     cdp_data_sources_bp,
     notifications_bp,
-    engagement_bp
+    engagement_bp,
 ]

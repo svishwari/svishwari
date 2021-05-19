@@ -23,6 +23,7 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
     delete_engagement,
 )
+from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -51,7 +52,7 @@ class EngagementSearch(SwaggerView):
 
     @marshal_with(EngagementGetSchema(many=True))
     def get(self) -> Tuple[dict, int]:
-        """Retrieve all engagements
+        """Retrieves all engagements.
 
         ---
 
@@ -112,7 +113,9 @@ class IndividualEngagementSearch(SwaggerView):
 
     @marshal_with(EngagementGetSchema)
     def get(self, engagement_id: str) -> Tuple[dict, int]:
-        """Retrieves an engagement by ID
+        """Retrieves an engagement by ID.
+
+        ---
 
         Args:
             engagement_id (str): id of the engagement
@@ -189,7 +192,7 @@ class SetEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     def post(self) -> Tuple[dict, int]:
-        """Create a new engagement.
+        """Creates a new engagement.
 
         ---
         Returns:
@@ -264,7 +267,7 @@ class DeleteEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     def delete(self, engagement_id: str) -> Tuple[dict, int]:
-        """A function to delete an engagement.
+        """Deletes an engagement.
 
         ---
         Args:
