@@ -104,12 +104,6 @@
                   <i style="font-size: 12px">Optional</i>
                 </strong>
                 <div class="d-flex">
-                  <Logo
-                    class="mt-1"
-                    v-for="destination in audience.destinations"
-                    :key="destination.id"
-                    :type="destination.type"
-                  />
                   <v-icon
                     size="30"
                     class="add-icon"
@@ -118,6 +112,13 @@
                   >
                     mdi-plus-circle
                   </v-icon>
+                  <Logo
+                    class="added-logo"
+                    v-for="destination in audience.destinations"
+                    :key="destination.id"
+                    :type="destination.type"
+                    :size="18"
+                  />
                 </div>
               </v-col>
             </v-row>
@@ -644,6 +645,9 @@ export default {
           }
         }
       }
+    }
+    .added-logo {
+      margin-top: 6px;
     }
   }
   .v-stepper {
