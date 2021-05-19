@@ -57,6 +57,7 @@
           :description="item.description"
           :active="item.active"
           :to="item.route"
+          v-bind:openDrawer="true"
         ></CardInfo>
       </div>
     </div>

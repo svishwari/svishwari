@@ -106,7 +106,7 @@ const routes = [
     },
   },
   {
-    path: "/datasources",
+    path: "/datasources/:openDrawer?",
     name: "datasources",
     component: () => import("@/views/Connections/Index"),
     meta: {
@@ -116,7 +116,7 @@ const routes = [
     },
   },
   {
-    path: "/connections/destinations/add",
+    path: "/connections/destinations/add/:openDrawer?",
     name: "add-destination",
     component: () => import("@/views/Destinations/Configuration"),
     meta: {

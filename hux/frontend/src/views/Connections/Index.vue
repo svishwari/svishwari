@@ -122,6 +122,9 @@ export default {
     await this.getDataSources()
     await this.getDestinations()
     this.loading = false
+    if(this.$route.params.openDrawer){
+      this.drawer = true
+    }
   },
 }
 </script>

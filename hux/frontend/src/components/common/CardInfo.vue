@@ -6,7 +6,7 @@
         min-width="220px"
         max-width="260px"
         :disabled="!active"
-        :to="{ name: to }"
+        :to="{ name: to, params: { openDrawer: openDrawer } }"
         @click="$emit('click')"
         :elevation="hover ? 10 : 0"
         :hover="true"
@@ -70,6 +70,12 @@ export default {
     to: {
       type: String,
       required: false,
+    },
+
+    openDrawer: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 }

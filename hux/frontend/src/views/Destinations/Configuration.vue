@@ -252,6 +252,9 @@ export default {
 
   async mounted() {
     await this.getDestinations()
+    if(this.$route.params.openDrawer){
+      this.drawer = true
+    }
   },
 }
 </script>
