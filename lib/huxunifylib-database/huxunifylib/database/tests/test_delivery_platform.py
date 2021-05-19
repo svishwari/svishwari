@@ -795,17 +795,15 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(not doc[c.FAVORITE])
 
-    def test_metrics(self):
-        """Test performance metrics functions."""
-
-        self.assertTrue(self.database is not None)
+    def test_set_get_performance_metrics(self):
+        """Performance metrics are set and retrieved."""
 
         delivery_job_id = self.delivery_job_doc[c.ID]
 
         end_time = datetime.datetime.utcnow()
         start_time = end_time - datetime.timedelta(days=7)
 
-        doc = dpm.set_delivered_audience_performance_metrics(
+        doc = dpm.set_performance_metrics(
             database=self.database,
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
@@ -816,9 +814,8 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
 
-        metrics_list = dpm.get_delivered_audience_performance_metrics(
-            self.database,
-            delivery_job_id,
+        metrics_list = dpm.get_performance_metrics(
+            self.database, delivery_job_id
         )
 
         self.assertTrue(metrics_list is not None)
@@ -827,12 +824,50 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = metrics_list[0]
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.DELIVERY_JOB_ID in doc)
-        self.assertTrue(c.CREATE_TIME in doc)
-        self.assertTrue(c.PERFORMANCE_METRICS in doc)
-        self.assertTrue(c.METRICS_START_TIME in doc)
-        self.assertTrue(c.METRICS_END_TIME in doc)
+        self.assertIn(c.DELIVERY_JOB_ID, doc)
+        self.assertIn(c.CREATE_TIME, doc)
+        self.assertIn(c.PERFORMANCE_METRICS, doc)
+        self.assertIn(c.METRICS_START_TIME, doc)
+        self.assertIn(c.METRICS_END_TIME, doc)
         self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
+
+        # Status is to be set to non-transferred automatically
+        self.assertEqual(
+            doc[c.PERFORMANCE_METRICS_STATUS], c.STATUS_NON_TRANSFERRED
+        )
+
+    def test_set_performance_metrics_status(self):
+        """Performance metrics status is set properly."""
+
+        delivery_job_id = self.delivery_job_2_doc[c.ID]
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+
+        metrics_init_doc = dpm.set_performance_metrics(
+            database=self.database,
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 10000, "Conversions": 50},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=self.generic_campaigns[0],
+        )
+
+        doc = dpm.set_performance_metrics_status(
+            database=self.database,
+            performance_metrics_id=metrics_init_doc[c.ID],
+            performance_metrics_status=c.STATUS_TRANSFERRED,
+        )
+        self.assertEqual(
+            doc[c.PERFORMANCE_METRICS_STATUS], c.STATUS_TRANSFERRED
+        )
+
+        # Read metrics separately of setting
+        metrics_list = dpm.get_performance_metrics(
+            self.database, delivery_job_id
+        )
+        self.assertEqual(
+            metrics_list[0][c.PERFORMANCE_METRICS_STATUS], c.STATUS_TRANSFERRED
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):

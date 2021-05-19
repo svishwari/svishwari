@@ -67,6 +67,9 @@ STATUS_PENDING = "Pending"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"
+STATUS_TRANSFERRED = "Transferred"
+STATUS_NON_TRANSFERRED = "Non transferred"
+
 
 INGESTED_DATA = "data"
 
@@ -153,7 +156,7 @@ AUDIENCE_STATUS_PAUSED = "Paused"
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_AUD_SIZE = "delivery_platform_audience_size"
 DELIVERY_PLATFORM_LOOKALIKE_AUDS = "delivery_platform_lookalike_audiences"
-DELIVERY_PLATFORM_NAME = "name"
+DELIVERY_PLATFORM_NAME = "delivery_platform_name"
 DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 DELIVERY_PLATFORM_AUTH = "authentication_details"
 DELIVERY_PLATFORM_STATUS = "connection_status"
@@ -200,6 +203,7 @@ DELIVERY_PLATFORM_GENERIC_CAMPAIGNS = "delivery_platform_generic_campaigns"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"
+PERFORMANCE_METRICS_STATUS = "performance_metrics_status"
 
 # Data source constants
 FIELD_SPECIAL_TYPE = "special_type"

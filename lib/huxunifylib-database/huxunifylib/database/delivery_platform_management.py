@@ -1545,7 +1545,7 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_delivered_audience_performance_metrics(
+def set_performance_metrics(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     generic_campaign_id: list,
@@ -1553,7 +1553,7 @@ def set_delivered_audience_performance_metrics(
     start_time: datetime.datetime,
     end_time: datetime.datetime,
 ) -> dict:
-    """A function to store the delivered audience performance metrics.
+    """Store campaign performance metrics.
 
     Args:
         database (DatabaseClient): A database client.
@@ -1584,6 +1584,8 @@ def set_delivered_audience_performance_metrics(
         c.METRICS_END_TIME: end_time,
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
         c.PERFORMANCE_METRICS: metrics_dict,
+        # By default not transferred to CDM yet
+        c.PERFORMANCE_METRICS_STATUS: c.STATUS_NON_TRANSFERRED,
     }
 
     try:
@@ -1601,48 +1603,96 @@ def set_delivered_audience_performance_metrics(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivered_audience_performance_metrics(
+def get_performance_metrics(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
+    status_filter: str = None,
 ) -> list:
-    """A function to get the delivered audience performance metrics.
+    """Retrieve campaign performance metrics.
 
     Args:
-        database (DatabaseClient): A database client.
-        delivery_job_id (ObjectId): The delivery job ID of audience.
-        min_start_time (datetime): Min start time of metrics.
-        max_end_time (datetime): Max end time of metrics.
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+        min_start_time (datetime.datetime, optional):
+            Min start time of metrics. Defaults to None.
+        max_end_time (datetime.datetime, optional):
+            Max start time of metrics. Defaults to None.
+        status_filter (str, optional):
+            Status to filter by. If None, do not filter. Defaults to None.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
 
     Returns:
-        list: A list of metrics.
+        list: list of metrics.
     """
-
-    metrics_list = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
 
     # Check validity of delivery job ID
     doc = get_delivery_job(database, delivery_job_id)
-
-    if doc is None:
+    if not doc:
         raise de.InvalidID(delivery_job_id)
 
     metric_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
 
-    if min_start_time is not None:
+    if min_start_time:
         metric_queries.append({c.METRICS_START_TIME: {"$gte": min_start_time}})
 
-    if max_end_time is not None:
+    if max_end_time:
         metric_queries.append({c.METRICS_END_TIME: {"$lte": max_end_time}})
+
+    if status_filter:
+        metric_queries.append(
+            {c.PERFORMANCE_METRICS_STATUS: {"$eq": status_filter}}
+        )
 
     mongo_query = {"$and": metric_queries}
 
     try:
         cursor = collection.find(mongo_query)
-        metrics_list = list(cursor)
+        return list(cursor)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return metrics_list
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_performance_metrics_status(
+    database: DatabaseClient,
+    performance_metrics_id: ObjectId,
+    performance_metrics_status: str,
+) -> dict:
+    """Set performance metrics status.
+
+    Args:
+        database (DatabaseClient): database client.
+        performance_metrics_id (ObjectId): performance metrics ID.
+        performance_metrics_status (str): performance metrics status.
+
+    Returns:
+        dict: performance metrics document.
+    """
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    update_doc = {c.PERFORMANCE_METRICS_STATUS: performance_metrics_status}
+
+    try:
+        doc = collection.find_one_and_update(
+            {c.ID: performance_metrics_id},
+            {"$set": update_doc},
+            upsert=False,
+            new=True,
+        )
+        return doc
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
