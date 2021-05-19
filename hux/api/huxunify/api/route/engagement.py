@@ -186,7 +186,7 @@ class SetEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     def post(self) -> Tuple[dict, int]:
-        """Create a new engagement.
+        """Creates a new engagement.
 
         ---
         Returns:
