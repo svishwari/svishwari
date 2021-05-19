@@ -12,10 +12,6 @@ from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
-from huxunify.api.schema.engagement import (
-    EngagementGetSchema,
-    EngagementPostSchema,
-)
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -23,7 +19,11 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
     delete_engagement,
 )
-from huxunify.api.schema.engagement import EngagementGetSchema
+from huxunify.api.schema.engagement import (
+    EngagementPostSchema,
+    EngagementGetSchema,
+)
+
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
