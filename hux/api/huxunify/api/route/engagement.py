@@ -1,3 +1,4 @@
+# pylint: disable=no-self-use
 """
 Paths for engagement API
 """
@@ -11,7 +12,6 @@ from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
-from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -19,6 +19,7 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
     delete_engagement,
 )
+from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -223,7 +224,7 @@ class SetEngagement(SwaggerView):
             raise ProblemException(
                 status=HTTPStatus.BAD_REQUEST.value,
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"Unable to create a new engagement.",
+                detail="Unable to create a new engagement.",
             ) from exc
 
 
@@ -288,10 +289,10 @@ class DeleteEngagement(SwaggerView):
                 return {
                     "message": api_c.OPERATION_SUCCESS
                 }, HTTPStatus.OK.value
-            else:
-                return {
-                    "message": api_c.OPERATION_FAILED
-                }, HTTPStatus.INTERNAL_SERVER_ERROR.value
+
+            return {
+                "message": api_c.OPERATION_FAILED
+            }, HTTPStatus.INTERNAL_SERVER_ERROR.value
 
         except Exception as exc:
 
@@ -304,5 +305,5 @@ class DeleteEngagement(SwaggerView):
             raise ProblemException(
                 status=HTTPStatus.BAD_REQUEST.value,
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"Unable to create a new engagement.",
+                detail="Unable to create a new engagement.",
             ) from exc
