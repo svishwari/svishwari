@@ -6,6 +6,7 @@ from typing import Any, Tuple
 from http import HTTPStatus
 
 from healthcheck import HealthCheck
+from decouple import config
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from huxunifylib.connectors.util.client import db_client_factory
@@ -118,6 +119,9 @@ def get_health_check() -> HealthCheck:
 
     """
     health = HealthCheck()
+
+    # check variable
+    health.add_section("flask_env", config("FLASK_ENV", default="UNKNOWN"))
 
     # add health checks
     health.add_check(check_mongo_connection)
