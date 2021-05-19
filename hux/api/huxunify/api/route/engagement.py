@@ -261,7 +261,7 @@ class DeleteEngagement(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     def delete(self, engagement_id: str) -> Tuple[dict, int]:
-        """A function to delete an engagement.
+        """Deletes an engagement.
 
         ---
         Args:
