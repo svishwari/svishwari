@@ -48,7 +48,7 @@ class EngagementSearch(SwaggerView):
 
     @marshal_with(EngagementGetSchema(many=True))
     def get(self) -> Tuple[dict, int]:
-        """Retrieve all engagements
+        """Retrieves all engagements.
 
         ---
 
