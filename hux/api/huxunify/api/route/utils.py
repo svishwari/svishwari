@@ -12,7 +12,7 @@ from mongomock import MongoClient
 from huxunifylib.connectors.util.client import db_client_factory
 
 from huxunify.api import constants
-from huxunify.api.config import MONGO_DB_CONFIG
+from huxunify.api.config import get_config
 from huxunify.api.data_connectors.tecton import check_tecton_connection
 from huxunify.api.data_connectors.aws import check_aws_connection
 
@@ -87,7 +87,7 @@ def get_db_client() -> MongoClient:
     Returns:
         MongoClient: MongoDB client.
     """
-    return db_client_factory.get_resource(**MONGO_DB_CONFIG)
+    return db_client_factory.get_resource(**get_config().MONGO_DB_CONFIG)
 
 
 def check_mongo_connection() -> Tuple[bool, str]:
@@ -98,7 +98,9 @@ def check_mongo_connection() -> Tuple[bool, str]:
         tuple[bool, str]: Returns if the connection is valid, and the message.
     """
     try:
-        db_client_factory.get_resource(**MONGO_DB_CONFIG).server_info()
+        db_client_factory.get_resource(
+            **get_config().MONGO_DB_CONFIG
+        ).server_info()
         return True, "Mongo available."
     # pylint: disable=broad-except
     # pylint: disable=unused-variable
