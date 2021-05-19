@@ -193,7 +193,10 @@
                     :key="destination.id"
                     :title="destination.name"
                     :icon="destination.type"
-                    :isAdded="destination.is_added || isDestinationAdded(destination.type)"
+                    :isAdded="
+                      destination.is_added ||
+                      isDestinationAdded(destination.type)
+                    "
                     :isAvailable="destination.is_enabled"
                     :isAlreadyAdded="destination.is_added"
                     @click="onSelectDestination(index, destination)"
@@ -507,27 +510,29 @@ export default {
     },
 
     onSelectDestination(index, selected) {
-      if(selected && selected.type === "salesforce"){
+      if (selected && selected.type === "salesforce") {
         this.destinationDrawer.selectedDestination.push(selected)
         this.destinationDrawer.viewStep = 2
-      }else {
+      } else {
         this.audience.destinations.push(selected)
         this.toggleDrawer()
       }
     },
     addDestinationToAudience() {
-      this.audience.destinations.push(...this.destinationDrawer.selectedDestination)
+      this.audience.destinations.push(
+        ...this.destinationDrawer.selectedDestination
+      )
       this.destinationDrawer.insideFlow = false
       this.destinationDrawer.viewStep = 1
     },
     isDestinationAdded(title) {
-      if(this.audience && this.audience.destinations) {
+      if (this.audience && this.audience.destinations) {
         const existingIndex = this.audience.destinations.findIndex(
           (destination) => destination.type === title
         )
-        return (existingIndex > -1)
+        return existingIndex > -1
       }
-    }
+    },
   },
   async mounted() {
     await this.getDestinations()
