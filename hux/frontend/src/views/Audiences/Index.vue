@@ -126,7 +126,7 @@ export default {
 
       columnDefs: [
         {
-          headerName: "Audience Name",
+          headerName: "Audience name",
           field: "audienceName",
           sortable: true,
           sort: "desc",
@@ -134,47 +134,54 @@ export default {
           width: "300",
           cellRendererFramework: MenuCell,
           cellClass: "menu-cells",
-        },
-        {
-          headerName: "Status",
-          field: "status",
-          sortable: true,
-          cellRendererFramework: StatusCell,
+          sortingOrder: ['desc', 'asc'],
         },
         {
           headerName: "Size",
           field: "size",
           sortable: true,
+          width: "100",
           cellRendererFramework: sizeCell,
+          sortingOrder: ['desc', 'asc'],
         },
         {
-          headerName: "Last Delivered",
+          headerName: "Last delivered",
           field: "lastDelivered",
-          sortable: true,
-        },
-        {
-          headerName: "Last Updated",
-          field: "lastUpdated",
+          width: "170",
           sortable: true,
           cellRendererFramework: DateTimeCell,
+          sortingOrder: ['desc', 'asc'],
         },
         {
-          headerName: "Last Updated By",
+          headerName: "Last updated",
+          field: "lastUpdated",
+          sortable: true,
+          width: "170",
+          cellRendererFramework: DateTimeCell,
+          sortingOrder: ['desc', 'asc'],
+        },
+        {
+          headerName: "Last updated by",
           field: "lastUpdatedBy",
           sortable: true,
+          width: "140",
           cellRendererFramework: UserAvatarCell,
+          sortingOrder: ['desc', 'asc'],
         },
         {
           headerName: "Created",
           field: "created",
           sortable: true,
+          width: "160",
           cellRendererFramework: DateTimeCell,
+          sortingOrder: ['desc', 'asc'],
         },
         {
-          headerName: "Created By",
+          headerName: "Created by",
           field: "createdBy",
           sortable: true,
           cellRendererFramework: UserAvatarCell,
+          sortingOrder: ['desc', 'asc'],
         },
       ],
     }
@@ -209,6 +216,7 @@ export default {
     margin-top: 1px;
     .v-icon--disabled {
       color: var(--v-lightGrey-base) !important;
+      font-size: 20px;
     }
     .text--refresh {
       margin-right: 10px;

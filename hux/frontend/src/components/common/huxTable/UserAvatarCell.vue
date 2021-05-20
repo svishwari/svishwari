@@ -1,7 +1,7 @@
 <template>
-  <v-menu bottom offset-y open-on-hover>
+  <v-menu bottom offset-y open-on-hover class="cursor-default">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn color="blue-grey" small outlined fab v-bind="attrs" v-on="on">
+      <v-btn color="blue-grey avatar-cell" small outlined fab v-bind="attrs" v-on="on">
         {{ cellValue.shortName }}
       </v-btn>
     </template>
@@ -31,4 +31,13 @@ export default Vue.extend({
   },
 })
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.blue-grey--text {
+  border-width: 2px;
+  font-size: 14px;
+  line-height: 22px;
+  border-color: var(--v-info-base);
+  color: var(--v-neroBlack-base) !important;
+  cursor: default !important;
+}
+</style>

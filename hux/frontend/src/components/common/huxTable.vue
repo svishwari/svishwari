@@ -75,6 +75,8 @@ export default {
         animateRows: true,
         rowDragManaged: true,
         suppressRowClickSelection: true,
+        suppressCellSelection: true,
+        headerHeight: "32",
       },
     }
   },
@@ -141,12 +143,24 @@ export default {
     .ag-root-wrapper-body {
       .ag-header {
         height: 32px !important;
+        max-height: 32px !important;
+        min-height: 32px !important;
         font-size: 12px;
         font-family: inherit;
         font-style: normal;
         font-weight: 600;
         line-height: 16px;
         background: transparent;
+        .ag-header-row {
+          height: 32px !important;
+        }
+        
+      }
+      .ag-row {.ag-cell {
+        display: flex;
+        align-items: center;
+        cursor: default !important;
+      }
       }
       .ag-row-hover {
         background: rgba(0, 118, 168, 0.05);
@@ -179,6 +193,7 @@ export default {
       }
       .ag-center-cols-container {
         min-width: inherit !important;
+        width: 100% !important;
       }
       .ag-icon.ag-icon-asc,
       .ag-icon.ag-icon-desc {
