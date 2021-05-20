@@ -4,7 +4,7 @@
       <Icon type="destinations" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
       <router-link
-        :to="{ name: 'add-destination' }"
+        :to="{ name: 'DestinationConfiguration' }"
         class="text-decoration-none"
       >
         <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>

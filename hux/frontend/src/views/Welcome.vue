@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     login() {
-      this.$router.push("overview")
+      this.$router.push("Overview")
     },
     async setup() {
       this.isAuthenticated()
