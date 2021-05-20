@@ -1,3 +1,4 @@
+ffield
 <template>
   <div class="create-audience-wrap">
     <div class="mt-10 ml-15">
@@ -37,7 +38,7 @@
         v-model="isFormValid"
         lazy-validation
       >
-        <v-timeline align-top dense class="">
+        <v-timeline align-top dense class>
           <v-timeline-item color="blue" class="timeline-section mb-7">
             <template v-slot:icon class="timeline-icon-section">
               <span>1</span>
@@ -70,9 +71,8 @@
                       @click="
                         engagementDrawer.insideFlow = !engagementDrawer.insideFlow
                       "
+                      >mdi-plus-circle</v-icon
                     >
-                      mdi-plus-circle
-                    </v-icon>
                     <v-chip
                       class="ma-2"
                       close
@@ -80,9 +80,8 @@
                       text-color="primary"
                       v-for="(item, index) in selectedEngagements"
                       :key="`engagement-${index}`"
+                      >{{ item.name }}</v-chip
                     >
-                      {{ item.name }}
-                    </v-chip>
                   </div>
                 </div>
               </v-col>
@@ -115,9 +114,8 @@
                     class="add-icon mt-1"
                     color="primary"
                     @click="toggleDrawer()"
+                    >mdi-plus-circle</v-icon
                   >
-                    mdi-plus-circle
-                  </v-icon>
                   <Logo
                     class="added-logo"
                     v-for="destination in audience.destinations"
@@ -135,7 +133,7 @@
             </template>
             <v-row class="pt-1">
               <v-col cols="12">
-                <strong class="text-h5"> Create lookalike audience </strong>
+                <strong class="text-h5">Create lookalike audience</strong>
               </v-col>
             </v-row>
           </v-timeline-item>
@@ -285,8 +283,7 @@
                       resetNewEngagement()
                       engagementDrawer.viewStep = 2
                     "
-                  >
-                  </huxButton>
+                  ></huxButton>
                 </div>
                 <div class="engagement-list-wrap">
                   <CardHorizontal
@@ -329,8 +326,7 @@
                                 : '$radioOff'
                             "
                           />
-                          <v-icon class="ico">mdi-gesture-tap</v-icon>
-                          Manual
+                          <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
                         </v-btn>
                         <v-btn>
                           <v-radio
@@ -340,8 +336,8 @@
                                 : '$radioOff'
                             "
                           />
-                          <v-icon class="ico">mdi-clock-check-outline</v-icon>
-                          Recurring
+                          <v-icon class="ico">mdi-clock-check-outline</v-icon
+                          >Recurring
                         </v-btn>
                       </v-btn-toggle>
                     </div>
@@ -631,16 +627,27 @@ export default {
       background-size: 12px 0px, 1px 12px;
     }
     .aud-name-field {
-      .v-input__control {
-        .v-input__slot {
-          min-height: 40px;
-          .v-text-field__slot {
-            .v-label {
-              top: 9px;
+      .v-input {
+        .v-input__control {
+          .v-input__slot {
+            min-height: 40px;
+            .v-text-field__slot {
+              .v-label {
+                top: 9px;
+              }
+            }
+            fieldset {
+              color: #d0d0ce;
             }
           }
-          fieldset {
-            color: #d0d0ce;
+        }
+        &.error--text {
+          .v-input__control {
+            .v-input__slot {
+              fieldset {
+                color: red;
+              }
+            }
           }
         }
       }
