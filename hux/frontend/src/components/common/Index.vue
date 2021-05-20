@@ -23,6 +23,8 @@
       type="error"
       title="Action Word (i.e. Remove) ___________?"
       body="Are you sure you want to stop the configuration and go to another page? You will not be able to recover it but will need to start the process again."
+      @onLeftClick="toggleModal()"
+      @onRightClick="toggleModal()"
     >
       <template v-slot:activator>
         <huxButton
@@ -320,6 +322,9 @@ export default {
       if (item.action) {
         item.action()
       }
+    },
+    toggleModal() {
+      this.modal = !this.modal
     },
   },
   data() {

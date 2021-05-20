@@ -18,6 +18,7 @@
           variant="tertiary"
           height="40"
           isTile
+          @click="onLeftClick()"
         />
         <huxButton
           :ButtonText="rightBtnText"
@@ -25,6 +26,7 @@
           :variant="type"
           height="40"
           isTile
+          @click="onRightClick()"
         />
       </div>
     </div>
@@ -100,6 +102,15 @@ export default {
       if (!this.localModal) {
         this.$emit("onClose")
       }
+    },
+  },
+
+  methods: {
+    onLeftClick: function () {
+      this.$emit("onLeftClick")
+    },
+    onRightClick: function () {
+      this.$emit("onRightClick")
     },
   },
 }
