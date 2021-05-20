@@ -83,18 +83,25 @@ S_TYPE_DOB_DAY = "date_of_birth_day"
 S_TYPE_DOB_MONTH = "date_of_birth_month"
 S_TYPE_DOB_YEAR = "date_of_birth_year"
 S_TYPE_EMAIL = "email_address"
-S_TYPE_FACEBOOK_CITY = "facebook_city"  # internal only
-S_TYPE_FACEBOOK_COUNTRY_CODE = "facebook_country_code"  # internal only
-S_TYPE_FACEBOOK_GENDER = "facebook_gender"  # internal only
-S_TYPE_FACEBOOK_PHONE_NUMBER = "facebook_phone_number"  # internal only
-S_TYPE_FACEBOOK_POSTAL_CODE = "facebook_postal_code"  # internal only
-S_TYPE_FACEBOOK_STATE_OR_PROVINCE = (
-    "facebook_state_or_province"  # internal only
+S_TYPE_DOB_DAY_HASHED = "date_of_birth_day_hashed"  # internal only
+S_TYPE_DOB_MONTH_HASHED = "date_of_birth_month_hashed"  # internal only
+S_TYPE_DOB_YEAR_HASHED = "date_of_birth_year_hashed"  # internal only
+S_TYPE_EMAIL_HASHED = "email_address_hashed" #internal only
+S_TYPE_CITY_HASHED = "city_lowercase_hashed"  # internal only
+S_TYPE_COUNTRY_CODE_HASHED = "country_code_lowercase_hashed"  # internal only
+S_TYPE_GENDER_HASHED = "gender_hashed"  # internal only
+S_TYPE_PHONE_NUMBER_HASHED = "phone_number_digits_only_hashed"  # internal only
+S_TYPE_POSTAL_CODE_HASHED = "postal_code_hashed"  # internal only
+S_TYPE_STATE_OR_PROVINCE_HASHED = (
+    "state_or_province_hashed"  # internal only
 )
 S_TYPE_FIRST_NAME = "first_name"
+S_TYPE_FIRST_NAME_HASHED = "first_name_hashed"  # internal only
 S_TYPE_FIRST_NAME_INITIAL = "first_name_initial"
+S_TYPE_FIRST_NAME_INITIAL_HASHED = "first_name_initial_hashed"  # internal only
 S_TYPE_GOOGLE_PHONE_NUMBER = "google_phone_number"  # internal only
 S_TYPE_LAST_NAME = "last_name"
+S_TYPE_LAST_NAME_HASHED = "last_name_hashed"  # internal only
 S_TYPE_MOBILE_DEVICE_ID = "mobile_device_id"
 S_TYPE_PHONE_NUMBER = "phone_number"
 S_TYPE_POSTAL_CODE = "postal_code"
