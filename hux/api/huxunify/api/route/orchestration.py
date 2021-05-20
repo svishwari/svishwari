@@ -149,8 +149,8 @@ class AudienceGetView(SwaggerView):
             audience.get(api_c.DESTINATIONS_TAG)
         )
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-        # Add dummy insights objects for test purpose.
-        audience[api_c.AUDIENCE_INSIGHTS] = api_c.DUMMY_INSIGHTS_RESPONSE
+        # Add stub insights for test purposes.
+        audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
