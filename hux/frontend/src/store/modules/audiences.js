@@ -35,7 +35,7 @@ const state = {
           { attribute: "Demgraphics" },
         ],
       },
-      astDelivered: {
+      lastDelivered: {
         shortDate: "Today, 12:00 PM",
         FullDate: "03/22/2021 12:45 PM",
       },
