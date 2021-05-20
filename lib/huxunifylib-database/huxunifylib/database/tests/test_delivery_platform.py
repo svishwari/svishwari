@@ -131,6 +131,24 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
 
+    def _set_delivery_job(self) -> ObjectId:
+        """Set delivery_job.
+
+        Returns:
+            ObjectId: Delivery job ID.
+        """
+        dpm.set_connection_status(
+            self.database,
+            self.delivery_platform_doc[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+        return dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+        )[c.ID]
+
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_platform_facebook(self):
         """Test set_delivery_platform for facebook."""
@@ -795,11 +813,11 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(not doc[c.FAVORITE])
 
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_performance_metrics(self):
         """Performance metrics are set and retrieved."""
 
-        delivery_job_id = self.delivery_job_doc[c.ID]
-
+        delivery_job_id = self._set_delivery_job()
         end_time = datetime.datetime.utcnow()
         start_time = end_time - datetime.timedelta(days=7)
 
@@ -834,10 +852,11 @@ class TestDeliveryPlatform(unittest.TestCase):
         # Status is to be set to non-transferred automatically
         self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
 
-    def test_set_performance_metrics_status(self):
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_performance_metrics_status(self):
         """Performance metrics status is set properly."""
 
-        delivery_job_id = self.delivery_job_2_doc[c.ID]
+        delivery_job_id = self._set_delivery_job()
         end_time = datetime.datetime.utcnow()
         start_time = end_time - datetime.timedelta(days=7)
 
@@ -861,6 +880,45 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database, delivery_job_id
         )
         self.assertTrue(metrics_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_metrics_pending_transfer_feedback(self):
+        """Performance metrics pending transfer feedback are retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+
+        metrics_doc_1 = dpm.set_performance_metrics(
+            database=self.database,
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 10000, "Conversions": 50},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=self.generic_campaigns[0],
+        )
+
+        metrics_doc_2 = dpm.set_performance_metrics(
+            database=self.database,
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 11234, "Conversions": 150},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=self.generic_campaigns[0],
+        )
+
+        dpm.set_transferred_for_feedback(
+            database=self.database,
+            performance_metrics_id=metrics_doc_2[c.ID],
+        )
+
+        metrics_list = dpm.get_performance_metrics(
+            database=self.database,
+            delivery_job_id=delivery_job_id,
+            pending_transfer_for_feedback=True,  # only pending transfer
+        )
+        self.assertTrue(len(metrics_list) == 1)
+        self.assertEqual(metrics_list[0][c.ID], metrics_doc_1[c.ID])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):

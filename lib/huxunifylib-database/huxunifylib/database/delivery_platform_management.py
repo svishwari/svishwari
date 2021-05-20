@@ -1609,7 +1609,7 @@ def get_performance_metrics(
     delivery_job_id: ObjectId,
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
-    transferred_for_feedback: bool = False,
+    pending_transfer_for_feedback: bool = False,
 ) -> list:
     """Retrieve campaign performance metrics.
 
@@ -1620,9 +1620,8 @@ def get_performance_metrics(
             Min start time of metrics. Defaults to None.
         max_end_time (datetime.datetime, optional):
             Max start time of metrics. Defaults to None.
-        transferred_for_feedback (bool, optional):
-            If True, retrieve only merics transferred for feedback.
-            Defaults to None.
+        pending_transfer_for_feedback (bool, optional): If True, retrieve only
+            merics that has not transferred for feedback. Defaults to None.
 
     Raises:
         de.InvalidID: Invalid ID for delivery job.
@@ -1647,9 +1646,9 @@ def get_performance_metrics(
     if max_end_time:
         metric_queries.append({c.METRICS_END_TIME: {"$lte": max_end_time}})
 
-    if transferred_for_feedback:
+    if pending_transfer_for_feedback:
         metric_queries.append(
-            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": True}}
+            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
         )
 
     mongo_query = {"$and": metric_queries}
