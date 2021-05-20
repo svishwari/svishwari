@@ -19,7 +19,7 @@
         <DescriptiveCard
           v-for="model in models"
           :key="model.id"
-          :icon="model.type || 'model-unsubscribe'"
+          :icon="`model-${model.type || 'unsubscribe'}`"
           :title="model.name"
           :description="model.description"
           class="mr-10"

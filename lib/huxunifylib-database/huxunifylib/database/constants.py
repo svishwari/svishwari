@@ -67,6 +67,7 @@ STATUS_PENDING = "Pending"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"
+STATUS_TRANSFERRED_FOR_FEEDBACK = "transferred_for_feedback"
 
 INGESTED_DATA = "data"
 
@@ -194,9 +195,12 @@ DESTINATIONS = "destinations"
 AUDIENCES = "audiences"
 FAVORITE_COMPONENTS = [CAMPAIGNS, DESTINATIONS, AUDIENCES]
 
+
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGNS = "delivery_platform_generic_campaigns"
+METRICS_DELIVERY_PLATFORM_ID = "delivery_platform_id"
+METRICS_DELIVERY_PLATFORM_NAME = "delivery_platform_name"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"

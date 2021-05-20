@@ -70,7 +70,9 @@
                 v-if="condition.operator"
               ></text-field>
             </div>
-            <div class="actions col-sm-2  d-flex align-center justify-content-end">
+            <div
+              class="actions col-sm-2 d-flex align-center justify-content-end"
+            >
               <v-btn icon color="primary" @click="addNewCondition(rule.id)">
                 <v-icon>mdi-plus-circle</v-icon>
               </v-btn>
@@ -95,7 +97,7 @@
           <v-chip :ripple="false">OR</v-chip>
         </div>
         <div class="add-section-wrap" v-if="index == lastIndex">
-          <v-col col="12" class="row">
+          <v-col col="12" class="row pr-0">
             <div class="add-section col-10">
               <v-btn icon color="primary" @click="addNewSection()">
                 <v-icon>mdi-plus-circle</v-icon>
