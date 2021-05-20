@@ -637,7 +637,7 @@ export default {
               }
             }
             fieldset {
-              color: #d0d0ce;
+              color: var(--v-lightGrey-base);
             }
           }
         }
@@ -645,7 +645,7 @@ export default {
           .v-input__control {
             .v-input__slot {
               fieldset {
-                color: red;
+                color: inherit;
               }
             }
           }
