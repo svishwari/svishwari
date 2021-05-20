@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <page-header>
-      <template slot="left">
-        <breadcrumb :items="breadcrumbs" />
-      </template>
-    </page-header>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
+  <page>
+    <div slot="header">
+      <page-header>
+        <template slot="left">
+          <breadcrumb :items="breadcrumbs" />
+        </template>
+      </page-header>
+      <v-progress-linear :active="loading" :indeterminate="loading" />
+    </div>
     <div v-if="!loading">
-      <v-row class="pa-10" v-if="isConnectionStarted">
+      <v-row v-if="isConnectionStarted">
         <v-col cols="6">
           <data-sources-list></data-sources-list>
         </v-col>
@@ -52,7 +54,7 @@
       </div>
       <AddDataSource v-model="drawer" />
     </div>
-  </div>
+  </page>
 </template>
 
 <script>
@@ -60,6 +62,7 @@ import { mapGetters, mapActions } from "vuex"
 
 import DataSourcesList from "./DataSourcesList"
 import DestinationsList from "./DestinationsList"
+import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
@@ -71,6 +74,7 @@ export default {
   components: {
     DataSourcesList,
     DestinationsList,
+    Page,
     PageHeader,
     Breadcrumb,
     huxButton,

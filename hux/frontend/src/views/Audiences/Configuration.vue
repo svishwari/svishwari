@@ -1,7 +1,6 @@
-ffield
 <template>
-  <div class="create-audience-wrap">
-    <div class="mt-10 ml-15">
+  <page class="white create-audience-wrap" maxWidth="100%">
+    <div>
       <div class="heading font-weight-light neroBlack--text">
         Add an audience
       </div>
@@ -28,17 +27,12 @@ ffield
           :interactable="true"
         ></MetricCard>
       </div>
-      <v-divider class="divider mt-5"></v-divider>
+      <v-divider class="divider mt-2 mb-9"></v-divider>
     </div>
 
-    <div class="timeline-wrapper mt-9 ml-9 pr-1">
-      <v-form
-        ref="form"
-        class="mx-2 mr-0"
-        v-model="isFormValid"
-        lazy-validation
-      >
-        <v-timeline align-top dense class>
+    <div class="timeline-wrapper">
+      <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
+        <v-timeline align-top dense class="">
           <v-timeline-item color="blue" class="timeline-section mb-7">
             <template v-slot:icon class="timeline-icon-section">
               <span>1</span>
@@ -386,11 +380,12 @@ ffield
         </template>
       </drawer>
     </div>
-  </div>
+  </page>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import Page from "@/components/Page"
 import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
@@ -404,6 +399,7 @@ import Logo from "@/components/common/Logo"
 export default {
   name: "Configuration",
   components: {
+    Page,
     MetricCard,
     HuxFooter,
     huxButton,
@@ -563,7 +559,6 @@ export default {
 
 <style lang="scss" scoped>
 .create-audience-wrap {
-  padding-right: 60px;
   .heading {
     font-size: 24px;
     line-height: 40px;
@@ -585,6 +580,7 @@ export default {
     padding-right: 30px;
     .theme--light.v-timeline {
       padding-top: 0px;
+      left: -30px;
       .theme--light.v-timeline-item:last-child {
         padding-bottom: 0px;
       }
