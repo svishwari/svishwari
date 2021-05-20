@@ -7,7 +7,7 @@ from typing import List, Tuple
 import dateutil.parser as parser
 import requests
 
-from huxunify.api import config
+from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.schema.model import (
     ModelVersionSchema,
@@ -26,13 +26,21 @@ def check_tecton_connection() -> Tuple[bool, str]:
     Returns:
         tuple[bool, str]: Returns if the connection is valid, and the message.
     """
+    # get config
+    config = get_config()
+
     # submit the post request to get models
-    response = requests.post(
-        config.TECTON_FEATURE_SERVICE,
-        dumps(constants.MODEL_LIST_PAYLOAD),
-        headers=config.TECTON_API_HEADERS,
-    )
-    return response.status_code == 200, response.reason
+    try:
+        response = requests.post(
+            config.TECTON_FEATURE_SERVICE,
+            dumps(constants.MODEL_LIST_PAYLOAD),
+            headers=config.TECTON_API_HEADERS,
+        )
+        return response.status_code, "Tecton available."
+
+    except Exception as exception:  # pylint: disable=broad-except
+        # report the generic error message
+        return False, getattr(exception, "message", repr(exception))
 
 
 def map_model_response(response: dict) -> dict:
@@ -58,15 +66,15 @@ def map_model_response(response: dict) -> dict:
         model = {
             constants.ID: 1,
             constants.LATEST_VERSION: version,
-            constants.FULCRUM_DATE: parser.parse(feature[0]),
+            constants.FULCRUM_DATE: parser.parse(feature[2]),
             constants.DESCRIPTION: feature[1],
-            constants.LAST_TRAINED: parser.parse(feature[2]),
+            constants.LAST_TRAINED: parser.parse(feature[0]),
             constants.LOOKBACK_WINDOW: feature[3],
-            constants.NAME: feature[4],
-            constants.OWNER: feature[5],
-            constants.PREDICTION_WINDOW: int(feature[4].split("-")[-1]),
-            constants.STATUS: feature[7],
-            constants.TYPE: feature[4].split("-")[0],
+            constants.NAME: feature[5],
+            constants.OWNER: feature[6],
+            constants.PREDICTION_WINDOW: int(feature[5].split("-")[-1]),
+            constants.STATUS: feature[8],
+            constants.TYPE: feature[5].split("-")[0],
         }
         models.append(model)
 
@@ -95,6 +103,9 @@ def get_models(model_ids: List[int] = None) -> List[dict]:
     Returns:
         List[ModelSchema]: List of models.
     """
+
+    # get config
+    config = get_config()
 
     if model_ids is None:
         # TODO - update when tecton makes the list available to get.

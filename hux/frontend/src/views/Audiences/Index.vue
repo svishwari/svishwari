@@ -4,20 +4,30 @@
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />
       </template>
+      <template slot="right">
+        <v-btn
+          min-width="40"
+          height="40"
+          width="40"
+          color="primary"
+          :disabled="true"
+        >
+          <v-icon size="23" color="white">mdi-download</v-icon>
+        </v-btn>
+      </template>
     </PageHeader>
-    <PageHeader class="mt-1" :headerHeight="71">
+    <PageHeader class="top-bar" :headerHeight="71">
       <template slot="left">
-        <v-icon large :disabled="true" @click="refresh">
-          mdi-filter-variant
-        </v-icon>
+        <v-icon medium :disabled="true">mdi-filter-variant</v-icon>
+        <v-icon medium :disabled="true" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template slot="right">
-        <v-icon large :disabled="true" color="primary" @click="refresh">
-          mdi-refresh
-        </v-icon>
+        <v-icon medium :disabled="true" color="primary refresh" @click="refresh"
+          >mdi-refresh</v-icon
+        >
         <router-link
-          :to="{ name: 'createAudience' }"
+          :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
           append
         >
@@ -28,7 +38,7 @@
             variant="primary"
             size="large"
             v-bind:isTile="true"
-            class="ma-2 font-weight-regular"
+            class="ma-2 font-weight-regular no-shadow mr-0"
           ></huxButton>
         </router-link>
       </template>
@@ -40,20 +50,20 @@
         :tableData="rowData"
         :rowHeight="60"
         height="350px"
-        hasCheckBox
+        class="pl-3"
       ></hux-table>
 
       <EmptyPage v-if="!isDataExists">
-        <template v-slot:icon> mdi-alert-circle-outline </template>
-        <template v-slot:title> Oops! There’s nothing here yet </template>
+        <template v-slot:icon>mdi-alert-circle-outline</template>
+        <template v-slot:title>Oops! There’s nothing here yet</template>
         <template v-slot:subtitle>
-          You currently have no audiences created! You can create the <br />
-          framework first then complete the details later. <br />
-          Begin by selecting the button below.
+          You currently have no audiences created! You can create the
+          <br />framework first then complete the details later. <br />Begin by
+          selecting the button below.
         </template>
         <template v-slot:button>
           <router-link
-            :to="{ name: 'createAudience' }"
+            :to="{ name: 'AudienceConfiguration' }"
             class="route-link text-decoration-none"
             append
           >
@@ -81,13 +91,10 @@ import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxTable from "@/components/common/huxTable.vue"
-import StatusCell from "@/components/common/huxTable/StatusCell"
 import UserAvatarCell from "@/components/common/huxTable/UserAvatarCell"
 import MenuCell from "@/components/common/huxTable/MenuCell"
-import DestinationCell from "@/components/common/huxTable/DestinationCell"
 import DateTimeCell from "@/components/common/huxTable/DateTimeCell"
 import sizeCell from "@/components/common/huxTable/sizeCell"
-import attributeCell from "@/components/common/huxTable/attributeCell"
 
 export default {
   name: "audiences",
@@ -105,13 +112,13 @@ export default {
           text: "Audiences",
           disabled: false,
           href: this.$route.path,
-          icon: "mdi-flip-h mdi-account-plus-outline",
+          iconPath: "icons/audience_icon",
         },
       ],
 
       columnDefs: [
         {
-          headerName: "Audience Name",
+          headerName: "Audience name",
           field: "audienceName",
           sortable: true,
           sort: "desc",
@@ -119,59 +126,54 @@ export default {
           width: "300",
           cellRendererFramework: MenuCell,
           cellClass: "menu-cells",
-        },
-        {
-          headerName: "Status",
-          field: "status",
-          sortable: true,
-          cellRendererFramework: StatusCell,
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Size",
           field: "size",
           sortable: true,
+          width: "100",
           cellRendererFramework: sizeCell,
+          sortingOrder: ["desc", "asc"],
         },
         {
-          headerName: "Destinations",
-          field: "destinations",
-          sortable: true,
-          cellRendererFramework: DestinationCell,
-        },
-        {
-          headerName: "Attributes",
-          field: "attributes",
-          sortable: true,
-          cellRendererFramework: attributeCell,
-        },
-        {
-          headerName: "Last Delivered",
+          headerName: "Last delivered",
           field: "lastDelivered",
-          sortable: true,
-        },
-        {
-          headerName: "Last Updated",
-          field: "lastUpdated",
+          width: "170",
           sortable: true,
           cellRendererFramework: DateTimeCell,
+          sortingOrder: ["desc", "asc"],
         },
         {
-          headerName: "Last Updated By",
+          headerName: "Last updated",
+          field: "lastUpdated",
+          sortable: true,
+          width: "170",
+          cellRendererFramework: DateTimeCell,
+          sortingOrder: ["desc", "asc"],
+        },
+        {
+          headerName: "Last updated by",
           field: "lastUpdatedBy",
           sortable: true,
+          width: "140",
           cellRendererFramework: UserAvatarCell,
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Created",
           field: "created",
           sortable: true,
+          width: "160",
           cellRendererFramework: DateTimeCell,
+          sortingOrder: ["desc", "asc"],
         },
         {
-          headerName: "Created By",
+          headerName: "Created by",
           field: "createdBy",
           sortable: true,
           cellRendererFramework: UserAvatarCell,
+          sortingOrder: ["desc", "asc"],
         },
       ],
     }
@@ -198,6 +200,21 @@ export default {
 .audiences-wrap {
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
+  }
+  .page-header--wrap {
+    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
+      0px 1px 1px 0px var(--v-lightGrey-base),
+      0px 1px 2px 0px var(--v-lightGrey-base) !important;
+  }
+  .top-bar {
+    margin-top: 1px;
+    .v-icon--disabled {
+      color: var(--v-lightGrey-base) !important;
+      font-size: 20px;
+    }
+    .text--refresh {
+      margin-right: 10px;
+    }
   }
   ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
     display: initial;

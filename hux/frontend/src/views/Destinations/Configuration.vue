@@ -1,5 +1,5 @@
 <template>
-  <div class="add-destination--wrap font-weight-regular">
+  <page class="white" max-width="970px">
     <div class="mb-10">
       <h4 class="text-h2 neroBlack--text">Add a destination</h4>
       <p class="neroBlack--text">
@@ -70,7 +70,7 @@
       </div>
     </v-form>
 
-    <hux-footer>
+    <hux-footer slot="footer" max-width="850px">
       <template v-slot:left>
         <hux-button
           button-text="Cancel"
@@ -92,7 +92,7 @@
       </template>
     </hux-footer>
 
-    <drawer v-model="drawer">
+    <Drawer v-model="drawer">
       <template v-slot:header-left>
         <div class="d-flex align-baseline">
           <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
@@ -139,12 +139,13 @@
           </CardHorizontal>
         </div>
       </template>
-    </drawer>
-  </div>
+    </Drawer>
+  </page>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import Page from "@/components/Page"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Logo from "@/components/common/Logo"
@@ -156,6 +157,7 @@ export default {
   name: "add-destination",
 
   components: {
+    Page,
     Drawer,
     CardHorizontal,
     HuxFooter,
@@ -238,7 +240,7 @@ export default {
     async add() {
       try {
         await this.addDestination(this.destination)
-        this.$router.push({ name: "connections" })
+        this.$router.push({ name: "Connections" })
       } catch (error) {
         console.error(error)
       }
@@ -246,22 +248,21 @@ export default {
 
     cancel() {
       // TODO: need to add modal that confirms to leave configuration
-      this.$router.push({ name: "connections" })
+      this.$router.push({ name: "Connections" })
     },
   },
 
   async mounted() {
     await this.getDestinations()
+    if (this.$route.query.select) {
+      this.drawer = true
+    }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.add-destination--wrap {
-  padding: 4rem 10rem;
-
-  .destination-auth-wrap {
-    border: 1px solid var(--v-zircon-base) !important;
-  }
+.destination-auth-wrap {
+  border: 1px solid var(--v-zircon-base) !important;
 }
 </style>

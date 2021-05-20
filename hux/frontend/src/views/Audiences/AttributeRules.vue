@@ -1,6 +1,6 @@
 <template>
-  <v-col cols="12" class="attribute-rule pt-0">
-    <v-col cols="12">
+  <v-col cols="12" class="attribute-rule pt-0 pl-0 pr-0">
+    <v-col cols="12" class="pr-0">
       <strong class="text-h5 neroBlack--text"
         >Select attribute(s) - <i style="font-size: 12px">Optional</i></strong
       >
@@ -10,7 +10,7 @@
         class="mt-2 blank-section"
         v-if="rules.length == 0"
       >
-        <v-card-actions>
+        <v-card-actions class="pr-0">
           <v-list-item class="grow">
             <v-list-item-content>
               <v-list-item-title class="text-subtitle-1 font-weight-normal"
@@ -31,7 +31,7 @@
         </v-card-actions>
       </v-card>
     </v-col>
-    <v-col col="12" v-if="rules.length > 0">
+    <v-col col="12" v-if="rules.length > 0" class="pr-0">
       <div
         v-for="(rule, index) in rules"
         :key="`rule-${index}`"
@@ -46,16 +46,17 @@
           of the following
         </span>
         <div
-          class="col-12 row pt-0 pb-2"
+          class="col-12 row pt-0 pb-2 pr-0"
           v-for="(condition, ixcondition) in rule.conditions"
           :key="`${index}-ruleCondition-${ixcondition}`"
         >
-          <div class="condition-card col-10 d-flex">
-            <div class="options">
+          <div class="condition-card col-10 d-flex align-center">
+            <div class="options col-sm-10 d-flex align-center">
               <DropdownMenu
                 v-model="condition.attribute"
                 :labelText="fetchDropdownLabel(condition, 'attribute')"
                 :menuItem="attributeOptions"
+                class="col-sm-4"
               ></DropdownMenu>
               <DropdownMenu
                 v-model="condition.operator"
@@ -69,7 +70,9 @@
                 v-if="condition.operator"
               ></text-field>
             </div>
-            <div class="actions">
+            <div
+              class="actions col-sm-2 d-flex align-center justify-content-end"
+            >
               <v-btn icon color="primary" @click="addNewCondition(rule.id)">
                 <v-icon>mdi-plus-circle</v-icon>
               </v-btn>
@@ -94,7 +97,7 @@
           <v-chip :ripple="false">OR</v-chip>
         </div>
         <div class="add-section-wrap" v-if="index == lastIndex">
-          <v-col col="12" class="row">
+          <v-col col="12" class="row pr-0">
             <div class="add-section col-10">
               <v-btn icon color="primary" @click="addNewSection()">
                 <v-icon>mdi-plus-circle</v-icon>
@@ -243,7 +246,7 @@ export default {
         .avatar-menu {
           display: block;
           margin-right: 20px;
-          min-width: 200px;
+          min-width: 180px;
           border: solid 1px var(--v-lightGrey-base);
           button {
             width: 100%;

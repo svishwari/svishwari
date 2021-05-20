@@ -1,54 +1,64 @@
 <template>
-  <div>
-    <page-header>
-      <template slot="left">
-        <breadcrumb :items="breadcrumbs" />
-      </template>
-    </page-header>
-    <v-row class="pa-10" v-if="isConnectionStarted">
-      <v-col cols="6">
-        <data-sources-list></data-sources-list>
-      </v-col>
-      <v-col cols="6">
-        <destinations-list></destinations-list>
-      </v-col>
-    </v-row>
-    <div class="empty-state-wrap text-center" v-else>
-      <v-icon color="secondary" x-large> mdi-alert-circle-outline </v-icon>
-      <div class="text-h3">Oops! There’s nothing here yet</div>
-      <div class="font-weight-regular text-h6 my-2">
-        To create a connection, you need to add a destination or a data source!
-        <br />
-        Begin by selecting a button below.
-      </div>
-      <router-link
-        :to="{ name: 'add-destination' }"
-        class="text-decoration-none"
-      >
-        <huxButton
-          ButtonText="Destination"
-          icon="mdi-plus"
-          iconPosition="left"
-          variant="primary"
-          size="small"
-          iconSize="small"
-          v-bind:isTile="true"
-          class="ma-2 text-h6 font-weight-regular"
-        />
-      </router-link>
-      <huxButton
-        ButtonText="Data source"
-        icon="mdi-plus"
-        iconPosition="left"
-        variant="primary"
-        size="small"
-        v-bind:isTile="true"
-        class="ma-2 text-h6 font-weight-regular"
-        @click="toggleDrawer"
-      />
+  <page>
+    <div slot="header">
+      <page-header>
+        <template slot="left">
+          <breadcrumb :items="breadcrumbs" />
+        </template>
+      </page-header>
+      <v-progress-linear :active="loading" :indeterminate="loading" />
     </div>
-    <AddDataSource v-model="drawer" />
-  </div>
+    <div v-if="!loading">
+      <v-row v-if="isConnectionStarted">
+        <v-col cols="6">
+          <data-sources-list></data-sources-list>
+        </v-col>
+        <v-col cols="6">
+          <destinations-list></destinations-list>
+        </v-col>
+      </v-row>
+      <div class="empty-state-wrap text-center" v-else>
+        <v-icon color="secondary" x-large> mdi-alert-circle-outline </v-icon>
+        <div class="text-h3">Oops! There’s nothing here yet</div>
+        <div class="font-weight-regular text-h6 my-2">
+          To create a connection, you need to add a destination or a data
+          source!
+          <br />
+          Begin by selecting a button below.
+        </div>
+        <router-link
+          :to="{ name: 'DestinationConfiguration' }"
+          class="text-decoration-none"
+        >
+          <huxButton
+            ButtonText="Destination"
+            icon="mdi-plus"
+            iconPosition="left"
+            variant="primary"
+            size="small"
+            iconSize="small"
+            :isTile="true"
+            class="ma-2 text-h6 font-weight-regular"
+          />
+        </router-link>
+        <router-link
+          :to="{ name: 'DataSourceConfiguration', query: { select: true } }"
+          class="text-decoration-none"
+        >
+          <huxButton
+            ButtonText="Data source"
+            icon="mdi-plus"
+            iconPosition="left"
+            variant="primary"
+            size="small"
+            :isTile="true"
+            class="ma-2 text-h6 font-weight-regular"
+          />
+        </router-link>
+      </div>
+    </div>
+    <DataSourceConfiguration v-model="drawer" />
+  </page>
 </template>
 
 <script>
@@ -56,10 +66,11 @@ import { mapGetters, mapActions } from "vuex"
 
 import DataSourcesList from "./DataSourcesList"
 import DestinationsList from "./DestinationsList"
+import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import AddDataSource from "@/views/DataSources/Configuration"
+import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
   name: "connections",
@@ -67,10 +78,11 @@ export default {
   components: {
     DataSourcesList,
     DestinationsList,
+    Page,
     PageHeader,
     Breadcrumb,
     huxButton,
-    AddDataSource,
+    DataSourceConfiguration,
   },
 
   computed: {
@@ -99,7 +111,24 @@ export default {
         },
       ],
       drawer: false,
+      loading: false,
     }
+  },
+
+  watch: {
+    $route() {
+      if (this.$route.query.select) {
+        this.drawer = true
+      } else {
+        this.drawer = false
+      }
+    },
+
+    drawer() {
+      if (!this.drawer) {
+        this.$router.push({ name: "Connections" })
+      }
+    },
   },
 
   methods: {
@@ -113,8 +142,14 @@ export default {
   },
 
   async mounted() {
+    this.loading = true
     await this.getDataSources()
     await this.getDestinations()
+    this.loading = false
+
+    if (this.$route.query.select) {
+      this.drawer = true
+    }
   },
 }
 </script>

@@ -1,15 +1,13 @@
 <template>
-  <div class="container-fluid">
-    <v-app>
-      <NavBar @toggleSidebarMenu="toggleSidebar"></NavBar>
-      <SideMenu v-bind:toggle="toggleMini"></SideMenu>
-      <v-main>
-        <v-container fluid ma-0 pa-0>
-          <slot />
-        </v-container>
-      </v-main>
-    </v-app>
-  </div>
+  <v-app>
+    <NavBar @toggleSidebarMenu="toggleSidebar"></NavBar>
+    <SideMenu v-bind:toggle="toggleMini"></SideMenu>
+    <v-main>
+      <v-container fluid ma-0 pa-0 class="views-container">
+        <slot />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -29,3 +27,10 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.views-container,
+.views-container > div {
+  height: 100%;
+}
+</style>

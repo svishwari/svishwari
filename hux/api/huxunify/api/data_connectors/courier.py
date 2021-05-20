@@ -13,7 +13,8 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
-from huxunify.api import config, constants as api_const
+from huxunify.api import constants as api_const, config as cfg
+from huxunify.api.config import get_config
 
 
 def map_destination_credentials_to_dict(destination: dict) -> dict:
@@ -91,6 +92,9 @@ class DestinationBatchJob:
                 self.audience_delivery_job_id,
             )
         self.aws_batch_connector = aws_batch_connector
+
+        # get the configuration values
+        config = get_config()
 
         # Register AWS batch job
         response_batch_register = self.aws_batch_connector.register_job(
@@ -176,21 +180,24 @@ def get_destination_config(
         destination_id,
     )
 
+    # get the configuration values
+    config = get_config()
+
     # Setup AWS Batch env vars and secrets
     aws_env_dict = {
         db_const.DELIVERY_JOB_ID.upper(): str(
             audience_delivery_job[db_const.ID]
         ),
         api_const.BATCH_SIZE.upper(): str(audience_router_batch_size),
-        config.HOST: config.MONGO_DB_HOST,
-        config.PORT: config.MONGO_DB_PORT,
-        config.USER_NAME: config.MONGO_DB_USERNAME,
-        config.SSL_CERT_PATH: config.MONGO_SSL_CERT,
+        cfg.HOST: config.MONGO_DB_HOST,
+        cfg.PORT: config.MONGO_DB_PORT,
+        cfg.USER_NAME: config.MONGO_DB_USERNAME,
+        cfg.SSL_CERT_PATH: config.MONGO_SSL_CERT,
         config.MONITORING_CONFIG_CONST: config.MONITORING_CONFIG,
     }
 
     aws_secret_dict = {
-        config.PASSWORD: config.MONGO_DB_PASSWORD,
+        cfg.PASSWORD: config.MONGO_DB_PASSWORD,
         **map_destination_credentials_to_dict(delivery_platform),
     }
     return DestinationBatchJob(

@@ -3,7 +3,7 @@
     <v-col class="d-flex pr-0">
       <router-link
         :to="{
-          name: 'audienceInsight',
+          name: 'AudienceInsight',
           params: { id: audienceId },
         }"
         class="text-decoration-none"
@@ -13,13 +13,6 @@
       </router-link>
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
-        <v-icon
-          class="mr-2 action-favroite"
-          :color="favoriteIconColor"
-          @click="addToFavorite()"
-        >
-          mdi-star
-        </v-icon>
         <v-menu class="menu-wrapper" bottom offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-icon

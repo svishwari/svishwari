@@ -1,21 +1,22 @@
 <template>
   <v-card
-    class="page-header--wrap d-flex justify-space-between align-center px-8 py-8"
+    class="page-header--wrap d-flex justify-space-between align-center px-8 py-5"
     elevation="1"
     tile
     :color="bgColor"
     :height="headerHeight"
   >
     <div>
-      <div class="page-header-container d-flex">
-        <v-icon size="20" color="black">
+      <div class="d-flex">
+        <v-icon v-if="icon" class="pr-1" size="20" color="black">
           {{ icon }}
         </v-icon>
-        <div class="header-title pl-1">
+        <svg-as-component :src="`assets/${iconPath}`" />
+        <div class="text-h2">
           {{ title }}
         </div>
       </div>
-      <div>
+      <div v-if="$slots.description" class="mt-2">
         <slot name="description"></slot>
       </div>
       <slot name="left"></slot>
@@ -27,11 +28,19 @@
 </template>
 
 <script>
+import svgAsComponent from "./common/SVG"
 export default {
   name: "PageHeader",
-
+  components: {
+    svgAsComponent,
+  },
   props: {
     icon: {
+      type: String,
+      required: false,
+    },
+
+    iconPath: {
       type: String,
       required: false,
     },
@@ -54,11 +63,3 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-.page-header--wrap {
-  .header-title {
-    font-weight: 300;
-    font-size: 24px;
-  }
-}
-</style>

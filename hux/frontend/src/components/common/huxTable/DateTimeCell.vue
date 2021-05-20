@@ -1,13 +1,15 @@
 <template>
-  <v-menu bottom offset-y open-on-hover>
+  <v-menu bottom offset-y open-on-hover class="cursor-default">
     <template v-slot:activator="{ on, attrs }">
-      <span v-bind="attrs" v-on="on">
+      <span v-bind="attrs" v-on="on" class="cursor-default">
         {{ cellValue.shortDate }}
       </span>
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title>{{ cellValue.FullDate }}</v-list-item-title>
+        <v-list-item-title>{{
+          cellValue.FullDate ? cellValue.FullDate : ""
+        }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>

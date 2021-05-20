@@ -118,16 +118,12 @@ parameter_store = ParameterStore()
 
 def get_aws_client(
     client: str = "s3",
-    aws_access_key: str = config.AWS_ACCESS_KEY_ID,
-    aws_secret_key: str = config.AWS_SECRET_ACCESS_KEY,
-    region_name: str = config.AWS_REGION,
+    region_name: str = config.get_config().AWS_REGION,
 ) -> boto3.client:
     """quick and dirty function for getting most AWS clients
 
     Args:
         client (str): client string
-        aws_access_key (str): AWS access key
-        aws_secret_key (str): AWS secret key
         region_name (str): Region Name
 
     Returns:
@@ -136,8 +132,6 @@ def get_aws_client(
     """
     return boto3.client(
         client,
-        aws_access_key_id=aws_access_key,
-        aws_secret_access_key=aws_secret_key,
         region_name=region_name,
     )
 
@@ -148,13 +142,35 @@ def check_aws_connection(client="s3") -> Tuple[bool, str]:
     Args:
         client (str): name of the boto3 client to use.
     Returns:
-        tuple[bool, str]: Returns if the AWS connection is valid, and the message.
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
     """
 
     try:
         # lookup the health test to run from api constants
-        getattr(get_aws_client(client), api_c.AWS_HEALTH_TESTS[client])()
+        health_test = api_c.AWS_HEALTH_TESTS[client]
+        getattr(get_aws_client(client), health_test[0])(**health_test[1])
         return True, f"{client} available."
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
         return False, getattr(exception, "message", repr(exception))
+
+
+def check_aws_ssm() -> Tuple[bool, str]:
+    """Validate AWS ssm Function
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+    """
+    return check_aws_connection(api_c.AWS_SSM_NAME)
+
+
+def check_aws_batch() -> Tuple[bool, str]:
+    """Validate AWS batch Function
+
+    Returns:
+        tuple[bool, str]: Returns if the AWS connection is valid,
+            and the message.
+    """
+    return check_aws_connection(api_c.AWS_BATCH_NAME)

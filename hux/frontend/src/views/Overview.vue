@@ -1,16 +1,16 @@
 <template>
   <div class="overview-wrap">
-    <PageHeader :title="'Welcome back, ' + firstName + ' ' + lastName + '!'">
+    <PageHeader :title="`Welcome back, ${fullName}!`" class="py-7">
       <template slot="description">
-        <div class="font-weight-regular">
-          Hux is here to help you make better, faster decisions to improve your
-          Customer Experiences.
-          <a
-            class="text-decoration-none"
-            href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
-            >Learn More ></a
-          >
-        </div>
+        Hux is here to help you make better, faster decisions to improve your
+        Customer Experiences.
+        <a
+          class="text-decoration-none"
+          href="https://consulting.deloitteresources.com/offerings/customer-marketing/advertising-marketing-commerce/Pages/hux_marketing.aspx"
+          target="_blank"
+        >
+          Learn More &gt;
+        </a>
       </template>
       <template slot="right" class="paheHeadRightPanel">
         <v-menu offset-y :close-on-content-click="false">
@@ -47,7 +47,7 @@
       </template>
     </PageHeader>
     <div class="quickAccessMenu" v-if="this.configureOptions['configureHux']">
-      <h6 class="mb-3">Configure Hux</h6>
+      <h5 class="mb-3 text-h5">Configure Hux</h5>
       <div class="card-wrap d-flex">
         <CardInfo
           v-for="(item, i) in configureHuxOptions"
@@ -93,35 +93,41 @@ export default {
           title: "Connect data source",
           description:
             "Choose your data source from various customer touchpoint systems.",
-          route: "datasources",
+          route: {
+            name: "DataSourceConfiguration",
+            query: { select: true },
+          },
           active: true,
         },
         {
           title: "Add a destination",
           description:
             "Choose a destination where your actionable intelligence will be consumed.",
-          route: "add-destination",
+          route: {
+            name: "DestinationConfiguration",
+            query: { select: true },
+          },
           active: true,
         },
         {
           title: "Build your models",
           description:
             "Build predictive models that intelligently characterize customer opportunities.",
-          route: "models",
+          route: { name: "Models" },
           active: false,
         },
         {
           title: "Create an audience",
           description:
-            "Create an audience based on customized orchestrated choices..",
-          route: "createAudience",
+            "Create an audience based on customized orchestrated choices.",
+          route: { name: "AudienceConfiguration" },
           active: true,
         },
         {
           title: "Create an engagement",
           description:
             "Put all this great data and information to good use by creating an engagement.",
-          route: "engagements",
+          route: { name: "Engagements" },
           active: true,
         },
       ],
@@ -134,6 +140,9 @@ export default {
     lastName() {
       return this.$store.getters.getLastName
     },
+    fullName() {
+      return `${this.firstName} ${this.lastName}`
+    },
   },
 }
 </script>
@@ -145,10 +154,7 @@ export default {
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
-    h6 {
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
+    h5 {
       line-height: 19px;
       letter-spacing: 0.5px;
       color: var(--v-neroBlack-base);

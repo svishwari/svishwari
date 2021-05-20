@@ -131,6 +131,24 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
 
+    def _set_delivery_job(self) -> ObjectId:
+        """Set delivery_job.
+
+        Returns:
+            ObjectId: Delivery job ID.
+        """
+        dpm.set_connection_status(
+            self.database,
+            self.delivery_platform_doc[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+        return dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+        )[c.ID]
+
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_platform_facebook(self):
         """Test set_delivery_platform for facebook."""
@@ -795,18 +813,18 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.FAVORITE in doc)
         self.assertTrue(not doc[c.FAVORITE])
 
-    def test_metrics(self):
-        """Test performance metrics functions."""
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_performance_metrics(self):
+        """Performance metrics are set and retrieved."""
 
-        self.assertTrue(self.database is not None)
-
-        delivery_job_id = self.delivery_job_doc[c.ID]
-
+        delivery_job_id = self._set_delivery_job()
         end_time = datetime.datetime.utcnow()
         start_time = end_time - datetime.timedelta(days=7)
 
-        doc = dpm.set_delivered_audience_performance_metrics(
+        doc = dpm.set_performance_metrics(
             database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -816,9 +834,8 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
 
-        metrics_list = dpm.get_delivered_audience_performance_metrics(
-            self.database,
-            delivery_job_id,
+        metrics_list = dpm.get_performance_metrics(
+            self.database, delivery_job_id
         )
 
         self.assertTrue(metrics_list is not None)
@@ -827,12 +844,91 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = metrics_list[0]
 
         self.assertTrue(doc is not None)
-        self.assertTrue(c.DELIVERY_JOB_ID in doc)
-        self.assertTrue(c.CREATE_TIME in doc)
-        self.assertTrue(c.PERFORMANCE_METRICS in doc)
-        self.assertTrue(c.METRICS_START_TIME in doc)
-        self.assertTrue(c.METRICS_END_TIME in doc)
+        self.assertIn(c.DELIVERY_JOB_ID, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
+        self.assertIn(c.CREATE_TIME, doc)
+        self.assertIn(c.PERFORMANCE_METRICS, doc)
+        self.assertIn(c.METRICS_START_TIME, doc)
+        self.assertIn(c.METRICS_END_TIME, doc)
         self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
+
+        # Status is to be set to non-transferred automatically
+        self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_performance_metrics_status(self):
+        """Performance metrics status is set properly."""
+
+        delivery_job_id = self._set_delivery_job()
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+
+        metrics_init_doc = dpm.set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 10000, "Conversions": 50},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=self.generic_campaigns[0],
+        )
+
+        doc = dpm.set_transferred_for_feedback(
+            database=self.database,
+            performance_metrics_id=metrics_init_doc[c.ID],
+        )
+        self.assertTrue(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+
+        # Read metrics separately of setting
+        metrics_list = dpm.get_performance_metrics(
+            self.database, delivery_job_id
+        )
+        self.assertTrue(metrics_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_metrics_pending_transfer_feedback(self):
+        """Performance metrics pending transfer for feedback are retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+
+        metrics_doc_1 = dpm.set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 10000, "Conversions": 50},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=self.generic_campaigns[0],
+        )
+
+        metrics_doc_2 = dpm.set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 11234, "Conversions": 150},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=self.generic_campaigns[0],
+        )
+
+        dpm.set_transferred_for_feedback(
+            database=self.database,
+            performance_metrics_id=metrics_doc_2[c.ID],
+        )
+
+        metrics_list = dpm.get_performance_metrics(
+            database=self.database,
+            delivery_job_id=delivery_job_id,
+            pending_transfer_for_feedback=True,  # only pending transfer
+        )
+        self.assertTrue(len(metrics_list) == 1)
+        self.assertEqual(metrics_list[0][c.ID], metrics_doc_1[c.ID])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platforms_count(self):

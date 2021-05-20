@@ -3,9 +3,15 @@
     <div class="d-flex align-end mb-4">
       <v-icon> mdi-cloud-download-outline </v-icon>
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
-      <v-icon @click="toggleDrawer" class="ml-2 add-icon" color="primary">
-        mdi-plus-circle
-      </v-icon>
+      <router-link
+        :to="{
+          name: 'DataSourceConfiguration',
+          query: { select: true },
+        }"
+        class="text-decoration-none"
+      >
+        <v-icon class="ml-2 add-icon" color="primary"> mdi-plus-circle </v-icon>
+      </router-link>
     </div>
 
     <template v-if="hasAddedDatasources">
@@ -30,7 +36,6 @@
         Begin by selecting the plus button above.
       </template>
     </EmptyStateData>
-    <AddDataSource v-model="drawer" />
   </div>
 </template>
 
@@ -40,18 +45,11 @@ import { mapGetters } from "vuex"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
-import AddDataSource from "@/views/DataSources/Configuration"
 
 export default {
   name: "data-sources-list",
 
-  components: { EmptyStateData, AddDataSource, CardHorizontal, Status },
-
-  data() {
-    return {
-      drawer: false,
-    }
-  },
+  components: { EmptyStateData, CardHorizontal, Status },
 
   computed: {
     ...mapGetters({
@@ -64,12 +62,6 @@ export default {
 
     hasAddedDatasources() {
       return Boolean(this.addedDataSources && this.addedDataSources.length)
-    },
-  },
-
-  methods: {
-    toggleDrawer() {
-      this.drawer = !this.drawer
     },
   },
 }
