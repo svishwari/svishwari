@@ -16,7 +16,8 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          :width="135"
+          width="11.368852459016393%"
+          :min-width="126.5"
           :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
@@ -29,8 +30,8 @@
       <v-divider class="divider mt-5"></v-divider>
     </div>
 
-    <div class="timeline-wrapper mt-9 ml-9">
-      <v-form ref="form" class="mx-2" v-model="isFormValid" lazy-validation>
+    <div class="timeline-wrapper mt-9 ml-9 pr-1">
+      <v-form ref="form" class="mx-2 mr-0" v-model="isFormValid" lazy-validation>
         <v-timeline align-top dense class="">
           <v-timeline-item color="blue" class="timeline-section mb-7">
             <template v-slot:icon class="timeline-icon-section">
@@ -48,18 +49,18 @@
                   backgroundColor="white"
                   v-bind:required="true"
                   v-model="audience.audienceName"
-                  class="mt-1 aud-name-field text-caption neroBlack--text"
+                  class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"
                 ></TextField>
               </v-col>
               <v-col cols="8">
                 <div class="mt-8 ml-15 text-caption neroBlack--text">
                   Add to an engagement -
-                  <span style="tilt">you must have at least one</span>
+                  <i style="tilt">you must have at least one</i>
                   <div>
                     <v-icon
                       size="30"
-                      class="add-icon"
+                      class="add-icon mt-1"
                       color="primary"
                       @click="
                         engagementDrawer.insideFlow = !engagementDrawer.insideFlow
@@ -86,7 +87,7 @@
             <template v-slot:icon class="timeline-icon-section">
               <span>2</span>
             </template>
-            <v-row class="pt-1 pr-10">
+            <v-row class="pt-1 pr-0">
               <attribute-rules :rules="attributeRules"></attribute-rules>
             </v-row>
           </v-timeline-item>
@@ -104,7 +105,7 @@
                   <i style="font-size: 12px">Optional</i>
                 </strong>
                 <div>
-                  <v-icon size="30" class="add-icon" color="primary">
+                  <v-icon size="30" class="add-icon mt-1" color="primary">
                     mdi-plus-circle
                   </v-icon>
                 </div>
@@ -117,7 +118,7 @@
             </template>
             <v-row class="pt-1">
               <v-col cols="12">
-                <strong> Create lookalike audience </strong>
+                <strong class="text-h5"> Create lookalike audience </strong>
               </v-col>
             </v-row>
           </v-timeline-item>
@@ -444,7 +445,27 @@ export default {
       }
     }
     .theme--light.v-timeline:before {
-      border: 1px dashed var(--v-info-base);
+      background: linear-gradient(
+          to right,
+          var(--v-skyBlueDark-base) 50%,
+          rgba(255, 255, 255, 0) 0%
+        ),
+        linear-gradient(
+          var(--v-skyBlueDark-base) 50%,
+          rgba(255, 255, 255, 0) 0%
+        ),
+        linear-gradient(
+          to right,
+          var(--v-skyBlueDark-base) 49%,
+          rgba(255, 255, 255, 0) 0%
+        ),
+        linear-gradient(
+          var(--v-skyBlueDark-base) 50%,
+          rgba(255, 255, 255, 0) 0%
+        );
+      background-position: top, right, bottom, left;
+      background-repeat: repeat-x, repeat-y;
+      background-size: 12px 0px, 1px 12px;
     }
     .aud-name-field {
       .v-input__control {
@@ -454,6 +475,9 @@ export default {
             .v-label {
               top: 9px;
             }
+          }
+          fieldset {
+            color: #D0D0CE
           }
         }
       }

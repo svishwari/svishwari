@@ -60,3 +60,7 @@ $rounded: (
   'pill': 9999px,
   'circle': 50%,
 );
+
+.background-white {
+  background: var(--v-white-base);
+}

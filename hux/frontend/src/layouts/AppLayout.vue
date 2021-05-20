@@ -3,7 +3,7 @@
     <v-app>
       <NavBar @toggleSidebarMenu="toggleSidebar"></NavBar>
       <SideMenu v-bind:toggle="toggleMini"></SideMenu>
-      <v-main>
+      <v-main class="background-white">
         <v-container fluid ma-0 pa-0>
           <slot />
         </v-container>
