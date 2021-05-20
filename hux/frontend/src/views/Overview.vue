@@ -47,7 +47,7 @@
       </template>
     </PageHeader>
     <div class="quickAccessMenu" v-if="this.configureOptions['configureHux']">
-      <h6 class="mb-3">Configure Hux</h6>
+      <h5 class="mb-3 text-h5">Configure Hux</h5>
       <div class="card-wrap d-flex">
         <CardInfo
           v-for="(item, i) in configureHuxOptions"
@@ -154,10 +154,7 @@ export default {
     min-height: 265px;
     padding: 16px 30px 40px 30px;
     overflow-x: auto;
-    h6 {
-      font-style: normal;
-      font-weight: normal;
-      font-size: 15px;
+    h5 {
       line-height: 19px;
       letter-spacing: 0.5px;
       color: var(--v-neroBlack-base);
