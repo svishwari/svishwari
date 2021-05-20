@@ -1,17 +1,22 @@
 <template>
   <v-footer
-    class="app-footer-wrap d-flex justify-space-between align-center shadow"
+    class="page-footer shadow"
     app
     paddless
     fixed
     inset
     color="background"
   >
-    <div class="footer--left">
-      <slot name="left"></slot>
-    </div>
-    <div class="footer--right">
-      <slot name="right"></slot>
+    <div
+      class="page-footer-container d-flex justify-space-between align-center"
+      :style="{ 'max-width': maxWidth }"
+    >
+      <div class="footer--left">
+        <slot name="left"></slot>
+      </div>
+      <div class="footer--right">
+        <slot name="right"></slot>
+      </div>
     </div>
   </v-footer>
 </template>
@@ -19,10 +24,24 @@
 <script>
 export default {
   name: "hux-footer",
+
+  props: {
+    maxWidth: {
+      type: String,
+      required: false,
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
-.app-footer-wrap {
-  padding: 1rem 10rem;
+.page-footer {
+  padding: 20px 60px;
+
+  .page-footer-container {
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+  }
 }
 </style>
