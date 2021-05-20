@@ -86,15 +86,13 @@ S_TYPE_EMAIL = "email_address"
 S_TYPE_DOB_DAY_HASHED = "date_of_birth_day_hashed"  # internal only
 S_TYPE_DOB_MONTH_HASHED = "date_of_birth_month_hashed"  # internal only
 S_TYPE_DOB_YEAR_HASHED = "date_of_birth_year_hashed"  # internal only
-S_TYPE_EMAIL_HASHED = "email_address_hashed" #internal only
+S_TYPE_EMAIL_HASHED = "email_address_hashed"  # internal only
 S_TYPE_CITY_HASHED = "city_lowercase_hashed"  # internal only
 S_TYPE_COUNTRY_CODE_HASHED = "country_code_lowercase_hashed"  # internal only
 S_TYPE_GENDER_HASHED = "gender_hashed"  # internal only
 S_TYPE_PHONE_NUMBER_HASHED = "phone_number_digits_only_hashed"  # internal only
 S_TYPE_POSTAL_CODE_HASHED = "postal_code_hashed"  # internal only
-S_TYPE_STATE_OR_PROVINCE_HASHED = (
-    "state_or_province_hashed"  # internal only
-)
+S_TYPE_STATE_OR_PROVINCE_HASHED = "state_or_province_hashed"  # internal only
 S_TYPE_FIRST_NAME = "first_name"
 S_TYPE_FIRST_NAME_HASHED = "first_name_hashed"  # internal only
 S_TYPE_FIRST_NAME_INITIAL = "first_name_initial"
