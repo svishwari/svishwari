@@ -5,6 +5,7 @@
     @click="$emit('click')"
     :disabled="!active"
     :width="width"
+    :min-width="minWidth"
     :height="height"
     elevation="0"
     :ripple="interactable"
@@ -69,6 +70,10 @@ export default {
       required: false,
       default: 135,
     },
+    minWidth: {
+      type: [String, Number],
+      required: false,
+    },
 
     height: {
       type: Number,
@@ -87,6 +92,7 @@ export default {
   }
   .item-headline {
     font-size: 12px;
+    color: var(--v-gray-base) !important;
   }
   .v-list-item__title {
     font-weight: 400;

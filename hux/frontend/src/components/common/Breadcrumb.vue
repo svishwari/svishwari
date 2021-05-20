@@ -22,6 +22,9 @@
 import Icon from "@/components/common/Icon"
 export default {
   name: "breadcrumb",
+  components: {
+    svgAsComponent,
+  },
 
   components: { Icon },
 
