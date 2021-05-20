@@ -2,7 +2,7 @@
   <div>
     <page-header>
       <template slot="left">
-        <breadcrumb
+        <Breadcrumb
           :items="[
             {
               text: $options.name,

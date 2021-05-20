@@ -11,7 +11,7 @@
         <v-icon v-if="icon" class="pr-1" size="20" color="black">
           {{ icon }}
         </v-icon>
-        <svg-as-component :src="`assets/${iconPath}`" />
+        <svg-as-component v-if="iconPath" :src="`assets/${iconPath}`" />
         <div class="text-h2">
           {{ title }}
         </div>

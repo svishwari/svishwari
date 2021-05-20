@@ -3,7 +3,7 @@
     <div slot="header">
       <page-header>
         <template slot="left">
-          <breadcrumb :items="breadcrumbs" />
+          <Breadcrumb :items="breadcrumbs" />
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />

@@ -50,7 +50,7 @@
       </div>
 
       <v-list-item class="pb-2" v-if="!item.menu" :to="item.link">
-        <v-list-item-icon>
+        <v-list-item-icon v-if="item.icon">
           <Icon :type="item.icon" :size="iconSize" color="white" />
         </v-list-item-icon>
         <v-list-item-title class="white--text">
@@ -64,7 +64,7 @@
           :key="menu.title"
           :to="menu.link"
         >
-          <v-list-item-icon>
+          <v-list-item-icon v-if="menu.icon">
             <Icon :type="menu.icon" :size="iconSize" color="white" />
           </v-list-item-icon>
           <v-list-item-title class="white--text">
@@ -112,8 +112,10 @@ export default {
 
 <style lang="scss" scoped>
 .side-nav-bar {
-  background-image: url("../assets/images/nav-bg.png");
-  background-position: bottom center;
+  @media (min-height: 900px) {
+    background-image: url("../assets/images/nav-bg.png");
+    background-position: bottom center;
+  }
 
   .client {
     align-items: center;
