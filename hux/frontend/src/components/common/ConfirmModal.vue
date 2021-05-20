@@ -13,20 +13,20 @@
         class="modal-footer background d-flex justify-space-between align-center px-10 py-5"
       >
         <huxButton
-          :ButtonText="leftBtnText"
+          :button-text="leftBtnText"
           size="large"
           variant="tertiary"
           height="40"
           isTile
-          @click="onLeftClick()"
+          @click="onCancel()"
         />
         <huxButton
-          :ButtonText="rightBtnText"
+          :button-text="rightBtnText"
           size="large"
           :variant="type"
           height="40"
           isTile
-          @click="onRightClick()"
+          @click="onConfirm()"
         />
       </div>
     </div>
@@ -46,7 +46,7 @@ export default {
     type: {
       type: String,
       required: false,
-      default: "secondary",
+      default: "primary",
     },
 
     title: {
@@ -106,11 +106,11 @@ export default {
   },
 
   methods: {
-    onLeftClick: function () {
-      this.$emit("onLeftClick")
+    onCancel: function () {
+      this.$emit("onCancel")
     },
-    onRightClick: function () {
-      this.$emit("onRightClick")
+    onConfirm: function () {
+      this.$emit("onConfirm")
     },
   },
 }
