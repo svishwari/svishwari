@@ -883,7 +883,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_metrics_pending_transfer_feedback(self):
-        """Performance metrics pending transfer feedback are retrieved."""
+        """Performance metrics pending transfer for feedback are retrieved."""
 
         delivery_job_id = self._set_delivery_job()
         end_time = datetime.datetime.utcnow()
