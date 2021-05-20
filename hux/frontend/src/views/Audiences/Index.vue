@@ -4,16 +4,31 @@
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />
       </template>
+      <template slot="right">
+        <v-btn
+          min-width="40"
+          height="40"
+          width="40"
+          color="primary"
+          :disabled="true"
+        >
+          <v-icon size="23" color="white">mdi-download</v-icon>
+        </v-btn>
+      </template>
     </PageHeader>
-    <PageHeader class="mt-1" :headerHeight="71">
+    <PageHeader class="top-bar" :headerHeight="71">
       <template slot="left">
-        <v-icon large :disabled="true" @click="refresh">
-          mdi-filter-variant
-        </v-icon>
+        <v-icon medium :disabled="true"> mdi-filter-variant </v-icon>
+        <v-icon medium :disabled="true" class="pl-6"> mdi-magnify </v-icon>
       </template>
 
       <template slot="right">
-        <v-icon large :disabled="true" color="primary" @click="refresh">
+        <v-icon
+          medium
+          :disabled="true"
+          color="primary refresh"
+          @click="refresh"
+        >
           mdi-refresh
         </v-icon>
         <router-link
@@ -28,7 +43,7 @@
             variant="primary"
             size="large"
             v-bind:isTile="true"
-            class="ma-2 font-weight-regular"
+            class="ma-2 font-weight-regular no-shadow mr-0"
           ></huxButton>
         </router-link>
       </template>
@@ -40,7 +55,7 @@
         :tableData="rowData"
         :rowHeight="60"
         height="350px"
-        hasCheckBox
+        class="pl-3"
       ></hux-table>
 
       <EmptyPage v-if="!isDataExists">
@@ -105,7 +120,7 @@ export default {
           text: "Audiences",
           disabled: false,
           href: this.$route.path,
-          icon: "mdi-flip-h mdi-account-plus-outline",
+          iconPath: "icons/audience_icon",
         },
       ],
 
@@ -131,18 +146,6 @@ export default {
           field: "size",
           sortable: true,
           cellRendererFramework: sizeCell,
-        },
-        {
-          headerName: "Destinations",
-          field: "destinations",
-          sortable: true,
-          cellRendererFramework: DestinationCell,
-        },
-        {
-          headerName: "Attributes",
-          field: "attributes",
-          sortable: true,
-          cellRendererFramework: attributeCell,
         },
         {
           headerName: "Last Delivered",
@@ -198,6 +201,18 @@ export default {
 .audiences-wrap {
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
+  }
+  .page-header--wrap {
+    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base), 0px 1px 1px 0px var(--v-lightGrey-base), 0px 1px 2px 0px var(--v-lightGrey-base) !important
+  }
+  .top-bar {
+    margin-top: 1px;
+    .v-icon--disabled {
+      color: var(--v-lightGrey-base) !important;
+    }
+    .text--refresh {
+      margin-right: 10px;
+    }
   }
   ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
     display: initial;

@@ -64,3 +64,6 @@ $rounded: (
 .background-white {
   background: var(--v-white-base);
 }
+.no-shadow {
+  box-shadow: none !important;
+}

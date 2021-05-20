@@ -11,6 +11,7 @@
         <v-icon v-if="icon" class="pr-1" size="20" color="black">
           {{ icon }}
         </v-icon>
+        <svg-as-component :src="`assets/${iconPath}`" />
         <div class="text-h2">
           {{ title }}
         </div>
@@ -27,11 +28,19 @@
 </template>
 
 <script>
+import svgAsComponent from "./common/SVG"
 export default {
   name: "PageHeader",
-
+  components: {
+    svgAsComponent,
+  },
   props: {
     icon: {
+      type: String,
+      required: false,
+    },
+
+    iconPath: {
       type: String,
       required: false,
     },
