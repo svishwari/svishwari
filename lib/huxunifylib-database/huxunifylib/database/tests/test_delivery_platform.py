@@ -823,6 +823,8 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         doc = dpm.set_performance_metrics(
             database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -862,6 +864,8 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         metrics_init_doc = dpm.set_performance_metrics(
             database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -891,6 +895,8 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         metrics_doc_1 = dpm.set_performance_metrics(
             database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
@@ -900,6 +906,8 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         metrics_doc_2 = dpm.set_performance_metrics(
             database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
             delivery_job_id=delivery_job_id,
             metrics_dict={"Clicks": 11234, "Conversions": 150},
             start_time=start_time,

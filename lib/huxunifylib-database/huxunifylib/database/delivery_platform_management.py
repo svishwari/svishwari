@@ -1548,6 +1548,8 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
 )
 def set_performance_metrics(
     database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    delivery_platform_name: str,
     delivery_job_id: ObjectId,
     generic_campaign_id: list,
     metrics_dict: dict,
@@ -1558,6 +1560,8 @@ def set_performance_metrics(
 
     Args:
         database (DatabaseClient): A database client.
+        delivery_platform_id (ObjectId): delivery platform ID
+        delivery_platform_name (str): delivery platform name
         delivery_job_id (ObjectId): The delivery job ID of audience.
         generic_campaign_id: (dict): generic campaign ID
         metrics_dict (dict): A dict containing performance metrics.
@@ -1579,6 +1583,8 @@ def set_performance_metrics(
     curr_time = datetime.datetime.utcnow()
 
     doc = {
+        c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
+        c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
