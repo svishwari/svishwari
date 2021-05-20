@@ -9,7 +9,11 @@
         <v-icon color="neroBlack" size="21" class="pr-1" v-if="item.icon">
           {{ item.icon }}
         </v-icon>
-        <svg-as-component class="mr-2" :src="`assets/${item.iconPath}`" v-if="item.iconPath"/>
+        <svg-as-component
+          class="mr-2"
+          :src="`assets/${item.iconPath}`"
+          v-if="item.iconPath"
+        />
         <span class="neroBlack--text">{{ item.text }}</span>
       </v-breadcrumbs-item>
     </template>

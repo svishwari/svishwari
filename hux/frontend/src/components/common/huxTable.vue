@@ -10,8 +10,7 @@
       :overlayNoRowsTemplate="overlayNoRowsTemplate"
       :frameworkComponents="frameworkComponents"
       :rowHeight="rowHeight"
-    >
-    </ag-grid-vue>
+    ></ag-grid-vue>
   </div>
 </template>
 
@@ -154,13 +153,13 @@ export default {
         .ag-header-row {
           height: 32px !important;
         }
-        
       }
-      .ag-row {.ag-cell {
-        display: flex;
-        align-items: center;
-        cursor: default !important;
-      }
+      .ag-row {
+        .ag-cell {
+          display: flex;
+          align-items: center;
+          cursor: default !important;
+        }
       }
       .ag-row-hover {
         background: rgba(0, 118, 168, 0.05);

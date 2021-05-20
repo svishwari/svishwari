@@ -18,19 +18,14 @@
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
       <template slot="left">
-        <v-icon medium :disabled="true"> mdi-filter-variant </v-icon>
-        <v-icon medium :disabled="true" class="pl-6"> mdi-magnify </v-icon>
+        <v-icon medium :disabled="true">mdi-filter-variant</v-icon>
+        <v-icon medium :disabled="true" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template slot="right">
-        <v-icon
-          medium
-          :disabled="true"
-          color="primary refresh"
-          @click="refresh"
+        <v-icon medium :disabled="true" color="primary refresh" @click="refresh"
+          >mdi-refresh</v-icon
         >
-          mdi-refresh
-        </v-icon>
         <router-link
           :to="{ name: 'createAudience' }"
           class="text-decoration-none"
@@ -59,12 +54,12 @@
       ></hux-table>
 
       <EmptyPage v-if="!isDataExists">
-        <template v-slot:icon> mdi-alert-circle-outline </template>
-        <template v-slot:title> Oops! There’s nothing here yet </template>
+        <template v-slot:icon>mdi-alert-circle-outline</template>
+        <template v-slot:title>Oops! There’s nothing here yet</template>
         <template v-slot:subtitle>
-          You currently have no audiences created! You can create the <br />
-          framework first then complete the details later. <br />
-          Begin by selecting the button below.
+          You currently have no audiences created! You can create the
+          <br />framework first then complete the details later. <br />Begin by
+          selecting the button below.
         </template>
         <template v-slot:button>
           <router-link
@@ -96,13 +91,10 @@ import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxTable from "@/components/common/huxTable.vue"
-import StatusCell from "@/components/common/huxTable/StatusCell"
 import UserAvatarCell from "@/components/common/huxTable/UserAvatarCell"
 import MenuCell from "@/components/common/huxTable/MenuCell"
-import DestinationCell from "@/components/common/huxTable/DestinationCell"
 import DateTimeCell from "@/components/common/huxTable/DateTimeCell"
 import sizeCell from "@/components/common/huxTable/sizeCell"
-import attributeCell from "@/components/common/huxTable/attributeCell"
 
 export default {
   name: "audiences",
@@ -134,7 +126,7 @@ export default {
           width: "300",
           cellRendererFramework: MenuCell,
           cellClass: "menu-cells",
-          sortingOrder: ['desc', 'asc'],
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Size",
@@ -142,7 +134,7 @@ export default {
           sortable: true,
           width: "100",
           cellRendererFramework: sizeCell,
-          sortingOrder: ['desc', 'asc'],
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Last delivered",
@@ -150,7 +142,7 @@ export default {
           width: "170",
           sortable: true,
           cellRendererFramework: DateTimeCell,
-          sortingOrder: ['desc', 'asc'],
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Last updated",
@@ -158,7 +150,7 @@ export default {
           sortable: true,
           width: "170",
           cellRendererFramework: DateTimeCell,
-          sortingOrder: ['desc', 'asc'],
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Last updated by",
@@ -166,7 +158,7 @@ export default {
           sortable: true,
           width: "140",
           cellRendererFramework: UserAvatarCell,
-          sortingOrder: ['desc', 'asc'],
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Created",
@@ -174,14 +166,14 @@ export default {
           sortable: true,
           width: "160",
           cellRendererFramework: DateTimeCell,
-          sortingOrder: ['desc', 'asc'],
+          sortingOrder: ["desc", "asc"],
         },
         {
           headerName: "Created by",
           field: "createdBy",
           sortable: true,
           cellRendererFramework: UserAvatarCell,
-          sortingOrder: ['desc', 'asc'],
+          sortingOrder: ["desc", "asc"],
         },
       ],
     }
@@ -210,7 +202,9 @@ export default {
     display: none;
   }
   .page-header--wrap {
-    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base), 0px 1px 1px 0px var(--v-lightGrey-base), 0px 1px 2px 0px var(--v-lightGrey-base) !important
+    box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
+      0px 1px 1px 0px var(--v-lightGrey-base),
+      0px 1px 2px 0px var(--v-lightGrey-base) !important;
   }
   .top-bar {
     margin-top: 1px;
