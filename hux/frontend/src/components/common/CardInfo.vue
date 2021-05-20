@@ -2,11 +2,11 @@
   <v-hover>
     <template v-slot:default="{ hover }">
       <v-card
-        class="text-center rounded-lg"
+        class="text-center rounded-lg card-info-wrapper"
         min-width="220px"
         max-width="260px"
         :disabled="!active"
-        :to="{ name: to }"
+        :to="to"
         @click="$emit('click')"
         :elevation="hover ? 10 : 0"
         :hover="true"
@@ -16,11 +16,11 @@
           fab
           :ripple="false"
           elevation="0"
-          outlined
+          :outlined="active"
           color="zircon"
           class="mt-4"
         >
-          <v-icon color="primary" x-large>
+          <v-icon :color="active ? 'primary' : 'white'" x-large>
             {{ icon }}
           </v-icon>
         </v-btn>
@@ -68,9 +68,16 @@ export default {
     },
 
     to: {
-      type: String,
+      type: Object,
       required: false,
     },
   },
 }
 </script>
+<style lang="scss" scoped>
+.card-info-wrapper {
+  .v-card__title {
+    margin-bottom: 10px;
+  }
+}
+</style>

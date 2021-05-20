@@ -92,7 +92,7 @@
       </template>
     </hux-footer>
 
-    <drawer v-model="drawer">
+    <Drawer v-model="drawer">
       <template v-slot:header-left>
         <div class="d-flex align-baseline">
           <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
@@ -139,7 +139,7 @@
           </CardHorizontal>
         </div>
       </template>
-    </drawer>
+    </Drawer>
   </page>
 </template>
 
@@ -240,7 +240,7 @@ export default {
     async add() {
       try {
         await this.addDestination(this.destination)
-        this.$router.push({ name: "connections" })
+        this.$router.push({ name: "Connections" })
       } catch (error) {
         console.error(error)
       }
@@ -248,12 +248,15 @@ export default {
 
     cancel() {
       // TODO: need to add modal that confirms to leave configuration
-      this.$router.push({ name: "connections" })
+      this.$router.push({ name: "Connections" })
     },
   },
 
   async mounted() {
     await this.getDestinations()
+    if (this.$route.query.select) {
+      this.drawer = true
+    }
   },
 }
 </script>
