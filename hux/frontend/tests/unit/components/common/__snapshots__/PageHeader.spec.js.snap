@@ -1,17 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page Header Page header displays both slots and props content 1`] = `
-<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-8">
+<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
-    <div class="page-header-container d-flex">
-      <v-icon-stub size="20" color="black">
+    <div class="d-flex">
+      <v-icon-stub size="20" color="black" class="pr-1">
         mdi-plus
       </v-icon-stub>
-      <div class="header-title pl-1">
+      <svg-as-component-stub src="assets/undefined"></svg-as-component-stub>
+      <div class="text-h2">
         Welcome back, User
       </div>
     </div>
-    <div>
+    <div class="mt-2">
       <div>Description</div>
     </div>
     <div>Left slot</div>
@@ -23,34 +24,34 @@ exports[`Page Header Page header displays both slots and props content 1`] = `
 `;
 
 exports[`Page Header Page header displays props content 1`] = `
-<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-8">
+<v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
-    <div class="page-header-container d-flex">
-      <v-icon-stub size="20" color="black">
+    <div class="d-flex">
+      <v-icon-stub size="20" color="black" class="pr-1">
         mdi-plus
       </v-icon-stub>
-      <div class="header-title pl-1">
+      <svg-as-component-stub src="assets/undefined"></svg-as-component-stub>
+      <div class="text-h2">
         Welcome back, User
       </div>
     </div>
-    <div></div>
+    <!---->
   </div>
   <div class="page-header--right"></div>
 </v-card-stub>
 `;
 
 exports[`Page Header Page header displays slots content 1`] = `
-<v-card-stub loaderheight="4" tag="div" color="white" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-8">
+<v-card-stub loaderheight="4" tag="div" color="white" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
-    <div class="page-header-container d-flex">
-      <v-icon-stub size="20" color="black">
-
-      </v-icon-stub>
-      <div class="header-title pl-1">
+    <div class="d-flex">
+      <!---->
+      <svg-as-component-stub src="assets/undefined"></svg-as-component-stub>
+      <div class="text-h2">
 
       </div>
     </div>
-    <div>
+    <div class="mt-2">
       <div>Description</div>
     </div>
     <div>Left slot</div>
