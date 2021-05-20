@@ -99,7 +99,7 @@ export default {
       breadcrumbs: [
         {
           text: "Connections",
-          icon: "mdi-connection",
+          icon: "connections",
         },
       ],
       drawer: false,

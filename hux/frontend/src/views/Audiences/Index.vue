@@ -105,7 +105,7 @@ export default {
           text: "Audiences",
           disabled: false,
           href: this.$route.path,
-          icon: "mdi-flip-h mdi-account-plus-outline",
+          icon: "audiences",
         },
       ],
 

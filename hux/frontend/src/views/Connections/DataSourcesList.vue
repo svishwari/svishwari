@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex align-end mb-4">
-      <v-icon> mdi-cloud-download-outline </v-icon>
+      <Icon type="data-sources-list" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <v-icon @click="toggleDrawer" class="ml-2 add-icon" color="primary">
         mdi-plus-circle
@@ -38,6 +38,7 @@
 import { mapGetters } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
+import Icon from "@/components/common/Icon"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 import AddDataSource from "@/views/DataSources/Configuration"
@@ -45,7 +46,7 @@ import AddDataSource from "@/views/DataSources/Configuration"
 export default {
   name: "data-sources-list",
 
-  components: { EmptyStateData, AddDataSource, CardHorizontal, Status },
+  components: { EmptyStateData, AddDataSource, CardHorizontal, Status, Icon },
 
   data() {
     return {

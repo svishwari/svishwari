@@ -51,7 +51,7 @@
 
       <v-list-item class="pb-2" v-if="!item.menu" :to="item.link">
         <v-list-item-icon>
-          <v-icon :size="iconSize" color="white"> {{ item.icon }} </v-icon>
+          <Icon :type="item.icon" :size="iconSize" color="white" />
         </v-list-item-icon>
         <v-list-item-title class="white--text">
           {{ item.title }}
@@ -65,7 +65,7 @@
           :to="menu.link"
         >
           <v-list-item-icon>
-            <v-icon :size="iconSize" color="white"> {{ menu.icon }} </v-icon>
+            <Icon :type="menu.icon" :size="iconSize" color="white" />
           </v-list-item-icon>
           <v-list-item-title class="white--text">
             {{ menu.title }}
@@ -82,9 +82,12 @@
 
 <script>
 import menuConfig from "@/menuConfig.json"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "SideMenu",
+
+  components: { Icon },
 
   props: {
     toggle: Boolean,
@@ -96,7 +99,7 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? "x-large" : "large"
+      return this.isMini ? 24 : 21
     },
   },
 

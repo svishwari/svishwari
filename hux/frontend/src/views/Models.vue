@@ -6,7 +6,7 @@
           :items="[
             {
               text: $options.name,
-              icon: 'mdi-tune-vertical-variant',
+              icon: 'models',
             },
           ]"
         />
