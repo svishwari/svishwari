@@ -1,6 +1,6 @@
 <template>
   <v-col cols="12" class="attribute-rule pt-0">
-    <v-col cols="12">
+    <v-col cols="12 pr-0">
       <strong class="text-h5 neroBlack--text"
         >Select attribute(s) - <i style="font-size: 12px">Optional</i></strong
       >
@@ -31,7 +31,7 @@
         </v-card-actions>
       </v-card>
     </v-col>
-    <v-col col="12" v-if="rules.length > 0">
+    <v-col col="12" v-if="rules.length > 0" class="pr-0">
       <div
         v-for="(rule, index) in rules"
         :key="`rule-${index}`"
@@ -46,7 +46,7 @@
           of the following
         </span>
         <div
-          class="col-12 row pt-0 pb-2"
+          class="col-12 row pt-0 pb-2 pr-0"
           v-for="(condition, ixcondition) in rule.conditions"
           :key="`${index}-ruleCondition-${ixcondition}`"
         >
@@ -94,7 +94,7 @@
           <v-chip :ripple="false">OR</v-chip>
         </div>
         <div class="add-section-wrap" v-if="index == lastIndex">
-          <v-col col="12" class="row">
+          <v-col col="12" class="row pr-0">
             <div class="add-section col-10">
               <v-btn icon color="primary" @click="addNewSection()">
                 <v-icon>mdi-plus-circle</v-icon>
