@@ -122,7 +122,7 @@ export default {
 
     drawer() {
       if (!this.drawer) {
-        this.$router.replace({ query: null })
+        this.$router.push({ name: "Connections" })
       }
     },
   },
