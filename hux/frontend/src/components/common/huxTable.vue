@@ -178,6 +178,10 @@ export default {
         }
       }
       .ag-header-row {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--v-neroBlack-base);
         .ag-checkbox {
           .ag-input-wrapper {
             display: block;
