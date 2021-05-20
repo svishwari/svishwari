@@ -1621,7 +1621,7 @@ def get_performance_metrics(
         max_end_time (datetime.datetime, optional):
             Max start time of metrics. Defaults to None.
         pending_transfer_for_feedback (bool, optional): If True, retrieve only
-            merics that has not transferred for feedback. Defaults to None.
+            metrics that have not been transferred for feedback. Defaults to None.
 
     Raises:
         de.InvalidID: Invalid ID for delivery job.
