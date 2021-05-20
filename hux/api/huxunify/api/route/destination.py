@@ -70,7 +70,7 @@ class DestinationGetView(SwaggerView):
 
     @marshal_with(DestinationGetSchema)
     def get(self, destination_id: str) -> Tuple[dict, int]:
-        """Get a destination by destination ID.
+        """Retrieves a Destination.
 
         ---
         Args:
@@ -400,7 +400,7 @@ class DestinationsDeleteView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     def delete(self) -> Tuple[list, int]:
-        """Delete destination by a list of ID(s).
+        """Deletes a Destination.
         Ability to delete one or multiple.
 
         ---

@@ -59,18 +59,18 @@ class AudienceView(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of all audiences",
+            "description": "List of all Audiences.",
             "schema": {"type": "array", "items": AudienceGetSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all audience."
+            "description": "Failed to get all Audiences."
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
-        """Retrieves all audience.
+        """Retrieves All Audiences.
 
         ---
         Returns:
@@ -113,7 +113,7 @@ class AudienceGetView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "schema": AudienceGetSchema,
-            "description": "Retrieved audience details.",
+            "description": "Retrieved Audience details.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve audience details.",
@@ -127,7 +127,7 @@ class AudienceGetView(SwaggerView):
 
     # pylint: disable=no-self-use
     def get(self, audience_id: str) -> Tuple[dict, int]:
-        """Get an audience by ID.
+        """Retrieves an Audience.
 
         ---
         Args:
@@ -211,7 +211,7 @@ class AudiencePostView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     def post(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
-        """Creates a new audience.
+        """Creates a new Audience.
 
         ---
         Returns:
@@ -302,7 +302,7 @@ class AudiencePutView(SwaggerView):
 
     # pylint: disable=no-self-use
     def put(self, audience_id: str) -> Tuple[dict, int]:
-        """Updates an existing audience.
+        """Updates an Audience.
 
         ---
         Args:
