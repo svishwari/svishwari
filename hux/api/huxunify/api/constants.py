@@ -13,14 +13,14 @@ HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
 TOTAL_CUSTOMERS = "total_customers"
-COUNTRIES = "countries"
-STATES = "states"
-CITIES = "cities"
+COUNTRIES = "total_countries"
+STATES = "total_us_states"
+CITIES = "total_cities"
 MIN_AGE = "min_age"
 MAX_AGE = "max_age"
-GENDER_WOMEN = "women"
-GENDER_MEN = "men"
-GENDER_OTHER = "other"
+GENDER_WOMEN = "gender_women"
+GENDER_MEN = "gender_men"
+GENDER_OTHER = "gender_other"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -168,6 +168,17 @@ AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
 
+DUMMY_INSIGHTS_RESPONSE = {
+    TOTAL_CUSTOMERS: 121321321,
+    COUNTRIES: 2,
+    STATES: 28,
+    CITIES: 246,
+    MIN_AGE: 34,
+    MAX_AGE: 100,
+    GENDER_WOMEN: 0.4651031,
+    GENDER_MEN: 0.481924,
+    GENDER_OTHER: 0.25219,
+}
 
 PARAM_STORE_PREFIX = "huxunify"
 PARAMETER_STORE_ERROR_MSG = (
