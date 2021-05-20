@@ -1,7 +1,7 @@
 <template>
   <v-menu bottom offset-y open-on-hover>
     <template v-slot:activator="{ on, attrs }">
-      <span v-bind="attrs" v-on="on">
+      <span v-bind="attrs" v-on="on" class="cursor-default">
         {{ cellValue.approxSize }}
       </span>
     </template>

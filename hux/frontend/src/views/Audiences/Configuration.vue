@@ -1,5 +1,5 @@
 <template>
-  <page class="white create-audience-wrap">
+  <page class="white create-audience-wrap" maxWidth="100%">
     <div>
       <div class="heading font-weight-light neroBlack--text">
         Add an audience
@@ -16,7 +16,8 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          :width="130"
+          width="11.368852459016393%"
+          :min-width="126.5"
           :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
@@ -26,11 +27,11 @@
           :interactable="true"
         ></MetricCard>
       </div>
-      <v-divider class="divider my-10"></v-divider>
+      <v-divider class="divider mt-2 mb-9"></v-divider>
     </div>
 
     <div class="timeline-wrapper">
-      <v-form ref="form" class="mx-2" v-model="isFormValid" lazy-validation>
+      <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
         <v-timeline align-top dense class="">
           <v-timeline-item color="blue" class="timeline-section mb-7">
             <template v-slot:icon class="timeline-icon-section">
@@ -48,25 +49,24 @@
                   backgroundColor="white"
                   v-bind:required="true"
                   v-model="audience.audienceName"
-                  class="mt-1 aud-name-field text-caption neroBlack--text"
+                  class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"
                 ></TextField>
               </v-col>
               <v-col cols="8">
                 <div class="mt-8 ml-15 text-caption neroBlack--text">
                   Add to an engagement -
-                  <span style="tilt">you must have at least one</span>
+                  <i style="tilt">you must have at least one</i>
                   <div>
                     <v-icon
                       size="30"
-                      class="add-icon"
+                      class="add-icon mt-1"
                       color="primary"
                       @click="
                         engagementDrawer.insideFlow = !engagementDrawer.insideFlow
                       "
+                      >mdi-plus-circle</v-icon
                     >
-                      mdi-plus-circle
-                    </v-icon>
                     <v-chip
                       class="ma-2"
                       close
@@ -74,9 +74,8 @@
                       text-color="primary"
                       v-for="(item, index) in selectedEngagements"
                       :key="`engagement-${index}`"
+                      >{{ item.name }}</v-chip
                     >
-                      {{ item.name }}
-                    </v-chip>
                   </div>
                 </div>
               </v-col>
@@ -103,15 +102,14 @@
                   Select destination(s) -
                   <i style="font-size: 12px">Optional</i>
                 </strong>
-                <div class="d-flex">
+                <div>
                   <v-icon
                     size="30"
-                    class="add-icon"
+                    class="add-icon mt-1"
                     color="primary"
                     @click="toggleDrawer()"
+                    >mdi-plus-circle</v-icon
                   >
-                    mdi-plus-circle
-                  </v-icon>
                   <Logo
                     class="added-logo"
                     v-for="destination in audience.destinations"
@@ -129,7 +127,7 @@
             </template>
             <v-row class="pt-1">
               <v-col cols="12">
-                <strong> Create lookalike audience </strong>
+                <strong class="text-h5">Create lookalike audience</strong>
               </v-col>
             </v-row>
           </v-timeline-item>
@@ -279,8 +277,7 @@
                       resetNewEngagement()
                       engagementDrawer.viewStep = 2
                     "
-                  >
-                  </huxButton>
+                  ></huxButton>
                 </div>
                 <div class="engagement-list-wrap">
                   <CardHorizontal
@@ -323,8 +320,7 @@
                                 : '$radioOff'
                             "
                           />
-                          <v-icon class="ico">mdi-gesture-tap</v-icon>
-                          Manual
+                          <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
                         </v-btn>
                         <v-btn>
                           <v-radio
@@ -334,8 +330,8 @@
                                 : '$radioOff'
                             "
                           />
-                          <v-icon class="ico">mdi-clock-check-outline</v-icon>
-                          Recurring
+                          <v-icon class="ico">mdi-clock-check-outline</v-icon
+                          >Recurring
                         </v-btn>
                       </v-btn-toggle>
                     </div>
@@ -584,6 +580,7 @@ export default {
     padding-right: 30px;
     .theme--light.v-timeline {
       padding-top: 0px;
+      left: -30px;
       .theme--light.v-timeline-item:last-child {
         padding-bottom: 0px;
       }
@@ -603,15 +600,49 @@ export default {
       }
     }
     .theme--light.v-timeline:before {
-      border: 1px dashed var(--v-info-base);
+      background: linear-gradient(
+          to right,
+          var(--v-skyBlueDark-base) 50%,
+          rgba(255, 255, 255, 0) 0%
+        ),
+        linear-gradient(
+          var(--v-skyBlueDark-base) 50%,
+          rgba(255, 255, 255, 0) 0%
+        ),
+        linear-gradient(
+          to right,
+          var(--v-skyBlueDark-base) 49%,
+          rgba(255, 255, 255, 0) 0%
+        ),
+        linear-gradient(
+          var(--v-skyBlueDark-base) 50%,
+          rgba(255, 255, 255, 0) 0%
+        );
+      background-position: top, right, bottom, left;
+      background-repeat: repeat-x, repeat-y;
+      background-size: 12px 0px, 1px 12px;
     }
     .aud-name-field {
-      .v-input__control {
-        .v-input__slot {
-          min-height: 40px;
-          .v-text-field__slot {
-            .v-label {
-              top: 9px;
+      .v-input {
+        .v-input__control {
+          .v-input__slot {
+            min-height: 40px;
+            .v-text-field__slot {
+              .v-label {
+                top: 9px;
+              }
+            }
+            fieldset {
+              color: var(--v-lightGrey-base);
+            }
+          }
+        }
+        &.error--text {
+          .v-input__control {
+            .v-input__slot {
+              fieldset {
+                color: inherit;
+              }
             }
           }
         }

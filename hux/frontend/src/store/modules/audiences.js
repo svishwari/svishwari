@@ -35,7 +35,10 @@ const state = {
           { attribute: "Demgraphics" },
         ],
       },
-      lastDelivered: "Today, 12:00 PM",
+      lastDelivered: {
+        shortDate: "Today, 12:00 PM",
+        FullDate: "03/22/2021 12:45 PM",
+      },
       lastUpdated: {
         shortDate: "Today, 12:00 PM",
         FullDate: "03/22/2021 12:45 PM",
@@ -100,7 +103,10 @@ const state = {
           { attribute: "Demgraphics" },
         ],
       },
-      lastDelivered: "Today, 12:00 PM",
+      lastDelivered: {
+        shortDate: "Today, 12:00 PM",
+        FullDate: "03/22/2021 12:45 PM",
+      },
       lastUpdated: {
         shortDate: "Today, 12:00 PM",
         FullDate: "03/22/2021 12:45 PM",
@@ -167,7 +173,10 @@ const state = {
           { attribute: "Demgraphics" },
         ],
       },
-      lastDelivered: "Today, 12:00 PM",
+      lastDelivered: {
+        shortDate: "Today, 12:00 PM",
+        FullDate: "03/22/2021 12:45 PM",
+      },
       lastUpdated: {
         shortDate: "Today, 12:00 PM",
         FullDate: "03/22/2021 12:45 PM",
@@ -233,7 +242,10 @@ const state = {
           { attribute: "Demgraphics" },
         ],
       },
-      lastDelivered: "Today, 12:00 PM",
+      lastDelivered: {
+        shortDate: "Today, 12:00 PM",
+        FullDate: "03/22/2021 12:45 PM",
+      },
       lastUpdated: {
         shortDate: "Today, 12:00 PM",
         FullDate: "03/22/2021 12:45 PM",
@@ -298,7 +310,10 @@ const state = {
           { attribute: "Demgraphics" },
         ],
       },
-      lastDelivered: "Today, 12:00 PM",
+      lastDelivered: {
+        shortDate: "Today, 12:00 PM",
+        FullDate: "03/22/2021 12:45 PM",
+      },
       lastUpdated: {
         shortDate: "Today, 12:00 PM",
         FullDate: "03/22/2021 12:45 PM",
@@ -365,7 +380,10 @@ const state = {
           { attribute: "Demgraphics" },
         ],
       },
-      lastDelivered: "Today, 12:00 PM",
+      lastDelivered: {
+        shortDate: "Today, 12:00 PM",
+        FullDate: "03/22/2021 12:45 PM",
+      },
       lastUpdated: {
         shortDate: "Today, 12:00 PM",
         FullDate: "03/22/2021 12:45 PM",
