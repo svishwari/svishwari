@@ -4,6 +4,7 @@ This module enables functionality related to delivery platform management.
 # pylint: disable=C0302
 
 import logging
+from functools import partial
 import datetime
 from operator import itemgetter
 
@@ -1545,18 +1546,22 @@ def get_lookalike_audiences_count(database: DatabaseClient) -> int:
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_delivered_audience_performance_metrics(
+def set_performance_metrics(
     database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    delivery_platform_name: str,
     delivery_job_id: ObjectId,
     generic_campaign_id: list,
     metrics_dict: dict,
     start_time: datetime.datetime,
     end_time: datetime.datetime,
 ) -> dict:
-    """A function to store the delivered audience performance metrics.
+    """Store campaign performance metrics.
 
     Args:
         database (DatabaseClient): A database client.
+        delivery_platform_id (ObjectId): delivery platform ID
+        delivery_platform_name (str): delivery platform name
         delivery_job_id (ObjectId): The delivery job ID of audience.
         generic_campaign_id: (dict): generic campaign ID
         metrics_dict (dict): A dict containing performance metrics.
@@ -1578,12 +1583,16 @@ def set_delivered_audience_performance_metrics(
     curr_time = datetime.datetime.utcnow()
 
     doc = {
+        c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
+        c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
         c.METRICS_END_TIME: end_time,
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
         c.PERFORMANCE_METRICS: metrics_dict,
+        # By default not transferred for feedback to CDM yet
+        c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
     }
 
     try:
@@ -1601,48 +1610,108 @@ def set_delivered_audience_performance_metrics(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivered_audience_performance_metrics(
+def get_performance_metrics(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
+    pending_transfer_for_feedback: bool = False,
 ) -> list:
-    """A function to get the delivered audience performance metrics.
+    """Retrieve campaign performance metrics.
 
     Args:
-        database (DatabaseClient): A database client.
-        delivery_job_id (ObjectId): The delivery job ID of audience.
-        min_start_time (datetime): Min start time of metrics.
-        max_end_time (datetime): Max end time of metrics.
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+        min_start_time (datetime.datetime, optional):
+            Min start time of metrics. Defaults to None.
+        max_end_time (datetime.datetime, optional):
+            Max start time of metrics. Defaults to None.
+        pending_transfer_for_feedback (bool, optional): If True, retrieve only
+            metrics that have not been transferred for feedback. Defaults to None.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
 
     Returns:
-        list: A list of metrics.
+        list: list of metrics.
     """
 
-    metrics_list = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
 
     # Check validity of delivery job ID
     doc = get_delivery_job(database, delivery_job_id)
-
-    if doc is None:
+    if not doc:
         raise de.InvalidID(delivery_job_id)
 
     metric_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
 
-    if min_start_time is not None:
+    if min_start_time:
         metric_queries.append({c.METRICS_START_TIME: {"$gte": min_start_time}})
 
-    if max_end_time is not None:
+    if max_end_time:
         metric_queries.append({c.METRICS_END_TIME: {"$lte": max_end_time}})
+
+    if pending_transfer_for_feedback:
+        metric_queries.append(
+            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+        )
 
     mongo_query = {"$and": metric_queries}
 
     try:
         cursor = collection.find(mongo_query)
-        metrics_list = list(cursor)
+        return list(cursor)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return metrics_list
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def _set_performance_metrics_status(
+    database: DatabaseClient,
+    performance_metrics_id: ObjectId,
+    performance_metrics_status: str,
+) -> dict:
+    """Set performance metrics status.
+
+    Args:
+        database (DatabaseClient): database client.
+        performance_metrics_id (ObjectId): performance metrics ID.
+        performance_metrics_status (str): performance metrics status.
+
+    Returns:
+        dict: performance metrics document.
+    """
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    # TODO Below is also designed to accommodate
+    # "transferred for reporting" status in the future
+    update_doc = {}
+    if performance_metrics_status == c.STATUS_TRANSFERRED_FOR_FEEDBACK:
+        update_doc.update({c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
+
+    if update_doc:
+        try:
+            doc = collection.find_one_and_update(
+                {c.ID: performance_metrics_id},
+                {"$set": update_doc},
+                upsert=False,
+                new=True,
+            )
+            return doc
+        except pymongo.errors.OperationFailure as exc:
+            logging.error(exc)
+
+    return None
+
+
+set_transferred_for_feedback = partial(
+    _set_performance_metrics_status,
+    performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+)
