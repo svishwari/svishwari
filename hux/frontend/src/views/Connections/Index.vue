@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <page maxWidth="100%">
     <div slot="header">
       <page-header>
         <template slot="left">
