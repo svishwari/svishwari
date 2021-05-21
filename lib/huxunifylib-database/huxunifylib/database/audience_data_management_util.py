@@ -74,12 +74,12 @@ def add_stats_to_update_dict(
 
     # Remove no-insights fields from col_list
     no_insight_fields = [
-        c.S_TYPE_FACEBOOK_CITY,
-        c.S_TYPE_FACEBOOK_COUNTRY_CODE,
-        c.S_TYPE_FACEBOOK_GENDER,
-        c.S_TYPE_FACEBOOK_PHONE_NUMBER,
-        c.S_TYPE_FACEBOOK_POSTAL_CODE,
-        c.S_TYPE_FACEBOOK_STATE_OR_PROVINCE,
+        c.S_TYPE_CITY_HASHED,
+        c.S_TYPE_COUNTRY_CODE_HASHED,
+        c.S_TYPE_GENDER_HASHED,
+        c.S_TYPE_PHONE_NUMBER_HASHED,
+        c.S_TYPE_POSTAL_CODE_HASHED,
+        c.S_TYPE_STATE_OR_PROVINCE_HASHED,
         c.S_TYPE_GOOGLE_PHONE_NUMBER,
     ]
 
