@@ -70,11 +70,11 @@ def map_model_response(response: dict) -> dict:
             constants.DESCRIPTION: feature[1],
             constants.LAST_TRAINED: parser.parse(feature[0]),
             constants.LOOKBACK_WINDOW: feature[3],
-            constants.NAME: feature[4],
-            constants.OWNER: feature[5],
-            constants.PREDICTION_WINDOW: int(feature[4].split("-")[-1]),
-            constants.STATUS: feature[7],
-            constants.TYPE: feature[4].split("-")[0],
+            constants.NAME: feature[5],
+            constants.OWNER: feature[6],
+            constants.PREDICTION_WINDOW: int(feature[5].split("-")[-1]),
+            constants.STATUS: feature[8],
+            constants.TYPE: feature[5].split("-")[0],
         }
         models.append(model)
 

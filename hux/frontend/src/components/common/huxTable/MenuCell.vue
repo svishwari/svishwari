@@ -3,7 +3,7 @@
     <v-col class="d-flex pr-0">
       <router-link
         :to="{
-          name: 'audienceInsight',
+          name: 'AudienceInsight',
           params: { id: audienceId },
         }"
         class="text-decoration-none"

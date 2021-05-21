@@ -1,6 +1,6 @@
 <template>
   <div class="add-data-source--wrap">
-    <drawer v-model="localDrawer" @onClose="closeAddDataSource">
+    <Drawer v-model="localDrawer" @onClose="closeAddDataSource">
       <template v-slot:header-left>
         <div class="d-flex align-baseline">
           <h5 class="text-h5 font-weight-light pr-2">Select a data source</h5>
@@ -73,7 +73,7 @@
           </CardHorizontal>
         </div>
       </template>
-    </drawer>
+    </Drawer>
   </div>
 </template>
 
@@ -83,7 +83,8 @@ import huxButton from "@/components/common/huxButton"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import { mapGetters, mapActions } from "vuex"
 export default {
-  name: "add-data-source",
+  name: "DataSourceConfiguration",
+
   components: {
     Drawer,
     CardHorizontal,

@@ -27,7 +27,7 @@
           Begin by selecting a button below.
         </div>
         <router-link
-          :to="{ name: 'add-destination' }"
+          :to="{ name: 'DestinationConfiguration' }"
           class="text-decoration-none"
         >
           <huxButton
@@ -37,23 +37,27 @@
             variant="primary"
             size="small"
             iconSize="small"
-            v-bind:isTile="true"
+            :isTile="true"
             class="ma-2 text-h6 font-weight-regular"
           />
         </router-link>
-        <huxButton
-          ButtonText="Data source"
-          icon="mdi-plus"
-          iconPosition="left"
-          variant="primary"
-          size="small"
-          v-bind:isTile="true"
-          class="ma-2 text-h6 font-weight-regular"
-          @click="toggleDrawer"
-        />
+        <router-link
+          :to="{ name: 'DataSourceConfiguration', query: { select: true } }"
+          class="text-decoration-none"
+        >
+          <huxButton
+            ButtonText="Data source"
+            icon="mdi-plus"
+            iconPosition="left"
+            variant="primary"
+            size="small"
+            :isTile="true"
+            class="ma-2 text-h6 font-weight-regular"
+          />
+        </router-link>
       </div>
-      <AddDataSource v-model="drawer" />
     </div>
+    <DataSourceConfiguration v-model="drawer" />
   </page>
 </template>
 
@@ -66,7 +70,7 @@ import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import AddDataSource from "@/views/DataSources/Configuration"
+import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
   name: "connections",
@@ -78,7 +82,7 @@ export default {
     PageHeader,
     Breadcrumb,
     huxButton,
-    AddDataSource,
+    DataSourceConfiguration,
   },
 
   computed: {
@@ -111,6 +115,22 @@ export default {
     }
   },
 
+  watch: {
+    $route() {
+      if (this.$route.query.select) {
+        this.drawer = true
+      } else {
+        this.drawer = false
+      }
+    },
+
+    drawer() {
+      if (!this.drawer) {
+        this.$router.push({ name: "Connections" })
+      }
+    },
+  },
+
   methods: {
     ...mapActions({
       getDataSources: "dataSources/getAll",
@@ -126,6 +146,10 @@ export default {
     await this.getDataSources()
     await this.getDestinations()
     this.loading = false
+
+    if (this.$route.query.select) {
+      this.drawer = true
+    }
   },
 }
 </script>
