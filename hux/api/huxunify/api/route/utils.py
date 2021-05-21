@@ -7,7 +7,7 @@ from http import HTTPStatus
 
 from healthcheck import HealthCheck
 from connexion.exceptions import ProblemException
-from mongomock import MongoClient
+from pymongo import MongoClient
 from huxunifylib.connectors.util.client import db_client_factory
 
 from huxunify.api.config import get_config
