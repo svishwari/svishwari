@@ -23,8 +23,8 @@ from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPutSchema,
-    DestinationPostSchema,
     DestinationConstants,
+    DestinationValidationSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
@@ -140,101 +140,6 @@ class DestinationsView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"{api_c.DESTINATIONS_ENDPOINT}",
-    "DestinationPostView",
-)
-class DestinationPostView(SwaggerView):
-    """
-    Single Destination Post view class
-    """
-
-    parameters = [
-        {
-            "name": "body",
-            "in": "body",
-            "type": "object",
-            "description": "Input destination body.",
-            "example": {
-                api_c.DESTINATION_NAME: "My destination",
-                api_c.DESTINATION_TYPE: "Facebook",
-                api_c.AUTHENTICATION_DETAILS: {
-                    api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                    api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                    api_c.FACEBOOK_APP_ID: "2951925002021888",
-                    api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
-                },
-            },
-        },
-    ]
-
-    responses = {
-        HTTPStatus.CREATED.value: {
-            "schema": DestinationGetSchema,
-            "description": "Destination created.",
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to create the destination.",
-        },
-    }
-
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DESTINATIONS_TAG]
-
-    def post(self) -> Tuple[dict, int]:
-        """Creates a new destination.
-
-        ---
-        Returns:
-            Tuple[dict, int]: Destination created, HTTP status.
-
-        """
-        # TODO - implement after HUS-254 is done to grab user/okta_id
-        user_id = ObjectId()
-
-        try:
-            body = DestinationPostSchema().load(request.get_json())
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
-
-        destination_id = destination_management.set_delivery_platform(
-            database=get_db_client(),
-            delivery_platform_type=body[api_c.DESTINATION_TYPE],
-            name=body[api_c.DESTINATION_NAME],
-            authentication_details=None,
-            user_id=user_id,
-        )[db_constants.ID]
-
-        # store the secrets in AWS parameter store
-        authentication_parameters = (
-            parameter_store.set_destination_authentication_secrets(
-                authentication_details=body[api_c.AUTHENTICATION_DETAILS],
-                is_updated=False,
-                destination_id=str(destination_id),
-                destination_name=body[api_c.DESTINATION_NAME],
-            )
-        )
-
-        # store the secrets paths in database
-        destination_management.set_authentication_details(
-            database=get_db_client(),
-            delivery_platform_id=destination_id,
-            authentication_details=authentication_parameters,
-        )
-
-        # A destination can only be created if the authentication is validated.
-        # So update the connection status to SUCCESS.
-        return (
-            destination_management.set_connection_status(
-                database=get_db_client(),
-                delivery_platform_id=ObjectId(destination_id),
-                connection_status=db_constants.STATUS_SUCCEEDED,
-            ),
-            HTTPStatus.CREATED,
-        )
-
-
-@add_view_to_blueprint(
-    dest_bp,
     f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
     "DestinationPutView",
 )
@@ -258,8 +163,6 @@ class DestinationPutView(SwaggerView):
             "description": "Destination Object.",
             "type": "object",
             "example": {
-                api_c.DESTINATION_NAME: "My destination",
-                api_c.DESTINATION_TYPE: "Facebook",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
                     api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
@@ -319,7 +222,6 @@ class DestinationPutView(SwaggerView):
                         authentication_details=auth_details,
                         is_updated=True,
                         destination_id=destination_id,
-                        destination_name=body.get(api_c.DESTINATION_NAME),
                     )
                 )
 
@@ -330,8 +232,6 @@ class DestinationPutView(SwaggerView):
                 destination_management.update_delivery_platform(
                     database=get_db_client(),
                     delivery_platform_id=ObjectId(destination_id),
-                    name=body.get(api_c.DESTINATION_NAME),
-                    delivery_platform_type=body.get(api_c.DESTINATION_TYPE),
                     authentication_details=authentication_parameters,
                     user_id=user_id,
                 ),
@@ -540,7 +440,7 @@ class DestinationValidatePostView(SwaggerView):
         """
 
         try:
-            body = DestinationPostSchema().load(request.get_json())
+            body = DestinationValidationSchema().load(request.get_json())
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 

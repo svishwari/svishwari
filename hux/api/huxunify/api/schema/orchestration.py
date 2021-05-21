@@ -19,7 +19,7 @@ class AudienceGetSchema(Schema):
     """
 
     _id = fields.String(
-        data_key=api_c.AUDIENCE_ID,
+        data_key=api_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,

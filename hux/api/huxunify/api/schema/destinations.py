@@ -12,7 +12,6 @@ from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
-    validate_dest_constants,
 )
 
 
@@ -22,7 +21,7 @@ class DestinationGetSchema(Schema):
     """
 
     _id = fields.String(
-        data_key=api_c.DESTINATION_ID,
+        data_key=api_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
@@ -88,23 +87,16 @@ class DestinationPutSchema(Schema):
     Destination put schema class
     """
 
-    type = fields.String()
-    name = fields.String()
     authentication_details = fields.Field()
 
 
-class DestinationPostSchema(DestinationPutSchema):
+class DestinationValidationSchema(Schema):
     """
-    Destination post schema class
+    Destination put schema class
     """
 
-    type = fields.String(validate=must_not_be_blank)
-    name = fields.String(validate=must_not_be_blank)
-    authentication_details = fields.Dict(
-        keys=fields.String(),
-        values=fields.String(),
-        validate=validate_dest_constants,
-    )
+    authentication_details = fields.Field()
+    type = fields.String()
 
 
 class FacebookAuthConstants(Schema):
