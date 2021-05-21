@@ -516,19 +516,19 @@ export default {
           text: "Home",
           disabled: false,
           href: "overview",
-          icon: "mdi-home-outline",
+          icon: "home",
         },
         {
           text: "Connections",
           disabled: false,
           href: "connections",
-          icon: "mdi-bullhorn-outline",
+          icon: "connections",
         },
         {
           text: "Destinations",
           disabled: true,
           href: "connections/destinations",
-          icon: "mdi-flip-h mdi-account-plus-outline",
+          icon: "destinations",
         },
       ],
 

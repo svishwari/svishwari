@@ -60,7 +60,7 @@
                   <div>
                     <v-icon
                       size="30"
-                      class="add-icon mt-1"
+                      class="add-icon mt-2"
                       color="primary"
                       @click="
                         engagementDrawer.insideFlow = !engagementDrawer.insideFlow
@@ -102,7 +102,7 @@
                   Select destination(s) -
                   <i style="font-size: 12px">Optional</i>
                 </strong>
-                <div>
+                <div class="d-flex align-center">
                   <v-icon
                     size="30"
                     class="add-icon mt-1"
@@ -111,7 +111,7 @@
                     >mdi-plus-circle</v-icon
                   >
                   <Logo
-                    class="added-logo"
+                    class="added-logo ml-2"
                     v-for="destination in audience.destinations"
                     :key="destination.id"
                     :type="destination.type"
@@ -134,7 +134,7 @@
         </v-timeline>
       </v-form>
 
-      <HuxFooter>
+      <HuxFooter maxWidth="inherit">
         <template v-slot:left>
           <huxButton
             ButtonText="Cancel"
@@ -142,7 +142,7 @@
             v-bind:isTile="true"
             width="94"
             height="40"
-            class="ma-2"
+            class="ma-2 ml-0"
             @click.native="$router.go(-1)"
           ></huxButton>
         </template>

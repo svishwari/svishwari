@@ -16,14 +16,26 @@
         height="55"
         class="d-flex ma-4"
       />
-      <div class="client">
-        <span>
-          {{ clientName }}
-        </span>
-        <v-icon v-if="!isMini" color="rgba(255, 255, 255, 0.5)">
-          mdi-chevron-down
-        </v-icon>
-      </div>
+      <v-menu open-on-hover offset-x>
+        <template v-slot:activator="{ on }">
+          <div v-on="on" class="client">
+            <span>
+              {{ clientName }}
+            </span>
+            <v-icon v-if="!isMini" color="rgba(255, 255, 255, 0.5)">
+              mdi-chevron-down
+            </v-icon>
+          </div>
+        </template>
+        <template v-slot:default>
+          <div class="px-6 py-5 white">
+            <v-icon color="primary"> mdi-information </v-icon>
+            <span class="pl-4 text-caption neroBlack--text">
+              This is where your future client accounts will be held.
+            </span>
+          </div>
+        </template>
+      </v-menu>
     </template>
 
     <v-list
@@ -37,23 +49,23 @@
         </span>
       </div>
 
-      <v-list-item v-if="!item.menu" :to="item.link">
-        <v-list-item-icon>
-          <v-icon :size="iconSize" color="white"> {{ item.icon }} </v-icon>
+      <v-list-item class="pb-2" v-if="!item.menu" :to="item.link">
+        <v-list-item-icon v-if="item.icon">
+          <Icon :type="item.icon" :size="iconSize" color="white" />
         </v-list-item-icon>
         <v-list-item-title class="white--text">
           {{ item.title }}
         </v-list-item-title>
       </v-list-item>
 
-      <div v-if="item.menu">
+      <div v-if="item.menu" class="pb-2">
         <v-list-item
           v-for="menu in item.menu"
           :key="menu.title"
           :to="menu.link"
         >
-          <v-list-item-icon>
-            <v-icon :size="iconSize" color="white"> {{ menu.icon }} </v-icon>
+          <v-list-item-icon v-if="menu.icon">
+            <Icon :type="menu.icon" :size="iconSize" color="white" />
           </v-list-item-icon>
           <v-list-item-title class="white--text">
             {{ menu.title }}
@@ -70,9 +82,12 @@
 
 <script>
 import menuConfig from "@/menuConfig.json"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "SideMenu",
+
+  components: { Icon },
 
   props: {
     toggle: Boolean,
@@ -84,7 +99,7 @@ export default {
     },
 
     iconSize() {
-      return this.isMini ? "x-large" : "large"
+      return this.isMini ? 24 : 21
     },
   },
 
@@ -97,8 +112,10 @@ export default {
 
 <style lang="scss" scoped>
 .side-nav-bar {
-  background-image: url("../assets/images/nav-bg.png");
-  background-position: bottom center;
+  @media (min-height: 900px) {
+    background-image: url("../assets/images/nav-bg.png");
+    background-position: bottom center;
+  }
 
   .client {
     align-items: center;
@@ -158,5 +175,8 @@ export default {
     opacity: 0.5;
     padding: 1rem;
   }
+}
+.v-menu__content {
+  @extend .box-shadow-25;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="status == Statuses.Active">
+  <div v-if="Statuses.Active.includes(status)">
     <span v-if="!collapsed">
       <v-icon color="success" class="mr-2"> mdi-checkbox-blank-circle </v-icon>
       <span>Active</span>
@@ -15,7 +15,7 @@
     </v-menu>
   </div>
 
-  <div v-else-if="status == Statuses.Activating">
+  <div v-else-if="Statuses.Activating.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
       <span class="half-left-circle success" />
       <span class="half-right-circle mr-2 secondary" />
@@ -33,7 +33,7 @@
     </v-menu>
   </div>
 
-  <div v-else-if="status == Statuses.Pending">
+  <div v-else-if="Statuses.Pending.includes(status)">
     <span v-if="!collapsed">
       <v-btn
         width="15"
@@ -69,14 +69,14 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: "success",
-        Inactive: "caution",
-        Activating: "activating",
-        Draft: "draft",
-        Disabled: "disabled",
-        Error: "error",
-        Pending: "pending",
-        Delivering: "delivering",
+        Active: ["active", "success"],
+        Inactive: ["caution"],
+        Activating: ["activating"],
+        Draft: ["draft"],
+        Disabled: ["disabled"],
+        Error: ["error"],
+        Pending: ["pending"],
+        Delivering: ["delivering"],
       },
     }
   },
