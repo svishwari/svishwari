@@ -37,4 +37,7 @@ export const defineRoutes = (server) => {
 
   // models
   server.get("/models")
+
+  // Audiences
+  server.get("/audiences")
 }
