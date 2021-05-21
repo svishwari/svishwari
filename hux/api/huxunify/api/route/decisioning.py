@@ -86,7 +86,7 @@ class ModelVersionView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(ModelVersionSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model versions by model name.
+        """Retrieves model version history.
 
         ---
         Args:
@@ -126,7 +126,7 @@ class ModelFeatureView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(FeatureSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model features by model name.
+        """Retrieves model features.
 
         ---
         Args:
@@ -168,7 +168,7 @@ class ModelMetricsView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(PerformanceMetricSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model performance metrics.
+        """Retrieves model performance metrics.
 
         ---
         Args:
@@ -213,7 +213,7 @@ class ModelFeatureImportanceView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(FeatureImportance(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model feature importance.
+        """Retrieves model feature importance details.
 
         ---
         Args:
@@ -258,7 +258,7 @@ class ModelLiftView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(LiftSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model lift.
+        """Retrieves model lift details.
 
         ---
         Args:
@@ -300,7 +300,7 @@ class ModelDriftView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(DriftSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model drift.
+        """Retrieves model drift details.
 
         ---
         Args:
