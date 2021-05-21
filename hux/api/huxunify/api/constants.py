@@ -119,6 +119,7 @@ DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
+DUPLICATE_NAME = "Name already exists."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
@@ -226,6 +227,10 @@ PAST_VERSION_COUNT = "past_version_count"
 CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
+
+# Engagement
+ENGAGEMENT_ENDPOINT = "/engagements"
+ENGAGEMENT_TAG = "engagements"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
