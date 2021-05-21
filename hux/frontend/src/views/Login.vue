@@ -96,6 +96,7 @@ export default {
     }
     h1 {
       font-family: Open Sans Light !important;
+      font-size: 24px !important;
       margin-top: 30px;
       line-height: 43px;
       color: var(--v-darkGreyHeading-base);
