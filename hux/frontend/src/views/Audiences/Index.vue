@@ -49,7 +49,7 @@
         :columnDef="columnDefs"
         :tableData="rowData"
         :rowHeight="60"
-        height="350px"
+        height="calc(100vh - 220px)"
         class="pl-3"
       ></hux-table>
 

@@ -127,13 +127,12 @@ export default {
     font-weight: 400;
     line-height: 16px;
   }
-  background: red;
   font-family: inherit;
   font-size: 12px;
   ::v-deep .ag-root-wrapper {
     border: none;
     border-top: solid 1px;
-    border-color: #babfc7;
+    border-color: var(--v-lightGrey-base) !important;
     .menu-cells {
       .ag-cell-value {
         width: 100%;
@@ -150,11 +149,13 @@ export default {
         font-weight: 600;
         line-height: 16px;
         background: transparent;
+        border-color: var(--v-lightGrey-base) !important;
         .ag-header-row {
           height: 32px !important;
         }
       }
       .ag-row {
+        border-color: var(--v-lightGrey-base) !important;
         .ag-cell {
           display: flex;
           align-items: center;
