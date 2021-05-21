@@ -14,6 +14,7 @@ from flasgger import SwaggerView
 from marshmallow import ValidationError
 
 from huxunifylib.database import constants as db_c
+import huxunifylib.database.db_exceptions as de
 from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements,
@@ -217,6 +218,11 @@ class SetEngagement(SwaggerView):
                 get_engagement(get_db_client(), engagement_id=engagement_id),
                 HTTPStatus.OK.value,
             )
+
+        except de.DuplicateName:
+            return {
+                "message": api_c.DUPLICATE_NAME
+            }, HTTPStatus.BAD_REQUEST.value
 
         except Exception as exc:
 

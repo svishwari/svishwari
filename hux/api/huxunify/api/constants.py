@@ -119,6 +119,7 @@ DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
+DUPLICATE_NAME = "Name already exists."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
