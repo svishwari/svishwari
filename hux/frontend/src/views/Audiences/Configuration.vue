@@ -142,7 +142,7 @@
             v-bind:isTile="true"
             width="94"
             height="40"
-            class="ma-2"
+            class="ma-2 ml-0"
             @click.native="$router.go(-1)"
           ></huxButton>
         </template>
