@@ -5,7 +5,7 @@ const bluecore = {
   type: "bluecore",
   is_enabled: true,
   is_added: true,
-  status: "success",
+  status: "active",
 }
 
 const facebookDS = {

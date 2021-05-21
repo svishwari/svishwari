@@ -30,9 +30,9 @@
         <template v-slot:default>
           <div class="px-6 py-5 white">
             <v-icon color="primary"> mdi-information </v-icon>
-            <span class="pl-4 text-caption neroBlack--text"
-              >This is where your future client accounts will be held.</span
-            >
+            <span class="pl-4 text-caption neroBlack--text">
+              This is where your future client accounts will be held.
+            </span>
           </div>
         </template>
       </v-menu>
