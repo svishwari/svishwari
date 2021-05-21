@@ -4,12 +4,12 @@
     color="red"
     content="2"
     value="2"
-    offset-x="30"
-    offset-y="40"
+    offset-x="22"
+    offset-y="35"
     class="notification-badge"
   >
-    <v-btn icon class="icon-btn">
-      <v-icon class="mdi-bell-outline"> mdi-bell-outline </v-icon>
+    <v-btn small icon class="icon-btn">
+      <v-icon size="22" class="mdi-bell-outline"> mdi-bell-outline </v-icon>
     </v-btn>
   </v-badge>
 </template>

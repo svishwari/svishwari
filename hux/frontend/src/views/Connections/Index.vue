@@ -3,7 +3,7 @@
     <div slot="header">
       <page-header>
         <template slot="left">
-          <breadcrumb :items="breadcrumbs" />
+          <Breadcrumb :items="breadcrumbs" />
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -107,7 +107,7 @@ export default {
       breadcrumbs: [
         {
           text: "Connections",
-          icon: "mdi-connection",
+          icon: "connections",
         },
       ],
       drawer: false,

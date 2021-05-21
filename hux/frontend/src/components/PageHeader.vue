@@ -8,10 +8,13 @@
   >
     <div>
       <div class="d-flex">
-        <v-icon v-if="icon" class="pr-1" size="20" color="black">
-          {{ icon }}
-        </v-icon>
-        <svg-as-component :src="`assets/${iconPath}`" />
+        <Icon
+          :type="icon"
+          v-if="icon"
+          class="pr-1"
+          :size="20"
+          color="neroBlack"
+        />
         <div class="text-h2">
           {{ title }}
         </div>
@@ -28,19 +31,14 @@
 </template>
 
 <script>
-import svgAsComponent from "./common/SVG"
+import Icon from "./common/Icon"
 export default {
   name: "PageHeader",
   components: {
-    svgAsComponent,
+    Icon,
   },
   props: {
     icon: {
-      type: String,
-      required: false,
-    },
-
-    iconPath: {
       type: String,
       required: false,
     },

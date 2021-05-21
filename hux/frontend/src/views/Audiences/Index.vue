@@ -112,7 +112,7 @@ export default {
           text: "Audiences",
           disabled: false,
           href: this.$route.path,
-          iconPath: "icons/audience_icon",
+          icon: "audiences",
         },
       ],
 
