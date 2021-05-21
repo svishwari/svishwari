@@ -6,6 +6,7 @@ import logging
 from http import HTTPStatus
 from typing import Tuple
 
+from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint, request
 from flask_apispec import marshal_with
@@ -23,13 +24,15 @@ from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
 )
-
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
+
+# TODO - implement after HUS-254 is done to grab user/okta_id
+# TODO Add updated_by fields to engagement_mgmt in set, update and delete methods
 
 
 @add_view_to_blueprint(
@@ -125,18 +128,14 @@ class IndividualEngagementSearch(SwaggerView):
 
         """
 
-        try:
-            valid_id = (
-                EngagementGetSchema()
-                .load({db_c.ENGAGEMENT_ID: engagement_id}, partial=True)
-                .get(db_c.ENGAGEMENT_ID)
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         try:
             return (
-                get_engagement(get_db_client(), engagement_id=valid_id),
+                get_engagement(
+                    get_db_client(), engagement_id=ObjectId(engagement_id)
+                ),
                 HTTPStatus.OK.value,
             )
 
@@ -278,17 +277,13 @@ class DeleteEngagement(SwaggerView):
 
         """
 
-        try:
-            valid_id = (
-                EngagementGetSchema()
-                .load({db_c.ENGAGEMENT_ID: engagement_id}, partial=True)
-                .get(db_c.ENGAGEMENT_ID)
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         try:
-            if delete_engagement(get_db_client(), engagement_id=valid_id):
+            if delete_engagement(
+                get_db_client(), engagement_id=ObjectId(engagement_id)
+            ):
                 return {
                     "message": api_c.OPERATION_SUCCESS
                 }, HTTPStatus.OK.value
