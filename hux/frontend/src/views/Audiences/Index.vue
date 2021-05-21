@@ -210,7 +210,7 @@ export default {
     margin-top: 1px;
     .v-icon--disabled {
       color: var(--v-lightGrey-base) !important;
-      font-size: 20px;
+      font-size: 24px;
     }
     .text--refresh {
       margin-right: 10px;

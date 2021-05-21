@@ -17,7 +17,7 @@
                 >You have not added any attributes, yet!</v-list-item-title
               >
             </v-list-item-content>
-            <v-row align="center" justify="end">
+            <v-col class="d-flex align-center justify-end pr-0">
               <v-icon
                 size="30"
                 class="add-icon"
@@ -26,7 +26,7 @@
               >
                 mdi-plus-circle
               </v-icon>
-            </v-row>
+            </v-col>
           </v-list-item>
         </v-card-actions>
       </v-card>

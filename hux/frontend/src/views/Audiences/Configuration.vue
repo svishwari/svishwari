@@ -134,7 +134,7 @@
         </v-timeline>
       </v-form>
 
-      <HuxFooter>
+      <HuxFooter maxWidth="inherit">
         <template v-slot:left>
           <huxButton
             ButtonText="Cancel"
