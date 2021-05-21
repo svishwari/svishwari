@@ -107,7 +107,7 @@ class IndividualUserSearch(SwaggerView):
 
     @marshal_with(UserSchema)
     def get(self, user_id: str) -> Tuple[dict, int]:
-        """Retrieves a user by ID.
+        """Retrieves a user.
 
         ---
         Args:
@@ -189,7 +189,7 @@ class AddPreferences(SwaggerView):
     tags = [api_c.USER_TAG]
 
     def post(self, user_id: str) -> Tuple[dict, int]:
-        """Add a user's preferences
+        """Creates a user preference.
 
         ---
         Args:
@@ -261,7 +261,7 @@ class EditPreferences(SwaggerView):
     tags = [api_c.USER_TAG]
 
     def put(self, user_id: str) -> Tuple[dict, int]:
-        """Edit a user's preferences
+        """Updates a user preference.
 
         ---
         Args:
@@ -335,7 +335,7 @@ class DeletePreferences(SwaggerView):
     tags = [api_c.USER_TAG]
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
-        """Delete a user's preferences
+        """Deletes a user preference.
 
         ---
         Args:
@@ -410,7 +410,7 @@ class AddUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     def post(self, user_id: str) -> Tuple[dict, int]:
-        """Add a new favorite for a user
+        """Creates a user favorite.
 
         ---
         Args:
@@ -490,7 +490,7 @@ class EditUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     def put(self, user_id: str) -> Tuple[dict, int]:
-        """Edit favorite for a user
+        """Updates a user favorite.
 
         ---
         Args:
@@ -570,7 +570,7 @@ class DeleteUserFavorite(SwaggerView):
     tags = [api_c.USER_TAG]
 
     def delete(self, user_id: str) -> Tuple[dict, int]:
-        """Delete a favorite for a user
+        """Deletes a user favorite.
 
         ---
         Args:

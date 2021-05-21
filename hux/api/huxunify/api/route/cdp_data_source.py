@@ -55,7 +55,7 @@ class DataSourceSearch(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def get(self) -> Tuple[list, int]:
-        """Retrieves all CDP data sources
+        """Retrieves all CDP data sources.
 
         ---
 
@@ -117,7 +117,7 @@ class IndividualDataSourceSearch(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def get(self, data_source_id: str):
-        """Retrieves a CDP data source by ID
+        """Retrieves a CDP data source.
 
         ---
         Args:
@@ -193,7 +193,7 @@ class CreateCdpDataSource(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def post(self) -> Tuple[str, int]:
-        """Creates a new CDP data source
+        """Creates a new CDP data source.
 
         ---
         Returns:
@@ -221,7 +221,7 @@ class CreateCdpDataSource(SwaggerView):
 )
 class DeleteCdpDataSource(SwaggerView):
     """
-    Deletes a CDP data source class
+    Deletes a CDP data source
     """
 
     parameters = [
@@ -245,7 +245,7 @@ class DeleteCdpDataSource(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def delete(self, data_source_id: str) -> Tuple[dict, int]:
-        """Deletes a CDP data source
+        """Deletes a CDP data source.
 
         ---
         Args:

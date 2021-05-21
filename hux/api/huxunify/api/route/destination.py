@@ -70,7 +70,7 @@ class DestinationGetView(SwaggerView):
 
     @marshal_with(DestinationGetSchema)
     def get(self, destination_id: str) -> Tuple[dict, int]:
-        """Retrieves a Destination.
+        """Retrieves a destination.
 
         ---
         Args:
@@ -181,7 +181,7 @@ class DestinationPostView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     def post(self) -> Tuple[dict, int]:
-        """Creates a new destination and tests the connection.
+        """Creates a new destination.
 
         ---
         Returns:
@@ -285,7 +285,7 @@ class DestinationPutView(SwaggerView):
 
     @marshal_with(DestinationPutSchema)
     def put(self, destination_id: str) -> Tuple[dict, int]:
-        """Updates an existing destination.
+        """Updates a destination.
 
         ---
         Args:
@@ -400,7 +400,7 @@ class DestinationsDeleteView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     def delete(self) -> Tuple[list, int]:
-        """Deletes a Destination.
+        """Deletes a destination.
         Ability to delete one or multiple.
 
         ---
@@ -530,7 +530,7 @@ class DestinationValidatePostView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     def post(self) -> Tuple[dict, int]:
-        """Authenticates the destination with given credentials.
+        """Validates the credentials for a destination.
 
         ---
         Returns:
