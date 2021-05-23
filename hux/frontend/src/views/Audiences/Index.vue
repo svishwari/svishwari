@@ -191,9 +191,9 @@ export default {
     ...mapActions(["getAllAudiences"]),
     refresh() {},
   },
-  async mounted() {
-    await this.getAllAudiences()
-  },
+  // async mounted() {
+  //   await this.getAllAudiences()
+  // },
 }
 </script>
 <style lang="scss" scoped>
