@@ -6,15 +6,10 @@
         :disabled="item.disabled"
         class="font-weight-light"
       >
-        <v-icon color="neroBlack" size="21" class="pr-1" v-if="item.icon">
-          {{ item.icon }}
-        </v-icon>
-        <svg-as-component
-          class="mr-2"
-          :src="`assets/${item.iconPath}`"
-          v-if="item.iconPath"
-        />
-        <span class="neroBlack--text">{{ item.text }}</span>
+        <div v-if="item.icon" class="d-flex">
+          <Icon :type="item.icon" :size="24" color="neroBlack" />
+        </div>
+        <span class="neroBlack--text pl-2">{{ item.text }}</span>
       </v-breadcrumbs-item>
     </template>
     <template v-slot:divider>
@@ -24,12 +19,11 @@
 </template>
 
 <script>
-import svgAsComponent from "./SVG"
+import Icon from "@/components/common/Icon"
 export default {
   name: "breadcrumb",
-  components: {
-    svgAsComponent,
-  },
+
+  components: { Icon },
 
   props: {
     items: {

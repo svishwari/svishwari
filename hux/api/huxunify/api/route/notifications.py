@@ -71,7 +71,7 @@ class NotificationsSearch(SwaggerView):
 
     @marshal_with(NotificationSchema(many=True))
     def get(self) -> Tuple[dict, int]:
-        """Retrieves a set of requested notifications
+        """Retrieves notifications.
 
         ---
 

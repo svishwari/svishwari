@@ -49,7 +49,7 @@
         :columnDef="columnDefs"
         :tableData="audiencesList"
         :rowHeight="60"
-        height="350px"
+        height="calc(100vh - 220px)"
         class="pl-3"
       ></hux-table>
 
@@ -112,7 +112,7 @@ export default {
           text: "Audiences",
           disabled: false,
           href: this.$route.path,
-          iconPath: "icons/audience_icon",
+          icon: "audiences",
         },
       ],
 
@@ -214,7 +214,7 @@ export default {
     margin-top: 1px;
     .v-icon--disabled {
       color: var(--v-lightGrey-base) !important;
-      font-size: 20px;
+      font-size: 24px;
     }
     .text--refresh {
       margin-right: 10px;

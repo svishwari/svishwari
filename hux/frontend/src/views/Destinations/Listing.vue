@@ -89,13 +89,13 @@ export default {
           text: "Connections",
           disabled: false,
           href: "/connections",
-          icon: "mdi-connection",
+          icon: "connections",
         },
         {
           text: "Destinations",
           disabled: true,
           href: this.$route.path,
-          icon: "mdi-map-marker-circle",
+          icon: "destinations",
         },
       ],
       // This is a temporary fix for table components

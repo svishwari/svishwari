@@ -134,7 +134,7 @@ export default {
           text: "Audiences",
           disabled: false,
           href: "/audiences",
-          icon: "mdi-flip-h mdi-account-plus-outline",
+          icon: "audiences",
         },
         {
           text: this.$route.params.audienceName,
