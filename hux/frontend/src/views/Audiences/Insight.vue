@@ -33,7 +33,7 @@
                 class="blue-grey d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item.shortName) }" 
+                v-bind:style="{ 'border-color': getColorCode(item.shortName) }"
               >
                 {{ getShortName(item.shortName) }}
               </span>
@@ -138,7 +138,7 @@ export default {
           icon: "audiences",
         },
         {
-          text: '',
+          text: "",
           disabled: true,
           href: this.$route.path,
         },

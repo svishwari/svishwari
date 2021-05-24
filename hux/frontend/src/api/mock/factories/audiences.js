@@ -24,7 +24,7 @@ const audienceFaker = {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
   audience_insights() {
-    return {  
+    return {
       gender_men: faker.datatype.number({ min: 1, max: 50 }),
       gender_women: faker.datatype.number({ min: 51, max: 90 }),
       gender_other: faker.datatype.number({ min: 91, max: 100 }),
@@ -35,7 +35,7 @@ const audienceFaker = {
       total_cities: faker.datatype.number({ min: 10, max: 50 }),
       total_customerss: faker.datatype.number(),
     }
-  }
+  },
 }
 
 export default audienceFaker

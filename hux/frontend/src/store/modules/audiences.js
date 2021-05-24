@@ -1,4 +1,3 @@
-import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
 
@@ -93,17 +92,17 @@ const actions = {
       response.data["insightInfo"] = insightInfo
       let history = [
         {
-          title: 'Last updated',
+          title: "Last updated",
           subtitle: response.data.update_time,
           shortName: response.data.updated_by,
           fullName: response.data.updated_by,
         },
         {
-          title: 'Created',
+          title: "Created",
           subtitle: response.data.create_time,
           shortName: response.data.created_by,
           fullName: response.data.created_by,
-        }
+        },
       ]
       response.data["audienceHistory"] = history
       commit("SET_SELECTED_AUDIENCE", response.data)
