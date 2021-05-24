@@ -60,7 +60,10 @@ const actions = {
 
   async validate(_, destination) {
     try {
-      await api.destinations.validate(destination.authentication_details)
+      await api.destinations.validate({
+        authentication_details: destination.authentication_details,
+        type: destination.type,
+      })
     } catch (error) {
       handleError(error)
       throw error
