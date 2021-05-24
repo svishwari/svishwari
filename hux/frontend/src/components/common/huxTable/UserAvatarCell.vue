@@ -27,13 +27,21 @@ export default Vue.extend({
     }
   },
   beforeMount() {
-    this.cellValue = {
-      shortName: this.params.value
-        .split(" ")
-        .map((n) => n[0])
-        .join(""),
-      fullName: this.params.value,
-      color: this.generateColor(this.params.value, 30, 60) + " !important",
+    if (this.params.value) {
+      this.cellValue = {
+        shortName: this.params.value
+          .split(" ")
+          .map((n) => n[0])
+          .join(""),
+        fullName: this.params.value,
+        color: this.generateColor(this.params.value, 30, 60) + " !important",
+      }
+    } else {
+      this.cellValue = {
+        shortName: "",
+        fullName: "",
+        color: "",
+      }
     }
   },
   methods: {
