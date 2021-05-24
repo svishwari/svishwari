@@ -2,7 +2,6 @@
 Purpose of this sub-folder is to store all route logic.
 """
 from huxunify.api.route.destination import dest_bp
-from huxunify.api.route.engagement import engagement_bp
 from huxunify.api.route.user import user_bp
 from huxunify.api.route.decisioning import model_bp
 from huxunify.api.route.orchestration import orchestration_bp
@@ -16,5 +15,4 @@ ROUTES = [
     orchestration_bp,
     cdp_data_sources_bp,
     notifications_bp,
-    engagement_bp,
 ]
