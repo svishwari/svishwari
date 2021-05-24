@@ -40,4 +40,5 @@ export const defineRoutes = (server) => {
 
   // Audiences
   server.get("/audiences")
+  server.get("/audiences/:id")
 }

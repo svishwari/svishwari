@@ -1,7 +1,6 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
-// import { getAllAudiences } from "@/api/resources/audiences"
 
 const namespaced = true
 
@@ -15,15 +14,14 @@ const NEW_AUDIENCE = {
 const state = {
   audiences: [],
   newAudience: NEW_AUDIENCE,
-  selectedAudience: {}
+  selectedAudience: {},
 }
 
 const getters = {
   list: (state) => state.audiences,
-  selectedAudience: (state) => (id) => {
-    return state.selectedAudience[id]
+  selectedAudience: (state) => {
+    return state.selectedAudience
   },
-  
 }
 
 const mutations = {
@@ -31,7 +29,7 @@ const mutations = {
     state.audiences = items
   },
   SET_SELECTED_AUDIENCE(state, audience) {
-    Vue.set(state.selectedAudience, audience.audienceId, audience)
+    state.selectedAudience = audience
   },
 }
 
@@ -47,77 +45,67 @@ const actions = {
   },
   async getAudienceById({ commit }, id) {
     try {
-      const response = {
-        data:  {
-            audienceId: 1,
-            audienceName: "Audience Name 1",
-            status: "Active",
-            size: {
-              approxSize: "654K",
-              actualSize: "2,345",
-            },
-            destinations: {
-              details: [
-                { logo: "facebook", name: "Facebook" },
-                { logo: "mailchimp", name: "Mailchimp" },
-                { logo: "mailchimp", name: "Mailchimp" },
-              ],
-            },
-            attributes: {
-              attribute: "Churn +2",
-              attributeList: [
-                { attribute: "LTV" },
-                { attribute: "Propensity" },
-                { attribute: "Demgraphics" },
-              ],
-            },
-            lastDelivered: {
-              shortDate: "Today, 12:00 PM",
-              FullDate: "03/22/2021 12:45 PM",
-            },
-            lastUpdated: {
-              shortDate: "Today, 12:00 PM",
-              FullDate: "03/22/2021 12:45 PM",
-            },
-            lastUpdatedBy: {
-              shortName: "HR",
-              fullName: "John Smith",
-            },
-            created: {
-              shortDate: "Today, 12:00 PM",
-              FullDate: "03/22/2021 12:45 PM",
-            },
-            createdBy: {
-              shortName: "RG",
-              fullName: "John Smith",
-            },
-            overview: [
-              { title: "Target size", subtitle: "34,203,204" },
-              { title: "Countries", subtitle: "2", icon: "mdi-earth" },
-              { title: "US States", subtitle: "52", icon: "mdi-map" },
-              { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
-              { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
-              { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
-              { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
-              { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
-            ],
-      
-            insightInfo: [
-              {
-                title: "Last updated",
-                subtitle: "Yesterday by",
-                shortName: "JS",
-                fullName: "John Smith",
-              },
-              {
-                title: "Created",
-                subtitle: "Yesterday by",
-                shortName: "JS",
-                fullName: "John Smith",
-              },
-            ],
-          },
-      }
+      const response = await api.audiences.find(id)
+      let insightInfo = [
+        {
+          title: "Target size",
+          subtitle: response.data.audience_insights.total_customerss.toString(),
+        },
+        {
+          title: "Countries",
+          subtitle: response.data.audience_insights.total_countries.toString(),
+          icon: "mdi-earth",
+        },
+        {
+          title: "US States",
+          subtitle: response.data.audience_insights.total_us_states.toString(),
+          icon: "mdi-map",
+        },
+        {
+          title: "Cities",
+          subtitle: response.data.audience_insights.total_cities.toString(),
+          icon: "mdi-map-marker-radius",
+        },
+        {
+          title: "Age",
+          subtitle:
+            response.data.audience_insights.min_age +
+            " - " +
+            response.data.audience_insights.max_age,
+          icon: "mdi-cake-variant",
+        },
+        {
+          title: "Women",
+          subtitle: response.data.audience_insights.gender_women + "%",
+          icon: "mdi-gender-female",
+        },
+        {
+          title: "Men",
+          subtitle: response.data.audience_insights.gender_men + "%",
+          icon: "mdi-gender-male",
+        },
+        {
+          title: "Other",
+          subtitle: response.data.audience_insights.gender_other + "%",
+          icon: "mdi-gender-male-female",
+        },
+      ]
+      response.data["insightInfo"] = insightInfo
+      let history = [
+        {
+          title: 'Last updated',
+          subtitle: response.data.update_time,
+          shortName: response.data.updated_by,
+          fullName: response.data.updated_by,
+        },
+        {
+          title: 'Created',
+          subtitle: response.data.create_time,
+          shortName: response.data.created_by,
+          fullName: response.data.created_by,
+        }
+      ]
+      response.data["audienceHistory"] = history
       commit("SET_SELECTED_AUDIENCE", response.data)
     } catch (error) {
       /*
