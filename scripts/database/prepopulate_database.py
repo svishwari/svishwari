@@ -65,7 +65,7 @@ DATA_SOURCES = [
     {
         c.DATA_SOURCE_NAME: "Mailchimp",
         c.DATA_SOURCE_TYPE: "mailchimp",
-        c.STATUS: c.PENDING,
+        c.STATUS: c.COMING_SOON,
         c.ENABLED: False,
         c.ADDED: False,
     },
@@ -79,7 +79,7 @@ DATA_SOURCES = [
     {
         c.DATA_SOURCE_NAME: "Amazon S3",
         c.DATA_SOURCE_TYPE: "amazons3",
-        c.STATUS: c.PENDING,
+        c.STATUS: c.COMING_SOON,
         c.ENABLED: False,
         c.ADDED: False,
     },
@@ -279,7 +279,7 @@ DELIVERY_PLATFORMS = [
     {
         c.DELIVERY_PLATFORM_NAME: "QuantumMetric",
         c.DELIVERY_PLATFORM_TYPE: "quantummetric",
-        c.STATUS: c.PENDING,
+        c.STATUS: c.COMING_SOON,
         c.ENABLED: False,
         c.ADDED: False,
     },
