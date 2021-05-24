@@ -1,6 +1,6 @@
 import faker from "faker"
 
-const audienceMocker = {
+const audienceMock = {
   name(i) {
     return `Audience ${i + 1}`
   },
@@ -25,4 +25,4 @@ const audienceMocker = {
   },
 }
 
-export default audienceMocker
+export default audienceMock
