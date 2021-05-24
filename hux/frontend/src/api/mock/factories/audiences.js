@@ -1,6 +1,6 @@
 import faker from "faker"
 
-const audienceFaker = {
+const audienceMock = {
   name(i) {
     return `Audience ${i + 1}`
   },
