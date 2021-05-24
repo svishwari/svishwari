@@ -68,10 +68,7 @@ const actions = {
         },
         {
           title: "Age",
-          subtitle:
-          audienceInsights.min_age +
-            " - " +
-          audienceInsights.max_age,
+          subtitle: audienceInsights.min_age + " - " + audienceInsights.max_age,
           icon: "mdi-cake-variant",
         },
         {

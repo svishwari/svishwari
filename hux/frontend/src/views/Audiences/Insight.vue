@@ -150,7 +150,7 @@ export default {
     ...mapGetters({
       getAudience: "audiences/audience",
     }),
-    audience () {
+    audience() {
       return this.getAudience(this.$route.params.id)
     },
   },
