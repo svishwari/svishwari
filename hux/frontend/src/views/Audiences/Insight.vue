@@ -13,9 +13,9 @@
         <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
       </template>
     </PageHeader>
-    <div class="row px-15 my-1">
+    <div class="row px-15 my-1" v-if="isDataExists">
       <MetricCard
-        v-for="(item, i) in audience.insightInfo"
+        v-for="(item, i) in selectedAudience.insightInfo"
         class="ma-4"
         :width="165"
         :height="80"
@@ -83,9 +83,9 @@
         class="rounded px-5 pt-5"
       >
         <div class="overview">Audience overview</div>
-        <div class="row overview-list mb-0 ml-0 mt-1">
+        <div class="row overview-list mb-0 ml-0 mt-1"  v-if="isDataExists">
           <MetricCard
-            v-for="(item, i) in audience.overview"
+            v-for="(item, i) in selectedAudience.overview"
             class="list-item mr-3"
             :width="135"
             :height="80"
@@ -108,6 +108,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import MetricCard from "@/components/common/MetricCard"
@@ -144,9 +145,27 @@ export default {
     }
   },
   computed: {
-    audience() {
-      return this.$store.getters.AudienceById(this.$route.params.id)
+    ...mapGetters({
+      getSelectedAudience: 'audiences/selectedAudience',
+    }),
+    isDataExists() { 
+      if (this.selectedAudience) return this.selectedAudience.overview.length > 0
+      return false
     },
+    selectedAudience () {
+      return this.getSelectedAudience(1)
+    },
+  },
+  methods: {
+    ...mapActions({
+      getAudienceById: "audiences/getAudienceById",
+    }),
+      refresh() {},
+  },
+  async mounted() {
+    this.loading = true
+    await this.getAudienceById(1)
+    this.loading = false
   },
 }
 </script>

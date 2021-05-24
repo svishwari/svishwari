@@ -47,7 +47,7 @@
       <hux-table
         v-if="isDataExists"
         :columnDef="columnDefs"
-        :tableData="rowData"
+        :tableData="audiencesList"
         :rowHeight="60"
         height="350px"
         class="pl-3"
@@ -180,20 +180,24 @@ export default {
   },
   computed: {
     ...mapGetters({
-      rowData: "audiences/AllAudiences",
+      audiencesList: "audiences/AllAudiences",
     }),
     isDataExists() {
-      if (this.rowData) return this.rowData.length > 0
+      if (this.audiencesList) return this.audiencesList.length > 0
       return false
     },
   },
   methods: {
-    ...mapActions(["getAllAudiences"]),
+     ...mapActions({
+      getAudiences: "audiences/getAllAudiences",
+    }),
     refresh() {},
   },
-  // async mounted() {
-  //   await this.getAllAudiences()
-  // },
+  async mounted() {
+    this.loading = true
+    await this.getAudiences()
+    this.loading = false
+  },
 }
 </script>
 <style lang="scss" scoped>
