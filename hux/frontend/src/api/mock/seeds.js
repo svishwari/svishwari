@@ -313,4 +313,7 @@ export default function (server) {
 
   // seed models
   server.create("model", unsubscribeModel)
+
+  //seed audiences
+  server.createList("audience", 10)
 }
