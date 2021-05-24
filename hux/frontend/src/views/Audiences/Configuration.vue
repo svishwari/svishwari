@@ -127,7 +127,10 @@
             </template>
             <v-row class="pt-1">
               <v-col cols="12">
-                <strong class="text-h5">Create lookalike audience</strong>
+                <strong class="text-h5"
+                  >Create a lookalike audience -
+                  <i>This feature will be coming soon</i></strong
+                >
               </v-col>
             </v-row>
           </v-timeline-item>
