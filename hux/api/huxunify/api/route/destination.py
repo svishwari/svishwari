@@ -68,7 +68,6 @@ class DestinationGetView(SwaggerView):
 
     tags = [api_c.DESTINATIONS_TAG]
 
-    @marshal_with(DestinationGetSchema)
     def get(self, destination_id: str) -> Tuple[dict, int]:
         """Retrieves a destination.
 
@@ -81,21 +80,14 @@ class DestinationGetView(SwaggerView):
 
         """
 
-        try:
-            # validate the id
-            valid_id = (
-                DestinationGetSchema()
-                .load({api_c.DESTINATION_ID: destination_id}, partial=True)
-                .get(api_c.DESTINATION_ID)
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        if not ObjectId.is_valid(destination_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # grab the destination
         destination = destination_management.get_delivery_platform(
-            get_db_client(), valid_id
+            get_db_client(), ObjectId(destination_id)
         )
-        return destination, HTTPStatus.OK
+        return DestinationGetSchema().dump(destination), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -118,7 +110,6 @@ class DestinationsView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    @marshal_with(DestinationGetSchema(many=True))
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all destinations.
 
@@ -131,9 +122,8 @@ class DestinationsView(SwaggerView):
         destinations = destination_management.get_all_delivery_platforms(
             get_db_client()
         )
-
         return (
-            destinations,
+            jsonify(DestinationGetSchema().dump(destinations, many=True)),
             HTTPStatus.OK,
         )
 
