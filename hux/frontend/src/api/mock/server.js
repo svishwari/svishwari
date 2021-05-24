@@ -28,7 +28,7 @@ export function makeServer({ environment = "development" } = {}) {
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
     model: Factory.extend(modelFactory),
-    audience: Factory.extend(audienceFactory),
+    audience: Factory.extend( ),
   }
 
   const server = createServer({
