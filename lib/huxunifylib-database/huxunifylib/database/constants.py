@@ -11,7 +11,6 @@ ADDED = "added"
 STATUS = "status"
 ACTIVE = "Active"
 PENDING = "Pending"
-COMING_SOON = "Coming Soon"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
