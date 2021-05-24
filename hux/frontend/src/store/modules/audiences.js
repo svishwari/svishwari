@@ -1,3 +1,4 @@
+import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
 
@@ -13,13 +14,12 @@ const NEW_AUDIENCE = {
 const state = {
   audiences: [],
   newAudience: NEW_AUDIENCE,
-  selectedAudience: {},
 }
 
 const getters = {
   list: (state) => state.audiences,
-  selectedAudience: (state) => {
-    return state.selectedAudience
+  audience: (state) => (id) => {
+    return state.audiences[id]
   },
 }
 
@@ -27,8 +27,8 @@ const mutations = {
   SET_ALL(state, items) {
     state.audiences = items
   },
-  SET_SELECTED_AUDIENCE(state, audience) {
-    state.selectedAudience = audience
+  SET_ONE(state, item) {
+    Vue.set(state.audiences, item.id, item)
   },
 }
 
@@ -45,47 +45,48 @@ const actions = {
   async getAudienceById({ commit }, id) {
     try {
       const response = await api.audiences.find(id)
+      const audienceInsights = response.data.audience_insights
       let insightInfo = [
         {
           title: "Target size",
-          subtitle: response.data.audience_insights.total_customerss.toString(),
+          subtitle: audienceInsights.total_customers.toString(),
         },
         {
           title: "Countries",
-          subtitle: response.data.audience_insights.total_countries.toString(),
+          subtitle: audienceInsights.total_countries.toString(),
           icon: "mdi-earth",
         },
         {
           title: "US States",
-          subtitle: response.data.audience_insights.total_us_states.toString(),
+          subtitle: audienceInsights.total_us_states.toString(),
           icon: "mdi-map",
         },
         {
           title: "Cities",
-          subtitle: response.data.audience_insights.total_cities.toString(),
+          subtitle: audienceInsights.total_cities.toString(),
           icon: "mdi-map-marker-radius",
         },
         {
           title: "Age",
           subtitle:
-            response.data.audience_insights.min_age +
+          audienceInsights.min_age +
             " - " +
-            response.data.audience_insights.max_age,
+          audienceInsights.max_age,
           icon: "mdi-cake-variant",
         },
         {
           title: "Women",
-          subtitle: response.data.audience_insights.gender_women + "%",
+          subtitle: audienceInsights.gender_women + "%",
           icon: "mdi-gender-female",
         },
         {
           title: "Men",
-          subtitle: response.data.audience_insights.gender_men + "%",
+          subtitle: audienceInsights.gender_men + "%",
           icon: "mdi-gender-male",
         },
         {
           title: "Other",
-          subtitle: response.data.audience_insights.gender_other + "%",
+          subtitle: audienceInsights.gender_other + "%",
           icon: "mdi-gender-male-female",
         },
       ]
@@ -105,11 +106,10 @@ const actions = {
         },
       ]
       response.data["audienceHistory"] = history
-      commit("SET_SELECTED_AUDIENCE", response.data)
+      commit("SET_ONE", response.data)
     } catch (error) {
-      /*
-       *    to do item...
-       */
+      handleError(error)
+      throw error
     }
   },
 }

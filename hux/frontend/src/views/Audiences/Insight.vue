@@ -14,7 +14,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="row px-15 my-1" v-if="audience.audienceHistory">
+    <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
         class="ma-4"
@@ -74,7 +74,7 @@
         </template>
       </MetricCard>
     </div>
-    <div class="px-15 my-1" v-if="audience.insightInfo">
+    <div class="px-15 my-1" v-if="audience && audience.insightInfo">
       <v-card
         height="150"
         width="fit-content"
@@ -148,8 +148,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      audience: "audiences/selectedAudience",
+      getAudience: "audiences/audience",
     }),
+    audience () {
+      return this.getAudience(this.$route.params.id)
+    },
   },
   methods: {
     ...mapActions({
