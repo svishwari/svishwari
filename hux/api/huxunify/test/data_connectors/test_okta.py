@@ -2,14 +2,36 @@
 purpose of this file is to house all the okta tests
 """
 import json
-import requests
 from unittest import TestCase
 import requests_mock
 from requests_mock import Mocker
 from bson import json_util
-from huxunify.api import constants
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors import tecton
+from huxunify.api.data_connectors import okta
+
+
+VALID_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "davesmith",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "davesmith@fake",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "1234567",
+}
+INVALID_RESPONSE = {"active": False}
+BEARER_SAMPLE = {
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "access_token": "",
+    "scope": "openid email profile",
+    "id_token": "",
+}
 
 
 class OktaTest(TestCase):
@@ -24,10 +46,15 @@ class OktaTest(TestCase):
 
         """
         self.config = get_config()
+        self.introspect_call = (
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/introspect?client_id="
+            f"{self.config.OKTA_CLIENT_ID}"
+        )
 
-    # @requests_mock.Mocker()
-    def test_introspection(self): #, request_mocker: Mocker):
-        """Test token introspection
+    @requests_mock.Mocker()
+    def test_introspection_invalid_call(self, request_mocker: Mocker):
+        """Test token introspection with an invalid token.
 
         Args:
             request_mocker (str): Request mock object.
@@ -37,23 +64,48 @@ class OktaTest(TestCase):
         """
 
         # setup the request mock post
-        # requests.post(
-        #     self.config.TECTON_FEATURE_SERVICE,
-        #     text=json.dumps(MOCK_MODEL_RESPONSE, default=json_util.default),
-        #     headers=self.config.TECTON_API_HEADERS,
-        # )
+        request_mocker.post(
+            self.introspect_call,
+            text=json.dumps(INVALID_RESPONSE, default=json_util.default),
+        )
 
-        issuer = "https://deloittedigital-ms.okta.com"
-        client_id = "0oab1i3ldgYyRvk5r2p7"
-        
-        access_token = ""
-        payload = requests.post(
-            
-            url=f"{issuer}/oauth2/v1/introspect?client_id={client_id}",
-            data={
-                constants.AUTHENTICATION_TOKEN: access_token,
-                constants.AUTHENTICATION_TOKEN_TYPE_HINT: constants.AUTHENTICATION_ACCESS_TOKEN,
-            },
-        ).json()
+        response = okta.introspect_token("invalid")
 
-        print(payload)
+        # # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        # test correct payload sent
+        expected_payload = "token=invalid&token_type_hint=access_token"
+        self.assertEqual(request_mocker.last_request.text, expected_payload)
+
+        # test expected response of None
+        self.assertIsNone(response)
+
+    @requests_mock.Mocker()
+    def test_introspection_valid_call(self, request_mocker: Mocker):
+        """Test token introspection with a valid token.
+
+        Args:
+            request_mocker (str): Request mock object.
+
+        Returns:
+
+        """
+
+        # setup the request mock post
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = okta.introspect_token("valid")
+
+        # # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        # test correct payload sent
+        expected_payload = "token=valid&token_type_hint=access_token"
+        self.assertEqual(request_mocker.last_request.text, expected_payload)
+
+        # test expected response of None
+        expected_response = {"user_id": "1234567", "user_name": "davesmith"}
+        self.assertDictEqual(response, expected_response)

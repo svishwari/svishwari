@@ -74,8 +74,10 @@ class Config:
         SSL_CERT_PATH: MONGO_SSL_CERT,
     }
 
-    OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="")
-    OKTA_ISSUER = config("OKTA_ISSUER", default="")
+    OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="0oab1i3ldgYyRvk5r2p7")
+    OKTA_ISSUER = config(
+        "OKTA_ISSUER", default="https://deloittedigital-ms.okta.com"
+    )
 
     MONITORING_CONFIG = config("OKTA_ISSUER", default="MONITORING-CONFIG")
 
