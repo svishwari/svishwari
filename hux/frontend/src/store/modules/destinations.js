@@ -49,7 +49,7 @@ const actions = {
     try {
       const response = await api.destinations.update(
         destination.id,
-        destination.auth_details
+        destination.authentication_details
       )
       commit("SET_ONE", response.data)
     } catch (error) {
@@ -60,7 +60,7 @@ const actions = {
 
   async validate(_, destination) {
     try {
-      await api.destinations.validate(destination.auth_details)
+      await api.destinations.validate(destination.authentication_details)
     } catch (error) {
       handleError(error)
       throw error
