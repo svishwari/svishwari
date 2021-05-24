@@ -6,7 +6,6 @@ CONNECT_RETRY_INTERVAL = 1
 DUPLICATE_ERR_CODE = 11000
 FAVORITE = "favorite"
 ENABLED = "enabled"
-AVAILABLE = "available"
 OKTA_ID = "okta_id"
 ADDED = "added"
 STATUS = "status"

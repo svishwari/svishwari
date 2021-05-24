@@ -21,7 +21,6 @@ def create_data_source(
     added: bool = False,
     enabled: bool = False,
     status: str = c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-    available: bool = False,
 ) -> dict:
     """A function that creates a new data source
 
@@ -32,7 +31,6 @@ def create_data_source(
         added (bool): data source is added.
         enabled (bool): data source is enabled.
         status (str): status of the data source.
-        available (bool): data source is available.
     Returns:
         dict: MongoDB document for a data source
 
@@ -49,7 +47,6 @@ def create_data_source(
         c.CDP_DATA_SOURCE_FIELD_STATUS: status,
         c.ADDED: added,
         c.ENABLED: enabled,
-        c.AVAILABLE: available,
     }
 
     try:
