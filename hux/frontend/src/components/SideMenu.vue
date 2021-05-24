@@ -16,7 +16,7 @@
         height="55"
         class="d-flex ma-4"
       />
-      <v-menu open-on-hover offset-x>
+      <v-menu open-on-hover offset-y>
         <template v-slot:activator="{ on }">
           <div v-on="on" class="client">
             <span>
@@ -49,8 +49,8 @@
         </span>
       </div>
 
-      <v-list-item class="pb-2" v-if="!item.menu" :to="item.link">
-        <v-list-item-icon v-if="item.icon">
+      <v-list-item class="my-2" v-if="!item.menu" :to="item.link">
+        <v-list-item-icon class="my-3" v-if="item.icon">
           <Icon :type="item.icon" :size="iconSize" color="white" />
         </v-list-item-icon>
         <v-list-item-title class="white--text">
@@ -64,7 +64,7 @@
           :key="menu.title"
           :to="menu.link"
         >
-          <v-list-item-icon v-if="menu.icon">
+          <v-list-item-icon class="my-3" v-if="menu.icon">
             <Icon :type="menu.icon" :size="iconSize" color="white" />
           </v-list-item-icon>
           <v-list-item-title class="white--text">
@@ -114,7 +114,7 @@ export default {
 .side-nav-bar {
   @media (min-height: 900px) {
     background-image: url("../assets/images/nav-bg.png");
-    background-position: bottom center;
+    background-position: bottom 30px center;
   }
 
   .client {
@@ -127,7 +127,7 @@ export default {
     line-height: 1.75rem;
     font-weight: normal;
     justify-content: space-between;
-    padding: 1rem 1.125rem;
+    padding: 0.8rem 1.78rem;
   }
 
   .v-icon {
