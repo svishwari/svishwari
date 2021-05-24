@@ -1,12 +1,12 @@
 import faker from "faker"
 
-const audienceFaker = {
+const audienceMocker = {
   name(i) {
     return `Audience ${i + 1}`
   },
 
   size() {
-    return faker.finance.account()
+    return faker.datatype.number({ min: 10000000, max: 999999999 })
   },
   create_time() {
     return faker.date.past()
@@ -25,4 +25,4 @@ const audienceFaker = {
   },
 }
 
-export default audienceFaker
+export default audienceMocker
