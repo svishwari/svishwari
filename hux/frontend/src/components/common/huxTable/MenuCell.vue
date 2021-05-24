@@ -46,7 +46,7 @@ export default Vue.extend({
       audienceId: null,
       cellValue: null,
       items: [
-        { title: "Favourite" },
+        { title: "Favorite" },
         { title: "Export" },
         { title: "Edit" },
         { title: "Duplicate" },
