@@ -67,8 +67,11 @@
                     >
                     <v-chip
                       :close="isChipRemovable"
-                      class="ma-2"
+                      small
+                      class="mx-2 font-weight-semi-bold"
                       text-color="primary"
+                      color="pillBlue"
+                      close-icon="mdi-close"
                       v-for="item in selectedEngagements"
                       @click:close="detachEngagement(item.engagement_id)"
                       :key="item.engagement_id"

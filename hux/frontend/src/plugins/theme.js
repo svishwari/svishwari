@@ -25,4 +25,5 @@ export default {
   darkGreyHeading: colors.darkGreyHeading,
   lightGreyAnotherVariant: colors.lightGreyAnotherVariant,
   offWhite: colors.offWhite,
+  pillBlue: colors.dullBlue,
 }
