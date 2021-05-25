@@ -182,7 +182,6 @@ def secured() -> object:
 
             # get the auth token
             # {"Authorization": f"Bearer {TEST_TOKEN}"}
-
             auth_header = request.headers.get("Authorization")
             if not auth_header:
                 # no authorization header, return a generic 401.

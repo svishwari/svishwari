@@ -303,7 +303,6 @@ class ModelDriftView(SwaggerView):
         """Retrieves model drift details.
 
         ---
-
         Args:
             name (str): model name
 
