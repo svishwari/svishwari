@@ -159,6 +159,7 @@ class TestEngagementManagement(unittest.TestCase):
             c.AUDIENCE_ID: self.audience[c.ID],
             c.DESTINATIONS: [x[c.ID] for x in self.destinations],
             c.ENABLED: True,
+            c.DELIVERIES: []
         }
 
         # create the engagement audience
@@ -409,7 +410,7 @@ class TestEngagementManagement(unittest.TestCase):
         engagements = em.get_engagements(self.database)
 
         self.assertTrue(engagements)
-        self.assertEqual(len(engagements), 5)
+        self.assertEqual(len(engagements), 6)
         found_engaged_audiences = []
         for i, engagement in enumerate(engagements):
             if not engagement[c.ID] in engagement_ids:
