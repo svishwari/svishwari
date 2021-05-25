@@ -51,8 +51,6 @@ def introspect_token(access_token: str) -> dict:
         },
     ).json()
 
-    print(payload)
-
     # check if a valid token
     if "active" in payload and not payload["active"]:
         return None

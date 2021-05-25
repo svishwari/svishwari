@@ -191,12 +191,14 @@ def secured() -> object:
                 return "Invalid authorization header.", 403
 
             # safely extract token using string partition
-            _, token = auth_header.partition(" ")
+            _, _, token = auth_header.partition(" ")
             if introspect_token(token):
                 return in_function(*args, **kwargs)
 
             return "You not authorized to visit this page.", 401
 
+        # set tag so we can assert if a function is secured via this decorator
+        decorator.__wrapped__ = in_function
         return decorator
 
     return wrapper

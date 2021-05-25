@@ -5,9 +5,11 @@ import json
 from unittest import TestCase
 import requests_mock
 from requests_mock import Mocker
+from flask import Flask
 from bson import json_util
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors import okta
+from huxunify.api.route.utils import secured
 
 
 VALID_RESPONSE = {
@@ -109,3 +111,134 @@ class OktaTest(TestCase):
         # test expected response of None
         expected_response = {"user_id": "1234567", "user_name": "davesmith"}
         self.assertDictEqual(response, expected_response)
+
+    def test_secured_decorator_invalid_header(self):
+        """Test secured decorator with an invalid header.
+
+        Args:
+
+        Returns:
+
+        """
+        invalid_header = ("You not authorized to visit this page.", 401)
+        with Flask("invalid_test").test_request_context("/"):
+
+            @secured()
+            def demo_endpoint():
+                return True
+
+            self.assertEqual(invalid_header, demo_endpoint())
+
+    def test_secured_decorator_valid_header_none_token(self):
+        """Test secured decorator with a valid header, None token.
+
+        Args:
+
+        Returns:
+
+        """
+        invalid_header = ("Invalid authorization header.", 403)
+        with Flask("invalid_test").test_request_context(
+            "/", headers={"Authorization": None}
+        ):
+
+            @secured()
+            def demo_endpoint():
+                return True
+
+            self.assertEqual(invalid_header, demo_endpoint())
+
+    def test_secured_decorator_misspelled_bearer(self):
+        """Test secured decorator with a misspelled bearer
+
+        Args:
+
+        Returns:
+
+        """
+        invalid_header = ("Invalid authorization header.", 403)
+        with Flask("invalid_test").test_request_context(
+            "/", headers={"Authorization": "Bearerr "}
+        ):
+
+            @secured()
+            def demo_endpoint():
+                return True
+
+            self.assertEqual(invalid_header, demo_endpoint())
+
+    def test_secured_decorator_bad_token(self):
+        """Test secured decorator with a bad token
+
+        Args:
+
+        Returns:
+
+        """
+        invalid_header = ("You not authorized to visit this page.", 401)
+        with Flask("invalid_test").test_request_context(
+            "/", headers={"Authorization": "Bearer 123456789"}
+        ):
+
+            @secured()
+            def demo_endpoint():
+                return True
+
+            self.assertEqual(invalid_header, demo_endpoint())
+
+    @requests_mock.Mocker()
+    def test_secured_decorator_valid_token(self, request_mocker: Mocker):
+        """Test secured decorator with a good token
+
+        Args:
+            request_mocker (str): Request mock object.
+
+        Returns:
+
+        """
+
+        # setup the request mock post
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        with Flask("valid_test").test_request_context(
+            "/", headers={"Authorization": "Bearer 12345678"}
+        ):
+
+            @secured()
+            def demo_endpoint():
+                return True
+
+            # true means the endpoint and token call were succesfully passed.
+            self.assertTrue(demo_endpoint())
+
+    def test_secured_decorator_exists(self):
+        """Test if the secured decorator is attached to the endpoint
+
+        Args:
+
+        Returns:
+
+        """
+
+        @secured()
+        def demo_endpoint():
+            return True
+
+        self.assertEqual(
+            getattr(demo_endpoint, "__wrapped__").__name__, "demo_endpoint"
+        )
+
+    def test_unsecured_decorator_exists(self):
+        """Test if the secured decorator is not attached to the endpoint
+
+        Args:
+
+        Returns:
+
+        """
+
+        def demo_endpoint():
+            return True
+
+        with self.assertRaises(AttributeError):
+            getattr(demo_endpoint, "__wrapped__")
