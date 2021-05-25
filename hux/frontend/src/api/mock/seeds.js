@@ -157,7 +157,7 @@ const facebook = {
   name: "Facebook",
   type: "facebook",
   is_enabled: true,
-  auth_details: {
+  authentication_details: {
     ad_account_id: {
       name: "Ad Account ID",
       type: "text",
@@ -189,7 +189,7 @@ const salesforce = {
   name: "Salesforce Marketing Cloud",
   type: "salesforce",
   is_enabled: true,
-  auth_details: {
+  authentication_details: {
     sfmc_account_id: {
       name: "Account ID",
       type: "text",

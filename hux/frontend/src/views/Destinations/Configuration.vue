@@ -29,7 +29,7 @@
         <v-row>
           <v-col
             cols="6"
-            v-for="item in Object.values(destination.auth_details)"
+            v-for="item in Object.values(destination.authentication_details)"
             :key="item.name"
           >
             <TextField
