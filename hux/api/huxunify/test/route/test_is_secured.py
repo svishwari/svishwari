@@ -31,6 +31,8 @@ UNSECURED_ROUTES = [
     "/swagger/<path:filename>",
     "/static/<path:filename>",
 ]
+
+# build off of this, for full-end-to-end testing.
 ROUTE_TEST_ARGS = {
     "/api/v1/notifications|get": {
         "query_string": {
