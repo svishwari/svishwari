@@ -101,7 +101,7 @@ def get_engagements(database: DatabaseClient) -> list:
                 "foreignField": db_c.ENGAGEMENT_ID,
                 "as": db_c.ENGAGEMENT_AUDIENCES_COLLECTION,
             }
-        }, 
+        },
         # {"$unwind": f"${db_c.ENGAGEMENT_AUDIENCES_COLLECTION}"},
     ]
 

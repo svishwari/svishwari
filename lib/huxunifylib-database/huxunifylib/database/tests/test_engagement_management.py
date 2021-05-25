@@ -159,7 +159,7 @@ class TestEngagementManagement(unittest.TestCase):
             c.AUDIENCE_ID: self.audience[c.ID],
             c.DESTINATIONS: [x[c.ID] for x in self.destinations],
             c.ENABLED: True,
-            c.DELIVERIES: []
+            c.DELIVERIES: [],
         }
 
         # create the engagement audience
