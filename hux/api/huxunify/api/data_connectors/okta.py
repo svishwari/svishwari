@@ -6,7 +6,7 @@ from typing import Tuple
 import requests
 
 from huxunify.api.config import get_config
-from huxunify.api import constants
+from huxunify.api import constants as api_c
 
 
 def check_okta_connection() -> Tuple[bool, str]:
@@ -19,10 +19,12 @@ def check_okta_connection() -> Tuple[bool, str]:
     # get config
     config = get_config()
 
-    # submit the post request to get models
+    # submit the get request to test if we can talk to OKTA.
     try:
         response = requests.get(
-            f"{config.OKTA_ISSUER}/oauth2/v1/keys?client_id={config.OKTA_CLIENT_ID}"
+            f"{config.OKTA_ISSUER}"
+            f"/oauth2/v1/keys?client_id="
+            f"{config.OKTA_CLIENT_ID}"
         )
         return response.status_code, "OKTA available."
 
@@ -44,10 +46,12 @@ def introspect_token(access_token: str) -> dict:
     config = get_config()
 
     payload = requests.post(
-        url=f"{config.OKTA_ISSUER}/oauth2/v1/introspect?client_id={config.OKTA_CLIENT_ID}",
+        url=f"{config.OKTA_ISSUER}"
+        f"/oauth2/v1/introspect?client_id="
+        f"{config.OKTA_CLIENT_ID}",
         data={
-            constants.AUTHENTICATION_TOKEN: access_token,
-            constants.AUTHENTICATION_TOKEN_TYPE_HINT: constants.AUTHENTICATION_ACCESS_TOKEN,
+            api_c.AUTHENTICATION_TOKEN: access_token,
+            api_c.AUTHENTICATION_TOKEN_TYPE_HINT: api_c.AUTHENTICATION_ACCESS_TOKEN,
         },
     ).json()
 
