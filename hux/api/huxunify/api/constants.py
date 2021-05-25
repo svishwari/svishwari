@@ -232,4 +232,4 @@ BATCH_SIZE = "batch_size"
 
 # ERROR
 INVALID_AUTH_HEADER = "Invalid authorization header."
-INVALID_AUTH = "You not authorized to visit this page."
+INVALID_AUTH = "You are not authorized to visit this page."
