@@ -179,6 +179,16 @@ const routes = [
       requiresAuth: false,
     },
   },
+  {
+    path: "/table",
+    name: "Table",
+    component: () => import("@/components/common/dataTable/HuxDataTable"),
+    meta: {
+      layout: "default",
+      title: "Table Components",
+      requiresAuth: false,
+    },
+  },
 ]
 
 routes.push(NotFoundRoute)
