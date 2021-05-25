@@ -655,14 +655,6 @@ def update_audience_name(
         dict: Updated audience configuration dict.
 
     """
-    ingestion_job_id = None
-
-    # Make sure the name will be unique
-    job_doc = get_audience_config(database, audience_id)
-
-    if job_doc is not None:
-        ingestion_job_id = job_doc.get(c.JOB_ID)
-
     exists_flag = audience_name_exists(
         database,
         name,
@@ -670,7 +662,7 @@ def update_audience_name(
 
     if exists_flag:
         cur_doc = get_audience_config(database, audience_id)
-        if cur_doc[c.AUDIENCE_NAME] != name:
+        if cur_doc[c.AUDIENCE_NAME] == name:
             raise de.DuplicateName(name)
 
     # Update dict
