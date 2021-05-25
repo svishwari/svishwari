@@ -22,8 +22,8 @@ def set_engagement(
     database: DatabaseClient,
     name: str,
     description: str,
-    audiences: list,
-    delivery_schedule: dict,
+    user_id: ObjectId,
+    delivery_schedule: dict = None,
 ) -> ObjectId:
     """A function to create an engagement
 
@@ -31,7 +31,7 @@ def set_engagement(
         database (DatabaseClient): A database client.
         name (str): Name of the engagement.
         description (str): Description of the engagement.
-        audiences (list): List of audience ObjectIds assigned to the engagement.
+        user_id (ObjectId): ID of the user creating the document.
         delivery_schedule (dict): Delivery Schedule dict
 
     Returns:
@@ -39,7 +39,9 @@ def set_engagement(
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
 
     if name_exists(
         database,
@@ -53,14 +55,13 @@ def set_engagement(
     doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
-        db_c.AUDIENCES: audiences,
-        db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.CREATE_TIME: datetime.datetime.utcnow(),
-        # TODO - implement after HUS-254 is done to grab user/okta_id
-        db_c.CREATED_BY: None,
+        db_c.CREATED_BY: user_id,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.ENABLED: True,
     }
+    if delivery_schedule:
+        doc[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = delivery_schedule
 
     try:
         engagement_id = collection.insert_one(doc).inserted_id
@@ -88,7 +89,9 @@ def get_engagements(database: DatabaseClient) -> list:
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
 
     try:
         return list(collection.find({db_c.ENABLED: True}))
@@ -114,10 +117,14 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
 
     try:
-        return collection.find_one({db_c.ID: engagement_id, db_c.ENABLED: True})
+        return collection.find_one(
+            {db_c.ID: engagement_id, db_c.ENABLED: True}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -128,7 +135,9 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def delete_engagement(database: DatabaseClient, engagement_id: ObjectId) -> bool:
+def delete_engagement(
+    database: DatabaseClient, engagement_id: ObjectId
+) -> bool:
     """A function to delete an engagement based on ID
 
     Args:
@@ -140,7 +149,9 @@ def delete_engagement(database: DatabaseClient, engagement_id: ObjectId) -> bool
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
 
     try:
         doc = collection.find_one_and_update(
@@ -165,9 +176,9 @@ def delete_engagement(database: DatabaseClient, engagement_id: ObjectId) -> bool
 def update_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
+    user_id: ObjectId,
     name: str = None,
     description: str = None,
-    audiences: list = None,
     delivery_schedule: dict = None,
 ) -> dict:
     """A function to update fields in an engagement
@@ -177,19 +188,20 @@ def update_engagement(
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
         name (str): Name of the engagement.
         description (str): Descriptions of the engagement.
-        audiences (list): list of audience ObjectIds.
         delivery_schedule (dict): delivery schedule dict.
 
     Returns:
         dict: dict object of the engagement that has been updated
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
 
     update_doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
-        db_c.AUDIENCES: audiences,
+        db_c.UPDATED_BY: user_id,
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
@@ -220,8 +232,8 @@ def update_engagement(
 )
 def create_engagement_audience(
     database: DatabaseClient,
-    audience_id: str,
-    engagement_id: str,
+    audience_id: ObjectId,
+    engagement_id: ObjectId,
     destination_ids: list,
 ) -> dict:
     """A function to create an engagement audience.
@@ -229,43 +241,154 @@ def create_engagement_audience(
     Args:
         database (DatabaseClient): A database client.
         audience_id (str): audience id.
-        engagement_id (str): audience id.
-        destination_ids (list): List of destination
-            / delivery platform ids attached to the audience
+        engagement_id (str): engagement id.
+        destination_ids (list): List of destination ids attached
+            to the engagement
 
     Returns:
         dict: MongoDB engagement audience doc.
     """
 
-    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
-    collection = am_db[db_c.ENGAGEMENTS_COLLECTION]
+    # check for a valid object id
+    if not isinstance(audience_id, ObjectId):
+        raise TypeError(f"Invalid Audience ID Provided {audience_id}.")
 
-    # check if existing engaged audience already.
+    # check for a valid object id
+    if not isinstance(engagement_id, ObjectId):
+        raise TypeError(f"Invalid Engagement ID Provided {engagement_id}.")
+
+    # validate the destination IDs
+    if not all(isinstance(x, ObjectId) for x in destination_ids):
+        raise TypeError("Invalid Destination IDs Provided.")
+
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+
+    # check if the engagement id exists
+    engagements = am_db[db_c.ENGAGEMENTS_COLLECTION]
+    if engagements.count_documents({db_c.ID: engagement_id}, limit=1) == 0:
+        raise Exception(f"Engagement does not exist {engagement_id}.")
+
+    # check if the audience id exists
+    audiences = am_db[db_c.AUDIENCES_COLLECTION]
+    if audiences.count_documents({db_c.ID: audience_id}, limit=1) == 0:
+        raise Exception(f"Audience does not exist {audience_id}.")
+
+    # check if the all the destination ids exists
+    destinations = am_db[db_c.DELIVERY_PLATFORM_COLLECTION]
+    for dest_id in destination_ids:
+        if destinations.count_documents({db_c.ID: dest_id}, limit=1) == 0:
+            raise Exception(f"Destination does not exist {dest_id}.")
+
+    # get the engagement collection
+    collection = am_db[db_c.ENGAGEMENT_AUDIENCES_COLLECTION]
+
+    # check if existing engagement audience.
     try:
-        if collection.find_one(
+        engagement_audience = collection.find_one(
             {db_c.ENGAGEMENT_ID: engagement_id, db_c.AUDIENCE_ID: audience_id}
-        ):
-            raise Exception("Engagement")
+        )
+        if engagement_audience:
+            raise Exception(
+                f"Engagement Audience Exists {engagement_audience[db_c.ID]}."
+            )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    # Get current time
-    curr_time = datetime.datetime.utcnow()
-
-    audience_doc = {
-        c.AUDIENCE_NAME: name,
-        c.AUDIENCE_FILTERS: audience_filters,
-        c.DESTINATIONS: destination_ids,
-        c.CREATE_TIME: curr_time,
-        c.UPDATE_TIME: curr_time,
-        c.CREATED_BY: user_id,
-        c.UPDATED_BY: user_id,
+    engagement_audience = {
+        db_c.ENGAGEMENT_ID: engagement_id,
+        db_c.AUDIENCE_ID: audience_id,
+        db_c.DESTINATIONS: destination_ids,
+        db_c.ENABLED: True,
     }
 
     try:
-        audience_id = collection.insert_one(audience_doc).inserted_id
-        if audience_id is not None:
-            return collection.find_one({c.ID: audience_id})
+        engagement_audience_id = collection.insert_one(
+            engagement_audience
+        ).inserted_id
+        if engagement_audience_id is not None:
+            return collection.find_one({db_c.ID: engagement_audience_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_engagement_audiences(
+    database: DatabaseClient, engagement_ids: list, enabled: bool = True
+) -> list:
+    """A function to get engagement audiences based on ID
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_ids (list): list of engagement audiences.
+
+    Returns:
+        list: list of engagements.
+
+    """
+
+    if not engagement_ids:
+        return None
+
+    if not all(isinstance(x, ObjectId) for x in engagement_ids):
+        raise TypeError("Invalid Engagement IDs Provided.")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENT_AUDIENCES_COLLECTION
+    ]
+
+    try:
+        return list(
+            collection.find(
+                {db_c.ID: {"$in": engagement_ids}, db_c.ENABLED: enabled}
+            )
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_engagement_audiences(
+    database: DatabaseClient, engagement_ids: list
+) -> list:
+    """A function to delete engagement audiences based on ID.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_ids (list): list of engagement audiences.
+
+    Returns:
+        list: List of deleted engagement audiences.
+
+    """
+
+    if not engagement_ids:
+        return None
+
+    if not all(not isinstance(x, ObjectId) for x in engagement_ids):
+        raise TypeError("Invalid Engagement IDs Provided.")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENT_AUDIENCES_COLLECTION
+    ]
+
+    update_doc = {db_c.ENABLED: False}
+
+    try:
+        # soft-delete
+        delete_ids = collection.update_many(
+            {db_c.ID: {"$in": engagement_ids}}, {"$set": update_doc}
+        )
+        return list(delete_ids)
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

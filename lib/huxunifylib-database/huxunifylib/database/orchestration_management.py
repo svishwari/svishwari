@@ -21,7 +21,6 @@ def create_audience(
     database: DatabaseClient,
     name: str,
     audience_filters: list,
-    destination_ids: list = None,
     user_id: ObjectId = None,
 ) -> dict:
     """A function to create an audience.
@@ -31,8 +30,6 @@ def create_audience(
         name (str): Name of the audience.
         audience_filters (list of list): Multiple sections of audience filters.
         These are aggregated using "OR".
-        destination_ids (list): List of destination
-            / delivery platform ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
 
     Returns:
@@ -55,7 +52,6 @@ def create_audience(
     audience_doc = {
         c.AUDIENCE_NAME: name,
         c.AUDIENCE_FILTERS: audience_filters,
-        c.DESTINATIONS: destination_ids,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.CREATED_BY: user_id,
