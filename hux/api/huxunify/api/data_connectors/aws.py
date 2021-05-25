@@ -72,7 +72,6 @@ class ParameterStore:
         authentication_details: dict,
         is_updated: bool,
         destination_id: str,
-        destination_name: str,
     ) -> dict:
         """Save authentication details in AWS Parameter Store.
 
@@ -80,7 +79,6 @@ class ParameterStore:
             authentication_details (dict): The key/secret pair to store away.
             is_updated (bool): Flag to update the secrets in the AWS Parameter Store.
             destination_id (str): destinations ID.
-            destination_name (str): destinations name.
 
         Returns:
             ssm_params (dict): The key/path to where the parameters are stored.
@@ -107,7 +105,7 @@ class ParameterStore:
                     status=int(HTTPStatus.BAD_REQUEST.value),
                     title=HTTPStatus.BAD_REQUEST.description,
                     detail=f"{api_c.PARAMETER_STORE_ERROR_MSG}"
-                    f" destination_name: {destination_name}.",
+                    f" destination_id: {destination_id}.",
                 ) from exc
 
         return ssm_params
