@@ -44,12 +44,16 @@ class OktaTest(TestCase):
         Returns:
 
         """
+        print("getting config")
         self.config = get_config()
 
+        print("creating app")
         # setup the flask test client
         self.app = app.create_app()
-        self.routes = list(self.app.url_map.iter_rules())
 
+        print("listing routes")
+        self.routes = list(self.app.url_map.iter_rules())
+        print("introspect_call routes")
         self.introspect_call = (
             f"{self.config.OKTA_ISSUER}"
             f"/oauth2/v1/introspect?client_id="
@@ -68,7 +72,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-
+        print("test_secured_all_endpoints_invalid_response")
         # setup the request mock post
         request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
         mock_header = {"Authorization": "Bearer 1234567"}
@@ -98,7 +102,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-
+        print("test_secured_all_endpoints_invalid_header")
         # setup the request mock post
         request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
         mock_header = {"Authorization": "Bearer"}
@@ -128,7 +132,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-
+        print("test_secured_all_endpoints_valid_header_bad_token")
         # setup the request mock post
         request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
         mock_header = {"Authorization": "Bearer 123456765"}
@@ -158,7 +162,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-
+        print("test_secured_all_endpoints_valid_header_good_token")
         # setup the request mock post
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
         mock_header = {"Authorization": "Bearer 123456765"}
