@@ -11,7 +11,6 @@ from connexion.exceptions import ProblemException
 from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
-from marshmallow import ValidationError
 from flask_cors import cross_origin
 
 from huxunifylib.database import constants as db_constants
@@ -120,7 +119,6 @@ class IndividualUserSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
-    @marshal_with(UserSchema)
     def get(self, user_id: str) -> Tuple[dict, int]:
         """Retrieves a user.
 
@@ -136,18 +134,16 @@ class IndividualUserSearch(SwaggerView):
 
         """
 
-        # validate the id
-        try:
-            valid_id = (
-                UserSchema()
-                .load({db_constants.USER_ID: user_id}, partial=True)
-                .get(db_constants.USER_ID)
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        if not ObjectId.is_valid(user_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         try:
-            return get_user(get_db_client(), okta_id=valid_id), HTTPStatus.OK
+            return (
+                UserSchema().dump(
+                    get_user(get_db_client(), ObjectId(user_id))
+                ),
+                HTTPStatus.OK,
+            )
 
         except Exception as exc:
 
@@ -415,7 +411,7 @@ class AddUserFavorite(SwaggerView):
             "type": "object",
             "description": api_c.FAVORITE_BODY_DESCRIPTION,
             "example": {
-                db_constants.COMPONENT_NAME: "Audience",
+                db_constants.COMPONENT_NAME: "Audiences",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
             db_constants.COMPONENT_NAME: "component name",
@@ -501,7 +497,7 @@ class EditUserFavorite(SwaggerView):
             "type": "object",
             "description": api_c.FAVORITE_BODY_DESCRIPTION,
             "example": {
-                db_constants.COMPONENT_NAME: "Audience",
+                db_constants.COMPONENT_NAME: "Audiences",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
             db_constants.COMPONENT_NAME: "component name",
@@ -584,7 +580,7 @@ class DeleteUserFavorite(SwaggerView):
             "type": "object",
             "description": api_c.FAVORITE_BODY_DESCRIPTION,
             "example": {
-                db_constants.COMPONENT_NAME: "Audience",
+                db_constants.COMPONENT_NAME: "Audiences",
                 db_constants.COMPONENT_ID: "5f5f7262997acad4bac4364a",
             },
             db_constants.COMPONENT_NAME: "component name",
