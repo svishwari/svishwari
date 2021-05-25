@@ -29,18 +29,18 @@ from huxunifylib.database.utils import get_collection_count
 )
 def create_audience(
     database: DatabaseClient,
-    ingestion_job_id: ObjectId,
     name: str,
     audience_filters: list,
+    ingestion_job_id: ObjectId = None,
 ) -> dict:
     """A function to create and store audience rules.
 
     Args:
-        database (DatabaseClient): A database client.
-        ingestion_job_id (ObjectId): Mongo DB ID of the
-            corresponding ingestion job.
+        database (DatabaseClient): A database client. Defaults to None.
         name (str): Name of the audience.
         audience_filters (list): List if audience filters.
+        ingestion_job_id (ObjectId, optional): Mongo DB ID of the
+            corresponding ingestion job. Defaults to None.
 
     Returns:
         dict: MongoDB audience doc.
@@ -54,7 +54,6 @@ def create_audience(
     # Make sure the name will be unique
     exists_flag = audience_name_exists(
         database,
-        ingestion_job_id,
         name,
     )
 
@@ -62,16 +61,17 @@ def create_audience(
         raise de.DuplicateName(name)
 
     # Validate ingestion job id
-    doc = dm.get_ingestion_job(database, ingestion_job_id)
+    doc = None
+    if ingestion_job_id:
+        doc = dm.get_ingestion_job(database, ingestion_job_id)
 
-    if doc is None:
+    if ingestion_job_id and doc is None:
         raise de.InvalidID(ingestion_job_id)
 
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
     audience_doc = {
-        c.JOB_ID: ingestion_job_id,
         c.AUDIENCE_NAME: name,
         c.AUDIENCE_FILTERS: audience_filters,
         c.ENABLED: True,
@@ -79,6 +79,9 @@ def create_audience(
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
     }
+
+    if ingestion_job_id:
+        audience_doc[c.JOB_ID] = ingestion_job_id
 
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id
@@ -662,7 +665,6 @@ def update_audience_name(
 
     exists_flag = audience_name_exists(
         database,
-        ingestion_job_id,
         name,
     )
 
