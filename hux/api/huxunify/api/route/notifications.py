@@ -15,7 +15,11 @@ from huxunifylib.database import (
     notification_management,
 )
 from huxunify.api.schema.notifications import NotificationSchema
-from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
+from huxunify.api.route.utils import (
+    add_view_to_blueprint,
+    get_db_client,
+    secured,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 NOTIFICATIONS_TAG = "notifications"
@@ -24,6 +28,13 @@ NOTIFICATIONS_ENDPOINT = "notifications"
 
 # setup the notifications blueprint
 notifications_bp = Blueprint(NOTIFICATIONS_ENDPOINT, import_name=__name__)
+
+
+@notifications_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the notification endpoints."""
+    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(
