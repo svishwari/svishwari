@@ -64,6 +64,7 @@ class DataSourceSearch(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
+    security = api_c.SECURITY_TAG
 
     def get(self) -> Tuple[list, int]:
         """Retrieves all CDP data sources.
@@ -126,6 +127,7 @@ class IndividualDataSourceSearch(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
+    security = api_c.SECURITY_TAG
 
     def get(self, data_source_id: str):
         """Retrieves a CDP data source.
@@ -202,6 +204,7 @@ class CreateCdpDataSource(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
+    security = api_c.SECURITY_TAG
 
     def post(self) -> Tuple[str, int]:
         """Creates a new CDP data source.
@@ -254,6 +257,7 @@ class DeleteCdpDataSource(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
+    security = api_c.SECURITY_TAG
 
     def delete(self, data_source_id: str) -> Tuple[dict, int]:
         """Deletes a CDP data source.

@@ -183,10 +183,6 @@ def secured() -> object:
             # get the auth token
             # {"Authorization": f"Bearer {TEST_TOKEN}"}
 
-            # disable until migrate to FastAPI and OpenAPI3.
-            return in_function(*args, **kwargs)
-
-            # pylint: disable=unreachable
             auth_header = request.headers.get("Authorization")
             if not auth_header:
                 # no authorization header, return a generic 401.

@@ -25,7 +25,7 @@ SWAGGER_CONFIG = {
     "securityDefinitions": {
         "Bearer": {
             "in": "header",
-            "type": "accessToken",
+            "type": "apiKey",
             "name": "Authorization",
         }
     },
