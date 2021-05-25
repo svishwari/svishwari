@@ -79,7 +79,7 @@ class Config:
         "OKTA_ISSUER", default="https://deloittedigital-ms.okta.com"
     )
 
-    MONITORING_CONFIG = config("OKTA_ISSUER", default="MONITORING-CONFIG")
+    MONITORING_CONFIG = config("MONITORING-CONFIG", default="")
 
     # TECTON
     TECTON_API_KEY = config("TECTON_API_KEY", default="")
