@@ -18,14 +18,12 @@ from huxunifylib.database.client import DatabaseClient
 )
 def audience_name_exists(
     database: DatabaseClient,
-    ingestion_job_id: ObjectId,
     name: str,
 ) -> bool:
     """A function to ensure uniqueness of audience names for an ingestion job.
 
     Args:
         database (DatabaseClient): A database client.
-        ingestion_job_id (ObjectId): Mongo ID of the corresponding ingestion job.
         name (str): Name of the entity.
 
     Returns:
@@ -37,9 +35,7 @@ def audience_name_exists(
     collection = am_db[c.AUDIENCES_COLLECTION]
 
     try:
-        doc = collection.find_one(
-            {"$and": [{c.JOB_ID: ingestion_job_id}, {c.AUDIENCE_NAME: name}]}
-        )
+        doc = collection.find_one({c.AUDIENCE_NAME: name})
         if doc:
             return True
     except pymongo.errors.OperationFailure as exc:

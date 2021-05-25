@@ -78,16 +78,16 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.source_audience_doc = am.create_audience(
             self.database,
-            self.ingestion_job_doc[c.ID],
             "My Audience",
             [],
+            self.ingestion_job_doc[c.ID],
         )
 
         self.audience_2_doc = am.create_audience(
             self.database,
-            self.ingestion_job_doc[c.ID],
             "My Audience 2",
             [],
+            self.ingestion_job_doc[c.ID],
         )
 
         doc = dpm.set_connection_status(
