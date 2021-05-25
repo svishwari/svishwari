@@ -39,9 +39,7 @@ def set_engagement(
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     if name_exists(
         database,
@@ -90,9 +88,7 @@ def get_engagements(database: DatabaseClient) -> list:
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return list(collection.find({db_c.ENABLED: True}))
@@ -118,14 +114,10 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
-        return collection.find_one(
-            {db_c.ID: engagement_id, db_c.ENABLED: True}
-        )
+        return collection.find_one({db_c.ID: engagement_id, db_c.ENABLED: True})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -136,9 +128,7 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def delete_engagement(
-    database: DatabaseClient, engagement_id: ObjectId
-) -> bool:
+def delete_engagement(database: DatabaseClient, engagement_id: ObjectId) -> bool:
     """A function to delete an engagement based on ID
 
     Args:
@@ -150,9 +140,7 @@ def delete_engagement(
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         doc = collection.find_one_and_update(
@@ -196,9 +184,7 @@ def update_engagement(
         dict: dict object of the engagement that has been updated
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     update_doc = {
         db_c.ENGAGEMENT_NAME: name,
@@ -236,7 +222,7 @@ def create_engagement_audience(
     database: DatabaseClient,
     audience_id: str,
     engagement_id: str,
-    destination_ids: list
+    destination_ids: list,
 ) -> dict:
     """A function to create an engagement audience.
 
@@ -256,10 +242,9 @@ def create_engagement_audience(
 
     # check if existing engaged audience already.
     try:
-        if collection.find_one({
-            db_c.ENGAGEMENT_ID: engagement_id,
-            db_c.AUDIENCE_ID: audience_id
-        }):
+        if collection.find_one(
+            {db_c.ENGAGEMENT_ID: engagement_id, db_c.AUDIENCE_ID: audience_id}
+        ):
             raise Exception("Engagement")
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
