@@ -47,6 +47,8 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
+    is_added = fields.Bool(attribute="added")
+    is_enabled = fields.Bool(attribute="enabled")
     create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = fields.String(attribute=db_c.UPDATE_TIME, allow_none=True)

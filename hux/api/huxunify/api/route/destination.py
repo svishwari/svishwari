@@ -15,7 +15,6 @@ from marshmallow import ValidationError
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     constants as db_constants,
-    delete_util,
 )
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.util.general.const import FacebookCredentials
@@ -234,6 +233,7 @@ class DestinationPutView(SwaggerView):
                         destination_id=destination_id,
                     )
                 )
+                is_added = True
 
             # TODO - provide input user-id to delivery platform
             #       create the destination after the PR 171 is merged
@@ -243,6 +243,7 @@ class DestinationPutView(SwaggerView):
                     database=get_db_client(),
                     delivery_platform_id=ObjectId(destination_id),
                     authentication_details=authentication_parameters,
+                    added=is_added,
                     user_id=user_id,
                 ),
                 HTTPStatus.OK,
@@ -260,103 +261,6 @@ class DestinationPutView(SwaggerView):
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
                 detail=api_c.CANNOT_UPDATE_DESTINATIONS,
-            ) from exc
-
-
-@add_view_to_blueprint(
-    dest_bp,
-    api_c.DESTINATIONS_ENDPOINT,
-    "DestinationsDeleteView",
-)
-class DestinationsDeleteView(SwaggerView):
-    """
-    DestinationsDeleteView view class
-    Delete multiple destinations at once.
-    """
-
-    parameters = [
-        {
-            "in": "body",
-            "name": "destination_ids",
-            "description": "List of destination IDs to be deleted.",
-            "schema": {
-                "type": "array",
-                "items": {"type": "string"},
-                "example": [
-                    "603e112b53594f0228bd79ef",
-                    "603e112c53594f0228bd79f5",
-                ],
-            },
-        },
-    ]
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Deleted destinations.",
-            "schema": {
-                "type": "array",
-                "items": {"type": "string"},
-                "example": [
-                    "603e112b53594f0228bd79ef",
-                    "603e112c53594f0228bd79f5",
-                ],
-            },
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to delete destinations."
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DESTINATIONS_TAG]
-
-    def delete(self) -> Tuple[list, int]:
-        """Deletes a destination.
-        Ability to delete one or multiple.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Returns:
-            Tuple[list, int]: list of deleted destination ids, HTTP status.
-
-        """
-
-        # validate the destination ids
-        body = request.get_json()
-
-        if not body:
-            return [], HTTPStatus.BAD_REQUEST
-
-        # load the IDs and validate using the destination schema
-        destination_ids = [ObjectId(x) for x in body if ObjectId.is_valid(x)]
-
-        try:
-            if delete_util.delete_delivery_platforms_bulk(
-                database=get_db_client(), delivery_platform_ids=destination_ids
-            ):
-                # return list of string IDs
-                return (
-                    jsonify([str(x) for x in destination_ids]),
-                    HTTPStatus.OK,
-                )
-            raise ProblemException(
-                status=int(HTTPStatus.BAD_REQUEST.value),
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=api_c.CANNOT_DELETE_DESTINATIONS,
-            )
-        except Exception as exc:
-            logging.error(
-                "%s: %s. Reason:[%s: %s].",
-                api_c.CANNOT_DELETE_DESTINATIONS,
-                destination_ids,
-                exc.__class__,
-                exc,
-            )
-            raise ProblemException(
-                status=int(HTTPStatus.BAD_REQUEST.value),
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=api_c.CANNOT_DELETE_DESTINATIONS,
             ) from exc
 
 

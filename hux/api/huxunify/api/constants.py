@@ -33,6 +33,8 @@ AWS_HEALTH_TESTS = {
 
 NAME = "name"
 DESCRIPTION = "description"
+TYPE = "type"
+REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
 START_DATE = "start_date"
 END_DATE = "end_date"
@@ -71,19 +73,74 @@ OPERATION_FAILED = "FAILED"
 
 DESTINATION_CONSTANTS = {
     FACEBOOK_NAME: {
-        FACEBOOK_AD_ACCOUNT_ID: "Ad Account ID",
-        FACEBOOK_APP_ID: "Facebook App ID",
-        FACEBOOK_APP_SECRET: "App Secret",
-        FACEBOOK_ACCESS_TOKEN: "Access Token",
+        FACEBOOK_AD_ACCOUNT_ID: {
+            NAME: "Ad Account ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        FACEBOOK_APP_ID: {
+            NAME: "App ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        FACEBOOK_ACCESS_TOKEN: {
+            NAME: "Access Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        FACEBOOK_APP_SECRET: {
+            NAME: "App Secret",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
     },
     SFMC_NAME: {
-        SFMC_CLIENT_ID: "Client ID",
-        SFMC_ACCOUNT_ID: "Account ID",
-        SFMC_CLIENT_SECRET: "Client Secret",
-        SFMC_AUTH_BASE_URI: "Auth Base URI",
-        SFMC_REST_BASE_URI: "REST Base URI",
-        SFMC_SOAP_BASE_URI: "SOAP Base URI",
-        SFMC_PERFORMANCE_EXT_NAME: "Performance metric data extension name",
+        SFMC_ACCOUNT_ID: {
+            NAME: "Account ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_AUTH_BASE_URI: {
+            NAME: "Auth Base URI",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_CLIENT_ID: {
+            NAME: "Client ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_CLIENT_SECRET: {
+            NAME: "Client Secret",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_REST_BASE_URI: {
+            NAME: "REST Base URI",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_SOAP_BASE_URI: {
+            NAME: "Soap Base URI",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_PERFORMANCE_EXT_NAME: {
+            NAME: "Performance metric data extension name",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
         SFMC_PERFORMANCE_EXT_VALUES: [],
     },
 }
