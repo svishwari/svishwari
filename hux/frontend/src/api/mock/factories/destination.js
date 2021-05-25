@@ -29,7 +29,7 @@ export default {
 
   is_added: false,
 
-  auth_details: {
+  authentication_details: {
     access_token: {
       name: "Access Token",
       type: "password",
