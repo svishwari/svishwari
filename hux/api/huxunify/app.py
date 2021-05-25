@@ -21,14 +21,6 @@ SWAGGER_CONFIG = {
     "specs_route": "/api/v1/ui/",
     "description": "",
     "termsOfService": "",
-    "schemes": ["http", "https"],
-    "securityDefinitions": {
-        "Bearer": {
-            "in": "header",
-            "type": "apiKey",
-            "name": "Authorization",
-        }
-    },
 }
 
 
