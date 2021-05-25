@@ -21,11 +21,7 @@ from huxunifylib.database.user_management import (
     manage_user_favorites,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
-    add_view_to_blueprint,
-    get_db_client,
-    secured,
-)
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -33,13 +29,6 @@ from huxunify.api import constants as api_c
 
 # setup the cdm blueprint
 user_bp = Blueprint(api_c.USER_ENDPOINT, import_name=__name__)
-
-
-@user_bp.before_request
-@secured()
-def before_request():
-    """Protect all of the user endpoints."""
-    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(user_bp, api_c.USER_ENDPOINT, "UserSearch")

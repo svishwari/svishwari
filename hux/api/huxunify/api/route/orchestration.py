@@ -19,24 +19,13 @@ from huxunify.api.schema.orchestration import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
-from huxunify.api.route.utils import (
-    add_view_to_blueprint,
-    get_db_client,
-    secured,
-)
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
     api_c.ORCHESTRATION_ENDPOINT, import_name=__name__
 )
-
-
-@orchestration_bp.before_request
-@secured()
-def before_request():
-    """Protect all of the orchestration endpoints."""
-    pass  # pylint: disable=unnecessary-pass
 
 
 def add_destinations(destination_ids) -> list:

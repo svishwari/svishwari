@@ -11,7 +11,6 @@ from flasgger import SwaggerView
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     handle_api_exception,
-    secured,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
@@ -29,13 +28,6 @@ from huxunify.api import constants as api_c
 
 # setup the models blueprint
 model_bp = Blueprint(api_c.MODELS_ENDPOINT, import_name=__name__)
-
-
-@model_bp.before_request
-@secured()
-def before_request():
-    """Protect all of the model endpoints."""
-    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "ModelsView")

@@ -25,11 +25,7 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourcePostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import (
-    add_view_to_blueprint,
-    get_db_client,
-    secured,
-)
+from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
@@ -38,13 +34,6 @@ from huxunify.api import constants as api_c
 cdp_data_sources_bp = Blueprint(
     api_c.CDP_DATA_SOURCES_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
-
-
-@cdp_data_sources_bp.before_request
-@secured()
-def before_request():
-    """Protect all of the cdp data source endpoints."""
-    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(
