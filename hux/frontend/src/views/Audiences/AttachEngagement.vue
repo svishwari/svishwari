@@ -1,0 +1,316 @@
+<template>
+  <Drawer v-model="localDrawer">
+    <template v-slot:header-left>
+      <div class="d-flex align-center">
+        <Icon
+          v-if="viewStep == '1'"
+          type="engagements"
+          :size="18"
+          color="neroBlack"
+        />
+        <h3 v-if="viewStep == '1'" class="text-h3 ml-2 neroBlack--text">
+          Add to an engagement
+        </h3>
+        <h3 v-else class="text-h3 ml-2 neroBlack--text">
+          Add a new engagement
+        </h3>
+      </div>
+    </template>
+    <template v-slot:default>
+      <v-stepper v-model="viewStep">
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <div class="ma-1">
+              <h6 class="mb-8 text-h6 neroBlack--text">
+                Select an existing engagement or create a new one. You are
+                required to have at least one selected.
+              </h6>
+              <huxButton
+                ButtonText="New engagement"
+                icon="mdi-plus"
+                iconPosition="left"
+                variant="primary"
+                v-bind:isTile="true"
+                height="40"
+                @click="goToAddNewEngagement()"
+              ></huxButton>
+              <div class="engagement-list-wrap">
+                <CardHorizontal
+                  v-for="engagement in engagements"
+                  :key="engagement.engagement_id"
+                  :title="engagement.name"
+                  :isAdded="
+                    selectedEngagementIds.includes(engagement.engagement_id)
+                  "
+                  @click="onEngagementClick(engagement)"
+                  class="my-3"
+                />
+              </div>
+            </div>
+          </v-stepper-content>
+          <v-stepper-content step="2">
+            <div class="new-engament-wrap">
+              <h6 class="mb-8 text-h6 neroBlack--text">
+                Build a new engagement to see performance information on this
+                audience.
+              </h6>
+              <v-form ref="newEngagementRef" v-model="newEngagementValid">
+                <TextField
+                  labelText="Engagement name"
+                  placeholder="Give this engagement a name"
+                  v-model="newEngagement.name"
+                  :required="true"
+                  :rules="newEngagementRules"
+                />
+                <TextField
+                  labelText="Description - <i>optional</i>"
+                  placeholder="What is the purpose of this engagement?"
+                  v-model="newEngagement.description"
+                />
+                <div class="d-flex flex-column delivery-options">
+                  <span class="my-1">Delivery schedule</span>
+                  <v-btn-toggle v-model="newEngagement.deliveryType" mandatory>
+                    <v-btn>
+                      <v-radio
+                        :off-icon="
+                          newEngagement.deliveryType == 0
+                            ? '$radioOn'
+                            : '$radioOff'
+                        "
+                      />
+                      <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
+                    </v-btn>
+                    <v-btn>
+                      <v-radio
+                        :off-icon="
+                          newEngagement.deliveryType == 1
+                            ? '$radioOn'
+                            : '$radioOff'
+                        "
+                      />
+                      <v-icon class="ico">mdi-clock-check-outline</v-icon
+                      >Recurring
+                    </v-btn>
+                  </v-btn-toggle>
+                </div>
+              </v-form>
+            </div>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+    </template>
+    <template v-slot:footer-right>
+      <div class="d-flex align-baseline" v-if="viewStep == 2">
+        <huxButton
+          ButtonText="Create &amp; add"
+          variant="primary"
+          v-bind:isTile="true"
+          height="40"
+          :isDisabled="!newEngagementValid"
+          class="ma-2"
+          @click.native="addEngagement()"
+        />
+      </div>
+    </template>
+
+    <template v-slot:footer-left>
+      <div class="d-flex align-baseline" v-if="viewStep == 1">
+        {{ engagements.length }} results
+      </div>
+      <div class="d-flex align-baseline" v-if="viewStep == 2">
+        <huxButton
+          ButtonText="Cancel &amp; back"
+          variant="white"
+          v-bind:isTile="true"
+          height="40"
+          class="ma-2"
+          @click.native="goToStep1()"
+        ></huxButton>
+      </div>
+    </template>
+  </Drawer>
+</template>
+
+<script>
+// import { mapGetters, mapActions } from "vuex"
+
+import huxButton from "@/components/common/huxButton"
+import TextField from "@/components/common/TextField"
+import Drawer from "@/components/common/Drawer"
+import CardHorizontal from "@/components/common/CardHorizontal"
+import Icon from "@/components/common/Icon"
+
+export default {
+  name: "attach-engagement",
+
+  components: {
+    Drawer,
+    huxButton,
+    TextField,
+    CardHorizontal,
+    Icon,
+  },
+
+  data() {
+    return {
+      localDrawer: this.value,
+      viewStep: 1,
+      selectedEngagementIds: [],
+      selectedEngagements: [],
+      newEngagement: {
+        name: "",
+        description: "",
+        deliveryType: 0,
+      },
+      newEngagementValid: false,
+      engagements: [
+        {
+          name: "Enagagement 1",
+          engagement_id: "1",
+        },
+        {
+          name: "Enagagement 2",
+          engagement_id: "2",
+        },
+        {
+          name: "Enagagement 3",
+          engagement_id: "3",
+        },
+        {
+          name: "Enagagement 4",
+          engagement_id: "4",
+        },
+      ],
+      newEngagementRules: [(v) => !!v || "Engagement name is required"],
+    }
+  },
+
+  props: {
+    value: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    finalEngagements: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+  },
+
+  watch: {
+    value: function () {
+      this.localDrawer = this.value
+    },
+    localDrawer: function () {
+      this.$emit("input", this.localDrawer)
+      if (!this.localDrawer) {
+        this.$emit("onClose")
+      }
+    },
+    finalEngagements: function (newVal) {
+      this.selectedEngagements = newVal[0]
+      this.selectedEngagementIds = newVal[1]
+    },
+  },
+
+  methods: {
+    goToAddNewEngagement: function () {
+      this.resetNewEngagement()
+      this.goToStep2()
+    },
+    addNewEngagement: function () {
+      this.resetNewEngagement()
+      this.goToStep2()
+    },
+    resetNewEngagement: function () {
+      this.$refs.newEngagementRef.reset()
+      this.newEngagement.deliveryType = 0
+    },
+    goToStep1: function () {
+      this.viewStep = 1
+    },
+    goToStep2: function () {
+      this.viewStep = 2
+    },
+    addEngagement: function () {
+      // TO DO make a api call here and get the engagement id created.
+      this.goToStep1()
+    },
+    onEngagementClick: function (engagement) {
+      if (this.selectedEngagementIds.includes(engagement.engagement_id)) {
+        if (this.selectedEngagementIds.length !== 1) {
+          const deselectedId = this.selectedEngagementIds.indexOf(
+            engagement.engagement_id
+          )
+          this.selectedEngagementIds.splice(deselectedId, 1)
+
+          this.selectedEngagements.splice(deselectedId, 1)
+          this.$emit("onEngagementChange", [
+            this.selectedEngagements,
+            this.selectedEngagementIds,
+          ])
+        }
+      } else {
+        this.selectedEngagementIds.push(engagement.engagement_id)
+
+        this.selectedEngagements.push(engagement)
+        this.$emit("onEngagementChange", [
+          this.selectedEngagements,
+          this.selectedEngagementIds,
+        ])
+      }
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.v-stepper {
+  box-shadow: none;
+}
+.new-engament-wrap {
+  .delivery-options {
+    ::v-deep button {
+      background: var(--v-tertiary-base);
+      border: 1px solid var(--v-lightGrey-base);
+      box-sizing: border-box;
+      border-radius: 4px;
+      border-left-width: 1px !important;
+      width: 175px;
+      height: 40px;
+      padding: 10px;
+      margin-right: 10px;
+      color: var(--v-lightGrey-base);
+      .v-icon {
+        &.ico {
+          width: 13.44px;
+          height: 12.5px;
+          margin-right: 9px;
+        }
+      }
+      .v-btn__content {
+        justify-content: start;
+      }
+      .theme--light {
+        color: var(--v-lightGrey-base) !important;
+      }
+      &.v-btn--active {
+        border: 1px solid var(--v-primary-base) !important;
+        color: var(--v-primary-base) !important;
+        .v-icon {
+          &.ico {
+            width: 13.44px;
+            height: 12.5px;
+            color: var(--v-skyBlueDark-base) !important;
+            margin-right: 9px;
+          }
+        }
+        .theme--light {
+          color: var(--v-primary-base) !important;
+        }
+      }
+    }
+  }
+}
+</style>
