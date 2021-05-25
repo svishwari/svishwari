@@ -28,13 +28,6 @@ VALID_RESPONSE = {
     "uid": "1234567",
 }
 INVALID_RESPONSE = {"active": False}
-BEARER_SAMPLE = {
-    "token_type": "Bearer",
-    "expires_in": 3600,
-    "access_token": "",
-    "scope": "openid email profile",
-    "id_token": "",
-}
 
 
 class OktaTest(TestCase):

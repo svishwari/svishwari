@@ -169,7 +169,8 @@ def secured() -> object:
 
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
-            """Decorator for validating endpoint security
+            """Decorator for validating endpoint security.
+            expected header to verify {"Authorization": "Bearer <token>"}
 
             Args:
                 *args (object): function arguments.
@@ -178,6 +179,7 @@ def secured() -> object:
             Returns:
                object: returns a decorated function object.
             """
+
             # get the auth token
             # {"Authorization": f"Bearer {TEST_TOKEN}"}
             auth_header = request.headers.get("Authorization")
