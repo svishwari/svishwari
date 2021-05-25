@@ -60,6 +60,7 @@ class UserProfile(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
+    @secured()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a user profile.
 
@@ -93,12 +94,12 @@ class UserProfile(SwaggerView):
             raise ProblemException(
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"Unable to get user profile.",
+                detail="Unable to get user profile.",
             ) from exc
 
 
 @add_view_to_blueprint(
-    user_bp, f"<component_name>/<component_id>/favorite", "AddUserFavorite"
+    user_bp, "<component_name>/<component_id>/favorite", "AddUserFavorite"
 )
 class AddUserFavorite(SwaggerView):
     """
@@ -134,6 +135,7 @@ class AddUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
+    @secured()
     def post(self, component_name: str, component_id: str) -> Tuple[dict, int]:
         """Creates a user favorite.
 
@@ -170,7 +172,7 @@ class AddUserFavorite(SwaggerView):
 
 
 @add_view_to_blueprint(
-    user_bp, f"<component_name>/<component_id>/favorite", "DeleteUserFavorite"
+    user_bp, "<component_name>/<component_id>/favorite", "DeleteUserFavorite"
 )
 class DeleteUserFavorite(SwaggerView):
     """
@@ -206,6 +208,7 @@ class DeleteUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
+    @secured()
     def delete(
         self, component_name: str, component_id: str
     ) -> Tuple[dict, int]:
@@ -235,7 +238,7 @@ class DeleteUserFavorite(SwaggerView):
 
         manage_user_favorites(
             get_db_client(),
-            okta=okta_id,
+            okta_id=okta_id,
             component_name=component_name,
             component_id=component_id,
             delete_flag=True,
