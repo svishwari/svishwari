@@ -299,3 +299,117 @@ class TestEngagementManagement(unittest.TestCase):
 
         audiences = em.get_engagement_audiences(self.database, [new_doc[c.ID]])
         self.assertTrue(audiences)
+
+    def test_attach_deliveries_to_engagement_audience(self) -> None:
+        """Test attaching deliveries to an engagement audience
+
+        Returns:
+            Response: None
+
+        """
+
+        # define expected doc
+        expected = {
+            c.ENGAGEMENT_ID: self.engagement_id,
+            c.AUDIENCE_ID: self.audience[c.ID],
+            c.DESTINATIONS: [x[c.ID] for x in self.destinations],
+        }
+
+        # create the engagement audience
+        new_doc = em.create_engagement_audience(
+            self.database,
+            self.audience[c.ID],
+            self.engagement_id,
+            expected[c.DESTINATIONS],
+        )
+
+        # check if anything created
+        self.assertTrue(new_doc)
+
+        # test attaching deliveries
+        deliveries = [ObjectId() for x in range(5)]
+        updated_doc = em.add_deliveries_to_engagement_audience(
+            self.database, new_doc[c.ID], deliveries
+        )
+
+        # validate the results.
+        self.assertIsNotNone(updated_doc)
+        self.assertIn(c.DELIVERIES, updated_doc)
+        self.assertListEqual(
+            expected[c.DESTINATIONS], updated_doc[c.DESTINATIONS]
+        )
+
+    def test_get_engagements_with_engaged_audiences(self) -> None:
+        """Test get engagements with engaged audiences
+
+        Returns:
+            Response: None
+
+        """
+
+        # define expected doc
+        destinations = [x[c.ID] for x in self.destinations]
+
+        # create the engagements
+        engagement_ids = []
+        for i in range(5):
+            engagement_ids.append(
+                em.set_engagement(
+                    self.database,
+                    f"Fall 202{i}",
+                    f"description for {i}",
+                    self.user_id,
+                )
+            )
+
+        # ensure engagements were created
+        self.assertTrue(engagement_ids)
+        self.assertEqual(len(engagement_ids), 5)
+
+        # create audiences
+        audiences = []
+        for i in range(5):
+            audiences.append(
+                om.create_audience(
+                    self.database, f"description {i}", [], self.user_id
+                )
+            )
+
+        # ensure audiences were created
+        self.assertTrue(audiences)
+        self.assertEqual(len(audiences), 5)
+
+        # create the engagement audiences
+        for audience, engagement_id in zip(audiences, engagement_ids):
+            new_doc = em.create_engagement_audience(
+                self.database,
+                audience[c.ID],
+                engagement_id,
+                destinations,
+            )
+
+            # test document was created.
+            self.assertTrue(new_doc)
+
+            # attach deliveries
+            deliveries = [ObjectId() for x in range(5)]
+            updated_doc = em.add_deliveries_to_engagement_audience(
+                self.database, new_doc[c.ID], deliveries
+            )
+
+            # validate the results.
+            self.assertIsNotNone(updated_doc)
+            self.assertIn(c.DELIVERIES, updated_doc)
+            self.assertListEqual(deliveries, updated_doc[c.DELIVERIES])
+
+        # now test engagements
+        engagements = em.get_engagements(self.database)
+
+        self.assertTrue(engagements)
+        self.assertEqual(len(engagements), 5)
+        for i, engagement in enumerate(engagements):
+            # validate engagement_audiences is in the result.
+            self.assertIn(c.ENGAGEMENT_AUDIENCES_COLLECTION, engagement)
+
+            # validate the length of the engagement_audiences
+            abc = 0

@@ -157,6 +157,7 @@ AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
 
+DELIVERIES = "deliveries"
 DELIVERY_PLATFORM_ID = "delivery_platform_id"
 DELIVERY_PLATFORM_AUD_SIZE = "delivery_platform_audience_size"
 DELIVERY_PLATFORM_LOOKALIKE_AUDS = "delivery_platform_lookalike_audiences"

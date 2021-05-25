@@ -93,8 +93,20 @@ def get_engagements(database: DatabaseClient) -> list:
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
+    pipeline = [
+        {
+            "$lookup": {
+                "from": db_c.ENGAGEMENT_AUDIENCES_COLLECTION,
+                "localField": "_id",
+                "foreignField": db_c.ENGAGEMENT_ID,
+                "as": db_c.ENGAGEMENT_AUDIENCES_COLLECTION,
+            }
+        },
+        {"$unwind": f"${db_c.ENGAGEMENT_AUDIENCES_COLLECTION}"},
+    ]
+
     try:
-        return list(collection.find({db_c.ENABLED: True}))
+        return list(collection.aggregate(pipeline))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -298,6 +310,7 @@ def create_engagement_audience(
         db_c.ENGAGEMENT_ID: engagement_id,
         db_c.AUDIENCE_ID: audience_id,
         db_c.DESTINATIONS: destination_ids,
+        db_c.DELIVERIES: [],
         db_c.ENABLED: True,
     }
 
@@ -389,6 +402,77 @@ def delete_engagement_audiences(
             {db_c.ID: {"$in": engagement_ids}}, {"$set": update_doc}
         )
         return list(delete_ids)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def add_deliveries_to_engagement_audience(
+    database: DatabaseClient,
+    engagement_audience_id: ObjectId,
+    deliveries: list,
+) -> dict:
+    """A function to add a delivery to an engagement audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_audience_id (str): audience id.
+        deliveries (list): List of deliveries
+
+    Returns:
+        dict: MongoDB engagement audience doc.
+    """
+
+    # check for a valid object id
+    if not isinstance(engagement_audience_id, ObjectId):
+        raise TypeError(
+            f"Invalid Audience ID Provided {engagement_audience_id}."
+        )
+
+    # validate the delivery IDs
+    if not all(isinstance(x, ObjectId) for x in deliveries):
+        raise TypeError("Invalid Delivery IDs Provided.")
+
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+
+    # check if the engagement audience id exists
+    engagement_audiences = am_db[db_c.ENGAGEMENT_AUDIENCES_COLLECTION]
+    if (
+        engagement_audiences.count_documents(
+            {db_c.ID: engagement_audience_id}, limit=1
+        )
+        == 0
+    ):
+        raise Exception(
+            f"Engagement Audience does not exist {engagement_audience_id}."
+        )
+
+    # # TODO - hook up to delivery collection
+    # # check if the all the delivery ids exists
+    # col = am_db[db_c.DELIVERY_COLLECTION]
+    # for delivery in deliveries_collection:
+    #     if col.count_documents({db_c.ID: delivery[db_c.ID]}, limit=1) == 0:
+    #         raise Exception(f"Destination does not exist {dest_id}.")
+
+    # get the engagement collection
+    collection = am_db[db_c.ENGAGEMENT_AUDIENCES_COLLECTION]
+
+    # push deliveries to existing document.
+    try:
+        return collection.find_one_and_update(
+            {db_c.ID: engagement_audience_id},
+            {
+                "$push": {
+                    db_c.DELIVERIES: {"$each": deliveries, "$position": -1}
+                }
+            },
+            return_document=True,
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
