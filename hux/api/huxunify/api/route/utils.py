@@ -17,6 +17,7 @@ from huxunifylib.database.cdp_data_source_management import (
 )
 
 from huxunify.api.config import get_config
+from huxunify.api import constants
 from huxunify.api.data_connectors.tecton import check_tecton_connection
 from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
 from huxunify.api.data_connectors.okta import (
@@ -182,20 +183,20 @@ def secured() -> object:
             auth_header = request.headers.get("Authorization")
             if not auth_header:
                 # no authorization header, return a generic 401.
-                return "You not authorized to visit this page.", 401
+                return constants.INVALID_AUTH, 401
 
             # check header
             if not auth_header.startswith("Bearer "):
                 # user submitted an invalid authorization header.
                 # return a generic 403
-                return "Invalid authorization header.", 403
+                return constants.INVALID_AUTH_HEADER, 403
 
             # safely extract token using string partition
             _, _, token = auth_header.partition(" ")
             if introspect_token(token):
                 return in_function(*args, **kwargs)
 
-            return "You not authorized to visit this page.", 401
+            return constants.INVALID_AUTH, 401
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function

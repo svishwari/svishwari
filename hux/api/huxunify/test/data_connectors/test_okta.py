@@ -8,6 +8,7 @@ from requests_mock import Mocker
 from flask import Flask
 from bson import json_util
 from huxunify.api.config import get_config
+from huxunify.api import constants
 from huxunify.api.data_connectors import okta
 from huxunify.api.route.utils import secured
 
@@ -120,7 +121,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = ("You not authorized to visit this page.", 401)
+        invalid_header = (constants.INVALID_AUTH, 401)
         with Flask("invalid_test").test_request_context("/"):
 
             @secured()
@@ -137,7 +138,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = ("Invalid authorization header.", 403)
+        invalid_header = (constants.INVALID_AUTH_HEADER, 403)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": None}
         ):
@@ -156,7 +157,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = ("Invalid authorization header.", 403)
+        invalid_header = (constants.INVALID_AUTH_HEADER, 403)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": "Bearerr "}
         ):
@@ -175,7 +176,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = ("You not authorized to visit this page.", 401)
+        invalid_header = (constants.INVALID_AUTH, 401)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}
         ):
