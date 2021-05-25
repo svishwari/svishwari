@@ -230,3 +230,7 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
+
+# ERROR
+INVALID_AUTH_HEADER = "Invalid authorization header."
+INVALID_AUTH = "You are not authorized to visit this page."
