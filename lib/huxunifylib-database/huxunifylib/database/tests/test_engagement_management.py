@@ -380,6 +380,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(len(audiences), 5)
 
         # create the engagement audiences
+        engagement_audience_ids = []
         for audience, engagement_id in zip(audiences, engagement_ids):
             new_doc = em.create_engagement_audience(
                 self.database,
@@ -390,6 +391,8 @@ class TestEngagementManagement(unittest.TestCase):
 
             # test document was created.
             self.assertTrue(new_doc)
+
+            engagement_audience_ids.append(new_doc[c.ID])
 
             # attach deliveries
             deliveries = [ObjectId() for x in range(5)]
@@ -407,9 +410,24 @@ class TestEngagementManagement(unittest.TestCase):
 
         self.assertTrue(engagements)
         self.assertEqual(len(engagements), 5)
+        found_engaged_audiences = []
         for i, engagement in enumerate(engagements):
+            if not engagement[c.ID] in engagement_ids:
+                continue
+
             # validate engagement_audiences is in the result.
             self.assertIn(c.ENGAGEMENT_AUDIENCES_COLLECTION, engagement)
 
+            engagement_audience = engagement[c.ENGAGEMENT_AUDIENCES_COLLECTION]
+
+            self.assertIn(c.DELIVERIES, engagement_audience)
+            self.assertIn(c.DESTINATIONS, engagement_audience)
+
             # validate the length of the engagement_audiences
-            abc = 0
+            self.assertEqual(len(engagement_audience[c.DESTINATIONS]), 2)
+            self.assertEqual(len(engagement_audience[c.DELIVERIES]), 5)
+
+            found_engaged_audiences.append(engagement_audience[c.ID])
+
+        self.assertTrue(found_engaged_audiences)
+        self.assertListEqual(found_engaged_audiences, engagement_audience_ids)

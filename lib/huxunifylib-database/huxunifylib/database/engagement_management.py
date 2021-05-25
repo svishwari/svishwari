@@ -97,7 +97,7 @@ def get_engagements(database: DatabaseClient) -> list:
         {
             "$lookup": {
                 "from": db_c.ENGAGEMENT_AUDIENCES_COLLECTION,
-                "localField": "_id",
+                "localField": db_c.ID,
                 "foreignField": db_c.ENGAGEMENT_ID,
                 "as": db_c.ENGAGEMENT_AUDIENCES_COLLECTION,
             }
