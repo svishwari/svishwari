@@ -21,7 +21,6 @@ from huxunify.api.route.utils import (
     secured,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api import constants as api_c
 
 NOTIFICATIONS_TAG = "notifications"
 NOTIFICATIONS_DESCRIPTION = "Notifications API"
@@ -80,7 +79,6 @@ class NotificationsSearch(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [NOTIFICATIONS_TAG]
-    security = api_c.SECURITY_TAG
 
     @marshal_with(NotificationSchema(many=True))
     def get(self) -> Tuple[dict, int]:

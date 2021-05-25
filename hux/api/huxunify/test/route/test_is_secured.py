@@ -32,25 +32,6 @@ UNSECURED_ROUTES = [
     "/static/<path:filename>",
 ]
 
-# build off of this, for full-end-to-end testing.
-ROUTE_TEST_ARGS = {
-    "/api/v1/notifications|get": {
-        "query_string": {
-            "batch_size": 10,
-            "sort_order": "ascending",
-            "batch_number": 1,
-        }
-    },
-    "/api/v1/destinations/validate|post": {"json": {"doug: 125"}},
-    "/api/v1/destinations/validate|delete": {
-        "query_string": {
-            "batch_size": 10,
-            "sort_order": "ascending",
-            "batch_number": 1,
-        }
-    },
-}
-
 
 class OktaTest(TestCase):
     """

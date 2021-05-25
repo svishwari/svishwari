@@ -52,7 +52,6 @@ class ModelsView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     @marshal_with(ModelSchema(many=True))
@@ -91,7 +90,6 @@ class ModelVersionView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     @marshal_with(ModelVersionSchema(many=True))
@@ -132,7 +130,6 @@ class ModelFeatureView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     @marshal_with(FeatureSchema(many=True))
@@ -175,7 +172,6 @@ class ModelMetricsView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     @marshal_with(PerformanceMetricSchema(many=True))
@@ -221,7 +217,6 @@ class ModelFeatureImportanceView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     @marshal_with(FeatureImportance(many=True))
@@ -267,7 +262,6 @@ class ModelLiftView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     @marshal_with(LiftSchema(many=True))
@@ -310,7 +304,6 @@ class ModelDriftView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     @marshal_with(DriftSchema(many=True))
@@ -318,6 +311,7 @@ class ModelDriftView(SwaggerView):
         """Retrieves model drift details.
 
         ---
+
         Args:
             name (str): model name
 

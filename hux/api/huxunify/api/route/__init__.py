@@ -9,10 +9,10 @@ from huxunify.api.route.cdp_data_source import cdp_data_sources_bp
 from huxunify.api.route.notifications import notifications_bp
 
 ROUTES = [
-    dest_bp,
-    user_bp,
+    # dest_bp,
+    # user_bp,
     model_bp,
-    orchestration_bp,
-    cdp_data_sources_bp,
-    notifications_bp,
+    # orchestration_bp,
+    # cdp_data_sources_bp,
+    # notifications_bp,
 ]

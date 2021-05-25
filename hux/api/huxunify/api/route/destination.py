@@ -78,7 +78,6 @@ class DestinationGetView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
 
     tags = [api_c.DESTINATIONS_TAG]
-    security = api_c.SECURITY_TAG
 
     def get(self, destination_id: str) -> Tuple[dict, int]:
         """Retrieves a destination.
@@ -121,7 +120,6 @@ class DestinationsView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
-    security = api_c.SECURITY_TAG
 
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all destinations.
@@ -188,7 +186,6 @@ class DestinationPutView(SwaggerView):
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
-    security = api_c.SECURITY_TAG
 
     @marshal_with(DestinationPutSchema)
     def put(self, destination_id: str) -> Tuple[dict, int]:
@@ -302,7 +299,6 @@ class DestinationsDeleteView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
-    security = api_c.SECURITY_TAG
 
     def delete(self) -> Tuple[list, int]:
         """Deletes a destination.
@@ -373,7 +369,6 @@ class DestinationsConstants(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
-    security = api_c.SECURITY_TAG
 
     @marshal_with(DestinationConstants)
     def get(self) -> Tuple[dict, int]:
@@ -434,7 +429,6 @@ class DestinationValidatePostView(SwaggerView):
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
-    security = api_c.SECURITY_TAG
 
     def post(self) -> Tuple[dict, int]:
         """Validates the credentials for a destination.

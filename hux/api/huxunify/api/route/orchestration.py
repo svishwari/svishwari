@@ -79,7 +79,6 @@ class AudienceView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
-    security = api_c.SECURITY_TAG
 
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all audiences.
@@ -136,7 +135,6 @@ class AudienceGetView(SwaggerView):
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     def get(self, audience_id: str) -> Tuple[dict, int]:
@@ -224,7 +222,6 @@ class AudiencePostView(SwaggerView):
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
-    security = api_c.SECURITY_TAG
 
     def post(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
         """Creates a new audience.
@@ -315,7 +312,6 @@ class AudiencePutView(SwaggerView):
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
-    security = api_c.SECURITY_TAG
 
     # pylint: disable=no-self-use
     def put(self, audience_id: str) -> Tuple[dict, int]:
