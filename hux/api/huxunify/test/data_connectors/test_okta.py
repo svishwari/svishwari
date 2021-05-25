@@ -94,7 +94,7 @@ class OktaTest(TestCase):
 
         response = okta.introspect_token("valid")
 
-        # # test that it was actually called and only once
+        # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
         self.assertTrue(request_mocker.called)
 
