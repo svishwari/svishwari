@@ -226,3 +226,62 @@ def update_engagement(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def create_engagement_audience(
+    database: DatabaseClient,
+    audience_id: str,
+    engagement_id: str,
+    destination_ids: list
+) -> dict:
+    """A function to create an engagement audience.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (str): audience id.
+        engagement_id (str): audience id.
+        destination_ids (list): List of destination
+            / delivery platform ids attached to the audience
+
+    Returns:
+        dict: MongoDB engagement audience doc.
+    """
+
+    am_db = database[db_c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[db_c.ENGAGEMENTS_COLLECTION]
+
+    # check if existing engaged audience already.
+    try:
+        if collection.find_one({
+            db_c.ENGAGEMENT_ID: engagement_id,
+            db_c.AUDIENCE_ID: audience_id
+        }):
+            raise Exception("Engagement")
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    # Get current time
+    curr_time = datetime.datetime.utcnow()
+
+    audience_doc = {
+        c.AUDIENCE_NAME: name,
+        c.AUDIENCE_FILTERS: audience_filters,
+        c.DESTINATIONS: destination_ids,
+        c.CREATE_TIME: curr_time,
+        c.UPDATE_TIME: curr_time,
+        c.CREATED_BY: user_id,
+        c.UPDATED_BY: user_id,
+    }
+
+    try:
+        audience_id = collection.insert_one(audience_doc).inserted_id
+        if audience_id is not None:
+            return collection.find_one({c.ID: audience_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
