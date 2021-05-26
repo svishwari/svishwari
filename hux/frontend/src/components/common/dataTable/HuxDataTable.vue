@@ -12,7 +12,16 @@
         <tr>
           <td></td>
           <td v-for="field in Object.keys(item)" :key="field.name">
-            <span v-if="field == 'engagementName'" class="primary--text">
+            <slot
+              name="un-expanded-row"
+              v-bind:field="field"
+              v-bind:item="item"
+              v-bind:expand="expand"
+              v-bind:isExpanded="isExpanded"
+            >
+            </slot>
+
+            <!-- <span v-if="field == 'engagementName'" class="primary--text">
               <v-icon v-if="('child' in item)"
                 color="primary"
                 :class="{ 'rotate-icon': isExpanded }"
@@ -40,14 +49,15 @@
               <span v-if="field != 'child'">
                 {{ item[field] }}
               </span>
-            </span>
+            </span> -->
           </td>
         </tr>
       </template>
       <template v-slot:expanded-item="{ item }">
         <tr v-for="(field, index) in item.child" :key="index">
           <td></td>
-          <td class="primary--text">{{ field.engagementName }}</td>
+          <slot name="expanded-row" v-bind:field="field"></slot>
+          <!-- <td class="primary--text">{{ field.engagementName }}</td>
           <td>{{ field.audiences }}</td>
           <td>
             <v-icon
@@ -68,7 +78,7 @@
           <td>{{ field.lastUpdated }}</td>
           <td>{{ field.lastUpdatedBy }}</td>
           <td>{{ field.created }}</td>
-          <td>{{ field.createdBy }}</td>
+          <td>{{ field.createdBy }}</td> -->
         </tr>
       </template>
     </v-data-table>
@@ -79,74 +89,22 @@
 export default {
   name: "HuxDataTable",
   components: {},
-  props: {},
+  props: {
+    dataItems: {
+      type: Array,
+      default: () => [],
+      required: true,
+    },
+    headers: {
+      type: Array,
+      default: () => [],
+      required: true,
+    },
+  },
   data() {
     return {
       search: "",
       expanded: [],
-      headers: [
-        {
-          text: "Engagement name",
-          align: "left",
-          value: "engagementName",
-        },
-        { text: "Audiences", value: "audiences" },
-        { text: "Status", value: "status" },
-        { text: "Size", value: "size" },
-        { text: "Delivery schedule", value: "deliverySchedule" },
-        { text: "Last updated", value: "lastUpdated" },
-        { text: "Last updated By", value: "lastUpdatedBy" },
-        { text: "Created", value: "created" },
-        { text: "Created By", value: "createdBy" },
-      ],
-      dataItems: [
-        {
-          engagementName: "Winter",
-          audiences: 159,
-          status: "Active",
-          size: "476M",
-          deliverySchedule: "Manual",
-          lastUpdated: "1 week ago",
-          lastUpdatedBy: "JS",
-          created: "1 month ago",
-          createdBy: "JS",
-          child: [
-            {
-              engagementName: "Frozen goods",
-              audiences: 159,
-              status: "Delivering",
-              size: "565k",
-              deliverySchedule: "-",
-              lastUpdated: "1 week ago",
-              lastUpdatedBy: "JS",
-              created: "1 month ago",
-              createdBy: "JS",
-            },
-            {
-              engagementName: "Texas",
-              audiences: 159,
-              status: "Active",
-              size: "30M",
-              deliverySchedule: "-",
-              lastUpdated: "1 week ago",
-              lastUpdatedBy: "JS",
-              created: "1 month ago",
-              createdBy: "JS",
-            },
-          ],
-        },
-        {
-          engagementName: "Summer",
-          audiences: 100,
-          status: "Active",
-          size: "476M",
-          deliverySchedule: "Manual",
-          lastUpdated: "1 week ago",
-          lastUpdatedBy: "JS",
-          created: "1 month ago",
-          createdBy: "JS",
-        },
-      ],
     }
   },
   computed: {},
@@ -158,16 +116,16 @@ export default {
 
 <style lang="scss" scoped>
 .hux-data-table {
-  .material-icons.delivered {
+  ::v-deep .material-icons.delivered {
     color: var(--v-success-lighten1);
   }
-  .material-icons.delivering {
+  ::v-deep .material-icons.delivering {
     color: var(--v-success-lighten2);
   }
-  .material-icons.alert {
+  ::v-deep .material-icons.alert {
     color: var(--v-error-base);
   }
-  .rotate-icon {
+  ::v-deep .rotate-icon {
     transition: 0.3s;
     -webkit-transition: 0.3s;
     -moz-transition: 0.3s;
@@ -178,6 +136,18 @@ export default {
     -o-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     transform: rotate(90deg);
+  }
+  ::v-deep .avatar-border {
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 50%;
+    font-size: 14px;
+    width: 35px;
+    height: 35px;
+    line-height: 22px;
+    color: var(--v-neroBlack-base) !important;
+    cursor: default !important;
+    background: transparent !important;
   }
 }
 </style>
