@@ -2,7 +2,7 @@
   <div>
     <label class="d-flex align-items-center mb-2">
       <span v-html="labelText"></span>
-      <v-tooltip top>
+      <v-tooltip top v-if="helpText">
         <template v-slot:activator="{ on, attrs }">
           <v-icon
             color="primary"
