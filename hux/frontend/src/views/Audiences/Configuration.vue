@@ -57,23 +57,23 @@
                 <div class="mt-8 ml-15 text-caption neroBlack--text">
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
-                  <div>
+                  <div class="mt-2 d-flex align-center">
                     <v-icon
                       size="30"
-                      class="add-icon mt-2"
+                      class="add-icon"
                       color="primary"
                       @click="engagementDrawer = !engagementDrawer"
                       >mdi-plus-circle</v-icon
                     >
                     <v-chip
-                      :close="isChipRemovable"
+                      :close="isMinEngagementSelected"
                       small
                       class="mx-2 font-weight-semi-bold"
                       text-color="primary"
                       color="pillBlue"
                       close-icon="mdi-close"
                       v-for="item in selectedEngagements"
-                      @click:close="detachEngagement(item.engagement_id)"
+                      @click:close="detachEngagement(item)"
                       :key="item.engagement_id"
                     >
                       {{ item.name }}
@@ -259,7 +259,7 @@
       <!-- Engagement workflow -->
       <AttachEngagement
         v-model="engagementDrawer"
-        :finalEngagements="[selectedEngagements, selectedEngagementIds]"
+        :finalEngagements="selectedEngagements"
         @onEngagementChange="setSelectedEngagements"
       />
     </div>
@@ -318,7 +318,6 @@ export default {
         destinations: [],
       },
       selectedEngagements: [],
-      selectedEngagementIds: [],
       newEngagementValid: true,
       engagement: {
         name: "",
@@ -351,11 +350,17 @@ export default {
     attributeRules() {
       return this.audience ? this.audience.attributeRules : []
     },
-    isChipRemovable() {
+    isMinEngagementSelected() {
       return this.selectedEngagements.length > 1
     },
     isAudienceFormValid() {
       return !!this.audience.audienceName && this.selectedEngagements.length > 0
+    },
+    selectedEngagementIds() {
+      // This will be used when sending data to create an audience
+      return this.selectedEngagements.map((each) => {
+        return each["id"]
+      })
     },
   },
 
@@ -365,18 +370,14 @@ export default {
       fetchEngagements: "engagements/getAll",
     }),
     // Engagements
-    detachEngagement(id) {
-      const existingIndex = this.selectedEngagements.findIndex(
-        (eng) => eng.engagement_id === id
-      )
+    detachEngagement(engagement) {
+      const existingIndex = this.selectedEngagements.findIndex(engagement)
       if (existingIndex > -1) {
         this.selectedEngagements.splice(existingIndex, 1)
-        this.selectedEngagementIds.splice(existingIndex, 1)
       }
     },
     setSelectedEngagements(engagementsList) {
-      this.selectedEngagements = engagementsList[0]
-      this.selectedEngagementIds = engagementsList[1]
+      this.selectedEngagements = engagementsList
     },
 
     // Destinations

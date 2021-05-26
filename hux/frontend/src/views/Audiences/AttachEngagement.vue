@@ -37,11 +37,9 @@
               <div class="engagement-list-wrap">
                 <CardHorizontal
                   v-for="engagement in engagements"
-                  :key="engagement.engagement_id"
+                  :key="engagement.id"
                   :title="engagement.name"
-                  :isAdded="
-                    selectedEngagementIds.includes(engagement.engagement_id)
-                  "
+                  :isAdded="selectedEngagements.includes(engagement)"
                   @click="onEngagementClick(engagement)"
                   class="my-3"
                 />
@@ -80,7 +78,7 @@
                       />
                       <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
                     </v-btn>
-                    <v-btn>
+                    <v-btn disabled style="background: white !important">
                       <v-radio
                         :off-icon="
                           newEngagement.deliveryType == 1
@@ -155,7 +153,6 @@ export default {
     return {
       localDrawer: this.value,
       viewStep: 1,
-      selectedEngagementIds: [],
       selectedEngagements: [],
       newEngagement: {
         name: "",
@@ -165,20 +162,20 @@ export default {
       newEngagementValid: false,
       engagements: [
         {
-          name: "Enagagement 1",
-          engagement_id: "1",
+          name: "Engagement 1",
+          id: "1",
         },
         {
-          name: "Enagagement 2",
-          engagement_id: "2",
+          name: "Engagement 2",
+          id: "2",
         },
         {
-          name: "Enagagement 3",
-          engagement_id: "3",
+          name: "Engagement 3",
+          id: "3",
         },
         {
-          name: "Enagagement 4",
-          engagement_id: "4",
+          name: "Engagement 4",
+          id: "4",
         },
       ],
       newEngagementRules: [(v) => !!v || "Engagement name is required"],
@@ -209,8 +206,7 @@ export default {
       }
     },
     finalEngagements: function (newVal) {
-      this.selectedEngagements = newVal[0]
-      this.selectedEngagementIds = newVal[1]
+      this.selectedEngagements = newVal
     },
   },
 
@@ -238,27 +234,16 @@ export default {
       this.goToStep1()
     },
     onEngagementClick: function (engagement) {
-      if (this.selectedEngagementIds.includes(engagement.engagement_id)) {
-        if (this.selectedEngagementIds.length !== 1) {
-          const deselectedId = this.selectedEngagementIds.indexOf(
-            engagement.engagement_id
-          )
-          this.selectedEngagementIds.splice(deselectedId, 1)
+      if (this.selectedEngagements.includes(engagement)) {
+        if (this.selectedEngagements.length !== 1) {
+          const deselectedId = this.selectedEngagements.indexOf(engagement)
 
           this.selectedEngagements.splice(deselectedId, 1)
-          this.$emit("onEngagementChange", [
-            this.selectedEngagements,
-            this.selectedEngagementIds,
-          ])
+          this.$emit("onEngagementChange", this.selectedEngagements)
         }
       } else {
-        this.selectedEngagementIds.push(engagement.engagement_id)
-
         this.selectedEngagements.push(engagement)
-        this.$emit("onEngagementChange", [
-          this.selectedEngagements,
-          this.selectedEngagementIds,
-        ])
+        this.$emit("onEngagementChange", this.selectedEngagements)
       }
     },
   },
