@@ -30,21 +30,22 @@
                 icon="mdi-plus"
                 iconPosition="left"
                 variant="primary"
-                v-bind:isTile="true"
+                :isTile="true"
                 height="40"
                 @click="goToAddNewEngagement()"
               ></huxButton>
               <div class="engagement-list-wrap mt-6">
                 <div>
-                  <span class="text-caption">Engagemet name</span>
+                  <span class="text-caption">Engagement name</span>
                   <v-icon
                     :class="{ 'rotate-icon-180': toggleSortIcon }"
                     class="ml-1"
                     color="secondary"
                     size="12"
                     @click="onSortIconClick()"
-                    >mdi-arrow-down</v-icon
                   >
+                    mdi-arrow-down
+                  </v-icon>
                 </div>
                 <CardHorizontal
                   v-for="engagement in engagements"
@@ -85,8 +86,9 @@
                         color="secondary"
                         :size="12"
                         class="ml-1"
-                        >mdi-information-outline</v-icon
                       >
+                        mdi-information-outline
+                      </v-icon>
                     </template>
                     <template v-slot:default>
                       <div class="px-4 py-2 white">
@@ -128,8 +130,8 @@
                             : '$radioOff'
                         "
                       />
-                      <v-icon class="ico">mdi-clock-check-outline</v-icon
-                      >Recurring
+                      <v-icon class="ico"> mdi-clock-check-outline </v-icon>
+                      Recurring
                     </v-btn>
                   </v-btn-toggle>
                 </div>
@@ -144,7 +146,7 @@
         <huxButton
           ButtonText="Create &amp; add"
           variant="primary"
-          v-bind:isTile="true"
+          :isTile="true"
           height="40"
           :isDisabled="!newEngagementValid"
           class="ma-2"
@@ -161,7 +163,7 @@
         <huxButton
           ButtonText="Cancel &amp; back"
           variant="white"
-          v-bind:isTile="true"
+          :isTile="true"
           height="40"
           class="ma-2"
           @click.native="goToStep1()"
@@ -179,6 +181,8 @@ import TextField from "@/components/common/TextField"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Icon from "@/components/common/Icon"
+
+import sortBy from "lodash/sortBy"
 
 export default {
   name: "attach-engagement",
@@ -222,6 +226,7 @@ export default {
         },
       ],
       newEngagementRules: [(v) => !!v || "Engagement name is required"],
+      sortBy: sortBy,
     }
   },
 
@@ -273,7 +278,7 @@ export default {
       this.viewStep = 2
     },
     addEngagement: function () {
-      // TO DO make a api call here and get the engagement id created.
+      //TODO: make a api call here and get the engagement id created.
       this.engagements.push({
         name: this.newEngagement.name,
         id: this.engagements.length + 1,
@@ -296,9 +301,9 @@ export default {
     },
     sortEngagements: function () {
       if (this.toggleSortIcon) {
-        this.engagements = this.sortByKey(this.engagements, "name", "asc")
+        this.engagements = this.sortBy(this.engagements, ["name"])
       } else {
-        this.engagements = this.sortByKey(this.engagements, "name", "desc")
+        this.engagements = this.sortBy(this.engagements, ["name"]).reverse()
       }
     },
     toggleSort: function () {

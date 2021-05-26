@@ -24,23 +24,6 @@ Object.keys(filters).forEach((filterName) => {
   Vue.filter(filterName, filters[filterName])
 })
 
-//Mixin
-Vue.mixin({
-  methods: {
-    sortByKey: function (array, key, order = "desc") {
-      return array.sort(function (a, b) {
-        var x = a[key]
-        var y = b[key]
-        if (order == "desc") {
-          return x > y ? -1 : x < y ? 1 : 0
-        } else {
-          return x < y ? -1 : x > y ? 1 : 0
-        }
-      })
-    },
-  },
-})
-
 Vue.config.productionTip = false
 
 if (process.env.NODE_ENV === "development") {
