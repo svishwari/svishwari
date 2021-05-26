@@ -27,12 +27,23 @@ from huxunify.api.schema.destinations import (
     DestinationValidationSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
-from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
+from huxunify.api.route.utils import (
+    add_view_to_blueprint,
+    get_db_client,
+    secured,
+)
 import huxunify.api.constants as api_c
 
 
 # setup the destination blueprint
 dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
+
+
+@dest_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the destinations endpoints."""
+    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(
@@ -72,6 +83,9 @@ class DestinationGetView(SwaggerView):
         """Retrieves a destination.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             destination_id (str): Destination ID.
 
@@ -114,6 +128,9 @@ class DestinationsView(SwaggerView):
         """Retrieves all destinations.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[list, int]: list of destinations, HTTP status.
 
@@ -181,6 +198,9 @@ class DestinationPutView(SwaggerView):
         """Updates a destination.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             destination_id (str): Destination ID.
 
@@ -294,6 +314,9 @@ class DestinationsDeleteView(SwaggerView):
         Ability to delete one or multiple.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[list, int]: list of deleted destination ids, HTTP status.
 
@@ -364,6 +387,9 @@ class DestinationsConstants(SwaggerView):
         """Retrieves all destination constants.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[dict, int]: dict of destination constants, HTTP status.
 
@@ -423,6 +449,9 @@ class DestinationValidatePostView(SwaggerView):
         """Validates the credentials for a destination.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.

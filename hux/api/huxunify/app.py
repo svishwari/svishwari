@@ -21,6 +21,10 @@ SWAGGER_CONFIG = {
     "specs_route": "/api/v1/ui/",
     "description": "",
     "termsOfService": "",
+    "schemes": ["https"],
+    "securityDefinitions": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    },
 }
 
 
@@ -44,6 +48,7 @@ def configure_flask(flask_app: Flask) -> None:
                 "huxunify.api.config.DevelopmentConfig"
             )
         else:
+            SWAGGER_CONFIG["schemes"].insert(0, "HTTP")
             flask_app.config.from_object("huxunify.api.config.Config")
     except KeyError as error:
         desc = f"Environment not configured: {error} is required."

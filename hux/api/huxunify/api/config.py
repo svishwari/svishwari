@@ -134,7 +134,7 @@ class DevelopmentConfig(Config):
     }
 
 
-def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
+def load_env_vars(flask_env=config("FLASK_ENV", default="TEST")) -> None:
     """Load variables from secret store into ENV before we load the config.
 
     Args:
