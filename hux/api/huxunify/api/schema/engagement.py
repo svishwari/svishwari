@@ -24,7 +24,7 @@ class EngagementGetSchema(Schema):
     """
 
     _id = fields.String(
-        data_key=api_c.ENGAGEMENT_ID,
+        data_key=api_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
@@ -47,11 +47,10 @@ class EngagementGetSchema(Schema):
         required=True,
         attribute=api_c.DELIVERY_SCHEDULE,
     )
-    created_time = fields.DateTime(attribute=db_c.CREATE_TIME)
+    create_time = fields.DateTime(attribute=db_c.CREATE_TIME)
     created_by = fields.String(attribute=db_c.CREATED_BY)
-    updated_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
-    updated_by = fields.DateTime(attribute=db_c.UPDATED_BY, allow_none=True)
-    enabled = fields.Bool(attribute=db_c.ENABLED, required=True)
+    update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
 
 class EngagementPostSchema(Schema):
