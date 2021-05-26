@@ -21,7 +21,7 @@
         <v-stepper-items>
           <v-stepper-content step="1">
             <div class="ma-1">
-              <h6 class="mb-8 text-h6 neroBlack--text">
+              <h6 class="mb-6 text-h6 neroBlack--text">
                 Select an existing engagement or create a new one. You are
                 required to have at least one selected.
               </h6>
@@ -34,7 +34,18 @@
                 height="40"
                 @click="goToAddNewEngagement()"
               ></huxButton>
-              <div class="engagement-list-wrap">
+              <div class="engagement-list-wrap mt-6">
+                <div>
+                  <span class="text-caption">Engagemet name</span>
+                  <v-icon
+                    :class="{ 'rotate-icon-180': toggleSortIcon }"
+                    class="ml-1"
+                    color="secondary"
+                    size="12"
+                    @click="onSortIconClick()"
+                    >mdi-arrow-down</v-icon
+                  >
+                </div>
                 <CardHorizontal
                   v-for="engagement in engagements"
                   :key="engagement.id"
@@ -152,6 +163,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
+      toggleSortIcon: false,
       viewStep: 1,
       selectedEngagements: [],
       newEngagement: {
@@ -162,7 +174,7 @@ export default {
       newEngagementValid: false,
       engagements: [
         {
-          name: "Engagement 1",
+          name: "Engagement 3",
           id: "1",
         },
         {
@@ -170,7 +182,7 @@ export default {
           id: "2",
         },
         {
-          name: "Engagement 3",
+          name: "Engagement 1",
           id: "3",
         },
         {
@@ -231,6 +243,11 @@ export default {
     },
     addEngagement: function () {
       // TO DO make a api call here and get the engagement id created.
+      this.engagements.push({
+        name: this.newEngagement.name,
+        id: this.engagements.length + 1,
+      })
+      this.sortEngagements()
       this.goToStep1()
     },
     onEngagementClick: function (engagement) {
@@ -246,6 +263,23 @@ export default {
         this.$emit("onEngagementChange", this.selectedEngagements)
       }
     },
+    sortEngagements: function () {
+      if (this.toggleSortIcon) {
+        this.engagements = this.sortByKey(this.engagements, "name", "asc")
+      } else {
+        this.engagements = this.sortByKey(this.engagements, "name", "desc")
+      }
+    },
+    toggleSort: function () {
+      this.toggleSortIcon = !this.toggleSortIcon
+    },
+    onSortIconClick: function () {
+      this.toggleSort()
+      this.sortEngagements()
+    },
+  },
+  async mounted() {
+    this.sortEngagements()
   },
 }
 </script>

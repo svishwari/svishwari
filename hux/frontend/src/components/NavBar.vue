@@ -5,7 +5,9 @@
         @click.stop="toggleSidebarMenu"
         class="nav-back-burger"
       >
-        <v-icon :class="{ 'rotate-icon': toggleMini }">mdi-backburger</v-icon>
+        <v-icon :class="{ 'rotate-icon-180': toggleMini }">
+          mdi-backburger
+        </v-icon>
       </v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <NavBarMenu></NavBarMenu>
@@ -57,18 +59,6 @@ export default {
         }
       }
     }
-  }
-  .rotate-icon {
-    transition: 0.7s;
-    -webkit-transition: 0.7s;
-    -moz-transition: 0.7s;
-    -ms-transition: 0.7s;
-    -o-transition: 0.7s;
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    transform: rotate(180deg);
   }
 }
 </style>
