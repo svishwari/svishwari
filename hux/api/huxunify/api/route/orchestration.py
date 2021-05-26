@@ -1,6 +1,7 @@
 """
 Paths for Orchestration API
 """
+import datetime
 from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
@@ -10,6 +11,7 @@ from marshmallow import ValidationError, INCLUDE
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
+    user_management,
     orchestration_management,
 )
 from huxunify.api.schema.orchestration import (
@@ -83,7 +85,20 @@ class AudienceView(SwaggerView):
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 audience.get(api_c.DESTINATIONS_TAG)
             )
-        # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
+            audience[api_c.CREATED_BY] = user_management.get_user(
+                get_db_client(), audience.get(api_c.CREATED_BY)
+            )
+            audience[api_c.UPDATED_BY] = user_management.get_user(
+                get_db_client(), audience.get(api_c.UPDATED_BY)
+            )
+
+            # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
+            # Add stub size, last_delivered_on for test purposes.
+            audience[api_c.SIZE] = 28328192
+            audience[
+                api_c.AUDIENCE_LAST_DELIVERED
+            ] = datetime.datetime.utcnow()
+
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
             HTTPStatus.OK,
@@ -148,9 +163,18 @@ class AudienceGetView(SwaggerView):
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
             audience.get(api_c.DESTINATIONS_TAG)
         )
+        audience[api_c.CREATED_BY] = user_management.get_user(
+            get_db_client(), audience.get(api_c.CREATED_BY)
+        )
+        audience[api_c.UPDATED_BY] = user_management.get_user(
+            get_db_client(), audience.get(api_c.UPDATED_BY)
+        )
+
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-        # Add stub insights for test purposes.
+        # Add stub insights, size, last_delivered_on for test purposes.
         audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
+        audience[api_c.SIZE] = 28328192
+        audience[api_c.AUDIENCE_LAST_DELIVERED] = datetime.datetime.utcnow()
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,

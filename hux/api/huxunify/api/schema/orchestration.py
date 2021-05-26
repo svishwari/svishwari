@@ -7,6 +7,7 @@ from marshmallow import fields
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.destinations import DestinationGetSchema
+from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
@@ -71,10 +72,19 @@ class AudienceGetSchema(Schema):
         },
     )
 
+    size = fields.Int(example=6173223)
+    last_delivered_on = fields.DateTime(
+        attribute=api_c.AUDIENCE_LAST_DELIVERED
+    )
+
     create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
-    created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
-    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+    created_by = fields.Nested(
+        UserSchema(only=("first_name", "last_name", "user_id"))
+    )
+    updated_by = fields.Nested(
+        UserSchema(only=("first_name", "last_name", "user_id"))
+    )
 
 
 class AudiencePutSchema(Schema):
