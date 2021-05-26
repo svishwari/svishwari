@@ -30,7 +30,7 @@ def set_delivery_platform(
     authentication_details: dict = None,
     status: str = c.STATUS_PENDING,
     enabled: bool = True,
-    added: bool = False,
+    deleted: bool = False,
     user_id: ObjectId = None,
 ) -> dict:
     """A function to create a delivery platform.
@@ -44,7 +44,7 @@ def set_delivery_platform(
             authentication details.
         status (str): status of the delivery platform.
         enabled (bool): if the delivery platform is enabled.
-        added (bool): if the delivery platform is added.
+        deleted (bool): if the delivery platform is deleted (soft-delete).
         user_id (ObjectId): User id of user creating delivery platform.
             This is Optional.
 
@@ -75,7 +75,7 @@ def set_delivery_platform(
         c.DELIVERY_PLATFORM_NAME: name,
         c.DELIVERY_PLATFORM_STATUS: status,
         c.ENABLED: enabled,
-        c.ADDED: added,
+        c.DELETED: deleted,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
@@ -130,7 +130,12 @@ def get_delivery_platforms_by_id(
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        return list(collection.find({c.ID: {"$in": delivery_platform_ids}}))
+        return list(
+            collection.find(
+                {c.ID: {"$in": delivery_platform_ids}, c.DELETED: False},
+                {c.DELETED: 0},
+            )
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -160,7 +165,7 @@ def get_delivery_platform(
 
     try:
         return collection.find_one(
-            {c.ID: delivery_platform_id, c.ENABLED: True}, {c.ENABLED: False}
+            {c.ID: delivery_platform_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -189,7 +194,7 @@ def get_all_delivery_platforms(
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
     try:
-        doc = list(collection.find({c.ENABLED: True}, {c.ENABLED: 0}))
+        doc = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -494,6 +499,7 @@ def update_delivery_platform(
     name: str = None,
     delivery_platform_type: str = None,
     authentication_details: dict = None,
+    added: bool = None,
     user_id: ObjectId = None,
 ) -> dict:
     """A function to update delivery platform configuration.
@@ -504,6 +510,7 @@ def update_delivery_platform(
         name (str): Delivery platform name.
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
+        added (bool): if the delivery platform is added.
         user_id (ObjectId): User id of user updating delivery platform. This is Optional.
 
     Returns:
@@ -542,6 +549,9 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_AUTH: authentication_details,
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
+
+    if added is not None:
+        update_doc[c.ADDED] = added
 
     # Add user object only if it is available
     if ObjectId.is_valid(user_id) and name_exists(
