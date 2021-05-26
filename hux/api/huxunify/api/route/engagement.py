@@ -117,7 +117,7 @@ class IndividualEngagementSearch(SwaggerView):
 
     @marshal_with(EngagementGetSchema)
     def get(self, engagement_id: str) -> Tuple[dict, int]:
-        """Retrieves an engagement by ID.
+        """Retrieves an engagement.
 
         ---
 
