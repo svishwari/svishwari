@@ -232,7 +232,7 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 BATCH_SIZE = "batch_size"
 
 # ERROR
-MISSING_AUTH_HEADER = "Authorization header is expected."
+MISSING_AUTH_HEADER = "Authorization header is missing."
 INVALID_AUTH_HEADER = "Authorization header must start with Bearer."
 MISSING_TOKEN = "Token not found."
 AUTH_HEADER_FORMAT = "Authorization header must be 'Bearer token'."
