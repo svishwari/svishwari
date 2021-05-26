@@ -576,6 +576,7 @@ def update_delivery_platform(
             doc = collection.find_one_and_update(
                 {c.ID: delivery_platform_id, c.DELETED: False},
                 {"$set": update_doc},
+                {c.DELETED: 0},
                 upsert=False,
                 new=True,
             )

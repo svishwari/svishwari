@@ -435,6 +435,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertFalse(doc[c.ADDED])
+        self.assertFalse(c.DELETED in doc)
 
         # update two fields
         doc = dpm.update_delivery_platform(
