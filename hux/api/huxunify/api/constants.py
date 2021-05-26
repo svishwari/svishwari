@@ -51,7 +51,7 @@ ENGAGEMENT_STATUSES = [
 ]
 
 # Facebook connector defines
-FACEBOOK_NAME = "facebook"
+FACEBOOK_NAME = "Facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
 FACEBOOK_APP_ID = "facebook_app_id"
 FACEBOOK_APP_SECRET = "facebook_app_secret"
