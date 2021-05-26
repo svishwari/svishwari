@@ -26,4 +26,5 @@ export default {
   lightGreyAnotherVariant: colors.lightGreyAnotherVariant,
   offWhite: colors.offWhite,
   pillBlue: colors.dullBlue,
+  lightGreyText: colors.lightGreyText,
 }

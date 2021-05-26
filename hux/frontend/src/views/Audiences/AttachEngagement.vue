@@ -76,8 +76,39 @@
                   placeholder="What is the purpose of this engagement?"
                   v-model="newEngagement.description"
                 />
+                <div class="mb-2">
+                  Delivery schedule
+                  <v-menu max-width="184" open-on-hover offset-y>
+                    <template v-slot:activator="{ on }">
+                      <v-icon
+                        v-on="on"
+                        color="secondary"
+                        :size="12"
+                        class="ml-1"
+                        >mdi-information-outline</v-icon
+                      >
+                    </template>
+                    <template v-slot:default>
+                      <div class="px-4 py-2 white">
+                        <div class="neroBlack--text text-caption">
+                          Manual delivery
+                        </div>
+                        <div class="lightGreyText--text text-caption mt-1">
+                          Choose this option if you want the engagement
+                          delivered immediately or at a future date and time.
+                        </div>
+                        <div class="neroBlack--text text-caption mt-3">
+                          Recurring delivery
+                        </div>
+                        <div class="lightGreyText--text text-caption mt-1">
+                          Choose this option if you want the engagement
+                          delivered on a specific recurring basis you selected.
+                        </div>
+                      </div>
+                    </template>
+                  </v-menu>
+                </div>
                 <div class="d-flex flex-column delivery-options">
-                  <span class="my-1">Delivery schedule</span>
                   <v-btn-toggle v-model="newEngagement.deliveryType" mandatory>
                     <v-btn>
                       <v-radio

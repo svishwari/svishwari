@@ -60,24 +60,26 @@
                   <div class="mt-2 d-flex align-center">
                     <v-icon
                       size="30"
-                      class="add-icon"
+                      class="add-icon cursor-pointer"
                       color="primary"
                       @click="engagementDrawer = !engagementDrawer"
                       >mdi-plus-circle</v-icon
                     >
-                    <v-chip
-                      :close="isMinEngagementSelected"
-                      small
-                      class="mx-2 font-weight-semi-bold"
-                      text-color="primary"
-                      color="pillBlue"
-                      close-icon="mdi-close"
-                      v-for="item in selectedEngagements"
-                      @click:close="detachEngagement(item)"
-                      :key="item.id"
-                    >
-                      {{ item.name }}
-                    </v-chip>
+                    <div>
+                      <v-chip
+                        :close="isMinEngagementSelected"
+                        small
+                        class="mx-2 my-1 font-weight-semi-bold"
+                        text-color="primary"
+                        color="pillBlue"
+                        close-icon="mdi-close"
+                        v-for="item in selectedEngagements"
+                        @click:close="detachEngagement(item)"
+                        :key="item.id"
+                      >
+                        {{ item.name }}
+                      </v-chip>
+                    </div>
                   </div>
                 </div>
               </v-col>
