@@ -74,7 +74,7 @@
                       close-icon="mdi-close"
                       v-for="item in selectedEngagements"
                       @click:close="detachEngagement(item)"
-                      :key="item.engagement_id"
+                      :key="item.id"
                     >
                       {{ item.name }}
                     </v-chip>
@@ -371,7 +371,9 @@ export default {
     }),
     // Engagements
     detachEngagement(engagement) {
-      const existingIndex = this.selectedEngagements.findIndex(engagement)
+      const existingIndex = this.selectedEngagements.findIndex(
+        (each) => engagement.id === each.id
+      )
       if (existingIndex > -1) {
         this.selectedEngagements.splice(existingIndex, 1)
       }
