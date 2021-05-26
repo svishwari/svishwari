@@ -7,10 +7,6 @@ from flask_apispec import marshal_with
 from flasgger import SwaggerView
 import datetime
 
-from huxunifylib.database import (
-    constants as db_constants,
-    notification_management,
-)
 from huxunify.api.schema.customer_profiles import CustomerProfilesOverview
 from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -68,7 +64,11 @@ class CustomerProfilesOverview(SwaggerView):
                     c.MAX_AGE:randint(1,100),
                     c.GENDER_WOMEN:0.52123,
                     c.GENDER_MEN:0.46123,
-                    c.GENDER_OTHER:0.02123
+                    c.GENDER_OTHER:0.02123,
+                    c.MIN_LTV_PREDICTED:34.1323,
+                    c.MAX_LTV_PREDICTED:89.1234,
+                    c.MIN_LTV_ACTUAL:14.1234,
+                    c.MAX_LTV_ACTUAL:89.1234
                 }
        
       

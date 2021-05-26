@@ -29,6 +29,10 @@ MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+MIN_LTV_PREDICTED="min_ltv_predicted"
+MAX_LTV_PREDICTED="max_ltv_predicted"
+MIN_LTV_ACTUAL="min_ltv_actual"
+MAX_LTV_ACTUAL="max_ltv_actual"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
