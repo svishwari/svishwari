@@ -13,7 +13,7 @@
           <td></td>
           <td v-for="field in Object.keys(item)" :key="field.name">
             <span v-if="field == 'engagementName'" class="primary--text">
-              <v-icon
+              <v-icon v-if="('child' in item)"
                 color="primary"
                 :class="{ 'rotate-icon': isExpanded }"
                 @click="expand(!isExpanded)"
@@ -134,6 +134,17 @@ export default {
               createdBy: "JS",
             },
           ],
+        },
+        {
+          engagementName: "Summer",
+          audiences: 100,
+          status: "Active",
+          size: "476M",
+          deliverySchedule: "Manual",
+          lastUpdated: "1 week ago",
+          lastUpdatedBy: "JS",
+          created: "1 month ago",
+          createdBy: "JS",
         },
       ],
     }
