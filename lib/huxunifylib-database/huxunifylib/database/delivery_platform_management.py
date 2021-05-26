@@ -23,6 +23,7 @@ import huxunifylib.database.audience_management as am
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=R0914
 def set_delivery_platform(
     database: DatabaseClient,
     delivery_platform_type: str,
@@ -30,6 +31,7 @@ def set_delivery_platform(
     authentication_details: dict = None,
     status: str = c.STATUS_PENDING,
     enabled: bool = True,
+    added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
 ) -> dict:
@@ -44,6 +46,7 @@ def set_delivery_platform(
             authentication details.
         status (str): status of the delivery platform.
         enabled (bool): if the delivery platform is enabled.
+        added (bool): if the delivery platform is added.
         deleted (bool): if the delivery platform is deleted (soft-delete).
         user_id (ObjectId): User id of user creating delivery platform.
             This is Optional.
@@ -75,6 +78,7 @@ def set_delivery_platform(
         c.DELIVERY_PLATFORM_NAME: name,
         c.DELIVERY_PLATFORM_STATUS: status,
         c.ENABLED: enabled,
+        c.ADDED: added,
         c.DELETED: deleted,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
@@ -570,7 +574,7 @@ def update_delivery_platform(
     try:
         if update_doc:
             doc = collection.find_one_and_update(
-                {c.ID: delivery_platform_id, c.ENABLED: True},
+                {c.ID: delivery_platform_id, c.DELETED: False},
                 {"$set": update_doc},
                 upsert=False,
                 new=True,
