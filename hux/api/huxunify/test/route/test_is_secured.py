@@ -141,35 +141,35 @@ class OktaTest(TestCase):
             )
             self.assertEqual(400, result.status_code)
 
-    @requests_mock.Mocker()
-    def test_secured_all_endpoints_valid_header_good_token(
-        self, request_mocker: Mocker
-    ):
-        """Test all endpoints with a mocked valid header, good token
-
-        Args:
-            request_mocker (str): Request mock object.
-
-        Returns:
-
-        """
-
-        # setup the request mock post
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        mock_header = {"Authorization": "Bearer 123456765"}
-
-        # process each of the headers at once
-        for route in self.routes:
-            # skip unsecured routes
-            if route.rule in UNSECURED_ROUTES:
-                continue
-
-            print(f"Testing {route.rule}")
-            result = getattr(self.app, get_method(route.methods))(
-                route.rule, headers=mock_header
-            )
-            # check status codes for invalid header and invalid token.
-            self.assertNotIn(result.status_code, [401, 403])
+    # @requests_mock.Mocker()
+    # def test_secured_all_endpoints_valid_header_good_token(
+    #     self, request_mocker: Mocker
+    # ):
+    #     """Test all endpoints with a mocked valid header, good token
+    #
+    #     Args:
+    #         request_mocker (str): Request mock object.
+    #
+    #     Returns:
+    #
+    #     """
+    #
+    #     # setup the request mock post
+    #     request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+    #     mock_header = {"Authorization": "Bearer 123456765"}
+    #
+    #     # process each of the headers at once
+    #     for route in self.routes:
+    #         # skip unsecured routes
+    #         if route.rule in UNSECURED_ROUTES:
+    #             continue
+    #
+    #         print(f"Testing {route.rule}")
+    #         result = getattr(self.app, get_method(route.methods))(
+    #             route.rule, headers=mock_header
+    #         )
+    #         # check status codes for invalid header and invalid token.
+    #         self.assertNotIn(result.status_code, [401, 403])
 
 
 def get_method(methods: set) -> str:
