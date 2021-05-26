@@ -48,7 +48,8 @@ def configure_flask(flask_app: Flask) -> None:
                 "huxunify.api.config.DevelopmentConfig"
             )
         else:
-            SWAGGER_CONFIG["schemes"].insert(0, "HTTP")
+            # use http by default for local testing.
+            SWAGGER_CONFIG["schemes"].insert(0, "http")
             flask_app.config.from_object("huxunify.api.config.Config")
     except KeyError as error:
         desc = f"Environment not configured: {error} is required."

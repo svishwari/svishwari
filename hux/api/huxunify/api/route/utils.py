@@ -184,21 +184,21 @@ def secured() -> object:
             auth_header = request.headers.get("Authorization", None)
             if not auth_header:
                 # no authorization header, return a generic 401.
-                return constants.MISSING_AUTH_HEADER, 401
+                return constants.INVALID_AUTH_HEADER, 401
 
             # split the header
             parts = auth_header.split()
-            if parts[0].lower() != "bearer":
+            if parts[0] != "Bearer":
                 # user submitted an invalid authorization header.
                 # return a generic 401
                 return constants.INVALID_AUTH_HEADER, 401
 
             if len(parts) == 1:
                 # token not found
-                return constants.MISSING_TOKEN, 401
+                return constants.INVALID_AUTH_HEADER, 401
 
             if len(parts) > 2:
-                return constants.AUTH_HEADER_FORMAT, 401
+                return constants.INVALID_AUTH_HEADER, 401
 
             # safely extract token using string partition
             if introspect_token(parts[1]):
