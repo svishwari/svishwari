@@ -67,13 +67,13 @@
                     >
                     <div>
                       <v-chip
+                        v-for="item in selectedEngagements"
                         :close="isMinEngagementSelected"
                         small
                         class="mx-2 my-1 font-weight-semi-bold"
                         text-color="primary"
                         color="pillBlue"
                         close-icon="mdi-close"
-                        v-for="item in selectedEngagements"
                         @click:close="detachEngagement(item)"
                         :key="item.id"
                       >
