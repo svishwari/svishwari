@@ -89,7 +89,9 @@
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(field.lastUpdatedBy) }"
+                v-bind:style="{
+                  'border-color': getColorCode(field.lastUpdatedBy),
+                }"
               >
                 {{ field.lastUpdatedBy }}
               </span>
