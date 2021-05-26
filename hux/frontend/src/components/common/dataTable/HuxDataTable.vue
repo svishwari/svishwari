@@ -20,36 +20,6 @@
               v-bind:isExpanded="isExpanded"
             >
             </slot>
-
-            <!-- <span v-if="field == 'engagementName'" class="primary--text">
-              <v-icon v-if="('child' in item)"
-                color="primary"
-                :class="{ 'rotate-icon': isExpanded }"
-                @click="expand(!isExpanded)"
-              >
-                mdi-chevron-right
-              </v-icon>
-              {{ item[field] }}
-            </span>
-            <span v-else-if="field == 'status'">
-              <v-icon
-                v-if="item[field] == 'Active'"
-                class="material-icons delivered"
-              >
-                mdi-checkbox-blank-circle
-              </v-icon>
-              <v-icon
-                v-if="item[field] == 'Delivering'"
-                class="material-icons alert"
-              >
-                mdi-alert-circle
-              </v-icon>
-            </span>
-            <span v-else>
-              <span v-if="field != 'child'">
-                {{ item[field] }}
-              </span>
-            </span> -->
           </td>
         </tr>
       </template>
@@ -57,28 +27,6 @@
         <tr v-for="(field, index) in item.child" :key="index">
           <td></td>
           <slot name="expanded-row" v-bind:field="field"></slot>
-          <!-- <td class="primary--text">{{ field.engagementName }}</td>
-          <td>{{ field.audiences }}</td>
-          <td>
-            <v-icon
-              v-if="field.status == 'Active'"
-              class="material-icons delivered"
-            >
-              mdi-checkbox-blank-circle
-            </v-icon>
-            <v-icon
-              v-if="field.status == 'Delivering'"
-              class="material-icons alert"
-            >
-              mdi-alert-circle
-            </v-icon>
-          </td>
-          <td>{{ field.size }}</td>
-          <td>{{ field.deliverySchedule }}</td>
-          <td>{{ field.lastUpdated }}</td>
-          <td>{{ field.lastUpdatedBy }}</td>
-          <td>{{ field.created }}</td>
-          <td>{{ field.createdBy }}</td> -->
         </tr>
       </template>
     </v-data-table>

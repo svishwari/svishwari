@@ -42,6 +42,20 @@
             </template>
           </v-menu>
         </span>
+        <span v-else-if="field == 'createdBy'">
+          <v-menu bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="avatar-border d-flex align-center justify-center"
+                v-bind="attrs"
+                v-on="on"
+                v-bind:style="{ 'border-color': getColorCode(item[field]) }"
+              >
+                {{ item[field] }}
+              </span>
+            </template>
+          </v-menu>
+        </span>
         <span v-else>
           <span v-if="field != 'child'">
             {{ item[field] }}
@@ -83,21 +97,23 @@
           </v-menu>
         </td>
         <td>{{ field.created }}</td>
-        <td>{{ field.createdBy }}</td>
+        <td>
+          <v-menu bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="avatar-border d-flex align-center justify-center"
+                v-bind="attrs"
+                v-on="on"
+                v-bind:style="{ 'border-color': getColorCode(field.createdBy) }"
+              >
+                {{ field.createdBy }}
+              </span>
+            </template>
+          </v-menu>
+        </td>
       </template>
     </HuxDataTable>
     <v-divider class="mt-10" />
-
-
-
-
-
-
-
-
-
-
-
     <v-subheader> Info Card </v-subheader>
     <CardInfo></CardInfo>
 
@@ -696,7 +712,7 @@ export default {
           engagementName: "Winter",
           audiences: 159,
           status: "Active",
-          size: "476M",
+          size: "176M",
           deliverySchedule: "Manual",
           lastUpdated: "1 week ago",
           lastUpdatedBy: "AZ",
