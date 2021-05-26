@@ -102,7 +102,12 @@ def get_engagements(database: DatabaseClient) -> list:
                 "as": db_c.ENGAGEMENT_AUDIENCES_COLLECTION,
             }
         },
-        # {"$unwind": f"${db_c.ENGAGEMENT_AUDIENCES_COLLECTION}"},
+        {
+            "$unwind": {
+                "path": f"${db_c.ENGAGEMENTS_COLLECTION}",
+                "preserveNullAndEmptyArrays": True,
+            },
+        },
     ]
 
     try:
@@ -467,9 +472,7 @@ def add_deliveries_to_engagement_audience(
         return collection.find_one_and_update(
             {db_c.ID: engagement_audience_id},
             {
-                "$push": {
-                    db_c.DELIVERIES: {"$each": deliveries, "$position": -1}
-                }
+                "$push": {db_c.DELIVERIES: {"$each": deliveries}},
             },
             return_document=True,
         )

@@ -419,7 +419,9 @@ class TestEngagementManagement(unittest.TestCase):
             # validate engagement_audiences is in the result.
             self.assertIn(c.ENGAGEMENT_AUDIENCES_COLLECTION, engagement)
 
-            engagement_audience = engagement[c.ENGAGEMENT_AUDIENCES_COLLECTION]
+            engagement_audience = engagement[
+                c.ENGAGEMENT_AUDIENCES_COLLECTION
+            ][0]
 
             self.assertIn(c.DELIVERIES, engagement_audience)
             self.assertIn(c.DESTINATIONS, engagement_audience)
