@@ -11,7 +11,6 @@ from connexion.exceptions import ProblemException
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
-from flask_cors import cross_origin
 
 
 from huxunifylib.database import constants as db_constants
@@ -42,7 +41,6 @@ cdp_data_sources_bp = Blueprint(
 
 
 @cdp_data_sources_bp.before_request
-@cross_origin()
 @secured()
 def before_request():
     """Protect all of the data source endpoints."""

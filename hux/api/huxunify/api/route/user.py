@@ -10,7 +10,6 @@ from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint
 from flasgger import SwaggerView
-from flask_cors import cross_origin
 
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.user_management import (
@@ -33,7 +32,6 @@ user_bp = Blueprint(api_c.USER_ENDPOINT, import_name=__name__)
 
 
 @user_bp.before_request
-@cross_origin()
 @secured()
 def before_request():
     """Protect all of the user endpoints."""

@@ -9,7 +9,6 @@ import pymongo
 from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
-from flask_cors import cross_origin
 
 from huxunifylib.database import (
     constants as db_constants,
@@ -32,7 +31,6 @@ notifications_bp = Blueprint(NOTIFICATIONS_ENDPOINT, import_name=__name__)
 
 
 @notifications_bp.before_request
-@cross_origin()
 @secured()
 def before_request():
     """Protect all of the notifications endpoints."""
