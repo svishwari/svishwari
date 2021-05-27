@@ -290,7 +290,7 @@ def create_engagement_audience(
     if audiences.count_documents({db_c.ID: audience_id}, limit=1) == 0:
         raise Exception(f"Audience does not exist {audience_id}.")
 
-    # check if the all the destination ids exists
+    # check if the all the destination ids exist
     destinations = am_db[db_c.DELIVERY_PLATFORM_COLLECTION]
     for dest_id in destination_ids:
         if destinations.count_documents({db_c.ID: dest_id}, limit=1) == 0:
