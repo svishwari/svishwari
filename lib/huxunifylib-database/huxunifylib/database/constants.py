@@ -9,6 +9,7 @@ ENABLED = "enabled"
 OKTA_ID = "okta_id"
 ADDED = "added"
 STATUS = "status"
+ACTIVE = "Active"
 PENDING = "Pending"
 
 # Data Management Defines

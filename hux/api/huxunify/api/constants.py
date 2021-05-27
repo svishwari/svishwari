@@ -111,6 +111,7 @@ DESTINATIONS_DESCRIPTION = "Destinations API"
 DESTINATIONS_ENDPOINT = "/destinations"
 DESTINATION_ID = "destination_id"
 DESTINATION_TYPE = "type"
+DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 DESTINATION_NAME = "name"
 DESTINATION_CAMPAIGN_COUNT = "campaign_count"
 CONNECTION_STATUS = "connection_status"
@@ -229,3 +230,7 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
+
+# ERROR
+INVALID_AUTH_HEADER = "Invalid authorization header."
+INVALID_AUTH = "You are not authorized to visit this page."
