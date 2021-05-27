@@ -14,10 +14,10 @@
           <td v-for="field in Object.keys(item)" :key="field.name">
             <slot
               name="un-expanded-row"
-              v-bind:field="field"
-              v-bind:item="item"
-              v-bind:expand="expand"
-              v-bind:isExpanded="isExpanded"
+              :field="field"
+              :item="item"
+              :expand="expand"
+              :isExpanded="isExpanded"
             >
             </slot>
           </td>
@@ -26,7 +26,7 @@
       <template v-slot:expanded-item="{ item }">
         <tr v-for="(field, index) in item.child" :key="index">
           <td></td>
-          <slot name="expanded-row" v-bind:field="field"></slot>
+          <slot name="expanded-row" :field="field"></slot>
         </tr>
       </template>
     </v-data-table>
