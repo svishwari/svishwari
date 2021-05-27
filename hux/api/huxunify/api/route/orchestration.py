@@ -7,6 +7,7 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError, INCLUDE
+from flask_cors import cross_origin
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -33,6 +34,7 @@ orchestration_bp = Blueprint(
 
 
 @orchestration_bp.before_request
+@cross_origin()
 @secured()
 def before_request():
     """Protect all of the orchestration endpoints."""

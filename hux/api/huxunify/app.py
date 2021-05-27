@@ -30,7 +30,7 @@ SWAGGER_CONFIG = {
 
 
 def after_request(response) -> Response:
-    """Set configuration and variables for Flask.
+    """Set after request headers for flask endpoints.
 
     Args:
         response (Response): App after request response.
@@ -40,7 +40,9 @@ def after_request(response) -> Response:
 
     """
     response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "PUT,GET,POST,DELETE"
+    response.headers[
+        "Access-Control-Allow-Methods"
+    ] = "PUT,GET,POST,DELETE,OPTIONS"
     response.headers[
         "Access-Control-Allow-Headers"
     ] = "Content-Type,Authorization"

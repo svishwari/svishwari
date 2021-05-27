@@ -12,6 +12,7 @@ from flask import Blueprint, request
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
+from flask_cors import cross_origin
 
 from huxunifylib.database import constants as db_c
 import huxunifylib.database.db_exceptions as de
@@ -39,6 +40,7 @@ engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 # TODO - implement after HUS-443 is done to grab user/okta_id
 # TODO Add updated_by fields to engagement_mgmt in set, update and delete methods
 @engagement_bp.before_request
+@cross_origin()
 @secured()
 def before_request():
     """Protect all of the engagement endpoints."""
