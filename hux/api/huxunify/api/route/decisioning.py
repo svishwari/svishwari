@@ -7,6 +7,7 @@ from typing import Tuple, List
 from flask import Blueprint
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
+from flask_cors import cross_origin
 
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
@@ -32,6 +33,7 @@ model_bp = Blueprint(api_c.MODELS_ENDPOINT, import_name=__name__)
 
 
 @model_bp.before_request
+@cross_origin()
 @secured()
 def before_request():
     """Protect all of the model endpoints."""
