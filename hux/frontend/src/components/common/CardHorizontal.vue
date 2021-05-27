@@ -2,10 +2,10 @@
   <v-card
     class="d-flex justify-space-between align-center px-5 py-2 rounded"
     @click="$emit('click')"
-    :class="isDisabledOrBlue ? 'card-horizontal-disabled' : ''"
-    :elevation="isDisabledOrBlue ? '0' : '2'"
+    :class="isDisabledOrDeselectable ? 'card-horizontal-disabled' : ''"
+    :elevation="isDisabledOrDeselectable ? '0' : '2'"
     :disabled="isDisabled"
-    :color="isDisabledOrBlue ? 'background' : 'white'"
+    :color="isDisabledOrDeselectable ? 'background' : 'white'"
     height="60"
   >
     <div v-if="icon || title" class="d-flex align-center">
@@ -85,7 +85,7 @@ export default {
       return this.isAlreadyAdded || !this.isAvailable
     },
 
-    isDisabledOrBlue: function () {
+    isDisabledOrDeselectable: function () {
       return this.isDisabled || this.enableBlueBackground
     },
   },
