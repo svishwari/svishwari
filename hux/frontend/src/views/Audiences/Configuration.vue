@@ -429,6 +429,38 @@ export default {
         return existingIndex > -1
       }
     },
+    createAudience() {
+      const destinationIdArray = this.audience.destinations.map(
+        (destination) => destination.id
+      )
+      const engagementIdArray = this.selectedEngagements.map(
+        (engagement) => engagement.id
+      )
+      const filtersArray = []
+      for (let f = 0; f < this.audience.attributeRules.length; f++) {
+        var obj = {
+          section_aggregator: this.audience.attributeRules[f].operand
+            ? "ALL"
+            : "ANY",
+          section_filters: [],
+        }
+        for (let c = 0; c < this.audience.attributeRules[f].conditions.length; c++) {
+          obj.section_filters.push({
+            field: this.audience.attributeRules[f].conditions[c].attribute,
+            type: this.audience.attributeRules[f].conditions[c].operator,
+            value: this.audience.attributeRules[f].conditions[c].text,
+          })
+        }
+        filtersArray.push(obj)
+      }
+      const payload = {
+        destinations: destinationIdArray,
+        engagements: engagementIdArray,
+        filters: filtersArray,
+        name: this.audience.audienceName,
+      }
+      console.log(payload)
+    },
   },
   async mounted() {
     await this.getDestinations()
