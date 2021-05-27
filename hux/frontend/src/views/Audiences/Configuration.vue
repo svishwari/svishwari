@@ -367,6 +367,8 @@ export default {
   methods: {
     ...mapActions({
       getDestinations: "destinations/getAll",
+      fetchEngagements: "engagements/getAll",
+      addAudienceToDB: "audiences/add",
     }),
     // Engagements
     detachEngagement(engagement) {
@@ -425,6 +427,54 @@ export default {
         )
         return existingIndex > -1
       }
+    },
+    async createAudience() {
+      const destinationIdArray = this.audience.destinations.map(
+        (destination) => destination.id
+      )
+      const engagementIdArray = this.selectedEngagements.map(
+        (engagement) => engagement.id
+      )
+      const filtersArray = []
+      for (
+        let ruleIndex = 0;
+        ruleIndex < this.audience.attributeRules.length;
+        ruleIndex++
+      ) {
+        var filter = {
+          section_aggregator: this.audience.attributeRules[ruleIndex].operand
+            ? "ALL"
+            : "ANY",
+          section_filters: [],
+        }
+        for (
+          let conditionIndex = 0;
+          conditionIndex <
+          this.audience.attributeRules[ruleIndex].conditions.length;
+          conditionIndex++
+        ) {
+          filter.section_filters.push({
+            field: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].attribute,
+            type: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].operator,
+            value: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].text,
+          })
+        }
+        filtersArray.push(filter)
+      }
+      const payload = {
+        destinations: destinationIdArray,
+        engagements: engagementIdArray,
+        filters: filtersArray,
+        name: this.audience.audienceName,
+      }
+      await this.addAudienceToDB(payload)
+      this.$router.push({ name: "Audiences" })
     },
   },
   async mounted() {
