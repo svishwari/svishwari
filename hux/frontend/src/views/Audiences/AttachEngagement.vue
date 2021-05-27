@@ -280,6 +280,7 @@ export default {
         }
       }
       let newEngagement = await this.addEngagementToDB(this.newEngagement)
+      this.engagements.push(newEngagement)
       this.sortEngagements()
       this.onEngagementClick(newEngagement)
       this.goToStep1()
