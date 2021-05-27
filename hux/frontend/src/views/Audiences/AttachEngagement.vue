@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localDrawer">
+  <Drawer v-model="localDrawer" @onClose="goToStep1()">
     <template v-slot:header-left>
       <div class="d-flex align-center">
         <Icon
@@ -17,10 +17,37 @@
       </div>
     </template>
     <template v-slot:default>
-      <v-stepper v-model="viewStep">
+      <v-progress-linear
+        color="primary"
+        :active="loading"
+        :indeterminate="loading"
+      />
+      <v-stepper v-if="!loading" v-model="viewStep">
         <v-stepper-items>
           <v-stepper-content step="1">
-            <div class="ma-1">
+            <div v-if="!areEngagementAlreadyCreated">
+              <EmptyPage>
+                <template v-slot:icon>mdi-alert-circle-outline</template>
+                <template v-slot:title>Oops! There’s nothing here yet</template>
+                <template v-slot:subtitle>
+                  No engagements has been launched yet. Let’s create one <br />
+                  by clicking the new engagement button below.
+                </template>
+                <template v-slot:button>
+                  <huxButton
+                    ButtonText="New engagement"
+                    icon="mdi-plus"
+                    iconPosition="left"
+                    variant="primary"
+                    size="small"
+                    :isTile="true"
+                    @click="goToStep2()"
+                    class="ma-2"
+                  ></huxButton>
+                </template>
+              </EmptyPage>
+            </div>
+            <div class="ma-1" v-else>
               <h6 class="mb-6 text-h6 neroBlack--text">
                 Select an existing engagement or create a new one. You are
                 required to have at least one selected.
@@ -50,11 +77,33 @@
                 <CardHorizontal
                   v-for="engagement in engagements"
                   :key="engagement.id"
-                  :title="engagement.name"
-                  :isAdded="selectedEngagements.includes(engagement)"
+                  :isAdded="isEngagementSelected(engagement)"
+                  :enableBlueBackground="isEngagementSelected(engagement)"
                   @click="onEngagementClick(engagement)"
                   class="my-3"
-                />
+                >
+                  <v-menu open-on-hover offset-x offset-y :max-width="177">
+                    <template v-slot:activator="{ on }">
+                      <div v-on="on" class="pl-2 font-weight-regular">
+                        {{ engagement.name }}
+                      </div>
+                    </template>
+                    <template v-slot:default>
+                      <div class="px-4 py-2 white">
+                        <div class="neroBlack--text text-caption">Name</div>
+                        <div class="lightGreyText--text text-caption mt-1">
+                          {{ engagement.name }}
+                        </div>
+                        <div class="neroBlack--text text-caption mt-3">
+                          Description
+                        </div>
+                        <div class="lightGreyText--text text-caption mt-1">
+                          {{ engagement.description }}
+                        </div>
+                      </div>
+                    </template>
+                  </v-menu>
+                </CardHorizontal>
               </div>
             </div>
           </v-stepper-content>
@@ -111,11 +160,14 @@
                   </v-menu>
                 </div>
                 <div class="d-flex flex-column delivery-options">
-                  <v-btn-toggle v-model="newEngagement.deliveryType" mandatory>
+                  <v-btn-toggle
+                    v-model="newEngagement.delivery_schedule"
+                    mandatory
+                  >
                     <v-btn>
                       <v-radio
                         :off-icon="
-                          newEngagement.deliveryType == 0
+                          newEngagement.delivery_schedule == 0
                             ? '$radioOn'
                             : '$radioOff'
                         "
@@ -125,7 +177,7 @@
                     <v-btn disabled style="background: white !important">
                       <v-radio
                         :off-icon="
-                          newEngagement.deliveryType == 1
+                          newEngagement.delivery_schedule == 1
                             ? '$radioOn'
                             : '$radioOff'
                         "
@@ -149,14 +201,16 @@
           :isTile="true"
           height="40"
           :isDisabled="!newEngagementValid"
-          class="ma-2"
           @click.native="addEngagement()"
         />
       </div>
     </template>
 
     <template v-slot:footer-left>
-      <div class="d-flex align-baseline" v-if="viewStep == 1">
+      <div
+        class="d-flex align-baseline"
+        v-if="viewStep == 1 && areEngagementAlreadyCreated"
+      >
         {{ engagements.length }} results
       </div>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
@@ -165,7 +219,6 @@
           variant="white"
           :isTile="true"
           height="40"
-          class="ma-2"
           @click.native="goToStep1()"
         ></huxButton>
       </div>
@@ -174,10 +227,11 @@
 </template>
 
 <script>
-// import { mapGetters, mapActions } from "vuex"
+import { mapActions } from "vuex"
 
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
+import EmptyPage from "@/components/common/EmptyPage"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Icon from "@/components/common/Icon"
@@ -192,39 +246,30 @@ export default {
     huxButton,
     TextField,
     CardHorizontal,
+    EmptyPage,
     Icon,
+  },
+
+  computed: {
+    areEngagementAlreadyCreated() {
+      return this.engagements.length > 0
+    },
   },
 
   data() {
     return {
       localDrawer: this.value,
       toggleSortIcon: false,
+      engagements: [],
+      loading: false,
       viewStep: 1,
       selectedEngagements: [],
       newEngagement: {
         name: "",
         description: "",
-        deliveryType: 0,
+        delivery_schedule: 0,
       },
       newEngagementValid: false,
-      engagements: [
-        {
-          name: "Engagement 3",
-          id: "1",
-        },
-        {
-          name: "Engagement 2",
-          id: "2",
-        },
-        {
-          name: "Engagement 1",
-          id: "3",
-        },
-        {
-          name: "Engagement 4",
-          id: "4",
-        },
-      ],
       newEngagementRules: [(v) => !!v || "Engagement name is required"],
       sortBy: sortBy,
     }
@@ -259,17 +304,20 @@ export default {
   },
 
   methods: {
-    goToAddNewEngagement: function () {
-      this.resetNewEngagement()
-      this.goToStep2()
+    ...mapActions({
+      fetchEngagements: "engagements/getAll",
+      addEngagementToDB: "engagements/add",
+    }),
+    isEngagementSelected: function (engagement) {
+      return this.selectedEngagements.includes(engagement)
     },
-    addNewEngagement: function () {
+    goToAddNewEngagement: function () {
       this.resetNewEngagement()
       this.goToStep2()
     },
     resetNewEngagement: function () {
       this.$refs.newEngagementRef.reset()
-      this.newEngagement.deliveryType = 0
+      this.newEngagement.delivery_schedule = 0
     },
     goToStep1: function () {
       this.viewStep = 1
@@ -277,14 +325,22 @@ export default {
     goToStep2: function () {
       this.viewStep = 2
     },
-    addEngagement: function () {
-      //TODO: make a api call here and get the engagement id created.
-      this.engagements.push({
-        name: this.newEngagement.name,
-        id: this.engagements.length + 1,
-      })
+    addEngagement: async function () {
+      this.loading = true
+      if (this.newEngagement.delivery_schedule == 0) {
+        this.newEngagement.delivery_schedule = null
+      } else {
+        this.newEngagement.delivery_schedule = {
+          end_date: "",
+          start_date: "",
+        }
+      }
+      let newEngagement = await this.addEngagementToDB(this.newEngagement)
+      this.engagements.push(newEngagement)
       this.sortEngagements()
+      this.onEngagementClick(newEngagement)
       this.goToStep1()
+      this.loading = false
     },
     onEngagementClick: function (engagement) {
       if (this.selectedEngagements.includes(engagement)) {
@@ -315,7 +371,13 @@ export default {
     },
   },
   async mounted() {
+    this.loading = true
+    await this.fetchEngagements()
+    this.engagements = JSON.parse(
+      JSON.stringify(this.$store.getters["engagements/list"])
+    )
     this.sortEngagements()
+    this.loading = false
   },
 }
 </script>

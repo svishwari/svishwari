@@ -45,6 +45,17 @@ const actions = {
     }
   },
 
+  async add({ commit }, engagement) {
+    try {
+      const response = await api.engagements.create(engagement)
+      commit("SET_ONE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async update({ commit }, engagement) {
     try {
       const response = await api.engagements.update(
