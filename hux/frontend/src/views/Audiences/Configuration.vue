@@ -428,7 +428,7 @@ export default {
         return existingIndex > -1
       }
     },
-    createAudience() {
+    async createAudience() {
       const destinationIdArray = this.audience.destinations.map(
         (destination) => destination.id
       )
@@ -436,25 +436,25 @@ export default {
         (engagement) => engagement.id
       )
       const filtersArray = []
-      for (let f = 0; f < this.audience.attributeRules.length; f++) {
-        var obj = {
-          section_aggregator: this.audience.attributeRules[f].operand
+      for (let ruleIndex = 0; ruleIndex < this.audience.attributeRules.length; ruleIndex++) {
+        var filter = {
+          section_aggregator: this.audience.attributeRules[ruleIndex].operand
             ? "ALL"
             : "ANY",
           section_filters: [],
         }
         for (
-          let c = 0;
-          c < this.audience.attributeRules[f].conditions.length;
-          c++
+          let conditionIndex = 0;
+          conditionIndex < this.audience.attributeRules[ruleIndex].conditions.length;
+          conditionIndex++
         ) {
-          obj.section_filters.push({
-            field: this.audience.attributeRules[f].conditions[c].attribute,
-            type: this.audience.attributeRules[f].conditions[c].operator,
-            value: this.audience.attributeRules[f].conditions[c].text,
+          filter.section_filters.push({
+            field: this.audience.attributeRules[ruleIndex].conditions[conditionIndex].attribute,
+            type: this.audience.attributeRules[ruleIndex].conditions[conditionIndex].operator,
+            value: this.audience.attributeRules[ruleIndex].conditions[conditionIndex].text,
           })
         }
-        filtersArray.push(obj)
+        filtersArray.push(filter)
       }
       const payload = {
         destinations: destinationIdArray,
@@ -462,7 +462,7 @@ export default {
         filters: filtersArray,
         name: this.audience.audienceName,
       }
-      this.addAudienceToDB(payload)
+      await this.addAudienceToDB(payload)
       this.$router.push({ name: "Audiences" })
     },
   },
