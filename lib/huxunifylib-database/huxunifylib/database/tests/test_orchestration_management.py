@@ -195,6 +195,55 @@ class TestAudienceManagement(unittest.TestCase):
         )
         self.assertEqual(len(doc[c.AUDIENCE_FILTERS]), 1)
 
+    def test_add_audience_with_destination(self):
+        """Test add audience with destinations."""
+
+        set_audience = am.create_audience(
+            self.database,
+            "My Audience",
+            self.audience_filters,
+            self.destination_ids,
+        )
+        doc = am.get_audience(self.database, set_audience[c.ID])
+
+        self.assertTrue(doc is not None)
+        self.assertTrue(c.AUDIENCE_FILTERS in doc)
+        self.assertTrue(c.DESTINATIONS in doc)
+        self.assertEqual(doc[c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(doc[c.DESTINATIONS][1], "destination_id2")
+
+    def test_update_audience_destination(self):
+        """Test update audience destinations."""
+
+        set_audience = am.create_audience(
+            self.database,
+            "My Audience",
+            self.audience_filters,
+            self.destination_ids,
+        )
+        doc = am.get_audience(self.database, set_audience[c.ID])
+
+        self.assertTrue(doc is not None)
+        self.assertTrue(c.AUDIENCE_FILTERS in doc)
+        self.assertTrue(c.DESTINATIONS in doc)
+        self.assertEqual(doc[c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(doc[c.DESTINATIONS][1], "destination_id2")
+
+        new_destination_ids = ["destination_id1", "destination_id3"]
+        am.update_audience(
+            self.database,
+            set_audience[c.ID],
+            "My Audience",
+            self.audience_filters,
+            new_destination_ids,
+        )
+        updated_doc = am.get_audience(self.database, set_audience[c.ID])
+
+        self.assertTrue(updated_doc is not None)
+        self.assertTrue(c.DESTINATIONS in updated_doc)
+        self.assertEqual(updated_doc[c.DESTINATIONS][0], "destination_id1")
+        self.assertEqual(updated_doc[c.DESTINATIONS][1], "destination_id3")
+
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
 

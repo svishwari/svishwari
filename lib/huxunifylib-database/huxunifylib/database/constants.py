@@ -29,7 +29,6 @@ LOOKALIKE_AUDIENCE_COLLECTION = "lookalike_audiences"
 PERFORMANCE_METRICS_COLLECTION = "performance_metrics"
 USER_COLLECTION = "users"
 NOTIFICATIONS_COLLECTION = "notifications"
-ENGAGEMENT_AUDIENCES_COLLECTION = "engagement_audiences"
 
 CONSTANT_NAME = "constant"
 CONSTANT_VALUE = "value"
