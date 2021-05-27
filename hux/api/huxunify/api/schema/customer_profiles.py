@@ -4,31 +4,30 @@ Schemas for the Customer Profiles API
 
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int,Float,DateTime
+from marshmallow import fields
 
 
 class CustomerProfilesOverview(Schema):
     """Customer Profile Overview Schema"""
 
-    total_records=Int(required=True)
-    match_rate=Float(required=True)
-    total_unique_ids=Int(required=True)
-    total_unknown_ids=Int(required=True)
-    total_known_ids=Int(required=True)
-    total_individual_ids=Int(required=True)
-    total_household_ids=Int(required=True)
-    updated=DateTime(required=True)
-    total_customers=Int(required=True)
-    total_countries=Int(required=True)
-    total_us_states=Int(required=True)
-    total_cities=Int(required=True)
-    min_age=Int(required=True)
-    max_age=Int(required=True)
-    gender_women=Float(required=True)
-    gender_men=Float(required=True)
-    gender_other=Float(required=True)
-    min_ltv_predicted=Float(required=True)
-    max_ltv_predicted=Float(required=True)
-    min_ltv_actual=Float(required=True)
-    max_ltv_actual=Float(required=True)
-
+    total_records = fields.Integer(required=True)
+    match_rate = fields.Float(required=True)
+    total_unique_ids = fields.Integer(required=True)
+    total_unknown_ids = fields.Integer(required=True)
+    total_known_ids = fields.Integer(required=True)
+    total_individual_ids = fields.Integer(required=True)
+    total_household_ids = fields.Integer(required=True)
+    updated = fields.DateTime(required=True)
+    total_customers = fields.Integer(required=True)
+    total_countries = fields.Integer(required=True)
+    total_us_states = fields.Integer(required=True)
+    total_cities = fields.Integer(required=True)
+    min_age = fields.Integer(required=True)
+    max_age = fields.Integer(required=True)
+    gender_women = fields.Float(required=True)
+    gender_men = fields.Float(required=True)
+    gender_other = fields.Float(required=True)
+    min_ltv_predicted = fields.Float(required=True)
+    max_ltv_predicted = fields.Float(required=True)
+    min_ltv_actual = fields.Float(required=True)
+    max_ltv_actual = fields.Float(required=True)

@@ -7,7 +7,7 @@ from huxunify.api.route.decisioning import model_bp
 from huxunify.api.route.orchestration import orchestration_bp
 from huxunify.api.route.cdp_data_source import cdp_data_sources_bp
 from huxunify.api.route.notifications import notifications_bp
-from huxunify.api.route.customer_profiles import customer_profiles_bp
+from huxunify.api.route.customers import customers_bp
 
 ROUTES = [
     dest_bp,
@@ -16,5 +16,5 @@ ROUTES = [
     orchestration_bp,
     cdp_data_sources_bp,
     notifications_bp,
-    customer_profiles_bp
+    customers_bp,
 ]
