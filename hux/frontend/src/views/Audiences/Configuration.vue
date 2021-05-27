@@ -445,7 +445,11 @@ export default {
             : "ANY",
           section_filters: [],
         }
-        for (let c = 0; c < this.audience.attributeRules[f].conditions.length; c++) {
+        for (
+          let c = 0;
+          c < this.audience.attributeRules[f].conditions.length;
+          c++
+        ) {
           obj.section_filters.push({
             field: this.audience.attributeRules[f].conditions[c].attribute,
             type: this.audience.attributeRules[f].conditions[c].operator,

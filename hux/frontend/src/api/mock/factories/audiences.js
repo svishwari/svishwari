@@ -24,10 +24,10 @@ const audienceMock = {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
 
-  destinations(){
+  destinations() {
     return faker.datatype.array(faker.datatype.hexaDecimal)
   },
-  engagements(){
+  engagements() {
     return faker.datatype.array(faker.datatype.hexaDecimal)
   },
 }

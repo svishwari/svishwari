@@ -273,27 +273,21 @@ const unsubscribeModel = {
 
 // audiences
 const defaultAudience = {
-  destinations: [
-    "71364317897acad4bac4373b",
-    "67589317897acad4bac4373b"
-  ],
-  engagements: [
-    "84759317897acad4bac4373b",
-    "46826317897acad4bac4373b"
-  ],
+  destinations: ["71364317897acad4bac4373b", "67589317897acad4bac4373b"],
+  engagements: ["84759317897acad4bac4373b", "46826317897acad4bac4373b"],
   filters: [
     {
-      "section_aggregator": "ALL",
-      "section_filters": [
+      section_aggregator: "ALL",
+      section_filters: [
         {
-          "field": "filter_field",
-          "type": "type",
-          "value": "value"
-        }
-      ]
-    }
+          field: "filter_field",
+          type: "type",
+          value: "value",
+        },
+      ],
+    },
   ],
-  name: "My Audience"
+  name: "My Audience",
 }
 
 export default function (server) {
