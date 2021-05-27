@@ -12,7 +12,6 @@ from marshmallow import ValidationError
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
 from huxunify.api import constants as api_c
 
-
 # get random data back based on marshmallow field type
 SPEC_TYPE_LOOKUP = {
     Boolean: bool(random.getrandbits(1)),
@@ -110,5 +109,27 @@ AUTH401_RESPONSE = {
 }
 
 
+def redact_fields(data: dict, redacted_fields: list) -> dict:
+    """Function is meant to redact fields that a customer is not allowed to see
+
+    Args:
+        data: original data with all fields
+        redacted_fields: list of fields that need to be redacted
+
+    Returns:
+        dict: the original body with fields filled in with "REDACTED"
+
+    """
+    for field in redacted_fields:
+        if field in data:
+            data[field] = "REDACTED"
+
+    return data
+
+
 if __name__ == "__main__":
-    pass
+    body = {"test1": 1, "test2": 2, "test3": 3, "test4": 4, "test5": 5}
+
+    fields = ["test2", "test4"]
+
+    print(redact_fields(body, fields))

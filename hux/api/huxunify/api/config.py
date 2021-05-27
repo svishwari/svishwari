@@ -109,6 +109,11 @@ class Config:
     AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
     AUDIENCE_ROUTER_IMAGE = config(AUDIENCE_ROUTER_IMAGE_CONST, default="")
 
+    # CDP
+    # TODO config details needed for this
+    CDP_SERVICE = ""
+    CDP_HEADERS = {}
+
 
 class ProductionConfig(Config):
     """

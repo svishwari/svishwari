@@ -8,6 +8,14 @@ OWNER = "owner"
 STATUS = "status"
 TYPE = "type"
 DESCRIPTION = "description"
+EMAIL = "email"
+PHONE = "phone"
+AGE = "age"
+GENDER = "gender"
+ADDRESS = "address"
+CITY = "city"
+STATE = "state"
+ZIP = "zip"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -231,9 +239,27 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 
+# Customers
+CUSTOMER_ID = "customer_id"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_TAG = "customers"
+
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
 # ERROR
 INVALID_AUTH_HEADER = "Invalid authorization header."
 INVALID_AUTH = "You are not authorized to visit this page."
+
+# FILTERING
+REDACTED = "REDACTED"
+CUSTOMER_PROFILE_REDACTED_FIELDS = [
+    EMAIL,
+    PHONE,
+    AGE,
+    GENDER,
+    ADDRESS,
+    CITY,
+    STATE,
+    ZIP,
+]
