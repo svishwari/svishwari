@@ -25,7 +25,29 @@
       <v-stepper v-if="!loading" v-model="viewStep">
         <v-stepper-items>
           <v-stepper-content step="1">
-            <div class="ma-1">
+            <div v-if="!areEngagementAlreadyCreated">
+              <EmptyPage>
+                <template v-slot:icon>mdi-alert-circle-outline</template>
+                <template v-slot:title>Oops! There’s nothing here yet</template>
+                <template v-slot:subtitle>
+                  No engagements has been launched yet. Let’s create one <br />
+                  by clicking the new engagement button below.
+                </template>
+                <template v-slot:button>
+                  <huxButton
+                    ButtonText="New engagement"
+                    icon="mdi-plus"
+                    iconPosition="left"
+                    variant="primary"
+                    size="small"
+                    :isTile="true"
+                    @click="goToStep2()"
+                    class="ma-2"
+                  ></huxButton>
+                </template>
+              </EmptyPage>
+            </div>
+            <div class="ma-1" v-else>
               <h6 class="mb-6 text-h6 neroBlack--text">
                 Select an existing engagement or create a new one. You are
                 required to have at least one selected.
@@ -179,14 +201,16 @@
           :isTile="true"
           height="40"
           :isDisabled="!newEngagementValid"
-          class="ma-2"
           @click.native="addEngagement()"
         />
       </div>
     </template>
 
     <template v-slot:footer-left>
-      <div class="d-flex align-baseline" v-if="viewStep == 1">
+      <div
+        class="d-flex align-baseline"
+        v-if="viewStep == 1 && areEngagementAlreadyCreated"
+      >
         {{ engagements.length }} results
       </div>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
@@ -195,7 +219,6 @@
           variant="white"
           :isTile="true"
           height="40"
-          class="ma-2"
           @click.native="goToStep1()"
         ></huxButton>
       </div>
@@ -208,6 +231,7 @@ import { mapActions } from "vuex"
 
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
+import EmptyPage from "@/components/common/EmptyPage"
 import Drawer from "@/components/common/Drawer"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import Icon from "@/components/common/Icon"
@@ -222,7 +246,14 @@ export default {
     huxButton,
     TextField,
     CardHorizontal,
+    EmptyPage,
     Icon,
+  },
+
+  computed: {
+    areEngagementAlreadyCreated() {
+      return this.engagements.length > 0
+    },
   },
 
   data() {
