@@ -21,6 +21,7 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
+    secured,
 )
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
