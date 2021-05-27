@@ -48,10 +48,20 @@ const routes = [
   {
     path: "/engagements",
     name: "Engagements",
-    component: () => import("@/views/Engagements"),
+    component: () => import("@/views/Engagements/Index"),
     meta: {
       layout: "app",
       title: "Engagements",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/engagements/:id",
+    name: "EngagementInsight",
+    component: () => import("@/views/Engagements/Insight"),
+    meta: {
+      layout: "app",
+      title: "Engagement Dashboard",
       requiresAuth: true,
     },
   },
