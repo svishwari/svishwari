@@ -436,7 +436,11 @@ export default {
         (engagement) => engagement.id
       )
       const filtersArray = []
-      for (let ruleIndex = 0; ruleIndex < this.audience.attributeRules.length; ruleIndex++) {
+      for (
+        let ruleIndex = 0;
+        ruleIndex < this.audience.attributeRules.length;
+        ruleIndex++
+      ) {
         var filter = {
           section_aggregator: this.audience.attributeRules[ruleIndex].operand
             ? "ALL"
@@ -445,13 +449,20 @@ export default {
         }
         for (
           let conditionIndex = 0;
-          conditionIndex < this.audience.attributeRules[ruleIndex].conditions.length;
+          conditionIndex <
+          this.audience.attributeRules[ruleIndex].conditions.length;
           conditionIndex++
         ) {
           filter.section_filters.push({
-            field: this.audience.attributeRules[ruleIndex].conditions[conditionIndex].attribute,
-            type: this.audience.attributeRules[ruleIndex].conditions[conditionIndex].operator,
-            value: this.audience.attributeRules[ruleIndex].conditions[conditionIndex].text,
+            field: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].attribute,
+            type: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].operator,
+            value: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].text,
           })
         }
         filtersArray.push(filter)
