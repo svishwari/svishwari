@@ -104,6 +104,7 @@ AUTH401_ERROR_MESSAGE = "Access token is missing or invalid."
 INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
+DUPLICATE_NAME = "Name already exists."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -124,6 +125,8 @@ INVALID_ID = "Invalid Object ID."
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_NAME = "engagement_name"
+ENGAGEMENT_ENDPOINT = "/engagements"
+ENGAGEMENT_TAG = "engagements"
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
@@ -232,5 +235,5 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 BATCH_SIZE = "batch_size"
 
 # ERROR
-INVALID_AUTH_HEADER = "Invalid authorization header."
+INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."

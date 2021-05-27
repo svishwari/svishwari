@@ -23,4 +23,6 @@ export default {
   skyBlue: "#80D1EF",
   skyBlueDark: "#00A3E0",
   offWhite: "#e5e5e5",
+  dullBlue: "#B7CFD9",
+  lightGreyText: "#4F4F4F",
 }

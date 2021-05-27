@@ -25,7 +25,11 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourcePostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
+from huxunify.api.route.utils import (
+    add_view_to_blueprint,
+    get_db_client,
+    secured,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
@@ -34,6 +38,13 @@ from huxunify.api import constants as api_c
 cdp_data_sources_bp = Blueprint(
     api_c.CDP_DATA_SOURCES_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
+
+
+@cdp_data_sources_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the data source endpoints."""
+    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(
@@ -58,6 +69,8 @@ class DataSourceSearch(SwaggerView):
         """Retrieves all CDP data sources.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int] list of CDP data sources and http code
@@ -120,6 +133,9 @@ class IndividualDataSourceSearch(SwaggerView):
         """Retrieves a CDP data source.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             data_source_id (str): id of CDP data source
 
@@ -196,6 +212,9 @@ class CreateCdpDataSource(SwaggerView):
         """Creates a new CDP data source.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[str, int]: ID of CDP Data source, http code
 
@@ -248,6 +267,9 @@ class DeleteCdpDataSource(SwaggerView):
         """Deletes a CDP data source.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             data_source_id (str): CDP data source id
 

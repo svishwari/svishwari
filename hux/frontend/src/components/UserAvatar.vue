@@ -5,7 +5,7 @@
         <v-btn color="primary" class="font-weight-bold" small outlined fab>
           {{ initials }}
         </v-btn>
-        <v-icon color="primary" :class="{ 'rotate-icon': menu }">
+        <v-icon color="primary" :class="{ 'rotate-icon-180': menu }">
           mdi-chevron-down
         </v-icon>
       </span>
@@ -67,18 +67,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.rotate-icon {
-  transition: 0.7s;
-  -webkit-transition: 0.7s;
-  -moz-transition: 0.7s;
-  -ms-transition: 0.7s;
-  -o-transition: 0.7s;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  transform: rotate(180deg);
-}
-</style>
