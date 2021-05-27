@@ -12,8 +12,12 @@
       </template>
       <template slot="right">
         <v-icon size="22" :disabled="true" class="mr-2">mdi-refresh</v-icon>
-        <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1">mdi-pencil</v-icon>
-        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1">mdi-download</v-icon>
+        <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1"
+          >mdi-pencil</v-icon
+        >
+        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1"
+          >mdi-download</v-icon
+        >
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -22,15 +26,19 @@
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-8">
         <MetricCard
-          :class="`list-item mr-3 ${summary.cardType ? summary.cardType : ''}`"
+          :class="{
+            'list-item': true,
+            'mr-3': index != summaryCards.length - 1,
+            description: index == summaryCards.length - 1,
+          }"
           :width="summary.width"
+          :min-width="summary.minWidth"
           :height="75"
           v-for="(summary, index) in summaryCards"
           :key="`summary-${index}`"
           :title="summary.title"
           :subtitle="summary.value"
           :interactable="false"
-          v-if="showCard(summary)"
         >
           <template slot="short-name" v-if="summary.subLabel">
             <Avatar :name="summary.subLabel" />
@@ -43,19 +51,30 @@
         <v-card minHeight="145px" elevation="2">
           <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
             <div class="d-flex align-center">
-              <Icon type="audiences" :size="24" color="neroBlack" class="mr-2" />Audiences
+              <Icon
+                type="audiences"
+                :size="24"
+                color="neroBlack"
+                class="mr-2"
+              />Audiences
             </div>
             <div class="mt-2">
-              <a href="#" class="d-flex align-center primary--text text-decoration-none">
+              <a
+                href="#"
+                class="d-flex align-center primary--text text-decoration-none"
+              >
                 <Icon type="audiences" :size="16" class="mr-1" />Add an audience
               </a>
             </div>
           </v-card-title>
           <v-card-text class="pl-6 pr-6 pb-6">
             <div
-              class="blank-section rounded-sm pa-5"
+              class="blank-section rounded-lg pa-5"
               v-if="engagement.audiences.length == 0"
-            >Nothing to show here yet. Add an audience and then assign a destination.</div>
+            >
+              Nothing to show here yet. Add an audience and then assign a
+              destination.
+            </div>
             <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
               <status-list
                 v-for="(item, index) in engagement.audiences"
@@ -66,7 +85,7 @@
             </v-col>
           </v-card-text>
         </v-card>
-        <v-tabs v-model="tabOption" class="mt-12">
+        <v-tabs v-model="tabOption" class="mt-8">
           <v-tabs-slider color="yellow"></v-tabs-slider>
 
           <v-tab key="displayAds" class="pa-2" color>
@@ -77,12 +96,12 @@
         <v-tabs-items v-model="tabOption" class="mt-2">
           <v-tab-item key="displayAds" class="rounded-lg">
             <v-card flat>
-              <v-card-text class="d-flex mt-2 rounded-sm">
+              <v-card-text class="d-flex mt-2 rounded-lg summary-wrap">
                 <MetricCard
                   class="list-item mr-2"
                   :width="item.width"
                   :height="70"
-                  v-for="(item, index) in displayAds"
+                  v-for="(item, index) in displayAdsSummary"
                   :key="`dispinfo-${index}`"
                   :title="item.title"
                   :subtitle="item.value"
@@ -93,22 +112,42 @@
           </v-tab-item>
           <v-tab-item key="email" class="rounded-lg">
             <v-card flat>
-              <v-card-text>Emails content live here</v-card-text>
+              <v-card-text class="mt-2 rounded-lg">
+                <v-row class="summary-wrap pl-3 pr-3">
+                  <MetricCard
+                    class="list-item mr-1 rounded-lg"
+                    :min-width="item.width"
+                    :height="70"
+                    v-for="(item, index) in emailSummary"
+                    :key="`emailInfo-${index}`"
+                    :title="item.title"
+                    :subtitle="item.value"
+                    :interactable="false"
+                  ></MetricCard>
+                </v-row>
+              </v-card-text>
             </v-card>
           </v-tab-item>
         </v-tabs-items>
         <v-card minHeight="145px" elevation="2" class="mt-6">
           <v-card-title class="d-flex justify-space-between pb-6">
             <div class="d-flex align-center">
-              <Icon type="audiences" :size="24" color="neroBlack" class="mr-2" />Audience
-              performance
+              <Icon
+                type="audiences"
+                :size="24"
+                color="neroBlack"
+                class="mr-2"
+              />Audience performance
             </div>
           </v-card-title>
           <v-card-text class="pl-6 pr-6 pb-6 mt-6">
             <div
               class="blank-section rounded-sm pa-5"
               v-if="engagement.audiences.length == 0"
-            >Nothing to show here yet. Add an audience and then assign a destination.</div>
+            >
+              Nothing to show here yet. Add an audience and then assign a
+              destination.
+            </div>
           </v-card-text>
         </v-card>
       </div>
@@ -160,19 +199,13 @@ export default {
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
-                type: "mailchimp",
-                status: "active",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-              {
                 type: "facebook",
                 status: "active",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
-                type: "salesforce",
+                type: "insightIQ",
                 status: "active",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
@@ -202,7 +235,7 @@ export default {
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
-                type: "salesforce",
+                type: "insightIQ",
                 status: "pending",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
@@ -279,27 +312,27 @@ export default {
       return items
     },
     summaryCards() {
-      return [
+      const summary = [
         {
           title: "Delivery schedule",
           value: this.fetchKey("schedule"),
           subLabel: null,
           width: "12.6%",
-          cardType: null,
+          minWidth: "146px",
         },
         {
           title: "Last updated",
           value: this.getDateStamp(this.fetchKey("update_time")),
           subLabel: this.fetchKey("updated_by"),
           width: "19%",
-          cardType: null,
+          minWidth: "164px",
         },
         {
           title: "Created",
           value: this.getDateStamp(this.fetchKey("created_time")),
           subLabel: this.fetchKey("created_by"),
           width: "19%",
-          cardType: null,
+          minWidth: "164px",
         },
         {
           title:
@@ -307,11 +340,12 @@ export default {
           value: null,
           subLabel: null,
           width: "48%",
-          cardType: "description",
+          minWidth: "518px",
         },
       ]
+      return summary.filter((item) => item.title !== null)
     },
-    displayAds() {
+    displayAdsSummary() {
       return [
         { title: "Spend", value: "$2.1M", width: "10%" },
         { title: "Reach", value: "500k", width: "10%" },
@@ -324,6 +358,26 @@ export default {
         { title: "CPA", value: "$652", width: "10%" },
         { title: "CPC", value: "$485", width: "10%" },
         { title: "Engagement rate", value: "56%", width: "10%" },
+      ]
+    },
+    emailSummary() {
+      return [
+        { title: "Sent", value: "Yesterday", width: "95px" },
+        { title: "Hard bounces / Rate", value: "125 • 0.1%", width: "139px" },
+        { title: "Delivered / Rate", value: "125 • 0.1%", width: "113px" },
+        { title: "Open / Rate", value: "365.2k • 72.8%", width: "122px" },
+        { title: "Click / CTR", value: "365.2k • 72.8%", width: "122px" },
+        { title: "Click to open rate  ", value: "72.8%", width: "121px" },
+        {
+          title: "Unique clicks / Unique opens",
+          value: "365.2k • 72.8%",
+          width: "185px",
+        },
+        {
+          title: "Unsubscribe / Rate",
+          value: "365.2k • 72.8%",
+          width: "130px",
+        },
       ]
     },
   },
@@ -392,16 +446,21 @@ export default {
         .v-tabs-bar__content {
           border-bottom: 2px solid #e2eaec;
           .v-tabs-slider-wrapper {
+            width: 111px;
             .v-tabs-slider {
-              background-color: #00a3e0 !important;
-              border-color: #00a3e0 !important;
+              background-color: var(--v-skyBlueDark-base) !important;
+              border-color: var(--v-skyBlueDark-base) !important;
             }
           }
           .v-tab {
             text-transform: inherit;
             padding: 8px;
+            color: var(--v-primary-base);
             svg {
               fill: transparent !important;
+            }
+            &.v-tab--active {
+              color: var(--v-skyBlueDark-base);
             }
           }
         }

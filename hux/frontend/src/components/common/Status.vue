@@ -35,7 +35,14 @@
 
   <div v-else-if="Statuses.Pending.includes(status)">
     <span v-if="!collapsed">
-      <v-btn width="15" height="15" icon outlined color="success" class="dotted mr-2" />
+      <v-btn
+        width="15"
+        height="15"
+        icon
+        outlined
+        color="success"
+        class="dotted mr-2"
+      />
       <span v-if="showLabel">Pending</span>
     </span>
     <v-menu v-else bottom offset-y offset-x open-on-hover>
@@ -71,7 +78,7 @@ export default {
         Pending: ["pending"],
         Delivering: ["delivering"],
       },
-    };
+    }
   },
 
   props: {
@@ -90,7 +97,7 @@ export default {
       default: true,
     },
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 .half-right-circle {

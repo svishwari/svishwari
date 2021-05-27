@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Icon from "@/components/common/Icon";
+import Icon from "@/components/common/Icon"
 export default {
   name: "breadcrumb",
 
@@ -34,7 +34,7 @@ export default {
       default: () => [],
     },
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 .breadcrumb {
