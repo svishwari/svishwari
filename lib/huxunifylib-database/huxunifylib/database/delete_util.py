@@ -426,7 +426,10 @@ def delete_bulk(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
-    update_doc = {c.ENABLED: False}
+    if collection_name == c.DELIVERY_PLATFORM_COLLECTION:
+        update_doc = {c.DELETED: True}
+    else:
+        update_doc = {c.ENABLED: False}
 
     try:
         if collection.update_many(

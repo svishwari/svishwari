@@ -434,6 +434,8 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_FACEBOOK
         )
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], new_auth_details)
+        self.assertFalse(doc[c.ADDED])
+        self.assertFalse(c.DELETED in doc)
 
         # update two fields
         doc = dpm.update_delivery_platform(
@@ -441,6 +443,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_id=self.delivery_platform_doc[c.ID],
             name="Test name",
             delivery_platform_type=c.DELIVERY_PLATFORM_GOOGLE,
+            added=True,
         )
 
         self.assertIsNotNone(doc)
@@ -453,6 +456,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_GOOGLE
         )
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], new_auth_details)
+        self.assertTrue(doc[c.ADDED])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_job(self):
