@@ -24,22 +24,28 @@
       </template>
     </div>
 
-    <v-form v-model="isFormValid" v-if="isDestinationSelected">
+    <v-form
+      v-model="isFormValid"
+      v-if="isDestinationSelected && destinationFields"
+    >
       <div class="destination-auth-wrap background pa-5 rounded mb-10">
         <v-row>
           <v-col
             cols="6"
-            v-for="item in Object.values(destination.authentication_details)"
-            :key="item.name"
+            v-for="fieldKey in Object.keys(destinationFields)"
+            :key="fieldKey"
           >
             <TextField
-              :labelText="item.name"
+              v-model="authenticationDetails[fieldKey]"
+              :labelText="destinationFields[fieldKey].name"
               :rules="[rules.required]"
               :placeholderText="
-                item.type == 'text' ? `Enter ${item.name}` : `**********`
+                destinationFields[fieldKey].type == 'text'
+                  ? `Enter ${destinationFields[fieldKey].name}`
+                  : `**********`
               "
-              :InputType="item.type"
-              :help-text="item.description"
+              :InputType="destinationFields[fieldKey].type"
+              :help-text="destinationFields[fieldKey].description"
               @blur="resetValidation"
               icon="mdi-alert-circle-outline"
               class="mb-0"
@@ -55,8 +61,8 @@
           :icon-position="isValidated ? 'left' : null"
           :variant="isValidated ? 'success' : 'primary'"
           size="large"
-          v-bind:isTile="true"
-          v-bind:isDisabled="!isFormValid"
+          :isTile="true"
+          :isDisabled="!isFormValid"
           @click="validate()"
         ></hux-button>
         <hux-button
@@ -65,7 +71,7 @@
           button-text="Validating..."
           variant="primary"
           size="large"
-          v-bind:isTile="true"
+          :isTile="true"
         ></hux-button>
       </div>
     </v-form>
@@ -76,7 +82,7 @@
           button-text="Cancel"
           variant="tertiary"
           size="large"
-          v-bind:isTile="true"
+          :isTile="true"
           @click="cancel()"
         ></hux-button>
       </template>
@@ -85,8 +91,8 @@
           button-text="Add &amp; return"
           variant="primary"
           size="large"
-          v-bind:isTile="true"
-          v-bind:isDisabled="!isValidated"
+          :isTile="true"
+          :isDisabled="!isValidated"
           @click="add()"
         ></hux-button>
       </template>
@@ -170,6 +176,7 @@ export default {
     return {
       drawer: false,
       selectedDestinationIndex: -1,
+      authenticationDetails: {},
       isValidated: false,
       isValidating: false,
       isFormValid: false,
@@ -182,10 +189,15 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
+      destinationConstants: "destinations/constants",
     }),
 
     destination() {
       return this.destinations[this.selectedDestinationIndex] || null
+    },
+
+    destinationFields() {
+      return this.destinationConstants[this.destination.type] || null
     },
 
     isDestinationSelected() {
@@ -203,6 +215,7 @@ export default {
 
   methods: {
     ...mapActions({
+      getDestinationConstants: "destinations/constants",
       getDestinations: "destinations/getAll",
       getDestination: "destinations/get",
       addDestination: "destinations/add",
@@ -216,6 +229,7 @@ export default {
     onSelectDestination(index) {
       this.selectedDestinationIndex = index
       this.isValidated = false
+      this.authenticationDetails = {}
       setTimeout(() => (this.drawer = false), 470)
     },
 
@@ -227,7 +241,10 @@ export default {
       this.isValidating = true
 
       try {
-        await this.validateDestination(this.destination)
+        await this.validateDestination({
+          type: this.destination.type,
+          authentication_details: this.authenticationDetails,
+        })
         this.isValidated = true
       } catch (error) {
         // TODO we probably want to do more here when things arent valid
@@ -239,7 +256,10 @@ export default {
 
     async add() {
       try {
-        await this.addDestination(this.destination)
+        await this.addDestination({
+          id: this.destination.id,
+          authentication_details: this.authenticationDetails,
+        })
         this.$router.push({ name: "Connections" })
       } catch (error) {
         console.error(error)
@@ -253,6 +273,7 @@ export default {
   },
 
   async mounted() {
+    await this.getDestinationConstants()
     await this.getDestinations()
     if (this.$route.query.select) {
       this.drawer = true
