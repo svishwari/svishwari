@@ -21,7 +21,6 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
-    secured,
 )
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -60,7 +59,6 @@ class UserProfile(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
-    @secured()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a user profile.
 
@@ -77,9 +75,7 @@ class UserProfile(SwaggerView):
 
         try:
             return (
-                UserSchema().dump(
-                    get_user(get_db_client(), okta_id)
-                ),
+                UserSchema().dump(get_user(get_db_client(), okta_id)),
                 HTTPStatus.OK,
             )
 
@@ -135,7 +131,6 @@ class AddUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
-    @secured()
     def post(self, component_name: str, component_id: str) -> Tuple[dict, int]:
         """Creates a user favorite.
 
@@ -208,7 +203,6 @@ class DeleteUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
-    @secured()
     def delete(
         self, component_name: str, component_id: str
     ) -> Tuple[dict, int]:
