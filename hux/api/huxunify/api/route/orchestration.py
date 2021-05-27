@@ -2,7 +2,9 @@
 Paths for Orchestration API
 """
 import datetime
+import random
 from http import HTTPStatus
+from random import randrange
 from typing import Tuple
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -94,10 +96,12 @@ class AudienceView(SwaggerView):
 
             # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
             # Add stub size, last_delivered_on for test purposes.
-            audience[api_c.SIZE] = 28328192
+            audience[api_c.SIZE] = randrange(10000000)
             audience[
                 api_c.AUDIENCE_LAST_DELIVERED
-            ] = datetime.datetime.utcnow()
+            ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
+                days=1000
+            )
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
@@ -173,8 +177,12 @@ class AudienceGetView(SwaggerView):
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         # Add stub insights, size, last_delivered_on for test purposes.
         audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
-        audience[api_c.SIZE] = 28328192
-        audience[api_c.AUDIENCE_LAST_DELIVERED] = datetime.datetime.utcnow()
+        audience[api_c.SIZE] = randrange(10000000)
+        audience[
+            api_c.AUDIENCE_LAST_DELIVERED
+        ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
+            days=1000
+        )
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
