@@ -11,7 +11,6 @@ from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
-from flask_cors import cross_origin
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -41,7 +40,6 @@ dest_bp = Blueprint(api_c.DESTINATIONS_ENDPOINT, import_name=__name__)
 
 
 @dest_bp.before_request
-@cross_origin()
 @secured()
 def before_request():
     """Protect all of the destinations endpoints."""
