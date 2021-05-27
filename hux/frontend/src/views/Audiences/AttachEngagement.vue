@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapActions } from "vuex"
 
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
@@ -203,24 +203,11 @@ export default {
     Icon,
   },
 
-  computed: {
-    ...mapGetters({
-      engagementsStore: "engagements/list",
-    }),
-    engagements: {
-      get: function () {
-        return this.engagementsStore
-      },
-      set: function () {
-        //This function needs to be there if we want to manipulate computed property
-      },
-    },
-  },
-
   data() {
     return {
       localDrawer: this.value,
       toggleSortIcon: false,
+      engagements: [],
       loading: false,
       viewStep: 1,
       selectedEngagements: [],
@@ -329,6 +316,9 @@ export default {
   async mounted() {
     this.loading = true
     await this.fetchEngagements()
+    this.engagements = JSON.parse(
+      JSON.stringify(this.$store.getters["engagements/list"])
+    )
     this.sortEngagements()
     this.loading = false
   },
