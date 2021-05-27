@@ -28,11 +28,13 @@ class TestEngagementManagement(unittest.TestCase):
             self.database, "all", [], self.user_id
         )
 
+        self.audience[c.AUDIENCE_ID] = self.audience[c.ID]
+
         self.engagement_id = em.set_engagement(
             self.database,
             "Spring 2021",
             "spring of 2021",
-            [self.audience[c.ID]],
+            [self.audience],
             self.user_id,
         )
 
@@ -63,7 +65,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             "Engagement 2",
             "Engagement 2 Description",
-            [self.audience[c.ID]],
+            [self.audience],
             self.user_id,
         )
 

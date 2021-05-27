@@ -41,6 +41,18 @@ def set_engagement(
 
     """
 
+    if not audiences:
+        raise AttributeError("A minimum of one audience is required.")
+
+    # validate the audience has an ID
+    for audience in audiences:
+        if not isinstance(audience, dict):
+            raise AttributeError("Audience must be a dict.")
+        if db_c.AUDIENCE_ID not in audience:
+            raise KeyError(f"Missing audience {db_c.AUDIENCE_ID}.")
+        if not ObjectId(audience[db_c.AUDIENCE_ID]):
+            raise ValueError("Invalid object id value.")
+
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
@@ -57,13 +69,23 @@ def set_engagement(
     doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
-        db_c.AUDIENCES: audiences,
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.CREATE_TIME: datetime.datetime.utcnow(),
         db_c.CREATED_BY: user_id,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.ENABLED: True,
+        db_c.AUDIENCES: [],
     }
+
+    # attach the audiences to the engagement
+    for audience in audiences:
+        doc[db_c.AUDIENCES].append(
+            {
+                db_c.AUDIENCE_ID: audience[db_c.ID],
+                db_c.DESTINATIONS: audience[db_c.DESTINATIONS],
+            }
+        )
+
     if delivery_schedule:
         doc[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = delivery_schedule
 
