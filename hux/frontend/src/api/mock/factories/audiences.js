@@ -24,6 +24,10 @@ const audienceMock = {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
 
+  /*
+  * TO DO
+  * Later this need to be mapped to destination IDs and engagement IDs
+  */
   destinations() {
     return faker.datatype.array(faker.datatype.hexaDecimal)
   },
