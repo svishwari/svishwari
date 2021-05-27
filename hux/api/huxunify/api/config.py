@@ -110,9 +110,11 @@ class Config:
     AUDIENCE_ROUTER_IMAGE = config(AUDIENCE_ROUTER_IMAGE_CONST, default="")
 
     # CDP
-    # TODO config details needed for this
-    CDP_SERVICE = ""
-    CDP_HEADERS = {}
+    # TODO config details needed for this. These values are not real
+    CDP_SERVICE = "https://cdp.hux.com"
+    CDP_HEADERS = {
+        "Authorization": f"",
+    }
 
 
 class ProductionConfig(Config):
