@@ -11,7 +11,7 @@ import datetime
 
 from marshmallow import INCLUDE
 
-from huxunify.api.schema.customer_profiles import CustomerProfilesOverview
+from huxunify.api.schema.customer_profiles import CustomerProfilesOverviewSchema
 from huxunify.api.route.utils import add_view_to_blueprint
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as c
@@ -63,7 +63,7 @@ def get_customers_overview() -> dict:
 @add_view_to_blueprint(
     customers_bp,
     f"/{c.CUSTOMER_PROFILES_OVERVIEW_ENDPOINT}",
-    "CustomerProfilesOverview",
+    "CustomerProfilesOverviewSchema",
 )
 class CustomerProfilesOverview(SwaggerView):
     """
@@ -73,7 +73,7 @@ class CustomerProfilesOverview(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Customer Profiles Overview",
-            "schema": {"type": "array", "items": CustomerProfilesOverview},
+            "schema": {"type": "array", "items": CustomerProfilesOverviewSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get customers overview"
@@ -94,6 +94,6 @@ class CustomerProfilesOverview(SwaggerView):
         customers_overview_data = get_customers_overview()
 
         return (
-            CustomerProfilesOverview().dump(customers_overview_data),
+            CustomerProfilesOverviewSchema().dump(customers_overview_data),
             HTTPStatus.OK,
         )

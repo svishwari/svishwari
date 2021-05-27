@@ -7,7 +7,7 @@ from flask_marshmallow import Schema
 from marshmallow import fields
 
 
-class CustomerProfilesOverview(Schema):
+class CustomerProfilesOverviewSchema(Schema):
     """Customer Profile Overview Schema"""
 
     total_records = fields.Integer(required=True)
