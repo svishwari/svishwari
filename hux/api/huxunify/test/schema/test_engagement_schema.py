@@ -24,13 +24,12 @@ class EngagementSchemaTest(TestCase):
 
         """
         doc = {
-            api_c.ENGAGEMENT_ID: "5f5f7262997acad4bac4373b",
+            api_c.ID: "5f5f7262997acad4bac4373b",
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
             db_c.AUDIENCES: [],
             api_c.STATUS: api_c.STATUS_ACTIVE,
             api_c.DELIVERY_SCHEDULE: {},
-            api_c.ENABLED: True,
         }
 
         assert EngagementGetSchema().validate(doc) == {}
@@ -73,7 +72,7 @@ class EngagementSchemaTest(TestCase):
 
         """
         doc = {
-            api_c.ENGAGEMENT_ID: "5f5f7262997acad4bac4373b",
+            api_c.ID: "5f5f7262997acad4bac4373b",
             api_c.NAME: 3,
             api_c.DESCRIPTION: "Engagement 1 description",
             db_c.AUDIENCES: [],
@@ -93,7 +92,7 @@ class EngagementSchemaTest(TestCase):
 
         """
         doc = {
-            api_c.ENGAGEMENT_ID: "5f5f7262997acad4bac4373b",
+            api_c.ID: "5f5f7262997acad4bac4373b",
             api_c.NAME: "Engagement 1",
             api_c.DESCRIPTION: "Engagement 1 description",
             api_c.STATUS: api_c.STATUS_ACTIVE,
