@@ -370,6 +370,7 @@ export default {
     ...mapActions({
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
+      addAudienceToDB: "audiences/add",
     }),
     // Engagements
     detachEngagement(engagement) {
@@ -459,7 +460,8 @@ export default {
         filters: filtersArray,
         name: this.audience.audienceName,
       }
-      console.log(payload)
+      this.addAudienceToDB(payload)
+      this.$router.push({ name: "Audiences" })
     },
   },
   async mounted() {

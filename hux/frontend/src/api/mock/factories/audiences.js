@@ -23,6 +23,13 @@ const audienceMock = {
   updated_by() {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
+
+  destinations(){
+    return faker.datatype.array(faker.datatype.hexaDecimal)
+  },
+  engagements(){
+    return faker.datatype.array(faker.datatype.hexaDecimal)
+  },
 }
 
 export default audienceMock

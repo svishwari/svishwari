@@ -40,4 +40,8 @@ export const defineRoutes = (server) => {
 
   // Audiences
   server.get("/audiences")
+  server.post("/audiences", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+    return schema.audiences.create(requestData)
+  })
 }

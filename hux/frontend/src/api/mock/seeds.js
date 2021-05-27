@@ -271,6 +271,31 @@ const unsubscribeModel = {
   status: "pending",
 }
 
+// audiences
+const defaultAudience = {
+  destinations: [
+    "71364317897acad4bac4373b",
+    "67589317897acad4bac4373b"
+  ],
+  engagements: [
+    "84759317897acad4bac4373b",
+    "46826317897acad4bac4373b"
+  ],
+  filters: [
+    {
+      "section_aggregator": "ALL",
+      "section_filters": [
+        {
+          "field": "filter_field",
+          "type": "type",
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  name: "My Audience"
+}
+
 export default function (server) {
   // seed data sources
   server.create("dataSource", bluecore)
@@ -315,5 +340,5 @@ export default function (server) {
   server.create("model", unsubscribeModel)
 
   //seed audiences
-  server.createList("audience", 10)
+  server.create("audience", defaultAudience)
 }
