@@ -17,7 +17,7 @@ const state = {
 }
 
 const getters = {
-  list: (state) => state.audiences,
+  list: (state) => Object.values(state.audiences),
   audience: (state) => (id) => {
     return state.audiences[id]
   },
@@ -25,7 +25,9 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
-    state.audiences = items
+    items.forEach((item) => {
+      Vue.set(state.audiences, item.id, item)
+    })
   },
   SET_ONE(state, item) {
     Vue.set(state.audiences, item.id, item)
@@ -49,21 +51,21 @@ const actions = {
       let insightInfo = [
         {
           title: "Target size",
-          subtitle: audienceInsights.total_customers.toString(),
+          subtitle: audienceInsights.total_customers,
         },
         {
           title: "Countries",
-          subtitle: audienceInsights.total_countries.toString(),
+          subtitle: audienceInsights.total_countries,
           icon: "mdi-earth",
         },
         {
           title: "US States",
-          subtitle: audienceInsights.total_us_states.toString(),
+          subtitle: audienceInsights.total_us_states,
           icon: "mdi-map",
         },
         {
           title: "Cities",
-          subtitle: audienceInsights.total_cities.toString(),
+          subtitle: audienceInsights.total_cities,
           icon: "mdi-map-marker-radius",
         },
         {
@@ -73,17 +75,17 @@ const actions = {
         },
         {
           title: "Women",
-          subtitle: audienceInsights.gender_women + "%",
+          subtitle: audienceInsights.gender_women.toLocaleString("en-US", {style: "percent", maximumFractionDigits:2}),
           icon: "mdi-gender-female",
         },
         {
           title: "Men",
-          subtitle: audienceInsights.gender_men + "%",
+          subtitle: audienceInsights.gender_men.toLocaleString("en-US", {style: "percent", maximumFractionDigits:2}),
           icon: "mdi-gender-male",
         },
         {
           title: "Other",
-          subtitle: audienceInsights.gender_other + "%",
+          subtitle: audienceInsights.gender_other.toLocaleString("en-US", {style: "percent", maximumFractionDigits:2}),
           icon: "mdi-gender-male-female",
         },
       ]

@@ -49,7 +49,7 @@ export default {
     },
 
     subtitle: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
 
