@@ -235,5 +235,5 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 BATCH_SIZE = "batch_size"
 
 # ERROR
-INVALID_AUTH_HEADER = "Invalid authorization header."
+INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
