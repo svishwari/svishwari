@@ -405,12 +405,12 @@ export default {
 <style lang="scss" scoped>
 .engagement-dash {
   .page-header--wrap {
-    box-shadow: 0px 1px 0px #d0d0ce !important;
+    box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
   }
   .inner-wrap {
     .summary-wrap {
       .metric-card-wrapper {
-        border: 1px solid #e2eaec;
+        border: 1px solid var(--v-zircon-base);
         box-sizing: border-box;
         border-radius: 12px;
         ::v-deep .v-list-item__content {
@@ -444,7 +444,7 @@ export default {
       ::v-deep .v-tabs-bar {
         background: transparent;
         .v-tabs-bar__content {
-          border-bottom: 2px solid #e2eaec;
+          border-bottom: 2px solid var(--v-zircon-base);
           .v-tabs-slider-wrapper {
             width: 111px;
             .v-tabs-slider {
@@ -467,7 +467,7 @@ export default {
       }
     }
     .v-tabs-items {
-      background: #ffffff;
+      background: var(--v-white-base);
       box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
       border-radius: 12px;
     }

@@ -137,11 +137,11 @@ export default {
   border-radius: 12px !important;
   display: table;
   .v-card__title {
-    background: #f9fafb;
+    background: var(--v-background-base);
     border-radius: 12px 12px 0px 0px;
     font-size: 14px;
     line-height: 22px;
-    color: #005587;
+    color: var(--v-primary-base);
     height: 46px;
     flex-wrap: inherit;
     .top-action {
@@ -168,12 +168,12 @@ export default {
       .deliverdOn-col {
         font-size: 12px;
         line-height: 16px;
-        color: #1e1e1e;
+        color: var(--v-neroBlack-base);
         min-width: 80px;
       }
       &:hover,
       &:focus {
-        background: #ffffff;
+        background: var(--v-white-base);
         box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
         .action-icon {
           display: block !important;
@@ -188,9 +188,9 @@ export default {
       min-height: 32px !important;
       font-size: 14px;
       line-height: 22px;
-      color: #1e1e1e;
+      color: var(--v-neroBlack-base);
       &.v-list-item--disabled {
-        color: #d0d0ce;
+        color: var(--v-lightGrey-base);
       }
       &:hover {
         background: var(--v-aliceBlue-base);
