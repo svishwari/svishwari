@@ -257,8 +257,8 @@ def create_engagement_audience(
 
     Args:
         database (DatabaseClient): A database client.
-        audience_id (str): audience id.
-        engagement_id (str): engagement id.
+        audience_id (ObjectId): audience id.
+        engagement_id (ObjectId): engagement id.
         destination_ids (list): List of destination ids attached
             to the engagement
 
