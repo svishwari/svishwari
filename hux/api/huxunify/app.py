@@ -27,6 +27,12 @@ SWAGGER_CONFIG = {
     },
 }
 
+CORS_CONFIG = {
+    "origins": ["*"],
+    "methods": ["OPTIONS", "GET", "POST", "PUT", "DELETE"],
+    "allow_headers": ["Authorization", "Content-Type"],
+}
+
 
 def configure_flask(flask_app: Flask) -> None:
     """Set configuration and variables for Flask.
@@ -70,7 +76,8 @@ def create_app() -> Flask:
     # setup the flask app
     flask_app = Flask(__name__)
 
-    CORS(flask_app)
+    # setup CORS
+    CORS(flask_app, resources={"/*": CORS_CONFIG})
 
     # register the routes
     for route in ROUTES:
