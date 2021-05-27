@@ -1,6 +1,7 @@
 """
 Purpose of this file is to house the main application code.
 """
+from requests import Response
 from flask import Flask
 from flasgger import Swagger
 from flask_cors import CORS
@@ -21,7 +22,29 @@ SWAGGER_CONFIG = {
     "specs_route": "/api/v1/ui/",
     "description": "",
     "termsOfService": "",
+    "schemes": ["https"],
+    "securityDefinitions": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    },
 }
+
+
+def after_request(response) -> Response:
+    """Set configuration and variables for Flask.
+
+    Args:
+        response (Response): App after request response.
+
+    Returns:
+        Response: returns the response with added headers.
+
+    """
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "PUT,GET,POST,DELETE"
+    response.headers[
+        "Access-Control-Allow-Headers"
+    ] = "Content-Type,Authorization"
+    return response
 
 
 def configure_flask(flask_app: Flask) -> None:
@@ -44,6 +67,8 @@ def configure_flask(flask_app: Flask) -> None:
                 "huxunify.api.config.DevelopmentConfig"
             )
         else:
+            # use http by default for local testing.
+            SWAGGER_CONFIG["schemes"].insert(0, "http")
             flask_app.config.from_object("huxunify.api.config.Config")
     except KeyError as error:
         desc = f"Environment not configured: {error} is required."
@@ -65,6 +90,9 @@ def create_app() -> Flask:
     flask_app = Flask(__name__)
 
     CORS(flask_app)
+
+    # assign the after request call
+    flask_app.after_request(after_request)
 
     # register the routes
     for route in ROUTES:

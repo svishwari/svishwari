@@ -82,16 +82,16 @@ class TestUtils(unittest.TestCase):
         # Create audiences
         self.audience_doc_1 = am.create_audience(
             self.database,
-            self.ingestion_job_doc_1[c.ID],
             "My Audience 1",
             [],
+            self.ingestion_job_doc_1[c.ID],
         )
 
         self.audience_doc_2 = am.create_audience(
             self.database,
-            self.ingestion_job_doc_2[c.ID],
             "My Audience 2",
             [],
+            self.ingestion_job_doc_2[c.ID],
         )
 
         # Set delivery platforms
@@ -208,9 +208,9 @@ class TestUtils(unittest.TestCase):
         # Create an audience
         audience_doc = am.create_audience(
             database,
-            ingestion_job_id,
             "My Audience",
             [],
+            ingestion_job_id,
         )
 
         self.assertTrue(audience_doc is not None)
