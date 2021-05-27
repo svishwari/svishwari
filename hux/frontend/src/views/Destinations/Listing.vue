@@ -12,7 +12,7 @@
     </PageHeader>
     <PageHeader
       bgColor="background"
-      style="height: 70px; border: 1px solid #d0d0ce !important"
+      style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">
         <v-icon color="primary" class="mr-3 cursor-pointer" large>
@@ -48,7 +48,7 @@
     </PageHeader>
     <PageHeader
       bgColor="aliceBlue"
-      style="height: 70px; border: 1px solid #d0d0ce !important"
+      style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">
         <div class="d-flex filters-wrapper">

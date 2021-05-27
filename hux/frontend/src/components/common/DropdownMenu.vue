@@ -10,7 +10,7 @@
       <div v-on="on" class="d-flex avatar-menu">
         <v-btn tile class="main-button" color="tertiary">
           {{ labelText }}
-          <v-icon right dark color="#005587"> {{ iconType }} </v-icon>
+          <v-icon right dark color="primary"> {{ iconType }} </v-icon>
         </v-btn>
       </div>
     </template>
