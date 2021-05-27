@@ -2,13 +2,13 @@
   <v-card
     class="d-flex justify-space-between align-center px-5 py-2 rounded"
     @click="$emit('click')"
-    :class="isDisabled ? 'card-horizontal-disabled' : ''"
-    :elevation="isDisabled ? '0' : '2'"
+    :class="isDisabledOrBlue ? 'card-horizontal-disabled' : ''"
+    :elevation="isDisabledOrBlue ? '0' : '2'"
     :disabled="isDisabled"
-    :color="isDisabled ? 'background' : 'white'"
+    :color="isDisabledOrBlue ? 'background' : 'white'"
     height="60"
   >
-    <div class="d-flex align-center">
+    <div v-if="icon || title" class="d-flex align-center">
       <Logo :type="icon" />
       <div class="pl-2 font-weight-regular">{{ title }}</div>
     </div>
@@ -72,11 +72,21 @@ export default {
       required: false,
       default: false,
     },
+
+    enableBlueBackground: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   computed: {
     isDisabled: function () {
       return this.isAlreadyAdded || !this.isAvailable
+    },
+
+    isDisabledOrBlue: function () {
+      return this.isDisabled || this.enableBlueBackground
     },
   },
 }

@@ -55,11 +55,33 @@
                 <CardHorizontal
                   v-for="engagement in engagements"
                   :key="engagement.id"
-                  :title="engagement.name"
-                  :isAdded="selectedEngagements.includes(engagement)"
+                  :isAdded="isEngagementSelected(engagement)"
+                  :enableBlueBackground="isEngagementSelected(engagement)"
                   @click="onEngagementClick(engagement)"
                   class="my-3"
-                />
+                >
+                  <v-menu open-on-hover offset-x offset-y :max-width="177">
+                    <template v-slot:activator="{ on }">
+                      <div v-on="on" class="pl-2 font-weight-regular">
+                        {{ engagement.name }}
+                      </div>
+                    </template>
+                    <template v-slot:default>
+                      <div class="px-4 py-2 white">
+                        <div class="neroBlack--text text-caption">Name</div>
+                        <div class="lightGreyText--text text-caption mt-1">
+                          {{ engagement.name }}
+                        </div>
+                        <div class="neroBlack--text text-caption mt-3">
+                          Description
+                        </div>
+                        <div class="lightGreyText--text text-caption mt-1">
+                          {{ engagement.description }}
+                        </div>
+                      </div>
+                    </template>
+                  </v-menu>
+                </CardHorizontal>
               </div>
             </div>
           </v-stepper-content>
@@ -255,6 +277,9 @@ export default {
       fetchEngagements: "engagements/getAll",
       addEngagementToDB: "engagements/add",
     }),
+    isEngagementSelected: function (engagement) {
+      return this.selectedEngagements.includes(engagement)
+    },
     goToAddNewEngagement: function () {
       this.resetNewEngagement()
       this.goToStep2()
