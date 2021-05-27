@@ -5,7 +5,7 @@
     </v-btn>
     <Notification></Notification>
     <v-btn small icon class="icon-btn">
-      <v-icon size="22" class="mdi-help">mdi-help</v-icon>
+      <v-icon size="20" class="mdi-help">mdi-help</v-icon>
     </v-btn>
     <v-divider vertical color="lightGrey"></v-divider>
     <UserAvatar></UserAvatar>

@@ -127,9 +127,9 @@ class TestAudienceManagement(unittest.TestCase):
         )
         audience_doc = am.create_audience(
             self.database,
-            ingestion_job_id,
             "My Audience",
             self.audience_filters,
+            ingestion_job_id,
         )
         return audience_doc, ingestion_job_doc
 
@@ -149,9 +149,9 @@ class TestAudienceManagement(unittest.TestCase):
         )
         self.audience_doc = am.create_audience(
             self.database,
-            ingestion_job_id,
             "My Audience",
             self.audience_filters,
+            ingestion_job_id,
         )
 
     def test_set_ingestion_job(self):
@@ -196,9 +196,9 @@ class TestAudienceManagement(unittest.TestCase):
 
         doc = am.create_audience(
             self.database,
-            ingestion_job_id,
             "My Audience new",
             self.audience_filters,
+            ingestion_job_id,
         )
 
         self.assertTrue(doc is not None)
