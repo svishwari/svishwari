@@ -116,7 +116,7 @@ class AddUserFavorite(SwaggerView):
             "name": db_constants.COMPONENT_NAME,
             "in": "path",
             "type": "string",
-            "description": "Component NAME.",
+            "description": "Component name.",
             "example": "audiences",
             "required": True,
         },
