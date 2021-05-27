@@ -23,12 +23,90 @@ export const defineRoutes = (server) => {
     const code = 200
     const headers = {}
     const body = { message: "Destination authentication details are valid" }
+    return new Response(code, headers, body)
+  })
 
+  server.get("/destinations/constants", () => {
+    const code = 200
+    const headers = {}
+    const body = {
+      facebook: {
+        facebook_ad_account_id: {
+          name: "Ad Account ID",
+          type: "text",
+          required: true,
+          description: "Placeholder information text for 'Ad Account ID'",
+        },
+        facebook_app_id: {
+          name: "App ID",
+          type: "text",
+          required: true,
+          description: "Placeholder information text for 'App ID'",
+        },
+        facebook_access_token: {
+          name: "Access Token",
+          type: "password",
+          required: true,
+          description: "Placeholder information text for 'Access Token'",
+        },
+        facebook_app_secret: {
+          name: "App Secret",
+          type: "password",
+          required: true,
+          description: "Placeholder information text for 'App Secret'",
+        },
+      },
+      SFMC: {
+        sfmc_account_id: {
+          name: "Account ID",
+          type: "text",
+          required: true,
+          description: "Placeholder information text for 'Account ID'",
+        },
+        sfmc_auth_base_uri: {
+          name: "Auth Base URI",
+          type: "text",
+          required: true,
+          description: "Placeholder information text for 'Auth Base URI'",
+        },
+        sfmc_client_id: {
+          name: "Client ID",
+          type: "text",
+          required: true,
+          description: "Placeholder information text for 'Client ID'",
+        },
+        sfmc_client_secret: {
+          name: "Client Secret",
+          type: "password",
+          required: true,
+          description: "Placeholder information text for 'Client Secret'",
+        },
+        sfmc_rest_base_uri: {
+          name: "REST Base URI",
+          type: "text",
+          required: true,
+          description: "Placeholder information text for 'REST Base URI'",
+        },
+        sfmc_soap_base_uri: {
+          name: "Soap Base URI",
+          type: "text",
+          required: true,
+          description: null,
+        },
+      },
+    }
     return new Response(code, headers, body)
   })
 
   // engagements
   server.get("/engagements")
+
+  server.post("/engagements", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+
+    return schema.engagements.create(requestData)
+  })
+
   server.post("/engagements/:id", (schema) => {
     let attrs = this.normalizedRequestAttrs()
 
@@ -40,4 +118,8 @@ export const defineRoutes = (server) => {
 
   // Audiences
   server.get("/audiences")
+  server.post("/audiences", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+    return schema.audiences.create(requestData)
+  })
 }

@@ -16,7 +16,7 @@ const facebookDS = {
 
 const sfmcDS = {
   name: "Salesforce Marketing Cloud",
-  type: "salesforce",
+  type: "SFMC",
   is_enabled: true,
 }
 
@@ -157,76 +157,12 @@ const facebook = {
   name: "Facebook",
   type: "facebook",
   is_enabled: true,
-  authentication_details: {
-    ad_account_id: {
-      name: "Ad Account ID",
-      type: "text",
-      required: true,
-      description: "Placeholder information text for 'Ad Account ID'",
-    },
-    app_id: {
-      name: "App ID",
-      type: "text",
-      required: true,
-      description: "Placeholder information text for 'App ID'",
-    },
-    access_token: {
-      name: "Access Token",
-      type: "password",
-      required: true,
-      description: "Placeholder information text for 'Access Token'",
-    },
-    app_secret: {
-      name: "App Secret",
-      type: "password",
-      required: true,
-      description: "Placeholder information text for 'App Secret'",
-    },
-  },
 }
 
 const salesforce = {
   name: "Salesforce Marketing Cloud",
-  type: "salesforce",
+  type: "SFMC",
   is_enabled: true,
-  authentication_details: {
-    sfmc_account_id: {
-      name: "Account ID",
-      type: "text",
-      required: true,
-      description: "Placeholder information text for 'Account ID'",
-    },
-    sfmc_auth_base_uri: {
-      name: "Auth Base URI",
-      type: "text",
-      required: true,
-      description: "Placeholder information text for 'Auth Base URI'",
-    },
-    sfmc_client_id: {
-      name: "Client ID",
-      type: "text",
-      required: true,
-      description: "Placeholder information text for 'Client ID'",
-    },
-    sfmc_client_secret: {
-      name: "Client Secret",
-      type: "password",
-      required: true,
-      description: "Placeholder information text for 'Client Secret'",
-    },
-    sfmc_rest_base_uri: {
-      name: "REST Base URI",
-      type: "text",
-      required: true,
-      description: "Placeholder information text for 'REST Base URI'",
-    },
-    sfmc_soap_base_uri: {
-      name: "Soap Base URI",
-      type: "text",
-      required: true,
-      description: "Placeholder information text for 'Soap Base URI",
-    },
-  },
 }
 
 const adobe = {
@@ -271,6 +207,25 @@ const unsubscribeModel = {
   status: "pending",
 }
 
+// audiences
+const defaultAudience = {
+  destinations: ["71364317897acad4bac4373b", "67589317897acad4bac4373b"],
+  engagements: ["84759317897acad4bac4373b", "46826317897acad4bac4373b"],
+  filters: [
+    {
+      section_aggregator: "ALL",
+      section_filters: [
+        {
+          field: "filter_field",
+          type: "type",
+          value: "value",
+        },
+      ],
+    },
+  ],
+  name: "My Audience",
+}
+
 export default function (server) {
   // seed data sources
   server.create("dataSource", bluecore)
@@ -309,11 +264,12 @@ export default function (server) {
   server.create("destination", mailchimp)
 
   // seed engagements
+  server.createList("engagement", 5)
   server.create("engagement", defaultEngagement)
 
   // seed models
   server.create("model", unsubscribeModel)
 
   //seed audiences
-  server.createList("audience", 10)
+  server.create("audience", defaultAudience)
 }

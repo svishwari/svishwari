@@ -28,13 +28,4 @@ export default {
   is_enabled: false,
 
   is_added: false,
-
-  authentication_details: {
-    access_token: {
-      name: "Access Token",
-      type: "password",
-      required: true,
-      description: "This field is required for...",
-    },
-  },
 }

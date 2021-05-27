@@ -114,7 +114,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = (constants.INVALID_AUTH, 401)
+        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context("/"):
 
             @secured()
@@ -131,7 +131,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = (constants.INVALID_AUTH_HEADER, 403)
+        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": None}
         ):
@@ -150,7 +150,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = (constants.INVALID_AUTH_HEADER, 403)
+        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": "Bearerr "}
         ):
@@ -169,7 +169,7 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        invalid_header = (constants.INVALID_AUTH, 401)
+        invalid_header = (constants.INVALID_AUTH, 400)
         with Flask("invalid_test").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}
         ):

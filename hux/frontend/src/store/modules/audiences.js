@@ -50,6 +50,16 @@ const actions = {
        */
     }
   },
+  async add({ commit }, audience) {
+    try {
+      const response = await api.audiences.create(audience)
+      commit("SET_AUDIENCE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {

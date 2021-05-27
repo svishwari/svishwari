@@ -157,13 +157,13 @@ def get_all_users(database: DatabaseClient) -> list:
 )
 def delete_user(
     database: DatabaseClient,
-    user_id: ObjectId,
+    okta_id: str,
 ) -> bool:
     """A function to delete a user.
 
     Args:
         database (DatabaseClient): A database client.
-        user_id (ObjectId): The Mongo DB ID of the user.
+        okta_id (str): Okta ID of the user.
 
     Returns:
         bool: A flag indicating successful deletion.
@@ -171,7 +171,7 @@ def delete_user(
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
 
     try:
-        return collection.delete_one({c.ID: user_id}).deleted_count > 0
+        return collection.delete_one({c.OKTA_ID: okta_id}).deleted_count > 0
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -183,13 +183,13 @@ def delete_user(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def update_user(
-    database: DatabaseClient, user_id: ObjectId, update_doc: dict
+    database: DatabaseClient, okta_id: str, update_doc: dict
 ) -> dict:
     """A function to update a user.
 
     Args:
         database (DatabaseClient): A database client.
-        user_id (ObjectId): MongoDB ID of a user doc.
+        okta_id (str): Okta ID of a user doc.
         update_doc (dict): Dict of key values to update.
 
     Returns:
@@ -198,12 +198,7 @@ def update_user(
     """
 
     # validate user input id
-    if (
-        not user_id
-        or not isinstance(user_id, ObjectId)
-        or not update_doc
-        or not isinstance(update_doc, dict)
-    ):
+    if not okta_id or not update_doc or not isinstance(update_doc, dict):
         return None
 
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
@@ -229,7 +224,7 @@ def update_user(
 
     try:
         return collection.find_one_and_update(
-            {c.ID: user_id},
+            {c.OKTA_ID: okta_id},
             {"$set": update_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -246,7 +241,7 @@ def update_user(
 )
 def manage_user_favorites(
     database: DatabaseClient,
-    user_id: ObjectId,
+    okta_id: str,
     component_name: str,
     component_id: ObjectId,
     delete_flag: bool = False,
@@ -255,7 +250,7 @@ def manage_user_favorites(
 
     Args:
         database (DatabaseClient): A database client.
-        user_id (ObjectId): MongoDB ID of a user doc.
+        okta_id (str): Okta ID of a user doc.
         component_name (ObjectId): name of the component (i.e campaigns, destinations, etc.).
         component_id (ObjectId): MongoDB ID of the input component
         delete_flag (bool): Boolean that specifies to add/remove a favorite component,
@@ -269,7 +264,7 @@ def manage_user_favorites(
 
     # validate user input id and campaign id
     if (
-        not isinstance(user_id, ObjectId)
+        not okta_id
         or not isinstance(component_id, ObjectId)
         or component_name not in c.FAVORITE_COMPONENTS
     ):
@@ -290,7 +285,7 @@ def manage_user_favorites(
     try:
         return collection.find_one_and_update(
             {
-                c.ID: user_id,
+                c.OKTA_ID: okta_id,
                 config_field: {element_query: component_id},
             },
             {
@@ -314,7 +309,7 @@ def manage_user_favorites(
 )
 def manage_user_dashboard_config(
     database: DatabaseClient,
-    user_id: ObjectId,
+    okta_id: str,
     config_key: str,
     config_value: Any,
     delete_flag: bool = False,
@@ -323,7 +318,7 @@ def manage_user_dashboard_config(
 
     Args:
         database (DatabaseClient): A database client.
-        user_id (ObjectId): MongoDB ID of a user doc.
+        okta_id (str): Okta ID of a user doc.
         config_key (ObjectId): name of the config param.
         config_value (Any): value of the config key.
         delete_flag (bool): flag to delete the user config, defaults to false.
@@ -334,7 +329,7 @@ def manage_user_dashboard_config(
     """
 
     # validate user input id and config param
-    if not isinstance(user_id, ObjectId) or not isinstance(config_key, str):
+    if not okta_id or not isinstance(config_key, str):
         return None
 
     # grab the collection
@@ -352,7 +347,7 @@ def manage_user_dashboard_config(
 
     try:
         return collection.find_one_and_update(
-            {c.ID: user_id},
+            {c.OKTA_ID: okta_id},
             update_dict,
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,

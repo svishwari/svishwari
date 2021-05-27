@@ -19,6 +19,7 @@ Object.keys(resources).forEach((resource) => {
     find: (resourceId) => http.get(`${endpoint}/${resourceId}`),
     update: (resourceId, data) => http.put(`${endpoint}/${resourceId}`, data),
     batchUpdate: (data) => http.put(`${endpoint}`, data),
+    constants: () => http.get(`${endpoint}/constants`),
   }
 
   // Custom one-off resource endpoints
