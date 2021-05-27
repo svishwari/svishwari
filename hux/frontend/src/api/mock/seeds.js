@@ -309,6 +309,7 @@ export default function (server) {
   server.create("destination", mailchimp)
 
   // seed engagements
+  server.createList("engagement", 5)
   server.create("engagement", defaultEngagement)
 
   // seed models

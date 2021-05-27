@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localDrawer">
+  <Drawer v-model="localDrawer" @onClose="goToStep1()">
     <template v-slot:header-left>
       <div class="d-flex align-center">
         <Icon
@@ -17,7 +17,12 @@
       </div>
     </template>
     <template v-slot:default>
-      <v-stepper v-model="viewStep">
+      <v-progress-linear
+        color="primary"
+        :active="loading"
+        :indeterminate="loading"
+      />
+      <v-stepper v-if="!loading" v-model="viewStep">
         <v-stepper-items>
           <v-stepper-content step="1">
             <div class="ma-1">
@@ -111,11 +116,14 @@
                   </v-menu>
                 </div>
                 <div class="d-flex flex-column delivery-options">
-                  <v-btn-toggle v-model="newEngagement.deliveryType" mandatory>
+                  <v-btn-toggle
+                    v-model="newEngagement.delivery_schedule"
+                    mandatory
+                  >
                     <v-btn>
                       <v-radio
                         :off-icon="
-                          newEngagement.deliveryType == 0
+                          newEngagement.delivery_schedule == 0
                             ? '$radioOn'
                             : '$radioOff'
                         "
@@ -125,7 +133,7 @@
                     <v-btn disabled style="background: white !important">
                       <v-radio
                         :off-icon="
-                          newEngagement.deliveryType == 1
+                          newEngagement.delivery_schedule == 1
                             ? '$radioOn'
                             : '$radioOff'
                         "
@@ -174,7 +182,7 @@
 </template>
 
 <script>
-// import { mapGetters, mapActions } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
@@ -195,36 +203,33 @@ export default {
     Icon,
   },
 
+  computed: {
+    ...mapGetters({
+      engagementsStore: "engagements/list",
+    }),
+    engagements: {
+      get: function () {
+        return this.engagementsStore
+      },
+      set: function () {
+        //This function needs to be there if we want to manipulate computed property
+      },
+    },
+  },
+
   data() {
     return {
       localDrawer: this.value,
       toggleSortIcon: false,
+      loading: false,
       viewStep: 1,
       selectedEngagements: [],
       newEngagement: {
         name: "",
         description: "",
-        deliveryType: 0,
+        delivery_schedule: 0,
       },
       newEngagementValid: false,
-      engagements: [
-        {
-          name: "Engagement 3",
-          id: "1",
-        },
-        {
-          name: "Engagement 2",
-          id: "2",
-        },
-        {
-          name: "Engagement 1",
-          id: "3",
-        },
-        {
-          name: "Engagement 4",
-          id: "4",
-        },
-      ],
       newEngagementRules: [(v) => !!v || "Engagement name is required"],
       sortBy: sortBy,
     }
@@ -259,17 +264,17 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      fetchEngagements: "engagements/getAll",
+      addEngagementToDB: "engagements/add",
+    }),
     goToAddNewEngagement: function () {
-      this.resetNewEngagement()
-      this.goToStep2()
-    },
-    addNewEngagement: function () {
       this.resetNewEngagement()
       this.goToStep2()
     },
     resetNewEngagement: function () {
       this.$refs.newEngagementRef.reset()
-      this.newEngagement.deliveryType = 0
+      this.newEngagement.delivery_schedule = 0
     },
     goToStep1: function () {
       this.viewStep = 1
@@ -277,14 +282,21 @@ export default {
     goToStep2: function () {
       this.viewStep = 2
     },
-    addEngagement: function () {
-      //TODO: make a api call here and get the engagement id created.
-      this.engagements.push({
-        name: this.newEngagement.name,
-        id: this.engagements.length + 1,
-      })
+    addEngagement: async function () {
+      this.loading = true
+      if (this.newEngagement.delivery_schedule == 0) {
+        this.newEngagement.delivery_schedule = null
+      } else {
+        this.newEngagement.delivery_schedule = {
+          end_date: "",
+          start_date: "",
+        }
+      }
+      let newEngagement = await this.addEngagementToDB(this.newEngagement)
       this.sortEngagements()
+      this.onEngagementClick(newEngagement)
       this.goToStep1()
+      this.loading = false
     },
     onEngagementClick: function (engagement) {
       if (this.selectedEngagements.includes(engagement)) {
@@ -315,7 +327,10 @@ export default {
     },
   },
   async mounted() {
+    this.loading = true
+    await this.fetchEngagements()
     this.sortEngagements()
+    this.loading = false
   },
 }
 </script>

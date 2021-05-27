@@ -315,7 +315,6 @@ export default {
       engagementDrawer: false,
       audience: {
         name: null,
-        engagements: [],
         attributeRules: [],
         destinations: [],
       },
@@ -339,7 +338,6 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
-      engagements: "engagements/list",
     }),
 
     destination() {
@@ -369,7 +367,6 @@ export default {
   methods: {
     ...mapActions({
       getDestinations: "destinations/getAll",
-      fetchEngagements: "engagements/getAll",
     }),
     // Engagements
     detachEngagement(engagement) {
@@ -432,7 +429,6 @@ export default {
   },
   async mounted() {
     await this.getDestinations()
-    await this.fetchEngagements()
   },
 }
 </script>

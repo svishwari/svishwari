@@ -1,7 +1,9 @@
 import faker from "faker"
 
 export default {
-  name: "New York Engagement",
+  name(i) {
+    return `Engagement ${i + 1}`
+  },
   description: "Engagement for New York",
   delivery_schedule: {
     schedule_type: "recurring",
