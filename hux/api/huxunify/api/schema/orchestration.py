@@ -78,10 +78,10 @@ class AudienceGetSchema(Schema):
     create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
     created_by = fields.Nested(
-        UserSchema(only=("first_name", "last_name", "user_id"))
+        UserSchema(only=("first_name", "last_name", "_id"))
     )
     updated_by = fields.Nested(
-        UserSchema(only=("first_name", "last_name", "user_id"))
+        UserSchema(only=("first_name", "last_name", "_id"))
     )
 
 
