@@ -52,6 +52,7 @@ ENGAGEMENT_STATUSES = [
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
+FACEBOOK_TYPE = "facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
 FACEBOOK_APP_ID = "facebook_app_id"
 FACEBOOK_APP_SECRET = "facebook_app_secret"
@@ -59,6 +60,7 @@ FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 
 # SFMC connector defines
 SFMC_NAME = "SFMC"
+SFMC_TYPE = "SFMC"
 SFMC_CLIENT_ID = "sfmc_client_id"
 SFMC_CLIENT_SECRET = "sfmc_client_secret"
 SFMC_ACCOUNT_ID = "sfmc_account_id"
@@ -72,7 +74,7 @@ OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
 DESTINATION_CONSTANTS = {
-    FACEBOOK_NAME: {
+    FACEBOOK_TYPE: {
         FACEBOOK_AD_ACCOUNT_ID: {
             NAME: "Ad Account ID",
             TYPE: "text",
@@ -98,7 +100,7 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
-    SFMC_NAME: {
+    SFMC_TYPE: {
         SFMC_ACCOUNT_ID: {
             NAME: "Account ID",
             TYPE: "text",
@@ -135,13 +137,6 @@ DESTINATION_CONSTANTS = {
             REQUIRED: True,
             DESCRIPTION: None,
         },
-        SFMC_PERFORMANCE_EXT_NAME: {
-            NAME: "Performance metric data extension name",
-            TYPE: "text",
-            REQUIRED: True,
-            DESCRIPTION: None,
-        },
-        SFMC_PERFORMANCE_EXT_VALUES: [],
     },
 }
 

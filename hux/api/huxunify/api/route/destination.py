@@ -22,7 +22,7 @@ from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPutSchema,
-    DestinationConstants,
+    DestinationConstantsSchema,
     DestinationValidationSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -276,7 +276,7 @@ class DestinationsConstants(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": DestinationConstants,
+            "schema": DestinationConstantsSchema,
             "description": "Retrieved destination constants.",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -286,7 +286,6 @@ class DestinationsConstants(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    @marshal_with(DestinationConstants)
     def get(self) -> Tuple[dict, int]:
         """Retrieves all destination constants.
 
@@ -298,7 +297,11 @@ class DestinationsConstants(SwaggerView):
             Tuple[dict, int]: dict of destination constants, HTTP status.
 
         """
-        return api_c.DESTINATION_CONSTANTS, HTTPStatus.OK
+
+        return (
+            DestinationConstantsSchema().dump(api_c.DESTINATION_CONSTANTS),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(

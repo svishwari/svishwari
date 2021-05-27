@@ -77,15 +77,45 @@ class FacebookAuthConstants(Schema):
     Facebook Auth constants schema class
     """
 
-    facebook_ad_account_id = fields.String(
-        required=True, validate=must_not_be_blank
+    facebook_ad_account_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Ad Account ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    facebook_app_id = fields.String(required=True, validate=must_not_be_blank)
-    facebook_app_secret = fields.String(
-        required=True, validate=must_not_be_blank
+    facebook_app_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "App ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    facebook_access_token = fields.String(
-        required=True, validate=must_not_be_blank
+    facebook_app_secret = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "App Secret",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    facebook_access_token = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Access Token",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
 
 
@@ -94,26 +124,72 @@ class SFMCAuthConstants(Schema):
     SFMC Auth constants schema class
     """
 
-    sfmc_client_id = fields.String(required=True, validate=must_not_be_blank)
-    sfmc_account_id = fields.String(required=True, validate=must_not_be_blank)
-    sfmc_client_secret = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_client_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    sfmc_auth_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_account_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Account ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    sfmc_rest_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_client_secret = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client Secret",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    sfmc_soap_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_auth_base_uri = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Auth Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_rest_base_uri = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "REST Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_soap_base_uri = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "SOAP Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
 
 
-class DestinationConstants(Schema):
+class DestinationConstantsSchema(Schema):
     """
     Destination constants schema class
     """
 
-    Facebook = fields.Nested(FacebookAuthConstants)
+    facebook = fields.Nested(FacebookAuthConstants)
     SFMC = fields.Nested(SFMCAuthConstants)
