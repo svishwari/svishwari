@@ -49,7 +49,7 @@ export default {
     },
 
     subtitle: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
 
@@ -99,6 +99,7 @@ export default {
   }
   .v-list-item__subtitle {
     font-weight: 600;
+    overflow: unset;
   }
   &.v-card--disabled {
     background-color: transparent;
