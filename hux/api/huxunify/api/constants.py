@@ -256,6 +256,7 @@ BATCH_SIZE = "batch_size"
 
 # Customers API Fields
 CUSTOMERS_TAG = "customers"
+CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
 # ERROR

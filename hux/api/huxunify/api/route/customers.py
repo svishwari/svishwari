@@ -16,7 +16,9 @@ import huxunify.api.constants as c
 
 
 # setup the Customers blueprint
-customers_bp = Blueprint(c.CUSTOMERS_TAG, import_name=__name__)
+customers_bp = Blueprint(
+    c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
+)
 
 
 @customers_bp.before_request
@@ -44,9 +46,9 @@ def get_customers_overview() -> dict:
         c.TOTAL_HOUSEHOLD_IDS: randint(10000000, 99999999),
         c.UPDATED: datetime.datetime.now(),
         c.TOTAL_CUSTOMERS: randint(10000000, 99999999),
-        c.COUNTRIES: randint(1, 100),
-        c.STATES: randint(1, 100),
-        c.CITIES: randint(10 ^ 3, 10 ^ 5),
+        c.COUNTRIES: randint(1, 3),
+        c.STATES: randint(1, 51),
+        c.CITIES: randint(5, 50),
         c.MIN_AGE: randint(1, 10),
         c.MAX_AGE: randint(11, 100),
         c.GENDER_WOMEN: round(uniform(0, 1), 5),
