@@ -107,7 +107,6 @@
 </template>
 
 <script>
-import moment from "moment"
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
@@ -160,7 +159,7 @@ export default {
     }),
     refresh() {},
     getFormattedTime(time) {
-      return this.$options.filters.Date(time, 'relative') + " by"
+      return this.$options.filters.Date(time, "relative") + " by"
     },
     getShortName(fullname) {
       return fullname
