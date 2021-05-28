@@ -86,7 +86,7 @@
           </v-card-text>
         </v-card>
         <v-tabs v-model="tabOption" class="mt-8">
-          <v-tabs-slider color="yellow"></v-tabs-slider>
+          <v-tabs-slider color="primary"></v-tabs-slider>
 
           <v-tab key="displayAds" class="pa-2" color>
             <Icon type="display_ads" :size="10" class="mr-2" />Display ads
@@ -492,8 +492,8 @@ export default {
           .v-tabs-slider-wrapper {
             width: 111px !important;
             .v-tabs-slider {
-              background-color: var(--v-skyBlueDark-base) !important;
-              border-color: var(--v-skyBlueDark-base) !important;
+              background-color: var(--v-skyBlue-base) !important;
+              border-color: var(--v-skyBlue-base) !important;
             }
           }
           .v-tab {
@@ -504,7 +504,7 @@ export default {
               fill: transparent !important;
             }
             &.v-tab--active {
-              color: var(--v-skyBlueDark-base);
+              color: var(--v-skyBlue-base);
             }
           }
         }
