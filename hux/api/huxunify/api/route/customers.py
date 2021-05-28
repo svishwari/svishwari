@@ -23,6 +23,12 @@ from random import randint
 customers_bp = Blueprint(c.CUSTOMERS_TAG, import_name=__name__)
 
 
+@customers_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the customer endpoints."""
+    pass # pylint: disable=unnecessary-pass
+
 def get_customers_overview() -> dict:
     """Fetch customers overview data.
     ---
@@ -84,6 +90,8 @@ class CustomerProfilesOverview(SwaggerView):
         """Retrieves a customer data overview.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[dict, int] dict of Customer data overview and http code
