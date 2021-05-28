@@ -422,6 +422,7 @@ class EngagementDeliverView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate delivery route
+        # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
             "message": f"Successfully created delivery job(s) for {engagement_id}"
         }, HTTPStatus.OK
@@ -532,6 +533,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate delivery route
+        # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
             "message": f"Successfully created delivery job(s) for {engagement_id} and {audience_id}"
         }, HTTPStatus.OK
@@ -681,6 +683,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate the destination exists
+        # TODO - hook up to connectors for HUS-437 in Sprint 10
 
         # validate delivery route
         return {
