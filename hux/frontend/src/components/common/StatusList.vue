@@ -39,7 +39,8 @@
                     v-on="on"
                     class="mr-2 more-action"
                     color="primary"
-                   @click.prevent>
+                    @click.prevent
+                  >
                     mdi-dots-vertical
                   </v-icon>
                 </template>
@@ -121,7 +122,7 @@ export default {
     getTimeStamp(value) {
       return moment(new Date(value)).fromNow()
     },
-    toggleFocus(){},
+    toggleFocus() {},
   },
 }
 </script>
