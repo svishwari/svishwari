@@ -39,7 +39,8 @@
                     v-on="on"
                     class="mr-2 more-action"
                     color="primary"
-                    @click="takeActions($event)">
+                    @click="takeActions($event)"
+                  >
                     mdi-dots-vertical
                   </v-icon>
                 </template>

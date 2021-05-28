@@ -51,7 +51,10 @@ export default {
    * @param {*} value The string eg. "John petro"
    * @returns shortname string eg. "JP"
    */
-   shortName(value) {
-    return value.split(" ").map((n) => n[0]).join("")
+  shortName(value) {
+    return value
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
   },
 }
