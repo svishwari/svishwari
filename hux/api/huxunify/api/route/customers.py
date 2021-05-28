@@ -11,8 +11,8 @@ import datetime
 
 from marshmallow import INCLUDE
 
-from huxunify.api.schema.customer_profiles import CustomerProfilesOverviewSchema
-from huxunify.api.route.utils import add_view_to_blueprint
+from huxunify.api.schema.customers import CustomerProfilesOverviewSchema
+from huxunify.api.route.utils import add_view_to_blueprint,secured
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as c
 
