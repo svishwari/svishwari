@@ -160,6 +160,76 @@ class TestEngagementManagement(unittest.TestCase):
         engagement_doc = em.get_engagement(self.database, engagement_id)
         self.assertIsNone(engagement_doc)
 
-    # TODO - test the destinations and audiences of an engagement
-    # TODO raise error if no audiences
-    # test adding destinations and pulling them
+    def test_create_engagement_no_audiences(self) -> None:
+        """Test creating an engagement without audiences.
+
+        Returns:
+            Response: None
+
+        """
+
+        # create engagement
+        with self.assertRaises(AttributeError):
+            em.set_engagement(
+                self.database,
+                "Fall 2024",
+                "fall of 2024",
+                [],
+                self.user_id,
+            )
+
+    def test_create_and_get_engagement_with_many_audiences(self) -> None:
+        """Test creating an engagement with many audiences
+
+        Returns:
+            Response: None
+
+        """
+
+        # create an engagement that has
+        # an audience with three destinations
+        # an audience with two destinations
+        new_engagement = {
+            c.ENGAGEMENT_NAME: "Spring 2024",
+            c.ENGAGEMENT_DESCRIPTION: "high ltv for spring 2024",
+            c.AUDIENCES: [
+                {
+                    c.AUDIENCE_ID: ObjectId(),
+                    c.DESTINATIONS: [
+                        {
+                            c.DELIVERY_PLATFORM_ID: ObjectId(),
+                            c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                        },
+                        {c.DELIVERY_PLATFORM_ID: ObjectId()},
+                        {c.DELIVERY_PLATFORM_ID: ObjectId()},
+                    ],
+                },
+                {
+                    c.AUDIENCE_ID: ObjectId(),
+                    c.DESTINATIONS: [{c.DELIVERY_PLATFORM_ID: ObjectId()}],
+                },
+            ],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            new_engagement[c.ENGAGEMENT_NAME],
+            new_engagement[c.ENGAGEMENT_DESCRIPTION],
+            new_engagement[c.AUDIENCES],
+            self.user_id,
+        )
+
+        # validate it was created
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        # get the created engagement to check values
+        engagement = em.get_engagement(self.database, engagement_id)
+
+        self.assertIsNotNone(engagement)
+
+        # test audiences
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(len(engagement[c.AUDIENCES]), 2)
+        self.assertListEqual(
+            engagement[c.AUDIENCES], new_engagement[c.AUDIENCES]
+        )

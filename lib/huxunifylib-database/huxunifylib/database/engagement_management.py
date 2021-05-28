@@ -81,7 +81,7 @@ def set_engagement(
     for audience in audiences:
         doc[db_c.AUDIENCES].append(
             {
-                db_c.AUDIENCE_ID: audience[db_c.ID],
+                db_c.AUDIENCE_ID: audience[db_c.AUDIENCE_ID],
                 db_c.DESTINATIONS: audience[db_c.DESTINATIONS],
             }
         )
