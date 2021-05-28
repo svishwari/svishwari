@@ -145,7 +145,7 @@
         <template v-slot:left>
           <huxButton
             ButtonText="Cancel"
-            variant="tertiary"
+            variant="white"
             v-bind:isTile="true"
             width="94"
             height="40"
@@ -528,22 +528,16 @@ export default {
     .theme--light.v-timeline:before {
       background: linear-gradient(
           to right,
-          var(--v-skyBlueDark-base) 50%,
+          var(--v-secondary-base) 50%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(
-          var(--v-skyBlueDark-base) 50%,
-          rgba(255, 255, 255, 0) 0%
-        ),
+        linear-gradient(var(--v-secondary-base) 50%, rgba(255, 255, 255, 0) 0%),
         linear-gradient(
           to right,
-          var(--v-skyBlueDark-base) 49%,
+          var(--v-secondary-base) 49%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(
-          var(--v-skyBlueDark-base) 50%,
-          rgba(255, 255, 255, 0) 0%
-        );
+        linear-gradient(var(--v-secondary-base) 50%, rgba(255, 255, 255, 0) 0%);
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 12px 0px, 1px 12px;

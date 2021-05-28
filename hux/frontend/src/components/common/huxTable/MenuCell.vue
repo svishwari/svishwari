@@ -75,7 +75,7 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    this.audienceId = this.params.data.audienceId
+    this.audienceId = this.params.data.id
   },
 })
 </script>

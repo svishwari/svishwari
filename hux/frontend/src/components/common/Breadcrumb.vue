@@ -1,15 +1,17 @@
 <template>
-  <v-breadcrumbs :items="items" class="pl-0">
+  <v-breadcrumbs :items="items" class="pl-0 breadcrumb">
     <template v-slot:item="{ item }">
       <v-breadcrumbs-item
         :href="item.href"
         :disabled="item.disabled"
         class="font-weight-light"
       >
-        <div v-if="item.icon" class="d-flex">
+        <div v-if="item.icon" class="d-flex pr-2">
           <Icon :type="item.icon" :size="24" color="neroBlack" />
         </div>
-        <span class="neroBlack--text pl-2">{{ item.text }}</span>
+        <span :class="{ 'neroBlack-text': item.disabled, 'pl-1': true }">{{
+          item.text
+        }}</span>
       </v-breadcrumbs-item>
     </template>
     <template v-slot:divider>
@@ -34,3 +36,10 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.breadcrumb {
+  ::v-deep .v-breadcrumbs__divider {
+    padding: 0;
+  }
+}
+</style>
