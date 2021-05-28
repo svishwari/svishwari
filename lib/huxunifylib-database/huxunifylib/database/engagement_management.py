@@ -70,7 +70,6 @@ def set_engagement(
     doc = {
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
-        db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.CREATE_TIME: datetime.datetime.utcnow(),
         db_c.CREATED_BY: user_id,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),

@@ -129,7 +129,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(
             engagement_doc[c.ENGAGEMENT_DESCRIPTION], new_description
         )
-        self.assertIn(c.ENGAGEMENT_DELIVERY_SCHEDULE, engagement_doc)
+        self.assertNotIn(c.ENGAGEMENT_DELIVERY_SCHEDULE, engagement_doc)
         self.assertEqual(self.user_id, engagement_doc[c.CREATED_BY])
 
     def test_delete_engagement(self) -> None:
