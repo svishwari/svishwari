@@ -446,7 +446,7 @@ export default {
         .v-tabs-bar__content {
           border-bottom: 2px solid var(--v-zircon-base);
           .v-tabs-slider-wrapper {
-            width: 111px;
+            width: 111px !important;
             .v-tabs-slider {
               background-color: var(--v-skyBlueDark-base) !important;
               border-color: var(--v-skyBlueDark-base) !important;
