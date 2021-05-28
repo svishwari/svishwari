@@ -11,8 +11,8 @@
         <v-list class="menu-list-wrapper">
           <v-list-item-group>
             <v-list-item
-              v-for="(item, index) in topNavItems"
-              :key="index"
+              v-for="(item) in topNavItems"
+              :key="item.id"
               :disabled="!item.active"
             >
               <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -23,8 +23,8 @@
     </v-card-title>
     <v-list dense class="pa-0">
       <v-list-item
-        v-for="(item, index) in destinations"
-        :key="`dest-${index}`"
+        v-for="(item) in destinations"
+        :key="item.id"
         @click="toggleFocus()"
       >
         <v-list-item-content class="icon-col py-1">
@@ -47,8 +47,8 @@
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
                     <v-list-item
-                      v-for="(item, index) in items"
-                      :key="index"
+                      v-for="(item) in items"
+                      :key="item.id"
                       :disabled="!item.active"
                     >
                       <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -67,9 +67,9 @@
         }}</v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
-          v-if="item.lastDeliveredOn"
-          >{{ getTimeStamp(item.lastDeliveredOn) }}</v-list-item-content
-        >
+          v-if="item.lastDeliveredOn">
+          {{ getTimeStamp(item.lastDeliveredOn) }}
+        </v-list-item-content>
       </v-list-item>
     </v-list>
   </v-card>
@@ -87,19 +87,19 @@ export default {
   data() {
     return {
       items: [
-        { title: "Deliver now", active: true },
-        { title: "Create lookalike", active: false },
-        { title: "Edit delivery schedule", active: false },
-        { title: "Pause delivery", active: false },
-        { title: "Open destination", active: false },
-        { title: "Remove destination", active: false },
+        { id: 1, title: "Deliver now", active: true },
+        { id: 2, title: "Create lookalike", active: false },
+        { id: 3, title: "Edit delivery schedule", active: false },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: false },
       ],
       topNavItems: [
-        { title: "Deliver now", active: true },
-        { title: "Add a destination", active: true },
-        { title: "Create lookalike", active: false },
-        { title: "Pause all delivery", active: false },
-        { title: "Remove audience", active: false },
+        { id: 1, title: "Deliver now", active: true },
+        { id: 2, title: "Add a destination", active: true },
+        { id: 3, title: "Create lookalike", active: false },
+        { id: 4, title: "Pause all delivery", active: false },
+        { id: 5, title: "Remove audience", active: false },
       ],
     }
   },

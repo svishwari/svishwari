@@ -35,7 +35,7 @@
           :min-width="summary.minWidth"
           :height="75"
           v-for="(summary, index) in summaryCards"
-          :key="`summary-${index}`"
+          :key="summary.id"
           :title="summary.title"
           :subtitle="summary.value"
           :interactable="false"
@@ -77,8 +77,8 @@
             </div>
             <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
               <status-list
-                v-for="(item, index) in engagement.audiences"
-                :key="`audience-${index}`"
+                v-for="(item) in engagement.audiences"
+                :key="item.id"
                 :title="item.name"
                 :destinations="item.destinations"
               ></status-list>
@@ -101,8 +101,8 @@
                   class="list-item mr-2"
                   :width="item.width"
                   :height="70"
-                  v-for="(item, index) in displayAdsSummary"
-                  :key="`dispinfo-${index}`"
+                  v-for="(item) in displayAdsSummary"
+                  :key="item.id"
                   :title="item.title"
                   :subtitle="item.value"
                   :interactable="false"
@@ -118,8 +118,8 @@
                     class="list-item mr-1 rounded-lg"
                     :min-width="item.width"
                     :height="70"
-                    v-for="(item, index) in emailSummary"
-                    :key="`emailInfo-${index}`"
+                    v-for="(item) in emailSummary"
+                    :key="item.id"
                     :title="item.title"
                     :subtitle="item.value"
                     :interactable="false"
@@ -193,24 +193,28 @@ export default {
             name: "Audience - Main",
             destinations: [
               {
+                id: 1,
                 type: "mailchimp",
                 status: "active",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
+                id: 2,
                 type: "facebook",
                 status: "active",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
+                id: 3,
                 type: "insightIQ",
                 status: "active",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
+                id: 4,
                 type: "adobe-experience",
                 status: "pending",
                 size: null,
@@ -222,6 +226,7 @@ export default {
             name: "Audience 1",
             destinations: [
               {
+                id: 1,
                 type: "mailchimp",
                 status: "active",
                 size: 356046921,
@@ -229,12 +234,14 @@ export default {
               },
 
               {
+                id: 2,
                 type: "facebook",
                 status: "active",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
+                id: 3,
                 type: "insightIQ",
                 status: "pending",
                 size: 356046921,
@@ -246,12 +253,14 @@ export default {
             name: "Audience 2",
             destinations: [
               {
+                id: 1,
                 type: "mailchimp",
                 status: "pending",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
+                id: 2,
                 type: "facebook",
                 status: "active",
                 size: 356046921,
@@ -263,12 +272,14 @@ export default {
             name: "Audience 3",
             destinations: [
               {
+                id: 1,
                 type: "mailchimp",
                 status: "pending",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
+                id: 2,
                 type: "facebook",
                 status: "active",
                 size: 356046921,
@@ -280,6 +291,7 @@ export default {
             name: "Audience - test",
             destinations: [
               {
+                id: 2,
                 type: "facebook",
                 status: "active",
                 size: 356046921,
@@ -314,6 +326,7 @@ export default {
     summaryCards() {
       const summary = [
         {
+          id: 1,
           title: "Delivery schedule",
           value: this.fetchKey("schedule"),
           subLabel: null,
@@ -321,6 +334,7 @@ export default {
           minWidth: "146px",
         },
         {
+          id: 2,
           title: "Last updated",
           value: this.getDateStamp(this.fetchKey("update_time")),
           subLabel: this.fetchKey("updated_by"),
@@ -328,6 +342,7 @@ export default {
           minWidth: "164px",
         },
         {
+          id: 3,
           title: "Created",
           value: this.getDateStamp(this.fetchKey("created_time")),
           subLabel: this.fetchKey("created_by"),
@@ -335,6 +350,7 @@ export default {
           minWidth: "164px",
         },
         {
+          id: 4,
           title:
             "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear.",
           value: null,
@@ -347,33 +363,35 @@ export default {
     },
     displayAdsSummary() {
       return [
-        { title: "Spend", value: "$2.1M", width: "10%" },
-        { title: "Reach", value: "500k", width: "10%" },
-        { title: "Impressions", value: "456,850", width: "10%" },
-        { title: "Conversions", value: "521,006", width: "10%" },
-        { title: "Clicks", value: "498,587", width: "10%" },
-        { title: "Frequency", value: "500", width: "10%" },
-        { title: "CPM", value: "$850", width: "10%" },
-        { title: "CTR", value: "52%", width: "10%" },
-        { title: "CPA", value: "$652", width: "10%" },
-        { title: "CPC", value: "$485", width: "10%" },
-        { title: "Engagement rate", value: "56%", width: "10%" },
+        { id: 1, title: "Spend", value: "$2.1M", width: "10%" },
+        { id: 2, title: "Reach", value: "500k", width: "10%" },
+        { id: 3, title: "Impressions", value: "456,850", width: "10%" },
+        { id: 4, title: "Conversions", value: "521,006", width: "10%" },
+        { id: 5, title: "Clicks", value: "498,587", width: "10%" },
+        { id: 6, title: "Frequency", value: "500", width: "10%" },
+        { id: 7, title: "CPM", value: "$850", width: "10%" },
+        { id: 8, title: "CTR", value: "52%", width: "10%" },
+        { id: 9, title: "CPA", value: "$652", width: "10%" },
+        { id: 10, title: "CPC", value: "$485", width: "10%" },
+        { id: 11, title: "Engagement rate", value: "56%", width: "10%" },
       ]
     },
     emailSummary() {
       return [
-        { title: "Sent", value: "Yesterday", width: "95px" },
-        { title: "Hard bounces / Rate", value: "125 • 0.1%", width: "139px" },
-        { title: "Delivered / Rate", value: "125 • 0.1%", width: "113px" },
-        { title: "Open / Rate", value: "365.2k • 72.8%", width: "122px" },
-        { title: "Click / CTR", value: "365.2k • 72.8%", width: "122px" },
-        { title: "Click to open rate  ", value: "72.8%", width: "121px" },
+        { id: 1, title: "Sent", value: "Yesterday", width: "95px" },
+        { id: 2, title: "Hard bounces / Rate", value: "125 • 0.1%", width: "139px" },
+        { id: 3, title: "Delivered / Rate", value: "125 • 0.1%", width: "113px" },
+        { id: 4, title: "Open / Rate", value: "365.2k • 72.8%", width: "122px" },
+        { id: 5, title: "Click / CTR", value: "365.2k • 72.8%", width: "122px" },
+        { id: 6, title: "Click to open rate  ", value: "72.8%", width: "121px" },
         {
+          id: 7, 
           title: "Unique clicks / Unique opens",
           value: "365.2k • 72.8%",
           width: "185px",
         },
         {
+          id: 8, 
           title: "Unsubscribe / Rate",
           value: "365.2k • 72.8%",
           width: "130px",
