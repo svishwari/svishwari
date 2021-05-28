@@ -70,6 +70,7 @@ def create_app() -> Flask:
     # setup the flask app
     flask_app = Flask(__name__)
 
+    # setup CORS
     CORS(flask_app)
 
     # register the routes

@@ -7,6 +7,7 @@ from marshmallow.fields import Str, Int, validate, List, DateTime, Nested, Dict
 
 from huxunifylib.database.constants import USER_ROLES
 from huxunify.api.schema.utils import validate_object_id
+from huxunify.api import constants as api_c
 
 
 class Favorites(Schema):
@@ -20,7 +21,12 @@ class Favorites(Schema):
 class UserSchema(Schema):
     """User Schema"""
 
-    user_id = Str(required=True, validate=validate_object_id)
+    _id = Str(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        required=True,
+        validate=validate_object_id,
+    )
     email = Str(required=True)
     first_name = Str()
     last_name = Str()
