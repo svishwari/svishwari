@@ -4,29 +4,53 @@ Purpose of this file is to house all the customers api tests
 
 import unittest
 import json
-
+import requests_mock
+from requests_mock import Mocker
+from huxunify.api.config import get_config
 
 from huxunify.api import constants as c
 from huxunify.app import create_app
 
+VALID_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "davesmith",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "davesmith@fake",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "1234567",
+}
 
 class TestCustomersOverview(unittest.TestCase):
     """
     Purpose of this class is to test Customers overview
     """
-
-    def setUp(self):
+    @requests_mock.Mocker()
+    def setUp(self,request_mocker:Mocker):
         """
         Sets up Test Client
 
         Returns:
         """
+        self.config=get_config()
+        self.introspect_call = (
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/introspect?client_id="
+            f"{self.config.OKTA_CLIENT_ID}"
+        )
         self.app = create_app().test_client()
         self.customer_overview_endpoint = (
             f"/api/v1{c.CUSTOMER_PROFILES_OVERVIEW_ENDPOINT}"
         )
-        response = self.app.get(self.customer_overview_endpoint)
-        self.jsonresponse = json.loads(response.data.decode("utf-8"))
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+       
+        response = self.app.get(self.customer_overview_endpoint,headers={"Authorization": "Bearer 12345678"})
+        self.jsonresponse = json.loads(response.data)
 
     def test_count_insights(self):
         """
