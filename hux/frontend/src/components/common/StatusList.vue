@@ -39,8 +39,7 @@
                     v-on="on"
                     class="mr-2 more-action"
                     color="primary"
-                    @click="takeActions($event)"
-                  >
+                   @click.prevent>
                     mdi-dots-vertical
                   </v-icon>
                 </template>
@@ -122,9 +121,7 @@ export default {
     getTimeStamp(value) {
       return moment(new Date(value)).fromNow()
     },
-    takeActions(evnt) {
-      evnt.preventDefault()
-    },
+    toggleFocus(){},
   },
 }
 </script>
