@@ -9,7 +9,10 @@ from flask import Blueprint
 from flasgger import SwaggerView
 
 
-from huxunify.api.schema.customers import CustomerOverviewSchema
+from huxunify.api.schema.customers import (
+    CustomerOverviewSchema,
+    CustomersSchema,
+)
 from huxunify.api.route.utils import add_view_to_blueprint, secured
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as c
@@ -103,5 +106,57 @@ class CustomerOverview(SwaggerView):
 
         return (
             CustomerOverviewSchema().dump(customers_overview_data),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{c.CUSTOMERS_TAG}",
+    "CustomersSchema",
+)
+class Customersview(SwaggerView):
+    """
+    Customers Overview class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": CustomersSchema,
+            "description": "Customers list.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves a list of customers.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] dict of Customers and http code
+        """
+
+        customers_stub_data = {
+            "total_customers": 52456232,
+            "customers": [
+                {
+                    "id": "1531-2039-22",
+                    "first_name": "Bertie",
+                    "last_name": "Fox",
+                    "match_confidence": round(uniform(0, 1), 5),
+                }
+            ],
+        }
+
+        return (
+            CustomersSchema().dump(customers_stub_data),
             HTTPStatus.OK,
         )
