@@ -60,23 +60,23 @@ export default {
       }
       .theme--light {
         .v-slider__track-fill {
-          background-color: #00abab !important;
+          background-color: var(--v-persianGreen-base) !important;
         }
       }
       .v-slider__thumb {
         width: 16px;
         height: 16px;
-        background-color: #ffffff !important;
-        border: 1px solid #00abab;
+        background-color: var(--v-white-base) !important;
+        border: 1px solid var(--v-persianGreen-base);
         box-sizing: border-box;
         box-shadow: 0px 1px 5px rgb(0 0 0 / 15%);
         border-radius: 100px;
-        border-color: #00abab !important;
+        border-color: var(--v-persianGreen-base) !important;
       }
       .v-slider__thumb-label {
         transform: translateY(35px) translateX(-50%) rotate(45deg) !important;
         background-color: inherit !important;
-        color: #4f4f4f;
+        color: var(--v-gray-base);
         border: none !important;
         font-size: 12px;
         line-height: 16px;
