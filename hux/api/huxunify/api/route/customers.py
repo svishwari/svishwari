@@ -9,14 +9,14 @@ from flask import Blueprint
 from flasgger import SwaggerView
 
 
-from huxunify.api.schema.customers import CustomerProfilesOverviewSchema
+from huxunify.api.schema.customers import CustomerOverviewSchema
 from huxunify.api.route.utils import add_view_to_blueprint, secured
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as c
 
 
 # setup the Customers blueprint
-customers_bp = Blueprint(c.CUSTOMERS_TAG, import_name=__name__)
+customers_bp = Blueprint(c.CUSTOMER_TAG, import_name=__name__)
 
 
 @customers_bp.before_request
@@ -63,10 +63,10 @@ def get_customers_overview() -> dict:
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{c.CUSTOMER_PROFILES_OVERVIEW_ENDPOINT}",
+    f"/{c.CUSTOMER_TAG}/{c.CUSTOMER_OVERVIEW_ENDPOINT}",
     "CustomerProfilesOverviewSchema",
 )
-class CustomerProfilesOverview(SwaggerView):
+class CustomerOverview(SwaggerView):
     """
     Customers Overview class
     """
@@ -76,7 +76,7 @@ class CustomerProfilesOverview(SwaggerView):
             "description": "Customer Profiles Overview",
             "schema": {
                 "type": "array",
-                "items": CustomerProfilesOverviewSchema,
+                "items": CustomerOverviewSchema,
             },
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -84,7 +84,7 @@ class CustomerProfilesOverview(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [c.CUSTOMERS_TAG]
+    tags = [c.CUSTOMER_TAG]
 
     # pylint: disable=no-self-use
     def get(self) -> Tuple[dict, int]:
@@ -101,6 +101,6 @@ class CustomerProfilesOverview(SwaggerView):
         customers_overview_data = get_customers_overview()
 
         return (
-            CustomerProfilesOverviewSchema().dump(customers_overview_data),
+            CustomerOverviewSchema().dump(customers_overview_data),
             HTTPStatus.OK,
         )
