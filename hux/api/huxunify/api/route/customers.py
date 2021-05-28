@@ -151,7 +151,7 @@ class Customersview(SwaggerView):
                     "id": "1531-2039-22",
                     "first_name": "Bertie",
                     "last_name": "Fox",
-                    "match_confidence": 0.96666666661,
+                    "match_confidence": round(uniform(0, 1), 5),
                 }
             ],
         }
