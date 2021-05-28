@@ -312,7 +312,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertTrue(result)
 
-        # ensure the audience was removed
+        # ensure the audience was updated
         updated = em.get_engagement(self.database, engagement_id)
         self.assertIn(c.AUDIENCES, updated)
 
