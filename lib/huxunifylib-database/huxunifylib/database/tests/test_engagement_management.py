@@ -145,7 +145,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             "Fall 2024",
             "fall of 2024",
-            [self.audience[c.ID]],
+            [self.audience],
             self.user_id,
         )
 
