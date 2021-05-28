@@ -160,7 +160,7 @@ export default {
     }),
     refresh() {},
     getFormattedTime(time) {
-      return moment(new Date(time)).fromNow() + " by"
+      return this.$options.filters.Date(time, 'relative') + " by"
     },
     getShortName(fullname) {
       return fullname
