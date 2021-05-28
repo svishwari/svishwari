@@ -49,7 +49,7 @@ class TestCustomersOverview(unittest.TestCase):
         )
         self.app = create_app().test_client()
         self.customer_overview_endpoint = (
-            f"/api/v1/{c.CUSTOMER_TAG}/{c.CUSTOMER_OVERVIEW_ENDPOINT}"
+            f"/api/v1/{c.CUSTOMERS_TAG}/{c.CUSTOMERS_OVERVIEW_ENDPOINT}"
         )
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 

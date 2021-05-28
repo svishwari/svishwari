@@ -254,9 +254,9 @@ BATCH_SIZE = "batch_size"
 
 
 # Customers API Fields
-CUSTOMER_TAG = "customers"
-CUSTOMER_DESCRIPTION = "Customers API"
-CUSTOMER_OVERVIEW_ENDPOINT = "overview"
+CUSTOMERS_TAG = "customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
+CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
