@@ -15,7 +15,9 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     user_management,
     orchestration_management,
+    db_exceptions,
 )
+
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
@@ -455,9 +457,13 @@ class AudienceDeliverView(SwaggerView):
         audience_id = ObjectId(audience_id)
 
         # check if audience exists
-        audience = orchestration_management.get_audience(
-            get_db_client(), audience_id
-        )
+        audience = None
+        try:
+            audience = orchestration_management.get_audience(
+                get_db_client(), audience_id
+            )
+        except db_exceptions.InvalidID:
+            pass
         if not audience:
             return {
                 "message": "Audience does not exist."
