@@ -388,3 +388,81 @@ class AudiencePutView(SwaggerView):
         )
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/deliver",
+    "AudienceDeliverView",
+)
+class AudienceDeliverView(SwaggerView):
+    """
+    Audience delivery class
+    """
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Result.",
+            "schema": {
+                "example": {"message": "Delivery job created."},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to deliver audience.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    def post(self, audience_id: str) -> Tuple[dict, int]:
+        """Delivers a single audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        # TODO - implement after HUS-479 is done
+        user_id = ObjectId()
+
+        # validate object id
+        if not ObjectId(audience_id).is_valid():
+            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+
+        # validate audience exists
+        audience_id = ObjectId(audience_id)
+
+        # check if audience exists
+        audience = orchestration_management.get_audience(
+            get_db_client(), audience_id
+        )
+        if not audience:
+            return {
+                "message": "Audience does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate delivery route
+        return {
+            "message": f"Successfully created delivery job(s) for {audience_id}"
+        }, HTTPStatus.OK
