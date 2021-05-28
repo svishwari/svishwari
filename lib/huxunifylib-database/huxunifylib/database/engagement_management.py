@@ -216,7 +216,7 @@ def update_engagement(
         user_id (ObjectId): ObjectID of user.
         name (str): Name of the engagement.
         description (str): Descriptions of the engagement.
-        audiences (list): list of audience ObjectIds.
+        audiences (list): list of audiences.
         delivery_schedule (dict): delivery schedule dict.
 
     Returns:
@@ -250,6 +250,65 @@ def update_engagement(
             )
         else:
             raise de.NoUpdatesSpecified("engagement")
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+# pylint: disable=too-many-arguments
+# pylint: disable=no-else-return
+def remove_audiences_from_engagement(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    user_id: ObjectId,
+    audience_ids: list,
+) -> dict:
+    """A function to allow for removing audiences from an engagement.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): ObjectID of the engagement to be updated.
+        user_id (ObjectId): ObjectID of user.
+        audience_ids (list): list of audience ObjectIds.
+
+    Returns:
+        dict: dict object of the engagement that has been updated
+    """
+
+    # validate audiences
+    if not audience_ids:
+        raise AttributeError("A minimum of one audience is required.")
+
+    if not all(ObjectId.is_valid(a) for a in audience_ids):
+        raise AttributeError("Invalid ObjectID submitted.")
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    try:
+        bad = collection.update(
+            {db_c.ID: engagement_id},
+            {
+                "$pull": {
+                    f"{db_c.AUDIENCES}.{db_c.AUDIENCE_ID}": {
+                        db_c.AUDIENCE_ID: {"$in": audience_ids}
+                    }
+                }
+            },
+            {
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_id,
+                }
+            },
+        )
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

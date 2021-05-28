@@ -233,3 +233,23 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertListEqual(
             engagement[c.AUDIENCES], new_engagement[c.AUDIENCES]
         )
+
+    def test_set_engagement_attach_audience_after(self) -> None:
+        """Test creating an engagement and attaching an audience after
+
+        Returns:
+            Response: None
+
+        """
+
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement 2",
+            "Engagement 2 Description",
+            [self.audience],
+            self.user_id,
+        )
+
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        # attach an audience
