@@ -664,7 +664,7 @@ class EngagementDeliverDestinationView(SwaggerView):
                 "message": "Destination is not attached to the engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate destination exiasts
+        # validate destination exists
         destination = delivery_platform_management.get_delivery_platform(
             get_db_client(), destination_id
         )
