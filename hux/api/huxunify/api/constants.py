@@ -12,10 +12,19 @@ FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
 CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
+MATCH_CONFIDENCE = "match_confidence"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
+TOTAL_RECORDS = "total_records"
+MATCH_RATE = "match_rate"
+TOTAL_UNIQUE_IDS = "total_unique_ids"
+TOTAL_UNKNOWN_IDS = "total_unknown_ids"
+TOTAL_KNOWN_IDS = "total_known_ids"
+TOTAL_INDIVIDUAL_IDS = "total_individual_ids"
+TOTAL_HOUSEHOLD_IDS = "total_household_ids"
+UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 COUNTRIES = "total_countries"
 STATES = "total_us_states"
@@ -25,6 +34,10 @@ MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+MIN_LTV_PREDICTED = "min_ltv_predicted"
+MAX_LTV_PREDICTED = "max_ltv_predicted"
+MIN_LTV_ACTUAL = "min_ltv_actual"
+MAX_LTV_ACTUAL = "max_ltv_actual"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -37,6 +50,8 @@ AWS_HEALTH_TESTS = {
 
 NAME = "name"
 DESCRIPTION = "description"
+TYPE = "type"
+REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
 START_DATE = "start_date"
 END_DATE = "end_date"
@@ -55,6 +70,7 @@ ENGAGEMENT_STATUSES = [
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
+FACEBOOK_TYPE = "facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
 FACEBOOK_APP_ID = "facebook_app_id"
 FACEBOOK_APP_SECRET = "facebook_app_secret"
@@ -62,6 +78,7 @@ FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 
 # SFMC connector defines
 SFMC_NAME = "SFMC"
+SFMC_TYPE = "SFMC"
 SFMC_CLIENT_ID = "sfmc_client_id"
 SFMC_CLIENT_SECRET = "sfmc_client_secret"
 SFMC_ACCOUNT_ID = "sfmc_account_id"
@@ -75,21 +92,69 @@ OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
 DESTINATION_CONSTANTS = {
-    FACEBOOK_NAME: {
-        FACEBOOK_AD_ACCOUNT_ID: "Ad Account ID",
-        FACEBOOK_APP_ID: "Facebook App ID",
-        FACEBOOK_APP_SECRET: "App Secret",
-        FACEBOOK_ACCESS_TOKEN: "Access Token",
+    FACEBOOK_TYPE: {
+        FACEBOOK_AD_ACCOUNT_ID: {
+            NAME: "Ad Account ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        FACEBOOK_APP_ID: {
+            NAME: "App ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        FACEBOOK_ACCESS_TOKEN: {
+            NAME: "Access Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        FACEBOOK_APP_SECRET: {
+            NAME: "App Secret",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
     },
-    SFMC_NAME: {
-        SFMC_CLIENT_ID: "Client ID",
-        SFMC_ACCOUNT_ID: "Account ID",
-        SFMC_CLIENT_SECRET: "Client Secret",
-        SFMC_AUTH_BASE_URI: "Auth Base URI",
-        SFMC_REST_BASE_URI: "REST Base URI",
-        SFMC_SOAP_BASE_URI: "SOAP Base URI",
-        SFMC_PERFORMANCE_EXT_NAME: "Performance metric data extension name",
-        SFMC_PERFORMANCE_EXT_VALUES: [],
+    SFMC_TYPE: {
+        SFMC_ACCOUNT_ID: {
+            NAME: "Account ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_AUTH_BASE_URI: {
+            NAME: "Auth Base URI",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_CLIENT_ID: {
+            NAME: "Client ID",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_CLIENT_SECRET: {
+            NAME: "Client Secret",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_REST_BASE_URI: {
+            NAME: "REST Base URI",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_SOAP_BASE_URI: {
+            NAME: "Soap Base URI",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
     },
 }
 
@@ -241,6 +306,12 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
+
+# Customers API Fields
+CUSTOMERS_TAG = "customers"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
+CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
