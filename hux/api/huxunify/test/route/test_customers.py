@@ -26,18 +26,20 @@ VALID_RESPONSE = {
     "uid": "1234567",
 }
 
+
 class TestCustomersOverview(unittest.TestCase):
     """
     Purpose of this class is to test Customers overview
     """
+
     @requests_mock.Mocker()
-    def setUp(self,request_mocker:Mocker):
+    def setUp(self, request_mocker: Mocker):
         """
         Sets up Test Client
 
         Returns:
         """
-        self.config=get_config()
+        self.config = get_config()
         self.introspect_call = (
             f"{self.config.OKTA_ISSUER}"
             f"/oauth2/v1/introspect?client_id="
@@ -48,8 +50,11 @@ class TestCustomersOverview(unittest.TestCase):
             f"/api/v1{c.CUSTOMER_PROFILES_OVERVIEW_ENDPOINT}"
         )
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-       
-        response = self.app.get(self.customer_overview_endpoint,headers={"Authorization": "Bearer 12345678"})
+
+        response = self.app.get(
+            self.customer_overview_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
         self.jsonresponse = json.loads(response.data)
 
     def test_count_insights(self):

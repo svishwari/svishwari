@@ -12,7 +12,7 @@ import datetime
 from marshmallow import INCLUDE
 
 from huxunify.api.schema.customers import CustomerProfilesOverviewSchema
-from huxunify.api.route.utils import add_view_to_blueprint,secured
+from huxunify.api.route.utils import add_view_to_blueprint, secured
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as c
 
@@ -27,7 +27,8 @@ customers_bp = Blueprint(c.CUSTOMERS_TAG, import_name=__name__)
 @secured()
 def before_request():
     """Protect all of the customer endpoints."""
-    pass # pylint: disable=unnecessary-pass
+    pass  # pylint: disable=unnecessary-pass
+
 
 def get_customers_overview() -> dict:
     """Fetch customers overview data.
@@ -51,8 +52,8 @@ def get_customers_overview() -> dict:
         c.COUNTRIES: randint(1, 100),
         c.STATES: randint(1, 100),
         c.CITIES: randint(10 ^ 3, 10 ^ 5 - 1),
-        c.MIN_AGE: randint(1, 100),
-        c.MAX_AGE: randint(1, 100),
+        c.MIN_AGE: randint(1, 10),
+        c.MAX_AGE: randint(11, 100),
         c.GENDER_WOMEN: 0.52123,
         c.GENDER_MEN: 0.46123,
         c.GENDER_OTHER: 0.02123,
@@ -77,7 +78,10 @@ class CustomerProfilesOverview(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Customer Profiles Overview",
-            "schema": {"type": "array", "items": CustomerProfilesOverviewSchema},
+            "schema": {
+                "type": "array",
+                "items": CustomerProfilesOverviewSchema,
+            },
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get customers overview"
