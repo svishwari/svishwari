@@ -77,7 +77,7 @@
             </div>
             <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
               <status-list
-                v-for="(item) in engagement.audiences"
+                v-for="item in engagement.audiences"
                 :key="item.id"
                 :title="item.name"
                 :destinations="item.destinations"
@@ -101,7 +101,7 @@
                   class="list-item mr-2"
                   :width="item.width"
                   :height="70"
-                  v-for="(item) in displayAdsSummary"
+                  v-for="item in displayAdsSummary"
                   :key="item.id"
                   :title="item.title"
                   :subtitle="item.value"
@@ -118,7 +118,7 @@
                     class="list-item mr-1 rounded-lg"
                     :min-width="item.width"
                     :height="70"
-                    v-for="(item) in emailSummary"
+                    v-for="item in emailSummary"
                     :key="item.id"
                     :title="item.title"
                     :subtitle="item.value"
@@ -379,19 +379,44 @@ export default {
     emailSummary() {
       return [
         { id: 1, title: "Sent", value: "Yesterday", width: "95px" },
-        { id: 2, title: "Hard bounces / Rate", value: "125 • 0.1%", width: "139px" },
-        { id: 3, title: "Delivered / Rate", value: "125 • 0.1%", width: "113px" },
-        { id: 4, title: "Open / Rate", value: "365.2k • 72.8%", width: "122px" },
-        { id: 5, title: "Click / CTR", value: "365.2k • 72.8%", width: "122px" },
-        { id: 6, title: "Click to open rate  ", value: "72.8%", width: "121px" },
         {
-          id: 7, 
+          id: 2,
+          title: "Hard bounces / Rate",
+          value: "125 • 0.1%",
+          width: "139px",
+        },
+        {
+          id: 3,
+          title: "Delivered / Rate",
+          value: "125 • 0.1%",
+          width: "113px",
+        },
+        {
+          id: 4,
+          title: "Open / Rate",
+          value: "365.2k • 72.8%",
+          width: "122px",
+        },
+        {
+          id: 5,
+          title: "Click / CTR",
+          value: "365.2k • 72.8%",
+          width: "122px",
+        },
+        {
+          id: 6,
+          title: "Click to open rate  ",
+          value: "72.8%",
+          width: "121px",
+        },
+        {
+          id: 7,
           title: "Unique clicks / Unique opens",
           value: "365.2k • 72.8%",
           width: "185px",
         },
         {
-          id: 8, 
+          id: 8,
           title: "Unsubscribe / Rate",
           value: "365.2k • 72.8%",
           width: "130px",

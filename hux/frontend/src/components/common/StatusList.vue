@@ -11,7 +11,7 @@
         <v-list class="menu-list-wrapper">
           <v-list-item-group>
             <v-list-item
-              v-for="(item) in topNavItems"
+              v-for="item in topNavItems"
               :key="item.id"
               :disabled="!item.active"
             >
@@ -23,7 +23,7 @@
     </v-card-title>
     <v-list dense class="pa-0">
       <v-list-item
-        v-for="(item) in destinations"
+        v-for="item in destinations"
         :key="item.id"
         @click="toggleFocus()"
       >
@@ -47,7 +47,7 @@
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
                     <v-list-item
-                      v-for="(item) in items"
+                      v-for="item in items"
                       :key="item.id"
                       :disabled="!item.active"
                     >
@@ -67,7 +67,8 @@
         }}</v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
-          v-if="item.lastDeliveredOn">
+          v-if="item.lastDeliveredOn"
+        >
           {{ getTimeStamp(item.lastDeliveredOn) }}
         </v-list-item-content>
       </v-list-item>
