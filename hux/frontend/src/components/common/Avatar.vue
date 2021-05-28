@@ -7,7 +7,7 @@
         v-on="on"
         v-bind:style="{ 'border-color': userInfo.color }"
       >
-        {{ userInfo.shortName }}
+        {{ userInfo.fullName | shortName }}
       </span>
     </template>
     <v-list>
@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { generateColor } from "@/utils"
+
 export default {
   name: "Avatar",
   props: {
@@ -37,7 +39,7 @@ export default {
             .map((n) => n[0])
             .join(""),
           fullName: this.name,
-          color: this.generateColor(this.name, 30, 60) + " !important",
+          color: this.getColorCode(this.name),
         }
       } else {
         return {
@@ -50,32 +52,8 @@ export default {
   },
 
   methods: {
-    generateColor(str, s, l) {
-      function hslToHex(h, s, l) {
-        l /= 100
-        const a = (s * Math.min(l, 1 - l)) / 100
-        const f = (n) => {
-          const k = (n + h / 30) % 12
-          const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
-          return Math.round(255 * color)
-            .toString(16)
-            .padStart(2, "0") // convert to Hex and prefix "0" if needed
-        }
-        return `#${f(0)}${f(8)}${f(4)}`
-      }
-      var hash = 0
-      for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash)
-      }
-
-      var h = hash % 360
-      return hslToHex(h, s, l)
-    },
-    hsl2rgb(h, s, l) {
-      let a = s * Math.min(l, 1 - l)
-      let f = (n, k = (n + h / 30) % 12) =>
-        l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
-      return [f(0), f(8), f(4)]
+    getColorCode(name) {
+      return generateColor(name, 30, 60) + " !important"
     },
   },
 }

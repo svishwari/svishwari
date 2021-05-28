@@ -4,9 +4,9 @@
       <span>{{ title }}</span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on" class="top-action"
-            >mdi-dots-vertical</v-icon
-          >
+          <v-icon v-bind="attrs" v-on="on" class="top-action">
+            mdi-dots-vertical
+          </v-icon>
         </template>
         <v-list class="menu-list-wrapper">
           <v-list-item-group>
@@ -39,9 +39,9 @@
                     v-on="on"
                     class="mr-2 more-action"
                     color="primary"
-                    @click="takeActions($event)"
-                    >mdi-dots-vertical</v-icon
-                  >
+                    @click="takeActions($event)">
+                    mdi-dots-vertical
+                  </v-icon>
                 </template>
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>

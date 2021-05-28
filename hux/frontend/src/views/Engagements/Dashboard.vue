@@ -12,12 +12,12 @@
       </template>
       <template slot="right">
         <v-icon size="22" :disabled="true" class="mr-2">mdi-refresh</v-icon>
-        <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1"
-          >mdi-pencil</v-icon
-        >
-        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1"
-          >mdi-download</v-icon
-        >
+        <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1">
+          mdi-pencil
+        </v-icon>
+        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1">
+          mdi-download
+        </v-icon>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -166,7 +166,7 @@ import Icon from "@/components/common/Icon"
 import StatusList from "../../components/common/StatusList.vue"
 
 export default {
-  name: "engagementInsight",
+  name: "engagementDashboard",
   components: {
     PageHeader,
     Breadcrumb,

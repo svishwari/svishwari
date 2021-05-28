@@ -57,8 +57,8 @@ const routes = [
   },
   {
     path: "/engagements/:id",
-    name: "EngagementInsight",
-    component: () => import("@/views/Engagements/Insight"),
+    name: "EngagementDashboard",
+    component: () => import("@/views/Engagements/Dashboard"),
     meta: {
       layout: "app",
       title: "Engagement Dashboard",
