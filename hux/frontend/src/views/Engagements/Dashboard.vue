@@ -48,7 +48,7 @@
 
       <div class="audience-summary">
         <!-- Audience Destination Cards Wrapper -->
-        <v-card minHeight="145px" elevation="2">
+        <v-card class="rounded-lg" minHeight="145px" elevation="2">
           <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
             <div class="d-flex align-center">
               <Icon
@@ -190,7 +190,7 @@ export default {
           "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear. ",
         audiences: [
           {
-            name: "Audience: Main",
+            name: "Audience - Main",
             destinations: [
               {
                 type: "mailchimp",
@@ -219,7 +219,7 @@ export default {
             ],
           },
           {
-            name: "Audience: Main",
+            name: "Audience 1",
             destinations: [
               {
                 type: "mailchimp",
@@ -243,7 +243,7 @@ export default {
             ],
           },
           {
-            name: "Audience: Main",
+            name: "Audience 2",
             destinations: [
               {
                 type: "mailchimp",
@@ -260,7 +260,7 @@ export default {
             ],
           },
           {
-            name: "Audience: Main",
+            name: "Audience 3",
             destinations: [
               {
                 type: "mailchimp",
@@ -277,7 +277,7 @@ export default {
             ],
           },
           {
-            name: "Audience: Main",
+            name: "Audience - test",
             destinations: [
               {
                 type: "facebook",
@@ -300,13 +300,13 @@ export default {
           text: "Engagements",
           disabled: false,
           href: this.$router.resolve({ name: "Engagements" }).href,
-          icon: "audiences",
+          icon: "engagements",
         },
       ]
       if (this.engagement) {
         items.push({
           text: this.engagement.name,
-          disabled: true,
+          disabled: false,
         })
       }
       return items
@@ -435,6 +435,7 @@ export default {
 
               text-overflow: inherit;
               white-space: inherit;
+              color: var(--v-neroBlack-base) !important;
             }
           }
         }
