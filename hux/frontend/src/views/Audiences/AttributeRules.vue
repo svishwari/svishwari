@@ -281,7 +281,7 @@ export default {
       box-sizing: border-box;
       border-radius: 5px;
       span {
-        color: #005587;
+        color: var(--v-primary-base);
       }
     }
   }

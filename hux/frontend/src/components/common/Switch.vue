@@ -66,12 +66,12 @@ export default {
         width: 61px;
         height: 24px;
         background: var(--v-white-base);
-        border: 1px solid var(--v-skyBlueDark-base);
+        border: 1px solid var(--v-secondary-base);
         box-sizing: border-box;
         border-radius: 21px;
       }
       .v-input--switch__thumb {
-        background: var(--v-skyBlueDark-base);
+        background: var(--v-secondary-base);
         border: 1px solid var(--v-white-base);
         box-sizing: border-box;
         width: 20px;
