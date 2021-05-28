@@ -159,3 +159,7 @@ class TestEngagementManagement(unittest.TestCase):
         # validate the engagement was deleted
         engagement_doc = em.get_engagement(self.database, engagement_id)
         self.assertIsNone(engagement_doc)
+
+    # TODO - test the destinations and audiences of an engagement
+    # TODO raise error if no audiences
+    # test adding destinations and pulling them
