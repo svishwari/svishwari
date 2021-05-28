@@ -33,7 +33,7 @@ class TestCustomersOverview(unittest.TestCase):
     """
 
     @requests_mock.Mocker()
-    def setUp(self, request_mocker: Mocker):
+    def setUp(self, request_mocker: Mocker): # pylint: disable=arguments-differ
         """
         Sets up Test Client
 

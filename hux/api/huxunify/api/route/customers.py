@@ -3,20 +3,16 @@ Purpose of this file is to have Customer APIs
 """
 from http import HTTPStatus
 from typing import Tuple
-
-from flask import Blueprint, jsonify
-
-from flasgger import SwaggerView
 import datetime
+from random import randint
+from flask import Blueprint
+from flasgger import SwaggerView
 
-from marshmallow import INCLUDE
 
 from huxunify.api.schema.customers import CustomerProfilesOverviewSchema
 from huxunify.api.route.utils import add_view_to_blueprint, secured
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as c
-
-from random import randint
 
 
 # setup the Customers blueprint
