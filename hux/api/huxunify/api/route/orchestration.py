@@ -424,11 +424,11 @@ class AudienceDeliverView(SwaggerView):
     }
 
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.ORCHESTRATION_TAG]
+    tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
     def post(self, audience_id: str) -> Tuple[dict, int]:
-        """Delivers a single audience.
+        """Delivers an audience for all of the engagements it is apart of.
 
         ---
         security:
@@ -444,10 +444,11 @@ class AudienceDeliverView(SwaggerView):
         """
 
         # TODO - implement after HUS-479 is done
+        # pylint: disable=unused-variable
         user_id = ObjectId()
 
         # validate object id
-        if not ObjectId(audience_id).is_valid():
+        if not ObjectId.is_valid(audience_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
         # validate audience exists

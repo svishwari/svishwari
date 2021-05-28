@@ -384,11 +384,11 @@ class EngagementDeliverView(SwaggerView):
     }
 
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.ENGAGEMENT_TAG]
+    tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
-    def put(self, engagement_id: str) -> Tuple[dict, int]:
-        """Delivers a single engagement.
+    def post(self, engagement_id: str) -> Tuple[dict, int]:
+        """Delivers all audiences for an engagement.
 
         ---
         security:
@@ -404,10 +404,11 @@ class EngagementDeliverView(SwaggerView):
         """
 
         # TODO - implement after HUS-479 is done
+        # pylint: disable=unused-variable
         user_id = ObjectId()
 
         # validate object id
-        if not ObjectId(engagement_id).is_valid():
+        if not ObjectId.is_valid(engagement_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
         # validate engagement exists
@@ -468,11 +469,11 @@ class EngagementDeliverAudienceView(SwaggerView):
     }
 
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.ENGAGEMENT_TAG]
+    tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
-    def put(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
-        """Delivers a single audience for an engagement.
+    def post(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
+        """Delivers one audience for an engagement.
 
         ---
         security:
@@ -489,12 +490,11 @@ class EngagementDeliverAudienceView(SwaggerView):
         """
 
         # TODO - implement after HUS-479 is done
+        # pylint: disable=unused-variable
         user_id = ObjectId()
 
         # validate object id
-        if not all(
-            ObjectId(x).is_valid() for x in [audience_id, engagement_id]
-        ):
+        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
         # validate engagement exists
@@ -539,8 +539,9 @@ class EngagementDeliverAudienceView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/audience/<audience_id>/destination/<destination_id/deliver",
-    "EngagementDeliverAudienceView",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"audience/<audience_id>/destination/<destination_id>/deliver",
+    "EngagementDeliverDestinationView",
 )
 class EngagementDeliverDestinationView(SwaggerView):
     """
@@ -587,13 +588,14 @@ class EngagementDeliverDestinationView(SwaggerView):
     }
 
     responses.update(AUTH401_RESPONSE)
-    tags = [api_c.ENGAGEMENT_TAG]
+    tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
-    def put(
+    # pylint: disable=too-many-return-statements
+    def post(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
-        """Delivers a single destination for an audience for an engagement.
+        """Delivers one destination for an engagement audience.
 
         ---
         security:
@@ -611,11 +613,12 @@ class EngagementDeliverDestinationView(SwaggerView):
         """
 
         # TODO - implement after HUS-479 is done
+        # pylint: disable=unused-variable
         user_id = ObjectId()
 
         # validate object id
         if not all(
-            ObjectId(x).is_valid()
+            ObjectId.is_valid(x)
             for x in [audience_id, engagement_id, destination_id]
         ):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST

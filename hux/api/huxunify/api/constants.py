@@ -197,6 +197,7 @@ ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_NAME = "engagement_name"
 ENGAGEMENT_ENDPOINT = "/engagements"
 ENGAGEMENT_TAG = "engagements"
+DELIVERY_TAG = "delivery"
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
