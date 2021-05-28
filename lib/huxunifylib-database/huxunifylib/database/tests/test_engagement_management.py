@@ -261,7 +261,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
-        # attach an audience
+        # remove an audience
         result = em.remove_audiences_from_engagement(
             self.database, engagement_id, self.user_id, [self.audience[c.ID]]
         )
