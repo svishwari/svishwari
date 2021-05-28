@@ -234,6 +234,46 @@ class TestEngagementManagement(unittest.TestCase):
             engagement[c.AUDIENCES], new_engagement[c.AUDIENCES]
         )
 
+    def test_set_engagement_remove_audience_after(self) -> None:
+        """Test creating an engagement and remove an audience after
+
+        Returns:
+            Response: None
+
+        """
+
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement 2",
+            "Engagement 2 Description",
+            [self.audience],
+            self.user_id,
+        )
+
+        engagement = em.get_engagement(self.database, engagement_id)
+
+        # check engagement
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+        self.assertEqual(
+            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
+            self.audience[c.AUDIENCE_ID],
+        )
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        # attach an audience
+        result = em.remove_audiences_from_engagement(
+            self.database, engagement_id, self.user_id, [self.audience[c.ID]]
+        )
+        self.assertTrue(result)
+
+        # ensure the audience was removed
+        updated = em.get_engagement(self.database, engagement_id)
+        self.assertIn(c.AUDIENCES, updated)
+
+        # test audience should not be there
+        self.assertFalse(updated[c.AUDIENCES])
+
     def test_set_engagement_attach_audience_after(self) -> None:
         """Test creating an engagement and attaching an audience after
 
@@ -250,6 +290,32 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_id,
         )
 
+        engagement = em.get_engagement(self.database, engagement_id)
+
+        # check engagement
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+        self.assertEqual(
+            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
+            self.audience[c.AUDIENCE_ID],
+        )
         self.assertIsInstance(engagement_id, ObjectId)
 
-        # attach an audience
+        # setup a few destinations
+        new_audience = {
+            c.AUDIENCE_ID: ObjectId(),
+            c.DESTINATIONS: self.destinations,
+        }
+
+        result = em.append_audiences_to_engagement(
+            self.database, engagement_id, self.user_id, [new_audience]
+        )
+        self.assertTrue(result)
+
+        # ensure the audience was removed
+        updated = em.get_engagement(self.database, engagement_id)
+        self.assertIn(c.AUDIENCES, updated)
+
+        # test audience should not be there
+        self.assertTrue(updated[c.AUDIENCES])
+        self.assertEqual(len(updated[c.AUDIENCES]), 2)

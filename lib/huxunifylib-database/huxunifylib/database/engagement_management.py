@@ -42,17 +42,8 @@ def set_engagement(
 
     """
 
-    if not audiences:
-        raise AttributeError("A minimum of one audience is required.")
-
-    # validate the audience has an ID
-    for audience in audiences:
-        if not isinstance(audience, dict):
-            raise AttributeError("Audience must be a dict.")
-        if db_c.AUDIENCE_ID not in audience:
-            raise KeyError(f"Missing audience {db_c.AUDIENCE_ID}.")
-        if not ObjectId(audience[db_c.AUDIENCE_ID]):
-            raise ValueError("Invalid object id value.")
+    # validate audiences
+    validate_audiences(audiences)
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
@@ -293,7 +284,7 @@ def remove_audiences_from_engagement(
     ]
 
     try:
-        bad = collection.update(
+        result = collection.update_one(
             {db_c.ID: engagement_id},
             {
                 "$pull": {
@@ -310,7 +301,82 @@ def remove_audiences_from_engagement(
             },
         )
 
+        return result.modified_count == len(audience_ids)
+
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+# pylint: disable=too-many-arguments
+# pylint: disable=no-else-return
+def append_audiences_to_engagement(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    user_id: ObjectId,
+    audiences: list,
+) -> dict:
+    """A function to allow for appending audiences to an engagement.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): ObjectID of the engagement to be updated.
+        user_id (ObjectId): ObjectID of user.
+        audiences (list): list of audiences.
+
+    Returns:
+        dict: dict object of the engagement that has been updated
+    """
+
+    # validate audiences
+    validate_audiences(audiences)
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    try:
+        return collection.find_one_and_update(
+            {db_c.ID: engagement_id},
+            {
+                "$set": {
+                    db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                    db_c.UPDATED_BY: user_id,
+                },
+                "$push": {db_c.AUDIENCES: audiences},
+            },
+            upsert=False,
+            return_document=pymongo.ReturnDocument.AFTER,
+        )
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+def validate_audiences(audiences: list) -> None:
+    """A function for validating a list of audience objects.
+
+    Args:
+        audiences (list): list of audiences.
+
+    Returns:
+
+    """
+    if not audiences:
+        raise AttributeError("A minimum of one audience is required.")
+
+    # validate the audience has an ID
+    for audience in audiences:
+        if not isinstance(audience, dict):
+            raise AttributeError("Audience must be a dict.")
+        if db_c.AUDIENCE_ID not in audience:
+            raise KeyError(f"Missing audience {db_c.AUDIENCE_ID}.")
+        if not ObjectId(audience[db_c.AUDIENCE_ID]):
+            raise ValueError("Invalid object id value.")
