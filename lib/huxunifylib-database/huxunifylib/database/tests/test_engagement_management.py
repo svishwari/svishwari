@@ -316,6 +316,6 @@ class TestEngagementManagement(unittest.TestCase):
         updated = em.get_engagement(self.database, engagement_id)
         self.assertIn(c.AUDIENCES, updated)
 
-        # test audience should not be there
+        # test audience appears as expected
         self.assertTrue(updated[c.AUDIENCES])
         self.assertEqual(len(updated[c.AUDIENCES]), 2)
