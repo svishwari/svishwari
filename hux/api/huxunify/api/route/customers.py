@@ -86,7 +86,7 @@ class CustomerProfilesOverview(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [c.CUSTOMERS_TAG]
 
-    def get(self) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, int]: #pylint disable=no-self-use
         """Retrieves a customer data overview.
 
         ---
