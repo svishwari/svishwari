@@ -5,6 +5,7 @@ Schemas for the Customer Profiles API
 
 from flask_marshmallow import Schema
 from marshmallow import fields
+from huxunify.api import constants as api_c
 
 
 class CustomerOverviewSchema(Schema):
@@ -31,3 +32,20 @@ class CustomerOverviewSchema(Schema):
     max_ltv_predicted = fields.Float(required=True)
     min_ltv_actual = fields.Float(required=True)
     max_ltv_actual = fields.Float(required=True)
+
+
+class CustomersSchema(Schema):
+    """Customers Schema"""
+
+    total_customers = fields.Integer(required=True, example=827438924)
+    customers = fields.List(
+        fields.Dict(),
+        example=[
+            {
+                api_c.ID: "1531-2039-22",
+                api_c.FIRST_NAME: "Bertie",
+                api_c.LAST_NAME: "Fox",
+                api_c.MATCH_CONFIDENCE: 0.96666666661,
+            }
+        ],
+    )
