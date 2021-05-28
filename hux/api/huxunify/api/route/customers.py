@@ -24,9 +24,7 @@ customers_bp = Blueprint(c.CUSTOMERS_TAG, import_name=__name__)
 
 
 def get_customers_overview() -> dict:
-
     """Fetch customers overview data.
-
     ---
 
         Args: None
@@ -83,7 +81,7 @@ class CustomerProfilesOverview(SwaggerView):
     tags = [c.CUSTOMERS_TAG]
 
     def get(self) -> Tuple[dict, int]:
-        """Retrieves a Customer data overview.
+        """Retrieves a customer data overview.
 
         ---
 

@@ -19,7 +19,7 @@ class TestCustomersOverview(unittest.TestCase):
         """
         Sets up Test Client
 
-        Returns: None
+        Returns:
         """
         self.app = create_app().test_client()
         self.customer_overview_endpoint = (
@@ -45,7 +45,9 @@ class TestCustomersOverview(unittest.TestCase):
         gender_women = self.jsonresponse["gender_women"]
         gender_other = self.jsonresponse["gender_other"]
 
-        # sum_gender = gender_men + gender_women + gender_other
+        # TODO check for sum of ratios to be equal to 1
+        #  sum_gender = gender_men + gender_women + gender_other
+        # self.assertEqual(round(sum_gender,2),1.00)
 
         self.assertGreaterEqual(gender_men, 0)
         self.assertGreaterEqual(gender_women, 0)
@@ -63,6 +65,7 @@ class TestCustomersOverview(unittest.TestCase):
         min_age = self.jsonresponse["min_age"]
         max_age = self.jsonresponse["max_age"]
 
+        # TODO to check the min_age & max_age are in range
         # self.assertGreaterEqual(min_age,19)
         # self.assertLessEqual(max_age,90)
         self.assertLess(min_age, max_age)
