@@ -1,7 +1,7 @@
 """
 Purpose of this file is to house the main application code.
 """
-from flask import Flask
+from flask import Flask, Response
 from flasgger import Swagger
 from flask_cors import CORS
 
@@ -32,6 +32,26 @@ CORS_CONFIG = {
     "methods": ["OPTIONS", "GET", "POST", "PUT", "DELETE"],
     "allow_headers": ["Authorization", "Content-Type"],
 }
+
+
+def after_request(response) -> Response:
+    """Set after request headers for flask endpoints.
+
+    Args:
+        response (Response): App after request response.
+
+    Returns:
+        Response: returns the response with added headers.
+
+    """
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers[
+        "Access-Control-Allow-Methods"
+    ] = "PUT,GET,POST,DELETE,OPTIONS"
+    response.headers[
+        "Access-Control-Allow-Headers"
+    ] = "Content-Type,Authorization"
+    return response
 
 
 def configure_flask(flask_app: Flask) -> None:
@@ -78,6 +98,9 @@ def create_app() -> Flask:
 
     # setup CORS
     CORS(flask_app, resources={"/*": CORS_CONFIG})
+
+    # assign the after request call
+    flask_app.after_request(after_request)
 
     # register the routes
     for route in ROUTES:
