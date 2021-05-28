@@ -25,6 +25,7 @@ def set_engagement(
     audiences: list,
     user_id: ObjectId,
     delivery_schedule: dict = None,
+    deleted: bool = False,
 ) -> ObjectId:
     """A function to create an engagement
 
@@ -32,10 +33,10 @@ def set_engagement(
         database (DatabaseClient): A database client.
         name (str): Name of the engagement.
         description (str): Description of the engagement.
-        audiences (list): List of audience ObjectIds assigned to the engagement.
+        audiences (list): List of audiences assigned to the engagement.
         user_id (ObjectId): ObjectID of user.
         delivery_schedule (dict): Delivery Schedule dict
-
+        deleted (bool): if the engagement is deleted (soft-delete).
     Returns:
         ObjectId: id of the newly created engagement
 
@@ -73,7 +74,7 @@ def set_engagement(
         db_c.CREATE_TIME: datetime.datetime.utcnow(),
         db_c.CREATED_BY: user_id,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-        db_c.ENABLED: True,
+        db_c.DELETED: deleted,
         db_c.AUDIENCES: [],
     }
 
@@ -120,7 +121,7 @@ def get_engagements(database: DatabaseClient) -> list:
     ]
 
     try:
-        return list(collection.find({db_c.ENABLED: True}))
+        return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -149,7 +150,7 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
 
     try:
         return collection.find_one(
-            {db_c.ID: engagement_id, db_c.ENABLED: True}
+            {db_c.ID: engagement_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -182,11 +183,11 @@ def delete_engagement(
     try:
         doc = collection.find_one_and_update(
             {db_c.ID: engagement_id},
-            {"$set": {db_c.ENABLED: False}},
+            {"$set": {db_c.DELETED: True}},
             upsert=False,
             new=True,
         )
-        return not doc[db_c.ENABLED]
+        return doc[db_c.DELETED]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -242,8 +243,9 @@ def update_engagement(
     try:
         if update_doc:
             return collection.find_one_and_update(
-                {db_c.ID: engagement_id},
+                {db_c.ID: engagement_id, db_c.DELETED: False},
                 {"$set": update_doc},
+                {db_c.DELETED: 0},
                 upsert=False,
                 new=True,
             )
