@@ -335,7 +335,12 @@ export default {
           start_date: "",
         }
       }
-      let newEngagement = await this.addEngagementToDB(this.newEngagement)
+      // This is a temporary to fulfill api calls
+      let temporaryNewEngagement = {
+        name: this.newEngagement.name,
+        description: this.newEngagement.description,
+      }
+      let newEngagement = await this.addEngagementToDB(temporaryNewEngagement)
       this.engagements.push(newEngagement)
       this.sortEngagements()
       this.onEngagementClick(newEngagement)
@@ -383,8 +388,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-stepper {
-  box-shadow: none;
+::v-deep .v-stepper {
+  box-shadow: none !important;
 }
 .new-engament-wrap {
   .delivery-options {
