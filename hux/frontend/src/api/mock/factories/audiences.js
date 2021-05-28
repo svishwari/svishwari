@@ -36,6 +36,15 @@ const audienceMock = {
       total_customers: faker.datatype.number(),
     }
   },
+  /*
+   * TO DO
+   * Later this need to be mapped to destination IDs and engagement IDs
+   */
+  destinations() {
+    return faker.datatype.array(faker.datatype.hexaDecimal)
+  },
+  engagements() {
+    return faker.datatype.array(faker.datatype.hexaDecimal)
+  },
 }
-
 export default audienceMock
