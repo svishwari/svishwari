@@ -16,6 +16,14 @@ UPDATED_BY = "updated_by"
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
+TOTAL_RECORDS = "total_records"
+MATCH_RATE = "match_rate"
+TOTAL_UNIQUE_IDS = "total_unique_ids"
+TOTAL_UNKNOWN_IDS = "total_unknown_ids"
+TOTAL_KNOWN_IDS = "total_known_ids"
+TOTAL_INDIVIDUAL_IDS = "total_individual_ids"
+TOTAL_HOUSEHOLD_IDS = "total_household_ids"
+UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 COUNTRIES = "total_countries"
 STATES = "total_us_states"
@@ -25,6 +33,10 @@ MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+MIN_LTV_PREDICTED = "min_ltv_predicted"
+MAX_LTV_PREDICTED = "max_ltv_predicted"
+MIN_LTV_ACTUAL = "min_ltv_actual"
+MAX_LTV_ACTUAL = "max_ltv_actual"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -241,6 +253,12 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
+
+# Customers API Fields
+CUSTOMERS_TAG = "customers"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
+CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
