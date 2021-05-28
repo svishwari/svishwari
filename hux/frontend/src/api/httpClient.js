@@ -4,6 +4,7 @@
 
 import axios from "axios"
 import config from "@/config"
+import Vue from "vue"
 
 const httpClient = axios.create({
   baseURL: `${config.apiUrl}${config.apiBasePath}`,
@@ -14,7 +15,7 @@ const httpClient = axios.create({
 })
 
 httpClient.interceptors.request.use(async (config) => {
-  const accessToken = localStorage.token
+  const accessToken = await Vue.prototype.$auth.getAccessToken()
   config.headers.Authorization = `Bearer ${accessToken}`
   return config
 })

@@ -8,7 +8,7 @@
       v-if="cellValue == 'Delivering'"
       v-bind:isOutlined="true"
       size="small"
-      variant="#43b02a"
+      variant="successs"
       width="20"
       height="20"
       v-bind:iconType="true"

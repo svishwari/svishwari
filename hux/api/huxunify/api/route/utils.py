@@ -180,6 +180,10 @@ def secured() -> object:
                object: returns a decorated function object.
             """
 
+            # allow preflight options through
+            if request.method == "OPTIONS":
+                return "Success", 200
+
             # get the auth token
             auth_header = request.headers.get("Authorization", None)
             if not auth_header:
@@ -188,16 +192,9 @@ def secured() -> object:
 
             # split the header
             parts = auth_header.split()
-            if parts[0] != "Bearer":
+            if parts[0] != "Bearer" or len(parts) != 2:
                 # user submitted an invalid authorization header.
                 # return a generic 401
-                return constants.INVALID_AUTH_HEADER, 401
-
-            if len(parts) == 1:
-                # token not found
-                return constants.INVALID_AUTH_HEADER, 401
-
-            if len(parts) > 2:
                 return constants.INVALID_AUTH_HEADER, 401
 
             # safely extract token using string partition

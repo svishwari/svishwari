@@ -45,7 +45,7 @@ export default {
   }
   .v-divider {
     &.v-divider--vertical {
-      border: 1px solid #d0d0ce;
+      border: 1px solid var(--v-lightGrey-base);
       margin-right: 9px;
       margin-left: 9px;
     }

@@ -144,14 +144,14 @@
                         <div class="neroBlack--text text-caption">
                           Manual delivery
                         </div>
-                        <div class="lightGreyText--text text-caption mt-1">
+                        <div class="gray--text text-caption mt-1">
                           Choose this option if you want the engagement
                           delivered immediately or at a future date and time.
                         </div>
                         <div class="neroBlack--text text-caption mt-3">
                           Recurring delivery
                         </div>
-                        <div class="lightGreyText--text text-caption mt-1">
+                        <div class="gray--text text-caption mt-1">
                           Choose this option if you want the engagement
                           delivered on a specific recurring basis you selected.
                         </div>
@@ -389,7 +389,7 @@ export default {
 .new-engament-wrap {
   .delivery-options {
     ::v-deep button {
-      background: var(--v-tertiary-base);
+      background: var(--v-white-base);
       border: 1px solid var(--v-lightGrey-base);
       box-sizing: border-box;
       border-radius: 4px;
@@ -419,7 +419,7 @@ export default {
           &.ico {
             width: 13.44px;
             height: 12.5px;
-            color: var(--v-skyBlueDark-base) !important;
+            color: var(--v-secondary-base) !important;
             margin-right: 9px;
           }
         }
