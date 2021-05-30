@@ -231,7 +231,7 @@ CDP_DATA_SOURCE_STATUS_PENDING = "Pending"
 
 DATA_ROUTER_BATCH_SIZE = "data_router_batch_size"
 AUDIENCE_ROUTER_BATCH_SIZE = "audience_router_batch_size"
-AUDIENCE_ROUTER_STUB_TEST="audience_router_stub_test"
+AUDIENCE_ROUTER_STUB_TEST = "audience_router_stub_test"
 AWS_BATCH_MEM_LIMIT = "aws_batch_mem_limit"
 
 # Notifications constants
