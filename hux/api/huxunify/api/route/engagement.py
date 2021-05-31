@@ -498,7 +498,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate engagement exists
+        # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
 
