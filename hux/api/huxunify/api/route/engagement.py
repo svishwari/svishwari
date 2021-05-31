@@ -411,7 +411,7 @@ class EngagementDeliverView(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate engagement exists
+        # convert the engagement ID
         engagement_id = ObjectId(engagement_id)
 
         # check if engagement exists
