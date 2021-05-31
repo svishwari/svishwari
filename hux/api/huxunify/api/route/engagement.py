@@ -414,7 +414,7 @@ class EngagementDeliverView(SwaggerView):
         # validate engagement exists
         engagement_id = ObjectId(engagement_id)
 
-        # check if audience exists
+        # check if engagement exists
         engagement = get_engagement(get_db_client(), engagement_id)
         if not engagement:
             return {
