@@ -424,7 +424,7 @@ class EngagementDeliverView(SwaggerView):
         # validate delivery route
         # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
-            "message": f"Successfully created delivery job(s) for {engagement_id}"
+            "message": f"Successfully created delivery job(s) for engagement ID {engagement_id}"
         }, HTTPStatus.OK
 
 
