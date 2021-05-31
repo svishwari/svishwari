@@ -637,7 +637,7 @@ class EngagementDeliverDestinationView(SwaggerView):
                 "message": "Engagement does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate that the audience belongs to the engagement
+        # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
             return {
                 "message": "Engagement has no audiences."
