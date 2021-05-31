@@ -472,5 +472,5 @@ class AudienceDeliverView(SwaggerView):
         # validate delivery route
         # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
-            "message": f"Successfully created delivery job(s) for {audience_id}"
+            "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
