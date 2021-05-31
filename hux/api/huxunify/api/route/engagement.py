@@ -625,7 +625,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         ):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate engagement exists
+        # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
         destination_id = ObjectId(destination_id)
