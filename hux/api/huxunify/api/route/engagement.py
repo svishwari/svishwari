@@ -687,5 +687,5 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         # validate delivery route
         return {
-            "message": f"Successfully created delivery job(s) for {engagement_id} and {audience_id}"
+            "message": f"Successfully created delivery job(s) for engagement ID {engagement_id} and audience ID {audience_id} to destination ID {destination_id}"
         }, HTTPStatus.OK
