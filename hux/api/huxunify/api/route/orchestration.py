@@ -453,7 +453,7 @@ class AudienceDeliverView(SwaggerView):
         if not ObjectId.is_valid(audience_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate audience exists
+        # convert to an ObjectId
         audience_id = ObjectId(audience_id)
 
         # check if audience exists
