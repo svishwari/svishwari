@@ -36,6 +36,7 @@ class Config:
     """
 
     DEBUG = False
+    FLASK_ENV = "test"
 
     # AWS_CONFIG
     AWS_REGION = config("AWS_REGION", default="us-east-2")
@@ -115,7 +116,7 @@ class ProductionConfig(Config):
     Production Config Object
     """
 
-    ...
+    FLASK_ENV = api_c.PRODUCTION_MODE
 
 
 class DevelopmentConfig(Config):
@@ -124,6 +125,7 @@ class DevelopmentConfig(Config):
     """
 
     DEBUG = False
+    FLASK_ENV = api_c.DEVELOPMENT_MODE
     MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="read_write_user")
     MONGO_DB_CONFIG = {
         "host": Config.MONGO_DB_HOST,
@@ -146,6 +148,9 @@ def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
 
     # import the aws module to prevent app context issues.
     aws = import_module(api_c.AWS_MODULE_NAME)
+
+    # set flask key based on derived setting
+    environ["FLASK_ENV"] = get_config().FLASK_ENV
 
     if flask_env in [api_c.DEVELOPMENT_MODE, api_c.PRODUCTION_MODE]:
         # load in variables before running flask app.
