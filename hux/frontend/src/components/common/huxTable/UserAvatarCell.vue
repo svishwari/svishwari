@@ -7,12 +7,12 @@
         v-on="on"
         v-bind:style="{ 'border-color': cellValue.color }"
       >
-        {{ cellValue.shortName }}
+        {{ cellValue.shortName | TitleCase }}
       </span>
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title>{{ cellValue.fullName }}</v-list-item-title>
+        <v-list-item-title>{{ cellValue.fullName | TitleCase }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
