@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 from unittest import TestCase
 
 import mongomock
@@ -11,7 +12,6 @@ from huxunify.api.config import get_config
 from huxunifylib.database.client import DatabaseClient
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
-
 
 VALID_RESPONSE = {
     "active": True,
@@ -28,13 +28,15 @@ VALID_RESPONSE = {
     "uid": "1234567",
 }
 
+TEST_AUTH_BEARER_TOKEN = "Bearer 12345678"
 
+
+@mongomock.patch(servers=(("localhost", 27017),))
 class DataSourcesTest(TestCase):
     """
     Test Data Sources CRUD APIs
     """
 
-    @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self) -> None:
         """Setup tests
 
@@ -52,33 +54,26 @@ class DataSourcesTest(TestCase):
         self.test_client = create_app().test_client()
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
-
-        self.introspect_call = (
-            f"{self.config.OKTA_ISSUER}"
-            f"/oauth2/v1/introspect?client_id="
-            f"{self.config.OKTA_CLIENT_ID}"
-        )
-
-    @requests_mock.Mocker()
-    def test_get_data_sources(self, request_mocker: Mocker):
         # create data sources first
-        data_sources = []
+
+        self.data_sources = []
         for ds in [api_c.FACEBOOK_NAME, api_c.SFMC_NAME]:
             data_source = create_data_source(self.database, ds, "")
-            data_sources.append(data_source)
+            self.data_sources.append(data_source)
 
-        # set the introspect call so we can authorize
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        self.introspect_call = ("{}/oauth2/v1/introspect?client_id={}".format(
+            self.config.OKTA_ISSUER,
+            self.config.OKTA_CLIENT_ID
+        ))
 
-        # attempt to get data-sources
-        response = self.test_client.get(
-            "/api/v1/data-sources",
-            headers={"Authorization": "Bearer 12345678"},
-        )
-        print(len(response.json))
+    def tearDown(self) -> None:
+        """
+        Destroy all resources after each test
+        """
+        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
     @requests_mock.Mocker()
-    def test_get_data_source_by_id_valid_request(self, request_mocker: Mocker):
+    def test_get_data_source_by_id_valid_id(self, request_mocker: Mocker):
         """Test get data source by id from DB
 
         Args:
@@ -91,15 +86,17 @@ class DataSourcesTest(TestCase):
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         response = self.test_client.get(
-            f'{self.data_sources_api_endpoint}/{valid_response["_id"]}',
-            headers={"Authorization": "Bearer 12345678"},
+            "{}/{}".format(self.data_sources_api_endpoint, valid_response["_id"]),
+            headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, valid_response)
+        response_json = response.json
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response_json, valid_response)
 
     @requests_mock.Mocker()
-    def test_get_all_data_sources_valid_request(self, request_mocker: Mocker):
+    def test_get_all_data_sources_success(self, request_mocker: Mocker):
         """Test get all data source from DB
 
         Args:
@@ -113,19 +110,17 @@ class DataSourcesTest(TestCase):
 
         response = self.test_client.get(
             self.data_sources_api_endpoint,
-            headers={"Authorization": "Bearer 12345678"},
+            headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
         )
 
         status_code = response.status_code
-        response_data = json.loads(response.data.decode("utf-8"))
+        response_json = response.json
 
-        self.assertEqual(status_code, 200)
-        self.assertEqual(response_data, valid_response)
+        self.assertEqual(status_code, HTTPStatus.OK)
+        self.assertEqual(response_json, valid_response)
 
     @requests_mock.Mocker()
-    def test_delete_data_source_by_id_valid_request(
-        self, request_mocker: Mocker
-    ):
+    def test_delete_data_source_by_id_valid_id(self, request_mocker: Mocker):
         """Test delete data source by id from DB
 
         Args:
@@ -139,20 +134,17 @@ class DataSourcesTest(TestCase):
 
         response = self.test_client.delete(
             "self.data_sources_api_endpoint/{}".format(valid_response["_id"]),
-            headers={"Authorization": "Bearer 12345678"},
+            headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
         )
 
         status_code = response.status_code
-        response_data = json.loads(response.data.decode("utf-8"))
+        response_json = response.json
 
-        self.assertEqual(status_code, 200)
-        self.assertEqual(
-            response_data[c.CDP_DATA_SOURCE_ID], valid_response["_id"]
-        )
+        self.assertEqual(status_code, HTTPStatus.OK)
+        self.assertEqual(response_json, valid_response)
 
     @requests_mock.Mocker()
-    def test_create_data_source(self, request_mocker: Mocker):
-
+    def test_create_data_source_valid_params(self, request_mocker: Mocker):
         ds_name = "test_create"
         ds_category = "Web Events"
 
@@ -177,15 +169,78 @@ class DataSourcesTest(TestCase):
             ),
             headers={
                 "Content-Type": "application/json",
-                "Authorization": "Bearer 12345678",
+                "Authorization": TEST_AUTH_BEARER_TOKEN,
             },
         )
 
         status_code = response.status_code
-        response_data = json.loads(response.data.decode("utf-8"))
+        response_json = response.json
 
-        self.assertEqual(status_code, 200)
-        self.assertEqual(response_data[c.CDP_DATA_SOURCE_FIELD_NAME], ds_name)
-        self.assertEqual(
-            response_data[c.CDP_DATA_SOURCE_FIELD_CATEGORY], ds_category
+        self.assertEqual(status_code, HTTPStatus.OK)
+        self.assertEqual(response_json, valid_response)
+
+    @requests_mock.Mocker()
+    def test_get_data_source_by_id_invalid_id(self, request_mocker: Mocker):
+        """Test get data source by id from DB
+
+        Args:
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.test_client.get(
+            "{}/{}".format(self.data_sources_api_endpoint, '@#$%'),
+            headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
         )
+
+        status_code = response.status_code
+
+        self.assertEqual(status_code, HTTPStatus.NOT_FOUND)
+
+    @requests_mock.Mocker()
+    def test_delete_data_source_by_id_invalid_id(self, request_mocker: Mocker):
+        """Test delete data source by id from DB
+
+        Args:
+
+        Returns:
+
+        """
+        ds_id = "ABC123"
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.test_client.delete(
+            "self.data_sources_api_endpoint/{}".format(ds_id),
+            headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
+        )
+
+        status_code = response.status_code
+
+        self.assertEqual(status_code, HTTPStatus.NOT_FOUND)
+
+    @requests_mock.Mocker()
+    def test_create_data_source_invalid_params(self, request_mocker: Mocker):
+        ds_name = None
+        ds_category = "Web Events"
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.test_client.post(
+            self.data_sources_api_endpoint,
+            data=json.dumps(
+                {
+                    c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
+                    c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
+                }
+            ),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": TEST_AUTH_BEARER_TOKEN,
+            },
+        )
+
+        status_code = response.status_code
+
+        self.assertEqual(status_code, HTTPStatus.BAD_REQUEST)
