@@ -31,11 +31,21 @@ class EngagementGetSchema(Schema):
     )
     name = fields.String(attribute=api_c.NAME, required=True)
     description = fields.String(attribute=api_c.DESCRIPTION)
-    # TODO return empty list for now
     audiences = fields.List(
-        cls_or_instance=fields.String,
-        attribute=db_c.AUDIENCES,
-        required=True,
+        fields.Dict(),
+        attribute=api_c.ENGAGEMENT_AUDIENCE,
+        example=[
+            {
+                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.DESTINATION_IDS: [
+                    {"id": "60ae035b6c5bf45da27f17d6", "name": "Facebook"},
+                ],
+                api_c.DELIVERIES: [
+                    "60ae035b6c5bf45da27f17e5",
+                    "60ae035b6c5bf45da27f17e6",
+                ],
+            }
+        ],
     )
     status = fields.String(
         attribute=api_c.STATUS,
@@ -61,7 +71,19 @@ class EngagementPostSchema(Schema):
     name = fields.String(required=True, validate=must_not_be_blank)
     description = fields.String()
     delivery_schedule = fields.Nested(DeliverySchedule)
-    audiences = fields.List(cls_or_instance=fields.String)
+    audiences = fields.List(
+        fields.Dict(),
+        attribute=api_c.ENGAGEMENT_AUDIENCE,
+        example=[
+            {
+                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.DESTINATION_IDS: [
+                    "60ae035b6c5bf45da27f17e5",
+                    "60ae035b6c5bf45da27f17e6",
+                ],
+            }
+        ],
+    )
 
 
 class EngagementPutSchema(Schema):
@@ -71,5 +93,50 @@ class EngagementPutSchema(Schema):
 
     name = fields.String(required=False)
     description = fields.String(required=False)
-    audiences = fields.List(cls_or_instance=fields.String, required=False)
+    audiences = fields.List(
+        fields.Dict(),
+        attribute=api_c.ENGAGEMENT_AUDIENCE,
+        example=[
+            {
+                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.DESTINATION_IDS: [
+                    "60ae035b6c5bf45da27f17e5",
+                    "60ae035b6c5bf45da27f17e6",
+                ],
+            }
+        ],
+    )
     delivery_schedule = fields.Nested(DeliverySchedule, required=False)
+
+
+class AudienceEngagementSchema(Schema):
+    """
+    Schema for adding/deleting audience to engagement
+    """
+
+    audiences = fields.List(
+        fields.Dict(),
+        example=[
+            {
+                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.DESTINATION_IDS: [
+                    "60ae035b6c5bf45da27f17e5",
+                    "60ae035b6c5bf45da27f17e6",
+                ],
+            }
+        ],
+    )
+
+
+class AudienceEngagementDeleteSchema(Schema):
+    """
+    Schema for adding/deleting audience to engagement
+    """
+
+    audience_ids = fields.List(
+        fields.String,
+        example=[
+            "60ae035b6c5bf45da27f17e5",
+            "60ae035b6c5bf45da27f17e6",
+        ],
+    )
