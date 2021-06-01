@@ -411,10 +411,10 @@ class EngagementDeliverView(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate engagement exists
+        # convert the engagement ID
         engagement_id = ObjectId(engagement_id)
 
-        # check if audience exists
+        # check if engagement exists
         engagement = get_engagement(get_db_client(), engagement_id)
         if not engagement:
             return {
@@ -424,7 +424,7 @@ class EngagementDeliverView(SwaggerView):
         # validate delivery route
         # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
-            "message": f"Successfully created delivery job(s) for {engagement_id}"
+            "message": f"Successfully created delivery job(s) for engagement ID {engagement_id}"
         }, HTTPStatus.OK
 
 
@@ -498,18 +498,18 @@ class EngagementDeliverAudienceView(SwaggerView):
         if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate engagement exists
+        # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
 
-        # check if audience exists
+        # check if engagement exists
         engagement = get_engagement(get_db_client(), engagement_id)
         if not engagement:
             return {
                 "message": "Engagement does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate that the audience belongs to the engagement
+        # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
             return {
                 "message": "Engagement has no audiences."
@@ -535,7 +535,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         # validate delivery route
         # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
-            "message": f"Successfully created delivery job(s) for {engagement_id} and {audience_id}"
+            "message": f"Successfully created delivery job(s) for engagement ID {engagement_id} and audience ID {audience_id}"
         }, HTTPStatus.OK
 
 
@@ -625,7 +625,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         ):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate engagement exists
+        # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
         destination_id = ObjectId(destination_id)
@@ -637,7 +637,7 @@ class EngagementDeliverDestinationView(SwaggerView):
                 "message": "Engagement does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate that the audience belongs to the engagement
+        # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
             return {
                 "message": "Engagement has no audiences."
@@ -687,5 +687,5 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         # validate delivery route
         return {
-            "message": f"Successfully created delivery job(s) for {engagement_id} and {audience_id}"
+            "message": f"Successfully created delivery job(s) for engagement ID {engagement_id} and audience ID {audience_id} to destination ID {destination_id}"
         }, HTTPStatus.OK

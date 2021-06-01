@@ -453,7 +453,7 @@ class AudienceDeliverView(SwaggerView):
         if not ObjectId.is_valid(audience_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
-        # validate audience exists
+        # convert to an ObjectId
         audience_id = ObjectId(audience_id)
 
         # check if audience exists
@@ -472,5 +472,5 @@ class AudienceDeliverView(SwaggerView):
         # validate delivery route
         # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
-            "message": f"Successfully created delivery job(s) for {audience_id}"
+            "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
