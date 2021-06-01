@@ -10,10 +10,10 @@ from huxunify.api.schema.utils import redact_fields
 
 
 def get_customer_profile(customer_id: str) -> dict:
-    """
+    """Retrieves a customer profile.
 
     Args:
-        customer_id: id of the customer
+        customer_id (str): id of the customer
 
     Returns:
         dict: dictionary containing the customer profile

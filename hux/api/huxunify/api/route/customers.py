@@ -11,7 +11,7 @@ from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
 from huxunify.api.data_connectors import cdp
-from huxunify.api.schema.customer import CustomerProfileSchema
+from huxunify.api.schema.customers import CustomerProfileSchema
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
@@ -33,7 +33,6 @@ class CustomerProfileSearch(SwaggerView):
     Individual Customer Profile Search Class
     """
 
-    # TODO is customer id a mongo id or an id generated from snowflake?
     parameters = [
         {
             "name": api_c.CUSTOMER_ID,
@@ -41,7 +40,7 @@ class CustomerProfileSearch(SwaggerView):
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "5f5f7262997acad4bac4373b",
+            "example": "1531-1234-21",
         }
     ]
     responses = {
@@ -59,7 +58,7 @@ class CustomerProfileSearch(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(CustomerProfileSchema)
     def get(self, customer_id: str) -> Tuple[dict, int]:
-        """Retrieves customer profile by ID
+        """Retrieves a customer profile.
 
         Args:
             customer_id: ID of the customer

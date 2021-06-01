@@ -254,7 +254,7 @@ INVALID_AUTH_HEADER = "Invalid authorization header."
 INVALID_AUTH = "You are not authorized to visit this page."
 
 # FILTERING
-REDACTED = "REDACTED"
+REDACTED = "++REDACTED++"
 CUSTOMER_PROFILE_REDACTED_FIELDS = [
     EMAIL,
     PHONE,

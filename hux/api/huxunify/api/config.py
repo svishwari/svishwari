@@ -111,7 +111,7 @@ class Config:
 
     # CDP
     # TODO config details needed for this. These values are not real
-    CDP_SERVICE = "https://cdp.hux.com"
+    CDP_SERVICE = "https://cdp.deloittehux.com"
     CDP_HEADERS = {
         "Authorization": "",
     }

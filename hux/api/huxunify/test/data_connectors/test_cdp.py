@@ -64,9 +64,9 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
 }
 
 
-class TectonTest(TestCase):
+class CDPTest(TestCase):
     """
-    Test Tecton request methods
+    Test CDP request methods
     """
 
     def setUp(self) -> None:
