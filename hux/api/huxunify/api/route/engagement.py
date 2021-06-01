@@ -374,7 +374,7 @@ class EngagementDeliverView(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Result.",
+            "description": "Delivery job created.",
             "schema": {
                 "example": {"message": "Delivery job created."},
             },
