@@ -12,6 +12,7 @@ FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
 CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
+MATCH_CONFIDENCE = "match_confidence"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
