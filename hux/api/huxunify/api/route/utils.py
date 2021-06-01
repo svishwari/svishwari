@@ -180,25 +180,28 @@ def secured() -> object:
                object: returns a decorated function object.
             """
 
+            # allow preflight options through
+            if request.method == "OPTIONS":
+                return "Success", 200
+
             # get the auth token
-            # {"Authorization": f"Bearer {TEST_TOKEN}"}
-            auth_header = request.headers.get("Authorization")
+            auth_header = request.headers.get("Authorization", None)
             if not auth_header:
                 # no authorization header, return a generic 401.
-                return constants.INVALID_AUTH, 401
+                return constants.INVALID_AUTH_HEADER, 401
 
-            # check header
-            if not auth_header.startswith("Bearer "):
+            # split the header
+            parts = auth_header.split()
+            if parts[0] != "Bearer" or len(parts) != 2:
                 # user submitted an invalid authorization header.
-                # return a generic 403
-                return constants.INVALID_AUTH_HEADER, 403
+                # return a generic 401
+                return constants.INVALID_AUTH_HEADER, 401
 
             # safely extract token using string partition
-            _, _, token = auth_header.partition(" ")
-            if introspect_token(token):
+            if introspect_token(parts[1]):
                 return in_function(*args, **kwargs)
 
-            return constants.INVALID_AUTH, 401
+            return constants.INVALID_AUTH, 400
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function

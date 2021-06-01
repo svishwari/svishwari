@@ -4,10 +4,21 @@ Schemas for the Customers API
 """
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, Float, DateTime, Boolean, List, Nested
+from marshmallow.fields import (
+    Str,
+    Int,
+    Float,
+    DateTime,
+    Boolean,
+    List,
+    Nested,
+    Integer,
+    Dict,
+)
 from huxunify.api.schema.utils import (
     validate_object_id,
 )
+import huxunify.api.constants as api_c
 
 
 class DataSource(Schema):
@@ -66,3 +77,46 @@ class CustomerProfileSchema(Schema):
     identity_resolution = Nested(IdentityResolution, required=True)
     propensity_to_unsubscribe = Float(required=True)
     propensity_to_purchase = Float(required=True)
+
+
+class CustomerOverviewSchema(Schema):
+    """Customer Profile Overview Schema"""
+
+    total_records = Integer(required=True)
+    match_rate = Float(required=True)
+    total_unique_ids = Integer(required=True)
+    total_unknown_ids = Integer(required=True)
+    total_known_ids = Integer(required=True)
+    total_individual_ids = Integer(required=True)
+    total_household_ids = Integer(required=True)
+    updated = DateTime(required=True)
+    total_customers = Integer(required=True)
+    total_countries = Integer(required=True)
+    total_us_states = Integer(required=True)
+    total_cities = Integer(required=True)
+    min_age = Integer(required=True)
+    max_age = Integer(required=True)
+    gender_women = Float(required=True)
+    gender_men = Float(required=True)
+    gender_other = Float(required=True)
+    min_ltv_predicted = Float(required=True)
+    max_ltv_predicted = Float(required=True)
+    min_ltv_actual = Float(required=True)
+    max_ltv_actual = Float(required=True)
+
+
+class CustomersSchema(Schema):
+    """Customers Schema"""
+
+    total_customers = Integer(required=True, example=827438924)
+    customers = List(
+        Dict(),
+        example=[
+            {
+                api_c.ID: "1531-2039-22",
+                api_c.FIRST_NAME: "Bertie",
+                api_c.LAST_NAME: "Fox",
+                api_c.MATCH_CONFIDENCE: 0.96666666661,
+            }
+        ],
+    )

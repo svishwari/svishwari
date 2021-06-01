@@ -26,7 +26,11 @@ from huxunify.api.schema.engagement import (
     EngagementGetSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
+from huxunify.api.route.utils import (
+    add_view_to_blueprint,
+    get_db_client,
+    secured,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
@@ -34,6 +38,11 @@ engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
 # TODO - implement after HUS-443 is done to grab user/okta_id
 # TODO Add updated_by fields to engagement_mgmt in set, update and delete methods
+@engagement_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the engagement endpoints."""
+    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(
@@ -59,6 +68,10 @@ class EngagementSearch(SwaggerView):
         """Retrieves all engagements.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
 
         Returns:
             Tuple[dict, int]: dict of engagements and http code
@@ -120,6 +133,8 @@ class IndividualEngagementSearch(SwaggerView):
         """Retrieves an engagement.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
 
         Args:
             engagement_id (str): id of the engagement
@@ -195,6 +210,11 @@ class SetEngagement(SwaggerView):
         """Creates a new engagement.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+
         Returns:
             Tuple[dict, int]: Engagement created, HTTP status.
 
@@ -285,6 +305,9 @@ class DeleteEngagement(SwaggerView):
         """Deletes an engagement.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             engagement_id (str): Engagement id
 

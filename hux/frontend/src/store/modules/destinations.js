@@ -6,10 +6,13 @@ const namespaced = true
 
 const state = {
   items: {},
+  constants: null,
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
+
+  constants: (state) => state.constants,
 }
 
 const mutations = {
@@ -21,6 +24,10 @@ const mutations = {
 
   SET_ONE(state, item) {
     Vue.set(state.items, item.id, item)
+  },
+
+  SET_CONSTANTS(state, data) {
+    Vue.set(state, "constants", data)
   },
 }
 
@@ -47,10 +54,10 @@ const actions = {
 
   async add({ commit }, destination) {
     try {
-      const response = await api.destinations.update(
-        destination.id,
-        destination.authentication_details
-      )
+      const body = {
+        authentication_details: destination.authentication_details,
+      }
+      const response = await api.destinations.update(destination.id, body)
       commit("SET_ONE", response.data)
     } catch (error) {
       handleError(error)
@@ -60,10 +67,21 @@ const actions = {
 
   async validate(_, destination) {
     try {
-      await api.destinations.validate({
-        authentication_details: destination.authentication_details,
+      const body = {
         type: destination.type,
-      })
+        authentication_details: destination.authentication_details,
+      }
+      await api.destinations.validate(body)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async constants({ commit }) {
+    try {
+      const response = await api.destinations.constants()
+      commit("SET_CONSTANTS", response.data)
     } catch (error) {
       handleError(error)
       throw error

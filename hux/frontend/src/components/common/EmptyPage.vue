@@ -1,7 +1,7 @@
 <template>
   <div class="empty-page d-flex justify-center align-center">
     <div class="text-center">
-      <v-icon color="blue" x-large>
+      <v-icon color="primary" x-large>
         <slot name="icon"></slot>
       </v-icon>
       <h3 class="text-h3 my-4">
