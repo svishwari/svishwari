@@ -29,7 +29,8 @@ export default Vue.extend({
   },
   beforeMount() {
     if (this.params.value) {
-      const _fullName = this.params.value.first_name + ' ' + this.params.value.last_name;
+      const _fullName =
+        this.params.value.first_name + " " + this.params.value.last_name
       this.cellValue = {
         shortName: _fullName
           .split(" ")
