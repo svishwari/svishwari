@@ -238,6 +238,7 @@ class SetEngagement(SwaggerView):
                 delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
                 if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
                 else None,
+                user_id=ObjectId(),
             )
 
             return (
