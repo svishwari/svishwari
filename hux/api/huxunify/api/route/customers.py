@@ -61,7 +61,7 @@ class CustomerProfileSearch(SwaggerView):
         """Retrieves a customer profile.
 
         Args:
-            customer_id: ID of the customer
+            customer_id (str): ID of the customer
 
         Returns:
             Tuple[dict, int]: dict of customer profile and http code
