@@ -464,6 +464,7 @@ class AudienceDeliverView(SwaggerView):
             )
         except db_exceptions.InvalidID:
             pass
+
         if not audience:
             return {
                 "message": "Audience does not exist."
