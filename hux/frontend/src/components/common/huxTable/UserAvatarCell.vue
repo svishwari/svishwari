@@ -12,7 +12,9 @@
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title>{{ cellValue.fullName | TitleCase }}</v-list-item-title>
+        <v-list-item-title>{{
+          cellValue.fullName | TitleCase
+        }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
