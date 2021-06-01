@@ -44,7 +44,7 @@ class DataSourcesTest(TestCase):
 
         """
         self.config = get_config("TEST")
-
+        self.data_sources_api_endpoint = "/api/v1{}".format(api_c.CDP_DATA_SOURCES_ENDPOINT)
         # setup the mock DB client
         self.database = DatabaseClient(
             "localhost", 27017, None, None
