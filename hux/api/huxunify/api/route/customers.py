@@ -28,6 +28,8 @@ from huxunify.api.schema.customers import (
 from huxunify.api import constants as api_c
 
 # setup the Customers blueprint
+from huxunify.test.data_connectors import test_cdp
+
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
@@ -217,7 +219,9 @@ class CustomerProfileSearch(SwaggerView):
         """
 
         try:
-            return cdp.get_customer_profile(customer_id), HTTPStatus.OK.value
+            return test_cdp.MOCK_CUSTOMER_PROFILE_RESPONSE, HTTPStatus.OK.value
+            # TODO use real call when available
+            # return cdp.get_customer_profile(customer_id), HTTPStatus.OK.value
         except Exception as exc:
             raise handle_api_exception(
                 exc, "Unable to get customer profile."
