@@ -353,7 +353,7 @@ class DeleteEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/deliver",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.DELIVER}",
     "EngagementDeliverView",
 )
 class EngagementDeliverView(SwaggerView):
@@ -432,7 +432,7 @@ class EngagementDeliverView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/audience/<audience_id>/deliver",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCE}/<audience_id>/{api_c.DELIVER}",
     "EngagementDeliverAudienceView",
 )
 class EngagementDeliverAudienceView(SwaggerView):
@@ -546,7 +546,7 @@ class EngagementDeliverAudienceView(SwaggerView):
 @add_view_to_blueprint(
     engagement_bp,
     f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
-    f"audience/<audience_id>/destination/<destination_id>/deliver",
+    f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.DELIVER}",
     "EngagementDeliverDestinationView",
 )
 class EngagementDeliverDestinationView(SwaggerView):
