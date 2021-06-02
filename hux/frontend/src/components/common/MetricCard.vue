@@ -17,7 +17,7 @@
           v-bind:class="interactable ? 'primary--text ' : 'gray--text '"
         >
           <span v-if="!titleTooltip">{{ title }}</span>
-          <tooltip  v-if="titleTooltip">
+          <tooltip v-if="titleTooltip">
             <template slot="label-content">
               {{ title }}
             </template>
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import Tooltip from './Tooltip.vue'
+import Tooltip from "./Tooltip.vue"
 export default {
   components: { Tooltip },
   name: "metric-card",

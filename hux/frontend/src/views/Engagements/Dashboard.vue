@@ -366,11 +366,11 @@ export default {
       loading: false,
       tabOption: 0,
       Tooltips: [
-        { acronym: "CPM", description: "Cost per Thousand Impressions"},
-        { acronym: "CTR", description: "Click Through Rate"},
-        { acronym: "CPA", description: "Cost per Action"},
-        { acronym: "CPC", description: "Cost per Click"},
-      ]
+        { acronym: "CPM", description: "Cost per Thousand Impressions" },
+        { acronym: "CTR", description: "Click Through Rate" },
+        { acronym: "CPA", description: "Cost per Action" },
+        { acronym: "CPC", description: "Cost per Click" },
+      ],
     }
   },
   computed: {
@@ -508,11 +508,12 @@ export default {
       }
     },
     getTooltip(summaryCard) {
-      const acronymObject = this.Tooltips.filter(item => item.acronym === summaryCard.title)
-      if(acronymObject.length === 0)
-        return null
+      const acronymObject = this.Tooltips.filter(
+        (item) => item.acronym === summaryCard.title
+      )
+      if (acronymObject.length === 0) return null
       return acronymObject[0].description
-    }
+    },
   },
   async mounted() {
     this.loading = true
