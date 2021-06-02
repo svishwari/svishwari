@@ -324,6 +324,58 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> DataCards </v-subheader>
+    <DataCards
+      :items="[
+        {
+          id: 1,
+          name: 'Data field name',
+          description: 'Data field description',
+          size: 123456789,
+        },
+        {
+          id: 2,
+          name: 'Another data field name',
+          description: 'Another data field description',
+          size: 812380123,
+        },
+      ]"
+      :fields="[
+        {
+          key: 'name',
+          label: 'Name',
+          sortable: true,
+        },
+        {
+          key: 'description',
+          label: 'Description',
+          sortable: true,
+        },
+        {
+          key: 'size',
+          label: 'Target size',
+          sortable: true,
+        },
+        {
+          key: 'manage',
+          sortable: false,
+        },
+      ]"
+    >
+      <template #field:size="row">
+        {{ row.value | Numeric(true, true) }}
+      </template>
+      <template #field:manage>
+        <div class="d-flex justify-end">
+          <v-btn icon color="primary">
+            <v-icon>mdi-delete-outline</v-icon>
+          </v-btn>
+        </div>
+      </template>
+    </DataCards>
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Descriptive Card </v-subheader>
     <DescriptiveCard
       icon="model-unsubscribe"
@@ -420,6 +472,7 @@ import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import CardStat from "@/components/common/Cards/Stat"
 import FormSteps from "@/components/common/FormSteps"
 import FormStep from "@/components/common/FormStep"
+import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import { generateColor } from "@/utils"
 
@@ -445,6 +498,7 @@ export default {
     Logo,
     Icon,
     HuxDataTable,
+    DataCards,
     FormSteps,
     FormStep,
   },

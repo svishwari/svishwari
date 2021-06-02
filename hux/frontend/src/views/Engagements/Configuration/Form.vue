@@ -85,7 +85,6 @@
             },
             {
               key: 'manage',
-              label: 'Manage',
               sortable: false,
             },
           ]"

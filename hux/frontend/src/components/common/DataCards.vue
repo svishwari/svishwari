@@ -1,17 +1,28 @@
 <template>
   <div>
     <v-data-iterator :items="items" :items-per-page="100" hide-default-footer>
-      <!-- row -->
       <template v-slot:default="props">
+        <!-- header -->
+        <v-row align="center" no-gutters>
+          <v-col v-for="field in fields" :key="field.label">
+            <div class="px-4 py-2">
+              <span class="text-caption">
+                {{ field.label }}
+              </span>
+            </div>
+          </v-col>
+        </v-row>
+
+        <!-- row -->
         <v-card
           v-for="item in Object.values(props.items)"
           :key="item.id"
           :class="{ 'bordered-card': bordered }"
           class="data-card mb-4"
         >
-          <v-card-title>
-            <v-row align="center">
-              <v-col v-for="field in fields" :key="field.key">
+          <v-row align="center" no-gutters>
+            <v-col v-for="field in fields" :key="field.key">
+              <div class="pa-4">
                 <!-- cell slot -->
                 <slot
                   :name="`field:${field.key}`"
@@ -21,9 +32,9 @@
                   <!-- default cell -->
                   <template>{{ item[field.key] }}</template>
                 </slot>
-              </v-col>
-            </v-row>
-          </v-card-title>
+              </div>
+            </v-col>
+          </v-row>
         </v-card>
       </template>
 
@@ -66,16 +77,6 @@ export default {
       required: false,
       default: false,
     },
-  },
-
-  watch: {
-    items() {
-      console.log(this.$slots)
-    },
-  },
-
-  mounted() {
-    console.log(this.$slots)
   },
 }
 </script>
