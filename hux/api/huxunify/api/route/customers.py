@@ -12,7 +12,6 @@ from flask import Blueprint
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
-from huxunify.api.data_connectors import cdp
 from huxunify.api.schema.customers import CustomerProfileSchema
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -206,6 +205,7 @@ class CustomerProfileSearch(SwaggerView):
     tags = ([api_c.CUSTOMERS_TAG],)
 
     # pylint: disable=no-self-use
+    # pylint: disable=unused-argument
     @marshal_with(CustomerProfileSchema)
     def get(self, customer_id: str) -> Tuple[dict, int]:
         """Retrieves a customer profile.
