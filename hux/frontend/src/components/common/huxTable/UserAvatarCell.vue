@@ -7,18 +7,21 @@
         v-on="on"
         v-bind:style="{ 'border-color': cellValue.color }"
       >
-        {{ cellValue.shortName }}
+        {{ cellValue.shortName | TitleCase }}
       </span>
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title>{{ cellValue.fullName }}</v-list-item-title>
+        <v-list-item-title>{{
+          cellValue.fullName | TitleCase
+        }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
 </template>
 <script>
 import Vue from "vue"
+import { generateColor } from "@/utils"
 export default Vue.extend({
   name: "UserAvatarCell",
   data() {
@@ -28,13 +31,15 @@ export default Vue.extend({
   },
   beforeMount() {
     if (this.params.value) {
+      const _fullName =
+        this.params.value.first_name + " " + this.params.value.last_name
       this.cellValue = {
-        shortName: this.params.value
+        shortName: _fullName
           .split(" ")
           .map((n) => n[0])
           .join(""),
-        fullName: this.params.value,
-        color: this.generateColor(this.params.value, 30, 60) + " !important",
+        fullName: _fullName,
+        color: generateColor(_fullName, 30, 60) + " !important",
       }
     } else {
       this.cellValue = {
@@ -43,35 +48,6 @@ export default Vue.extend({
         color: "",
       }
     }
-  },
-  methods: {
-    generateColor(str, s, l) {
-      function hslToHex(h, s, l) {
-        l /= 100
-        const a = (s * Math.min(l, 1 - l)) / 100
-        const f = (n) => {
-          const k = (n + h / 30) % 12
-          const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
-          return Math.round(255 * color)
-            .toString(16)
-            .padStart(2, "0") // convert to Hex and prefix "0" if needed
-        }
-        return `#${f(0)}${f(8)}${f(4)}`
-      }
-      var hash = 0
-      for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash)
-      }
-
-      var h = hash % 360
-      return hslToHex(h, s, l)
-    },
-    hsl2rgb(h, s, l) {
-      let a = s * Math.min(l, 1 - l)
-      let f = (n, k = (n + h / 30) % 12) =>
-        l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
-      return [f(0), f(8), f(4)]
-    },
   },
 })
 </script>

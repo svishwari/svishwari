@@ -13,15 +13,26 @@ const audienceMock = {
   },
 
   created_by() {
-    return `${faker.name.firstName()} ${faker.name.lastName()}`
+    return {
+      first_name: `${faker.name.firstName()}`,
+      id: "608265eb0a98afab01216c61",
+      last_name: `${faker.name.lastName()}`,
+    }
   },
 
   update_time() {
     return faker.date.past()
   },
+  last_delivered() {
+    return faker.date.past()
+  },
 
   updated_by() {
-    return `${faker.name.firstName()} ${faker.name.lastName()}`
+    return {
+      first_name: `${faker.name.firstName()}`,
+      id: "608265eb0a98afab01216c61",
+      last_name: `${faker.name.lastName()}`,
+    }
   },
   audience_insights() {
     return {
