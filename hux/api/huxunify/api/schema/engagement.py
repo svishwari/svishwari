@@ -33,7 +33,7 @@ class EngagementGetSchema(Schema):
     description = fields.String(attribute=api_c.DESCRIPTION)
     audiences = fields.List(
         fields.Dict(),
-        attribute=api_c.ENGAGEMENT_AUDIENCE,
+        attribute=api_c.AUDIENCES,
         example=[
             {
                 api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
@@ -73,7 +73,7 @@ class EngagementPostSchema(Schema):
     delivery_schedule = fields.Nested(DeliverySchedule)
     audiences = fields.List(
         fields.Dict(),
-        attribute=api_c.ENGAGEMENT_AUDIENCE,
+        attribute=api_c.AUDIENCES,
         example=[
             {
                 api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
@@ -95,7 +95,7 @@ class EngagementPutSchema(Schema):
     description = fields.String(required=False)
     audiences = fields.List(
         fields.Dict(),
-        attribute=api_c.ENGAGEMENT_AUDIENCE,
+        attribute=api_c.AUDIENCES,
         example=[
             {
                 api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",

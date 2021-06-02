@@ -182,11 +182,8 @@ DESTINATIONS_TAG = "destinations"
 DESTINATIONS_DESCRIPTION = "Destinations API"
 DESTINATIONS_ENDPOINT = "/destinations"
 DESTINATION_ID = "destination_id"
-<<<<<<< HEAD
 DESTINATION = "destination"
-=======
 DESTINATION_IDS = "destination_ids"
->>>>>>> 10ad8d1a (HUS-319: API changes for adding/deleting audience to engagement)
 DESTINATION_TYPE = "type"
 DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 DESTINATION_NAME = "name"

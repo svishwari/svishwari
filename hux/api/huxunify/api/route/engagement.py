@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, C0302
 """
 Paths for engagement API
 """
@@ -518,7 +518,7 @@ class AddAudienceEngagement(SwaggerView):
     responses = {
         HTTPStatus.CREATED.value: {
             "schema": EngagementGetSchema,
-            "description": "Engagement created.",
+            "description": "Audience added to Engagement.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create the engagement.",
