@@ -123,7 +123,7 @@ class CustomerOverview(SwaggerView):
 @add_view_to_blueprint(
     customers_bp,
     f"/{api_c.CUSTOMERS_ENDPOINT}",
-    "CustomersSchema",
+    "Customersview",
 )
 class Customersview(SwaggerView):
     """
@@ -202,7 +202,7 @@ class CustomerProfileSearch(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = ([api_c.CUSTOMERS_TAG],)
+    tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
@@ -210,6 +210,7 @@ class CustomerProfileSearch(SwaggerView):
     def get(self, customer_id: str) -> Tuple[dict, int]:
         """Retrieves a customer profile.
 
+        ---
         Args:
             customer_id (str): ID of the customer
 

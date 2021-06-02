@@ -28,7 +28,8 @@ def get_customer_profile(customer_id: str) -> dict:
 
     if response.status_code != 200:
         raise Exception(
-            f"Failed to retrieve customer profile. Received status code: {response.status_code}. "
+            f"Failed to retrieve customer profile. "
+            f"Received status code: {response.status_code}. "
             f"Received body: {response.json()}"
         )
 
