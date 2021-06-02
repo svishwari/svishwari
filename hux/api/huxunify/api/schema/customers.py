@@ -34,7 +34,7 @@ class Resolution(Schema):
     """Resolution Schema"""
 
     percentage = Float(required=True)
-    data_sources = List(cls_or_instance=DataSource, required=True)
+    data_sources = List(cls_or_instance=Nested(DataSource), required=True)
 
 
 class IdentityResolution(Schema):
