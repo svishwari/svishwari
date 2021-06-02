@@ -44,7 +44,9 @@ class DataSourcesTest(TestCase):
 
         """
         self.config = get_config("TEST")
-        self.data_sources_api_endpoint = "/api/v1{}".format(api_c.CDP_DATA_SOURCES_ENDPOINT)
+        self.data_sources_api_endpoint = "/api/v1{}".format(
+            api_c.CDP_DATA_SOURCES_ENDPOINT
+        )
 
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
@@ -92,7 +94,9 @@ class DataSourcesTest(TestCase):
         # TODO: Uncomment after DB patch is updated
         # valid_response = self.data_sources[0]
         # response = self.test_client.get(
-        #     "{}/{}".format(self.data_sources_api_endpoint, valid_response["_id"]),
+        #     "{}/{}".format(
+        #         self.data_sources_api_endpoint, valid_response["_id"]
+        #     ),
         #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
         # )
 
@@ -144,7 +148,9 @@ class DataSourcesTest(TestCase):
         # TODO: Uncomment after DB patch is updated
         # valid_response = self.data_sources[0]
         # response = self.test_client.delete(
-        #     "self.data_sources_api_endpoint/{}".format(valid_response["_id"]),
+        #     "self.data_sources_api_endpoint/{}".format(
+        #         valid_response["_id"]
+        #     ),
         #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
         # )
 
