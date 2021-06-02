@@ -69,40 +69,48 @@
       </FormStep>
 
       <FormStep :step="3" label="Select audience(s) and destination(s)">
-        <div v-if="Object.values(value.audiences).length">
-          <v-card
-            v-for="item in Object.values(value.audiences)"
-            :key="item.id"
-            elevation="3"
-            class="bordered-card pa-5 mb-4"
-          >
-            <v-row align="center">
-              <v-col class="grow">
-                {{ item.name }}
-              </v-col>
-              <v-col class="grow">
-                {{ item.size | Numeric(true, true) }}
-              </v-col>
-              <v-col class="shrink pa-0">
-                <div class="d-flex align-center">
-                  <v-btn
-                    x-small
-                    fab
-                    class="primary mr-2"
-                    @click="toggleAudiencesDrawer()"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                  <v-btn icon color="primary" @click="removeAudience(item)">
-                    <v-icon>mdi-delete-outline</v-icon>
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-          </v-card>
-        </div>
-        <v-alert v-else color="background" class="border">
-          <v-row align="center">
+        <DataCards
+          bordered
+          :items="Object.values(value.audiences)"
+          :fields="[
+            {
+              key: 'name',
+              label: 'Audience name',
+              sortable: true,
+            },
+            {
+              key: 'size',
+              label: 'Target size',
+              sortable: true,
+            },
+            {
+              key: 'manage',
+              label: 'Manage',
+              sortable: false,
+            },
+          ]"
+        >
+          <template #field:size="row">
+            {{ row.value | Numeric(true, true) }}
+          </template>
+
+          <template #field:manage="row">
+            <div class="d-flex align-center justify-end">
+              <v-btn
+                x-small
+                fab
+                class="primary mr-2"
+                @click="toggleAudiencesDrawer()"
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+              <v-btn icon color="primary" @click="removeAudience(row.item)">
+                <v-icon>mdi-delete-outline</v-icon>
+              </v-btn>
+            </div>
+          </template>
+
+          <template slot="empty">
             <v-col class="grow">You have not added any audiences, yet.</v-col>
             <v-col class="shrink">
               <v-btn
@@ -115,8 +123,8 @@
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </v-col>
-          </v-row>
-        </v-alert>
+          </template>
+        </DataCards>
       </FormStep>
     </FormSteps>
 
@@ -158,9 +166,10 @@
 
 <script>
 import { mapActions } from "vuex"
-import HuxFooter from "@/components/common/HuxFooter.vue"
-import FormSteps from "@/components/common/FormSteps.vue"
+import DataCards from "@/components/common/DataCards.vue"
 import FormStep from "@/components/common/FormStep.vue"
+import FormSteps from "@/components/common/FormSteps.vue"
+import HuxFooter from "@/components/common/HuxFooter.vue"
 import TextField from "@/components/common/TextField.vue"
 import AudiencesDrawer from "@/views/Audiences/Drawer.vue"
 
@@ -168,10 +177,11 @@ export default {
   name: "EngagementsForm",
 
   components: {
+    DataCards,
+    FormStep,
+    FormSteps,
     HuxFooter,
     TextField,
-    FormSteps,
-    FormStep,
     AudiencesDrawer,
   },
 
@@ -252,13 +262,5 @@ export default {
   &.v-radio--is-disabled {
     border-color: var(--v-lightGrey-base);
   }
-}
-
-.border {
-  border: 1px solid var(--v-zircon-base) !important;
-}
-
-.bordered-card {
-  border-left: 10px solid var(--v-aliceBlue-base);
 }
 </style>
