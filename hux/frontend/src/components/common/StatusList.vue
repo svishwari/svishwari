@@ -39,14 +39,15 @@
       >
         <v-list-item-content class="icon-col py-1">
           <div class="d-flex align-center">
-            <v-menu bottom offset-y open-on-hover>
-              <template v-slot:activator="{ on, attrs }">
-                <span v-on="on" v-bind="attrs">
-                  <Logo :type="item.type" :size="18" />
-                </span>
+            <tooltip>
+              <template slot="label-content">
+                <Logo :type="item.type" :size="18" />
               </template>
-              <div class="px-4 py-2 white">{{ item.type | TitleCase }}</div>
-            </v-menu>
+              <template slot="hover-content">
+                {{ item.type | TitleCase }}
+              </template>
+            </tooltip>
+
             <v-spacer></v-spacer>
             <span class="action-icon font-weight-light float-right d-none">
               <v-menu class="menu-wrapper" bottom offset-y>
@@ -79,25 +80,27 @@
           <status :status="item.status" collapsed showLabel />
         </v-list-item-content>
         <v-list-item-content class="size-col py-1" v-if="item.size">
-          <v-menu bottom offset-y open-on-hover>
-            <template v-slot:activator="{ on, attrs }">
-              <span v-on="on" v-bind="attrs">{{ getSize(item.size) }}</span>
+          <tooltip>
+            <template slot="label-content">
+              {{ getSize(item.size) }}
             </template>
-            <div class="px-4 py-2 white">{{ item.size }}</div>
-          </v-menu>
+            <template slot="hover-content">
+              {{ item.size | FormatSize }}
+            </template>
+          </tooltip>
         </v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
           v-if="item.lastDeliveredOn"
         >
-          <v-menu bottom offset-y open-on-hover>
-            <template v-slot:activator="{ on, attrs }">
-              <span v-on="on" v-bind="attrs">{{
-                getTimeStamp(item.lastDeliveredOn)
-              }}</span>
+          <tooltip>
+            <template slot="label-content">
+              {{ getTimeStamp(item.lastDeliveredOn) }}
             </template>
-            <div class="px-4 py-2 white">{{ item.lastDeliveredOn }}</div>
-          </v-menu>
+            <template slot="hover-content">
+              {{ item.lastDeliveredOn | Date | Empty }}
+            </template>
+          </tooltip>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -109,10 +112,11 @@ import Logo from "./Logo.vue"
 import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import moment from "moment"
+import Tooltip from "./Tooltip.vue"
 
 export default {
-  components: { Logo, Status },
-  Statusame: "StatusList",
+  components: { Logo, Status, Tooltip },
+  name: "StatusList",
   data() {
     return {
       items: [

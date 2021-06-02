@@ -24,7 +24,7 @@
     <!-- Page Content Starts here -->
     <div class="inner-wrap px-15 py-8">
       <!-- Summary Cards Wrapper -->
-      <div class="summary-wrap d-flex mb-8">
+      <div class="summary-wrap d-flex mb-6">
         <MetricCard
           :class="{
             'list-item': true,
@@ -51,14 +51,14 @@
         >
           <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
             <span class="mr-2">
-            <tooltip>
-              <template slot="label-content">
-                {{ summaryCards[1].value }}
-              </template>
-              <template slot="hover-content">
-                {{ summaryCards[1].hoverValue}}
-              </template>
-            </tooltip>
+              <tooltip>
+                <template slot="label-content">
+                  {{ summaryCards[1].value }}
+                </template>
+                <template slot="hover-content">
+                  {{ summaryCards[1].hoverValue | Date | Empty }}
+                </template>
+              </tooltip>
             </span>
             <Avatar :name="summaryCards[1].subLabel" />
           </template>
@@ -76,14 +76,14 @@
         >
           <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
             <span class="mr-2">
-            <tooltip>
-              <template slot="label-content">
-                {{ summaryCards[2].value }}
-              </template>
-              <template slot="hover-content">
-                {{ summaryCards[2].hoverValue}}
-              </template>
-            </tooltip>
+              <tooltip>
+                <template slot="label-content">
+                  {{ summaryCards[2].value }}
+                </template>
+                <template slot="hover-content">
+                  {{ summaryCards[2].hoverValue | Date | Empty }}
+                </template>
+              </tooltip>
             </span>
             <Avatar :name="summaryCards[1].subLabel" />
           </template>
@@ -92,7 +92,7 @@
           :class="{
             'list-item': true,
             'mr-3': true,
-            'description': true,
+            description: true,
           }"
           :width="summaryCards[3].width"
           :min-width="summaryCards[3].minWidth"
@@ -160,6 +160,7 @@
                   v-for="item in displayAdsSummary"
                   :key="item.id"
                   :title="item.title"
+                  :titleTooltip="getTooltip(item)"
                   :subtitle="item.value"
                   :interactable="false"
                 ></MetricCard>
@@ -364,6 +365,12 @@ export default {
       },
       loading: false,
       tabOption: 0,
+      Tooltips: [
+        { acronym: "CPM", description: "Cost per Thousand Impressions"},
+        { acronym: "CTR", description: "Click Through Rate"},
+        { acronym: "CPA", description: "Cost per Action"},
+        { acronym: "CPC", description: "Cost per Click"},
+      ]
     }
   },
   computed: {
@@ -396,9 +403,9 @@ export default {
         },
         {
           id: 2,
-          title: "Last updated",  
+          title: "Last updated",
           value: this.getDateStamp(this.fetchKey("update_time")),
-          hoverValue: this.fetchKey('update_time'),
+          hoverValue: this.fetchKey("update_time"),
           subLabel: this.fetchKey("updated_by"),
           width: "19%",
           minWidth: "164px",
@@ -407,7 +414,7 @@ export default {
           id: 3,
           title: "Created",
           value: this.getDateStamp(this.fetchKey("created_time")),
-          hoverValue: this.fetchKey('created_time'),
+          hoverValue: this.fetchKey("created_time"),
           subLabel: this.fetchKey("created_by"),
           width: "19%",
           minWidth: "164px",
@@ -500,6 +507,12 @@ export default {
         return !!card.title
       }
     },
+    getTooltip(summaryCard) {
+      const acronymObject = this.Tooltips.filter(item => item.acronym === summaryCard.title)
+      if(acronymObject.length === 0)
+        return null
+      return acronymObject[0].description
+    }
   },
   async mounted() {
     this.loading = true
@@ -547,8 +560,8 @@ export default {
               color: var(--v-neroBlack-base) !important;
             }
             .v-list-item__subtitle {
-            display: none;
-          }
+              display: none;
+            }
           }
         }
       }

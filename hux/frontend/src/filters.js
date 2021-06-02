@@ -57,4 +57,13 @@ export default {
       .map((n) => n[0])
       .join("")
   },
+  /**
+   * Format the number with comma
+   *
+   * @param {*} value the number eg "125767"
+   * @returns formatted number
+   */
+  FormatSize(value) {
+    return Number(value).toLocaleString()
+  },
 }
