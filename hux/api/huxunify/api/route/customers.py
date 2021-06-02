@@ -120,6 +120,51 @@ class CustomerOverview(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
+    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.CUSTOMERS_DASHBOARD_OVERVIEW_ENDPOINT}",
+    "CustomerDashboardOverview",
+)
+class CustomerDashboardOverview(SwaggerView):
+    """
+    Customers Overview class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Customer Dashboard Overview",
+            "schema": {
+                "type": "array",
+                "items": CustomerOverviewSchema,
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers overview"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves a customer data overview.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] dict of Customer data overview and http code
+        """
+
+        customers_overview_data = get_customers_overview()
+
+        return (
+            CustomerOverviewSchema().dump(customers_overview_data),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
     f"/{api_c.CUSTOMERS_ENDPOINT}",
     "Customersview",
 )
