@@ -28,14 +28,59 @@ export default {
     MetricCard,
   },
 
-  data() {
-    return {
-      overview: [
-        { title: "Destinations", subtitle: "0" },
-        { title: "Target size", subtitle: "0" },
-        { title: "Delivery schedule", subtitle: "Manual" },
-      ],
-    }
+  props: {
+    value: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  computed: {
+    numberOfDestinations() {
+      let count = 0
+
+      Object.values(this.value.audiences).forEach((audience) => {
+        if (audience.destinations) {
+          count += Object.keys(audience.destinations).length
+        }
+      })
+
+      return count
+    },
+
+    sumAudienceSizes() {
+      let size = 0
+
+      Object.values(this.value.audiences).forEach((audience) => {
+        if (audience.size) {
+          size += Number(audience.size)
+        }
+      })
+
+      return size
+    },
+
+    deliverySchedule() {
+      const schedule = JSON.parse(this.value.delivery_schedule)
+      return schedule ? schedule : "Manual"
+    },
+
+    overview() {
+      return [
+        {
+          title: "Destinations",
+          subtitle: this.$options.filters.Numeric(this.numberOfDestinations),
+        },
+        {
+          title: "Target size",
+          subtitle: this.$options.filters.Numeric(this.sumAudienceSizes),
+        },
+        {
+          title: "Delivery schedule",
+          subtitle: this.deliverySchedule,
+        },
+      ]
+    },
   },
 }
 </script>

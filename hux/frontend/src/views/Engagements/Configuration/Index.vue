@@ -10,7 +10,7 @@
         you planning to run it? Who are you targeting?
       </p>
 
-      <EngagementOverview />
+      <EngagementOverview v-model="data" />
 
       <v-divider class="divider my-4 mb-8"></v-divider>
 

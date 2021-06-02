@@ -34,7 +34,7 @@ export default {
   },
 
   Numeric(value, round = false, abbreviate = false, append = "") {
-    if (!value) return ""
+    if (isNaN(value)) return ""
 
     let abrv = ""
 
