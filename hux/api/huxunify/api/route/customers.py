@@ -85,11 +85,8 @@ class CustomerOverview(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
+            "schema": CustomerOverviewSchema,
             "description": "Customer Profiles Overview",
-            "schema": {
-                "type": "array",
-                "items": CustomerOverviewSchema,
-            },
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get customers overview"
@@ -130,14 +127,11 @@ class CustomerDashboardOverview(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Customer Dashboard Overview",
-            "schema": {
-                "type": "array",
-                "items": CustomerOverviewSchema,
-            },
+            "schema": CustomerOverviewSchema,
+            "description": "Customer Identity Resolution Dashboard overview.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get customers overview"
+            "description": "Failed to get customers identity dashboard overview."
         },
     }
     responses.update(AUTH401_RESPONSE)
