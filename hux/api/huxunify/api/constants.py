@@ -10,6 +10,14 @@ TYPE = "type"
 DESCRIPTION = "description"
 FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
+EMAIL = "email"
+PHONE = "phone"
+AGE = "age"
+GENDER = "gender"
+ADDRESS = "address"
+CITY = "city"
+STATE = "state"
+ZIP = "zip"
 CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
@@ -313,6 +321,11 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 
+# Customers
+CUSTOMER_ID = "customer_id"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_TAG = "customers"
+
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
@@ -325,3 +338,16 @@ CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
+
+# FILTERING
+REDACTED = "++REDACTED++"
+CUSTOMER_PROFILE_REDACTED_FIELDS = [
+    EMAIL,
+    PHONE,
+    AGE,
+    GENDER,
+    ADDRESS,
+    CITY,
+    STATE,
+    ZIP,
+]
