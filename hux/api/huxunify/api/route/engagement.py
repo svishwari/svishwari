@@ -536,6 +536,7 @@ class AddAudienceEngagement(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            engagement_id (str): Engagement id
 
         Returns:
             Tuple[dict, int]: Audience Engagement added, HTTP status.
