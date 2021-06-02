@@ -62,8 +62,8 @@ class DataSourcesTest(TestCase):
         # create data sources first
 
         self.data_sources = []
-        for ds in [api_c.FACEBOOK_NAME, api_c.SFMC_NAME]:
-            data_source = create_data_source(self.database, ds, "")
+        for ds_name in [api_c.FACEBOOK_NAME, api_c.SFMC_NAME]:
+            data_source = create_data_source(self.database, ds_name, "")
             self.data_sources.append(data_source)
 
         self.introspect_call = ("{}/oauth2/v1/introspect?client_id={}".format(
@@ -235,7 +235,7 @@ class DataSourcesTest(TestCase):
 
         # TODO: Uncomment after DB patch is updated
         # ds_id = "ABC123"
-        
+        #
         # response = self.test_client.delete(
         #     "self.data_sources_api_endpoint/{}".format(ds_id),
         #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
