@@ -5,7 +5,7 @@
       <template slot="left">
         <div class="d-flex align-center bread-crumb">
           <Breadcrumb :items="breadcrumbItems" />
-          <div class="ml-4">
+          <div class="ml-3">
             <Status :status="engagement.status"></Status>
           </div>
         </div>
@@ -28,27 +28,84 @@
         <MetricCard
           :class="{
             'list-item': true,
-            'mr-3': index != summaryCards.length - 1,
-            description: index == summaryCards.length - 1,
+            'mr-3': true,
           }"
-          :width="summary.width"
-          :min-width="summary.minWidth"
+          :width="summaryCards[0].width"
+          :min-width="summaryCards[0].minWidth"
           :height="75"
-          v-for="(summary, index) in summaryCards"
-          :key="summary.id"
-          :title="summary.title"
-          :subtitle="summary.value"
+          :title="summaryCards[0].title"
+          :subtitle="summaryCards[0].value"
           :interactable="false"
         >
-          <template slot="short-name" v-if="summary.subLabel">
-            <Avatar :name="summary.subLabel" />
+        </MetricCard>
+        <MetricCard
+          :class="{
+            'list-item': true,
+            'mr-3': true,
+          }"
+          :width="summaryCards[1].width"
+          :min-width="summaryCards[1].minWidth"
+          :height="75"
+          :title="summaryCards[1].title"
+          :interactable="false"
+        >
+          <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
+            <span class="mr-2">
+            <tooltip>
+              <template slot="label-content">
+                {{ summaryCards[1].value }}
+              </template>
+              <template slot="hover-content">
+                {{ summaryCards[1].hoverValue}}
+              </template>
+            </tooltip>
+            </span>
+            <Avatar :name="summaryCards[1].subLabel" />
           </template>
+        </MetricCard>
+        <MetricCard
+          :class="{
+            'list-item': true,
+            'mr-3': true,
+          }"
+          :width="summaryCards[2].width"
+          :min-width="summaryCards[2].minWidth"
+          :height="75"
+          :title="summaryCards[2].title"
+          :interactable="false"
+        >
+          <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
+            <span class="mr-2">
+            <tooltip>
+              <template slot="label-content">
+                {{ summaryCards[2].value }}
+              </template>
+              <template slot="hover-content">
+                {{ summaryCards[2].hoverValue}}
+              </template>
+            </tooltip>
+            </span>
+            <Avatar :name="summaryCards[1].subLabel" />
+          </template>
+        </MetricCard>
+        <MetricCard
+          :class="{
+            'list-item': true,
+            'mr-3': true,
+            'description': true,
+          }"
+          :width="summaryCards[3].width"
+          :min-width="summaryCards[3].minWidth"
+          :height="75"
+          :title="summaryCards[3].title"
+          :interactable="false"
+        >
         </MetricCard>
       </div>
 
       <div class="audience-summary">
         <!-- Audience Destination Cards Wrapper -->
-        <v-card class="rounded-lg" minHeight="145px" elevation="2">
+        <v-card class="rounded-lg card-style" minHeight="145px" flat>
           <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
             <div class="d-flex align-center">
               <Icon
@@ -56,7 +113,7 @@
                 :size="24"
                 color="neroBlack"
                 class="mr-2"
-              />Audiences
+              /><span class="text-h5">Audiences</span>
             </div>
             <div class="mt-2">
               <a
@@ -79,8 +136,7 @@
               <status-list
                 v-for="item in engagement.audiences"
                 :key="item.id"
-                :title="item.name"
-                :destinations="item.destinations"
+                :audience="item"
               ></status-list>
             </v-col>
           </v-card-text>
@@ -94,9 +150,9 @@
           <v-tab key="email">@ Email</v-tab>
         </v-tabs>
         <v-tabs-items v-model="tabOption" class="mt-2">
-          <v-tab-item key="displayAds" class="rounded-lg">
-            <v-card flat>
-              <v-card-text class="d-flex mt-2 rounded-lg summary-wrap">
+          <v-tab-item key="displayAds">
+            <v-card flat class="card-style">
+              <v-card-text class="d-flex summary-tab-wrap">
                 <MetricCard
                   class="list-item mr-2"
                   :width="item.width"
@@ -110,26 +166,24 @@
               </v-card-text>
             </v-card>
           </v-tab-item>
-          <v-tab-item key="email" class="rounded-lg">
-            <v-card flat>
-              <v-card-text class="mt-2 rounded-lg">
-                <v-row class="summary-wrap pl-3 pr-3">
-                  <MetricCard
-                    class="list-item mr-1 rounded-lg"
-                    :min-width="item.width"
-                    :height="70"
-                    v-for="item in emailSummary"
-                    :key="item.id"
-                    :title="item.title"
-                    :subtitle="item.value"
-                    :interactable="false"
-                  ></MetricCard>
-                </v-row>
+          <v-tab-item key="email">
+            <v-card flat class="card-style">
+              <v-card-text class="d-flex summary-tab-wrap">
+                <MetricCard
+                  class="list-item mr-1 rounded-lg"
+                  :min-width="item.width"
+                  :height="70"
+                  v-for="item in emailSummary"
+                  :key="item.id"
+                  :title="item.title"
+                  :subtitle="item.value"
+                  :interactable="false"
+                ></MetricCard>
               </v-card-text>
             </v-card>
           </v-tab-item>
         </v-tabs-items>
-        <v-card minHeight="145px" elevation="2" class="mt-6">
+        <v-card minHeight="145px" flat class="mt-6 card-style">
           <v-card-title class="d-flex justify-space-between pb-6">
             <div class="d-flex align-center">
               <Icon
@@ -137,7 +191,7 @@
                 :size="24"
                 color="neroBlack"
                 class="mr-2"
-              />Audience performance
+              /><span class="text-h5">Audience performance</span>
             </div>
           </v-card-title>
           <v-card-text class="pl-6 pr-6 pb-6 mt-6">
@@ -164,6 +218,7 @@ import MetricCard from "@/components/common/MetricCard"
 import Avatar from "@/components/common/Avatar"
 import Icon from "@/components/common/Icon"
 import StatusList from "../../components/common/StatusList.vue"
+import Tooltip from "../../components/common/Tooltip.vue"
 
 export default {
   name: "engagementDashboard",
@@ -175,6 +230,7 @@ export default {
     Avatar,
     Icon,
     StatusList,
+    Tooltip,
   },
   data() {
     return {
@@ -190,45 +246,47 @@ export default {
           "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear. ",
         audiences: [
           {
+            audienceId: 1,
             name: "Audience - Main",
             destinations: [
               {
                 id: 1,
                 type: "mailchimp",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 2,
                 type: "facebook",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 3,
                 type: "insightIQ",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 4,
                 type: "adobe-experience",
-                status: "pending",
+                status: "delivering",
                 size: null,
                 lastDeliveredOn: null,
               },
             ],
           },
           {
+            audienceId: 1,
             name: "Audience 1",
             destinations: [
               {
                 id: 1,
                 type: "mailchimp",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -236,64 +294,67 @@ export default {
               {
                 id: 2,
                 type: "facebook",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 3,
                 type: "insightIQ",
-                status: "pending",
+                status: "delivering",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
             ],
           },
           {
+            audienceId: 1,
             name: "Audience 2",
             destinations: [
               {
                 id: 1,
                 type: "mailchimp",
-                status: "pending",
+                status: "delivering",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 2,
                 type: "facebook",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
             ],
           },
           {
+            audienceId: 1,
             name: "Audience 3",
             destinations: [
               {
                 id: 1,
                 type: "mailchimp",
-                status: "pending",
+                status: "delivering",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 2,
                 type: "facebook",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
             ],
           },
           {
+            audienceId: 1,
             name: "Audience - test",
             destinations: [
               {
                 id: 2,
                 type: "facebook",
-                status: "active",
+                status: "delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -335,8 +396,9 @@ export default {
         },
         {
           id: 2,
-          title: "Last updated",
+          title: "Last updated",  
           value: this.getDateStamp(this.fetchKey("update_time")),
+          hoverValue: this.fetchKey('update_time'),
           subLabel: this.fetchKey("updated_by"),
           width: "19%",
           minWidth: "164px",
@@ -345,6 +407,7 @@ export default {
           id: 3,
           title: "Created",
           value: this.getDateStamp(this.fetchKey("created_time")),
+          hoverValue: this.fetchKey('created_time'),
           subLabel: this.fetchKey("created_by"),
           width: "19%",
           minWidth: "164px",
@@ -450,6 +513,9 @@ export default {
   .page-header--wrap {
     box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
   }
+  ::v-deep .mdi-checkbox-blank-circle {
+    font-size: 18px;
+  }
   .inner-wrap {
     .summary-wrap {
       .metric-card-wrapper {
@@ -465,7 +531,44 @@ export default {
             margin: 0 !important;
           }
           .v-list-item__subtitle {
-            margin-bottom: 22px !important;
+            margin-bottom: 15px !important;
+          }
+        }
+        &.description {
+          ::v-deep .v-list-item__content {
+            padding-top: 0px;
+
+            .v-list-item__title {
+              font-size: 14px;
+              line-height: 22px;
+
+              text-overflow: inherit;
+              white-space: inherit;
+              color: var(--v-neroBlack-base) !important;
+            }
+            .v-list-item__subtitle {
+            display: none;
+          }
+          }
+        }
+      }
+    }
+    .summary-tab-wrap {
+      .metric-card-wrapper {
+        border: 1px solid var(--v-zircon-base);
+        box-sizing: border-box;
+        border-radius: 12px;
+        ::v-deep .v-list-item__content {
+          padding-top: 15px;
+          padding-bottom: 15px;
+          margin-left: -5px !important;
+          .v-list-item__title {
+            font-size: 12px;
+            line-height: 16px;
+            margin: 0 !important;
+          }
+          .v-list-item__subtitle {
+            margin-bottom: 15px !important;
           }
         }
         &.description {
@@ -484,27 +587,38 @@ export default {
         }
       }
     }
+
     .v-tabs {
       ::v-deep .v-tabs-bar {
         background: transparent;
         .v-tabs-bar__content {
           border-bottom: 2px solid var(--v-zircon-base);
           .v-tabs-slider-wrapper {
-            width: 111px !important;
             .v-tabs-slider {
-              background-color: var(--v-skyBlue-base) !important;
-              border-color: var(--v-skyBlue-base) !important;
+              background-color: var(--v-info-base) !important;
+              border-color: var(--v-info-base) !important;
             }
           }
           .v-tab {
             text-transform: inherit;
             padding: 8px;
             color: var(--v-primary-base);
+            cursor: default;
+            font-size: 15px;
+            line-height: 20px;
             svg {
               fill: transparent !important;
+              path {
+                stroke: var(--v-primary-base);
+              }
             }
             &.v-tab--active {
-              color: var(--v-skyBlue-base);
+              color: var(--v-info-base);
+              svg {
+                path {
+                  stroke: var(--v-info-base);
+                }
+              }
             }
           }
         }

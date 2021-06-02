@@ -1,12 +1,22 @@
 <template>
-  <v-card class="rounded-sm status-card mr-2">
+  <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title class="d-flex justify-space-between">
-      <span>{{ title }}</span>
+      <span
+        ><router-link
+          :to="{
+            name: 'AudienceInsight',
+            params: { id: audience.audienceId },
+          }"
+          class="text-decoration-none"
+          append
+          >{{ audience.name }}</router-link
+        ></span
+      >
       <v-menu class="menu-wrapper" bottom offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on" class="top-action">
-            mdi-dots-vertical
-          </v-icon>
+          <v-icon v-bind="attrs" v-on="on" class="top-action"
+            >mdi-dots-vertical</v-icon
+          >
         </template>
         <v-list class="menu-list-wrapper">
           <v-list-item-group>
@@ -23,13 +33,20 @@
     </v-card-title>
     <v-list dense class="pa-0">
       <v-list-item
-        v-for="item in destinations"
+        v-for="item in audience.destinations"
         :key="item.id"
         @click="toggleFocus()"
       >
         <v-list-item-content class="icon-col py-1">
           <div class="d-flex align-center">
-            <Logo :type="item.type" :size="18" />
+            <v-menu bottom offset-y open-on-hover>
+              <template v-slot:activator="{ on, attrs }">
+                <span v-on="on" v-bind="attrs">
+                  <Logo :type="item.type" :size="18" />
+                </span>
+              </template>
+              <div class="px-4 py-2 white">{{ item.type | TitleCase }}</div>
+            </v-menu>
             <v-spacer></v-spacer>
             <span class="action-icon font-weight-light float-right d-none">
               <v-menu class="menu-wrapper" bottom offset-y>
@@ -40,9 +57,8 @@
                     class="mr-2 more-action"
                     color="primary"
                     @click.prevent
+                    >mdi-dots-vertical</v-icon
                   >
-                    mdi-dots-vertical
-                  </v-icon>
                 </template>
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
@@ -60,16 +76,28 @@
           </div>
         </v-list-item-content>
         <v-list-item-content class="status-col py-1" v-if="item.status">
-          <status :status="item.status" :showLabel="false" />
+          <status :status="item.status" collapsed showLabel />
         </v-list-item-content>
-        <v-list-item-content class="size-col py-1" v-if="item.size">{{
-          getSize(item.size)
-        }}</v-list-item-content>
+        <v-list-item-content class="size-col py-1" v-if="item.size">
+          <v-menu bottom offset-y open-on-hover>
+            <template v-slot:activator="{ on, attrs }">
+              <span v-on="on" v-bind="attrs">{{ getSize(item.size) }}</span>
+            </template>
+            <div class="px-4 py-2 white">{{ item.size }}</div>
+          </v-menu>
+        </v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
           v-if="item.lastDeliveredOn"
         >
-          {{ getTimeStamp(item.lastDeliveredOn) }}
+          <v-menu bottom offset-y open-on-hover>
+            <template v-slot:activator="{ on, attrs }">
+              <span v-on="on" v-bind="attrs">{{
+                getTimeStamp(item.lastDeliveredOn)
+              }}</span>
+            </template>
+            <div class="px-4 py-2 white">{{ item.lastDeliveredOn }}</div>
+          </v-menu>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -105,13 +133,8 @@ export default {
     }
   },
   props: {
-    title: {
-      title: String,
-      required: true,
-    },
-    destinations: {
-      type: Array,
-      default: () => [],
+    audience: {
+      title: Object,
       required: true,
     },
   },

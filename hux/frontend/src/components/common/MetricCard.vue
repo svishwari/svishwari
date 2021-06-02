@@ -21,9 +21,9 @@
         <slot name="extra-item"></slot>
         <v-list-item-subtitle
           class="item-subtitle mb-3 text-h6 neroBlack--text"
-          v-if="subtitle"
         >
           {{ subtitle }}
+          <slot name="subtitle-extended"></slot>
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-icon color="zircon" x-large> {{ icon }} </v-icon>
@@ -89,6 +89,7 @@ export default {
   border: 1px solid var(--v-zircon-base);
   &.no-click {
     background-color: transparent;
+    cursor: default;
   }
   .item-headline {
     font-size: 12px;
