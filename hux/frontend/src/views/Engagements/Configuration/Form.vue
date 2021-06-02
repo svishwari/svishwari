@@ -22,7 +22,32 @@
         </v-row>
       </FormStep>
 
-      <FormStep :step="2" label="Setup a delivery schedule">
+      <FormStep :step="2">
+        <template slot="label">
+          <h5 class="text-h5 d-flex align-start">
+            Setup a delivery schedule
+
+            <v-menu max-width="16rem" offset-x offset-y top>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" color="primary" :size="12">
+                  mdi-information-outline
+                </v-icon>
+              </template>
+              <div class="pa-4 white text-caption">
+                <h6 class="text-caption mb-2">Manual delivery</h6>
+                <p class="gray--text">
+                  Choose this option if you want the engagement delivered
+                  immediately or at a future date and time.
+                </p>
+                <h6 class="text-caption mb-2">Recurring delivery</h6>
+                <p class="gray--text">
+                  Choose this option if you want the engagement delivered on a
+                  specific recurring basis you selected.
+                </p>
+              </div>
+            </v-menu>
+          </h5>
+        </template>
         <v-radio-group v-model="value.delivery_schedule" row class="ma-0">
           <v-radio value="null" selected class="btn-radio">
             <template v-slot:label>

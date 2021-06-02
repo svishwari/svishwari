@@ -11,7 +11,8 @@
         {{ step }}
       </span>
       <div class="form-step__label">
-        <span class="text-h5">{{ label || `Step ${step}` }}</span>
+        <slot v-if="$slots.label" name="label"></slot>
+        <span v-else class="text-h5">{{ label || `Step ${step}` }}</span>
         <em v-if="optional" class="text-caption grey--text"> - Optional</em>
       </div>
     </div>
@@ -36,20 +37,24 @@ export default {
       type: Number,
       required: true,
     },
+
     label: {
       type: String,
       required: false,
     },
+
     optional: {
       type: Boolean,
       required: false,
       default: false,
     },
+
     disabled: {
       type: Boolean,
       required: false,
       default: false,
     },
+
     border: {
       type: String,
       required: false,
@@ -62,9 +67,6 @@ export default {
 $form-step-spacing: 16px;
 
 .form-step {
-  .form-step__header {
-  }
-
   .form-step__indicator {
     color: var(--v-secondary-base);
     border: 1px solid var(--v-secondary-base);
