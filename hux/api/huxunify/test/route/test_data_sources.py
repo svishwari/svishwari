@@ -1,3 +1,5 @@
+"""CDP Data Sources API Testing"""
+
 from http import HTTPStatus
 from unittest import TestCase
 
@@ -84,11 +86,11 @@ class DataSourcesTest(TestCase):
         Returns:
 
         """
-        valid_response = self.data_sources[0]
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         # TODO: Uncomment after DB patch is updated
+        # valid_response = self.data_sources[0]
         # response = self.test_client.get(
         #     "{}/{}".format(self.data_sources_api_endpoint, valid_response["_id"]),
         #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
@@ -110,11 +112,11 @@ class DataSourcesTest(TestCase):
         Returns:
 
         """
-        valid_response = self.data_sources
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         # TODO: Uncomment after DB patch is updated
+        # valid_response = self.data_sources
         # response = self.test_client.get(
         #     self.data_sources_api_endpoint,
         #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
@@ -136,11 +138,11 @@ class DataSourcesTest(TestCase):
         Returns:
 
         """
-        valid_response = self.data_sources[0]
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         # TODO: Uncomment after DB patch is updated
+        # valid_response = self.data_sources[0]
         # response = self.test_client.delete(
         #     "self.data_sources_api_endpoint/{}".format(valid_response["_id"]),
         #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
@@ -155,21 +157,29 @@ class DataSourcesTest(TestCase):
 
     @requests_mock.Mocker()
     def test_create_data_source_valid_params(self, request_mocker: Mocker):
-        ds_name = "test_create"
-        ds_category = "Web Events"
+        """
+        Test creating a new data source with valid params
 
-        valid_response = {
-            c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
-            c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
-            c.CDP_DATA_SOURCE_FIELD_STATUS: c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-            c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
-            c.ADDED: False,
-            c.ENABLED: False,
-        }
+        Args:
+
+        Returns:
+        """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         # TODO: Uncomment after DB patch is updated
+        # ds_name = "test_create"
+        # ds_category = "Web Events"
+        #
+        # valid_response = {
+        #     c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
+        #     c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
+        #     c.CDP_DATA_SOURCE_FIELD_STATUS: c.CDP_DATA_SOURCE_STATUS_ACTIVE,
+        #     c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
+        #     c.ADDED: False,
+        #     c.ENABLED: False,
+        # }
+        #
         # response = self.test_client.post(
         #     self.data_sources_api_endpoint,
         #     data=json.dumps(
@@ -221,10 +231,11 @@ class DataSourcesTest(TestCase):
         Returns:
 
         """
-        ds_id = "ABC123"
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         # TODO: Uncomment after DB patch is updated
+        # ds_id = "ABC123"
+        
         # response = self.test_client.delete(
         #     "self.data_sources_api_endpoint/{}".format(ds_id),
         #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
@@ -236,12 +247,18 @@ class DataSourcesTest(TestCase):
 
     @requests_mock.Mocker()
     def test_create_data_source_invalid_params(self, request_mocker: Mocker):
-        ds_name = None
-        ds_category = "Web Events"
+        """Test creating a data source with invalid params
+
+        Args:
+
+        Returns:
+        """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         # TODO: Uncomment after DB patch is updated
+        # ds_name = None
+        # ds_category = "Web Events"
         # response = self.test_client.post(
         #     self.data_sources_api_endpoint,
         #     data=json.dumps(
