@@ -307,6 +307,23 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Form Steps </v-subheader>
+    <FormSteps class="white pa-10">
+      <FormStep :step="1" label="General information" optional="true">
+        Contents for step 1
+      </FormStep>
+
+      <FormStep :step="2" label="Select attribute(s)" border="inactive">
+        Contents for step 2
+      </FormStep>
+
+      <FormStep :step="3" :disabled="true">
+        Contents for disabled step 3
+      </FormStep>
+    </FormSteps>
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Descriptive Card </v-subheader>
     <DescriptiveCard
       icon="model-unsubscribe"
@@ -401,6 +418,8 @@ import HuxSlider from "@/components/common/HuxSlider"
 import HuxDropdown from "@/components/common/HuxDropdown"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import CardStat from "@/components/common/Cards/Stat"
+import FormSteps from "@/components/common/FormSteps"
+import FormStep from "@/components/common/FormStep"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import { generateColor } from "@/utils"
 
@@ -426,6 +445,8 @@ export default {
     Logo,
     Icon,
     HuxDataTable,
+    FormSteps,
+    FormStep,
   },
   methods: {
     onupdatelabelText(newValue) {

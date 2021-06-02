@@ -33,6 +33,31 @@ export default {
     return value
   },
 
+  Numeric(value, round = false, abbreviate = false, append = "") {
+    if (!value) return ""
+
+    let abrv = ""
+
+    if (abbreviate) {
+      if (value >= 1000000) {
+        value = value / 1000000
+        abrv = "m"
+      } else if (value >= 1000) {
+        value = value / 1000
+        abrv = "k"
+      }
+    }
+
+    return (
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: round && Number(value) ? 0 : 2,
+      }) +
+      abrv +
+      append
+    )
+  },
+
   /**
    * Formats a string with title case.
    *

@@ -28,6 +28,11 @@ Object.keys(resources).forEach((resource) => {
       return http.post("/destinations/validate", data)
     }
   }
+  if (resource === "engagements") {
+    client[resource].deliver = (resourceId, data) => {
+      return http.post(`/engagements/${resourceId}/deliver`, data)
+    }
+  }
 })
 
 export default client

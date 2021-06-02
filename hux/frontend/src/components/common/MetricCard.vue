@@ -88,6 +88,7 @@ export default {
 .metric-card-wrapper {
   border: 1px solid var(--v-zircon-base);
   &.no-click {
+    cursor: default;
     background-color: transparent;
   }
   .item-headline {
