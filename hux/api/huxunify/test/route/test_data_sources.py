@@ -44,7 +44,7 @@ class DataSourcesTest(TestCase):
         # setup the mock DB client
         self.database = DatabaseClient(
             "localhost", 27017, None, None
-        )
+        ).connect()
 
         # setup the flask test client
         self.test_client = create_app().test_client()
