@@ -48,6 +48,7 @@
             </v-menu>
           </h5>
         </template>
+
         <v-radio-group v-model="value.delivery_schedule" row class="ma-0">
           <v-radio value="null" selected class="btn-radio">
             <template v-slot:label>
@@ -68,9 +69,9 @@
       </FormStep>
 
       <FormStep :step="3" label="Select audience(s) and destination(s)">
-        <div v-if="selectedAudiences.length">
+        <div v-if="Object.values(value.audiences).length">
           <v-card
-            v-for="item in selectedAudiences"
+            v-for="item in Object.values(value.audiences)"
             :key="item.id"
             elevation="3"
             class="bordered-card pa-5 mb-4"
@@ -92,7 +93,7 @@
                   >
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
-                  <v-btn icon color="primary" @click="removeAudience(item.id)">
+                  <v-btn icon color="primary" @click="removeAudience(item)">
                     <v-icon>mdi-delete-outline</v-icon>
                   </v-btn>
                 </div>
@@ -128,12 +129,12 @@
 
       <template v-slot:right>
         <v-btn
-          v-if="value.audiences.length"
+          v-if="hasDestinations && isManualDelivery"
           tile
           color="primary"
           height="44"
           :disabled="!isValid"
-          @click="addAndDeliverEngagement()"
+          @click="deliverNewEngagement()"
         >
           Add &amp; deliver
         </v-btn>
@@ -144,7 +145,7 @@
           color="primary"
           height="44"
           :disabled="!isValid"
-          @click="addEngagement()"
+          @click="addNewEngagement()"
         >
           Add
         </v-btn>
@@ -156,13 +157,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-
+import { mapActions } from "vuex"
 import HuxFooter from "@/components/common/HuxFooter.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import FormStep from "@/components/common/FormStep.vue"
 import TextField from "@/components/common/TextField.vue"
-
 import AudiencesDrawer from "@/views/Audiences/Drawer.vue"
 
 export default {
@@ -190,29 +189,25 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      audiences: "audiences/list",
-    }),
-
-    selectedAudiences() {
-      if (this.audiences) {
-        return this.audiences.filter((audience) => {
-          return this.value.audiences.includes(audience.id)
-        })
-      } else {
-        return []
-      }
-    },
-
     isValid() {
       return this.value.name.length
+    },
+
+    hasDestinations() {
+      return Object.values(this.value.audiences).find((audience) => {
+        return audience.destinations && audience.destinations.length
+      })
+    },
+
+    isManualDelivery() {
+      const MANUAL = "null"
+      return this.value.delivery_schedule === MANUAL
     },
   },
 
   methods: {
     ...mapActions({
-      getAudiences: "audiences/getAll",
-      addNewEngagement: "engagements/add",
+      addEngagement: "engagements/add",
       deliverEngagement: "engagements/deliver",
     }),
 
@@ -220,31 +215,30 @@ export default {
       this.showAudiencesDrawer = !this.showAudiencesDrawer
     },
 
-    removeAudience(id) {
-      const index = this.value.audiences.indexOf(id)
-      this.value.audiences.splice(index, 1)
+    removeAudience(audience) {
+      this.$delete(this.value.audiences, audience.id)
     },
 
-    async addEngagement() {
-      await this.addNewEngagement(this.value)
-      this.$router.push({ name: "Engagements" })
+    async addNewEngagement() {
+      const engagement = await this.addEngagement(this.value)
+      this.$router.push({
+        name: "EngagementDashboard",
+        params: { id: engagement.id },
+      })
     },
 
-    async addAndDeliverEngagement() {
+    async deliverNewEngagement() {
       try {
-        const id = await this.addNewEngagement(this.value)
-        await this.deliverEngagement(id)
-        this.$router.push({ name: "Engagements" })
+        const engagement = await this.addEngagement(this.value)
+        await this.deliverEngagement(engagement.id)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: engagement.id },
+        })
       } catch (error) {
         console.error(error)
       }
     },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getAudiences()
-    this.loading = false
   },
 }
 </script>

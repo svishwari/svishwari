@@ -22,7 +22,7 @@
           >
             <template v-slot:default="props">
               <v-card
-                v-for="item in props.items"
+                v-for="item in Object.values(props.items)"
                 :key="item.id"
                 elevation="2"
                 class="mb-4"
@@ -53,10 +53,10 @@
                     </v-col>
                     <v-col class="shrink">
                       <v-btn
-                        v-if="isAdded(item.id)"
+                        v-if="isAdded(item)"
                         color="secondary"
                         width="100"
-                        @click="remove(item.id)"
+                        @click="remove(item)"
                       >
                         <v-icon small class="mr-1">mdi-check</v-icon>
                         Added
@@ -66,7 +66,7 @@
                         outlined
                         color="lightGrey"
                         width="100"
-                        @click="add(item.id)"
+                        @click="add(item)"
                       >
                         <span class="darkGrey--text">Add</span>
                       </v-btn>
@@ -97,7 +97,7 @@ export default {
 
   props: {
     value: {
-      type: Array,
+      type: Object,
       required: true,
     },
 
@@ -132,17 +132,20 @@ export default {
       getAudiences: "audiences/getAll",
     }),
 
-    isAdded(id) {
-      return this.value.find((el) => el === id)
+    isAdded(audience) {
+      return Boolean(this.value[audience.id])
     },
 
-    add(id) {
-      this.value.push(id)
+    add(audience) {
+      this.$set(this.value, audience.id, {
+        id: audience.id,
+        name: audience.name,
+        size: audience.size,
+      })
     },
 
-    remove(id) {
-      const index = this.value.indexOf(id)
-      this.value.splice(index, 1)
+    remove(audience) {
+      this.$delete(this.value, audience.id)
     },
   },
 
