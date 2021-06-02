@@ -22,7 +22,7 @@ class CreateAppTest(TestCase):
         """
         self.config = get_config("TEST")
 
-    def test_secured_all_endpoints_invalid_response(self):
+    def test_creating_flask_app(self):
         """Test Creating the APP test client
 
         Args:
