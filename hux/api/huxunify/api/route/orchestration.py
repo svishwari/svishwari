@@ -15,7 +15,9 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     user_management,
     orchestration_management,
+    db_exceptions,
 )
+
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
@@ -388,3 +390,88 @@ class AudiencePutView(SwaggerView):
         )
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/deliver",
+    "AudienceDeliverView",
+)
+class AudienceDeliverView(SwaggerView):
+    """
+    Audience delivery class
+    """
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Result.",
+            "schema": {
+                "example": {"message": "Delivery job created."},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to deliver audience.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DELIVERY_TAG]
+
+    # pylint: disable=no-self-use
+    def post(self, audience_id: str) -> Tuple[dict, int]:
+        """Delivers an audience for all of the engagements it is apart of.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        # TODO - implement after HUS-479 is done
+        # pylint: disable=unused-variable
+        user_id = ObjectId()
+
+        # validate object id
+        if not ObjectId.is_valid(audience_id):
+            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+
+        # convert to an ObjectId
+        audience_id = ObjectId(audience_id)
+
+        # check if audience exists
+        audience = None
+        try:
+            audience = orchestration_management.get_audience(
+                get_db_client(), audience_id
+            )
+        except db_exceptions.InvalidID:
+            pass
+
+        if not audience:
+            return {
+                "message": "Audience does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate delivery route
+        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        return {
+            "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
+        }, HTTPStatus.OK
