@@ -7,6 +7,7 @@ from marshmallow import post_dump
 from marshmallow.fields import Str, Int, Bool
 from huxunifylib.database.constants import ID, CDP_DATA_SOURCE_ID
 from huxunify.api.schema.utils import validate_object_id, must_not_be_blank
+from huxunify.api import constants as api_c
 
 
 class CdpDataSourcePostSchema(Schema):
@@ -23,7 +24,12 @@ class CdpDataSourceSchema(Schema):
     CdpDataSourceSchema
     """
 
-    _id = Str(required=True, validate=validate_object_id)
+    _id = Str(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        required=True,
+        validate=validate_object_id,
+    )
     name = Str(required=True)
     category = Str(required=True)
     feed_count = Int()
