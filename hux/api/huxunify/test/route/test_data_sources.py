@@ -1,5 +1,7 @@
 from http import HTTPStatus
 from unittest import TestCase
+
+import mongomock
 import requests_mock
 from requests_mock import Mocker
 
@@ -41,6 +43,11 @@ class DataSourcesTest(TestCase):
         """
         self.config = get_config("TEST")
         self.data_sources_api_endpoint = "/api/v1{}".format(api_c.CDP_DATA_SOURCES_ENDPOINT)
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
         # setup the mock DB client
         self.database = DatabaseClient(
             "localhost", 27017, None, None
