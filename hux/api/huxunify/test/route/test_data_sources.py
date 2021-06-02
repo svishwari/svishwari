@@ -68,10 +68,9 @@ class DataSourcesTest(TestCase):
             data_source = create_data_source(self.database, ds_name, "")
             self.data_sources.append(data_source)
 
-        self.introspect_call = ("{}/oauth2/v1/introspect?client_id={}".format(
-            self.config.OKTA_ISSUER,
-            self.config.OKTA_CLIENT_ID
-        ))
+        self.introspect_call = "{}/oauth2/v1/introspect?client_id={}".format(
+            self.config.OKTA_ISSUER, self.config.OKTA_CLIENT_ID
+        )
 
     def tearDown(self) -> None:
         """
