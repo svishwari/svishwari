@@ -14,7 +14,6 @@ from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
-
 VALID_RESPONSE = {
     "active": True,
     "scope": "openid email profile",
@@ -37,6 +36,7 @@ class DataSourcesTest(TestCase):
     """
     Test Data Sources CRUD APIs
     """
+
     def setUp(self) -> None:
         """Setup tests
 
