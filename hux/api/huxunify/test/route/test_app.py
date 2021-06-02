@@ -30,5 +30,4 @@ class CreateAppTest(TestCase):
         Returns:
 
         """
-
         self.assertIsInstance(create_app().test_client(), FlaskClient)

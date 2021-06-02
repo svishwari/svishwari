@@ -10,26 +10,26 @@
 
 -i https://pypi.python.org/simple
 --extra-index-url https://dolong@deloitte.com:AKCp8jQ8dGnZqM5iF4rzDFFubHop44UBNLT5UZXe6WA5urWiZi6UfQ7oCuinsn4CKQv51CsC8@repo.mgnt.in/artifactory/api/pypi/python/simple
-aiohttp==4.0.0a1; python_full_version >= '3.5.3'
+aiohttp==3.7.4.post0; python_full_version >= '3.5.3'
 aniso8601==9.0.1
 apispec-webframeworks==0.5.2
 apispec[yaml]==4.4.2
 appdirs==1.4.4
-astroid==2.5.7; python_version ~= '3.6'
+astroid==2.5.6; python_version ~= '3.6'
 async-timeout==3.0.1; python_full_version >= '3.5.3'
 attrs==21.2.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 black==21.5b2
-boto3==1.17.85
-botocore==1.20.85; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'
+boto3==1.17.86
+botocore==1.20.86; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'
 bson==0.5.10
 cached-property==1.5.2
 cachetools==4.2.2; python_version ~= '3.5'
 certifi==2021.5.30
 cfgv==3.3.0; python_full_version >= '3.6.1'
-chardet==3.0.4; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
+chardet==4.0.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 click==8.0.1; python_version >= '3.6'
 clickclick==20.10.2
-connexion==2016.0.dev1
+connexion==2.7.0
 curlify==2.2.1
 defusedxml==0.7.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 distlib==0.3.2
@@ -46,9 +46,9 @@ flask==2.0.1
 google-auth-oauthlib==0.4.4; python_version >= '3.6'
 google-auth==1.30.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'
 googleads==28.0.0
-huxunifylib-connectors==0.1.0
+huxunifylib-connectors==0.1.13
 huxunifylib-database==0.2.12
-huxunifylib-util==0.1.12
+huxunifylib-util==0.1.13
 identify==2.2.7; python_full_version >= '3.6.1'
 idna==2.10; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
 importlib-metadata==4.4.0; python_version < '3.8'
@@ -59,33 +59,35 @@ isort==5.8.0; python_version >= '3.6' and python_version < '4.0'
 itsdangerous==2.0.1; python_version >= '3.6'
 jinja2==3.0.1; python_version >= '3.6'
 jmespath==0.10.0; python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'
-jsonschema==4.0.0a1
+jsonschema==3.2.0
 lazy-object-proxy==1.6.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'
 lxml==4.6.3; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 markupsafe==2.0.1; python_version >= '3.6'
 marshmallow==3.12.1
 mccabe==0.6.1
-mistune==2.0.0rc1
+mistune==0.8.4
 mongomock==3.22.1
-multidict==4.7.6; python_version >= '3.5'
+multidict==5.1.0; python_version >= '3.6'
 mypy-extensions==0.4.3
 nodeenv==1.6.0
-numpy==1.21.0rc1; python_version >= '3.7'
+numpy==1.20.3; python_version >= '3.7'
 oauthlib==3.1.1; python_version >= '3.6'
+openapi-schema-validator==0.1.5; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
+openapi-spec-validator==0.3.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 packaging==20.9; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
 pandas==1.2.4; python_full_version >= '3.7.1'
 pathspec==0.8.1
 phonenumbers==8.12.24
-pluggy==1.0.0.dev0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+pluggy==0.13.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
 pre-commit==2.13.0
 py-healthcheck==1.10.1
 py==1.10.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
 pyasn1-modules==0.2.8
 pyasn1==0.4.8
 pycountry==20.7.3
-pylint==3.0.0a3
+pylint==2.8.3
 pymongo==3.11.4
-pyparsing==3.0.0b2; python_version >= '3.5'
+pyparsing==2.4.7; python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'
 pyrsistent==0.17.3; python_version >= '3.5'
 pytest==6.2.4
 python-dateutil==2.8.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
@@ -103,7 +105,6 @@ s3transfer==0.4.2
 safety==1.10.3
 sentinels==1.0.0
 six==1.16.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
-swagger-spec-validator==2.7.3
 tenacity==7.0.0
 toml==0.10.2; python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'
 typed-ast==1.4.3; python_version < '3.8' and implementation_name == 'cpython'
