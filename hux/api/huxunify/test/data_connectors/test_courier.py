@@ -258,7 +258,10 @@ class CourierTest(TestCase):
                 batch_destination = get_destination_config(
                     self.database, destination_id, audience_id
                 )
-
+                batch_destination.aws_envs[
+                    api_c.AUDIENCE_ROUTER_BATCH_SIZE
+                ] = 1000
+                batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_STUB_TEST] = 1
                 self.assertIsNotNone(batch_destination)
 
                 # Register job
