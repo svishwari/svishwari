@@ -86,4 +86,7 @@ export default {
   height: calc(100% - 130px);
   overflow-y: auto;
 }
+.v-footer {
+  height: 80px;
+}
 </style>

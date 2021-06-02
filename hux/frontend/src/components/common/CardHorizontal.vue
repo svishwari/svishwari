@@ -23,6 +23,7 @@
         :isDisabled="isAlreadyAdded"
         iconPosition="left"
         class="ma-2"
+        :ButtonTextColor="'neroBlack--text'"
       ></huxButton>
     </div>
   </v-card>

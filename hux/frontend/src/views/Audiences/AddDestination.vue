@@ -1,6 +1,6 @@
 <template>
   <div class="add-destination-wrapper font-weight-regular">
-    Extension type
+    <span class="neroBlack--text text-caption">Extension type</span>
     <div class="d-flex align-center mt-2">
       <div
         class="extension-type mr-4 text-center"
@@ -14,7 +14,7 @@
             </v-icon>
           </div>
           <extensionInactive1 v-if="!isActive" />
-          <div class="label">New data extension</div>
+          <div class="label primary--text">New data extension</div>
         </div>
       </div>
       <diV
@@ -29,7 +29,7 @@
             </v-icon>
           </div>
           <extensionInactive2 v-if="isActive" />
-          <div class="label">Existing data extension</div>
+          <div class="label primary--text">Existing data extension</div>
         </div>
       </diV>
     </div>
@@ -37,7 +37,7 @@
     <div class="mt-6" v-if="isActive">
       <div>
         <label class="d-flex align-items-center">
-          Journey type
+          <span class="neroBlack--text text-caption">Journey type</span>
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
@@ -54,12 +54,17 @@
           </v-tooltip>
         </label>
         <v-radio-group v-model="journeyType" row>
-          <v-radio label="Automated (Batched)" value="radio-1"></v-radio>
-          <v-radio
-            label="Triggered (API) - coming soon"
-            value="radio-2"
-            :disabled="true"
-          ></v-radio>
+          <v-radio value="radio-1">
+            <template v-slot:label>
+              <div class="darkGreyHeading--text text-caption">Automated (Batched)</div>
+            </template>
+          </v-radio>
+          <v-radio value="radio-2" :disabled="true">
+            <template v-slot:label>
+              <div class="text-caption">Triggered (API) - coming soon</div>
+            </template>
+          </v-radio>
+
         </v-radio-group>
       </div>
       <TextField
@@ -68,11 +73,14 @@
         icon="mdi-alert-circle-outline"
         placeholderText="What is the name for this new data extension?"
         helpText="Extension name"
+        height="40"
+        backgroundColor="white"
+        class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
       ></TextField>
     </div>
 
     <div class="mt-6" v-if="!isActive">
-      <label class="d-flex align-items-center mb-2">
+      <label class="d-flex align-items-center mb-2 neroBlack--text text-caption">
         Existing data extension
       </label>
       <v-select
@@ -108,7 +116,7 @@ export default {
   data() {
     return {
       isActive: true,
-      journeyType: null,
+      journeyType: 'radio-1',
       extension: null,
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     }
@@ -134,7 +142,7 @@ export default {
     border: 1px solid var(--v-lightGrey-base);
     box-sizing: border-box;
     &.active {
-      border: 1px solid var(--v-darkBlue-base);
+      border: 1px solid var(--v-primary-base);
     }
     .child {
       .label {

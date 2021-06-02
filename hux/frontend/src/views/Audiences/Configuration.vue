@@ -167,34 +167,34 @@
         </template>
       </HuxFooter>
       <!-- Add destination workflow -->
-      <drawer v-model="destinationDrawer.insideFlow">
+      <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
         <template v-slot:header-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
           >
-            <h5 class="text-h5 font-weight-regular pr-2">
+            <h3 class="text-h3 font-weight-light pr-2">
               Select a destination to add
-            </h5>
+            </h3>
           </div>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 2"
           >
-            <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
+            <h3 class="text-h3 pr-2 d-flex align-center">
               <Logo :type="destinationDrawer.selectedDestination[0].type" />
-              <div class="pl-2 font-weight-regular">
+              <div class="pl-2 font-weight-light">
                 {{ destinationDrawer.selectedDestination[0].name }}
               </div>
-            </h5>
+            </h3>
           </div>
         </template>
 
         <template v-slot:default>
-          <v-stepper v-model="destinationDrawer.viewStep">
+          <v-stepper v-model="destinationDrawer.viewStep" class="stepper">
             <v-stepper-items>
               <v-stepper-content step="1">
-                <div class="ma-5">
+                <div>
                   <CardHorizontal
                     v-for="destination in destinations"
                     :key="destination.id"
@@ -252,7 +252,7 @@
               v-bind:isTile="true"
               width="80"
               height="40"
-              class="ma-2"
+              class="ma-2 drawer-back"
               @click.native="destinationDrawer.viewStep = 1"
             ></huxButton>
           </div>
@@ -337,7 +337,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      destinations: "destinations/list",
+      destinations: "destinations/enabledDestination",
     }),
 
     destination() {
@@ -391,7 +391,7 @@ export default {
     onSelectDestination(index, selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
-        if (selected && selected.type === "salesforce") {
+        if (selected && selected.type === "SFMC") {
           if (!this.isDestinationAddedOnDrawer(selected)) {
             this.destinationDrawer.selectedDestination.push(selected)
           }
@@ -400,6 +400,9 @@ export default {
           this.audience.destinations.push(selected)
           this.toggleDrawer()
         }
+      }else {
+        var removeIndex = this.audience.destinations.map(item => item.id == selected.id);
+        ~removeIndex && this.audience.destinations.splice(removeIndex, 1);
       }
     },
     addDestinationToAudience() {
@@ -602,5 +605,15 @@ export default {
       margin-top: 6px;
     }
   }
+
+  .destination-drawer {
+    .stepper {
+      box-shadow: none !important;
+    }
+    .drawer-back {
+      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25)
+    }
+  }
+
 }
 </style>
