@@ -82,7 +82,7 @@ class CDPTest(TestCase):
         """Test get customer profiles
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
