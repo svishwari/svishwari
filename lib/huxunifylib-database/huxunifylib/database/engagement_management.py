@@ -45,9 +45,7 @@ def set_engagement(
     # validate audiences
     validate_audiences(audiences, check_empty=False)
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     if name_exists(
         database,
@@ -106,9 +104,7 @@ def get_engagements(database: DatabaseClient) -> list:
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
@@ -134,9 +130,7 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return collection.find_one(
@@ -152,9 +146,7 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def delete_engagement(
-    database: DatabaseClient, engagement_id: ObjectId
-) -> bool:
+def delete_engagement(database: DatabaseClient, engagement_id: ObjectId) -> bool:
     """A function to delete an engagement based on ID
 
     Args:
@@ -166,9 +158,7 @@ def delete_engagement(
 
     """
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         doc = collection.find_one_and_update(
@@ -278,9 +268,7 @@ def remove_audiences_from_engagement(
     # validate audiences
     validate_object_id_list(audience_ids)
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return collection.find_one_and_update(
@@ -333,9 +321,7 @@ def append_audiences_to_engagement(
     # validate audiences
     validate_audiences(audiences)
 
-    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-        db_c.ENGAGEMENTS_COLLECTION
-    ]
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][db_c.ENGAGEMENTS_COLLECTION]
 
     try:
         return collection.find_one_and_update(

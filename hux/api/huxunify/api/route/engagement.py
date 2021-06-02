@@ -161,9 +161,7 @@ class IndividualEngagementSearch(SwaggerView):
 
         try:
             return (
-                get_engagement(
-                    get_db_client(), engagement_id=ObjectId(engagement_id)
-                ),
+                get_engagement(get_db_client(), engagement_id=ObjectId(engagement_id)),
                 HTTPStatus.OK.value,
             )
 
@@ -182,9 +180,7 @@ class IndividualEngagementSearch(SwaggerView):
             ) from exc
 
 
-@add_view_to_blueprint(
-    engagement_bp, f"{api_c.ENGAGEMENT_ENDPOINT}", "SetEngagement"
-)
+@add_view_to_blueprint(engagement_bp, f"{api_c.ENGAGEMENT_ENDPOINT}", "SetEngagement")
 class SetEngagement(SwaggerView):
     """
     Class to create a new engagement
@@ -258,9 +254,7 @@ class SetEngagement(SwaggerView):
                 description=body[db_c.ENGAGEMENT_DESCRIPTION]
                 if db_c.ENGAGEMENT_DESCRIPTION in body
                 else None,
-                audiences=body[db_c.AUDIENCES]
-                if db_c.AUDIENCES in body
-                else None,
+                audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
                 delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
                 if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
                 else None,
@@ -269,17 +263,13 @@ class SetEngagement(SwaggerView):
 
             return (
                 EngagementGetSchema().dump(
-                    get_engagement(
-                        get_db_client(), engagement_id=engagement_id
-                    )
+                    get_engagement(get_db_client(), engagement_id=engagement_id)
                 ),
                 HTTPStatus.CREATED,
             )
 
         except de.DuplicateName:
-            return {
-                "message": api_c.DUPLICATE_NAME
-            }, HTTPStatus.BAD_REQUEST.value
+            return {"message": api_c.DUPLICATE_NAME}, HTTPStatus.BAD_REQUEST.value
 
         except Exception as exc:
 
@@ -308,6 +298,14 @@ class UpdateEngagement(SwaggerView):
 
     parameters = [
         {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
@@ -318,15 +316,19 @@ class UpdateEngagement(SwaggerView):
                 db_c.AUDIENCES: [
                     {
                         api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ],
                 db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
             },
-        }
+        },
     ]
 
     responses = {
@@ -376,9 +378,7 @@ class UpdateEngagement(SwaggerView):
                 description=body[db_c.ENGAGEMENT_DESCRIPTION]
                 if db_c.ENGAGEMENT_DESCRIPTION in body
                 else None,
-                audiences=body[db_c.AUDIENCES]
-                if db_c.AUDIENCES in body
-                else None,
+                audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
                 delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
                 if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
                 else None,
@@ -390,9 +390,7 @@ class UpdateEngagement(SwaggerView):
             )
 
         except de.DuplicateName:
-            return {
-                "message": api_c.DUPLICATE_NAME
-            }, HTTPStatus.BAD_REQUEST.value
+            return {"message": api_c.DUPLICATE_NAME}, HTTPStatus.BAD_REQUEST.value
 
         except Exception as exc:
 
@@ -463,9 +461,7 @@ class DeleteEngagement(SwaggerView):
             if delete_engagement(
                 get_db_client(), engagement_id=ObjectId(engagement_id)
             ):
-                return {
-                    "message": api_c.OPERATION_SUCCESS
-                }, HTTPStatus.OK.value
+                return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
             return {
                 "message": api_c.OPERATION_FAILED
@@ -514,9 +510,13 @@ class AddAudienceEngagement(SwaggerView):
                 api_c.AUDIENCES: [
                     {
                         api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ]
@@ -558,15 +558,13 @@ class AddAudienceEngagement(SwaggerView):
         user_id = ObjectId()
 
         try:
-            body = AudienceEngagementSchema().load(
-                request.get_json(), partial=True
-            )
+            body = AudienceEngagementSchema().load(request.get_json(), partial=True)
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
             append_audiences_to_engagement(
-                get_db_client(), engagement_id, user_id, body[api_c.AUDIENCES]
+                get_db_client(), ObjectId(engagement_id), user_id, body[api_c.AUDIENCES]
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:
@@ -658,7 +656,7 @@ class DeleteAudienceEngagement(SwaggerView):
         try:
             remove_audiences_from_engagement(
                 get_db_client(),
-                engagement_id,
+                ObjectId(engagement_id),
                 user_id,
                 body[api_c.AUDIENCE_IDS],
             )
@@ -745,9 +743,7 @@ class EngagementDeliverView(SwaggerView):
         # check if engagement exists
         engagement = get_engagement(get_db_client(), engagement_id)
         if not engagement:
-            return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": "Engagement does not exist."}, HTTPStatus.BAD_REQUEST
 
         # validate delivery route
         # TODO - hook up to connectors for HUS-437 in Sprint 10
@@ -834,32 +830,22 @@ class EngagementDeliverAudienceView(SwaggerView):
         # check if engagement exists
         engagement = get_engagement(get_db_client(), engagement_id)
         if not engagement:
-            return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": "Engagement does not exist."}, HTTPStatus.BAD_REQUEST
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
-            return {
-                "message": "Engagement has no audiences."
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": "Engagement has no audiences."}, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
             }, HTTPStatus.BAD_REQUEST
 
         # validate the audience exists
-        if not orchestration_management.get_audience(
-            get_db_client(), audience_id
-        ):
-            return {
-                "message": "Audience does not exist."
-            }, HTTPStatus.BAD_REQUEST
+        if not orchestration_management.get_audience(get_db_client(), audience_id):
+            return {"message": "Audience does not exist."}, HTTPStatus.BAD_REQUEST
 
         # validate delivery route
         # TODO - hook up to connectors for HUS-437 in Sprint 10
@@ -951,8 +937,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         # validate object id
         if not all(
-            ObjectId.is_valid(x)
-            for x in [audience_id, engagement_id, destination_id]
+            ObjectId.is_valid(x) for x in [audience_id, engagement_id, destination_id]
         ):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
 
@@ -964,20 +949,14 @@ class EngagementDeliverDestinationView(SwaggerView):
         # check if engagement exists
         engagement = get_engagement(get_db_client(), engagement_id)
         if not engagement:
-            return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": "Engagement does not exist."}, HTTPStatus.BAD_REQUEST
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
-            return {
-                "message": "Engagement has no audiences."
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": "Engagement has no audiences."}, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
@@ -1000,18 +979,12 @@ class EngagementDeliverDestinationView(SwaggerView):
             get_db_client(), destination_id
         )
         if not destination:
-            return {
-                "message": "Destination does not exist."
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": "Destination does not exist."}, HTTPStatus.BAD_REQUEST
 
         # validate the audience exists
-        audience = orchestration_management.get_audience(
-            get_db_client(), audience_id
-        )
+        audience = orchestration_management.get_audience(get_db_client(), audience_id)
         if not audience:
-            return {
-                "message": "Audience does not exist."
-            }, HTTPStatus.BAD_REQUEST
+            return {"message": "Audience does not exist."}, HTTPStatus.BAD_REQUEST
 
         # TODO - hook up to connectors for HUS-437 in Sprint 10
 

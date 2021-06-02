@@ -37,7 +37,7 @@ class EngagementGetSchema(Schema):
         example=[
             {
                 api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DESTINATION_IDS: [
+                api_c.DESTINATIONS: [
                     {"id": "60ae035b6c5bf45da27f17d6", "name": "Facebook"},
                 ],
                 api_c.DELIVERIES: [
@@ -77,9 +77,13 @@ class EngagementPostSchema(Schema):
         example=[
             {
                 api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DESTINATION_IDS: [
-                    "60ae035b6c5bf45da27f17e5",
-                    "60ae035b6c5bf45da27f17e6",
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: "60ae035b6c5bf45da27f17e5",
+                    },
+                    {
+                        api_c.ID: "60ae035b6c5bf45da27f17e6",
+                    },
                 ],
             }
         ],
@@ -99,9 +103,13 @@ class EngagementPutSchema(Schema):
         example=[
             {
                 api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DESTINATION_IDS: [
-                    "60ae035b6c5bf45da27f17e5",
-                    "60ae035b6c5bf45da27f17e6",
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: "60ae035b6c5bf45da27f17e5",
+                    },
+                    {
+                        api_c.ID: "60ae035b6c5bf45da27f17e6",
+                    },
                 ],
             }
         ],
@@ -119,9 +127,13 @@ class AudienceEngagementSchema(Schema):
         example=[
             {
                 api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DESTINATION_IDS: [
-                    "60ae035b6c5bf45da27f17e5",
-                    "60ae035b6c5bf45da27f17e6",
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: "60ae035b6c5bf45da27f17e5",
+                    },
+                    {
+                        api_c.ID: "60ae035b6c5bf45da27f17e6",
+                    },
                 ],
             }
         ],
