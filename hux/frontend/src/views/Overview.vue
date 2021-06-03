@@ -127,7 +127,7 @@ export default {
           title: "Create an engagement",
           description:
             "Put all this great data and information to good use by creating an engagement.",
-          route: { name: "Engagements" },
+          route: { name: "EngagementConfiguration" },
           active: true,
         },
       ],

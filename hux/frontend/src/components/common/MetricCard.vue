@@ -21,7 +21,7 @@
         <slot name="extra-item"></slot>
         <v-list-item-subtitle
           class="item-subtitle mb-3 text-h6 neroBlack--text"
-          v-if="subtitle"
+          v-if="subtitle.toString()"
         >
           {{ subtitle }}
         </v-list-item-subtitle>
@@ -43,7 +43,7 @@ export default {
     },
 
     title: {
-      type: String,
+      type: [String, Number],
       required: false,
       default: "Info card title",
     },
@@ -88,6 +88,7 @@ export default {
 .metric-card-wrapper {
   border: 1px solid var(--v-zircon-base);
   &.no-click {
+    cursor: default;
     background-color: transparent;
   }
   .item-headline {
