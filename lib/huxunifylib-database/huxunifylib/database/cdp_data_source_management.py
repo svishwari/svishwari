@@ -37,7 +37,9 @@ def create_data_source(
         dict: MongoDB document for a data source
 
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     # TODO - feed count to be updated per CDM in future tickets.
     doc = {
@@ -77,7 +79,9 @@ def get_all_data_sources(database: DatabaseClient) -> list:
         list: List of all data sources
 
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     try:
         return list(collection.find({}))
@@ -91,7 +95,9 @@ def get_all_data_sources(database: DatabaseClient) -> list:
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_data_source(database: DatabaseClient, data_source_id: ObjectId) -> dict:
+def get_data_source(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> dict:
     """A function to return a single data source based on a provided id
 
     Args:
@@ -102,7 +108,9 @@ def get_data_source(database: DatabaseClient, data_source_id: ObjectId) -> dict:
         dict: MongoDB document for a data source
 
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     try:
         return collection.find_one({c.ID: data_source_id})
@@ -116,7 +124,9 @@ def get_data_source(database: DatabaseClient, data_source_id: ObjectId) -> dict:
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def delete_data_source(database: DatabaseClient, data_source_id: ObjectId) -> bool:
+def delete_data_source(
+    database: DatabaseClient, data_source_id: ObjectId
+) -> bool:
     """A function to delete a data source
 
     Args:
@@ -127,7 +137,9 @@ def delete_data_source(database: DatabaseClient, data_source_id: ObjectId) -> bo
         bool: a flag indicating successful deletion
 
     """
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.CDP_DATA_SOURCES_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
 
     try:
         return collection.delete_one({c.ID: data_source_id}).deleted_count > 0
