@@ -273,11 +273,7 @@ def remove_audiences_from_engagement(
     """
 
     # validate audiences
-    if not audience_ids:
-        raise AttributeError("A minimum of one audience is required.")
-
-    if not all(ObjectId.is_valid(a) for a in audience_ids):
-        raise AttributeError("Invalid ObjectID submitted.")
+    validate_object_id_list(audience_ids)
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
@@ -376,5 +372,27 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
             raise AttributeError("Audience must be a dict.")
         if db_c.AUDIENCE_ID not in audience:
             raise KeyError(f"Missing audience {db_c.AUDIENCE_ID}.")
+        if not isinstance(audience[db_c.AUDIENCE_ID], ObjectId):
+            raise ValueError("Must provide an ObjectId.")
         if not ObjectId(audience[db_c.AUDIENCE_ID]):
             raise ValueError("Invalid object id value.")
+
+
+def validate_object_id_list(
+    object_ids: list, check_empty: bool = True
+) -> None:
+    """A function for validating a list of object ids.
+
+    Args:
+        object_ids (list): list of object ids.
+        check_empty (bool): check empty list.
+    Returns:
+
+    """
+    if not object_ids and check_empty:
+        raise AttributeError("A minimum of one item is required.")
+
+    # validate the list
+    for object_id in object_ids:
+        if not isinstance(object_id, ObjectId):
+            raise ValueError("Must provide an ObjectId.")

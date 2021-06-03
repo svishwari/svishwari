@@ -71,6 +71,27 @@ class TestEngagementManagement(unittest.TestCase):
 
         self.assertIsInstance(engagement_id, ObjectId)
 
+    def test_set_engagement_string_audience_id(self) -> None:
+        """Test set_engagement routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # change audience_id to string
+        audience = self.audience.copy()
+        audience[c.AUDIENCE_ID] = str(audience[c.AUDIENCE_ID])
+
+        with self.assertRaises(ValueError):
+            em.set_engagement(
+                self.database,
+                "Engagement string audience",
+                "string audience",
+                [audience],
+                self.user_id,
+            )
+
     def test_get_engagements(self) -> None:
         """Test get_engagements routine
 
@@ -256,6 +277,43 @@ class TestEngagementManagement(unittest.TestCase):
         # test audience should not be there
         self.assertFalse(updated[c.AUDIENCES])
 
+    def test_set_engagement_remove_audience_str_audience(self) -> None:
+        """Test creating an engagement and remove a string audience
+
+        Returns:
+            Response: None
+
+        """
+
+        # create audience normally
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement 2",
+            "Engagement 2 Description",
+            [self.audience],
+            self.user_id,
+        )
+
+        engagement = em.get_engagement(self.database, engagement_id)
+
+        # check engagement
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+        self.assertEqual(
+            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
+            self.audience[c.AUDIENCE_ID],
+        )
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        with self.assertRaises(ValueError):
+            # remove an audience
+            em.remove_audiences_from_engagement(
+                self.database,
+                engagement_id,
+                self.user_id,
+                [str(self.audience[c.ID])],
+            )
+
     def test_set_engagement_attach_audience_after(self) -> None:
         """Test creating an engagement and attaching an audience after
 
@@ -301,3 +359,42 @@ class TestEngagementManagement(unittest.TestCase):
         # test audience appears as expected
         self.assertTrue(updated[c.AUDIENCES])
         self.assertEqual(len(updated[c.AUDIENCES]), 2)
+
+    def test_set_engagement_attach_audience_str_id(self) -> None:
+        """Test creating an engagement and attaching an audience
+            with a str object id
+
+        Returns:
+            Response: None
+
+        """
+
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement 2",
+            "Engagement 2 Description",
+            [self.audience],
+            self.user_id,
+        )
+
+        engagement = em.get_engagement(self.database, engagement_id)
+
+        # check engagement
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+        self.assertEqual(
+            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
+            self.audience[c.AUDIENCE_ID],
+        )
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        # setup a few destinations
+        new_audience = {
+            c.AUDIENCE_ID: str(ObjectId()),
+            c.DESTINATIONS: self.destinations,
+        }
+
+        with self.assertRaises(ValueError):
+            em.append_audiences_to_engagement(
+                self.database, engagement_id, self.user_id, [new_audience]
+            )
