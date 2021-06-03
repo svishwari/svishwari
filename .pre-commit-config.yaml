@@ -9,8 +9,6 @@ repos:
     rev: stable
     hooks:
     -   id: black
-        args:
-        - -l 79
 -   repo: local
     hooks:
     -   id: pylint
