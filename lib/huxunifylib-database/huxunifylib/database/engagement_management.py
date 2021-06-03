@@ -389,6 +389,7 @@ def validate_object_id_list(
     Args:
         object_ids (list): list of object ids.
         check_empty (bool): check empty list.
+
     Returns:
 
     """
