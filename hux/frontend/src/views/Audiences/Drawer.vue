@@ -1,11 +1,11 @@
 <template>
   <div>
     <Drawer v-model="toggleDrawer">
-      <template v-slot:header-left>
+      <template #header-left>
         <h3 class="text-h3">Add audiences to this engagement</h3>
       </template>
 
-      <template v-slot:default>
+      <template #default>
         <v-progress-linear :active="loading" :indeterminate="loading" />
 
         <div class="pa-8">
@@ -15,83 +15,79 @@
             New audience
           </v-btn>
 
-          <v-data-iterator
+          <DataCards
             :items="audiences"
-            :items-per-page="100"
-            hide-default-footer
+            :fields="[
+              {
+                key: 'name',
+                label: 'Name',
+                sortable: true,
+              },
+              {
+                key: 'size',
+                label: 'Target size',
+                sortable: true,
+              },
+              {
+                key: 'manage',
+                sortable: false,
+              },
+            ]"
           >
-            <template v-slot:default="props">
-              <v-card
-                v-for="item in Object.values(props.items)"
-                :key="item.id"
-                elevation="2"
-                class="mb-4"
-              >
-                <v-card-title>
-                  <v-row align="center">
-                    <v-menu
-                      bottom
-                      offset-y
-                      nudge-left="-100%"
-                      nudge-top="10px"
-                      open-on-hover
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-col class="grow" v-on="on">
-                          {{ item.name }}
-                        </v-col>
-                      </template>
-                      <div class="px-4 py-3 text-caption white">
-                        <p class="mb-0">{{ item.name }}</p>
-                        <p class="text-caption gray--text mb-0">
-                          {{ item.size | Numeric }}
-                        </p>
-                      </div>
-                    </v-menu>
-                    <v-col class="grow">
-                      {{ item.size | Numeric(true, true) }}
-                    </v-col>
-                    <v-col class="shrink">
-                      <v-btn
-                        v-if="isAdded(item)"
-                        color="secondary"
-                        width="100"
-                        @click="remove(item)"
-                      >
-                        <v-icon small class="mr-1">mdi-check</v-icon>
-                        Added
-                      </v-btn>
-                      <v-btn
-                        v-else
-                        outlined
-                        color="lightGrey"
-                        width="100"
-                        @click="add(item)"
-                      >
-                        <span class="darkGrey--text">Add</span>
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-card-title>
-              </v-card>
+            <template #field:size="row">
+              <v-menu offset-y open-on-hover>
+                <template #activator="{ on }">
+                  <span v-on="on">
+                    {{ row.value | Numeric(true, true) }}
+                  </span>
+                </template>
+                <div class="px-4 py-3 text-caption white">
+                  {{ row.value | Numeric }}
+                </div>
+              </v-menu>
             </template>
-          </v-data-iterator>
+
+            <template #field:manage="row">
+              <div class="d-flex align-center justify-end">
+                <v-btn
+                  v-if="isAdded(row.item)"
+                  color="secondary"
+                  width="100"
+                  @click="remove(row.item)"
+                >
+                  <v-icon small class="mr-1">mdi-check</v-icon>
+                  Added
+                </v-btn>
+                <v-btn
+                  v-else
+                  outlined
+                  color="lightGrey"
+                  width="100"
+                  @click="add(row.item)"
+                >
+                  <span class="darkGrey--text">Add</span>
+                </v-btn>
+              </div>
+            </template>
+          </DataCards>
         </div>
       </template>
 
-      <template v-slot:footer-left> {{ audiences.length }} results </template>
+      <template #footer-left> {{ audiences.length }} results </template>
     </Drawer>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
 
 export default {
   name: "AudiencesDrawer",
 
   components: {
+    DataCards,
     Drawer,
   },
 
