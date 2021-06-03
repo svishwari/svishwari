@@ -205,7 +205,7 @@ class SetEngagement(SwaggerView):
                                 "contact_list": "sfmc_extension_name",
                             },
                             {
-                                db_c.ID: "60ae035b6c5bf45da27f17e6",
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
                             },
                         ],
                     }
