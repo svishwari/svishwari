@@ -170,7 +170,7 @@ import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
 import TextField from "@/components/common/TextField.vue"
-import AudiencesDrawer from "@/views/Audiences/Drawer.vue"
+import AudiencesDrawer from "./AudiencesDrawer.vue"
 
 export default {
   name: "EngagementsForm",
