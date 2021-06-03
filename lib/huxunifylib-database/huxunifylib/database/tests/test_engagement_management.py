@@ -153,6 +153,35 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertNotIn(c.ENGAGEMENT_DELIVERY_SCHEDULE, engagement_doc)
         self.assertEqual(self.user_id, engagement_doc[c.CREATED_BY])
 
+    def test_update_engagement_bad_string_id(self) -> None:
+        """Test update_engagement routine with a bad string id
+
+        Returns:
+            Response: None
+
+        """
+
+        new_name = "Engagement 3"
+        new_description = "Engagement 3 description"
+        engagement_docs = em.get_engagements(database=self.database)
+        engagement_id = engagement_docs[0]["_id"]
+
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        # change audience_id to string
+        audience = self.audience.copy()
+        audience[c.AUDIENCE_ID] = str(audience[c.AUDIENCE_ID])
+
+        with self.assertRaises(ValueError):
+            em.update_engagement(
+                self.database,
+                engagement_id,
+                self.user_id,
+                new_name,
+                new_description,
+                [audience],
+            )
+
     def test_delete_engagement(self) -> None:
         """Test delete_engagement routine
 

@@ -214,6 +214,9 @@ def update_engagement(
         dict: dict object of the engagement that has been updated
     """
 
+    if audiences:
+        validate_audiences(audiences, check_empty=True)
+
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
