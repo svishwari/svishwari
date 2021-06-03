@@ -1,13 +1,35 @@
 <template>
   <div>
-    <v-data-iterator :items="items" :items-per-page="100" hide-default-footer>
+    <v-data-iterator
+      :items="items"
+      :items-per-page="itemsPerPage"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      hide-default-footer
+    >
       <template v-slot:default="props">
         <!-- header -->
-        <v-row align="center" no-gutters>
+        <v-row align="center" no-gutters :class="{ 'pl-2': bordered }">
           <v-col v-for="field in fields" :key="field.label">
             <div class="px-4 py-2">
               <span class="text-caption">
                 {{ field.label }}
+                <v-btn
+                  v-if="field.sortable"
+                  icon
+                  x-small
+                  @click="setSortBy(field.key)"
+                >
+                  <v-icon
+                    x-small
+                    :class="{
+                      'secondary--text': isSortedBy(field.key),
+                      'rotate-icon-180': isSortedBy(field.key) && sortDesc,
+                    }"
+                  >
+                    mdi-arrow-up
+                  </v-icon>
+                </v-btn>
               </span>
             </div>
           </v-col>
@@ -52,6 +74,8 @@
 </template>
 
 <script>
+const ALL = -1
+
 export default {
   name: "DataCards",
 
@@ -78,6 +102,27 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      sortBy: null,
+      sortDesc: false,
+      itemsPerPage: ALL,
+    }
+  },
+
+  methods: {
+    setSortBy(key) {
+      if (this.isSortedBy(key)) {
+        this.sortDesc = !this.sortDesc
+      } else {
+        this.sortBy = key
+      }
+    },
+
+    isSortedBy(key) {
+      return Boolean(this.sortBy === key)
+    },
+  },
 }
 </script>
 
@@ -91,6 +136,6 @@ export default {
 }
 
 .bordered-card {
-  border-left: 10px solid var(--v-aliceBlue-base);
+  border-left: 8px solid var(--v-aliceBlue-base);
 }
 </style>
