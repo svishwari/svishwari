@@ -201,7 +201,7 @@ class SetEngagement(SwaggerView):
                         api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
                         db_c.DESTINATIONS: [
                             {
-                                db_c.ID: "60ae035b6c5bf45da27f17e5",
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
                                 "contact_list": "sfmc_extension_name",
                             },
                             {
