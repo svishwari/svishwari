@@ -209,6 +209,9 @@ class CustomerProfileSearch(SwaggerView):
         """Retrieves a customer profile.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             customer_id (str): ID of the customer
 
