@@ -1,24 +1,16 @@
 <template>
   <div class="d-flex navbar-menu align-center">
-    <v-btn small icon class="icon-btn">
-      <v-icon size="22" class="mdi-plus">mdi-plus</v-icon>
-    </v-btn>
-    <Notification></Notification>
-    <v-btn small icon class="icon-btn">
-      <v-icon size="20" class="mdi-help">mdi-help</v-icon>
-    </v-btn>
     <v-divider vertical color="lightGrey"></v-divider>
     <UserAvatar></UserAvatar>
   </div>
 </template>
 
 <script>
-import Notification from "@/components/Notification"
 import UserAvatar from "@/components/UserAvatar"
 
 export default {
   name: "NavBarMenu",
-  components: { Notification, UserAvatar },
+  components: { UserAvatar },
 }
 </script>
 

@@ -9,7 +9,7 @@
         <div v-if="item.icon" class="d-flex pr-2">
           <Icon :type="item.icon" :size="24" color="neroBlack" />
         </div>
-        <span :class="{ 'neroBlack-text': item.disabled, 'pl-1': true }">{{
+        <span :class="{ 'neroBlack--text': item.disabled, 'pl-1': true }">{{
           item.text
         }}</span>
       </v-breadcrumbs-item>
@@ -40,6 +40,9 @@ export default {
 .breadcrumb {
   ::v-deep .v-breadcrumbs__divider {
     padding: 0;
+  }
+  ::v-deep .v-breadcrumbs__item--disabled {
+    color: var(--v-neroBlack-base);
   }
 }
 </style>

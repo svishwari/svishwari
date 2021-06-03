@@ -113,7 +113,7 @@ export default {
 <style lang="scss" scoped>
 .side-nav-bar {
   @media (min-height: 900px) {
-    background-image: url("../assets/images/nav-bg.png");
+    // background-image: url("../assets/images/nav-bg.png");
     background-position: bottom 30px center;
   }
 

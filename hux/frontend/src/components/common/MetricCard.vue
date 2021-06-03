@@ -16,14 +16,22 @@
           class="item-headline mt-1"
           v-bind:class="interactable ? 'primary--text ' : 'gray--text '"
         >
-          {{ title }}
+          <span v-if="!titleTooltip">{{ title }}</span>
+          <tooltip v-if="titleTooltip">
+            <template slot="label-content">
+              {{ title }}
+            </template>
+            <template slot="hover-content">
+              {{ titleTooltip }}
+            </template>
+          </tooltip>
         </v-list-item-title>
         <slot name="extra-item"></slot>
         <v-list-item-subtitle
           class="item-subtitle mb-3 text-h6 neroBlack--text"
-          v-if="subtitle.toString()"
         >
           {{ subtitle }}
+          <slot name="subtitle-extended"></slot>
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-icon color="zircon" x-large> {{ icon }} </v-icon>
@@ -33,7 +41,9 @@
 </template>
 
 <script>
+import Tooltip from "./Tooltip.vue"
 export default {
+  components: { Tooltip },
   name: "metric-card",
 
   props: {
@@ -64,6 +74,10 @@ export default {
       required: false,
       default: true,
     },
+    titleTooltip: {
+      type: String,
+      required: false,
+    },
 
     width: {
       type: [String, Number],
@@ -90,6 +104,7 @@ export default {
   &.no-click {
     cursor: default;
     background-color: transparent;
+    cursor: default;
   }
   .item-headline {
     font-size: 12px;
