@@ -44,8 +44,10 @@
                 <Logo :type="item.type" :size="18" />
               </template>
               <template slot="hover-content">
-                <div class="d-flex  align-center"><Logo :type="item.type" :size="18" />
-                <span class="ml-2">{{ item.type | TitleCase }}</span></div>
+                <div class="d-flex align-center">
+                  <Logo :type="item.type" :size="18" />
+                  <span class="ml-2">{{ item.type | TitleCase }}</span>
+                </div>
               </template>
             </tooltip>
 
