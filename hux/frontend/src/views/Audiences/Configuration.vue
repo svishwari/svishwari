@@ -400,9 +400,11 @@ export default {
           this.audience.destinations.push(selected)
           this.toggleDrawer()
         }
-      }else {
-        var removeIndex = this.audience.destinations.map(item => item.id == selected.id);
-        ~removeIndex && this.audience.destinations.splice(removeIndex, 1);
+      } else {
+        var removeIndex = this.audience.destinations.map(
+          (item) => item.id == selected.id
+        )
+        ~removeIndex && this.audience.destinations.splice(removeIndex, 1)
       }
     },
     addDestinationToAudience() {
@@ -611,9 +613,8 @@ export default {
       box-shadow: none !important;
     }
     .drawer-back {
-      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25)
+      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
     }
   }
-
 }
 </style>

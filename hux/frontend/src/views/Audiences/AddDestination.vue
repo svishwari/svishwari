@@ -56,7 +56,9 @@
         <v-radio-group v-model="journeyType" row>
           <v-radio value="radio-1">
             <template v-slot:label>
-              <div class="darkGreyHeading--text text-caption">Automated (Batched)</div>
+              <div class="darkGreyHeading--text text-caption">
+                Automated (Batched)
+              </div>
             </template>
           </v-radio>
           <v-radio value="radio-2" :disabled="true">
@@ -64,7 +66,6 @@
               <div class="text-caption">Triggered (API) - coming soon</div>
             </template>
           </v-radio>
-
         </v-radio-group>
       </div>
       <TextField
@@ -80,7 +81,9 @@
     </div>
 
     <div class="mt-6" v-if="!isActive">
-      <label class="d-flex align-items-center mb-2 neroBlack--text text-caption">
+      <label
+        class="d-flex align-items-center mb-2 neroBlack--text text-caption"
+      >
         Existing data extension
       </label>
       <v-select
@@ -116,7 +119,7 @@ export default {
   data() {
     return {
       isActive: true,
-      journeyType: 'radio-1',
+      journeyType: "radio-1",
       extension: null,
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     }
