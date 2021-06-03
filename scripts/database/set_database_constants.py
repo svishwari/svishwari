@@ -162,19 +162,11 @@ CONSTANTS_LIST = [
                     c.TRANSFORMER: TransformerNames.PASS_THROUGH.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_CITY,
                 },
-                {
-                    c.TRANSFORMER: TransformerNames.STRIP_SPACE_LOWER_CASE_HASHED.name,
-                    c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_CITY,
-                },
             ],
             c.S_TYPE_COUNTRY_CODE: [
                 {
                     c.TRANSFORMER: TransformerNames.STRIP_SPACE_UPPER_CASE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_COUNTRY_CODE,
-                },
-                {
-                    c.TRANSFORMER: TransformerNames.STRIP_SPACE_UPPER_CASE_HASHED.name,
-                    c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_COUNTRY_CODE,
                 },
             ],
             c.S_TYPE_DOB: [
@@ -240,10 +232,6 @@ CONSTANTS_LIST = [
                     c.TRANSFORMER: TransformerNames.GENDER.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_GENDER,
                 },
-                {
-                    c.TRANSFORMER: TransformerNames.FACEBOOK_GENDER.name,
-                    c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_GENDER,
-                },
             ],
             c.S_TYPE_LAST_NAME: [
                 {
@@ -259,10 +247,6 @@ CONSTANTS_LIST = [
             ],
             c.S_TYPE_PHONE_NUMBER: [
                 {
-                    c.TRANSFORMER: TransformerNames.FACEBOOK_PHONE_NUMBER.name,
-                    c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_PHONE_NUMBER,
-                },
-                {
                     c.TRANSFORMER: TransformerNames.GOOGLE_PHONE_NUMBER.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_GOOGLE_PHONE_NUMBER,
                 },
@@ -272,19 +256,11 @@ CONSTANTS_LIST = [
                     c.TRANSFORMER: TransformerNames.POSTAL_CODE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_POSTAL_CODE,
                 },
-                {
-                    c.TRANSFORMER: TransformerNames.FACEBOOK_POSTAL_CODE.name,
-                    c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_POSTAL_CODE,
-                },
             ],
             c.S_TYPE_STATE_OR_PROVINCE: [
                 {
                     c.TRANSFORMER: TransformerNames.STATE_OR_PROVINCE.name,
                     c.DESTINATION_COLUMN: c.S_TYPE_STATE_OR_PROVINCE,
-                },
-                {
-                    c.TRANSFORMER: TransformerNames.FACEBOOK_STATE_OR_PROVINCE.name,
-                    c.DESTINATION_COLUMN: c.S_TYPE_FACEBOOK_STATE_OR_PROVINCE,
                 },
             ],
             c.S_TYPE_CUSTOMER_ID: [

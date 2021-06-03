@@ -16,188 +16,189 @@ logging.basicConfig(level=logging.INFO)
 
 # Initiate Data Base client
 DB_CLIENT = get_mongo_client()
+SOURCE_TYPE = "source_type"
 
 
 # Data Sources List
 DATA_SOURCES = [
     {
         c.DATA_SOURCE_NAME: "Bluecore",
-        c.DATA_SOURCE_TYPE: "bluecore",
+        SOURCE_TYPE: "bluecore",
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "NetSuite",
-        c.DATA_SOURCE_TYPE: "netsuite",
+        SOURCE_TYPE: "netsuite",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Aqfer",
-        c.DATA_SOURCE_TYPE: "aqfer",
+        SOURCE_TYPE: "aqfer",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Facebook",
-        c.DATA_SOURCE_TYPE: "facebook",
+        SOURCE_TYPE: "facebook",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Salesforce Marketing Cloud",
-        c.DATA_SOURCE_TYPE: "salesforce",
+        SOURCE_TYPE: "salesforce",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Adobe Experience",
-        c.DATA_SOURCE_TYPE: "adobe-experience",
+        SOURCE_TYPE: "adobe-experience",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Mailchimp",
-        c.DATA_SOURCE_TYPE: "mailchimp",
+        SOURCE_TYPE: "mailchimp",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Amazon Advertising",
-        c.DATA_SOURCE_TYPE: "amazon-advertising",
+        SOURCE_TYPE: "amazon-advertising",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Amazon S3",
-        c.DATA_SOURCE_TYPE: "amazon-s3",
+        SOURCE_TYPE: "amazon-s3",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Aol",
-        c.DATA_SOURCE_TYPE: "aol",
+        SOURCE_TYPE: "aol",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Apache Hive",
-        c.DATA_SOURCE_TYPE: "apache-hive",
+        SOURCE_TYPE: "apache-hive",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Azure",
-        c.DATA_SOURCE_TYPE: "azure-blob",
+        SOURCE_TYPE: "azure-blob",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "GA360",
-        c.DATA_SOURCE_TYPE: "GA360",
+        SOURCE_TYPE: "GA360",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Google Ads",
-        c.DATA_SOURCE_TYPE: "google-ads",
+        SOURCE_TYPE: "google-ads",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Gmail",
-        c.DATA_SOURCE_TYPE: "gmail",
+        SOURCE_TYPE: "gmail",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Google Analytics",
-        c.DATA_SOURCE_TYPE: "google-analytics",
+        SOURCE_TYPE: "google-analytics",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "IBM DB2",
-        c.DATA_SOURCE_TYPE: "IBMDB2",
+        SOURCE_TYPE: "IBMDB2",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "InsightIQ",
-        c.DATA_SOURCE_TYPE: "insightIQ",
+        SOURCE_TYPE: "insightIQ",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Jira",
-        c.DATA_SOURCE_TYPE: "jira",
+        SOURCE_TYPE: "jira",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Mandrill",
-        c.DATA_SOURCE_TYPE: "mandrill",
+        SOURCE_TYPE: "mandrill",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Maria DB",
-        c.DATA_SOURCE_TYPE: "mariaDB",
+        SOURCE_TYPE: "mariaDB",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Medallia",
-        c.DATA_SOURCE_TYPE: "medallia",
+        SOURCE_TYPE: "medallia",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Microsoft Azure SQL",
-        c.DATA_SOURCE_TYPE: "microsoftAzureSQL",
+        SOURCE_TYPE: "microsoftAzureSQL",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Qualtrics",
-        c.DATA_SOURCE_TYPE: "qualtrics",
+        SOURCE_TYPE: "qualtrics",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Tableau",
-        c.DATA_SOURCE_TYPE: "tableau",
+        SOURCE_TYPE: "tableau",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Twilio",
-        c.DATA_SOURCE_TYPE: "twilio",
+        SOURCE_TYPE: "twilio",
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -210,7 +211,6 @@ DELIVERY_PLATFORMS = [
         c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
         c.DELIVERY_PLATFORM_TYPE: "salesforce",
         c.STATUS: c.ACTIVE,
-        c.ENABLED: True,
         c.ENABLED: True,
         c.ADDED: False,
     },
@@ -300,6 +300,11 @@ DELIVERY_PLATFORMS = [
     },
 ]
 
+# drop collections for writing.
+collections = [c.CDP_DATA_SOURCES_COLLECTION, c.DELIVERY_PLATFORM_COLLECTION]
+for collection in collections:
+    DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][collection].drop()
+
 # Inserting Data Sources into Data Sources Collection
 logging.info("Prepopulate data sources.")
 inserted_ids = []
@@ -315,7 +320,6 @@ inserted_ids = []
 for i, delivery_platform in enumerate(DELIVERY_PLATFORMS):
     result_id = set_delivery_platform(
         DB_CLIENT,
-        delivery_platform_type=delivery_platform[c.DELIVERY_PLATFORM_NAME],
         **delivery_platform,
     )[c.ID]
     logging.info(

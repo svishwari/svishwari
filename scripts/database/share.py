@@ -22,6 +22,11 @@ def get_mongo_client() -> MongoClient:
     # grab the SSL cert path
     ssl_cert_path = str(Path(__file__).parent.joinpath("rds-combined-ca-bundle.pem"))
 
+    host = "unifieddb.cyzq3ntrysmc.us-east-1.docdb.amazonaws.com"
+    port = 27017
+    user_name = "docdbmaster"
+    password = "S7H47PBWXS3QzLFZ"
+
     # Set up the database client
     return MongoClient(
         host,
