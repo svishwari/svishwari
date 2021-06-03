@@ -43,7 +43,7 @@ def set_engagement(
     """
 
     # validate audiences
-    validate_audiences(audiences, False)
+    validate_audiences(audiences, check_empty=False)
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
