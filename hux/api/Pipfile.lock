@@ -115,19 +115,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:1d24c6d1f5db4b52bb29f1dfe13fd3e9d95d9fa4634b0638a096f5a884173cde",
-                "sha256:8ee8766813864796be6c87ad762c6da4bfef603977931854a38f49fe4db06495"
+                "sha256:4f15867701b28ca78eb56cfc4ff5f0e5ee7db42558dbc445f1a7395e467ac3e9",
+                "sha256:85c1875ab17c36ffb3ad1b0f4b52e3418e0fd1ef7d167ff4e545fb052b7cc1f8"
             ],
             "index": "pypi",
-            "version": "==1.17.84"
+            "version": "==1.17.86"
         },
         "botocore": {
             "hashes": [
-                "sha256:75e1397b80aa8757a26636b949eebd20b3cf67e8f1ed80dc01170907e06ea45d",
-                "sha256:bc59eb748fcb07835613ebea6dcc2600ae1a8be0fae30e40b9c1e81b73262296"
+                "sha256:2a48154fd7d61a67d861b0781e204918508aa8af094391f03ad4047c979dc9c7",
+                "sha256:bbdfd2adedb0cc9117cf411ef51cbd8fc19798e21e414f831ad9781e507ff1da"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==1.20.84"
+            "version": "==1.20.86"
         },
         "bson": {
             "hashes": [
@@ -311,13 +311,11 @@
         },
         "huxunifylib-connectors": {
             "hashes": [
-                "sha256:19de6acdad8a79e9b6def874a3173711f1e543c72e17dba8c5a8d97a2781209f",
-                "sha256:1f32027137f9e8b5f511bb72175966ccb000fb9e36066ec69e5a22c6f61a113f",
-                "sha256:2f1e9d445175a0fff70e72c9005227e02f5bb45f0e5853e0f969d8d4c44e521c",
-                "sha256:fcc9645c0ea66c6521075ad9b3bf7c77f6ca4ee51920666a8db12c16098cc91d"
+                "sha256:5ad072b90951f7cbcd285b933dbb50aeae3e23fd9e9d5eca5003caf1d0a3658e",
+                "sha256:97843dd84da423002a87dc486837029907a1dc7ac56e5c2205b241de1d4dbf0f"
             ],
             "index": "jfrog",
-            "version": "==0.1.0"
+            "version": "==0.1.13"
         },
         "huxunifylib-database": {
             "hashes": [
@@ -329,11 +327,11 @@
         },
         "huxunifylib-util": {
             "hashes": [
-                "sha256:2094c83bae7509578ad76210492c4bbdce50405655e9c7d7610c5ae8cb2895e0",
-                "sha256:3c48bc0471564f7e8a579c24a52d64f2b8ef50f300b37a4e1a4638365bb893cc"
+                "sha256:124c008f6d4ec6b096d223922e5a7279c301944256b5a90041ae8676a3a3dffd",
+                "sha256:1949d8cc15c019920f50d7e3db4f2d5f9543d0118c07d757655b56bd554d96cc"
             ],
             "index": "jfrog",
-            "version": "==0.1.12"
+            "version": "==0.1.13"
         },
         "identify": {
             "hashes": [
