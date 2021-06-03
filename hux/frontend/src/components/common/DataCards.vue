@@ -27,7 +27,7 @@
                       'rotate-icon-180': isSortedBy(field.key) && sortDesc,
                     }"
                   >
-                    mdi-arrow-up
+                    mdi-arrow-down
                   </v-icon>
                 </v-btn>
               </span>
@@ -40,7 +40,7 @@
           v-for="item in Object.values(props.items)"
           :key="item.id"
           :class="{ 'bordered-card': bordered }"
-          class="data-card mb-4"
+          class="data-card mb-2"
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key">
@@ -105,7 +105,7 @@ export default {
   data() {
     return {
       sortBy: null,
-      sortDesc: false,
+      sortDesc: true,
       itemsPerPage: ALL,
     }
   },
