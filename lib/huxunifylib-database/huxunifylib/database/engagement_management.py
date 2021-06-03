@@ -284,24 +284,22 @@ def remove_audiences_from_engagement(
     ]
 
     try:
-        result = collection.update_one(
+        return collection.find_one_and_update(
             {db_c.ID: engagement_id},
             {
                 "$pull": {
                     f"{db_c.AUDIENCES}.{db_c.AUDIENCE_ID}": {
                         db_c.AUDIENCE_ID: {"$in": audience_ids}
                     }
-                }
-            },
-            {
+                },
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                     db_c.UPDATED_BY: user_id,
-                }
+                },
             },
+            upsert=False,
+            return_document=pymongo.ReturnDocument.AFTER,
         )
-
-        return result.modified_count == len(audience_ids)
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -348,7 +346,7 @@ def append_audiences_to_engagement(
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                     db_c.UPDATED_BY: user_id,
                 },
-                "$push": {db_c.AUDIENCES: audiences},
+                "$push": {db_c.AUDIENCES: {"$each": audiences}},
             },
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
