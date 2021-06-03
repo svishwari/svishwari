@@ -69,6 +69,15 @@ const actions = {
       throw error
     }
   },
+
+  async deliver(_, id) {
+    try {
+      await api.engagements.deliver(id)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {

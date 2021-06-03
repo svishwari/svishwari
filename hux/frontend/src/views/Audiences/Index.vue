@@ -138,7 +138,7 @@ export default {
         },
         {
           headerName: "Last delivered",
-          field: "lastDelivered",
+          field: "last_delivered",
           width: "170",
           sortable: true,
           cellRendererFramework: DateTimeCell,

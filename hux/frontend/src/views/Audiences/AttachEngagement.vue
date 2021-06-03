@@ -122,7 +122,7 @@
                   :rules="newEngagementRules"
                 />
                 <TextField
-                  labelText="Description - <i>optional</i>"
+                  labelText="Description"
                   placeholder="What is the purpose of this engagement?"
                   v-model="newEngagement.description"
                 />

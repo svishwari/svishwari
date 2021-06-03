@@ -272,4 +272,5 @@ export default function (server) {
 
   //seed audiences
   server.create("audience", defaultAudience)
+  server.createList("audience", 10)
 }

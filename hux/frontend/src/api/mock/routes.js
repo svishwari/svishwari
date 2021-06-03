@@ -113,6 +113,13 @@ export const defineRoutes = (server) => {
     return schema.engagements.create(attrs)
   })
 
+  server.post("/engagements/:id/deliver", () => {
+    const code = 200
+    const headers = {}
+    const body = { message: "Successfully created delivery jobs" }
+    return new Response(code, headers, body)
+  })
+
   // models
   server.get("/models")
 
