@@ -72,7 +72,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIsInstance(engagement_id, ObjectId)
 
     def test_set_engagement_string_audience_id(self) -> None:
-        """Test set_engagement routine
+        """Test set_engagement routine with string audience id
 
         Returns:
             Response: None
@@ -307,7 +307,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertFalse(updated[c.AUDIENCES])
 
     def test_set_engagement_remove_audience_str_audience(self) -> None:
-        """Test creating an engagement and remove a string audience
+        """Test creating an engagement and remove a string audience id
 
         Returns:
             Response: None
