@@ -29,6 +29,7 @@ const mutations = {
       Vue.set(state.audiences, item.id, item)
     })
   },
+
   SET_ONE(state, item) {
     Vue.set(state.audiences, item.id, item)
   },
@@ -120,10 +121,11 @@ const actions = {
       throw error
     }
   },
+
   async add({ commit }, audience) {
     try {
       const response = await api.audiences.create(audience)
-      commit("SET_AUDIENCE", response.data)
+      commit("SET_ONE", response.data)
       return response.data
     } catch (error) {
       handleError(error)

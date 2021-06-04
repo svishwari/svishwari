@@ -36,11 +36,13 @@
             <v-menu offset-y open-on-hover>
               <template #activator="{ on }">
                 <span v-on="on">
-                  {{ row.value | Numeric(true, true) }}
+                  {{ row.value | Numeric(true, true) | Empty }}
                 </span>
               </template>
               <div class="px-4 py-3 text-caption white">
-                {{ row.value | Numeric }}
+                {{
+                  row.value | Numeric | Empty("Size unavailable at this time")
+                }}
               </div>
             </v-menu>
           </template>

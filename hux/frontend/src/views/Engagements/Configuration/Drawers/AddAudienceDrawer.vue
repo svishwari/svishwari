@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer.vue"
 
 export default {
@@ -32,6 +33,26 @@ export default {
   },
 
   props: {
+    /**
+     * The list of audiences to add the new audience to, keyed by id
+     *
+     * Example:
+     * {
+     *     "1": {
+     *         "id": "1",
+     *         "name": "Audience name",
+     *         "size": 91240,
+     *     },
+     * }
+     */
+    value: {
+      type: Object,
+      required: true,
+    },
+
+    /**
+     * A toggle indicating whether the drawer is open or not.
+     */
     toggle: {
       type: Boolean,
       required: false,
@@ -63,20 +84,39 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      addAudience: "audiences/add",
+    }),
+
     closeDrawer() {
       this.localToggle = false
     },
 
-    add() {
-      // TODO: Call the API to create the audience
-      // If successful, close the drawer
-      this.closeDrawer()
-    },
-  },
+    async add() {
+      try {
+        this.loading = true
 
-  async mounted() {
-    this.loading = true
-    // do something ...
+        // TODO: replace data with details of the audience in the form
+        const data = {
+          name: `Gold Star Dallas ${Math.floor(Math.random() * 100)}`,
+          filters: [],
+        }
+
+        const newAudience = await this.addAudience(data)
+
+        this.$set(this.value, newAudience.id, {
+          id: newAudience.id,
+          name: newAudience.name,
+          size: newAudience.size,
+        })
+
+        this.closeDrawer()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.loading = false
+      }
+    },
   },
 }
 </script>

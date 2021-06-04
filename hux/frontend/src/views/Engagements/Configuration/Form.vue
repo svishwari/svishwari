@@ -90,7 +90,18 @@
           ]"
         >
           <template #field:size="row">
-            {{ row.value | Numeric(true, true) }}
+            <v-menu offset-y open-on-hover>
+              <template #activator="{ on }">
+                <span v-on="on">
+                  {{ row.value | Numeric(true, true) | Empty }}
+                </span>
+              </template>
+              <div class="px-4 py-3 text-caption white">
+                {{
+                  row.value | Numeric | Empty("Size unavailable at this time")
+                }}
+              </div>
+            </v-menu>
           </template>
 
           <template #field:manage="row">
@@ -167,6 +178,7 @@
     />
 
     <AddAudienceDrawer
+      v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
     />
