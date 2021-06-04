@@ -1,35 +1,46 @@
 <template>
   <div class="hux-data-table">
-    <v-data-table
-      :headers="headers"
-      :items="dataItems"
-      :expanded.sync="expanded"
-      show-expand
-      item-key="name"
-      :hide-default-footer="true"
-    >
-      <template v-slot:item="{ item, expand, isExpanded }">
-        <tr>
-          <td></td>
-          <td v-for="field in Object.keys(item)" :key="field.name">
-            <slot
-              name="un-expanded-row"
-              :field="field"
-              :item="item"
-              :expand="expand"
-              :isExpanded="isExpanded"
-            >
-            </slot>
-          </td>
-        </tr>
-      </template>
-      <template v-slot:expanded-item="{ item }">
-        <tr v-for="(field, index) in item.child" :key="index">
-          <td></td>
-          <slot name="expanded-row" :field="field"></slot>
-        </tr>
-      </template>
-    </v-data-table>
+    <div class="table-overflow" :style="{ 'margin-left': FixedWidth }">
+      <v-data-table
+        :headers="headers"
+        :items="dataItems"
+        item-key="name"
+        :hide-default-footer="true"
+        must-sort
+        :sort-by="sortColumn"
+        sort-desc
+        :height="height"
+      >
+        <template v-slot:body="{ items }" v-if="!nested">
+          <tbody>
+            <tr v-for="item in items" :key="item.id">
+              <slot name="row-item" :item="item" />
+            </tr>
+          </tbody>
+        </template>
+        <template v-slot:item="{ item, expand, isExpanded }" v-if="nested">
+          <tr>
+            <td></td>
+            <td v-for="field in Object.keys(item)" :key="field.name">
+              <slot
+                name="table-row"
+                :field="field"
+                :item="item"
+                :expand="expand"
+                :isExpanded="isExpanded"
+              >
+              </slot>
+            </td>
+          </tr>
+        </template>
+        <template v-slot:expanded-item="{ item }" v-if="nested">
+          <tr v-for="(field, index) in item.child" :key="index">
+            <td></td>
+            <slot name="expanded-row" :field="field"></slot>
+          </tr>
+        </template>
+      </v-data-table>
+    </div>
   </div>
 </template>
 
@@ -48,6 +59,20 @@ export default {
       default: () => [],
       required: true,
     },
+    nested: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    height: {
+      type: Number,
+      required: false,
+    },
+    sortColumn: {
+      type: String,
+      required: false,
+      default: "name",
+    },
   },
   data() {
     return {
@@ -55,15 +80,24 @@ export default {
       expanded: [],
     }
   },
-  computed: {},
-  methods: {},
-  beforeMount() {},
-  mounted() {},
+  computed: {
+    FixedWidth() {
+      return (
+        this.headers
+          .filter((item) => item.fixed)
+          .map(({ width }) => width)
+          .map((item) => parseInt(item, 0))
+          .reduce((a, b) => a + b) + "px"
+      )
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .hux-data-table {
+  width: 100%;
+  position: relative;
   ::v-deep .material-icons.delivered {
     color: var(--v-success-lighten1);
   }
@@ -96,6 +130,49 @@ export default {
     color: var(--v-neroBlack-base) !important;
     cursor: default !important;
     background: transparent !important;
+  }
+  .table-overflow {
+    overflow-x: auto;
+    overflow-y: hidden !important;
+  }
+  ::v-deep table {
+    table-layout: fixed;
+
+    .fixed-column {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      background: var(--v-white-base) !important;
+      left: 0px;
+    }
+    .fixed-header {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      background: var(--v-white-base) !important;
+      left: 0px !important;
+    }
+    .v-data-table-header {
+      position: sticky;
+      tr {
+        height: 32px !important;
+        th {
+          height: 32px !important;
+          font-size: 12px;
+          font-family: inherit;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 8px;
+          padding-top: 0px;
+          padding-bottom: 0px;
+          color: var(--v-neroBlack-base) !important;
+          i {
+            font-size: 16px !important;
+            color: #00a3e0 !important;
+          }
+        }
+      }
+    }
   }
 }
 </style>

@@ -91,4 +91,22 @@ export default {
   FormatSize(value) {
     return Number(value).toLocaleString()
   },
+  /**
+   * Format the number with Approximate value
+   *
+   * @param {*} value the number eg "125767"
+   * @returns formatted value
+   */
+  ApproxSize(value) {
+    // Nine Zeroes for Billions
+    return Math.abs(Number(value)) >= 1.0e9
+      ? (Math.abs(Number(value)) / 1.0e9).toFixed(2) + "B"
+      : // Six Zeroes for Millions
+      Math.abs(Number(value)) >= 1.0e6
+      ? (Math.abs(Number(value)) / 1.0e6).toFixed(2) + "M"
+      : // Three Zeroes for Thousands
+      Math.abs(Number(value)) >= 1.0e3
+      ? (Math.abs(Number(value)) / 1.0e3).toFixed(2) + "K"
+      : this.FormatSize(Math.abs(Number(value)))
+  },
 }

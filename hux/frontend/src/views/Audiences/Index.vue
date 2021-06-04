@@ -44,15 +44,44 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7" v-if="!loading">
-      <hux-table
+    <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
+      <hux-data-table
+        :headers="columnDefs"
+        :dataItems="rowData"
         v-if="isDataExists"
-        :columnDef="columnDefs"
-        :tableData="rowData"
-        :rowHeight="60"
-        height="calc(100vh - 220px)"
-        class="pl-3"
-      ></hux-table>
+      >
+        <template v-slot:row-item="{ item }">
+          <td
+            v-for="header in columnDefs"
+            v-bind:key="header.value"
+            :class="{
+              'fixed-column': header.fixed,
+              'v-data-table__divider': header.fixed,
+            }"
+            :style="{ width: header.width, left: 0 }"
+          >
+            <span v-if="header.value == 'name'">{{ item[header.value] }}</span>
+            <span v-if="header.value == 'size'"
+              ><size :value="item[header.value]"
+            /></span>
+            <span v-if="header.value == 'last_delivered'">
+              <time-stamp :value="item[header.value]" />
+            </span>
+            <span v-if="header.value == 'update_time'">
+              <time-stamp :value="item[header.value]" />
+            </span>
+            <span v-if="header.value == 'updated_by'"
+              ><avatar :name="getName(item[header.value])"
+            /></span>
+            <span v-if="header.value == 'create_time'">
+              <time-stamp :value="item[header.value]" />
+            </span>
+            <span v-if="header.value == 'created_by'"
+              ><avatar :name="getName(item[header.value])"
+            /></span>
+          </td>
+        </template>
+      </hux-data-table>
 
       <EmptyPage v-if="!isDataExists">
         <template v-slot:icon>mdi-alert-circle-outline</template>
@@ -91,11 +120,10 @@ import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxTable from "@/components/common/huxTable.vue"
-import UserAvatarCell from "@/components/common/huxTable/UserAvatarCell"
-import MenuCell from "@/components/common/huxTable/MenuCell"
-import DateTimeCell from "@/components/common/huxTable/DateTimeCell"
-import sizeCell from "@/components/common/huxTable/sizeCell"
+import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import Avatar from "../../components/common/Avatar.vue"
+import Size from "../../components/common/huxTable/Size.vue"
+import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 
 export default {
   name: "audiences",
@@ -103,8 +131,11 @@ export default {
     PageHeader,
     Breadcrumb,
     huxButton,
-    HuxTable,
     EmptyPage,
+    HuxDataTable,
+    Avatar,
+    Size,
+    TimeStamp,
   },
   data() {
     return {
@@ -118,62 +149,42 @@ export default {
 
       columnDefs: [
         {
-          headerName: "Audience name",
-          field: "name",
-          sortable: true,
-          sort: "desc",
-          pinned: "left",
-          width: "300",
-          cellRendererFramework: MenuCell,
-          cellClass: "menu-cells",
-          sortingOrder: ["desc", "asc"],
+          text: "Audience name",
+          value: "name",
+          width: "300px",
+          fixed: true,
+          divider: true,
+          class: "fixed-header",
         },
         {
-          headerName: "Size",
-          field: "size",
-          sortable: true,
-          width: "100",
-          cellRendererFramework: sizeCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Size",
+          value: "size",
+          width: "100px",
         },
         {
-          headerName: "Last delivered",
-          field: "last_delivered",
+          text: "Last delivered",
+          value: "last_delivered",
           width: "170",
-          sortable: true,
-          cellRendererFramework: DateTimeCell,
-          sortingOrder: ["desc", "asc"],
         },
         {
-          headerName: "Last updated",
-          field: "update_time",
-          sortable: true,
+          text: "Last updated",
+          value: "update_time",
           width: "170",
-          cellRendererFramework: DateTimeCell,
-          sortingOrder: ["desc", "asc"],
         },
         {
-          headerName: "Last updated by",
-          field: "updated_by",
-          sortable: true,
-          width: "140",
-          cellRendererFramework: UserAvatarCell,
-          sortingOrder: ["desc", "asc"],
-        },
-        {
-          headerName: "Created",
-          field: "create_time",
-          sortable: true,
+          text: "Last updated by",
+          value: "updated_by",
           width: "160",
-          cellRendererFramework: DateTimeCell,
-          sortingOrder: ["desc", "asc"],
         },
         {
-          headerName: "Created by",
-          field: "created_by",
-          sortable: true,
-          cellRendererFramework: UserAvatarCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Created",
+          value: "create_time",
+          width: "160",
+        },
+        {
+          text: "Created by",
+          value: "created_by",
+          width: "100%",
         },
       ],
       loading: false,
@@ -192,6 +203,9 @@ export default {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
     }),
+    getName(item) {
+      return item.first_name + " " + item.last_name
+    },
   },
   async mounted() {
     this.loading = true
@@ -219,6 +233,9 @@ export default {
     .text--refresh {
       margin-right: 10px;
     }
+  }
+  .hux-data-table {
+    margin-top: 1px;
   }
   ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
     display: initial;

@@ -53,6 +53,7 @@
           outlined
           color="success"
           class="dotted"
+          style="margin-left: 1.5px"
           v-on="on"
         />
       </template>
