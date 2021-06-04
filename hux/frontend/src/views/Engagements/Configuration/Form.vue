@@ -8,8 +8,8 @@
               v-model="value.name"
               labelText="Engagement name"
               placeholder="Give this engagement a name"
-              :required="true"
               :rules="[(value) => !!value || 'Engagement name is required']"
+              required
             />
           </v-col>
           <v-col>
