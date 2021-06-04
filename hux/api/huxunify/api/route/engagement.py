@@ -336,7 +336,6 @@ class UpdateEngagement(SwaggerView):
                         ],
                     }
                 ],
-                db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
             },
         },
     ]
