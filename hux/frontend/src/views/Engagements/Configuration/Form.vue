@@ -50,8 +50,8 @@
         </template>
 
         <v-radio-group v-model="value.delivery_schedule" row class="ma-0">
-          <v-radio value="null" selected class="btn-radio">
-            <template v-slot:label>
+          <v-radio :value="0" selected class="btn-radio">
+            <template #label>
               <v-icon small color="primary" class="mr-1">
                 mdi-gesture-tap
               </v-icon>
@@ -59,8 +59,8 @@
             </template>
           </v-radio>
 
-          <v-radio value="scheduled" class="btn-radio" disabled>
-            <template v-slot:label>
+          <v-radio :value="1" class="btn-radio" disabled>
+            <template #label>
               <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
               <span>Recurring</span>
             </template>
@@ -143,13 +143,13 @@
     </FormSteps>
 
     <HuxFooter>
-      <template v-slot:left>
+      <template #left>
         <v-btn tile color="white" height="40" @click.native="$router.go(-1)">
           <span class="primary--text">Cancel</span>
         </v-btn>
       </template>
 
-      <template v-slot:right>
+      <template #right>
         <v-btn
           v-if="hasDestinations && isManualDelivery"
           tile
@@ -240,8 +240,7 @@ export default {
     },
 
     isManualDelivery() {
-      const MANUAL = "null"
-      return this.value.delivery_schedule === MANUAL
+      return this.value.delivery_schedule === 0
     },
 
     totalSelectedAudiences() {
