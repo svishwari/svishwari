@@ -404,12 +404,14 @@ def get_engagements_by_audience(
     ]
 
     try:
-        return collection.find(
-            {
-                f"{db_c.AUDIENCES}.{db_c.ID_NORMAL}": audience_id,
-                db_c.DELETED: False,
-            },
-            {db_c.DELETED: 0},
+        return list(
+            collection.find(
+                {
+                    f"{db_c.AUDIENCES}.{db_c.ID}": audience_id,
+                    db_c.DELETED: False,
+                },
+                {db_c.DELETED: 0},
+            )
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

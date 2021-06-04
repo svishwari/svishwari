@@ -2,7 +2,6 @@
 
 # General Defines
 ID = "_id"
-ID_NORMAL = "ID"
 CONNECT_RETRY_INTERVAL = 1
 DUPLICATE_ERR_CODE = 11000
 FAVORITE = "favorite"
