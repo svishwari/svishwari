@@ -54,7 +54,7 @@ class EngagementGetSchema(Schema):
     )
     delivery_schedule = fields.Nested(
         DeliverySchedule,
-        required=True,
+        required=False,
         attribute=api_c.DELIVERY_SCHEDULE,
     )
     create_time = fields.DateTime(attribute=db_c.CREATE_TIME)
