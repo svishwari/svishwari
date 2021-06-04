@@ -99,7 +99,7 @@
                 x-small
                 fab
                 class="primary mr-2"
-                @click="toggleAudiencesDrawer()"
+                @click="toggleSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -117,7 +117,7 @@
                 fab
                 color="primary"
                 elevation="0"
-                @click="toggleAudiencesDrawer()"
+                @click="toggleSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -159,7 +159,19 @@
       </template>
     </HuxFooter>
 
-    <AudiencesDrawer v-model="value.audiences" :toggle="showAudiencesDrawer" />
+    <SelectAudiencesDrawer
+      v-model="value.audiences"
+      :toggle="showSelectAudiencesDrawer"
+      @onToggle="(val) => (showSelectAudiencesDrawer = val)"
+      @onAdd="toggleAddAudiencesDrawer()"
+    />
+
+    <AddAudienceDrawer
+      :toggle="showAddAudiencesDrawer"
+      @onToggle="(val) => (showAddAudiencesDrawer = val)"
+      @onCancel="toggleSelectAudiencesDrawer()"
+      @onCreated="toggleSelectAudiencesDrawer()"
+    />
   </v-form>
 </template>
 
@@ -170,7 +182,8 @@ import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
 import TextField from "@/components/common/TextField.vue"
-import AudiencesDrawer from "./AudiencesDrawer.vue"
+import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
+import AddAudienceDrawer from "./Drawers/AddAudienceDrawer.vue"
 
 export default {
   name: "EngagementsForm",
@@ -181,7 +194,8 @@ export default {
     FormSteps,
     HuxFooter,
     TextField,
-    AudiencesDrawer,
+    SelectAudiencesDrawer,
+    AddAudienceDrawer,
   },
 
   props: {
@@ -193,7 +207,8 @@ export default {
 
   data() {
     return {
-      showAudiencesDrawer: false,
+      showSelectAudiencesDrawer: false,
+      showAddAudiencesDrawer: false,
     }
   },
 
@@ -220,8 +235,14 @@ export default {
       deliverEngagement: "engagements/deliver",
     }),
 
-    toggleAudiencesDrawer() {
-      this.showAudiencesDrawer = !this.showAudiencesDrawer
+    toggleSelectAudiencesDrawer() {
+      this.showAddAudiencesDrawer = false
+      this.showSelectAudiencesDrawer = !this.showSelectAudiencesDrawer
+    },
+
+    toggleAddAudiencesDrawer() {
+      this.showSelectAudiencesDrawer = false
+      this.showAddAudiencesDrawer = !this.showAddAudiencesDrawer
     },
 
     removeAudience(audience) {
