@@ -99,7 +99,7 @@
                 x-small
                 fab
                 class="primary mr-2"
-                @click="toggleSelectAudiencesDrawer()"
+                @click="openSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -117,7 +117,7 @@
                 fab
                 color="primary"
                 elevation="0"
-                @click="toggleSelectAudiencesDrawer()"
+                @click="openSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -163,14 +163,14 @@
       v-model="value.audiences"
       :toggle="showSelectAudiencesDrawer"
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
-      @onAdd="toggleAddAudiencesDrawer()"
+      @onAdd="openAddAudiencesDrawer()"
     />
 
     <AddAudienceDrawer
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
-      @onCancel="toggleSelectAudiencesDrawer()"
-      @onCreated="toggleSelectAudiencesDrawer()"
+      @onCancel="closeAddAudiencesDrawer()"
+      @onCreated="closeAddAudiencesDrawer()"
     />
   </v-form>
 </template>
@@ -235,14 +235,23 @@ export default {
       deliverEngagement: "engagements/deliver",
     }),
 
-    toggleSelectAudiencesDrawer() {
+    closeAllDrawers() {
+      this.showSelectAudiencesDrawer = false
       this.showAddAudiencesDrawer = false
-      this.showSelectAudiencesDrawer = !this.showSelectAudiencesDrawer
     },
 
-    toggleAddAudiencesDrawer() {
-      this.showSelectAudiencesDrawer = false
-      this.showAddAudiencesDrawer = !this.showAddAudiencesDrawer
+    openSelectAudiencesDrawer() {
+      this.closeAllDrawers()
+      this.showSelectAudiencesDrawer = true
+    },
+
+    openAddAudiencesDrawer() {
+      this.closeAllDrawers()
+      this.showAddAudiencesDrawer = true
+    },
+
+    closeAddAudiencesDrawer() {
+      this.showAddAudiencesDrawer = false
     },
 
     removeAudience(audience) {

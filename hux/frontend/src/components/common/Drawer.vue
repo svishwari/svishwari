@@ -2,12 +2,12 @@
   <v-navigation-drawer
     v-model="localDrawer"
     :right="toRight"
+    :style="animation"
     :width="width"
-    temporary
-    floating
     app
-    style="transition-duration: 0.5s"
-    overlay-opacity="0"
+    floating
+    hide-overlay
+    temporary
   >
     <v-toolbar width="100%">
       <v-toolbar-title class="px-6">
@@ -70,6 +70,20 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+
+    disableTransition: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  computed: {
+    animation() {
+      return {
+        transitionDuration: this.disableTransition ? "0s" : "0.5s",
+      }
     },
   },
 

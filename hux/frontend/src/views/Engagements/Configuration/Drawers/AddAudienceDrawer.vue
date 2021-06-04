@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localToggle" expandable>
+  <Drawer v-model="localToggle" expandable disable-transition>
     <template #header-left>
       <h3 class="text-h3">Create a new audience</h3>
     </template>
