@@ -22,7 +22,7 @@ def create_data_source(
     enabled: bool = False,
     source_type: str = None,
     status: str = c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-) -> dict:
+) -> Optional[dict]:
     """A function that creates a new data source
 
     Args:
