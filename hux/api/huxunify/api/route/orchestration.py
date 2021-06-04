@@ -30,6 +30,10 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
 )
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
+)
 
 
 # setup the orchestration blueprint
@@ -463,6 +467,8 @@ class AudienceDeliverView(SwaggerView):
                 get_db_client(), audience_id
             )
         except db_exceptions.InvalidID:
+            # get audience returns invalid if the audience does not exist.
+            # pass and catch in the next step.
             pass
 
         if not audience:
@@ -470,8 +476,20 @@ class AudienceDeliverView(SwaggerView):
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate delivery route
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # # submit jobs for the audience/destination pairs
+        # delivery_job_ids = []
+        # for pair in get_audience_destination_pairs(
+        #     engagement[api_c.AUDIENCES]
+        # ):
+        #     if pair[0] != audience_id:
+        #         continue
+        #     batch_destination = get_destination_config(database, *pair)
+        #     batch_destination.register()
+        #     batch_destination.submit()
+        #     delivery_job_ids.append(
+        #         str(batch_destination.audience_delivery_job_id)
+        #     )
+
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
