@@ -40,7 +40,7 @@ class EngagementGetSchema(Schema):
                 api_c.DESTINATIONS: [
                     {
                         "id": "60ae035b6c5bf45da27f17d6",
-                        "data_extension": "test",
+                        "contact_list": "sfmc_extension_name",
                     },
                 ],
                 api_c.DELIVERIES: [
