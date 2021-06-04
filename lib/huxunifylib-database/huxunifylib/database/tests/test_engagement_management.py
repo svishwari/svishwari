@@ -28,7 +28,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.database, "all", [], self.user_id
         )
 
-        self.audience[c.AUDIENCE_ID] = self.audience[c.ID]
+        self.audience[c.ID] = self.audience[c.ID]
 
         self.engagement_id = em.set_engagement(
             self.database,
@@ -81,7 +81,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # change audience_id to string
         audience = self.audience.copy()
-        audience[c.AUDIENCE_ID] = str(audience[c.AUDIENCE_ID])
+        audience[c.ID] = str(audience[c.ID])
 
         with self.assertRaises(ValueError):
             em.set_engagement(
@@ -170,7 +170,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # change audience_id to string
         audience = self.audience.copy()
-        audience[c.AUDIENCE_ID] = str(audience[c.AUDIENCE_ID])
+        audience[c.ID] = str(audience[c.ID])
 
         with self.assertRaises(ValueError):
             em.update_engagement(
@@ -226,19 +226,19 @@ class TestEngagementManagement(unittest.TestCase):
             c.ENGAGEMENT_DESCRIPTION: "high ltv for spring 2024",
             c.AUDIENCES: [
                 {
-                    c.AUDIENCE_ID: ObjectId(),
+                    c.ID: ObjectId(),
                     c.DESTINATIONS: [
                         {
-                            c.DELIVERY_PLATFORM_ID: ObjectId(),
+                            c.ID: ObjectId(),
                             c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
                         },
-                        {c.DELIVERY_PLATFORM_ID: ObjectId()},
-                        {c.DELIVERY_PLATFORM_ID: ObjectId()},
+                        {c.ID: ObjectId()},
+                        {c.ID: ObjectId()},
                     ],
                 },
                 {
-                    c.AUDIENCE_ID: ObjectId(),
-                    c.DESTINATIONS: [{c.DELIVERY_PLATFORM_ID: ObjectId()}],
+                    c.ID: ObjectId(),
+                    c.DESTINATIONS: [{c.ID: ObjectId()}],
                 },
             ],
         }
@@ -288,8 +288,8 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
-            self.audience[c.AUDIENCE_ID],
+            engagement[c.AUDIENCES][0][c.ID],
+            self.audience[c.ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
@@ -329,8 +329,8 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
-            self.audience[c.AUDIENCE_ID],
+            engagement[c.AUDIENCES][0][c.ID],
+            self.audience[c.ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
@@ -365,14 +365,14 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
-            self.audience[c.AUDIENCE_ID],
+            engagement[c.AUDIENCES][0][c.ID],
+            self.audience[c.ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
         # setup a few destinations
         new_audience = {
-            c.AUDIENCE_ID: ObjectId(),
+            c.ID: ObjectId(),
             c.DESTINATIONS: self.destinations,
         }
 
@@ -412,14 +412,14 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.AUDIENCE_ID],
-            self.audience[c.AUDIENCE_ID],
+            engagement[c.AUDIENCES][0][c.ID],
+            self.audience[c.ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
         # setup a few destinations
         new_audience = {
-            c.AUDIENCE_ID: str(ObjectId()),
+            c.ID: str(ObjectId()),
             c.DESTINATIONS: self.destinations,
         }
 
