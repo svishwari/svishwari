@@ -43,13 +43,13 @@ def check_tecton_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def map_model_response(response: dict) -> dict:
+def map_model_response(response: dict) -> List[dict]:
     """Map model response to a usable dict.
     Args:
         response (dict): Input Tecton API response.
 
     Returns:
-        dict: A cleaned model dict.
+        List(dict): A cleaned model dict.
 
     """
     if response.status_code != 200:

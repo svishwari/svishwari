@@ -25,7 +25,7 @@ MOCK_MODEL_RESPONSE = {
                 "Susan Miller",
                 "smiller@xyz.com",
                 "success",
-                "0.4.6",
+                "0.2.4",
             ],
             "joinKeys": ["1"],
         },
@@ -90,7 +90,7 @@ class TectonTest(TestCase):
             request_mocker.last_request.json(), constants.MODEL_LIST_PAYLOAD
         )
 
-        self.assertEqual(models[0][constants.LATEST_VERSION], "0.4.6")
+        self.assertEqual(models[0][constants.LATEST_VERSION], "0.2.4")
         self.assertEqual(models[0][constants.PAST_VERSION_COUNT], 0)
 
     def test_model_version_history(self):
