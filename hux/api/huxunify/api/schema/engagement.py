@@ -36,9 +36,12 @@ class EngagementGetSchema(Schema):
         attribute=api_c.AUDIENCES,
         example=[
             {
-                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.ID: "60ae035b6c5bf45da27f17d6",
                 api_c.DESTINATIONS: [
-                    {"id": "60ae035b6c5bf45da27f17d6", "name": "Facebook"},
+                    {
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension": "test",
+                    },
                 ],
                 api_c.DELIVERIES: [
                     "60ae035b6c5bf45da27f17e5",
@@ -76,7 +79,7 @@ class EngagementPostSchema(Schema):
         attribute=api_c.AUDIENCES,
         example=[
             {
-                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.ID: "60ae035b6c5bf45da27f17d6",
                 api_c.DESTINATIONS: [
                     {
                         api_c.ID: "60ae035b6c5bf45da27f17e5",
@@ -102,7 +105,7 @@ class EngagementPutSchema(Schema):
         attribute=api_c.AUDIENCES,
         example=[
             {
-                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.ID: "60ae035b6c5bf45da27f17d6",
                 api_c.DESTINATIONS: [
                     {
                         api_c.ID: "60ae035b6c5bf45da27f17e5",
@@ -126,7 +129,7 @@ class AudienceEngagementSchema(Schema):
         fields.Dict(),
         example=[
             {
-                api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                api_c.ID: "60ae035b6c5bf45da27f17d6",
                 api_c.DESTINATIONS: [
                     {
                         api_c.ID: "60ae035b6c5bf45da27f17e5",

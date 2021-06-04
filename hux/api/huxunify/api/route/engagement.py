@@ -201,8 +201,8 @@ class SetEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        db_c.DESTINATIONS: [
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e5",
                                 "contact_list": "sfmc_extension_name",
@@ -325,7 +325,7 @@ class UpdateEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
                         api_c.DESTINATIONS: [
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e5",
@@ -525,7 +525,7 @@ class AddAudienceEngagement(SwaggerView):
             "example": {
                 api_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
                         api_c.DESTINATIONS: [
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e5",
@@ -864,9 +864,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
@@ -994,9 +992,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
