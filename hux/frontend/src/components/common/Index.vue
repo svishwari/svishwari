@@ -309,7 +309,7 @@
 
     <v-subheader> Form Steps </v-subheader>
     <FormSteps class="white pa-10">
-      <FormStep :step="1" label="General information" optional="true">
+      <FormStep :step="1" label="General information" optional>
         Contents for step 1
       </FormStep>
 
@@ -324,55 +324,46 @@
 
     <v-divider class="mt-10" />
 
-    <v-subheader> DataCards </v-subheader>
+    <v-subheader> Data Cards </v-subheader>
     <DataCards
-      :items="[
-        {
-          id: 1,
-          name: 'Data field name',
-          description: 'Data field description',
-          size: 123456789,
-        },
-        {
-          id: 2,
-          name: 'Another data field name',
-          description: 'Another data field description',
-          size: 812380123,
-        },
-      ]"
-      :fields="[
-        {
-          key: 'name',
-          label: 'Name',
-          sortable: true,
-        },
-        {
-          key: 'description',
-          label: 'Description',
-          sortable: true,
-        },
-        {
-          key: 'size',
-          label: 'Target size',
-          sortable: true,
-        },
-        {
-          key: 'manage',
-          sortable: false,
-        },
-      ]"
+      :items="DataCards.items"
+      :fields="DataCards.fields"
+      :bordered="DataCards.bordered"
+      :empty="DataCards.empty"
     >
       <template #field:size="row">
         {{ row.value | Numeric(true, true) }}
       </template>
-      <template #field:manage>
+
+      <template #field:manage="row">
         <div class="d-flex justify-end">
-          <v-btn icon color="primary">
+          <v-btn
+            icon
+            color="primary"
+            @click="
+              DataCards.items.splice(
+                DataCards.items.findIndex((item) => item.id === row.item.id),
+                1
+              )
+            "
+          >
             <v-icon>mdi-delete-outline</v-icon>
           </v-btn>
         </div>
       </template>
     </DataCards>
+
+    <v-btn @click="DataCards.bordered = !DataCards.bordered" class="mr-4">
+      Toggle bordered
+    </v-btn>
+    <v-btn @click="DataCards.items.push(DataCards.newItem)" class="mr-4">
+      Add item
+    </v-btn>
+    <v-text-field
+      v-model="DataCards.empty"
+      label="Empty text"
+      class="d-inline-flex"
+    />
 
     <v-divider class="mt-10" />
 
@@ -526,6 +517,52 @@ export default {
   },
   data() {
     return {
+      DataCards: {
+        items: [
+          {
+            id: 1,
+            name: "Data field name",
+            description: "Data field description",
+            size: 123456789,
+          },
+          {
+            id: 2,
+            name: "Another data field name",
+            description: "Another data field description",
+            size: 812380123,
+          },
+        ],
+        newItem: {
+          id: 3,
+          name: "Data field name 3",
+          description: "Data field description 3",
+          size: 1251024101,
+        },
+        fields: [
+          {
+            key: "name",
+            label: "Name",
+            sortable: true,
+          },
+          {
+            key: "description",
+            label: "Description",
+            sortable: false,
+          },
+          {
+            key: "size",
+            label: "Target size",
+            sortable: true,
+          },
+          {
+            key: "manage",
+            sortable: false,
+          },
+        ],
+        bordered: false,
+        empty: "No items available.",
+      },
+
       selectedMenuItem: "Select a value...",
       TextFieldValue: null,
       DropdownValue: null,
