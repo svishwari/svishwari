@@ -39,10 +39,10 @@
 
   <div v-else-if="Statuses.Pending.includes(status)">
     <span v-if="!collapsed">
-      <v-btn icon outlined color="success" class="dotted mr-2" />
-      <div class="px-4 py-2 white" v-if="showLabel">
+      <v-btn width="15" height="15" icon outlined color="success" class="dotted mr-2" />
+      <span v-if="showLabel">
         {{ status | TitleCase }}
-      </div>
+      </span>
     </span>
     <v-menu v-else bottom offset-y offset-x open-on-hover>
       <template v-slot:activator="{ on }">
