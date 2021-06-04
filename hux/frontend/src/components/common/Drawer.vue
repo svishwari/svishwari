@@ -2,7 +2,7 @@
   <v-navigation-drawer
     v-model="localDrawer"
     :right="toRight"
-    :style="animation"
+    :style="transition"
     :width="width"
     app
     floating
@@ -80,7 +80,7 @@ export default {
   },
 
   computed: {
-    animation() {
+    transition() {
       return {
         transitionDuration: this.disableTransition ? "0s" : "0.5s",
       }

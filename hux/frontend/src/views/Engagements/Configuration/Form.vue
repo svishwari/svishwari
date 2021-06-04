@@ -169,8 +169,6 @@
     <AddAudienceDrawer
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
-      @onCancel="closeAddAudiencesDrawer()"
-      @onCreated="closeAddAudiencesDrawer()"
     />
   </v-form>
 </template>
@@ -248,10 +246,6 @@ export default {
     openAddAudiencesDrawer() {
       this.closeAllDrawers()
       this.showAddAudiencesDrawer = true
-    },
-
-    closeAddAudiencesDrawer() {
-      this.showAddAudiencesDrawer = false
     },
 
     removeAudience(audience) {

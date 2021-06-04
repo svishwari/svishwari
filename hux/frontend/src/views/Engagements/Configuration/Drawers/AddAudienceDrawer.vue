@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localToggle" expandable disable-transition>
+  <Drawer v-model="localToggle" :disable-transition="isOpening" expandable>
     <template #header-left>
       <h3 class="text-h3">Create a new audience</h3>
     </template>
@@ -13,7 +13,7 @@
     </template>
 
     <template #footer-left>
-      <v-btn tile color="white" @click="$emit('onCancel')">
+      <v-btn tile color="white" @click="closeDrawer()">
         <span class="primary--text">Cancel &amp; back</span>
       </v-btn>
       <v-btn tile color="primary" @click="add()"> Create &amp; add </v-btn>
@@ -56,11 +56,21 @@ export default {
     },
   },
 
+  computed: {
+    isOpening() {
+      return this.localToggle
+    },
+  },
+
   methods: {
+    closeDrawer() {
+      this.localToggle = false
+    },
+
     add() {
-      // call the API to create the audience, and on success, emit the event to
-      // close this drawer and open the select drawer
-      this.$emit("onCreated")
+      // TODO: Call the API to create the audience
+      // If successful, close the drawer
+      this.closeDrawer()
     },
   },
 
