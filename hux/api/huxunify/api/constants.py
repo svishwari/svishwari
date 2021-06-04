@@ -88,7 +88,7 @@ FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 
 # SFMC connector defines
 SFMC_NAME = "SFMC"
-SFMC_TYPE = "SFMC"
+SFMC_TYPE = "salesforce"
 SFMC_CLIENT_ID = "sfmc_client_id"
 SFMC_CLIENT_SECRET = "sfmc_client_secret"
 SFMC_ACCOUNT_ID = "sfmc_account_id"
