@@ -86,7 +86,7 @@ def get_models() -> List[dict]:
     Args:
 
     Returns:
-        List[ModelSchema]: List of models.
+        List[dict]: List of models.
     """
 
     # get config
