@@ -99,16 +99,21 @@ class Config:
     # AWS BATCH
     AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST = "AUDIENCE-ROUTER-JOB-ROLE-ARN"
     AUDIENCE_ROUTER_JOB_ROLE_ARN = config(
-        AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST, default=""
+        AUDIENCE_ROUTER_JOB_ROLE_ARN_CONST,
+        default="arn:aws:iam::062880848536:role/adperf_ecs_execution_role",
     )
     AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST = (
         "AUDIENCE-ROUTER-EXECUTION-ROLE-ARN"
     )
     AUDIENCE_ROUTER_EXECUTION_ROLE_ARN = config(
-        AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST, default=""
+        AUDIENCE_ROUTER_EXECUTION_ROLE_ARN_CONST,
+        default="arn:aws:iam::062880848536:role/adperf_ecs_execution_role",
     )
     AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
-    AUDIENCE_ROUTER_IMAGE = config(AUDIENCE_ROUTER_IMAGE_CONST, default="")
+    AUDIENCE_ROUTER_IMAGE = config(
+        AUDIENCE_ROUTER_IMAGE_CONST,
+        default="602322178640.dkr.ecr.us-east-1.amazonaws.com/audience_router:1.0.0",
+    )
 
     # CDP
     # TODO config details needed for this. These values are not real

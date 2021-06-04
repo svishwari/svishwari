@@ -11,6 +11,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job_status,
 )
+from huxunifylib.database.engagement_management import get_engagement
 from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunify.api import constants as api_const, config as cfg
@@ -190,10 +191,11 @@ def get_destination_config(
         ),
         api_const.BATCH_SIZE.upper(): str(audience_router_batch_size),
         cfg.HOST: config.MONGO_DB_HOST,
-        cfg.PORT: config.MONGO_DB_PORT,
+        cfg.PORT: str(config.MONGO_DB_PORT),
         cfg.USER_NAME: config.MONGO_DB_USERNAME,
         cfg.SSL_CERT_PATH: config.MONGO_SSL_CERT,
         config.MONITORING_CONFIG_CONST: config.MONITORING_CONFIG,
+        api_const.AUDIENCE_ROUTER_STUB_TEST: "1",  # CDM STUB VALUE
     }
 
     aws_secret_dict = {
@@ -206,22 +208,6 @@ def get_destination_config(
         aws_secret_dict,
         aws_env_dict,
     )
-
-
-def get_engagement(db_client: MongoClient, engagement_id: ObjectId) -> dict:
-    """Temp get engagement.
-
-    Args:
-        database (MongoClient): Mongo database client.
-        engagement_id (ObjectId): The engagement ObjectId.
-
-    Returns:
-        dict: Returns an engagement.
-    """
-    # TODO - set engagement object when engagements are in Database Library
-    # simulate for now
-    engagements = db_client[db_const.DATA_MANAGEMENT_DATABASE]["engagements"]
-    return engagements.find_one(engagement_id)
 
 
 def get_delivery_route(
