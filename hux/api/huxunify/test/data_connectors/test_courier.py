@@ -13,12 +13,17 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_job_status,
     set_connection_status,
 )
+from huxunifylib.database.engagement_management import (
+    get_engagement,
+    set_engagement,
+)
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_destination_config,
+    get_audience_destination_pairs,
 )
 
 
@@ -101,24 +106,41 @@ class CourierTest(TestCase):
         )
         self.assertIsNotNone(self.audience_two)
 
-        # TODO - set engagement object when engagements are in Database Library
-        engagements = self.database[c.DATA_MANAGEMENT_DATABASE]["engagements"]
-
         # define a sample engagement, with prepopulated engagements
         engagement_doc = {
             c.AUDIENCE_NAME: "Chihuly Garden and Glass",
             c.NOTIFICATION_FIELD_DESCRIPTION: "Former fun forest amusement park.",
-            c.AUDIENCES: [self.audience_one[c.ID], self.audience_two[c.ID]],
+            c.AUDIENCES: [
+                {
+                    c.AUDIENCE_ID: self.audience_one[c.ID],
+                    c.DESTINATIONS: [
+                        {c.DELIVERY_PLATFORM_ID: x}
+                        for x in self.audience_one[c.DESTINATIONS]
+                    ],
+                },
+                {
+                    c.AUDIENCE_ID: self.audience_two[c.ID],
+                    c.DESTINATIONS: [
+                        {c.DELIVERY_PLATFORM_ID: x}
+                        for x in self.audience_two[c.DESTINATIONS]
+                    ],
+                },
+            ],
             c.CREATED_BY: ObjectId(),
         }
-        # insert engagement doc in the collection
-        self.engagement_id = engagements.insert_one(engagement_doc).inserted_id
-        self.assertIsNotNone(self.engagement_id)
 
-        engagement = engagements.find_one(self.engagement_id)
-        for key, value in engagement_doc.items():
-            self.assertIn(key, engagement)
-            self.assertEqual(value, engagement[key])
+        # insert engagement doc in the collection
+        engagement_id = set_engagement(
+            self.database,
+            engagement_doc[c.AUDIENCE_NAME],
+            engagement_doc[c.NOTIFICATION_FIELD_DESCRIPTION],
+            engagement_doc[c.AUDIENCES],
+            engagement_doc[c.CREATED_BY],
+        )
+
+        self.assertIsInstance(engagement_id, ObjectId)
+        self.engagement = get_engagement(self.database, engagement_id)
+        self.assertTrue(self.engagement)
 
     def test_map_destination_credentials(self):
         """Test mapping of destination credentials for submitting to AWS Batch.
@@ -149,8 +171,8 @@ class CourierTest(TestCase):
             cred_dict, destination[api_c.AUTHENTICATION_DETAILS]
         )
 
-    def test_get_delivery_route(self):
-        """Test get delivery route
+    def test_get_pairs(self):
+        """Test get audience/destination pairs
 
         Args:
 
@@ -158,15 +180,12 @@ class CourierTest(TestCase):
 
         """
 
-        delivery_route = get_delivery_route(self.database, self.engagement_id)
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[c.AUDIENCES]
+        )
 
-        self.assertIsNotNone(delivery_route)
-
-        expected_route = {
-            self.audience_one[c.ID]: self.audience_one[c.DESTINATIONS],
-            self.audience_two[c.ID]: self.audience_two[c.DESTINATIONS],
-        }
-        self.assertDictEqual(expected_route, delivery_route)
+        self.assertTrue(delivery_route)
+        self.assertEqual(len(delivery_route), 4)
 
     def test_get_delivery_route_audience(self):
         """Test get delivery route with specific audience
@@ -177,39 +196,21 @@ class CourierTest(TestCase):
 
         """
 
-        delivery_route = get_delivery_route(
-            self.database, self.engagement_id, [self.audience_one[c.ID]]
+        engagement = self.engagement.copy()
+        engagement[c.AUDIENCES] = [engagement[c.AUDIENCES][0]]
+
+        delivery_route = get_audience_destination_pairs(
+            engagement[c.AUDIENCES]
         )
 
-        self.assertIsNotNone(delivery_route)
+        self.assertTrue(delivery_route)
 
-        expected_route = {
-            self.audience_one[c.ID]: self.audience_one[c.DESTINATIONS]
-        }
-        self.assertDictEqual(expected_route, delivery_route)
+        expected_route = [
+            [self.audience_one[c.ID], self.audience_one[c.DESTINATIONS][0]],
+            [self.audience_one[c.ID], self.audience_one[c.DESTINATIONS][1]],
+        ]
 
-    def test_get_delivery_route_destination(self):
-        """Test get delivery route with specific destination
-
-        Args:
-
-        Returns:
-
-        """
-
-        destination_id = self.audience_one[c.DESTINATIONS][0]
-
-        delivery_route = get_delivery_route(
-            self.database,
-            self.engagement_id,
-            [self.audience_one[c.ID]],
-            [destination_id],
-        )
-
-        self.assertIsNotNone(delivery_route)
-
-        expected_route = {self.audience_one[c.ID]: [destination_id]}
-        self.assertDictEqual(expected_route, delivery_route)
+        self.assertListEqual(expected_route, delivery_route)
 
     def test_destination_batch_init(self):
         """Test destination batch init
@@ -219,26 +220,23 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        delivery_route = get_delivery_route(self.database, self.engagement_id)
-        self.assertIsNotNone(delivery_route)
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[c.AUDIENCES]
+        )
+        self.assertTrue(delivery_route)
 
-        for audience_id, destination_ids in delivery_route.items():
-            for destination_id in destination_ids:
-                batch_destination = get_destination_config(
-                    self.database, destination_id, audience_id
-                )
-                self.assertIsNotNone(batch_destination.aws_envs)
-                self.assertIsNotNone(batch_destination.aws_secrets)
-                self.assertIsNotNone(
-                    batch_destination.audience_delivery_job_id
-                )
-                self.assertEqual(self.database, batch_destination.database)
+        for pair in delivery_route:
+            batch_destination = get_destination_config(self.database, *pair)
+            self.assertIsNotNone(batch_destination.aws_envs)
+            self.assertIsNotNone(batch_destination.aws_secrets)
+            self.assertIsNotNone(batch_destination.audience_delivery_job_id)
+            self.assertEqual(self.database, batch_destination.database)
 
-                # validate the audience delivery job id exists
-                audience_delivery_status = get_delivery_job_status(
-                    self.database, batch_destination.audience_delivery_job_id
-                )
-                self.assertEqual(audience_delivery_status, c.STATUS_PENDING)
+            # validate the audience delivery job id exists
+            audience_delivery_status = get_delivery_job_status(
+                self.database, batch_destination.audience_delivery_job_id
+            )
+            self.assertEqual(audience_delivery_status, c.STATUS_PENDING)
 
     def test_destination_register_job(self):
         """Test destination batch register job
@@ -248,33 +246,30 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        delivery_route = get_delivery_route(self.database, self.engagement_id)
-        self.assertIsNotNone(delivery_route)
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[c.AUDIENCES]
+        )
+        self.assertTrue(delivery_route)
 
         # walk the delivery route
-        for audience_id, destination_ids in delivery_route.items():
-            for destination_id in destination_ids:
-                batch_destination = get_destination_config(
-                    self.database, destination_id, audience_id
-                )
-                batch_destination.aws_envs[
-                    api_c.AUDIENCE_ROUTER_BATCH_SIZE
-                ] = 1000
-                batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_STUB_TEST] = 1
-                self.assertIsNotNone(batch_destination)
+        for pair in delivery_route:
+            batch_destination = get_destination_config(self.database, *pair)
+            batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_BATCH_SIZE] = 1000
+            batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_STUB_TEST] = 1
+            self.assertIsNotNone(batch_destination)
 
-                # Register job
-                return_value = {
-                    "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
-                }
-                with mock.patch.object(
-                    AWSBatchConnector,
-                    "register_job",
-                    return_value=return_value,
-                ):
-                    batch_destination.register()
+            # Register job
+            return_value = {
+                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
+            }
+            with mock.patch.object(
+                AWSBatchConnector,
+                "register_job",
+                return_value=return_value,
+            ):
+                batch_destination.register()
 
-                self.assertEqual(batch_destination.result, c.STATUS_PENDING)
+            self.assertEqual(batch_destination.result, c.STATUS_PENDING)
 
     def test_destination_submit_job(self):
         """Test destination batch submit job
@@ -284,33 +279,30 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        delivery_route = get_delivery_route(self.database, self.engagement_id)
-        self.assertIsNotNone(delivery_route)
+        delivery_route = get_audience_destination_pairs(
+            self.engagement[c.AUDIENCES]
+        )
+        self.assertTrue(delivery_route)
 
         # walk the delivery route
-        for audience_id, destination_ids in delivery_route.items():
-            for destination_id in destination_ids:
-                batch_destination = get_destination_config(
-                    self.database, destination_id, audience_id
-                )
+        for pair in delivery_route:
+            batch_destination = get_destination_config(self.database, *pair)
 
-                # Register job
-                return_value = {
-                    "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
-                }
-                with mock.patch.object(
-                    AWSBatchConnector,
-                    "register_job",
-                    return_value=return_value,
-                ):
-                    batch_destination.register()
-                self.assertEqual(batch_destination.result, c.STATUS_PENDING)
+            # Register job
+            return_value = {
+                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
+            }
+            with mock.patch.object(
+                AWSBatchConnector,
+                "register_job",
+                return_value=return_value,
+            ):
+                batch_destination.register()
+            self.assertEqual(batch_destination.result, c.STATUS_PENDING)
 
-                with mock.patch.object(
-                    AWSBatchConnector, "submit_job", return_value=return_value
-                ):
-                    batch_destination.submit()
+            with mock.patch.object(
+                AWSBatchConnector, "submit_job", return_value=return_value
+            ):
+                batch_destination.submit()
 
-                self.assertEqual(
-                    batch_destination.result, c.STATUS_IN_PROGRESS
-                )
+            self.assertEqual(batch_destination.result, c.STATUS_IN_PROGRESS)
