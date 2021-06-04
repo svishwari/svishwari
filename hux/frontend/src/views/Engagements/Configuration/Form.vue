@@ -106,14 +106,20 @@
 
           <template #field:manage="row">
             <div class="d-flex align-center justify-end">
-              <v-btn
-                x-small
-                fab
-                class="primary mr-2"
-                @click="openSelectAudiencesDrawer()"
-              >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
+              <Tooltip v-if="isLastItem(row.index)">
+                <template #label-content>
+                  <v-btn
+                    x-small
+                    fab
+                    class="primary mr-2"
+                    @click="openSelectAudiencesDrawer()"
+                  >
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </template>
+                <template #hover-content>Add another audience</template>
+              </Tooltip>
+
               <v-btn icon color="primary" @click="removeAudience(row.item)">
                 <v-icon>mdi-delete-outline</v-icon>
               </v-btn>
@@ -192,6 +198,7 @@ import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
 import TextField from "@/components/common/TextField.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
 import AddAudienceDrawer from "./Drawers/AddAudienceDrawer.vue"
 
@@ -204,6 +211,7 @@ export default {
     FormSteps,
     HuxFooter,
     TextField,
+    Tooltip,
     SelectAudiencesDrawer,
     AddAudienceDrawer,
   },
@@ -237,6 +245,10 @@ export default {
       const MANUAL = "null"
       return this.value.delivery_schedule === MANUAL
     },
+
+    countAudiencesSelected() {
+      return Object.values(this.value.audiences).length
+    },
   },
 
   methods: {
@@ -262,6 +274,10 @@ export default {
 
     removeAudience(audience) {
       this.$delete(this.value.audiences, audience.id)
+    },
+
+    isLastItem(index) {
+      return Boolean((index + 1) === this.countAudiencesSelected)
     },
 
     async addNewEngagement() {
