@@ -244,7 +244,7 @@ export default {
       return this.value.delivery_schedule === MANUAL
     },
 
-    countAudiencesSelected() {
+    totalSelectedAudiences() {
       return Object.values(this.value.audiences).length
     },
   },
@@ -275,7 +275,7 @@ export default {
     },
 
     isLastItem(index) {
-      return Boolean((index + 1) === this.countAudiencesSelected)
+      return Boolean(index === this.totalSelectedAudiences - 1)
     },
 
     async addNewEngagement() {
