@@ -33,18 +33,16 @@
           ]"
         >
           <template #field:size="row">
-            <v-menu offset-y open-on-hover>
-              <template #activator="{ on }">
-                <span v-on="on">
-                  {{ row.value | Numeric(true, true) | Empty }}
-                </span>
+            <Tooltip>
+              <template #label-content>
+                {{ row.value | Numeric(true, true) | Empty }}
               </template>
-              <div class="px-4 py-3 text-caption white">
+              <template #hover-content>
                 {{
                   row.value | Numeric | Empty("Size unavailable at this time")
                 }}
-              </div>
-            </v-menu>
+              </template>
+            </Tooltip>
           </template>
 
           <template #field:manage="row">
@@ -81,6 +79,7 @@
 import { mapGetters, mapActions } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "AudiencesDrawer",
@@ -88,6 +87,7 @@ export default {
   components: {
     DataCards,
     Drawer,
+    Tooltip,
   },
 
   props: {

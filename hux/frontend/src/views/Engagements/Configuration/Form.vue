@@ -27,13 +27,13 @@
           <h5 class="text-h5 d-flex align-start">
             Setup a delivery schedule
 
-            <v-menu max-width="16rem" offset-x offset-y top>
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on" color="primary" :size="12">
+            <Tooltip>
+              <template #label-content>
+                <v-icon color="primary" :size="12" class="ml-1">
                   mdi-information-outline
                 </v-icon>
               </template>
-              <div class="pa-4 white text-caption">
+              <template #hover-content>
                 <h6 class="text-caption mb-2">Manual delivery</h6>
                 <p class="gray--text">
                   Choose this option if you want the engagement delivered
@@ -44,8 +44,8 @@
                   Choose this option if you want the engagement delivered on a
                   specific recurring basis you selected.
                 </p>
-              </div>
-            </v-menu>
+              </template>
+            </Tooltip>
           </h5>
         </template>
 
@@ -90,18 +90,16 @@
           ]"
         >
           <template #field:size="row">
-            <v-menu offset-y open-on-hover>
-              <template #activator="{ on }">
-                <span v-on="on">
-                  {{ row.value | Numeric(true, true) | Empty }}
-                </span>
+            <Tooltip>
+              <template #label-content>
+                {{ row.value | Numeric(true, true) | Empty }}
               </template>
-              <div class="px-4 py-3 text-caption white">
+              <template #hover-content>
                 {{
                   row.value | Numeric | Empty("Size unavailable at this time")
                 }}
-              </div>
-            </v-menu>
+              </template>
+            </Tooltip>
           </template>
 
           <template #field:manage="row">
