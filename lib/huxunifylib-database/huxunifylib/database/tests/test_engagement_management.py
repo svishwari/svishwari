@@ -229,16 +229,16 @@ class TestEngagementManagement(unittest.TestCase):
                     c.ID: ObjectId(),
                     c.DESTINATIONS: [
                         {
-                            c.DELIVERY_PLATFORM_ID: ObjectId(),
+                            c.ID: ObjectId(),
                             c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
                         },
-                        {c.DELIVERY_PLATFORM_ID: ObjectId()},
-                        {c.DELIVERY_PLATFORM_ID: ObjectId()},
+                        {c.ID: ObjectId()},
+                        {c.ID: ObjectId()},
                     ],
                 },
                 {
                     c.ID: ObjectId(),
-                    c.DESTINATIONS: [{c.DELIVERY_PLATFORM_ID: ObjectId()}],
+                    c.DESTINATIONS: [{c.ID: ObjectId()}],
                 },
             ],
         }
