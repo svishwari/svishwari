@@ -111,16 +111,35 @@
                     size="30"
                     class="add-icon mt-1"
                     color="primary"
-                    @click="toggleDrawer()"
-                    >mdi-plus-circle</v-icon
-                  >
-                  <Logo
+                    @click="toggleDrawer()">
+                    mdi-plus-circle
+                  </v-icon>
+                  <!-- <Logo
                     class="added-logo ml-2"
                     v-for="destination in audience.destinations"
                     :key="destination.id"
                     :type="destination.type"
                     :size="18"
-                  />
+                  /> -->
+
+                <tooltip>
+                  <template slot="label-content">
+                    <Logo
+                      class="added-logo ml-2"
+                      v-for="destination in audience.destinations"
+                      :key="destination.id"
+                      :type="destination.type"
+                      :size="18"
+                      @mouseover.native="hoverItem = destination.name"
+                    />
+                  </template>
+                  <template slot="hover-content">
+                    <div class="d-flex align-center">
+                      Remove {{hoverItem}}
+                    </div>
+                  </template>
+                </tooltip>
+
                 </div>
               </v-col>
             </v-row>
@@ -281,6 +300,7 @@ import CardHorizontal from "@/components/common/CardHorizontal"
 import AddDestination from "@/views/Audiences/AddDestination"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import Logo from "@/components/common/Logo"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "Configuration",
@@ -296,6 +316,7 @@ export default {
     AddDestination,
     Logo,
     AttachEngagement,
+    Tooltip,
   },
   data() {
     return {
@@ -332,6 +353,7 @@ export default {
         viewStep: 1,
         selectedDestination: [],
       },
+      hoverItem: '',
     }
   },
 
@@ -605,6 +627,12 @@ export default {
     }
     .added-logo {
       margin-top: 6px;
+      &:hover {
+        width: 18px;
+        height: 18px;
+        background-image: url("../../assets/images/delete_outline.png");
+        background-size: 18px 18px;
+      }
     }
   }
 
