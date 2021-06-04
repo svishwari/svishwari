@@ -157,16 +157,16 @@ class DestinationBatchJob:
 
 def get_destination_config(
     database: MongoClient,
-    destination_id,
     audience_id,
+    destination_id,
     audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
     Args:
         database (MongoClient): The mongo database client.
-        destination_id (ObjectId): The ID of the destination.
         audience_id (ObjectId): The ID of the audience.
+        destination_id (ObjectId): The ID of the destination.
         audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
@@ -210,68 +210,20 @@ def get_destination_config(
     )
 
 
-def get_delivery_route(
-    database: MongoClient,
-    engagement_id: ObjectId,
-    audience_ids: list = None,
-    destination_ids: list = None,
-) -> dict:
-    """Deliver engagements
-
-    Args:
-        database (MongoClient): Mongo database client.
-        engagement_id (ObjectId): The engagement ObjectId.
-        audience_ids (list): Optional Audience ID list.
-        destination_ids (list): Optional Destination ID list.
-
-    Returns:
-        dict: Returns the delivery route.
+def get_audience_destination_pairs(engagement_audiences: dict):
     """
 
-    if not ObjectId.is_valid(engagement_id):
-        raise Exception("Invalid engagement id.")
+    Args:
+        engagement:
 
-    # get the engagements
-    engagement = get_engagement(database, engagement_id)
-    if not engagement[db_const.AUDIENCES]:
-        raise Exception("No audiences present on the engagement.")
+    Returns:
 
-    # ensure provided audiences are in the engagement
-    if audience_ids:
-        if not set(audience_ids).issubset(engagement[db_const.AUDIENCES]):
-            raise Exception(
-                "Some of the provided audiences are not in the engagement."
-            )
-        # grab matching audiences
-        audience_ids = [
-            a for a in engagement[db_const.AUDIENCES] if a in audience_ids
-        ]
-    else:
-        audience_ids = engagement[db_const.AUDIENCES]
-
-    # build route
-    delivery_route = {}
-    for audience_id in audience_ids:
-        # get the audience object
-        delivery_route[audience_id] = []
-
-        # process each destination listed in the audience
-        audience = get_audience(database, audience_id)
-        if db_const.DESTINATIONS not in audience:
-            continue
-
-        destinations = audience[db_const.DESTINATIONS]
-
-        if destination_ids:
-            # grab matching destinations
-            destination_ids = [d for d in destinations if d in destination_ids]
-        else:
-            destination_ids = destinations
-
-        # assign the destinations
-        delivery_route[audience_id] = destination_ids
-
-    return delivery_route
+    """
+    return [
+        [aud[api_const.AUDIENCE_ID], dest[db_const.DELIVERY_PLATFORM_ID]]
+        for aud in engagement_audiences
+        for dest in aud[db_const.DESTINATIONS]
+    ]
 
 
 if __name__ == "__main__":

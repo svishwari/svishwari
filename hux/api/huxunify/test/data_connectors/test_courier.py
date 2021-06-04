@@ -17,7 +17,6 @@ from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.courier import (
-    get_delivery_route,
     map_destination_credentials_to_dict,
     get_destination_config,
 )
