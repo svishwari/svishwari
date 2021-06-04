@@ -47,7 +47,7 @@
                   height="40"
                   labelText="Audience name"
                   backgroundColor="white"
-                  v-bind:required="true"
+                  required
                   v-model="audience.audienceName"
                   class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"

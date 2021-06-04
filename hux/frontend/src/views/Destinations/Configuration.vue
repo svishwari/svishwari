@@ -37,14 +37,15 @@
           >
             <TextField
               v-model="authenticationDetails[fieldKey]"
-              :labelText="destinationFields[fieldKey].name"
+              :label-text="destinationFields[fieldKey].name"
+              :required="destinationFields[fieldKey].required"
               :rules="[rules.required]"
               :placeholderText="
                 destinationFields[fieldKey].type == 'text'
                   ? `Enter ${destinationFields[fieldKey].name}`
                   : `**********`
               "
-              :InputType="destinationFields[fieldKey].type"
+              :input-type="destinationFields[fieldKey].type"
               :help-text="destinationFields[fieldKey].description"
               @blur="resetValidation"
               icon="mdi-alert-circle-outline"

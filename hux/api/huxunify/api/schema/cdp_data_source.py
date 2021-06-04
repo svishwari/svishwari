@@ -36,6 +36,7 @@ class CdpDataSourceSchema(Schema):
     status = Str()
     is_added = Bool(attribute="added")
     is_enabled = Bool(attribute="enabled")
+    type = Str()
 
     @post_dump
     # pylint: disable=unused-argument
