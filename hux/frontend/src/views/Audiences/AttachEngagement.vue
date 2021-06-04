@@ -118,11 +118,11 @@
                   labelText="Engagement name"
                   placeholder="Give this engagement a name"
                   v-model="newEngagement.name"
-                  :required="true"
                   :rules="newEngagementRules"
+                  required
                 />
                 <TextField
-                  labelText="Description - <i>optional</i>"
+                  labelText="Description"
                   placeholder="What is the purpose of this engagement?"
                   v-model="newEngagement.description"
                 />

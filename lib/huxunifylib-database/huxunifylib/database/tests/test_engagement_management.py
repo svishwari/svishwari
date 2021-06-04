@@ -160,24 +160,6 @@ class TestEngagementManagement(unittest.TestCase):
         engagement_doc = em.get_engagement(self.database, engagement_id)
         self.assertIsNone(engagement_doc)
 
-    def test_create_engagement_no_audiences(self) -> None:
-        """Test creating an engagement without audiences.
-
-        Returns:
-            Response: None
-
-        """
-
-        # create engagement
-        with self.assertRaises(AttributeError):
-            em.set_engagement(
-                self.database,
-                "Fall 2024",
-                "fall of 2024",
-                [],
-                self.user_id,
-            )
-
     def test_create_and_get_engagement_with_many_audiences(self) -> None:
         """Test creating an engagement with many audiences
 

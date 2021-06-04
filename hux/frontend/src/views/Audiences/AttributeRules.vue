@@ -64,11 +64,12 @@
                 :menuItem="conditionOptions"
                 v-if="condition.attribute"
               ></DropdownMenu>
-              <text-field
+              <TextField
+                v-if="condition.operator"
                 v-model="condition.text"
                 placeholder="Text"
-                v-if="condition.operator"
-              ></text-field>
+                required
+              />
             </div>
             <div
               class="actions col-sm-2 d-flex align-center justify-content-end"

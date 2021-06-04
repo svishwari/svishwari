@@ -307,6 +307,66 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Form Steps </v-subheader>
+    <FormSteps class="white pa-10">
+      <FormStep :step="1" label="General information" optional>
+        Contents for step 1
+      </FormStep>
+
+      <FormStep :step="2" label="Select attribute(s)" border="inactive">
+        Contents for step 2
+      </FormStep>
+
+      <FormStep :step="3" :disabled="true">
+        Contents for disabled step 3
+      </FormStep>
+    </FormSteps>
+
+    <v-divider class="mt-10" />
+
+    <v-subheader> Data Cards </v-subheader>
+    <DataCards
+      :items="DataCards.items"
+      :fields="DataCards.fields"
+      :bordered="DataCards.bordered"
+      :empty="DataCards.empty"
+    >
+      <template #field:size="row">
+        {{ row.value | Numeric(true, true) }}
+      </template>
+
+      <template #field:manage="row">
+        <div class="d-flex justify-end">
+          <v-btn
+            icon
+            color="primary"
+            @click="
+              DataCards.items.splice(
+                DataCards.items.findIndex((item) => item.id === row.item.id),
+                1
+              )
+            "
+          >
+            <v-icon>mdi-delete-outline</v-icon>
+          </v-btn>
+        </div>
+      </template>
+    </DataCards>
+
+    <v-btn @click="DataCards.bordered = !DataCards.bordered" class="mr-4">
+      Toggle bordered
+    </v-btn>
+    <v-btn @click="DataCards.items.push(DataCards.newItem)" class="mr-4">
+      Add item
+    </v-btn>
+    <v-text-field
+      v-model="DataCards.empty"
+      label="Empty text"
+      class="d-inline-flex"
+    />
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Descriptive Card </v-subheader>
     <DescriptiveCard
       icon="model-unsubscribe"
@@ -401,6 +461,9 @@ import HuxSlider from "@/components/common/HuxSlider"
 import HuxDropdown from "@/components/common/HuxDropdown"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import CardStat from "@/components/common/Cards/Stat"
+import FormSteps from "@/components/common/FormSteps"
+import FormStep from "@/components/common/FormStep"
+import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import { generateColor } from "@/utils"
 
@@ -426,6 +489,9 @@ export default {
     Logo,
     Icon,
     HuxDataTable,
+    DataCards,
+    FormSteps,
+    FormStep,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -451,6 +517,52 @@ export default {
   },
   data() {
     return {
+      DataCards: {
+        items: [
+          {
+            id: 1,
+            name: "Data field name",
+            description: "Data field description",
+            size: 123456789,
+          },
+          {
+            id: 2,
+            name: "Another data field name",
+            description: "Another data field description",
+            size: 812380123,
+          },
+        ],
+        newItem: {
+          id: 3,
+          name: "Data field name 3",
+          description: "Data field description 3",
+          size: 1251024101,
+        },
+        fields: [
+          {
+            key: "name",
+            label: "Name",
+            sortable: true,
+          },
+          {
+            key: "description",
+            label: "Description",
+            sortable: false,
+          },
+          {
+            key: "size",
+            label: "Target size",
+            sortable: true,
+          },
+          {
+            key: "manage",
+            sortable: false,
+          },
+        ],
+        bordered: false,
+        empty: "No items available.",
+      },
+
       selectedMenuItem: "Select a value...",
       TextFieldValue: null,
       DropdownValue: null,

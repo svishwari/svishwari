@@ -8,18 +8,6 @@ const bluecore = {
   status: "active",
 }
 
-const facebookDS = {
-  name: "Facebook",
-  type: "facebook",
-  is_enabled: true,
-}
-
-const sfmcDS = {
-  name: "Salesforce Marketing Cloud",
-  type: "SFMC",
-  is_enabled: true,
-}
-
 const netsuite = {
   name: "Netsuite",
   type: "netsuite",
@@ -161,7 +149,7 @@ const facebook = {
 
 const salesforce = {
   name: "Salesforce Marketing Cloud",
-  type: "SFMC",
+  type: "salesforce",
   is_enabled: true,
 }
 
@@ -229,8 +217,8 @@ const defaultAudience = {
 export default function (server) {
   // seed data sources
   server.create("dataSource", bluecore)
-  server.create("dataSource", facebookDS)
-  server.create("dataSource", sfmcDS)
+  server.create("dataSource", facebook)
+  server.create("dataSource", salesforce)
   server.create("dataSource", netsuite)
   server.create("dataSource", aqfer)
   server.create("dataSource", amazonAdvertising)
@@ -272,4 +260,5 @@ export default function (server) {
 
   //seed audiences
   server.create("audience", defaultAudience)
+  server.createList("audience", 10)
 }

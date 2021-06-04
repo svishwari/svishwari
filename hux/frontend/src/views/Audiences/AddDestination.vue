@@ -77,6 +77,7 @@
         height="40"
         backgroundColor="white"
         class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
+        required
       ></TextField>
     </div>
 

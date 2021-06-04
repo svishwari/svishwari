@@ -5,9 +5,9 @@
         Add an audience
       </div>
       <div class="sub-heading font-weight-regular">
-        Build a target Audience from the data you own. Feel free to save and
-        complete later as a draft or simply create and fill in the information
-        when you are ready.
+        Build a target audience from the data you own. Add the attributes you
+        want to involve in this particular audience and where you wish to send
+        this audience.
       </div>
 
       <div class="overview font-weight-regular neroBlack--text mt-15">
@@ -24,7 +24,7 @@
           :title="item.title"
           :subtitle="item.subtitle"
           :icon="item.icon"
-          :interactable="true"
+          :interactable="false"
         ></MetricCard>
       </div>
       <v-divider class="divider mt-2 mb-9"></v-divider>
@@ -47,7 +47,7 @@
                   height="40"
                   labelText="Audience name"
                   backgroundColor="white"
-                  v-bind:required="true"
+                  required
                   v-model="audience.audienceName"
                   class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"

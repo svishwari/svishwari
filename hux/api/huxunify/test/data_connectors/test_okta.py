@@ -53,7 +53,7 @@ class OktaTest(TestCase):
         """Test token introspection with an invalid token.
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
@@ -83,7 +83,7 @@ class OktaTest(TestCase):
         """Test token introspection with a valid token.
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
@@ -185,7 +185,7 @@ class OktaTest(TestCase):
         """Test secured decorator with a good token
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 

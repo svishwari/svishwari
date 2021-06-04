@@ -95,7 +95,7 @@ class TectonTest(TestCase):
         """Test list models
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 

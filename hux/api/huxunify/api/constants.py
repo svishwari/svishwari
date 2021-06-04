@@ -10,9 +10,18 @@ TYPE = "type"
 DESCRIPTION = "description"
 FIRST_NAME = "first_name"
 LAST_NAME = "last_name"
+EMAIL = "email"
+PHONE = "phone"
+AGE = "age"
+GENDER = "gender"
+ADDRESS = "address"
+CITY = "city"
+STATE = "state"
+ZIP = "zip"
 CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
+DELIVERIES = "deliveries"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -182,6 +191,7 @@ DESTINATIONS_DESCRIPTION = "Destinations API"
 DESTINATIONS_ENDPOINT = "/destinations"
 DESTINATION_ID = "destination_id"
 DESTINATION = "destination"
+DESTINATION_IDS = "destination_ids"
 DESTINATION_TYPE = "type"
 DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 DESTINATION_NAME = "name"
@@ -226,9 +236,11 @@ AUTHENTICATION_OKTA_ISSUER = "OKTA-ISSUER"
 # Orchestration API fields
 ORCHESTRATION_ENDPOINT = "/orchestration"
 AUDIENCE_ENDPOINT = "/audiences"
+AUDIENCES = "audiences"
 ORCHESTRATION_TAG = "orchestration"
 AUDIENCE = "audience"
 AUDIENCE_ID = "audience_id"
+AUDIENCE_IDS = "audience_ids"
 AUDIENCE_NAME = "name"
 AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
@@ -309,6 +321,11 @@ CDP_DATA_SOURCES_TAG = "data sources"
 CDP_DATA_SOURCES_DESCRIPTION = "CDP DATA SOURCES API"
 CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 
+# Customers
+CUSTOMER_ID = "customer_id"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_TAG = "customers"
+
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
@@ -321,3 +338,68 @@ CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
+
+# FILTERING
+REDACTED = "++REDACTED++"
+CUSTOMER_PROFILE_REDACTED_FIELDS = [
+    EMAIL,
+    PHONE,
+    AGE,
+    GENDER,
+    ADDRESS,
+    CITY,
+    STATE,
+    ZIP,
+]
+
+MOCK_CUSTOMER_PROFILE_RESPONSE = {
+    "id": "1531-2039-22",
+    "first_name": "Bertie",
+    "last_name": "Fox",
+    "match_confidence": 0.96666666661,
+    "since": "2020-02-20T20:02:02.202000Z",
+    "ltv_actual": 60.22,
+    "ltv_predicted": 59.55,
+    "conversion_time": "2020-02-20T20:02:02.202000Z",
+    "churn_rate": 5,
+    "last_click": "2020-02-20T20:02:02.202000Z",
+    "last_purchase": "2020-02-20T20:02:02.202000Z",
+    "last_email_open": "2020-02-20T20:02:02.202000Z",
+    "email": "bertiefox@mail.com",
+    "phone": "(555)555-1231",
+    "age": 53,
+    "gender": "Female",
+    "address": "4364 Pursglove Court",
+    "city": "Dayton",
+    "state": "Ohio",
+    "zip": "45402-1317",
+    "preference_email": False,
+    "preference_push": False,
+    "preference_sms": False,
+    "preference_in_app": False,
+    "identity_resolution": {
+        "name": {
+            "percentage": "0.26",
+            "data_sources": [
+                {
+                    "id": "585t749997acad4bac4373b",
+                    "name": "Adobe Experience",
+                    "type": "adobe-experience",
+                    "percentage": 0.49,
+                },
+                {
+                    "id": "685t749997acad4bac4373b",
+                    "name": "Google Analytics",
+                    "type": "google-analytics",
+                    "percentage": 0.51,
+                },
+            ],
+        },
+        "address": {"percentage": 0.2, "data_sources": []},
+        "email": {"percentage": 0.34, "data_sources": []},
+        "phone": {"percentage": 0.1, "data_sources": []},
+        "cookie": {"percentage": 0.1, "data_sources": []},
+    },
+    "propensity_to_unsubscribe": 1,
+    "propensity_to_purchase": 0,
+}
