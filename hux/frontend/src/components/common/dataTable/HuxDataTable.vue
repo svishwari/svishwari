@@ -6,6 +6,7 @@
         :items="dataItems"
         item-key="name"
         :hide-default-footer="true"
+        fixed-header
         must-sort
         :sort-by="sortColumn"
         sort-desc
