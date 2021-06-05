@@ -43,7 +43,7 @@ def set_engagement(
     """
 
     # validate audiences
-    validate_audiences(audiences)
+    validate_audiences(audiences, check_empty=False)
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
@@ -72,7 +72,7 @@ def set_engagement(
     for audience in audiences:
         doc[db_c.AUDIENCES].append(
             {
-                db_c.AUDIENCE_ID: audience[db_c.AUDIENCE_ID],
+                db_c.ID: audience[db_c.ID],
                 db_c.DESTINATIONS: audience[db_c.DESTINATIONS],
             }
         )
@@ -214,6 +214,9 @@ def update_engagement(
         dict: dict object of the engagement that has been updated
     """
 
+    if audiences:
+        validate_audiences(audiences, check_empty=True)
+
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
@@ -273,35 +276,29 @@ def remove_audiences_from_engagement(
     """
 
     # validate audiences
-    if not audience_ids:
-        raise AttributeError("A minimum of one audience is required.")
-
-    if not all(ObjectId.is_valid(a) for a in audience_ids):
-        raise AttributeError("Invalid ObjectID submitted.")
+    validate_object_id_list(audience_ids)
 
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
     try:
-        result = collection.update_one(
+        return collection.find_one_and_update(
             {db_c.ID: engagement_id},
             {
                 "$pull": {
-                    f"{db_c.AUDIENCES}.{db_c.AUDIENCE_ID}": {
-                        db_c.AUDIENCE_ID: {"$in": audience_ids}
+                    f"{db_c.AUDIENCES}.{db_c.ID}": {
+                        db_c.ID: {"$in": audience_ids}
                     }
-                }
-            },
-            {
+                },
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                     db_c.UPDATED_BY: user_id,
-                }
+                },
             },
+            upsert=False,
+            return_document=pymongo.ReturnDocument.AFTER,
         )
-
-        return result.modified_count == len(audience_ids)
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -348,7 +345,7 @@ def append_audiences_to_engagement(
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                     db_c.UPDATED_BY: user_id,
                 },
-                "$push": {db_c.AUDIENCES: audiences},
+                "$push": {db_c.AUDIENCES: {"$each": audiences}},
             },
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -360,23 +357,46 @@ def append_audiences_to_engagement(
     return None
 
 
-def validate_audiences(audiences: list) -> None:
+def validate_audiences(audiences: list, check_empty: bool = True) -> None:
     """A function for validating a list of audience objects.
 
     Args:
         audiences (list): list of audiences.
-
+        check_empty (bool): check empty list.
     Returns:
 
     """
-    if not audiences:
+    if not audiences and check_empty:
         raise AttributeError("A minimum of one audience is required.")
 
     # validate the audience has an ID
     for audience in audiences:
         if not isinstance(audience, dict):
             raise AttributeError("Audience must be a dict.")
-        if db_c.AUDIENCE_ID not in audience:
-            raise KeyError(f"Missing audience {db_c.AUDIENCE_ID}.")
-        if not ObjectId(audience[db_c.AUDIENCE_ID]):
+        if db_c.ID not in audience:
+            raise KeyError(f"Missing audience {db_c.ID}.")
+        if not isinstance(audience[db_c.ID], ObjectId):
+            raise ValueError("Must provide an ObjectId.")
+        if not ObjectId(audience[db_c.ID]):
             raise ValueError("Invalid object id value.")
+
+
+def validate_object_id_list(
+    object_ids: list, check_empty: bool = True
+) -> None:
+    """A function for validating a list of object ids.
+
+    Args:
+        object_ids (list): list of object ids.
+        check_empty (bool): check empty list.
+
+    Returns:
+
+    """
+    if not object_ids and check_empty:
+        raise AttributeError("A minimum of one item is required.")
+
+    # validate the list
+    for object_id in object_ids:
+        if not isinstance(object_id, ObjectId):
+            raise ValueError("Must provide an ObjectId.")

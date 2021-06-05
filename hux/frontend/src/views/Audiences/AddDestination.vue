@@ -68,6 +68,7 @@
         icon="mdi-alert-circle-outline"
         placeholderText="What is the name for this new data extension?"
         helpText="Extension name"
+        required
       ></TextField>
     </div>
 
