@@ -61,25 +61,32 @@
             }"
             :style="{ width: header.width, left: 0 }"
           >
-            <span v-if="header.value == 'name'">{{ item[header.value] }}</span>
-            <span v-if="header.value == 'size'"
-              ><size :value="item[header.value]"
-            /></span>
-            <span v-if="header.value == 'last_delivered'">
+            <div v-if="header.value == 'name'" class="w-100">
+              <menu-cell
+                :value="item[header.value]"
+                :menuOptions="actionItems"
+                routeName="AudienceInsight"
+                :routeParam="item['id']"
+              />
+            </div>
+            <div v-if="header.value == 'size'">
+              <size :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'last_delivered'">
               <time-stamp :value="item[header.value]" />
-            </span>
-            <span v-if="header.value == 'update_time'">
+            </div>
+            <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
-            </span>
-            <span v-if="header.value == 'updated_by'"
-              ><avatar :name="getName(item[header.value])"
-            /></span>
-            <span v-if="header.value == 'create_time'">
+            </div>
+            <div v-if="header.value == 'updated_by'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
+            <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
-            </span>
-            <span v-if="header.value == 'created_by'"
-              ><avatar :name="getName(item[header.value])"
-            /></span>
+            </div>
+            <div v-if="header.value == 'created_by'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
           </td>
         </template>
       </hux-data-table>
@@ -125,6 +132,7 @@ import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
+import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 
 export default {
   name: "audiences",
@@ -137,9 +145,18 @@ export default {
     Avatar,
     Size,
     TimeStamp,
+    MenuCell,
   },
   data() {
     return {
+      actionItems: [
+        { title: "Favorite" },
+        { title: "Export" },
+        { title: "Edit" },
+        { title: "Duplicate" },
+        { title: "Create a lookalike" },
+        { title: "Delete" },
+      ],
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -238,7 +255,7 @@ export default {
   .hux-data-table {
     margin-top: 1px;
   }
-  ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
+  ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
 }
