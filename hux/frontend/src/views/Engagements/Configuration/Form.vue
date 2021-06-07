@@ -76,16 +76,13 @@
             {
               key: 'name',
               label: 'Audience name',
-              sortable: true,
             },
             {
               key: 'size',
               label: 'Target size',
-              sortable: true,
             },
             {
               key: 'manage',
-              sortable: false,
             },
           ]"
         >
