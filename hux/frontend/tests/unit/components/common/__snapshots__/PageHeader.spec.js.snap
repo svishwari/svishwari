@@ -4,10 +4,7 @@ exports[`Page Header Page header displays both slots and props content 1`] = `
 <v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
     <div class="d-flex">
-      <v-icon-stub size="20" color="black" class="pr-1">
-        mdi-plus
-      </v-icon-stub>
-      <svg-as-component-stub src="assets/undefined"></svg-as-component-stub>
+      <icon-stub type="mdi-plus" size="20" color="neroBlack" class="pr-1"></icon-stub>
       <div class="text-h2">
         Welcome back, User
       </div>
@@ -27,10 +24,7 @@ exports[`Page Header Page header displays props content 1`] = `
 <v-card-stub loaderheight="4" tag="div" color="red" elevation="1" tile="true" class="page-header--wrap d-flex justify-space-between align-center px-8 py-5">
   <div>
     <div class="d-flex">
-      <v-icon-stub size="20" color="black" class="pr-1">
-        mdi-plus
-      </v-icon-stub>
-      <svg-as-component-stub src="assets/undefined"></svg-as-component-stub>
+      <icon-stub type="mdi-plus" size="20" color="neroBlack" class="pr-1"></icon-stub>
       <div class="text-h2">
         Welcome back, User
       </div>
@@ -46,7 +40,6 @@ exports[`Page Header Page header displays slots content 1`] = `
   <div>
     <div class="d-flex">
       <!---->
-      <svg-as-component-stub src="assets/undefined"></svg-as-component-stub>
       <div class="text-h2">
 
       </div>

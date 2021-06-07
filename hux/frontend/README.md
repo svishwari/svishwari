@@ -1,35 +1,43 @@
 # Hux UI
 
 ## Project setup
-```
+```sh
 yarn install
 ```
 
 ### Compiles and hot-reloads for development
-```
+```sh
 yarn serve
 ```
 
 ### Compiles and minifies for production
-```
+```sh
 yarn build
 ```
 
 ### Run your unit tests
-```
+```sh
 yarn test:unit
 ```
 
-### Lints and fixes files
+#### Snapshots
+If you have updated a reusable component's template, be sure to update the
+snaphots for them and commit them with your changes using:
+
+```sh
+yarn test:unit -u
 ```
+
+### Lints and fixes files
+```sh
 yarn lint
 ```
 
 ### Run storybook
 
-```
+```sh
 yarn serve:storybook
-````
+```
 
 ## Docker
 
