@@ -33,6 +33,8 @@ from huxunify.api.schema.engagement import (
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
+    AudiencePerformanceDisplayAdsSchema,
+    AudiencePerformanceEmailSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -44,6 +46,7 @@ from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
+
 
 # TODO - implement after HUS-443 is done to grab user/okta_id
 # TODO Add updated_by fields to engagement_mgmt in set, update and delete methods
@@ -1019,3 +1022,232 @@ class EngagementDeliverDestinationView(SwaggerView):
             f"and audience ID {audience_id} to "
             f"destination ID {destination_id}"
         }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.ENGAGEMENT_DISPLAY_ADS}",
+    "AudiencePerformanceDisplayAdsSchema",
+)
+class EngagementMetricsDisplayAds(SwaggerView):
+    """
+    Display Ads Engagement Metrics
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Display Ads Performance Metrics",
+            "schema": {
+                "example": {
+                    "display_ads_summary": "Audience Metrics Display Ad"
+                },
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves Display Ad Engagement Metrics.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+
+        Returns:
+            Tuple[dict, int]: Response of Display Ads Performance Metrics
+
+        """
+
+        display_ads = {
+            "summary": {
+                api_c.ENGAGEMENT_SPEND: 2000000,
+                api_c.ENGAGEMENT_REACH: 500000,
+                api_c.ENGAGEMENT_IMPRESSIONS: 456850,
+                api_c.ENGAGEMENT_CONVERSIONS: 521006,
+                api_c.ENGAGEMENT_CLICKS: 498587,
+                api_c.ENGAGEMENT_FREQUENCY: 500,
+                api_c.ENGAGEMENT_CPM: 850,
+                api_c.ENGAGEMENT_CTR: 0.5201,
+                api_c.ENGAGEMENT_CPA: 652,
+                api_c.ENGAGEMENT_CPC: 485,
+                api_c.ENGAGEMENT_RATE: 0.5601,
+            },
+            "audience_performance": [
+                {
+                    api_c.AUDIENCE_NAME: "audience_1",
+                    api_c.ENGAGEMENT_SPEND: 2000000,
+                    api_c.ENGAGEMENT_REACH: 500000,
+                    api_c.ENGAGEMENT_IMPRESSIONS: 456850,
+                    api_c.ENGAGEMENT_CONVERSIONS: 521006,
+                    api_c.ENGAGEMENT_CLICKS: 498587,
+                    api_c.ENGAGEMENT_FREQUENCY: 500,
+                    api_c.ENGAGEMENT_CPM: 850,
+                    api_c.ENGAGEMENT_CTR: 0.5201,
+                    api_c.ENGAGEMENT_CPA: 652,
+                    api_c.ENGAGEMENT_CPC: 485,
+                    api_c.ENGAGEMENT_RATE: 0.5601,
+                    "campaigns": [
+                        {
+                            api_c.AUDIENCE_NAME: "facebook",
+                            api_c.ENGAGEMENT_IS_MAPPED: True,
+                            api_c.ENGAGEMENT_SPEND: 2000000,
+                            api_c.ENGAGEMENT_REACH: 500000,
+                            api_c.ENGAGEMENT_IMPRESSIONS: 456850,
+                            api_c.ENGAGEMENT_CONVERSIONS: 521006,
+                            api_c.ENGAGEMENT_CLICKS: 498587,
+                            api_c.ENGAGEMENT_FREQUENCY: 500,
+                            api_c.ENGAGEMENT_CPM: 850,
+                            api_c.ENGAGEMENT_CTR: 0.5201,
+                            api_c.ENGAGEMENT_CPA: 652,
+                            api_c.ENGAGEMENT_CPC: 485,
+                            api_c.ENGAGEMENT_RATE: 0.5601,
+                        },
+                        {
+                            api_c.AUDIENCE_NAME: "Salesforce Marketing Cloud",
+                            api_c.ENGAGEMENT_IS_MAPPED: True,
+                            api_c.ENGAGEMENT_SPEND: 2000000,
+                            api_c.ENGAGEMENT_REACH: 500000,
+                            api_c.ENGAGEMENT_IMPRESSIONS: 456850,
+                            api_c.ENGAGEMENT_CONVERSIONS: 521006,
+                            api_c.ENGAGEMENT_CLICKS: 498587,
+                            api_c.ENGAGEMENT_FREQUENCY: 500,
+                            api_c.ENGAGEMENT_CPM: 850,
+                            api_c.ENGAGEMENT_CTR: 0.5201,
+                            api_c.ENGAGEMENT_CPA: 652,
+                            api_c.ENGAGEMENT_CPC: 485,
+                            api_c.ENGAGEMENT_RATE: 0.5601,
+                        },
+                    ],
+                },
+            ],
+        }
+        return (
+            AudiencePerformanceDisplayAdsSchema().dump(display_ads),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.ENGAGEMENT_EMAIL}",
+    "AudiencePerformanceEmailSchema",
+)
+class EngagementMetricsEmail(SwaggerView):
+    """
+    Email Engagement Metrics
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Email Audience Performance Metrics",
+            "schema": {
+                "example": {"email_summary": "Audience Metrics Email"},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve email engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves Email Engagement Metrics
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+
+        Returns:
+            Tuple[dict, int]: Response of Email Performance Metrics
+
+        """
+
+        email = {
+            "summary": {
+                api_c.ENGAGEMENT_EMAIL: 1200000,
+                api_c.ENGAGEMENT_SENT: 125,
+                api_c.ENGAGEMENT_HARD_BOUNCES: 0.1,
+                api_c.ENGAGEMENT_DELIVERED: 125,
+                api_c.ENGAGEMENT_DELIVERED_RATE: 0.1,
+                api_c.ENGAGEMENT_OPEN: 365200,
+                api_c.ENGAGEMENT_OPEN_RATE: 0.1,
+                api_c.ENGAGEMENT_CLICKS: 365200,
+                api_c.ENGAGEMENT_CTR: 0.7208,
+                api_c.ENGAGEMENT_COTR: 0.7208,
+                api_c.ENGAGEMENT_UNIQUE_CLICKS: 365200,
+                api_c.ENGAGEMENT_UNIQUE_OPENS: 225100,
+                api_c.ENGAGEMENT_UNSUBSCRIBE: 365200,
+                api_c.ENGAGEMENT_UNSUBSCRIBE_RATE: 0.7208,
+            },
+            "audience_performance": [
+                {
+                    api_c.AUDIENCE_NAME: "audience_1",
+                    api_c.ENGAGEMENT_EMAIL: 1200000,
+                    api_c.ENGAGEMENT_SENT: 125,
+                    api_c.ENGAGEMENT_HARD_BOUNCES: 0.1,
+                    api_c.ENGAGEMENT_DELIVERED: 125,
+                    api_c.ENGAGEMENT_DELIVERED_RATE: 0.1,
+                    api_c.ENGAGEMENT_OPEN: 365200,
+                    api_c.ENGAGEMENT_OPEN_RATE: 0.1,
+                    api_c.ENGAGEMENT_CLICKS: 365200,
+                    api_c.ENGAGEMENT_CTR: 0.7208,
+                    api_c.ENGAGEMENT_COTR: 0.7208,
+                    api_c.ENGAGEMENT_UNIQUE_CLICKS: 365200,
+                    api_c.ENGAGEMENT_UNIQUE_OPENS: 225100,
+                    api_c.ENGAGEMENT_UNSUBSCRIBE: 365200,
+                    api_c.ENGAGEMENT_UNSUBSCRIBE_RATE: 0.7208,
+                    "campaigns": [
+                        {
+                            api_c.AUDIENCE_NAME: "facebook",
+                            api_c.ENGAGEMENT_IS_MAPPED: True,
+                            api_c.ENGAGEMENT_EMAIL: 1200000,
+                            api_c.ENGAGEMENT_SENT: 125,
+                            api_c.ENGAGEMENT_HARD_BOUNCES: 0.1,
+                            api_c.ENGAGEMENT_DELIVERED: 125,
+                            api_c.ENGAGEMENT_DELIVERED_RATE: 0.1,
+                            api_c.ENGAGEMENT_OPEN: 365200,
+                            api_c.ENGAGEMENT_OPEN_RATE: 0.1,
+                            api_c.ENGAGEMENT_CLICKS: 365200,
+                            api_c.ENGAGEMENT_CTR: 0.7208,
+                            api_c.ENGAGEMENT_COTR: 0.7208,
+                            api_c.ENGAGEMENT_UNIQUE_CLICKS: 365200,
+                            api_c.ENGAGEMENT_UNIQUE_OPENS: 225100,
+                            api_c.ENGAGEMENT_UNSUBSCRIBE: 365200,
+                            api_c.ENGAGEMENT_UNSUBSCRIBE_RATE: 0.7208,
+                        },
+                        {
+                            api_c.AUDIENCE_NAME: "Salesforce Marketing Cloud",
+                            api_c.ENGAGEMENT_IS_MAPPED: True,
+                            api_c.ENGAGEMENT_EMAIL: 1200000,
+                            api_c.ENGAGEMENT_SENT: 125,
+                            api_c.ENGAGEMENT_HARD_BOUNCES: 0.1,
+                            api_c.ENGAGEMENT_DELIVERED: 125,
+                            api_c.ENGAGEMENT_DELIVERED_RATE: 0.1,
+                            api_c.ENGAGEMENT_OPEN: 365200,
+                            api_c.ENGAGEMENT_OPEN_RATE: 0.1,
+                            api_c.ENGAGEMENT_CLICKS: 365200,
+                            api_c.ENGAGEMENT_CTR: 0.7208,
+                            api_c.ENGAGEMENT_COTR: 0.7208,
+                            api_c.ENGAGEMENT_UNIQUE_CLICKS: 365200,
+                            api_c.ENGAGEMENT_UNIQUE_OPENS: 225100,
+                            api_c.ENGAGEMENT_UNSUBSCRIBE: 365200,
+                            api_c.ENGAGEMENT_UNSUBSCRIBE_RATE: 0.7208,
+                        },
+                    ],
+                },
+            ],
+        }
+        return (
+            AudiencePerformanceEmailSchema().dump(email),
+            HTTPStatus.OK,
+        )

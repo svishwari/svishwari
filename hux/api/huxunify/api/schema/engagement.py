@@ -1,6 +1,6 @@
 # pylint: disable=no-self-use
 """
-Schemas for the Engagements API
+Schemas for the api_c.Engagements API
 """
 from flask_marshmallow import Schema
 from marshmallow import fields, validate
@@ -139,4 +139,101 @@ class AudienceEngagementDeleteSchema(Schema):
             "60ae035b6c5bf45da27f17e5",
             "60ae035b6c5bf45da27f17e6",
         ],
+    )
+
+
+class DisplayAdsSummary(Schema):
+    """
+    Schema for Display Ads Summary
+    """
+
+    spend = fields.Float()
+    reach = fields.Integer()
+    impressions = fields.Integer()
+    conversions = fields.Integer()
+    clicks = fields.Integer()
+    frequency = fields.Float()
+    cost_per_thousand_impressions = fields.Float()
+    click_through_rate = fields.Float()
+    cost_per_action = fields.Float()
+    cost_per_click = fields.Float()
+    engagement_rate = fields.Float()
+
+
+class DispAdIndividualCampaignSummary(DisplayAdsSummary):
+    """
+    Schema for Individual Campaign Summary
+    """
+
+    name = fields.String()
+    is_mapped = fields.Boolean()
+
+
+class DispAdIndividualAudienceSummary(DisplayAdsSummary):
+    """
+    Schema for Individual Audience Summary
+    """
+
+    name = fields.String()
+    campaigns = fields.List(fields.Nested(DispAdIndividualCampaignSummary))
+
+
+class AudiencePerformanceDisplayAdsSchema(Schema):
+    """
+    Schema for Performance Metrics of Display Ads
+    """
+
+    summary = fields.Nested(DisplayAdsSummary)
+    audience_performance = fields.List(
+        fields.Nested(DispAdIndividualAudienceSummary)
+    )
+
+
+class EmailSummary(Schema):
+    """
+    Schema for Summary Performance Metrics of Email
+    """
+
+    sent = fields.Integer()
+    hard_bounces = fields.Integer()
+    hard_bounces_rate = fields.Float()
+    delivered = fields.Integer()
+    delivered_rate = fields.Float()
+    open = fields.Integer()
+    open_rate = fields.Float()
+    clicks = fields.Integer()
+    click_through_rate = fields.Float()
+    click_to_open_rate = fields.Float()
+    unique_clicks = fields.Integer()
+    unique_opens = fields.Integer()
+    unsubscribe = fields.Integer()
+    unsubscribe_rate = fields.Float()
+
+
+class EmailIndividualCampaignSummary(EmailSummary):
+    """
+    Schema for Individual Campaign Summary of Email
+    """
+
+    name = fields.String()
+    is_mapped = fields.Boolean()
+
+
+class EmailIndividualAudienceSummary(EmailSummary):
+    """
+    Schema for Individual Audience Summary of Email
+    """
+
+    name = fields.String()
+    campaigns = fields.List(fields.Nested(EmailIndividualCampaignSummary))
+
+
+class AudiencePerformanceEmailSchema(Schema):
+    """
+    Schema for Performance Metrics of Email
+    """
+
+    summary = fields.Nested(EmailSummary)
+    audience_performance = fields.List(
+        fields.Nested(EmailIndividualAudienceSummary)
     )
