@@ -412,7 +412,6 @@
 
     <v-divider class="mt-10" />
 
-    
     <v-subheader>Hux Slider</v-subheader>
     <hux-slider :inputValue="50"></hux-slider>
     <v-divider class="mt-10" />
@@ -498,7 +497,7 @@ export default {
     DataCards,
     FormSteps,
     FormStep,
-    HuxSlider
+    HuxSlider,
   },
   methods: {
     onupdatelabelText(newValue) {
