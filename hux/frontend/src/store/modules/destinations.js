@@ -7,7 +7,7 @@ const namespaced = true
 const state = {
   items: {},
   constants: null,
-  availableDestinations: {}
+  availableDestinations: {},
 }
 
 const getters = {
@@ -34,7 +34,7 @@ const mutations = {
   },
   SET_AVAILABLE_DESTINATIONS(state, items) {
     items.forEach((item) => {
-      if(item.is_added){
+      if (item.is_added) {
         item.is_added = false
         Vue.set(state.availableDestinations, item.id, item)
       }
@@ -108,7 +108,6 @@ const actions = {
       throw error
     }
   },
-  
 }
 
 export default {
