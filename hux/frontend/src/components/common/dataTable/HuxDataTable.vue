@@ -13,8 +13,8 @@
         :height="height"
       >
         <template v-slot:body="{ items }" v-if="!nested">
-          <tbody>
-            <tr v-for="item in items" :key="item.id">
+          <tbody class="data-table-body">
+            <tr v-for="item in items" :key="item.id" class="data-table-row neroBlack--text">
               <slot name="row-item" :item="item" />
             </tr>
           </tbody>
@@ -145,6 +145,7 @@ export default {
       align-items: center;
       background: var(--v-white-base) !important;
       left: 0px;
+      height: 59.84px !important;
     }
     .fixed-header {
       position: absolute;
@@ -171,6 +172,14 @@ export default {
             font-size: 16px !important;
             color: #00a3e0 !important;
           }
+        }
+      }
+    }
+    .data-table-body {
+      .data-table-row {
+        height: 59.84px;
+        td {
+          font-size: 14px !important;
         }
       }
     }

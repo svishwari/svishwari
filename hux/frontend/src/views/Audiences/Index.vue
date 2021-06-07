@@ -57,6 +57,7 @@
             :class="{
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
+              'primary--text': header.fixed,
             }"
             :style="{ width: header.width, left: 0 }"
           >
