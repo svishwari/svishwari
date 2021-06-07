@@ -196,7 +196,7 @@
               <v-stepper-content step="1">
                 <div class="ma-5">
                   <CardHorizontal
-                    v-for="destination in destinations"
+                    v-for="destination in destinationsList"
                     :key="destination.id"
                     :title="destination.name"
                     :icon="destination.type"
@@ -240,7 +240,7 @@
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
           >
-            {{ destinations.length }} results
+            {{ destinationsList.length }} results
           </div>
           <div
             class="d-flex align-baseline"
@@ -339,6 +339,10 @@ export default {
     ...mapGetters({
       destinations: "destinations/list",
     }),
+
+    destinationsList() {
+      return this.destinations.filter((destination) => destination.is_added == false)
+    },
 
     destination() {
       return this.destinations[this.selectedDestinationIndex] || null
