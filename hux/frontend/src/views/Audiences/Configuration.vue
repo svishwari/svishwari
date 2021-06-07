@@ -341,7 +341,9 @@ export default {
     }),
 
     destinationsList() {
-      return this.destinations.filter((destination) => destination.is_added == false)
+      return this.destinations.filter(
+        (destination) => destination.is_added == false
+      )
     },
 
     destination() {
