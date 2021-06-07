@@ -250,8 +250,8 @@
 
     <v-divider class="mt-10" />
 
-    <v-subheader> Hux Slider</v-subheader>
-    <huxSlider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
+    <v-subheader> Hux Range Slider</v-subheader>
+    <hux-range-slider :min="0" :max="1" :step="0.05" v-model="sliderRange" />
 
     <v-divider class="mt-10" />
 
@@ -412,6 +412,11 @@
 
     <v-divider class="mt-10" />
 
+    
+    <v-subheader>Hux Slider</v-subheader>
+    <hux-slider :inputValue="50"></hux-slider>
+    <v-divider class="mt-10" />
+
     <v-subheader>Logos</v-subheader>
     <Logo type="bluecore"></Logo>
     <Logo type="bluecore" :size="48"></Logo>
@@ -457,7 +462,7 @@ import MetricCard from "@/components/common/MetricCard"
 import Logo from "@/components/common/Logo"
 import Status from "@/components/common/Status"
 import Icon from "@/components/common/Icon"
-import HuxSlider from "@/components/common/HuxSlider"
+import HuxRangeSlider from "@/components/common/HuxRangeSlider"
 import HuxDropdown from "@/components/common/HuxDropdown"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import CardStat from "@/components/common/Cards/Stat"
@@ -465,6 +470,7 @@ import FormSteps from "@/components/common/FormSteps"
 import FormStep from "@/components/common/FormStep"
 import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
+import HuxSlider from "@/components/common/HuxSlider"
 import { generateColor } from "@/utils"
 
 export default {
@@ -483,7 +489,7 @@ export default {
     MetricCard,
     DescriptiveCard,
     CardStat,
-    HuxSlider,
+    HuxRangeSlider,
     HuxDropdown,
     Status,
     Logo,
@@ -492,6 +498,7 @@ export default {
     DataCards,
     FormSteps,
     FormStep,
+    HuxSlider
   },
   methods: {
     onupdatelabelText(newValue) {
