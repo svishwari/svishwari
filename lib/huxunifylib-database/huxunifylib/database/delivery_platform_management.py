@@ -102,8 +102,12 @@ def set_delivery_platform(
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
             return collection.find_one(
-                {c.ID: delivery_platform_id, c.ENABLED: enabled},
-                {c.ENABLED: 0},
+                {
+                    c.ID: delivery_platform_id,
+                    c.ENABLED: enabled,
+                    c.DELETED: False,
+                },
+                {c.ENABLED: 0, c.DELETED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -237,7 +241,7 @@ def set_connection_status(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -303,7 +307,7 @@ def set_authentication_details(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -386,7 +390,7 @@ def set_name(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -458,7 +462,7 @@ def set_platform_type(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -497,6 +501,7 @@ def get_platform_type(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=R0914
 def update_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
@@ -505,6 +510,8 @@ def update_delivery_platform(
     authentication_details: dict = None,
     added: bool = None,
     user_id: ObjectId = None,
+    enabled: bool = None,
+    deleted: bool = None,
 ) -> dict:
     """A function to update delivery platform configuration.
 
@@ -516,6 +523,8 @@ def update_delivery_platform(
         authentication_details (dict): A dict containing delivery platform authentication details.
         added (bool): if the delivery platform is added.
         user_id (ObjectId): User id of user updating delivery platform. This is Optional.
+        enabled (bool): if the delivery platform is enabled.
+        deleted (bool): if the delivery platform is deleted (soft-delete).
 
     Returns:
         dict: Updated delivery platform configuration.
@@ -556,6 +565,12 @@ def update_delivery_platform(
 
     if added is not None:
         update_doc[c.ADDED] = added
+
+    if enabled is not None:
+        update_doc[c.ENABLED] = enabled
+
+    if deleted is not None:
+        update_doc[c.DELETED] = deleted
 
     # Add user object only if it is available
     if ObjectId.is_valid(user_id) and name_exists(
