@@ -93,6 +93,13 @@ class Config:
     AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
     AUDIENCE_ROUTER_IMAGE = config(AUDIENCE_ROUTER_IMAGE_CONST, default="")
 
+    # CDP
+    # TODO config details needed for this. These values are not real
+    CDP_SERVICE = "https://cdp.deloittehux.com"
+    CDP_HEADERS = {
+        "Authorization": "",
+    }
+
 
 class ProductionConfig(Config):
     """

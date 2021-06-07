@@ -43,13 +43,13 @@ def check_tecton_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def map_model_response(response: dict) -> dict:
+def map_model_response(response: dict) -> List[dict]:
     """Map model response to a usable dict.
     Args:
         response (dict): Input Tecton API response.
 
     Returns:
-        dict: A cleaned model dict.
+        List[dict]: A cleaned model dict.
 
     """
     if response.status_code != 200:
@@ -62,76 +62,43 @@ def map_model_response(response: dict) -> dict:
     for meta_data in response.json()[constants.RESULTS]:
         # get model metadata from tecton
         feature = meta_data[constants.FEATURES]
-        version = meta_data[constants.JOIN_KEYS][0]
         model = {
-            constants.ID: 1,
-            constants.LATEST_VERSION: version,
-            constants.FULCRUM_DATE: parser.parse(feature[2]),
-            constants.DESCRIPTION: feature[1],
+            constants.ID: meta_data[constants.JOIN_KEYS][0],
             constants.LAST_TRAINED: parser.parse(feature[0]),
-            constants.LOOKBACK_WINDOW: feature[3],
-            constants.NAME: feature[5],
+            constants.DESCRIPTION: feature[1],
+            constants.FULCRUM_DATE: parser.parse(feature[2]),
+            constants.LOOKBACK_WINDOW: int(feature[3]),
+            constants.NAME: feature[4],
+            constants.TYPE: feature[5],
             constants.OWNER: feature[6],
-            constants.PREDICTION_WINDOW: int(feature[5].split("-")[-1]),
             constants.STATUS: feature[8],
-            constants.TYPE: feature[5].split("-")[0],
+            constants.LATEST_VERSION: feature[9],
+            constants.PREDICTION_WINDOW: int(feature[3]),
+            constants.PAST_VERSION_COUNT: 0,
         }
         models.append(model)
-
-    # sort by version number
-    models = sorted(
-        models, key=lambda k: k[constants.LATEST_VERSION], reverse=True
-    )
-
-    # take first model
-    model = models[0]
-
-    # assign version count
-    model[constants.PAST_VERSION_COUNT] = (
-        sum([1 for x in models if x[constants.NAME] == model[constants.NAME]])
-        - 1
-    )
-
-    return model
+    return models
 
 
-def get_models(model_ids: List[int] = None) -> List[dict]:
+def get_models() -> List[dict]:
     """Get models from Tecton.
+
     Args:
-        model_ids (List[int]): List of model ids to query.
 
     Returns:
-        List[ModelSchema]: List of models.
+        List[dict]: List of models.
     """
 
     # get config
     config = get_config()
 
-    if model_ids is None:
-        # TODO - update when tecton makes the list available to get.
-        model_ids = [1]
-
     # submit the post request to get the models
-    models = []
-    for model_id in model_ids:
-        # grab the payload and filter by ID
-        model_payload = constants.MODEL_LIST_PAYLOAD
-
-        # specific to this model.
-        model_payload["params"]["join_key_map"]["model_id"] = str(model_id)
-
-        response = requests.post(
-            config.TECTON_FEATURE_SERVICE,
-            dumps(model_payload),
-            headers=config.TECTON_API_HEADERS,
-        )
-        mapped_model = map_model_response(response)
-        if not mapped_model:
-            continue
-
-        models.append(mapped_model)
-
-    return models
+    response = requests.post(
+        config.TECTON_FEATURE_SERVICE,
+        dumps(constants.MODEL_LIST_PAYLOAD),
+        headers=config.TECTON_API_HEADERS,
+    )
+    return map_model_response(response)
 
 
 # pylint: disable=unused-argument

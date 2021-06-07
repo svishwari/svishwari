@@ -61,6 +61,7 @@ export default {
 
 <style lang="scss" scoped>
 .blue-grey {
+  display: inline-flex !important;
   border-width: 2px;
   border-style: solid;
   border-radius: 50%;

@@ -18,7 +18,7 @@ git clone https://github.com/DeloitteHux/hux-unified.git
 cd hux-unified/lib/huxunifylib-database
 python -m pip install --upgrade pip
 python -m pip install build twine
-python -m pip install .
+python -m pip install . -U
 ```
 
 Run the database create scripts

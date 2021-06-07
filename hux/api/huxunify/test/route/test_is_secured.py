@@ -62,7 +62,7 @@ class OktaTest(TestCase):
         """Test all endpoints with a mocked invalid response
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
@@ -90,7 +90,7 @@ class OktaTest(TestCase):
         """Test all endpoints with a mocked invalid header
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
@@ -118,7 +118,7 @@ class OktaTest(TestCase):
         """Test all endpoints with a mocked valid header, bad token
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 

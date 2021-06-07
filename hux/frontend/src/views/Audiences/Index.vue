@@ -111,8 +111,7 @@ export default {
       breadcrumbItems: [
         {
           text: "Audiences",
-          disabled: false,
-          href: this.$route.path,
+          disabled: true,
           icon: "audiences",
         },
       ],

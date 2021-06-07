@@ -15,63 +15,34 @@ MOCK_MODEL_RESPONSE = {
     "results": [
         {
             "features": [
-                "2021-05-04 00:00:00",
-                "LTV prediction of Customers over 30 days"
-                "proxy from 2021-04-04 using Hux Blueprints",
-                "2021-04-04 00:00:00",
+                "2021-04-26 00:00:00",
+                "Propensity of a customer making a purchase after "
+                "receiving an email.",
+                "2021-04-26 00:00:00",
                 "365",
-                "HUS",
-                "ltv-model-365-30",
-                "Dave Smith",
-                "dsmith@domain.com",
-                None,
+                "Propensity to Unsubscribe",
+                "unsubscribe",
+                "Susan Miller",
+                "smiller@xyz.com",
+                "success",
+                "0.2.4",
             ],
-            "joinKeys": ["0.2.1"],
+            "joinKeys": ["1"],
         },
         {
             "features": [
-                "2021-05-05 00:00:00",
-                "LTV prediction of Customers over 30 days"
-                "proxy from 2021-04-05 using Hux Blueprints",
-                "2021-04-05 00:00:00",
+                "2021-01-25 00:00:00",
+                "Predict the lifetime value of a customer.",
+                "2021-01-25 00:00:00",
                 "365",
-                "HUS",
-                "ltv-model-365-30",
-                "Dave Smith",
-                "dsmith@domain.com",
-                None,
+                "Lifetime Value",
+                "ltv",
+                "John Smith",
+                "jsmith@xyz.com",
+                "success",
+                "0.4.5",
             ],
-            "joinKeys": ["0.2.2"],
-        },
-        {
-            "features": [
-                "2021-05-06 00:00:00",
-                "LTV prediction of Customers over 30 days"
-                " proxy from 2021-04-06 using Hux Blueprints",
-                "2021-04-06 00:00:00",
-                "365",
-                "HUS",
-                "ltv-model-365-30",
-                "Dave Smith",
-                "dsmith@domain.com",
-                None,
-            ],
-            "joinKeys": ["0.2.3"],
-        },
-        {
-            "features": [
-                "2021-05-07 00:00:00",
-                "LTV prediction of Customers over 30 days"
-                " proxy from 2021-04-07 using Hux Blueprints",
-                "2021-04-07 00:00:00",
-                "365",
-                "HUS",
-                "ltv-model-365-30",
-                "Dave Smith",
-                "dsmith@domain.com",
-                None,
-            ],
-            "joinKeys": ["0.2.4"],
+            "joinKeys": ["2"],
         },
     ]
 }
@@ -95,7 +66,7 @@ class TectonTest(TestCase):
         """Test list models
 
         Args:
-            request_mocker (str): Request mock object.
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
@@ -108,7 +79,7 @@ class TectonTest(TestCase):
             headers=self.config.TECTON_API_HEADERS,
         )
 
-        models = tecton.get_models(model_ids=[1])
+        models = tecton.get_models()
 
         # test that it was actually called and only once
         self.assertEqual(request_mocker.call_count, 1)
@@ -120,7 +91,7 @@ class TectonTest(TestCase):
         )
 
         self.assertEqual(models[0][constants.LATEST_VERSION], "0.2.4")
-        self.assertEqual(models[0][constants.PAST_VERSION_COUNT], 3)
+        self.assertEqual(models[0][constants.PAST_VERSION_COUNT], 0)
 
     def test_model_version_history(self):
         """test model version history"""

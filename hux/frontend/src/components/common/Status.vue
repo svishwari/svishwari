@@ -1,8 +1,8 @@
 <template>
   <div v-if="Statuses.Active.includes(status)">
-    <span v-if="!collapsed">
+    <span v-if="!collapsed" class="d-flex align-center">
       <v-icon color="success" class="mr-2"> mdi-checkbox-blank-circle </v-icon>
-      <span v-if="showLabel">Active</span>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
@@ -11,7 +11,9 @@
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">Active</div>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
     </v-menu>
   </div>
 
@@ -19,7 +21,7 @@
     <span v-if="!collapsed" class="d-flex align-center">
       <span class="half-left-circle success" />
       <span class="half-right-circle mr-2 secondary" />
-      <span v-if="showLabel">Activating</span>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
@@ -29,7 +31,9 @@
           <span class="half-right-circle mr-2 secondary" />
         </span>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">Activating</div>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
     </v-menu>
   </div>
 
@@ -43,7 +47,9 @@
         color="success"
         class="dotted mr-2"
       />
-      <span v-if="showLabel">Pending</span>
+      <span v-if="showLabel">
+        {{ status | TitleCase }}
+      </span>
     </span>
     <v-menu v-else bottom offset-y offset-x open-on-hover>
       <template v-slot:activator="{ on }">
@@ -57,7 +63,9 @@
           v-on="on"
         />
       </template>
-      <div class="px-4 py-2 text-caption white" v-if="showLabel">Pending</div>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
     </v-menu>
   </div>
 </template>
@@ -69,14 +77,13 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["active", "success"],
+        Active: ["active", "success", "delivered"],
         Inactive: ["caution"],
         Activating: ["activating"],
         Draft: ["draft"],
         Disabled: ["disabled"],
         Error: ["error"],
-        Pending: ["pending"],
-        Delivering: ["delivering"],
+        Pending: ["pending", "delivering"],
       },
     }
   },
@@ -92,6 +99,11 @@ export default {
       default: false,
     },
     showLabel: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    showTooltip: {
       type: Boolean,
       required: false,
       default: true,

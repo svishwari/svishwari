@@ -6,10 +6,17 @@
           name: 'AudienceInsight',
           params: { id: audienceId },
         }"
-        class="text-decoration-none"
+        class="text-decoration-none text-elipsis"
         append
       >
-        <span class="primary--text"> {{ cellValue }} </span>
+        <tooltip>
+          <template slot="label-content">
+            <span class="primary--text ellipsis"> {{ cellValue }} </span>
+          </template>
+          <template slot="hover-content">
+            {{ cellValue }}
+          </template>
+        </tooltip>
       </router-link>
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
@@ -39,8 +46,12 @@
 </template>
 <script>
 import Vue from "vue"
+import Tooltip from "../Tooltip.vue"
 export default Vue.extend({
   name: "MenuCell",
+  components: {
+    Tooltip,
+  },
   data() {
     return {
       audienceId: null,
@@ -85,6 +96,15 @@ export default Vue.extend({
     &.theme--light {
       min-height: 32px !important;
     }
+  }
+}
+.menu-cell-wrapper {
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 31ch;
+    display: inline-block;
+    width: 31ch;
   }
 }
 </style>
