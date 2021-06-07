@@ -1,5 +1,5 @@
 <template>
-  <v-menu max-width="240px" bottom offset-y open-on-hover>
+  <v-menu bottom offset-y open-on-hover>
     <template v-slot:activator="{ on }">
       <span v-on="on">
         <slot name="label-content"> sample</slot>

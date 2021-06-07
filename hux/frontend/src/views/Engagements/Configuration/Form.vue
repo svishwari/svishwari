@@ -34,16 +34,18 @@
                 </v-icon>
               </template>
               <template #hover-content>
-                <h6 class="text-caption mb-2">Manual delivery</h6>
-                <p class="gray--text">
-                  Choose this option if you want the engagement delivered
-                  immediately or at a future date and time.
-                </p>
-                <h6 class="text-caption mb-2">Recurring delivery</h6>
-                <p class="gray--text">
-                  Choose this option if you want the engagement delivered on a
-                  specific recurring basis you selected.
-                </p>
+                <v-sheet max-width="240px">
+                  <h6 class="text-caption mb-2">Manual delivery</h6>
+                  <p class="gray--text">
+                    Choose this option if you want the engagement delivered
+                    immediately or at a future date and time.
+                  </p>
+                  <h6 class="text-caption mb-2">Recurring delivery</h6>
+                  <p class="gray--text">
+                    Choose this option if you want the engagement delivered on a
+                    specific recurring basis you selected.
+                  </p>
+                </v-sheet>
               </template>
             </Tooltip>
           </h5>
