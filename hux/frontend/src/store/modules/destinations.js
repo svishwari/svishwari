@@ -7,12 +7,15 @@ const namespaced = true
 const state = {
   items: {},
   constants: null,
+  availableDestinations: {}
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
 
   constants: (state) => state.constants,
+
+  availableDestinations: (state) => Object.values(state.availableDestinations),
 }
 
 const mutations = {
@@ -28,6 +31,14 @@ const mutations = {
 
   SET_CONSTANTS(state, data) {
     Vue.set(state, "constants", data)
+  },
+  SET_AVAILABLE_DESTINATIONS(state, items) {
+    items.forEach((item) => {
+      if(item.is_added){
+        item.is_added = false
+        Vue.set(state.availableDestinations, item.id, item)
+      }
+    })
   },
 }
 
@@ -87,6 +98,17 @@ const actions = {
       throw error
     }
   },
+
+  async getAvailableDestinations({ commit }) {
+    try {
+      const response = await api.destinations.all()
+      commit("SET_AVAILABLE_DESTINATIONS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  
 }
 
 export default {

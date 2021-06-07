@@ -338,12 +338,11 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
+      availableDestinations: "destinations/availableDestinations",
     }),
 
     destinationsList() {
-      return this.destinations.filter(
-        (destination) => destination.is_added == false
-      )
+      return this.availableDestinations
     },
 
     destination() {
@@ -375,6 +374,7 @@ export default {
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
+      getAvailableDestinations: "destinations/getAvailableDestinations",
     }),
     // Engagements
     detachEngagement(engagement) {
@@ -485,6 +485,7 @@ export default {
   },
   async mounted() {
     await this.getDestinations()
+    await this.getAvailableDestinations()
   },
 }
 </script>
