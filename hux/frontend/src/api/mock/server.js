@@ -11,6 +11,7 @@ import seeds from "./seeds"
 import dataSourceFactory from "./factories/dataSource"
 import destinationFactory from "./factories/destination"
 import engagementFactory from "./factories/engagement"
+import audienceFactory from "./factories/audiences"
 import modelFactory from "./factories/model"
 
 export function makeServer({ environment = "development" } = {}) {
@@ -20,6 +21,7 @@ export function makeServer({ environment = "development" } = {}) {
     destination: Model,
     engagement: Model,
     model: Model,
+    audience: Model,
   }
 
   const factories = {
@@ -27,6 +29,7 @@ export function makeServer({ environment = "development" } = {}) {
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
     model: Factory.extend(modelFactory),
+    audience: Factory.extend(audienceFactory),
   }
 
   const server = createServer({

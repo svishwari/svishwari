@@ -5,9 +5,9 @@
         Add an audience
       </div>
       <div class="sub-heading font-weight-regular">
-        Build a target Audience from the data you own. Feel free to save and
-        complete later as a draft or simply create and fill in the information
-        when you are ready.
+        Build a target audience from the data you own. Add the attributes you
+        want to involve in this particular audience and where you wish to send
+        this audience.
       </div>
 
       <div class="overview font-weight-regular neroBlack--text mt-15">
@@ -24,7 +24,7 @@
           :title="item.title"
           :subtitle="item.subtitle"
           :icon="item.icon"
-          :interactable="true"
+          :interactable="false"
         ></MetricCard>
       </div>
       <v-divider class="divider mt-2 mb-9"></v-divider>
@@ -47,7 +47,7 @@
                   height="40"
                   labelText="Audience name"
                   backgroundColor="white"
-                  v-bind:required="true"
+                  required
                   v-model="audience.audienceName"
                   class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"
@@ -57,25 +57,29 @@
                 <div class="mt-8 ml-15 text-caption neroBlack--text">
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
-                  <div>
+                  <div class="mt-2 d-flex align-center">
                     <v-icon
                       size="30"
-                      class="add-icon mt-1"
+                      class="add-icon cursor-pointer"
                       color="primary"
-                      @click="
-                        engagementDrawer.insideFlow = !engagementDrawer.insideFlow
-                      "
+                      @click="engagementDrawer = !engagementDrawer"
                       >mdi-plus-circle</v-icon
                     >
-                    <v-chip
-                      class="ma-2"
-                      close
-                      @click:close="detachEngagement(item.id)"
-                      text-color="primary"
-                      v-for="(item, index) in selectedEngagements"
-                      :key="`engagement-${index}`"
-                      >{{ item.name }}</v-chip
-                    >
+                    <div>
+                      <v-chip
+                        v-for="item in selectedEngagements"
+                        :close="isMinEngagementSelected"
+                        small
+                        class="mx-2 my-1 font-weight-semi-bold"
+                        text-color="primary"
+                        color="pillBlue"
+                        close-icon="mdi-close"
+                        @click:close="detachEngagement(item)"
+                        :key="item.id"
+                      >
+                        {{ item.name }}
+                      </v-chip>
+                    </div>
                   </div>
                 </div>
               </v-col>
@@ -102,7 +106,7 @@
                   Select destination(s) -
                   <i style="font-size: 12px">Optional</i>
                 </strong>
-                <div>
+                <div class="d-flex align-center">
                   <v-icon
                     size="30"
                     class="add-icon mt-1"
@@ -111,7 +115,7 @@
                     >mdi-plus-circle</v-icon
                   >
                   <Logo
-                    class="added-logo"
+                    class="added-logo ml-2"
                     v-for="destination in audience.destinations"
                     :key="destination.id"
                     :type="destination.type"
@@ -127,22 +131,25 @@
             </template>
             <v-row class="pt-1">
               <v-col cols="12">
-                <strong class="text-h5">Create lookalike audience</strong>
+                <strong class="text-h5"
+                  >Create a lookalike audience -
+                  <i>This feature will be coming soon</i>
+                </strong>
               </v-col>
             </v-row>
           </v-timeline-item>
         </v-timeline>
       </v-form>
 
-      <HuxFooter>
+      <HuxFooter maxWidth="inherit">
         <template v-slot:left>
           <huxButton
             ButtonText="Cancel"
-            variant="tertiary"
+            variant="white"
             v-bind:isTile="true"
             width="94"
             height="40"
-            class="ma-2"
+            class="ma-2 ml-0"
             @click.native="$router.go(-1)"
           ></huxButton>
         </template>
@@ -189,7 +196,7 @@
               <v-stepper-content step="1">
                 <div class="ma-5">
                   <CardHorizontal
-                    v-for="(destination, index) in destinations"
+                    v-for="destination in destinations"
                     :key="destination.id"
                     :title="destination.name"
                     :icon="destination.type"
@@ -252,133 +259,11 @@
         </template>
       </drawer>
       <!-- Engagement workflow -->
-      <drawer v-model="engagementDrawer.insideFlow">
-        <template v-slot:header-left>
-          <div class="p-4 d-flex align-items-center">
-            <v-icon>mdi-bullhorn-outline</v-icon>
-            <h5 class="text-h5 font-weight-regular ml-2">
-              Add to an engagement
-            </h5>
-          </div>
-        </template>
-        <template v-slot:default>
-          <v-stepper v-model="engagementDrawer.viewStep">
-            <v-stepper-items>
-              <v-stepper-content step="1">
-                <div>
-                  <huxButton
-                    ButtonText="New engagement"
-                    icon="mdi-plus"
-                    iconPosition="left"
-                    variant="primary"
-                    v-bind:isTile="true"
-                    height="40"
-                    @click="
-                      resetNewEngagement()
-                      engagementDrawer.viewStep = 2
-                    "
-                  ></huxButton>
-                </div>
-                <div class="engagement-list-wrap">
-                  <CardHorizontal
-                    v-for="(engagement, index) in engagements"
-                    :key="`engage-${index}`"
-                    :title="engagement.name"
-                    :isAdded="engagement.is_added || isSelected(engagement.id)"
-                    :isAvailable="engagement.is_enabled"
-                    :isAlreadyAdded="engagement.is_added"
-                    @click="selectEngagement(engagement)"
-                    class="my-3"
-                  />
-                </div>
-              </v-stepper-content>
-              <v-stepper-content step="2">
-                <div class="new-engament-wrap">
-                  <h2 class="mb-8">
-                    Build a new engagement to see performance information on
-                    this audience.
-                  </h2>
-                  <v-form ref="newEngagement" v-model="newEngagementValid">
-                    <TextField
-                      labelText="Engagement name"
-                      placeholder="Give this engagement a name"
-                      v-model="engagement.name"
-                    />
-                    <TextField
-                      labelText="Description - <i>optional</i>"
-                      placeholder="What is the purpose of this engagement?"
-                      v-model="engagement.description"
-                    />
-                    <div class="d-flex flex-column">
-                      <span class="my-1">Delivery schedule</span>
-                      <v-btn-toggle v-model="engagement.deliveryType">
-                        <v-btn>
-                          <v-radio
-                            :off-icon="
-                              engagement.deliveryType == 0
-                                ? '$radioOn'
-                                : '$radioOff'
-                            "
-                          />
-                          <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
-                        </v-btn>
-                        <v-btn>
-                          <v-radio
-                            :off-icon="
-                              engagement.deliveryType == 1
-                                ? '$radioOn'
-                                : '$radioOff'
-                            "
-                          />
-                          <v-icon class="ico">mdi-clock-check-outline</v-icon
-                          >Recurring
-                        </v-btn>
-                      </v-btn-toggle>
-                    </div>
-                  </v-form>
-                </div>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </template>
-        <template v-slot:footer-right>
-          <div
-            class="d-flex align-baseline"
-            v-if="engagementDrawer.viewStep == 2"
-          >
-            <huxButton
-              ButtonText="Create &amp; add"
-              variant="primary"
-              v-bind:isTile="true"
-              height="40"
-              class="ma-2"
-              @click="engagementDrawer.viewStep = 1"
-            ></huxButton>
-          </div>
-        </template>
-
-        <template v-slot:footer-left>
-          <div
-            class="d-flex align-baseline"
-            v-if="engagementDrawer.viewStep == 1"
-          >
-            {{ engagements.length }} results
-          </div>
-          <div
-            class="d-flex align-baseline"
-            v-if="engagementDrawer.viewStep == 2"
-          >
-            <huxButton
-              ButtonText="Cancel &amp; back"
-              variant="white"
-              v-bind:isTile="true"
-              height="40"
-              class="ma-2"
-              @click.native="engagementDrawer.viewStep = 1"
-            ></huxButton>
-          </div>
-        </template>
-      </drawer>
+      <AttachEngagement
+        v-model="engagementDrawer"
+        :finalEngagements="selectedEngagements"
+        @onEngagementChange="setSelectedEngagements"
+      />
     </div>
   </page>
 </template>
@@ -394,6 +279,7 @@ import Drawer from "@/components/common/Drawer"
 import AttributeRules from "./AttributeRules.vue"
 import CardHorizontal from "@/components/common/CardHorizontal"
 import AddDestination from "@/views/Audiences/AddDestination"
+import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import Logo from "@/components/common/Logo"
 
 export default {
@@ -409,6 +295,7 @@ export default {
     CardHorizontal,
     AddDestination,
     Logo,
+    AttachEngagement,
   },
   data() {
     return {
@@ -425,13 +312,9 @@ export default {
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
 
-      engagementDrawer: {
-        insideFlow: false,
-        viewStep: 1,
-      },
+      engagementDrawer: false,
       audience: {
         name: null,
-        engagements: [],
         attributeRules: [],
         destinations: [],
       },
@@ -455,7 +338,6 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
-      engagements: "engagements/list",
     }),
 
     destination() {
@@ -468,11 +350,17 @@ export default {
     attributeRules() {
       return this.audience ? this.audience.attributeRules : []
     },
-    isEngagementSelected() {
-      return this.selectedEngagements.length > 0
+    isMinEngagementSelected() {
+      return this.selectedEngagements.length > 1
     },
     isAudienceFormValid() {
       return !!this.audience.audienceName && this.selectedEngagements.length > 0
+    },
+    selectedEngagementIds() {
+      // This will be used when sending data to create an audience
+      return this.selectedEngagements.map((each) => {
+        return each["id"]
+      })
     },
   },
 
@@ -480,31 +368,22 @@ export default {
     ...mapActions({
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
+      addAudienceToDB: "audiences/add",
     }),
-
-    selectEngagement(engagement) {
-      const filtered = [...this.selectedEngagements]
-      const existingIndex = filtered.findIndex(
-        (eng) => eng.id === engagement.id
-      )
-      if (existingIndex > -1) filtered.splice(existingIndex, 1)
-      else filtered.push(engagement)
-      this.selectedEngagements = filtered
-    },
-    resetNewEngagement() {
-      this.$refs.newEngagement.reset()
-      this.engagement.deliveryType = 0
-    },
-    isSelected(id) {
-      return this.selectedEngagements.filter((eng) => eng.id === id).length > 0
-    },
-    detachEngagement(id) {
+    // Engagements
+    detachEngagement(engagement) {
       const existingIndex = this.selectedEngagements.findIndex(
-        (eng) => eng.id === id
+        (each) => engagement.id === each.id
       )
-      if (existingIndex > -1) this.selectedEngagements.splice(existingIndex, 1)
+      if (existingIndex > -1) {
+        this.selectedEngagements.splice(existingIndex, 1)
+      }
+    },
+    setSelectedEngagements(engagementsList) {
+      this.selectedEngagements = engagementsList
     },
 
+    // Destinations
     toggleDrawer() {
       this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
     },
@@ -549,10 +428,57 @@ export default {
         return existingIndex > -1
       }
     },
+    async createAudience() {
+      const destinationIdArray = this.audience.destinations.map(
+        (destination) => destination.id
+      )
+      const engagementIdArray = this.selectedEngagements.map(
+        (engagement) => engagement.id
+      )
+      const filtersArray = []
+      for (
+        let ruleIndex = 0;
+        ruleIndex < this.audience.attributeRules.length;
+        ruleIndex++
+      ) {
+        var filter = {
+          section_aggregator: this.audience.attributeRules[ruleIndex].operand
+            ? "ALL"
+            : "ANY",
+          section_filters: [],
+        }
+        for (
+          let conditionIndex = 0;
+          conditionIndex <
+          this.audience.attributeRules[ruleIndex].conditions.length;
+          conditionIndex++
+        ) {
+          filter.section_filters.push({
+            field: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].attribute,
+            type: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].operator,
+            value: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].text,
+          })
+        }
+        filtersArray.push(filter)
+      }
+      const payload = {
+        destinations: destinationIdArray,
+        engagements: engagementIdArray,
+        filters: filtersArray,
+        name: this.audience.audienceName,
+      }
+      await this.addAudienceToDB(payload)
+      this.$router.push({ name: "Audiences" })
+    },
   },
   async mounted() {
     await this.getDestinations()
-    await this.fetchEngagements()
   },
 }
 </script>
@@ -602,22 +528,16 @@ export default {
     .theme--light.v-timeline:before {
       background: linear-gradient(
           to right,
-          var(--v-skyBlueDark-base) 50%,
+          var(--v-secondary-base) 50%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(
-          var(--v-skyBlueDark-base) 50%,
-          rgba(255, 255, 255, 0) 0%
-        ),
+        linear-gradient(var(--v-secondary-base) 50%, rgba(255, 255, 255, 0) 0%),
         linear-gradient(
           to right,
-          var(--v-skyBlueDark-base) 49%,
+          var(--v-secondary-base) 49%,
           rgba(255, 255, 255, 0) 0%
         ),
-        linear-gradient(
-          var(--v-skyBlueDark-base) 50%,
-          rgba(255, 255, 255, 0) 0%
-        );
+        linear-gradient(var(--v-secondary-base) 50%, rgba(255, 255, 255, 0) 0%);
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 12px 0px, 1px 12px;
@@ -680,67 +600,6 @@ export default {
     }
     .added-logo {
       margin-top: 6px;
-    }
-  }
-  .v-stepper {
-    box-shadow: none;
-  }
-  .new-engament-wrap {
-    h2 {
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 22px;
-      color: var(--v-neroBlack-base);
-    }
-    ::v-deep label {
-      font-weight: normal;
-      font-size: 12px;
-      line-height: 16px;
-      color: var(--v-neroBlack-base);
-    }
-    .delivery-options {
-      display: flex;
-      flex-direction: column;
-      ::v-deep button {
-        background: var(--v-tertiary-base);
-        border: 1px solid var(--v-lightGrey-base);
-        box-sizing: border-box;
-        border-radius: 4px;
-        border-left-width: 1px !important;
-        width: 175px;
-        height: 40px;
-        padding: 10px;
-        margin-right: 10px;
-        color: var(--v-lightGrey-base);
-        .v-icon {
-          &.ico {
-            width: 13.44px;
-            height: 12.5px;
-            margin-right: 9px;
-          }
-        }
-        .v-btn__content {
-          justify-content: start;
-        }
-        .theme--light {
-          color: var(--v-lightGrey-base) !important;
-        }
-        &.v-btn--active {
-          border: 1px solid var(--v-primary-base) !important;
-          color: var(--v-primary-base) !important;
-          .v-icon {
-            &.ico {
-              width: 13.44px;
-              height: 12.5px;
-              color: var(--v-skyBlueDark-base) !important;
-              margin-right: 9px;
-            }
-          }
-          .theme--light {
-            color: var(--v-primary-base) !important;
-          }
-        }
-      }
     }
   }
 }

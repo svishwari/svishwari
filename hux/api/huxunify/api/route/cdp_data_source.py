@@ -25,7 +25,11 @@ from huxunify.api.schema.cdp_data_source import (
     CdpDataSourcePostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
-from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
+from huxunify.api.route.utils import (
+    add_view_to_blueprint,
+    get_db_client,
+    secured,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
@@ -34,6 +38,13 @@ from huxunify.api import constants as api_c
 cdp_data_sources_bp = Blueprint(
     api_c.CDP_DATA_SOURCES_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
+
+
+@cdp_data_sources_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the data source endpoints."""
+    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(
@@ -55,9 +66,11 @@ class DataSourceSearch(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def get(self) -> Tuple[list, int]:
-        """Retrieves all CDP data sources
+        """Retrieves all CDP data sources.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[list, int] list of CDP data sources and http code
@@ -117,9 +130,12 @@ class IndividualDataSourceSearch(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def get(self, data_source_id: str):
-        """Retrieves a CDP data source by ID
+        """Retrieves a CDP data source.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             data_source_id (str): id of CDP data source
 
@@ -193,9 +209,12 @@ class CreateCdpDataSource(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def post(self) -> Tuple[str, int]:
-        """Creates a new CDP data source
+        """Creates a new CDP data source.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[str, int]: ID of CDP Data source, http code
 
@@ -221,7 +240,7 @@ class CreateCdpDataSource(SwaggerView):
 )
 class DeleteCdpDataSource(SwaggerView):
     """
-    Deletes a CDP data source class
+    Deletes a CDP data source
     """
 
     parameters = [
@@ -245,9 +264,12 @@ class DeleteCdpDataSource(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def delete(self, data_source_id: str) -> Tuple[dict, int]:
-        """Deletes a CDP data source
+        """Deletes a CDP data source.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             data_source_id (str): CDP data source id
 

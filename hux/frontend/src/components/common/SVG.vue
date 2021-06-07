@@ -47,7 +47,7 @@ export default {
   },
 
   watch: {
-    src: (newSrc) => {
+    src: function (newSrc) {
       import(`../../${newSrc}.svg`).then((svg) => (this.svg = svg))
     },
   },

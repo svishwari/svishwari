@@ -33,6 +33,31 @@ export default {
     return value
   },
 
+  Numeric(value, round = false, abbreviate = false, append = "") {
+    if (isNaN(value)) return ""
+
+    let abrv = ""
+
+    if (abbreviate) {
+      if (value >= 1000000) {
+        value = value / 1000000
+        abrv = "m"
+      } else if (value >= 1000) {
+        value = value / 1000
+        abrv = "k"
+      }
+    }
+
+    return (
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: round && Number(value) ? 0 : 2,
+      }) +
+      abrv +
+      append
+    )
+  },
+
   /**
    * Formats a string with title case.
    *
@@ -44,5 +69,26 @@ export default {
       .replace(/([A-Z])/g, (match) => ` ${match}`)
       .replace(/^./, (match) => match.toUpperCase())
       .trim()
+  },
+  /**
+   * Formats any string(fullname) to shortname.
+   *
+   * @param {*} value The string eg. "John petro"
+   * @returns shortname string eg. "JP"
+   */
+  shortName(value) {
+    return value
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+  },
+  /**
+   * Format the number with comma
+   *
+   * @param {*} value the number eg "125767"
+   * @returns formatted number
+   */
+  FormatSize(value) {
+    return Number(value).toLocaleString()
   },
 }

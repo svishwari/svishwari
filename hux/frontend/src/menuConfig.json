@@ -2,7 +2,7 @@
   "menu" : [
     {
       "label" : null,
-      "icon": "mdi-home-outline",
+      "icon": "home",
       "title": "Overview",
       "link": {
         "name": "Overview"
@@ -12,14 +12,14 @@
       "label" : "Orchestration",
       "menu": [
         { 
-          "icon": "mdi-bullhorn-outline",
+          "icon": "engagements",
           "title": "Engagements", 
           "link": {
             "name": "Engagements"
           }
         },
         { 
-          "icon": "mdi-flip-h mdi-account-plus-outline", 
+          "icon": "audiences", 
           "title": "Audiences", 
           "link": {
             "name": "Audiences"
@@ -31,7 +31,7 @@
       "label" : "Decisioning",
       "menu": [
         { 
-          "icon": "mdi-tune-vertical-variant", 
+          "icon": "models", 
           "title": "Models", 
           "link": {
             "name": "Models"
@@ -43,21 +43,21 @@
       "label" : "Data Management",
       "menu": [
         { 
-          "icon": "mdi-account-details-outline", 
+        "icon": "customer-profiles", 
           "title": "Customer Profiles", 
           "link": {
             "name": "Profiles"
           }
         },
         { 
-          "icon": "mdi-account-search-outline", 
-          "title": "Identity", 
+          "icon": "identity-resolution", 
+          "title": "Identity Resolution", 
           "link": {
             "name": "Identity"
           }
         },
         {
-          "icon": "mdi-connection", 
+          "icon": "connections", 
           "title": "Connections", 
           "link": {
             "name": "Connections"

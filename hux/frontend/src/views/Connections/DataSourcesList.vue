@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex align-end mb-4">
-      <v-icon> mdi-cloud-download-outline </v-icon>
+      <Icon type="data-sources-list" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <router-link
         :to="{
@@ -43,13 +43,20 @@
 import { mapGetters } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
+import Icon from "@/components/common/Icon"
 import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 
 export default {
   name: "data-sources-list",
 
-  components: { EmptyStateData, CardHorizontal, Status },
+  components: { EmptyStateData, CardHorizontal, Status, Icon },
+
+  data() {
+    return {
+      drawer: false,
+    }
+  },
 
   computed: {
     ...mapGetters({

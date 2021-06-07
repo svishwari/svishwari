@@ -1,8 +1,8 @@
 <template>
-  <div v-if="status == Statuses.Active">
-    <span v-if="!collapsed">
+  <div v-if="Statuses.Active.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
       <v-icon color="success" class="mr-2"> mdi-checkbox-blank-circle </v-icon>
-      <span>Active</span>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
@@ -11,15 +11,17 @@
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white">Active</div>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
     </v-menu>
   </div>
 
-  <div v-else-if="status == Statuses.Activating">
+  <div v-else-if="Statuses.Activating.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
       <span class="half-left-circle success" />
       <span class="half-right-circle mr-2 secondary" />
-      <span>Activating</span>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
@@ -29,11 +31,13 @@
           <span class="half-right-circle mr-2 secondary" />
         </span>
       </template>
-      <div class="px-4 py-2 white">Activating</div>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
     </v-menu>
   </div>
 
-  <div v-else-if="status == Statuses.Pending">
+  <div v-else-if="Statuses.Pending.includes(status)">
     <span v-if="!collapsed">
       <v-btn
         width="15"
@@ -43,7 +47,9 @@
         color="success"
         class="dotted mr-2"
       />
-      <span>Pending</span>
+      <span v-if="showLabel">
+        {{ status | TitleCase }}
+      </span>
     </span>
     <v-menu v-else bottom offset-y offset-x open-on-hover>
       <template v-slot:activator="{ on }">
@@ -57,7 +63,9 @@
           v-on="on"
         />
       </template>
-      <div class="px-4 py-2 text-caption white">Pending</div>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
     </v-menu>
   </div>
 </template>
@@ -69,14 +77,13 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: "success",
-        Inactive: "caution",
-        Activating: "activating",
-        Draft: "draft",
-        Disabled: "disabled",
-        Error: "error",
-        Pending: "pending",
-        Delivering: "delivering",
+        Active: ["active", "success", "delivered"],
+        Inactive: ["caution"],
+        Activating: ["activating"],
+        Draft: ["draft"],
+        Disabled: ["disabled"],
+        Error: ["error"],
+        Pending: ["pending", "delivering"],
       },
     }
   },
@@ -90,6 +97,16 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    showLabel: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    showTooltip: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
 }

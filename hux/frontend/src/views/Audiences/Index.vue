@@ -23,7 +23,7 @@
       </template>
 
       <template slot="right">
-        <v-icon medium :disabled="true" color="primary refresh" @click="refresh"
+        <v-icon medium :disabled="true" color="primary refresh"
           >mdi-refresh</v-icon
         >
         <router-link
@@ -43,13 +43,14 @@
         </router-link>
       </template>
     </PageHeader>
-    <v-row class="pt-3 pb-7">
+    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <v-row class="pt-3 pb-7" v-if="!loading">
       <hux-table
         v-if="isDataExists"
         :columnDef="columnDefs"
         :tableData="rowData"
         :rowHeight="60"
-        height="350px"
+        height="calc(100vh - 220px)"
         class="pl-3"
       ></hux-table>
 
@@ -110,16 +111,15 @@ export default {
       breadcrumbItems: [
         {
           text: "Audiences",
-          disabled: false,
-          href: this.$route.path,
-          iconPath: "icons/audience_icon",
+          disabled: true,
+          icon: "audiences",
         },
       ],
 
       columnDefs: [
         {
           headerName: "Audience name",
-          field: "audienceName",
+          field: "name",
           sortable: true,
           sort: "desc",
           pinned: "left",
@@ -138,7 +138,7 @@ export default {
         },
         {
           headerName: "Last delivered",
-          field: "lastDelivered",
+          field: "last_delivered",
           width: "170",
           sortable: true,
           cellRendererFramework: DateTimeCell,
@@ -146,7 +146,7 @@ export default {
         },
         {
           headerName: "Last updated",
-          field: "lastUpdated",
+          field: "update_time",
           sortable: true,
           width: "170",
           cellRendererFramework: DateTimeCell,
@@ -154,7 +154,7 @@ export default {
         },
         {
           headerName: "Last updated by",
-          field: "lastUpdatedBy",
+          field: "updated_by",
           sortable: true,
           width: "140",
           cellRendererFramework: UserAvatarCell,
@@ -162,7 +162,7 @@ export default {
         },
         {
           headerName: "Created",
-          field: "created",
+          field: "create_time",
           sortable: true,
           width: "160",
           cellRendererFramework: DateTimeCell,
@@ -170,17 +170,18 @@ export default {
         },
         {
           headerName: "Created by",
-          field: "createdBy",
+          field: "created_by",
           sortable: true,
           cellRendererFramework: UserAvatarCell,
           sortingOrder: ["desc", "asc"],
         },
       ],
+      loading: false,
     }
   },
   computed: {
     ...mapGetters({
-      rowData: "audiences/AllAudiences",
+      rowData: "audiences/list",
     }),
     isDataExists() {
       if (this.rowData) return this.rowData.length > 0
@@ -188,11 +189,14 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getAllAudiences"]),
-    refresh() {},
+    ...mapActions({
+      getAllAudiences: "audiences/getAll",
+    }),
   },
   async mounted() {
+    this.loading = true
     await this.getAllAudiences()
+    this.loading = false
   },
 }
 </script>
@@ -210,7 +214,7 @@ export default {
     margin-top: 1px;
     .v-icon--disabled {
       color: var(--v-lightGrey-base) !important;
-      font-size: 20px;
+      font-size: 24px;
     }
     .text--refresh {
       margin-right: 10px;

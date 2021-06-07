@@ -1,5 +1,121 @@
 <template>
   <v-container>
+    <v-subheader> Data Table </v-subheader>
+    <HuxDataTable v-bind:headers="headers" v-bind:dataItems="dataItems">
+      <template v-slot:un-expanded-row="{ field, item, expand, isExpanded }">
+        <span v-if="field == 'engagementName'" class="primary--text">
+          <v-icon
+            v-if="'child' in item"
+            color="primary"
+            :class="{ 'rotate-icon': isExpanded }"
+            @click="expand(!isExpanded)"
+          >
+            mdi-chevron-right
+          </v-icon>
+          {{ item[field] }}
+        </span>
+        <span v-else-if="field == 'status'">
+          <v-icon
+            v-if="item[field] == 'Active'"
+            class="material-icons delivered"
+          >
+            mdi-checkbox-blank-circle
+          </v-icon>
+          <v-icon
+            v-if="item[field] == 'Delivering'"
+            class="material-icons alert"
+          >
+            mdi-alert-circle
+          </v-icon>
+        </span>
+        <span v-else-if="field == 'lastUpdatedBy'">
+          <v-menu bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="avatar-border d-flex align-center justify-center"
+                v-bind="attrs"
+                v-on="on"
+                v-bind:style="{ 'border-color': getColorCode(item[field]) }"
+              >
+                {{ item[field] }}
+              </span>
+            </template>
+          </v-menu>
+        </span>
+        <span v-else-if="field == 'createdBy'">
+          <v-menu bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="avatar-border d-flex align-center justify-center"
+                v-bind="attrs"
+                v-on="on"
+                v-bind:style="{ 'border-color': getColorCode(item[field]) }"
+              >
+                {{ item[field] }}
+              </span>
+            </template>
+          </v-menu>
+        </span>
+        <span v-else>
+          <span v-if="field != 'child'">
+            {{ item[field] }}
+          </span>
+        </span>
+      </template>
+      <template v-slot:expanded-row="{ field }">
+        <td class="primary--text">{{ field.engagementName }}</td>
+        <td>{{ field.audiences }}</td>
+        <td>
+          <v-icon
+            v-if="field.status == 'Active'"
+            class="material-icons delivered"
+          >
+            mdi-checkbox-blank-circle
+          </v-icon>
+          <v-icon
+            v-if="field.status == 'Delivering'"
+            class="material-icons alert"
+          >
+            mdi-alert-circle
+          </v-icon>
+        </td>
+        <td>{{ field.size }}</td>
+        <td>{{ field.deliverySchedule }}</td>
+        <td>{{ field.lastUpdated }}</td>
+        <td>
+          <v-menu bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="avatar-border d-flex align-center justify-center"
+                v-bind="attrs"
+                v-on="on"
+                v-bind:style="{
+                  'border-color': getColorCode(field.lastUpdatedBy),
+                }"
+              >
+                {{ field.lastUpdatedBy }}
+              </span>
+            </template>
+          </v-menu>
+        </td>
+        <td>{{ field.created }}</td>
+        <td>
+          <v-menu bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="avatar-border d-flex align-center justify-center"
+                v-bind="attrs"
+                v-on="on"
+                v-bind:style="{ 'border-color': getColorCode(field.createdBy) }"
+              >
+                {{ field.createdBy }}
+              </span>
+            </template>
+          </v-menu>
+        </td>
+      </template>
+    </HuxDataTable>
+    <v-divider class="mt-10" />
     <v-subheader> Info Card </v-subheader>
     <CardInfo></CardInfo>
 
@@ -191,6 +307,66 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader> Form Steps </v-subheader>
+    <FormSteps class="white pa-10">
+      <FormStep :step="1" label="General information" optional>
+        Contents for step 1
+      </FormStep>
+
+      <FormStep :step="2" label="Select attribute(s)" border="inactive">
+        Contents for step 2
+      </FormStep>
+
+      <FormStep :step="3" :disabled="true">
+        Contents for disabled step 3
+      </FormStep>
+    </FormSteps>
+
+    <v-divider class="mt-10" />
+
+    <v-subheader> Data Cards </v-subheader>
+    <DataCards
+      :items="DataCards.items"
+      :fields="DataCards.fields"
+      :bordered="DataCards.bordered"
+      :empty="DataCards.empty"
+    >
+      <template #field:size="row">
+        {{ row.value | Numeric(true, true) }}
+      </template>
+
+      <template #field:manage="row">
+        <div class="d-flex justify-end">
+          <v-btn
+            icon
+            color="primary"
+            @click="
+              DataCards.items.splice(
+                DataCards.items.findIndex((item) => item.id === row.item.id),
+                1
+              )
+            "
+          >
+            <v-icon>mdi-delete-outline</v-icon>
+          </v-btn>
+        </div>
+      </template>
+    </DataCards>
+
+    <v-btn @click="DataCards.bordered = !DataCards.bordered" class="mr-4">
+      Toggle bordered
+    </v-btn>
+    <v-btn @click="DataCards.items.push(DataCards.newItem)" class="mr-4">
+      Add item
+    </v-btn>
+    <v-text-field
+      v-model="DataCards.empty"
+      label="Empty text"
+      class="d-inline-flex"
+    />
+
+    <v-divider class="mt-10" />
+
     <v-subheader> Descriptive Card </v-subheader>
     <DescriptiveCard
       icon="model-unsubscribe"
@@ -285,6 +461,11 @@ import HuxSlider from "@/components/common/HuxSlider"
 import HuxDropdown from "@/components/common/HuxDropdown"
 import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import CardStat from "@/components/common/Cards/Stat"
+import FormSteps from "@/components/common/FormSteps"
+import FormStep from "@/components/common/FormStep"
+import DataCards from "@/components/common/DataCards"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
+import { generateColor } from "@/utils"
 
 export default {
   name: "Components",
@@ -307,6 +488,10 @@ export default {
     Status,
     Logo,
     Icon,
+    HuxDataTable,
+    DataCards,
+    FormSteps,
+    FormStep,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -326,9 +511,58 @@ export default {
     toggleModal() {
       this.modal = !this.modal
     },
+    getColorCode(name) {
+      return generateColor(name, 30, 60) + " !important"
+    },
   },
   data() {
     return {
+      DataCards: {
+        items: [
+          {
+            id: 1,
+            name: "Data field name",
+            description: "Data field description",
+            size: 123456789,
+          },
+          {
+            id: 2,
+            name: "Another data field name",
+            description: "Another data field description",
+            size: 812380123,
+          },
+        ],
+        newItem: {
+          id: 3,
+          name: "Data field name 3",
+          description: "Data field description 3",
+          size: 1251024101,
+        },
+        fields: [
+          {
+            key: "name",
+            label: "Name",
+            sortable: true,
+          },
+          {
+            key: "description",
+            label: "Description",
+            sortable: false,
+          },
+          {
+            key: "size",
+            label: "Target size",
+            sortable: true,
+          },
+          {
+            key: "manage",
+            sortable: false,
+          },
+        ],
+        bordered: false,
+        empty: "No items available.",
+      },
+
       selectedMenuItem: "Select a value...",
       TextFieldValue: null,
       DropdownValue: null,
@@ -516,19 +750,19 @@ export default {
           text: "Home",
           disabled: false,
           href: "overview",
-          icon: "mdi-home-outline",
+          icon: "home",
         },
         {
           text: "Connections",
           disabled: false,
           href: "connections",
-          icon: "mdi-bullhorn-outline",
+          icon: "connections",
         },
         {
           text: "Destinations",
           disabled: true,
           href: "connections/destinations",
-          icon: "mdi-flip-h mdi-account-plus-outline",
+          icon: "destinations",
         },
       ],
 
@@ -585,6 +819,71 @@ export default {
             console.log("menu-item-5")
           },
         },
+      ],
+
+      dataItems: [
+        {
+          engagementName: "Winter",
+          audiences: 159,
+          status: "Active",
+          size: "176M",
+          deliverySchedule: "Manual",
+          lastUpdated: "1 week ago",
+          lastUpdatedBy: "AZ",
+          created: "1 month ago",
+          createdBy: "JS",
+          child: [
+            {
+              engagementName: "Frozen goods",
+              audiences: 159,
+              status: "Delivering",
+              size: "565k",
+              deliverySchedule: "-",
+              lastUpdated: "1 week ago",
+              lastUpdatedBy: "SA",
+              created: "1 month ago",
+              createdBy: "JS",
+            },
+            {
+              engagementName: "Texas",
+              audiences: 159,
+              status: "Active",
+              size: "30M",
+              deliverySchedule: "-",
+              lastUpdated: "1 week ago",
+              lastUpdatedBy: "PR",
+              created: "1 month ago",
+              createdBy: "JS",
+            },
+          ],
+        },
+        {
+          engagementName: "Summer",
+          audiences: 100,
+          status: "Active",
+          size: "476M",
+          deliverySchedule: "Manual",
+          lastUpdated: "1 week ago",
+          lastUpdatedBy: "JS",
+          created: "1 month ago",
+          createdBy: "JS",
+        },
+      ],
+
+      headers: [
+        {
+          text: "Engagement name",
+          align: "left",
+          value: "engagementName",
+        },
+        { text: "Audiences", value: "audiences" },
+        { text: "Status", value: "status" },
+        { text: "Size", value: "size" },
+        { text: "Delivery schedule", value: "deliverySchedule" },
+        { text: "Last updated", value: "lastUpdated" },
+        { text: "Last updated By", value: "lastUpdatedBy" },
+        { text: "Created", value: "created" },
+        { text: "Created By", value: "createdBy" },
       ],
     }
   },

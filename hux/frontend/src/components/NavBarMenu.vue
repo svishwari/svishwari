@@ -1,24 +1,16 @@
 <template>
-  <div class="d-flex navbar-menu">
-    <v-btn icon class="icon-btn">
-      <v-icon class="mdi-plus">mdi-plus</v-icon>
-    </v-btn>
-    <Notification></Notification>
-    <v-btn icon class="icon-btn">
-      <v-icon class="mdi-help">mdi-help</v-icon>
-    </v-btn>
-    <v-divider vertical></v-divider>
+  <div class="d-flex navbar-menu align-center">
+    <v-divider vertical color="lightGrey"></v-divider>
     <UserAvatar></UserAvatar>
   </div>
 </template>
 
 <script>
-import Notification from "@/components/Notification"
 import UserAvatar from "@/components/UserAvatar"
 
 export default {
   name: "NavBarMenu",
-  components: { Notification, UserAvatar },
+  components: { UserAvatar },
 }
 </script>
 
@@ -45,7 +37,7 @@ export default {
   }
   .v-divider {
     &.v-divider--vertical {
-      border: 1px solid #d0d0ce;
+      border: 1px solid var(--v-lightGrey-base);
       margin-right: 9px;
       margin-left: 9px;
     }

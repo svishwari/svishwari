@@ -12,7 +12,7 @@
     </PageHeader>
     <PageHeader
       bgColor="background"
-      style="height: 70px; border: 1px solid #d0d0ce !important"
+      style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">
         <v-icon color="primary" class="mr-3 cursor-pointer" large>
@@ -48,7 +48,7 @@
     </PageHeader>
     <PageHeader
       bgColor="aliceBlue"
-      style="height: 70px; border: 1px solid #d0d0ce !important"
+      style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">
         <div class="d-flex filters-wrapper">
@@ -89,13 +89,13 @@ export default {
           text: "Connections",
           disabled: false,
           href: "/connections",
-          icon: "mdi-connection",
+          icon: "connections",
         },
         {
           text: "Destinations",
           disabled: true,
           href: this.$route.path,
-          icon: "mdi-map-marker-circle",
+          icon: "destinations",
         },
       ],
       // This is a temporary fix for table components

@@ -150,11 +150,11 @@ class TestUserManagement(unittest.TestCase):
         self.assertTrue(c.ID in user_doc)
 
         # remove the user
-        success_flag = um.delete_user(self.database, user_doc[c.ID])
+        success_flag = um.delete_user(self.database, user_doc[c.OKTA_ID])
         self.assertTrue(success_flag)
 
         # ensure user does not exist anymore
-        user_doc = um.get_user(self.database, user_doc[c.ID])
+        user_doc = um.get_user(self.database, user_doc[c.OKTA_ID])
         self.assertIsNone(user_doc)
 
     def test_add_favorite(self) -> None:
@@ -174,7 +174,7 @@ class TestUserManagement(unittest.TestCase):
 
             # add favorite component
             update_doc = um.manage_user_favorites(
-                self.database, user_doc[c.ID], component, component_id
+                self.database, user_doc[c.OKTA_ID], component, component_id
             )
 
             # test non empty list first
@@ -202,13 +202,13 @@ class TestUserManagement(unittest.TestCase):
 
             # add favorite component
             um.manage_user_favorites(
-                self.database, user_doc[c.ID], component, component_id
+                self.database, user_doc[c.OKTA_ID], component, component_id
             )
 
             # now remove the favorite
             removed_doc = um.manage_user_favorites(
                 self.database,
-                user_doc[c.ID],
+                user_doc[c.OKTA_ID],
                 component,
                 component_id,
                 delete_flag=True,
@@ -235,7 +235,7 @@ class TestUserManagement(unittest.TestCase):
             # add favorite component x2
             for _ in range(2):
                 um.manage_user_favorites(
-                    self.database, user_doc[c.ID], component, component_id
+                    self.database, user_doc[c.OKTA_ID], component, component_id
                 )
 
             # get user doc
@@ -270,7 +270,7 @@ class TestUserManagement(unittest.TestCase):
 
         # set the config setting for a user
         updated_doc = um.manage_user_dashboard_config(
-            self.database, user_doc[c.ID], pinned_key, pinned_value
+            self.database, user_doc[c.OKTA_ID], pinned_key, pinned_value
         )
 
         # test pinned value key exists
@@ -298,7 +298,7 @@ class TestUserManagement(unittest.TestCase):
 
         # set the config setting for a user first
         user_doc = um.manage_user_dashboard_config(
-            self.database, user_doc[c.ID], pinned_key, pinned_value
+            self.database, user_doc[c.OKTA_ID], pinned_key, pinned_value
         )
 
         # test pinned value key exists
@@ -312,7 +312,11 @@ class TestUserManagement(unittest.TestCase):
 
         # delete the config setting for a user
         updated_doc = um.manage_user_dashboard_config(
-            self.database, user_doc[c.ID], pinned_key, None, delete_flag=True
+            self.database,
+            user_doc[c.OKTA_ID],
+            pinned_key,
+            None,
+            delete_flag=True,
         )
 
         # test pinned value key does not exist

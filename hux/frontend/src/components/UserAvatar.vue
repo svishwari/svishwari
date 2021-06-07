@@ -1,24 +1,28 @@
 <template>
-  <v-menu offset-y close-on-click>
+  <v-menu v-model="menu" offset-y close-on-click>
     <template v-slot:activator="{ on }">
-      <span v-on="on" class="d-flex">
-        <v-avatar color="primary" class="font-weight-bold">
+      <span v-on="on" class="d-flex cursor-pointer mr-6">
+        <v-btn color="primary" class="font-weight-bold" small outlined fab>
           {{ initials }}
-        </v-avatar>
-        <v-icon color="black"> mdi-chevron-down </v-icon>
+        </v-btn>
+        <v-icon color="primary" :class="{ 'rotate-icon-180': menu }">
+          mdi-chevron-down
+        </v-icon>
       </span>
     </template>
     <v-list>
       <v-list-item class="font-weight-bold">
-        <v-avatar color="primary" class="font-weight-bold white--text mr-2">
+        <v-btn color="primary" class="font-weight-bold mr-2" small outlined fab>
           {{ initials }}
-        </v-avatar>
-        <v-list-item-title>{{ firstName }} {{ lastName }}</v-list-item-title>
+        </v-btn>
+        <v-list-item-title class="text-h6 neroBlack--text font-weight-bold"
+          >{{ firstName }} {{ lastName }}</v-list-item-title
+        >
       </v-list-item>
       <v-list-item>
         <v-list-item-title>
           <a
-            class="text-decoration-none text--primary"
+            class="text-decoration-none text-h6 neroBlack--text"
             :href="changeDetailsLink"
             target="_blank"
             >My Hux Profile</a
@@ -27,7 +31,9 @@
       </v-list-item>
       <v-divider />
       <v-list-item @click="initiateLogout()">
-        <v-list-item-title>Logout</v-list-item-title>
+        <v-list-item-title class="text-h6 neroBlack--text"
+          >Logout</v-list-item-title
+        >
       </v-list-item>
     </v-list>
   </v-menu>
@@ -42,6 +48,7 @@ export default {
   data() {
     return {
       changeDetailsLink: config.userDetails,
+      menu: false,
     }
   },
   methods: {

@@ -21,6 +21,10 @@ SWAGGER_CONFIG = {
     "specs_route": "/api/v1/ui/",
     "description": "",
     "termsOfService": "",
+    "schemes": ["https"],
+    "securityDefinitions": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    },
 }
 
 
@@ -44,6 +48,8 @@ def configure_flask(flask_app: Flask) -> None:
                 "huxunify.api.config.DevelopmentConfig"
             )
         else:
+            # use http by default for local testing.
+            SWAGGER_CONFIG["schemes"].insert(0, "http")
             flask_app.config.from_object("huxunify.api.config.Config")
     except KeyError as error:
         desc = f"Environment not configured: {error} is required."
@@ -64,6 +70,7 @@ def create_app() -> Flask:
     # setup the flask app
     flask_app = Flask(__name__)
 
+    # setup CORS
     CORS(flask_app)
 
     # register the routes

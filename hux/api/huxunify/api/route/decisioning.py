@@ -11,6 +11,7 @@ from flasgger import SwaggerView
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     handle_api_exception,
+    secured,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
@@ -28,6 +29,13 @@ from huxunify.api import constants as api_c
 
 # setup the models blueprint
 model_bp = Blueprint(api_c.MODELS_ENDPOINT, import_name=__name__)
+
+
+@model_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the model endpoints."""
+    pass  # pylint: disable=unnecessary-pass
 
 
 @add_view_to_blueprint(model_bp, api_c.MODELS_ENDPOINT, "ModelsView")
@@ -51,6 +59,8 @@ class ModelsView(SwaggerView):
         """Retrieves all models.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
 
         Returns:
             Tuple[List[dict], int] dict of models and http code
@@ -86,9 +96,12 @@ class ModelVersionView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(ModelVersionSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model versions by model name.
+        """Retrieves model version history.
 
         ---
+        security:
+            - Bearer: [Authorization]
+
         Args:
             name (str): model name
 
@@ -126,9 +139,12 @@ class ModelFeatureView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(FeatureSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model features by model name.
+        """Retrieves model features.
 
         ---
+        security:
+            - Bearer: [Authorization]
+
         Args:
             name (str): model name
 
@@ -168,9 +184,12 @@ class ModelMetricsView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(PerformanceMetricSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model performance metrics.
+        """Retrieves model performance metrics.
 
         ---
+        security:
+            - Bearer: [Authorization]
+
         Args:
             name (str): model name
 
@@ -213,9 +232,12 @@ class ModelFeatureImportanceView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(FeatureImportance(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model feature importance.
+        """Retrieves model feature importance details.
 
         ---
+        security:
+            - Bearer: [Authorization]
+
         Args:
             name (str): model name
 
@@ -258,9 +280,12 @@ class ModelLiftView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(LiftSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model lift.
+        """Retrieves model lift details.
 
         ---
+        security:
+            - Bearer: [Authorization]
+
         Args:
             name (str): model name
 
@@ -300,9 +325,12 @@ class ModelDriftView(SwaggerView):
     # pylint: disable=no-self-use
     @marshal_with(DriftSchema(many=True))
     def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieve model drift.
+        """Retrieves model drift details.
 
         ---
+        security:
+            - Bearer: [Authorization]
+
         Args:
             name (str): model name
 

@@ -19,12 +19,18 @@ Object.keys(resources).forEach((resource) => {
     find: (resourceId) => http.get(`${endpoint}/${resourceId}`),
     update: (resourceId, data) => http.put(`${endpoint}/${resourceId}`, data),
     batchUpdate: (data) => http.put(`${endpoint}`, data),
+    constants: () => http.get(`${endpoint}/constants`),
   }
 
   // Custom one-off resource endpoints
   if (resource === "destinations") {
     client[resource].validate = (data) => {
       return http.post("/destinations/validate", data)
+    }
+  }
+  if (resource === "engagements") {
+    client[resource].deliver = (resourceId, data) => {
+      return http.post(`/engagements/${resourceId}/deliver`, data)
     }
   }
 })

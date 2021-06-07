@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex align-end mb-4">
-      <v-icon> mdi-map-marker-circle </v-icon>
+      <Icon type="destinations" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
       <router-link
         :to="{ name: 'DestinationConfiguration' }"
@@ -37,6 +37,7 @@ import { mapGetters } from "vuex"
 
 import CardHorizontal from "@/components/common/CardHorizontal"
 import EmptyStateData from "@/components/common/EmptyStateData"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "destinations-list",
@@ -44,6 +45,7 @@ export default {
   components: {
     CardHorizontal,
     EmptyStateData,
+    Icon,
   },
 
   computed: {

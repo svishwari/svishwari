@@ -4,15 +4,13 @@ Schemas for the Destinations API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import fields, post_load
+from marshmallow import fields
 from marshmallow.validate import OneOf
-from bson import ObjectId
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
-    validate_dest_constants,
 )
 
 
@@ -22,12 +20,14 @@ class DestinationGetSchema(Schema):
     """
 
     _id = fields.String(
-        data_key=api_c.DESTINATION_ID,
+        data_key=api_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
     )
-    type = fields.String(attribute=api_c.DESTINATION_TYPE, example="Facebook")
+    type = fields.String(
+        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="Facebook"
+    )
     name = fields.String(
         attribute=api_c.DESTINATION_NAME, example="My destination"
     )
@@ -47,40 +47,12 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
+    is_added = fields.Bool(attribute="added")
+    is_enabled = fields.Bool(attribute="enabled")
     create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = fields.String(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
-
-    @post_load()
-    # pylint: disable=unused-argument
-    def process_modified(
-        self,
-        data: dict,
-        many: bool = False,
-        pass_original=False,
-        partial=False,
-    ) -> dict:
-        """process the schema before deserializing.
-
-        Args:
-            data (dict): The destination object
-            many (bool): If there are many to process
-        Returns:
-            Response: Returns a destination object
-
-        """
-        # set the input ID to an object ID
-        if api_c.DESTINATION_ID in data:
-            # if a valid ID, map it
-            if ObjectId.is_valid(data[api_c.DESTINATION_ID]):
-                data.update(
-                    destination_id=ObjectId(data[api_c.DESTINATION_ID])
-                )
-            else:
-                # otherwise map to None
-                data.update(destination_id=None)
-        return data
 
 
 class DestinationPutSchema(Schema):
@@ -88,23 +60,16 @@ class DestinationPutSchema(Schema):
     Destination put schema class
     """
 
-    type = fields.String()
-    name = fields.String()
     authentication_details = fields.Field()
 
 
-class DestinationPostSchema(DestinationPutSchema):
+class DestinationValidationSchema(Schema):
     """
-    Destination post schema class
+    Destination put schema class
     """
 
-    type = fields.String(validate=must_not_be_blank)
-    name = fields.String(validate=must_not_be_blank)
-    authentication_details = fields.Dict(
-        keys=fields.String(),
-        values=fields.String(),
-        validate=validate_dest_constants,
-    )
+    authentication_details = fields.Field()
+    type = fields.String()
 
 
 class FacebookAuthConstants(Schema):
@@ -112,15 +77,45 @@ class FacebookAuthConstants(Schema):
     Facebook Auth constants schema class
     """
 
-    facebook_ad_account_id = fields.String(
-        required=True, validate=must_not_be_blank
+    facebook_ad_account_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Ad Account ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    facebook_app_id = fields.String(required=True, validate=must_not_be_blank)
-    facebook_app_secret = fields.String(
-        required=True, validate=must_not_be_blank
+    facebook_app_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "App ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    facebook_access_token = fields.String(
-        required=True, validate=must_not_be_blank
+    facebook_app_secret = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "App Secret",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    facebook_access_token = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Access Token",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
 
 
@@ -129,26 +124,72 @@ class SFMCAuthConstants(Schema):
     SFMC Auth constants schema class
     """
 
-    sfmc_client_id = fields.String(required=True, validate=must_not_be_blank)
-    sfmc_account_id = fields.String(required=True, validate=must_not_be_blank)
-    sfmc_client_secret = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_client_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    sfmc_auth_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_account_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Account ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    sfmc_rest_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_client_secret = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client Secret",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
-    sfmc_soap_base_uri = fields.String(
-        required=True, validate=must_not_be_blank
+    sfmc_auth_base_uri = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Auth Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_rest_base_uri = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "REST Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_soap_base_uri = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "SOAP Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
     )
 
 
-class DestinationConstants(Schema):
+class DestinationConstantsSchema(Schema):
     """
     Destination constants schema class
     """
 
-    Facebook = fields.Nested(FacebookAuthConstants)
+    facebook = fields.Nested(FacebookAuthConstants)
     SFMC = fields.Nested(SFMCAuthConstants)

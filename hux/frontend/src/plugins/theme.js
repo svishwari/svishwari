@@ -20,9 +20,11 @@ export default {
   lightGrey: colors.lightGrey,
   columbiaBlue: colors.columbiaBlue,
   skyBlue: colors.skyBlue,
-  skyBlueDark: colors.skyBlueDark,
   pinkLittleDark: colors.pinkLittleDark,
   darkGreyHeading: colors.darkGreyHeading,
   lightGreyAnotherVariant: colors.lightGreyAnotherVariant,
   offWhite: colors.offWhite,
+  pillBlue: colors.dullBlue,
+  persianGreen: colors.persianGreen,
+  appBodyGrey: colors.appBodyGrey,
 }

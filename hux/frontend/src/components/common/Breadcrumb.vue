@@ -1,20 +1,17 @@
 <template>
-  <v-breadcrumbs :items="items" class="pl-0">
+  <v-breadcrumbs :items="items" class="pl-0 breadcrumb">
     <template v-slot:item="{ item }">
       <v-breadcrumbs-item
         :href="item.href"
         :disabled="item.disabled"
         class="font-weight-light"
       >
-        <v-icon color="neroBlack" size="21" class="pr-1" v-if="item.icon">
-          {{ item.icon }}
-        </v-icon>
-        <svg-as-component
-          class="mr-2"
-          :src="`assets/${item.iconPath}`"
-          v-if="item.iconPath"
-        />
-        <span class="neroBlack--text">{{ item.text }}</span>
+        <div v-if="item.icon" class="d-flex pr-2">
+          <Icon :type="item.icon" :size="24" color="neroBlack" />
+        </div>
+        <span :class="{ 'neroBlack--text': item.disabled, 'pl-1': true }">{{
+          item.text
+        }}</span>
       </v-breadcrumbs-item>
     </template>
     <template v-slot:divider>
@@ -24,12 +21,11 @@
 </template>
 
 <script>
-import svgAsComponent from "./SVG"
+import Icon from "@/components/common/Icon"
 export default {
   name: "breadcrumb",
-  components: {
-    svgAsComponent,
-  },
+
+  components: { Icon },
 
   props: {
     items: {
@@ -40,3 +36,13 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.breadcrumb {
+  ::v-deep .v-breadcrumbs__divider {
+    padding: 0;
+  }
+  ::v-deep .v-breadcrumbs__item--disabled {
+    color: var(--v-neroBlack-base);
+  }
+}
+</style>

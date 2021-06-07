@@ -1,116 +1,106 @@
 <template>
   <v-col cols="12" class="attribute-rule pt-0 pl-0 pr-0">
     <v-col cols="12" class="pr-0">
-      <strong class="text-h5 neroBlack--text"
-        >Select attribute(s) - <i style="font-size: 12px">Optional</i></strong
-      >
+      <strong class="text-h5 neroBlack--text">
+        Select attribute(s) - <i style="font-size: 12px">Optional</i>
+      </strong>
       <v-card
         tile
         elevation="0"
         class="mt-2 blank-section"
         v-if="rules.length == 0"
       >
-        <v-card-actions class="pr-0">
-          <v-list-item class="grow">
-            <v-list-item-content>
-              <v-list-item-title class="text-subtitle-1 font-weight-normal"
-                >You have not added any attributes, yet!</v-list-item-title
-              >
-            </v-list-item-content>
-            <v-row align="center" justify="end">
-              <v-icon
-                size="30"
-                class="add-icon"
-                color="primary"
-                @click="addNewSection()"
-              >
-                mdi-plus-circle
-              </v-icon>
-            </v-row>
-          </v-list-item>
-        </v-card-actions>
+        <div class="gray--text font-weight-normal">
+          You have not added any attributes, yet!
+        </div>
+        <v-icon
+          size="30"
+          class="add-icon"
+          color="primary"
+          @click="addNewSection()"
+        >
+          mdi-plus-circle
+        </v-icon>
       </v-card>
     </v-col>
     <v-col col="12" v-if="rules.length > 0" class="pr-0">
-      <div
-        v-for="(rule, index) in rules"
-        :key="`rule-${index}`"
-        class="rule-section"
-      >
-        <span class="section-title mb-2"
-          >Match
-          <huxSwitch
-            v-model="rule.operand"
-            :switchLabels="switchOptions"
-          ></huxSwitch>
+      <div v-for="(rule, index) in rules" :key="`rule-${index}`">
+        <div class="d-flex align-center mb-2 col-12 pa-0">
+          <span class="mr-2">Match</span>
+          <huxSwitch v-model="rule.operand" :switchLabels="switchOptions" />
           of the following
-        </span>
+        </div>
+
         <div
-          class="col-12 row pt-0 pb-2 pr-0"
           v-for="(condition, ixcondition) in rule.conditions"
           :key="`${index}-ruleCondition-${ixcondition}`"
+          class="rule-section mb-2"
         >
-          <div class="condition-card col-10 d-flex align-center">
-            <div class="options col-sm-10 d-flex align-center">
-              <DropdownMenu
-                v-model="condition.attribute"
-                :labelText="fetchDropdownLabel(condition, 'attribute')"
-                :menuItem="attributeOptions"
-                class="col-sm-4"
-              ></DropdownMenu>
-              <DropdownMenu
-                v-model="condition.operator"
-                :labelText="fetchDropdownLabel(condition, 'operator')"
-                :menuItem="conditionOptions"
-                v-if="condition.attribute"
-              ></DropdownMenu>
-              <text-field
-                v-model="condition.text"
-                placeholder="Text"
-                v-if="condition.operator"
-              ></text-field>
-            </div>
-            <div
-              class="actions col-sm-2 d-flex align-center justify-content-end"
-            >
-              <v-btn icon color="primary" @click="addNewCondition(rule.id)">
-                <v-icon>mdi-plus-circle</v-icon>
-              </v-btn>
-              <v-btn
-                icon
-                color="primary"
-                @click="removeCondition(rule, ixcondition)"
-              >
-                <v-icon>mdi-delete-outline</v-icon>
-              </v-btn>
-            </div>
-          </div>
-          <div class="col-2 pt-0 pr-0 pb-0">
-            <div class="condition-summary">
-              <span class="title">Size</span>
-              <span>{{ condition.outputSummary }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 row seperator mt-5 mb-1" v-if="index != lastIndex">
-          <hr />
-          <v-chip :ripple="false">OR</v-chip>
-        </div>
-        <div class="add-section-wrap" v-if="index == lastIndex">
-          <v-col col="12" class="row pr-0">
-            <div class="add-section col-10">
-              <v-btn icon color="primary" @click="addNewSection()">
-                <v-icon>mdi-plus-circle</v-icon>
-              </v-btn>
-              <span>New section</span>
-            </div>
-            <div class="col-2 pt-0 pr-0 pb-0">
-              <div class="condition-summary">
-                <span class="title">Result Size</span>
-                <span>35,645,000</span>
+          <div class="condition-card col-10 pa-0">
+            <div class="condition-container">
+              <div class="condition-items col-10 pa-0">
+                <DropdownMenu
+                  v-model="condition.attribute"
+                  :labelText="fetchDropdownLabel(condition, 'attribute')"
+                  :menuItem="attributeOptions"
+                />
+                <DropdownMenu
+                  v-model="condition.operator"
+                  :labelText="fetchDropdownLabel(condition, 'operator')"
+                  :menuItem="conditionOptions"
+                  v-if="condition.attribute"
+                />
+                <TextField
+                  v-if="condition.operator"
+                  v-model="condition.text"
+                  placeholder="Text"
+                  required
+                  class="item-text-field"
+                />
+              </div>
+              <div class="condition-actions col-2 pa-0">
+                <v-icon @click="addNewCondition(rule.id)" color="primary"
+                  >mdi-plus-circle</v-icon
+                >
+                <v-icon
+                  @click="removeCondition(rule, ixcondition)"
+                  color="primary"
+                  >mdi-delete-outline</v-icon
+                >
               </div>
             </div>
-          </v-col>
+          </div>
+          <div class="condition-summary col-2">
+            <span class="title text-caption">Size</span>
+            <span class="value text-h6 pt-1 font-weight-semi-bold">{{
+              condition.outputSummary
+            }}</span>
+          </div>
+        </div>
+
+        <div class="col-12 seperator mt-5 mb-1" v-if="index != lastIndex">
+          <hr />
+          <v-chip
+            small
+            class="mx-2 my-1 font-weight-semi-bold"
+            text-color="primary"
+            color="pillBlue"
+            :ripple="false"
+          >
+            OR
+          </v-chip>
+        </div>
+      </div>
+      <div class="add-section-wrap">
+        <div class="add-section pl-4 col-10">
+          <v-btn icon color="primary" @click="addNewSection()">
+            <v-icon>mdi-plus-circle</v-icon>
+          </v-btn>
+          <span class="primary--text pl-1">New section</span>
+        </div>
+        <div class="condition-summary col-2">
+          <span class="title text-caption">Result Size</span>
+          <span class="value text-h6 pt-1 font-weight-semi-bold">35.6M</span>
         </div>
       </div>
     </v-col>
@@ -207,66 +197,89 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .attribute-rule {
-  .blank-section {
+  ::v-deep .blank-section {
     background: var(--v-background-base);
     border: 1px solid var(--v-zircon-base);
-    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-radius: 5px !important;
-    .text-subtitle-1 {
-      color: var(--v-gray-base);
+    padding: 14px 16px;
+  }
+  ::v-deep .seperator {
+    position: relative;
+    hr {
+      border-style: solid;
+      border-color: var(--v-zircon-base);
+    }
+    .v-chip {
+      position: absolute;
+      top: 0;
+      left: 50%;
     }
   }
-  .rule-section {
-    .section-title {
-      display: flex;
-      align-items: center;
-      font-size: 12px;
-      line-height: 16px;
-      font-weight: normal;
-      .v-input {
-        margin-left: 15px;
-      }
-    }
+  ::v-deep .rule-section {
+    display: flex;
     .condition-card {
       background: var(--v-white-base);
       border: 1px solid var(--v-background-base);
-      box-sizing: border-box;
       box-shadow: 0px 3px 8px var(--v-lightGrey-base);
       border-left: solid 10px var(--v-aliceBlue-base);
-      min-height: 60px;
-      max-height: 60px;
-      padding: 16px 14px 19px 14px;
-      padding-left: 16px;
-      justify-content: space-between;
-      .options {
+      display: flex;
+      align-items: center;
+      .condition-container {
+        width: 100%;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        .avatar-menu {
-          display: block;
-          margin-right: 20px;
-          min-width: 180px;
-          border: solid 1px var(--v-lightGrey-base);
-          button {
-            width: 100%;
-            justify-content: left;
-            box-shadow: none !important;
-            .v-btn__content {
-              justify-content: space-between;
+        padding: 14px 26px;
+        .condition-items {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          .avatar-menu {
+            margin-right: 20px;
+            max-width: 200px;
+            border: solid 1px var(--v-lightGrey-base);
+            flex-grow: 1;
+            button {
+              width: 100%;
+              justify-content: left;
+              min-width: unset;
+              box-shadow: none !important;
+              height: 30px;
+              .v-btn__content {
+                justify-content: space-between;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+          .item-text-field {
+            flex-grow: 1;
+            label {
+              margin-bottom: 0 !important;
+            }
+          }
+          .v-text-field {
+            .v-input__slot {
+              min-height: inherit;
+              height: 32px;
+              border: solid 1px var(--v-lightGrey-base) !important;
+              border-radius: 0;
+              margin-bottom: 0;
+              fieldset {
+                border: 0;
+              }
+            }
+            .v-text-field__details {
+              display: none;
             }
           }
         }
-        .v-text-field {
-          .v-input__slot {
-            min-height: inherit;
-            height: 38px;
-            border: solid 1px var(--v-lightGrey-base);
-            border-radius: 0;
-          }
-          .v-text-field__details {
-            display: none;
-          }
+        .condition-actions {
+          text-align: end;
         }
       }
     }
@@ -274,55 +287,30 @@ export default {
       background: var(--v-white-base);
     }
   }
-  .add-section-wrap {
+  ::v-deep .add-section-wrap {
+    display: flex;
     .add-section {
       background: var(--v-background-base);
       border: 1px solid var(--v-zircon-base);
-      box-sizing: border-box;
       border-radius: 5px;
-      span {
-        color: #005587;
-      }
+      display: flex;
+      align-items: center;
     }
   }
-  .condition-summary {
-    margin-left: 15px;
-    border: solid 1px var(--v-lightGrey-base);
+  ::v-deep .condition-summary {
+    border: solid 1px var(--v-zircon-base);
     border-radius: 10px;
+    margin-left: 15px;
     background: var(--v-background-base);
-    min-height: 60px;
-    max-height: 60px;
     padding: 10px 15px;
     display: flex;
     flex-direction: column;
+    width: 120px;
     .title {
-      font-family: Open Sans !important;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 12px !important;
       line-height: 16px;
     }
     .value {
-      font-family: Open Sans SemiBold;
-      font-style: normal;
-      font-weight: 600;
-      font-size: 14px;
       line-height: 19px;
-    }
-  }
-  .seperator {
-    position: relative;
-    hr {
-      width: 100%;
-      border-style: solid;
-      border-color: var(--v-zircon-base);
-    }
-    .v-chip {
-      position: absolute;
-      top: 0;
-      transform: translateX(-50px);
-      left: 50%;
-      background: var(--v-zircon-base) !important;
     }
   }
 }

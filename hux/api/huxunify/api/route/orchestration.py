@@ -1,7 +1,10 @@
 """
 Paths for Orchestration API
 """
+import datetime
+import random
 from http import HTTPStatus
+from random import randrange
 from typing import Tuple
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -10,8 +13,11 @@ from marshmallow import ValidationError, INCLUDE
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
+    user_management,
     orchestration_management,
+    db_exceptions,
 )
+
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
@@ -19,13 +25,24 @@ from huxunify.api.schema.orchestration import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
-from huxunify.api.route.utils import add_view_to_blueprint, get_db_client
+from huxunify.api.route.utils import (
+    add_view_to_blueprint,
+    get_db_client,
+    secured,
+)
 
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
     api_c.ORCHESTRATION_ENDPOINT, import_name=__name__
 )
+
+
+@orchestration_bp.before_request
+@secured()
+def before_request():
+    """Protect all of the orchestration endpoints."""
+    pass  # pylint: disable=unnecessary-pass
 
 
 def add_destinations(destination_ids) -> list:
@@ -59,20 +76,23 @@ class AudienceView(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of all audiences",
+            "description": "List of all Audiences.",
             "schema": {"type": "array", "items": AudienceGetSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all audience."
+            "description": "Failed to get all Audiences."
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
-        """Retrieves all audience.
+        """Retrieves all audiences.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[list, int]: list of audience, HTTP status.
 
@@ -83,7 +103,22 @@ class AudienceView(SwaggerView):
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 audience.get(api_c.DESTINATIONS_TAG)
             )
-        # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
+            audience[api_c.CREATED_BY] = user_management.get_user(
+                get_db_client(), audience.get(api_c.CREATED_BY)
+            )
+            audience[api_c.UPDATED_BY] = user_management.get_user(
+                get_db_client(), audience.get(api_c.UPDATED_BY)
+            )
+
+            # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
+            # Add stub size, last_delivered_on for test purposes.
+            audience[api_c.SIZE] = randrange(10000000)
+            audience[
+                api_c.AUDIENCE_LAST_DELIVERED
+            ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
+                days=1000
+            )
+
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
             HTTPStatus.OK,
@@ -113,7 +148,7 @@ class AudienceGetView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "schema": AudienceGetSchema,
-            "description": "Retrieved audience details.",
+            "description": "Retrieved Audience details.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve audience details.",
@@ -127,9 +162,12 @@ class AudienceGetView(SwaggerView):
 
     # pylint: disable=no-self-use
     def get(self, audience_id: str) -> Tuple[dict, int]:
-        """Get an audience by ID.
+        """Retrieves an audience.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             audience_id (str): Audience ID.
 
@@ -148,9 +186,22 @@ class AudienceGetView(SwaggerView):
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
             audience.get(api_c.DESTINATIONS_TAG)
         )
+        audience[api_c.CREATED_BY] = user_management.get_user(
+            get_db_client(), audience.get(api_c.CREATED_BY)
+        )
+        audience[api_c.UPDATED_BY] = user_management.get_user(
+            get_db_client(), audience.get(api_c.UPDATED_BY)
+        )
+
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-        # Add stub insights for test purposes.
+        # Add stub insights, size, last_delivered_on for test purposes.
         audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
+        audience[api_c.SIZE] = randrange(10000000)
+        audience[
+            api_c.AUDIENCE_LAST_DELIVERED
+        ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
+            days=1000
+        )
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
@@ -216,6 +267,9 @@ class AudiencePostView(SwaggerView):
         """Creates a new audience.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Returns:
             Tuple[dict, int]: Created audience, HTTP status.
 
@@ -304,9 +358,12 @@ class AudiencePutView(SwaggerView):
 
     # pylint: disable=no-self-use
     def put(self, audience_id: str) -> Tuple[dict, int]:
-        """Updates an existing audience.
+        """Updates an audience.
 
         ---
+        security:
+            - Bearer: ["Authorization"]
+
         Args:
             audience_id (str): Audience ID.
 
@@ -333,3 +390,88 @@ class AudiencePutView(SwaggerView):
         )
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/deliver",
+    "AudienceDeliverView",
+)
+class AudienceDeliverView(SwaggerView):
+    """
+    Audience delivery class
+    """
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Result.",
+            "schema": {
+                "example": {"message": "Delivery job created."},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to deliver audience.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DELIVERY_TAG]
+
+    # pylint: disable=no-self-use
+    def post(self, audience_id: str) -> Tuple[dict, int]:
+        """Delivers an audience for all of the engagements it is apart of.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        # TODO - implement after HUS-479 is done
+        # pylint: disable=unused-variable
+        user_id = ObjectId()
+
+        # validate object id
+        if not ObjectId.is_valid(audience_id):
+            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+
+        # convert to an ObjectId
+        audience_id = ObjectId(audience_id)
+
+        # check if audience exists
+        audience = None
+        try:
+            audience = orchestration_management.get_audience(
+                get_db_client(), audience_id
+            )
+        except db_exceptions.InvalidID:
+            pass
+
+        if not audience:
+            return {
+                "message": "Audience does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate delivery route
+        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        return {
+            "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
+        }, HTTPStatus.OK
