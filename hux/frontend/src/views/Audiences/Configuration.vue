@@ -423,10 +423,12 @@ export default {
           this.toggleDrawer()
         }
       } else {
-        var removeIndex = this.audience.destinations.map(
+        var index = this.audience.destinations.findIndex(
           (item) => item.id == selected.id
         )
-        ~removeIndex && this.audience.destinations.splice(removeIndex, 1)
+        if(index>-1){
+          this.audience.destinations.splice(index, 1)
+        }
       }
     },
     addDestinationToAudience() {
