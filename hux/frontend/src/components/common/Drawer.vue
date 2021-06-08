@@ -3,7 +3,7 @@
     v-model="localDrawer"
     :right="toRight"
     :style="transition"
-    :width="width"
+    :width="drawerWidth"
     app
     floating
     hide-overlay
@@ -50,6 +50,7 @@ export default {
     return {
       localDrawer: this.value,
       expanded: false,
+      drawerWidth: this.width,
     }
   },
 
@@ -70,6 +71,12 @@ export default {
       type: Number,
       required: false,
       default: 600,
+    },
+
+    expandedWidth: {
+      type: Number,
+      required: false,
+      default: 900,
     },
 
     expandable: {
@@ -102,6 +109,7 @@ export default {
       this.$emit("input", this.localDrawer)
       if (!this.localDrawer) {
         this.$emit("onClose")
+        this.reset()
       }
     },
   },
@@ -110,6 +118,19 @@ export default {
     onExpandIconClick: function () {
       this.expanded = !this.expanded
       this.$emit("iconToggle", this.expanded)
+      this.changeDrawerWidth()
+    },
+
+    changeDrawerWidth() {
+      if (this.expanded) {
+        this.drawerWidth = this.expandedWidth
+      } else {
+        this.drawerWidth = this.width
+      }
+    },
+
+    reset() {
+      this.drawerWidth = this.width
     },
   },
 }

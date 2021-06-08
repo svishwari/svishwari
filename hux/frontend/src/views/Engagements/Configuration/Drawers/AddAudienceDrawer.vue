@@ -5,7 +5,6 @@
     :width="drawerWidth"
     :disable-transition="isOpening"
     expandable
-    @iconToggle="changeDrawerWidth"
   >
     <template #header-left>
       <h3 class="text-h3">Create a new audience</h3>
@@ -105,6 +104,7 @@ export default {
       drawerWidth: 640,
       newAudienceRules: [(v) => !!v || "Audience name is required"],
       newAudienceValidity: false,
+      // TODO: need to make API call and update the cards/sizes of metric cards
       newAudience: {
         name: "",
       },
@@ -145,17 +145,12 @@ export default {
 
     closeDrawer() {
       this.localToggle = false
-      this.$refs.newAudienceRef.reset()
-      this.attributeRules = []
-      this.changeDrawerWidth(false)
+      this.reset()
     },
 
-    changeDrawerWidth(expanded) {
-      if (expanded) {
-        this.drawerWidth = 900
-      } else {
-        this.drawerWidth = 640
-      }
+    reset() {
+      this.$refs.newAudienceRef.reset()
+      this.attributeRules = []
     },
 
     async add() {
@@ -190,7 +185,7 @@ export default {
           filtersArray.push(filter)
         }
 
-        // TODO: need to integrate size and other data on rules addition
+        // TODO: HUS-246 need to integrate size and other data on rules addition
         const data = {
           name: this.newAudience.name,
           filters: filtersArray,
