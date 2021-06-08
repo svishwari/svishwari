@@ -11,8 +11,6 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job_status,
 )
-from huxunifylib.database.engagement_management import get_engagement
-from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunify.api import constants as api_const, config as cfg
 from huxunify.api.config import get_config
@@ -220,7 +218,7 @@ def get_audience_destination_pairs(engagement_audiences: dict):
 
     """
     return [
-        [aud[api_const.AUDIENCE_ID], dest[db_const.DELIVERY_PLATFORM_ID]]
+        [aud[db_const.ID], dest[db_const.DELIVERY_PLATFORM_ID]]
         for aud in engagement_audiences
         for dest in aud[db_const.DESTINATIONS]
     ]

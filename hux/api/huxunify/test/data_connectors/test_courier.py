@@ -112,14 +112,14 @@ class CourierTest(TestCase):
             c.NOTIFICATION_FIELD_DESCRIPTION: "Former fun forest amusement park.",
             c.AUDIENCES: [
                 {
-                    c.AUDIENCE_ID: self.audience_one[c.ID],
+                    c.ID: self.audience_one[c.ID],
                     c.DESTINATIONS: [
                         {c.DELIVERY_PLATFORM_ID: x}
                         for x in self.audience_one[c.DESTINATIONS]
                     ],
                 },
                 {
-                    c.AUDIENCE_ID: self.audience_two[c.ID],
+                    c.ID: self.audience_two[c.ID],
                     c.DESTINATIONS: [
                         {c.DELIVERY_PLATFORM_ID: x}
                         for x in self.audience_two[c.DESTINATIONS]
