@@ -538,16 +538,16 @@ def delete_delivery_platforms_bulk(
     if delivery_jobs:
         delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
 
-    if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
-        # Delete dependent lookalike audiences
-        all_lookalike_ids = []
-        if delivery_jobs:
-            for delivery_doc in delivery_jobs:
-                lookalike_ids = delivery_doc.get(
-                    c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
-                )
-                if lookalike_ids:
-                    all_lookalike_ids += lookalike_ids
+        if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
+            # Delete dependent lookalike audiences
+            all_lookalike_ids = []
+            if delivery_jobs:
+                for delivery_doc in delivery_jobs:
+                    lookalike_ids = delivery_doc.get(
+                        c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
+                    )
+                    if lookalike_ids:
+                        all_lookalike_ids += lookalike_ids
 
         if delete_lookalike_audiences_bulk(database, all_lookalike_ids):
             # Delete delivery platforms
