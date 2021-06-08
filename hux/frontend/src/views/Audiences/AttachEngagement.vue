@@ -35,7 +35,6 @@
                 </template>
                 <template v-slot:button>
                   <huxButton
-                    ButtonText="New engagement"
                     icon="mdi-plus"
                     iconPosition="left"
                     variant="primary"
@@ -43,7 +42,11 @@
                     :isTile="true"
                     @click="goToStep2()"
                     class="ma-2"
-                  ></huxButton>
+                  >
+                    <template #text>
+                      <span>New engagement</span>
+                    </template>
+                  </huxButton>
                 </template>
               </EmptyPage>
             </div>
@@ -53,14 +56,17 @@
                 required to have at least one selected.
               </h6>
               <huxButton
-                ButtonText="New engagement"
                 icon="mdi-plus"
                 iconPosition="left"
                 variant="primary"
                 :isTile="true"
                 height="40"
                 @click="goToAddNewEngagement()"
-              ></huxButton>
+              >
+                <template #text>
+                  <span>New engagement</span>
+                </template>
+              </huxButton>
               <div class="engagement-list-wrap mt-6">
                 <div>
                   <span class="text-caption">Engagement name</span>
@@ -196,13 +202,16 @@
     <template v-slot:footer-right>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Create &amp; add"
           variant="primary"
           :isTile="true"
           height="40"
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
-        />
+        >
+          <template #text>
+            <span>Create &amp; add</span>
+          </template>
+        </huxButton>
       </div>
     </template>
 
@@ -215,12 +224,15 @@
       </div>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Cancel &amp; back"
           variant="white"
           :isTile="true"
           height="40"
           @click.native="goToStep1()"
-        ></huxButton>
+        >
+          <template #text>
+            <span>Cancel &amp; back</span>
+          </template>
+        </huxButton>
       </div>
     </template>
   </Drawer>

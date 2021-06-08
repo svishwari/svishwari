@@ -144,18 +144,20 @@
       <HuxFooter maxWidth="inherit">
         <template v-slot:left>
           <huxButton
-            ButtonText="Cancel"
             variant="white"
             v-bind:isTile="true"
             width="94"
             height="40"
             class="ma-2 ml-0"
             @click.native="$router.go(-1)"
-          ></huxButton>
+          >
+            <template #text>
+              <span>Cancel</span>
+            </template>
+          </huxButton>
         </template>
         <template v-slot:right>
           <huxButton
-            ButtonText="Create"
             variant="primary"
             v-bind:isTile="true"
             width="94"
@@ -163,7 +165,11 @@
             class="ma-2"
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
-          ></huxButton>
+          >
+            <template #text>
+              <span>Create</span>
+            </template>
+          </huxButton>
         </template>
       </HuxFooter>
       <!-- Add destination workflow -->
@@ -224,14 +230,17 @@
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Add"
               variant="primary"
               v-bind:isTile="true"
               width="80"
               height="40"
               class="ma-2"
               @click="addDestinationToAudience()"
-            ></huxButton>
+            >
+              <template #text>
+                <span>Add</span>
+              </template>
+            </huxButton>
           </div>
         </template>
 
@@ -247,14 +256,17 @@
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Back"
               variant="white"
               v-bind:isTile="true"
               width="80"
               height="40"
               class="ma-2"
               @click.native="destinationDrawer.viewStep = 1"
-            ></huxButton>
+            >
+              <template #text>
+                <span>Back</span>
+              </template>
+            </huxButton>
           </div>
         </template>
       </drawer>

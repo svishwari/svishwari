@@ -36,13 +36,16 @@
           class="text-decoration-none"
         >
           <huxButton
-            ButtonText="Destination"
             icon="mdi-plus"
             iconPosition="left"
             variant="primary"
             size="large"
             v-bind:isTile="true"
-          ></huxButton>
+          >
+            <template #text>
+              <span>Destination</span>
+            </template>
+          </huxButton>
         </router-link>
       </template>
     </PageHeader>

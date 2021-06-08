@@ -16,21 +16,27 @@
       <template v-slot:footer-right>
         <div v-if="isDataSourcesSelected" class="d-flex align-baseline">
           <huxButton
-            ButtonText="Cancel"
             variant="tertiary"
             size="large"
             :isTile="true"
             class="mr-2"
             @click="closeAddDataSource"
-          ></huxButton>
+          >
+            <template #text>
+              <span>Cancel</span>
+            </template>
+          </huxButton>
           <huxButton
-            :ButtonText="dataSourcesBtnText"
             variant="primary"
             size="large"
             :isTile="true"
             :isDisabled="!isDataSourcesSelected"
             @click="addDataSources"
-          ></huxButton>
+          >
+            <template #text>
+              <span>{{dataSourcesBtnText}}</span>
+            </template>
+          </huxButton>
         </div>
       </template>
       <template v-slot:default>

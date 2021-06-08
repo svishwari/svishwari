@@ -144,11 +144,14 @@
     >
       <template v-slot:activator>
         <huxButton
-          ButtonText="Open modal"
           size="large"
           class="ma-2"
           @click="modal = !modal"
-        ></huxButton>
+        >
+          <template #text>
+            <span>Open modal</span>
+          </template>
+        </huxButton>
       </template>
     </ConfirmModal>
 
@@ -167,56 +170,77 @@
 
     <v-subheader> Button </v-subheader>
     <huxButton
-      ButtonText="Added"
       v-bind:isOutlined="true"
       size="large"
       icon="mdi-check"
       iconPosition="left"
       class="ma-2"
-    ></huxButton>
+    >
+      <template #text>
+        <span>Added</span>
+      </template>
+    </huxButton>
     <huxButton
-      ButtonText="Add"
       v-bind:isOutlined="true"
       size="x-small"
       variant="darkGrey"
       class="ma-2"
-    ></huxButton>
+    >
+      <template #text>
+        <span>Add</span>
+      </template>
+    </huxButton>
     <huxButton
-      ButtonText="Leave configuration"
       variant="primary"
       size="large"
       v-bind:isTile="true"
       class="ma-2"
-    ></huxButton>
+    >
+      <template #text>
+        <span>Leave configuration</span>
+      </template>
+    </huxButton>
     <huxButton
-      ButtonText="Success!"
       icon="mdi-check"
       iconPosition="left"
       variant="success"
       size="x-large"
       v-bind:isTile="true"
       class="ma-2"
-    ></huxButton>
+    >
+      <template #text>
+        <span>Success!</span>
+      </template>
+    </huxButton>
     <huxButton
-      ButtonText="Cancel &amp; Return"
       variant="tertiary"
       v-bind:isTile="true"
       class="ma-2"
-    ></huxButton>
+    >
+      <template #text>
+        <span>Cancel &amp; Return</span>
+      </template>
+    </huxButton>
     <huxButton
-      ButtonText="Disabled"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:isDisabled="true"
       class="ma-2"
-    ></huxButton>
+    >
+      <template #text>
+        <span>Disabled</span>
+      </template>
+    </huxButton>
     <huxButton
-      ButtonText="Loader"
       variant="tertiary"
       v-bind:isTile="true"
       v-bind:enableLoading="true"
       class="ma-2"
-    ></huxButton>
+    >
+      <template #text>
+        <span>Loader</span>
+      </template>
+    </huxButton>
 
     <v-divider class="mt-10" />
 

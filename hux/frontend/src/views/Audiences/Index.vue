@@ -32,14 +32,17 @@
           append
         >
           <huxButton
-            ButtonText="Audience"
             icon="mdi-plus"
             iconPosition="left"
             variant="primary"
             size="large"
             v-bind:isTile="true"
             class="ma-2 font-weight-regular no-shadow mr-0"
-          ></huxButton>
+          >
+            <template #text>
+              <span>Audience</span>
+            </template>
+          </huxButton>
         </router-link>
       </template>
     </PageHeader>
@@ -69,14 +72,17 @@
             append
           >
             <huxButton
-              ButtonText="Audience"
               icon="mdi-plus"
               iconPosition="left"
               variant="primary"
               size="large"
               v-bind:isTile="true"
               class="ma-2 font-weight-regular"
-            ></huxButton>
+            >
+              <template #text>
+                <span>Audience</span>
+              </template>
+            </huxButton>
           </router-link>
         </template>
       </EmptyPage>

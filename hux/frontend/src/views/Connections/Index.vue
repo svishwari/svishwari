@@ -31,7 +31,6 @@
           class="text-decoration-none"
         >
           <huxButton
-            ButtonText="Destination"
             icon="mdi-plus"
             iconPosition="left"
             variant="primary"
@@ -39,7 +38,11 @@
             iconSize="small"
             :isTile="true"
             class="ma-2 text-h6 font-weight-regular"
-          />
+          >
+            <template #text>
+              <span>Destination</span>
+            </template>
+          </huxButton>
         </router-link>
         <router-link
           :to="{ name: 'DataSourceConfiguration', query: { select: true } }"
@@ -53,7 +56,11 @@
             size="small"
             :isTile="true"
             class="ma-2 text-h6 font-weight-regular"
-          />
+          >
+            <template #text>
+              <span>Data source</span>
+            </template>
+          </huxButton>
         </router-link>
       </div>
     </div>
