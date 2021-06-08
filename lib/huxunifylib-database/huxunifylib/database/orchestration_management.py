@@ -4,7 +4,7 @@ to orchestration (audience/engagement) management.
 
 import logging
 import datetime
-from typing import Optional
+from typing import Union
 
 from bson import ObjectId
 import pymongo
@@ -25,7 +25,7 @@ def create_audience(
     audience_filters: list,
     destination_ids: list = None,
     user_id: ObjectId = None,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to create an audience.
 
     Args:
@@ -38,7 +38,7 @@ def create_audience(
         user_id (ObjectId): Object id of user creating / updating the audience
 
     Returns:
-        dict: MongoDB audience doc.
+        Union[list,None]: MongoDB audience doc.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -111,14 +111,14 @@ def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
 )
 def get_all_audiences(
     database: DatabaseClient,
-) -> Optional[list]:
+) -> Union[list, None]:
     """A function to get all existing audiences.
 
     Args:
         database (DatabaseClient): A database client.
 
     Returns:
-        List: A list of all audiences.
+        Union[list,None]: A list of all audiences.
 
     """
 
@@ -145,7 +145,7 @@ def update_audience(
     audience_filters: list = None,
     destination_ids: list = None,
     user_id: ObjectId = None,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to update an audience.
     Args:
         database (DatabaseClient): A database client.
@@ -157,7 +157,7 @@ def update_audience(
             ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
     Returns:
-        dict: Updated audience configuration dict.
+        Union[dict,None]: Updated audience configuration dict.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]

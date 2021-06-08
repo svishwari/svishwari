@@ -338,9 +338,9 @@ def update_data_source_name(
 
     if exists_flag:
         cur_doc = get_data_source(database, data_source_id)
-        if cur_doc:
-            if cur_doc[c.DATA_SOURCE_NAME] != name:
-                raise de.DuplicateName(name)
+
+        if cur_doc is not None and cur_doc[c.DATA_SOURCE_NAME] != name:
+            raise de.DuplicateName(name)
 
     return update_data_source_param(
         database,
@@ -579,9 +579,8 @@ def update_data_source(
         name,
     ):
         cur_doc = get_data_source(database, data_source_id)
-        if cur_doc:
-            if cur_doc[c.DATA_SOURCE_NAME] != name:
-                raise de.DuplicateName(name)
+        if cur_doc is not None and cur_doc[c.DATA_SOURCE_NAME] != name:
+            raise de.DuplicateName(name)
 
     # Do not update if data source is associated to an ingestion job
     if not is_data_source_mutable(database, data_source_id):
@@ -661,18 +660,18 @@ def set_ingestion_job(
         logging.error(exc)
 
     # Update recent ingestion job info of the data source
-    if ingestion_job_id:
+    if ingestion_job_id and ingestion_job_doc is not None:
         update_data_source_recent_ingestion_job_id(
             database,
             data_source_id,
             ingestion_job_id,
         )
-        if ingestion_job_doc:
-            update_data_source_recent_ingestion_job_status(
-                database=database,
-                data_source_id=data_source_id,
-                recent_ingestion_job_status=ingestion_job_doc[c.JOB_STATUS],
-            )
+
+        update_data_source_recent_ingestion_job_status(
+            database=database,
+            data_source_id=data_source_id,
+            recent_ingestion_job_status=ingestion_job_doc[c.JOB_STATUS],
+        )
 
     return ingestion_job_doc
 
@@ -1180,9 +1179,9 @@ def get_data_source_recent_ingestion_job_id(
     job_id = None
 
     doc = get_data_source(database, data_source_id)
-    if doc:
-        if c.DATA_SOURCE_RECENT_JOB_ID in doc:
-            job_id = doc[c.DATA_SOURCE_RECENT_JOB_ID]
+
+    if doc is not None and c.DATA_SOURCE_RECENT_JOB_ID in doc:
+        job_id = doc[c.DATA_SOURCE_RECENT_JOB_ID]
 
     return job_id
 

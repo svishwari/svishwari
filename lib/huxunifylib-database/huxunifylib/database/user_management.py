@@ -5,7 +5,7 @@ This module enables functionality related to user management.
 import logging
 import datetime
 import re
-from typing import Any, Optional
+from typing import Any, Union
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -29,7 +29,7 @@ def set_user(
     subscriptions: list = None,
     display_name: str = "",
     profile_photo: str = "",
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to set a user.
 
     Args:
@@ -43,7 +43,7 @@ def set_user(
         profile_photo (str): a profile photo url for the user, defaults to an empty string.
 
     Returns:
-        dict: MongoDB document for a user.
+        Union[dict,None]: MongoDB document for a user.
 
     """
 
@@ -106,7 +106,7 @@ def set_user(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_user(database: DatabaseClient, okta_id: str) -> Optional[dict]:
+def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
     """A function to get a user.
 
     Args:
@@ -114,7 +114,7 @@ def get_user(database: DatabaseClient, okta_id: str) -> Optional[dict]:
         okta_id (str): id derived from okta authentication.
 
     Returns:
-        dict: MongoDB document for a user.
+        Union[dict,None]: MongoDB document for a user.
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
@@ -184,7 +184,7 @@ def delete_user(
 )
 def update_user(
     database: DatabaseClient, okta_id: str, update_doc: dict
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to update a user.
 
     Args:
@@ -193,7 +193,7 @@ def update_user(
         update_doc (dict): Dict of key values to update.
 
     Returns:
-        dict: Updated MongoDB document for a user.
+        Union[dict,None]: Updated MongoDB document for a user.
 
     """
 
@@ -245,7 +245,7 @@ def manage_user_favorites(
     component_name: str,
     component_id: ObjectId,
     delete_flag: bool = False,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to add a favorite component for a user.
 
     Args:
@@ -257,7 +257,7 @@ def manage_user_favorites(
             defaults to false.
 
     Returns:
-        dict: Updated MongoDB document for a user.
+        Union[dict,None]: Updated MongoDB document for a user.
 
     """
     component_name = component_name.lower()
@@ -313,7 +313,7 @@ def manage_user_dashboard_config(
     config_key: str,
     config_value: Any,
     delete_flag: bool = False,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to manage user dashboard configuration
 
     Args:
@@ -324,7 +324,7 @@ def manage_user_dashboard_config(
         delete_flag (bool): flag to delete the user config, defaults to false.
 
     Returns:
-        dict: Updated MongoDB document for a user.
+        Union[dict,None]: Updated MongoDB document for a user.
 
     """
 

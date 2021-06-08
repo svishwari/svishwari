@@ -490,7 +490,7 @@ def delete_audiences_bulk(
         False,
     )
 
-    if delivery_jobs:
+    if delivery_jobs is not None:
         delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
 
         if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
@@ -534,7 +534,7 @@ def delete_delivery_platforms_bulk(
         False,
     )
 
-    if delivery_jobs:
+    if delivery_jobs is not None:
         delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
 
         if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
@@ -580,11 +580,15 @@ def delete_data_sources_bulk(
         True,
     )
 
-    if ingestion_jobs:
+    if ingestion_jobs is not None:
         ingestion_job_ids = [doc[c.ID] for doc in ingestion_jobs]
 
-    if delete_bulk(database, ingestion_job_ids, c.INGESTION_JOBS_COLLECTION):
-        if delete_bulk(database, data_source_ids, c.DATA_SOURCES_COLLECTION):
-            return True
+        if delete_bulk(
+            database, ingestion_job_ids, c.INGESTION_JOBS_COLLECTION
+        ):
+            if delete_bulk(
+                database, data_source_ids, c.DATA_SOURCES_COLLECTION
+            ):
+                return True
 
     return False

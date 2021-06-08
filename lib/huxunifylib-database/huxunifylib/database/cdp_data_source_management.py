@@ -2,7 +2,7 @@
 This module enables functionality for data source management
 """
 import logging
-from typing import Optional
+from typing import Union
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -23,7 +23,7 @@ def create_data_source(
     enabled: bool = False,
     source_type: str = None,
     status: str = c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function that creates a new data source
 
     Args:
@@ -35,7 +35,7 @@ def create_data_source(
         source_type (str): type of the data source.
         status (str): status of the data source.
     Returns:
-        dict: MongoDB document for a data source
+        Union[dict,None]: MongoDB document for a data source or None
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
@@ -70,14 +70,14 @@ def create_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_all_data_sources(database: DatabaseClient) -> Optional[list]:
+def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
     """A function that returns all data sources
 
     Args:
         database (DatabaseClient): A database client.
 
     Returns:
-        list: List of all data sources
+        Union[list,None]: List of all data sources or None
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
@@ -98,7 +98,7 @@ def get_all_data_sources(database: DatabaseClient) -> Optional[list]:
 )
 def get_data_source(
     database: DatabaseClient, data_source_id: ObjectId
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to return a single data source based on a provided id
 
     Args:
@@ -106,7 +106,7 @@ def get_data_source(
         data_source_id (ObjectId): data source id.
 
     Returns:
-        dict: MongoDB document for a data source
+        Union[dict,None]: MongoDB document for a data source or None
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][

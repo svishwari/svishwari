@@ -2,7 +2,7 @@
 
 import logging
 from collections import defaultdict
-from typing import Optional
+from typing import Union
 
 from bson import ObjectId
 import pymongo
@@ -315,7 +315,7 @@ def update_audience_doc(
     database: DatabaseClient,
     audience_id: ObjectId,
     update_dict: dict,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """Update MongoDb document.
 
     Args:

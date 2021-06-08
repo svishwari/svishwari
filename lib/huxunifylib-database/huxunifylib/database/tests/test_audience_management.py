@@ -135,7 +135,7 @@ class TestAudienceManagement(unittest.TestCase):
         )
         return audience_doc, ingestion_job_doc
 
-    def _setup_ingestion_succeeded_and_audience(self) -> dict:
+    def _setup_ingestion_succeeded_and_audience(self) -> None:
 
         ingestion_job_doc = self._setup_ingestion_job()
         ingestion_job_id = ingestion_job_doc[c.ID]

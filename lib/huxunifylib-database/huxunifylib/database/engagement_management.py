@@ -4,7 +4,7 @@ This module enables functionality related to engagement management.
 
 import logging
 import datetime
-from typing import Optional
+from typing import Union
 
 from bson import ObjectId
 import pymongo
@@ -97,14 +97,14 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements(database: DatabaseClient) -> Optional[list]:
+def get_engagements(database: DatabaseClient) -> Union[list, None]:
     """A function to get all engagements
 
     Args:
         database (DatabaseClient): A database client.
 
     Returns:
-        list: List of all engagement documents.
+        Union[list,None]: List of all engagement documents.
 
     """
 
@@ -126,7 +126,7 @@ def get_engagements(database: DatabaseClient) -> Optional[list]:
 )
 def get_engagement(
     database: DatabaseClient, engagement_id: ObjectId
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to get an engagement based on ID
 
     Args:
@@ -134,7 +134,7 @@ def get_engagement(
         engagement_id (ObjectId): ObjectId of the engagement
 
     Returns:
-        dict: Dict of an engagement.
+        Union[dict,None]: Dict of an engagement.
 
     """
 
@@ -202,7 +202,7 @@ def update_engagement(
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to update fields in an engagement
 
     Args:
@@ -215,7 +215,7 @@ def update_engagement(
         delivery_schedule (dict): delivery schedule dict.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict,None]: dict object of the engagement that has been updated
     """
 
     if audiences:
@@ -266,7 +266,7 @@ def remove_audiences_from_engagement(
     engagement_id: ObjectId,
     user_id: ObjectId,
     audience_ids: list,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to allow for removing audiences from an engagement.
 
     Args:
@@ -276,7 +276,7 @@ def remove_audiences_from_engagement(
         audience_ids (list): list of audience ObjectIds.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict,None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -321,7 +321,7 @@ def append_audiences_to_engagement(
     engagement_id: ObjectId,
     user_id: ObjectId,
     audiences: list,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to allow for appending audiences to an engagement.
 
     Args:
@@ -331,7 +331,7 @@ def append_audiences_to_engagement(
         audiences (list): list of audiences.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict,None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -391,7 +391,7 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
 )
 def get_engagements_by_audience(
     database: DatabaseClient, audience_id: ObjectId
-) -> Optional[list]:
+) -> Union[list, None]:
     """A function to get a list of engagements by audience_id
 
     Args:
@@ -399,7 +399,7 @@ def get_engagements_by_audience(
         audience_id (ObjectId): ObjectId of an audience
 
     Returns:
-        list: list of engagements.
+        Union[list,None]: list of engagements.
 
     """
 

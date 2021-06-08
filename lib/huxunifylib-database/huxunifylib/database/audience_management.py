@@ -5,7 +5,7 @@ import time
 import logging
 import datetime
 from collections import defaultdict
-from typing import Tuple, Generator, Optional
+from typing import Tuple, Generator, Union
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -32,7 +32,7 @@ def create_audience(
     name: str,
     audience_filters: list,
     ingestion_job_id: ObjectId = None,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to create and store audience rules.
 
     Args:
@@ -43,7 +43,7 @@ def create_audience(
             corresponding ingestion job. Defaults to None.
 
     Returns:
-        dict: MongoDB audience doc.
+        Union[dict,None]: MongoDB audience doc or None
     """
 
     ret_doc = None
@@ -345,7 +345,7 @@ def get_audience_batches(
 def get_audience_config(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to get an audience configuration.
 
     Args:
@@ -353,7 +353,7 @@ def get_audience_config(
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        dict: Configuration of the audience in Mongo DB.
+        Union[dict,None]: Configuration of the audience in Mongo DB or None
 
     """
 
@@ -440,7 +440,7 @@ def get_audience_data_source_id(
 def get_audience_non_breakdown_fields(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> Optional[list]:
+) -> Union[list, None]:
     """
     A function to get non breakdown fields of an audience.
 
@@ -449,7 +449,7 @@ def get_audience_non_breakdown_fields(
         audience_id (ObjectId): MongoDB document ID of audience.
 
     Returns:
-        list: A list of non breakdown fields.
+        Union[list,None]: A list of non breakdown fields or None
 
     """
 
@@ -480,7 +480,7 @@ def append_audience_insights(
     audience_id: ObjectId,
     audience_data: pd.DataFrame,
     custom_breakdown_fields: list = None,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to create insights for an audience.
 
     Args:
@@ -491,7 +491,7 @@ def append_audience_insights(
             breakdowns should be calculated.
 
     Returns:
-        dict: Stored audience insights.
+        Union[dict,None]: Stored audience insights or None
 
     """
 
@@ -574,7 +574,7 @@ def refresh_audience_insights(
     audience_id: ObjectId,
     batch_size: int = 1000,
     custom_breakdown_fields: list = None,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to refresh an audience's insights.
 
     Args:
@@ -585,7 +585,7 @@ def refresh_audience_insights(
             breakdowns should be calculated.
 
     Returns:
-        dict: Refreshed audience insights.
+        Union[dict,None]: Refreshed audience insights or None.
     """
 
     doc = None
@@ -617,7 +617,7 @@ def refresh_audience_insights(
 def get_audience_name(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> Optional[str]:
+) -> Union[str, None]:
     """A function to get an audience name.
 
     Args:
@@ -625,7 +625,7 @@ def get_audience_name(
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        str: Name of the audience in Mongo DB.
+        Union[str,None]: Name of the audience in Mongo DB or None
 
     """
 
@@ -662,9 +662,8 @@ def update_audience_name(
 
     if exists_flag:
         cur_doc = get_audience_config(database, audience_id)
-        if cur_doc:
-            if cur_doc[c.AUDIENCE_NAME] == name:
-                raise de.DuplicateName(name)
+        if cur_doc is not None and cur_doc[c.AUDIENCE_NAME] == name:
+            raise de.DuplicateName(name)
 
     # Update dict
     update_dict = {
@@ -685,7 +684,7 @@ def update_audience_filters(
     audience_filters: list,
     batch_size: int = 1000,
     custom_breakdown_fields: list = None,
-) -> Optional[dict]:
+) -> Union[dict, None]:
     """A function to update an audience filters.
 
     Args:
@@ -697,7 +696,7 @@ def update_audience_filters(
             breakdowns should be calculated.
 
     Returns:
-        dict: Updated audience configuration dict.
+        Union[dict,None]: Updated audience configuration dict or None
 
     """
     doc = None
@@ -868,14 +867,14 @@ def get_all_recent_audiences(
 )
 def get_all_audiences(
     database: DatabaseClient,
-) -> Optional[list]:
+) -> Union[list, None]:
     """A function to get all existing audiences in database.
 
     Args:
         database (DatabaseClient): A database client.
 
     Returns:
-        List: A list of all audience configuration dicts.
+        Union[dict,None]: A list of all audience configuration dicts or None
 
     """
 
