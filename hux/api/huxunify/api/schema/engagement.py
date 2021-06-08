@@ -1,6 +1,6 @@
 # pylint: disable=no-self-use
 """
-Schemas for the api_c.Engagements API
+Schemas for the Engagements API
 """
 from flask_marshmallow import Schema
 from marshmallow import fields, validate
