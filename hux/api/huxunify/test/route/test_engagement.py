@@ -4,6 +4,8 @@ Purpose of this file is to house all the engagement api tests
 
 import unittest
 import json
+
+import requests_mock
 from marshmallow import ValidationError
 from requests_mock import Mocker
 from huxunify.api.config import get_config
@@ -57,14 +59,6 @@ class TestEngagementMetricsDisplayAds(unittest.TestCase):
             f"{c.AUDIENCE_PERFORMANCE}/"
             f"{c.DISPLAY_ADS}"
         )
-        request_mocker = Mocker()
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-
-        response = self.app.get(
-            self.display_ads_engagement_metrics_endpoint,
-            headers={"Authorization": "Bearer 12345678"},
-        )
-        self.jsonresponse = json.loads(response.data)
 
     @staticmethod
     def validate_schema(schema, response) -> bool:
@@ -83,22 +77,42 @@ class TestEngagementMetricsDisplayAds(unittest.TestCase):
 
             return False
 
-    def test_display_ads_summary(self):
+    @requests_mock.Mocker()
+    def test_display_ads_summary(self, request_mocker: Mocker):
         """
         It validates the schema for Display Ads Summary
         Schema Name: DisplayAdsSummary
         """
-        summary = self.jsonresponse["summary"]
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.display_ads_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        summary = jsonresponse["summary"]
         result = self.validate_schema(DisplayAdsSummary(), summary)
         self.assertTrue(result)
 
-    def test_display_ads_audience_performance(self):
+    @requests_mock.Mocker()
+    def test_display_ads_audience_performance(self, request_mocker: Mocker):
         """
         It validates the schema for Individual Audience
         Display Ads Performance Summary
         Schema Name: DispAdIndividualAudienceSummary
         """
-        audience_performance = self.jsonresponse["audience_performance"][0]
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.display_ads_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        audience_performance = jsonresponse["audience_performance"][0]
         result = self.validate_schema(
             DispAdIndividualAudienceSummary(), audience_performance
         )
@@ -128,14 +142,6 @@ class TestEngagementMetricsEmail(unittest.TestCase):
             f"{c.AUDIENCE_PERFORMANCE}/"
             f"{c.EMAIL}"
         )
-        request_mocker = Mocker()
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-
-        response = self.app.get(
-            self.email_engagement_metrics_endpoint,
-            headers={"Authorization": "Bearer 12345678"},
-        )
-        self.jsonresponse = json.loads(response.data)
 
     @staticmethod
     def validate_schema(schema, response) -> bool:
@@ -153,21 +159,39 @@ class TestEngagementMetricsEmail(unittest.TestCase):
         except ValidationError:
             return False
 
-    def test_email_summary(self):
+    @requests_mock.Mocker()
+    def test_email_summary(self, request_mocker: Mocker):
         """
         It validates the schema for Email Summary
         Schema Name: EmailSummary
         """
-        summary = self.jsonresponse["summary"]
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.email_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        summary = jsonresponse["summary"]
         result = self.validate_schema(EmailSummary(), summary)
         self.assertTrue(result)
 
-    def test_email_audience_performance(self):
+    @requests_mock.Mocker()
+    def test_email_audience_performance(self, request_mocker: Mocker):
         """
         It validates the schema for Individual Audience Display Ads Performance Summary
         Schema Name: EmailIndividualAudienceSummary
         """
-        audience_performance = self.jsonresponse["audience_performance"][0]
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.email_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        audience_performance = jsonresponse["audience_performance"][0]
         result = self.validate_schema(
             EmailIndividualAudienceSummary(), audience_performance
         )
