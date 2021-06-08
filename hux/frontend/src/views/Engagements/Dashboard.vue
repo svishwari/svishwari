@@ -151,21 +151,10 @@
         </v-tabs>
         <v-tabs-items v-model="tabOption" class="mt-2">
           <v-tab-item key="displayAds">
-            <v-card flat class="card-style">
-              <v-card-text class="d-flex summary-tab-wrap">
-                <MetricCard
-                  class="list-item mr-2"
-                  :width="item.width"
-                  :height="70"
-                  v-for="item in displayAdsSummary"
-                  :key="item.id"
-                  :title="item.title"
-                  :titleTooltip="getTooltip(item)"
-                  :subtitle="item.value"
-                  :interactable="false"
-                ></MetricCard>
-              </v-card-text>
-            </v-card>
+            <campaign-summary
+              :summary="displayAdsSummary"
+              :campaignData="AdPerformaceData.audience_performance"
+            />
           </v-tab-item>
           <v-tab-item key="email">
             <v-card flat class="card-style">
@@ -184,27 +173,6 @@
             </v-card>
           </v-tab-item>
         </v-tabs-items>
-        <v-card minHeight="145px" flat class="mt-6 card-style">
-          <v-card-title class="d-flex justify-space-between pb-6">
-            <div class="d-flex align-center">
-              <Icon
-                type="audiences"
-                :size="24"
-                color="neroBlack"
-                class="mr-2"
-              /><span class="text-h5">Audience performance</span>
-            </div>
-          </v-card-title>
-          <v-card-text class="pl-6 pr-6 pb-6 mt-6">
-            <div
-              class="blank-section rounded-sm pa-5"
-              v-if="engagement.audiences.length == 0"
-            >
-              Nothing to show here yet. Add an audience and then assign a
-              destination.
-            </div>
-          </v-card-text>
-        </v-card>
       </div>
     </div>
   </div>
@@ -220,6 +188,7 @@ import Avatar from "@/components/common/Avatar"
 import Icon from "@/components/common/Icon"
 import StatusList from "../../components/common/StatusList.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
+import CampaignSummary from "../../components/CampaignSummary.vue"
 
 export default {
   name: "engagementDashboard",
@@ -232,6 +201,7 @@ export default {
     Icon,
     StatusList,
     Tooltip,
+    CampaignSummary,
   },
   data() {
     return {
@@ -240,7 +210,7 @@ export default {
         status: "active",
         schedule: "Manual",
         update_time: "2020-07-10T11:45:01.984Z",
-        updated_by: "Mohit Bansal",
+        updated_by: "Rahul Goel",
         created_time: "2020-07-10T11:45:01.984Z",
         created_by: "Mohit Bansal",
         description:
@@ -371,6 +341,84 @@ export default {
         { acronym: "CPA", description: "Cost per Action" },
         { acronym: "CPC", description: "Cost per Click" },
       ],
+      AdPerformaceData: {
+        summary: {
+          spend: 2000000,
+          reach: 500000,
+          impressions: 456850,
+          conversions: 521006,
+          clicks: 498587,
+          frequency: 500,
+          cost_per_thousand_impressions: 850,
+          click_through_rate: 0.5201,
+          cost_per_action: 652,
+          cost_per_click: 485,
+          engagement_rate: 0.5601,
+        },
+        audience_performance: [
+          {
+            name: "audience_1",
+            spend: 2000000,
+            reach: 500000,
+            impressions: 456850,
+            conversions: 521006,
+            clicks: 498587,
+            frequency: 500,
+            cost_per_thousand_impressions: 850,
+            click_through_rate: 0.5201,
+            cost_per_action: 652,
+            cost_per_click: 485,
+            engagement_rate: 0.5601,
+            campaigns: [
+              {
+                name: "Facebook",
+                is_mapped: true,
+                spend: 2000000,
+                reach: 500000,
+                impressions: 456850,
+                conversions: 521006,
+                clicks: 498587,
+                frequency: 500,
+                cost_per_thousand_impressions: 850,
+                click_through_rate: 0.5201,
+                cost_per_action: 652,
+                cost_per_click: 485,
+                engagement_rate: 0.5601,
+              },
+              {
+                name: "Salesforce Marketing Cloud Marketing Cloud",
+                is_mapped: true,
+                spend: 2000000,
+                reach: 500000,
+                impressions: 456850,
+                conversions: 521006,
+                clicks: 498587,
+                frequency: 500,
+                cost_per_thousand_impressions: 850,
+                click_through_rate: 0.5201,
+                cost_per_action: 652,
+                cost_per_click: 485,
+                engagement_rate: 0.5601,
+              },
+              {
+                name: "Google Ads",
+                is_mapped: true,
+                spend: 2000000,
+                reach: 500000,
+                impressions: 456850,
+                conversions: 521006,
+                clicks: 498587,
+                frequency: 500,
+                cost_per_thousand_impressions: 850,
+                click_through_rate: 0.5201,
+                cost_per_action: 652,
+                cost_per_click: 485,
+                engagement_rate: 0.5601,
+              },
+            ],
+          },
+        ],
+      },
     }
   },
   computed: {
@@ -432,18 +480,19 @@ export default {
       return summary.filter((item) => item.title !== null)
     },
     displayAdsSummary() {
+      // TODO refine the object parse and put blank UI in case of no information.
       return [
-        { id: 1, title: "Spend", value: "$2.1M", width: "10%" },
-        { id: 2, title: "Reach", value: "500k", width: "10%" },
-        { id: 3, title: "Impressions", value: "456,850", width: "10%" },
-        { id: 4, title: "Conversions", value: "521,006", width: "10%" },
-        { id: 5, title: "Clicks", value: "498,587", width: "10%" },
-        { id: 6, title: "Frequency", value: "500", width: "10%" },
-        { id: 7, title: "CPM", value: "$850", width: "10%" },
-        { id: 8, title: "CTR", value: "52%", width: "10%" },
-        { id: 9, title: "CPA", value: "$652", width: "10%" },
-        { id: 10, title: "CPC", value: "$485", width: "10%" },
-        { id: 11, title: "Engagement rate", value: "56%", width: "10%" },
+        { id: 1, title: "Spend", value: "$2.1M", width: "90px" },
+        { id: 2, title: "Reach", value: "500k", width: "90px" },
+        { id: 3, title: "Impressions", value: "456,850", width: "90px" },
+        { id: 4, title: "Conversions", value: "521,006", width: "90px" },
+        { id: 5, title: "Clicks", value: "498,587", width: "90px" },
+        { id: 6, title: "Frequency", value: "500", width: "90px" },
+        { id: 7, title: "CPM", value: "$850", width: "90px" },
+        { id: 8, title: "CTR", value: "52%", width: "90px" },
+        { id: 9, title: "CPA", value: "$652", width: "90px" },
+        { id: 10, title: "CPC", value: "$485", width: "90px" },
+        { id: 11, title: "Engagement rate", value: "56%", width: "90px" },
       ]
     },
     emailSummary() {
@@ -558,7 +607,7 @@ export default {
 
               text-overflow: inherit;
               white-space: inherit;
-              color: var(--v-neroBlack-base) !important;
+              color: !important;
             }
             .v-list-item__subtitle {
               display: none;
@@ -572,17 +621,19 @@ export default {
         border: 1px solid var(--v-zircon-base);
         box-sizing: border-box;
         border-radius: 12px;
-        ::v-deep .v-list-item__content {
-          padding-top: 15px;
-          padding-bottom: 15px;
-          margin-left: -5px !important;
-          .v-list-item__title {
-            font-size: 12px;
-            line-height: 16px;
-            margin: 0 !important;
-          }
-          .v-list-item__subtitle {
-            margin-bottom: 15px !important;
+        ::v-deep .v-list-item {
+          .v-list-item__content {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            margin-left: -5px !important;
+            .v-list-item__title {
+              font-size: 12px;
+              line-height: 16px;
+              margin: 0 !important;
+            }
+            .v-list-item__subtitle {
+              margin-bottom: 15px !important;
+            }
           }
         }
         &.description {
@@ -639,9 +690,11 @@ export default {
       }
     }
     .v-tabs-items {
-      background: var(--v-white-base);
-      box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
-      border-radius: 12px;
+      overflow: auto;
+      background-color: transparent;
+      .v-window-item--active {
+        background: transparent;
+      }
     }
   }
 }

@@ -109,4 +109,10 @@ export default {
       ? (Math.abs(Number(value)) / 1.0e3).toFixed(2) + "K"
       : this.FormatSize(Math.abs(Number(value)))
   },
+  CurrentFormat(value) {
+    return Number(value).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    })
+  },
 }

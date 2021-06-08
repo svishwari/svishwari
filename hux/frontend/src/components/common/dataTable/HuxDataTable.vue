@@ -11,6 +11,10 @@
         :sort-by="sortColumn"
         sort-desc
         :height="height"
+        :expanded.sync="expanded"
+        :show-expand="nested"
+        :items-per-page="100"
+        :hide-default-header="!showHeader"
       >
         <template v-slot:body="{ items }" v-if="!nested">
           <tbody>
@@ -19,26 +23,8 @@
             </tr>
           </tbody>
         </template>
-        <template v-slot:item="{ item, expand, isExpanded }" v-if="nested">
-          <tr>
-            <td></td>
-            <td v-for="field in Object.keys(item)" :key="field.name">
-              <slot
-                name="table-row"
-                :field="field"
-                :item="item"
-                :expand="expand"
-                :isExpanded="isExpanded"
-              >
-              </slot>
-            </td>
-          </tr>
-        </template>
-        <template v-slot:expanded-item="{ item }" v-if="nested">
-          <tr v-for="(field, index) in item.child" :key="index">
-            <td></td>
-            <slot name="expanded-row" :field="field"></slot>
-          </tr>
+        <template v-slot:expanded-item="{ headers, item }">
+          <slot name="expanded-row" :headers="headers" :item="item" />
         </template>
       </v-data-table>
     </div>
@@ -69,6 +55,11 @@ export default {
       type: Number,
       required: false,
     },
+    showHeader: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     sortColumn: {
       type: String,
       required: false,
@@ -83,13 +74,14 @@ export default {
   },
   computed: {
     FixedWidth() {
-      return (
-        this.headers
-          .filter((item) => item.fixed)
-          .map(({ width }) => width)
-          .map((item) => parseInt(item, 0))
-          .reduce((a, b) => a + b) + "px"
-      )
+      const fixedHeaders = this.headers.filter((item) => item.fixed)
+
+      return fixedHeaders.length > 0
+        ? fixedHeaders
+            .map(({ width }) => width)
+            .map((item) => parseInt(item, 0))
+            .reduce((a, b) => a + b) + "px"
+        : "0px"
     },
   },
 }
@@ -154,7 +146,6 @@ export default {
       left: 0px !important;
     }
     .v-data-table-header {
-      position: sticky;
       tr {
         height: 32px !important;
         th {
@@ -173,6 +164,9 @@ export default {
           }
         }
       }
+    }
+    ::v-deep .v-data-table__expanded__content {
+      padding: 0px;
     }
   }
 }
