@@ -19,8 +19,9 @@
           color="primary"
           @click="onExpandIconClick"
           class="cursor-pointer px-6 ml-auto"
-          >{{ expanded ? "mdi-arrow-collapse" : "mdi-arrow-expand" }}</v-icon
         >
+          {{ expanded ? "mdi-arrow-collapse" : "mdi-arrow-expand" }}
+        </v-icon>
       </template>
     </v-toolbar>
 

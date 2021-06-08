@@ -138,6 +138,8 @@ export default {
 
     closeDrawer() {
       this.localToggle = false
+      this.$refs.newAudienceRef.reset()
+      this.attributeRules = []
     },
 
     changeDrawerWidth(expanded) {
