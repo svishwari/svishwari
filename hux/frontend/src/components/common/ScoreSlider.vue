@@ -22,20 +22,21 @@
 </template>
 
 <script>
+
 import colors from "../../plugins/colors"
 
 export default {
   name: "score-slider",
   props: {
     value: {
-      type: Number | String,
+      type: Number,
       required: true,
       default: 50,
     },
     readOnly: {
       type: Boolean,
       required: false,
-      default: false,
+      default: true,
     },
   },
   data() {
