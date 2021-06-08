@@ -178,8 +178,8 @@ class TestCdpDataSourceManagement(unittest.TestCase):
         )
 
         # test values
-        for did in data_source_ids:
-            data_source = dsmgmt.get_data_source(self.database, did)
+        for data_source_id in data_source_ids:
+            data_source = dsmgmt.get_data_source(self.database, data_source_id)
             self.assertTrue(data_source[c.ADDED])
             self.assertTrue(data_source[c.ENABLED])
 
@@ -233,6 +233,8 @@ class TestCdpDataSourceManagement(unittest.TestCase):
 
     def test_update_data_source_empty_list(self) -> None:
         """Test update data sources with an empty list.
+
+        Args:
 
         Returns:
             Response: None
