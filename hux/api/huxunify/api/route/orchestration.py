@@ -16,6 +16,7 @@ from huxunifylib.database import (
     user_management,
     orchestration_management,
     db_exceptions,
+    engagement_management,
 )
 
 from huxunify.api.schema.orchestration import (
@@ -462,9 +463,10 @@ class AudienceDeliverView(SwaggerView):
 
         # check if audience exists
         audience = None
+        database = get_db_client()
         try:
             audience = orchestration_management.get_audience(
-                get_db_client(), audience_id
+                database, audience_id
             )
         except db_exceptions.InvalidID:
             # get audience returns invalid if the audience does not exist.
@@ -476,19 +478,25 @@ class AudienceDeliverView(SwaggerView):
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # # submit jobs for the audience/destination pairs
-        # delivery_job_ids = []
-        # for pair in get_audience_destination_pairs(
-        #     engagement[api_c.AUDIENCES]
-        # ):
-        #     if pair[0] != audience_id:
-        #         continue
-        #     batch_destination = get_destination_config(database, *pair)
-        #     batch_destination.register()
-        #     batch_destination.submit()
-        #     delivery_job_ids.append(
-        #         str(batch_destination.audience_delivery_job_id)
-        #     )
+        # get engagements
+        engagements = engagement_management.get_engagements_by_audience(
+            database, audience_id
+        )
+
+        # submit jobs for the audience/destination pairs
+        delivery_job_ids = []
+        for engagement in engagements:
+            for pair in get_audience_destination_pairs(
+                engagement[api_c.AUDIENCES]
+            ):
+                if pair[0] != audience_id:
+                    continue
+                batch_destination = get_destination_config(database, *pair)
+                batch_destination.register()
+                batch_destination.submit()
+                delivery_job_ids.append(
+                    str(batch_destination.audience_delivery_job_id)
+                )
 
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
