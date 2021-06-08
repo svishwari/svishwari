@@ -412,7 +412,7 @@
 
     <v-divider class="mt-10" />
 
-    <v-subheader>Hux Slider</v-subheader>
+    <v-subheader>Score Slider</v-subheader>
     <score-slider :value="36"></score-slider>
     <v-divider class="mt-10" />
 
