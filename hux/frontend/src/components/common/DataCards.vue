@@ -37,8 +37,8 @@
 
         <!-- row -->
         <v-card
-          v-for="item in Object.values(props.items)"
-          :key="item.id"
+          v-for="(item, index) in Object.values(props.items)"
+          :key="index"
           :class="{ 'bordered-card': bordered }"
           class="data-card mb-2"
         >
@@ -50,6 +50,7 @@
                   :name="`field:${field.key}`"
                   :value="item[field.key]"
                   :item="item"
+                  :index="index"
                 >
                   <!-- default cell -->
                   <template>{{ item[field.key] }}</template>
