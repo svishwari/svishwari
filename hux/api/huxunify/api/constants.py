@@ -302,8 +302,8 @@ MODEL_NAME_PARAMS = [
 ]
 MODEL_LIST_PAYLOAD = {
     "params": {
-        "feature_service_name": "ui_metadata_model_history_service",
-        "join_key_map": {"model_id": "1"},
+        "feature_service_name": "ui_metadata_models_service",
+        "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
 FEATURES = "features"

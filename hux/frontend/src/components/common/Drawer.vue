@@ -2,18 +2,22 @@
   <v-navigation-drawer
     v-model="localDrawer"
     :right="toRight"
+    :style="transition"
     :width="width"
-    temporary
-    floating
     app
-    style="transition-duration: 0.5s"
-    overlay-opacity="0"
+    floating
+    hide-overlay
+    temporary
   >
     <v-toolbar width="100%">
       <v-toolbar-title class="px-6">
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
       </v-toolbar-title>
+      <!-- TODO: HUS-229, HUS-445 -->
+      <template v-if="expandable">
+        <v-icon class="px-6 ml-auto">mdi-arrow-expand</v-icon>
+      </template>
     </v-toolbar>
 
     <div class="drawer-content">
@@ -60,6 +64,26 @@ export default {
       type: Number,
       required: false,
       default: 600,
+    },
+
+    expandable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    disableTransition: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  computed: {
+    transition() {
+      return {
+        transitionDuration: this.disableTransition ? "0s" : "0.5s",
+      }
     },
   },
 

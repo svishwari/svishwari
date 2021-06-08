@@ -211,7 +211,6 @@ DELIVERY_PLATFORMS = [
         c.DELIVERY_PLATFORM_TYPE: "salesforce",
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
-        c.ENABLED: True,
         c.ADDED: False,
     },
     {
@@ -300,11 +299,24 @@ DELIVERY_PLATFORMS = [
     },
 ]
 
+# drop collections for writing.
+collections = [c.CDP_DATA_SOURCES_COLLECTION, c.DELIVERY_PLATFORM_COLLECTION]
+for collection in collections:
+    DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][collection].drop()
+
 # Inserting Data Sources into Data Sources Collection
 logging.info("Prepopulate data sources.")
 inserted_ids = []
 for i, data_source in enumerate(DATA_SOURCES):
-    result_id = create_data_source(DB_CLIENT, category="", **data_source)[c.ID]
+    result_id = create_data_source(
+        DB_CLIENT,
+        data_source[c.DATA_SOURCE_NAME],
+        category="",
+        added=data_source[c.ADDED],
+        enabled=data_source[c.ENABLED],
+        source_type=data_source[c.DATA_SOURCE_TYPE],
+        status=data_source[c.STATUS],
+    )[c.ID]
     logging.info("Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id)
 logging.info("Prepopulate data sources complete.")
 
@@ -315,7 +327,6 @@ inserted_ids = []
 for i, delivery_platform in enumerate(DELIVERY_PLATFORMS):
     result_id = set_delivery_platform(
         DB_CLIENT,
-        delivery_platform_type=delivery_platform[c.DELIVERY_PLATFORM_NAME],
         **delivery_platform,
     )[c.ID]
     logging.info(
