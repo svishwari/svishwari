@@ -70,7 +70,7 @@ def create_data_source(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_all_data_sources(database: DatabaseClient) -> list:
+def get_all_data_sources(database: DatabaseClient) -> Optional[list]:
     """A function that returns all data sources
 
     Args:
@@ -98,7 +98,7 @@ def get_all_data_sources(database: DatabaseClient) -> list:
 )
 def get_data_source(
     database: DatabaseClient, data_source_id: ObjectId
-) -> dict:
+) -> Optional[dict]:
     """A function to return a single data source based on a provided id
 
     Args:

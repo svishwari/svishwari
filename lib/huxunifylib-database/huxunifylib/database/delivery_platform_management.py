@@ -7,6 +7,7 @@ import logging
 from functools import partial
 import datetime
 from operator import itemgetter
+from typing import Optional
 
 from bson import ObjectId
 import pymongo
@@ -34,7 +35,7 @@ def set_delivery_platform(
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to create a delivery platform.
 
     Args:
@@ -118,7 +119,7 @@ def set_delivery_platform(
 def get_delivery_platforms_by_id(
     database: DatabaseClient,
     delivery_platform_ids: list,
-) -> list:
+) -> Optional[list]:
     """A function to get a list of delivery platforms by id.
 
     Args:
@@ -153,7 +154,7 @@ def get_delivery_platforms_by_id(
 def get_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to get a delivery platform.
 
     Args:
@@ -183,7 +184,7 @@ def get_delivery_platform(
 )
 def get_all_delivery_platforms(
     database: DatabaseClient,
-) -> list:
+) -> Optional[list]:
     """A function to get all configured delivery platforms.
 
     Args:
@@ -213,7 +214,7 @@ def set_connection_status(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
     connection_status: str,
-) -> dict:
+) -> Optional[dict]:
 
     """A function to set the status of connection to a delivery platform.
 
@@ -231,7 +232,7 @@ def set_connection_status(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
-    update_doc = {}
+    update_doc: dict = {}
     update_doc[c.DELIVERY_PLATFORM_STATUS] = connection_status
     update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
 
@@ -250,7 +251,7 @@ def set_connection_status(
 
 def get_connection_status(
     database: DatabaseClient, delivery_platform_id: ObjectId
-) -> str:
+) -> Optional[str]:
     """A function to get status of connection to delivery platform.
 
     Args:
@@ -267,8 +268,9 @@ def get_connection_status(
 
     doc = get_delivery_platform(database, delivery_platform_id)
 
-    if c.DELIVERY_PLATFORM_STATUS in doc:
-        connection_status = doc[c.DELIVERY_PLATFORM_STATUS]
+    if doc:
+        if c.DELIVERY_PLATFORM_STATUS in doc:
+            connection_status = doc[c.DELIVERY_PLATFORM_STATUS]
 
     return connection_status
 
@@ -281,7 +283,7 @@ def set_authentication_details(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
     authentication_details: dict,
-) -> dict:
+) -> Optional[dict]:
     """A function to set delivery platform authentication details.
 
     Args:
@@ -297,7 +299,7 @@ def set_authentication_details(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
-    update_doc = {}
+    update_doc: dict = {}
     update_doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
     update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
 
@@ -316,7 +318,7 @@ def set_authentication_details(
 
 def get_authentication_details(
     database: DatabaseClient, delivery_platform_id: ObjectId
-) -> dict:
+) -> Optional[dict]:
     """A function to get authentication details of a delivery platform.
 
     Args:
@@ -331,9 +333,9 @@ def get_authentication_details(
     auth_dict = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-
-    if c.DELIVERY_PLATFORM_AUTH in doc:
-        auth_dict = doc[c.DELIVERY_PLATFORM_AUTH]
+    if doc:
+        if c.DELIVERY_PLATFORM_AUTH in doc:
+            auth_dict = doc[c.DELIVERY_PLATFORM_AUTH]
 
     return auth_dict
 
@@ -346,7 +348,7 @@ def set_name(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
     name: str,
-) -> dict:
+) -> Optional[dict]:
     """A function to set delivery platform name.
 
     Args:
@@ -376,8 +378,9 @@ def set_name(
             database,
             delivery_platform_id,
         )
-        if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
-            raise de.DuplicateName(name)
+        if cur_doc:
+            if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+                raise de.DuplicateName(name)
 
     update_doc = {
         c.DELIVERY_PLATFORM_NAME: name,
@@ -397,7 +400,9 @@ def set_name(
     return doc
 
 
-def get_name(database: DatabaseClient, delivery_platform_id: ObjectId) -> str:
+def get_name(
+    database: DatabaseClient, delivery_platform_id: ObjectId
+) -> Optional[str]:
     """A function to get name of a delivery platform.
 
     Args:
@@ -412,9 +417,9 @@ def get_name(database: DatabaseClient, delivery_platform_id: ObjectId) -> str:
     name = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-
-    if c.DELIVERY_PLATFORM_NAME in doc:
-        name = doc[c.DELIVERY_PLATFORM_NAME]
+    if doc:
+        if c.DELIVERY_PLATFORM_NAME in doc:
+            name = doc[c.DELIVERY_PLATFORM_NAME]
 
     return name
 
@@ -427,7 +432,7 @@ def set_platform_type(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
     delivery_platform_type: str,
-) -> dict:
+) -> Optional[dict]:
     """A function to set delivery platform type.
 
     Args:
@@ -471,7 +476,7 @@ def set_platform_type(
 
 def get_platform_type(
     database: DatabaseClient, delivery_platform_id: ObjectId
-) -> str:
+) -> Optional[str]:
     """A function to get the delivery platform type.
 
     Args:
@@ -486,9 +491,9 @@ def get_platform_type(
     delivery_platform_type = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-
-    if c.DELIVERY_PLATFORM_TYPE in doc:
-        delivery_platform_type = doc[c.DELIVERY_PLATFORM_TYPE]
+    if doc:
+        if c.DELIVERY_PLATFORM_TYPE in doc:
+            delivery_platform_type = doc[c.DELIVERY_PLATFORM_TYPE]
 
     return delivery_platform_type
 
@@ -505,7 +510,7 @@ def update_delivery_platform(
     authentication_details: dict = None,
     added: bool = None,
     user_id: ObjectId = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to update delivery platform configuration.
 
     Args:
@@ -544,10 +549,11 @@ def update_delivery_platform(
 
     if exists_flag:
         cur_doc = get_delivery_platform(database, delivery_platform_id)
-        if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
-            raise de.DuplicateName(name)
+        if cur_doc:
+            if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+                raise de.DuplicateName(name)
 
-    update_doc = {
+    update_doc: dict = {
         c.DELIVERY_PLATFORM_NAME: name,
         c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_PLATFORM_AUTH: authentication_details,
@@ -600,7 +606,7 @@ def create_delivery_platform_lookalike_audience(
     name: str,
     audience_size_percentage: float,
     country: str = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to create a delivery platform lookalike audience.
 
     Args:
@@ -684,7 +690,7 @@ def create_delivery_platform_lookalike_audience(
 def get_delivery_platform_lookalike_audience(
     database: DatabaseClient,
     lookalike_audience_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to get a delivery platform lookalike audience.
 
     Args:
@@ -715,7 +721,7 @@ def get_delivery_platform_lookalike_audience(
 )
 def get_all_delivery_platform_lookalike_audiences(
     database: DatabaseClient,
-) -> list:
+) -> Optional[list]:
     """A function to get all delivery platform lookalike audience configurations.
 
     Args:
@@ -746,7 +752,7 @@ def update_lookalike_audience_name(
     database: DatabaseClient,
     lookalike_audience_id: ObjectId,
     name: str,
-) -> dict:
+) -> Optional[dict]:
     """A function to update a delivery platform lookalike audience name.
 
     Args:
@@ -776,8 +782,9 @@ def update_lookalike_audience_name(
             database,
             lookalike_audience_id,
         )
-        if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
-            raise de.DuplicateName(name)
+        if cur_doc:
+            if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
+                raise de.DuplicateName(name)
 
     update_doc = {
         c.LOOKALIKE_AUD_NAME: name,
@@ -805,7 +812,7 @@ def update_lookalike_audience_size_percentage(
     database: DatabaseClient,
     lookalike_audience_id: ObjectId,
     audience_size_percentage: float,
-) -> dict:
+) -> Optional[dict]:
     """A function to update lookalike audience size percentage.
 
     Args:
@@ -849,7 +856,7 @@ def update_lookalike_audience(
     name: str = None,
     audience_size_percentage: float = None,
     country: str = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to update lookalike audience.
 
     Args:
@@ -880,8 +887,9 @@ def update_lookalike_audience(
             database,
             lookalike_audience_id,
         )
-        if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
-            raise de.DuplicateName(name)
+        if cur_doc:
+            if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
+                raise de.DuplicateName(name)
 
     update_doc = {
         c.LOOKALIKE_AUD_NAME: name,
@@ -920,7 +928,7 @@ def set_delivery_job(
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
     engagement_id: ObjectId = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to set an audience delivery job.
 
     Args:
@@ -991,7 +999,7 @@ def get_delivery_job(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     engagement_id: ObjectId = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to get an audience delivery job.
 
     Args:
@@ -1026,7 +1034,7 @@ def get_delivery_job(
 )
 def set_delivery_job_status(
     database: DatabaseClient, delivery_job_id: ObjectId, job_status: str
-) -> dict:
+) -> Optional[dict]:
     """A function to set an delivery job status.
 
     Args:
@@ -1044,7 +1052,7 @@ def set_delivery_job_status(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
     curr_time = datetime.datetime.utcnow()
 
-    update_doc = {}
+    update_doc: dict = {}
     update_doc[c.JOB_STATUS] = job_status
     update_doc[c.UPDATE_TIME] = curr_time
 
@@ -1068,7 +1076,7 @@ def set_delivery_job_status(
 
 def get_delivery_job_status(
     database: DatabaseClient, delivery_job_id: ObjectId
-) -> str:
+) -> Optional[str]:
     """A function to get an delivery job status.
 
     Args:
@@ -1084,9 +1092,9 @@ def get_delivery_job_status(
     job_status = None
 
     doc = get_delivery_job(database, delivery_job_id)
-
-    if c.JOB_STATUS in doc:
-        job_status = doc[c.JOB_STATUS]
+    if doc:
+        if c.JOB_STATUS in doc:
+            job_status = doc[c.JOB_STATUS]
 
     return job_status
 
@@ -1099,7 +1107,7 @@ def set_delivery_job_audience_size(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     audience_size: int,
-) -> dict:
+) -> Optional[dict]:
     """A function to store delivery job audience size.
 
     Args:
@@ -1143,7 +1151,7 @@ def set_delivery_job_lookalike_audiences(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     lookalike_audiences: list,
-) -> dict:
+) -> Optional[dict]:
     """A function to store delivery job lookalike audiences.
 
     Args:
@@ -1181,7 +1189,7 @@ def set_delivery_job_lookalike_audiences(
 
 def get_delivery_job_audience_size(
     database: DatabaseClient, delivery_job_id: ObjectId
-) -> int:
+) -> Optional[int]:
     """A function to get delivery job audience size.
 
     Args:
@@ -1199,9 +1207,9 @@ def get_delivery_job_audience_size(
         database,
         delivery_job_id,
     )
-
-    if c.DELIVERY_PLATFORM_AUD_SIZE in doc:
-        audience_size = doc[c.DELIVERY_PLATFORM_AUD_SIZE]
+    if doc:
+        if c.DELIVERY_PLATFORM_AUD_SIZE in doc:
+            audience_size = doc[c.DELIVERY_PLATFORM_AUD_SIZE]
 
     return audience_size
 
@@ -1257,7 +1265,7 @@ def get_audience_recent_delivery_job(
     database: DatabaseClient,
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to get the most recent delivery job associated with
     a given audience and delivery platform.
 
@@ -1345,7 +1353,7 @@ def get_ingestion_job_audience_delivery_jobs(
 def favorite_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to favorite a delivery platform.
 
     Args:
@@ -1385,7 +1393,7 @@ def favorite_delivery_platform(
 def unfavorite_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to unfavorite a delivery platform.
 
     Args:
@@ -1425,7 +1433,7 @@ def unfavorite_delivery_platform(
 def favorite_lookalike_audience(
     database: DatabaseClient,
     lookalike_audience_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to favorite a delivery platform lookalike audience.
 
     Args:
@@ -1465,7 +1473,7 @@ def favorite_lookalike_audience(
 def unfavorite_lookalike_audience(
     database: DatabaseClient,
     lookalike_audience_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to unfavorite a delivery platform lookalike audience.
 
     Args:
@@ -1570,7 +1578,7 @@ def set_performance_metrics(
     metrics_dict: dict,
     start_time: datetime.datetime,
     end_time: datetime.datetime,
-) -> dict:
+) -> Optional[dict]:
     """Store campaign performance metrics.
 
     Args:
@@ -1631,7 +1639,7 @@ def get_performance_metrics(
     min_start_time: datetime.datetime = None,
     max_end_time: datetime.datetime = None,
     pending_transfer_for_feedback: bool = False,
-) -> list:
+) -> Optional[list]:
     """Retrieve campaign performance metrics.
 
     Args:
@@ -1691,7 +1699,7 @@ def _set_performance_metrics_status(
     database: DatabaseClient,
     performance_metrics_id: ObjectId,
     performance_metrics_status: str,
-) -> dict:
+) -> Optional[dict]:
     """Set performance metrics status.
 
     Args:

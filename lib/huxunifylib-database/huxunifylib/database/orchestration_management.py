@@ -4,6 +4,8 @@ to orchestration (audience/engagement) management.
 
 import logging
 import datetime
+from typing import Optional
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -23,7 +25,7 @@ def create_audience(
     audience_filters: list,
     destination_ids: list = None,
     user_id: ObjectId = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to create an audience.
 
     Args:
@@ -109,7 +111,7 @@ def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
 )
 def get_all_audiences(
     database: DatabaseClient,
-) -> list:
+) -> Optional[list]:
     """A function to get all existing audiences.
 
     Args:
@@ -143,7 +145,7 @@ def update_audience(
     audience_filters: list = None,
     destination_ids: list = None,
     user_id: ObjectId = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to update an audience.
     Args:
         database (DatabaseClient): A database client.

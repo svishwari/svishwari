@@ -5,7 +5,7 @@ This module enables functionality related to user management.
 import logging
 import datetime
 import re
-from typing import Any
+from typing import Any, Optional
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -29,7 +29,7 @@ def set_user(
     subscriptions: list = None,
     display_name: str = "",
     profile_photo: str = "",
-) -> dict:
+) -> Optional[dict]:
     """A function to set a user.
 
     Args:
@@ -106,7 +106,7 @@ def set_user(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_user(database: DatabaseClient, okta_id: str) -> dict:
+def get_user(database: DatabaseClient, okta_id: str) -> Optional[dict]:
     """A function to get a user.
 
     Args:
@@ -184,7 +184,7 @@ def delete_user(
 )
 def update_user(
     database: DatabaseClient, okta_id: str, update_doc: dict
-) -> dict:
+) -> Optional[dict]:
     """A function to update a user.
 
     Args:
@@ -245,7 +245,7 @@ def manage_user_favorites(
     component_name: str,
     component_id: ObjectId,
     delete_flag: bool = False,
-) -> dict:
+) -> Optional[dict]:
     """A function to add a favorite component for a user.
 
     Args:
@@ -313,7 +313,7 @@ def manage_user_dashboard_config(
     config_key: str,
     config_value: Any,
     delete_flag: bool = False,
-) -> dict:
+) -> Optional[dict]:
     """A function to manage user dashboard configuration
 
     Args:

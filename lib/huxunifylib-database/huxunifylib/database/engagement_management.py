@@ -4,6 +4,8 @@ This module enables functionality related to engagement management.
 
 import logging
 import datetime
+from typing import Optional
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -95,7 +97,7 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements(database: DatabaseClient) -> list:
+def get_engagements(database: DatabaseClient) -> Optional[list]:
     """A function to get all engagements
 
     Args:
@@ -122,7 +124,9 @@ def get_engagements(database: DatabaseClient) -> list:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
+def get_engagement(
+    database: DatabaseClient, engagement_id: ObjectId
+) -> Optional[dict]:
     """A function to get an engagement based on ID
 
     Args:
@@ -198,7 +202,7 @@ def update_engagement(
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to update fields in an engagement
 
     Args:
@@ -262,7 +266,7 @@ def remove_audiences_from_engagement(
     engagement_id: ObjectId,
     user_id: ObjectId,
     audience_ids: list,
-) -> dict:
+) -> Optional[dict]:
     """A function to allow for removing audiences from an engagement.
 
     Args:
@@ -317,7 +321,7 @@ def append_audiences_to_engagement(
     engagement_id: ObjectId,
     user_id: ObjectId,
     audiences: list,
-) -> dict:
+) -> Optional[dict]:
     """A function to allow for appending audiences to an engagement.
 
     Args:
@@ -387,7 +391,7 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
 )
 def get_engagements_by_audience(
     database: DatabaseClient, audience_id: ObjectId
-) -> list:
+) -> Optional[list]:
     """A function to get a list of engagements by audience_id
 
     Args:

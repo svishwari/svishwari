@@ -3,7 +3,7 @@
 
 import logging
 import datetime
-from typing import Any, Union
+from typing import Any, Union, Optional
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -28,7 +28,7 @@ def set_constant(
     database: DatabaseClient,
     constant_name: str,
     constant_value: Any,
-) -> dict:
+) -> Optional[dict]:
     """A function to set a data source constant.
 
     Args:
@@ -64,7 +64,9 @@ def set_constant(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_constant(database: DatabaseClient, constant_name: str) -> dict:
+def get_constant(
+    database: DatabaseClient, constant_name: str
+) -> Optional[dict]:
     """A function to get a data source constant.
 
     Args:
@@ -99,7 +101,7 @@ def set_data_source(
     location_type: str,
     location_details: dict,
     fields: list,
-) -> dict:
+) -> Optional[dict]:
     """A function to set a data source.
 
     Args:
@@ -173,7 +175,7 @@ def set_data_source(
 )
 def get_data_source(
     database: DatabaseClient, data_source_id: ObjectId
-) -> dict:
+) -> Optional[dict]:
     """A function to get a data source.
 
     Args:
@@ -228,7 +230,7 @@ def get_all_data_sources(database: DatabaseClient) -> list:
 def get_data_source_non_breakdown_fields(
     database: DatabaseClient,
     data_source_id: ObjectId,
-) -> dict:
+) -> list:
     """A function to get a list of non breakdown fields of a data source.
 
     Args:
@@ -258,8 +260,8 @@ def update_data_source_param(
     database: DatabaseClient,
     data_source_id: ObjectId,
     param_name: str,
-    param_value: Union[str, dict, list],
-) -> dict:
+    param_value: Union[str, dict, list, bool],
+) -> Optional[dict]:
     """A function to update a data source parameter.
 
     Args:
@@ -312,7 +314,7 @@ def update_data_source_name(
     database: DatabaseClient,
     data_source_id: ObjectId,
     name: str,
-) -> dict:
+) -> Optional[dict]:
     """A function to update data source name.
 
     Args:
@@ -336,8 +338,9 @@ def update_data_source_name(
 
     if exists_flag:
         cur_doc = get_data_source(database, data_source_id)
-        if cur_doc[c.DATA_SOURCE_NAME] != name:
-            raise de.DuplicateName(name)
+        if cur_doc:
+            if cur_doc[c.DATA_SOURCE_NAME] != name:
+                raise de.DuplicateName(name)
 
     return update_data_source_param(
         database,
@@ -351,7 +354,7 @@ def update_data_source_format(
     database: DatabaseClient,
     data_source_id: ObjectId,
     data_source_format: str,
-) -> dict:
+) -> Optional[dict]:
     """A function to update data source format.
 
     Args:
@@ -376,7 +379,7 @@ def update_data_source_location_type(
     database: DatabaseClient,
     data_source_id: ObjectId,
     location_type: str,
-) -> dict:
+) -> Optional[dict]:
     """A function to update data source location type.
 
     Args:
@@ -401,7 +404,7 @@ def update_data_source_location_details(
     database: DatabaseClient,
     data_source_id: ObjectId,
     location_details: dict,
-) -> dict:
+) -> Optional[dict]:
     """A function to update data source location details.
 
     Args:
@@ -426,7 +429,7 @@ def update_data_source_fields(
     database: DatabaseClient,
     data_source_id: ObjectId,
     fields: list,
-) -> dict:
+) -> Optional[dict]:
     """A function to update data source fields.
 
     Args:
@@ -455,7 +458,7 @@ def update_data_source_recent_ingestion_job_id(
     database: DatabaseClient,
     data_source_id: ObjectId,
     recent_ingestion_job_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to update data source recent ingestion job ID.
 
     Args:
@@ -480,7 +483,7 @@ def update_data_source_recent_ingestion_job_status(
     database: DatabaseClient,
     data_source_id: ObjectId,
     recent_ingestion_job_status: str,
-) -> dict:
+) -> Optional[dict]:
     """A function to update the status of a data source's
     most recent ingestion job.
 
@@ -510,7 +513,7 @@ def update_data_source_non_breakdown_fields(
     database: DatabaseClient,
     data_source_id: ObjectId,
     non_breakdown_fields: list,
-) -> dict:
+) -> Optional[dict]:
     """A function to update non breakdown fields for a data source.
 
     Args:
@@ -543,7 +546,7 @@ def update_data_source(
     location_type: str = None,
     location_details: dict = None,
     fields: list = None,
-):
+) -> Optional[dict]:
     """A function to update data source configuration.
 
     Args:
@@ -576,8 +579,9 @@ def update_data_source(
         name,
     ):
         cur_doc = get_data_source(database, data_source_id)
-        if cur_doc[c.DATA_SOURCE_NAME] != name:
-            raise de.DuplicateName(name)
+        if cur_doc:
+            if cur_doc[c.DATA_SOURCE_NAME] != name:
+                raise de.DuplicateName(name)
 
     # Do not update if data source is associated to an ingestion job
     if not is_data_source_mutable(database, data_source_id):
@@ -618,7 +622,7 @@ def update_data_source(
 )
 def set_ingestion_job(
     database: DatabaseClient, data_source_id: ObjectId
-) -> dict:
+) -> Optional[dict]:
     """A function to set an ingestion job.
 
     Args:
@@ -657,17 +661,18 @@ def set_ingestion_job(
         logging.error(exc)
 
     # Update recent ingestion job info of the data source
-    if ingestion_job_id is not None:
-        doc = update_data_source_recent_ingestion_job_id(
+    if ingestion_job_id:
+        update_data_source_recent_ingestion_job_id(
             database,
             data_source_id,
             ingestion_job_id,
         )
-        update_data_source_recent_ingestion_job_status(
-            database=database,
-            data_source_id=data_source_id,
-            recent_ingestion_job_status=ingestion_job_doc[c.JOB_STATUS],
-        )
+        if ingestion_job_doc:
+            update_data_source_recent_ingestion_job_status(
+                database=database,
+                data_source_id=data_source_id,
+                recent_ingestion_job_status=ingestion_job_doc[c.JOB_STATUS],
+            )
 
     return ingestion_job_doc
 
@@ -786,7 +791,7 @@ def set_ingestion_job_status_no_default_audience(
     ingestion_job_id: ObjectId,
     job_status: str,
     status_msg: str,
-) -> dict:
+) -> Optional[dict]:
 
     """Set ingestion job status, but do not create default adience when
     ingestion job succeeded.
@@ -808,7 +813,7 @@ def set_ingestion_job_status_no_default_audience(
     curr_time = datetime.datetime.utcnow()
 
     # Update ingestion job
-    update_dict = {}
+    update_dict: dict = {}
     update_dict[c.UPDATE_TIME] = curr_time
 
     if job_status == c.STATUS_IN_PROGRESS:
@@ -915,7 +920,7 @@ def get_ingestion_job_data_source_fields(
 def get_ingestion_job_custom_fields(
     database: DatabaseClient,
     ingestion_job_id: ObjectId,
-) -> dict:
+) -> list:
     """A function to get a list of custom fields of a ingestion job.
 
     Args:
@@ -1131,7 +1136,7 @@ def append_ingested_data_stats(
 )
 def get_all_data_source_ids(
     database: DatabaseClient,
-) -> list:
+) -> Optional[list]:
     """A function to get all existing data source IDs.
 
     Args:
@@ -1175,9 +1180,9 @@ def get_data_source_recent_ingestion_job_id(
     job_id = None
 
     doc = get_data_source(database, data_source_id)
-
-    if c.DATA_SOURCE_RECENT_JOB_ID in doc:
-        job_id = doc[c.DATA_SOURCE_RECENT_JOB_ID]
+    if doc:
+        if c.DATA_SOURCE_RECENT_JOB_ID in doc:
+            job_id = doc[c.DATA_SOURCE_RECENT_JOB_ID]
 
     return job_id
 
@@ -1185,7 +1190,7 @@ def get_data_source_recent_ingestion_job_id(
 def favorite_data_source(
     database: DatabaseClient,
     data_source_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to favorite a data source.
 
     Args:
@@ -1208,7 +1213,7 @@ def favorite_data_source(
 def unfavorite_data_source(
     database: DatabaseClient,
     data_source_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to unfavorite a data source.
 
     Args:

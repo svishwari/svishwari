@@ -3,6 +3,7 @@ This module enables functionality related to notification management
 """
 import logging
 from datetime import datetime
+from typing import Optional
 
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -18,7 +19,7 @@ from huxunifylib.database.db_exceptions import InvalidNotificationType
 )
 def create_notification(
     database: DatabaseClient, notification_type: str, description: str
-) -> dict:
+) -> Optional[dict]:
     """A function to create a new notification
 
     Args:
@@ -70,7 +71,7 @@ def get_notifications(
     batch_size: int,
     sort_order: int,
     batch_number: int,
-) -> list:
+) -> Optional[list]:
     """A function to get notifications
 
     Args:

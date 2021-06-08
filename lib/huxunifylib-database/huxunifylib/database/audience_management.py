@@ -5,7 +5,7 @@ import time
 import logging
 import datetime
 from collections import defaultdict
-from typing import Tuple, Generator
+from typing import Tuple, Generator, Optional
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -32,7 +32,7 @@ def create_audience(
     name: str,
     audience_filters: list,
     ingestion_job_id: ObjectId = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to create and store audience rules.
 
     Args:
@@ -139,7 +139,7 @@ def get_ingested_data(
             .limit(batch_size)
         )
 
-        data_cols = []
+        data_cols: list = []
         for count, item in enumerate(cursor):
             ingested_data = item[c.INGESTED_DATA]
 
@@ -345,7 +345,7 @@ def get_audience_batches(
 def get_audience_config(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> dict:
+) -> Optional[dict]:
     """A function to get an audience configuration.
 
     Args:
@@ -440,7 +440,7 @@ def get_audience_data_source_id(
 def get_audience_non_breakdown_fields(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> list:
+) -> Optional[list]:
     """
     A function to get non breakdown fields of an audience.
 
@@ -480,7 +480,7 @@ def append_audience_insights(
     audience_id: ObjectId,
     audience_data: pd.DataFrame,
     custom_breakdown_fields: list = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to create insights for an audience.
 
     Args:
@@ -574,7 +574,7 @@ def refresh_audience_insights(
     audience_id: ObjectId,
     batch_size: int = 1000,
     custom_breakdown_fields: list = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to refresh an audience's insights.
 
     Args:
@@ -617,7 +617,7 @@ def refresh_audience_insights(
 def get_audience_name(
     database: DatabaseClient,
     audience_id: ObjectId,
-) -> str:
+) -> Optional[str]:
     """A function to get an audience name.
 
     Args:
@@ -662,8 +662,9 @@ def update_audience_name(
 
     if exists_flag:
         cur_doc = get_audience_config(database, audience_id)
-        if cur_doc[c.AUDIENCE_NAME] == name:
-            raise de.DuplicateName(name)
+        if cur_doc:
+            if cur_doc[c.AUDIENCE_NAME] == name:
+                raise de.DuplicateName(name)
 
     # Update dict
     update_dict = {
@@ -684,7 +685,7 @@ def update_audience_filters(
     audience_filters: list,
     batch_size: int = 1000,
     custom_breakdown_fields: list = None,
-) -> dict:
+) -> Optional[dict]:
     """A function to update an audience filters.
 
     Args:
@@ -867,7 +868,7 @@ def get_all_recent_audiences(
 )
 def get_all_audiences(
     database: DatabaseClient,
-) -> list:
+) -> Optional[list]:
     """A function to get all existing audiences in database.
 
     Args:
