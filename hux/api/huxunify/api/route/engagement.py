@@ -1061,7 +1061,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
         Args:
 
         Returns:
-            Tuple[dict, int]: Response of Display Ads Performance Metrics
+            Tuple[dict, int]: Response of Display Ads Performance Metrics,
+                              HTTP Status Code
 
         """
 
@@ -1160,7 +1161,7 @@ class EngagementMetricsEmail(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     def get(self) -> Tuple[dict, int]:
-        """Retrieves email performance metrics
+        """Retrieves email performance metrics.
         ---
         security:
             - Bearer: ["Authorization"]
@@ -1168,7 +1169,8 @@ class EngagementMetricsEmail(SwaggerView):
         Args:
 
         Returns:
-            Tuple[dict, int]: Response of Email Performance Metrics
+            Tuple[dict, int]: Response of Email Performance Metrics,
+                              HTTP Status Code
 
         """
 
