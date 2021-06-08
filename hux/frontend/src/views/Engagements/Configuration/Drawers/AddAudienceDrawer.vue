@@ -53,7 +53,14 @@
       <v-btn tile color="white" @click="closeDrawer()">
         <span class="primary--text">Cancel &amp; back</span>
       </v-btn>
-      <v-btn tile color="primary" @click="add()"> Create &amp; add </v-btn>
+      <v-btn
+        :disabled="!newAudienceValidity"
+        tile
+        color="primary"
+        @click="add()"
+      >
+        Create &amp; add
+      </v-btn>
     </template>
   </Drawer>
 </template>
@@ -140,6 +147,7 @@ export default {
       this.localToggle = false
       this.$refs.newAudienceRef.reset()
       this.attributeRules = []
+      this.changeDrawerWidth(false)
     },
 
     changeDrawerWidth(expanded) {
