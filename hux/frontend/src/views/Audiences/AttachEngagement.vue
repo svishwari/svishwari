@@ -327,20 +327,13 @@ export default {
     },
     addEngagement: async function () {
       this.loading = true
-      if (this.newEngagement.delivery_schedule == 0) {
-        this.newEngagement.delivery_schedule = null
-      } else {
-        this.newEngagement.delivery_schedule = {
-          end_date: "",
-          start_date: "",
-        }
-      }
-      // This is a temporary to fulfill api calls
-      let temporaryNewEngagement = {
+      const payload = {
         name: this.newEngagement.name,
+        delivery_schedule: this.newEngagement.delivery_schedule,
         description: this.newEngagement.description,
+        audiences: [],
       }
-      let newEngagement = await this.addEngagementToDB(temporaryNewEngagement)
+      const newEngagement = await this.addEngagementToDB(payload)
       this.engagements.push(newEngagement)
       this.sortEngagements()
       this.onEngagementClick(newEngagement)
