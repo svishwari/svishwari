@@ -155,7 +155,6 @@ export default {
       left: 0px !important;
     }
     .v-data-table-header {
-      position: sticky;
       tr {
         height: 32px !important;
         th {
