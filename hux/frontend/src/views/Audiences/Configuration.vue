@@ -210,7 +210,7 @@
         </template>
 
         <template v-slot:default>
-          <v-stepper v-model="destinationDrawer.viewStep" class="stepper">
+          <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
             <v-stepper-items>
               <v-stepper-content step="1">
                 <div>
