@@ -143,11 +143,7 @@
       @onConfirm="toggleModal()"
     >
       <template v-slot:activator>
-        <huxButton
-          size="large"
-          class="ma-2"
-          @click="modal = !modal"
-        >
+        <huxButton size="large" class="ma-2" @click="modal = !modal">
           <template #text>
             <span>Open modal</span>
           </template>
@@ -190,12 +186,7 @@
         <span>Add</span>
       </template>
     </huxButton>
-    <huxButton
-      variant="primary"
-      size="large"
-      v-bind:isTile="true"
-      class="ma-2"
-    >
+    <huxButton variant="primary" size="large" v-bind:isTile="true" class="ma-2">
       <template #text>
         <span>Leave configuration</span>
       </template>
@@ -212,11 +203,7 @@
         <span>Success!</span>
       </template>
     </huxButton>
-    <huxButton
-      variant="tertiary"
-      v-bind:isTile="true"
-      class="ma-2"
-    >
+    <huxButton variant="tertiary" v-bind:isTile="true" class="ma-2">
       <template #text>
         <span>Cancel &amp; Return</span>
       </template>

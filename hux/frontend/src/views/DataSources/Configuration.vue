@@ -34,7 +34,7 @@
             @click="addDataSources"
           >
             <template #text>
-              <span>{{dataSourcesBtnText}}</span>
+              <span>{{ dataSourcesBtnText }}</span>
             </template>
           </huxButton>
         </div>

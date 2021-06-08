@@ -15,10 +15,10 @@
       {{ icon }}
     </v-icon>
     <v-spacer> </v-spacer>
-    
+
     <!-- {{ ButtonText }} -->
     <slot name="text"></slot>
-    
+
     <v-spacer> </v-spacer>
     <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
       {{ icon }}

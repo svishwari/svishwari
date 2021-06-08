@@ -66,7 +66,9 @@
           @click="validate()"
         >
           <template #text>
-            <span> {{ isValidated ? 'Success!' : 'Validate connection' }} </span>
+            <span>
+              {{ isValidated ? "Success!" : "Validate connection" }}
+            </span>
           </template>
         </hux-button>
         <hux-button
@@ -105,7 +107,7 @@
           :isDisabled="!isValidated"
           @click="add()"
         >
-           <template #text>
+          <template #text>
             <span> Add &amp; return </span>
           </template>
         </hux-button>

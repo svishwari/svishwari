@@ -24,9 +24,13 @@
         class="ma-2"
       >
         <template #text>
-          <span  v-bind:class="[ isAdded ? 'white--text' : 'primary--text', 
-          isAlreadyAdded ? 'gray--text' : '']" > 
-            {{ isAdded ? 'Added' : 'Add' }}
+          <span
+            v-bind:class="[
+              isAdded ? 'white--text' : 'primary--text',
+              isAlreadyAdded ? 'gray--text' : '',
+            ]"
+          >
+            {{ isAdded ? "Added" : "Add" }}
           </span>
         </template>
       </huxButton>
@@ -102,7 +106,7 @@ export default {
 .card-horizontal-disabled {
   border: 1px solid var(--v-zircon-base) !important;
   .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
-   background-color: var(--v-smoke-base) !important;
+    background-color: var(--v-smoke-base) !important;
   }
 }
 </style>

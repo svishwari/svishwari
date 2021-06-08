@@ -32,7 +32,7 @@
         class="ma-2"
       >
         <template #text>
-          <span>{{label}}</span>
+          <span>{{ label }}</span>
         </template>
       </huxButton>
     </template>
