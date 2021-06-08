@@ -7,7 +7,7 @@
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title>
+        <v-list-item-title class="neroBlack--text">
           {{ value | Date | Empty }}
         </v-list-item-title>
       </v-list-item>
