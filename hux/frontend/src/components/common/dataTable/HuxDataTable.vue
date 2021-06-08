@@ -14,7 +14,11 @@
       >
         <template v-slot:body="{ items }" v-if="!nested">
           <tbody class="data-table-body">
-            <tr v-for="item in items" :key="item.id" class="data-table-row neroBlack--text">
+            <tr
+              v-for="item in items"
+              :key="item.id"
+              class="data-table-row neroBlack--text"
+            >
               <slot name="row-item" :item="item" />
             </tr>
           </tbody>

@@ -7,7 +7,9 @@
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title class="neroBlack--text">{{ value | FormatSize }}</v-list-item-title>
+        <v-list-item-title class="neroBlack--text">{{
+          value | FormatSize
+        }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
