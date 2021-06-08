@@ -2,22 +2,23 @@
 
 import json
 from http import HTTPStatus
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
 from marshmallow import ValidationError
 from requests_mock import Mocker
-from werkzeug import Response
 
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
-import huxunifylib.database.constants as c
+import huxunifylib.database.constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
 from huxunify.app import create_app
 
+BASE_ENDPOINT = "/api/v1"
+TEST_AUTH_TOKEN = "Bearer 12345678"
 VALID_RESPONSE = {
     "active": True,
     "scope": "openid email profile",
@@ -32,8 +33,6 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
-
-TEST_AUTH_BEARER_TOKEN = "Bearer 12345678"
 
 
 def validate_schema(schema, response_json, is_multiple=False):
@@ -54,9 +53,9 @@ def validate_schema(schema, response_json, is_multiple=False):
         return False
 
 
-class DataSourcesTest(TestCase):
+class CdpDataSourcesTest(TestCase):
     """
-    Test Data Sources CRUD APIs
+    Test CDP Data Sources CRUD APIs
     """
 
     def setUp(self) -> None:
@@ -66,8 +65,8 @@ class DataSourcesTest(TestCase):
 
         """
         self.config = get_config("TEST")
-        self.data_sources_api_endpoint = "/api/v1{}".format(
-            api_c.CDP_DATA_SOURCES_ENDPOINT
+        self.data_sources_api_endpoint = (
+            f"{BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
         )
 
         # init mongo patch initially
@@ -79,25 +78,32 @@ class DataSourcesTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        # mock get_db_client()
+
+        get_db_client_mock = mock.patch(
+            "huxunify.api.route.cdp_data_source.get_db_client"
+        ).start()
+        get_db_client_mock.return_value = self.database
+        self.addCleanup(mock.patch.stopall)
+
         # setup the flask test client
         self.test_client = create_app().test_client()
 
-        self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
         # create data sources first
 
         self.data_sources = []
         for ds_name in [api_c.FACEBOOK_NAME, api_c.SFMC_NAME]:
             self.data_sources.append(
-                {
-                    k: str(v)
-                    for k, v in create_data_source(
-                        self.database, ds_name, ""
-                    ).items()
-                }
+                CdpDataSourceSchema().dump(
+                    create_data_source(self.database, ds_name, "")
+                )
             )
 
-        self.introspect_call = "{}/oauth2/v1/introspect?client_id={}".format(
-            self.config.OKTA_ISSUER, self.config.OKTA_CLIENT_ID
+        self.introspect_call = (
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/introspect?client_id="
+            f"{self.config.OKTA_CLIENT_ID}"
         )
 
     @requests_mock.Mocker()
@@ -115,27 +121,16 @@ class DataSourcesTest(TestCase):
 
         valid_response = self.data_sources[0]
 
-        # TODO: Uncomment and update after Db patch issue is fixed
-        # response = self.test_client.get(
-        #     "{}/{}".format(
-        #         self.data_sources_api_endpoint, valid_response["_id"]
-        #     ),
-        #     headers={
-        #         "Authorization": TEST_AUTH_BEARER_TOKEN,
-        #         "Content-Type": "application/json"
-        #     },
-        # )
-
-        # TODO: Remove after DB patch issue is fixed
-        # Start
-        response = Response(
-            response=json.dumps(valid_response),
-            status=HTTPStatus.OK,
-            content_type="application/json",
+        response = self.test_client.get(
+            f"{self.data_sources_api_endpoint}/{valid_response[api_c.ID]}",
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
         )
-        # End
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTrue(CdpDataSourceSchema(), response.json)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
@@ -150,30 +145,20 @@ class DataSourcesTest(TestCase):
         """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        # is_multiple = False
+        is_multiple = True
 
         valid_response = self.data_sources
 
-        # TODO: Uncomment and update after DB patch issue is fixed
-        # response = self.test_client.get(
-        #     self.data_sources_api_endpoint,
-        #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
-        # )
-
-        # TODO: Remove after DB patch issue is fixed
-        # Start
-        response = Response(
-            response=json.dumps(valid_response),
-            status=HTTPStatus.OK,
-            content_type="application/json",
+        response = self.test_client.get(
+            self.data_sources_api_endpoint,
+            headers={"Authorization": TEST_AUTH_TOKEN},
         )
-        # End
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTrue(
+            validate_schema(CdpDataSourceSchema(), response.json, is_multiple)
+        )
         self.assertEqual(response.json, valid_response)
-        # self.assertTrue(
-        #     validate_schema(CdpDataSourceSchema(), response.json, is_multiple)
-        # )
 
     @requests_mock.Mocker()
     def test_delete_data_source_by_id_valid_id(self, request_mocker: Mocker):
@@ -188,24 +173,14 @@ class DataSourcesTest(TestCase):
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
-        valid_response = self.data_sources[0]
+        ds_id = self.data_sources[0][api_c.ID]
 
-        # TODO: Uncomment and update after DB patch issue is fixed
-        # response = self.test_client.delete(
-        #     "self.data_sources_api_endpoint/{}".format(
-        #         valid_response["_id"]
-        #     ),
-        #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
-        # )
+        valid_response = dict(message="SUCCESS")
 
-        # TODO: Remove after DB patch issue is fixed
-        # Start
-        response = Response(
-            response=json.dumps(valid_response),
-            status=HTTPStatus.OK,
-            content_type="application/json",
+        response = self.test_client.delete(
+            f"{self.data_sources_api_endpoint}/{ds_id}",
+            headers={"Authorization": TEST_AUTH_TOKEN},
         )
-        # End
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(response.json, valid_response)
@@ -224,52 +199,39 @@ class DataSourcesTest(TestCase):
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
-        ds_name = "test_create"
+        ds_name = "test create data source"
+        ds_category = "test category"
 
-        # TODO: Uncomment and update after DB patch issue is fixed
-        # response = self.test_client.post(
-        #     self.data_sources_api_endpoint,
-        #     data=json.dumps(
-        #         {
-        #             c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
-        #             c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
-        #         }
-        #     ),
-        #     headers={
-        #         "Content-Type": "application/json",
-        #         "Authorization": TEST_AUTH_BEARER_TOKEN,
-        #     },
-        # )
-
-        # TODO Remove after DB patch issie is fixed
-        # Start
-        valid_schema_response = {
-            "category": "string",
-            "feed_count": 0,
-            "id": "5f5f7262997acad4bac4373b",
-            "is_added": True,
-            "is_enabled": True,
-            "name": ds_name,
-            "status": "string",
-            "type": "string",
+        valid_response = {
+            db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
+            db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
+            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
+            db_c.CDP_DATA_SOURCE_FIELD_STATUS: db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
+            "is_added": False,
+            "is_enabled": False,
         }
 
-        response = Response(
-            response=json.dumps(valid_schema_response),
-            status=200,
-            content_type="application/json",
+        response = self.test_client.post(
+            self.data_sources_api_endpoint,
+            data=json.dumps(
+                {
+                    db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
+                    db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
+                }
+            ),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": TEST_AUTH_TOKEN,
+            },
         )
-        # End
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTrue(validate_schema(CdpDataSourceSchema(), response.json))
-        self.assertEqual(response.json[c.DATA_SOURCE_NAME], ds_name)
+        self.assertDictContainsSubset(valid_response, response.json)
 
     @requests_mock.Mocker()
-    def test_get_data_source_by_id_invalid_object_id(
-        self, request_mocker: Mocker
-    ):
-        """Test get data source by id from DB
+    def test_get_data_source_by_id_invalid_id(self, request_mocker: Mocker):
+        """Test get data source by id from DB with an invalid id
 
         Args:
             request_mocker (str): Request mocker object.
@@ -285,9 +247,9 @@ class DataSourcesTest(TestCase):
         }
 
         response = self.test_client.get(
-            "{}/{}".format(self.data_sources_api_endpoint, ds_id),
+            f"{self.data_sources_api_endpoint}/{ds_id}",
             headers={
-                "Authorization": TEST_AUTH_BEARER_TOKEN,
+                "Authorization": TEST_AUTH_TOKEN,
                 "Content-Type": "application/json",
             },
         )
@@ -312,26 +274,18 @@ class DataSourcesTest(TestCase):
             "message": f"Invalid CDP data source ID received {ds_id}."
         }
 
-        # TODO: Uncomment and update after DB patch issue is fixed
-        # response = self.test_client.delete(
-        #     "self.data_sources_api_endpoint/{}".format(ds_id),
-        #     headers={"Authorization": TEST_AUTH_BEARER_TOKEN},
-        # )
-
-        # TODO: Remove after DB patch issue is fixed
-        # Start
-        response = Response(
-            response=json.dumps(valid_response),
-            status=HTTPStatus.BAD_REQUEST,
-            content_type="application/json",
+        response = self.test_client.delete(
+            f"{self.data_sources_api_endpoint}/{ds_id}",
+            headers={"Authorization": TEST_AUTH_TOKEN},
         )
-        # End
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
-    def test_create_data_source_invalid_params(self, request_mocker: Mocker):
+    def test_create_data_source_no_category_null_name(
+        self, request_mocker: Mocker
+    ):
         """Test creating a data source with invalid params
 
         Args:
@@ -343,20 +297,52 @@ class DataSourcesTest(TestCase):
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
-        # TODO: Uncomment after DB patch is updated
-        # ds_name = None
-        #
-        # response = self.test_client.post(
-        #     self.data_sources_api_endpoint,
-        #     data=json.dumps(
-        #         dict(c.CDP_DATA_SOURCE_FIELD_NAME=ds_name)
-        #     ),
-        #     headers={
-        #         "Content-Type": "application/json",
-        #         "Authorization": TEST_AUTH_BEARER_TOKEN,
-        #     },
-        # )
+        ds_name = None
 
-        response = Response(status=HTTPStatus.BAD_REQUEST)
+        valid_response = {
+            "category": ["Missing data for required field."],
+            "name": ["Field may not be null."],
+        }
+        response = self.test_client.post(
+            self.data_sources_api_endpoint,
+            data=json.dumps({db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name}),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": TEST_AUTH_TOKEN,
+            },
+        )
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    def test_create_data_source_no_category_no_name(
+        self, request_mocker: Mocker
+    ):
+        """Test creating a data source with invalid params
+
+        Args:
+            request_mocker (str): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        valid_response = {
+            "category": ["Missing data for required field."],
+            "name": ["Missing data for required field."],
+        }
+
+        response = self.test_client.post(
+            self.data_sources_api_endpoint,
+            data=json.dumps({}),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": TEST_AUTH_TOKEN,
+            },
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.json, valid_response)
