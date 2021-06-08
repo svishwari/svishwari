@@ -14,9 +14,13 @@
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
       </v-toolbar-title>
-      <!-- TODO: HUS-229, HUS-445 -->
       <template v-if="expandable">
-        <v-icon class="px-6 ml-auto">mdi-arrow-expand</v-icon>
+        <v-icon
+          color="primary"
+          @click="onExpandIconClick"
+          class="cursor-pointer px-6 ml-auto"
+          >{{ expanded ? "mdi-arrow-collapse" : "mdi-arrow-expand" }}</v-icon
+        >
       </template>
     </v-toolbar>
 
@@ -44,6 +48,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
+      expanded: false,
     }
   },
 
@@ -99,6 +104,13 @@ export default {
       }
     },
   },
+
+  methods: {
+    onExpandIconClick: function () {
+      this.expanded = !this.expanded
+      this.$emit("iconToggle", this.expanded)
+    },
+  },
 }
 </script>
 
@@ -109,5 +121,8 @@ export default {
 .drawer-content {
   height: calc(100% - 130px);
   overflow-y: auto;
+}
+::v-deep .v-icon.v-icon::after {
+  content: none;
 }
 </style>
