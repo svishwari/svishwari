@@ -1,11 +1,11 @@
 <template>
   <v-range-slider
+    class="hux-range-slider"
     :max="max"
     :min="min"
     :step="step"
     thumb-label="always"
     v-model="localValue"
-    class="huxSlider"
     @end="onFinalValue"
   ></v-range-slider>
 </template>
@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.huxSlider {
+.hux-range-slider {
   ::v-deep .v-input__control {
     .v-input__slot {
       .v-slider__track-container {

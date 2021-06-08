@@ -1,13 +1,12 @@
 <template>
   <div class="hux-v-slider">
     <v-slider
-      v-model="currentValue"
+      always-dirty
       :color="currentColor"
       :readonly="readOnly"
       :track-color="currentColor"
-      :min="minRange"
-      :max="maxRange"
-      always-dirty
+      v-model="currentValue"
+      @end="onFinalValue"
     >
       <template v-slot:append>
         <span
@@ -23,23 +22,15 @@
 </template>
 
 <script>
+import colors from "../../plugins/colors"
+
 export default {
-  name: "hux-slider",
+  name: "score-slider",
   props: {
-    inputValue: {
-      type: Number,
+    value: {
+      type: Number | String,
       required: true,
-      default: 30,
-    },
-    minRange: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    maxRange: {
-      type: Number,
-      required: false,
-      default: 100,
+      default: 50,
     },
     readOnly: {
       type: Boolean,
@@ -49,26 +40,13 @@ export default {
   },
   data() {
     return {
-      currentValue: this.inputValue,
-      colorCombination: [
-        "#ec5b54",
-        "#f76d48",
-        "#fe823b",
-        "#ff972d",
-        "#ffae1d",
-        "#f6b810",
-        "#ecc103",
-        "#e0ca00",
-        "#c9c703",
-        "#b3c40f",
-        "#9cc01a",
-        "#86bc25",
-      ],
+      currentValue: this.value,
+      colorCombination: colors.gradientSliderColors,
     }
   },
 
   computed: {
-    currentColor() {
+    currentColor: function () {
       if (this.currentValue < 8) return this.colorCombination[0]
       if (this.currentValue < 16) return this.colorCombination[1]
       if (this.currentValue < 24) return this.colorCombination[2]
@@ -85,7 +63,11 @@ export default {
     },
   },
 
-  methods: {},
+  methods: {
+    onFinalValue: function (value) {
+      this.$emit("onFinalValue", value)
+    },
+  },
 }
 </script>
 

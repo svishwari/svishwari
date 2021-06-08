@@ -413,7 +413,7 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Hux Slider</v-subheader>
-    <hux-slider :inputValue="50"></hux-slider>
+    <score-slider value="36"></score-slider>
     <v-divider class="mt-10" />
 
     <v-subheader>Logos</v-subheader>
@@ -469,7 +469,7 @@ import FormSteps from "@/components/common/FormSteps"
 import FormStep from "@/components/common/FormStep"
 import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
-import HuxSlider from "@/components/common/HuxSlider"
+import ScoreSlider from "@/components/common/ScoreSlider"
 import { generateColor } from "@/utils"
 
 export default {
@@ -497,7 +497,7 @@ export default {
     DataCards,
     FormSteps,
     FormStep,
-    HuxSlider,
+    ScoreSlider,
   },
   methods: {
     onupdatelabelText(newValue) {
