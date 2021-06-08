@@ -11,6 +11,7 @@
         :sort-by="sortColumn"
         sort-desc
         :height="height"
+        :items-per-page="100"
       >
         <template v-slot:body="{ items }" v-if="!nested">
           <tbody class="data-table-body">
