@@ -40,7 +40,7 @@ export default {
         name: "",
         description: "",
         audiences: {},
-        delivery_schedule: "null",
+        delivery_schedule: 0,
       },
 
       loading: false,

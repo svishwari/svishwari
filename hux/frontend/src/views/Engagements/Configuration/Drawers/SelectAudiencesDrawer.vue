@@ -1,0 +1,157 @@
+<template>
+  <Drawer v-model="localToggle">
+    <template #header-left>
+      <h3 class="text-h3">Add audiences to this engagement</h3>
+    </template>
+
+    <template #default>
+      <v-progress-linear :active="loading" :indeterminate="loading" />
+
+      <div class="pa-8">
+        <v-btn tile color="primary" class="mb-4" @click="$emit('onAdd')">
+          <v-icon>mdi-plus</v-icon>
+          New audience
+        </v-btn>
+
+        <DataCards
+          :items="audiences"
+          :fields="[
+            {
+              key: 'name',
+              label: 'Name',
+              sortable: true,
+            },
+            {
+              key: 'size',
+              label: 'Target size',
+              sortable: true,
+            },
+            {
+              key: 'manage',
+              sortable: false,
+            },
+          ]"
+        >
+          <template #field:size="row">
+            <Tooltip>
+              <template #label-content>
+                {{ row.value | Numeric(true, true) | Empty }}
+              </template>
+              <template #hover-content>
+                {{
+                  row.value | Numeric | Empty("Size unavailable at this time")
+                }}
+              </template>
+            </Tooltip>
+          </template>
+
+          <template #field:manage="row">
+            <div class="d-flex align-center justify-end">
+              <v-btn
+                v-if="isAdded(row.item)"
+                color="secondary"
+                width="100"
+                @click="remove(row.item)"
+              >
+                <v-icon small class="mr-1">mdi-check</v-icon>
+                Added
+              </v-btn>
+              <v-btn
+                v-else
+                outlined
+                color="lightGrey"
+                width="100"
+                @click="add(row.item)"
+              >
+                <span class="darkGrey--text">Add</span>
+              </v-btn>
+            </div>
+          </template>
+        </DataCards>
+      </div>
+    </template>
+
+    <template #footer-left> {{ audiences.length }} results </template>
+  </Drawer>
+</template>
+
+<script>
+import { mapGetters, mapActions } from "vuex"
+import DataCards from "@/components/common/DataCards.vue"
+import Drawer from "@/components/common/Drawer.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
+export default {
+  name: "AudiencesDrawer",
+
+  components: {
+    DataCards,
+    Drawer,
+    Tooltip,
+  },
+
+  props: {
+    value: {
+      type: Object,
+      required: true,
+    },
+
+    toggle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      localToggle: false,
+      loading: false,
+    }
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
+    },
+  },
+
+  computed: {
+    ...mapGetters({
+      audiences: "audiences/list",
+    }),
+  },
+
+  methods: {
+    ...mapActions({
+      getAudiences: "audiences/getAll",
+    }),
+
+    isAdded(audience) {
+      return Boolean(this.value[audience.id])
+    },
+
+    add(audience) {
+      this.$set(this.value, audience.id, {
+        id: audience.id,
+        name: audience.name,
+        size: audience.size,
+      })
+    },
+
+    remove(audience) {
+      this.$delete(this.value, audience.id)
+    },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getAudiences()
+    this.loading = false
+  },
+}
+</script>
