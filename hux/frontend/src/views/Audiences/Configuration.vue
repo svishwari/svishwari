@@ -413,7 +413,7 @@ export default {
     onSelectDestination(index, selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
-        if (selected && selected.type === "SFMC") {
+        if (selected && selected.type === "salesforce") {
           if (!this.isDestinationAddedOnDrawer(selected)) {
             this.destinationDrawer.selectedDestination.push(selected)
           }
@@ -643,7 +643,7 @@ export default {
       box-shadow: none !important;
     }
     .drawer-back {
-      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+       @extend .box-shadow-25;
     }
   }
 }
