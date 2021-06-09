@@ -15,7 +15,7 @@
       </v-card-text>
     </v-card>
     <v-card minHeight="145px" flat class="mt-6 card-style">
-      <v-card-title class="d-flex justify-space-between pb-6">
+      <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
           <icon
             type="audiences"
@@ -25,7 +25,7 @@
           /><span class="text-h5">Audience performance</span>
         </div>
       </v-card-title>
-      <v-card-text class="pl-6 pr-6 pb-6 mt-6">
+      <v-card-text class="pl-6 pb-6 mt-0 pr-0">
         <div
           class="blank-section rounded-sm pa-5"
           v-if="campaignData.length == 0"
@@ -129,16 +129,16 @@
                       >{{ item[header.value] | Currency }}</span
                     >
                     <span v-if="header.value == 'click_through_rate'">{{
-                      item[header.value] | Numeric(true, false)
+                      item[header.value] | Numeric(true, false, "%")
                     }}</span>
                     <span v-if="header.value == 'cost_per_action'">{{
-                      item[header.value] | Numeric(true, false)
+                      item[header.value] | Currency
                     }}</span>
                     <span v-if="header.value == 'cost_per_click'">{{
-                      item[header.value] | Numeric(true, false)
+                      item[header.value] | Currency
                     }}</span>
                     <span v-if="header.value == 'engagement_rate'">{{
-                      item[header.value] | Numeric(true, false)
+                      item[header.value] | Numeric(true, false, "%")
                     }}</span>
                   </td>
                 </template>
@@ -174,34 +174,34 @@ export default {
         {
           text: "Spend",
           value: "spend",
-          width: "92px",
+          width: "100px",
           tooltipValue:
             "CPM * Impressions / 1000 \n The amount paid to acquire the impressions served to individuals.",
         },
         {
           text: "Reach",
           value: "reach",
-          width: "92px",
+          width: "100px",
           tooltipValue:
             "Number of unique individuals that were served an impression",
         },
         {
           text: "Impressions",
           value: "impressions",
-          width: "112px",
+          width: "125px",
           tooltipValue: "Number of ads served",
         },
         {
           text: "Conversions",
           value: "conversions",
-          width: "112px",
+          width: "125px",
           tooltipValue:
             "Number of times the conversion pixel fired on a specific action (e.g. a sign up, \n purchase, etc.). ",
         },
         {
           text: "Clicks",
           value: "clicks",
-          width: "90px",
+          width: "100px",
           tooltipValue: "Number of times an ad was clicked",
         },
         { text: "Frequency", value: "frequency", width: "115px" },
@@ -233,7 +233,7 @@ export default {
         {
           text: "Engagement rate",
           value: "engagement_rate",
-          width: "150px",
+          width: "180px",
           tooltipValue: "Total Engagements / Total Followers * 100",
         },
       ],
@@ -286,22 +286,20 @@ export default {
       obj["click_through_rate"] = this.$options.filters.Numeric(
         obj["click_through_rate"],
         true,
-        false
+        false,
+        "%"
       )
-      obj["cost_per_action"] = this.$options.filters.Numeric(
-        obj["cost_per_action"],
-        true,
-        false
+      obj["cost_per_action"] = this.$options.filters.Currency(
+        obj["cost_per_action"]
       )
-      obj["cost_per_click"] = this.$options.filters.Numeric(
-        obj["cost_per_click"],
-        true,
-        false
+      obj["cost_per_click"] = this.$options.filters.Currency(
+        obj["cost_per_click"]
       )
       obj["engagement_rate"] = this.$options.filters.Numeric(
         obj["engagement_rate"],
         true,
-        false
+        false,
+        "%"
       )
 
       return obj
@@ -346,9 +344,9 @@ export default {
     .ellipsis {
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 25ch;
+      max-width: 21ch;
       display: inline-block;
-      width: 25ch;
+      width: 21ch;
       white-space: nowrap;
     }
     .v-data-table__expanded__row {
