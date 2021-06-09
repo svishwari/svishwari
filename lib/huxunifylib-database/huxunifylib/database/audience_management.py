@@ -43,7 +43,7 @@ def create_audience(
             corresponding ingestion job. Defaults to None.
 
     Returns:
-        Union[dict,None]: MongoDB audience doc or None
+        Union[dict, None]: MongoDB audience doc or None
     """
 
     ret_doc = None
@@ -353,7 +353,7 @@ def get_audience_config(
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        Union[dict,None]: Configuration of the audience in Mongo DB or None
+        Union[dict, None]: Configuration of the audience in Mongo DB or None
 
     """
 
@@ -491,7 +491,7 @@ def append_audience_insights(
             breakdowns should be calculated.
 
     Returns:
-        Union[dict,None]: Stored audience insights or None
+        Union[dict, None]: Stored audience insights or None
 
     """
 
@@ -585,7 +585,7 @@ def refresh_audience_insights(
             breakdowns should be calculated.
 
     Returns:
-        Union[dict,None]: Refreshed audience insights or None.
+        Union[dict, None]: Refreshed audience insights or None.
     """
 
     doc = None
@@ -696,7 +696,7 @@ def update_audience_filters(
             breakdowns should be calculated.
 
     Returns:
-        Union[dict,None]: Updated audience configuration dict or None
+        Union[dict, None]: Updated audience configuration dict or None
 
     """
     doc = None
@@ -874,7 +874,7 @@ def get_all_audiences(
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[dict,None]: A list of all audience configuration dicts or None
+        Union[dict, None]: A list of all audience configuration dicts or None
 
     """
 

@@ -104,7 +104,7 @@ def get_engagements(database: DatabaseClient) -> Union[list, None]:
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list,None]: List of all engagement documents.
+        Union[list, None]: List of all engagement documents.
 
     """
 
@@ -134,7 +134,7 @@ def get_engagement(
         engagement_id (ObjectId): ObjectId of the engagement
 
     Returns:
-        Union[dict,None]: Dict of an engagement.
+        Union[dict, None]: Dict of an engagement.
 
     """
 
@@ -215,7 +215,7 @@ def update_engagement(
         delivery_schedule (dict): delivery schedule dict.
 
     Returns:
-        Union[dict,None]: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     if audiences:
@@ -276,7 +276,7 @@ def remove_audiences_from_engagement(
         audience_ids (list): list of audience ObjectIds.
 
     Returns:
-        Union[dict,None]: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -331,7 +331,7 @@ def append_audiences_to_engagement(
         audiences (list): list of audiences.
 
     Returns:
-        Union[dict,None]: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -399,7 +399,7 @@ def get_engagements_by_audience(
         audience_id (ObjectId): ObjectId of an audience
 
     Returns:
-        Union[list,None]: list of engagements.
+        Union[list, None]: list of engagements.
 
     """
 

@@ -53,7 +53,7 @@ def set_delivery_platform(
             This is Optional.
 
     Returns:
-        Union[dict,None]: MongoDB audience doc.
+        Union[dict, None]: MongoDB audience doc.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -128,7 +128,7 @@ def get_delivery_platforms_by_id(
             List of Delivery platform object ids.
 
     Returns:
-        Union[list,None]: Delivery platform configuration.
+        Union[list, None]: Delivery platform configuration.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -162,7 +162,7 @@ def get_delivery_platform(
         delivery_platform_id (ObjectId): The MongoDB ID of the delivery platform.
 
     Returns:
-        Union[dict,None]: Delivery platform configuration.
+        Union[dict, None]: Delivery platform configuration.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -191,7 +191,7 @@ def get_all_delivery_platforms(
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list,None]: A list of all delivery platform configuration dicts.
+        Union[list, None]: A list of all delivery platform configuration dicts.
     """
 
     doc = None
@@ -225,7 +225,7 @@ def set_connection_status(
             In progress, Failed, or Succeeded.
 
     Returns:
-        Union[dict,None]: Updated delivery platform configuration.
+        Union[dict, None]: Updated delivery platform configuration.
     """
 
     doc = None
@@ -260,7 +260,7 @@ def get_connection_status(
           platform.
 
     Returns:
-        Union[str,None]: Status of delivery platform connection. Can be Pending,
+        Union[str, None]: Status of delivery platform connection. Can be Pending,
           In Progress, Failed, or Succeeded.
     """
 
@@ -268,9 +268,8 @@ def get_connection_status(
 
     doc = get_delivery_platform(database, delivery_platform_id)
 
-    if doc:
-        if c.DELIVERY_PLATFORM_STATUS in doc:
-            connection_status = doc[c.DELIVERY_PLATFORM_STATUS]
+    if doc is not None and c.DELIVERY_PLATFORM_STATUS in doc:
+        connection_status = doc[c.DELIVERY_PLATFORM_STATUS]
 
     return connection_status
 
@@ -292,7 +291,7 @@ def set_authentication_details(
         authentication_details (dict): A dict containing delivery platform authentication details.
 
     Returns:
-        Union[dict,None]: Updated delivery platform configuration.
+        Union[dict, None]: Updated delivery platform configuration.
     """
 
     doc = None
@@ -327,15 +326,14 @@ def get_authentication_details(
           platform.
 
     Returns:
-        Union[dict,None]: Delivery authentication details.
+        Union[dict, None]: Delivery authentication details.
     """
 
     auth_dict = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-    if doc:
-        if c.DELIVERY_PLATFORM_AUTH in doc:
-            auth_dict = doc[c.DELIVERY_PLATFORM_AUTH]
+    if doc is not None and c.DELIVERY_PLATFORM_AUTH in doc:
+        auth_dict = doc[c.DELIVERY_PLATFORM_AUTH]
 
     return auth_dict
 
@@ -357,7 +355,7 @@ def set_name(
         name (str): Delivery platform name.
 
     Returns:
-        Union[dict,None]: Updated delivery platform configuration.
+        Union[dict, None]: Updated delivery platform configuration.
     """
 
     doc = None
@@ -378,9 +376,8 @@ def set_name(
             database,
             delivery_platform_id,
         )
-        if cur_doc:
-            if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
-                raise de.DuplicateName(name)
+        if cur_doc is not None and cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+            raise de.DuplicateName(name)
 
     update_doc = {
         c.DELIVERY_PLATFORM_NAME: name,
@@ -411,15 +408,14 @@ def get_name(
           platform.
 
     Returns:
-        Union[str,None]: Delivery platform name.
+        Union[str, None]: Delivery platform name.
     """
 
     name = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-    if doc:
-        if c.DELIVERY_PLATFORM_NAME in doc:
-            name = doc[c.DELIVERY_PLATFORM_NAME]
+    if doc is not None and c.DELIVERY_PLATFORM_NAME in doc:
+        name = doc[c.DELIVERY_PLATFORM_NAME]
 
     return name
 
@@ -441,7 +437,7 @@ def set_platform_type(
         delivery_platform_type (str): Delivery platform type.
 
     Returns:
-        Union[dict,None]: Updated delivery platform configuration.
+        Union[dict, None]: Updated delivery platform configuration.
     """
 
     if delivery_platform_type not in [
@@ -485,15 +481,14 @@ def get_platform_type(
           platform.
 
     Returns:
-        Union[str,None]: Delivery platform type.
+        Union[str, None]: Delivery platform type.
     """
 
     delivery_platform_type = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-    if doc:
-        if c.DELIVERY_PLATFORM_TYPE in doc:
-            delivery_platform_type = doc[c.DELIVERY_PLATFORM_TYPE]
+    if doc is not None and c.DELIVERY_PLATFORM_TYPE in doc:
+        delivery_platform_type = doc[c.DELIVERY_PLATFORM_TYPE]
 
     return delivery_platform_type
 
@@ -523,7 +518,7 @@ def update_delivery_platform(
         user_id (ObjectId): User id of user updating delivery platform. This is Optional.
 
     Returns:
-        Union[dict,None]: Updated delivery platform configuration.
+        Union[dict, None]: Updated delivery platform configuration.
     """
 
     if delivery_platform_type not in [
@@ -549,9 +544,8 @@ def update_delivery_platform(
 
     if exists_flag:
         cur_doc = get_delivery_platform(database, delivery_platform_id)
-        if cur_doc:
-            if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
-                raise de.DuplicateName(name)
+        if cur_doc is not None and cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+            raise de.DuplicateName(name)
 
     update_doc: dict = {
         c.DELIVERY_PLATFORM_NAME: name,
@@ -618,7 +612,7 @@ def create_delivery_platform_lookalike_audience(
         country (str): Country of the lookalike audience.
 
     Returns:
-        Union[dict,None]: The lookalike audience configuration.
+        Union[dict, None]: The lookalike audience configuration.
     """
 
     ret_doc = None
@@ -698,7 +692,7 @@ def get_delivery_platform_lookalike_audience(
         lookalike_audience_id (ObjectId): The Mongo ID of lookalike audience.
 
     Returns:
-        Union[dict,None]: The lookalike audience configuration.
+        Union[dict, None]: The lookalike audience configuration.
     """
 
     ret_doc = None
@@ -728,7 +722,7 @@ def get_all_delivery_platform_lookalike_audiences(
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list,None]: List of all lookalike audience configurations.
+        Union[list, None]: List of all lookalike audience configurations.
 
     """
 
@@ -761,7 +755,7 @@ def update_lookalike_audience_name(
         name (str): The new name of the lookalike audience.
 
     Returns:
-        Union[dict,None]: The updated lookalike audience configuration.
+        Union[dict, None]: The updated lookalike audience configuration.
     """
 
     ret_doc = None
@@ -782,9 +776,8 @@ def update_lookalike_audience_name(
             database,
             lookalike_audience_id,
         )
-        if cur_doc:
-            if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
-                raise de.DuplicateName(name)
+        if cur_doc is not None and cur_doc[c.LOOKALIKE_AUD_NAME] != name:
+            raise de.DuplicateName(name)
 
     update_doc = {
         c.LOOKALIKE_AUD_NAME: name,
@@ -821,7 +814,7 @@ def update_lookalike_audience_size_percentage(
         audience_size_percentage (float): The new size percentage of the lookalike audience.
 
     Returns:
-        Union[dict,None]: The updated lookalike audience configuration.
+        Union[dict, None]: The updated lookalike audience configuration.
     """
 
     ret_doc = None
@@ -867,7 +860,7 @@ def update_lookalike_audience(
         country (str): Updated lookalike audience country.
 
     Returns:
-        Union[dict,None]: The updated lookalike audience configuration.
+        Union[dict, None]: The updated lookalike audience configuration.
     """
     ret_doc = None
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -938,7 +931,7 @@ def set_delivery_job(
         delivery_platform_generic_campaigns (list): generic campaign IDs.
         engagement_id (ObjectId): Engagement ID.
     Returns:
-        Union[dict,None]: Delivery job configuration.
+        Union[dict, None]: Delivery job configuration.
 
     """
 
@@ -1008,7 +1001,7 @@ def get_delivery_job(
         engagement_id (ObjectId): Engagement id.
 
     Returns:
-        Union[dict,None]: Delivery job configuration.
+        Union[dict, None]: Delivery job configuration.
 
     """
 
@@ -1044,7 +1037,7 @@ def set_delivery_job_status(
             In Progress, Failed, or Succeeded.
 
     Returns:
-        Union[dict,None]: Updated delivery job configuration.
+        Union[dict, None]: Updated delivery job configuration.
     """
 
     doc = None
@@ -1085,7 +1078,7 @@ def get_delivery_job_status(
           job.
 
     Returns:
-        Union[str,None]: Status of delivery job. Can be Pending,
+        Union[str, None]: Status of delivery job. Can be Pending,
           In Progress, Failed, or Succeeded.
     """
 
@@ -1116,7 +1109,7 @@ def set_delivery_job_audience_size(
         audience_size (int): Size of audience in delivery platform.
 
     Returns:
-        Union[dict,None]: Stored delivery job configuration.
+        Union[dict, None]: Stored delivery job configuration.
 
     """
 
@@ -1160,7 +1153,7 @@ def set_delivery_job_lookalike_audiences(
         lookalike_audiences (list): List of lookalike audiences.
 
     Returns:
-        Union[dict,None]: Stored delivery job configuration.
+        Union[dict, None]: Stored delivery job configuration.
 
     """
 
@@ -1197,7 +1190,7 @@ def get_delivery_job_audience_size(
         delivery_job_id (ObjectId): MongoDB document ID of delivery job.
 
     Returns:
-        Union[int,None]: Delivery platform audience size.
+        Union[int, None]: Delivery platform audience size.
 
     """
 
@@ -1275,7 +1268,7 @@ def get_audience_recent_delivery_job(
         delivery_platform_id (ObjectId): The MongoDB ID of a delivery platform.
 
     Returns:
-        Union[dict,None]: Most recent delivery job stored associated
+        Union[dict, None]: Most recent delivery job stored associated
         with the audience and delivery platform.
     """
 
@@ -1361,7 +1354,7 @@ def favorite_delivery_platform(
         delivery_platform_id (ObjectId): The ID of delivery platform.
 
     Returns:
-        Union[dict,None]: Updated delivery platform configuration.
+        Union[dict, None]: Updated delivery platform configuration.
     """
 
     doc = None
@@ -1401,7 +1394,7 @@ def unfavorite_delivery_platform(
         delivery_platform_id (ObjectId): The ID of delivery platform.
 
     Returns:
-        Union[dict,None]: Updated delivery platform configuration.
+        Union[dict, None]: Updated delivery platform configuration.
     """
 
     doc = None
@@ -1441,7 +1434,7 @@ def favorite_lookalike_audience(
         lookalike_audience_id (ObjectId): The ID of lookalike audience.
 
     Returns:
-        Union[dict,None]: The updated lookalike audience configuration.
+        Union[dict, None]: The updated lookalike audience configuration.
     """
 
     ret_doc = None
@@ -1481,7 +1474,7 @@ def unfavorite_lookalike_audience(
         lookalike_audience_id (ObjectId): The ID of lookalike audience.
 
     Returns:
-        Union[dict,None]: The updated lookalike audience configuration.
+        Union[dict, None]: The updated lookalike audience configuration.
     """
 
     ret_doc = None
@@ -1592,7 +1585,7 @@ def set_performance_metrics(
         end_time (datetime): End time of metrics.
 
     Returns:
-        Union[dict,None]: MongoDB metrics doc.
+        Union[dict, None]: MongoDB metrics doc.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1656,7 +1649,7 @@ def get_performance_metrics(
         de.InvalidID: Invalid ID for delivery job.
 
     Returns:
-        Union[list,None]: list of metrics.
+        Union[list, None]: list of metrics.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1708,7 +1701,7 @@ def _set_performance_metrics_status(
         performance_metrics_status (str): performance metrics status.
 
     Returns:
-        Union[dict,None]: performance metrics document.
+        Union[dict, None]: performance metrics document.
     """
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]

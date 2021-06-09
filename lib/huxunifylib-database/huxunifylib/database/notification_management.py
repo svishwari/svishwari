@@ -28,7 +28,7 @@ def create_notification(
         description (str): description of notification.
 
     Returns:
-        Union[dict,None]: MongoDB document for a notification.
+        Union[dict, None]: MongoDB document for a notification.
 
     """
 
@@ -82,7 +82,7 @@ def get_notifications(
         batch_number (int): Number of which batch should be returned
 
     Returns:
-        Union[list,None]: MongoDB document for a notification.
+        Union[list, None]: MongoDB document for a notification.
 
     """
     # get collection

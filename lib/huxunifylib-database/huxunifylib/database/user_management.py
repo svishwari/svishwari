@@ -43,7 +43,7 @@ def set_user(
         profile_photo (str): a profile photo url for the user, defaults to an empty string.
 
     Returns:
-        Union[dict,None]: MongoDB document for a user.
+        Union[dict, None]: MongoDB document for a user.
 
     """
 
@@ -114,7 +114,7 @@ def get_user(database: DatabaseClient, okta_id: str) -> Union[dict, None]:
         okta_id (str): id derived from okta authentication.
 
     Returns:
-        Union[dict,None]: MongoDB document for a user.
+        Union[dict, None]: MongoDB document for a user.
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][c.USER_COLLECTION]
@@ -193,7 +193,7 @@ def update_user(
         update_doc (dict): Dict of key values to update.
 
     Returns:
-        Union[dict,None]: Updated MongoDB document for a user.
+        Union[dict, None]: Updated MongoDB document for a user.
 
     """
 
@@ -257,7 +257,7 @@ def manage_user_favorites(
             defaults to false.
 
     Returns:
-        Union[dict,None]: Updated MongoDB document for a user.
+        Union[dict, None]: Updated MongoDB document for a user.
 
     """
     component_name = component_name.lower()
@@ -324,7 +324,7 @@ def manage_user_dashboard_config(
         delete_flag (bool): flag to delete the user config, defaults to false.
 
     Returns:
-        Union[dict,None]: Updated MongoDB document for a user.
+        Union[dict, None]: Updated MongoDB document for a user.
 
     """
 

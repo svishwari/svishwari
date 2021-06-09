@@ -38,7 +38,7 @@ def create_audience(
         user_id (ObjectId): Object id of user creating / updating the audience
 
     Returns:
-        Union[list,None]: MongoDB audience doc.
+        Union[list, None]: MongoDB audience doc.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -118,7 +118,7 @@ def get_all_audiences(
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list,None]: A list of all audiences.
+        Union[list, None]: A list of all audiences.
 
     """
 
@@ -157,7 +157,7 @@ def update_audience(
             ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
     Returns:
-        Union[dict,None]: Updated audience configuration dict.
+        Union[dict, None]: Updated audience configuration dict.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]

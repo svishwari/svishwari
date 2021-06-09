@@ -35,7 +35,7 @@ def create_data_source(
         source_type (str): type of the data source.
         status (str): status of the data source.
     Returns:
-        Union[dict,None]: MongoDB document for a data source or None
+        Union[dict, None]: MongoDB document for a data source or None
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
@@ -106,7 +106,7 @@ def get_data_source(
         data_source_id (ObjectId): data source id.
 
     Returns:
-        Union[dict,None]: MongoDB document for a data source or None
+        Union[dict, None]: MongoDB document for a data source or None
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
