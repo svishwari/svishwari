@@ -12,12 +12,13 @@
         sort-desc
         :height="height"
         :expanded.sync="expanded"
-        :show-expand="nested"
         :items-per-page="-1"
         :hide-default-header="!showHeader"
         @click:row="expandRow"
-        class="class"
       >
+        <template #item.name="{ item, isExpanded }" v-if="nested">
+          <slot name="item-name" :item="item" :isExpanded="isExpanded" />
+        </template>
         <template #item.data-table-expand="{ expand, isExpanded }">
           <v-icon
             @click="expand(!isExpanded)"
@@ -94,10 +95,6 @@ export default {
       type: String,
       required: false,
       default: "name",
-    },
-    class: {
-      type: String,
-      required: false,
     },
   },
   data() {

@@ -34,12 +34,47 @@
           destination.
         </div>
         <!-- Campaign Nested Table -->
-        <hux-data-table
-          :headers="AdsHeaders"
-          :dataItems="data"
-          nested
-          class="parent-table"
-        >
+        <hux-data-table :headers="AdsHeaders" :dataItems="data" nested>
+          <template #item-name="{ item, isExpanded }">
+            <v-icon :class="{ 'normal-icon': isExpanded }"
+              >mdi-chevron-right</v-icon
+            >
+            <tooltip>
+              <template slot="label-content">
+                <!-- TODO Route Link to Audience Insight Page -->
+                <router-link to="#" class="text-decoration-none" append
+                  >{{ item.name }}
+                </router-link></template
+              >
+              <template slot="hover-content">
+                {{ item.name }}
+              </template>
+            </tooltip>
+          </template>
+          <template #row-item="{ headers, item, isExpanded }">
+            <td
+              v-for="header in headers"
+              v-bind:key="header.value"
+              :style="{ width: header.width }"
+            >
+              <span v-if="header.value == 'name'">
+                <v-icon :class="{ 'normal-icon': isExpanded }">
+                  mdi-chevron-right
+                </v-icon>
+                <tooltip>
+                  <template slot="label-content">
+                    {{ item[header.value] }}
+                  </template>
+                  <template slot="hover-content">
+                    {{ item[header.value] }}
+                  </template>
+                </tooltip>
+              </span>
+              <span v-else>
+                {{ item[header.value] }}
+              </span>
+            </td>
+          </template>
           <template #expanded-row="{ headers, item }">
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
@@ -47,7 +82,6 @@
                 :dataItems="item.campaigns"
                 :showHeader="false"
                 v-if="item"
-                class="child-table"
               >
                 <template v-slot:row-item="{ item }">
                   <td
@@ -58,7 +92,14 @@
                     <span v-if="header.value == 'name'">
                       <tooltip>
                         <template slot="label-content">
-                          {{ item[header.value] }}
+                          <logo
+                            :type="logoType(item[header.value])"
+                            :size="18"
+                            class="mr-3"
+                          />
+                          <span class="text--neroblack ellipsis">
+                            {{ item[header.value] }}
+                          </span>
                         </template>
                         <template slot="hover-content">
                           {{ item[header.value] }}
@@ -115,6 +156,7 @@ import HuxDataTable from "./common/dataTable/HuxDataTable.vue"
 import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "./common/Tooltip.vue"
 import Icon from "./common/Icon.vue"
+import Logo from "./common/Logo.vue"
 export default {
   name: "CampaignSummary",
   components: {
@@ -122,36 +164,37 @@ export default {
     MetricCard,
     Tooltip,
     Icon,
+    Logo,
   },
   data() {
     return {
       expand: [],
       AdsHeaders: [
-        { text: "Audiences", value: "name", width: "170px" },
+        { text: "Audiences", value: "name", width: "278px" },
         {
           text: "Spend",
           value: "spend",
-          width: "90px",
+          width: "92px",
           tooltipValue:
             "CPM * Impressions / 1000 \n The amount paid to acquire the impressions served to individuals.",
         },
         {
           text: "Reach",
           value: "reach",
-          width: "90px",
+          width: "92px",
           tooltipValue:
             "Number of unique individuals that were served an impression",
         },
         {
           text: "Impressions",
           value: "impressions",
-          width: "125px",
+          width: "112px",
           tooltipValue: "Number of ads served",
         },
         {
           text: "Conversions",
           value: "conversions",
-          width: "125px",
+          width: "112px",
           tooltipValue:
             "Number of times the conversion pixel fired on a specific action (e.g. a sign up, \n purchase, etc.). ",
         },
@@ -214,6 +257,9 @@ export default {
     },
   },
   methods: {
+    logoType(name) {
+      return name.split(" ")[0].toLowerCase()
+    },
     formatData(item) {
       const obj = Object.assign({}, item)
       obj["name"] = this.$options.filters.TitleCase(obj["name"])
@@ -266,23 +312,65 @@ export default {
 
 <style lang="scss" scoped>
 .hux-data-table {
-  margin-left: -20px;
   ::v-deep table {
     table-layout: fixed !important;
-    thead {
-      th:first-child {
-        visibility: hidden;
+    .mdi-chevron-right {
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+    }
+    .v-data-table-header {
+      th {
+        background: #ecf4f9;
+        &:first-child {
+          border-radius: 12px 0px 0px 0px;
+        }
+        &:last-child {
+          border-radius: 0px 12px 0px 0px;
+        }
+        .v-data-table-header__icon {
+          color: var(--v-neroBlack-base) !important;
+        }
+      }
+      border-radius: 12px 12px 0px 0px;
+    }
+    tr {
+      &:hover {
+        background: var(--v-aliceBlue-base) !important;
+      }
+      height: 64px;
+      td {
+        font-size: 14px !important;
+        line-height: 22px;
+        color: var(--v-neroBlack-base);
       }
     }
-    .v-data-table__expand-icon {
-      left: 15px;
-      transform: rotate(-90deg);
-      &.v-data-table__expand-icon--active {
-        transform: rotate(0deg);
+    .ellipsis {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 25ch;
+      display: inline-block;
+      width: 25ch;
+      white-space: nowrap;
+    }
+    .v-data-table__expanded__row {
+      background: var(--v-aliceBlue-base);
+      .mdi-chevron-right {
+        transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -webkit-transform: rotate(90deg);
       }
     }
-    .child-table {
-      margin-left: 20px;
+  }
+  .child {
+    background: var(--v-background-base);
+    ::v-deep table {
+      background: inherit;
+      tbody {
+        td {
+          &:first-child {
+            padding-left: 45px;
+          }
+        }
+      }
     }
   }
 }

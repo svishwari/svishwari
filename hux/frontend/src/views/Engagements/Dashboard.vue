@@ -386,7 +386,7 @@ export default {
                 engagement_rate: 0.5601,
               },
               {
-                name: "Salesforce Marketing Cloud Marketing Cloud",
+                name: "Salesforce Marketing Cloud",
                 is_mapped: true,
                 spend: 2000000,
                 reach: 500000,
@@ -401,7 +401,7 @@ export default {
                 engagement_rate: 0.5601,
               },
               {
-                name: "Google Ads",
+                name: "Google-Ads",
                 is_mapped: true,
                 spend: 2000000,
                 reach: 500000,
