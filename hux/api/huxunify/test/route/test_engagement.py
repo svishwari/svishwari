@@ -41,7 +41,7 @@ class TestEngagementMetricsDisplayAds(unittest.TestCase):
     Purpose of this class is to test Engagement Metrics of Display Ads
     """
 
-    def setUp(self):  # pylint: disable=arguments-differ
+    def setUp(self):
         """
         Sets up Test Client
 
@@ -54,8 +54,10 @@ class TestEngagementMetricsDisplayAds(unittest.TestCase):
             f"{self.config.OKTA_CLIENT_ID}"
         )
         self.app = create_app().test_client()
+        self.engagement_id = "engagement-sample"
         self.display_ads_engagement_metrics_endpoint = (
             f"/api/v1/{c.ENGAGEMENT_TAG}/"
+            f"{self.engagement_id}/"
             f"{c.AUDIENCE_PERFORMANCE}/"
             f"{c.DISPLAY_ADS}"
         )
@@ -82,6 +84,12 @@ class TestEngagementMetricsDisplayAds(unittest.TestCase):
         """
         It validates the schema for Display Ads Summary
         Schema Name: DisplayAdsSummary
+
+        Args:
+            request_mocker: Mocker object
+
+        Returns:
+            None
         """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
@@ -102,6 +110,12 @@ class TestEngagementMetricsDisplayAds(unittest.TestCase):
         It validates the schema for Individual Audience
         Display Ads Performance Summary
         Schema Name: DispAdIndividualAudienceSummary
+
+        Args:
+            request_mocker: Mocker object
+
+        Returns:
+            None
         """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
@@ -124,7 +138,7 @@ class TestEngagementMetricsEmail(unittest.TestCase):
     Purpose of this class is to test Engagement Metrics of Email
     """
 
-    def setUp(self):  # pylint: disable=arguments-differ
+    def setUp(self):
         """
         Sets up Test Client
 
@@ -137,8 +151,11 @@ class TestEngagementMetricsEmail(unittest.TestCase):
             f"{self.config.OKTA_CLIENT_ID}"
         )
         self.app = create_app().test_client()
+
+        self.engagement_id = "engagement_sample_id"
         self.email_engagement_metrics_endpoint = (
             f"/api/v1/{c.ENGAGEMENT_TAG}/"
+            f"{self.engagement_id}/"
             f"{c.AUDIENCE_PERFORMANCE}/"
             f"{c.EMAIL}"
         )
@@ -148,10 +165,11 @@ class TestEngagementMetricsEmail(unittest.TestCase):
         """
         Utility Function to Validate the Schema with respect to Response
 
-        Args:schema: Marshmallow Schema
-            response:json response
+        Args:
+             schema: Marshmallow Schema
+             response:json response
 
-        Return: Boolean
+        Return: boolean
         """
         try:
             schema.load(data=response)
@@ -164,6 +182,12 @@ class TestEngagementMetricsEmail(unittest.TestCase):
         """
         It validates the schema for Email Summary
         Schema Name: EmailSummary
+
+        Args:
+            request_mocker: Mocker object
+
+        Returns:
+            None
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
@@ -182,6 +206,12 @@ class TestEngagementMetricsEmail(unittest.TestCase):
         """
         It validates the schema for Individual Audience Display Ads Performance Summary
         Schema Name: EmailIndividualAudienceSummary
+
+        Args:
+            request_mocker: Mocker object
+
+        Returns:
+            None
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 

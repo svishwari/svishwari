@@ -1026,7 +1026,8 @@ class EngagementDeliverDestinationView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/"
     f"{api_c.DISPLAY_ADS}",
     "AudiencePerformanceDisplayAdsSchema",
 )
@@ -1034,6 +1035,17 @@ class EngagementMetricsDisplayAds(SwaggerView):
     """
     Display Ads Engagement Metrics
     """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "15A1-1234-21",
+        }
+    ]
 
     responses = {
         HTTPStatus.OK.value: {
@@ -1051,7 +1063,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def get(self) -> Tuple[dict, int]:
+    # pylint: disable=unused-argument
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves display ad performance metrics.
 
         ---
@@ -1059,6 +1072,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            engagement_id (str): ID of an engagement
 
         Returns:
             Tuple[dict, int]: Response of Display Ads Performance Metrics,
@@ -1137,7 +1151,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/"
     f"{api_c.EMAIL}",
     "AudiencePerformanceEmailSchema",
 )
@@ -1145,6 +1160,17 @@ class EngagementMetricsEmail(SwaggerView):
     """
     Email Engagement Metrics
     """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "15A1-1234-21",
+        }
+    ]
 
     responses = {
         HTTPStatus.OK.value: {
@@ -1160,13 +1186,15 @@ class EngagementMetricsEmail(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def get(self) -> Tuple[dict, int]:
+    # pylint: disable=unused-argument
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves email performance metrics.
         ---
         security:
             - Bearer: ["Authorization"]
 
         Args:
+            engagement_id (str): ID of an engagement
 
         Returns:
             Tuple[dict, int]: Response of Email Performance Metrics,
