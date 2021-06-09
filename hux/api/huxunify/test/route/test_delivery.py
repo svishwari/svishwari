@@ -1,29 +1,33 @@
 """
 Purpose of this file is to house all tests related to Delivery CRUD operations
 """
-import json
+
 import unittest
 from http import HTTPStatus
 from unittest import mock
 
 import mongomock
 import requests_mock
-from bson import ObjectId
-from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.delivery_platform_management import set_delivery_platform
-from huxunifylib.database.engagement_management import get_engagement, set_engagement
-from huxunifylib.database.orchestration_management import create_audience
 from requests_mock import Mocker
-from werkzeug import Response
-
-from huxunify.api.config import get_config
-from huxunify.api import constants as api_c
-from huxunify.api.schema.destinations import DestinationGetSchema
-from huxunify.api.schema.orchestration import AudienceGetSchema
-from huxunify.api.schema.engagement import AudienceEngagementSchema, EngagementPostSchema
-from huxunify.app import create_app
+from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.delivery_platform_management import (
+    set_delivery_platform,
+)
+from huxunifylib.database.engagement_management import (
+    set_engagement,
+)
+from huxunifylib.database.orchestration_management import create_audience
+
+from huxunify.api import constants as api_c
+from huxunify.api.config import get_config
+from huxunify.api.schema.destinations import DestinationGetSchema
+from huxunify.api.schema.orchestration import AudienceGetSchema
+
+from huxunify.app import create_app
+
 
 BASE_URL = "/api/vi"
 TEST_AUTH_TOKEN = "Bearer 12345678"
@@ -96,17 +100,14 @@ class TestDeliveryOperations(unittest.TestCase):
                 db_c.STATUS: db_c.ACTIVE,
                 db_c.ENABLED: True,
                 db_c.ADDED: False,
-            }
+            },
         ]
 
         self.destinations = []
         for destination in destinations:
             self.destinations.append(
                 DestinationGetSchema().dump(
-                    set_delivery_platform(
-                        self.database,
-                        **destination
-                    )
+                    set_delivery_platform(self.database, **destination)
                 )
             )
 
@@ -114,52 +115,54 @@ class TestDeliveryOperations(unittest.TestCase):
             {
                 db_c.AUDIENCE_NAME: "Test Audience",
                 "audience_filters": [],
-                api_c.DESTINATION_IDS: [d[api_c.ID] for d in self.destinations],
+                api_c.DESTINATION_IDS: [
+                    d[api_c.ID] for d in self.destinations
+                ],
             },
             {
                 db_c.AUDIENCE_NAME: "Test Audience 2",
                 "audience_filters": [],
-                api_c.DESTINATION_IDS: [d[api_c.ID] for d in self.destinations],
-            }
+                api_c.DESTINATION_IDS: [
+                    d[api_c.ID] for d in self.destinations
+                ],
+            },
         ]
 
         # TODO: Map audience key names aptly
         self.audiences = []
         for audience in audiences:
-            self.audiences.append(AudienceGetSchema().dump(
-                create_audience(
-                    self.database,
-                    **audience
+            self.audiences.append(
+                AudienceGetSchema().dump(
+                    create_audience(self.database, **audience)
                 )
-            ))
+            )
 
         engagements = [
             {
                 db_c.ENGAGEMENT_NAME: "Test Engagement 1",
                 db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
                 db_c.AUDIENCES: [],  # self.audiences,
-                db_c.USER_ID: ObjectId()
+                db_c.USER_ID: ObjectId(),
             },
             {
                 db_c.ENGAGEMENT_NAME: "Test Engagement 2",
                 db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
                 db_c.AUDIENCES: [],  # self.audiences,
-                db_c.USER_ID: ObjectId()
-            }
+                db_c.USER_ID: ObjectId(),
+            },
         ]
 
         self.engagement_ids = []
         for engagement in engagements:
             # engagement = EngagementPostSchema().dump(engagement)
             self.engagement_ids.append(
-                str(set_engagement(
-                    self.database,
-                    **engagement
-                ))
+                str(set_engagement(self.database, **engagement))
             )
 
     @requests_mock.Mocker()
-    def test_deliver_audience_for_all_engagements_valid_request(self, request_mocker: Mocker):
+    def test_deliver_audience_for_all_engagements_valid_request(
+        self, request_mocker: Mocker
+    ):
         """
         Test delivery of audience for all engagements
 
@@ -176,8 +179,8 @@ class TestDeliveryOperations(unittest.TestCase):
             f"{BASE_URL}/{api_c.AUDIENCES}/{audience_id}/deliver",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
         valid_response = {
@@ -189,7 +192,7 @@ class TestDeliveryOperations(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_all_engagements_invalid_audience_id(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of audience for all engagements it is a part of with invalid audience id
@@ -207,20 +210,18 @@ class TestDeliveryOperations(unittest.TestCase):
             f"{BASE_URL}/{api_c.AUDIENCES}/{audience_id}/deliver",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Invalid Object ID"
-        }
+        valid_response = {"message": "Invalid Object ID"}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_all_engagements_valid_object_id_not_found(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of audience for all engagements it is a part of with valid Object id
@@ -239,20 +240,18 @@ class TestDeliveryOperations(unittest.TestCase):
             f"{BASE_URL}/{api_c.AUDIENCES}/{audience_id}/deliver",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Audience does not exist."
-        }
+        valid_response = {"message": "Audience does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_an_engagement_valid_ids(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of an audience for an engagements with valid Object ids
@@ -274,8 +273,8 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
         valid_response = {
@@ -291,7 +290,7 @@ class TestDeliveryOperations(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_an_engagement_invalid_audience_id(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of an audience for an engagements with invalid audience id
@@ -313,20 +312,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Invalid Object ID"
-        }
+        valid_response = {"message": "Invalid Object ID"}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_an_engagement_invalid_engagement_id(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of an audience for an engagements with invalid engagement id
@@ -348,20 +345,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Invalid Object ID"
-        }
+        valid_response = {"message": "Invalid Object ID"}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_an_engagement_no_engagement(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of an audience for an engagements with invalid engagement id
@@ -383,20 +378,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Engagement does not exist."
-        }
+        valid_response = {"message": "Engagement does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_an_engagement_no_audience(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of an audience for an engagements with invalid engagement id
@@ -418,20 +411,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Audience does not exist."
-        }
+        valid_response = {"message": "Audience does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_destination_for_engagement_audience_valid_ids(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of a destination for an audience in engagement
@@ -457,20 +448,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Audience does not exist."
-        }
+        valid_response = {"message": "Audience does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_destination_for_engagement_audience_no_engagement(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of a destination for a non-existent engagement
@@ -496,20 +485,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Engagement does not exist."
-        }
+        valid_response = {"message": "Engagement does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_destination_for_non_existent_engagement(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of a destination for a non-existent engagement
@@ -535,20 +522,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Engagement does not exist."
-        }
+        valid_response = {"message": "Engagement does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_destination_for_engagement_w_no_audience(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of a destination for a non-existent engagement
@@ -574,20 +559,18 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Engagement has no audiences."
-        }
+        valid_response = {"message": "Engagement has no audiences."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     def test_deliver_destination_for_unattached_audience(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of a destination for a non-existent engagement
@@ -613,8 +596,8 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
         valid_response = {
@@ -626,7 +609,7 @@ class TestDeliveryOperations(unittest.TestCase):
 
     @requests_mock.Mocker()
     def test_deliver_invalid_destination_for_engagement_audience(
-            self, request_mocker: Mocker
+        self, request_mocker: Mocker
     ):
         """
         Test delivery of an invalid destination for engagement audience
@@ -652,21 +635,17 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Destination does not exist."
-        }
+        valid_response = {"message": "Destination does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
-    def test_deliver_invalid_destination_for_engagement_audience(
-            self, request_mocker: Mocker
-    ):
+    def test_deliver_destination_for_no_audience(self, request_mocker: Mocker):
         """
         Test delivery of an invalid destination for engagement audience
 
@@ -691,14 +670,11 @@ class TestDeliveryOperations(unittest.TestCase):
             ),
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json"
-            }
+                "Content-Type": "application/json",
+            },
         )
 
-        valid_response = {
-            "message": "Destination does not exist."
-        }
+        valid_response = {"message": "Audience does not exist."}
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
-
