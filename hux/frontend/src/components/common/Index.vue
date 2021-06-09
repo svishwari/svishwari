@@ -251,7 +251,13 @@
     <v-divider class="mt-10" />
 
     <v-subheader> Hux Range Slider</v-subheader>
-    <hux-slider :isRangeSlider="true" :min="0" :max="1" :step="0.05" v-model="sliderRange" />
+    <hux-slider
+      :isRangeSlider="true"
+      :min="0"
+      :max="1"
+      :step="0.05"
+      v-model="sliderRange"
+    />
 
     <v-divider class="mt-10" />
 
