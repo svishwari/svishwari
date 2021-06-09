@@ -19,7 +19,10 @@
         <template #item.name="{ item, isExpanded }" v-if="nested">
           <slot name="item-name" :item="item" :isExpanded="isExpanded" />
         </template>
-        <template #item.data-table-expand="{ expand, isExpanded }">
+        <template
+          #item.data-table-expand="{ expand, isExpanded }"
+          v-if="nested"
+        >
           <v-icon
             @click="expand(!isExpanded)"
             small
@@ -31,7 +34,7 @@
             <template>mdi-chevron-down</template>
           </v-icon>
         </template>
-        <template v-for="h in headers" v-slot:[`header.${h.value}`]>
+        <template v-for="h in headers" v-slot:[`header.${h.value}`] v-if="">
           <tooltip :key="h.value" v-if="h.tooltipValue">
             <template slot="label-content">
               {{ h.text }}
