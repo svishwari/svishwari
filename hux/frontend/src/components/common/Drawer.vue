@@ -50,7 +50,6 @@ export default {
     return {
       localDrawer: this.value,
       expanded: false,
-      drawerWidth: this.width,
     }
   },
 
@@ -98,6 +97,9 @@ export default {
         transitionDuration: this.disableTransition ? "0s" : "0.5s",
       }
     },
+    drawerWidth() {
+      return this.expanded ? this.expandedWidth : this.width
+    },
   },
 
   watch: {
@@ -118,15 +120,6 @@ export default {
     onExpandIconClick: function () {
       this.expanded = !this.expanded
       this.$emit("iconToggle", this.expanded)
-      this.changeDrawerWidth()
-    },
-
-    changeDrawerWidth() {
-      if (this.expanded) {
-        this.drawerWidth = this.expandedWidth
-      } else {
-        this.drawerWidth = this.width
-      }
     },
 
     reset() {
