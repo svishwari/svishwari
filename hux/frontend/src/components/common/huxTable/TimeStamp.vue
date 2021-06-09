@@ -1,23 +1,21 @@
 <template>
-  <v-menu bottom offset-y open-on-hover class="cursor-default">
-    <template v-slot:activator="{ on, attrs }">
-      <span v-bind="attrs" v-on="on" class="cursor-default">
-        {{ value | Date("relative") | Empty }}
-      </span>
+  <tooltip>
+    <template slot="label-content">
+      {{ value | Date("relative") | Empty }}
     </template>
-    <v-list>
-      <v-list-item>
-        <v-list-item-title class="neroBlack--text">
-          {{ value | Date | Empty }}
-        </v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+    <template slot="hover-content">
+      {{ value | Date | Empty }}
+    </template>
+  </tooltip>
 </template>
 <script>
 import Vue from "vue"
+import Tooltip from "../Tooltip.vue"
 export default Vue.extend({
   name: "TimeStamp",
+  components: {
+    Tooltip,
+  },
   props: {
     value: {
       type: String,

@@ -1,6 +1,6 @@
 <template>
   <div class="hux-data-table">
-    <div class="table-overflow" :style="{ 'margin-left': FixedWidth }">
+    <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
         :headers="headers"
         :items="dataItems"
@@ -87,7 +87,7 @@ export default {
     }
   },
   computed: {
-    FixedWidth() {
+    fixedWidth() {
       return (
         this.headers
           .filter((item) => item.fixed)

@@ -34,7 +34,7 @@
           destination.
         </div>
         <!-- Campaign Nested Table -->
-        <hux-data-table :headers="AdsHeaders" :dataItems="campaignData" nested>
+        <hux-data-table :headers="adsHeaders" :dataItems="campaignData" nested>
           <template v-slot:expandable-row="{ item }">
             <td
               v-for="header in headers"
@@ -70,42 +70,41 @@
                         </template>
                       </tooltip>
                     </span>
-                    <span v-if="header.value == 'spend'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'reach'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'impressions'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'conversions'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'clicks'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'frequency'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
+                    <span v-if="header.value == 'spend'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
+                    <span v-if="header.value == 'reach'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
+                    <span v-if="header.value == 'impressions'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
+                    <span v-if="header.value == 'conversions'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
+                    <span v-if="header.value == 'clicks'">
+                      {{ item[header.value] | FormatSize }}</span
+                    >
+                    <span v-if="header.value == 'frequency'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
                     <span
                       v-if="header.value == 'cost_per_thousand_impressions'"
-                      >{{
-                        item[header.value] | FormatSize | CurrentFormat
-                      }}</span
                     >
-                    <span v-if="header.value == 'click_through_rate'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'cost_per_action'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'cost_per_click'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
-                    <span v-if="header.value == 'engagement_rate'">{{
-                      item[header.value] | FormatSize
-                    }}</span>
+                      {{ item[header.value] | FormatSize | CurrentFormat }}
+                    </span>
+                    <span v-if="header.value == 'click_through_rate'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
+                    <span v-if="header.value == 'cost_per_action'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
+                    <span v-if="header.value == 'cost_per_click'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
+                    <span v-if="header.value == 'engagement_rate'">
+                      {{ item[header.value] | FormatSize }}
+                    </span>
                   </td>
                 </template>
               </hux-data-table>
@@ -132,7 +131,7 @@ export default {
   },
   data() {
     return {
-      AdsHeaders: [
+      adsHeaders: [
         { text: "Audiences", value: "name", width: "170px" },
         { text: "Spend", value: "spend", width: "90px" },
         { text: "Reach", value: "reach", width: "90px" },
@@ -162,8 +161,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-::root {
-}
-</style>

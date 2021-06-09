@@ -1,22 +1,20 @@
 <template>
-  <v-menu bottom offset-y open-on-hover>
-    <template v-slot:activator="{ on, attrs }">
-      <span v-bind="attrs" v-on="on" class="cursor-default">
-        {{ value | ApproxSize }}
+  <tooltip>
+    <template slot="label-content">
+      <span class="neroBlack--text">
+        {{ value | Numeric(false, false, true) | Empty }}
       </span>
     </template>
-    <v-list>
-      <v-list-item>
-        <v-list-item-title class="neroBlack--text">{{
-          value | FormatSize
-        }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+    <template slot="hover-content">
+      {{ value | Numeric(true) | Empty }}
+    </template>
+  </tooltip>
 </template>
 <script>
 import Vue from "vue"
+import Tooltip from "../Tooltip.vue"
 export default Vue.extend({
+  components: { Tooltip },
   name: "size",
   props: {
     value: {
