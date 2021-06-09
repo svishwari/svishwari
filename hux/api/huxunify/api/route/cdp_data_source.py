@@ -19,6 +19,7 @@ from huxunifylib.database.cdp_data_source_management import (
     get_data_source,
     create_data_source,
     delete_data_source,
+    update_data_sources,
 )
 from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceSchema,
@@ -379,5 +380,26 @@ class BatchUpdateDataSources(SwaggerView):
                 HTTPStatus.BAD_REQUEST.value,
             )
 
-        # update data sources
-        return self.responses[HTTPStatus.OK.value], HTTPStatus.OK.value
+        try:
+            # update the data sources.
+            if update_data_sources(get_db_client(), data_source_ids, data):
+                return self.responses[HTTPStatus.OK.value], HTTPStatus.OK.value
+
+            return (
+                self.responses[HTTPStatus.BAD_REQUEST.value],
+                HTTPStatus.BAD_REQUEST.value,
+            )
+
+        except Exception as exc:
+
+            logging.error(
+                "%s: %s.",
+                exc.__class__,
+                exc,
+            )
+
+            raise ProblemException(
+                status=HTTPStatus.BAD_REQUEST.value,
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail="Unable to get CDP data sources.",
+            ) from exc
