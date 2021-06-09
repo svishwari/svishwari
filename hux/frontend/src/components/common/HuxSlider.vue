@@ -1,34 +1,75 @@
 <template>
-  <v-range-slider
-    :max="max"
-    :min="min"
-    :step="step"
-    thumb-label="always"
-    v-model="localValue"
-    class="huxSlider"
-    @end="onFinalValue"
-  ></v-range-slider>
+  <transition>
+    <v-range-slider
+      class="hux-range-slider"
+      :max="max"
+      :min="min"
+      :step="step"
+      thumb-label="always"
+      v-if="isRangeSlider"
+      v-model="localValue"
+      @end="onFinalValue"
+    ></v-range-slider>
+    <v-slider
+      class="hux-score-slider"
+      always-dirty
+      :color="currentColor"
+      :readonly="readOnly"
+      :track-color="currentColor"
+      v-else
+      v-model="currentValue"
+      @end="onFinalValue"
+    >
+      <template v-slot:append>
+        <span
+          class="slider-value-display"
+          :style="{
+            color: currentColor,
+          }"
+          v-text="currentValue + '%'"
+        ></span>
+      </template>
+    </v-slider>
+  </transition>
 </template>
 
 <script>
+import colors from "../../plugins/colors"
+
 export default {
-  name: "huxSlider",
+  name: "hux-slider",
   props: {
     value: {
-      type: Array,
+      type: [Number, Array],
       required: true,
     },
     min: {
       type: Number,
-      required: true,
+      required: false,
     },
     max: {
       type: Number,
-      required: true,
+      required: false,
     },
     step: {
-      required: true,
+      required: false,
     },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    isRangeSlider: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      currentValue: this.value,
+      colorCombination: colors.gradientSliderColors,
+    }
   },
   computed: {
     localValue: {
@@ -38,6 +79,21 @@ export default {
       set(value) {
         this.$emit("input", value)
       },
+    },
+    currentColor: function () {
+      if (this.currentValue < 8) return this.colorCombination[0]
+      if (this.currentValue < 16) return this.colorCombination[1]
+      if (this.currentValue < 24) return this.colorCombination[2]
+      if (this.currentValue < 32) return this.colorCombination[3]
+      if (this.currentValue < 40) return this.colorCombination[4]
+      if (this.currentValue < 48) return this.colorCombination[5]
+      if (this.currentValue < 56) return this.colorCombination[6]
+      if (this.currentValue < 64) return this.colorCombination[7]
+      if (this.currentValue < 72) return this.colorCombination[8]
+      if (this.currentValue < 80) return this.colorCombination[9]
+      if (this.currentValue < 88) return this.colorCombination[10]
+      if (this.currentValue < 96) return this.colorCombination[11]
+      return this.colorCombination[11]
     },
   },
   methods: {
@@ -49,7 +105,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.huxSlider {
+.hux-range-slider {
   ::v-deep .v-input__control {
     .v-input__slot {
       .v-slider__track-container {
@@ -81,6 +137,52 @@ export default {
         font-size: 12px;
         line-height: 16px;
       }
+    }
+  }
+}
+.hux-score-slider {
+  margin-left: 10px;
+  margin-right: 10px;
+
+  .slider-value-display {
+    width: 28px;
+    height: 16px;
+    margin-top: 4px;
+  }
+
+  ::v-deep .v-slider__thumb {
+    height: 16px;
+    width: 16px;
+    box-shadow: 0px 1px 5px rgb(0 0 0 / 25%);
+    -webkit-appearance: none;
+    appearance: none;
+
+    &:before {
+      left: -10px;
+      top: -10px;
+    }
+  }
+
+  ::v-deep .v-slider--horizontal {
+    margin-left: 0px;
+
+    .v-slider__track-container {
+      width: 101%;
+      height: 6px;
+      left: -6px;
+      transform: translateY(-50%);
+      background: linear-gradient(0.25turn, #ec5b54, #ffcd00, #86bc25);
+      border-radius: 5px;
+    }
+
+    .v-slider__track-background {
+      border-radius: 5px;
+      background: transparent !important;
+    }
+
+    .v-slider__track-fill {
+      border-radius: 5px;
+      background: transparent !important;
     }
   }
 }
