@@ -287,7 +287,7 @@ def remove_audiences_from_engagement(
             {db_c.ID: engagement_id},
             {
                 "$pull": {
-                    f"{db_c.AUDIENCES}": {db_c.ID: {"$in": audience_ids}}
+                    f"{db_c.AUDIENCES}": {db_c.API_ID: {"$in": audience_ids}}
                 },
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),

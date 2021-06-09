@@ -505,7 +505,7 @@ def get_platform_type(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-# pylint: disable=R0914
+# pylint: disable=too-many-locals
 def update_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
