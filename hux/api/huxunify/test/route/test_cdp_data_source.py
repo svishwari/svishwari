@@ -1,4 +1,6 @@
-"""CDP Data Sources API Testing"""
+"""
+Purpose of this file is to house all data sources tests
+"""
 
 import json
 from http import HTTPStatus
@@ -35,7 +37,7 @@ VALID_RESPONSE = {
 }
 
 
-def validate_schema(schema, response_json, is_multiple=False):
+def validate_schema(schema, response_json, is_multiple=False) -> bool:
     """
     Validate if the response confirms with the given schema
     Args:
@@ -59,7 +61,8 @@ class CdpDataSourcesTest(TestCase):
     """
 
     def setUp(self) -> None:
-        """Setup tests
+        """
+        Setup tests
 
         Returns:
 
@@ -79,7 +82,6 @@ class CdpDataSourcesTest(TestCase):
         ).connect()
 
         # mock get_db_client()
-
         get_db_client_mock = mock.patch(
             "huxunify.api.route.cdp_data_source.get_db_client"
         ).start()
@@ -108,10 +110,11 @@ class CdpDataSourcesTest(TestCase):
 
     @requests_mock.Mocker()
     def test_get_data_source_by_id_valid_id(self, request_mocker: Mocker):
-        """Test get data source by id from DB
+        """
+        Test get data source by id from DB
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -129,16 +132,17 @@ class CdpDataSourcesTest(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertTrue(CdpDataSourceSchema(), response.json)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(validate_schema(CdpDataSourceSchema(), response.json))
+        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_get_all_data_sources_success(self, request_mocker: Mocker):
-        """Test get all data source from DB
+        """
+        Test get all data source from DB
 
         Args:
-            request_mocker (str): Request mocker object
+            request_mocker (Mocker): Request mocker object
 
         Returns:
 
@@ -154,18 +158,19 @@ class CdpDataSourcesTest(TestCase):
             headers={"Authorization": TEST_AUTH_TOKEN},
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             validate_schema(CdpDataSourceSchema(), response.json, is_multiple)
         )
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_delete_data_source_by_id_valid_id(self, request_mocker: Mocker):
-        """Test delete data source by id from DB
+        """
+        Test delete data source by id from DB
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -182,8 +187,8 @@ class CdpDataSourcesTest(TestCase):
             headers={"Authorization": TEST_AUTH_TOKEN},
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_create_data_source_valid_params(self, request_mocker: Mocker):
@@ -191,7 +196,7 @@ class CdpDataSourcesTest(TestCase):
         Test creating a new data source with valid params
 
         Args:
-            request_mocker (str): Request mocker object
+            request_mocker (Mocker): Request mocker object
 
         Returns:
 
@@ -225,16 +230,17 @@ class CdpDataSourcesTest(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(validate_schema(CdpDataSourceSchema(), response.json))
         self.assertDictContainsSubset(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_get_data_source_by_id_invalid_id(self, request_mocker: Mocker):
-        """Test get data source by id from DB with an invalid id
+        """
+        Test get data source by id from DB with an invalid id
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -254,15 +260,16 @@ class CdpDataSourcesTest(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_delete_data_source_by_id_invalid_id(self, request_mocker: Mocker):
-        """Test delete data source by id from DB
+        """
+        Test delete data source by id from DB
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -279,17 +286,18 @@ class CdpDataSourcesTest(TestCase):
             headers={"Authorization": TEST_AUTH_TOKEN},
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_create_data_source_no_category_null_name(
         self, request_mocker: Mocker
     ):
-        """Test creating a data source with invalid params
+        """
+        Test creating a data source with invalid params
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -312,17 +320,18 @@ class CdpDataSourcesTest(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_create_data_source_no_category_no_name(
         self, request_mocker: Mocker
     ):
-        """Test creating a data source with invalid params
+        """
+        Test creating a data source with invalid params
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -344,5 +353,5 @@ class CdpDataSourcesTest(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
