@@ -2,7 +2,7 @@
   <v-hover>
     <template v-slot:default="{ hover }">
       <v-card
-        class="text-center rounded-lg card-info-wrapper"
+        class="text-center rounded-lg card-info-wrapper card-shadow"
         min-width="220px"
         max-width="260px"
         :disabled="!active"
