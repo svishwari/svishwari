@@ -107,7 +107,7 @@ def set_delivery_platform(
                     c.ENABLED: enabled,
                     c.DELETED: False,
                 },
-                {c.ENABLED: 0, c.DELETED: 0},
+                {c.DELETED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -241,8 +241,9 @@ def set_connection_status(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -307,8 +308,9 @@ def set_authentication_details(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -390,8 +392,9 @@ def set_name(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -462,8 +465,9 @@ def set_platform_type(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True, c.DELETED: False},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
