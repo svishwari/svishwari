@@ -10,7 +10,7 @@
     :ripple="interactable"
   >
     <div class="d-flex align-center justify-space-between">
-      <div class="grow">
+      <div class="flex-grow-1">
         <span
           v-if="!titleTooltip"
           class="text-caption"
