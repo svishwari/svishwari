@@ -30,12 +30,8 @@
             'list-item': true,
             'mr-3': true,
           }"
-          :width="summaryCards[0].width"
-          :min-width="summaryCards[0].minWidth"
-          :height="75"
           :title="summaryCards[0].title"
           :subtitle="summaryCards[0].value"
-          :interactable="false"
         >
         </MetricCard>
         <MetricCard
@@ -43,11 +39,7 @@
             'list-item': true,
             'mr-3': true,
           }"
-          :width="summaryCards[1].width"
-          :min-width="summaryCards[1].minWidth"
-          :height="75"
           :title="summaryCards[1].title"
-          :interactable="false"
         >
           <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
             <span class="mr-2">
@@ -68,11 +60,7 @@
             'list-item': true,
             'mr-3': true,
           }"
-          :width="summaryCards[2].width"
-          :min-width="summaryCards[2].minWidth"
-          :height="75"
           :title="summaryCards[2].title"
-          :interactable="false"
         >
           <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
             <span class="mr-2">
@@ -94,11 +82,7 @@
             'mr-3': true,
             description: true,
           }"
-          :width="summaryCards[3].width"
-          :min-width="summaryCards[3].minWidth"
-          :height="75"
           :title="summaryCards[3].title"
-          :interactable="false"
         >
         </MetricCard>
       </div>
@@ -154,15 +138,12 @@
             <v-card flat class="card-style">
               <v-card-text class="d-flex summary-tab-wrap">
                 <MetricCard
-                  class="list-item mr-2"
-                  :width="item.width"
-                  :height="70"
+                  class="mr-2"
                   v-for="item in displayAdsSummary"
                   :key="item.id"
                   :title="item.title"
                   :titleTooltip="getTooltip(item)"
                   :subtitle="item.value"
-                  :interactable="false"
                 ></MetricCard>
               </v-card-text>
             </v-card>
@@ -171,14 +152,11 @@
             <v-card flat class="card-style">
               <v-card-text class="d-flex summary-tab-wrap">
                 <MetricCard
-                  class="list-item mr-1 rounded-lg"
-                  :min-width="item.width"
-                  :height="70"
+                  class="mr-1"
                   v-for="item in emailSummary"
                   :key="item.id"
                   :title="item.title"
                   :subtitle="item.value"
-                  :interactable="false"
                 ></MetricCard>
               </v-card-text>
             </v-card>

@@ -18,42 +18,27 @@
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
         class="ma-4"
-        :width="205"
-        :height="80"
         :key="i"
+        :grow="0"
         :title="item.title"
-        :subtitle="getFormattedTime(item.subtitle)"
         :icon="item.icon"
-        :interactable="false"
       >
-        <template slot="short-name">
-          <v-menu bottom offset-y open-on-hover>
-            <template v-slot:activator="{ on, attrs }">
-              <span
-                class="blue-grey d-flex align-center justify-center"
-                v-bind="attrs"
-                v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item.shortName) }"
-              >
-                {{ getShortName(item.shortName) }}
-              </span>
-            </template>
-            <v-list>
-              <v-list-item>
-                <v-list-item-title>{{ item.fullName }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+        <template #subtitle-extended>
+          <span class="mr-2">
+            <Tooltip>
+              <template #label-content>
+                {{ getFormattedTime(item.subtitle) }}
+              </template>
+              <template #hover-content>
+                {{ item.subtitle | Date | Empty }}
+              </template>
+            </Tooltip>
+          </span>
+          <Avatar :name="getFullName(item.fullName)" />
         </template>
       </MetricCard>
 
-      <MetricCard
-        class="ma-4"
-        width="53%"
-        :height="80"
-        :interactable="false"
-        :title="'Attributes'"
-      >
+      <MetricCard class="ma-4" :title="'Attributes'">
         <template slot="extra-item">
           <div class="container pl-0">
             <ul>
@@ -75,24 +60,17 @@
       </MetricCard>
     </div>
     <div class="px-15 my-1" v-if="audience && audience.insightInfo">
-      <v-card
-        height="150"
-        width="fit-content"
-        elevation="1"
-        class="rounded px-5 pt-5"
-      >
+      <v-card height="150" elevation="1" class="rounded px-5 pt-5">
         <div class="overview">Audience overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard
             v-for="(item, i) in audience.insightInfo"
-            class="list-item mr-3"
-            :width="135"
-            :height="80"
+            class="mr-3"
             :key="i"
+            :grow="i === 0 ? 2 : 1"
             :title="item.title"
             :subtitle="item.subtitle"
             :icon="item.icon"
-            :interactable="false"
           ></MetricCard>
         </div>
       </v-card>
@@ -111,6 +89,8 @@ import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import Avatar from "@/components/common/Avatar"
+import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import lifetimeValue from "@/assets/images/lifetimeValue.svg"
@@ -123,6 +103,8 @@ export default {
     EmptyStateChart,
     PageHeader,
     Breadcrumb,
+    Avatar,
+    Tooltip,
     lifetimeValue,
     churn,
     plus,
@@ -161,11 +143,8 @@ export default {
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
     },
-    getShortName(fullname) {
-      return fullname
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
+    getFullName(fullname) {
+      return fullname.first_name + " " + fullname.last_name
     },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
