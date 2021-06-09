@@ -3,15 +3,15 @@
     <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
         :headers="headers"
-        :items="dataItems"
-        item-key="name"
         :hide-default-footer="true"
+        :height="height"
+        :items="dataItems"
+        :item-key="name"
+        :items-per-page="itemPerPage"
+        :sort-by="sortColumn"
         fixed-header
         must-sort
-        :sort-by="sortColumn"
         sort-desc
-        :height="height"
-        :items-per-page="100"
       >
         <template v-slot:body="{ items }" v-if="!nested">
           <tbody class="data-table-body">
@@ -51,6 +51,7 @@
 </template>
 
 <script>
+const ALL = -1
 export default {
   name: "HuxDataTable",
   components: {},
@@ -84,6 +85,7 @@ export default {
     return {
       search: "",
       expanded: [],
+      itemPerPage: ALL,
     }
   },
   computed: {

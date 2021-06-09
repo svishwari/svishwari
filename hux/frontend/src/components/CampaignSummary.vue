@@ -38,7 +38,7 @@
           <template v-slot:expandable-row="{ item }">
             <td
               v-for="header in headers"
-              v-bind:key="header.value"
+              :key="header.value"
               :style="{ width: header.width }"
             >
               <div v-if="header.value == 'name'">
@@ -57,7 +57,7 @@
                 <template v-slot:row-item="{ item }">
                   <td
                     v-for="header in headers"
-                    v-bind:key="header.value"
+                    :key="header.value"
                     :style="{ width: header.width }"
                   >
                     <span v-if="header.value == 'name'">
