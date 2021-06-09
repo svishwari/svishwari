@@ -86,7 +86,7 @@
                 <template v-slot:row-item="{ item }">
                   <td
                     v-for="header in headers"
-                    v-bind:key="header.value"
+                    :key="header.value"
                     :style="{ width: header.width }"
                   >
                     <span v-if="header.value == 'name'">
@@ -106,40 +106,41 @@
                         </template>
                       </tooltip>
                     </span>
-                    <span v-if="header.value == 'spend'">{{
-                      item[header.value] | Numeric(true, false)
-                    }}</span>
-                    <span v-if="header.value == 'reach'">{{
-                      item[header.value] | Numeric(true, false)
-                    }}</span>
-                    <span v-if="header.value == 'impressions'">{{
-                      item[header.value] | Numeric(true, false)
-                    }}</span>
-                    <span v-if="header.value == 'conversions'">{{
-                      item[header.value] | Numeric(true, false)
-                    }}</span>
-                    <span v-if="header.value == 'clicks'">{{
-                      item[header.value] | Numeric(true, false)
-                    }}</span>
-                    <span v-if="header.value == 'frequency'">{{
-                      item[header.value] | Numeric(true, false)
-                    }}</span>
+                    <span v-if="header.value == 'spend'">
+                      {{ item[header.value] | Numeric(true, false) }}
+                    </span>
+                    <span v-if="header.value == 'reach'">
+                      {{ item[header.value] | Numeric(true, false) }}
+                    </span>
+                    <span v-if="header.value == 'impressions'">
+                      {{ item[header.value] | Numeric(true, false) }}
+                    </span>
+                    <span v-if="header.value == 'conversions'">
+                      {{ item[header.value] | Numeric(true, false) }}
+                    </span>
+                    <span v-if="header.value == 'clicks'">
+                      {{ item[header.value] | Numeric(true, false) }}
+                    </span>
+                    <span v-if="header.value == 'frequency'">
+                      {{ item[header.value] | Numeric(true, false) }}
+                    </span>
                     <span
                       v-if="header.value == 'cost_per_thousand_impressions'"
-                      >{{ item[header.value] | Currency }}</span
                     >
-                    <span v-if="header.value == 'click_through_rate'">{{
-                      item[header.value] | Numeric(true, false, "%")
-                    }}</span>
-                    <span v-if="header.value == 'cost_per_action'">{{
-                      item[header.value] | Currency
-                    }}</span>
-                    <span v-if="header.value == 'cost_per_click'">{{
-                      item[header.value] | Currency
-                    }}</span>
-                    <span v-if="header.value == 'engagement_rate'">{{
-                      item[header.value] | Numeric(true, false, "%")
-                    }}</span>
+                      {{ item[header.value] | Currency }}
+                    </span>
+                    <span v-if="header.value == 'click_through_rate'">
+                      {{ item[header.value] | Numeric(true, false, "%") }}
+                    </span>
+                    <span v-if="header.value == 'cost_per_action'">
+                      {{ item[header.value] | Currency }}
+                    </span>
+                    <span v-if="header.value == 'cost_per_click'">
+                      {{ item[header.value] | Currency }}
+                    </span>
+                    <span v-if="header.value == 'engagement_rate'">
+                      {{ item[header.value] | Numeric(true, false, "%") }}
+                    </span>
                   </td>
                 </template>
               </hux-data-table>

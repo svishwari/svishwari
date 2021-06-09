@@ -2,18 +2,27 @@
   <v-navigation-drawer
     v-model="localDrawer"
     :right="toRight"
-    :width="width"
-    temporary
-    floating
+    :style="transition"
+    :width="drawerWidth"
     app
-    style="transition-duration: 0.5s"
-    overlay-opacity="0"
+    floating
+    hide-overlay
+    temporary
   >
     <v-toolbar width="100%">
       <v-toolbar-title class="px-6">
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
       </v-toolbar-title>
+      <template v-if="expandable">
+        <v-icon
+          color="primary"
+          @click="onExpandIconClick"
+          class="cursor-pointer px-6 ml-auto"
+        >
+          {{ expanded ? "mdi-arrow-collapse" : "mdi-arrow-expand" }}
+        </v-icon>
+      </template>
     </v-toolbar>
 
     <div class="drawer-content">
@@ -40,6 +49,7 @@ export default {
   data() {
     return {
       localDrawer: this.value,
+      expanded: false,
     }
   },
 
@@ -61,6 +71,35 @@ export default {
       required: false,
       default: 600,
     },
+
+    expandedWidth: {
+      type: Number,
+      required: false,
+      default: 900,
+    },
+
+    expandable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    disableTransition: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  computed: {
+    transition() {
+      return {
+        transitionDuration: this.disableTransition ? "0s" : "0.5s",
+      }
+    },
+    drawerWidth() {
+      return this.expanded ? this.expandedWidth : this.width
+    },
   },
 
   watch: {
@@ -72,7 +111,19 @@ export default {
       this.$emit("input", this.localDrawer)
       if (!this.localDrawer) {
         this.$emit("onClose")
+        this.reset()
       }
+    },
+  },
+
+  methods: {
+    onExpandIconClick: function () {
+      this.expanded = !this.expanded
+      this.$emit("iconToggle", this.expanded)
+    },
+
+    reset() {
+      this.drawerWidth = this.width
     },
   },
 }
@@ -85,5 +136,8 @@ export default {
 .drawer-content {
   height: calc(100% - 130px);
   overflow-y: auto;
+}
+::v-deep .v-icon.v-icon::after {
+  content: none;
 }
 </style>

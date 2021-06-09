@@ -3,12 +3,9 @@
     <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
         :headers="headers"
-        :items="dataItems"
-        item-key="name"
         :hide-default-footer="true"
         :fixed-header="true"
         must-sort
-        :sort-by="sortColumn"
         sort-desc
         :height="height"
         :expanded.sync="expanded"
@@ -34,7 +31,7 @@
             <template>mdi-chevron-down</template>
           </v-icon>
         </template>
-        <template v-for="h in headers" v-slot:[`header.${h.value}`] v-if="">
+        <template v-for="h in headers" v-slot:[`header.${h.value}`]>
           <tooltip :key="h.value" v-if="h.tooltipValue">
             <template slot="label-content">
               {{ h.text }}
@@ -66,6 +63,7 @@
 
 <script>
 import Tooltip from "../Tooltip.vue"
+const ALL = -1
 export default {
   name: "HuxDataTable",
   components: { Tooltip },
@@ -103,6 +101,7 @@ export default {
   data() {
     return {
       expanded: [],
+      itemPerPage: ALL,
     }
   },
   computed: {
@@ -180,6 +179,7 @@ export default {
       align-items: center;
       background: var(--v-white-base) !important;
       left: 0px;
+      height: 59.84px !important;
     }
     .fixed-header {
       position: absolute;

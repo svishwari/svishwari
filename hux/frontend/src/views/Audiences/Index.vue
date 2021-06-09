@@ -57,6 +57,7 @@
             :class="{
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
+              'primary--text': header.fixed,
             }"
             :style="{ width: header.width, left: 0 }"
           >
@@ -168,7 +169,7 @@ export default {
         {
           text: "Audience name",
           value: "name",
-          width: "300px",
+          width: "331px",
           fixed: true,
           divider: true,
           class: "fixed-header",
@@ -176,27 +177,27 @@ export default {
         {
           text: "Size",
           value: "size",
-          width: "100px",
+          width: "112px",
         },
         {
           text: "Last delivered",
           value: "last_delivered",
-          width: "170",
+          width: "162",
         },
         {
           text: "Last updated",
           value: "update_time",
-          width: "170",
+          width: "154",
         },
         {
           text: "Last updated by",
           value: "updated_by",
-          width: "160",
+          width: "148",
         },
         {
           text: "Created",
           value: "create_time",
-          width: "160",
+          width: "154",
         },
         {
           text: "Created by",
