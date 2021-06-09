@@ -49,7 +49,7 @@ def validate_schema(schema, response_json, is_multiple=False) -> bool:
     """
 
     try:
-        _ = schema.load(response_json, many=is_multiple)
+       schema.load(response_json, many=is_multiple)
         return True
     except ValidationError:
         return False
