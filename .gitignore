@@ -34,3 +34,4 @@ docs/build/*
 # IDE
 .vscode/
 .idea/
+/lib/huxunifylib-database/huxunifylib/database/tests/.hypothesis/
