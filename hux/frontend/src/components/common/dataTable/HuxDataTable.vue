@@ -15,17 +15,40 @@
         :show-expand="nested"
         :items-per-page="-1"
         :hide-default-header="!showHeader"
+        @click:row="expandRow"
+        class="class"
       >
-        <template #body="{ headers, items, expand, isExpanded }">
+        <template #item.data-table-expand="{ expand, isExpanded }">
+          <v-icon
+            @click="expand(!isExpanded)"
+            small
+            color="darkGrey"
+            :class="{
+              'rotate-expand-icon': !isExpanded,
+            }"
+          >
+            <template>mdi-chevron-down</template>
+          </v-icon>
+        </template>
+        <template v-for="h in headers" v-slot:[`header.${h.value}`]>
+          <tooltip :key="h.value" v-if="h.tooltipValue">
+            <template slot="label-content">
+              {{ h.text }}
+            </template>
+            <template slot="hover-content">
+              <span
+                v-html="h.tooltipValue.replace(/(?:\r\n|\r|\n)/g, '<br />')"
+              ></span>
+            </template>
+          </tooltip>
+          <template v-if="!h.tooltipValue">
+            {{ h.text }}
+          </template>
+        </template>
+        <template #body="{ headers, items }" v-if="!nested">
           <tbody>
             <tr v-for="item in items" :key="item.id">
-              <slot
-                name="row-item"
-                :item="item"
-                :headers="headers"
-                :expand="expand"
-                :isExpanded="isExpanded"
-              />
+              <slot name="row-item" :item="item" :headers="headers" />
             </tr>
           </tbody>
         </template>
@@ -38,9 +61,10 @@
 </template>
 
 <script>
+import Tooltip from "../Tooltip.vue"
 export default {
   name: "HuxDataTable",
-  components: {},
+  components: { Tooltip },
   props: {
     dataItems: {
       type: Array,
@@ -71,15 +95,14 @@ export default {
       required: false,
       default: "name",
     },
-    expand: {
-      type: Array,
+    class: {
+      type: String,
       required: false,
-      default: () => [],
     },
   },
   data() {
     return {
-      search: "",
+      expanded: [],
     }
   },
   computed: {
@@ -93,13 +116,15 @@ export default {
             .reduce((a, b) => a + b) + "px"
         : "0px"
     },
-    expanded: {
-      get() {
-        return this.expand
-      },
-      set(value) {
-        this.$set(this.expand, value)
-      },
+  },
+  methods: {
+    expandRow(value) {
+      const index = this.expanded.indexOf(value)
+      if (index === -1) {
+        this.expanded.push(value)
+      } else {
+        this.expanded.splice(index, 1)
+      }
     },
   },
 }
