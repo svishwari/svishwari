@@ -2,15 +2,16 @@
   <div class="hux-data-table">
     <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
-        :headers="headers"
-        :hide-default-footer="true"
+        :expanded.sync="expanded"
         :fixed-header="true"
+        :headers="headers"
+        :hide-default-header="!showHeader"
+        :height="height"
+        :items="dataItems"
+        :items-per-page="-1"
+        hide-default-footer
         must-sort
         sort-desc
-        :height="height"
-        :expanded.sync="expanded"
-        :items-per-page="-1"
-        :hide-default-header="!showHeader"
         @click:row="expandRow"
       >
         <template #item.name="{ item, isExpanded }" v-if="nested">

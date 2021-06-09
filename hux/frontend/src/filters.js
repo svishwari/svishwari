@@ -64,7 +64,7 @@ export default {
           : // Three Zeroes for Thousands
           Math.abs(Number(value)) >= 1.0e3
           ? (Math.abs(Number(value)) / 1.0e3).toFixed(2) + "K"
-          : this.FormatSize(Math.abs(Number(value)))
+          : Math.abs(Number(value))
     }
 
     return approx
@@ -100,5 +100,11 @@ export default {
       .split(" ")
       .map((n) => n[0])
       .join("")
+  },
+  Currency(value) {
+    return Number(value).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    })
   },
 }
