@@ -111,7 +111,8 @@
                     size="30"
                     class="add-icon mt-1"
                     color="primary"
-                    @click="toggleDrawer()">
+                    @click="toggleDrawer()"
+                  >
                     mdi-plus-circle
                   </v-icon>
                   <!-- <Logo
@@ -122,24 +123,23 @@
                     :size="18"
                   /> -->
 
-                <tooltip>
-                  <template slot="label-content">
-                    <Logo
-                      class="added-logo ml-2"
-                      v-for="destination in audience.destinations"
-                      :key="destination.id"
-                      :type="destination.type"
-                      :size="18"
-                      @mouseover.native="hoverItem = destination.name"
-                    />
-                  </template>
-                  <template slot="hover-content">
-                    <div class="d-flex align-center">
-                      Remove {{hoverItem}}
-                    </div>
-                  </template>
-                </tooltip>
-
+                  <tooltip>
+                    <template slot="label-content">
+                      <Logo
+                        class="added-logo ml-2"
+                        v-for="destination in audience.destinations"
+                        :key="destination.id"
+                        :type="destination.type"
+                        :size="18"
+                        @mouseover.native="hoverItem = destination.name"
+                      />
+                    </template>
+                    <template slot="hover-content">
+                      <div class="d-flex align-center">
+                        Remove {{ hoverItem }}
+                      </div>
+                    </template>
+                  </tooltip>
                 </div>
               </v-col>
             </v-row>
@@ -225,7 +225,7 @@
                     "
                     :isAvailable="destination.is_enabled"
                     :isAlreadyAdded="destination.is_added"
-                    @click="onSelectDestination(index, destination)"
+                    @click="onSelectDestination(destination)"
                     class="my-3"
                   />
                 </div>
@@ -353,7 +353,7 @@ export default {
         viewStep: 1,
         selectedDestination: [],
       },
-      hoverItem: '',
+      hoverItem: "",
     }
   },
 
@@ -410,7 +410,7 @@ export default {
       this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
     },
 
-    onSelectDestination(index, selected) {
+    onSelectDestination(selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
         if (selected && selected.type === "salesforce") {
@@ -423,11 +423,11 @@ export default {
           this.toggleDrawer()
         }
       } else {
-        var index = this.audience.destinations.findIndex(
+        var idx = this.audience.destinations.findIndex(
           (item) => item.id == selected.id
         )
-        if(index>-1){
-          this.audience.destinations.splice(index, 1)
+        if (idx > -1) {
+          this.audience.destinations.splice(idx, 1)
         }
       }
     },
@@ -643,7 +643,7 @@ export default {
       box-shadow: none !important;
     }
     .drawer-back {
-       @extend .box-shadow-25;
+      @extend .box-shadow-25;
     }
   }
 }
