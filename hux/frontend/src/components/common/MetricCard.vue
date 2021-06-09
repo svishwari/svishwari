@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="metric-card-wrapper mb-2"
+    class="metric-card-wrapper mb-2 rounded-lg"
     :class="{ 'no-click': !interactable }"
     @click="$emit('click')"
     :disabled="!active"
