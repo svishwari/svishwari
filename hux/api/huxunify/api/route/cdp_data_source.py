@@ -358,7 +358,9 @@ class BatchUpdateDataSources(SwaggerView):
 
         # validate data source ids
         data_source_ids = [
-            x for x in data[api_c.CDP_DATA_SOURCE_IDS] if ObjectId.is_valid(x)
+            ObjectId(x)
+            for x in data[api_c.CDP_DATA_SOURCE_IDS]
+            if ObjectId.is_valid(x)
         ]
         if not data_source_ids or len(data_source_ids) != len(
             data[api_c.CDP_DATA_SOURCE_IDS]
@@ -379,6 +381,9 @@ class BatchUpdateDataSources(SwaggerView):
                 self.responses[HTTPStatus.BAD_REQUEST.value],
                 HTTPStatus.BAD_REQUEST.value,
             )
+
+        # rename key from is_added to added for DB.
+        data[db_constants.ADDED] = data.pop(api_c.IS_ADDED)
 
         try:
             # update the data sources.
