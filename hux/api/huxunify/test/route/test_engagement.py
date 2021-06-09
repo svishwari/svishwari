@@ -1,6 +1,5 @@
 """
-Purpose of this file is to house all tests related to Engagement
-Delivery CRUD operations
+Purpose of this file is to house all tests related to engagement
 """
 
 import unittest
@@ -46,7 +45,7 @@ VALID_RESPONSE = {
 
 class TestEngagementDeliveryOperations(unittest.TestCase):
     """
-    Tests for Delivery APIs
+    Tests for Engagement Delivery APIs
     """
 
     def setUp(self) -> None:

@@ -1,5 +1,5 @@
 """
-Purpose of this file is to house all tests related to Delivery CRUD operations
+Purpose of this file is to house all tests related to orchestration
 """
 
 import unittest
@@ -45,7 +45,7 @@ VALID_RESPONSE = {
 
 class TestAudienceDeliveryOperations(unittest.TestCase):
     """
-    Tests for Delivery APIs
+    Tests for Audience Delivery API
     """
 
     def setUp(self) -> None:
