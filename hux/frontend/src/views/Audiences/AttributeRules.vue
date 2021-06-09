@@ -23,7 +23,7 @@
         </v-icon>
       </v-card>
     </v-col>
-    <v-col col="12" v-if="rules.length > 0" class="pr-0">
+    <v-col col="12" v-if="rules.length > 0" class="pt-0 pr-0">
       <div v-for="(rule, index) in rules" :key="`rule-${index}`">
         <div class="d-flex align-center mb-2 col-12 pa-0">
           <span class="mr-2">Match</span>

@@ -26,4 +26,18 @@ export default {
   persianGreen: "#00abab",
   appBodyGrey: "#f8f9fa",
   smoke: "#ECECEC",
+  gradientSliderColors: [
+    "#ec5b54",
+    "#f76d48",
+    "#fe823b",
+    "#ff972d",
+    "#ffae1d",
+    "#f6b810",
+    "#ecc103",
+    "#e0ca00",
+    "#c9c703",
+    "#b3c40f",
+    "#9cc01a",
+    "#86bc25",
+  ],
 }

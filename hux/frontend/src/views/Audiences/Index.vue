@@ -47,15 +47,52 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7" v-if="!loading">
-      <hux-table
+    <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
+      <hux-data-table
+        :headers="columnDefs"
+        :dataItems="rowData"
         v-if="isDataExists"
-        :columnDef="columnDefs"
-        :tableData="rowData"
-        :rowHeight="60"
-        height="calc(100vh - 220px)"
-        class="pl-3"
-      ></hux-table>
+      >
+        <template v-slot:row-item="{ item }">
+          <td
+            v-for="header in columnDefs"
+            v-bind:key="header.value"
+            :class="{
+              'fixed-column': header.fixed,
+              'v-data-table__divider': header.fixed,
+              'primary--text': header.fixed,
+            }"
+            :style="{ width: header.width, left: 0 }"
+          >
+            <div v-if="header.value == 'name'" class="w-100">
+              <menu-cell
+                :value="item[header.value]"
+                :menuOptions="actionItems"
+                routeName="AudienceInsight"
+                :routeParam="item['id']"
+              />
+            </div>
+            <div v-if="header.value == 'size'">
+              <size :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'last_delivered'">
+              <time-stamp :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'update_time'">
+              <time-stamp :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'updated_by'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
+            <div v-if="header.value == 'create_time'">
+              <time-stamp :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'created_by'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
+          </td>
+        </template>
+      </hux-data-table>
 
       <EmptyPage v-if="!isDataExists">
         <template v-slot:icon>mdi-alert-circle-outline</template>
@@ -97,11 +134,11 @@ import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxTable from "@/components/common/huxTable.vue"
-import UserAvatarCell from "@/components/common/huxTable/UserAvatarCell"
-import MenuCell from "@/components/common/huxTable/MenuCell"
-import DateTimeCell from "@/components/common/huxTable/DateTimeCell"
-import sizeCell from "@/components/common/huxTable/sizeCell"
+import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import Avatar from "../../components/common/Avatar.vue"
+import Size from "../../components/common/huxTable/Size.vue"
+import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
+import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 
 export default {
   name: "audiences",
@@ -109,11 +146,23 @@ export default {
     PageHeader,
     Breadcrumb,
     huxButton,
-    HuxTable,
     EmptyPage,
+    HuxDataTable,
+    Avatar,
+    Size,
+    TimeStamp,
+    MenuCell,
   },
   data() {
     return {
+      actionItems: [
+        { title: "Favorite" },
+        { title: "Export" },
+        { title: "Edit" },
+        { title: "Duplicate" },
+        { title: "Create a lookalike" },
+        { title: "Delete" },
+      ],
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -124,62 +173,42 @@ export default {
 
       columnDefs: [
         {
-          headerName: "Audience name",
-          field: "name",
-          sortable: true,
-          sort: "desc",
-          pinned: "left",
-          width: "300",
-          cellRendererFramework: MenuCell,
-          cellClass: "menu-cells",
-          sortingOrder: ["desc", "asc"],
+          text: "Audience name",
+          value: "name",
+          width: "331px",
+          fixed: true,
+          divider: true,
+          class: "fixed-header",
         },
         {
-          headerName: "Size",
-          field: "size",
-          sortable: true,
-          width: "100",
-          cellRendererFramework: sizeCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Size",
+          value: "size",
+          width: "112px",
         },
         {
-          headerName: "Last delivered",
-          field: "last_delivered",
-          width: "170",
-          sortable: true,
-          cellRendererFramework: DateTimeCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Last delivered",
+          value: "last_delivered",
+          width: "162",
         },
         {
-          headerName: "Last updated",
-          field: "update_time",
-          sortable: true,
-          width: "170",
-          cellRendererFramework: DateTimeCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Last updated",
+          value: "update_time",
+          width: "154",
         },
         {
-          headerName: "Last updated by",
-          field: "updated_by",
-          sortable: true,
-          width: "140",
-          cellRendererFramework: UserAvatarCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Last updated by",
+          value: "updated_by",
+          width: "148",
         },
         {
-          headerName: "Created",
-          field: "create_time",
-          sortable: true,
-          width: "160",
-          cellRendererFramework: DateTimeCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Created",
+          value: "create_time",
+          width: "154",
         },
         {
-          headerName: "Created by",
-          field: "created_by",
-          sortable: true,
-          cellRendererFramework: UserAvatarCell,
-          sortingOrder: ["desc", "asc"],
+          text: "Created by",
+          value: "created_by",
+          width: "100%",
         },
       ],
       loading: false,
@@ -198,6 +227,9 @@ export default {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
     }),
+    getName(item) {
+      return item.first_name + " " + item.last_name
+    },
   },
   async mounted() {
     this.loading = true
@@ -226,7 +258,10 @@ export default {
       margin-right: 10px;
     }
   }
-  ::v-deep .ag-row-hover .menu-cell-wrapper .action-icon {
+  .hux-data-table {
+    margin-top: 1px;
+  }
+  ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
 }
