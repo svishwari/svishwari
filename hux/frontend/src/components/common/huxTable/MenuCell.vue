@@ -1,20 +1,13 @@
 <template>
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
-      <router-link
-        :to="{
-          name: 'AudienceInsight',
-          params: { id: audienceId },
-        }"
-        class="text-decoration-none text-elipsis"
-        append
-      >
+      <router-link :to="routePath" class="text-decoration-none" append>
         <tooltip>
           <template slot="label-content">
-            <span class="primary--text ellipsis"> {{ cellValue }} </span>
+            <span class="primary--text ellipsis"> {{ value }} </span>
           </template>
           <template slot="hover-content">
-            {{ cellValue }}
+            {{ value }}
           </template>
         </tooltip>
       </router-link>
@@ -34,7 +27,11 @@
           </template>
           <v-list class="list-wrapper">
             <v-list-item-group>
-              <v-list-item v-for="(item, index) in items" :key="index" disabled>
+              <v-list-item
+                v-for="(item, index) in menuOptions"
+                :key="index"
+                disabled
+              >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
@@ -52,41 +49,41 @@ export default Vue.extend({
   components: {
     Tooltip,
   },
-  data() {
-    return {
-      audienceId: null,
-      cellValue: null,
-      items: [
-        { title: "Favorite" },
-        { title: "Export" },
-        { title: "Edit" },
-        { title: "Duplicate" },
-        { title: "Create a lookalike" },
-        { title: "Delete" },
-      ],
-      favoriteIconColor: "default",
-    }
-  },
-  beforeMount() {
-    this.cellValue = this.getValueToDisplay(this.params)
-  },
-  methods: {
-    getValueToDisplay(params) {
-      return params.valueFormatted ? params.valueFormatted : params.value
+  props: {
+    navigateTo: {
+      type: Object,
+      required: false,
     },
-    addToFavorite() {
-      if (this.favoriteIconColor == "default") {
-        this.favoriteIconColor = "primary"
-      } else {
-        this.favoriteIconColor = "default"
+    value: {
+      type: String,
+      required: true,
+    },
+    menuOptions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    routeName: {
+      type: String,
+      required: true,
+    },
+    routeParam: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    routePath() {
+      return {
+        name: this.routeName,
+        params: { id: this.routeParam },
       }
     },
+  },
+  methods: {
     takeActions(evnt) {
       evnt.preventDefault()
     },
-  },
-  async mounted() {
-    this.audienceId = this.params.data.id
   },
 })
 </script>
@@ -105,6 +102,12 @@ export default Vue.extend({
     max-width: 31ch;
     display: inline-block;
     width: 31ch;
+    white-space: nowrap;
+  }
+  :hover {
+    .action-icon {
+      display: block;
+    }
   }
 }
 </style>
