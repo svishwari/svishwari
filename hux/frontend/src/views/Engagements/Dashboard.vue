@@ -357,7 +357,7 @@ export default {
         },
         audience_performance: [
           {
-            name: "audience_1",
+            name: "audience 1",
             spend: 2000000,
             reach: 500000,
             impressions: 456850,
@@ -607,7 +607,7 @@ export default {
 
               text-overflow: inherit;
               white-space: inherit;
-              color: !important;
+              color: var(--v-neroBlack-base) !important;
             }
             .v-list-item__subtitle {
               display: none;

@@ -34,30 +34,78 @@
           destination.
         </div>
         <!-- Campaign Nested Table -->
-        <hux-data-table :headers="AdsHeaders" :dataItems="campaignData" nested>
-          <template v-slot:header="{ props: { headers } }">
-            <thead class="v-data-table-header hello">
-              <tr>
-                <th
-                  v-for="header in headers"
-                  :key="header.value"
-                  class="text-uppercase"
-                  scope="col"
+        <hux-data-table
+          :headers="AdsHeaders"
+          :dataItems="campaignData"
+          nested
+          :expand.sync="expand"
+        >
+          <template #row-item="{ headers, item, expand, isExpanded }">
+            <td v-for="header in headers" v-bind:key="header.value">
+              <span v-if="header.value == 'data-table-expand'">
+                <v-icon
+                  @click="expand(!isExpanded)"
+                  small
+                  color="darkGrey"
+                  :class="{
+                    'rotate-expand-icon': !isExpanded,
+                  }"
                 >
-                  {{ header.text }}
-                </th>
-              </tr>
-            </thead>
+                  <template>mdi-chevron-right</template>
+                </v-icon>
+              </span>
+              <span v-if="header.value == 'name'">
+                <tooltip>
+                  <template slot="label-content">
+                    {{ item[header.value] | TitleCase }}
+                  </template>
+                  <template slot="hover-content">
+                    {{ item[header.value] }}
+                  </template>
+                </tooltip>
+              </span>
+              <span v-if="header.value == 'spend'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'reach'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'impressions'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'conversions'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'clicks'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'frequency'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'cost_per_thousand_impressions'">{{
+                item[header.value] | FormatSize | CurrentFormat
+              }}</span>
+              <span v-if="header.value == 'click_through_rate'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'cost_per_action'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'cost_per_click'">{{
+                item[header.value] | FormatSize
+              }}</span>
+              <span v-if="header.value == 'engagement_rate'">{{
+                item[header.value] | FormatSize
+              }}</span>
+            </td>
           </template>
-          <template v-slot:item="{ item }">
-            {{ item }}
-          </template>
-          <template v-slot:expanded-row="{ headers, item }">
+          <template #expanded-row="{ headers, item }">
             <td :colspan="headers.length" class="pa-0">
               <hux-data-table
                 :headers="headers"
                 :dataItems="item.campaigns"
                 :showHeader="false"
+                v-if="item"
               >
                 <template v-slot:row-item="{ item }">
                   <td
@@ -137,6 +185,7 @@ export default {
   },
   data() {
     return {
+      expand: [],
       AdsHeaders: [
         { text: "Audiences", value: "name", width: "170px" },
         { text: "Spend", value: "spend", width: "90px" },
@@ -153,6 +202,7 @@ export default {
       ],
     }
   },
+
   props: {
     summary: {
       type: Array,
@@ -165,10 +215,6 @@ export default {
       default: () => [],
     },
   },
+  methods: {},
 }
 </script>
-
-<style lang="scss" scoped>
-::root {
-}
-</style>

@@ -1,29 +1,35 @@
 <template>
   <div class="hux-data-table">
-    <div class="table-overflow" :style="{ 'margin-left': FixedWidth }">
+    <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
         :headers="headers"
         :items="dataItems"
         item-key="name"
         :hide-default-footer="true"
-        fixed-header
+        :fixed-header="true"
         must-sort
         :sort-by="sortColumn"
         sort-desc
         :height="height"
         :expanded.sync="expanded"
         :show-expand="nested"
-        :items-per-page="100"
+        :items-per-page="-1"
         :hide-default-header="!showHeader"
       >
-        <template v-slot:body="{ items }" v-if="!nested">
+        <template #body="{ headers, items, expand, isExpanded }">
           <tbody>
             <tr v-for="item in items" :key="item.id">
-              <slot name="row-item" :item="item" />
+              <slot
+                name="row-item"
+                :item="item"
+                :headers="headers"
+                :expand="expand"
+                :isExpanded="isExpanded"
+              />
             </tr>
           </tbody>
         </template>
-        <template v-slot:expanded-item="{ headers, item }">
+        <template #expanded-item="{ headers, item }">
           <slot name="expanded-row" :headers="headers" :item="item" />
         </template>
       </v-data-table>
@@ -65,15 +71,19 @@ export default {
       required: false,
       default: "name",
     },
+    expand: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
   data() {
     return {
       search: "",
-      expanded: [],
     }
   },
   computed: {
-    FixedWidth() {
+    fixedWidth() {
       const fixedHeaders = this.headers.filter((item) => item.fixed)
 
       return fixedHeaders.length > 0
@@ -82,6 +92,14 @@ export default {
             .map((item) => parseInt(item, 0))
             .reduce((a, b) => a + b) + "px"
         : "0px"
+    },
+    expanded: {
+      get() {
+        return this.expand
+      },
+      set(value) {
+        this.$set(this.expand, value)
+      },
     },
   },
 }
