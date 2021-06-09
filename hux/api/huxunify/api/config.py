@@ -39,7 +39,7 @@ class Config:
     FLASK_ENV = "test"
 
     # AWS_CONFIG
-    AWS_REGION = config("AWS_REGION", default="us-east-2")
+    AWS_REGION = config("AWS_REGION", default="us-east-1")
 
     # MONGO CONFIG
     MONGO_DB_HOST = config("MONGO_DB_HOST", default="localhost")

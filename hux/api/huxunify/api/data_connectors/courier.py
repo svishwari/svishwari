@@ -188,16 +188,17 @@ def get_destination_config(
             audience_delivery_job[db_const.ID]
         ),
         api_const.BATCH_SIZE.upper(): str(audience_router_batch_size),
-        cfg.HOST: config.MONGO_DB_HOST,
+        cfg.HOST: "unifieddb_host_alias",  # config.MONGO_DB_HOST,
         cfg.PORT: str(config.MONGO_DB_PORT),
-        cfg.USER_NAME: config.MONGO_DB_USERNAME,
-        cfg.SSL_CERT_PATH: config.MONGO_SSL_CERT,
+        cfg.USER_NAME: "read_write_user",  # config.MONGO_DB_USERNAME,
+        # cfg.SSL_CERT_PATH: config.MONGO_SSL_CERT,
+        cfg.SSL_CERT_PATH: "../rds-combined-ca-bundle.pem",
         config.MONITORING_CONFIG_CONST: config.MONITORING_CONFIG,
         api_const.AUDIENCE_ROUTER_STUB_TEST: "1",  # CDM STUB VALUE
     }
 
     aws_secret_dict = {
-        cfg.PASSWORD: config.MONGO_DB_PASSWORD,
+        cfg.PASSWORD: "unifieddb_rw",  # config.MONGO_DB_PASSWORD,
         **map_destination_credentials_to_dict(delivery_platform),
     }
     return DestinationBatchJob(
