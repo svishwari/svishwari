@@ -115,14 +115,6 @@
                   >
                     mdi-plus-circle
                   </v-icon>
-                  <!-- <Logo
-                    class="added-logo ml-2"
-                    v-for="destination in audience.destinations"
-                    :key="destination.id"
-                    :type="destination.type"
-                    :size="18"
-                  /> -->
-
                   <tooltip>
                     <template slot="label-content">
                       <Logo
