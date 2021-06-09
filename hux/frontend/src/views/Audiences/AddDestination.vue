@@ -120,7 +120,7 @@ export default {
   data() {
     return {
       isActive: true,
-      journeyType: "radio-1",
+      journeyType: "radio-1", // TODO - with API integration
       extension: null,
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     }
