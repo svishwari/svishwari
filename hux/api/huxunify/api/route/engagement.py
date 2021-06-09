@@ -1189,6 +1189,7 @@ class EngagementMetricsEmail(SwaggerView):
     # pylint: disable=unused-argument
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves email performance metrics.
+
         ---
         security:
             - Bearer: ["Authorization"]
