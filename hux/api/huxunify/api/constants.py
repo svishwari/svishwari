@@ -22,6 +22,7 @@ CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
+OVERVIEW = "overview"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -334,12 +335,10 @@ BATCH_SIZE = "batch_size"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
-CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
-CUSTOMERS_DASHBOARD_OVERVIEW_ENDPOINT = "dashboard_overview"
 
 # IDR Fields
+IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
-IDR_OVERVIEW_ENDPOINT = "overview"
 
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
