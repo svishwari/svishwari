@@ -13,7 +13,7 @@
         must-sort
         sort-desc
       >
-        <template v-slot:body="{ items }" v-if="!nested">
+        <template #body="{ items }" v-if="!nested">
           <tbody class="data-table-body">
             <tr
               v-for="item in items"
@@ -24,7 +24,7 @@
             </tr>
           </tbody>
         </template>
-        <template v-slot:item="{ item, expand, isExpanded }" v-if="nested">
+        <template #item="{ item, expand, isExpanded }" v-if="nested">
           <tr>
             <td></td>
             <td v-for="field in Object.keys(item)" :key="field.name">
@@ -39,7 +39,7 @@
             </td>
           </tr>
         </template>
-        <template v-slot:expanded-item="{ item }" v-if="nested">
+        <template #expanded-item="{ item }" v-if="nested">
           <tr v-for="(field, index) in item.child" :key="index">
             <td></td>
             <slot name="expanded-row" :field="field"></slot>
