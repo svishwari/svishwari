@@ -117,12 +117,12 @@ class CustomerOverview(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.CUSTOMERS_DASHBOARD_OVERVIEW_ENDPOINT}",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.IDR_OVERVIEW_ENDPOINT}",
     "CustomerDashboardOverview",
 )
 class CustomerDashboardOverview(SwaggerView):
     """
-    Customers Overview class
+    Customers Dashboard Overview class
     """
 
     responses = {
@@ -139,7 +139,7 @@ class CustomerDashboardOverview(SwaggerView):
 
     # pylint: disable=no-self-use
     def get(self) -> Tuple[dict, int]:
-        """Retrieves a customer data overview.
+        """Retrieves a customer data dashboard overview.
 
         ---
         security:
