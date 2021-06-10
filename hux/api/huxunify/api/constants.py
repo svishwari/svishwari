@@ -245,7 +245,7 @@ UNSUBSCRIBE_RATE = "unsubscribe_rate"
 CDP_DATA_SOURCE_NAME = "name"
 CDP_DATA_SOURCE_CATEGORY = "category"
 CDP_DATA_SOURCE_DESCRIPTION = "CDP data source body"
-CDP_DATA_SOURCE_FIELD_FEED_COUNT = "feed_count"
+CDP_DATA_SOURCE_FEED_COUNT = "feed_count"
 CDP_DATA_SOURCE_ADDED = "is_added"
 CDP_DATA_SOURCE_ENABLED = "is_enabled"
 

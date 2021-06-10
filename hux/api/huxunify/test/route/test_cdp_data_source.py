@@ -215,7 +215,7 @@ class CdpDataSourcesTest(TestCase):
         valid_response = {
             api_c.CDP_DATA_SOURCE_NAME: ds_name,
             api_c.CDP_DATA_SOURCE_CATEGORY: ds_category,
-            api_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
+            api_c.CDP_DATA_SOURCE_FEED_COUNT: 1,
             api_c.STATUS: db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
             api_c.CDP_DATA_SOURCE_ADDED: False,
             api_c.CDP_DATA_SOURCE_ENABLED: False,
