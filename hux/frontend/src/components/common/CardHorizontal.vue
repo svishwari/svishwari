@@ -95,7 +95,7 @@ export default {
 
 <style lang="scss" scoped>
 .horizontal-card {
-  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
+  @extend .box-shadow-5;
   .card-horizontal-disabled {
     border: 1px solid var(--v-zircon-base) !important;
   }

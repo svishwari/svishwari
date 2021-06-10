@@ -60,7 +60,7 @@
       </MetricCard>
     </div>
     <div class="px-15 my-1" v-if="audience && audience.insightInfo">
-      <v-card elevation="1" class="rounded px-5 pt-5">
+      <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview">Audience overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard

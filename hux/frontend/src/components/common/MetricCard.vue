@@ -103,7 +103,7 @@ export default {
 <style lang="scss" scoped>
 .metric-card-wrapper {
   border: 1px solid var(--v-zircon-base);
-  padding: 1% 1.4%;
+  padding: 20px 15px;
   &.no-click {
     cursor: default;
     background-color: transparent;

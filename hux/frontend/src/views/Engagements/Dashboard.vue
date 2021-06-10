@@ -555,7 +555,7 @@ export default {
     }
     .v-tabs-items {
       background: var(--v-white-base);
-      box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
+      @extend .box-shadow-5;
       border-radius: 12px;
     }
   }
