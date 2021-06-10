@@ -112,15 +112,26 @@
                     class="add-icon mt-1"
                     color="primary"
                     @click="toggleDrawer()"
-                    >mdi-plus-circle</v-icon
                   >
-                  <Logo
-                    class="added-logo ml-2"
-                    v-for="destination in audience.destinations"
-                    :key="destination.id"
-                    :type="destination.type"
-                    :size="18"
-                  />
+                    mdi-plus-circle
+                  </v-icon>
+                  <tooltip>
+                    <template slot="label-content">
+                      <Logo
+                        class="added-logo ml-2"
+                        v-for="destination in audience.destinations"
+                        :key="destination.id"
+                        :type="destination.type"
+                        :size="18"
+                        @mouseover.native="hoverItem = destination.name"
+                      />
+                    </template>
+                    <template slot="hover-content">
+                      <div class="d-flex align-center">
+                        Remove {{ hoverItem }}
+                      </div>
+                    </template>
+                  </tooltip>
                 </div>
               </v-col>
             </v-row>
@@ -167,34 +178,34 @@
         </template>
       </HuxFooter>
       <!-- Add destination workflow -->
-      <drawer v-model="destinationDrawer.insideFlow">
+      <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
         <template v-slot:header-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
           >
-            <h5 class="text-h5 font-weight-regular pr-2">
+            <h3 class="text-h3 font-weight-light pr-2">
               Select a destination to add
-            </h5>
+            </h3>
           </div>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 2"
           >
-            <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
+            <h3 class="text-h3 pr-2 d-flex align-center">
               <Logo :type="destinationDrawer.selectedDestination[0].type" />
-              <div class="pl-2 font-weight-regular">
+              <div class="pl-2 font-weight-light">
                 {{ destinationDrawer.selectedDestination[0].name }}
               </div>
-            </h5>
+            </h3>
           </div>
         </template>
 
         <template v-slot:default>
-          <v-stepper v-model="destinationDrawer.viewStep">
+          <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
             <v-stepper-items>
               <v-stepper-content step="1">
-                <div class="ma-5">
+                <div>
                   <CardHorizontal
                     v-for="destination in destinations"
                     :key="destination.id"
@@ -206,7 +217,7 @@
                     "
                     :isAvailable="destination.is_enabled"
                     :isAlreadyAdded="destination.is_added"
-                    @click="onSelectDestination(index, destination)"
+                    @click="onSelectDestination(destination)"
                     class="my-3"
                   />
                 </div>
@@ -252,7 +263,7 @@
               v-bind:isTile="true"
               width="80"
               height="40"
-              class="ma-2"
+              class="ma-2 drawer-back"
               @click.native="destinationDrawer.viewStep = 1"
             ></huxButton>
           </div>
@@ -281,6 +292,7 @@ import CardHorizontal from "@/components/common/CardHorizontal"
 import AddDestination from "@/views/Audiences/AddDestination"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import Logo from "@/components/common/Logo"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "Configuration",
@@ -296,6 +308,7 @@ export default {
     AddDestination,
     Logo,
     AttachEngagement,
+    Tooltip,
   },
   data() {
     return {
@@ -332,12 +345,13 @@ export default {
         viewStep: 1,
         selectedDestination: [],
       },
+      hoverItem: "",
     }
   },
 
   computed: {
     ...mapGetters({
-      destinations: "destinations/list",
+      destinations: "destinations/enabledDestination",
     }),
 
     destination() {
@@ -388,7 +402,7 @@ export default {
       this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
     },
 
-    onSelectDestination(index, selected) {
+    onSelectDestination(selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
         if (selected && selected.type === "salesforce") {
@@ -399,6 +413,13 @@ export default {
         } else {
           this.audience.destinations.push(selected)
           this.toggleDrawer()
+        }
+      } else {
+        var idx = this.audience.destinations.findIndex(
+          (item) => item.id == selected.id
+        )
+        if (idx > -1) {
+          this.audience.destinations.splice(idx, 1)
         }
       }
     },
@@ -600,6 +621,21 @@ export default {
     }
     .added-logo {
       margin-top: 6px;
+      &:hover {
+        width: 18px;
+        height: 18px;
+        background-image: url("../../assets/images/delete_outline.png");
+        background-size: 18px 18px;
+      }
+    }
+  }
+
+  .destination-drawer {
+    .stepper {
+      box-shadow: none !important;
+    }
+    .drawer-back {
+      @extend .box-shadow-25;
     }
   }
 }

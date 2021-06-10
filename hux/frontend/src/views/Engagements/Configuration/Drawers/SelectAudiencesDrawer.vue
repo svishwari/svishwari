@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localToggle">
+  <Drawer v-model="localToggle" :width="640">
     <template #header-left>
       <h3 class="text-h3">Add audiences to this engagement</h3>
     </template>

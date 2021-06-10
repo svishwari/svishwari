@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="d-flex justify-space-between align-center px-5 py-2 rounded"
+    class="d-flex justify-space-between align-center px-5 py-2 rounded list-shadow"
     @click="$emit('click')"
     :class="isDisabledOrDeselectable ? 'card-horizontal-disabled' : ''"
     :elevation="isDisabledOrDeselectable ? '0' : '2'"
@@ -17,12 +17,13 @@
       <huxButton
         :ButtonText="isAdded ? 'Added' : 'Add'"
         :isOutlined="!isAdded"
-        :variant="isAdded ? 'secondary' : 'lightGrey'"
+        :variant="isAdded ? 'secondary' : 'gray'"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
         :isDisabled="isAlreadyAdded"
         iconPosition="left"
         class="ma-2"
+        :ButtonTextColor="!isAdded ? 'gray--text' : ''"
       ></huxButton>
     </div>
   </v-card>
@@ -93,7 +94,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-horizontal-disabled {
-  border: 1px solid var(--v-zircon-base) !important;
+.horizontal-card {
+  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
+  .card-horizontal-disabled {
+    border: 1px solid var(--v-zircon-base) !important;
+  }
+  &:hover {
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25) !important;
+  }
 }
 </style>
