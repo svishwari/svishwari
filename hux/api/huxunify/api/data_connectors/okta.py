@@ -4,6 +4,7 @@ Purpose of this file is for holding methods to query and pull data from OKTA.
 from typing import Tuple
 
 import requests
+from flask import request
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
@@ -81,22 +82,23 @@ def get_user_info(access_token: str) -> dict:
     ).json()
 
 
-def get_token_from_request(request) -> tuple:
+def get_token_from_request(flask_request: request) -> tuple:
     """Validate the OKTA connection.
 
     Args:
+        flask_request (request): flask request.
 
     Returns:
         tuple[str, int]: Returns a string message or token and a response code.
 
     """
 
-    # check if request has headers attribute
-    if not hasattr(request, "headers"):
+    # check if flask_request has headers attribute
+    if not hasattr(flask_request, "headers"):
         return api_c.INVALID_AUTH_HEADER, 401
 
     # get the auth token
-    auth_header = request.headers.get("Authorization", None)
+    auth_header = flask_request.headers.get("Authorization", None)
     if not auth_header:
         # no authorization header, return a generic 401.
         return api_c.INVALID_AUTH_HEADER, 401
