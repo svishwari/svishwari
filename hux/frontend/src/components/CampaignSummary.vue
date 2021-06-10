@@ -102,6 +102,9 @@
                     <span v-if="header.value == 'spend'">
                       {{ item[header.value] | Numeric(true, false) }}
                     </span>
+                    <span v-if="header.value == 'sent'">
+                      {{ item[header.value] | Numeric(true, false) }}
+                    </span>
                     <span v-if="header.value == 'reach'">
                       {{ item[header.value] | Numeric(true, false) }}
                     </span>
@@ -242,75 +245,108 @@ export default {
         {
           text: "Hard bounces",
           value: "hard_bounces",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "150px",
+          tooltipValue:
+            "Total number of permanent errors, such as a wrong email address",
         },
         {
           text: "Hard bounce rate",
           value: "hard_bounces_rate",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "170px",
         },
         {
           text: "Delivered",
           value: "delivered",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "120px",
+          tooltipValue: "Number of messages successfully sent",
         },
         {
           text: "Delivered rate",
           value: "delivered_rate",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "150px",
         },
         {
           text: "Open",
           value: "open",
           width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          tooltipValue: "Number of messages that was opened",
         },
         {
           text: "Open rate",
           value: "open_rate",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "120px",
         },
         {
           text: "CTR",
           value: "clicks",
           width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          tooltipValue: "Number of email links or content clicked",
         },
         {
           text: "CTOR",
           value: "click_through_rate",
           width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          tooltipValue: "Clicks / Opens * 100",
         },
         {
           text: "Unique clicks",
           value: "unique_clicks",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "150px",
+          tooltipValue: "Number of individuals who clicked on content or links",
         },
         {
           text: "Unique opens",
           value: "unique_opens",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "150px",
+          tooltipValue: "Number of individuals who opened the link",
         },
         {
           text: "Unsubscribe",
           value: "unsubscribe",
-          width: "100px",
-          tooltipValue: "Number of emails sent (including bounces etc)",
+          width: "140px",
+          tooltipValue:
+            "Number of people who unsubscribed from ALL of the campaigns",
         },
         {
           text: "Unsubscribe rate",
           value: "unsubscribe_rate",
-          width: "100px",
+          width: "150px",
           tooltipValue: "Number of emails sent (including bounces etc)",
         },
+      ],
+      numericColumns: [
+        // Ads Columns
+        "spend",
+        "reach",
+        "impressions",
+        "conversions",
+        "frequency",
+        // Email Columns
+        "sent",
+        "hard_bounces",
+        "delivered",
+        "open",
+        "clicks",
+        "unique_clicks",
+        "unique_opens",
+        "unsubscribe",
+      ],
+      percentileColumns: [
+        // Ads Columns
+        "click_through_rate",
+        "engagement_rate",
+        // Email Columns
+        "hard_bounces_rate",
+        "delivered_rate",
+        "open_rate",
+        "click_through_rate",
+      ],
+      currencyColumns: [
+        // Ads Columns
+        "cost_per_thousand_impressions",
+        "cost_per_action",
+        "cost_per_click",
+        // Email Columns
       ],
     }
   },
@@ -345,46 +381,17 @@ export default {
     },
     formatData(item) {
       const obj = Object.assign({}, item)
-      obj["name"] = this.$options.filters.TitleCase(obj["name"])
-      obj["spend"] = this.$options.filters.Numeric(obj["spend"], true, false)
-      obj["reach"] = this.$options.filters.Numeric(obj["reach"], true, false)
-      obj["impressions"] = this.$options.filters.Numeric(
-        obj["impressions"],
-        true,
-        false
-      )
-      obj["conversions"] = this.$options.filters.Numeric(
-        obj["conversions"],
-        true,
-        false
-      )
-      obj["frequency"] = this.$options.filters.Numeric(
-        obj["frequency"],
-        true,
-        false
-      )
-      obj["cost_per_thousand_impressions"] = this.$options.filters.Currency(
-        obj["cost_per_thousand_impressions"]
-      )
-      obj["click_through_rate"] = this.$options.filters.Numeric(
-        obj["click_through_rate"],
-        true,
-        false,
-        "%"
-      )
-      obj["cost_per_action"] = this.$options.filters.Currency(
-        obj["cost_per_action"]
-      )
-      obj["cost_per_click"] = this.$options.filters.Currency(
-        obj["cost_per_click"]
-      )
-      obj["engagement_rate"] = this.$options.filters.Numeric(
-        obj["engagement_rate"],
-        true,
-        false,
-        "%"
-      )
-
+      Object.keys(item).forEach((key) => {
+        if (this.numericColumns.includes(key)) {
+          obj[key] = this.$options.filters.Numeric(obj[key], true, false)
+        } else if (this.percentileColumns.includes(key)) {
+          obj[key] = this.$options.filters.Numeric(obj[key], true, false, "%")
+        } else if (this.currencyColumns.includes(key)) {
+          obj[key] = this.$options.filters.Currency(obj[key])
+        } else if (key === "name") {
+          obj[key] = this.$options.filters.TitleCase(obj[key])
+        }
+      })
       return obj
     },
   },

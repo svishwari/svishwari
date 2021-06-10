@@ -16,16 +16,13 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          width="11.368852459016393%"
-          :min-width="126.5"
-          :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
+          :grow="i === 0 ? 2 : 1"
           :title="item.title"
           :subtitle="item.subtitle"
           :icon="item.icon"
-          :interactable="false"
-        ></MetricCard>
+        />
       </div>
       <v-divider class="divider mt-2 mb-9"></v-divider>
     </div>

@@ -26,29 +26,12 @@
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-6">
         <MetricCard
-          :class="{
-            'list-item': true,
-            'mr-3': true,
-          }"
-          :width="summaryCards[0].width"
-          :min-width="summaryCards[0].minWidth"
-          :height="75"
+          class="mr-3"
           :title="summaryCards[0].title"
           :subtitle="summaryCards[0].value"
-          :interactable="false"
         >
         </MetricCard>
-        <MetricCard
-          :class="{
-            'list-item': true,
-            'mr-3': true,
-          }"
-          :width="summaryCards[1].width"
-          :min-width="summaryCards[1].minWidth"
-          :height="75"
-          :title="summaryCards[1].title"
-          :interactable="false"
-        >
+        <MetricCard class="mr-3" :title="summaryCards[1].title">
           <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
@@ -63,17 +46,7 @@
             <Avatar :name="summaryCards[1].subLabel" />
           </template>
         </MetricCard>
-        <MetricCard
-          :class="{
-            'list-item': true,
-            'mr-3': true,
-          }"
-          :width="summaryCards[2].width"
-          :min-width="summaryCards[2].minWidth"
-          :height="75"
-          :title="summaryCards[2].title"
-          :interactable="false"
-        >
+        <MetricCard class="mr-3" :title="summaryCards[2].title">
           <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
@@ -88,18 +61,7 @@
             <Avatar :name="summaryCards[1].subLabel" />
           </template>
         </MetricCard>
-        <MetricCard
-          :class="{
-            'list-item': true,
-            'mr-3': true,
-            description: true,
-          }"
-          :width="summaryCards[3].width"
-          :min-width="summaryCards[3].minWidth"
-          :height="75"
-          :title="summaryCards[3].title"
-          :interactable="false"
-        >
+        <MetricCard class="mr-3" :title="summaryCards[3].title" :maxWidth="540">
         </MetricCard>
       </div>
 
@@ -158,6 +120,10 @@
         </v-tabs>
         <v-tabs-items v-model="tabOption" class="mt-2">
           <v-tab-item key="displayAds">
+            <v-progress-linear
+              :active="loadingTab"
+              :indeterminate="loadingTab"
+            />
             <campaign-summary
               :summary="displayAdsSummary"
               :campaignData="audiencePerformanceAdsData"
@@ -165,6 +131,10 @@
             />
           </v-tab-item>
           <v-tab-item key="email">
+            <v-progress-linear
+              :active="loadingTab"
+              :indeterminate="loadingTab"
+            />
             <campaign-summary
               :summary="emailSummary"
               :campaignData="audiencePerformanceEmailData"
@@ -335,6 +305,7 @@ export default {
         ],
       },
       loading: false,
+      loadingTab: false,
       tabOption: 0,
       Tooltips: [
         { acronym: "CPM", description: "Cost per Thousand Impressions" },
@@ -461,8 +432,6 @@ export default {
           title: "Delivery schedule",
           value: this.fetchKey(this.engagement, "schedule"),
           subLabel: null,
-          width: "12.6%",
-          minWidth: "146px",
         },
         {
           id: 2,
@@ -492,8 +461,6 @@ export default {
             "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear.",
           value: null,
           subLabel: null,
-          width: "48%",
-          minWidth: "518px",
         },
       ]
       return summary.filter((item) => item.title !== null)
@@ -792,8 +759,13 @@ export default {
         return !!card.title
       }
     },
-    fetchCampaignPerformanceDetails(type) {
-      this.getAudiencePerformanceById({ type: type, id: this.engagement.id })
+    async fetchCampaignPerformanceDetails(type) {
+      this.loadingTab = true
+      await this.getAudiencePerformanceById({
+        type: type,
+        id: this.engagement.id,
+      })
+      this.loadingTab = false
     },
     getTooltip(summaryCard) {
       const acronymObject = this.Tooltips.filter(
@@ -821,40 +793,7 @@ export default {
   }
   .inner-wrap {
     .summary-wrap {
-      .metric-card-wrapper {
-        border: 1px solid var(--v-zircon-base);
-        box-sizing: border-box;
-        border-radius: 12px;
-        ::v-deep .v-list-item__content {
-          padding-top: 15px;
-          padding-bottom: 15px;
-          .v-list-item__title {
-            font-size: 12px;
-            line-height: 16px;
-            margin: 0 !important;
-          }
-          .v-list-item__subtitle {
-            margin-bottom: 15px !important;
-          }
-        }
-        &.description {
-          ::v-deep .v-list-item__content {
-            padding-top: 0px;
-
-            .v-list-item__title {
-              font-size: 14px;
-              line-height: 22px;
-
-              text-overflow: inherit;
-              white-space: inherit;
-              color: var(--v-neroBlack-base) !important;
-            }
-            .v-list-item__subtitle {
-              display: none;
-            }
-          }
-        }
-      }
+      flex-wrap: wrap;
     }
     .summary-tab-wrap {
       .metric-card-wrapper {

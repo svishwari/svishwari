@@ -7,32 +7,35 @@
         :hide-default-header="!showHeader"
         :height="height"
         :items="dataItems"
+        item-key="name"
         :items-per-page="-1"
+        :single-expand="true"
         fixed-header
         hide-default-footer
         must-sort
         sort-desc
-        single-expand
-        single-sele
-        @click:row="expandRow"
+        single-select
+        @click:row="clickRow"
       >
-        <template #item.name="{ item, isExpanded }" v-if="nested">
-          <slot name="item-name" :item="item" :isExpanded="isExpanded" />
-        </template>
-        <template
-          #item.data-table-expand="{ expand, isExpanded }"
-          v-if="nested"
-        >
+        <template #item.name="{ item, expand, isExpanded }" v-if="nested">
           <v-icon
+            :class="{ 'normal-icon': isExpanded }"
+            @mouseover="toolsIndex = index"
+            @mouseleave="toolsIndex = null"
             @click="expand(!isExpanded)"
-            small
-            color="darkGrey"
-            :class="{
-              'rotate-expand-icon': !isExpanded,
-            }"
+            >mdi-chevron-right</v-icon
           >
-            <template>mdi-chevron-down</template>
-          </v-icon>
+          <tooltip>
+            <template slot="label-content">
+              <!-- TODO Route Link to Audience Insight Page -->
+              <router-link to="#" class="text-decoration-none" append
+                >{{ item.name }}
+              </router-link></template
+            >
+            <template slot="hover-content">
+              {{ item.name }}
+            </template>
+          </tooltip>
         </template>
         <template v-for="h in headers" v-slot:[`header.${h.value}`]>
           <tooltip :key="h.value" v-if="h.tooltipValue">
@@ -51,7 +54,11 @@
         </template>
         <template #body="{ headers, items }" v-if="!nested">
           <tbody>
-            <tr v-for="item in items" :key="item.id">
+            <tr
+              v-for="(item, index) in items"
+              :key="item.id"
+              @click="expandRow(index)"
+            >
               <slot name="row-item" :item="item" :headers="headers" />
             </tr>
           </tbody>
@@ -120,8 +127,8 @@ export default {
     },
   },
   methods: {
-    expandRow(value, row) {
-      row.expand(!row.isExpanded)
+    clickRow(_, event) {
+      event.expand(!event.isExpanded)
     },
   },
 }
