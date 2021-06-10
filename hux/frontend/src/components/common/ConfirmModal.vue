@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="localModal" :width="width">
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <slot name="activator" v-on="on" v-bind="attrs"></slot>
     </template>
     <div class="white text-center pt-10">

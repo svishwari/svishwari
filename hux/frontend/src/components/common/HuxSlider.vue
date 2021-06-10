@@ -20,7 +20,7 @@
       v-model="currentValue"
       @end="onFinalValue"
     >
-      <template v-slot:append>
+      <template #append>
         <span
           class="slider-value-display"
           :style="{

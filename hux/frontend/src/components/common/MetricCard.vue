@@ -14,7 +14,7 @@
       <v-list-item-content>
         <v-list-item-title
           class="item-headline mt-1"
-          v-bind:class="interactable ? 'primary--text ' : 'gray--text '"
+          :class="interactable ? 'primary--text ' : 'gray--text '"
         >
           <span v-if="!titleTooltip">{{ title }}</span>
           <tooltip v-if="titleTooltip">

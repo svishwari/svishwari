@@ -11,7 +11,7 @@
         transition="fade-transition"
         top
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template #activator="{ on, attrs }">
           <v-icon
             color="primary"
             size="small"
