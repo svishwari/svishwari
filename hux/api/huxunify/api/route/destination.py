@@ -18,11 +18,15 @@ from huxunifylib.database import (
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.util.general.const import FacebookCredentials
 from huxunify.api.data_connectors.aws import parameter_store
+from huxunifylib.connectors.connector_sfmc import (
+    SFMCConnector
+)
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPutSchema,
     DestinationConstantsSchema,
     DestinationValidationSchema,
+    DestinationDataExtSchema
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import (
@@ -416,3 +420,96 @@ class DestinationValidatePostView(SwaggerView):
         return {
             "message": api_c.DESTINATION_AUTHENTICATION_FAILED
         }, HTTPStatus.BAD_REQUEST
+
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/dataextensions",
+    "DestinationDataExtView",
+)
+class DestinationDataExtView(SwaggerView):
+    """
+    Destination Validation Post view class
+    """
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Validated destination successfully.",
+            "schema": {
+                "example": {
+                    "message": "Destination is validated successfully"
+                },
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to validate the destination.",
+            "schema": {
+                "example": {"message": "Destination can not be validated"},
+            },
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    def get(self, destination_id: str) -> Tuple[list, int]:
+        """Validates the credentials for a destination.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        if destination_id is None or not ObjectId.is_valid(destination_id):
+            return HTTPStatus.BAD_REQUEST
+
+        destination = destination_management.get_delivery_platforms_by_id(get_db_client(), destination_id)
+        if api_c.DELIVERY_PLATFORM_AUTH not in destination or api_c.DELIVERY_PLATFORM_TYPE not in destination:
+            return HTTPStatus.BAD_REQUEST
+
+        ext_list = []
+        try:
+            if (
+                    destination[api_c.DELIVERY_PLATFORM_TYPE]
+                    == db_constants.DELIVERY_PLATFORM_SFMC
+            ):
+                connector = SFMCConnector(
+                    destination[api_c.AUTHENTICATION_DETAILS]
+                )
+                ext_list = connector.get_list_of_data_extensions()
+                ext_list = connector.create_data_extension("jnfdw")
+
+            return (ext_list, HTTPStatus.OK)
+        except Exception as exc:
+            logging.error(
+                "%s. Reason:[%s: %s].",
+                api_c.DESTINATION_AUTHENTICATION_FAILED,
+                exc.__class__,
+                exc,
+            )
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=api_c.DESTINATION_AUTHENTICATION_FAILED,
+            ) from exc
+
+        return {
+                   "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+               }, HTTPStatus.BAD_REQUEST
+

@@ -15,11 +15,10 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
     user_management,
     orchestration_management,
-    db_exceptions,
     engagement_management,
-    data_management,
+    db_exceptions,
+    constants as db_c
 )
-import huxunifylib.database.constants as db_c
 
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
@@ -32,13 +31,8 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
-    api_error_handler,
-    get_user_id,
 )
-from huxunify.api.data_connectors.courier import (
-    get_destination_config,
-    get_audience_destination_pairs,
-)
+
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -53,21 +47,21 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(destination_ids) -> list:
+def add_destinations(destinations) -> list:
     """Fetch destinations data using destination ids.
 
     ---
 
         Args:
-            destination_ids (list): Destinations Ids.
+            destinations (list): Destinations list.
 
         Returns:
             destinations (list): Destination objects.
 
     """
 
-    if destination_ids is not None:
-        object_ids = [ObjectId(x) for x in destination_ids]
+    if destinations is not None:
+        object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
         return destination_management.get_delivery_platforms_by_id(
             get_db_client(), object_ids
         )
@@ -235,8 +229,10 @@ class AudiencePostView(SwaggerView):
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS_TAG: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
+                    {
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension_id": "data_extension_id",
+                    }
                 ],
                 api_c.AUDIENCE_ENGAGEMENTS: [
                     "84759317897acad4bac4373b",
@@ -271,39 +267,41 @@ class AudiencePostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    @get_user_id()
-    def post(self, user_id) -> Tuple[dict, int]:  # pylint: disable=no-self-use
+    def post(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
         """Creates a new audience.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
-        Args:
-            user_id (ObjectId): user_id extracted from Okta.
-
         Returns:
             Tuple[dict, int]: Created audience, HTTP status.
 
         """
+        # TODO - implement after HUS-254 is done to grab user/okta_id
+        user_id = ObjectId()
 
         try:
             body = AudiencePostSchema().load(request.get_json(), partial=True)
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        try:
-            audience_doc = orchestration_management.create_audience(
-                database=get_db_client(),
-                name=body[api_c.AUDIENCE_NAME],
-                audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-                destination_ids=body.get(api_c.DESTINATIONS_TAG),
-                user_id=user_id,
+        audience_doc = orchestration_management.create_audience(
+            database=get_db_client(),
+            name=body[api_c.AUDIENCE_NAME],
+            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+            destination_ids=body.get(api_c.DESTINATIONS_TAG),
+            user_id=user_id,
+        )
+
+        for engagement in body.get(api_c.ENGAGEMENT_TAG):
+            audience = {
+                api_c.ID: audience_doc.get(db_c.ID),
+                api_c.DESTINATIONS: body.get(api_c.DESTINATIONS_TAG),
+            }
+            engagement_management.append_audiences_to_engagement(
+                get_db_client(), engagement, user_id, [audience]
             )
-        except db_exceptions.DuplicateName:
-            return {
-                "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
-            }, HTTPStatus.BAD_REQUEST
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
@@ -335,8 +333,10 @@ class AudiencePutView(SwaggerView):
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS_TAG: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
+                    {
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension_id": "data_extension_id",
+                    }
                 ],
                 api_c.AUDIENCE_ENGAGEMENTS: [
                     "76859317897acad4bac4373b",
@@ -372,8 +372,7 @@ class AudiencePutView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    @get_user_id()
-    def put(self, audience_id: str, user_id: str) -> Tuple[dict, int]:
+    def put(self, audience_id: str) -> Tuple[dict, int]:
         """Updates an audience.
 
         ---
@@ -382,13 +381,14 @@ class AudiencePutView(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
-            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience doc, HTTP status.
 
         """
 
+        # TODO - implement after HUS-254 is done to grab user/okta_id
+        user_id = ObjectId()
         # load into the schema object
         try:
             body = AudiencePutSchema().load(request.get_json(), partial=True)
@@ -444,7 +444,6 @@ class AudienceDeliverView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
     def post(self, audience_id: str) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is apart of.
 
@@ -461,6 +460,10 @@ class AudienceDeliverView(SwaggerView):
 
         """
 
+        # TODO - implement after HUS-479 is done
+        # pylint: disable=unused-variable
+        user_id = ObjectId()
+
         # validate object id
         if not ObjectId.is_valid(audience_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
@@ -470,14 +473,11 @@ class AudienceDeliverView(SwaggerView):
 
         # check if audience exists
         audience = None
-        database = get_db_client()
         try:
             audience = orchestration_management.get_audience(
-                database, audience_id
+                get_db_client(), audience_id
             )
         except db_exceptions.InvalidID:
-            # get audience returns invalid if the audience does not exist.
-            # pass and catch in the next step.
             pass
 
         if not audience:
@@ -485,130 +485,8 @@ class AudienceDeliverView(SwaggerView):
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # get engagements
-        engagements = engagement_management.get_engagements_by_audience(
-            database, audience_id
-        )
-
-        # submit jobs for the audience/destination pairs
-        delivery_job_ids = []
-        for engagement in engagements:
-            for pair in get_audience_destination_pairs(
-                engagement[api_c.AUDIENCES]
-            ):
-                if pair[0] != audience_id:
-                    continue
-                batch_destination = get_destination_config(database, *pair)
-                batch_destination.register()
-                batch_destination.submit()
-                delivery_job_ids.append(
-                    str(batch_destination.audience_delivery_job_id)
-                )
-
+        # validate delivery route
+        # TODO - hook up to connectors for HUS-437 in Sprint 10
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    orchestration_bp, f"{api_c.AUDIENCE_ENDPOINT}/rules", "AudienceRules"
-)
-class AudienceRules(SwaggerView):
-    """
-    Audience rules class
-    """
-
-    responses = {
-        HTTPStatus.OK.value: {"description": "Get audience rules dictionary"},
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get all audience rules."
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.ORCHESTRATION_TAG]
-
-    def get(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
-        """Retrieves all audience rules.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Returns:
-            Tuple[dict, int]: dict of audience rules, HTTP status.
-
-        """
-
-        rules_constants = data_management.get_constant(
-            get_db_client(), db_c.AUDIENCE_FILTER_CONSTANTS
-        )
-
-        # TODO HUS-356. Stubbed, this will come from CDM
-        # Min/ max values will come from cdm, we will build this dynamically
-        # list of genders will come from cdm
-        # locations will come from cdm
-        rules_from_cdm = {
-            "rule_attributes": {
-                "model_scores": {
-                    "propensity_to_unsubscribe": {
-                        "name": "Propensity to unsubscribe",
-                        "type": "range",
-                        "min": 0.0,
-                        "max": 1.0,
-                        "steps": 0.05,
-                    },
-                    "actual_lifetime_value": {
-                        "name": "Actual lifetime value",
-                        "type": "range",
-                        "min": 0,
-                        "max": 50000,
-                        "steps": 1000,
-                    },
-                    "propensity_to_purchase": {
-                        "name": "Propensity to purchase",
-                        "type": "range",
-                        "min": 0.0,
-                        "max": 1.0,
-                        "steps": 0.05,
-                    },
-                },
-                "general": {
-                    "age": {
-                        "name": "Age",
-                        "type": "range",
-                        "min": 0,
-                        "max": 100,
-                    },
-                    "email": {"name": "Email", "type": "text"},
-                    "gender": {
-                        "name": "Gender",
-                        "type": "text",  # text for 5.0, list for future
-                        "options": [],
-                    },
-                    "location": {
-                        "name": "Location",
-                        "country": {
-                            "name": "Country",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": [],
-                        },
-                        "state": {
-                            "name": "State",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": [],
-                        },
-                        "city": {
-                            "name": "City",
-                            "type": "text",  # text for 5.0, list for future
-                            "options": [],
-                        },
-                        "zip_code": {"name": "Zip code", "type": "text"},
-                    },
-                },
-            }
-        }
-
-        rules_constants = rules_constants["value"]
-        rules_constants.update(rules_from_cdm)
-
-        return rules_constants, HTTPStatus.OK.value

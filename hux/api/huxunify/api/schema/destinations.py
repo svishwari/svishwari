@@ -191,3 +191,14 @@ class DestinationConstantsSchema(Schema):
 
     facebook = fields.Nested(FacebookAuthConstants)
     salesforce = fields.Nested(SFMCAuthConstants)
+
+
+class DestinationDataExtSchema(Schema):
+    """
+    Destination put schema class
+    """
+
+    id = fields.String()
+    authentication_details = fields.Field()
+    type = fields.String()
+
