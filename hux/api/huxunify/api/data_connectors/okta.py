@@ -61,3 +61,46 @@ def introspect_token(access_token: str) -> dict:
 
     # extract user info
     return {"user_name": payload["username"], "user_id": payload["uid"]}
+
+
+def get_user_info(access_token: str) -> dict:
+    """Calls Okta's user_info endpoint and returns user_info object
+
+    Args:
+        access_token (str): The encoded JWT access token, provided by Okta.
+
+    Returns:
+        payload (dict): The decoded payload user info data from Okta.
+    """
+
+    return requests.get(
+        url=f"{get_config().OKTA_ISSUER}" f"/oauth2/v1/userinfo",
+        headers={
+            "Authorization": f"Bearer {access_token}",
+        },
+    ).json()
+
+
+def get_token_from_request(request) -> tuple:
+    """Validate the OKTA connection.
+
+    Args:
+
+    Returns:
+        tuple[str, int]: Returns a string message or token and a response code.
+
+    """
+    # get the auth token
+    auth_header = request.headers.get("Authorization", None)
+    if not auth_header:
+        # no authorization header, return a generic 401.
+        return api_c.INVALID_AUTH_HEADER, 401
+
+    # split the header
+    parts = auth_header.split()
+    if parts[0] != "Bearer" or len(parts) != 2:
+        # user submitted an invalid authorization header.
+        # return a generic 401
+        return api_c.INVALID_AUTH_HEADER, 401
+
+    return parts[1], 200
