@@ -407,7 +407,7 @@ def get_engagements_by_audience(
         return list(
             collection.find(
                 {
-                    f"{db_c.AUDIENCES}.{db_c.ID}": audience_id,
+                    f"{db_c.AUDIENCES}.{db_c.OBJECT_ID}": audience_id,
                     db_c.DELETED: False,
                 },
                 {db_c.DELETED: 0},
