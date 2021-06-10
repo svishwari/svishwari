@@ -255,6 +255,14 @@ def get_audience_destination_pairs(audiences: list) -> list:
     Returns:
         list: list of tuples [(audience_id, destination_id),..]
     """
+
+    if not audiences or not any(x for x in audiences if x):
+        raise TypeError("Empty list provided.")
+
+    # validate to ensure list of dicts has destinations
+    if any(x for x in audiences if db_const.DESTINATIONS not in x):
+        raise TypeError("must be a list of destinations.")
+
     return [
         [aud[db_const.ID], dest[db_const.DELIVERY_PLATFORM_ID]]
         for aud in audiences

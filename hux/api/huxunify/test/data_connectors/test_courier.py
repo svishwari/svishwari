@@ -5,6 +5,7 @@ from http import HTTPStatus
 from unittest import TestCase, mock
 import mongomock
 from bson import ObjectId
+from hypothesis import given, strategies as st
 
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
@@ -19,6 +20,10 @@ from huxunifylib.database.engagement_management import (
 )
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+from huxunifylib.util.general.const import (
+    FacebookCredentials,
+)
+from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
@@ -56,21 +61,9 @@ class CourierTest(TestCase):
             "facebook_ad_account_id": "path4",
         }
 
-        self.auth_details_sfmc = {
-            "sfmc_client_id": "path1",
-            "sfmc_client_secret": "path2",
-            "sfmc_account_id": "path3",
-            "sfmc_auth_base_uri": "path4",
-            "sfmc_rest_base_uri": "path5",
-            "sfmc_soap_base_uri": "path5",
-        }
-
         # create the list of destinations
         destinations = []
-        for destination in [
-            (api_c.FACEBOOK_NAME, self.auth_details_facebook),
-            (api_c.SFMC_NAME, self.auth_details_sfmc),
-        ]:
+        for destination in [(api_c.FACEBOOK_NAME, self.auth_details_facebook)]:
             # TODO - remove when we remove delivery-platform types
             destination_doc = set_delivery_platform(
                 self.database,
@@ -154,7 +147,7 @@ class CourierTest(TestCase):
         # setup destination object with synthetic credentials.
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
-            api_c.DESTINATION_NAME: "My destination",
+            api_c.DESTINATION_NAME: "Facebook",
             api_c.DESTINATION_TYPE: "Facebook",
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
@@ -164,11 +157,34 @@ class CourierTest(TestCase):
             },
         }
 
-        cred_dict = map_destination_credentials_to_dict(destination)
+        env_dict, secret_dict = map_destination_credentials_to_dict(
+            destination
+        )
 
         # ensure mapping.
+        auth = destination[api_c.AUTHENTICATION_DETAILS]
         self.assertDictEqual(
-            cred_dict, destination[api_c.AUTHENTICATION_DETAILS]
+            env_dict,
+            {
+                FacebookCredentials.FACEBOOK_APP_ID.name: auth[
+                    api_c.FACEBOOK_APP_ID
+                ],
+                FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
+                    api_c.FACEBOOK_AD_ACCOUNT_ID
+                ],
+            },
+        )
+
+        self.assertDictEqual(
+            secret_dict,
+            {
+                FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
+                    api_c.FACEBOOK_APP_SECRET
+                ],
+                FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
+                    api_c.FACEBOOK_ACCESS_TOKEN
+                ],
+            },
         )
 
     def test_get_pairs(self):
@@ -185,7 +201,7 @@ class CourierTest(TestCase):
         )
 
         self.assertTrue(delivery_route)
-        self.assertEqual(len(delivery_route), 4)
+        self.assertEqual(len(delivery_route), 2)
 
     def test_get_delivery_route_audience(self):
         """Test get delivery route with specific audience
@@ -206,8 +222,7 @@ class CourierTest(TestCase):
         self.assertTrue(delivery_route)
 
         expected_route = [
-            [self.audience_one[c.ID], self.audience_one[c.DESTINATIONS][0]],
-            [self.audience_one[c.ID], self.audience_one[c.DESTINATIONS][1]],
+            [self.audience_one[c.ID], self.audience_one[c.DESTINATIONS][0]]
         ]
 
         self.assertListEqual(expected_route, delivery_route)
@@ -254,7 +269,9 @@ class CourierTest(TestCase):
         # walk the delivery route
         for pair in delivery_route:
             batch_destination = get_destination_config(self.database, *pair)
-            batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_BATCH_SIZE] = 1000
+            batch_destination.aws_envs[
+                AudienceRouterConfig.BATCH_SIZE.name
+            ] = 1000
             batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_STUB_TEST] = 1
             self.assertIsNotNone(batch_destination)
 
@@ -306,3 +323,41 @@ class CourierTest(TestCase):
                 batch_destination.submit()
 
             self.assertEqual(batch_destination.result, c.STATUS_IN_PROGRESS)
+
+    @given(
+        st.dictionaries(
+            keys=st.one_of(st.text(), st.floats()),
+            values=st.one_of(st.text(), st.floats()),
+        )
+    )
+    def test_bad_map_destination_credentials_to_dict(self, bad_dict: dict):
+        """Test mapping destination credentials with a bad data.
+
+        Args:
+            bad_dict (dict): hypothesis dict of random data.
+
+        Returns:
+
+        """
+        with self.assertRaises(KeyError):
+            map_destination_credentials_to_dict(bad_dict)
+
+    @given(
+        st.lists(
+            st.dictionaries(
+                keys=st.one_of(st.text(), st.floats()),
+                values=st.one_of(st.text(), st.floats()),
+            )
+        )
+    )
+    def test_bad_get_audience_destination_pairs(self, bad_list: list):
+        """Test getting audience destinations with bad data.
+
+        Args:
+            bad_list (dict): hypothesis list of random data.
+
+        Returns:
+
+        """
+        with self.assertRaises(TypeError):
+            get_audience_destination_pairs(bad_list)
