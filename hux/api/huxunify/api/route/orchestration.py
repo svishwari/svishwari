@@ -279,7 +279,6 @@ class AudiencePostView(SwaggerView):
             Tuple[dict, int]: Created audience, HTTP status.
 
         """
-        database = get_db_client()
 
         try:
             body = AudiencePostSchema().load(request.get_json(), partial=True)
@@ -287,7 +286,7 @@ class AudiencePostView(SwaggerView):
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         audience_doc = orchestration_management.create_audience(
-            database=database,
+            database=get_db_client(),
             name=body[api_c.AUDIENCE_NAME],
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS_TAG),
