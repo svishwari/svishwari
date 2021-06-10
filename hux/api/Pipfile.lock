@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "027fd97a5e1c812e176cda6efbbcc524643bbb2179544739386dc3ebdf17c89f"
+            "sha256": "8a3e13f61415d6a0c186bcfadd6329f033c7bafa163771efec6cf9d9ba8d66c5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -115,19 +115,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:06d8dca85a0bb66b7bf2721745895d44691c78dbe7eb3b146702aff85e34af34",
-                "sha256:1f02cd513b130f9cd86c99836de6a0a5f78ea55110bdbc9011d9d78ff0fd3204"
+                "sha256:4cfab400cd9ca9b27b7dffb43f5675525ea5d36c81223d64d15542fdb16cdf7e",
+                "sha256:b0808a58c54c595b6cc6271cbc14a09bb89f0951ca9e8b105d1e94bef3ed24a0"
             ],
             "index": "pypi",
-            "version": "==1.17.89"
+            "version": "==1.17.91"
         },
         "botocore": {
             "hashes": [
-                "sha256:ce0fa8bc260ad187824052805d224cee239d953bb4bfb1e52cf35ad79481b316",
-                "sha256:e112f9a45db1c5a42f787e4b228a35da6e823bcba70f43f43005b4fb58066446"
+                "sha256:462e75419e6537efb2709b7eb5b8c7ade007d30209416f0476bd7c51a2ddc78d",
+                "sha256:cbd0d5d57ec96319f8629347631b00cde72a9ae8826d36ad172c2ab61b299cb1"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==1.20.89"
+            "version": "==1.20.91"
         },
         "bson": {
             "hashes": [
@@ -289,11 +289,11 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:044d81b1e58012f8ebc71cc134e191c1fa312f543f1fbc99973afe28c25e3228",
-                "sha256:b3ca7a8ff9ab3bdefee3ad5aefb11fc6485423767eee016f5942d8e606ca23fb"
+                "sha256:9b235dbc876e49454cbedc52ae0abd540ef705ebccdf4fbe93553bb13f26b1a4",
+                "sha256:eb017521276a75492282c6ca4b718f26de112ed3bcbeaeeb02c1b82de425f909"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==1.30.1"
+            "version": "==1.30.2"
         },
         "google-auth-oauthlib": {
             "hashes": [
@@ -311,27 +311,27 @@
         },
         "huxunifylib-connectors": {
             "hashes": [
-                "sha256:5ad072b90951f7cbcd285b933dbb50aeae3e23fd9e9d5eca5003caf1d0a3658e",
-                "sha256:97843dd84da423002a87dc486837029907a1dc7ac56e5c2205b241de1d4dbf0f"
+                "sha256:983b06362784d697be34ca31a6ce8cc3746535c4f23fe3c235e22e2f6130ddc2",
+                "sha256:e80f364a5c58583d2f7d62c4ad54f42bc18ec6e9d7308ee399752a12e6c60a29"
             ],
             "index": "jfrog",
-            "version": "==0.1.13"
+            "version": "==0.1.14"
         },
         "huxunifylib-database": {
             "hashes": [
-                "sha256:263525bd5cb5bdd3c8c1858d56bc6b9ab48a3d67bb14ab004b8f0643c18cffa1",
-                "sha256:8e8ccd3a8449c72f1abbbfecbda5771f9129b60d1a230c5e2b50667a19e4820c"
+                "sha256:1c823707b714b7bdcb947be89dd642d6ce17bc3c2665899547f064f5fdab3bb0",
+                "sha256:681a45c8fb35d8cda2c03ab161e8594b9a371c1ad9e2dd3442262ecb34dedefb"
             ],
             "index": "jfrog",
-            "version": "==0.2.15"
+            "version": "==0.2.17"
         },
         "huxunifylib-util": {
             "hashes": [
-                "sha256:124c008f6d4ec6b096d223922e5a7279c301944256b5a90041ae8676a3a3dffd",
-                "sha256:1949d8cc15c019920f50d7e3db4f2d5f9543d0118c07d757655b56bd554d96cc"
+                "sha256:1f7c05920489dc427f6a14c44708e8e74d9b1c59060fe1a3e14cd1a7db415679",
+                "sha256:35830234fc39612628cf5472598b1dd47395a880ad4989726751c408c44ba10a"
             ],
             "index": "jfrog",
-            "version": "==0.1.13"
+            "version": "==0.1.14"
         },
         "identify": {
             "hashes": [
@@ -710,6 +710,14 @@
             ],
             "version": "==20.7.3"
         },
+        "pyjwt": {
+            "hashes": [
+                "sha256:934d73fbba91b0483d3857d1aff50e96b2a892384ee2c17417ed3203f173fca1",
+                "sha256:fba44e7898bbca160a2b2b501f492824fc8382485d3a6f11ba5d0c1937ce6130"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==2.1.0"
+        },
         "pymongo": {
             "hashes": [
                 "sha256:03be7ad107d252bb7325d4af6309fdd2c025d08854d35f0e7abc8bf048f4245e",
@@ -889,6 +897,13 @@
             ],
             "version": "==0.4.2"
         },
+        "salesforce-fuelsdk": {
+            "hashes": [
+                "sha256:e9210594f9503a326c098695fc8f07f385ba8440e01e51ec7ebaf3655e8987bb",
+                "sha256:f88d02e13a93541aebaccf48ed0425735349a4289a303cae841696926ea988d0"
+            ],
+            "version": "==1.3.0"
+        },
         "sentinels": {
             "hashes": [
                 "sha256:7be0704d7fe1925e397e92d18669ace2f619c92b5d4eb21a89f31e026f9ff4b1"
@@ -902,6 +917,13 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
+        },
+        "suds-jurko": {
+            "hashes": [
+                "sha256:1cb7252cb13018fc32887c3a834ed7c6648a5b5c4c159be5806da2e1785399e8",
+                "sha256:29edb72fd21e3044093d86f33c66cf847c5aaab26d64cb90e69e528ef014e57f"
+            ],
+            "version": "==0.6"
         },
         "tenacity": {
             "hashes": [
@@ -1089,6 +1111,14 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==0.5.1"
+        },
+        "hypothesis": {
+            "hashes": [
+                "sha256:27aa2af763af06b8b61ce65c09626cf1da6d3a6ff155900f3c581837b453313a",
+                "sha256:9bdee01ae260329b16117e9b0229a839b4a77747a985922653f595bd2a6a541a"
+            ],
+            "index": "pypi",
+            "version": "==6.14.0"
         },
         "idna": {
             "hashes": [
@@ -1329,6 +1359,13 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
+        },
+        "sortedcontainers": {
+            "hashes": [
+                "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88",
+                "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"
+            ],
+            "version": "==2.4.0"
         },
         "toml": {
             "hashes": [
