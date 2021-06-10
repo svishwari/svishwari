@@ -32,8 +32,9 @@
         </div>
         <div class="d-flex align-center pb-4">
           <MetricCard
-            class="list-item ma-0 mr-3"
             v-for="(item, i) in overviewListItems"
+            class="list-item ma-0 mr-3"
+            :class="{ 'd-none': i > overviewListItems.length - 3 && !expanded }"
             :key="i"
             :title="item.title"
             :subtitle="item.subtitle"
@@ -113,8 +114,11 @@ export default {
         { title: "Cities", subtitle: "-" },
         { title: "Age", subtitle: "-" },
         { title: "Women", subtitle: "52%" },
+        { title: "Men", subtitle: "46%" },
+        { title: "Other", subtitle: "2%" },
       ],
       attributeRules: [],
+      expanded: false,
     }
   },
 
@@ -145,15 +149,7 @@ export default {
     },
 
     changeOverviewListItems(expanded) {
-      if (expanded) {
-        this.overviewListItems.push(
-          { title: "Men", subtitle: "46%" },
-          { title: "Other", subtitle: "2%" }
-        )
-      } else {
-        this.overviewListItems.pop()
-        this.overviewListItems.pop()
-      }
+      this.expanded = expanded
     },
 
     reset() {
