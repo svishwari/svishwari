@@ -14,7 +14,7 @@
       </template>
       <template slot="right" class="paheHeadRightPanel">
         <v-menu offset-y :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn
               min-width="40"
               height="40"
@@ -60,7 +60,7 @@
       </div>
     </div>
     <EmptyStateChart>
-      <template v-slot:chart-image>
+      <template #chart-image>
         <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
       </template>
     </EmptyStateChart>

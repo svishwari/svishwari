@@ -214,6 +214,37 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc[c.ID])
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_deleted_delivery_platform(self):
+        """Test get_deleted_delivery_platform."""
+
+        doc = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform 1",
+            "user_id_or_email",
+            self.auth_details_facebook,
+            deleted=True,
+        )
+        self.assertIsNone(doc)
+
+        doc = dpm.get_delivery_platform(
+            self.database, self.delivery_platform_doc[c.ID]
+        )
+        self.assertIsNotNone(doc)
+
+        dpm.update_delivery_platform(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc[c.ID],
+            name="Updated name",
+            delivery_platform_type=c.DELIVERY_PLATFORM_FACEBOOK,
+            deleted=True,
+        )
+        doc = dpm.get_delivery_platform(
+            self.database, self.delivery_platform_doc[c.ID]
+        )
+        self.assertIsNone(doc)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform(self):
         """Test get_delivery_platform."""
 

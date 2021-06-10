@@ -1,6 +1,6 @@
 <template>
   <v-menu v-model="menu" offset-y close-on-click>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <span v-on="on" class="d-flex cursor-pointer mr-6">
         <v-btn color="primary" class="font-weight-bold" small outlined fab>
           {{ initials }}

@@ -9,9 +9,7 @@
         :title="item.title"
         :subtitle="item.subtitle"
         :icon="item.icon"
-        :interactable="false"
-        :height="80"
-        :min-width="174"
+        :maxWidth="172"
         class="mr-4"
       />
     </v-row>

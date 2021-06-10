@@ -32,7 +32,7 @@ from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
     AudienceEngagementSchema,
-    AudienceEngagementDeleteSchema,
+    AudienceEngagementDeleteSchema
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (

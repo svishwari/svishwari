@@ -4,7 +4,7 @@
     <div class="d-flex align-center mt-2">
       <div
         class="extension-type mr-4 text-center"
-        v-bind:class="[isActive ? 'active' : '']"
+        :class="[isActive ? 'active' : '']"
         @click="toggleClass($event)"
       >
         <div class="child mt-4">
@@ -19,7 +19,7 @@
       </div>
       <diV
         class="extension-type mr-4 text-center"
-        v-bind:class="[!isActive ? 'active' : '']"
+        :class="[!isActive ? 'active' : '']"
         @click="toggleClass($event)"
       >
         <div class="child mt-4">
@@ -39,7 +39,7 @@
         <label class="d-flex align-items-center">
           <span class="neroBlack--text text-caption">Journey type</span>
           <v-tooltip top>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
                 size="small"
@@ -55,14 +55,14 @@
         </label>
         <v-radio-group v-model="journeyType" row>
           <v-radio value="radio-1">
-            <template v-slot:label>
+            <template #label>
               <div class="darkGreyHeading--text text-caption">
                 Automated (Batched)
               </div>
             </template>
           </v-radio>
           <v-radio value="radio-2" :disabled="true">
-            <template v-slot:label>
+            <template #label>
               <div class="text-caption">Triggered (API) - coming soon</div>
             </template>
           </v-radio>
