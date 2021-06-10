@@ -81,7 +81,6 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
         get_db_client_mock.return_value = self.database
         self.addCleanup(mock.patch.stopall)
 
-        # TODO: Add dummy audiences, destinations, engagements
         destinations = [
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
@@ -141,8 +140,7 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
 
         self.audiences = []
         for audience in audiences:
-            audience = create_audience(self.database, **audience)
-            self.audiences.append(audience)
+            self.audiences.append(create_audience(self.database, **audience))
 
         user_id = ObjectId()
 
