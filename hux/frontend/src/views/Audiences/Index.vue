@@ -39,9 +39,7 @@
             v-bind:isTile="true"
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
-            <template #text>
-              <span>Audience</span>
-            </template>
+           Audience
           </huxButton>
         </router-link>
       </template>
@@ -116,9 +114,7 @@
               v-bind:isTile="true"
               class="ma-2 font-weight-regular"
             >
-              <template #text>
-                <span>Audience</span>
-              </template>
+              Audience
             </huxButton>
           </router-link>
         </template>

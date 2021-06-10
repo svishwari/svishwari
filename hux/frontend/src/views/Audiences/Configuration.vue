@@ -151,9 +151,7 @@
             class="ma-2 ml-0"
             @click.native="$router.go(-1)"
           >
-            <template #text>
-              <span>Cancel</span>
-            </template>
+            Cancel
           </huxButton>
         </template>
         <template v-slot:right>
@@ -166,9 +164,7 @@
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
           >
-            <template #text>
-              <span>Create</span>
-            </template>
+           Create
           </huxButton>
         </template>
       </HuxFooter>
@@ -237,9 +233,7 @@
               class="ma-2"
               @click="addDestinationToAudience()"
             >
-              <template #text>
-                <span>Add</span>
-              </template>
+              Add
             </huxButton>
           </div>
         </template>
@@ -263,9 +257,7 @@
               class="ma-2"
               @click.native="destinationDrawer.viewStep = 1"
             >
-              <template #text>
-                <span>Back</span>
-              </template>
+              Back
             </huxButton>
           </div>
         </template>

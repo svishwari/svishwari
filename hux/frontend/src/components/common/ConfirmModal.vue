@@ -19,9 +19,7 @@
           isTile
           @click="onCancel()"
         >
-          <template #text>
-            <span>{{ leftBtnText }}</span>
-          </template>
+          {{ leftBtnText }}
         </huxButton>
         <huxButton
           size="large"
@@ -30,9 +28,7 @@
           isTile
           @click="onConfirm()"
         >
-          <template #text>
-            <span>{{ rightBtnText }}</span>
-          </template>
+          {{ rightBtnText }}
         </huxButton>
       </div>
     </div>

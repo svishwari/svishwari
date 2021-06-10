@@ -42,9 +42,7 @@
             size="large"
             v-bind:isTile="true"
           >
-            <template #text>
-              <span>Destination</span>
-            </template>
+           Destination
           </huxButton>
         </router-link>
       </template>

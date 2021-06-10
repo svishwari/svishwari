@@ -144,9 +144,7 @@
     >
       <template v-slot:activator>
         <huxButton size="large" class="ma-2" @click="modal = !modal">
-          <template #text>
-            <span>Open modal</span>
-          </template>
+          Open modal
         </huxButton>
       </template>
     </ConfirmModal>
@@ -172,9 +170,7 @@
       iconPosition="left"
       class="ma-2"
     >
-      <template #text>
-        <span>Added</span>
-      </template>
+      Added
     </huxButton>
     <huxButton
       v-bind:isOutlined="true"
@@ -182,14 +178,10 @@
       variant="darkGrey"
       class="ma-2"
     >
-      <template #text>
-        <span>Add</span>
-      </template>
+      Add
     </huxButton>
     <huxButton variant="primary" size="large" v-bind:isTile="true" class="ma-2">
-      <template #text>
-        <span>Leave configuration</span>
-      </template>
+      Leave configuration
     </huxButton>
     <huxButton
       icon="mdi-check"
@@ -199,14 +191,10 @@
       v-bind:isTile="true"
       class="ma-2"
     >
-      <template #text>
-        <span>Success!</span>
-      </template>
+      Success!
     </huxButton>
     <huxButton variant="tertiary" v-bind:isTile="true" class="ma-2">
-      <template #text>
-        <span>Cancel &amp; Return</span>
-      </template>
+     Cancel &amp; Return
     </huxButton>
     <huxButton
       variant="tertiary"
@@ -214,9 +202,7 @@
       v-bind:isDisabled="true"
       class="ma-2"
     >
-      <template #text>
-        <span>Disabled</span>
-      </template>
+      Disabled
     </huxButton>
     <huxButton
       variant="tertiary"
@@ -224,9 +210,7 @@
       v-bind:enableLoading="true"
       class="ma-2"
     >
-      <template #text>
-        <span>Loader</span>
-      </template>
+      Loader
     </huxButton>
 
     <v-divider class="mt-10" />

@@ -23,7 +23,6 @@
         iconPosition="left"
         class="ma-2"
       >
-        <template #text>
           <span
             v-bind:class="[
               isAdded ? 'white--text' : 'primary--text',
@@ -32,7 +31,6 @@
           >
             {{ isAdded ? "Added" : "Add" }}
           </span>
-        </template>
       </huxButton>
     </div>
   </v-card>

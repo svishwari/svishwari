@@ -22,9 +22,7 @@
             class="mr-2"
             @click="closeAddDataSource"
           >
-            <template #text>
-              <span>Cancel</span>
-            </template>
+           Cancel
           </huxButton>
           <huxButton
             variant="primary"
@@ -33,9 +31,7 @@
             :isDisabled="!isDataSourcesSelected"
             @click="addDataSources"
           >
-            <template #text>
-              <span>{{ dataSourcesBtnText }}</span>
-            </template>
+            {{ dataSourcesBtnText }}
           </huxButton>
         </div>
       </template>

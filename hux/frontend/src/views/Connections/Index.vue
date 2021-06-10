@@ -39,9 +39,7 @@
             :isTile="true"
             class="ma-2 text-h6 font-weight-regular"
           >
-            <template #text>
-              <span>Destination</span>
-            </template>
+            Destination
           </huxButton>
         </router-link>
         <router-link
@@ -57,9 +55,7 @@
             :isTile="true"
             class="ma-2 text-h6 font-weight-regular"
           >
-            <template #text>
-              <span>Data source</span>
-            </template>
+           Data source
           </huxButton>
         </router-link>
       </div>

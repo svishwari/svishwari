@@ -17,7 +17,7 @@
     <v-spacer> </v-spacer>
 
     <!-- {{ ButtonText }} -->
-    <slot name="text"></slot>
+    <slot name="default"></slot>
 
     <v-spacer> </v-spacer>
     <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  name: "huxButton",
+  name: "HuxButton",
   data() {
     return {
       loader: null,

@@ -43,9 +43,7 @@
                     @click="goToStep2()"
                     class="ma-2"
                   >
-                    <template #text>
-                      <span>New engagement</span>
-                    </template>
+                    New engagement
                   </huxButton>
                 </template>
               </EmptyPage>
@@ -63,9 +61,7 @@
                 height="40"
                 @click="goToAddNewEngagement()"
               >
-                <template #text>
-                  <span>New engagement</span>
-                </template>
+                New engagement
               </huxButton>
               <div class="engagement-list-wrap mt-6">
                 <div>
@@ -208,9 +204,7 @@
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
         >
-          <template #text>
-            <span>Create &amp; add</span>
-          </template>
+         Create &amp; add
         </huxButton>
       </div>
     </template>
@@ -229,9 +223,7 @@
           height="40"
           @click.native="goToStep1()"
         >
-          <template #text>
-            <span>Cancel &amp; back</span>
-          </template>
+         Cancel &amp; back
         </huxButton>
       </div>
     </template>

@@ -65,23 +65,16 @@
           :isDisabled="!isFormValid"
           @click="validate()"
         >
-          <template #text>
-            <span>
-              {{ isValidated ? "Success!" : "Validate connection" }}
-            </span>
-          </template>
+         {{ isValidated ? "Success!" : "Validate connection" }}
         </hux-button>
         <hux-button
           v-if="isValidating"
           class="processing-button"
-          button-text="Validating..."
           variant="primary"
           size="large"
           :isTile="true"
         >
-          <template #text>
-            <span> Validating... </span>
-          </template>
+          Validating... 
         </hux-button>
       </div>
     </v-form>
@@ -94,9 +87,7 @@
           :isTile="true"
           @click="cancel()"
         >
-          <template #text>
-            <span> Cancel </span>
-          </template>
+          Cancel
         </hux-button>
       </template>
       <template v-slot:right>
@@ -107,9 +98,7 @@
           :isDisabled="!isValidated"
           @click="add()"
         >
-          <template #text>
-            <span> Add &amp; return </span>
-          </template>
+           Add &amp; return 
         </hux-button>
       </template>
     </hux-footer>
