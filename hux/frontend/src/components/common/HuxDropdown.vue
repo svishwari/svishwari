@@ -29,7 +29,8 @@
         width="200"
         icon=" mdi-chevron-down"
         iconPosition="right"
-        class="ma-2">
+        class="ma-2"
+      >
         {{ label }}
       </huxButton>
     </template>

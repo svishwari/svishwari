@@ -172,12 +172,7 @@
     >
       Added
     </huxButton>
-    <huxButton
-      isOutlined
-      size="x-small"
-      variant="darkGrey"
-      class="ma-2"
-    >
+    <huxButton isOutlined size="x-small" variant="darkGrey" class="ma-2">
       Add
     </huxButton>
     <huxButton variant="primary" size="large" isTile class="ma-2">
@@ -196,20 +191,10 @@
     <huxButton variant="tertiary" isTile class="ma-2">
       Cancel &amp; Return
     </huxButton>
-    <huxButton
-      variant="tertiary"
-      isTile
-      isDisabled
-      class="ma-2"
-    >
+    <huxButton variant="tertiary" isTile isDisabled class="ma-2">
       Disabled
     </huxButton>
-    <huxButton
-      variant="tertiary"
-      isTile
-      enableLoading
-      class="ma-2"
-    >
+    <huxButton variant="tertiary" isTile enableLoading class="ma-2">
       Loader
     </huxButton>
 
