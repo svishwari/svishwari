@@ -7,7 +7,7 @@
       :sort-desc.sync="sortDesc"
       hide-default-footer
     >
-      <template v-slot:default="props">
+      <template #default="props">
         <!-- header -->
         <v-row align="center" no-gutters :class="{ 'pl-2': bordered }">
           <v-col v-for="field in fields" :key="field.label">
@@ -62,7 +62,7 @@
       </template>
 
       <!-- empty slot -->
-      <template v-slot:no-data>
+      <template #no-data>
         <v-alert color="background" class="empty-card">
           <v-row align="center">
             <slot v-if="$slots.empty" name="empty"></slot>

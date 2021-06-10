@@ -1,8 +1,8 @@
 <template>
   <v-menu bottom offset-y open-on-hover>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <span v-on="on">
-        <slot name="label-content"> sample</slot>
+        <slot name="label-content"></slot>
       </span>
     </template>
     <div class="px-4 py-2 white caption">

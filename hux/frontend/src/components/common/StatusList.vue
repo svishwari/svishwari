@@ -13,7 +13,7 @@
         ></span
       >
       <v-menu class="menu-wrapper" bottom offset-y>
-        <template v-slot:activator="{ on, attrs }">
+        <template #activator="{ on, attrs }">
           <v-icon v-bind="attrs" v-on="on" class="top-action"
             >mdi-dots-vertical</v-icon
           >
@@ -54,7 +54,7 @@
             <v-spacer></v-spacer>
             <span class="action-icon font-weight-light float-right d-none">
               <v-menu class="menu-wrapper" bottom offset-y>
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <v-icon
                     v-bind="attrs"
                     v-on="on"
