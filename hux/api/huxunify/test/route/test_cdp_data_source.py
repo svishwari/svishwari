@@ -8,6 +8,7 @@ from unittest import TestCase, mock
 
 import mongomock
 import requests_mock
+from flask_marshmallow import Schema
 from marshmallow import ValidationError
 from requests_mock import Mocker
 
@@ -37,7 +38,9 @@ VALID_RESPONSE = {
 }
 
 
-def validate_schema(schema, response_json, is_multiple=False) -> bool:
+def validate_schema(
+    schema: Schema, response_json: dict, is_multiple: bool = False
+) -> bool:
     """
     Validate if the response confirms with the given schema
     Args:
@@ -208,12 +211,12 @@ class CdpDataSourcesTest(TestCase):
         ds_category = "test category"
 
         valid_response = {
-            db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
-            db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
-            db_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
-            db_c.CDP_DATA_SOURCE_FIELD_STATUS: db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-            "is_added": False,
-            "is_enabled": False,
+            api_c.CDP_DATA_SOURCE_NAME: ds_name,
+            api_c.CDP_DATA_SOURCE_CATEGORY: ds_category,
+            api_c.CDP_DATA_SOURCE_FIELD_FEED_COUNT: 1,
+            api_c.STATUS: db_c.CDP_DATA_SOURCE_STATUS_ACTIVE,
+            api_c.CDP_DATA_SOURCE_ADDED: False,
+            api_c.CDP_DATA_SOURCE_ENABLED: False,
         }
 
         response = self.test_client.post(
@@ -237,7 +240,7 @@ class CdpDataSourcesTest(TestCase):
     @requests_mock.Mocker()
     def test_get_data_source_by_id_invalid_id(self, request_mocker: Mocker):
         """
-        Test get data source by id from DB with an invalid id
+        Test get data source with an invalid id
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -266,7 +269,7 @@ class CdpDataSourcesTest(TestCase):
     @requests_mock.Mocker()
     def test_delete_data_source_by_id_invalid_id(self, request_mocker: Mocker):
         """
-        Test delete data source by id from DB
+        Test delete data source with an invalid id
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -290,11 +293,11 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
-    def test_create_data_source_no_category_null_name(
+    def test_create_data_source_w_empty_name_string(
         self, request_mocker: Mocker
     ):
         """
-        Test creating a data source with invalid params
+        Test creating a data source with name set as empty string
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -305,11 +308,11 @@ class CdpDataSourcesTest(TestCase):
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
-        ds_name = None
+        ds_name = ""
 
         valid_response = {
             "category": ["Missing data for required field."],
-            "name": ["Field may not be null."],
+            "name": ["Data not provided."],
         }
         response = self.test_client.post(
             self.data_sources_api_endpoint,
@@ -324,11 +327,11 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
-    def test_create_data_source_no_category_no_name(
+    def test_create_data_source_no_inputs(
         self, request_mocker: Mocker
     ):
         """
-        Test creating a data source with invalid params
+        Test creating a data source without any inputs
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -347,6 +350,46 @@ class CdpDataSourcesTest(TestCase):
         response = self.test_client.post(
             self.data_sources_api_endpoint,
             data=json.dumps({}),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": TEST_AUTH_TOKEN,
+            },
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_create_data_source_w_no_values(self, request_mocker: Mocker):
+        """
+        Test creating a data source with name and category
+        set as empty string
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        ds_name = ""
+        ds_category = ""
+
+        valid_response = {
+            "category": ["Data not provided."],
+            "name": ["Data not provided."],
+        }
+
+        response = self.test_client.post(
+            self.data_sources_api_endpoint,
+            data=json.dumps(
+                {
+                    db_c.CDP_DATA_SOURCE_FIELD_NAME: ds_name,
+                    db_c.CDP_DATA_SOURCE_FIELD_CATEGORY: ds_category,
+                }
+            ),
             headers={
                 "Content-Type": "application/json",
                 "Authorization": TEST_AUTH_TOKEN,
