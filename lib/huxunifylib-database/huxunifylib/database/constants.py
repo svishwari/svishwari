@@ -14,6 +14,7 @@ PENDING = "Pending"
 DELETED = "deleted"
 NAME = "name"
 TYPE = "type"
+OBJECT_ID = "id"
 
 # general fields
 AGE = "age"
