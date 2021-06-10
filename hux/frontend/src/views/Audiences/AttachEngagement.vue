@@ -1,6 +1,6 @@
 <template>
   <Drawer v-model="localDrawer" @onClose="goToStep1()">
-    <template v-slot:header-left>
+    <template #header-left>
       <div class="d-flex align-center">
         <Icon
           v-if="viewStep == '1'"
@@ -16,7 +16,7 @@
         </h3>
       </div>
     </template>
-    <template v-slot:default>
+    <template #default>
       <v-progress-linear
         color="primary"
         :active="loading"
@@ -27,13 +27,13 @@
           <v-stepper-content step="1">
             <div v-if="!areEngagementAlreadyCreated">
               <EmptyPage>
-                <template v-slot:icon>mdi-alert-circle-outline</template>
-                <template v-slot:title>Oops! There’s nothing here yet</template>
-                <template v-slot:subtitle>
+                <template #icon>mdi-alert-circle-outline</template>
+                <template #title>Oops! There’s nothing here yet</template>
+                <template #subtitle>
                   No engagements has been launched yet. Let’s create one <br />
                   by clicking the new engagement button below.
                 </template>
-                <template v-slot:button>
+                <template #button>
                   <huxButton
                     ButtonText="New engagement"
                     icon="mdi-plus"
@@ -83,12 +83,12 @@
                   class="my-3"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <div v-on="on" class="pl-2 font-weight-regular">
                         {{ engagement.name }}
                       </div>
                     </template>
-                    <template v-slot:default>
+                    <template #default>
                       <div class="px-4 py-2 white">
                         <div class="neroBlack--text text-caption">Name</div>
                         <div class="lightGreyText--text text-caption mt-1">
@@ -129,7 +129,7 @@
                 <div class="mb-2">
                   Delivery schedule
                   <v-menu max-width="184" open-on-hover offset-y>
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <v-icon
                         v-on="on"
                         color="secondary"
@@ -139,7 +139,7 @@
                         mdi-information-outline
                       </v-icon>
                     </template>
-                    <template v-slot:default>
+                    <template #default>
                       <div class="px-4 py-2 white">
                         <div class="neroBlack--text text-caption">
                           Manual delivery
@@ -193,7 +193,7 @@
         </v-stepper-items>
       </v-stepper>
     </template>
-    <template v-slot:footer-right>
+    <template #footer-right>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
           ButtonText="Create &amp; add"
@@ -206,7 +206,7 @@
       </div>
     </template>
 
-    <template v-slot:footer-left>
+    <template #footer-left>
       <div
         class="d-flex align-baseline"
         v-if="viewStep == 1 && areEngagementAlreadyCreated"

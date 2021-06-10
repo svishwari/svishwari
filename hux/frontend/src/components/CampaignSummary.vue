@@ -76,7 +76,7 @@
                 :showHeader="false"
                 v-if="item"
               >
-                <template v-slot:row-item="{ item }">
+                <template #row-item="{ item }">
                   <td
                     v-for="header in headers"
                     :key="header.value"

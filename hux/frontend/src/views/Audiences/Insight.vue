@@ -28,12 +28,12 @@
       >
         <template slot="short-name">
           <v-menu bottom offset-y open-on-hover>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="blue-grey d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item.shortName) }"
+                :style="{ 'border-color': getColorCode(item.shortName) }"
               >
                 {{ getShortName(item.shortName) }}
               </span>
@@ -99,7 +99,7 @@
     </div>
     <v-divider class="my-8"></v-divider>
     <EmptyStateChart>
-      <template v-slot:chart-image>
+      <template #chart-image>
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>

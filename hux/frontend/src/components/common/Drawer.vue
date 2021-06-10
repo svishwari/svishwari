@@ -123,7 +123,7 @@ export default {
     },
 
     reset() {
-      this.drawerWidth = this.width
+      this.expanded = false
     },
   },
 }
@@ -136,6 +136,9 @@ export default {
 .drawer-content {
   height: calc(100% - 130px);
   overflow-y: auto;
+}
+.v-footer {
+  height: 80px;
 }
 ::v-deep .v-icon.v-icon::after {
   content: none;

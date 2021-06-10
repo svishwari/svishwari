@@ -15,7 +15,7 @@
       {{ icon }}
     </v-icon>
     <v-spacer> </v-spacer>
-    {{ ButtonText }}
+    <span :class="buttonTextColor">{{ ButtonText }}</span>
     <v-spacer> </v-spacer>
     <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
       {{ icon }}
@@ -49,6 +49,10 @@ export default {
       default: false,
     },
     ButtonText: {
+      type: String,
+      required: false,
+    },
+    ButtonTextColor: {
       type: String,
       required: false,
     },
@@ -103,6 +107,9 @@ export default {
   computed: {
     buttonSize: function () {
       return "v-size--" + this.size
+    },
+    buttonTextColor: function () {
+      return this.ButtonTextColor
     },
   },
   methods: {

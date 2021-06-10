@@ -11,7 +11,8 @@ const state = {
 
 const getters = {
   list: (state) => Object.values(state.items),
-
+  enabledDestination: (state) =>
+    Object.values(state.items).filter((item) => item.is_enabled),
   constants: (state) => state.constants,
 }
 
