@@ -75,7 +75,7 @@ def get_customers_overview() -> dict:
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW_ENDPOINT}",
+    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.CUSTOMERS_OVERVIEW_ENDPOINT}",
     "CustomerOverviewSchema",
 )
 class CustomerOverview(SwaggerView):
@@ -117,7 +117,7 @@ class CustomerOverview(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"{api_c.CUSTOMERS_ENDPOINT}/{api_c.IDR}/{api_c.OVERVIEW_ENDPOINT}",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.IDR_OVERVIEW_ENDPOINT}",
     "CustomerDashboardOverview",
 )
 class CustomerDashboardOverview(SwaggerView):
