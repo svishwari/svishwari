@@ -1043,7 +1043,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "15A1-1234-21",
+            "example": "60b8d6d7d3cf80b4edcd890b",
         }
     ]
 
@@ -1076,7 +1076,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         Returns:
             Tuple[dict, int]: Response of Display Ads Performance Metrics,
-                              HTTP Status Code
+                HTTP Status Code
 
         """
 
@@ -1168,7 +1168,7 @@ class EngagementMetricsEmail(SwaggerView):
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "15A1-1234-21",
+            "example": "60b8d6d7d3cf80b4edcd890b",
         }
     ]
 
@@ -1199,7 +1199,7 @@ class EngagementMetricsEmail(SwaggerView):
 
         Returns:
             Tuple[dict, int]: Response of Email Performance Metrics,
-                              HTTP Status Code
+                HTTP Status Code
 
         """
 
