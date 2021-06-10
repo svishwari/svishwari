@@ -32,6 +32,7 @@ const mutations = {
   SET_CONSTANTS(state, data) {
     Vue.set(state, "constants", data)
   },
+  // TODO: Redesign this solution as this is a workaround for the destinations drawer on the audience setup page
   SET_AVAILABLE_DESTINATIONS(state, items) {
     items.forEach((item) => {
       if (item.is_added) {
