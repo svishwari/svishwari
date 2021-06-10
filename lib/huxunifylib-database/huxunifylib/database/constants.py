@@ -12,7 +12,7 @@ STATUS = "status"
 ACTIVE = "Active"
 PENDING = "Pending"
 DELETED = "deleted"
-API_ID = "id"
+OBJECT_ID = "id"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
