@@ -1,13 +1,16 @@
 """
 purpose of this file is to house all the okta tests
 """
+import unittest
 import json
 from unittest import TestCase
 import requests_mock
+import mongomock
 from requests_mock import Mocker
 from flask import Flask
 from bson import json_util, ObjectId
 from hypothesis import given, strategies as st
+from huxunifylib.database.client import DatabaseClient
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors import okta
@@ -59,6 +62,23 @@ class OktaTest(TestCase):
             f"{self.config.OKTA_CLIENT_ID}"
         )
         self.user_info_call = f"{self.config.OKTA_ISSUER}/oauth2/v1/userinfo"
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock get_db_client()
+        unittest.mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        self.addCleanup(unittest.mock.patch.stopall)
 
     @requests_mock.Mocker()
     def test_introspection_invalid_call(self, request_mocker: Mocker):
@@ -249,7 +269,7 @@ class OktaTest(TestCase):
         with self.assertRaises(AttributeError):
             getattr(demo_endpoint, "__wrapped__")
 
-    def test_secured_decorator_get_user_id(self):
+    def test_secured_decorator_get_user_id_invalid_header(self):
         """Test secured decorator with an invalid header to get_user_id.
 
         Args:

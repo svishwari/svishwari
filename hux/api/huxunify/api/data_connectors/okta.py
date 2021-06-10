@@ -74,12 +74,21 @@ def get_user_info(access_token: str) -> dict:
         payload (dict): The decoded payload user info data from Okta.
     """
 
-    return requests.get(
-        url=f"{get_config().OKTA_ISSUER}" f"/oauth2/v1/userinfo",
-        headers={
-            "Authorization": f"Bearer {access_token}",
-        },
-    ).json()
+    if access_token is None:
+        return {}
+
+    # replace invalid header characters
+    access_token = str(access_token).replace("\r", "")
+
+    try:
+        return requests.get(
+            url=f"{get_config().OKTA_ISSUER}" f"/oauth2/v1/userinfo",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+            },
+        ).json()
+    except requests.exceptions.InvalidHeader:
+        return {}
 
 
 def get_token_from_request(flask_request: request) -> tuple:
