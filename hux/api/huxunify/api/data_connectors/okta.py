@@ -90,6 +90,11 @@ def get_token_from_request(request) -> tuple:
         tuple[str, int]: Returns a string message or token and a response code.
 
     """
+
+    # check if request has headers attribute
+    if not hasattr(request, "headers"):
+        return api_c.INVALID_AUTH_HEADER, 401
+
     # get the auth token
     auth_header = request.headers.get("Authorization", None)
     if not auth_header:

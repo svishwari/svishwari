@@ -7,10 +7,15 @@ import requests_mock
 from requests_mock import Mocker
 from flask import Flask
 from bson import json_util, ObjectId
+from hypothesis import given, strategies as st
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors import okta
 from huxunify.api.route.utils import secured, get_user_id
+from huxunify.api.data_connectors.okta import (
+    get_user_info,
+    get_token_from_request,
+)
 
 
 VALID_RESPONSE = {
@@ -282,14 +287,36 @@ class OktaTest(TestCase):
         ):
 
             @get_user_id()
-            def demo_endpoint(user_id):
+            def demo_endpoint(user_id=None):
                 return user_id
 
             # true means the endpoint and token call were succesfully passed.
             self.assertIsInstance(demo_endpoint(), ObjectId)
 
+    @given(access_token=st.one_of(st.text(), st.floats(), st.none()))
+    @requests_mock.Mocker()
+    def test_get_user_info_invalid(
+        self, request_mocker: Mocker, access_token: str
+    ):
+        """Test get_user_info with an invalid response.
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+            access_token (str): hypothesis random data.
+
+        Returns:
+
+        """
+        # run an invalid response (empty)
+        # try to break by throwing a bunch of random data into it.
+        request_mocker.get(self.user_info_call, json={})
+
+        # get user info should always resolve to False in this test.
+        self.assertFalse(get_user_info(access_token))
+
+    @requests_mock.Mocker()
     def test_get_user_info(self, request_mocker: Mocker):
-        """Test secured decorator with a good token to get user id
+        """Test get_user_info with a valid response.
 
         Args:
             request_mocker (Mocker): Request mock object.
@@ -297,7 +324,34 @@ class OktaTest(TestCase):
         Returns:
 
         """
-        pass
+        # run an invalid response (empty)
+        # try to break by throwing a bunch of random data into it.
+        request_mocker.get(self.user_info_call, json=VALID_RESPONSE)
 
-    # test get_user_info
-    # test get_token_from_request()
+        # get user info should always resolve to False in this test.
+        response = get_user_info("access_token")
+
+        # test that it was actually called and only once
+        self.assertEqual(request_mocker.call_count, 1)
+        self.assertTrue(request_mocker.called)
+
+        # test that payload was empty.
+        self.assertIsNone(request_mocker.last_request.text)
+
+        # test expected response
+        self.assertDictEqual(response, VALID_RESPONSE)
+
+    @given(random_data=st.one_of(st.text(), st.floats(), st.none()))
+    def test_get_token_from_request_invalid(self, random_data: str):
+        """Test get_token_from_request with invalid data trying to break it.
+
+        Args:
+            random_data (str): hypothesis random data.
+
+        Returns:
+
+        """
+
+        # should always return a 401
+        response = get_token_from_request(random_data)
+        self.assertEqual(401, response[1])
