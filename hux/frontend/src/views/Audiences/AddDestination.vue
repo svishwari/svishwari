@@ -4,7 +4,7 @@
     <div class="d-flex align-center mt-2">
       <div
         class="extension-type mr-4 text-center"
-        v-bind:class="[isActive ? 'active' : '']"
+        :class="[isActive ? 'active' : '']"
         @click="toggleClass($event)"
       >
         <div class="child mt-4">
@@ -19,7 +19,7 @@
       </div>
       <diV
         class="extension-type mr-4 text-center"
-        v-bind:class="[!isActive ? 'active' : '']"
+        :class="[!isActive ? 'active' : '']"
         @click="toggleClass($event)"
       >
         <div class="child mt-4">

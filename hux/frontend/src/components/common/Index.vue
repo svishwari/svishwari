@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-subheader> Data Table </v-subheader>
-    <HuxDataTable v-bind:headers="headers" v-bind:dataItems="dataItems">
+    <HuxDataTable :headers="headers" :dataItems="dataItems">
       <template #un-expanded-row="{ field, item, expand, isExpanded }">
         <span v-if="field == 'engagementName'" class="primary--text">
           <v-icon
@@ -35,7 +35,7 @@
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item[field]) }"
+                :style="{ 'border-color': getColorCode(item[field]) }"
               >
                 {{ item[field] }}
               </span>
@@ -49,7 +49,7 @@
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item[field]) }"
+                :style="{ 'border-color': getColorCode(item[field]) }"
               >
                 {{ item[field] }}
               </span>
@@ -89,7 +89,7 @@
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{
+                :style="{
                   'border-color': getColorCode(field.lastUpdatedBy),
                 }"
               >
@@ -106,7 +106,7 @@
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(field.createdBy) }"
+                :style="{ 'border-color': getColorCode(field.createdBy) }"
               >
                 {{ field.createdBy }}
               </span>
@@ -127,7 +127,7 @@
       labelText="Add Account ID"
       icon="mdi-alert-circle-outline"
       placeholderText="Account name"
-      v-bind:required="true"
+      required
     ></TextField>
     {{ TextFieldValue }}
 
@@ -168,7 +168,7 @@
     <v-subheader> Button </v-subheader>
     <huxButton
       ButtonText="Added"
-      v-bind:isOutlined="true"
+      isOutlined
       size="large"
       icon="mdi-check"
       iconPosition="left"
@@ -176,7 +176,7 @@
     ></huxButton>
     <huxButton
       ButtonText="Add"
-      v-bind:isOutlined="true"
+      isOutlined
       size="x-small"
       variant="darkGrey"
       class="ma-2"
@@ -185,7 +185,7 @@
       ButtonText="Leave configuration"
       variant="primary"
       size="large"
-      v-bind:isTile="true"
+      isTile
       class="ma-2"
     ></huxButton>
     <huxButton
@@ -194,27 +194,27 @@
       iconPosition="left"
       variant="success"
       size="x-large"
-      v-bind:isTile="true"
+      isTile
       class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Cancel &amp; Return"
       variant="tertiary"
-      v-bind:isTile="true"
+      isTile
       class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Disabled"
       variant="tertiary"
-      v-bind:isTile="true"
-      v-bind:isDisabled="true"
+      isTile
+      isDisabled
       class="ma-2"
     ></huxButton>
     <huxButton
       ButtonText="Loader"
       variant="tertiary"
-      v-bind:isTile="true"
-      v-bind:enableLoading="true"
+      isTile
+      enableLoading
       class="ma-2"
     ></huxButton>
 
@@ -223,8 +223,8 @@
     <v-subheader> Select Dropdown </v-subheader>
     <DropdownMenu
       v-model="DropdownValue"
-      v-bind:labelText="labelText"
-      v-bind:menuItem="DropdownData"
+      :labelText="labelText"
+      :menuItem="DropdownData"
       @updatelabelText="onupdatelabelText"
     ></DropdownMenu>
     {{ DropdownValue }}

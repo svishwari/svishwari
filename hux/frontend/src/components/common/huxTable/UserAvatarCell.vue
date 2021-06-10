@@ -5,7 +5,7 @@
         class="blue-grey d-flex align-center justify-center"
         v-bind="attrs"
         v-on="on"
-        v-bind:style="{ 'border-color': cellValue.color }"
+        :style="{ 'border-color': cellValue.color }"
       >
         {{ cellValue.shortName | TitleCase }}
       </span>

@@ -26,11 +26,11 @@
         </v-btn>
         <v-card-title
           class="justify-center font-weight-regular"
-          v-bind:class="{ 'primary--text': active }"
+          :class="{ 'primary--text': active }"
         >
           {{ title }}
         </v-card-title>
-        <v-card-subtitle v-bind:class="{ 'neroBlack--text': active }">
+        <v-card-subtitle :class="{ 'neroBlack--text': active }">
           {{ description }}
         </v-card-subtitle>
       </v-card>

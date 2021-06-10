@@ -22,11 +22,11 @@
       </v-list-item>
       <huxButton
         v-else
-        v-bind:v-on="on"
+        :v-on="on"
         @click="openMenu = true"
         text
-        v-bind:ButtonText="label"
-        v-bind:isOutlined="true"
+        :ButtonText="label"
+        :isOutlined="true"
         width="200"
         icon=" mdi-chevron-down"
         iconPosition="right"

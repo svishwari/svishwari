@@ -37,7 +37,7 @@
             iconPosition="left"
             variant="primary"
             size="large"
-            v-bind:isTile="true"
+            isTile
             class="ma-2 font-weight-regular no-shadow mr-0"
           ></huxButton>
         </router-link>
@@ -53,7 +53,7 @@
         <template #row-item="{ item }">
           <td
             v-for="header in columnDefs"
-            v-bind:key="header.value"
+            :key="header.value"
             :class="{
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
@@ -111,7 +111,7 @@
               iconPosition="left"
               variant="primary"
               size="large"
-              v-bind:isTile="true"
+              isTile
               class="ma-2 font-weight-regular"
             ></huxButton>
           </router-link>

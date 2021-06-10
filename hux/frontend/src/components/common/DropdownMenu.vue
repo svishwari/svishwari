@@ -19,7 +19,7 @@
         <v-list-item-group>
           <v-list-item
             v-for="(item, index) in menuItem"
-            v-bind:key="index"
+            :key="index"
             @click="clicked(item)"
           >
             <v-list-item-title>{{ item.value }}</v-list-item-title>

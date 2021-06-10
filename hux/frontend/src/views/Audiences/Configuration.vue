@@ -157,7 +157,7 @@
           <huxButton
             ButtonText="Cancel"
             variant="white"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="40"
             class="ma-2 ml-0"
@@ -168,7 +168,7 @@
           <huxButton
             ButtonText="Create"
             variant="primary"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="44"
             class="ma-2"
@@ -237,7 +237,7 @@
             <huxButton
               ButtonText="Add"
               variant="primary"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
               class="ma-2"
@@ -260,7 +260,7 @@
             <huxButton
               ButtonText="Back"
               variant="white"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
               class="ma-2 drawer-back"
