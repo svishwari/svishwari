@@ -245,18 +245,19 @@ def get_destination_config(
     )
 
 
-def get_audience_destination_pairs(engagement_audiences: dict):
-    """
+def get_audience_destination_pairs(audiences: list) -> list:
+    """function to get all the audience destination pairs for a list
+    of audiences within an engagement.
 
     Args:
-        engagement:
+        audiences (list): list of audiences
 
     Returns:
-
+        list: list of tuples [(audience_id, destination_id),..]
     """
     return [
         [aud[db_const.ID], dest[db_const.DELIVERY_PLATFORM_ID]]
-        for aud in engagement_audiences
+        for aud in audiences
         for dest in aud[db_const.DESTINATIONS]
     ]
 

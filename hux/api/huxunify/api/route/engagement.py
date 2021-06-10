@@ -39,6 +39,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    api_error_handler,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -696,7 +697,7 @@ class EngagementDeliverView(SwaggerView):
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "5f5f7262997acad4bac4373b",
+            "example": "60bfeaa3fa9ba04689906f7a",
         }
     ]
 
@@ -716,6 +717,7 @@ class EngagementDeliverView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, engagement_id: str) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
@@ -753,6 +755,7 @@ class EngagementDeliverView(SwaggerView):
 
         # submit jobs for all the audience/destination pairs
         delivery_job_ids = []
+
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
@@ -814,6 +817,7 @@ class EngagementDeliverAudienceView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
 
@@ -945,6 +949,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
+    @api_error_handler()
     def post(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:

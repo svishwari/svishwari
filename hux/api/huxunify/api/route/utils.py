@@ -208,3 +208,61 @@ def secured() -> object:
         return decorator
 
     return wrapper
+
+
+def api_error_handler() -> object:
+    """
+    This decorator handles generic errors for API requests.
+
+    Eventually this decorator will handle more types of errors.
+
+    Example: @api_error_handler()
+
+    Args:
+
+    Returns:
+        Response: decorator
+
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           object: returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling errors.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               object: returns a decorated function object.
+            """
+            try:
+                return in_function(*args, **kwargs)
+
+            except Exception as exc:  # pylint: disable=broad-except
+                # log error, but return vague description to client.
+                logging.error(
+                    "%s: %s.",
+                    exc.__class__,
+                    exc,
+                )
+
+                return {
+                    "message": "Internal Server Error"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        # set tag so we can assert if a function is secured via this decorator
+        decorator.__wrapped__ = in_function
+        return decorator
+
+    return wrapper

@@ -30,6 +30,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    api_error_handler,
 )
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
@@ -434,6 +435,7 @@ class AudienceDeliverView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, audience_id: str) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is apart of.
 
