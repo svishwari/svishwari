@@ -158,10 +158,10 @@ const routes = [
   {
     path: "/profiles",
     name: "Profiles",
-    component: () => import("@/views/Profiles"),
+    component: () => import("@/views/Profiles/CustomerProfiles"),
     meta: {
       layout: "app",
-      title: "Profiles",
+      title: "Customer Profiles",
       requiresAuth: true,
     },
   },
