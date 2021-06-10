@@ -220,10 +220,10 @@
         },
         "facebook-business": {
             "hashes": [
-                "sha256:242dbbf21194cd4a1f5dee6b176b4d4e81430f06f75377b3b4794aacd4e99349",
-                "sha256:adfb9d6b66bcd6a6ccb3a0a78aa121a05ba8e8a4c9feaf475485a2c2757c4613"
+                "sha256:94a6e43697c815edb2133e05d937b6e0eb13e5225c1ae48e88c40b33d18401ee",
+                "sha256:994c26268c52f6dfeecb0aa40b8edc3d1a66d26694156844f36e2e962d8fa0c0"
             ],
-            "version": "==10.0.1"
+            "version": "==11.0.0"
         },
         "filelock": {
             "hashes": [
@@ -319,11 +319,11 @@
         },
         "huxunifylib-database": {
             "hashes": [
-                "sha256:1c823707b714b7bdcb947be89dd642d6ce17bc3c2665899547f064f5fdab3bb0",
-                "sha256:681a45c8fb35d8cda2c03ab161e8594b9a371c1ad9e2dd3442262ecb34dedefb"
+                "sha256:292b76b7a4de51a5a40ab2061e30512d6535a4e4b0a59c0c4f48e1423ff8a133",
+                "sha256:ecf68710dcb57c27dd8a28c8a1890714e5ba10dd01deac32880e6ccdece7eb32"
             ],
             "index": "jfrog",
-            "version": "==0.2.17"
+            "version": "==0.2.19"
         },
         "huxunifylib-util": {
             "hashes": [

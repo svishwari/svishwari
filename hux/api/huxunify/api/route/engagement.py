@@ -9,7 +9,6 @@ from typing import Tuple
 from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
@@ -90,9 +89,15 @@ class EngagementSearch(SwaggerView):
         """
 
         try:
-            eng_db = get_engagements(get_db_client())
-            eng = jsonify(EngagementGetSchema().dump(eng_db, many=True))
-            return eng, HTTPStatus.OK.value
+            return (
+                jsonify(
+                    EngagementGetSchema().dump(
+                        get_engagements(get_db_client()), many=True
+                    )
+                ),
+                HTTPStatus.OK.value,
+            )
+
         except Exception as exc:
 
             logging.error(
