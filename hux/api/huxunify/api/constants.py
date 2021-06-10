@@ -363,12 +363,10 @@ BATCH_SIZE = "batch_size"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
-CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
-CUSTOMERS_DASHBOARD_OVERVIEW_ENDPOINT = "dashboard_overview"
+OVERVIEW_ENDPOINT = "overview"
 
 # IDR Fields
-IDR_ENDPOINT = "/idr"
-IDR_OVERVIEW_ENDPOINT = "overview"
+IDR = "idr"
 
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
