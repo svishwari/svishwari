@@ -65,7 +65,7 @@
           :isDisabled="!isFormValid"
           @click="validate()"
         >
-         {{ isValidated ? "Success!" : "Validate connection" }}
+          {{ isValidated ? "Success!" : "Validate connection" }}
         </hux-button>
         <hux-button
           v-if="isValidating"
@@ -74,7 +74,7 @@
           size="large"
           :isTile="true"
         >
-          Validating... 
+          Validating...
         </hux-button>
       </div>
     </v-form>
@@ -98,7 +98,7 @@
           :isDisabled="!isValidated"
           @click="add()"
         >
-           Add &amp; return 
+          Add &amp; return
         </hux-button>
       </template>
     </hux-footer>

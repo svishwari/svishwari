@@ -204,7 +204,7 @@
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
         >
-         Create &amp; add
+          Create &amp; add
         </huxButton>
       </div>
     </template>
@@ -223,7 +223,7 @@
           height="40"
           @click.native="goToStep1()"
         >
-         Cancel &amp; back
+          Cancel &amp; back
         </huxButton>
       </div>
     </template>

@@ -55,7 +55,7 @@
             :isTile="true"
             class="ma-2 text-h6 font-weight-regular"
           >
-           Data source
+            Data source
           </huxButton>
         </router-link>
       </div>

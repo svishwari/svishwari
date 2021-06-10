@@ -164,7 +164,7 @@
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
           >
-           Create
+            Create
           </huxButton>
         </template>
       </HuxFooter>

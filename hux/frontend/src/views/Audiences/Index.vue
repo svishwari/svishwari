@@ -39,7 +39,7 @@
             v-bind:isTile="true"
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
-           Audience
+            Audience
           </huxButton>
         </router-link>
       </template>

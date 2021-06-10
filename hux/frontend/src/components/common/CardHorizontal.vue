@@ -23,14 +23,14 @@
         iconPosition="left"
         class="ma-2"
       >
-          <span
-            v-bind:class="[
-              isAdded ? 'white--text' : 'primary--text',
-              isAlreadyAdded ? 'gray--text' : '',
-            ]"
-          >
-            {{ isAdded ? "Added" : "Add" }}
-          </span>
+        <span
+          v-bind:class="[
+            isAdded ? 'white--text' : 'primary--text',
+            isAlreadyAdded ? 'gray--text' : '',
+          ]"
+        >
+          {{ isAdded ? "Added" : "Add" }}
+        </span>
       </huxButton>
     </div>
   </v-card>

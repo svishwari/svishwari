@@ -194,7 +194,7 @@
       Success!
     </huxButton>
     <huxButton variant="tertiary" v-bind:isTile="true" class="ma-2">
-     Cancel &amp; Return
+      Cancel &amp; Return
     </huxButton>
     <huxButton
       variant="tertiary"

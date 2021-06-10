@@ -42,7 +42,7 @@
             size="large"
             v-bind:isTile="true"
           >
-           Destination
+            Destination
           </huxButton>
         </router-link>
       </template>
