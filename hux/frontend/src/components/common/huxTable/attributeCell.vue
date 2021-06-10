@@ -1,6 +1,6 @@
 <template>
   <v-menu bottom offset-y open-on-hover>
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on">
         {{ cellValue.attribute }}
       </span>

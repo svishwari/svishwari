@@ -21,9 +21,9 @@
       />
     </template>
     <EmptyStateData v-else>
-      <template v-slot:icon> mdi-alert-circle-outline </template>
-      <template v-slot:title> Oops! There’s nothing here yet </template>
-      <template v-slot:subtitle>
+      <template #icon> mdi-alert-circle-outline </template>
+      <template #title> Oops! There’s nothing here yet </template>
+      <template #subtitle>
         To create a connection, you need to select a destination!
         <br />
         Begin by selecting the plus button above.

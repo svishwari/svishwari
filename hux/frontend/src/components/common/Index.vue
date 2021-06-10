@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <v-subheader> Data Table </v-subheader>
-    <HuxDataTable v-bind:headers="headers" v-bind:dataItems="dataItems">
-      <template v-slot:un-expanded-row="{ field, item, expand, isExpanded }">
+    <HuxDataTable :headers="headers" :dataItems="dataItems">
+      <template #un-expanded-row="{ field, item, expand, isExpanded }">
         <span v-if="field == 'engagementName'" class="primary--text">
           <v-icon
             v-if="'child' in item"
@@ -30,12 +30,12 @@
         </span>
         <span v-else-if="field == 'lastUpdatedBy'">
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item[field]) }"
+                :style="{ 'border-color': getColorCode(item[field]) }"
               >
                 {{ item[field] }}
               </span>
@@ -44,12 +44,12 @@
         </span>
         <span v-else-if="field == 'createdBy'">
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item[field]) }"
+                :style="{ 'border-color': getColorCode(item[field]) }"
               >
                 {{ item[field] }}
               </span>
@@ -62,7 +62,7 @@
           </span>
         </span>
       </template>
-      <template v-slot:expanded-row="{ field }">
+      <template #expanded-row="{ field }">
         <td class="primary--text">{{ field.engagementName }}</td>
         <td>{{ field.audiences }}</td>
         <td>
@@ -84,12 +84,12 @@
         <td>{{ field.lastUpdated }}</td>
         <td>
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{
+                :style="{
                   'border-color': getColorCode(field.lastUpdatedBy),
                 }"
               >
@@ -101,12 +101,12 @@
         <td>{{ field.created }}</td>
         <td>
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
                 v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(field.createdBy) }"
+                :style="{ 'border-color': getColorCode(field.createdBy) }"
               >
                 {{ field.createdBy }}
               </span>
@@ -127,7 +127,7 @@
       labelText="Add Account ID"
       icon="mdi-alert-circle-outline"
       placeholderText="Account name"
-      v-bind:required="true"
+      required
     ></TextField>
     {{ TextFieldValue }}
 
@@ -142,13 +142,10 @@
       @onCancel="toggleModal()"
       @onConfirm="toggleModal()"
     >
-      <template v-slot:activator>
-        <huxButton
-          ButtonText="Open modal"
-          size="large"
-          class="ma-2"
-          @click="modal = !modal"
-        ></huxButton>
+      <template #activator>
+        <huxButton size="large" class="ma-2" @click="modal = !modal">
+          Open modal
+        </huxButton>
       </template>
     </ConfirmModal>
 
@@ -167,64 +164,47 @@
 
     <v-subheader> Button </v-subheader>
     <huxButton
-      ButtonText="Added"
-      v-bind:isOutlined="true"
+      isOutlined
       size="large"
       icon="mdi-check"
       iconPosition="left"
       class="ma-2"
-    ></huxButton>
+    >
+      Added
+    </huxButton>
+    <huxButton isOutlined size="x-small" variant="darkGrey" class="ma-2">
+      Add
+    </huxButton>
+    <huxButton variant="primary" size="large" isTile class="ma-2">
+      Leave configuration
+    </huxButton>
     <huxButton
-      ButtonText="Add"
-      v-bind:isOutlined="true"
-      size="x-small"
-      variant="darkGrey"
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Leave configuration"
-      variant="primary"
-      size="large"
-      v-bind:isTile="true"
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Success!"
       icon="mdi-check"
       iconPosition="left"
       variant="success"
       size="x-large"
-      v-bind:isTile="true"
+      isTile
       class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Cancel &amp; Return"
-      variant="tertiary"
-      v-bind:isTile="true"
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Disabled"
-      variant="tertiary"
-      v-bind:isTile="true"
-      v-bind:isDisabled="true"
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Loader"
-      variant="tertiary"
-      v-bind:isTile="true"
-      v-bind:enableLoading="true"
-      class="ma-2"
-    ></huxButton>
+    >
+      Success!
+    </huxButton>
+    <huxButton variant="tertiary" isTile class="ma-2">
+      Cancel &amp; Return
+    </huxButton>
+    <huxButton variant="tertiary" isTile isDisabled class="ma-2">
+      Disabled
+    </huxButton>
+    <huxButton variant="tertiary" isTile enableLoading class="ma-2">
+      Loader
+    </huxButton>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Select Dropdown </v-subheader>
     <DropdownMenu
       v-model="DropdownValue"
-      v-bind:labelText="labelText"
-      v-bind:menuItem="DropdownData"
+      :labelText="labelText"
+      :menuItem="DropdownData"
       @updatelabelText="onupdatelabelText"
     ></DropdownMenu>
     {{ DropdownValue }}
@@ -274,19 +254,19 @@
     <v-subheader> Drawer</v-subheader>
     <v-btn @click="drawer = !drawer">Toggle Drawer</v-btn>
     <drawer v-model="drawer">
-      <template v-slot:header-left>
+      <template #header-left>
         <h2>Heading</h2>
       </template>
-      <template v-slot:header-right>
+      <template #header-right>
         <v-icon color="black"> mdi-dots-vertical </v-icon>
       </template>
-      <template v-slot:default>
+      <template #default>
         <Button />
       </template>
-      <template v-slot:footer-left>
+      <template #footer-left>
         <h2>Heading</h2>
       </template>
-      <template v-slot:footer-right>
+      <template #footer-right>
         <v-icon color="black"> mdi-dots-vertical </v-icon>
       </template>
     </drawer>
@@ -296,8 +276,7 @@
     <v-subheader>Metric Card</v-subheader>
     <MetricCard
       class="ma-4"
-      :width="135"
-      :height="80"
+      :maxWidth="200"
       v-for="(item, i) in overviewListItems"
       :key="i"
       :title="item.title"
