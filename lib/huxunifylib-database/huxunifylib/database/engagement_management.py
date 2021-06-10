@@ -381,6 +381,44 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
             raise ValueError("Invalid object id value.")
 
 
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_engagements_by_audience(
+    database: DatabaseClient, audience_id: ObjectId
+) -> list:
+    """A function to get a list of engagements by audience_id
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): ObjectId of an audience
+
+    Returns:
+        list: list of engagements.
+
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    try:
+        return list(
+            collection.find(
+                {
+                    f"{db_c.AUDIENCES}.{db_c.ID}": audience_id,
+                    db_c.DELETED: False,
+                },
+                {db_c.DELETED: 0},
+            )
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
 def validate_object_id_list(
     object_ids: list, check_empty: bool = True
 ) -> None:

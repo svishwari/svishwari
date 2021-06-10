@@ -7,7 +7,7 @@
     :transition="transition"
     :value="openMenu"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <!-- <v-btn v-if="icon" :color="color" v-on="on">
         <v-icon>{{ icon }}</v-icon>
       </v-btn> -->
@@ -22,16 +22,17 @@
       </v-list-item>
       <huxButton
         v-else
-        v-bind:v-on="on"
+        :v-on="on"
         @click="openMenu = true"
         text
-        v-bind:ButtonText="label"
-        v-bind:isOutlined="true"
+        :isOutlined="true"
         width="200"
         icon=" mdi-chevron-down"
         iconPosition="right"
         class="ma-2"
-      ></huxButton>
+      >
+        {{ label }}
+      </huxButton>
     </template>
     <v-list>
       <template v-for="(item, index) in items">

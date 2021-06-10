@@ -27,31 +27,33 @@
           <h5 class="text-h5 d-flex align-start">
             Setup a delivery schedule
 
-            <v-menu max-width="16rem" offset-x offset-y top>
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on" color="primary" :size="12">
+            <Tooltip>
+              <template #label-content>
+                <v-icon color="primary" :size="12" class="ml-1">
                   mdi-information-outline
                 </v-icon>
               </template>
-              <div class="pa-4 white text-caption">
-                <h6 class="text-caption mb-2">Manual delivery</h6>
-                <p class="gray--text">
-                  Choose this option if you want the engagement delivered
-                  immediately or at a future date and time.
-                </p>
-                <h6 class="text-caption mb-2">Recurring delivery</h6>
-                <p class="gray--text">
-                  Choose this option if you want the engagement delivered on a
-                  specific recurring basis you selected.
-                </p>
-              </div>
-            </v-menu>
+              <template #hover-content>
+                <v-sheet max-width="240px">
+                  <h6 class="text-caption mb-2">Manual delivery</h6>
+                  <p class="gray--text">
+                    Choose this option if you want the engagement delivered
+                    immediately or at a future date and time.
+                  </p>
+                  <h6 class="text-caption mb-2">Recurring delivery</h6>
+                  <p class="gray--text">
+                    Choose this option if you want the engagement delivered on a
+                    specific recurring basis you selected.
+                  </p>
+                </v-sheet>
+              </template>
+            </Tooltip>
           </h5>
         </template>
 
         <v-radio-group v-model="value.delivery_schedule" row class="ma-0">
-          <v-radio value="null" selected class="btn-radio">
-            <template v-slot:label>
+          <v-radio :value="0" selected class="btn-radio">
+            <template #label>
               <v-icon small color="primary" class="mr-1">
                 mdi-gesture-tap
               </v-icon>
@@ -59,8 +61,8 @@
             </template>
           </v-radio>
 
-          <v-radio value="scheduled" class="btn-radio" disabled>
-            <template v-slot:label>
+          <v-radio :value="1" class="btn-radio" disabled>
+            <template #label>
               <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
               <span>Recurring</span>
             </template>
@@ -76,33 +78,45 @@
             {
               key: 'name',
               label: 'Audience name',
-              sortable: true,
             },
             {
               key: 'size',
               label: 'Target size',
-              sortable: true,
             },
             {
               key: 'manage',
-              sortable: false,
             },
           ]"
         >
           <template #field:size="row">
-            {{ row.value | Numeric(true, true) }}
+            <Tooltip>
+              <template #label-content>
+                {{ row.value | Numeric(true, true) | Empty }}
+              </template>
+              <template #hover-content>
+                {{
+                  row.value | Numeric | Empty("Size unavailable at this time")
+                }}
+              </template>
+            </Tooltip>
           </template>
 
           <template #field:manage="row">
             <div class="d-flex align-center justify-end">
-              <v-btn
-                x-small
-                fab
-                class="primary mr-2"
-                @click="toggleAudiencesDrawer()"
-              >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
+              <Tooltip v-if="isLastItem(row.index)">
+                <template #label-content>
+                  <v-btn
+                    x-small
+                    fab
+                    class="primary mr-2"
+                    @click="openSelectAudiencesDrawer()"
+                  >
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </template>
+                <template #hover-content>Add another audience</template>
+              </Tooltip>
+
               <v-btn icon color="primary" @click="removeAudience(row.item)">
                 <v-icon>mdi-delete-outline</v-icon>
               </v-btn>
@@ -117,7 +131,7 @@
                 fab
                 color="primary"
                 elevation="0"
-                @click="toggleAudiencesDrawer()"
+                @click="openSelectAudiencesDrawer()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -128,13 +142,13 @@
     </FormSteps>
 
     <HuxFooter>
-      <template v-slot:left>
+      <template #left>
         <v-btn tile color="white" height="40" @click.native="$router.go(-1)">
           <span class="primary--text">Cancel</span>
         </v-btn>
       </template>
 
-      <template v-slot:right>
+      <template #right>
         <v-btn
           v-if="hasDestinations && isManualDelivery"
           tile
@@ -159,7 +173,18 @@
       </template>
     </HuxFooter>
 
-    <AudiencesDrawer v-model="value.audiences" :toggle="showAudiencesDrawer" />
+    <SelectAudiencesDrawer
+      v-model="value.audiences"
+      :toggle="showSelectAudiencesDrawer"
+      @onToggle="(val) => (showSelectAudiencesDrawer = val)"
+      @onAdd="openAddAudiencesDrawer()"
+    />
+
+    <AddAudienceDrawer
+      v-model="value.audiences"
+      :toggle="showAddAudiencesDrawer"
+      @onToggle="(val) => (showAddAudiencesDrawer = val)"
+    />
   </v-form>
 </template>
 
@@ -170,7 +195,9 @@ import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
 import TextField from "@/components/common/TextField.vue"
-import AudiencesDrawer from "@/views/Audiences/Drawer.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
+import AddAudienceDrawer from "./Drawers/AddAudienceDrawer.vue"
 
 export default {
   name: "EngagementsForm",
@@ -181,7 +208,9 @@ export default {
     FormSteps,
     HuxFooter,
     TextField,
-    AudiencesDrawer,
+    Tooltip,
+    SelectAudiencesDrawer,
+    AddAudienceDrawer,
   },
 
   props: {
@@ -193,7 +222,8 @@ export default {
 
   data() {
     return {
-      showAudiencesDrawer: false,
+      showSelectAudiencesDrawer: false,
+      showAddAudiencesDrawer: false,
     }
   },
 
@@ -209,8 +239,11 @@ export default {
     },
 
     isManualDelivery() {
-      const MANUAL = "null"
-      return this.value.delivery_schedule === MANUAL
+      return this.value.delivery_schedule === 0
+    },
+
+    totalSelectedAudiences() {
+      return Object.values(this.value.audiences).length
     },
   },
 
@@ -220,12 +253,27 @@ export default {
       deliverEngagement: "engagements/deliver",
     }),
 
-    toggleAudiencesDrawer() {
-      this.showAudiencesDrawer = !this.showAudiencesDrawer
+    closeAllDrawers() {
+      this.showSelectAudiencesDrawer = false
+      this.showAddAudiencesDrawer = false
+    },
+
+    openSelectAudiencesDrawer() {
+      this.closeAllDrawers()
+      this.showSelectAudiencesDrawer = true
+    },
+
+    openAddAudiencesDrawer() {
+      this.closeAllDrawers()
+      this.showAddAudiencesDrawer = true
     },
 
     removeAudience(audience) {
       this.$delete(this.value.audiences, audience.id)
+    },
+
+    isLastItem(index) {
+      return Boolean(index === this.totalSelectedAudiences - 1)
     },
 
     async addNewEngagement() {

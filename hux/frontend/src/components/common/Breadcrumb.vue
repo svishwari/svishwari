@@ -1,6 +1,6 @@
 <template>
   <v-breadcrumbs :items="items" class="pl-0 breadcrumb">
-    <template v-slot:item="{ item }">
+    <template #item="{ item }">
       <v-breadcrumbs-item
         :href="item.href"
         :disabled="item.disabled"
@@ -14,7 +14,7 @@
         }}</span>
       </v-breadcrumbs-item>
     </template>
-    <template v-slot:divider>
+    <template #divider>
       <v-icon size="21" color="primary">mdi-chevron-right</v-icon>
     </template>
   </v-breadcrumbs>
