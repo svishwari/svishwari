@@ -25,20 +25,20 @@ DATA_SOURCES = [
         c.DATA_SOURCE_TYPE: "bluecore",
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
-        c.ADDED: False,
+        c.ADDED: True,
     },
     {
         c.DATA_SOURCE_NAME: "NetSuite",
         c.DATA_SOURCE_TYPE: "netsuite",
         c.STATUS: c.PENDING,
-        c.ENABLED: False,
+        c.ENABLED: True,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Aqfer",
         c.DATA_SOURCE_TYPE: "aqfer",
         c.STATUS: c.PENDING,
-        c.ENABLED: False,
+        c.ENABLED: True,
         c.ADDED: False,
     },
     {
