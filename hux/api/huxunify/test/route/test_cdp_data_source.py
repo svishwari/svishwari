@@ -327,9 +327,7 @@ class CdpDataSourcesTest(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
-    def test_create_data_source_no_inputs(
-        self, request_mocker: Mocker
-    ):
+    def test_create_data_source_no_inputs(self, request_mocker: Mocker):
         """
         Test creating a data source without any inputs
 
