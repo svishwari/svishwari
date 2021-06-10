@@ -32,6 +32,12 @@ Object.keys(resources).forEach((resource) => {
     client[resource].deliver = (resourceId, data) => {
       return http.post(`/engagements/${resourceId}/deliver`, data)
     }
+    client[resource].fetchAudiencePerformance = (engagementId, type) => {
+      const uri = `/engagements/${engagementId}/audience-performance/${
+        type === "ads" ? "display-ads" : "email"
+      }`
+      return http.get(uri)
+    }
   }
 })
 

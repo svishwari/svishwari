@@ -6,10 +6,13 @@ const namespaced = true
 
 const state = {
   items: {},
+  audiencePerformance: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
+  audiencePerformanceByAds: (state) => state.audiencePerformance.ads,
+  audiencePerformanceByEmail: (state) => state.audiencePerformance.email,
 }
 
 const mutations = {
@@ -21,6 +24,19 @@ const mutations = {
 
   SET_ONE(state, item) {
     Vue.set(state.items, item.id, item)
+  },
+  SET_AUDIENCE_PERFORMANCE(state, { item, type }) {
+    /**
+     * TODO To be revised with actual API call once API is ready for integration.
+     * Below logic needs revision
+     */
+    let audiencePerformanceObject = {}
+    if (type === "ads") {
+      audiencePerformanceObject = item["displayads_audience_performance"]
+    } else {
+      audiencePerformanceObject = item["email_audience_performance"]
+    }
+    Vue.set(state.audiencePerformance, type, audiencePerformanceObject)
   },
 }
 
@@ -43,6 +59,14 @@ const actions = {
       handleError(error)
       throw error
     }
+  },
+
+  async getAudiencePerformance({ commit }, payload) {
+    const response = await api.engagements.fetchAudiencePerformance(
+      payload.id,
+      payload.type
+    )
+    commit("SET_AUDIENCE_PERFORMANCE", { item: response.data, type: "ads" })
   },
 
   async add({ commit }, engagement) {

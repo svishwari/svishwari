@@ -144,7 +144,12 @@
         <v-tabs v-model="tabOption" class="mt-8">
           <v-tabs-slider color="primary"></v-tabs-slider>
 
-          <v-tab key="displayAds" class="pa-2" color>
+          <v-tab
+            key="displayAds"
+            class="pa-2"
+            color
+            @click="fetchCampaignPerformanceDetails('ads')"
+          >
             <Icon type="display_ads" :size="10" class="mr-2" />Display ads
           </v-tab>
           <v-tab key="email">@ Email</v-tab>
@@ -153,24 +158,14 @@
           <v-tab-item key="displayAds">
             <campaign-summary
               :summary="displayAdsSummary"
-              :campaignData="AdPerformaceData.audience_performance"
+              :campaignData="audiencePerformanceAdsData"
             />
           </v-tab-item>
           <v-tab-item key="email">
-            <v-card flat class="card-style">
-              <v-card-text class="d-flex summary-tab-wrap">
-                <MetricCard
-                  class="list-item mr-1 rounded-lg"
-                  :min-width="item.width"
-                  :height="70"
-                  v-for="item in emailSummary"
-                  :key="item.id"
-                  :title="item.title"
-                  :subtitle="item.value"
-                  :interactable="false"
-                ></MetricCard>
-              </v-card-text>
-            </v-card>
+            <campaign-summary
+              :summary="emailSummary"
+              :campaignData="audiencePerformanceEmailData"
+            />
           </v-tab-item>
         </v-tabs-items>
       </div>
@@ -179,6 +174,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
 import moment from "moment"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -206,6 +202,7 @@ export default {
   data() {
     return {
       engagement: {
+        id: Math.floor(Math.random() * 10) + 1,
         name: "Engagement name",
         status: "active",
         schedule: "Manual",
@@ -422,6 +419,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      audiencePerformanceAds: "engagements/audiencePerformanceByAds",
+      audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
+    }),
     breadcrumbItems() {
       const items = [
         {
@@ -439,12 +440,17 @@ export default {
       }
       return items
     },
+    audiencePerformanceAdsData() {
+      return this.audiencePerformanceAds
+        ? this.audiencePerformanceAds.audience_performance
+        : []
+    },
     summaryCards() {
       const summary = [
         {
           id: 1,
           title: "Delivery schedule",
-          value: this.fetchKey("schedule"),
+          value: this.fetchKey(this.engagement, "schedule"),
           subLabel: null,
           width: "12.6%",
           minWidth: "146px",
@@ -452,18 +458,22 @@ export default {
         {
           id: 2,
           title: "Last updated",
-          value: this.getDateStamp(this.fetchKey("update_time")),
-          hoverValue: this.fetchKey("update_time"),
-          subLabel: this.fetchKey("updated_by"),
+          value: this.getDateStamp(
+            this.fetchKey(this.engagement, "update_time")
+          ),
+          hoverValue: this.fetchKey(this.engagement, "update_time"),
+          subLabel: this.fetchKey(this.engagement, "updated_by"),
           width: "19%",
           minWidth: "164px",
         },
         {
           id: 3,
           title: "Created",
-          value: this.getDateStamp(this.fetchKey("created_time")),
-          hoverValue: this.fetchKey("created_time"),
-          subLabel: this.fetchKey("created_by"),
+          value: this.getDateStamp(
+            this.fetchKey(this.engagement, "created_time")
+          ),
+          hoverValue: this.fetchKey(this.engagement, "created_time"),
+          subLabel: this.fetchKey(this.engagement, "created_by"),
           width: "19%",
           minWidth: "164px",
         },
@@ -480,81 +490,244 @@ export default {
       return summary.filter((item) => item.title !== null)
     },
     displayAdsSummary() {
-      // TODO refine the object parse and put blank UI in case of no information.
       return [
-        { id: 1, title: "Spend", value: "$2.1M", width: "90px" },
-        { id: 2, title: "Reach", value: "500k", width: "90px" },
-        { id: 3, title: "Impressions", value: "456,850", width: "90px" },
-        { id: 4, title: "Conversions", value: "521,006", width: "90px" },
-        { id: 5, title: "Clicks", value: "498,587", width: "90px" },
-        { id: 6, title: "Frequency", value: "500", width: "90px" },
-        { id: 7, title: "CPM", value: "$850", width: "90px" },
-        { id: 8, title: "CTR", value: "52%", width: "90px" },
-        { id: 9, title: "CPA", value: "$652", width: "90px" },
-        { id: 10, title: "CPC", value: "$485", width: "90px" },
-        { id: 11, title: "Engagement rate", value: "56%", width: "90px" },
+        {
+          id: 1,
+          title: "Spend",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(this.audiencePerformanceAds["summary"], "spend")
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 2,
+          title: "Reach",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(this.audiencePerformanceAds["summary"], "reach")
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 3,
+          title: "Impressions",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(
+                this.audiencePerformanceAds["summary"],
+                "impressions"
+              )
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 4,
+          title: "Conversions",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(
+                this.audiencePerformanceAds["summary"],
+                "conversions"
+              )
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 5,
+          title: "Clicks",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(this.audiencePerformanceAds["summary"], "clicks")
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 6,
+          title: "Frequency",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(this.audiencePerformanceAds["summary"], "frequency")
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 7,
+          title: "CPM",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(
+                this.audiencePerformanceAds["summary"],
+                "cost_per_thousand_impressions"
+              )
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 8,
+          title: "CTR",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(
+                this.audiencePerformanceAds["summary"],
+                "click_through_rate"
+              )
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 9,
+          title: "CPA",
+          value: this.audiencePerformanceAds
+            ? this.audiencePerformanceAds &&
+              this.fetchKey(
+                this.audiencePerformanceAds["summary"],
+                "cost_per_action"
+              )
+            : "-",
+          width: "90px",
+        },
+        {
+          id: 10,
+          title: "CPC",
+          value:
+            this.audiencePerformanceAds &&
+            this.fetchKey(
+              this.audiencePerformanceAds["summary"],
+              "cost_per_click"
+            ),
+          width: "90px",
+        },
+        {
+          id: 11,
+          title: "Engagement rate",
+          value:
+            this.audiencePerformanceAds &&
+            this.fetchKey(
+              this.audiencePerformanceAds["summary"],
+              "engagement_rate"
+            ),
+          width: "90px",
+        },
       ]
     },
     emailSummary() {
       return [
-        { id: 1, title: "Sent", value: "Yesterday", width: "95px" },
+        {
+          id: 1,
+          title: "Sent",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(this.audiencePerformanceEmail["summary"], "spend")
+            : "-",
+          width: "95px",
+        },
         {
           id: 2,
           title: "Hard bounces / Rate",
-          value: "125 • 0.1%",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(
+                this.audiencePerformanceEmail["summary"],
+                "hard_bounces"
+              )
+            : "-",
           width: "139px",
         },
         {
           id: 3,
           title: "Delivered / Rate",
-          value: "125 • 0.1%",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(
+                this.audiencePerformanceEmail["summary"],
+                "delivered"
+              )
+            : "-",
           width: "113px",
         },
         {
           id: 4,
           title: "Open / Rate",
-          value: "365.2k • 72.8%",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(
+                this.audiencePerformanceEmail["summary"],
+                "delivered"
+              )
+            : "-",
           width: "122px",
         },
         {
           id: 5,
           title: "Click / CTR",
-          value: "365.2k • 72.8%",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(
+                this.audiencePerformanceEmail["summary"],
+                "hard_bounces"
+              )
+            : "-",
           width: "122px",
         },
         {
           id: 6,
           title: "Click to open rate  ",
-          value: "72.8%",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(
+                this.audiencePerformanceEmail["summary"],
+                "hard_bounces"
+              )
+            : "-",
           width: "121px",
         },
         {
           id: 7,
           title: "Unique clicks / Unique opens",
-          value: "365.2k • 72.8%",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(
+                this.audiencePerformanceEmail["summary"],
+                "hard_bounces"
+              )
+            : "-",
           width: "185px",
         },
         {
           id: 8,
           title: "Unsubscribe / Rate",
-          value: "365.2k • 72.8%",
+          value: this.audiencePerformanceEmail
+            ? this.audiencePerformanceEmail &&
+              this.fetchKey(
+                this.audiencePerformanceEmail["summary"],
+                "hard_bounces"
+              )
+            : "-",
           width: "130px",
         },
       ]
     },
   },
   methods: {
+    ...mapActions({
+      getAudiencePerformanceById: "engagements/getAudiencePerformance",
+    }),
+
     getDateStamp(value) {
       return value ? moment(new Date(value)).fromNow() + " by" : "-"
     },
-    fetchKey(key) {
-      return this.engagement ? this.engagement[key] : "-"
+    fetchKey(obj, key) {
+      return obj ? obj[key] : "-"
     },
     showCard(card) {
       if (card.cardType !== "description") return true
       else {
         return !!card.title
       }
+    },
+    fetchCampaignPerformanceDetails(type) {
+      this.getAudiencePerformanceById({ type: type, id: this.engagement.id })
     },
     getTooltip(summaryCard) {
       const acronymObject = this.Tooltips.filter(
@@ -566,6 +739,7 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
     this.loading = false
   },
 }

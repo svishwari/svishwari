@@ -3,15 +3,17 @@
     <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
         :expanded.sync="expanded"
-        :fixed-header="true"
         :headers="headers"
         :hide-default-header="!showHeader"
         :height="height"
         :items="dataItems"
         :items-per-page="-1"
+        fixed-header
         hide-default-footer
         must-sort
         sort-desc
+        single-expand
+        single-sele
         @click:row="expandRow"
       >
         <template #item.name="{ item, isExpanded }" v-if="nested">
@@ -118,13 +120,8 @@ export default {
     },
   },
   methods: {
-    expandRow(value) {
-      const index = this.expanded.indexOf(value)
-      if (index === -1) {
-        this.expanded.push(value)
-      } else {
-        this.expanded.splice(index, 1)
-      }
+    expandRow(value, row) {
+      row.expand(!row.isExpanded)
     },
   },
 }
