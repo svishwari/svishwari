@@ -51,10 +51,6 @@ export default {
       required: false,
       default: false,
     },
-    ButtonText: {
-      type: String,
-      required: false,
-    },
     icon: {
       type: String,
       required: false,
