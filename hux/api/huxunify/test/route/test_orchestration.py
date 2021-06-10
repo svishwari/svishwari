@@ -187,11 +187,12 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
             self.engagement_ids.append(str(engagement_id))
 
     @requests_mock.Mocker()
-    def test_deliver_audience_for_all_engagements_valid_request(
+    def test_deliver_audience_for_all_engagements_valid_audience_id(
         self, request_mocker: Mocker
     ):
         """
         Test delivery of audience for all engagements
+        with valid audience id
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -223,10 +224,11 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of audience for all engagements it is a part of with invalid audience id
+        Test delivery of audience for all engagements
+        with invalid audience id
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -248,15 +250,15 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
-    def test_deliver_audience_for_all_engagements_valid_object_id_not_found(
+    def test_deliver_audience_for_all_engagements_non_existent_audience(
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of audience for all engagements it is a part of with valid Object id
-        but no audience is found with the Object id
+        Test delivery of audience for all engagements
+        with non-existent audience id
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 

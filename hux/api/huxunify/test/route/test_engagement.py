@@ -191,10 +191,11 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of an audience for an engagements with valid ids
+        Test delivery of an audience for an engagement
+        with valid ids
 
         Args:
-            request_mocker (str): Request mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -230,7 +231,8 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of an audience for an engagements with invalid audience id
+        Test delivery of an audience for an engagement
+        with invalid audience id
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -263,7 +265,8 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of an audience for an engagements with invalid engagement id
+        Test delivery of an audience for an engagement
+        with invalid engagement id
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -292,11 +295,12 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
-    def test_deliver_audience_for_an_engagement_no_engagement(
+    def test_deliver_audience_for_an_engagement_non_existent_engagement(
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of an audience for an engagements with invalid engagement id
+        Test delivery of an audience for an engagement
+        with non-existent engagement id
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -330,6 +334,7 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
     ):
         """
         Test delivery of a destination for an audience in engagement
+        with valid ids
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -410,7 +415,7 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of a destination for a unattached audience
+        Test delivery of a destination for an unattached audience
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -420,7 +425,8 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
         engagement_id = self.engagement_ids[1]
-        audience_id = self.audiences[0][db_c.ID]  # Unattached
+        # Unattached audience id
+        audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.post(
@@ -449,7 +455,7 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         self, request_mocker: Mocker
     ):
         """
-        Test delivery of a destination for a unattached destination
+        Test delivery of a destination for an unattached destination
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -460,7 +466,8 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
         engagement_id = self.engagement_ids[1]
         audience_id = self.audiences[1][db_c.ID]
-        destination_id = self.destinations[1][db_c.ID]  # Unattached
+        # Unattached destination id
+        destination_id = self.destinations[1][db_c.ID]
 
         response = self.app.post(
             (
