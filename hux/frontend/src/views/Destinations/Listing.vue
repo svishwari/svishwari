@@ -41,7 +41,7 @@
             iconPosition="left"
             variant="primary"
             size="large"
-            v-bind:isTile="true"
+            isTile
           ></huxButton>
         </router-link>
       </template>
@@ -56,8 +56,8 @@
             v-for="(item, index) in filters"
             :key="item.name"
             v-model="item.selectedValue"
-            v-bind:labelText="item.name"
-            v-bind:menuItem="item.values"
+            :labelText="item.name"
+            :menuItem="item.values"
             @updatelabelText="onFilterSelection(index)"
           />
         </div>
