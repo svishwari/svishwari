@@ -6,12 +6,12 @@
     <huxButton
       class="ma-0"
       v-if="cellValue == 'Delivering'"
-      v-bind:isOutlined="true"
+      isOutlined
       size="small"
       variant="successs"
       width="20"
       height="20"
-      v-bind:iconType="true"
+      iconType
     ></huxButton>
     <v-icon v-if="cellValue == 'Error'" class="material-icons alert">
       mdi-alert-circle

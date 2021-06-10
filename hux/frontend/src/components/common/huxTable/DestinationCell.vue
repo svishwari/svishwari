@@ -1,6 +1,6 @@
 <template>
   <v-menu bottom offset-y open-on-hover>
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
         <v-row class="destination-cell-wrapper">
           <v-col class="d-flex align-center pr-0 mt-2">
