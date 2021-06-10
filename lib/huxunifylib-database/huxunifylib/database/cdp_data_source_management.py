@@ -2,12 +2,14 @@
 This module enables functionality for data source management
 """
 import logging
+from typing import Optional
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.engagement_management import validate_object_id_list
 
 
 @retry(
@@ -20,8 +22,9 @@ def create_data_source(
     category: str,
     added: bool = False,
     enabled: bool = False,
+    source_type: str = None,
     status: str = c.CDP_DATA_SOURCE_STATUS_ACTIVE,
-) -> dict:
+) -> Optional[dict]:
     """A function that creates a new data source
 
     Args:
@@ -30,6 +33,7 @@ def create_data_source(
         category (str): category of the data source.
         added (bool): data source is added.
         enabled (bool): data source is enabled.
+        source_type (str): type of the data source.
         status (str): status of the data source.
     Returns:
         dict: MongoDB document for a data source
@@ -48,6 +52,9 @@ def create_data_source(
         c.ADDED: added,
         c.ENABLED: enabled,
     }
+
+    if source_type:
+        doc[c.DATA_SOURCE_TYPE] = source_type
 
     try:
         data_source_id = collection.insert_one(doc).inserted_id
@@ -139,6 +146,52 @@ def delete_data_source(
     try:
         return collection.delete_one({c.ID: data_source_id}).deleted_count > 0
     except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def update_data_sources(
+    database: DatabaseClient, data_source_ids: list, update_dict: dict
+) -> bool:
+    """A function to update data source(s) based on ObjectId(s).
+
+    Args:
+        database (DatabaseClient): A database client.
+        data_source_ids (list): list of ObjectIds.
+        update_dict (dict): update field dict.
+
+    Returns:
+        bool: Success flag.
+
+    """
+
+    if not update_dict:
+        return False
+
+    # validate list of object ids.
+    validate_object_id_list(data_source_ids)
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.CDP_DATA_SOURCES_COLLECTION
+    ]
+
+    try:
+        result = collection.update_many(
+            {c.ID: {"$in": data_source_ids}}, {"$inc": update_dict}
+        )
+        return all(
+            len(data_source_ids) == x
+            for x in [result.matched_count, result.modified_count]
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    except TypeError as exc:
         logging.error(exc)
 
     return False

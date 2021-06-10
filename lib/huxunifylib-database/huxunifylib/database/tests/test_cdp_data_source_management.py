@@ -2,6 +2,8 @@
 
 import unittest
 import mongomock
+from bson import ObjectId
+from hypothesis import given, strategies as st
 
 import huxunifylib.database.cdp_data_source_management as dsmgmt
 import huxunifylib.database.constants as c
@@ -104,3 +106,152 @@ class TestCdpDataSourceManagement(unittest.TestCase):
             self.database, data_source_doc[c.ID]
         )
         self.assertIsNone(data_source_doc)
+
+    @given(description=st.text(), data_source_name=st.text())
+    def test_update_data_source(
+        self, description: str, data_source_name: str
+    ) -> None:
+        """Test update data source.
+
+        Args:
+            description (str): random text.
+            data_source_name (str): random text.
+
+        Returns:
+            Response: None
+
+        """
+
+        # create data source first
+        data_source = dsmgmt.create_data_source(
+            self.database, data_source_name, description
+        )
+        self.assertTrue(data_source)
+        self.assertFalse(data_source[c.ADDED])
+        self.assertFalse(data_source[c.ENABLED])
+
+        # update data sources
+        update_body = {"added": True, "enabled": True}
+        self.assertTrue(
+            dsmgmt.update_data_sources(
+                self.database, [data_source[c.ID]], update_body
+            )
+        )
+
+        # test values
+        data_source = dsmgmt.get_data_source(self.database, data_source[c.ID])
+        self.assertTrue(data_source[c.ADDED])
+        self.assertTrue(data_source[c.ENABLED])
+
+    @given(description=st.text(), data_source_name=st.text())
+    def test_update_data_sources(
+        self, description: str, data_source_name: str
+    ) -> None:
+        """Test update data sources.
+
+        Args:
+            description (str): random text.
+            data_source_name (str): random text.
+
+        Returns:
+            Response: None
+
+        """
+
+        # create data source first
+        data_source_ids = []
+        for dsx in range(3):
+            data_source = dsmgmt.create_data_source(
+                self.database, f"{data_source_name}{dsx}", description
+            )
+            self.assertTrue(data_source)
+            self.assertFalse(data_source[c.ADDED])
+            self.assertFalse(data_source[c.ENABLED])
+            data_source_ids.append(data_source[c.ID])
+
+        # update data sources
+        update_body = {"added": True, "enabled": True}
+        self.assertTrue(
+            dsmgmt.update_data_sources(
+                self.database, data_source_ids, update_body
+            )
+        )
+
+        # test values
+        for data_source_id in data_source_ids:
+            data_source = dsmgmt.get_data_source(self.database, data_source_id)
+            self.assertTrue(data_source[c.ADDED])
+            self.assertTrue(data_source[c.ENABLED])
+
+    @given(st.lists(st.one_of(st.text(), st.floats(), st.none())))
+    def test_update_data_source_bad_id(self, text: list) -> None:
+        """Test update data sources with a bad id.
+
+        Args:
+            text (list): hypothesis list of random data.
+
+        Returns:
+            Response: None
+
+        """
+
+        with self.assertRaises(ValueError):
+            dsmgmt.update_data_sources(
+                self.database, [text], {c.ENABLED: True}
+            )
+
+    @given(
+        st.dictionaries(
+            keys=st.one_of(st.text(), st.floats()),
+            values=st.one_of(st.text(), st.floats()),
+        )
+    )
+    def test_update_data_source_bad_update_dict(
+        self, update_body: dict
+    ) -> None:
+        """Test update data sources with a bad data.
+
+        Args:
+            update_body (dict): hypothesis dict of random data.
+
+        Returns:
+            Response: None
+
+        """
+
+        # create data source first
+        data_source = dsmgmt.create_data_source(
+            self.database, "HypoDictTest", "Web Events"
+        )
+        self.assertTrue(data_source)
+        self.assertFalse(data_source[c.ADDED])
+        self.assertFalse(data_source[c.ENABLED])
+
+        dsmgmt.update_data_sources(
+            self.database, [data_source[c.ID]], update_body
+        )
+
+    def test_update_data_source_empty_list(self) -> None:
+        """Test update data sources with an empty list.
+
+        Args:
+
+        Returns:
+            Response: None
+
+        """
+
+        with self.assertRaises(AttributeError):
+            dsmgmt.update_data_sources(self.database, [], {c.ENABLED: True})
+
+    def test_update_data_source_empty_update_dict(self) -> None:
+        """Test update data sources with an empty update dict.
+
+        Returns:
+            Response: None
+
+        """
+
+        self.assertFalse(
+            dsmgmt.update_data_sources(self.database, [ObjectId()], {})
+        )

@@ -8,7 +8,7 @@
     width="220"
     class="side-nav-bar primary"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <img
         src="@/assets/images/logo.png"
         alt="Hux"
@@ -17,7 +17,7 @@
         class="d-flex ma-4"
       />
       <v-menu open-on-hover offset-y>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <div v-on="on" class="client">
             <span>
               {{ clientName }}
@@ -27,7 +27,7 @@
             </v-icon>
           </div>
         </template>
-        <template v-slot:default>
+        <template #default>
           <div class="px-6 py-5 white">
             <v-icon color="primary"> mdi-information </v-icon>
             <span class="pl-4 text-caption neroBlack--text">
@@ -74,7 +74,7 @@
       </div>
     </v-list>
 
-    <template v-slot:append v-if="!isMini">
+    <template #append v-if="!isMini">
       <div class="nav-footer">Hux by Deloitte Digital</div>
     </template>
   </v-navigation-drawer>
@@ -113,7 +113,7 @@ export default {
 <style lang="scss" scoped>
 .side-nav-bar {
   @media (min-height: 900px) {
-    background-image: url("../assets/images/nav-bg.png");
+    // background-image: url("../assets/images/nav-bg.png");
     background-position: bottom 30px center;
   }
 

@@ -47,7 +47,25 @@ const actions = {
 
   async add({ commit }, engagement) {
     try {
-      const response = await api.engagements.create(engagement)
+      const payload = {
+        name: engagement.name,
+        description: engagement.description,
+        delivery_schedule:
+          engagement.delivery_schedule === 0
+            ? null
+            : {
+                end_date: "",
+                start_date: "",
+              },
+        audiences: Object.values(engagement.audiences).map((audience) => {
+          return {
+            id: audience.id,
+            // TODO: HUS-512
+            destinations: [],
+          }
+        }),
+      }
+      const response = await api.engagements.create(payload)
       commit("SET_ONE", response.data)
       return response.data
     } catch (error) {
@@ -64,6 +82,15 @@ const actions = {
         engagement.desciption
       )
       commit("SET_ONE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deliver(_, id) {
+    try {
+      await api.engagements.deliver(id)
     } catch (error) {
       handleError(error)
       throw error

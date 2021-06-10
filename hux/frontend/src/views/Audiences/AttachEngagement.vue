@@ -1,6 +1,6 @@
 <template>
   <Drawer v-model="localDrawer" @onClose="goToStep1()">
-    <template v-slot:header-left>
+    <template #header-left>
       <div class="d-flex align-center">
         <Icon
           v-if="viewStep == '1'"
@@ -16,7 +16,7 @@
         </h3>
       </div>
     </template>
-    <template v-slot:default>
+    <template #default>
       <v-progress-linear
         color="primary"
         :active="loading"
@@ -27,15 +27,14 @@
           <v-stepper-content step="1">
             <div v-if="!areEngagementAlreadyCreated">
               <EmptyPage>
-                <template v-slot:icon>mdi-alert-circle-outline</template>
-                <template v-slot:title>Oops! There’s nothing here yet</template>
-                <template v-slot:subtitle>
+                <template #icon>mdi-alert-circle-outline</template>
+                <template #title>Oops! There’s nothing here yet</template>
+                <template #subtitle>
                   No engagements has been launched yet. Let’s create one <br />
                   by clicking the new engagement button below.
                 </template>
-                <template v-slot:button>
+                <template #button>
                   <huxButton
-                    ButtonText="New engagement"
                     icon="mdi-plus"
                     iconPosition="left"
                     variant="primary"
@@ -43,7 +42,9 @@
                     :isTile="true"
                     @click="goToStep2()"
                     class="ma-2"
-                  ></huxButton>
+                  >
+                    New engagement
+                  </huxButton>
                 </template>
               </EmptyPage>
             </div>
@@ -53,14 +54,15 @@
                 required to have at least one selected.
               </h6>
               <huxButton
-                ButtonText="New engagement"
                 icon="mdi-plus"
                 iconPosition="left"
                 variant="primary"
                 :isTile="true"
                 height="40"
                 @click="goToAddNewEngagement()"
-              ></huxButton>
+              >
+                New engagement
+              </huxButton>
               <div class="engagement-list-wrap mt-6">
                 <div>
                   <span class="text-caption">Engagement name</span>
@@ -83,12 +85,12 @@
                   class="my-3"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <div v-on="on" class="pl-2 font-weight-regular">
                         {{ engagement.name }}
                       </div>
                     </template>
-                    <template v-slot:default>
+                    <template #default>
                       <div class="px-4 py-2 white">
                         <div class="neroBlack--text text-caption">Name</div>
                         <div class="lightGreyText--text text-caption mt-1">
@@ -118,18 +120,18 @@
                   labelText="Engagement name"
                   placeholder="Give this engagement a name"
                   v-model="newEngagement.name"
-                  :required="true"
                   :rules="newEngagementRules"
+                  required
                 />
                 <TextField
-                  labelText="Description - <i>optional</i>"
+                  labelText="Description"
                   placeholder="What is the purpose of this engagement?"
                   v-model="newEngagement.description"
                 />
                 <div class="mb-2">
                   Delivery schedule
                   <v-menu max-width="184" open-on-hover offset-y>
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <v-icon
                         v-on="on"
                         color="secondary"
@@ -139,7 +141,7 @@
                         mdi-information-outline
                       </v-icon>
                     </template>
-                    <template v-slot:default>
+                    <template #default>
                       <div class="px-4 py-2 white">
                         <div class="neroBlack--text text-caption">
                           Manual delivery
@@ -193,20 +195,21 @@
         </v-stepper-items>
       </v-stepper>
     </template>
-    <template v-slot:footer-right>
+    <template #footer-right>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Create &amp; add"
           variant="primary"
           :isTile="true"
           height="40"
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
-        />
+        >
+          Create &amp; add
+        </huxButton>
       </div>
     </template>
 
-    <template v-slot:footer-left>
+    <template #footer-left>
       <div
         class="d-flex align-baseline"
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
@@ -215,12 +218,13 @@
       </div>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Cancel &amp; back"
           variant="white"
           :isTile="true"
           height="40"
           @click.native="goToStep1()"
-        ></huxButton>
+        >
+          Cancel &amp; back
+        </huxButton>
       </div>
     </template>
   </Drawer>
@@ -327,20 +331,13 @@ export default {
     },
     addEngagement: async function () {
       this.loading = true
-      if (this.newEngagement.delivery_schedule == 0) {
-        this.newEngagement.delivery_schedule = null
-      } else {
-        this.newEngagement.delivery_schedule = {
-          end_date: "",
-          start_date: "",
-        }
-      }
-      // This is a temporary to fulfill api calls
-      let temporaryNewEngagement = {
+      const payload = {
         name: this.newEngagement.name,
+        delivery_schedule: this.newEngagement.delivery_schedule,
         description: this.newEngagement.description,
+        audiences: [],
       }
-      let newEngagement = await this.addEngagementToDB(temporaryNewEngagement)
+      const newEngagement = await this.addEngagementToDB(payload)
       this.engagements.push(newEngagement)
       this.sortEngagements()
       this.onEngagementClick(newEngagement)

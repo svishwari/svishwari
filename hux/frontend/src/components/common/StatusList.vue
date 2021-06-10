@@ -1,12 +1,22 @@
 <template>
-  <v-card class="rounded-sm status-card mr-2">
+  <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title class="d-flex justify-space-between">
-      <span>{{ title }}</span>
+      <span
+        ><router-link
+          :to="{
+            name: 'AudienceInsight',
+            params: { id: audience.audienceId },
+          }"
+          class="text-decoration-none"
+          append
+          >{{ audience.name }}</router-link
+        ></span
+      >
       <v-menu class="menu-wrapper" bottom offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on" class="top-action">
-            mdi-dots-vertical
-          </v-icon>
+        <template #activator="{ on, attrs }">
+          <v-icon v-bind="attrs" v-on="on" class="top-action"
+            >mdi-dots-vertical</v-icon
+          >
         </template>
         <v-list class="menu-list-wrapper">
           <v-list-item-group>
@@ -23,26 +33,36 @@
     </v-card-title>
     <v-list dense class="pa-0">
       <v-list-item
-        v-for="item in destinations"
+        v-for="item in audience.destinations"
         :key="item.id"
         @click="toggleFocus()"
       >
         <v-list-item-content class="icon-col py-1">
           <div class="d-flex align-center">
-            <Logo :type="item.type" :size="18" />
+            <tooltip>
+              <template slot="label-content">
+                <Logo :type="item.type" :size="18" />
+              </template>
+              <template slot="hover-content">
+                <div class="d-flex align-center">
+                  <Logo :type="item.type" :size="18" />
+                  <span class="ml-2">{{ item.type | TitleCase }}</span>
+                </div>
+              </template>
+            </tooltip>
+
             <v-spacer></v-spacer>
             <span class="action-icon font-weight-light float-right d-none">
               <v-menu class="menu-wrapper" bottom offset-y>
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <v-icon
                     v-bind="attrs"
                     v-on="on"
                     class="mr-2 more-action"
                     color="primary"
                     @click.prevent
+                    >mdi-dots-vertical</v-icon
                   >
-                    mdi-dots-vertical
-                  </v-icon>
                 </template>
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
@@ -60,16 +80,30 @@
           </div>
         </v-list-item-content>
         <v-list-item-content class="status-col py-1" v-if="item.status">
-          <status :status="item.status" :showLabel="false" />
+          <status :status="item.status" collapsed showLabel />
         </v-list-item-content>
-        <v-list-item-content class="size-col py-1" v-if="item.size">{{
-          getSize(item.size)
-        }}</v-list-item-content>
+        <v-list-item-content class="size-col py-1" v-if="item.size">
+          <tooltip>
+            <template slot="label-content">
+              {{ getSize(item.size) }}
+            </template>
+            <template slot="hover-content">
+              {{ item.size | FormatSize }}
+            </template>
+          </tooltip>
+        </v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
           v-if="item.lastDeliveredOn"
         >
-          {{ getTimeStamp(item.lastDeliveredOn) }}
+          <tooltip>
+            <template slot="label-content">
+              {{ getTimeStamp(item.lastDeliveredOn) }}
+            </template>
+            <template slot="hover-content">
+              {{ item.lastDeliveredOn | Date | Empty }}
+            </template>
+          </tooltip>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -81,10 +115,11 @@ import Logo from "./Logo.vue"
 import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import moment from "moment"
+import Tooltip from "./Tooltip.vue"
 
 export default {
-  components: { Logo, Status },
-  Statusame: "StatusList",
+  components: { Logo, Status, Tooltip },
+  name: "StatusList",
   data() {
     return {
       items: [
@@ -105,13 +140,8 @@ export default {
     }
   },
   props: {
-    title: {
-      title: String,
-      required: true,
-    },
-    destinations: {
-      type: Array,
-      default: () => [],
+    audience: {
+      title: Object,
       required: true,
     },
   },

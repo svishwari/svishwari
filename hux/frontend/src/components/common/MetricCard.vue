@@ -1,39 +1,56 @@
 <template>
   <v-card
-    class="metric-card-wrapper mb-2"
+    class="metric-card-wrapper rounded-lg"
     :class="{ 'no-click': !interactable }"
+    :style="{ 'flex-grow': grow }"
+    :max-width="maxWidth"
     @click="$emit('click')"
     :disabled="!active"
-    :width="width"
-    :min-width="minWidth"
-    :height="height"
     elevation="0"
     :ripple="interactable"
   >
-    <v-list-item three-line>
-      <v-list-item-content>
-        <v-list-item-title
-          class="item-headline mt-1"
-          v-bind:class="interactable ? 'primary--text ' : 'gray--text '"
+    <div class="d-flex align-center justify-space-between">
+      <div class="flex-grow-1">
+        <span
+          v-if="!titleTooltip"
+          class="text-caption"
+          :class="interactable ? 'primary--text ' : 'gray--text '"
         >
           {{ title }}
-        </v-list-item-title>
+        </span>
+        <Tooltip v-else>
+          <template #label-content>
+            <span
+              class="text-caption"
+              :class="interactable ? 'primary--text ' : 'gray--text '"
+            >
+              {{ title }}
+            </span>
+          </template>
+          <template #hover-content>
+            {{ titleTooltip }}
+          </template>
+        </Tooltip>
+
         <slot name="extra-item"></slot>
-        <v-list-item-subtitle
-          class="item-subtitle mb-3 text-h6 neroBlack--text"
-          v-if="subtitle"
-        >
-          {{ subtitle }}
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <v-icon color="zircon" x-large> {{ icon }} </v-icon>
+
+        <div class="pt-1">
+          <span class="font-weight-semi-bold">{{ subtitle }}</span>
+          <slot name="subtitle-extended"></slot>
+        </div>
+      </div>
+
+      <v-icon v-if="icon" color="zircon" x-large> {{ icon }} </v-icon>
+
       <slot name="short-name"></slot>
-    </v-list-item>
+    </div>
   </v-card>
 </template>
 
 <script>
+import Tooltip from "./Tooltip.vue"
 export default {
+  components: { Tooltip },
   name: "metric-card",
 
   props: {
@@ -43,7 +60,7 @@ export default {
     },
 
     title: {
-      type: String,
+      type: [String, Number],
       required: false,
       default: "Info card title",
     },
@@ -62,23 +79,22 @@ export default {
     interactable: {
       type: Boolean,
       required: false,
-      default: true,
+      default: false,
     },
-
-    width: {
-      type: [String, Number],
-      required: false,
-      default: 135,
-    },
-    minWidth: {
-      type: [String, Number],
+    titleTooltip: {
+      type: String,
       required: false,
     },
 
-    height: {
+    grow: {
       type: Number,
       required: false,
-      default: 80,
+      default: 1,
+    },
+
+    maxWidth: {
+      type: [String, Number],
+      required: false,
     },
   },
 }
@@ -87,8 +103,11 @@ export default {
 <style lang="scss" scoped>
 .metric-card-wrapper {
   border: 1px solid var(--v-zircon-base);
+  padding: 20px 15px;
   &.no-click {
+    cursor: default;
     background-color: transparent;
+    cursor: default;
   }
   .item-headline {
     font-size: 12px;

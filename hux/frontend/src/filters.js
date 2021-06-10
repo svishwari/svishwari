@@ -33,6 +33,50 @@ export default {
     return value
   },
 
+  Numeric(
+    value,
+    round = false,
+    abbreviate = false,
+    approx = false,
+    append = ""
+  ) {
+    if (isNaN(value)) return ""
+
+    let abrv = ""
+
+    if (abbreviate) {
+      if (value >= 1000000) {
+        value = value / 1000000
+        abrv = "m"
+      } else if (value >= 1000) {
+        value = value / 1000
+        abrv = "k"
+      }
+    }
+    if (approx) {
+      // Nine Zeroes for Billions
+      value =
+        Math.abs(Number(value)) >= 1.0e9
+          ? (Math.abs(Number(value)) / 1.0e9).toFixed(2) + "B"
+          : // Six Zeroes for Millions
+          Math.abs(Number(value)) >= 1.0e6
+          ? (Math.abs(Number(value)) / 1.0e6).toFixed(2) + "M"
+          : // Three Zeroes for Thousands
+          Math.abs(Number(value)) >= 1.0e3
+          ? (Math.abs(Number(value)) / 1.0e3).toFixed(2) + "K"
+          : this.FormatSize(Math.abs(Number(value)))
+    }
+
+    return approx
+      ? value
+      : value.toLocaleString("en-US", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: round && Number(value) ? 0 : 2,
+        }) +
+          abrv +
+          append
+  },
+
   /**
    * Formats a string with title case.
    *

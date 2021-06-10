@@ -1,39 +1,41 @@
 <template>
   <div class="add-data-source--wrap">
     <Drawer v-model="localDrawer" @onClose="closeAddDataSource">
-      <template v-slot:header-left>
+      <template #header-left>
         <div class="d-flex align-baseline">
           <h5 class="text-h5 font-weight-light pr-2">Select a data source</h5>
         </div>
       </template>
-      <template v-slot:footer-left>
+      <template #footer-left>
         <div class="d-flex align-baseline">
           <div class="font-weight-regular">
             {{ dataSources.length }} results
           </div>
         </div>
       </template>
-      <template v-slot:footer-right>
+      <template #footer-right>
         <div v-if="isDataSourcesSelected" class="d-flex align-baseline">
           <huxButton
-            ButtonText="Cancel"
             variant="tertiary"
             size="large"
             :isTile="true"
             class="mr-2"
             @click="closeAddDataSource"
-          ></huxButton>
+          >
+            Cancel
+          </huxButton>
           <huxButton
-            :ButtonText="dataSourcesBtnText"
             variant="primary"
             size="large"
             :isTile="true"
             :isDisabled="!isDataSourcesSelected"
             @click="addDataSources"
-          ></huxButton>
+          >
+            {{ dataSourcesBtnText }}
+          </huxButton>
         </div>
       </template>
-      <template v-slot:default>
+      <template #default>
         <div class="ma-5">
           <div class="font-weight-light">Data sources</div>
           <CardHorizontal

@@ -15,15 +15,23 @@
     <slot></slot>
     <div v-if="isAvailable && !hideButton">
       <huxButton
-        :ButtonText="isAdded ? 'Added' : 'Add'"
         :isOutlined="!isAdded"
-        :variant="isAdded ? 'secondary' : 'lightGrey'"
+        :variant="isAdded ? 'secondary' : 'primary'"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
         :isDisabled="isAlreadyAdded"
         iconPosition="left"
         class="ma-2"
-      ></huxButton>
+      >
+        <span
+          :class="[
+            isAdded ? 'white--text' : 'primary--text',
+            isAlreadyAdded ? 'gray--text' : '',
+          ]"
+        >
+          {{ isAdded ? "Added" : "Add" }}
+        </span>
+      </huxButton>
     </div>
   </v-card>
 </template>
@@ -95,5 +103,12 @@ export default {
 <style lang="scss" scoped>
 .card-horizontal-disabled {
   border: 1px solid var(--v-zircon-base) !important;
+  .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
+    background-color: var(--v-smoke-base) !important;
+    @extend .box-shadow-none;
+  }
+  &:hover {
+    @extend .box-shadow-25;
+  }
 }
 </style>

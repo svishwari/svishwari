@@ -56,7 +56,7 @@ export const defineRoutes = (server) => {
           description: "Placeholder information text for 'App Secret'",
         },
       },
-      SFMC: {
+      salesforce: {
         sfmc_account_id: {
           name: "Account ID",
           type: "text",
@@ -111,6 +111,13 @@ export const defineRoutes = (server) => {
     let attrs = this.normalizedRequestAttrs()
 
     return schema.engagements.create(attrs)
+  })
+
+  server.post("/engagements/:id/deliver", () => {
+    const code = 200
+    const headers = {}
+    const body = { message: "Successfully created delivery jobs" }
+    return new Response(code, headers, body)
   })
 
   // models

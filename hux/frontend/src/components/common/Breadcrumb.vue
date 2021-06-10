@@ -1,6 +1,6 @@
 <template>
   <v-breadcrumbs :items="items" class="pl-0 breadcrumb">
-    <template v-slot:item="{ item }">
+    <template #item="{ item }">
       <v-breadcrumbs-item
         :href="item.href"
         :disabled="item.disabled"
@@ -9,12 +9,12 @@
         <div v-if="item.icon" class="d-flex pr-2">
           <Icon :type="item.icon" :size="24" color="neroBlack" />
         </div>
-        <span :class="{ 'neroBlack-text': item.disabled, 'pl-1': true }">{{
+        <span :class="{ 'neroBlack--text': item.disabled, 'pl-1': true }">{{
           item.text
         }}</span>
       </v-breadcrumbs-item>
     </template>
-    <template v-slot:divider>
+    <template #divider>
       <v-icon size="21" color="primary">mdi-chevron-right</v-icon>
     </template>
   </v-breadcrumbs>
@@ -40,6 +40,9 @@ export default {
 .breadcrumb {
   ::v-deep .v-breadcrumbs__divider {
     padding: 0;
+  }
+  ::v-deep .v-breadcrumbs__item--disabled {
+    color: var(--v-neroBlack-base);
   }
 }
 </style>

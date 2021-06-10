@@ -1,18 +1,20 @@
 <template>
   <v-menu bottom offset-y open-on-hover class="cursor-default">
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <span
         class="blue-grey d-flex align-center justify-center"
         v-bind="attrs"
         v-on="on"
-        :style="{ 'border-color': userInfo.color }"
+        :style="{ 'border-color': getColorCode(name) }"
       >
-        {{ userInfo.fullName | shortName }}
+        {{ name | shortName }}
       </span>
     </template>
     <v-list>
       <v-list-item>
-        <v-list-item-title>{{ userInfo.fullName }}</v-list-item-title>
+        <v-list-item-title class="neroBlack--text">{{
+          name
+        }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -30,27 +32,6 @@ export default {
       required: true,
     },
   },
-  computed: {
-    userInfo() {
-      if (this.name) {
-        return {
-          shortName: this.name
-            .split(" ")
-            .map((n) => n[0])
-            .join(""),
-          fullName: this.name,
-          color: this.getColorCode(this.name),
-        }
-      } else {
-        return {
-          shortName: "",
-          fullName: "",
-          color: "",
-        }
-      }
-    },
-  },
-
   methods: {
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
@@ -61,6 +42,7 @@ export default {
 
 <style lang="scss" scoped>
 .blue-grey {
+  display: inline-flex !important;
   border-width: 2px;
   border-style: solid;
   border-radius: 50%;

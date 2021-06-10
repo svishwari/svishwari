@@ -37,14 +37,15 @@
           >
             <TextField
               v-model="authenticationDetails[fieldKey]"
-              :labelText="destinationFields[fieldKey].name"
+              :label-text="destinationFields[fieldKey].name"
+              :required="destinationFields[fieldKey].required"
               :rules="[rules.required]"
               :placeholderText="
                 destinationFields[fieldKey].type == 'text'
                   ? `Enter ${destinationFields[fieldKey].name}`
                   : `**********`
               "
-              :InputType="destinationFields[fieldKey].type"
+              :input-type="destinationFields[fieldKey].type"
               :help-text="destinationFields[fieldKey].description"
               @blur="resetValidation"
               icon="mdi-alert-circle-outline"
@@ -56,7 +57,6 @@
       <div class="d-flex flex-wrap justify-end">
         <hux-button
           v-if="!isValidating"
-          :button-text="isValidated ? 'Success!' : 'Validate connection'"
           :icon="isValidated ? 'mdi-check' : null"
           :icon-position="isValidated ? 'left' : null"
           :variant="isValidated ? 'success' : 'primary'"
@@ -64,55 +64,60 @@
           :isTile="true"
           :isDisabled="!isFormValid"
           @click="validate()"
-        ></hux-button>
+        >
+          {{ isValidated ? "Success!" : "Validate connection" }}
+        </hux-button>
         <hux-button
           v-if="isValidating"
           class="processing-button"
-          button-text="Validating..."
           variant="primary"
           size="large"
           :isTile="true"
-        ></hux-button>
+        >
+          Validating...
+        </hux-button>
       </div>
     </v-form>
 
     <hux-footer slot="footer" max-width="850px">
-      <template v-slot:left>
+      <template #left>
         <hux-button
-          button-text="Cancel"
           variant="tertiary"
           size="large"
           :isTile="true"
           @click="cancel()"
-        ></hux-button>
+        >
+          Cancel
+        </hux-button>
       </template>
-      <template v-slot:right>
+      <template #right>
         <hux-button
-          button-text="Add &amp; return"
           variant="primary"
           size="large"
           :isTile="true"
           :isDisabled="!isValidated"
           @click="add()"
-        ></hux-button>
+        >
+          Add &amp; return
+        </hux-button>
       </template>
     </hux-footer>
 
     <Drawer v-model="drawer">
-      <template v-slot:header-left>
+      <template #header-left>
         <div class="d-flex align-baseline">
           <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
           <p class="mb-0">(select one)</p>
         </div>
       </template>
-      <template v-slot:footer-left>
+      <template #footer-left>
         <div class="d-flex align-baseline">
           <p class="font-weight-regular mb-0">
             {{ destinations.length }} results
           </p>
         </div>
       </template>
-      <template v-slot:default>
+      <template #default>
         <div class="ma-5 font-weight-light">
           <CardHorizontal
             v-for="(destination, index) in enabledDestinations"

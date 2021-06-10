@@ -1,9 +1,17 @@
 <template>
   <div>
     <label class="d-flex align-items-center mb-2">
-      <span v-html="labelText" class="neroBlack--text text-caption"></span>
-      <v-tooltip v-if="helpText" top>
-        <template v-slot:activator="{ on, attrs }">
+      <span class="neroBlack--text text-caption">
+        {{ labelText }}
+        <em v-if="!required"> - optional</em>
+      </span>
+      <v-tooltip
+        v-if="helpText"
+        color="transparent"
+        transition="fade-transition"
+        top
+      >
+        <template #activator="{ on, attrs }">
           <v-icon
             color="primary"
             size="small"
@@ -14,7 +22,7 @@
             {{ icon }}
           </v-icon>
         </template>
-        <span>
+        <span class="white neroBlack--text shadow pa-2 text-caption">
           {{ helpText }}
         </span>
       </v-tooltip>

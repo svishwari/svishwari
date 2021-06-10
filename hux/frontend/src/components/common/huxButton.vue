@@ -15,7 +15,10 @@
       {{ icon }}
     </v-icon>
     <v-spacer> </v-spacer>
-    {{ ButtonText }}
+
+    <!-- {{ ButtonText }} -->
+    <slot name="default"></slot>
+
     <v-spacer> </v-spacer>
     <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
       {{ icon }}
@@ -25,7 +28,7 @@
 
 <script>
 export default {
-  name: "huxButton",
+  name: "HuxButton",
   data() {
     return {
       loader: null,
@@ -47,10 +50,6 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-    },
-    ButtonText: {
-      type: String,
-      required: false,
     },
     icon: {
       type: String,
@@ -103,6 +102,9 @@ export default {
   computed: {
     buttonSize: function () {
       return "v-size--" + this.size
+    },
+    buttonTextColor: function () {
+      return this.ButtonTextColor
     },
   },
   methods: {

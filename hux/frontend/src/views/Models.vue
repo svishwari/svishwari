@@ -69,9 +69,9 @@
 
       <template v-else>
         <EmptyPage>
-          <template v-slot:icon> mdi-alert-circle-outline </template>
-          <template v-slot:title> Oops! There’s nothing here yet </template>
-          <template v-slot:subtitle>
+          <template #icon> mdi-alert-circle-outline </template>
+          <template #title> Oops! There’s nothing here yet </template>
+          <template #subtitle>
             Our team is still working hard activating your models. But they
             should be up and running soon! Please be patient in the meantime!
           </template>

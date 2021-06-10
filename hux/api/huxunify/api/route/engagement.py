@@ -199,13 +199,17 @@ class SetEngagement(SwaggerView):
                 db_c.AUDIENCES: [
                     {
                         api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        db_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                                "contact_list": "sfmc_extension_name",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ],
-                db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
             },
         }
     ]
@@ -238,7 +242,9 @@ class SetEngagement(SwaggerView):
         """
 
         try:
-            body = EngagementPostSchema().load(request.get_json())
+            body = EngagementPostSchema().load(
+                request.get_json(), partial=("delivery_schedule",)
+            )
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
