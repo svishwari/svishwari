@@ -128,7 +128,6 @@ def get_health_check() -> HealthCheck:
     health = HealthCheck()
 
     # check variable
-    # pylint: disable=no-member
     health.add_section("flask_env", config("FLASK_ENV", default="UNKNOWN"))
 
     # add health checks
