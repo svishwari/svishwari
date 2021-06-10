@@ -6,6 +6,7 @@ import unittest
 import json
 
 import requests_mock
+from bson import ObjectId
 from marshmallow import ValidationError
 from requests_mock import Mocker
 from huxunify.api.config import get_config
@@ -54,7 +55,7 @@ class TestEngagementMetricsDisplayAds(unittest.TestCase):
             f"{self.config.OKTA_CLIENT_ID}"
         )
         self.app = create_app().test_client()
-        self.engagement_id = "60b8d6d7d3cf80b4edcd890b"
+        self.engagement_id = ObjectId()
         self.display_ads_engagement_metrics_endpoint = (
             f"/api/v1/{c.ENGAGEMENT_TAG}/"
             f"{self.engagement_id}/"
