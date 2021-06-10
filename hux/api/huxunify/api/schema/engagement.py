@@ -2,8 +2,9 @@
 """
 Schemas for the Engagements API
 """
+from bson import ObjectId
 from flask_marshmallow import Schema
-from marshmallow import fields, validate
+from marshmallow import fields, validate, pre_load, pre_dump
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
@@ -65,6 +66,14 @@ class EngagementGetSchema(Schema):
     update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
+    @pre_dump
+    def pre_process_details(self, data, **kwarg):
+        for audience in data[api_c.AUDIENCES]:
+            audience[api_c.ID] = str(audience[api_c.ID])
+            for destination in audience[api_c.DESTINATIONS]:
+                destination[api_c.ID] = str(destination[api_c.ID])
+        return data
+
 
 class EngagementPostSchema(Schema):
     """
@@ -91,6 +100,14 @@ class EngagementPostSchema(Schema):
             }
         ],
     )
+
+    @pre_load
+    def pre_process_details(self, data, **kwarg):
+        for audience in data[api_c.AUDIENCES]:
+            audience[api_c.ID] = ObjectId(audience[api_c.ID])
+            for destination in audience[api_c.DESTINATIONS]:
+                destination[api_c.ID] = ObjectId(destination[api_c.ID])
+        return data
 
 
 class EngagementPutSchema(Schema):
@@ -120,6 +137,43 @@ class EngagementPutSchema(Schema):
     delivery_schedule = fields.Nested(DeliverySchedule, required=False)
 
 
+class AudienceEngagementDeleteSchema(Schema):
+    """
+    Schema for adding/deleting audience to engagement
+    """
+
+    audience_ids = fields.List(
+        fields.String,
+        example=[
+            "60ae035b6c5bf45da27f17e5",
+            "60ae035b6c5bf45da27f17e6",
+        ],
+    )
+
+
+class AudienceEngagementDestinationSchema(Schema):
+    id = fields.String(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        required=True,
+        validate=validate_object_id,
+    )
+    contact_list = fields.String()
+
+
+class AudienceEngagementBaseSchema(Schema):
+
+    id = fields.String(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        required=True,
+        validate=validate_object_id,
+    )
+    destinations = fields.List(
+        fields.Nested(AudienceEngagementDestinationSchema)
+    )
+
+
 class AudienceEngagementSchema(Schema):
     """
     Schema for adding/deleting audience to engagement
@@ -141,6 +195,14 @@ class AudienceEngagementSchema(Schema):
             }
         ],
     )
+
+    @pre_load
+    def pre_process_details(self, data, **kwarg):
+        for audience in data[api_c.AUDIENCES]:
+            audience[api_c.ID] = ObjectId(audience[api_c.ID])
+            for destination in audience[api_c.DESTINATIONS]:
+                destination[api_c.ID] = ObjectId(destination[api_c.ID])
+        return data
 
 
 class AudienceEngagementDeleteSchema(Schema):
@@ -252,3 +314,4 @@ class AudiencePerformanceEmailSchema(Schema):
     audience_performance = fields.List(
         fields.Nested(EmailIndividualAudienceSummary)
     )
+

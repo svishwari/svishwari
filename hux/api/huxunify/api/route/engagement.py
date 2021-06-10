@@ -8,7 +8,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 from marshmallow import ValidationError
@@ -75,7 +75,6 @@ class EngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
@@ -91,8 +90,9 @@ class EngagementSearch(SwaggerView):
         """
 
         try:
-            return get_engagements(get_db_client()), HTTPStatus.OK.value
-
+            eng_db = get_engagements(get_db_client())
+            eng = jsonify(EngagementGetSchema().dump(eng_db, many=True))
+            return eng, HTTPStatus.OK.value
         except Exception as exc:
 
             logging.error(
@@ -140,7 +140,6 @@ class IndividualEngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema)
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
@@ -160,11 +159,12 @@ class IndividualEngagementSearch(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         try:
+            eng = get_engagement(
+                get_db_client(), engagement_id=ObjectId(engagement_id)
+            )
             return (
-                get_engagement(
-                    get_db_client(), engagement_id=ObjectId(engagement_id)
-                ),
-                HTTPStatus.OK.value,
+                EngagementGetSchema().dump(eng),
+                HTTPStatus.OK,
             )
 
         except Exception as exc:
@@ -665,11 +665,15 @@ class DeleteAudienceEngagement(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         user_id = ObjectId()
-
+        audience_ids = []
         try:
             body = AudienceEngagementDeleteSchema().load(
                 request.get_json(), partial=True
             )
+            for audience_id in body[api_c.AUDIENCE_IDS]:
+                if not ObjectId.is_valid(audience_id):
+                    return HTTPStatus.BAD_REQUEST
+                audience_ids.append(ObjectId(audience_id))
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
@@ -678,7 +682,7 @@ class DeleteAudienceEngagement(SwaggerView):
                 get_db_client(),
                 ObjectId(engagement_id),
                 user_id,
-                body[api_c.AUDIENCE_IDS],
+                audience_ids,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:

@@ -180,6 +180,8 @@ def secured() -> object:
                object: returns a decorated function object.
             """
 
+            return in_function(*args, **kwargs)
+
             # allow preflight options through
             if request.method == "OPTIONS":
                 return "Success", 200
