@@ -12,11 +12,16 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job_status,
 )
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
-from huxunify.api import constants as api_const, config as cfg
+from huxunifylib.util.general.const import (
+    MongoDBCredentials,
+    FacebookCredentials,
+)
+from huxunifylib.util.audience_router.const import AudienceRouterConfig
+from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
 
 
-def map_destination_credentials_to_dict(destination: dict) -> dict:
+def map_destination_credentials_to_dict(destination: dict) -> tuple:
     """Map destination credentials to a dictionary for aws batch.
     Handle any custom logic here in the future for new destination types.
 
@@ -24,18 +29,43 @@ def map_destination_credentials_to_dict(destination: dict) -> dict:
         destination (dict): The destination object.
 
     Returns:
-        dict: The credential dictionary.
+        tuple: The credential tuple for (env, secrets).
     """
-    cred_dict = {}
 
     # skip if no authentication details provided.
     if db_const.DELIVERY_PLATFORM_AUTH not in destination:
-        return cred_dict
+        raise KeyError(
+            f"No authentication details for {destination[db_const.DELIVERY_PLATFORM_NAME]}"
+        )
 
-    # assign the auth credentials to the secrets dict
-    for key, value in destination[db_const.DELIVERY_PLATFORM_AUTH].items():
-        cred_dict[key] = value
-    return cred_dict
+    # get auth
+    auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
+    if (
+        destination[db_const.DELIVERY_PLATFORM_NAME].upper()
+        == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
+    ):
+        env_dict = {
+            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
+                api_const.FACEBOOK_AD_ACCOUNT_ID
+            ],
+            FacebookCredentials.FACEBOOK_APP_ID.name: auth[
+                api_const.FACEBOOK_APP_ID
+            ],
+        }
+        secret_dict = {
+            FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
+                api_const.FACEBOOK_APP_SECRET
+            ],
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
+                api_const.FACEBOOK_ACCESS_TOKEN
+            ],
+        }
+    else:
+        raise KeyError(
+            f"No configuration for {destination[db_const.DELIVERY_PLATFORM_NAME]}"
+        )
+
+    return env_dict, secret_dict
 
 
 class DestinationBatchJob:
@@ -182,30 +212,36 @@ def get_destination_config(
     # get the configuration values
     config = get_config()
 
-    # Setup AWS Batch env vars and secrets
-    aws_env_dict = {
-        db_const.DELIVERY_JOB_ID.upper(): str(
+    # get destination specific env values
+    ds_env_dict, ds_secret_dict = map_destination_credentials_to_dict(
+        delivery_platform
+    )
+
+    # Setup AWS Batch env dict
+    env_dict = {
+        AudienceRouterConfig.DELIVERY_JOB_ID.name: str(
             audience_delivery_job[db_const.ID]
         ),
-        api_const.BATCH_SIZE.upper(): str(audience_router_batch_size),
-        cfg.HOST: "unifieddb_host_alias",  # config.MONGO_DB_HOST,
-        cfg.PORT: str(config.MONGO_DB_PORT),
-        cfg.USER_NAME: "read_write_user",  # config.MONGO_DB_USERNAME,
-        # cfg.SSL_CERT_PATH: config.MONGO_SSL_CERT,
-        cfg.SSL_CERT_PATH: "../rds-combined-ca-bundle.pem",
-        config.MONITORING_CONFIG_CONST: config.MONITORING_CONFIG,
-        api_const.AUDIENCE_ROUTER_STUB_TEST: "1",  # CDM STUB VALUE
+        AudienceRouterConfig.BATCH_SIZE.name: str(audience_router_batch_size),
+        MongoDBCredentials.MONGO_DB_HOST.name: config.MONGO_DB_HOST,
+        MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
+        MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
+        MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
+        api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
+        **ds_env_dict,
     }
 
-    aws_secret_dict = {
-        cfg.PASSWORD: "unifieddb_rw",  # config.MONGO_DB_PASSWORD,
-        **map_destination_credentials_to_dict(delivery_platform),
+    # setup the secrets dict
+    secret_dict = {
+        MongoDBCredentials.MONGO_DB_PASSWORD.name: api_const.AUDIENCE_ROUTER_MONGO_PASSWORD_FROM,
+        **ds_secret_dict,
     }
+
     return DestinationBatchJob(
         database,
         audience_delivery_job[db_const.ID],
-        aws_secret_dict,
-        aws_env_dict,
+        secret_dict,
+        env_dict,
     )
 
 
