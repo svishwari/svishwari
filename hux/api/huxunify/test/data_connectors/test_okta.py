@@ -6,11 +6,11 @@ from unittest import TestCase
 import requests_mock
 from requests_mock import Mocker
 from flask import Flask
-from bson import json_util
+from bson import json_util, ObjectId
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors import okta
-from huxunify.api.route.utils import secured
+from huxunify.api.route.utils import secured, get_user_id
 
 
 VALID_RESPONSE = {
@@ -26,6 +26,12 @@ VALID_RESPONSE = {
     "token_type": "Bearer",
     "client_id": "1234",
     "uid": "1234567",
+}
+
+VALID_USER_RESPONSE = {
+    constants.OKTA_ID_SUB: "8548bfh8d",
+    constants.EMAIL: "davesmith@fake.com",
+    constants.NAME: "dave smith",
 }
 INVALID_RESPONSE = {"active": False}
 
@@ -47,6 +53,7 @@ class OktaTest(TestCase):
             f"/oauth2/v1/introspect?client_id="
             f"{self.config.OKTA_CLIENT_ID}"
         )
+        self.user_info_call = f"{self.config.OKTA_ISSUER}/oauth2/v1/userinfo"
 
     @requests_mock.Mocker()
     def test_introspection_invalid_call(self, request_mocker: Mocker):
@@ -236,3 +243,62 @@ class OktaTest(TestCase):
 
         with self.assertRaises(AttributeError):
             getattr(demo_endpoint, "__wrapped__")
+
+    def test_secured_decorator_get_user_id(self):
+        """Test secured decorator with an invalid header to get_user_id.
+
+        Args:
+
+        Returns:
+
+        """
+        invalid_header = (constants.INVALID_AUTH_HEADER, 401)
+        with Flask("invalid_test").test_request_context("/"):
+
+            @get_user_id()
+            def demo_endpoint():
+                return True
+
+            self.assertEqual(invalid_header, demo_endpoint())
+
+    @requests_mock.Mocker()
+    def test_secured_decorator_valid_token_user_id(
+        self, request_mocker: Mocker
+    ):
+        """Test secured decorator with a good token to get user id
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+
+        # setup the request mock post
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        with Flask("valid_test").test_request_context(
+            "/", headers={"Authorization": "Bearer 12345678"}
+        ):
+
+            @get_user_id()
+            def demo_endpoint(user_id):
+                return user_id
+
+            # true means the endpoint and token call were succesfully passed.
+            self.assertIsInstance(demo_endpoint(), ObjectId)
+
+    def test_get_user_info(
+        self, request_mocker: Mocker
+    ):
+        """Test secured decorator with a good token to get user id
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        pass
+    # test get_user_info
+    # test get_token_from_request()
