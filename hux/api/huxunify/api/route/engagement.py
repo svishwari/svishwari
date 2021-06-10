@@ -845,9 +845,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[api_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
@@ -975,9 +973,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[api_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
