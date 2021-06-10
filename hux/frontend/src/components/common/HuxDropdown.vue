@@ -7,7 +7,7 @@
     :transition="transition"
     :value="openMenu"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <!-- <v-btn v-if="icon" :color="color" v-on="on">
         <v-icon>{{ icon }}</v-icon>
       </v-btn> -->

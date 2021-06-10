@@ -1,6 +1,6 @@
 <template>
   <v-menu bottom offset-y open-on-hover class="cursor-default">
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <span
         class="blue-grey d-flex align-center justify-center"
         v-bind="attrs"

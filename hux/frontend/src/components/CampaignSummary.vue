@@ -35,7 +35,7 @@
         </div>
         <!-- Campaign Nested Table -->
         <hux-data-table :headers="adsHeaders" :dataItems="campaignData" nested>
-          <template v-slot:expandable-row="{ item }">
+          <template #expandable-row="{ item }">
             <td
               v-for="header in headers"
               :key="header.value"
@@ -47,14 +47,14 @@
               </div>
             </td>
           </template>
-          <template v-slot:expanded-row="{ headers, item }">
+          <template #expanded-row="{ headers, item }">
             <td :colspan="headers.length" class="pa-0">
               <hux-data-table
                 :headers="headers"
                 :dataItems="item.campaigns"
                 :showHeader="false"
               >
-                <template v-slot:row-item="{ item }">
+                <template #row-item="{ item }">
                   <td
                     v-for="header in headers"
                     :key="header.value"

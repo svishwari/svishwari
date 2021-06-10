@@ -123,7 +123,7 @@ export default {
     },
 
     reset() {
-      this.drawerWidth = this.width
+      this.expanded = false
     },
   },
 }

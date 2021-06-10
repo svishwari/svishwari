@@ -2,7 +2,7 @@
   <v-container>
     <v-subheader> Data Table </v-subheader>
     <HuxDataTable v-bind:headers="headers" v-bind:dataItems="dataItems">
-      <template v-slot:un-expanded-row="{ field, item, expand, isExpanded }">
+      <template #un-expanded-row="{ field, item, expand, isExpanded }">
         <span v-if="field == 'engagementName'" class="primary--text">
           <v-icon
             v-if="'child' in item"
@@ -30,7 +30,7 @@
         </span>
         <span v-else-if="field == 'lastUpdatedBy'">
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
@@ -44,7 +44,7 @@
         </span>
         <span v-else-if="field == 'createdBy'">
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
@@ -62,7 +62,7 @@
           </span>
         </span>
       </template>
-      <template v-slot:expanded-row="{ field }">
+      <template #expanded-row="{ field }">
         <td class="primary--text">{{ field.engagementName }}</td>
         <td>{{ field.audiences }}</td>
         <td>
@@ -84,7 +84,7 @@
         <td>{{ field.lastUpdated }}</td>
         <td>
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
@@ -101,7 +101,7 @@
         <td>{{ field.created }}</td>
         <td>
           <v-menu bottom offset-y>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
@@ -142,7 +142,7 @@
       @onCancel="toggleModal()"
       @onConfirm="toggleModal()"
     >
-      <template v-slot:activator>
+      <template #activator>
         <huxButton
           ButtonText="Open modal"
           size="large"
@@ -274,19 +274,19 @@
     <v-subheader> Drawer</v-subheader>
     <v-btn @click="drawer = !drawer">Toggle Drawer</v-btn>
     <drawer v-model="drawer">
-      <template v-slot:header-left>
+      <template #header-left>
         <h2>Heading</h2>
       </template>
-      <template v-slot:header-right>
+      <template #header-right>
         <v-icon color="black"> mdi-dots-vertical </v-icon>
       </template>
-      <template v-slot:default>
+      <template #default>
         <Button />
       </template>
-      <template v-slot:footer-left>
+      <template #footer-left>
         <h2>Heading</h2>
       </template>
-      <template v-slot:footer-right>
+      <template #footer-right>
         <v-icon color="black"> mdi-dots-vertical </v-icon>
       </template>
     </drawer>

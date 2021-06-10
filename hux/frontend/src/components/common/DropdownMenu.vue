@@ -6,7 +6,7 @@
     nudge-bottom="5"
     v-model="DropdownValue"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <div v-on="on" class="d-flex avatar-menu">
         <v-btn tile class="main-button" color="tertiary">
           {{ labelText }}
