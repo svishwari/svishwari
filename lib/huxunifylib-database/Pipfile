@@ -8,6 +8,7 @@ pymongo = "*"
 pandas = "*"
 tenacity = "*"
 huxunifylib-database = {path = ".", editable = true}
+hypothesis = "*"
 
 [dev-packages]
 mongomock = "*"
