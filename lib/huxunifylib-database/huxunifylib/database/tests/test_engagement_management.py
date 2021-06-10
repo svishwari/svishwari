@@ -456,7 +456,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.assertIn(c.AUDIENCES, engagement)
             self.assertEqual(len(engagement[c.AUDIENCES]), 1)
             self.assertEqual(
-                engagement[c.AUDIENCES][0][c.ID],
+                engagement[c.AUDIENCES][0][c.OBJECT_ID],
                 self.audience[c.ID],
             )
             self.assertIsInstance(engagement_id, ObjectId)

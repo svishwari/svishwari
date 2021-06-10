@@ -22,6 +22,7 @@ CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
+OVERVIEW = "overview"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -245,6 +246,9 @@ UNSUBSCRIBE_RATE = "unsubscribe_rate"
 CDP_DATA_SOURCE_NAME = "name"
 CDP_DATA_SOURCE_CATEGORY = "category"
 CDP_DATA_SOURCE_DESCRIPTION = "CDP data source body"
+CDP_DATA_SOURCE_FEED_COUNT = "feed_count"
+CDP_DATA_SOURCE_ADDED = "is_added"
+CDP_DATA_SOURCE_ENABLED = "is_enabled"
 
 CDP_DATA_SOURCE_NAME_DESCRIPTION = "Name of the CDP data source"
 CDP_DATA_SOURCE_CATEGORY_DESCRIPTION = "Category of the CDP data source"
@@ -363,7 +367,11 @@ BATCH_SIZE = "batch_size"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
-CUSTOMERS_OVERVIEW_ENDPOINT = "overview"
+
+# IDR Fields
+IDR_TAG = "idr"
+IDR_ENDPOINT = "/idr"
+
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
