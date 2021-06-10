@@ -85,11 +85,8 @@ class CustomerOverview(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
+            "schema": CustomerOverviewSchema,
             "description": "Customer Profiles Overview",
-            "schema": {
-                "type": "array",
-                "items": CustomerOverviewSchema,
-            },
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get customers overview"
@@ -101,6 +98,48 @@ class CustomerOverview(SwaggerView):
     # pylint: disable=no-self-use
     def get(self) -> Tuple[dict, int]:
         """Retrieves a customer data overview.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] dict of Customer data overview and http code
+        """
+
+        customers_overview_data = get_customers_overview()
+
+        return (
+            CustomerOverviewSchema().dump(customers_overview_data),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.IDR_ENDPOINT}/{api_c.IDR_OVERVIEW_ENDPOINT}",
+    "CustomerDashboardOverview",
+)
+class CustomerDashboardOverview(SwaggerView):
+    """
+    Customers Dashboard Overview class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": CustomerOverviewSchema,
+            "description": "Customer Identity Resolution Dashboard overview.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers identity dashboard overview."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves a customer data dashboard overview.
 
         ---
         security:
