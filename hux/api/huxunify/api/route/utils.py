@@ -195,7 +195,7 @@ def secured() -> object:
             if token_response[1] != 200:
                 return token_response
 
-            # safely extract token using string partition
+            # introspect token
             if introspect_token(token_response[0]):
                 return in_function(*args, **kwargs)
 
