@@ -1,16 +1,25 @@
 """
-Purpose of this file is to house all tests related to engagement
+Purpose of this file is to house all the engagement api tests
 """
 
-import unittest
-from http import HTTPStatus
-from unittest import mock
-
+import json
 import mongomock
 import requests_mock
-from requests_mock import Mocker
 from bson import ObjectId
+from http import HTTPStatus
+from marshmallow import ValidationError
+from requests_mock import Mocker
+from unittest import TestCase, mock
 
+from huxunify.api import constants as api_c
+from huxunify.api.config import get_config
+from huxunify.app import create_app
+from huxunify.api.schema.engagement import (
+    DisplayAdsSummary,
+    DispAdIndividualAudienceSummary,
+    EmailSummary,
+    EmailIndividualAudienceSummary,
+)
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
@@ -18,11 +27,6 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
-
-from huxunify.api import constants as api_c
-from huxunify.api.config import get_config
-
-from huxunify.app import create_app
 
 
 BASE_URL = "/api/v1"
@@ -41,9 +45,216 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+VALID_RESPONSE = {
+    "active": True,
+    "scope": "openid email profile",
+    "username": "davesmith",
+    "exp": 1234,
+    "iat": 12345,
+    "sub": "davesmith@fake",
+    "aud": "sample_aud",
+    "iss": "sample_iss",
+    "jti": "sample_jti",
+    "token_type": "Bearer",
+    "client_id": "1234",
+    "uid": "1234567",
+}
 
 
-class TestEngagementDeliveryOperations(unittest.TestCase):
+class TestEngagementMetricsDisplayAds(TestCase):
+    """
+    Purpose of this class is to test Engagement Metrics of Display Ads
+    """
+
+    def setUp(self):
+        """
+        Sets up Test Client
+
+        Returns:
+        """
+        self.config = get_config()
+        self.introspect_call = (
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/introspect?client_id="
+            f"{self.config.OKTA_CLIENT_ID}"
+        )
+        self.app = create_app().test_client()
+        self.engagement_id = ObjectId()
+        self.display_ads_engagement_metrics_endpoint = (
+            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+            f"{self.engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.DISPLAY_ADS}"
+        )
+
+    @staticmethod
+    def validate_schema(schema, response) -> bool:
+        """
+        Utility Function to Validate the Schema with respect to Response
+
+        Args:
+            schema: Marshmallow Schema
+            response:json response
+
+        Return: bool
+        """
+        try:
+            schema.load(data=response)
+            return True
+        except ValidationError:
+
+            return False
+
+    @requests_mock.Mocker()
+    def test_display_ads_summary(self, request_mocker: Mocker):
+        """
+        It validates the schema for Display Ads Summary
+        Schema Name: DisplayAdsSummary
+
+        Args:
+            request_mocker(Mocker): Mocker object
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.display_ads_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        summary = jsonresponse["summary"]
+        result = self.validate_schema(DisplayAdsSummary(), summary)
+        self.assertTrue(result)
+
+    @requests_mock.Mocker()
+    def test_display_ads_audience_performance(self, request_mocker: Mocker):
+        """
+        It validates the schema for Individual Audience
+        Display Ads Performance Summary
+        Schema Name: DispAdIndividualAudienceSummary
+
+        Args:
+            request_mocker(Mocker): Mocker object
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.display_ads_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        audience_performance = jsonresponse["audience_performance"][0]
+        result = self.validate_schema(
+            DispAdIndividualAudienceSummary(), audience_performance
+        )
+        self.assertTrue(result)
+
+
+class TestEngagementMetricsEmail(TestCase):
+    """
+    Purpose of this class is to test Engagement Metrics of Email
+    """
+
+    def setUp(self):
+        """
+        Sets up Test Client
+
+        Returns:
+        """
+        self.config = get_config()
+        self.introspect_call = (
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/introspect?client_id="
+            f"{self.config.OKTA_CLIENT_ID}"
+        )
+        self.app = create_app().test_client()
+
+        self.engagement_id = "60b8d6d7d3cf80b4edcd890b"
+        self.email_engagement_metrics_endpoint = (
+            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+            f"{self.engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.EMAIL}"
+        )
+
+    @staticmethod
+    def validate_schema(schema, response) -> bool:
+        """
+        Utility Function to Validate the Schema with respect to Response
+
+        Args:
+             schema: Marshmallow Schema
+             response:json response
+
+        Return: boolean
+        """
+        try:
+            schema.load(data=response)
+            return True
+        except ValidationError:
+            return False
+
+    @requests_mock.Mocker()
+    def test_email_summary(self, request_mocker: Mocker):
+        """
+        It validates the schema for Email Summary
+        Schema Name: EmailSummary
+
+        Args:
+            request_mocker(Mocker): Mocker object
+
+        Returns:
+            None
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.email_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        summary = jsonresponse["summary"]
+        result = self.validate_schema(EmailSummary(), summary)
+        self.assertTrue(result)
+
+    @requests_mock.Mocker()
+    def test_email_audience_performance(self, request_mocker: Mocker):
+        """
+        It validates the schema for Individual Audience Display Ads Performance Summary
+        Schema Name: EmailIndividualAudienceSummary
+
+        Args:
+            request_mocker(Mocker): Mocker object
+
+        Returns:
+            None
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        response = self.app.get(
+            self.email_engagement_metrics_endpoint,
+            headers={"Authorization": "Bearer 12345678"},
+        )
+        jsonresponse = json.loads(response.data)
+
+        audience_performance = jsonresponse["audience_performance"][0]
+        result = self.validate_schema(
+            EmailIndividualAudienceSummary(), audience_performance
+        )
+        self.assertTrue(result)
+
+
+class TestEngagementDeliveryOperations(TestCase):
     """
     Tests for Engagement Delivery APIs
     """
@@ -150,14 +361,14 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
                 db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: self.audiences[0][db_c.ID],
+                        db_c.ID: self.audiences[0][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
                             {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
                     },
                     {
-                        api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
+                        db_c.ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
                             {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
                             for dest in self.destinations
@@ -171,7 +382,7 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
                 db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
+                        db_c.ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS_TAG: [],
                     },
                 ],
