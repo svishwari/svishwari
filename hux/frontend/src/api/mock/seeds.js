@@ -262,6 +262,6 @@ export default function (server) {
   server.create("model", unsubscribeModel)
 
   //seed audiences
-  server.create("audience", defaultAudience)
-  server.createList("audience", 10)
+  // server.create("audience", defaultAudience)
+  // server.createList("audience", 10)
 }
