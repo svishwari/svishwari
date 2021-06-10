@@ -3,13 +3,21 @@ Purpose of this file is to house all the engagement api tests
 """
 
 import json
-import mongomock
-import requests_mock
-from bson import ObjectId
-from http import HTTPStatus
-from marshmallow import ValidationError
-from requests_mock import Mocker
 from unittest import TestCase, mock
+from http import HTTPStatus
+import requests_mock
+from requests_mock import Mocker
+import mongomock
+from bson import ObjectId
+from marshmallow import ValidationError
+
+from huxunifylib.database import constants as db_c
+from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.delivery_platform_management import (
+    set_delivery_platform,
+)
+from huxunifylib.database.engagement_management import set_engagement
+from huxunifylib.database.orchestration_management import create_audience
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
@@ -20,13 +28,6 @@ from huxunify.api.schema.engagement import (
     EmailSummary,
     EmailIndividualAudienceSummary,
 )
-from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database.delivery_platform_management import (
-    set_delivery_platform,
-)
-from huxunifylib.database.engagement_management import set_engagement
-from huxunifylib.database.orchestration_management import create_audience
 
 
 BASE_URL = "/api/v1"
