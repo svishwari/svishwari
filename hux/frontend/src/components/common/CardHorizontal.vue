@@ -24,7 +24,7 @@
         class="ma-2"
       >
         <span
-          v-bind:class="[
+          :class="[
             isAdded ? 'white--text' : 'primary--text',
             isAlreadyAdded ? 'gray--text' : '',
           ]"

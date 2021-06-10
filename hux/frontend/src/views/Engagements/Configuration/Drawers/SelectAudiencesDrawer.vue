@@ -47,24 +47,27 @@
 
           <template #field:manage="row">
             <div class="d-flex align-center justify-end">
-              <v-btn
+              <HuxButton
                 v-if="isAdded(row.item)"
-                color="secondary"
+                variant="secondary"
                 width="100"
+                height="40"
+                icon="mdi-check"
+                iconPosition="left"
                 @click="remove(row.item)"
               >
-                <v-icon small class="mr-1">mdi-check</v-icon>
                 Added
-              </v-btn>
-              <v-btn
+              </HuxButton>
+              <HuxButton
                 v-else
-                outlined
-                color="lightGrey"
+                isOutlined
+                variant="primary"
                 width="100"
+                height="40"
                 @click="add(row.item)"
               >
-                <span class="darkGrey--text">Add</span>
-              </v-btn>
+                Add
+              </HuxButton>
             </div>
           </template>
         </DataCards>
@@ -79,6 +82,7 @@
 import { mapGetters, mapActions } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
+import HuxButton from "@/components/common/huxButton.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
@@ -87,6 +91,7 @@ export default {
   components: {
     DataCards,
     Drawer,
+    HuxButton,
     Tooltip,
   },
 
