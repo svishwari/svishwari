@@ -81,7 +81,6 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         get_db_client_mock.return_value = self.database
         self.addCleanup(mock.patch.stopall)
 
-        # TODO: Add dummy audiences, destinations, engagements
         destinations = [
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
@@ -141,8 +140,7 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
 
         self.audiences = []
         for audience in audiences:
-            audience = create_audience(self.database, **audience)
-            self.audiences.append(audience)
+            self.audiences.append(create_audience(self.database, **audience))
 
         user_id = ObjectId()
 
@@ -183,8 +181,9 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
 
         self.engagement_ids = []
         for engagement in engagements:
-            engagement_id = set_engagement(self.database, **engagement)
-            self.engagement_ids.append(str(engagement_id))
+            self.engagement_ids.append(
+                str(set_engagement(self.database, **engagement))
+            )
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_an_engagement_valid_ids(
@@ -425,6 +424,7 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
         engagement_id = self.engagement_ids[1]
+
         # Unattached audience id
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -466,6 +466,7 @@ class TestEngagementDeliveryOperations(unittest.TestCase):
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
         engagement_id = self.engagement_ids[1]
         audience_id = self.audiences[1][db_c.ID]
+
         # Unattached destination id
         destination_id = self.destinations[1][db_c.ID]
 
