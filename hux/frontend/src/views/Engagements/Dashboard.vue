@@ -152,19 +152,23 @@
           >
             <Icon type="display_ads" :size="10" class="mr-2" />Display ads
           </v-tab>
-          <v-tab key="email">@ Email</v-tab>
+          <v-tab key="email" @click="fetchCampaignPerformanceDetails('email')"
+            >@ Email</v-tab
+          >
         </v-tabs>
         <v-tabs-items v-model="tabOption" class="mt-2">
           <v-tab-item key="displayAds">
             <campaign-summary
               :summary="displayAdsSummary"
               :campaignData="audiencePerformanceAdsData"
+              type="ads"
             />
           </v-tab-item>
           <v-tab-item key="email">
             <campaign-summary
               :summary="emailSummary"
               :campaignData="audiencePerformanceEmailData"
+              type="email"
             />
           </v-tab-item>
         </v-tabs-items>
@@ -445,6 +449,11 @@ export default {
         ? this.audiencePerformanceAds.audience_performance
         : []
     },
+    audiencePerformanceEmailData() {
+      return this.audiencePerformanceEmail
+        ? this.audiencePerformanceEmail.audience_performance
+        : []
+    },
     summaryCards() {
       const summary = [
         {
@@ -625,49 +634,86 @@ export default {
         {
           id: 2,
           title: "Hard bounces / Rate",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(
-                this.audiencePerformanceEmail["summary"],
-                "hard_bounces"
-              )
-            : "-",
+          value: `${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "hard_bounces"
+                )
+              : "-"
+          } * ${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "hard_bounces_rate"
+                )
+              : "-"
+          }`,
           width: "139px",
         },
         {
           id: 3,
           title: "Delivered / Rate",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(
-                this.audiencePerformanceEmail["summary"],
-                "delivered"
-              )
-            : "-",
+          value: `${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "delivered"
+                )
+              : "-"
+          } * ${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "delivered_rate"
+                )
+              : "-"
+          }`,
           width: "113px",
         },
         {
           id: 4,
           title: "Open / Rate",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(
-                this.audiencePerformanceEmail["summary"],
-                "delivered"
-              )
-            : "-",
+          value: `${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(this.audiencePerformanceEmail["summary"], "open")
+              : "-"
+          } * ${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "open_rate"
+                )
+              : "-"
+          }`,
           width: "122px",
         },
         {
           id: 5,
           title: "Click / CTR",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(
-                this.audiencePerformanceEmail["summary"],
-                "hard_bounces"
-              )
-            : "-",
+          value: `${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "clicks"
+                )
+              : "-"
+          } * ${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "click_through_rate"
+                )
+              : "-"
+          }`,
           width: "122px",
         },
         {
@@ -677,7 +723,7 @@ export default {
             ? this.audiencePerformanceEmail &&
               this.fetchKey(
                 this.audiencePerformanceEmail["summary"],
-                "hard_bounces"
+                "click_to_open_rate"
               )
             : "-",
           width: "121px",
@@ -685,25 +731,45 @@ export default {
         {
           id: 7,
           title: "Unique clicks / Unique opens",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(
-                this.audiencePerformanceEmail["summary"],
-                "hard_bounces"
-              )
-            : "-",
+          value: `${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "unique_clicks"
+                )
+              : "-"
+          } * ${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "unique_opens"
+                )
+              : "-"
+          }`,
           width: "185px",
         },
         {
           id: 8,
           title: "Unsubscribe / Rate",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(
-                this.audiencePerformanceEmail["summary"],
-                "hard_bounces"
-              )
-            : "-",
+          value: `${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "unsubscribe"
+                )
+              : "-"
+          } * ${
+            this.audiencePerformanceEmail
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "unsubscribe_rate"
+                )
+              : "-"
+          }`,
           width: "130px",
         },
       ]

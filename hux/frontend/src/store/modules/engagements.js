@@ -66,7 +66,10 @@ const actions = {
       payload.id,
       payload.type
     )
-    commit("SET_AUDIENCE_PERFORMANCE", { item: response.data, type: "ads" })
+    commit("SET_AUDIENCE_PERFORMANCE", {
+      item: response.data,
+      type: payload.type,
+    })
   },
 
   async add({ commit }, engagement) {

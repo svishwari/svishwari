@@ -123,7 +123,6 @@ export const defineRoutes = (server) => {
   server.get(
     "/engagements/:id/audience-performance/email",
     (schema, request) => {
-      debugger
       const id = request.params.id
       return schema.audiencePerformances.find(id)
     }

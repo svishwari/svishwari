@@ -26,15 +26,8 @@
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
-        <div
-          class="blank-section rounded-sm pa-5"
-          v-if="campaignData.length == 0"
-        >
-          Nothing to show here yet. Add an audience and then assign a
-          destination.
-        </div>
         <!-- Campaign Nested Table -->
-        <hux-data-table :headers="AdsHeaders" :dataItems="data" nested>
+        <hux-data-table :headers="headers" :dataItems="data" nested>
           <template #item-name="{ item, isExpanded }">
             <v-icon :class="{ 'normal-icon': isExpanded }"
               >mdi-chevron-right</v-icon
@@ -238,11 +231,95 @@ export default {
           tooltipValue: "Total Engagements / Total Followers * 100",
         },
       ],
+      emailHeaders: [
+        { text: "Audiences", value: "name", width: "278px" },
+        {
+          text: "Sent",
+          value: "sent",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Hard bounces",
+          value: "hard_bounces",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Hard bounce rate",
+          value: "hard_bounces_rate",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Delivered",
+          value: "delivered",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Delivered rate",
+          value: "delivered_rate",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Open",
+          value: "open",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Open rate",
+          value: "open_rate",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "CTR",
+          value: "clicks",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "CTOR",
+          value: "click_through_rate",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Unique clicks",
+          value: "unique_clicks",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Unique opens",
+          value: "unique_opens",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Unsubscribe",
+          value: "unsubscribe",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+        {
+          text: "Unsubscribe rate",
+          value: "unsubscribe_rate",
+          width: "100px",
+          tooltipValue: "Number of emails sent (including bounces etc)",
+        },
+      ],
     }
   },
   computed: {
     data() {
       return this.campaignData.map((item) => this.formatData(item))
+    },
+    headers() {
+      return this.type === "ads" ? this.AdsHeaders : this.emailHeaders
     },
   },
   props: {
@@ -255,6 +332,11 @@ export default {
       type: Array,
       required: false,
       default: () => [],
+    },
+    type: {
+      type: String,
+      required: true,
+      default: "ads",
     },
   },
   methods: {
