@@ -17,14 +17,8 @@
         single-select
         @click:row="clickRow"
       >
-        <template #item.name="{ item, expand, isExpanded }" v-if="nested">
-          <v-icon
-            :class="{ 'normal-icon': isExpanded }"
-            @mouseover="toolsIndex = index"
-            @mouseleave="toolsIndex = null"
-            @click="expand(!isExpanded)"
-            >mdi-chevron-right</v-icon
-          >
+        <template #item.name="{ item, isExpanded }" v-if="nested">
+          <v-icon> mdi-chevron-right </v-icon>
           <tooltip>
             <template slot="label-content">
               <!-- TODO Route Link to Audience Insight Page -->
@@ -184,7 +178,6 @@ export default {
       align-items: center;
       background: var(--v-white-base) !important;
       left: 0px;
-      height: 59.84px !important;
     }
     .fixed-header {
       position: absolute;
