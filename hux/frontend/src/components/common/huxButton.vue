@@ -103,6 +103,9 @@ export default {
     buttonSize: function () {
       return "v-size--" + this.size
     },
+    buttonTextColor: function () {
+      return this.ButtonTextColor
+    },
   },
   methods: {
     onClick: function () {
