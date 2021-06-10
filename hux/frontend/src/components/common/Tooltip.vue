@@ -1,11 +1,11 @@
 <template>
-  <v-menu class="menu-wrapper" bottom offset-y open-on-hover>
-    <template v-slot:activator="{ on }">
+  <v-menu bottom offset-y open-on-hover>
+    <template #activator="{ on }">
       <span v-on="on">
-        <slot name="label-content"> sample</slot>
+        <slot name="label-content"></slot>
       </span>
     </template>
-    <div class="px-4 py-2 white">
+    <div class="px-4 py-2 white caption">
       <slot name="hover-content"></slot>
     </div>
   </v-menu>
@@ -13,6 +13,6 @@
 
 <script>
 export default {
-  name: "tooltip",
+  name: "Tooltip",
 }
 </script>
