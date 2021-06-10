@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="d-flex justify-space-between align-center px-5 py-2 rounded list-shadow"
+    class="d-flex justify-space-between align-center px-5 py-2 rounded"
     @click="$emit('click')"
     :class="isDisabledOrDeselectable ? 'card-horizontal-disabled' : ''"
     :elevation="isDisabledOrDeselectable ? '0' : '2'"
@@ -105,6 +105,10 @@ export default {
   border: 1px solid var(--v-zircon-base) !important;
   .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
     background-color: var(--v-smoke-base) !important;
+    @extend .box-shadow-none;
+  }
+  &:hover {
+    @extend .box-shadow-25;
   }
 }
 </style>

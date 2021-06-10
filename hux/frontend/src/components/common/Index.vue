@@ -276,8 +276,7 @@
     <v-subheader>Metric Card</v-subheader>
     <MetricCard
       class="ma-4"
-      :width="135"
-      :height="80"
+      :maxWidth="200"
       v-for="(item, i) in overviewListItems"
       :key="i"
       :title="item.title"
