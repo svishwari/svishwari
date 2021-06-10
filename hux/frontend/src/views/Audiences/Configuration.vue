@@ -31,7 +31,7 @@
       <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
         <v-timeline align-top dense class="">
           <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>1</span>
             </template>
             <v-row class="pt-1">
@@ -83,7 +83,7 @@
             </v-row>
           </v-timeline-item>
           <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>2</span>
             </template>
             <v-row class="pt-1 pr-0">
@@ -94,7 +94,7 @@
             color="blue"
             class="timeline-section disable-down-timeline mb-15"
           >
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>3</span>
             </template>
             <v-row class="pt-1">
@@ -134,7 +134,7 @@
             </v-row>
           </v-timeline-item>
           <v-timeline-item class="timeline-section disabled">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>4</span>
             </template>
             <v-row class="pt-1">
@@ -150,22 +150,22 @@
       </v-form>
 
       <HuxFooter maxWidth="inherit">
-        <template v-slot:left>
+        <template #left>
           <huxButton
             ButtonText="Cancel"
             variant="white"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="40"
             class="ma-2 ml-0"
             @click.native="$router.go(-1)"
           ></huxButton>
         </template>
-        <template v-slot:right>
+        <template #right>
           <huxButton
             ButtonText="Create"
             variant="primary"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="44"
             class="ma-2"
@@ -176,7 +176,7 @@
       </HuxFooter>
       <!-- Add destination workflow -->
       <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
-        <template v-slot:header-left>
+        <template #header-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
@@ -198,7 +198,7 @@
           </div>
         </template>
 
-        <template v-slot:default>
+        <template #default>
           <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
             <v-stepper-items>
               <v-stepper-content step="1">
@@ -226,7 +226,7 @@
           </v-stepper>
         </template>
 
-        <template v-slot:footer-right>
+        <template #footer-right>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 2"
@@ -234,7 +234,7 @@
             <huxButton
               ButtonText="Add"
               variant="primary"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
               class="ma-2"
@@ -243,7 +243,7 @@
           </div>
         </template>
 
-        <template v-slot:footer-left>
+        <template #footer-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
@@ -257,7 +257,7 @@
             <huxButton
               ButtonText="Back"
               variant="white"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
               class="ma-2 drawer-back"

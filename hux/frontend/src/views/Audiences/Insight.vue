@@ -77,7 +77,7 @@
     </div>
     <v-divider class="my-8"></v-divider>
     <EmptyStateChart>
-      <template v-slot:chart-image>
+      <template #chart-image>
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
