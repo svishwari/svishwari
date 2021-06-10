@@ -43,10 +43,12 @@ def validate_schema(
 ) -> bool:
     """
     Validate if the response confirms with the given schema
+
     Args:
         schema (Schema): Instance of the Schema to validate against
         response_json (dict): Response json as dict
         is_multiple (bool): If response is a collection of objects
+
     Returns:
         (bool): True/False
     """
@@ -95,8 +97,8 @@ class CdpDataSourcesTest(TestCase):
         self.test_client = create_app().test_client()
 
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
-        # create data sources first
 
+        # create data sources first
         self.data_sources = []
         for ds_name in [api_c.FACEBOOK_NAME, api_c.SFMC_NAME]:
             self.data_sources.append(
