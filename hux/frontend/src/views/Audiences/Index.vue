@@ -32,14 +32,15 @@
           append
         >
           <huxButton
-            ButtonText="Audience"
             icon="mdi-plus"
             iconPosition="left"
             variant="primary"
             size="large"
             isTile
             class="ma-2 font-weight-regular no-shadow mr-0"
-          ></huxButton>
+          >
+            Audience
+          </huxButton>
         </router-link>
       </template>
     </PageHeader>
@@ -106,14 +107,15 @@
             append
           >
             <huxButton
-              ButtonText="Audience"
               icon="mdi-plus"
               iconPosition="left"
               variant="primary"
               size="large"
               isTile
               class="ma-2 font-weight-regular"
-            ></huxButton>
+            >
+              Audience
+            </huxButton>
           </router-link>
         </template>
       </EmptyPage>

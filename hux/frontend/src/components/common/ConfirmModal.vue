@@ -13,21 +13,23 @@
         class="modal-footer background d-flex justify-space-between align-center px-10 py-5"
       >
         <huxButton
-          :button-text="leftBtnText"
           size="large"
           variant="tertiary"
           height="40"
           isTile
           @click="onCancel()"
-        />
+        >
+          {{ leftBtnText }}
+        </huxButton>
         <huxButton
-          :button-text="rightBtnText"
           size="large"
           :variant="type"
           height="40"
           isTile
           @click="onConfirm()"
-        />
+        >
+          {{ rightBtnText }}
+        </huxButton>
       </div>
     </div>
   </v-dialog>

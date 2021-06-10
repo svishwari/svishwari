@@ -57,7 +57,6 @@
       <div class="d-flex flex-wrap justify-end">
         <hux-button
           v-if="!isValidating"
-          :button-text="isValidated ? 'Success!' : 'Validate connection'"
           :icon="isValidated ? 'mdi-check' : null"
           :icon-position="isValidated ? 'left' : null"
           :variant="isValidated ? 'success' : 'primary'"
@@ -65,37 +64,42 @@
           :isTile="true"
           :isDisabled="!isFormValid"
           @click="validate()"
-        ></hux-button>
+        >
+          {{ isValidated ? "Success!" : "Validate connection" }}
+        </hux-button>
         <hux-button
           v-if="isValidating"
           class="processing-button"
-          button-text="Validating..."
           variant="primary"
           size="large"
           :isTile="true"
-        ></hux-button>
+        >
+          Validating...
+        </hux-button>
       </div>
     </v-form>
 
     <hux-footer slot="footer" max-width="850px">
       <template #left>
         <hux-button
-          button-text="Cancel"
           variant="tertiary"
           size="large"
           :isTile="true"
           @click="cancel()"
-        ></hux-button>
+        >
+          Cancel
+        </hux-button>
       </template>
       <template #right>
         <hux-button
-          button-text="Add &amp; return"
           variant="primary"
           size="large"
           :isTile="true"
           :isDisabled="!isValidated"
           @click="add()"
-        ></hux-button>
+        >
+          Add &amp; return
+        </hux-button>
       </template>
     </hux-footer>
 

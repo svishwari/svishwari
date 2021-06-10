@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="d-flex justify-space-between align-center px-5 py-2 rounded list-shadow"
+    class="d-flex justify-space-between align-center px-5 py-2 rounded"
     @click="$emit('click')"
     :class="isDisabledOrDeselectable ? 'card-horizontal-disabled' : ''"
     :elevation="isDisabledOrDeselectable ? '0' : '2'"
@@ -15,16 +15,23 @@
     <slot></slot>
     <div v-if="isAvailable && !hideButton">
       <huxButton
-        :ButtonText="isAdded ? 'Added' : 'Add'"
         :isOutlined="!isAdded"
-        :variant="isAdded ? 'secondary' : 'gray'"
+        :variant="isAdded ? 'secondary' : 'primary'"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
         :isDisabled="isAlreadyAdded"
         iconPosition="left"
         class="ma-2"
-        :ButtonTextColor="!isAdded ? 'gray--text' : ''"
-      ></huxButton>
+      >
+        <span
+          v-bind:class="[
+            isAdded ? 'white--text' : 'primary--text',
+            isAlreadyAdded ? 'gray--text' : '',
+          ]"
+        >
+          {{ isAdded ? "Added" : "Add" }}
+        </span>
+      </huxButton>
     </div>
   </v-card>
 </template>
@@ -94,13 +101,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.horizontal-card {
-  @extend .box-shadow-5;
-  .card-horizontal-disabled {
-    border: 1px solid var(--v-zircon-base) !important;
+.card-horizontal-disabled {
+  border: 1px solid var(--v-zircon-base) !important;
+  .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
+    background-color: var(--v-smoke-base) !important;
+    @extend .box-shadow-none;
   }
   &:hover {
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25) !important;
+    @extend .box-shadow-25;
   }
 }
 </style>
