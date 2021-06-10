@@ -288,9 +288,7 @@ class OktaTest(TestCase):
             # true means the endpoint and token call were succesfully passed.
             self.assertIsInstance(demo_endpoint(), ObjectId)
 
-    def test_get_user_info(
-        self, request_mocker: Mocker
-    ):
+    def test_get_user_info(self, request_mocker: Mocker):
         """Test secured decorator with a good token to get user id
 
         Args:
@@ -300,5 +298,6 @@ class OktaTest(TestCase):
 
         """
         pass
+
     # test get_user_info
     # test get_token_from_request()
