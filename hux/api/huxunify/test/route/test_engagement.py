@@ -361,14 +361,14 @@ class TestEngagementDeliveryOperations(TestCase):
                 db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
                 db_c.AUDIENCES: [
                     {
-                        db_c.ID: self.audiences[0][db_c.ID],
+                        api_c.AUDIENCE_ID: self.audiences[0][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
                             {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
                     },
                     {
-                        db_c.ID: self.audiences[1][db_c.ID],
+                        api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
                             {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
                             for dest in self.destinations
@@ -382,7 +382,7 @@ class TestEngagementDeliveryOperations(TestCase):
                 db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
                 db_c.AUDIENCES: [
                     {
-                        db_c.ID: self.audiences[1][db_c.ID],
+                        api_c.AUDIENCE_ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS_TAG: [],
                     },
                 ],

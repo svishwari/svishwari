@@ -846,7 +846,7 @@ class EngagementDeliverAudienceView(SwaggerView):
 
         # validate that the audience is attached
         audience_ids = [
-            x[db_c.ID] for x in engagement[db_c.AUDIENCES]
+            x[api_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
         ]
         if audience_id not in audience_ids:
             return {
@@ -976,7 +976,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         # validate that the audience is attached
         audience_ids = [
-            x[db_c.ID] for x in engagement[db_c.AUDIENCES]
+            x[api_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
         ]
         if audience_id not in audience_ids:
             return {
