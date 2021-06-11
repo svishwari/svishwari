@@ -8,28 +8,33 @@ import { defineRoutes } from "./routes"
 import seeds from "./seeds"
 
 // factories
+import audienceFactory from "./factories/audiences"
+import { customer, customerProfile } from "./factories/customers"
 import dataSourceFactory from "./factories/dataSource"
 import destinationFactory from "./factories/destination"
 import engagementFactory from "./factories/engagement"
-import audienceFactory from "./factories/audiences"
 import modelFactory from "./factories/model"
 
 export function makeServer({ environment = "development" } = {}) {
   // models
   const models = {
+    audience: Model,
+    customer: Model,
+    customerProfile: Model,
     dataSource: Model,
     destination: Model,
     engagement: Model,
     model: Model,
-    audience: Model,
   }
 
   const factories = {
+    audience: Factory.extend(audienceFactory),
+    customer: Factory.extend(customer),
+    customerProfile: Factory.extend(customerProfile),
     dataSource: Factory.extend(dataSourceFactory),
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
     model: Factory.extend(modelFactory),
-    audience: Factory.extend(audienceFactory),
   }
 
   const server = createServer({

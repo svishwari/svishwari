@@ -46,14 +46,14 @@
         "icon": "customer-profiles", 
           "title": "Customer Profiles", 
           "link": {
-            "name": "Profiles"
+            "name": "CustomerProfiles"
           }
         },
         { 
           "icon": "identity-resolution", 
           "title": "Identity Resolution", 
           "link": {
-            "name": "Identity"
+            "name": "IdentityResolution"
           }
         },
         {
