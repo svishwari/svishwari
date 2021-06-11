@@ -11,7 +11,7 @@ import seeds from "./seeds"
 import audienceFactory from "./factories/audiences"
 import { customer, customerProfile } from "./factories/customers"
 import dataSourceFactory from "./factories/dataSource"
-import destinationFactory from "./factories/destination"
+import { destination as destinationFactory } from "./factories/destination"
 import engagementFactory from "./factories/engagement"
 import modelFactory from "./factories/model"
 
