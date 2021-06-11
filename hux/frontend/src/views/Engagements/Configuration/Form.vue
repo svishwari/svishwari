@@ -84,6 +84,10 @@
               label: 'Target size',
             },
             {
+              key: 'destinations',
+              label: 'Destinations',
+            },
+            {
               key: 'manage',
             },
           ]"
@@ -99,6 +103,28 @@
                 }}
               </template>
             </Tooltip>
+          </template>
+
+          <template #field:destinations="row">
+            <div class="d-flex align-center">
+              <Logo
+                class="mr-2"
+                v-for="destination in row.value"
+                :key="destination.id"
+                :type="destination.type"
+                :size="20"
+              />
+
+              <v-btn
+                width="20"
+                height="20"
+                fab
+                class="primary"
+                @click="openSelectDestinationsDrawer()"
+              >
+                <v-icon size="16">mdi-plus</v-icon>
+              </v-btn>
+            </div>
           </template>
 
           <template #field:manage="row">
@@ -194,6 +220,7 @@ import DataCards from "@/components/common/DataCards.vue"
 import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
+import Logo from "@/components/common/Logo.vue"
 import TextField from "@/components/common/TextField.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
@@ -206,6 +233,7 @@ export default {
     DataCards,
     FormStep,
     FormSteps,
+    Logo,
     HuxFooter,
     TextField,
     Tooltip,
