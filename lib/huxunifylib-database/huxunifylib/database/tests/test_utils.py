@@ -376,13 +376,13 @@ class TestUtils(unittest.TestCase):
             self.database,
             self.audience_doc_1[c.ID],
         )
-        self.assertIsNone(doc)
+        self.assertTrue(doc is None)
 
         doc = am.get_audience_config(
             self.database,
             self.audience_doc_2[c.ID],
         )
-        self.assertIsNone(doc)
+        self.assertTrue(doc is None)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_delivery_platforms_bulk(self):
