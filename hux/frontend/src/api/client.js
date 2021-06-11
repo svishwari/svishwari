@@ -8,10 +8,9 @@ import resources from "@/api/resources"
 
 const client = {}
 
+// Common resource endpoints
 Object.keys(resources).forEach((resource) => {
   const endpoint = resources[resource]
-
-  // Common resource endpoints
   client[resource] = {
     all: () => http.get(endpoint),
     create: (data) => http.post(endpoint, data),
@@ -21,18 +20,23 @@ Object.keys(resources).forEach((resource) => {
     batchUpdate: (data) => http.put(`${endpoint}`, data),
     constants: () => http.get(`${endpoint}/constants`),
   }
-
-  // Custom one-off resource endpoints
-  if (resource === "destinations") {
-    client[resource].validate = (data) => {
-      return http.post("/destinations/validate", data)
-    }
-  }
-  if (resource === "engagements") {
-    client[resource].deliver = (resourceId, data) => {
-      return http.post(`/engagements/${resourceId}/deliver`, data)
-    }
-  }
 })
+
+// Custom one-off resource endpoints
+client["customers"].overview = () => {
+  return http.get("/customers/overview")
+}
+
+client["destinations"].validate = (data) => {
+  return http.post("/destinations/validate", data)
+}
+
+client["engagements"].deliver = (resourceId, data) => {
+  return http.post(`/engagements/${resourceId}/deliver`, data)
+}
+
+client["identity"].overview = () => {
+  return http.get("/idr/overview")
+}
 
 export default client
