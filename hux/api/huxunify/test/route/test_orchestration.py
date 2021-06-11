@@ -94,7 +94,7 @@ class OrchestrationRouteTest(TestCase):
                     "does_not_equal": "Does not equal",
                     "equals": "Equals",
                 }
-            },
+            }
         )
 
         response = self.test_client.get(
