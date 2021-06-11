@@ -331,7 +331,7 @@ class CourierTest(TestCase):
         )
     )
     def test_bad_map_destination_credentials_to_dict(self, bad_dict: dict):
-        """Test mapping destination credentials with a bad data.
+        """Test mapping destination credentials with bad data.
 
         Args:
             bad_dict (dict): hypothesis dict of random data.
