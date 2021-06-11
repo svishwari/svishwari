@@ -232,7 +232,7 @@ def set_connection_status(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
-    update_doc: dict = {}
+    update_doc = {}
     update_doc[c.DELIVERY_PLATFORM_STATUS] = connection_status
     update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
 
@@ -298,7 +298,7 @@ def set_authentication_details(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
 
-    update_doc: dict = {}
+    update_doc = {}
     update_doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
     update_doc[c.UPDATE_TIME] = datetime.datetime.utcnow()
 
@@ -547,7 +547,7 @@ def update_delivery_platform(
         if cur_doc is not None and cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
             raise de.DuplicateName(name)
 
-    update_doc: dict = {
+    update_doc = {
         c.DELIVERY_PLATFORM_NAME: name,
         c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
         c.DELIVERY_PLATFORM_AUTH: authentication_details,
@@ -1045,7 +1045,7 @@ def set_delivery_job_status(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
     curr_time = datetime.datetime.utcnow()
 
-    update_doc: dict = {}
+    update_doc = {}
     update_doc[c.JOB_STATUS] = job_status
     update_doc[c.UPDATE_TIME] = curr_time
 

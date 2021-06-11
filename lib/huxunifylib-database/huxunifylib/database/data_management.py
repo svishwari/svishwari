@@ -812,7 +812,7 @@ def set_ingestion_job_status_no_default_audience(
     curr_time = datetime.datetime.utcnow()
 
     # Update ingestion job
-    update_dict: dict = {}
+    update_dict = {}
     update_dict[c.UPDATE_TIME] = curr_time
 
     if job_status == c.STATUS_IN_PROGRESS:

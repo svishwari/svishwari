@@ -139,7 +139,7 @@ def get_ingested_data(
             .limit(batch_size)
         )
 
-        data_cols: list = []
+        data_cols = []
         for count, item in enumerate(cursor):
             ingested_data = item[c.INGESTED_DATA]
 

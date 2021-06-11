@@ -221,7 +221,7 @@ class TestEngagementManagement(unittest.TestCase):
         # create an engagement that has
         # an audience with three destinations
         # an audience with two destinations
-        new_engagement: dict = {
+        new_engagement = {
             c.ENGAGEMENT_NAME: "Spring 2024",
             c.ENGAGEMENT_DESCRIPTION: "high ltv for spring 2024",
             c.AUDIENCES: [
