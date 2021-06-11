@@ -12,7 +12,14 @@ STATUS = "status"
 ACTIVE = "Active"
 PENDING = "Pending"
 DELETED = "deleted"
+NAME = "name"
+TYPE = "type"
 OBJECT_ID = "id"
+
+# general fields
+AGE = "age"
+MIN = "min"
+MAX = "max"
 
 # Data Management Defines
 DATA_MANAGEMENT_DATABASE = "data_management"
@@ -129,6 +136,7 @@ AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_FILTER_MIN = "min"
 AUDIENCE_FILTER_MAX = "max"
+AUDIENCE_FILTER_OPERATORS = "operators"
 AUDIENCE_FILTER_INCLUDE = "inclusion"
 AUDIENCE_FILTER_EXCLUDE = "exclusion"
 AUDIENCE_FILTER_EXISTS = "exists"
@@ -177,9 +185,6 @@ DELIVERY_PLATFORM_GOOGLE = "Google"
 DELIVERY_PLATFORM_SFMC = "SFMC"
 DELIVERY_PLATFORM_TWILIO = "Twilio"
 DELIVERY_PLATFORM_QUALTRICS = "Qualtrics"
-
-# Engagements
-ENGAGEMENT_ID = "engagement_id"
 
 LOOKALIKE_AUD_NAME = "name"
 LOOKALIKE_AUD_SIZE_PERCENTAGE = "audience_size_percentage"
@@ -255,6 +260,11 @@ NOTIFICATION_FIELD_CREATED = "created"
 NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE = "batch_size"
 NOTIFICATION_QUERY_PARAMETER_SORT_ORDER = "sort_order"
 NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
+# Audience constants
+AUDIENCE_FILTER_CONSTANTS = "audience_filter_constants"
+AGE_FILTER = "age_filter"
+FIRST_NAME_FILTER = "first_name_filter"
 
 # Engagement constants
 ENGAGEMENT_ID = "engagement_id"
