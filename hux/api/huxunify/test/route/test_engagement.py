@@ -6,6 +6,7 @@ import json
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
+from flask_marshmallow import Schema
 from requests_mock import Mocker
 import mongomock
 from bson import ObjectId
@@ -46,20 +47,26 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
-VALID_RESPONSE = {
-    "active": True,
-    "scope": "openid email profile",
-    "username": "davesmith",
-    "exp": 1234,
-    "iat": 12345,
-    "sub": "davesmith@fake",
-    "aud": "sample_aud",
-    "iss": "sample_iss",
-    "jti": "sample_jti",
-    "token_type": "Bearer",
-    "client_id": "1234",
     "uid": "1234567",
-}
+
+
+def validate_schema(schema: Schema, response: dict) -> bool:
+    """
+    Utility Function to Validate the Schema with respect to Response
+
+    Args:
+        schema (Schema): Marshmallow Schema
+        response (dict):json response
+
+    Returns:
+        (bool)
+    """
+    try:
+        schema.load(data=response)
+        return True
+    except ValidationError:
+
+        return False
 
 
 class TestEngagementMetricsDisplayAds(TestCase):
@@ -88,24 +95,6 @@ class TestEngagementMetricsDisplayAds(TestCase):
             f"{api_c.DISPLAY_ADS}"
         )
 
-    @staticmethod
-    def validate_schema(schema, response) -> bool:
-        """
-        Utility Function to Validate the Schema with respect to Response
-
-        Args:
-            schema: Marshmallow Schema
-            response:json response
-
-        Return: bool
-        """
-        try:
-            schema.load(data=response)
-            return True
-        except ValidationError:
-
-            return False
-
     @requests_mock.Mocker()
     def test_display_ads_summary(self, request_mocker: Mocker):
         """
@@ -128,7 +117,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         jsonresponse = json.loads(response.data)
 
         summary = jsonresponse["summary"]
-        result = self.validate_schema(DisplayAdsSummary(), summary)
+        result = validate_schema(DisplayAdsSummary(), summary)
         self.assertTrue(result)
 
     @requests_mock.Mocker()
@@ -154,7 +143,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         jsonresponse = json.loads(response.data)
 
         audience_performance = jsonresponse["audience_performance"][0]
-        result = self.validate_schema(
+        result = validate_schema(
             DispAdIndividualAudienceSummary(), audience_performance
         )
         self.assertTrue(result)
@@ -187,23 +176,6 @@ class TestEngagementMetricsEmail(TestCase):
             f"{api_c.EMAIL}"
         )
 
-    @staticmethod
-    def validate_schema(schema, response) -> bool:
-        """
-        Utility Function to Validate the Schema with respect to Response
-
-        Args:
-             schema: Marshmallow Schema
-             response:json response
-
-        Return: boolean
-        """
-        try:
-            schema.load(data=response)
-            return True
-        except ValidationError:
-            return False
-
     @requests_mock.Mocker()
     def test_email_summary(self, request_mocker: Mocker):
         """
@@ -225,7 +197,7 @@ class TestEngagementMetricsEmail(TestCase):
         jsonresponse = json.loads(response.data)
 
         summary = jsonresponse["summary"]
-        result = self.validate_schema(EmailSummary(), summary)
+        result = validate_schema(EmailSummary(), summary)
         self.assertTrue(result)
 
     @requests_mock.Mocker()
@@ -249,7 +221,7 @@ class TestEngagementMetricsEmail(TestCase):
         jsonresponse = json.loads(response.data)
 
         audience_performance = jsonresponse["audience_performance"][0]
-        result = self.validate_schema(
+        result = validate_schema(
             EmailIndividualAudienceSummary(), audience_performance
         )
         self.assertTrue(result)
