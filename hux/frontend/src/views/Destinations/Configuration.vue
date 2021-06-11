@@ -48,8 +48,9 @@
               :input-type="destinationFields[fieldKey].type"
               :help-text="destinationFields[fieldKey].description"
               @blur="resetValidation"
+              height="40"
               icon="mdi-alert-circle-outline"
-              class="mb-0"
+              class="destination-name-field"
             ></TextField>
           </v-col>
         </v-row>
@@ -106,15 +107,15 @@
     <Drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
-          <p class="mb-0">(select one)</p>
+          <h5 class="text-h3 pr-2">Select a destination</h5>
+          <span class="text-caption gray--text">(select one)</span>
         </div>
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <p class="font-weight-regular mb-0">
+          <span class="text-caption gray--text">
             {{ destinations.length }} results
-          </p>
+          </span>
         </div>
       </template>
       <template #default>
@@ -290,5 +291,31 @@ export default {
 <style lang="scss" scoped>
 .destination-auth-wrap {
   border: 1px solid var(--v-zircon-base) !important;
+  ::v-deep .destination-name-field {
+    .v-input {
+      .v-input__control {
+        .v-input__slot {
+          min-height: 40px;
+          .v-text-field__slot {
+            .v-label {
+              top: 9px;
+            }
+          }
+          fieldset {
+            color: var(--v-lightGrey-base);
+          }
+        }
+      }
+      &.error--text {
+        .v-input__control {
+          .v-input__slot {
+            fieldset {
+              color: inherit;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>

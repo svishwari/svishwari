@@ -2,15 +2,17 @@
   <v-card
     class="d-flex justify-space-between align-center px-5 py-2 rounded"
     @click="$emit('click')"
-    :class="isDisabledOrDeselectable ? 'card-horizontal-disabled' : ''"
-    :elevation="isDisabledOrDeselectable ? '0' : '2'"
+    :class="{
+      'card-horizontal-disabled': isDisabledOrDeselectable,
+      'box-shadow-5': !isDisabledOrDeselectable,
+    }"
     :disabled="isDisabled"
     :color="isDisabledOrDeselectable ? 'background' : 'white'"
     height="60"
   >
     <div v-if="icon || title" class="d-flex align-center">
       <Logo :type="icon" />
-      <div class="pl-2 font-weight-regular">{{ title }}</div>
+      <div class="pl-2 text-h6 neroBlack--text">{{ title }}</div>
     </div>
     <slot></slot>
     <div v-if="isAvailable && !hideButton">
@@ -104,9 +106,9 @@ export default {
 <style lang="scss" scoped>
 .card-horizontal-disabled {
   border: 1px solid var(--v-zircon-base) !important;
+  @extend .box-shadow-none;
   .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
     background-color: var(--v-smoke-base) !important;
-    @extend .box-shadow-none;
   }
   &:hover {
     @extend .box-shadow-25;
