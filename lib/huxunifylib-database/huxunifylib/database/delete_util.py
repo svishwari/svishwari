@@ -348,16 +348,13 @@ def delete_audience(
     collection = am_db[c.AUDIENCES_COLLECTION]
 
     if delete_audience_delivery_jobs(database, audience_id):
-        update_dict = {c.ENABLED: False}
-
         try:
-            if collection.find_one_and_update(
+            return collection.find_one_and_update(
                 {c.ID: audience_id},
-                {"$set": update_dict},
+                {"$set": {c.DELETED: True}},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
-            ):
-                return True
+            )[c.DELETED]
         except pymongo.errors.OperationFailure as exc:
             logging.error(exc)
 
