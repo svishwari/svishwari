@@ -196,22 +196,24 @@ const unsubscribeModel = {
 }
 
 // audiences
-const defaultAudience = {
-  destinations: ["71364317897acad4bac4373b", "67589317897acad4bac4373b"],
-  engagements: ["84759317897acad4bac4373b", "46826317897acad4bac4373b"],
-  filters: [
-    {
-      section_aggregator: "ALL",
-      section_filters: [
-        {
-          field: "filter_field",
-          type: "type",
-          value: "value",
-        },
-      ],
-    },
-  ],
-  name: "My Audience",
+const defaultAudience = ({ destinations = [], engagements = [] }) => {
+  return {
+    destinations: destinations,
+    engagements: engagements,
+    filters: [
+      {
+        section_aggregator: "ALL",
+        section_filters: [
+          {
+            field: "filter_field",
+            type: "type",
+            value: "value",
+          },
+        ],
+      },
+    ],
+    name: "My Audience",
+  }
 }
 
 export default function (server) {
@@ -243,13 +245,22 @@ export default function (server) {
   server.create("dataSource", twilioDS)
 
   // seed destinations
-  server.create("destination", facebook)
-  server.create("destination", salesforce)
+  const facebookSeed = server.create("destination", facebook)
+  const salesforceSeed = server.create("destination", salesforce)
   server.create("destination", twilio)
   server.create("destination", google)
   server.create("destination", tableau)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
+
+  // seed audiences
+  server.create(
+    "audience",
+    defaultAudience({
+      destinations: [facebookSeed, salesforceSeed],
+    })
+  )
+  server.createList("audience", 10)
 
   // seed engagements
   server.createList("engagement", 5)
@@ -260,8 +271,4 @@ export default function (server) {
 
   // seed customers
   server.createList("customer", 1000)
-
-  //seed audiences
-  server.create("audience", defaultAudience)
-  server.createList("audience", 10)
 }

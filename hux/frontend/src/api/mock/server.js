@@ -1,5 +1,6 @@
-import { createServer, Factory, Model, Serializer } from "miragejs"
+import { belongsTo, createServer, Factory, hasMany, Model } from "miragejs"
 import config from "@/config"
+import AppSerializer from "./serializer"
 
 // routes
 import { defineRoutes } from "./routes"
@@ -18,12 +19,17 @@ import modelFactory from "./factories/model"
 export function makeServer({ environment = "development" } = {}) {
   // models
   const models = {
-    audience: Model,
+    audience: Model.extend({
+      destinations: hasMany("destination"),
+      engagements: hasMany("engagement"),
+    }),
     customer: Model,
     customerProfile: Model,
     dataSource: Model,
-    destination: Model,
-    engagement: Model,
+    destination: Model.extend({
+      destinationable: belongsTo({ polymorphic: true }),
+    }),
+    engagement: Model.extend(),
     model: Model,
   }
 
@@ -52,9 +58,9 @@ export function makeServer({ environment = "development" } = {}) {
       this.passthrough(`${config.oktaUrl}/**`)
     },
     serializers: {
-      application: Serializer.extend({
-        embed: true,
-        root: false,
+      application: AppSerializer,
+      audience: AppSerializer.extend({
+        include: ["destinations", "engagements"],
       }),
     },
   })
