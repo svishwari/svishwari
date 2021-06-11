@@ -8,12 +8,13 @@ import mongomock
 import requests_mock
 from requests_mock import Mocker
 
-from huxunify.app import create_app
-from huxunify.api import constants as api_c
-from huxunify.api.config import get_config
 import huxunifylib.database.constants as db_c
 from huxunifylib.database import data_management
 from huxunifylib.database.client import DatabaseClient
+from huxunify.app import create_app
+from huxunify.api import constants as api_c
+from huxunify.api.config import get_config
+
 
 BASE_ENDPOINT = "/api/v1"
 TEST_AUTH_TOKEN = "Bearer 12345678"
