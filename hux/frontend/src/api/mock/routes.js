@@ -130,7 +130,7 @@ export const defineRoutes = (server) => {
     }
   )
   server.get(
-    "engagements/:id/audience-performance/display-ads",
+    "/engagements/:id/audience-performance/display-ads",
     (schema, request) => {
       const id = request.params.id
       return schema.audiencePerformances.find(id)
