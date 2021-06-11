@@ -98,6 +98,15 @@ class AudiencePostSchema(AudiencePutSchema):
     """
 
     name = fields.String(validate=must_not_be_blank)
-    destinations = fields.List(fields.String())
+    destinations = fields.List(
+        fields.Dict(),
+        attribute=api_c.DESTINATIONS,
+        example=[
+            {
+                "id": "60ae035b6c5bf45da27f17d6",
+                "data_extension_id": "data_extension_id",
+            }
+        ],
+    )
     engagements = fields.List(fields.String())
     filters = fields.List(fields.Dict())

@@ -193,12 +193,19 @@ class DestinationConstantsSchema(Schema):
     salesforce = fields.Nested(SFMCAuthConstants)
 
 
-class DestinationDataExtSchema(Schema):
+class DestinationDataExtPostSchema(Schema):
     """
-    Destination put schema class
+    Destination data ext post schema class
     """
 
-    id = fields.String()
     authentication_details = fields.Field()
+    data_extension = fields.String()
     type = fields.String()
 
+
+class DestinationDataExtGetSchema(Schema):
+    """
+    Destination data ext get schema class
+    """
+
+    data_extensions = fields.List(fields.String())

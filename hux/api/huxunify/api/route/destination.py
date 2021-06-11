@@ -16,17 +16,16 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
 from huxunifylib.connectors.facebook_connector import FacebookConnector
-from huxunifylib.util.general.const import FacebookCredentials
+from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunify.api.data_connectors.aws import parameter_store
-from huxunifylib.connectors.connector_sfmc import (
-    SFMCConnector
-)
+from huxunifylib.connectors.connector_sfmc import SFMCConnector
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPutSchema,
     DestinationConstantsSchema,
     DestinationValidationSchema,
-    DestinationDataExtSchema
+    DestinationDataExtPostSchema,
+    DestinationDataExtGetSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import (
@@ -394,6 +393,32 @@ class DestinationValidatePostView(SwaggerView):
                         ),
                     },
                 )
+            elif (
+                body.get(api_c.DESTINATION_TYPE)
+                == db_constants.DELIVERY_PLATFORM_SFMC
+            ):
+                destination_connector = SFMCConnector(
+                    auth_details={
+                        SFMCCredentials.SFMC_ACCOUNT_ID.name.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.SFMC_ACCOUNT_ID),
+                        SFMCCredentials.SFMC_AUTH_URL.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.SFMC_AUTH_BASE_URI),
+                        SFMCCredentials.SFMC_CLIENT_ID.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.SFMC_CLIENT_ID),
+                        SFMCCredentials.SFMC_CLIENT_SECRET.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.SFMC_CLIENT_SECRET),
+                        SFMCCredentials.SFMC_SOAP_ENDPOINT.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.SFMC_SOAP_BASE_URI),
+                        SFMCCredentials.SFMC_URL.name: body.get(
+                            api_c.AUTHENTICATION_DETAILS
+                        ).get(api_c.SFMC_REST_BASE_URI),
+                    },
+                )
             else:
                 return {
                     "message": api_c.DESTINATION_NOT_SUPPORTED
@@ -424,13 +449,14 @@ class DestinationValidatePostView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/dataextensions",
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSION}",
     "DestinationDataExtView",
 )
 class DestinationDataExtView(SwaggerView):
     """
-    Destination Validation Post view class
+    Destination Data Extension view class
     """
+
     parameters = [
         {
             "name": api_c.DESTINATION_ID,
@@ -442,21 +468,13 @@ class DestinationDataExtView(SwaggerView):
         }
     ]
 
-
     responses = {
         HTTPStatus.OK.value: {
-            "description": "Validated destination successfully.",
-            "schema": {
-                "example": {
-                    "message": "Destination is validated successfully"
-                },
-            },
+            "description": "Retrieved destination data extensions.",
+            "schema": DestinationDataExtGetSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to validate the destination.",
-            "schema": {
-                "example": {"message": "Destination can not be validated"},
-            },
+            "description": "Failed to retrieve destination data extensions.",
         },
     }
 
@@ -464,52 +482,162 @@ class DestinationDataExtView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     def get(self, destination_id: str) -> Tuple[list, int]:
-        """Validates the credentials for a destination.
+        """Retrieve destination data extensions.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
+            Tuple[dict, int]: List of data extensions, HTTP Status.
 
         """
 
         if destination_id is None or not ObjectId.is_valid(destination_id):
             return HTTPStatus.BAD_REQUEST
 
-        destination = destination_management.get_delivery_platforms_by_id(get_db_client(), destination_id)
-        if api_c.DELIVERY_PLATFORM_AUTH not in destination or api_c.DELIVERY_PLATFORM_TYPE not in destination:
+        destination = destination_management.get_delivery_platforms_by_id(
+            get_db_client(), destination_id
+        )
+        if (
+            api_c.AUTHENTICATION_DETAILS not in destination
+            or api_c.DELIVERY_PLATFORM_TYPE not in destination
+        ):
             return HTTPStatus.BAD_REQUEST
 
         ext_list = []
         try:
             if (
-                    destination[api_c.DELIVERY_PLATFORM_TYPE]
-                    == db_constants.DELIVERY_PLATFORM_SFMC
+                destination[api_c.DELIVERY_PLATFORM_TYPE]
+                == db_constants.DELIVERY_PLATFORM_SFMC
             ):
                 connector = SFMCConnector(
                     destination[api_c.AUTHENTICATION_DETAILS]
                 )
                 ext_list = connector.get_list_of_data_extensions()
-                ext_list = connector.create_data_extension("jnfdw")
 
-            return (ext_list, HTTPStatus.OK)
+            return (
+                jsonify(DestinationDataExtGetSchema.dump(ext_list, many=True)),
+                HTTPStatus.OK,
+            )
+
         except Exception as exc:
             logging.error(
                 "%s. Reason:[%s: %s].",
-                api_c.DESTINATION_AUTHENTICATION_FAILED,
+                api_c.DATA_EXTENSION_FAILED,
                 exc.__class__,
                 exc,
             )
             raise ProblemException(
                 status=int(HTTPStatus.BAD_REQUEST.value),
                 title=HTTPStatus.BAD_REQUEST.description,
-                detail=api_c.DESTINATION_AUTHENTICATION_FAILED,
+                detail=api_c.DATA_EXTENSION_FAILED,
             ) from exc
 
         return {
-                   "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-               }, HTTPStatus.BAD_REQUEST
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }, HTTPStatus.BAD_REQUEST
 
+
+@add_view_to_blueprint(
+    dest_bp,
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSION}",
+    "DestinationDataExtPostView",
+)
+class DestinationDataExtPostView(SwaggerView):
+    """
+    Destination Data Extension Post class
+    """
+
+    parameters = [
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": "true",
+            "example": "5f5f7262997acad4bac4373b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Created destination data extension successfully.",
+            "schema": {
+                "example": {
+                    "message": "Destination data ext is created successfully"
+                },
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create destination extension.",
+            "schema": {
+                "example": {
+                    "message": "Destination extension can not be created"
+                },
+            },
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DESTINATIONS_TAG]
+
+    def post(self, destination_id: str) -> Tuple[str, int]:
+        """Creates a destination data extension.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int]: Data Extension ID, HTTP Status.
+
+        """
+
+        if destination_id is None or not ObjectId.is_valid(destination_id):
+            return HTTPStatus.BAD_REQUEST
+
+        destination = destination_management.get_delivery_platforms_by_id(
+            get_db_client(), destination_id
+        )
+        if (
+            api_c.AUTHENTICATION_DETAILS not in destination
+            or api_c.DELIVERY_PLATFORM_TYPE not in destination
+        ):
+            return HTTPStatus.BAD_REQUEST
+
+        try:
+            body = DestinationDataExtPostSchema().load(
+                request.get_json(), partial=True
+            )
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
+
+        try:
+            if (
+                destination[api_c.DELIVERY_PLATFORM_TYPE]
+                == db_constants.DELIVERY_PLATFORM_SFMC
+            ):
+                connector = SFMCConnector(
+                    destination[api_c.AUTHENTICATION_DETAILS]
+                )
+                data_extension_id = connector.create_data_extension(
+                    body.get(api_c.DATA_EXTENSION)
+                )
+                return data_extension_id, HTTPStatus.OK
+
+            return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
+        except Exception as exc:
+            logging.error(
+                "%s. Reason:[%s: %s].",
+                api_c.OPERATION_FAILED,
+                exc.__class__,
+                exc,
+            )
+            raise ProblemException(
+                status=int(HTTPStatus.BAD_REQUEST.value),
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail=api_c.OPERATION_FAILED,
+            ) from exc
+
+        return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
