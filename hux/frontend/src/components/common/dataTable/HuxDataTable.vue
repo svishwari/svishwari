@@ -20,7 +20,7 @@
         <template #item.name="{ item, isExpanded }" v-if="nested">
           <slot name="item-name" :item="item" :isExpanded="isExpanded" />
         </template>
-        <template v-for="h in headers" #:[`header.${h.value}`]>
+        <template v-for="h in headers" v-slot:[`header.${h.value}`]>
           <tooltip :key="h.value" v-if="h.tooltipValue">
             <template slot="label-content">
               {{ h.text }}
