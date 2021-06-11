@@ -17,6 +17,7 @@ from huxunifylib.util.general.const import (
     FacebookCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
+from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
 
@@ -40,25 +41,24 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
     # get auth
     auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
+    secret_dict = {}
     if (
         destination[db_const.DELIVERY_PLATFORM_NAME].upper()
         == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
     ):
         env_dict = {
-            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
-                api_const.FACEBOOK_AD_ACCOUNT_ID
-            ],
-            FacebookCredentials.FACEBOOK_APP_ID.name: auth[
-                api_const.FACEBOOK_APP_ID
-            ],
-        }
-        secret_dict = {
-            FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
-                api_const.FACEBOOK_APP_SECRET
-            ],
-            FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
-                api_const.FACEBOOK_ACCESS_TOKEN
-            ],
+            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_AD_ACCOUNT_ID]
+            ),
+            FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_APP_ID]
+            ),
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_ACCESS_TOKEN]
+            ),
+            FacebookCredentials.FACEBOOK_APP_SECRET.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_APP_SECRET]
+            ),
         }
     else:
         raise KeyError(
