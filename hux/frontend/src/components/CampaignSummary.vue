@@ -1,6 +1,6 @@
 <template>
   <div class="pa-0 campaign-summary">
-    <v-card flat class="card-style">
+    <v-card flat class="card-style" style="position: sticky">
       <v-card-text>
         <div class="empty-state pa-5 text--gray" v-if="summary.length == 0">
           Be patient! Performance data is currently not available, check back
@@ -220,25 +220,25 @@ export default {
         {
           text: "Hard bounces",
           value: "hard_bounces",
-          width: "130px",
+          width: "135px",
           tooltipValue:
             "Total number of permanent errors, such as a wrong email address",
         },
         {
           text: "Hard bounce rate",
           value: "hard_bounces_rate",
-          width: "150px",
+          width: "155px",
         },
         {
           text: "Delivered",
           value: "delivered",
-          width: "105px",
+          width: "110px",
           tooltipValue: "Number of messages successfully sent",
         },
         {
           text: "Delivered rate",
           value: "delivered_rate",
-          width: "130px",
+          width: "135px",
         },
         {
           text: "Open",
@@ -266,19 +266,19 @@ export default {
         {
           text: "Unique clicks",
           value: "unique_clicks",
-          width: "125px",
+          width: "130px",
           tooltipValue: "Number of individuals who clicked on content or links",
         },
         {
           text: "Unique opens",
           value: "unique_opens",
-          width: "130px",
+          width: "135px",
           tooltipValue: "Number of individuals who opened the link",
         },
         {
           text: "Unsubscribe",
           value: "unsubscribe",
-          width: "120px",
+          width: "125px",
           tooltipValue:
             "Number of people who unsubscribed from ALL of the campaigns",
         },
