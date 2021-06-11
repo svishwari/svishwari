@@ -1,5 +1,2 @@
-#!/bin/bash
-cat <<EOF
-JFROG_REGISTRY=unified-docker-dev-local
-FILE_NAME=values-main-use1-hux-unified-dev1.yaml
-EOF
+JFROG_REGISTRY=unified-docker-dev-local\n
+FILE_NAME=values-main-use1-hux-unified-dev1.yaml\n
