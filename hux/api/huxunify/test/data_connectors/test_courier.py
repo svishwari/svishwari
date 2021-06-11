@@ -107,14 +107,14 @@ class CourierTest(TestCase):
                 {
                     c.OBJECT_ID: self.audience_one[c.ID],
                     c.DESTINATIONS: [
-                        {c.DELIVERY_PLATFORM_ID: x}
+                        {c.OBJECT_ID: x}
                         for x in self.audience_one[c.DESTINATIONS]
                     ],
                 },
                 {
                     c.OBJECT_ID: self.audience_two[c.ID],
                     c.DESTINATIONS: [
-                        {c.DELIVERY_PLATFORM_ID: x}
+                        {c.OBJECT_ID: x}
                         for x in self.audience_two[c.DESTINATIONS]
                     ],
                 },

@@ -264,7 +264,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         raise TypeError("must be a list of destinations.")
 
     return [
-        [aud[db_const.OBJECT_ID], dest[db_const.DELIVERY_PLATFORM_ID]]
+        [aud[db_const.OBJECT_ID], dest[db_const.OBJECT_ID]]
         for aud in audiences
         for dest in aud[db_const.DESTINATIONS]
     ]
