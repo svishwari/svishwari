@@ -348,7 +348,7 @@ def delete_audience(
     collection = am_db[c.AUDIENCES_COLLECTION]
 
     if delete_audience_delivery_jobs(database, audience_id):
-        update_dict = {c.DELETED: False}
+        update_dict = {c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
