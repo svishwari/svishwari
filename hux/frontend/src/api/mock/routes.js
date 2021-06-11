@@ -1,4 +1,6 @@
 import { Response } from "miragejs"
+import { customersOverview } from "./factories/customers"
+import idrOverview from "./factories/identity"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -137,6 +139,23 @@ export const defineRoutes = (server) => {
 
   // models
   server.get("/models")
+
+  // customers
+  server.get("/customers", (schema) => {
+    const maxPerRequest = 100
+    return {
+      customers: schema.customers.all().slice(0, maxPerRequest).models,
+      total_customers: 827438924,
+    }
+  })
+  server.get("/customers/:id", (schema, request) => {
+    const id = request.params.id
+    return server.create("customerProfile", schema.customers.find(id).attrs)
+  })
+  server.get("/customers/overview", () => customersOverview)
+
+  // identity resolution
+  server.get("/idr/overview", () => idrOverview)
 
   // Audiences
   server.get("/audiences")

@@ -591,6 +591,13 @@ export default {
             border-radius: 0px 12px 0px 0px;
           }
         }
+        th:nth-child(1) {
+          position: sticky;
+          top: 0;
+          left: 0;
+          z-index: 9;
+          border-right: thin solid rgba(0, 0, 0, 0.12);
+        }
         border-radius: 12px 12px 0px 0px;
       }
       tr {
@@ -602,6 +609,14 @@ export default {
           font-size: 14px !important;
           line-height: 22px;
           color: var(--v-neroBlack-base);
+        }
+        td:nth-child(1) {
+          position: sticky;
+          top: 0;
+          left: 0;
+          z-index: 9;
+          background: var(--v-white-base);
+          border-right: thin solid rgba(0, 0, 0, 0.12);
         }
       }
       .ellipsis {

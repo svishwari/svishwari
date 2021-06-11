@@ -84,10 +84,9 @@ export default {
    * @returns Title cased string eg. "Active Customers"
    */
   TitleCase(value) {
-    return value
-      .replace(/([A-Z])/g, (match) => ` ${match}`)
-      .replace(/^./, (match) => match.toUpperCase())
-      .trim()
+    return value.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    })
   },
   /**
    * Formats any string(fullname) to shortname.
