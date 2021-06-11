@@ -1,17 +1,23 @@
 <template>
-  <div class="pa-0">
+  <div class="pa-0 campaign-summary">
     <v-card flat class="card-style">
-      <v-card-text class="d-flex summary-tab-wrap" v-if="summary.length > 0">
-        <metric-card
-          class="list-item mr-1 rounded-lg"
-          :min-width="item.width"
-          :height="70"
-          v-for="item in summary"
-          :key="item.id"
-          :title="item.title"
-          :subtitle="item.value"
-          :interactable="false"
-        ></metric-card>
+      <v-card-text>
+        <div class="empty-state pa-5 text--gray" v-if="summary.length == 0">
+          Be patient! Performance data is currently not available, check back
+          tomorrow to see if the magic is ready.
+        </div>
+        <div v-if="summary.length > 0" class="d-flex summary-tab-wrap">
+          <MetricCard
+            class="list-item mr-3"
+            v-for="(item, i) in summaryCards"
+            :key="item.id"
+            :maxWidth="item.width"
+            :grow="i === 0 ? 2 : 1"
+            :title="item.title"
+            :subtitle="item.value"
+            :interactable="false"
+          />
+        </div>
       </v-card-text>
     </v-card>
     <v-card minHeight="145px" flat class="mt-6 card-style">
@@ -22,23 +28,27 @@
             :size="24"
             color="neroBlack"
             class="mr-2"
-          /><span class="text-h5">Audience performance</span>
+          /><span class="text-h5 text--neroblack">Audience performance</span>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
         <!-- Campaign Nested Table -->
         <hux-data-table :headers="headers" :dataItems="data" nested>
           <template #item-name="{ item, isExpanded }">
-            <v-icon :class="{ 'normal-icon': isExpanded }"
-              >mdi-chevron-right</v-icon
-            >
+            <v-icon :class="{ 'normal-icon': isExpanded }">
+              mdi-chevron-right
+            </v-icon>
             <tooltip>
               <template slot="label-content">
                 <!-- TODO Route Link to Audience Insight Page -->
-                <router-link to="#" class="text-decoration-none" append
-                  >{{ item.name }}
-                </router-link></template
-              >
+                <router-link
+                  to="#"
+                  class="text-decoration-none primary--text"
+                  append
+                >
+                  {{ item.name }}
+                </router-link>
+              </template>
               <template slot="hover-content">
                 {{ item.name }}
               </template>
@@ -72,7 +82,7 @@
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
                 :headers="headers"
-                :dataItems="item.campaigns"
+                :dataItems="getCampaigns(item.campaigns)"
                 :showHeader="false"
                 v-if="item"
               >
@@ -99,43 +109,8 @@
                         </template>
                       </tooltip>
                     </span>
-                    <span v-if="header.value == 'spend'">
-                      {{ item[header.value] | Numeric(true, false) }}
-                    </span>
-                    <span v-if="header.value == 'sent'">
-                      {{ item[header.value] | Numeric(true, false) }}
-                    </span>
-                    <span v-if="header.value == 'reach'">
-                      {{ item[header.value] | Numeric(true, false) }}
-                    </span>
-                    <span v-if="header.value == 'impressions'">
-                      {{ item[header.value] | Numeric(true, false) }}
-                    </span>
-                    <span v-if="header.value == 'conversions'">
-                      {{ item[header.value] | Numeric(true, false) }}
-                    </span>
-                    <span v-if="header.value == 'clicks'">
-                      {{ item[header.value] | Numeric(true, false) }}
-                    </span>
-                    <span v-if="header.value == 'frequency'">
-                      {{ item[header.value] | Numeric(true, false) }}
-                    </span>
-                    <span
-                      v-if="header.value == 'cost_per_thousand_impressions'"
-                    >
-                      {{ item[header.value] | Currency }}
-                    </span>
-                    <span v-if="header.value == 'click_through_rate'">
-                      {{ item[header.value] | Numeric(true, false, "%") }}
-                    </span>
-                    <span v-if="header.value == 'cost_per_action'">
-                      {{ item[header.value] | Currency }}
-                    </span>
-                    <span v-if="header.value == 'cost_per_click'">
-                      {{ item[header.value] | Currency }}
-                    </span>
-                    <span v-if="header.value == 'engagement_rate'">
-                      {{ item[header.value] | Numeric(true, false, "%") }}
+                    <span v-if="header.value != 'name'">
+                      {{ item[header.value] }}
                     </span>
                   </td>
                 </template>
@@ -239,71 +214,71 @@ export default {
         {
           text: "Sent",
           value: "sent",
-          width: "100px",
+          width: "90px",
           tooltipValue: "Number of emails sent (including bounces etc)",
         },
         {
           text: "Hard bounces",
           value: "hard_bounces",
-          width: "150px",
+          width: "130px",
           tooltipValue:
             "Total number of permanent errors, such as a wrong email address",
         },
         {
           text: "Hard bounce rate",
           value: "hard_bounces_rate",
-          width: "170px",
+          width: "150px",
         },
         {
           text: "Delivered",
           value: "delivered",
-          width: "120px",
+          width: "105px",
           tooltipValue: "Number of messages successfully sent",
         },
         {
           text: "Delivered rate",
           value: "delivered_rate",
-          width: "150px",
+          width: "130px",
         },
         {
           text: "Open",
           value: "open",
-          width: "100px",
+          width: "90px",
           tooltipValue: "Number of messages that was opened",
         },
         {
           text: "Open rate",
           value: "open_rate",
-          width: "120px",
+          width: "110px",
         },
         {
           text: "CTR",
           value: "clicks",
-          width: "100px",
+          width: "90px",
           tooltipValue: "Number of email links or content clicked",
         },
         {
           text: "CTOR",
           value: "click_through_rate",
-          width: "100px",
+          width: "85px",
           tooltipValue: "Clicks / Opens * 100",
         },
         {
           text: "Unique clicks",
           value: "unique_clicks",
-          width: "150px",
+          width: "125px",
           tooltipValue: "Number of individuals who clicked on content or links",
         },
         {
           text: "Unique opens",
           value: "unique_opens",
-          width: "150px",
+          width: "130px",
           tooltipValue: "Number of individuals who opened the link",
         },
         {
           text: "Unsubscribe",
           value: "unsubscribe",
-          width: "140px",
+          width: "120px",
           tooltipValue:
             "Number of people who unsubscribed from ALL of the campaigns",
         },
@@ -348,14 +323,177 @@ export default {
         "cost_per_click",
         // Email Columns
       ],
+      emptyCampaignData: [
+        {
+          campaigns: [],
+          click_through_rate: "-",
+          clicks: "-",
+          conversions: "-",
+          cost_per_action: "-",
+          cost_per_click: "-",
+          cost_per_thousand_impressions: "-",
+          engagement_rate: "-",
+          frequency: "-",
+          impressions: "-",
+          name: "Audience 1",
+          reach: "-",
+          spend: "-",
+        },
+        {
+          campaigns: [],
+          click_through_rate: "-",
+          clicks: "-",
+          conversions: "-",
+          cost_per_action: "-",
+          cost_per_click: "-",
+          cost_per_thousand_impressions: "-",
+          engagement_rate: "-",
+          frequency: "-",
+          impressions: "-",
+          name: "Audience 2",
+          reach: "-",
+          spend: "-",
+        },
+        {
+          campaigns: [],
+          click_through_rate: "-",
+          clicks: "-",
+          conversions: "-",
+          cost_per_action: "-",
+          cost_per_click: "-",
+          cost_per_thousand_impressions: "-",
+          engagement_rate: "-",
+          frequency: "-",
+          impressions: "-",
+          name: "Audience 3",
+          reach: "-",
+          spend: "-",
+        },
+      ],
+      emptyCampaignEmailData: [
+        {
+          campaigns: [],
+          sent: "-",
+          hard_bounces: "-",
+          hard_bounces_rate: "-",
+          delivered: "-",
+          delivered_rate: "-",
+          open: "-",
+          open_rate: "-",
+          clicks: "-",
+          click_through_rate: "-",
+          click_to_open_rate: "-",
+          unique_clicks: "-",
+          unique_opens: "-",
+          unsubscribe: "-",
+          unsubscribe_rate: "-",
+          name: "Audience 1",
+        },
+        {
+          campaigns: [],
+          sent: "-",
+          hard_bounces: "-",
+          hard_bounces_rate: "-",
+          delivered: "-",
+          delivered_rate: "-",
+          open: "-",
+          open_rate: "-",
+          clicks: "-",
+          click_through_rate: "-",
+          click_to_open_rate: "-",
+          unique_clicks: "-",
+          unique_opens: "-",
+          unsubscribe: "-",
+          unsubscribe_rate: "-",
+          name: "Audience 2",
+        },
+        {
+          campaigns: [],
+          sent: "-",
+          hard_bounces: "-",
+          hard_bounces_rate: "-",
+          delivered: "-",
+          delivered_rate: "-",
+          open: "-",
+          open_rate: "-",
+          clicks: "-",
+          click_through_rate: "-",
+          click_to_open_rate: "-",
+          unique_clicks: "-",
+          unique_opens: "-",
+          unsubscribe: "-",
+          unsubscribe_rate: "-",
+          name: "Audience 3",
+        },
+      ],
     }
   },
   computed: {
     data() {
-      return this.campaignData.map((item) => this.formatData(item))
+      if (this.campaignData.length === 0) {
+        return this.type === "ads"
+          ? this.emptyCampaignData
+          : this.emptyCampaignEmailData
+      } else {
+        return this.campaignData.map((item) => {
+          return this.formatData(item)
+        })
+      }
     },
     headers() {
       return this.type === "ads" ? this.AdsHeaders : this.emailHeaders
+    },
+    summaryCards() {
+      if (this.summary.length === 0) return []
+      return this.summary.map((sum) => {
+        switch (sum.title) {
+          case "Spend":
+            sum["value"] =
+              "$" +
+              this.$options.filters.Numeric(sum["value"], false, false, true)
+            break
+          case "Reach":
+            sum["value"] = this.$options.filters.Numeric(sum["value"], true)
+            break
+          case "Sent":
+            sum["value"] = this.$options.filters.Numeric(
+              sum["value"],
+              false,
+              false,
+              true
+            )
+            break
+          case "Impressions":
+          case "Conversions":
+          case "Clicks":
+          case "Frequency":
+            sum["value"] = this.$options.filters.Numeric(
+              sum["value"],
+              false,
+              false,
+              true
+            )
+            break
+          case "CPM":
+          case "CPA":
+          case "CPC":
+            sum["value"] = this.$options.filters.Currency(sum["value"])
+            break
+          case "CTR":
+          case "Engagement rate":
+            sum["value"] = this.$options.filters.Numeric(
+              sum["value"],
+              true,
+              false,
+              false,
+              "%"
+            )
+            break
+          default:
+            break
+        }
+        return sum
+      })
     },
   },
   props: {
@@ -379,13 +517,22 @@ export default {
     logoType(name) {
       return name.split(" ")[0].toLowerCase()
     },
+    getCampaigns(campaigns) {
+      return campaigns.map((camp) => this.formatData(camp))
+    },
     formatData(item) {
       const obj = Object.assign({}, item)
       Object.keys(item).forEach((key) => {
         if (this.numericColumns.includes(key)) {
           obj[key] = this.$options.filters.Numeric(obj[key], true, false)
         } else if (this.percentileColumns.includes(key)) {
-          obj[key] = this.$options.filters.Numeric(obj[key], true, false, "%")
+          obj[key] = this.$options.filters.Numeric(
+            obj[key],
+            true,
+            false,
+            false,
+            "%"
+          )
         } else if (this.currencyColumns.includes(key)) {
           obj[key] = this.$options.filters.Currency(obj[key])
         } else if (key === "name") {
@@ -399,63 +546,96 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.hux-data-table {
-  ::v-deep table {
-    table-layout: fixed !important;
-    .mdi-chevron-right {
-      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
-    }
-    .v-data-table-header {
-      th {
-        background: #ecf4f9;
-        &:first-child {
-          border-radius: 12px 0px 0px 0px;
-        }
-        &:last-child {
-          border-radius: 0px 12px 0px 0px;
-        }
-        .v-data-table-header__icon {
-          color: var(--v-neroBlack-base) !important;
-        }
+.campaign-summary {
+  .empty-state {
+    background: rgba(236, 244, 249, 0.3);
+    width: 100%;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--v-gray-base);
+    border: 1px solid rgba(208, 208, 206, 0.3);
+    box-sizing: border-box;
+    border-radius: 5px;
+  }
+  .summary-tab-wrap {
+    ::v-deep .metric-card-wrapper {
+      border: 1px solid var(--v-zircon-base);
+      box-sizing: border-box;
+      height: 75px;
+      padding: 10px;
+      margin-right: 5px !important;
+      .text-caption {
+        font-size: 12px;
+        line-height: 16px;
+        margin: 0 !important;
       }
-      border-radius: 12px 12px 0px 0px;
-    }
-    tr {
-      &:hover {
-        background: var(--v-aliceBlue-base) !important;
-      }
-      height: 64px;
-      td {
-        font-size: 14px !important;
-        line-height: 22px;
-        color: var(--v-neroBlack-base);
-      }
-    }
-    .ellipsis {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 21ch;
-      display: inline-block;
-      width: 21ch;
-      white-space: nowrap;
-    }
-    .v-data-table__expanded__row {
-      background: var(--v-aliceBlue-base);
-      .mdi-chevron-right {
-        transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        -webkit-transform: rotate(90deg);
+      .font-weight-semi-bold {
+        font-size: 14px;
+        line-height: 19px;
       }
     }
   }
-  .child {
-    background: var(--v-background-base);
+  .hux-data-table {
     ::v-deep table {
-      background: inherit;
-      tbody {
-        td {
+      table-layout: fixed !important;
+      .mdi-chevron-right {
+        transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+      }
+      .v-data-table-header {
+        th {
+          background: #ecf4f9;
           &:first-child {
-            padding-left: 45px;
+            border-radius: 12px 0px 0px 0px;
+          }
+          &:last-child {
+            border-radius: 0px 12px 0px 0px;
+          }
+        }
+        border-radius: 12px 12px 0px 0px;
+      }
+      tr {
+        &:hover {
+          background: var(--v-aliceBlue-base) !important;
+        }
+        height: 64px;
+        td {
+          font-size: 14px !important;
+          line-height: 22px;
+          color: var(--v-neroBlack-base);
+        }
+      }
+      .ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 21ch;
+        display: inline-block;
+        width: 21ch;
+        white-space: nowrap;
+      }
+      .mdi-chevron-right {
+        font-size: 18px;
+      }
+      .v-data-table__expanded__row {
+        background: var(--v-aliceBlue-base);
+        box-shadow: 0px 1px 0px #d0d0ce, -1px 0px 0px #d0d0ce;
+
+        .mdi-chevron-right {
+          font-size: 18px;
+          transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -webkit-transform: rotate(90deg);
+        }
+      }
+    }
+    .child {
+      background: var(--v-background-base);
+      ::v-deep table {
+        background: inherit;
+        tbody {
+          td {
+            &:first-child {
+              padding-left: 45px;
+            }
           }
         }
       }

@@ -112,7 +112,10 @@
             color
             @click="fetchCampaignPerformanceDetails('ads')"
           >
-            <Icon type="display_ads" :size="10" class="mr-2" />Display ads
+            <span style="width: 15px"
+              ><Icon type="display_ads" :size="10" class="mr-2"
+            /></span>
+            Display ads
           </v-tab>
           <v-tab key="email" @click="fetchCampaignPerformanceDetails('email')"
             >@ Email</v-tab
@@ -466,6 +469,12 @@ export default {
       return summary.filter((item) => item.title !== null)
     },
     displayAdsSummary() {
+      if (
+        !this.audiencePerformanceAds ||
+        (this.audiencePerformanceAds &&
+          this.audiencePerformanceAds.length === 0)
+      )
+        return []
       return [
         {
           id: 1,
@@ -474,7 +483,7 @@ export default {
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "spend")
             : "-",
-          width: "90px",
+          width: "80px",
         },
         {
           id: 2,
@@ -495,7 +504,7 @@ export default {
                 "impressions"
               )
             : "-",
-          width: "90px",
+          width: "105px",
         },
         {
           id: 4,
@@ -507,7 +516,7 @@ export default {
                 "conversions"
               )
             : "-",
-          width: "90px",
+          width: "105px",
         },
         {
           id: 5,
@@ -525,7 +534,7 @@ export default {
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "frequency")
             : "-",
-          width: "90px",
+          width: "100px",
         },
         {
           id: 7,
@@ -583,25 +592,33 @@ export default {
               this.audiencePerformanceAds["summary"],
               "engagement_rate"
             ),
-          width: "90px",
+          width: "150px",
         },
       ]
     },
     emailSummary() {
+      if (
+        !this.audiencePerformanceEmail ||
+        (this.audiencePerformanceEmail &&
+          this.audiencePerformanceEmail.length === 0)
+      )
+        return []
       return [
         {
           id: 1,
           title: "Sent",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(this.audiencePerformanceEmail["summary"], "spend")
-            : "-",
-          width: "95px",
+          value:
+            this.audiencePerformanceEmail &&
+            this.audiencePerformanceEmail["summary"]
+              ? this.audiencePerformanceEmail &&
+                this.fetchKey(this.audiencePerformanceEmail["summary"], "sent")
+              : "-",
+          width: "90px",
         },
         {
           id: 2,
           title: "Hard bounces / Rate",
-          value: `${
+          value: `${`${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -609,7 +626,7 @@ export default {
                   "hard_bounces"
                 )
               : "-"
-          } * ${
+          } • ${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -617,8 +634,8 @@ export default {
                   "hard_bounces_rate"
                 )
               : "-"
-          }`,
-          width: "139px",
+          }%`}`,
+          width: "150px",
         },
         {
           id: 3,
@@ -631,7 +648,7 @@ export default {
                   "delivered"
                 )
               : "-"
-          } * ${
+          } • ${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -639,8 +656,8 @@ export default {
                   "delivered_rate"
                 )
               : "-"
-          }`,
-          width: "113px",
+          }%`,
+          width: "120px",
         },
         {
           id: 4,
@@ -648,9 +665,17 @@ export default {
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.fetchKey(this.audiencePerformanceEmail["summary"], "open")
+                this.$options.filters.Numeric(
+                  this.fetchKey(
+                    this.audiencePerformanceEmail["summary"],
+                    "open"
+                  ),
+                  false,
+                  false,
+                  true
+                )
               : "-"
-          } * ${
+          } • ${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -658,7 +683,7 @@ export default {
                   "open_rate"
                 )
               : "-"
-          }`,
+          }%`,
           width: "122px",
         },
         {
@@ -667,12 +692,17 @@ export default {
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "clicks"
+                this.$options.filters.Numeric(
+                  this.fetchKey(
+                    this.audiencePerformanceEmail["summary"],
+                    "clicks"
+                  ),
+                  false,
+                  false,
+                  true
                 )
               : "-"
-          } * ${
+          } • ${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -680,7 +710,7 @@ export default {
                   "click_through_rate"
                 )
               : "-"
-          }`,
+          }%`,
           width: "122px",
         },
         {
@@ -691,9 +721,9 @@ export default {
               this.fetchKey(
                 this.audiencePerformanceEmail["summary"],
                 "click_to_open_rate"
-              )
+              ) + "%"
             : "-",
-          width: "121px",
+          width: "135px",
         },
         {
           id: 7,
@@ -701,21 +731,31 @@ export default {
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "unique_clicks"
+                this.$options.filters.Numeric(
+                  this.fetchKey(
+                    this.audiencePerformanceEmail["summary"],
+                    "unique_clicks"
+                  ),
+                  false,
+                  false,
+                  true
                 )
               : "-"
-          } * ${
+          } • ${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "unique_opens"
+                this.$options.filters.Numeric(
+                  this.fetchKey(
+                    this.audiencePerformanceEmail["summary"],
+                    "unique_opens"
+                  ),
+                  false,
+                  false,
+                  true
                 )
               : "-"
-          }`,
-          width: "185px",
+          }%`,
+          width: "200px",
         },
         {
           id: 8,
@@ -723,12 +763,17 @@ export default {
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "unsubscribe"
+                this.$options.filters.Numeric(
+                  this.fetchKey(
+                    this.audiencePerformanceEmail["summary"],
+                    "unsubscribe"
+                  ),
+                  false,
+                  false,
+                  true
                 )
               : "-"
-          } * ${
+          } • ${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -736,8 +781,8 @@ export default {
                   "unsubscribe_rate"
                 )
               : "-"
-          }`,
-          width: "130px",
+          }%`,
+          width: "140px",
         },
       ]
     },
@@ -751,7 +796,7 @@ export default {
       return value ? moment(new Date(value)).fromNow() + " by" : "-"
     },
     fetchKey(obj, key) {
-      return obj ? obj[key] : "-"
+      return obj && obj[key] ? obj[key] : "-"
     },
     showCard(card) {
       if (card.cardType !== "description") return true
@@ -777,7 +822,7 @@ export default {
   },
   async mounted() {
     this.loading = true
-    this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
+    // this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
     this.loading = false
   },
 }
@@ -838,6 +883,7 @@ export default {
         .v-tabs-bar__content {
           border-bottom: 2px solid var(--v-zircon-base);
           .v-tabs-slider-wrapper {
+            width: 128px;
             .v-tabs-slider {
               background-color: var(--v-info-base) !important;
               border-color: var(--v-info-base) !important;
@@ -869,8 +915,8 @@ export default {
       }
     }
     .v-tabs-items {
-      overflow: auto;
-      background-color: transparent;
+      overflow: inherit;
+      background-color: transparent !important;
       .v-window-item--active {
         background: transparent;
       }

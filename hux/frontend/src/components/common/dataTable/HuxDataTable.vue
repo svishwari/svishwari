@@ -18,20 +18,9 @@
         @click:row="clickRow"
       >
         <template #item.name="{ item, isExpanded }" v-if="nested">
-          <v-icon> mdi-chevron-right </v-icon>
-          <tooltip>
-            <template slot="label-content">
-              <!-- TODO Route Link to Audience Insight Page -->
-              <router-link to="#" class="text-decoration-none" append
-                >{{ item.name }}
-              </router-link></template
-            >
-            <template slot="hover-content">
-              {{ item.name }}
-            </template>
-          </tooltip>
+          <slot name="item-name" :item="item" :isExpanded="isExpanded" />
         </template>
-        <template v-for="h in headers" v-slot:[`header.${h.value}`]>
+        <template v-for="h in headers" #:[`header.${h.value}`]>
           <tooltip :key="h.value" v-if="h.tooltipValue">
             <template slot="label-content">
               {{ h.text }}
