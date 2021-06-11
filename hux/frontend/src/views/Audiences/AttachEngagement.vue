@@ -196,6 +196,7 @@
           variant="primary"
           :isTile="true"
           height="40"
+          width="146"
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
         >
@@ -216,9 +217,10 @@
           variant="white"
           :isTile="true"
           height="40"
+          width="146"
           @click.native="goToStep1()"
         >
-          Cancel &amp; back
+          <span class="primary--text">Cancel &amp; back</span>
         </huxButton>
       </div>
     </template>

@@ -22,7 +22,7 @@
             class="mr-2"
             @click="closeAddDataSource"
           >
-            Cancel
+            <span class="primary--text">Cancel</span>
           </huxButton>
           <huxButton
             variant="primary"

@@ -20,6 +20,7 @@
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
         :isDisabled="isAlreadyAdded"
+        :boxShadow="false"
         iconPosition="left"
         class="ma-2"
       >

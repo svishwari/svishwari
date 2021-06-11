@@ -5,7 +5,7 @@
     :outlined="isOutlined"
     :tile="isTile"
     :color="variant"
-    :class="buttonSize"
+    :class="[buttonSize, { 'box-shadow-25': boxShadow }]"
     :width="width"
     :height="height"
     :icon="iconType"
@@ -97,6 +97,11 @@ export default {
       type: Boolean,
       required: false,
       default: null,
+    },
+    boxShadow: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   computed: {

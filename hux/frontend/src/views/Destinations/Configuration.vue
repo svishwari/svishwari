@@ -87,7 +87,7 @@
           :isTile="true"
           @click="cancel()"
         >
-          Cancel
+          <span class="primary--text">Cancel</span>
         </hux-button>
       </template>
       <template #right>

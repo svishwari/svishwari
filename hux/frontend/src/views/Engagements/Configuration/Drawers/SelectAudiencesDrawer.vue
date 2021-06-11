@@ -52,6 +52,7 @@
                 height="40"
                 icon="mdi-check"
                 iconPosition="left"
+                :boxShadow="false"
                 @click="remove(row.item)"
               >
                 Added
@@ -62,6 +63,7 @@
                 variant="primary"
                 width="100"
                 height="40"
+                :boxShadow="false"
                 @click="add(row.item)"
               >
                 Add

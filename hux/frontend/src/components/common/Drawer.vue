@@ -34,6 +34,7 @@
       class="d-flex justify-space-between align-center px-6 py-5"
       absolute
       padless
+      height="80"
       color="white"
       elevation="5"
     >
@@ -143,9 +144,6 @@ export default {
 .drawer-content {
   height: calc(100% - 130px);
   overflow-y: auto;
-}
-.v-footer {
-  height: 80px;
 }
 ::v-deep .v-icon.v-icon::after {
   content: none;

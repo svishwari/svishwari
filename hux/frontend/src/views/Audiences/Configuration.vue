@@ -156,10 +156,9 @@
             isTile
             width="94"
             height="40"
-            class="ma-2 ml-0"
             @click.native="$router.go(-1)"
           >
-            Cancel
+            <span class="primary--text">Cancel</span>
           </huxButton>
         </template>
         <template #right>
@@ -168,7 +167,6 @@
             isTile
             width="94"
             height="44"
-            class="ma-2"
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
           >
