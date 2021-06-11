@@ -32,6 +32,7 @@ class EngagementGetSchema(Schema):
     )
     name = fields.String(attribute=api_c.NAME, required=True)
     description = fields.String(attribute=api_c.DESCRIPTION)
+
     audiences = fields.List(
         fields.Dict(),
         attribute=api_c.AUDIENCES,
@@ -41,6 +42,7 @@ class EngagementGetSchema(Schema):
                 api_c.DESTINATIONS: [
                     {
                         "id": "60ae035b6c5bf45da27f17d6",
+                        # TODO - hook up extension for HUS-458
                         "contact_list": "sfmc_extension_name",
                     },
                 ],
