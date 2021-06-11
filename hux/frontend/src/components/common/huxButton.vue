@@ -11,6 +11,7 @@
     :icon="iconType"
     @click="onClick"
   >
+    <slot name="custom-icon"></slot>
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
     </v-icon>

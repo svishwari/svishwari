@@ -1,111 +1,84 @@
 <template>
-  <div class="audience-insight-wrap">
+  <div class="customer-dashboard-wrap">
     <PageHeader class="background-border">
       <template slot="left">
         <Breadcrumb :items="items" />
       </template>
       <template slot="right">
-          <hux-button
+        <hux-button
           button-text="View all customers"
           variant="white"
           size="large"
           :isTile="true"
           :iconType="false"
-          icon="customer-profiles"
-          iconPosition = "left"
-        ></hux-button>
+          @click="viewAllCustomer()"
+        >
+          <template #custom-icon>
+            <Icon type="customer-profiles" :size="24" color="neroBlack" />
+          </template>
+        </hux-button>
         <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
       </template>
     </PageHeader>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="row px-15 my-1" v-if="primaryItems">
+    <div class="row px-15 my-2" v-if="primaryItems">
       <MetricCard
         v-for="(item, i) in primaryItems"
         class="ma-5"
-        :width="143"
-        :height="80"
         :key="i"
+        :grow="i !== 7 ? 1 : 0"
         :title="item.title"
-        :titleTooltip="i==0?'wow':''"
-        :subtitle="item.subtitle"
+        :subtitle="i !== 7 ? item.subtitle : ''"
         :icon="item.icon"
-        :interactable="true"
       >
-        <!-- <template slot="short-name">
-          <v-menu bottom offset-y open-on-hover>
-            <template v-slot:activator="{ on, attrs }">
-              <span
-                class="blue-grey d-flex align-center justify-center"
-                v-bind="attrs"
-                v-on="on"
-                v-bind:style="{ 'border-color': getColorCode(item.shortName) }"
-              >
-                {{ getShortName(item.shortName) }}
-              </span>
-            </template>
-            <v-list>
-              <v-list-item>
-                <v-list-item-title>{{ item.fullName }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template> -->
-      </MetricCard>
-
-      <!-- <MetricCard
-        class="ma-4"
-        width="53%"
-        :height="80"
-        :interactable="false"
-        :title="'Attributes'"
-      >
-        <template slot="extra-item">
-          <div class="container pl-0">
-            <ul>
-              <li>
-                <lifetimeValue />
-                Lifetime Value
-              </li>
-              <li>
-                <churn />
-                Churn
-              </li>
-              <li>
-                <plus />
-                Age, Email, Zipcode
-              </li>
-            </ul>
-          </div>
+        <template v-if="i === 7" #subtitle-extended>
+          <span class="font-weight-semi-bold"
+            >{{ item.date }} <span class="day-time-divider"></span>
+            {{ item.time }}
+          </span>
         </template>
-      </MetricCard> -->
+        <template #extra-item>
+          <Tooltip :positionTop="true">
+            <template #label-content>
+              <Icon type="info" :size="12" />
+            </template>
+            <template class="newp" #hover-content>
+              {{ item.toolTipText }}
+            </template>
+          </Tooltip>
+        </template>
+      </MetricCard>
     </div>
     <div class="px-15 my-1" v-if="overviewListItems">
-      <v-card
-        height="150"
-        width="fit-content"
-        elevation="1"
-        class="rounded px-5 pt-5"
-      >
+      <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview">Customer overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard
             v-for="(item, i) in overviewListItems"
-            class="list-item mr-3"
-            :width="135"
-            :height="80"
+            class="mr-3"
             :key="i"
+            :grow="i === 0 ? 2 : 1"
             :title="item.title"
-            titleTooltip="wow"
             :subtitle="item.subtitle"
             :icon="item.icon"
-            :interactable="true"
-          ></MetricCard>
+            :interactable="i === 0 ? true : false"
+          >
+            <template v-if="i == 0" #extra-item>
+              <Tooltip :positionTop="true">
+                <template #label-content>
+                  <Icon type="info" :size="12" />
+                </template>
+                <template class="newp" #hover-content>
+                  {{ item.toolTipText }}
+                </template>
+              </Tooltip>
+            </template>
+          </MetricCard>
         </div>
       </v-card>
     </div>
     <v-divider class="my-8"></v-divider>
     <EmptyStateChart>
-      <template v-slot:chart-image>
+      <template #chart-image>
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
@@ -113,16 +86,15 @@
 </template>
 
 <script>
-import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
+import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
-import lifetimeValue from "@/assets/images/lifetimeValue.svg"
-import churn from "@/assets/images/churn.svg"
-import plus from "@/assets/images/plus.svg"
 import huxButton from "@/components/common/huxButton"
+import Icon from "@/components/common/Icon"
+
 export default {
   name: "CustomerProfiles",
   components: {
@@ -130,15 +102,19 @@ export default {
     EmptyStateChart,
     PageHeader,
     Breadcrumb,
-    lifetimeValue,
-    churn,
-    plus,
-    huxButton
+    Tooltip,
+    huxButton,
+    Icon,
   },
   data() {
     return {
       overviewListItems: [
-        { title: "No. of customers", subtitle: "12M" },
+        {
+          title: "No. of customers",
+          subtitle: "12M",
+          toolTipText:
+            "Total no. of unique hux ids generated to represent a customer.",
+        },
         { title: "Countries", subtitle: "2", icon: "mdi-earth" },
         { title: "US States", subtitle: "52", icon: "mdi-map" },
         { title: "Cities", subtitle: "19k", icon: "mdi-map-marker-radius" },
@@ -148,14 +124,40 @@ export default {
         { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
       ],
       primaryItems: [
-        { title: "Total no. of records", subtitle: "12M" },
-        { title: "Match rate", subtitle: "60%" },
-        { title: "Unique Hux IDs", subtitle: "12M" },
-        { title: "Anonymous IDs", subtitle: "20M" },
-        { title: "Known IDs", subtitle: "20M" },
-        { title: "Individual IDs", subtitle: "20M" },
-        { title: "Household IDs", subtitle: "20M" },
-        { title: "Updated", subtitle: "Today 12:30PM" },
+        {
+          title: "Total no. of records",
+          subtitle: "12M",
+          toolTipText: "Total no. of records",
+        },
+        { title: "Match rate", subtitle: "60%", toolTipText: "Match rate" },
+        {
+          title: "Unique Hux IDs",
+          subtitle: "12M",
+          toolTipText: "Unique Hux IDs",
+        },
+        {
+          title: "Anonymous IDs",
+          subtitle: "20M",
+          toolTipText: "Anonymous IDs",
+        },
+        { title: "Known IDs", subtitle: "20M", toolTipText: "Known IDs" },
+        {
+          title: "Individual IDs",
+          subtitle: "20M",
+          toolTipText: "Individual IDs",
+        },
+        {
+          title: "Household IDs",
+          subtitle: "20M",
+          toolTipText: "Household IDs",
+        },
+        {
+          title: "Updated",
+          subtitle: "",
+          toolTipText: "Updated",
+          date: "Today",
+          time: "12:30PM",
+        },
       ],
       items: [
         {
@@ -174,86 +176,51 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      getAudience: "audiences/audience",
-    }),
-    audience() {
-      return this.getAudience(this.$route.params.id)
+    ...mapGetters({}),
+    customerData() {
+      return null
     },
   },
   methods: {
-    ...mapActions({
-      getAudienceById: "audiences/getAudienceById",
-    }),
+    ...mapActions({}),
     refresh() {},
-    getFormattedTime(time) {
-      return this.$options.filters.Date(time, "relative") + " by"
-    },
-    getShortName(fullname) {
-      return fullname
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-    },
-    getColorCode(name) {
-      return generateColor(name, 30, 60) + " !important"
-    },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getAudienceById(this.$route.params.id)
-    this.items[1].text = this.audience.name
-    this.loading = false
+    viewAllCustomer() {},
   },
 }
 </script>
 <style lang="scss" scoped>
-.audience-insight-wrap {
-    ::v-deep .menu-cell-wrapper .action-icon {
-    display: none;
-  }
-
-    ::v-deep .mdi-chevron-right::before {
-    content: none;
+::v-deep.v-btn:not(.v-btn--round).v-size--large {
+  height: 28px;
+  min-width: 178px;
+  padding: 12px;
 }
 
-::v-deep .v-application .ma-4 {
-    margin: 5px !important;
-    background-color: red;
+::v-deep .v-btn {
+  margin-right: 14px;
+  .v-btn__content span {
+    color: rgba(0, 85, 135, 1);
+  }
+}
+
+.my-2 {
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
+  margin-left: -6px;
+  margin-right: -6px;
+}
+
+.day-time-divider:before {
+  content: " \25CF";
+  font-size: 8px;
 }
 
 .ma-5 {
-     margin: 5px !important;
-   // background-color: red; 
+  margin: 6px !important;
 }
-  .container {
-    ul {
-      padding: 0;
-      margin: 0;
-      list-style-type: none;
-    }
-  }
-  .container {
-    ul {
-      li {
-        width: fit-content;
-        height: auto;
-        float: left;
-        margin-left: 2%;
-      }
-    }
-  }
-  .blue-grey {
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 50%;
-    font-size: 14px;
-    width: 35px;
-    height: 35px;
-    line-height: 22px;
-    color: var(--v-neroBlack-base) !important;
-    cursor: default !important;
-    background: transparent !important;
+
+.customer-dashboard-wrap {
+  ::v-deep .mdi-chevron-right::before {
+    content: none;
   }
 }
 </style>
