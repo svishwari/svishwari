@@ -9,7 +9,7 @@
     hide-overlay
     temporary
   >
-    <v-toolbar width="100%">
+    <v-toolbar width="100%" class="box-shadow-25">
       <v-toolbar-title class="px-6">
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
@@ -24,8 +24,9 @@
         </v-icon>
       </template>
     </v-toolbar>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="drawer-content">
+    <div class="drawer-content pa-2">
       <slot></slot>
     </div>
 
@@ -85,6 +86,12 @@ export default {
     },
 
     disableTransition: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    loading: {
       type: Boolean,
       required: false,
       default: false,

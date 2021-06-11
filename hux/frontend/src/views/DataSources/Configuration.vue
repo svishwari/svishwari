@@ -36,7 +36,7 @@
         </div>
       </template>
       <template #default>
-        <div class="ma-5">
+        <div class="ma-3">
           <div class="font-weight-light">Data sources</div>
           <CardHorizontal
             v-for="dataSource in enabledDataSources"

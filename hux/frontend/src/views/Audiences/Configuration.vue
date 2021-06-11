@@ -4,7 +4,7 @@
       <div class="heading font-weight-light neroBlack--text">
         Add an audience
       </div>
-      <div class="sub-heading font-weight-regular">
+      <div class="sub-heading text-h6 neroBlack--text">
         Build a target audience from the data you own. Add the attributes you
         want to involve in this particular audience and where you wish to send
         this audience.
@@ -512,7 +512,6 @@ export default {
     line-height: 40px;
   }
   .sub-heading {
-    font-size: 14px;
     line-height: 22px;
     max-width: 910px;
   }

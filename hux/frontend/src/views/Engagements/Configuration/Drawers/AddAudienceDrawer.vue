@@ -4,6 +4,7 @@
     v-model="localToggle"
     :width="drawerWidth"
     :disable-transition="isOpening"
+    :loading="loading"
     expandable
     @iconToggle="changeOverviewListItems"
   >
@@ -12,8 +13,7 @@
     </template>
 
     <template #default>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-      <div class="pa-6">
+      <div class="pa-4">
         <h6 class="pb-6 text-h6 neroBlack--text">
           Build a target audience from the data you own.
         </h6>
@@ -40,7 +40,7 @@
             :subtitle="item.subtitle"
           />
         </div>
-        <hr class="mb-4" />
+        <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
           <attribute-rules :rules="attributeRules"></attribute-rules>
         </div>
@@ -220,7 +220,6 @@ export default {
   }
   hr {
     border-style: solid;
-    border-color: var(--v-zircon-base);
   }
 }
 </style>

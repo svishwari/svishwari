@@ -17,11 +17,6 @@
       </div>
     </template>
     <template #default>
-      <v-progress-linear
-        color="primary"
-        :active="loading"
-        :indeterminate="loading"
-      />
       <v-stepper v-if="!loading" v-model="viewStep">
         <v-stepper-items>
           <v-stepper-content step="1">

@@ -79,7 +79,7 @@
         </div>
 
         <div class="col-12 seperator mt-5 mb-1" v-if="index != lastIndex">
-          <hr />
+          <hr class="zircon" />
           <v-chip
             small
             class="mx-2 my-1 font-weight-semi-bold"
@@ -212,7 +212,6 @@ export default {
     position: relative;
     hr {
       border-style: solid;
-      border-color: var(--v-zircon-base);
     }
     .v-chip {
       position: absolute;

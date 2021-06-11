@@ -118,7 +118,7 @@
         </div>
       </template>
       <template #default>
-        <div class="ma-5 font-weight-light">
+        <div class="ma-3 font-weight-light">
           <CardHorizontal
             v-for="(destination, index) in enabledDestinations"
             :key="destination.id"
