@@ -32,14 +32,15 @@
           append
         >
           <huxButton
-            ButtonText="Audience"
             icon="mdi-plus"
             iconPosition="left"
             variant="primary"
             size="large"
             isTile
             class="ma-2 font-weight-regular no-shadow mr-0"
-          ></huxButton>
+          >
+            Audience
+          </huxButton>
         </router-link>
       </template>
     </PageHeader>
@@ -78,13 +79,13 @@
             <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'updated_by'">
+            <div v-if="header.value == 'updated_by' && item[header.value]">
               <avatar :name="getName(item[header.value])" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'created_by'">
+            <div v-if="header.value == 'created_by' && item[header.value]">
               <avatar :name="getName(item[header.value])" />
             </div>
           </td>
@@ -106,14 +107,15 @@
             append
           >
             <huxButton
-              ButtonText="Audience"
               icon="mdi-plus"
               iconPosition="left"
               variant="primary"
               size="large"
               isTile
               class="ma-2 font-weight-regular"
-            ></huxButton>
+            >
+              Audience
+            </huxButton>
           </router-link>
         </template>
       </EmptyPage>

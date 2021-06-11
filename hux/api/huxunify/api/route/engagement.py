@@ -8,8 +8,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request
-from flask_apispec import marshal_with
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
@@ -33,6 +32,8 @@ from huxunify.api.schema.engagement import (
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
+    AudiencePerformanceDisplayAdsSchema,
+    AudiencePerformanceEmailSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -44,6 +45,7 @@ from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
+
 
 # TODO - implement after HUS-443 is done to grab user/okta_id
 # TODO Add updated_by fields to engagement_mgmt in set, update and delete methods
@@ -72,7 +74,6 @@ class EngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
@@ -88,7 +89,14 @@ class EngagementSearch(SwaggerView):
         """
 
         try:
-            return get_engagements(get_db_client()), HTTPStatus.OK.value
+            return (
+                jsonify(
+                    EngagementGetSchema().dump(
+                        get_engagements(get_db_client()), many=True
+                    )
+                ),
+                HTTPStatus.OK.value,
+            )
 
         except Exception as exc:
 
@@ -137,7 +145,6 @@ class IndividualEngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema)
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
@@ -157,11 +164,16 @@ class IndividualEngagementSearch(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         try:
+            eng = get_engagement(
+                get_db_client(), engagement_id=ObjectId(engagement_id)
+            )
+
+            if not eng:
+                return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
+
             return (
-                get_engagement(
-                    get_db_client(), engagement_id=ObjectId(engagement_id)
-                ),
-                HTTPStatus.OK.value,
+                EngagementGetSchema().dump(eng),
+                HTTPStatus.OK,
             )
 
         except Exception as exc:
@@ -198,8 +210,8 @@ class SetEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        db_c.DESTINATIONS: [
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e5",
                                 "contact_list": "sfmc_extension_name",
@@ -305,6 +317,14 @@ class UpdateEngagement(SwaggerView):
 
     parameters = [
         {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
@@ -314,16 +334,19 @@ class UpdateEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ],
-                db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
             },
-        }
+        },
     ]
 
     responses = {
@@ -510,10 +533,14 @@ class AddAudienceEngagement(SwaggerView):
             "example": {
                 api_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ]
@@ -563,7 +590,10 @@ class AddAudienceEngagement(SwaggerView):
 
         try:
             append_audiences_to_engagement(
-                get_db_client(), engagement_id, user_id, body[api_c.AUDIENCES]
+                get_db_client(),
+                ObjectId(engagement_id),
+                user_id,
+                body[api_c.AUDIENCES],
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:
@@ -644,20 +674,24 @@ class DeleteAudienceEngagement(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         user_id = ObjectId()
-
+        audience_ids = []
         try:
             body = AudienceEngagementDeleteSchema().load(
                 request.get_json(), partial=True
             )
+            for audience_id in body[api_c.AUDIENCE_IDS]:
+                if not ObjectId.is_valid(audience_id):
+                    return HTTPStatus.BAD_REQUEST
+                audience_ids.append(ObjectId(audience_id))
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
             remove_audiences_from_engagement(
                 get_db_client(),
-                engagement_id,
+                ObjectId(engagement_id),
                 user_id,
-                body[api_c.AUDIENCE_IDS],
+                audience_ids,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:
@@ -842,9 +876,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
@@ -972,9 +1004,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
@@ -1019,3 +1049,263 @@ class EngagementDeliverDestinationView(SwaggerView):
             f"and audience ID {audience_id} to "
             f"destination ID {destination_id}"
         }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.DISPLAY_ADS}",
+    "AudiencePerformanceDisplayAdsSchema",
+)
+class EngagementMetricsDisplayAds(SwaggerView):
+    """
+    Display Ads Engagement Metrics
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60b8d6d7d3cf80b4edcd890b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Display Ads Performance Metrics",
+            "schema": {
+                "example": {
+                    "display_ads_summary": "Audience Metrics Display Ad"
+                },
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    # pylint: disable=unused-argument
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
+        """Retrieves display ad performance metrics.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): ID of an engagement
+
+        Returns:
+            Tuple[dict, int]: Response of Display Ads Performance Metrics,
+                HTTP Status Code
+
+        """
+
+        display_ads = {
+            "summary": {
+                api_c.SPEND: 2000000,
+                api_c.REACH: 500000,
+                api_c.IMPRESSIONS: 456850,
+                api_c.CONVERSIONS: 521006,
+                api_c.CLICKS: 498587,
+                api_c.FREQUENCY: 500,
+                api_c.CPM: 850,
+                api_c.CTR: 0.5201,
+                api_c.CPA: 652,
+                api_c.CPC: 485,
+                api_c.ENGAGEMENT_RATE: 0.5601,
+            },
+            "audience_performance": [
+                {
+                    api_c.AUDIENCE_NAME: "audience_1",
+                    api_c.SPEND: 2000000,
+                    api_c.REACH: 500000,
+                    api_c.IMPRESSIONS: 456850,
+                    api_c.CONVERSIONS: 521006,
+                    api_c.CLICKS: 498587,
+                    api_c.FREQUENCY: 500,
+                    api_c.CPM: 850,
+                    api_c.CTR: 0.5201,
+                    api_c.CPA: 652,
+                    api_c.CPC: 485,
+                    api_c.ENGAGEMENT_RATE: 0.5601,
+                    "campaigns": [
+                        {
+                            api_c.DESTINATION_NAME: "Facebook",
+                            api_c.IS_MAPPED: True,
+                            api_c.SPEND: 2000000,
+                            api_c.REACH: 500000,
+                            api_c.IMPRESSIONS: 456850,
+                            api_c.CONVERSIONS: 521006,
+                            api_c.CLICKS: 498587,
+                            api_c.FREQUENCY: 500,
+                            api_c.CPM: 850,
+                            api_c.CTR: 0.5201,
+                            api_c.CPA: 652,
+                            api_c.CPC: 485,
+                            api_c.ENGAGEMENT_RATE: 0.5601,
+                        },
+                        {
+                            api_c.DESTINATION_NAME: "Salesforce Marketing Cloud",
+                            api_c.IS_MAPPED: True,
+                            api_c.SPEND: 2000000,
+                            api_c.REACH: 500000,
+                            api_c.IMPRESSIONS: 456850,
+                            api_c.CONVERSIONS: 521006,
+                            api_c.CLICKS: 498587,
+                            api_c.FREQUENCY: 500,
+                            api_c.CPM: 850,
+                            api_c.CTR: 0.5201,
+                            api_c.CPA: 652,
+                            api_c.CPC: 485,
+                            api_c.ENGAGEMENT_RATE: 0.5601,
+                        },
+                    ],
+                },
+            ],
+        }
+        return (
+            AudiencePerformanceDisplayAdsSchema().dump(display_ads),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.EMAIL}",
+    "AudiencePerformanceEmailSchema",
+)
+class EngagementMetricsEmail(SwaggerView):
+    """
+    Email Engagement Metrics
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60b8d6d7d3cf80b4edcd890b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Email Audience Performance Metrics",
+            "schema": {
+                "example": {"email_summary": "Audience Metrics Email"},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve email engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    # pylint: disable=unused-argument
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
+        """Retrieves email performance metrics.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): ID of an engagement
+
+        Returns:
+            Tuple[dict, int]: Response of Email Performance Metrics,
+                HTTP Status Code
+
+        """
+
+        email = {
+            "summary": {
+                api_c.EMAIL: 1200000,
+                api_c.SENT: 125,
+                api_c.HARD_BOUNCES: 0.1,
+                api_c.DELIVERED: 125,
+                api_c.DELIVERED_RATE: 0.1,
+                api_c.OPEN: 365200,
+                api_c.OPEN_RATE: 0.1,
+                api_c.CLICKS: 365200,
+                api_c.CTR: 0.7208,
+                api_c.COTR: 0.7208,
+                api_c.UNIQUE_CLICKS: 365200,
+                api_c.UNIQUE_OPENS: 225100,
+                api_c.UNSUBSCRIBE: 365200,
+                api_c.UNSUBSCRIBE_RATE: 0.7208,
+            },
+            "audience_performance": [
+                {
+                    api_c.AUDIENCE_NAME: "audience_1",
+                    api_c.EMAIL: 1200000,
+                    api_c.SENT: 125,
+                    api_c.HARD_BOUNCES: 0.1,
+                    api_c.DELIVERED: 125,
+                    api_c.DELIVERED_RATE: 0.1,
+                    api_c.OPEN: 365200,
+                    api_c.OPEN_RATE: 0.1,
+                    api_c.CLICKS: 365200,
+                    api_c.CTR: 0.7208,
+                    api_c.COTR: 0.7208,
+                    api_c.UNIQUE_CLICKS: 365200,
+                    api_c.UNIQUE_OPENS: 225100,
+                    api_c.UNSUBSCRIBE: 365200,
+                    api_c.UNSUBSCRIBE_RATE: 0.7208,
+                    "campaigns": [
+                        {
+                            api_c.DESTINATION_NAME: "Facebook",
+                            api_c.IS_MAPPED: True,
+                            api_c.EMAIL: 1200000,
+                            api_c.SENT: 125,
+                            api_c.HARD_BOUNCES: 0.1,
+                            api_c.DELIVERED: 125,
+                            api_c.DELIVERED_RATE: 0.1,
+                            api_c.OPEN: 365200,
+                            api_c.OPEN_RATE: 0.1,
+                            api_c.CLICKS: 365200,
+                            api_c.CTR: 0.7208,
+                            api_c.COTR: 0.7208,
+                            api_c.UNIQUE_CLICKS: 365200,
+                            api_c.UNIQUE_OPENS: 225100,
+                            api_c.UNSUBSCRIBE: 365200,
+                            api_c.UNSUBSCRIBE_RATE: 0.7208,
+                        },
+                        {
+                            api_c.DESTINATION_NAME: "Salesforce Marketing Cloud",
+                            api_c.IS_MAPPED: True,
+                            api_c.EMAIL: 1200000,
+                            api_c.SENT: 125,
+                            api_c.HARD_BOUNCES: 0.1,
+                            api_c.DELIVERED: 125,
+                            api_c.DELIVERED_RATE: 0.1,
+                            api_c.OPEN: 365200,
+                            api_c.OPEN_RATE: 0.1,
+                            api_c.CLICKS: 365200,
+                            api_c.CTR: 0.7208,
+                            api_c.COTR: 0.7208,
+                            api_c.UNIQUE_CLICKS: 365200,
+                            api_c.UNIQUE_OPENS: 225100,
+                            api_c.UNSUBSCRIBE: 365200,
+                            api_c.UNSUBSCRIBE_RATE: 0.7208,
+                        },
+                    ],
+                },
+            ],
+        }
+        return (
+            AudiencePerformanceEmailSchema().dump(email),
+            HTTPStatus.OK,
+        )

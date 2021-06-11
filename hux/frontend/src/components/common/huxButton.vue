@@ -16,7 +16,10 @@
       {{ icon }}
     </v-icon>
     <v-spacer> </v-spacer>
-    <span :class="buttonTextColor">{{ ButtonText }}</span>
+
+    <!-- {{ ButtonText }} -->
+    <slot name="default"></slot>
+
     <v-spacer> </v-spacer>
     <v-icon v-show="iconPosition == 'right'" dark class="mr-1">
       {{ icon }}
@@ -26,7 +29,7 @@
 
 <script>
 export default {
-  name: "huxButton",
+  name: "HuxButton",
   data() {
     return {
       loader: null,
@@ -48,14 +51,6 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-    },
-    ButtonText: {
-      type: String,
-      required: false,
-    },
-    ButtonTextColor: {
-      type: String,
-      required: false,
     },
     icon: {
       type: String,

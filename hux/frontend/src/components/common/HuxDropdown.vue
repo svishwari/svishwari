@@ -25,13 +25,14 @@
         :v-on="on"
         @click="openMenu = true"
         text
-        :ButtonText="label"
         :isOutlined="true"
         width="200"
         icon=" mdi-chevron-down"
         iconPosition="right"
         class="ma-2"
-      ></huxButton>
+      >
+        {{ label }}
+      </huxButton>
     </template>
     <v-list>
       <template v-for="(item, index) in items">

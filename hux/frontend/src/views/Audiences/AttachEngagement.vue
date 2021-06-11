@@ -35,7 +35,6 @@
                 </template>
                 <template #button>
                   <huxButton
-                    ButtonText="New engagement"
                     icon="mdi-plus"
                     iconPosition="left"
                     variant="primary"
@@ -43,7 +42,9 @@
                     :isTile="true"
                     @click="goToStep2()"
                     class="ma-2"
-                  ></huxButton>
+                  >
+                    New engagement
+                  </huxButton>
                 </template>
               </EmptyPage>
             </div>
@@ -53,14 +54,15 @@
                 required to have at least one selected.
               </h6>
               <huxButton
-                ButtonText="New engagement"
                 icon="mdi-plus"
                 iconPosition="left"
                 variant="primary"
                 :isTile="true"
                 height="40"
                 @click="goToAddNewEngagement()"
-              ></huxButton>
+              >
+                New engagement
+              </huxButton>
               <div class="engagement-list-wrap mt-6">
                 <div>
                   <span class="text-caption">Engagement name</span>
@@ -196,13 +198,14 @@
     <template #footer-right>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Create &amp; add"
           variant="primary"
           :isTile="true"
           height="40"
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
-        />
+        >
+          Create &amp; add
+        </huxButton>
       </div>
     </template>
 
@@ -215,12 +218,13 @@
       </div>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Cancel &amp; back"
           variant="white"
           :isTile="true"
           height="40"
           @click.native="goToStep1()"
-        ></huxButton>
+        >
+          Cancel &amp; back
+        </huxButton>
       </div>
     </template>
   </Drawer>

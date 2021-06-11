@@ -143,12 +143,9 @@
       @onConfirm="toggleModal()"
     >
       <template #activator>
-        <huxButton
-          ButtonText="Open modal"
-          size="large"
-          class="ma-2"
-          @click="modal = !modal"
-        ></huxButton>
+        <huxButton size="large" class="ma-2" @click="modal = !modal">
+          Open modal
+        </huxButton>
       </template>
     </ConfirmModal>
 
@@ -167,56 +164,39 @@
 
     <v-subheader> Button </v-subheader>
     <huxButton
-      ButtonText="Added"
       isOutlined
       size="large"
       icon="mdi-check"
       iconPosition="left"
       class="ma-2"
-    ></huxButton>
+    >
+      Added
+    </huxButton>
+    <huxButton isOutlined size="x-small" variant="darkGrey" class="ma-2">
+      Add
+    </huxButton>
+    <huxButton variant="primary" size="large" isTile class="ma-2">
+      Leave configuration
+    </huxButton>
     <huxButton
-      ButtonText="Add"
-      isOutlined
-      size="x-small"
-      variant="darkGrey"
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Leave configuration"
-      variant="primary"
-      size="large"
-      isTile
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Success!"
       icon="mdi-check"
       iconPosition="left"
       variant="success"
       size="x-large"
       isTile
       class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Cancel &amp; Return"
-      variant="tertiary"
-      isTile
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Disabled"
-      variant="tertiary"
-      isTile
-      isDisabled
-      class="ma-2"
-    ></huxButton>
-    <huxButton
-      ButtonText="Loader"
-      variant="tertiary"
-      isTile
-      enableLoading
-      class="ma-2"
-    ></huxButton>
+    >
+      Success!
+    </huxButton>
+    <huxButton variant="tertiary" isTile class="ma-2">
+      Cancel &amp; Return
+    </huxButton>
+    <huxButton variant="tertiary" isTile isDisabled class="ma-2">
+      Disabled
+    </huxButton>
+    <huxButton variant="tertiary" isTile enableLoading class="ma-2">
+      Loader
+    </huxButton>
 
     <v-divider class="mt-10" />
 
