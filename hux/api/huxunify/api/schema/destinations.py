@@ -26,11 +26,9 @@ class DestinationGetSchema(Schema):
         validate=validate_object_id,
     )
     type = fields.String(
-        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="Facebook"
+        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="facebook"
     )
-    name = fields.String(
-        attribute=api_c.DESTINATION_NAME, example="My destination"
-    )
+    name = fields.String(attribute=api_c.DESTINATION_NAME, example="Facebook")
     status = fields.String(
         attribute=api_c.CONNECTION_STATUS,
         validate=[
