@@ -269,7 +269,13 @@ To install MongoDB on local machine follow the instructions [here](https://docs.
 Steps to pre-populate use local MongoDB
 
 1. Follow the steps in `../../hux-unified/scripts/database/README.md` to build huxunifylib-database package
-2. Ensure to set the MONGO env variables in `../../hux-unified/scripts/database/README.md` before you execute any of the scripts
+2. Ensure to set the MONGO env variables in `../../hux-unified/scripts/database/README.md` before you execute any of the scripts using the following commands in Command Prompt(cmd)
+   - `set MONGO_DB_HOST=localhost`
+   - `set MONGO_DB_PORT=27017`
+   - `set MONGO_DB_USERNAME=''`
+   - `set MONGO_DB_PASSWORD=''`
+   - `set MONGO_DB_USE_SSL=False`
+   
 3. Follow the steps in `../../hux-unified/scripts/database/README.md` to populate the data in your local database
 
 To use local database for development, set the following in `../../hux/api/settings.ini`.
