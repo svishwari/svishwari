@@ -167,6 +167,10 @@ class IndividualEngagementSearch(SwaggerView):
             eng = get_engagement(
                 get_db_client(), engagement_id=ObjectId(engagement_id)
             )
+
+            if not eng:
+                return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
+
             return (
                 EngagementGetSchema().dump(eng),
                 HTTPStatus.OK,
