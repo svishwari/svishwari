@@ -633,7 +633,9 @@ export default {
       .v-data-table__expanded__row {
         background: var(--v-aliceBlue-base);
         box-shadow: 0px 1px 0px #d0d0ce, -1px 0px 0px #d0d0ce;
-
+        td:nth-child(1) {
+          background: var(--v-aliceBlue-base);
+        }
         .mdi-chevron-right {
           font-size: 18px;
           transform: rotate(90deg);
