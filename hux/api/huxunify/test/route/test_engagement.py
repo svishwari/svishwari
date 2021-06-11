@@ -47,7 +47,6 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
-    "uid": "1234567",
 
 
 def validate_schema(schema: Schema, response: dict) -> bool:
