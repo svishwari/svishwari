@@ -120,7 +120,7 @@
                 height="20"
                 fab
                 class="primary"
-                @click="openSelectDestinationsDrawer()"
+                @click="openSelectDestinationsDrawer(row.item.id)"
               >
                 <v-icon size="16">mdi-plus</v-icon>
               </v-btn>
@@ -211,6 +211,13 @@
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
     />
+
+    <SelectDestinationsDrawer
+      v-model="value.audiences"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showSelectDestinationsDrawer"
+      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+    />
   </v-form>
 </template>
 
@@ -223,8 +230,9 @@ import HuxFooter from "@/components/common/HuxFooter.vue"
 import Logo from "@/components/common/Logo.vue"
 import TextField from "@/components/common/TextField.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
 import AddAudienceDrawer from "./Drawers/AddAudienceDrawer.vue"
+import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
+import SelectDestinationsDrawer from "./Drawers/SelectDestinationsDrawer.vue"
 
 export default {
   name: "EngagementsForm",
@@ -237,8 +245,9 @@ export default {
     HuxFooter,
     TextField,
     Tooltip,
-    SelectAudiencesDrawer,
     AddAudienceDrawer,
+    SelectAudiencesDrawer,
+    SelectDestinationsDrawer,
   },
 
   props: {
@@ -252,6 +261,8 @@ export default {
     return {
       showSelectAudiencesDrawer: false,
       showAddAudiencesDrawer: false,
+      showSelectDestinationsDrawer: false,
+      selectedAudienceId: null,
     }
   },
 
@@ -284,6 +295,7 @@ export default {
     closeAllDrawers() {
       this.showSelectAudiencesDrawer = false
       this.showAddAudiencesDrawer = false
+      this.showSelectDestinationsDrawer = false
     },
 
     openSelectAudiencesDrawer() {
@@ -294,6 +306,13 @@ export default {
     openAddAudiencesDrawer() {
       this.closeAllDrawers()
       this.showAddAudiencesDrawer = true
+    },
+
+    openSelectDestinationsDrawer(audienceId) {
+      // set the selected audience on which we want to manage its destinations
+      this.selectedAudienceId = audienceId
+      this.closeAllDrawers()
+      this.showSelectDestinationsDrawer = true
     },
 
     removeAudience(audience) {
