@@ -25,8 +25,8 @@
                 <template #icon>mdi-alert-circle-outline</template>
                 <template #title>Oops! There’s nothing here yet</template>
                 <template #subtitle>
-                  No engagements has been launched yet. Let’s create one <br />
-                  by clicking the new engagement button below.
+                  No engagements have been created yet. Let’s create one by
+                  clicking the new engagement button below.
                 </template>
                 <template #button>
                   <huxButton
@@ -115,40 +115,49 @@
                   labelText="Engagement name"
                   placeholder="Give this engagement a name"
                   v-model="newEngagement.name"
+                  height="40"
+                  class="engagement-text-field"
                   :rules="newEngagementRules"
                   required
                 />
                 <TextField
                   labelText="Description"
                   placeholder="What is the purpose of this engagement?"
+                  height="40"
+                  class="engagement-text-field"
                   v-model="newEngagement.description"
                 />
                 <div class="mb-2">
-                  Delivery schedule
+                  <span class="neroBlack--text text-caption">
+                    Delivery schedule
+                  </span>
                   <v-menu max-width="184" open-on-hover offset-y>
                     <template #activator="{ on }">
-                      <v-icon
-                        v-on="on"
-                        color="secondary"
-                        :size="12"
-                        class="ml-1"
-                      >
+                      <v-icon v-on="on" color="primary" :size="12" class="ml-1">
                         mdi-information-outline
                       </v-icon>
                     </template>
                     <template #default>
                       <div class="px-4 py-2 white">
-                        <div class="neroBlack--text text-caption">
+                        <div
+                          class="neroBlack--text text-caption line-height-1-5"
+                        >
                           Manual delivery
                         </div>
-                        <div class="gray--text text-caption mt-1">
+                        <div
+                          class="gray--text text-caption mt-1 line-height-1-5"
+                        >
                           Choose this option if you want the engagement
                           delivered immediately or at a future date and time.
                         </div>
-                        <div class="neroBlack--text text-caption mt-3">
+                        <div
+                          class="neroBlack--text text-caption mt-3 line-height-1-5"
+                        >
                           Recurring delivery
                         </div>
-                        <div class="gray--text text-caption mt-1">
+                        <div
+                          class="gray--text text-caption mt-1 line-height-1-5"
+                        >
                           Choose this option if you want the engagement
                           delivered on a specific recurring basis you selected.
                         </div>
@@ -161,7 +170,11 @@
                     v-model="newEngagement.delivery_schedule"
                     mandatory
                   >
-                    <v-btn>
+                    <v-btn
+                      style="border-color: var(--v-primary-base) !important"
+                      height="40"
+                      width="175"
+                    >
                       <v-radio
                         :off-icon="
                           newEngagement.delivery_schedule == 0
@@ -171,7 +184,12 @@
                       />
                       <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
                     </v-btn>
-                    <v-btn disabled style="background: white !important">
+                    <v-btn
+                      disabled
+                      style="background: white !important"
+                      height="40"
+                      width="175"
+                    >
                       <v-radio
                         :off-icon="
                           newEngagement.delivery_schedule == 1
@@ -424,6 +442,27 @@ export default {
         }
         .theme--light {
           color: var(--v-primary-base) !important;
+        }
+      }
+    }
+  }
+  ::v-deep .engagement-text-field {
+    .v-input {
+      .v-input__control {
+        .v-input__slot {
+          min-height: 40px;
+          fieldset {
+            color: var(--v-lightGrey-base);
+          }
+        }
+      }
+      &.error--text {
+        .v-input__control {
+          .v-input__slot {
+            fieldset {
+              color: inherit;
+            }
+          }
         }
       }
     }
