@@ -32,14 +32,15 @@
           append
         >
           <huxButton
-            ButtonText="Audience"
             icon="mdi-plus"
             iconPosition="left"
             variant="primary"
             size="large"
-            v-bind:isTile="true"
+            isTile
             class="ma-2 font-weight-regular no-shadow mr-0"
-          ></huxButton>
+          >
+            Audience
+          </huxButton>
         </router-link>
       </template>
     </PageHeader>
@@ -50,10 +51,10 @@
         :dataItems="rowData"
         v-if="isDataExists"
       >
-        <template v-slot:row-item="{ item }">
+        <template #row-item="{ item }">
           <td
             v-for="header in columnDefs"
-            v-bind:key="header.value"
+            :key="header.value"
             :class="{
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
@@ -92,28 +93,29 @@
       </hux-data-table>
 
       <EmptyPage v-if="!isDataExists">
-        <template v-slot:icon>mdi-alert-circle-outline</template>
-        <template v-slot:title>Oops! There’s nothing here yet</template>
-        <template v-slot:subtitle>
+        <template #icon>mdi-alert-circle-outline</template>
+        <template #title>Oops! There’s nothing here yet</template>
+        <template #subtitle>
           You currently have no audiences created! You can create the
           <br />framework first then complete the details later. <br />Begin by
           selecting the button below.
         </template>
-        <template v-slot:button>
+        <template #button>
           <router-link
             :to="{ name: 'AudienceConfiguration' }"
             class="route-link text-decoration-none"
             append
           >
             <huxButton
-              ButtonText="Audience"
               icon="mdi-plus"
               iconPosition="left"
               variant="primary"
               size="large"
-              v-bind:isTile="true"
+              isTile
               class="ma-2 font-weight-regular"
-            ></huxButton>
+            >
+              Audience
+            </huxButton>
           </router-link>
         </template>
       </EmptyPage>

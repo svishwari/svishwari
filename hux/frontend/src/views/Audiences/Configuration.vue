@@ -16,16 +16,13 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          width="11.368852459016393%"
-          :min-width="126.5"
-          :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
+          :grow="i === 0 ? 2 : 1"
           :title="item.title"
           :subtitle="item.subtitle"
           :icon="item.icon"
-          :interactable="false"
-        ></MetricCard>
+        />
       </div>
       <v-divider class="divider mt-2 mb-9"></v-divider>
     </div>
@@ -34,7 +31,7 @@
       <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
         <v-timeline align-top dense class="">
           <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>1</span>
             </template>
             <v-row class="pt-1">
@@ -86,7 +83,7 @@
             </v-row>
           </v-timeline-item>
           <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>2</span>
             </template>
             <v-row class="pt-1 pr-0">
@@ -97,7 +94,7 @@
             color="blue"
             class="timeline-section disable-down-timeline mb-15"
           >
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>3</span>
             </template>
             <v-row class="pt-1">
@@ -137,7 +134,7 @@
             </v-row>
           </v-timeline-item>
           <v-timeline-item class="timeline-section disabled">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>4</span>
             </template>
             <v-row class="pt-1">
@@ -153,33 +150,35 @@
       </v-form>
 
       <HuxFooter maxWidth="inherit">
-        <template v-slot:left>
+        <template #left>
           <huxButton
-            ButtonText="Cancel"
             variant="white"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="40"
             class="ma-2 ml-0"
             @click.native="$router.go(-1)"
-          ></huxButton>
+          >
+            Cancel
+          </huxButton>
         </template>
-        <template v-slot:right>
+        <template #right>
           <huxButton
-            ButtonText="Create"
             variant="primary"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="44"
             class="ma-2"
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
-          ></huxButton>
+          >
+            Create
+          </huxButton>
         </template>
       </HuxFooter>
       <!-- Add destination workflow -->
       <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
-        <template v-slot:header-left>
+        <template #header-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
@@ -201,7 +200,7 @@
           </div>
         </template>
 
-        <template v-slot:default>
+        <template #default>
           <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
             <v-stepper-items>
               <v-stepper-content step="1">
@@ -229,24 +228,25 @@
           </v-stepper>
         </template>
 
-        <template v-slot:footer-right>
+        <template #footer-right>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Add"
               variant="primary"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
               class="ma-2"
               @click="addDestinationToAudience()"
-            ></huxButton>
+            >
+              Add
+            </huxButton>
           </div>
         </template>
 
-        <template v-slot:footer-left>
+        <template #footer-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
@@ -258,14 +258,15 @@
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Back"
               variant="white"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
               class="ma-2 drawer-back"
               @click.native="destinationDrawer.viewStep = 1"
-            ></huxButton>
+            >
+              Back
+            </huxButton>
           </div>
         </template>
       </drawer>

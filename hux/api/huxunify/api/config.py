@@ -58,23 +58,6 @@ class Config:
         "ssl_cert_path": MONGO_SSL_CERT,
     }
 
-    # grab params
-    MONGO_DB_HOST = config("MONGO_DB_HOST", default="localhost")
-    MONGO_DB_PORT = config("MONGO_DB_PORT", default=27017, cast=int)
-    MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="")
-    MONGO_DB_PASSWORD = config("MONGO_DB_PASSWORD", default="")
-    # grab the SSL cert path
-    MONGO_SSL_CERT = str(
-        Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
-    )
-    MONGO_DB_CONFIG = {
-        HOST: MONGO_DB_HOST,
-        PORT: MONGO_DB_PORT,
-        USER_NAME: MONGO_DB_USERNAME,
-        PASSWORD: MONGO_DB_PASSWORD,
-        SSL_CERT_PATH: MONGO_SSL_CERT,
-    }
-
     OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="0oab1i3ldgYyRvk5r2p7")
     OKTA_ISSUER = config(
         "OKTA_ISSUER", default="https://deloittedigital-ms.okta.com"

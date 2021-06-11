@@ -1,6 +1,6 @@
 <template>
   <v-menu bottom offset-y open-on-hover>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <span v-on="on">
         <slot name="label-content"></slot>
       </span>
