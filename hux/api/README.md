@@ -266,7 +266,7 @@ There are two primary ways for connecting to the database
 ### Local Database Installation
 To install MongoDB on local machine follow the instructions [here](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/#install-mongodb-community-edition)
 
-Steps to pre-populate and use local MongoDB for development and testing
+Steps to pre-populate use local MongoDB
 
 1. Follow the steps in `../../hux-unified/scripts/database/README.md` to build huxunifylib-database package
 2. Ensure to set the MONGO env variables in `../../hux-unified/scripts/database/README.md` before you execute any of the scripts
