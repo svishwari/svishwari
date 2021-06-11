@@ -6,7 +6,7 @@
     nudge-bottom="5"
     v-model="DropdownValue"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <div v-on="on" class="d-flex avatar-menu">
         <v-btn tile class="main-button" color="tertiary">
           {{ labelText }}
@@ -19,7 +19,7 @@
         <v-list-item-group>
           <v-list-item
             v-for="(item, index) in menuItem"
-            v-bind:key="index"
+            :key="index"
             @click="clicked(item)"
           >
             <v-list-item-title>{{ item.value }}</v-list-item-title>

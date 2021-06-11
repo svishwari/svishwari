@@ -14,7 +14,7 @@
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
         <v-menu class="menu-wrapper" bottom offset-y>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-icon
               v-bind="attrs"
               v-on="on"

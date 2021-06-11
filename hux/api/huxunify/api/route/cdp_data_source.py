@@ -231,7 +231,7 @@ class CreateCdpDataSource(SwaggerView):
             category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
         )
 
-        return CdpDataSourceSchema().dumps(response), HTTPStatus.OK
+        return CdpDataSourceSchema().dump(response), HTTPStatus.OK
 
 
 @add_view_to_blueprint(

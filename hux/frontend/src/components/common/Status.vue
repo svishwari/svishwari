@@ -6,7 +6,7 @@
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-icon v-on="on" color="success" class="mr-2">
           mdi-checkbox-blank-circle
         </v-icon>
@@ -25,7 +25,7 @@
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <span v-on="on" class="d-flex align-center">
           <span class="half-left-circle success" />
           <span class="half-right-circle mr-2 secondary" />
@@ -52,7 +52,7 @@
       </span>
     </span>
     <v-menu v-else bottom offset-y offset-x open-on-hover>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           width="15"
           height="15"
