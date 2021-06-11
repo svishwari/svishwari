@@ -715,6 +715,7 @@ def update_audience_filters(
         doc = collection.find_one_and_update(
             {c.ID: audience_id, c.DELETED: False},
             {"$set": update_dict},
+            {c.DELETED: 0},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
         )
