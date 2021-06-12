@@ -32,7 +32,59 @@
         </router-link>
       </template>
     </PageHeader>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <v-progress-linear :active="!loading" :indeterminate="!loading" />
+    <hux-data-table
+        :headers="columnDefs"
+        :dataItems="rowData"
+      >
+        <template #row-item="{ item }">
+          <td
+            v-for="header in columnDefs"
+            :key="header.value"
+            :class="{
+              'fixed-column': header.fixed,
+              'v-data-table__divider': header.fixed,
+              'primary--text': header.fixed,
+            }"
+            :style="{ width: header.width, left: 0 }"
+          >
+            <div v-if="header.value == 'name'" class="w-100">
+              <router-link
+                :to="{ name: 'AudienceConfiguration' }"
+                class="text-decoration-none"
+                append
+              >
+                {{item[header.value]}}
+              </router-link>
+            </div>
+            <div v-if="header.value == 'Audiences'">
+              {{item[header.value]}}
+            </div>
+            <div v-if="header.value == 'Status'">
+              <Status :status="item[header.value]" collapsed class="d-flex" />
+            </div>
+            <div v-if="header.value == 'Size'">
+              <size :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'Delivery_schedule'">
+              {{item[header.value]}}
+            </div>
+            <div v-if="header.value == 'Updated'">
+              <time-stamp :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'UpdatedBy'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
+            <div v-if="header.value == 'create'">
+              <time-stamp :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'createdBy'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
+          </td>
+        </template>
+      </hux-data-table>
+
     <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
       <EmptyPage>
         <template #icon>mdi-alert-circle-outline</template>
@@ -67,6 +119,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 
+import rowData from "./data.json"
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -76,6 +129,7 @@ import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
+import Status from "../../components/common/Status.vue"
 export default {
   name: "engagements",
   components: {
@@ -88,18 +142,48 @@ export default {
     Size,
     TimeStamp,
     MenuCell,
+    Status,
   },
   data() {
     return {
-       breadcrumbItems: [
+      breadcrumbItems: [
         {
           text: "Engagements",
           disabled: true,
           icon: "engagements",
         },
       ],
-      loading: false,
+      loading: true,
+      rowData: rowData.engagements,
+      columnDefs: [
+        { text: "Engagement name", value: "name", width: "278px" },
+        { text: "Audiences", value: "Audiences", width: "278px" },
+        { text: "Status", value: "Status", width: "278px" },
+        { text: "Size", value: "Size", width: "278px" },
+        {
+          text: "Delivery schedule",
+          value: "Delivery_schedule",
+          width: "278px",
+        },
+        { text: "Last updated", value: "Updated", width: "278px" },
+        { text: "Last updated by", value: "UpdatedBy", width: "278px" },
+        { text: "Created", value: "create", width: "278px" },
+        { text: "Created by", value: "createdBy", width: "278px" },
+      ],
     }
+  },
+  computed: {
+    subHeaders() {
+      const _headers = JSON.parse(JSON.stringify(this.headers))
+      _headers.splice(1, 2)
+      return _headers
+    },
+  },
+  methods: {
+    ...mapActions({ }),
+    getName(item) {
+      return item.first_name + " " + item.last_name
+    },
   },
 }
 </script>
