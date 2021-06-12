@@ -99,7 +99,7 @@
                 v-for="item in engagement.audiences"
                 :key="item.id"
                 :audience="item"
-              ></status-list>
+              />
             </v-col>
           </v-card-text>
         </v-card>
@@ -117,9 +117,9 @@
             /></span>
             Display ads
           </v-tab>
-          <v-tab key="email" @click="fetchCampaignPerformanceDetails('email')"
-            >@ Email</v-tab
-          >
+          <v-tab key="email" @click="fetchCampaignPerformanceDetails('email')">
+            @ Email
+          </v-tab>
         </v-tabs>
         <v-tabs-items v-model="tabOption" class="mt-2">
           <v-tab-item key="displayAds">
