@@ -33,57 +33,99 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="!loading" :indeterminate="!loading" />
-    <hux-data-table
-        :headers="columnDefs"
-        :dataItems="rowData"
-      >
-        <template #row-item="{ item }">
-          <td
-            v-for="header in columnDefs"
-            :key="header.value"
-            :class="{
-              'fixed-column': header.fixed,
-              'v-data-table__divider': header.fixed,
-              'primary--text': header.fixed,
-            }"
-            :style="{ width: header.width, left: 0 }"
+    <hux-data-table :headers="columnDefs" :dataItems="rowData" nested>
+      <template #row-item="{ item }">
+        <td
+          v-for="header in columnDefs"
+          :key="header.value"
+          :class="{
+            'fixed-column': header.fixed,
+            'v-data-table__divider': header.fixed,
+            'primary--text': header.fixed,
+          }"
+          :style="{ width: header.width, left: 0 }"
+        >
+          <div v-if="header.value == 'name'" class="w-100">
+            <router-link
+              :to="{ name: 'AudienceConfiguration' }"
+              class="text-decoration-none"
+              append
+            >
+              {{ item[header.value] }}
+            </router-link>
+          </div>
+          <div v-if="header.value == 'Audiences'">
+            {{ item[header.value] }}
+          </div>
+          <div v-if="header.value == 'Status'">
+            <status :status="item[header.value]" collapsed class="d-flex" />
+          </div>
+          <div v-if="header.value == 'Size'">
+            <size :value="item[header.value]" />
+          </div>
+          <div v-if="header.value == 'Delivery_schedule'">
+            {{ item[header.value] }}
+          </div>
+          <div v-if="header.value == 'Updated'">
+            <time-stamp :value="item[header.value]" />
+          </div>
+          <div v-if="header.value == 'UpdatedBy'">
+            <avatar :name="getName(item[header.value])" />
+          </div>
+          <div v-if="header.value == 'create'">
+            <time-stamp :value="item[header.value]" />
+          </div>
+          <div v-if="header.value == 'createdBy'">
+            <avatar :name="getName(item[header.value])" />
+          </div>
+        </td>
+      </template>
+      <template #expanded-row="{ headers, item }">
+        <td
+          :colspan="headers.length"
+          class="pa-0 child"
+          v-if="item.engagementList"
+        >
+          <hux-data-table
+            :headers="headers"
+            :dataItems="item.engagementList"
+            :showHeader="false"
+            v-if="item"
           >
-            <div v-if="header.value == 'name'" class="w-100">
-              <router-link
-                :to="{ name: 'AudienceConfiguration' }"
-                class="text-decoration-none"
-                append
+            <template #row-item="{ item }">
+              <td
+                v-for="header in subHeaders"
+                :key="header.value"
+                :colspan="header.value == 'name' ? 3 : 0"
+                :style="header.value == 'name' ? 'padding-left:295px' : null"
               >
-                {{item[header.value]}}
-              </router-link>
-            </div>
-            <div v-if="header.value == 'Audiences'">
-              {{item[header.value]}}
-            </div>
-            <div v-if="header.value == 'Status'">
-              <Status :status="item[header.value]" collapsed class="d-flex" />
-            </div>
-            <div v-if="header.value == 'Size'">
-              <size :value="item[header.value]" />
-            </div>
-            <div v-if="header.value == 'Delivery_schedule'">
-              {{item[header.value]}}
-            </div>
-            <div v-if="header.value == 'Updated'">
-              <time-stamp :value="item[header.value]" />
-            </div>
-            <div v-if="header.value == 'UpdatedBy'">
-              <avatar :name="getName(item[header.value])" />
-            </div>
-            <div v-if="header.value == 'create'">
-              <time-stamp :value="item[header.value]" />
-            </div>
-            <div v-if="header.value == 'createdBy'">
-              <avatar :name="getName(item[header.value])" />
-            </div>
-          </td>
-        </template>
-      </hux-data-table>
+                <div v-if="header.value == 'name'">
+                  {{ item[header.value] }}
+                </div>
+                <div v-if="header.value == 'Size'">
+                  <size :value="item[header.value]" />
+                </div>
+                <div v-if="header.value == 'Delivery_schedule'">
+                  {{ item[header.value] }}
+                </div>
+                <div v-if="header.value == 'Updated'">
+                  <time-stamp :value="item[header.value]" />
+                </div>
+                <div v-if="header.value == 'UpdatedBy'">
+                  <avatar :name="getName(item[header.value])" />
+                </div>
+                <div v-if="header.value == 'create'">
+                  <time-stamp :value="item[header.value]" />
+                </div>
+                <div v-if="header.value == 'createdBy'">
+                  <avatar :name="getName(item[header.value])" />
+                </div>
+              </td>
+            </template>
+          </hux-data-table>
+        </td>
+      </template>
+    </hux-data-table>
 
     <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
       <EmptyPage>
@@ -174,13 +216,13 @@ export default {
   },
   computed: {
     subHeaders() {
-      const _headers = JSON.parse(JSON.stringify(this.headers))
+      const _headers = JSON.parse(JSON.stringify(this.columnDefs))
       _headers.splice(1, 2)
       return _headers
     },
   },
   methods: {
-    ...mapActions({ }),
+    ...mapActions({}),
     getName(item) {
       return item.first_name + " " + item.last_name
     },
