@@ -63,30 +63,6 @@
               </td>
             </tr>
           </template>
-          <template #row-item="{ headers, item, isExpanded }">
-            <td
-              v-for="header in headers"
-              :key="header.value"
-              :style="{ width: header.width }"
-            >
-              <span v-if="header.value == 'name'">
-                <v-icon :class="{ 'normal-icon': isExpanded }">
-                  mdi-chevron-right
-                </v-icon>
-                <tooltip>
-                  <template #label-content>
-                    {{ item[header.value] }}
-                  </template>
-                  <template #hover-content>
-                    {{ item[header.value] }}
-                  </template>
-                </tooltip>
-              </span>
-              <span v-else>
-                {{ item[header.value] }}
-              </span>
-            </td>
-          </template>
           <template #expanded-row="{ headers, item }">
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
