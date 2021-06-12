@@ -8,8 +8,6 @@ export default {
   dataSources: "/data-sources",
   destinations: "/destinations",
   engagements: "/engagements",
-  audiencePerformanceByEmail: "/engagements/:id/audience-performance/email",
-  audiencePerformanceByAds: "/engagements/:id/audience-performance/display-ads",
   identity: "/idr",
   models: "/models",
 }

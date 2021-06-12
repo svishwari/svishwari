@@ -558,6 +558,7 @@ export default {
     border-radius: 5px;
   }
   .summary-tab-wrap {
+    flex-wrap: wrap;
     ::v-deep .metric-card-wrapper {
       border: 1px solid var(--v-zircon-base);
       box-sizing: border-box;
@@ -595,7 +596,7 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 9;
+          z-index: 4;
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
         border-radius: 12px 12px 0px 0px;
@@ -614,7 +615,7 @@ export default {
           position: sticky;
           top: 0;
           left: 0;
-          z-index: 9;
+          z-index: 4;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }

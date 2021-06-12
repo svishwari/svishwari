@@ -35,6 +35,10 @@ client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)
 }
 
+client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
+  return http.get(`/engagements/${resourceId}/audience-performance/${data === 'ads' ? 'display-ads' : 'email'}`)
+}
+
 client["identity"].overview = () => {
   return http.get("/idr/overview")
 }
