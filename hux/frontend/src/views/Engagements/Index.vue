@@ -100,6 +100,7 @@
             :headers="headers"
             :dataItems="item.engagementList"
             :showHeader="false"
+            class="expanded-table"
             v-if="item"
           >
             <template #row-item="{ item }">
@@ -270,6 +271,11 @@ export default {
   }
   .hux-data-table {
     margin-top: 1px;
+  }
+  ::v-deep .hux-data-table.expanded-table {
+    .v-data-table__wrapper {
+      box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
+    }
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
