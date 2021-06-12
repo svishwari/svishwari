@@ -278,6 +278,20 @@ export default {
       destination: "destinations/single",
     }),
 
+    payload() {
+      return {
+        name: this.value.name,
+        description: this.value.description,
+        delivery_schedule: this.value.delivery_schedule,
+        audiences: Object.values(this.value.audiences).map((audience) => {
+          return {
+            id: audience.id,
+            destinations: audience.destinations,
+          }
+        }),
+      }
+    },
+
     isValid() {
       return this.value.name.length
     },
@@ -339,7 +353,7 @@ export default {
     },
 
     async addNewEngagement() {
-      const engagement = await this.addEngagement(this.value)
+      const engagement = await this.addEngagement(this.payload)
       this.$router.push({
         name: "EngagementDashboard",
         params: { id: engagement.id },
@@ -348,7 +362,7 @@ export default {
 
     async deliverNewEngagement() {
       try {
-        const engagement = await this.addEngagement(this.value)
+        const engagement = await this.addEngagement(this.payload)
         await this.deliverEngagement(engagement.id)
         this.$router.push({
           name: "EngagementDashboard",
