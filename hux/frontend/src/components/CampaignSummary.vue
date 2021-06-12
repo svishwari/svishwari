@@ -625,9 +625,12 @@ export default {
       }
     }
     .child {
-      background: var(--v-background-base);
-      ::v-deep .v-data-table__wrapper {
-        box-shadow: inset 0px 10px 10px -4px #d0d0ce;
+      ::v-deep .theme--light {
+        background: var(--v-background-base);
+        .v-data-table__wrapper {
+          box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
+          border-bottom: thin solid rgba(0, 0, 0, 0.12);
+        }
       }
 
       ::v-deep table {
