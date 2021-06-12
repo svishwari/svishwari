@@ -1,7 +1,7 @@
 <template>
   <Drawer v-model="localToggle" :width="640">
     <template #header-left>
-      <h3 class="text-h3">Select destinations to add to this audience</h3>
+      <h3 class="text-h3">Add destinations to this audience</h3>
     </template>
 
     <template #default>
@@ -13,8 +13,7 @@
           :fields="[
             {
               key: 'name',
-              label: 'Name',
-              sortable: true,
+              label: 'Destination',
             },
             {
               key: 'manage',
@@ -22,16 +21,27 @@
             },
           ]"
         >
-          <template #field:manage="row">
+          <template #field:name="{ item }">
+            <div class="d-flex align-center">
+              <Logo
+                class="mr-2"
+                :key="item.type"
+                :type="item.type"
+                :size="26"
+              />
+              {{ item.name }}
+            </div>
+          </template>
+          <template #field:manage="{ item }">
             <div class="d-flex align-center justify-end">
               <HuxButton
-                v-if="isAdded(row.item.id)"
+                v-if="isAdded(item.id)"
                 variant="secondary"
                 width="100"
                 height="40"
                 icon="mdi-check"
                 iconPosition="left"
-                @click="remove(row.item)"
+                @click="remove(item)"
               >
                 Added
               </HuxButton>
@@ -41,7 +51,7 @@
                 variant="primary"
                 width="100"
                 height="40"
-                @click="add(row.item)"
+                @click="add(item)"
               >
                 Add
               </HuxButton>
@@ -60,6 +70,7 @@ import { mapGetters } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
+import Logo from "@/components/common/Logo.vue"
 
 export default {
   name: "DestinationsDrawer",
@@ -68,6 +79,7 @@ export default {
     DataCards,
     Drawer,
     HuxButton,
+    Logo,
   },
 
   props: {

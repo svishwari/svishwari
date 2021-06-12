@@ -115,15 +115,20 @@
                 :size="20"
               />
 
-              <v-btn
-                width="20"
-                height="20"
-                fab
-                class="primary"
-                @click="openSelectDestinationsDrawer(row.item.id)"
-              >
-                <v-icon size="16">mdi-plus</v-icon>
-              </v-btn>
+              <Tooltip>
+                <template #label-content>
+                  <v-btn
+                    width="20"
+                    height="20"
+                    fab
+                    class="primary"
+                    @click="openSelectDestinationsDrawer(row.item.id)"
+                  >
+                    <v-icon size="16">mdi-plus</v-icon>
+                  </v-btn>
+                </template>
+                <template #hover-content>Add destination(s)</template>
+              </Tooltip>
             </div>
           </template>
 
