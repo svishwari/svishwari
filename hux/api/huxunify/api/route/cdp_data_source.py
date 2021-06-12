@@ -334,7 +334,7 @@ class BatchUpdateDataSources(SwaggerView):
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
     def patch(self) -> Tuple[dict, int]:
-        """Update a list of data sources.
+        """Updates a list of data sources.
 
         ---
         security:
