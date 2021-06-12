@@ -107,13 +107,15 @@
 
           <template #field:destinations="row">
             <div class="d-flex align-center">
-              <Logo
-                class="mr-2"
-                v-for="destination in row.value"
-                :key="destination.id"
-                :type="destination.type"
-                :size="20"
-              />
+              <div class="d-flex align-center">
+                <Logo
+                  class="mr-2"
+                  v-for="destination in row.value"
+                  :key="destination.id"
+                  :type="destinationType(destination.id)"
+                  :size="20"
+                />
+              </div>
 
               <Tooltip>
                 <template #label-content>
@@ -227,7 +229,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
@@ -272,6 +274,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      destination: "destinations/single",
+    }),
+
     isValid() {
       return this.value.name.length
     },
@@ -326,6 +332,10 @@ export default {
 
     isLastItem(index) {
       return Boolean(index === this.totalSelectedAudiences - 1)
+    },
+
+    destinationType(id) {
+      return this.destination(id).type
     },
 
     async addNewEngagement() {

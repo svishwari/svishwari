@@ -144,7 +144,6 @@ export default {
         destinations: audience.destinations.map((destination) => {
           return {
             id: destination.id,
-            type: destination.type,
           }
         }),
       })

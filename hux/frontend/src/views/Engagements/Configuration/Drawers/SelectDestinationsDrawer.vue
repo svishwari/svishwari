@@ -140,9 +140,19 @@ export default {
       ).length
     },
 
-    add(destination) {},
+    add(destination) {
+      this.selectedDestinations.push({
+        id: destination.id,
+      })
+    },
 
-    remove(destination) {},
+    remove(destination) {
+      const id = destination.id
+      const index = this.selectedDestinations.findIndex(
+        (destination) => destination.id === id
+      )
+      this.selectedDestinations.splice(index, 1)
+    },
   },
 }
 </script>
