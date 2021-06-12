@@ -23,41 +23,50 @@
     <v-card minHeight="145px" flat class="mt-6 card-style">
       <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
-          <icon
-            type="audiences"
-            :size="24"
-            color="neroBlack"
-            class="mr-2"
-          /><span class="text-h5 text--neroblack">Audience performance</span>
+          <icon type="audiences" :size="24" color="neroBlack" class="mr-2" />
+          <span class="text-h5 text--neroblack"> Audience performance </span>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
         <!-- Campaign Nested Table -->
         <hux-data-table :headers="headers" :dataItems="data" nested>
-          <template #item-name="{ item, isExpanded }">
-            <v-icon :class="{ 'normal-icon': isExpanded }">
-              mdi-chevron-right
-            </v-icon>
-            <tooltip>
-              <template slot="label-content">
-                <!-- TODO Route Link to Audience Insight Page -->
-                <router-link
-                  to="#"
-                  class="text-decoration-none primary--text"
-                  append
-                >
-                  {{ item.name }}
-                </router-link>
-              </template>
-              <template slot="hover-content">
-                {{ item.name }}
-              </template>
-            </tooltip>
+          <template #item-row="{ item, expand, isExpanded }">
+            <tr>
+              <td v-for="header in headers" :key="header.value">
+                <div v-if="header.value == 'name'" class="w-100">
+                  <v-icon
+                    :class="{ 'rotate-icon-90': isExpanded }"
+                    size="18"
+                    @click="expand(!isExpanded)"
+                  >
+                    mdi-chevron-right
+                  </v-icon>
+                  <tooltip>
+                    <template #label-content>
+                      <!-- TODO Route Link to Audience Insight Page -->
+                      <router-link
+                        to="#"
+                        class="text-decoration-none primary--text"
+                        append
+                      >
+                        {{ item.name }}
+                      </router-link>
+                    </template>
+                    <template #hover-content>
+                      {{ item.name }}
+                    </template>
+                  </tooltip>
+                </div>
+                <div v-if="header.value != 'name'" class="w-100">
+                  {{ item[header.value] }}
+                </div>
+              </td>
+            </tr>
           </template>
           <template #row-item="{ headers, item, isExpanded }">
             <td
               v-for="header in headers"
-              v-bind:key="header.value"
+              :key="header.value"
               :style="{ width: header.width }"
             >
               <span v-if="header.value == 'name'">
@@ -65,10 +74,10 @@
                   mdi-chevron-right
                 </v-icon>
                 <tooltip>
-                  <template slot="label-content">
+                  <template #label-content>
                     {{ item[header.value] }}
                   </template>
-                  <template slot="hover-content">
+                  <template #hover-content>
                     {{ item[header.value] }}
                   </template>
                 </tooltip>
@@ -94,7 +103,7 @@
                   >
                     <span v-if="header.value == 'name'">
                       <tooltip>
-                        <template slot="label-content">
+                        <template #label-content>
                           <logo
                             :type="logoType(item[header.value])"
                             :size="18"
@@ -104,7 +113,7 @@
                             {{ item[header.value] }}
                           </span>
                         </template>
-                        <template slot="hover-content">
+                        <template #hover-content>
                           {{ item[header.value] }}
                         </template>
                       </tooltip>
@@ -584,7 +593,7 @@ export default {
       }
       .v-data-table-header {
         th {
-          background: #ecf4f9;
+          background: var(--v-aliceBlue-base);
           &:first-child {
             border-radius: 12px 0px 0px 0px;
           }
@@ -628,20 +637,10 @@ export default {
         width: 21ch;
         white-space: nowrap;
       }
-      .mdi-chevron-right {
-        font-size: 18px;
-      }
       .v-data-table__expanded__row {
         background: var(--v-aliceBlue-base);
-        box-shadow: 0px 1px 0px #d0d0ce, -1px 0px 0px #d0d0ce;
         td:nth-child(1) {
           background: var(--v-aliceBlue-base);
-        }
-        .mdi-chevron-right {
-          font-size: 18px;
-          transform: rotate(90deg);
-          -ms-transform: rotate(90deg);
-          -webkit-transform: rotate(90deg);
         }
       }
     }

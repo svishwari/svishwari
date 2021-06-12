@@ -72,7 +72,7 @@ const actions = {
      */
     await sleep(2000)
     const data = audiencePerformanceMock
-    if ((typeof data.displayads_audience_performance.summary) === 'function') {
+    if (typeof data.displayads_audience_performance.summary === "function") {
       data.displayads_audience_performance.summary = data.displayads_audience_performance.summary()
       data.displayads_audience_performance.audience_performance = data.displayads_audience_performance.audience_performance()
       data.email_audience_performance.summary = data.email_audience_performance.summary()
