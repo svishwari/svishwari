@@ -353,6 +353,7 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/enabledDestination",
+      AudiencesRules: "audiences/audiencesRules",
     }),
 
     destination() {
@@ -384,6 +385,7 @@ export default {
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
+      getAudiencesRules: "audiences/fetchConstants",
     }),
     // Engagements
     detachEngagement(engagement) {
@@ -501,6 +503,7 @@ export default {
   },
   async mounted() {
     await this.getDestinations()
+    await this.getAudiencesRules()
   },
 }
 </script>

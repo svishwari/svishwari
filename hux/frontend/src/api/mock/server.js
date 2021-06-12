@@ -14,6 +14,7 @@ import dataSourceFactory from "./factories/dataSource"
 import destinationFactory from "./factories/destination"
 import engagementFactory from "./factories/engagement"
 import modelFactory from "./factories/model"
+import audienceFilterFactory from "./factories/audiencesFilter"
 
 export function makeServer({ environment = "development" } = {}) {
   // models
@@ -25,6 +26,7 @@ export function makeServer({ environment = "development" } = {}) {
     destination: Model,
     engagement: Model,
     model: Model,
+    audienceFilter: Model,
   }
 
   const factories = {
@@ -35,6 +37,7 @@ export function makeServer({ environment = "development" } = {}) {
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
     model: Factory.extend(modelFactory),
+    audienceFilter: Factory.extend(audienceFilterFactory),
   }
 
   const server = createServer({

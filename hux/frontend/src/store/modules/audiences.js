@@ -14,6 +14,7 @@ const NEW_AUDIENCE = {
 const state = {
   audiences: [],
   newAudience: NEW_AUDIENCE,
+  constants: {}
 }
 
 const getters = {
@@ -21,6 +22,7 @@ const getters = {
   audience: (state) => (id) => {
     return state.audiences[id]
   },
+  audiencesRules: (state) => state.constants,
 }
 
 const mutations = {
@@ -32,6 +34,9 @@ const mutations = {
 
   SET_ONE(state, item) {
     Vue.set(state.audiences, item.id, item)
+  },
+  SET_CONSTANTS(state, item) {
+    Vue.set(state.constants, item)
   },
 }
 
@@ -126,6 +131,16 @@ const actions = {
     try {
       const response = await api.audiences.create(audience)
       commit("SET_ONE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async fetchConstants({ commit }) {
+    try {
+      const response = await api.audiences.getConstants()
+      commit("SET_CONSTANTS", response.data)
       return response.data
     } catch (error) {
       handleError(error)

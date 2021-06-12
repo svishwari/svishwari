@@ -149,4 +149,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
     return schema.audiences.create(requestData)
   })
+  server.get("/audiences/rules", (schema) => {
+    return schema.audienceFilters.all()
+  })
 }

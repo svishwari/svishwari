@@ -38,5 +38,8 @@ client["engagements"].deliver = (resourceId, data) => {
 client["identity"].overview = () => {
   return http.get("/idr/overview")
 }
+client["audiences"].getConstants = () => {
+  return http.get("/audiences/rules")
+}
 
 export default client
