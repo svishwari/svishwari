@@ -34,51 +34,61 @@
     </PageHeader>
     <v-progress-linear :active="!loading" :indeterminate="!loading" />
     <hux-data-table :headers="columnDefs" :dataItems="rowData" nested>
-      <template #row-item="{ item }">
-        <td
-          v-for="header in columnDefs"
-          :key="header.value"
-          :class="{
-            'fixed-column': header.fixed,
-            'v-data-table__divider': header.fixed,
-            'primary--text': header.fixed,
-          }"
-          :style="{ width: header.width, left: 0 }"
-        >
-          <div v-if="header.value == 'name'" class="w-100">
-            <router-link
-              :to="{ name: 'AudienceConfiguration' }"
-              class="text-decoration-none"
-              append
-            >
+      <template #item-row="{ item, expand, isExpanded }">
+        <tr>
+          <td
+            v-for="header in columnDefs"
+            :key="header.value"
+            :class="{
+              'fixed-column': header.fixed,
+              'v-data-table__divider': header.fixed,
+              'primary--text': header.fixed,
+            }"
+            :style="{ width: header.width, left: 0 }"
+          >
+            <div v-if="header.value == 'name'" class="w-100">
+              {{ item.isExpanded }}
+              <v-icon
+                :class="{ 'normal-icon': isExpanded }"
+                @click="expand(!isExpanded)"
+              >
+                mdi-chevron-right
+              </v-icon>
+              <tooltip>
+                <template slot="label-content">
+                  {{ item[header.value] }}
+                </template>
+                <template slot="hover-content">
+                  {{ item[header.value] }}
+                </template>
+              </tooltip>
+            </div>
+            <div v-if="header.value == 'Audiences'">
               {{ item[header.value] }}
-            </router-link>
-          </div>
-          <div v-if="header.value == 'Audiences'">
-            {{ item[header.value] }}
-          </div>
-          <div v-if="header.value == 'Status'">
-            <status :status="item[header.value]" collapsed class="d-flex" />
-          </div>
-          <div v-if="header.value == 'Size'">
-            <size :value="item[header.value]" />
-          </div>
-          <div v-if="header.value == 'Delivery_schedule'">
-            {{ item[header.value] }}
-          </div>
-          <div v-if="header.value == 'Updated'">
-            <time-stamp :value="item[header.value]" />
-          </div>
-          <div v-if="header.value == 'UpdatedBy'">
-            <avatar :name="getName(item[header.value])" />
-          </div>
-          <div v-if="header.value == 'create'">
-            <time-stamp :value="item[header.value]" />
-          </div>
-          <div v-if="header.value == 'createdBy'">
-            <avatar :name="getName(item[header.value])" />
-          </div>
-        </td>
+            </div>
+            <div v-if="header.value == 'Status'">
+              <status :status="item[header.value]" collapsed class="d-flex" />
+            </div>
+            <div v-if="header.value == 'Size'">
+              <size :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'Delivery_schedule'">
+              {{ item[header.value] }}
+            </div>
+            <div v-if="header.value == 'Updated'">
+              <time-stamp :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'UpdatedBy'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
+            <div v-if="header.value == 'create'">
+              <time-stamp :value="item[header.value]" />
+            </div>
+            <div v-if="header.value == 'createdBy'">
+              <avatar :name="getName(item[header.value])" />
+            </div>
+          </td>
+        </tr>
       </template>
       <template #expanded-row="{ headers, item }">
         <td
@@ -172,6 +182,7 @@ import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 import Status from "../../components/common/Status.vue"
+import Tooltip from "../../components/common/Tooltip.vue"
 export default {
   name: "engagements",
   components: {
@@ -185,6 +196,7 @@ export default {
     TimeStamp,
     MenuCell,
     Status,
+    Tooltip,
   },
   data() {
     return {
@@ -234,6 +246,12 @@ export default {
 .engagements-wrap {
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
+  }
+  .mdi-chevron-right {
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+    &.normal-icon {
+      transform: rotate(90deg);
+    }
   }
   .page-header--wrap {
     box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
