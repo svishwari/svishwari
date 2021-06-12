@@ -112,9 +112,9 @@
             color
             @click="fetchCampaignPerformanceDetails('ads')"
           >
-            <span style="width: 15px"
-              ><Icon type="display_ads" :size="10" class="mr-2"
-            /></span>
+            <span style="width: 15px">
+              <Icon type="display_ads" :size="10" class="mr-2" />
+            </span>
             Display ads
           </v-tab>
           <v-tab key="email" @click="fetchCampaignPerformanceDetails('email')">

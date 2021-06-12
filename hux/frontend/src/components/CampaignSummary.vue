@@ -31,7 +31,7 @@
         <!-- Campaign Nested Table -->
         <hux-data-table :headers="headers" :dataItems="data" nested>
           <template #item-row="{ item, expand, isExpanded }">
-            <tr>
+            <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
               <td v-for="header in headers" :key="header.value">
                 <div v-if="header.value == 'name'" class="w-100">
                   <v-icon
@@ -603,6 +603,9 @@ export default {
           z-index: 4;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
+          &:hover {
+            background: var(--v-aliceBlue-base) !important;
+          }
         }
       }
       .ellipsis {
@@ -615,6 +618,7 @@ export default {
       }
       .v-data-table__expanded__row {
         background: var(--v-aliceBlue-base);
+
         td:nth-child(1) {
           background: var(--v-aliceBlue-base);
         }
@@ -622,12 +626,17 @@ export default {
     }
     .child {
       background: var(--v-background-base);
+      ::v-deep .v-data-table__wrapper {
+        box-shadow: inset 0px 10px 10px -4px #d0d0ce;
+      }
+
       ::v-deep table {
         background: inherit;
         tbody {
           td {
             &:first-child {
               padding-left: 45px;
+              background: inherit;
             }
           }
         }

@@ -26,10 +26,10 @@
         </template>
         <template v-for="h in headers" v-slot:[`header.${h.value}`]>
           <tooltip :key="h.value" v-if="h.tooltipValue">
-            <template slot="label-content">
+            <template #label-content>
               {{ h.text }}
             </template>
-            <template slot="hover-content">
+            <template #hover-content>
               <span
                 v-html="h.tooltipValue.replace(/(?:\r\n|\r|\n)/g, '<br />')"
               ></span>
