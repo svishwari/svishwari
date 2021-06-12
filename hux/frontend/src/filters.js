@@ -57,13 +57,13 @@ export default {
       // Nine Zeroes for Billions
       value =
         Math.abs(Number(value)) >= 1.0e9
-          ? (Math.abs(Number(value)) / 1.0e9).toFixed(2) + "B"
+          ? (Math.abs(Number(value)) / 1.0e9).toFixed(1) + "B"
           : // Six Zeroes for Millions
           Math.abs(Number(value)) >= 1.0e6
-          ? (Math.abs(Number(value)) / 1.0e6).toFixed(2) + "M"
+          ? (Math.abs(Number(value)) / 1.0e6).toFixed(1) + "M"
           : // Three Zeroes for Thousands
           Math.abs(Number(value)) >= 1.0e3
-          ? (Math.abs(Number(value)) / 1.0e3).toFixed(2) + "K"
+          ? (Math.abs(Number(value)) / 1.0e3).toFixed(1) + "K"
           : Math.abs(Number(value))
     }
 
@@ -84,10 +84,9 @@ export default {
    * @returns Title cased string eg. "Active Customers"
    */
   TitleCase(value) {
-    return value
-      .replace(/([A-Z])/g, (match) => ` ${match}`)
-      .replace(/^./, (match) => match.toUpperCase())
-      .trim()
+    return value.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    })
   },
   /**
    * Formats any string(fullname) to shortname.
@@ -105,6 +104,8 @@ export default {
     return Number(value).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     })
   },
 }

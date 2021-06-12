@@ -152,18 +152,18 @@
       <HuxFooter maxWidth="inherit">
         <template #left>
           <huxButton
-            ButtonText="Cancel"
             variant="white"
             isTile
             width="94"
             height="40"
             class="ma-2 ml-0"
             @click.native="$router.go(-1)"
-          ></huxButton>
+          >
+            Cancel
+          </huxButton>
         </template>
         <template #right>
           <huxButton
-            ButtonText="Create"
             variant="primary"
             isTile
             width="94"
@@ -171,7 +171,9 @@
             class="ma-2"
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
-          ></huxButton>
+          >
+            Create
+          </huxButton>
         </template>
       </HuxFooter>
       <!-- Add destination workflow -->
@@ -232,14 +234,15 @@
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Add"
               variant="primary"
               isTile
               width="80"
               height="40"
               class="ma-2"
               @click="addDestinationToAudience()"
-            ></huxButton>
+            >
+              Add
+            </huxButton>
           </div>
         </template>
 
@@ -255,14 +258,15 @@
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Back"
               variant="white"
               isTile
               width="80"
               height="40"
               class="ma-2 drawer-back"
               @click.native="destinationDrawer.viewStep = 1"
-            ></huxButton>
+            >
+              Back
+            </huxButton>
           </div>
         </template>
       </drawer>
