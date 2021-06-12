@@ -55,16 +55,16 @@ def validate_schema(schema: Schema, response: dict) -> bool:
 
     Args:
         schema (Schema): Marshmallow Schema
-        response (dict):json response
+        response (dict): json response
 
     Returns:
         (bool)
+
     """
     try:
         schema.load(data=response)
         return True
     except ValidationError:
-
         return False
 
 
