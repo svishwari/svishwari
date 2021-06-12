@@ -15,10 +15,14 @@
         must-sort
         sort-desc
         single-select
-        @click:row="clickRow"
       >
-        <template #item.name="{ item, isExpanded }" v-if="nested">
-          <slot name="item-name" :item="item" :isExpanded="isExpanded" />
+        <template #item="{ item, expand, isExpanded }" v-if="nested">
+          <slot
+            name="item-row"
+            :item="item"
+            :expand="expand"
+            :isExpanded="isExpanded"
+          ></slot>
         </template>
         <template v-for="h in headers" v-slot:[`header.${h.value}`]>
           <tooltip :key="h.value" v-if="h.tooltipValue">
@@ -37,11 +41,7 @@
         </template>
         <template #body="{ headers, items }" v-if="!nested">
           <tbody>
-            <tr
-              v-for="(item, index) in items"
-              :key="item.id"
-              @click="expandRow(index)"
-            >
+            <tr v-for="item in items" :key="item.id">
               <slot name="row-item" :item="item" :headers="headers" />
             </tr>
           </tbody>

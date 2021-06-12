@@ -54,30 +54,42 @@
               </template>
             </tooltip>
           </template>
-          <template #row-item="{ headers, item, isExpanded }">
-            <td
-              v-for="header in headers"
-              v-bind:key="header.value"
-              :style="{ width: header.width }"
-            >
-              <span v-if="header.value == 'name'">
-                <v-icon :class="{ 'normal-icon': isExpanded }">
-                  mdi-chevron-right
-                </v-icon>
-                <tooltip>
-                  <template slot="label-content">
-                    {{ item[header.value] }}
-                  </template>
-                  <template slot="hover-content">
-                    {{ item[header.value] }}
-                  </template>
-                </tooltip>
-              </span>
-              <span v-else>
-                {{ item[header.value] }}
-              </span>
-            </td>
+          <template #item-row="{ item, expand, isExpanded }">
+            <tr>
+              <td
+                v-for="header in headers"
+                v-bind:key="header.value"
+                :style="{ width: header.width }"
+              >
+                <span v-if="header.value == 'name'">
+                  <v-icon
+                    :class="{ 'normal-icon': isExpanded }"
+                    @click="expand(!isExpanded)"
+                  >
+                    mdi-chevron-right
+                  </v-icon>
+                  <tooltip>
+                    <template slot="label-content">
+                      <router-link
+                        to="#"
+                        class="text-decoration-none primary--text"
+                        append
+                      >
+                        {{ item[header.value] }}
+                      </router-link>
+                    </template>
+                    <template slot="hover-content">
+                      {{ item[header.value] }}
+                    </template>
+                  </tooltip>
+                </span>
+                <span v-else>
+                  {{ item[header.value] }}
+                </span>
+              </td>
+            </tr>
           </template>
+
           <template #expanded-row="{ headers, item }">
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
