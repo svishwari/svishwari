@@ -19,6 +19,7 @@
     "axios": "^0.21.1",
     "compression-webpack-plugin": "^6.0.5",
     "core-js": "^3.6.5",
+    "d3": "^7.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "ngprogress": "^1.1.3",

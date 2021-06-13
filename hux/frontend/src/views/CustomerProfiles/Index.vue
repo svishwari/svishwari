@@ -37,7 +37,7 @@
             {{ item.time }}
           </span>
         </template>
-        <template v-if="i!==7" #extra-item>
+        <template v-if="i !== 7" #extra-item>
           <Tooltip :positionTop="true">
             <template #label-content>
               <Icon type="info" :size="12" />
@@ -131,27 +131,41 @@ export default {
           subtitle: "12M",
           toolTipText: "Total no. of input records across all data feeds.",
         },
-        { title: "Match rate", subtitle: "60%", toolTipText: "Percentage of input records that are consolidated into Hux Ids." },
+        {
+          title: "Match rate",
+          subtitle: "60%",
+          toolTipText:
+            "Percentage of input records that are consolidated into Hux Ids.",
+        },
         {
           title: "Unique Hux IDs",
           subtitle: "12M",
-          toolTipText: "Total Hux Ids that represent an anonymous or known customer.",
+          toolTipText:
+            "Total Hux Ids that represent an anonymous or known customer.",
         },
         {
           title: "Anonymous IDs",
           subtitle: "20M",
-          toolTipText: "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
+          toolTipText:
+            "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
         },
-        { title: "Known IDs", subtitle: "20M", toolTipText: "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number." },
+        {
+          title: "Known IDs",
+          subtitle: "20M",
+          toolTipText:
+            "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number.",
+        },
         {
           title: "Individual IDs",
           subtitle: "20M",
-          toolTipText: "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
+          toolTipText:
+            "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
         },
         {
           title: "Household IDs",
           subtitle: "20M",
-          toolTipText: "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
+          toolTipText:
+            "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
         },
         {
           title: "Updated",
@@ -195,7 +209,7 @@ export default {
 
   async mounted() {
     this.loading = true
-    
+
     await this.getOverview()
     await this.getCustomers()
     this.loading = false

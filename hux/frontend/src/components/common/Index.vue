@@ -402,6 +402,13 @@
 
     <v-divider class="mt-10" />
 
+
+    <v-subheader>Hux Chord Chart</v-subheader>
+    <hux-chord-chart :chartInput="chartData" :colorCodes="colorCodes"></hux-chord-chart>
+
+    <v-divider class="mt-10" />
+    
+
     <v-subheader>Logos</v-subheader>
     <Logo type="bluecore"></Logo>
     <Logo type="bluecore" :size="48"></Logo>
@@ -455,6 +462,7 @@ import FormStep from "@/components/common/FormStep"
 import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
+import HuxChordChart from "@/components/common/HuxChordChart"
 import { generateColor } from "@/utils"
 
 export default {
@@ -482,6 +490,7 @@ export default {
     FormSteps,
     FormStep,
     HuxSlider,
+    HuxChordChart,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -875,6 +884,14 @@ export default {
         { text: "Created", value: "created" },
         { text: "Created By", value: "createdBy" },
       ],
+        chartData: [
+        [ 1951, 0, 2060, 6171, 3622],
+        [500, 400, 300, 5200, 4500],
+        [11975, 5871, 8916, 2868, 2300],
+        [1951, 10048, 2060, 6171, 2800],
+        [8010, 16145, 8090, 8045, 8377]
+      ],
+      colorCodes: ["#43b02a", "#efa34c", "#005587", "#00a3e0", "#da291c"],
     }
   },
   mounted() {},
