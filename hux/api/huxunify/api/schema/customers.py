@@ -2,8 +2,10 @@
 """
 Schemas for the Customers API
 """
-
+from datetime import datetime
+from dateutil import parser
 from flask_marshmallow import Schema
+from marshmallow import pre_dump
 from marshmallow.fields import (
     Str,
     Int,
@@ -77,6 +79,35 @@ class CustomerProfileSchema(Schema):
     identity_resolution = Nested(IdentityResolution, required=True)
     propensity_to_unsubscribe = Float(required=True)
     propensity_to_purchase = Float(required=True)
+
+    @pre_dump
+    # pylint: disable=unused-argument
+    def pre_process_details(self, data, **kwarg):
+        """process the schema before serializing.
+
+        Args:
+            data (dict): The CustomerProfile data source object
+            many (bool): If there are many to process
+        Returns:
+            Response: Returns a CustomerProfile data source object
+
+        """
+
+        # resolve datetime fields
+        # TODO HUS-360 - this should not be an issue when we pull from CDM.
+        for field in [
+            "last_click",
+            "last_purchase",
+            "last_email_open",
+            "since",
+            "conversion_time",
+        ]:
+            # convert the string to datetime as marshmallow is expecting a
+            # datetime obj.
+            if field in data and not isinstance(data[field], datetime):
+                data[field] = parser.parser(data[field])
+
+        return data
 
 
 class CustomerOverviewSchema(Schema):
