@@ -16,7 +16,9 @@ from huxunifylib.database import (
     user_management,
     orchestration_management,
     db_exceptions,
+    data_management,
 )
+import huxunifylib.database.constants as db_c
 
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
@@ -31,7 +33,6 @@ from huxunify.api.route.utils import (
     secured,
     get_user_id,
 )
-
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -474,3 +475,107 @@ class AudienceDeliverView(SwaggerView):
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    orchestration_bp, f"{api_c.AUDIENCE_ENDPOINT}/rules", "AudienceRules"
+)
+class AudienceRules(SwaggerView):
+    """
+    Audience rules class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {"description": "Get audience rules dictionary"},
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get all audience rules."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    def get(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
+        """Retrieves all audience rules.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int]: dict of audience rules, HTTP status.
+
+        """
+
+        rules_constants = data_management.get_constant(
+            get_db_client(), db_c.AUDIENCE_FILTER_CONSTANTS
+        )
+
+        # TODO HUS-356. Stubbed, this will come from CDM
+        # Min/ max values will come from cdm, we will build this dynamically
+        # list of genders will come from cdm
+        # locations will come from cdm
+        rules_from_cdm = {
+            "rule_attributes": {
+                "model_scores": {
+                    "propensity_to_unsubscribe": {
+                        "name": "Propensity to unsubscribe",
+                        "type": "range",
+                        "min": 0.0,
+                        "max": 1.0,
+                        "steps": 0.05,
+                    },
+                    "actual_lifetime_value": {
+                        "name": "Actual lifetime value",
+                        "type": "range",
+                        "min": 0,
+                        "max": 50000,
+                        "steps": 1000,
+                    },
+                    "propensity_to_purchase": {
+                        "name": "Propensity to purchase",
+                        "type": "range",
+                        "min": 0.0,
+                        "max": 1.0,
+                        "steps": 0.05,
+                    },
+                },
+                "general": {
+                    "age": {
+                        "name": "Age",
+                        "type": "range",
+                        "min": 0,
+                        "max": 100,
+                    },
+                    "email": {"name": "Email", "type": "text"},
+                    "gender": {
+                        "name": "Gender",
+                        "type": "text",  # text for 5.0, list for future
+                        "options": [],
+                    },
+                    "location": {
+                        "name": "Location",
+                        "country": {
+                            "name": "Country",
+                            "type": "text",  # text for 5.0, list for future
+                            "options": [],
+                        },
+                        "state": {
+                            "name": "State",
+                            "type": "text",  # text for 5.0, list for future
+                            "options": [],
+                        },
+                        "city": {
+                            "name": "City",
+                            "type": "text",  # text for 5.0, list for future
+                            "options": [],
+                        },
+                        "zip_code": {"name": "Zip code", "type": "text"},
+                    },
+                },
+            }
+        }
+
+        rules_constants = rules_constants["value"]
+        rules_constants.update(rules_from_cdm)
+
+        return rules_constants, HTTPStatus.OK.value

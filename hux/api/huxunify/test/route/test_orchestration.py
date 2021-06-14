@@ -1,28 +1,23 @@
 """
 Purpose of this file is to house all tests related to orchestration
 """
-
-import unittest
 from http import HTTPStatus
-from unittest import mock
-
+from unittest import TestCase, mock
+from bson import ObjectId
 import mongomock
 import requests_mock
 from requests_mock import Mocker
-from bson import ObjectId
 
-from huxunifylib.database import constants as db_c
-from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database import constants as db_c, data_management
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
-
+from huxunifylib.database.client import DatabaseClient
+from huxunify.app import create_app
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
-
-from huxunify.app import create_app
 
 
 BASE_URL = "/api/v1"
@@ -43,11 +38,10 @@ VALID_RESPONSE = {
 }
 
 
-class TestAudienceDeliveryOperations(unittest.TestCase):
-    """
-    Tests for Audience Delivery API
-    """
+class OrchestrationRouteTest(TestCase):
+    """Orchestration Route tests"""
 
+    # pylint: disable=too-many-instance-attributes
     def setUp(self) -> None:
         """
         Setup resources before each test
@@ -62,6 +56,9 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
             f"{self.config.OKTA_ISSUER}"
             f"/oauth2/v1/introspect?client_id="
             f"{self.config.OKTA_CLIENT_ID}"
+        )
+        self.audience_api_endpoint = "/api/v1{}".format(
+            api_c.AUDIENCE_ENDPOINT
         )
 
         self.app = create_app().test_client()
@@ -184,6 +181,13 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
             engagement_id = set_engagement(self.database, **engagement)
             self.engagement_ids.append(str(engagement_id))
 
+        # setup the flask test client
+        self.test_client = create_app().test_client()
+
+        self.introspect_call = "{}/oauth2/v1/introspect?client_id={}".format(
+            self.config.OKTA_ISSUER, self.config.OKTA_CLIENT_ID
+        )
+
     @requests_mock.Mocker()
     def test_deliver_audience_for_all_engagements_valid_audience_id(
         self, request_mocker: Mocker
@@ -191,12 +195,9 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
         """
         Test delivery of audience for all engagements
         with valid audience id
-
         Args:
             request_mocker (Mocker): Request mocker object.
-
         Returns:
-
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
@@ -276,3 +277,34 @@ class TestAudienceDeliveryOperations(unittest.TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    def test_get_audience_rules_success(self, request_mocker: Mocker):
+        """Test the get audience rules route
+        Args:
+            request_mocker (Mocker): Request mocker object.
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        data_management.set_constant(
+            self.database,
+            db_c.AUDIENCE_FILTER_CONSTANTS,
+            {
+                "text_operators": {
+                    "contains": "Contains",
+                    "does_not_contain": "Does not contain",
+                    "does_not_equal": "Does not equal",
+                    "equals": "Equals",
+                }
+            },
+        )
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/rules",
+            headers={"Authorization": TEST_AUTH_TOKEN},
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn("rule_attributes", response.json)
+        self.assertIn("text_operators", response.json)
