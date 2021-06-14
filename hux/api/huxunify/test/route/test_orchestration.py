@@ -99,5 +99,5 @@ class OrchestrationRouteTest(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue("rule_attributes" in response.json)
-        self.assertTrue("text_operators" in response.json)
+        self.assertIn("rule_attributes", response.json)
+        self.assertTrue("text_operators", response.json)

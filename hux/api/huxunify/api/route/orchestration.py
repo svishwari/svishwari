@@ -483,7 +483,7 @@ class AudienceDeliverView(SwaggerView):
 )
 class AudienceRules(SwaggerView):
     """
-    Audience view class
+    Audience rules class
     """
 
     responses = {
@@ -545,8 +545,7 @@ class AudienceRules(SwaggerView):
                         "name": "Age",
                         "type": "range",
                         "min": 0,
-                        "max": 100,
-                        "steps": 1,
+                        "max": 100
                     },
                     "email": {"name": "Email", "type": "text"},
                     "gender": {
