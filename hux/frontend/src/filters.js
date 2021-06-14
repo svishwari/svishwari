@@ -101,4 +101,24 @@ export default {
       .map((n) => n[0])
       .join("")
   },
+
+  /**
+   * Formats any input with decimal to percentage.
+   *
+   * @param {*} value The input eg. "0.893251"
+   * @returns output value eg. "90%"
+   */
+  percentageConvert (value, round = false, percentage = false, append = '') {
+    if (!value) return ''
+
+    if (percentage) {
+      value = value * 100
+      append = '%'
+    }
+
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: round && Number(value) ? 0 : 2
+    }) + append
+  }
 }

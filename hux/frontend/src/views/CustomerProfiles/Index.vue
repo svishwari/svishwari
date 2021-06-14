@@ -1,20 +1,20 @@
 <template>
   <div class="customer-dashboard-wrap">
     <PageHeader class="background-border">
-      <template slot="left">
+      <template #left>
         <Breadcrumb :items="items" />
       </template>
-      <template slot="right">
+      <template #right>
         <hux-button
           variant="white"
-          size="large"
           :isTile="true"
           :iconType="false"
+          icon="customer-profiles"
           @click="viewAllCustomer()"
-          >View all customers
-          <template #custom-icon>
-            <Icon type="customer-profiles" :size="24" color="neroBlack" />
-          </template>
+          isDisabled
+          isCustomIcon
+        >
+          View all customers
         </hux-button>
         <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
       </template>
@@ -33,16 +33,16 @@
       >
         <template v-if="i === 7" #subtitle-extended>
           <span class="font-weight-semi-bold"
-            >{{ item.date }} <span class="day-time-divider"></span>
+            >{{ item.date }} &bull;
             {{ item.time }}
           </span>
         </template>
-        <template v-if="i!==7" #extra-item>
-          <Tooltip :positionTop="true">
+        <template v-if="i !== 7" #extra-item>
+          <Tooltip positionTop>
             <template #label-content>
               <Icon type="info" :size="12" />
             </template>
-            <template class="newp" #hover-content>
+            <template #hover-content>
               {{ item.toolTipText }}
             </template>
           </Tooltip>
@@ -62,13 +62,14 @@
             :subtitle="item.subtitle"
             :icon="item.icon"
             :interactable="i === 0 ? true : false"
+            @click="i == 0 ? viewAllCustomer() : ''"
           >
             <template v-if="i == 0" #extra-item>
-              <Tooltip :positionTop="true">
+              <Tooltip positionTop>
                 <template #label-content>
                   <Icon type="info" :size="12" />
                 </template>
-                <template class="newp" #hover-content>
+                <template #hover-content>
                   {{ item.toolTipText }}
                 </template>
               </Tooltip>
@@ -90,7 +91,7 @@
 import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
-import Tooltip from "../../components/common/Tooltip.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
@@ -113,59 +114,73 @@ export default {
       overviewListItems: [
         {
           title: "No. of customers",
-          subtitle: "12M",
+          subtitle: "",
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
         },
-        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
-        { title: "US States", subtitle: "52", icon: "mdi-map" },
-        { title: "Cities", subtitle: "19k", icon: "mdi-map-marker-radius" },
-        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
-        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
-        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
-        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+        { title: "Countries", subtitle: "", icon: "mdi-earth" },
+        { title: "US States", subtitle: "", icon: "mdi-map" },
+        { title: "Cities", subtitle: "", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
       ],
       primaryItems: [
         {
           title: "Total no. of records",
-          subtitle: "12M",
+          subtitle: "",
           toolTipText: "Total no. of input records across all data feeds.",
         },
-        { title: "Match rate", subtitle: "60%", toolTipText: "Percentage of input records that are consolidated into Hux Ids." },
+        {
+          title: "Match rate",
+          subtitle: "",
+          toolTipText:
+            "Percentage of input records that are consolidated into Hux Ids.",
+        },
         {
           title: "Unique Hux IDs",
-          subtitle: "12M",
-          toolTipText: "Total Hux Ids that represent an anonymous or known customer.",
+          subtitle: "",
+          toolTipText:
+            "Total Hux Ids that represent an anonymous or known customer.",
         },
         {
           title: "Anonymous IDs",
-          subtitle: "20M",
-          toolTipText: "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
+          subtitle: "",
+          toolTipText:
+            "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
         },
-        { title: "Known IDs", subtitle: "20M", toolTipText: "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number." },
+        {
+          title: "Known IDs",
+          subtitle: "",
+          toolTipText:
+            "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number.",
+        },
         {
           title: "Individual IDs",
-          subtitle: "20M",
-          toolTipText: "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
+          subtitle: "",
+          toolTipText:
+            "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
         },
         {
           title: "Household IDs",
-          subtitle: "20M",
-          toolTipText: "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
+          subtitle: "",
+          toolTipText:
+            "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
         },
         {
           title: "Updated",
           subtitle: "",
           toolTipText: "Updated",
-          date: "Today",
-          time: "12:30PM",
+          date: "",
+          time: "",
         },
       ],
       items: [
         {
           text: "Customer Profiles",
           disabled: true,
-          href: "/audiences",
+          href: "/customers",
           icon: "customer-profiles",
         },
         {
@@ -191,20 +206,83 @@ export default {
       getOverview: "customers/getOverview",
     }),
     viewAllCustomer() {},
+    mapOverviewData() {
+      this.overviewListItems[0].subtitle = this.applyNumericFilter(
+        this.overview.total_customers
+      )
+      this.overviewListItems[1].subtitle = this.overview.total_countries
+      this.overviewListItems[2].subtitle = this.overview.total_us_states
+      this.overviewListItems[3].subtitle = this.overview.total_cities
+      this.overviewListItems[4].subtitle =
+        this.overview.min_age + "-" + this.overview.max_age
+
+      this.overviewListItems[5].subtitle = this.applyPercentageFilter(
+        this.overview.gender_men
+      )
+      this.overviewListItems[6].subtitle = this.applyPercentageFilter(
+        this.overview.gender_women
+      )
+      this.overviewListItems[7].subtitle = this.applyPercentageFilter(
+        this.overview.gender_other
+      )
+
+      this.primaryItems[0].subtitle = this.applyNumericFilter(
+        this.overview.total_records
+      )
+      this.primaryItems[1].subtitle = this.applyPercentageFilter(
+        this.overview.match_rate
+      )
+      this.primaryItems[2].subtitle = this.applyNumericFilter(
+        this.overview.total_unique_ids
+      )
+      this.primaryItems[3].subtitle = this.applyNumericFilter(
+        this.overview.total_unknown_ids
+      )
+      this.primaryItems[4].subtitle = this.applyNumericFilter(
+        this.overview.total_known_ids
+      )
+      this.primaryItems[5].subtitle = this.applyNumericFilter(
+        this.overview.total_individual_ids
+      )
+      this.primaryItems[6].subtitle = this.applyNumericFilter(
+        this.overview.total_household_ids
+      )
+      ;[this.primaryItems[7].date, this.primaryItems[7].time] =
+        this.dateTimeFormatter(this.overview.updated)
+    },
+    applyNumericFilter(value) {
+      return value
+        ? this.$options.filters.Numeric(value, true, false, true)
+        : ""
+    },
+    applyPercentageFilter(value) {
+      return value
+        ? this.$options.filters.percentageConvert(value, true, true)
+        : ""
+    },
+    dateTimeFormatter(value) {
+      if (value) {
+        let updatedTime = this.$options.filters
+          .Date(value, "calendar")
+          .split(" at ")
+
+        return [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
+      } else return ""
+    },
   },
 
   async mounted() {
     this.loading = true
-    
     await this.getOverview()
     await this.getCustomers()
+    this.mapOverviewData()
     this.loading = false
   },
 }
 </script>
 
 <style lang="scss" scoped>
-::v-deep.v-btn:not(.v-btn--round).v-size--large {
+::v-deep.v-btn:not(.v-btn--round).v-size--default {
   height: 28px;
   min-width: 178px;
   padding: 12px;
@@ -222,11 +300,6 @@ export default {
   margin-bottom: 24px !important;
   margin-left: -6px;
   margin-right: -6px;
-}
-
-.day-time-divider:before {
-  content: " \25CF";
-  font-size: 8px;
 }
 
 .ma-5 {
