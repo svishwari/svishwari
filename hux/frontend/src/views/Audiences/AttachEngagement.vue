@@ -116,7 +116,6 @@
                   placeholder="Give this engagement a name"
                   v-model="newEngagement.name"
                   height="40"
-                  class="engagement-text-field"
                   :rules="newEngagementRules"
                   required
                 />
@@ -124,14 +123,13 @@
                   labelText="Description"
                   placeholder="What is the purpose of this engagement?"
                   height="40"
-                  class="engagement-text-field"
                   v-model="newEngagement.description"
                 />
                 <div class="mb-2">
                   <span class="neroBlack--text text-caption">
                     Delivery schedule
                   </span>
-                  <v-menu max-width="184" open-on-hover offset-y>
+                  <v-menu max-width="240" open-on-hover offset-y>
                     <template #activator="{ on }">
                       <v-icon v-on="on" color="primary" :size="12" class="ml-1">
                         mdi-information-outline
@@ -139,25 +137,17 @@
                     </template>
                     <template #default>
                       <div class="px-4 py-2 white">
-                        <div
-                          class="neroBlack--text text-caption line-height-1-5"
-                        >
+                        <div class="neroBlack--text text-caption">
                           Manual delivery
                         </div>
-                        <div
-                          class="gray--text text-caption mt-1 line-height-1-5"
-                        >
+                        <div class="gray--text text-caption mt-1">
                           Choose this option if you want the engagement
                           delivered immediately or at a future date and time.
                         </div>
-                        <div
-                          class="neroBlack--text text-caption mt-3 line-height-1-5"
-                        >
+                        <div class="neroBlack--text text-caption mt-3">
                           Recurring delivery
                         </div>
-                        <div
-                          class="gray--text text-caption mt-1 line-height-1-5"
-                        >
+                        <div class="gray--text text-caption mt-1">
                           Choose this option if you want the engagement
                           delivered on a specific recurring basis you selected.
                         </div>
@@ -171,7 +161,7 @@
                     mandatory
                   >
                     <v-btn
-                      style="border-color: var(--v-primary-base) !important"
+                      class="active-delivery-option"
                       height="40"
                       width="175"
                     >
@@ -186,7 +176,7 @@
                     </v-btn>
                     <v-btn
                       disabled
-                      style="background: white !important"
+                      class="disabled-white-background"
                       height="40"
                       width="175"
                     >
@@ -445,26 +435,11 @@ export default {
         }
       }
     }
-  }
-  ::v-deep .engagement-text-field {
-    .v-input {
-      .v-input__control {
-        .v-input__slot {
-          min-height: 40px;
-          fieldset {
-            color: var(--v-lightGrey-base);
-          }
-        }
-      }
-      &.error--text {
-        .v-input__control {
-          .v-input__slot {
-            fieldset {
-              color: inherit;
-            }
-          }
-        }
-      }
+    .active-delivery-option.v-btn.v-item--active {
+      border-color: var(--v-primary-base) !important;
+    }
+    .disabled-white-background {
+      background: white !important;
     }
   }
 }

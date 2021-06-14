@@ -10,7 +10,7 @@
       <template #default="props">
         <!-- header -->
         <v-row align="center" no-gutters :class="{ 'pl-2': bordered }">
-          <v-col v-for="field in fields" :key="field.label">
+          <v-col v-for="field in fields" :key="field.label" :cols="field.col">
             <div class="px-4 py-2">
               <span class="text-caption">
                 {{ field.label }}
@@ -43,7 +43,7 @@
           class="data-card mb-2"
         >
           <v-row align="center" no-gutters>
-            <v-col v-for="field in fields" :key="field.key">
+            <v-col v-for="field in fields" :key="field.key" :cols="field.col">
               <div class="pa-4">
                 <!-- cell slot -->
                 <slot
@@ -123,6 +123,12 @@ export default {
     isSortedBy(key) {
       return Boolean(this.sortBy === key)
     },
+  },
+
+  mounted() {
+    // Sort the list in ascending order by default
+    this.setSortBy(this.fields[0].key)
+    this.setSortBy(this.fields[0].key)
   },
 }
 </script>

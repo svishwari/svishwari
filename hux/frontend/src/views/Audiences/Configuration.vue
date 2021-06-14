@@ -46,9 +46,9 @@
                   backgroundColor="white"
                   required
                   v-model="audience.audienceName"
-                  class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
+                  class="mt-1 text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"
-                ></TextField>
+                />
               </v-col>
               <v-col cols="8">
                 <div class="mt-8 ml-15 text-caption neroBlack--text">
@@ -560,32 +560,6 @@ export default {
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 12px 0px, 1px 12px;
-    }
-    .aud-name-field {
-      .v-input {
-        .v-input__control {
-          .v-input__slot {
-            min-height: 40px;
-            .v-text-field__slot {
-              .v-label {
-                top: 9px;
-              }
-            }
-            fieldset {
-              color: var(--v-lightGrey-base);
-            }
-          }
-        }
-        &.error--text {
-          .v-input__control {
-            .v-input__slot {
-              fieldset {
-                color: inherit;
-              }
-            }
-          }
-        }
-      }
     }
     .theme--light.v-timeline-item {
       .v-timeline-item__divider {

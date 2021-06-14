@@ -184,6 +184,7 @@
       v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
+      @onBack="openSelectAudiencesDrawer()"
     />
   </v-form>
 </template>

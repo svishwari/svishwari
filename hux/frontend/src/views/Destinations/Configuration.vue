@@ -50,8 +50,7 @@
               @blur="resetValidation"
               height="40"
               icon="mdi-alert-circle-outline"
-              class="destination-name-field"
-            ></TextField>
+            />
           </v-col>
         </v-row>
       </div>
@@ -291,31 +290,5 @@ export default {
 <style lang="scss" scoped>
 .destination-auth-wrap {
   border: 1px solid var(--v-zircon-base) !important;
-  ::v-deep .destination-name-field {
-    .v-input {
-      .v-input__control {
-        .v-input__slot {
-          min-height: 40px;
-          .v-text-field__slot {
-            .v-label {
-              top: 9px;
-            }
-          }
-          fieldset {
-            color: var(--v-lightGrey-base);
-          }
-        }
-      }
-      &.error--text {
-        .v-input__control {
-          .v-input__slot {
-            fieldset {
-              color: inherit;
-            }
-          }
-        }
-      }
-    }
-  }
 }
 </style>

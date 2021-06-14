@@ -3,9 +3,9 @@
     class="add-audience-drawer-wrapper"
     v-model="localToggle"
     :width="drawerWidth"
-    :disable-transition="isOpening"
     :loading="loading"
     expandable
+    @onClose="closeDrawer()"
     @iconToggle="changeOverviewListItems"
   >
     <template #header-left>
@@ -48,7 +48,7 @@
     </template>
 
     <template #footer-left>
-      <v-btn tile color="white" @click="closeDrawer()">
+      <v-btn tile color="white" @click="onCancelAndBack()">
         <span class="primary--text">Cancel &amp; back</span>
       </v-btn>
       <v-btn
@@ -132,12 +132,6 @@ export default {
     },
   },
 
-  computed: {
-    isOpening() {
-      return this.localToggle
-    },
-  },
-
   methods: {
     ...mapActions({
       addAudience: "audiences/add",
@@ -148,6 +142,11 @@ export default {
       this.reset()
     },
 
+    onCancelAndBack() {
+      this.$emit("onBack")
+      this.reset()
+    },
+
     changeOverviewListItems(expanded) {
       this.expanded = expanded
     },
@@ -155,6 +154,7 @@ export default {
     reset() {
       this.$refs.newAudienceRef.reset()
       this.attributeRules = []
+      this.expanded = false
     },
 
     async add() {

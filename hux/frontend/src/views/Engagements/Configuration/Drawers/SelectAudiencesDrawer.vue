@@ -18,6 +18,7 @@
               key: 'name',
               label: 'Name',
               sortable: true,
+              col: '6',
             },
             {
               key: 'size',

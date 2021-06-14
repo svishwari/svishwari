@@ -122,7 +122,7 @@ const NEW_CONDITION = {
   attribute: "",
   operator: "",
   text: "",
-  outputSummary: "-",
+  outputSummary: "0",
 }
 
 export default {
