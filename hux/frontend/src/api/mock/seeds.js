@@ -245,11 +245,11 @@ export default function (server) {
   server.create("dataSource", twilioDS)
 
   // seed destinations
-  const facebookSeed = server.create("destination", facebook)
-  const salesforceSeed = server.create("destination", salesforce)
   server.create("destination", twilio)
   server.create("destination", google)
   server.create("destination", tableau)
+  const facebookSeed = server.create("destination", facebook)
+  const salesforceSeed = server.create("destination", salesforce)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
 
@@ -265,6 +265,9 @@ export default function (server) {
   // seed engagements
   server.createList("engagement", 5)
   server.create("engagement", defaultEngagement)
+
+  // seed Engagement Audience Performance
+  server.createList("audiencePerformance", 10)
 
   // seed models
   server.create("model", unsubscribeModel)

@@ -88,7 +88,7 @@
               {{ getSize(item.size) }}
             </template>
             <template slot="hover-content">
-              {{ item.size | FormatSize }}
+              {{ item.size | Numeric(true, false) }}
             </template>
           </tooltip>
         </v-list-item-content>

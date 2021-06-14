@@ -7,7 +7,7 @@ const namespaced = true
 const state = {
   items: {},
 
-  constants: null,
+  constants: {},
 }
 
 const getters = {
