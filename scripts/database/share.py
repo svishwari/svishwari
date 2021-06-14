@@ -21,27 +21,18 @@ def get_mongo_client() -> MongoClient:
     password = os.environ.get("MONGO_DB_PASSWORD")
     use_ssl = host not in ["localhost", None]
 
-    # Set up the database client
+    mongo_config = dict(
+        host=host,
+        port=port,
+        w=1,
+        username=user_name,
+        password=password,
+        ssl=use_ssl
+    )
+
     if use_ssl:
         # grab the SSL cert path
         ssl_cert_path = str(Path(__file__).parent.joinpath("rds-combined-ca-bundle.pem"))
-        db_client = MongoClient(
-            host,
-            port,
-            w=1,
-            username=user_name,
-            password=password,
-            ssl=True,
-            ssl_ca_certs=ssl_cert_path,
-        )
-    else:
-        db_client = MongoClient(
-            host,
-            port,
-            w=1,
-            username=user_name,
-            password=password,
-            ssl=use_ssl,
-        )
+        mongo_config["ssl_ca_certs"] = ssl_cert_path
 
-    return db_client
+    return MongoClient(**mongo_config)
