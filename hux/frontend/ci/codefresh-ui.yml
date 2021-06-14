@@ -57,7 +57,6 @@ steps:
     working_directory: "${{CF_REPO_NAME}}"
     commands: 
       - cat ./${{SUB_REPO}}/ci/$TRIGGER_NAME.var >> ${{CF_VOLUME_PATH}}/env_vars_to_export
-      - cat ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   DockerBuild:
     title: "Building Docker image"
