@@ -3,7 +3,7 @@
     <v-list-item three-line>
       <v-list-item-content>
         <div class="mb-4">
-          <Tooltip :positionTop="true">
+          <Tooltip positionTop>
             <template #label-content>
               Individual Identity
               <Icon type="info" :size="12" />
@@ -127,7 +127,7 @@ export default {
 }
 </script>
 
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .legend-section {
   span {
     margin-left: 8px;
