@@ -15,16 +15,15 @@ def get_mongo_client() -> MongoClient:
         MongoClient: A connected mongo client, pulling settings from the environment
     """
     # Get details on MongoDB configuration.
-    env = dict(os.environ)
-    host = env.get("MONGO_DB_HOST")
-    port = int(env["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
-    user_name = env.get("MONGO_DB_USERNAME")
-    password = env.get("MONGO_DB_PASSWORD")
-    # grab the SSL cert path
+    host = os.environ.get("MONGO_DB_HOST")
+    port = int(os.environ["MONGO_DB_PORT"]) if "MONGO_DB_PORT" in os.environ else None
+    user_name = os.environ.get("MONGO_DB_USERNAME")
+    password = os.environ.get("MONGO_DB_PASSWORD")
     use_ssl = host not in ["localhost", None]
 
     # Set up the database client
     if use_ssl:
+        # grab the SSL cert path
         ssl_cert_path = str(Path(__file__).parent.joinpath("rds-combined-ca-bundle.pem"))
         db_client = MongoClient(
             host,

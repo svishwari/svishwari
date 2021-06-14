@@ -34,7 +34,7 @@ The API is UI-driven.
       * [Testing](#testing)
    * [Database](#database)
       * [Connection to the database](#connection-to-the-database)
-      * [Local database Setup](#connection-to-local-mongodb)
+      * [Local MongoDB Setup](#local-mongodb-setup)
       * [How to implement a new endpoint](#how-to-implement-a-new-endpoint)
 
 
@@ -263,20 +263,20 @@ There are two primary ways for connecting to the database
 2. Using a GUI such as MongoDB Compass [here](https://www.mongodb.com/products/compass)
 
 
-### Local Database Installation
+### Local MongoDB Setup
 To install MongoDB on local machine follow the instructions [here](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/#install-mongodb-community-edition)
 
 Steps to pre-populate use local MongoDB
 
-1. Follow the steps in `../../hux-unified/scripts/database/README.md` to build huxunifylib-database package
-2. Ensure to set the MONGO env variables in `../../hux-unified/scripts/database/README.md` before you execute any of the scripts using the following commands in Command Prompt(cmd)
-   - `set MONGO_DB_HOST=localhost`
-   - `set MONGO_DB_PORT=27017`
-   - `set MONGO_DB_USERNAME=''`
-   - `set MONGO_DB_PASSWORD=''`
-   - `set MONGO_DB_USE_SSL=False`
+1. Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to build huxunifylib-database package
+2. Ensure to set the MONGO env variables in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) before you execute any of the scripts using the following commands in Command Prompt(cmd)
+   - `MONGO_DB_HOST=localhost`
+   - `MONGO_DB_PORT=27017`
+   - `MONGO_DB_USERNAME=''`
+   - `MONGO_DB_PASSWORD=''`
+   - `MONGO_DB_USE_SSL=False`
    
-3. Follow the steps in `../../hux-unified/scripts/database/README.md` to populate the data in your local database
+3. Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to populate the data in your local database
 
 To use local database for development, set the following in `../../hux/api/settings.ini`.
    - `MONGO_DB_HOST=localhost`
