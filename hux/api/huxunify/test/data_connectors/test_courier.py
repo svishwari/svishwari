@@ -25,6 +25,7 @@ from huxunifylib.util.general.const import (
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_destination_config,
@@ -145,21 +146,25 @@ class CourierTest(TestCase):
         """
 
         # setup destination object with synthetic credentials.
+        sample_auth = "sample_auth"
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
             api_c.DESTINATION_NAME: "Facebook",
             api_c.DESTINATION_TYPE: "Facebook",
             api_c.AUTHENTICATION_DETAILS: {
-                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
-                api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
-                api_c.FACEBOOK_APP_ID: "2951925002021888",
-                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
+                api_c.FACEBOOK_ACCESS_TOKEN: sample_auth,
+                api_c.FACEBOOK_APP_SECRET: sample_auth,
+                api_c.FACEBOOK_APP_ID: sample_auth,
+                api_c.FACEBOOK_AD_ACCOUNT_ID: sample_auth,
             },
         }
 
-        env_dict, secret_dict = map_destination_credentials_to_dict(
-            destination
-        )
+        with mock.patch.object(
+            parameter_store,
+            "get_store_value",
+            return_value="sample_auth",
+        ):
+            env_dict, _ = map_destination_credentials_to_dict(destination)
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
@@ -172,17 +177,11 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
-            },
-        )
-
-        self.assertDictEqual(
-            secret_dict,
-            {
-                FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
-                    api_c.FACEBOOK_APP_SECRET
-                ],
-                FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
+                FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
                     api_c.FACEBOOK_ACCESS_TOKEN
+                ],
+                FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
+                    api_c.FACEBOOK_APP_SECRET
                 ],
             },
         )
@@ -241,7 +240,14 @@ class CourierTest(TestCase):
         self.assertTrue(delivery_route)
 
         for pair in delivery_route:
-            batch_destination = get_destination_config(self.database, *pair)
+            with mock.patch.object(
+                parameter_store,
+                "get_store_value",
+                return_value="demo_store_value",
+            ):
+                batch_destination = get_destination_config(
+                    self.database, *pair
+                )
             self.assertIsNotNone(batch_destination.aws_envs)
             self.assertIsNotNone(batch_destination.aws_secrets)
             self.assertIsNotNone(batch_destination.audience_delivery_job_id)
@@ -268,7 +274,14 @@ class CourierTest(TestCase):
 
         # walk the delivery route
         for pair in delivery_route:
-            batch_destination = get_destination_config(self.database, *pair)
+            with mock.patch.object(
+                parameter_store,
+                "get_store_value",
+                return_value="demo_store_value",
+            ):
+                batch_destination = get_destination_config(
+                    self.database, *pair
+                )
             batch_destination.aws_envs[
                 AudienceRouterConfig.BATCH_SIZE.name
             ] = 1000
@@ -303,7 +316,14 @@ class CourierTest(TestCase):
 
         # walk the delivery route
         for pair in delivery_route:
-            batch_destination = get_destination_config(self.database, *pair)
+            with mock.patch.object(
+                parameter_store,
+                "get_store_value",
+                return_value="demo_store_value",
+            ):
+                batch_destination = get_destination_config(
+                    self.database, *pair
+                )
 
             # Register job
             return_value = {
