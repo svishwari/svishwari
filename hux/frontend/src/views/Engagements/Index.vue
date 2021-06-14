@@ -115,7 +115,9 @@
                 <div v-if="header.value == 'name'">
                   <tooltip>
                     <template slot="label-content">
-                      <span class="primary--text"> {{ item[header.value] }} </span>
+                      <span class="primary--text">
+                        {{ item[header.value] }}
+                      </span>
                     </template>
                     <template slot="hover-content">
                       {{ item[header.value] }}
@@ -179,8 +181,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-
 import rowData from "./data.json"
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
@@ -190,7 +190,6 @@ import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 export default {
@@ -204,7 +203,6 @@ export default {
     Avatar,
     Size,
     TimeStamp,
-    MenuCell,
     Status,
     Tooltip,
   },
@@ -244,7 +242,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions({}),
     getName(item) {
       return item.first_name + " " + item.last_name
     },
