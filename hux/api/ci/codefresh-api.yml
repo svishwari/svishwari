@@ -76,14 +76,14 @@ steps:
     commands: 
       - cat ./${{SUB_REPO}}/ci/$TRIGGER_NAME.var >> ${{CF_VOLUME_PATH}}/env_vars_to_export
       - cat ${{CF_VOLUME_PATH}}/env_vars_to_export
-  
+
   build_image:
     stage: "docker"
     title: "Building Docker Image for Unified API"
     type: "build"
     image_name: '${{BUILD_NAME}}'
-    working_directory: '${{CF_REPO_NAME}}/${{SUB_REPO}}'
-    dockerfile: 'Dockerfile'
+    working_directory: '${{CF_REPO_NAME}}'
+    dockerfile: '${{SUB_REPO}}/Dockerfile'
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
