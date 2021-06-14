@@ -11,13 +11,7 @@
     :icon="iconType"
     @click="onClick"
   >
-    <Icon
-      v-if="isCustomIcon"
-      :style="{ marginRight: '6px' }"
-      :type="icon"
-      :size="24"
-      color="neroBlack"
-    />
+    <Icon v-if="isCustomIcon" class="mr-2" :type="icon" :size="24" />
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
     </v-icon>
