@@ -27,6 +27,7 @@ export default {
   appBodyGrey: "#f8f9fa",
   smoke: "#ECECEC",
   matterhorn: "#4F4F4F",
+  cerulean: "#006699",
   gradientSliderColors: [
     "#ec5b54",
     "#f76d48",

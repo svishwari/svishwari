@@ -6,13 +6,13 @@
       </template>
       <template #right>
         <hux-button
-          variant="white"
-          :isTile="true"
-          :iconType="false"
-          icon="customer-profiles"
-          @click="viewAllCustomer()"
+          class="mr-4 pa-3"
           isDisabled
           isCustomIcon
+          isTile
+          icon="customer-profiles"
+          variant="white"
+          @click="viewAllCustomer()"
         >
           View all customers
         </hux-button>
@@ -20,24 +20,23 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="row px-15 my-2" v-if="primaryItems">
+    <div class="row px-15 mt-6 mb-6 row-margin" v-if="primaryItems">
       <MetricCard
-        v-for="(item, i) in primaryItems"
-        class="ma-5"
-        :key="i"
-        :grow="i !== 7 ? 1 : 0"
-        :title="item.title"
-        :subtitle="i !== 7 ? item.subtitle : ''"
+        v-for="item in primaryItems"
+        class="card-margin"
+        :grow="item.toolTipText ? 1 : 0"
         :icon="item.icon"
-        :interactable="false"
+        :key="item.title"
+        :subtitle="item.toolTipText ? item.subtitle : ''"
+        :title="item.title"
       >
-        <template v-if="i === 7" #subtitle-extended>
+        <template v-if="!item.toolTipText" #subtitle-extended>
           <span class="font-weight-semi-bold"
             >{{ item.date }} &bull;
             {{ item.time }}
           </span>
         </template>
-        <template v-if="i !== 7" #extra-item>
+        <template v-if="item.toolTipText" #extra-item>
           <Tooltip positionTop>
             <template #label-content>
               <Icon type="info" :size="12" />
@@ -54,17 +53,17 @@
         <div class="overview">Customer overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard
-            v-for="(item, i) in overviewListItems"
+            v-for="item in overviewListItems"
             class="mr-3"
-            :key="i"
-            :grow="i === 0 ? 2 : 1"
+            :key="item.title"
+            :grow="item.toolTipText ? 2 : 1"
             :title="item.title"
             :subtitle="item.subtitle"
             :icon="item.icon"
-            :interactable="i === 0 ? true : false"
-            @click="i == 0 ? viewAllCustomer() : ''"
+            :interactable="item.toolTipText ? true : false"
+            @click="item.toolTipText ? viewAllCustomer() : ''"
           >
-            <template v-if="i == 0" #extra-item>
+            <template v-if="item.toolTipText" #extra-item>
               <Tooltip positionTop>
                 <template #label-content>
                   <Icon type="info" :size="12" />
@@ -171,7 +170,6 @@ export default {
         {
           title: "Updated",
           subtitle: "",
-          toolTipText: "Updated",
           date: "",
           time: "",
         },
@@ -284,27 +282,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep.v-btn:not(.v-btn--round).v-size--default {
-  height: 28px;
-  min-width: 178px;
-  padding: 12px;
-}
-
 ::v-deep .v-btn {
-  margin-right: 14px;
+  &:not(.v-btn--round).v-size--default {
+    height: 28px;
+    min-width: 178px;
+  }
   .v-btn__content {
-    color: rgba(0, 85, 135, 1);
+    color: var(--v-cerulean-base) !important;
   }
 }
 
-.my-2 {
-  margin-top: 24px !important;
-  margin-bottom: 24px !important;
+.row-margin {
   margin-left: -6px;
   margin-right: -6px;
 }
 
-.ma-5 {
+.card-margin {
   margin: 6px !important;
 }
 

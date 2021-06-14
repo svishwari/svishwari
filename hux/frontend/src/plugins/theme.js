@@ -29,4 +29,5 @@ export default {
   appBodyGrey: colors.appBodyGrey,
   smoke: colors.smoke,
   matterhorn: colors.matterhorn,
+  cerulean: colors.cerulean,
 }
