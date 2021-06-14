@@ -6,13 +6,18 @@ const namespaced = true
 
 const state = {
   items: {},
-  constants: null,
+
+  constants: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
+
+  single: (state) => (id) => state.items[id],
+
   enabledDestination: (state) =>
     Object.values(state.items).filter((item) => item.is_enabled),
+
   constants: (state) => state.constants,
 }
 
