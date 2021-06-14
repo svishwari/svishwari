@@ -15,10 +15,10 @@ from marshmallow import ValidationError
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
-from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
-from huxunify.api.data_connectors.aws import parameter_store
+from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.connectors.connector_sfmc import SFMCConnector
+from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPutSchema,
@@ -399,7 +399,7 @@ class DestinationValidatePostView(SwaggerView):
             ):
                 destination_connector = SFMCConnector(
                     auth_details={
-                        SFMCCredentials.SFMC_ACCOUNT_ID.name.name: body.get(
+                        SFMCCredentials.SFMC_ACCOUNT_ID.name: body.get(
                             api_c.AUTHENTICATION_DETAILS
                         ).get(api_c.SFMC_ACCOUNT_ID),
                         SFMCCredentials.SFMC_AUTH_URL.name: body.get(
@@ -488,6 +488,9 @@ class DestinationDataExtView(SwaggerView):
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            destination_id (str): Destination ID.
+
         Returns:
             Tuple[dict, int]: List of data extensions, HTTP Status.
 
@@ -517,7 +520,9 @@ class DestinationDataExtView(SwaggerView):
                 ext_list = connector.get_list_of_data_extensions()
 
             return (
-                jsonify(DestinationDataExtGetSchema.dump(ext_list, many=True)),
+                jsonify(
+                    DestinationDataExtGetSchema().dump(ext_list, many=True)
+                ),
                 HTTPStatus.OK,
             )
 
@@ -589,6 +594,9 @@ class DestinationDataExtPostView(SwaggerView):
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            destination_id (str): Destination ID.
+
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP Status.
 
@@ -621,9 +629,9 @@ class DestinationDataExtPostView(SwaggerView):
                 connector = SFMCConnector(
                     destination[api_c.AUTHENTICATION_DETAILS]
                 )
-                data_extension_id = connector.create_data_extension(
-                    body.get(api_c.DATA_EXTENSION)
-                )
+                data_extension_id = api_c.DATA_EXTENSION
+                # TODO : Assin data extension id once sfmc method is updated
+                connector.create_data_extension(body.get(api_c.DATA_EXTENSION))
                 return data_extension_id, HTTPStatus.OK
 
             return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

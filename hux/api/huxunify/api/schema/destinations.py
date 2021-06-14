@@ -208,4 +208,4 @@ class DestinationDataExtGetSchema(Schema):
     Destination data ext get schema class
     """
 
-    data_extensions = fields.List(fields.String())
+    data_extensions = fields.String()
