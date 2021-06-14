@@ -205,8 +205,10 @@ class OrchestrationRouteTest(TestCase):
         """
         Test delivery of audience for all engagements
         with valid audience id
+
         Args:
             request_mocker (Mocker): Request mocker object.
+            *_ (None): Omit all extra keyword args the mock patches send.
 
         Returns:
 
