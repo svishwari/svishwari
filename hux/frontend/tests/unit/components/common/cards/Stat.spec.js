@@ -1,4 +1,4 @@
-import Stat from "@/components/common/cards/Stat"
+import Stat from "@/components/common/Cards/Stat"
 import { mount } from "@vue/test-utils"
 
 describe("Cards", () => {
