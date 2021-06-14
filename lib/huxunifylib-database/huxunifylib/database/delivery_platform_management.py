@@ -1706,6 +1706,45 @@ def get_performance_metrics(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_performance_metrics_by_engagement_id(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+) -> list:
+    """Retrieve campaign performance metrics using engagement id.
+
+    Args:
+        database (DatabaseClient): database client.
+        engagement_id (ObjectId): Engagement ID.
+
+    Raises:
+        de.InvalidID: Invalid ID for engagement.
+
+    Returns:
+        list: list of metrics.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    try:
+        cursor = collection.find(
+            {
+                c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: {
+                    c.ENGAGEMENT_ID: engagement_id
+                }
+            }
+        )
+        return list(cursor)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def _set_performance_metrics_status(
     database: DatabaseClient,
     performance_metrics_id: ObjectId,

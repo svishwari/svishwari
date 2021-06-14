@@ -892,6 +892,39 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_performance_metrics_by_engagement(self):
+        """Performance metrics are set and retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+
+        doc = dpm.set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Facebook",
+            delivery_job_id=delivery_job_id,
+            metrics_dict={"Clicks": 10000, "Conversions": 50},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=[{"engagement_id": "engagement_id_1"}],
+        )
+        self.assertTrue(doc is not None)
+
+        metrics_list = dpm.get_performance_metrics_by_engagement_id(
+            self.database, "engagement_id_1"
+        )
+
+        self.assertTrue(metrics_list is not None)
+        self.assertEqual(len(metrics_list), 1)
+
+        metrics_list = dpm.get_performance_metrics_by_engagement_id(
+            self.database, "engagement_id_2"
+        )
+
+        self.assertEqual(len(metrics_list), 0)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_performance_metrics_status(self):
         """Performance metrics status is set properly."""
 
