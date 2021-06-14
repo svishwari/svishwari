@@ -255,6 +255,9 @@ export default function (server) {
   server.createList("engagement", 5)
   server.create("engagement", defaultEngagement)
 
+  // seed Engagement Audience Performance
+  server.createList("audiencePerformance", 10)
+
   // seed models
   server.create("model", unsubscribeModel)
 

@@ -121,6 +121,21 @@ export const defineRoutes = (server) => {
     const body = { message: "Successfully created delivery jobs" }
     return new Response(code, headers, body)
   })
+  // Audience Performances
+  server.get(
+    "/engagements/:id/audience-performance/email",
+    (schema, request) => {
+      const id = request.params.id
+      return schema.audiencePerformances.find(id)
+    }
+  )
+  server.get(
+    "/engagements/:id/audience-performance/display-ads",
+    (schema, request) => {
+      const id = request.params.id
+      return schema.audiencePerformances.find(id)
+    }
+  )
 
   // models
   server.get("/models")
