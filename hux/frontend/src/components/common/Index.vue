@@ -894,12 +894,13 @@ export default {
         [8010, 16145, 8090, 8045, 8377],
       ],
       colorCodes: ["#43b02a", "#efa34c", "#005587", "#00a3e0", "#da291c"],
-      chartLegendsData: [{ prop: "Name", icon: "name" },
+      chartLegendsData: [
+        { prop: "Name", icon: "name" },
         { prop: "Address", icon: "address" },
         { prop: "Email", icon: "email" },
         { prop: "Phone", icon: "phone" },
-        { prop: "Cookie", icon: "cookie" }],
-
+        { prop: "Cookie", icon: "cookie" },
+      ],
     }
   },
   mounted() {},
