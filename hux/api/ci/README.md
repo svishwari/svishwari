@@ -6,9 +6,5 @@
 
 - For each trigger in codefresh-pipeline, respective `.var` file needs to be maintained.
 
-- Note: While creating `.var` files, make sure to add an empty line in the end of the file. If not added, codefresh will add an extra character in the end of the file which will lead to wrong varaible value.
-    E.g. 
-        ```
-        JFROG_REGISTRY=unified-docker-dev-local
+- **Note**: While creating `.var` files, make sure to add an empty line in the end of the file. If not added, codefresh will add an extra character in the end of the file which will lead to wrong varaible value.
 
-        ```
