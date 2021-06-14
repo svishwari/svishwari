@@ -1,10 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Drawer Drawer calls function on close 1`] = `
-<nav class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--floating v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light" style="height: 100vh; top: 0px; transform: translateX(0%); width: 600px;">
+<nav class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--floating v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light" style="height: 100vh; top: 0px; transform: translateX(0%); width: 600px; transition-duration: 0.5s;">
   <div class="v-navigation-drawer__content">
-    <header class="d-flex justify-space-between align-center px-6 py-5 v-sheet theme--light elevation-5 rounded-0 v-toolbar v-toolbar--absolute white" style="height: 70px; width: 100%;" padless="">
-      <div class="v-toolbar__content" style="height: 70px;"></div>
+    <header class="v-sheet theme--light v-toolbar" style="width: 100%; height: 64px;">
+      <div class="v-toolbar__content" style="height: 64px;">
+        <div class="v-toolbar__title px-6"> </div>
+        <!---->
+      </div>
     </header>
     <div class="drawer-content"></div>
     <footer class="v-footer d-flex justify-space-between align-center px-6 py-5 v-sheet theme--light elevation-5 v-footer--absolute v-footer--padless white" style="left: 0px; right: 0px; bottom: 0px;"></footer>

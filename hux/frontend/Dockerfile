@@ -16,6 +16,7 @@ RUN npm install
 RUN npm install @vue/cli@4.5.6 -g
 COPY . /app
 COPY --from=base /tmp/env_file .env
+RUN npm run test:unit
 RUN npm run build
 
 # production environment
