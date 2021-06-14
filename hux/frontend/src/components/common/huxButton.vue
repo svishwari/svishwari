@@ -11,7 +11,13 @@
     :icon="iconType"
     @click="onClick"
   >
-    <slot name="custom-icon"></slot>
+    <Icon
+      v-if="isCustomIcon"
+      :style="{ marginRight: '6px' }"
+      :type="icon"
+      :size="24"
+      color="neroBlack"
+    />
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
     </v-icon>
@@ -28,8 +34,12 @@
 </template>
 
 <script>
+import Icon from "@/components/common/Icon"
 export default {
   name: "HuxButton",
+  components: {
+    Icon,
+  },
   data() {
     return {
       loader: null,
@@ -98,6 +108,11 @@ export default {
       type: Boolean,
       required: false,
       default: null,
+    },
+    isCustomIcon: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {

@@ -42,14 +42,14 @@ def get_docs_bulk(
     collection = am_db[collection_name]
     ret_list = None
 
-    proj_dict = {c.ENABLED: 0}
+    proj_dict = {c.DELETED: 0}
 
     if ids_only:
         proj_dict[c.ID] = 1
 
     try:
         cursor = collection.find(
-            {field_name: {"$in": mongo_ids}, c.ENABLED: True},
+            {field_name: {"$in": mongo_ids}, c.DELETED: False},
             projection=proj_dict,
         )
     except pymongo.errors.OperationFailure as exc:
@@ -83,7 +83,7 @@ def delete_lookalike_audience(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
 
-    update_doc = {c.ENABLED: False}
+    update_doc = {c.DELETED: True}
 
     try:
         if collection.find_one_and_update(
@@ -269,7 +269,7 @@ def delete_delivery_job(
         database,
         delivery_job_id,
     ):
-        update_doc = {c.ENABLED: False}
+        update_doc = {c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
@@ -310,7 +310,7 @@ def delete_delivery_platform(
         database,
         delivery_platform_id,
     ):
-        update_doc = {c.ENABLED: False}
+        update_doc = {c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
@@ -348,7 +348,7 @@ def delete_audience(
     collection = am_db[c.AUDIENCES_COLLECTION]
 
     if delete_audience_delivery_jobs(database, audience_id):
-        update_dict = {c.ENABLED: False}
+        update_dict = {c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
@@ -387,7 +387,7 @@ def delete_ingestion_job(
     collection = dm_db[c.INGESTION_JOBS_COLLECTION]
 
     if delete_ingestion_job_audiences(database, ingestion_job_id):
-        update_doc = {c.ENABLED: False}
+        update_doc = {c.DELETED: True}
 
         try:
             if collection.find_one_and_update(
@@ -426,10 +426,7 @@ def delete_bulk(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[collection_name]
 
-    if collection_name == c.DELIVERY_PLATFORM_COLLECTION:
-        update_doc = {c.DELETED: True}
-    else:
-        update_doc = {c.ENABLED: False}
+    update_doc = {c.DELETED: True}
 
     try:
         if collection.update_many(
