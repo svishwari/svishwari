@@ -413,6 +413,19 @@ CONSTANTS_LIST = [
             }
         },
     ),
+    (
+        c.AUDIENCE_FILTER_CONSTANTS,
+        {
+            "operators": {
+                "text_operators": {
+                    "contains": "Contains",
+                    "does_not_contain": "Does not contain",
+                    "equals": "Equals",
+                    "does_not_equal": "Does not equal",
+                }
+            }
+        },
+    ),
 ]
 
 # Loop through the list and set constants

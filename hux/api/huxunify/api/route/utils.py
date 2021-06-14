@@ -184,6 +184,10 @@ def secured() -> object:
                object: returns a decorated function object.
             """
 
+            # override if flag set locally
+            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
+                return in_function(*args, **kwargs)
+
             # allow preflight options through
             if request.method == "OPTIONS":
                 return "Success", 200

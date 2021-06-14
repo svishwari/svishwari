@@ -275,7 +275,7 @@ class DestinationsConstants(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "schema": DestinationConstantsSchema,
-            "description": "Retrieved destination constants.",
+            "description": "Retrieve destination constants.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve the destination constants.",

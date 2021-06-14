@@ -8,8 +8,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request
-from flask_apispec import marshal_with
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
@@ -75,7 +74,6 @@ class EngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
@@ -91,7 +89,14 @@ class EngagementSearch(SwaggerView):
         """
 
         try:
-            return get_engagements(get_db_client()), HTTPStatus.OK.value
+            return (
+                jsonify(
+                    EngagementGetSchema().dump(
+                        get_engagements(get_db_client()), many=True
+                    )
+                ),
+                HTTPStatus.OK.value,
+            )
 
         except Exception as exc:
 
@@ -140,7 +145,6 @@ class IndividualEngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema)
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
@@ -160,11 +164,16 @@ class IndividualEngagementSearch(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         try:
+            eng = get_engagement(
+                get_db_client(), engagement_id=ObjectId(engagement_id)
+            )
+
+            if not eng:
+                return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
+
             return (
-                get_engagement(
-                    get_db_client(), engagement_id=ObjectId(engagement_id)
-                ),
-                HTTPStatus.OK.value,
+                EngagementGetSchema().dump(eng),
+                HTTPStatus.OK,
             )
 
         except Exception as exc:
@@ -201,8 +210,8 @@ class SetEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        db_c.DESTINATIONS: [
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e5",
                                 "contact_list": "sfmc_extension_name",
@@ -308,6 +317,14 @@ class UpdateEngagement(SwaggerView):
 
     parameters = [
         {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
@@ -317,16 +334,19 @@ class UpdateEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ],
-                db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
             },
-        }
+        },
     ]
 
     responses = {
@@ -513,10 +533,14 @@ class AddAudienceEngagement(SwaggerView):
             "example": {
                 api_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ]
@@ -566,7 +590,10 @@ class AddAudienceEngagement(SwaggerView):
 
         try:
             append_audiences_to_engagement(
-                get_db_client(), engagement_id, user_id, body[api_c.AUDIENCES]
+                get_db_client(),
+                ObjectId(engagement_id),
+                user_id,
+                body[api_c.AUDIENCES],
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:
@@ -650,19 +677,24 @@ class DeleteAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        audience_ids = []
         try:
             body = AudienceEngagementDeleteSchema().load(
                 request.get_json(), partial=True
             )
+            for audience_id in body[api_c.AUDIENCE_IDS]:
+                if not ObjectId.is_valid(audience_id):
+                    return HTTPStatus.BAD_REQUEST
+                audience_ids.append(ObjectId(audience_id))
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
             remove_audiences_from_engagement(
                 get_db_client(),
-                engagement_id,
+                ObjectId(engagement_id),
                 user_id,
-                body[api_c.AUDIENCE_IDS],
+                audience_ids,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:
@@ -839,9 +871,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
@@ -965,9 +995,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
