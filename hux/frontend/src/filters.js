@@ -108,17 +108,19 @@ export default {
    * @param {*} value The input eg. "0.893251"
    * @returns output value eg. "90%"
    */
-  percentageConvert (value, round = false, percentage = false, append = '') {
-    if (!value) return ''
+  percentageConvert(value, round = false, percentage = false, append = "") {
+    if (!value) return ""
 
     if (percentage) {
       value = value * 100
-      append = '%'
+      append = "%"
     }
 
-    return value.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: round && Number(value) ? 0 : 2
-    }) + append
-  }
+    return (
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: round && Number(value) ? 0 : 2,
+      }) + append
+    )
+  },
 }
