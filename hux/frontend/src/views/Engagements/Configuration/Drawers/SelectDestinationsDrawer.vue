@@ -126,7 +126,7 @@ export default {
     },
 
     selectedDestinations() {
-      if (this.selectedAudienceId) {
+      if (this.selectedAudienceId && this.value[this.selectedAudienceId]) {
         return this.value[this.selectedAudienceId].destinations
       }
       return []
