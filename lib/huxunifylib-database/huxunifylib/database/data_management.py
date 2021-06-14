@@ -246,7 +246,7 @@ def get_data_source_non_breakdown_fields(
     cur_doc = get_data_source(database, data_source_id)
 
     non_breakdown_fields = []
-    if cur_doc is not None and c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
+    if c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
         non_breakdown_fields = cur_doc[c.DATA_SOURCE_NON_BREAKDOWN_FIELDS]
 
     return non_breakdown_fields
@@ -339,7 +339,7 @@ def update_data_source_name(
     if exists_flag:
         cur_doc = get_data_source(database, data_source_id)
 
-        if cur_doc is not None and cur_doc[c.DATA_SOURCE_NAME] != name:
+        if cur_doc[c.DATA_SOURCE_NAME] != name:
             raise de.DuplicateName(name)
 
     return update_data_source_param(
@@ -579,7 +579,7 @@ def update_data_source(
         name,
     ):
         cur_doc = get_data_source(database, data_source_id)
-        if cur_doc is not None and cur_doc[c.DATA_SOURCE_NAME] != name:
+        if cur_doc[c.DATA_SOURCE_NAME] != name:
             raise de.DuplicateName(name)
 
     # Do not update if data source is associated to an ingestion job

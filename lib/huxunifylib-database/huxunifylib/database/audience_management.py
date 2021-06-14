@@ -662,7 +662,7 @@ def update_audience_name(
 
     if exists_flag:
         cur_doc = get_audience_config(database, audience_id)
-        if cur_doc is not None and cur_doc[c.AUDIENCE_NAME] == name:
+        if cur_doc[c.AUDIENCE_NAME] == name:
             raise de.DuplicateName(name)
 
     # Update dict

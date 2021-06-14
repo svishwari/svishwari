@@ -376,7 +376,7 @@ def set_name(
             database,
             delivery_platform_id,
         )
-        if cur_doc is not None and cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+        if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
             raise de.DuplicateName(name)
 
     update_doc = {
@@ -544,7 +544,7 @@ def update_delivery_platform(
 
     if exists_flag:
         cur_doc = get_delivery_platform(database, delivery_platform_id)
-        if cur_doc is not None and cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
+        if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
             raise de.DuplicateName(name)
 
     update_doc = {
@@ -776,7 +776,7 @@ def update_lookalike_audience_name(
             database,
             lookalike_audience_id,
         )
-        if cur_doc is not None and cur_doc[c.LOOKALIKE_AUD_NAME] != name:
+        if cur_doc[c.LOOKALIKE_AUD_NAME] != name:
             raise de.DuplicateName(name)
 
     update_doc = {
