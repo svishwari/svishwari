@@ -190,4 +190,4 @@ class DestinationConstantsSchema(Schema):
     """
 
     facebook = fields.Nested(FacebookAuthConstants)
-    SFMC = fields.Nested(SFMCAuthConstants)
+    salesforce = fields.Nested(SFMCAuthConstants)
