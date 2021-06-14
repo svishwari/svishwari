@@ -168,7 +168,7 @@ class CourierTest(TestCase):
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
-        # TODO work with ORCH so we dont' have to send creds in env_dict
+        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
         self.assertDictEqual(
             env_dict,
             {
