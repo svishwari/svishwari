@@ -243,11 +243,11 @@ export default function (server) {
   server.create("dataSource", twilioDS)
 
   // seed destinations
-  server.create("destination", facebook)
-  server.create("destination", salesforce)
   server.create("destination", twilio)
   server.create("destination", google)
   server.create("destination", tableau)
+  server.create("destination", facebook)
+  server.create("destination", salesforce)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
 
