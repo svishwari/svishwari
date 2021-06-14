@@ -65,21 +65,16 @@ class OrchestrationRouteTest(TestCase):
         # setup the flask test client
         self.test_client = create_app().test_client()
 
-        self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
-        # create data sources first
-
         self.introspect_call = "{}/oauth2/v1/introspect?client_id={}".format(
             self.config.OKTA_ISSUER, self.config.OKTA_CLIENT_ID
         )
 
     @requests_mock.Mocker()
-    def test_get_audience_rules(self, request_mocker: Mocker):
+    def test_get_audience_rules_success(self, request_mocker: Mocker):
         """Test the get audience rules route
 
         Args:
             request_mocker (Mocker): Request mocker object.
-
-        Expects a dict of all necessary audience rules
 
         """
 
