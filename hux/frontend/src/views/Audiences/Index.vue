@@ -79,13 +79,13 @@
             <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'updated_by'">
+            <div v-if="header.value == 'updated_by' && item[header.value]">
               <avatar :name="getName(item[header.value])" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'created_by'">
+            <div v-if="header.value == 'created_by' && item[header.value]">
               <avatar :name="getName(item[header.value])" />
             </div>
           </td>

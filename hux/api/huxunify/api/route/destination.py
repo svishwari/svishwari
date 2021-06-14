@@ -30,6 +30,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    get_user_id,
 )
 import huxunify.api.constants as api_c
 
@@ -193,7 +194,8 @@ class DestinationPutView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationPutSchema)
-    def put(self, destination_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def put(self, destination_id: str, user_id: ObjectId) -> Tuple[dict, int]:
         """Updates a destination.
 
         ---
@@ -202,14 +204,12 @@ class DestinationPutView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status.
 
         """
-
-        # TODO - implement after HUS-254 is done to grab user/okta_id
-        user_id = ObjectId()
 
         # load into the schema object
         try:
@@ -235,8 +235,6 @@ class DestinationPutView(SwaggerView):
                 )
                 is_added = True
 
-            # TODO - provide input user-id to delivery platform
-            #       create the destination after the PR 171 is merged
             # update the destination
             return (
                 destination_management.update_delivery_platform(
@@ -277,7 +275,7 @@ class DestinationsConstants(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "schema": DestinationConstantsSchema,
-            "description": "Retrieved destination constants.",
+            "description": "Retrieve destination constants.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve the destination constants.",

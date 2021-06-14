@@ -176,18 +176,18 @@ def update_data_sources(
     # validate list of object ids.
     validate_object_id_list(data_source_ids)
 
+    # remove duplicates if any.
+    data_source_ids = list(set(data_source_ids))
+
     collection = database[c.DATA_MANAGEMENT_DATABASE][
         c.CDP_DATA_SOURCES_COLLECTION
     ]
 
     try:
         result = collection.update_many(
-            {c.ID: {"$in": data_source_ids}}, {"$inc": update_dict}
+            {c.ID: {"$in": data_source_ids}}, {"$set": update_dict}
         )
-        return all(
-            len(data_source_ids) == x
-            for x in [result.matched_count, result.modified_count]
-        )
+        return len(data_source_ids) == result.matched_count
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
