@@ -2,13 +2,13 @@
   <v-card max-width="424" tile class="rounded-lg">
     <v-list-item three-line>
       <v-list-item-content>
-        <div class="mb-4">
+        <div class="title-section">
           <Tooltip positionTop>
             <template #label-content>
               Individual Identity
               <Icon type="info" :size="12" />
             </template>
-            <template class="newp" #hover-content>
+            <template #hover-content>
               {{ tooltipText }}
             </template>
           </Tooltip>
@@ -42,7 +42,11 @@ export default {
     },
     colorCodes: {
       type: Array,
-      required: false,
+      required: true,
+    },
+    chartLegendsData: {
+      type: Array,
+      required: true,
     },
   },
   data() {
@@ -52,13 +56,7 @@ export default {
       outerRadius: 0,
       innerRadius: 0,
       tooltipText: "most recent co-occurence between identifiers",
-      legendsData: [
-        { prop: "Name", icon: "name" },
-        { prop: "Address", icon: "address" },
-        { prop: "Email", icon: "email" },
-        { prop: "Phone", icon: "phone" },
-        { prop: "Cookie", icon: "cookie" },
-      ],
+      legendsData: this.chartLegendsData,
     }
   },
   methods: {
@@ -85,7 +83,10 @@ export default {
 
       let ribbon = d3.ribbon().radius(this.innerRadius)
 
-      let color = d3.scaleOrdinal().domain(d3.range(5)).range(this.colorCodes)
+      let color = d3
+        .scaleOrdinal()
+        .domain(d3.range(this.colorCodes.length))
+        .range(this.colorCodes)
 
       let g = svg
         .append("g")
@@ -132,7 +133,7 @@ export default {
     margin-left: 8px;
     font-size: 12px;
     line-height: 16px;
-    color: rgba(79, 79, 79, 1);
+    color: var(--v-matterhorn-base) !important;
   }
 }
 
@@ -140,7 +141,7 @@ export default {
   fill-opacity: 0.67;
 }
 
-.mb-4 {
+.title-section {
   font-size: 15px;
   line-height: 20px;
   font-weight: 400;
