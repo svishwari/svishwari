@@ -128,7 +128,7 @@ class EngagementPostSchema(Schema):
         # handle null delivery schedule
         delivery_schedule = data.get(api_c.DELIVERY_SCHEDULE, None)
         if not delivery_schedule:
-            del data[api_c.DELIVERY_SCHEDULE]
+            data.pop(api_c.DELIVERY_SCHEDULE, None)
 
         for audience in data[api_c.AUDIENCES]:
             audience[api_c.ID] = ObjectId(audience[api_c.ID])
