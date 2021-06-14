@@ -126,7 +126,7 @@ class EngagementPostSchema(Schema):
 
         """
         # handle null delivery schedule
-        delivery_schedule = data.get(api_c.DELIVERY_SCHEDULE, None)
+        delivery_schedule = data.get(api_c.DELIVERY_SCHEDULE)
         if not delivery_schedule:
             data.pop(api_c.DELIVERY_SCHEDULE, None)
 
