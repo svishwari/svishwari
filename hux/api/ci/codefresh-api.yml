@@ -26,6 +26,7 @@ steps:
         image: huxhub.repo.mgnt.in/alpine
         commands:
           - cf_export BUILD_NAME=unified-api
+          - cf_export SUB_REPO=hux/api
       GetTriggerName:
         stage: prepare
         title: get trigger name using id from spec yaml      
@@ -73,7 +74,7 @@ steps:
     image: alpine
     working_directory: "${{CF_REPO_NAME}}"
     commands: 
-      - cat ./hux/api/ci/$TRIGGER_NAME.var >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+      - cat ./${{SUB_REPO}}/ci/$TRIGGER_NAME.var >> ${{CF_VOLUME_PATH}}/env_vars_to_export
       - cat ${{CF_VOLUME_PATH}}/env_vars_to_export
   
   build_image:
@@ -81,8 +82,8 @@ steps:
     title: "Building Docker Image for Unified API"
     type: "build"
     image_name: '${{BUILD_NAME}}'
-    working_directory: '${{CF_REPO_NAME}}'
-    dockerfile: 'hux/api/Dockerfile'
+    working_directory: '${{CF_REPO_NAME}}/${{SUB_REPO}}'
+    dockerfile: 'Dockerfile'
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
