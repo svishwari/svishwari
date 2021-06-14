@@ -40,6 +40,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    get_user_id,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -47,7 +48,6 @@ from huxunify.api import constants as api_c
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
 
-# TODO - implement after HUS-443 is done to grab user/okta_id
 # TODO Add updated_by fields to engagement_mgmt in set, update and delete methods
 @engagement_bp.before_request
 @secured()
@@ -362,7 +362,8 @@ class UpdateEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def put(self, engagement_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def put(self, engagement_id: str, user_id: ObjectId) -> Tuple[dict, int]:
         """Updates an engagement.
 
         ---
@@ -371,6 +372,7 @@ class UpdateEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Engagement updated, HTTP status.
@@ -379,8 +381,6 @@ class UpdateEngagement(SwaggerView):
 
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
-        user_id = ObjectId()
 
         try:
             body = EngagementPostSchema().load(request.get_json())
@@ -561,7 +561,8 @@ class AddAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def post(self, engagement_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def post(self, engagement_id: str, user_id: ObjectId) -> Tuple[dict, int]:
         """Adds audience to engagement.
 
         ---
@@ -570,6 +571,7 @@ class AddAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience Engagement added, HTTP status.
@@ -578,8 +580,6 @@ class AddAudienceEngagement(SwaggerView):
 
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
-        user_id = ObjectId()
 
         try:
             body = AudienceEngagementSchema().load(
@@ -655,7 +655,10 @@ class DeleteAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def delete(self, engagement_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def delete(
+        self, engagement_id: str, user_id: ObjectId
+    ) -> Tuple[dict, int]:
         """Deletes audience from engagement.
 
         ---
@@ -664,6 +667,7 @@ class DeleteAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience deleted from engagement, HTTP status
@@ -673,7 +677,6 @@ class DeleteAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        user_id = ObjectId()
         audience_ids = []
         try:
             body = AudienceEngagementDeleteSchema().load(
@@ -762,10 +765,6 @@ class EngagementDeliverView(SwaggerView):
 
         """
 
-        # TODO - implement after HUS-479 is done
-        # pylint: disable=unused-variable
-        user_id = ObjectId()
-
         # validate object id
         if not ObjectId.is_valid(engagement_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
@@ -849,10 +848,6 @@ class EngagementDeliverAudienceView(SwaggerView):
                 success/failure, HTTP Status.
 
         """
-
-        # TODO - implement after HUS-479 is done
-        # pylint: disable=unused-variable
-        user_id = ObjectId()
 
         # validate object id
         if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
@@ -973,10 +968,6 @@ class EngagementDeliverDestinationView(SwaggerView):
                 success/failure, HTTP Status.
 
         """
-
-        # TODO - implement after HUS-479 is done
-        # pylint: disable=unused-variable
-        user_id = ObjectId()
 
         # validate object id
         if not all(

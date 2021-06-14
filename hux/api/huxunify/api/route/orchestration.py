@@ -29,6 +29,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    get_user_id,
 )
 
 
@@ -263,19 +264,21 @@ class AudiencePostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    def post(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
+    @get_user_id()
+    def post(self, user_id) -> Tuple[dict, int]:  # pylint: disable=no-self-use
         """Creates a new audience.
 
         ---
         security:
             - Bearer: ["Authorization"]
 
+        Args:
+            user_id (ObjectId): user_id extracted from Okta.
+
         Returns:
             Tuple[dict, int]: Created audience, HTTP status.
 
         """
-        # TODO - implement after HUS-254 is done to grab user/okta_id
-        user_id = ObjectId()
 
         try:
             body = AudiencePostSchema().load(request.get_json(), partial=True)
@@ -357,7 +360,8 @@ class AudiencePutView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    def put(self, audience_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def put(self, audience_id: str, user_id: str) -> Tuple[dict, int]:
         """Updates an audience.
 
         ---
@@ -366,14 +370,13 @@ class AudiencePutView(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience doc, HTTP status.
 
         """
 
-        # TODO - implement after HUS-254 is done to grab user/okta_id
-        user_id = ObjectId()
         # load into the schema object
         try:
             body = AudiencePutSchema().load(request.get_json(), partial=True)
@@ -444,10 +447,6 @@ class AudienceDeliverView(SwaggerView):
                 success/failure, HTTP Status.
 
         """
-
-        # TODO - implement after HUS-479 is done
-        # pylint: disable=unused-variable
-        user_id = ObjectId()
 
         # validate object id
         if not ObjectId.is_valid(audience_id):
