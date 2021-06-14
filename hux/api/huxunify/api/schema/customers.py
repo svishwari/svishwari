@@ -105,7 +105,7 @@ class CustomerProfileSchema(Schema):
             # convert the string to datetime as marshmallow is expecting a
             # datetime obj.
             if field in data and not isinstance(data[field], datetime):
-                data[field] = parser.parser(data[field])
+                data[field] = parser.parse(data[field])
 
         return data
 
