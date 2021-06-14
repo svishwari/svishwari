@@ -30,12 +30,11 @@
 
 <script>
 import * as d3 from "d3"
-import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "@/components/common/Tooltip"
 import Icon from "@/components/common/Icon"
 export default {
   name: "hux-chord-chart",
-  components: { MetricCard, Icon, Tooltip },
+  components: { Icon, Tooltip },
   props: {
     chartInput: {
       type: Array,
