@@ -4,8 +4,10 @@
 
 export default {
   audiences: "/audiences",
+  customers: "/customers",
   dataSources: "/data-sources",
   destinations: "/destinations",
   engagements: "/engagements",
+  identity: "/idr",
   models: "/models",
 }

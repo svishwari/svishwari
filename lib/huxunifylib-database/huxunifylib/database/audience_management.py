@@ -78,6 +78,7 @@ def create_audience(
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
+        c.DELETED: False,
     }
 
     if ingestion_job_id:
@@ -88,7 +89,7 @@ def create_audience(
         collection.create_index([(c.JOB_ID, pymongo.ASCENDING)])
         if audience_id is not None:
             ret_doc = collection.find_one(
-                {c.ID: audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+                {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -197,7 +198,7 @@ def get_audience(
 
     # Read the audience document which contains filtering rules
     try:
-        doc = collection.find_one({c.ID: audience_id, c.ENABLED: True})
+        doc = collection.find_one({c.ID: audience_id, c.DELETED: False})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -363,7 +364,7 @@ def get_audience_config(
 
     try:
         doc = collection.find_one(
-            {c.ID: audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -712,8 +713,9 @@ def update_audience_filters(
     # Update the doc.
     try:
         doc = collection.find_one_and_update(
-            {c.ID: audience_id, c.ENABLED: True},
+            {c.ID: audience_id, c.DELETED: False},
             {"$set": update_dict},
+            {c.DELETED: 0},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
         )
@@ -755,7 +757,9 @@ def get_ingestion_job_audience_ids(
 
     # Read the audience documents
     try:
-        cursor = collection.find({c.JOB_ID: ingestion_job_id, c.ENABLED: True})
+        cursor = collection.find(
+            {c.JOB_ID: ingestion_job_id, c.DELETED: False}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
         raise
@@ -850,7 +854,7 @@ def get_all_recent_audiences(
             doc = None
             try:
                 doc = collection.find_one(
-                    {c.ID: audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+                    {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
                 )
             except pymongo.errors.OperationFailure as exc:
                 logging.error(exc)
@@ -884,7 +888,7 @@ def get_all_audiences(
 
     # Get audience configurations and add to list
     try:
-        audiences = list(collection.find({c.ENABLED: True}, {c.ENABLED: 0}))
+        audiences = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
