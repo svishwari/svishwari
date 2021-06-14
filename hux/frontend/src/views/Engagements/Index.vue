@@ -28,7 +28,9 @@
             size="large"
             isTile
             class="ma-2 font-weight-regular no-shadow mr-0"
-          ></huxButton>
+          >
+            Engagement
+          </huxButton>
         </router-link>
       </template>
     </PageHeader>
@@ -56,7 +58,7 @@
               </v-icon>
               <tooltip>
                 <template slot="label-content">
-                  {{ item[header.value] }}
+                  <span class="primary--text"> {{ item[header.value] }} </span>
                 </template>
                 <template slot="hover-content">
                   {{ item[header.value] }}
@@ -111,7 +113,14 @@
                 :style="header.value == 'name' ? 'padding-left:295px' : null"
               >
                 <div v-if="header.value == 'name'">
-                  {{ item[header.value] }}
+                  <tooltip>
+                    <template slot="label-content">
+                      <span class="primary--text"> {{ item[header.value] }} </span>
+                    </template>
+                    <template slot="hover-content">
+                      {{ item[header.value] }}
+                    </template>
+                  </tooltip>
                 </div>
                 <div v-if="header.value == 'Size'">
                   <size :value="item[header.value]" />
@@ -271,6 +280,21 @@ export default {
   }
   .hux-data-table {
     margin-top: 1px;
+    ::v-deep table {
+      tr {
+        height: 64px;
+        &:hover {
+          background: var(--v-aliceBlue-base) !important;
+        }
+        td {
+          font-size: 12px !important;
+          color: var(--v-neroBlack-base);
+        }
+        td:nth-child(1) {
+          font-size: 14px !important;
+        }
+      }
+    }
   }
   ::v-deep .hux-data-table.expanded-table {
     .v-data-table__wrapper {
