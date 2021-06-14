@@ -379,7 +379,7 @@ class TestEngagementDeliveryOperations(TestCase):
         AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
     )
     def test_deliver_audience_for_an_engagement_valid_ids(
-        self, request_mocker: Mocker, *_
+        self, request_mocker: Mocker, *_: None
     ):
         """
         Test delivery of an audience for an engagement
@@ -387,6 +387,7 @@ class TestEngagementDeliveryOperations(TestCase):
 
         Args:
             request_mocker (Mocker): Request mocker object.
+            *_ (None): Omit all extra keyword args the mock patches send.
 
         Returns:
 

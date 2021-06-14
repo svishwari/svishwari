@@ -46,6 +46,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         destination[db_const.DELIVERY_PLATFORM_NAME].upper()
         == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
     ):
+        # TODO work with ORCH so we dont' have to send creds in env_dict
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
                 auth[api_const.FACEBOOK_AD_ACCOUNT_ID]
