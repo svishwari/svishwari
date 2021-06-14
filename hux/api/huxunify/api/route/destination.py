@@ -393,10 +393,7 @@ class DestinationValidatePostView(SwaggerView):
                         ),
                     },
                 )
-            elif (
-                body.get(api_c.DESTINATION_TYPE)
-                == db_constants.DELIVERY_PLATFORM_SFMC
-            ):
+            elif body.get(api_c.DESTINATION_TYPE) == api_c.SFMC_TYPE:
                 destination_connector = SFMCConnector(
                     auth_details={
                         SFMCCredentials.SFMC_ACCOUNT_ID.name: body.get(
@@ -510,10 +507,7 @@ class DestinationDataExtView(SwaggerView):
 
         ext_list = []
         try:
-            if (
-                destination[api_c.DELIVERY_PLATFORM_TYPE]
-                == db_constants.DELIVERY_PLATFORM_SFMC
-            ):
+            if destination[api_c.DELIVERY_PLATFORM_TYPE] == api_c.SFMC_TYPE:
                 connector = SFMCConnector(
                     destination[api_c.AUTHENTICATION_DETAILS]
                 )
@@ -622,10 +616,7 @@ class DestinationDataExtPostView(SwaggerView):
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
-            if (
-                destination[api_c.DELIVERY_PLATFORM_TYPE]
-                == db_constants.DELIVERY_PLATFORM_SFMC
-            ):
+            if destination[api_c.DELIVERY_PLATFORM_TYPE] == api_c.SFMC_TYPE:
                 connector = SFMCConnector(
                     destination[api_c.AUTHENTICATION_DETAILS]
                 )
