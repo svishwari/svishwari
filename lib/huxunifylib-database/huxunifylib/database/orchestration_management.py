@@ -98,8 +98,6 @@ def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
         doc = collection.find_one({c.ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
-
-    if doc is None:
         raise de.InvalidID(audience_id)
 
     return doc

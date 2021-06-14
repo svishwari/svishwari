@@ -1180,7 +1180,7 @@ def get_data_source_recent_ingestion_job_id(
 
     doc = get_data_source(database, data_source_id)
 
-    if doc is not None and c.DATA_SOURCE_RECENT_JOB_ID in doc:
+    if c.DATA_SOURCE_RECENT_JOB_ID in doc:
         job_id = doc[c.DATA_SOURCE_RECENT_JOB_ID]
 
     return job_id

@@ -268,7 +268,7 @@ def get_connection_status(
 
     doc = get_delivery_platform(database, delivery_platform_id)
 
-    if doc is not None and c.DELIVERY_PLATFORM_STATUS in doc:
+    if c.DELIVERY_PLATFORM_STATUS in doc:
         connection_status = doc[c.DELIVERY_PLATFORM_STATUS]
 
     return connection_status
@@ -332,7 +332,7 @@ def get_authentication_details(
     auth_dict = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-    if doc is not None and c.DELIVERY_PLATFORM_AUTH in doc:
+    if c.DELIVERY_PLATFORM_AUTH in doc:
         auth_dict = doc[c.DELIVERY_PLATFORM_AUTH]
 
     return auth_dict
@@ -414,7 +414,7 @@ def get_name(
     name = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-    if doc is not None and c.DELIVERY_PLATFORM_NAME in doc:
+    if c.DELIVERY_PLATFORM_NAME in doc:
         name = doc[c.DELIVERY_PLATFORM_NAME]
 
     return name
@@ -487,7 +487,7 @@ def get_platform_type(
     delivery_platform_type = None
 
     doc = get_delivery_platform(database, delivery_platform_id)
-    if doc is not None and c.DELIVERY_PLATFORM_TYPE in doc:
+    if c.DELIVERY_PLATFORM_TYPE in doc:
         delivery_platform_type = doc[c.DELIVERY_PLATFORM_TYPE]
 
     return delivery_platform_type

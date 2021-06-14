@@ -200,8 +200,6 @@ def get_audience(
         doc = collection.find_one({c.ID: audience_id, c.ENABLED: True})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
-
-    if doc is None:
         raise de.InvalidID(audience_id)
 
     # Get ingestion job ID and filters associated with the audience
@@ -633,7 +631,7 @@ def get_audience_name(
 
     doc = get_audience_config(database, audience_id)
 
-    if doc is not None and c.AUDIENCE_NAME in doc:
+    if c.AUDIENCE_NAME in doc:
         audience_name = doc[c.AUDIENCE_NAME]
 
     return audience_name
@@ -855,8 +853,7 @@ def get_all_recent_audiences(
             except pymongo.errors.OperationFailure as exc:
                 logging.error(exc)
 
-            if doc is not None:
-                audiences.append(doc)
+            audiences.append(doc)
 
     return audiences
 
