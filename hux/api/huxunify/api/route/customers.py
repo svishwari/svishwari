@@ -160,11 +160,12 @@ class CustomerDashboardOverview(SwaggerView):
 
 
 def get_stub_customer() -> dict:
-    """Fetch customers overview data.
+    """Fetch customer's stub data.
 
-    Args: None
+    Args:
 
-    Returns: dict of stub of customer
+    Returns:
+        dict of stub of customer
 
     """
     random_first_names = [
