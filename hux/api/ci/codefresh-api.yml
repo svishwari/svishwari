@@ -67,7 +67,7 @@ steps:
     image: alpine
     working_directory: "${{CF_REPO_NAME}}"
     commands: 
-      - cat ./$SUB_REPO/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+      - cat ./hux/api/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   build_image:
     stage: "docker"
@@ -75,7 +75,7 @@ steps:
     type: "build"
     image_name: '${{BUILD_NAME}}'
     working_directory: '${{CF_REPO_NAME}}'
-    dockerfile: '${{SUB_REPO}}/Dockerfile'
+    dockerfile: 'hux/api/Dockerfile'
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
