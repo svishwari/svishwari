@@ -107,7 +107,7 @@ export default {
     Tooltip,
     huxButton,
     Icon,
-    CustomerDetails
+    CustomerDetails,
   },
 
   data() {

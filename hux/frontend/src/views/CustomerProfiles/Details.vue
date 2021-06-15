@@ -19,7 +19,9 @@
             :style="{ width: header.width }"
           >
             <div v-if="header.value == 'id'">
-              <a @click="loadCustomerProfile(item[header.value])">{{ item[header.value] }}</a>
+              <a @click="loadCustomerProfile(item[header.value])">{{
+                item[header.value]
+              }}</a>
             </div>
             <div
               v-if="header.value == 'first_name' || header.value == 'last_name'"
@@ -114,7 +116,7 @@ export default {
     }),
 
     customers() {
-      let allCustomerList = JSON.parse(JSON.stringify(this.customersList));
+      let allCustomerList = JSON.parse(JSON.stringify(this.customersList))
       allCustomerList.forEach((data) => {
         data.match_confidence = parseInt(
           this.$options.filters
@@ -140,13 +142,8 @@ export default {
     }),
 
     loadCustomerProfile(huxId) {
-    }
-   },
-
-  async mounted() {
-    this.loading = true
-    await this.getCustomer(this.id)
-    this.loading = false
+      this.getCustomer(huxId)
+    },
   },
 }
 </script>
