@@ -205,7 +205,8 @@ class Customersview(SwaggerView):
             "total_customers": customer_count,
             "customers": [
                 {
-                    "id": f"{randint(1000, 9999)}-{randint(1000, 9999)}-{randint(10, 99)}",
+                    "id": f"{randint(1000, 9999)}-"
+                    f"{randint(1000, 9999)}-{randint(10, 99)}",
                     "first_name": faker.first_name(),
                     "last_name": faker.last_name(),
                     "match_confidence": round(uniform(0, 1), 5),
