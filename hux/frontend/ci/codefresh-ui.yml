@@ -48,7 +48,7 @@ steps:
     image: alpine
     working_directory: "${{CF_REPO_NAME}}"
     commands: 
-      - cat ./${{SUB_REPO}}/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+      - cat ./$SUB_REPO/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   DockerBuild:
     title: "Building Docker image"
