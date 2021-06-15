@@ -511,6 +511,7 @@ class TestEngagementManagement(unittest.TestCase):
         # test audience appears as expected
         self.assertTrue(updated[c.AUDIENCES])
         self.assertEqual(len(updated[c.AUDIENCES]), 2)
+        self.assertTrue(updated[c.AUDIENCES][1][c.LOOKALIKE])
 
     def test_get_engagements_via_audience_id(self) -> None:
         """Test getting engagements with an audience_id
