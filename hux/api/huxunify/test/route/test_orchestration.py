@@ -329,7 +329,7 @@ class OrchestrationRouteTest(TestCase):
         """Test create audience.
 
         Args:
-            request_mocker (Mocker): Re quest mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
