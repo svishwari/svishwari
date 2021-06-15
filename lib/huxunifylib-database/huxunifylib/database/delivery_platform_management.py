@@ -1744,15 +1744,18 @@ set_transferred_for_feedback = partial(
     performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
 )
 
+
 def get_all_performance_metrics(
     database: DatabaseClient,
     pending_transfer_for_feedback: bool = False,
 ) -> list:
     """Retrieve all campaign performance metrics.
+
     Args:
         database (DatabaseClient): database client.
         pending_transfer_for_feedback (bool): If True, retrieve only
             metrics that have not been transferred for feedback. Defaults to False.
+
     Returns:
         list: list of performance metrics.
     """
