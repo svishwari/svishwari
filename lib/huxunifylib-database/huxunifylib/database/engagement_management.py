@@ -133,7 +133,7 @@ def get_engagements(
 def get_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
-    include_user: bool = False,
+    include_users: bool = False,
 ) -> dict:
     """A function to get an engagement based on ID
 
