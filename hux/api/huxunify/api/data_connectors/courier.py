@@ -15,6 +15,7 @@ from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
+    SFMCCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api.data_connectors.aws import parameter_store
@@ -59,6 +60,30 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             ),
             FacebookCredentials.FACEBOOK_APP_SECRET.name: parameter_store.get_store_value(
                 auth[api_const.FACEBOOK_APP_SECRET]
+            ),
+        }
+    if (
+        destination[db_const.DELIVERY_PLATFORM_NAME].upper()
+        == db_const.DELIVERY_PLATFORM_SFMC.upper()
+    ):
+        env_dict = {
+            SFMCCredentials.SFMC_CLIENT_ID.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_CLIENT_ID]
+            ),
+            SFMCCredentials.SFMC_AUTH_URL.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_AUTH_BASE_URI]
+            ),
+            SFMCCredentials.SFMC_ACCOUNT_ID.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_ACCOUNT_ID]
+            ),
+            SFMCCredentials.SFMC_CLIENT_SECRET.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_CLIENT_SECRET]
+            ),
+            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_SOAP_BASE_URI]
+            ),
+            SFMCCredentials.SFMC_URL.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_REST_BASE_URI]
             ),
         }
     else:
