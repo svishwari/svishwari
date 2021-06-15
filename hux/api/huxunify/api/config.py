@@ -46,19 +46,18 @@ class Config:
     MONGO_DB_PORT = config("MONGO_DB_PORT", default=27017, cast=int)
     MONGO_DB_USERNAME = config("MONGO_DB_USERNAME", default="")
     MONGO_DB_PASSWORD = config("MONGO_DB_PASSWORD", default="")
+    # grab the SSL cert path
+    MONGO_SSL_CERT = str(
+        Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
+    )
 
     MONGO_DB_CONFIG = {
         "host": MONGO_DB_HOST,
         "port": MONGO_DB_PORT,
         "username": MONGO_DB_USERNAME,
         "password": MONGO_DB_PASSWORD,
+        "ssl_cert_path": MONGO_SSL_CERT,
     }
-    if MONGO_DB_HOST != "localhost":
-        # grab the SSL cert path
-        MONGO_SSL_CERT = str(
-            Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
-        )
-        MONGO_DB_CONFIG["ssl_cert_path"] = MONGO_SSL_CERT
 
     OKTA_CLIENT_ID = config("OKTA_CLIENT_ID", default="0oab1i3ldgYyRvk5r2p7")
     OKTA_ISSUER = config(
@@ -132,10 +131,8 @@ class DevelopmentConfig(Config):
         "port": Config.MONGO_DB_PORT,
         "username": MONGO_DB_USERNAME,
         "password": Config.MONGO_DB_PASSWORD,
+        "ssl_cert_path": Config.MONGO_SSL_CERT,
     }
-    if Config.MONGO_DB_HOST != "localhost":
-        MONGO_DB_CONFIG["ssl_cert_path"] = Config.MONGO_SSL_CERT
-
 
 def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
     """Load variables from secret store into ENV before we load the config.
