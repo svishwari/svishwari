@@ -133,14 +133,14 @@ def get_engagements(
 def get_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
-    include_user: bool = False,
+    include_users: bool = False,
 ) -> dict:
     """A function to get an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectId of the engagement
-        include_user (bool): Flag to include users.
+        include_users (bool): Flag to include users.
 
     Returns:
         dict: Dict of an engagement.
@@ -152,14 +152,14 @@ def get_engagement(
     ]
 
     try:
-        if include_user:
+        if include_users:
             docs = list(
                 collection.aggregate(
                     [{"$match": {db_c.ID: engagement_id}}]
                     + USER_LOOKUP_PIPELINE
                 )
             )
-            return docs[0] if docs else []
+            return docs[0] if docs else {}
 
         return collection.find_one(
             {db_c.ID: engagement_id, db_c.DELETED: False}, {db_c.DELETED: 0}

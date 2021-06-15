@@ -80,14 +80,14 @@ def create_audience(
 def get_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
-    include_user: bool = False,
+    include_users: bool = False,
 ) -> dict:
     """A function to get an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): The Mongo DB ID of the audience.
-        include_user (bool): Flag to include users.
+        include_users (bool): Flag to include users.
     Returns:
         dict:  An audience document.
 
@@ -98,13 +98,13 @@ def get_audience(
 
     # Read the audience document which contains filtering rules
     try:
-        if include_user:
+        if include_users:
             docs = list(
                 collection.aggregate(
                     [{"$match": {c.ID: audience_id}}] + USER_LOOKUP_PIPELINE
                 )
             )
-            return docs[0] if docs else []
+            return docs[0] if docs else {}
 
         return collection.find_one({c.ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
