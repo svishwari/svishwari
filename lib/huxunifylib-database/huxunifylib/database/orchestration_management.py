@@ -57,7 +57,7 @@ def create_audience(
     audience_doc = {
         c.AUDIENCE_NAME: name,
         c.AUDIENCE_FILTERS: audience_filters,
-        c.DESTINATIONS: destination_ids,
+        c.DESTINATIONS: destination_ids if destination_ids else [],
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.CREATED_BY: user_id,
