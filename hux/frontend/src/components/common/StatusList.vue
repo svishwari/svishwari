@@ -112,11 +112,13 @@
       v-if="audience.destinations.length == 0"
     >
       <div class="no-destinations text--gray pb-5">
-        There are no destinations assigned to this audience. <br />Add one
-        now.<br />
-        <v-icon size="30" class="add-icon cursor-pointer mt-3" color="primary"
-          >mdi-plus-circle</v-icon
-        >
+        There are no destinations assigned to this audience.
+        <br />
+        Add onenow.
+        <br />
+        <v-icon size="30" class="add-icon cursor-pointer mt-3" color="primary">
+          mdi-plus-circle
+        </v-icon>
       </div>
     </div>
   </v-card>

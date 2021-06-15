@@ -14,7 +14,6 @@
             :maxWidth="item.width"
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
-            :interactable="false"
           >
             <template #subtitle-extended>
               <span v-if="item.field.includes('|')">
@@ -195,55 +194,6 @@ export default {
   data() {
     return {
       expand: [],
-      emailSummaryCards: [
-        {
-          id: 1,
-          title: "Sent",
-          field: "sent",
-          width: "90px",
-        },
-        {
-          id: 2,
-          title: "Hard bounces / Rate",
-          field: "hard_bounces|hard_bounces_rate",
-          width: "150px",
-        },
-        {
-          id: 3,
-          title: "Delivered / Rate",
-          field: "delivered|delivered_rate",
-          width: "120px",
-        },
-        {
-          id: 4,
-          title: "Open / Rate",
-          width: "122px",
-        },
-        {
-          id: 5,
-          title: "Click / CTR",
-          field: "clicks|click_through_rate",
-          width: "122px",
-        },
-        {
-          id: 6,
-          title: "Click to open rate  ",
-          field: "click_to_open_rate",
-          width: "135px",
-        },
-        {
-          id: 7,
-          title: "Unique clicks / Unique opens",
-          field: "unique_clicks|unique_opens",
-          width: "200px",
-        },
-        {
-          id: 8,
-          title: "Unsubscribe / Rate",
-          field: "unsubscribe|unsubscribe_rate",
-          width: "140px",
-        },
-      ],
       AdsHeaders: [
         { text: "Audiences", value: "name", width: "278px" },
         {

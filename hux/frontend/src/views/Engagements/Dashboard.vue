@@ -412,7 +412,6 @@ export default {
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "spend")
             : "-",
-          width: "80px",
         },
         {
           id: 2,
@@ -422,7 +421,6 @@ export default {
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "reach")
             : "-",
-          width: "90px",
         },
         {
           id: 3,
@@ -435,7 +433,6 @@ export default {
                 "impressions"
               )
             : "-",
-          width: "105px",
         },
         {
           id: 4,
@@ -448,7 +445,6 @@ export default {
                 "conversions"
               )
             : "-",
-          width: "105px",
         },
         {
           id: 5,
@@ -458,7 +454,6 @@ export default {
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "clicks")
             : "-",
-          width: "90px",
         },
         {
           id: 6,
@@ -468,7 +463,6 @@ export default {
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "frequency")
             : "-",
-          width: "100px",
         },
         {
           id: 7,
@@ -481,7 +475,6 @@ export default {
                 "cost_per_thousand_impressions"
               )
             : "-",
-          width: "90px",
         },
         {
           id: 8,
@@ -494,7 +487,6 @@ export default {
                 "click_through_rate"
               )
             : "-",
-          width: "90px",
         },
         {
           id: 9,
@@ -507,7 +499,6 @@ export default {
                 "cost_per_action"
               )
             : "-",
-          width: "90px",
         },
         {
           id: 10,
@@ -519,7 +510,6 @@ export default {
               this.audiencePerformanceAds["summary"],
               "cost_per_click"
             ),
-          width: "90px",
         },
         {
           id: 11,
@@ -531,7 +521,6 @@ export default {
               this.audiencePerformanceAds["summary"],
               "engagement_rate"
             ),
-          width: "150px",
         },
       ]
     },
@@ -553,7 +542,6 @@ export default {
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(this.audiencePerformanceEmail["summary"], "sent")
               : "-",
-          width: "90px",
         },
         {
           id: 2,
@@ -576,7 +564,6 @@ export default {
                 )
               : "-"
           }`}`,
-          width: "150px",
         },
         {
           id: 3,
@@ -599,7 +586,6 @@ export default {
                 )
               : "-"
           }`,
-          width: "120px",
         },
         {
           id: 4,
@@ -619,7 +605,6 @@ export default {
                 )
               : "-"
           }`,
-          width: "122px",
         },
         {
           id: 5,
@@ -642,7 +627,6 @@ export default {
                 )
               : "-"
           }`,
-          width: "122px",
         },
         {
           id: 6,
@@ -655,7 +639,6 @@ export default {
                 "click_to_open_rate"
               )
             : "-",
-          width: "135px",
         },
         {
           id: 7,
@@ -678,7 +661,6 @@ export default {
                 )
               : "-"
           }`,
-          width: "200px",
         },
         {
           id: 8,
@@ -701,7 +683,6 @@ export default {
                 )
               : "-"
           }`,
-          width: "140px",
         },
       ]
     },
@@ -756,7 +737,8 @@ export default {
     font-size: 18px;
   }
   .empty-state {
-    background: rgba(236, 244, 249, 0.3);
+    background: var(--v-aliceBlue-base);
+    opacity: 0.3;
     width: 100%;
     font-size: 14px;
     line-height: 22px;
