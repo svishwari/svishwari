@@ -30,7 +30,7 @@ def set_delivery_platform(
     name: str,
     authentication_details: dict = None,
     status: str = c.STATUS_PENDING,
-    enabled: bool = True,
+    enabled: bool = False,
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
@@ -449,7 +449,9 @@ def set_platform_type(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in c.SUPPORTED_DELIVERY_PLATFORMS:
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
+    ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
     doc = None
@@ -532,11 +534,8 @@ def update_delivery_platform(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 

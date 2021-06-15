@@ -26,6 +26,10 @@ steps:
           - cf_export SUB_REPO=hux/frontend
           - cf_export PORT=80
           - cf_export FILE_NAME=values-main-use1-hux-unified-dev1.yaml
+          # build vars
+          - cf_export API_URL="https://unified-api-dev.main.use1.hux-unified-dev1.in"
+          - cf_export OKTA_CLIENT_ID="0oab1i3ldgYyRvk5r2p7"
+          - cf_export OKTA_ISSUER="https://deloittedigital-ms.okta.com"
 
       BuildNumber:
         stage: prepare
@@ -57,9 +61,9 @@ steps:
     dockerfile: "Dockerfile"
     stage: "docker"
     build_arguments:
-      - OKTA_ISSUER=${{OKTA_ISSUER}}
-      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
       - API_URL=${{API_URL}}
+      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
+      - OKTA_ISSUER=${{OKTA_ISSUER}}
 
   Lint:
     stage: "lint"

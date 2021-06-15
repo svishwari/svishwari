@@ -28,4 +28,5 @@ export default {
   persianGreen: colors.persianGreen,
   appBodyGrey: colors.appBodyGrey,
   smoke: colors.smoke,
+  cerulean: colors.cerulean,
 }

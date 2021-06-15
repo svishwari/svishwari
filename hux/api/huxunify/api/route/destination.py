@@ -14,7 +14,6 @@ from marshmallow import ValidationError
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
-    constants as db_constants,
 )
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.util.general.const import FacebookCredentials
@@ -319,7 +318,7 @@ class DestinationValidatePostView(SwaggerView):
             "type": "object",
             "description": "Validate destination body.",
             "example": {
-                api_c.DESTINATION_TYPE: "Facebook",
+                api_c.DESTINATION_TYPE: "facebook",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
                     api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
@@ -370,10 +369,7 @@ class DestinationValidatePostView(SwaggerView):
 
         try:
             # test the destination connection and update connection status
-            if (
-                body.get(api_c.DESTINATION_TYPE)
-                == db_constants.DELIVERY_PLATFORM_FACEBOOK
-            ):
+            if body.get(api_c.DESTINATION_TYPE) == api_c.FACEBOOK_TYPE:
                 destination_connector = FacebookConnector(
                     auth_details={
                         FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
