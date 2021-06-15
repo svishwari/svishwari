@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapGetters } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
@@ -132,10 +132,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      getAudiences: "audiences/getAll",
-    }),
-
     isAdded(audience) {
       return Boolean(this.value[audience.id])
     },
@@ -145,18 +141,17 @@ export default {
         id: audience.id,
         name: audience.name,
         size: audience.size,
+        destinations: audience.destinations.map((destination) => {
+          return {
+            id: destination.id,
+          }
+        }),
       })
     },
 
     remove(audience) {
       this.$delete(this.value, audience.id)
     },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getAudiences()
-    this.loading = false
   },
 }
 </script>

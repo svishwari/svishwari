@@ -157,6 +157,8 @@ def get_method(methods: set) -> str:
         method = "delete"
     elif "PUT" in methods:
         method = "put"
+    elif "PATCH" in methods:
+        method = "patch"
     else:
         raise AttributeError(f"Unknown methods {methods}")
     return method

@@ -19,6 +19,7 @@ from huxunifylib.database.cdp_data_source_management import (
     get_data_source,
     create_data_source,
     delete_data_source,
+    update_data_sources,
 )
 from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceSchema,
@@ -230,7 +231,7 @@ class CreateCdpDataSource(SwaggerView):
             category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
         )
 
-        return CdpDataSourceSchema().dumps(response), HTTPStatus.OK
+        return CdpDataSourceSchema().dump(response), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -292,3 +293,118 @@ class DeleteCdpDataSource(SwaggerView):
         return {
             "message": api_c.OPERATION_FAILED
         }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+@add_view_to_blueprint(
+    cdp_data_sources_bp,
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}",
+    "BatchUpdateDataSources",
+)
+class BatchUpdateDataSources(SwaggerView):
+    """
+    Class to partially batch update data sources
+    """
+
+    parameters = [
+        {
+            "name": api_c.BODY,
+            "in": api_c.BODY,
+            "type": "object",
+            "description": "Input Batch data source body.",
+            "example": {
+                api_c.CDP_DATA_SOURCE_IDS: ["60ae035b6c5bf45da27f17d6"],
+                api_c.BODY: {
+                    api_c.IS_ADDED: True,
+                    api_c.STATUS: api_c.AUDIENCE_STATUS_PENDING,
+                },
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Data source(s) updated.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update data source(s).",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CDP_DATA_SOURCES_TAG]
+
+    def patch(self) -> Tuple[dict, int]:
+        """Updates a list of data sources.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+
+        Returns:
+            Tuple[dict, int]: Data source updated, HTTP status code.
+
+        """
+
+        data = request.get_json()
+
+        # validate fields
+        if api_c.CDP_DATA_SOURCE_IDS not in data and api_c.BODY not in data:
+            return (
+                self.responses[HTTPStatus.BAD_REQUEST.value],
+                HTTPStatus.BAD_REQUEST.value,
+            )
+
+        # validate data source ids
+        data_source_ids = [
+            ObjectId(x)
+            for x in data[api_c.CDP_DATA_SOURCE_IDS]
+            if ObjectId.is_valid(x)
+        ]
+        if not data_source_ids or len(data_source_ids) != len(
+            data[api_c.CDP_DATA_SOURCE_IDS]
+        ):
+            return (
+                self.responses[HTTPStatus.BAD_REQUEST.value],
+                HTTPStatus.BAD_REQUEST.value,
+            )
+
+        # keep only allowed fields
+        data = {
+            k: v
+            for k, v in data[api_c.BODY].items()
+            if k in [api_c.IS_ADDED, api_c.STATUS]
+        }
+        if not data:
+            return (
+                self.responses[HTTPStatus.BAD_REQUEST.value],
+                HTTPStatus.BAD_REQUEST.value,
+            )
+
+        # rename key from is_added to added for DB.
+        data[db_constants.ADDED] = data.pop(api_c.IS_ADDED)
+
+        try:
+            # update the data sources.
+            if update_data_sources(get_db_client(), data_source_ids, data):
+                return self.responses[HTTPStatus.OK.value], HTTPStatus.OK.value
+
+            return (
+                self.responses[HTTPStatus.BAD_REQUEST.value],
+                HTTPStatus.BAD_REQUEST.value,
+            )
+
+        except Exception as exc:
+
+            logging.error(
+                "%s: %s.",
+                exc.__class__,
+                exc,
+            )
+
+            raise ProblemException(
+                status=HTTPStatus.BAD_REQUEST.value,
+                title=HTTPStatus.BAD_REQUEST.description,
+                detail="Unable to get CDP data sources.",
+            ) from exc

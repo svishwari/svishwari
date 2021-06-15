@@ -16,6 +16,7 @@ develop-eggs
 pip-wheel-metadata
 *.dist-info
 node_modules/
+.hypothesis
 
 # Environments
 .env

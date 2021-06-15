@@ -331,7 +331,7 @@ def update_audience_doc(
 
     try:
         return collection.find_one_and_update(
-            {c.ID: audience_id, c.ENABLED: True},
+            {c.ID: audience_id, c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,

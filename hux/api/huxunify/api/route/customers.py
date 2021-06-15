@@ -6,7 +6,7 @@ Paths for customer API
 from http import HTTPStatus
 from typing import Tuple
 import datetime
-from random import randint, uniform
+from random import randint, uniform, choice
 
 from flask import Blueprint
 from flask_apispec import marshal_with
@@ -25,7 +25,6 @@ from huxunify.api.schema.customers import (
     CustomersSchema,
 )
 from huxunify.api import constants as api_c
-
 
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
@@ -75,7 +74,7 @@ def get_customers_overview() -> dict:
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.CUSTOMERS_OVERVIEW_ENDPOINT}",
+    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW}",
     "CustomerOverviewSchema",
 )
 class CustomerOverview(SwaggerView):
@@ -120,13 +119,94 @@ class CustomerOverview(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}",
-    "Customersview",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.OVERVIEW}",
+    "CustomerDashboardOverview",
+)
+class CustomerDashboardOverview(SwaggerView):
+    """
+    Customers Dashboard Overview class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": CustomerOverviewSchema,
+            "description": "Customer Identity Resolution Dashboard overview.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers identity dashboard overview."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves a customer data dashboard overview.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] dict of Customer data overview and http code
+        """
+
+        customers_overview_data = get_customers_overview()
+
+        return (
+            CustomerOverviewSchema().dump(customers_overview_data),
+            HTTPStatus.OK,
+        )
+
+
+def get_stub_customer() -> dict:
+    """Fetch customer's stub data.
+
+    Args:
+
+    Returns:
+        dict of stub of customer
+
+    """
+    random_first_names = [
+        "Maryjane",
+        "Lillianna",
+        "Bertie",
+        "Bailey",
+        "Bridger",
+    ]
+    random_last_names = ["Warren", "Holder", "Greene", "Robinson", "Fox"]
+    stub_customer = {
+        "id": "1531-2039-22",
+        "first_name": choice(random_first_names),
+        "last_name": choice(random_last_names),
+        "match_confidence": round(uniform(0, 1), 5),
+    }
+    return stub_customer
+
+
+@add_view_to_blueprint(
+    customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "Customersview"
+)
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_ENDPOINT}/<no_of_customers>",
+    "Customersview_no_of_cust",
 )
 class Customersview(SwaggerView):
     """
     Customers Overview class
     """
+
+    parameters = [
+        {
+            "name": "no_of_customers",
+            "description": "No of Customers",
+            "type": "int",
+            "in": "path",
+            "example": 4,
+        }
+    ]
 
     responses = {
         HTTPStatus.OK.value: {
@@ -141,7 +221,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    def get(self) -> Tuple[dict, int]:
+    def get(self, no_of_customers: int = 2) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
         ---
@@ -155,12 +235,7 @@ class Customersview(SwaggerView):
         customers_stub_data = {
             "total_customers": 52456232,
             "customers": [
-                {
-                    "id": "1531-2039-22",
-                    "first_name": "Bertie",
-                    "last_name": "Fox",
-                    "match_confidence": round(uniform(0, 1), 5),
-                }
+                get_stub_customer() for i in range(int(no_of_customers))
             ],
         }
 

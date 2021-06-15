@@ -142,6 +142,7 @@ def set_data_source(
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
+        c.DELETED: False,
     }
 
     exists_flag = name_exists(
@@ -159,7 +160,7 @@ def set_data_source(
         data_source_id = collection.insert_one(doc).inserted_id
         if data_source_id is not None:
             data_source_doc = collection.find_one(
-                {c.ID: data_source_id, c.ENABLED: True}, {c.ENABLED: 0}
+                {c.ID: data_source_id, c.DELETED: False}, {c.DELETED: 0}
             )
         else:
             logging.error("Failed to create a new data source!")
@@ -193,7 +194,7 @@ def get_data_source(
 
     try:
         doc = collection.find_one(
-            {c.ID: data_source_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: data_source_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -220,7 +221,7 @@ def get_all_data_sources(database: DatabaseClient) -> list:
     collection = dm_db[c.DATA_SOURCES_COLLECTION]
 
     try:
-        docs = list(collection.find({c.ENABLED: True}, {c.ENABLED: 0}))
+        docs = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -299,7 +300,7 @@ def update_data_source_param(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: data_source_id, c.ENABLED: True},
+            {c.ID: data_source_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -602,7 +603,7 @@ def update_data_source(
     try:
         if update_doc:
             doc = collection.find_one_and_update(
-                {c.ID: data_source_id, c.ENABLED: True},
+                {c.ID: data_source_id, c.DELETED: False},
                 {"$set": update_doc},
                 upsert=False,
                 return_document=pymongo.ReturnDocument.AFTER,
@@ -646,7 +647,7 @@ def set_ingestion_job(
         c.UPDATE_TIME: curr_time,
         c.JOB_STATUS: c.STATUS_PENDING,
         c.STATUS_MESSAGE: "",
-        c.ENABLED: True,
+        c.DELETED: False,
     }
 
     try:
@@ -654,7 +655,7 @@ def set_ingestion_job(
         collection.create_index([(c.DATA_SOURCE_ID, pymongo.ASCENDING)])
         if ingestion_job_id is not None:
             ingestion_job_doc = collection.find_one(
-                {c.ID: ingestion_job_id, c.ENABLED: True}, {c.ENABLED: 0}
+                {c.ID: ingestion_job_id, c.DELETED: False}, {c.DELETED: 0}
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -699,7 +700,7 @@ def get_ingestion_job(
 
     try:
         doc = collection.find_one(
-            {c.ID: ingestion_job_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: ingestion_job_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -731,8 +732,8 @@ def get_data_source_ingestion_jobs(
     try:
         docs = list(
             collection.find(
-                {c.DATA_SOURCE_ID: data_source_id, c.ENABLED: True},
-                {c.ENABLED: 0},
+                {c.DATA_SOURCE_ID: data_source_id, c.DELETED: False},
+                {c.DELETED: 0},
             )
         )
     except pymongo.errors.OperationFailure as exc:
@@ -842,7 +843,7 @@ def set_ingestion_job_status_no_default_audience(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: ingestion_job_id, c.ENABLED: True},
+            {c.ID: ingestion_job_id, c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             new=True,
@@ -1050,7 +1051,7 @@ def get_ingested_data_stats(
 
     try:
         doc = collection.find_one(
-            {c.JOB_ID: ingestion_job_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.JOB_ID: ingestion_job_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1117,7 +1118,7 @@ def append_ingested_data_stats(
     # Update the doc. If no doc exists, a new doc will be created.
     try:
         doc = collection.find_one_and_update(
-            {c.JOB_ID: ingestion_job_id, c.ENABLED: True},
+            {c.JOB_ID: ingestion_job_id, c.DELETED: False},
             {"$set": update_dict},
             upsert=True,
             return_document=pymongo.ReturnDocument.AFTER,

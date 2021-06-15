@@ -74,7 +74,7 @@ def set_engagement(
     for audience in audiences:
         doc[db_c.AUDIENCES].append(
             {
-                db_c.ID: audience[db_c.ID],
+                db_c.OBJECT_ID: audience[db_c.OBJECT_ID],
                 db_c.DESTINATIONS: audience[db_c.DESTINATIONS],
             }
         )
@@ -291,8 +291,8 @@ def remove_audiences_from_engagement(
             {db_c.ID: engagement_id},
             {
                 "$pull": {
-                    f"{db_c.AUDIENCES}.{db_c.ID}": {
-                        db_c.ID: {"$in": audience_ids}
+                    f"{db_c.AUDIENCES}": {
+                        db_c.OBJECT_ID: {"$in": audience_ids}
                     }
                 },
                 "$set": {
@@ -377,11 +377,11 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
     for audience in audiences:
         if not isinstance(audience, dict):
             raise AttributeError("Audience must be a dict.")
-        if db_c.ID not in audience:
-            raise KeyError(f"Missing audience {db_c.ID}.")
-        if not isinstance(audience[db_c.ID], ObjectId):
+        if db_c.OBJECT_ID not in audience:
+            raise KeyError(f"Missing audience {db_c.OBJECT_ID}.")
+        if not isinstance(audience[db_c.OBJECT_ID], ObjectId):
             raise ValueError("Must provide an ObjectId.")
-        if not ObjectId(audience[db_c.ID]):
+        if not ObjectId(audience[db_c.OBJECT_ID]):
             raise ValueError("Invalid object id value.")
 
 
@@ -411,7 +411,7 @@ def get_engagements_by_audience(
         return list(
             collection.find(
                 {
-                    f"{db_c.AUDIENCES}.{db_c.ID}": audience_id,
+                    f"{db_c.AUDIENCES}.{db_c.OBJECT_ID}": audience_id,
                     db_c.DELETED: False,
                 },
                 {db_c.DELETED: 0},
