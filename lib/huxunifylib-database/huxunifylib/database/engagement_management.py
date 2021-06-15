@@ -152,7 +152,7 @@ def get_engagement(
     ]
 
     try:
-        if include_user:
+        if include_users:
             docs = list(
                 collection.aggregate(
                     [{"$match": {db_c.ID: engagement_id}}]
