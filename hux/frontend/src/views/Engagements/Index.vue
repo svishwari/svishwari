@@ -1,20 +1,18 @@
 <template>
   <div class="engagements-wrap grey lighten-5">
     <PageHeader>
-      <template slot="left">
+      <template #left>
         <Breadcrumb :items="breadcrumbItems" />
       </template>
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
-      <template slot="left">
-        <v-icon medium :disabled="true">mdi-filter-variant</v-icon>
-        <v-icon medium :disabled="true" class="pl-6">mdi-magnify</v-icon>
+      <template #left>
+        <v-icon medium disabled>mdi-filter-variant</v-icon>
+        <v-icon medium disabled class="pl-6">mdi-magnify</v-icon>
       </template>
 
-      <template slot="right">
-        <v-icon medium :disabled="true" color="primary refresh"
-          >mdi-refresh</v-icon
-        >
+      <template #right>
+        <v-icon medium disabled color="primary refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
@@ -57,10 +55,10 @@
                 mdi-chevron-right
               </v-icon>
               <tooltip>
-                <template slot="label-content">
+                <template #label-content>
                   <span class="primary--text"> {{ item[header.value] }} </span>
                 </template>
-                <template slot="hover-content">
+                <template #hover-content>
                   {{ item[header.value] }}
                 </template>
               </tooltip>
@@ -114,12 +112,12 @@
               >
                 <div v-if="header.value == 'name'">
                   <tooltip>
-                    <template slot="label-content">
+                    <template #label-content>
                       <span class="primary--text">
                         {{ item[header.value] }}
                       </span>
                     </template>
-                    <template slot="hover-content">
+                    <template #hover-content>
                       {{ item[header.value] }}
                     </template>
                   </tooltip>
