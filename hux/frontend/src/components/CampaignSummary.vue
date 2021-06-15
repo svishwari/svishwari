@@ -63,6 +63,7 @@
               </td>
             </tr>
           </template>
+
           <template #expanded-row="{ headers, item }">
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
