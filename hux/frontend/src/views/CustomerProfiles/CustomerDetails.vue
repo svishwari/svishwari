@@ -81,7 +81,8 @@ export default {
           text: "Match confidence",
           value: "match_confidence",
           width: "250px",
-          hoverTooltip: "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer."
+          hoverTooltip:
+            "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
         },
       ],
     }

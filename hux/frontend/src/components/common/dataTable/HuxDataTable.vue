@@ -39,7 +39,12 @@
           </template>
           <Tooltip :key="h.value" v-if="h.hoverTooltip" positionTop>
             <template #label-content>
-              <Icon type="info" :size="8"  :key="h.value" v-if="h.hoverTooltip"/>
+              <Icon
+                type="info"
+                :size="8"
+                :key="h.value"
+                v-if="h.hoverTooltip"
+              />
             </template>
             <template #hover-content>
               {{ h.hoverTooltip }}
