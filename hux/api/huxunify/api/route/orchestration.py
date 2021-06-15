@@ -280,7 +280,7 @@ class AudiencePostView(SwaggerView):
             Tuple[dict, int]: Created audience, HTTP status.
 
         """
-        print(request.get_json())
+
         try:
             body = AudiencePostSchema().load(request.get_json(), partial=True)
         except ValidationError as validation_error:
