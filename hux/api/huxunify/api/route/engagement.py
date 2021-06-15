@@ -40,10 +40,15 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    api_error_handler,
     get_user_id,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
+)
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -729,7 +734,7 @@ class EngagementDeliverView(SwaggerView):
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "5f5f7262997acad4bac4373b",
+            "example": "60bfeaa3fa9ba04689906f7a",
         }
     ]
 
@@ -749,6 +754,7 @@ class EngagementDeliverView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, engagement_id: str) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
@@ -773,17 +779,29 @@ class EngagementDeliverView(SwaggerView):
         engagement_id = ObjectId(engagement_id)
 
         # check if engagement exists
-        engagement = get_engagement(get_db_client(), engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
                 "message": "Engagement does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate delivery route
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # submit jobs for all the audience/destination pairs
+        delivery_job_ids = []
+
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
+            batch_destination = get_destination_config(database, *pair)
+            batch_destination.register()
+            batch_destination.submit()
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
+
         return {
             "message": f"Successfully created delivery job(s) "
-            f"for engagement ID {engagement_id}"
+            f"{','.join(delivery_job_ids)}"
         }, HTTPStatus.OK
 
 
@@ -832,6 +850,7 @@ class EngagementDeliverAudienceView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
 
@@ -858,7 +877,8 @@ class EngagementDeliverAudienceView(SwaggerView):
         audience_id = ObjectId(audience_id)
 
         # check if engagement exists
-        engagement = get_engagement(get_db_client(), engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
                 "message": "Engagement does not exist."
@@ -878,19 +898,28 @@ class EngagementDeliverAudienceView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate the audience exists
-        if not orchestration_management.get_audience(
-            get_db_client(), audience_id
-        ):
+        if not orchestration_management.get_audience(database, audience_id):
             return {
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate delivery route
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # submit jobs for the audience/destination pairs
+        delivery_job_ids = []
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
+            if pair[0] != audience_id:
+                continue
+            batch_destination = get_destination_config(database, *pair)
+            batch_destination.register()
+            batch_destination.submit()
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
+
         return {
             "message": f"Successfully created delivery job(s) "
-            f"for engagement ID {engagement_id} and "
-            f"audience ID {audience_id}"
+            f"{','.join(delivery_job_ids)}"
         }, HTTPStatus.OK
 
 
@@ -949,6 +978,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
+    @api_error_handler()
     def post(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
@@ -982,7 +1012,8 @@ class EngagementDeliverDestinationView(SwaggerView):
         destination_id = ObjectId(destination_id)
 
         # check if engagement exists
-        engagement = get_engagement(get_db_client(), engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
                 "message": "Engagement does not exist."
@@ -1005,17 +1036,18 @@ class EngagementDeliverDestinationView(SwaggerView):
         valid_destination = False
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if destination_id == destination[db_c.DELIVERY_PLATFORM_ID]:
+                if destination_id == destination[db_c.OBJECT_ID]:
                     valid_destination = True
 
         if not valid_destination:
             return {
-                "message": "Destination is not attached to the engagement audience."
+                "message": "Destination is not attached to the "
+                "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
         # validate destination exists
         destination = delivery_platform_management.get_delivery_platform(
-            get_db_client(), destination_id
+            database, destination_id
         )
         if not destination:
             return {
@@ -1023,22 +1055,30 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate the audience exists
-        audience = orchestration_management.get_audience(
-            get_db_client(), audience_id
-        )
+        audience = orchestration_management.get_audience(database, audience_id)
         if not audience:
             return {
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # submit jobs for the audience/destination pairs
+        delivery_job_ids = []
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
+            if pair != [audience_id, destination_id]:
+                continue
+            batch_destination = get_destination_config(database, *pair)
+            batch_destination.register()
+            batch_destination.submit()
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
 
         # validate delivery route
         return {
-            "message": f"Successfully created delivery job(s)"
-            f" for engagement ID {engagement_id} "
-            f"and audience ID {audience_id} to "
-            f"destination ID {destination_id}"
+            "message": f"Successfully created delivery job(s) "
+            f"{','.join(delivery_job_ids)}"
         }, HTTPStatus.OK
 
 

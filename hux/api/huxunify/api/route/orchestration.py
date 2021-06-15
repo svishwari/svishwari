@@ -16,6 +16,7 @@ from huxunifylib.database import (
     user_management,
     orchestration_management,
     db_exceptions,
+    engagement_management,
     data_management,
 )
 import huxunifylib.database.constants as db_c
@@ -31,7 +32,12 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    api_error_handler,
     get_user_id,
+)
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
 )
 
 # setup the orchestration blueprint
@@ -438,6 +444,7 @@ class AudienceDeliverView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, audience_id: str) -> Tuple[dict, int]:
         """Delivers an audience for all of the engagements it is apart of.
 
@@ -463,11 +470,14 @@ class AudienceDeliverView(SwaggerView):
 
         # check if audience exists
         audience = None
+        database = get_db_client()
         try:
             audience = orchestration_management.get_audience(
-                get_db_client(), audience_id
+                database, audience_id
             )
         except db_exceptions.InvalidID:
+            # get audience returns invalid if the audience does not exist.
+            # pass and catch in the next step.
             pass
 
         if not audience:
@@ -475,8 +485,26 @@ class AudienceDeliverView(SwaggerView):
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate delivery route
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # get engagements
+        engagements = engagement_management.get_engagements_by_audience(
+            database, audience_id
+        )
+
+        # submit jobs for the audience/destination pairs
+        delivery_job_ids = []
+        for engagement in engagements:
+            for pair in get_audience_destination_pairs(
+                engagement[api_c.AUDIENCES]
+            ):
+                if pair[0] != audience_id:
+                    continue
+                batch_destination = get_destination_config(database, *pair)
+                batch_destination.register()
+                batch_destination.submit()
+                delivery_job_ids.append(
+                    str(batch_destination.audience_delivery_job_id)
+                )
+
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
