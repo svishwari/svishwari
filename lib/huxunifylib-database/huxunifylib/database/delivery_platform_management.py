@@ -446,11 +446,8 @@ def set_platform_type(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -534,11 +531,8 @@ def update_delivery_platform(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
