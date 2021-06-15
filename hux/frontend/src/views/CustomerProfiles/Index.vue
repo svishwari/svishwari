@@ -245,10 +245,8 @@ export default {
       this.primaryItems[6].subtitle = this.applyNumericFilter(
         this.overview.total_household_ids
       )
-      ;[
-        this.primaryItems[7].date,
-        this.primaryItems[7].time,
-      ] = this.dateTimeFormatter(this.overview.updated)
+      ;[this.primaryItems[7].date, this.primaryItems[7].time] =
+        this.dateTimeFormatter(this.overview.updated)
     },
     applyNumericFilter(value) {
       return value
