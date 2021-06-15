@@ -549,56 +549,6 @@ export default {
     },
     summaryCards() {
       return this.summary.length === 0 ? [] : this.summary
-
-      // return this.summary.map((sum) => {
-      //   switch (sum.title) {
-      //     case "Spend":
-      //       sum["value"] =
-      //         "$" +
-      //         this.$options.filters.Numeric(sum["value"], false, false, true)
-      //       break
-      //     case "Reach":
-      //       sum["value"] = this.$options.filters.Numeric(sum["value"], true)
-      //       break
-      //     case "Sent":
-      //       sum["value"] = this.$options.filters.Numeric(
-      //         sum["value"],
-      //         false,
-      //         false,
-      //         true
-      //       )
-      //       break
-      //     case "Impressions":
-      //     case "Conversions":
-      //     case "Clicks":
-      //     case "Frequency":
-      //       sum["value"] = this.$options.filters.Numeric(
-      //         sum["value"],
-      //         false,
-      //         false,
-      //         true
-      //       )
-      //       break
-      //     case "CPM":
-      //     case "CPA":
-      //     case "CPC":
-      //       sum["value"] = this.$options.filters.Currency(sum["value"])
-      //       break
-      //     case "CTR":
-      //     case "Engagement rate":
-      //       sum["value"] = this.$options.filters.Numeric(
-      //         sum["value"],
-      //         true,
-      //         false,
-      //         false,
-      //         "%"
-      //       )
-      //       break
-      //     default:
-      //       break
-      //   }
-      //   return sum
-      // })
     },
   },
   props: {
