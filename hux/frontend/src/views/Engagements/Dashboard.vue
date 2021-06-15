@@ -647,6 +647,7 @@ export default {
         {
           id: 6,
           title: "Click to open rate  ",
+          field: "click_to_open_rate",
           value: this.audiencePerformanceEmail
             ? this.audiencePerformanceEmail &&
               this.fetchKey(

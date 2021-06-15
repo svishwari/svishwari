@@ -49,7 +49,9 @@
                         }}
                       </span>
                       <span
-                        v-if="numericColumns.includes(item.field.split('|')[1])"
+                        v-else-if="
+                          numericColumns.includes(item.field.split('|')[1])
+                        "
                       >
                         {{
                           item.value.split("|")[1] | Numeric(false, false, true)
@@ -413,11 +415,13 @@ export default {
       percentileColumns: [
         // Ads Columns
         "click_through_rate",
+
         "engagement_rate",
         // Email Columns
         "hard_bounces_rate",
         "delivered_rate",
         "open_rate",
+        "click_to_open_rate",
         "unsubscribe_rate",
       ],
       currencyColumns: [
