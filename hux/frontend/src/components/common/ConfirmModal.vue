@@ -10,15 +10,7 @@
         <div class="neroBlack--text text-h6 pt-3 pb-10">{{ body }}</div>
       </div>
       <div
-        class="
-          modal-footer
-          background
-          d-flex
-          justify-space-between
-          align-center
-          px-10
-          py-5
-        "
+        class="modal-footer background d-flex justify-space-between align-center px-10 py-5"
       >
         <huxButton
           size="large"
