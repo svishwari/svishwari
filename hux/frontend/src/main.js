@@ -4,7 +4,6 @@ import App from "@/App"
 import filters from "@/filters"
 import router from "./router"
 import store from "./store"
-import { makeServer } from "./api/mock/server"
 
 // Styles
 import "@mdi/font/css/materialdesignicons.css"
@@ -26,8 +25,10 @@ Object.keys(filters).forEach((filterName) => {
 
 Vue.config.productionTip = false
 
+// API mock for local development only
 if (process.env.NODE_ENV === "development") {
-  makeServer()
+  const apiMock = require("./api/mock/server")
+  apiMock.makeServer()
 }
 
 new Vue({

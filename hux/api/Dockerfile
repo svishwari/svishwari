@@ -38,7 +38,7 @@ ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/api"
 
 # set to dev
 ENV FLASK_ENV=development
-ENV AWS_REGION=us-east-2
+ENV AWS_REGION=us-east-1
 
 # run the python application
 EXPOSE 80
