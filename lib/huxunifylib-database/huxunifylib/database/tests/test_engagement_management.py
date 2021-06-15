@@ -489,6 +489,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIsInstance(engagement_id, ObjectId)
 
         new_lookalike_audience = {
+            c.LOOKALIKE: True,
             c.OBJECT_ID: lookalike_audience[c.ID],
             c.LOOKALIKE_SOURCE_AUD_ID: source_audience_id,
             c.LOOKALIKE_AUD_NAME: lookalike_audience[c.NAME],
