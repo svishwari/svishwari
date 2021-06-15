@@ -106,14 +106,13 @@ const actions = {
 
         description: engagement.description,
 
-        // TODO: needs API support from in HUS-517/HUS-581
-        // delivery_schedule:
-        //   engagement.delivery_schedule === 0
-        //     ? null
-        //     : {
-        //         end_date: "",
-        //         start_date: "",
-        //       },
+        delivery_schedule:
+          engagement.delivery_schedule === 0
+            ? null
+            : {
+                end_date: "",
+                start_date: "",
+              },
 
         audiences: Object.values(engagement.audiences).map((audience) => {
           return {
