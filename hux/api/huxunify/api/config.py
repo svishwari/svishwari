@@ -134,7 +134,7 @@ class DevelopmentConfig(Config):
         "password": Config.MONGO_DB_PASSWORD,
     }
     if Config.MONGO_DB_HOST != "localhost":
-        MONGO_DB_CONFIG["ssl_cert_path"]= Config.MONGO_SSL_CERT
+        MONGO_DB_CONFIG["ssl_cert_path"] = Config.MONGO_SSL_CERT
 
 
 def load_env_vars(flask_env=config("FLASK_ENV", default="")) -> None:
