@@ -231,12 +231,14 @@ class AudiencePostView(SwaggerView):
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS_TAG: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
+                    {
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension_id": "data_extension_id",
+                    }
                 ],
                 api_c.AUDIENCE_ENGAGEMENTS: [
-                    "84759317897acad4bac4373b",
-                    "46826317897acad4bac4373b",
+                    "71364317897acad4bac4373b",
+                    "67589317897acad4bac4373b",
                 ],
                 api_c.AUDIENCE_FILTERS: [
                     {
@@ -287,6 +289,11 @@ class AudiencePostView(SwaggerView):
             body = AudiencePostSchema().load(request.get_json(), partial=True)
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
+
+        if body.get(api_c.ENGAGEMENT_TAG) is None:
+            return {
+                "message": "Audience needs to have at least one engagement."
+            }, HTTPStatus.BAD_REQUEST
 
         try:
             audience_doc = orchestration_management.create_audience(

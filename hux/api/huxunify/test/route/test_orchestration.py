@@ -365,7 +365,10 @@ class OrchestrationRouteTest(TestCase):
                     ],
                 }
             ],
-            api_c.DESTINATIONS: [str(d[db_c.ID]) for d in self.destinations],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+            api_c.AUDIENCE_ENGAGEMENTS: self.engagement_ids,
         }
 
         response = self.test_client.post(
@@ -381,3 +384,46 @@ class OrchestrationRouteTest(TestCase):
             audience_post[api_c.AUDIENCE_NAME],
             response.json[api_c.AUDIENCE_NAME],
         )
+
+    @requests_mock.Mocker()
+    def test_create_audience_with_no_engagement(self, request_mocker: Mocker):
+        """Test create audience with out engagement ids.
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)

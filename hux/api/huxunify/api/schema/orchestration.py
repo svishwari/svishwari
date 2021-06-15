@@ -108,5 +108,5 @@ class AudiencePostSchema(AudiencePutSchema):
             }
         ],
     )
-    engagements = fields.List(fields.String())
+    engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())

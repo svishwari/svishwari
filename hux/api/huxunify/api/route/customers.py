@@ -190,7 +190,7 @@ def get_stub_customer() -> dict:
 )
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}/<no_of_customers>",
+    f"/{api_c.CUSTOMERS_ENDPOINT}",
     "Customersview_no_of_cust",
 )
 class Customersview(SwaggerView):
