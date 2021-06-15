@@ -60,7 +60,7 @@
             :subtitle="item.subtitle"
             :icon="item.icon"
             :interactable="item.toolTipText ? true : false"
-            @click="item.toolTipText ? viewAllCustomer() : ''"
+            @click="item.toolTipText ?  customerProfilesDrawer = !customerProfilesDrawer : ''"
           >
             <template v-if="item.toolTipText" #extra-item>
               <Tooltip positionTop>
@@ -95,7 +95,7 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
-import CustomerDetails from "@/views/CustomerProfiles/Details"
+import CustomerDetails from "@/views/CustomerProfiles/CustomerDetails"
 
 export default {
   name: "CustomerProfiles",
