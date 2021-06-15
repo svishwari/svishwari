@@ -106,7 +106,7 @@ export default {
   data() {
     return {
       sortBy: null,
-      sortDesc: true,
+      sortDesc: false,
       itemsPerPage: ALL,
     }
   },
@@ -127,7 +127,6 @@ export default {
 
   mounted() {
     // Sort the list in ascending order by default
-    this.setSortBy(this.fields[0].key)
     this.setSortBy(this.fields[0].key)
   },
 }
