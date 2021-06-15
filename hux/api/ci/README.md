@@ -1,10 +1,20 @@
-## Adding environment variables in .var files
+## Adding environment/pipeline/build variables in config.env files
 
-- Each `.var` file contains environment specific variables to be used in codefresh-pipeline. Name of the files should follow this standard : 
-    `name_of_trigger.var`
-     Here name_of_trigger refers to the trigger name which is set in the respective codefresh-pipeline.
+- Each `config.env` file contains environment/trigger specific variables to be used in codefresh-pipeline, which is maintained in respective trigger-specific folders.
 
-- For each trigger in codefresh-pipeline, respective `.var` file needs to be maintained.
+- Directory structure should follow this standard : 
 
-- **Note**: While creating `.var` files, make sure to add an empty line in the end of the file. If not added, codefresh will add an extra character in the end of the file which will lead to wrong variable value.
+```sh
+ ├── trigger-1/
+ │   ├── config.env
+ ├── trigger-2/
+ │   └── config.env                           
+ ├── ...
+```
+
+Here `trigger-1, trigger-2` refers to the trigger name which is set in the codefresh-pipeline.
+
+- For each trigger in codefresh-pipeline, a `config.env` file needs to be maintained.
+
+- **Note**: While creating `config.env` files, make sure to add an empty line in the end of the file. If not added, codefresh will add an extra character in the end of the file which will lead to wrong variable value.
 

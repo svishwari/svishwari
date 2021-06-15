@@ -17,14 +17,6 @@ steps:
     title: Prepare Build Details
     type: parallel
     steps:
-      BuildName:
-        stage: prepare
-        title: Set build variables
-        image: huxhub.repo.mgnt.in/alpine
-        commands:
-          - cf_export BUILD_NAME=unified-ui
-          - cf_export SUB_REPO=hux/frontend
-          - cf_export PORT=80
       GetTriggerName:
         stage: prepare
         title: get trigger name using id from spec yaml      
