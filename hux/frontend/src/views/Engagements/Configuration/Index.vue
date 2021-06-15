@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapActions } from "vuex"
 import Page from "@/components/Page.vue"
 import EngagementOverview from "./Overview.vue"
 import EngagementForm from "./Form.vue"
@@ -47,21 +47,17 @@ export default {
     }
   },
 
-  computed: {
-    ...mapGetters({
-      audiences: "audiences/list",
-    }),
-  },
-
   methods: {
     ...mapActions({
       getAudiences: "audiences/getAll",
+      getDestinations: "destinations/getAll",
     }),
   },
 
   async mounted() {
     this.loading = true
     await this.getAudiences()
+    await this.getDestinations()
     this.loading = false
   },
 }

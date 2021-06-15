@@ -8,6 +8,7 @@ from http import HTTPStatus
 
 from healthcheck import HealthCheck
 from decouple import config
+from bson import ObjectId
 from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
@@ -15,6 +16,8 @@ from huxunifylib.connectors.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
+from huxunifylib.database.user_management import get_user, set_user
+from huxunifylib.database.constants import ID
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -23,6 +26,8 @@ from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     introspect_token,
+    get_token_from_request,
+    get_user_info,
 )
 
 
@@ -180,28 +185,158 @@ def secured() -> object:
                object: returns a decorated function object.
             """
 
+            # override if flag set locally
+            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
+                return in_function(*args, **kwargs)
+
             # allow preflight options through
             if request.method == "OPTIONS":
                 return "Success", 200
 
             # get the auth token
-            auth_header = request.headers.get("Authorization", None)
-            if not auth_header:
-                # no authorization header, return a generic 401.
-                return constants.INVALID_AUTH_HEADER, 401
+            token_response = get_token_from_request(request)
 
-            # split the header
-            parts = auth_header.split()
-            if parts[0] != "Bearer" or len(parts) != 2:
-                # user submitted an invalid authorization header.
-                # return a generic 401
-                return constants.INVALID_AUTH_HEADER, 401
+            # if not 200, return response.
+            if token_response[1] != 200:
+                return token_response
 
-            # safely extract token using string partition
-            if introspect_token(parts[1]):
+            # introspect token
+            if introspect_token(token_response[0]):
                 return in_function(*args, **kwargs)
 
             return constants.INVALID_AUTH, 400
+
+        # set tag so we can assert if a function is secured via this decorator
+        decorator.__wrapped__ = in_function
+        return decorator
+
+    return wrapper
+
+
+def get_user_id() -> object:
+    """
+    This decorator takes an API request and extracts the user id.
+
+    Example: @get_user_id()
+
+    Args:
+
+    Returns:
+        Response: decorator
+
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           object: returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for extracting the user_id
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               object: returns a decorated function object.
+            """
+
+            # override if flag set locally
+            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
+                # return a default user id
+                kwargs[constants.OKTA_USER_ID] = ObjectId()
+                return in_function(*args, **kwargs)
+
+            # get the auth token
+            token_response = get_token_from_request(request)
+
+            # if not 200, return response.
+            if token_response[1] != 200:
+                return token_response
+
+            # get the user information
+            user_info = get_user_info(token_response[0])
+
+            # check if the user is in the database
+            database = get_db_client()
+            user = get_user(database, user_info[constants.OKTA_ID_SUB])
+
+            # return found user, or create one and return it.
+            kwargs[constants.OKTA_USER_ID] = (
+                user[ID]
+                if user
+                else set_user(
+                    database,
+                    user_info[constants.OKTA_ID_SUB],
+                    user_info[constants.EMAIL],
+                    display_name=user_info[constants.NAME],
+                )[ID]
+            )
+
+            return in_function(*args, **kwargs)
+
+        return decorator
+
+    return wrapper
+
+
+def api_error_handler() -> object:
+    """
+    This decorator handles generic errors for API requests.
+
+    Eventually this decorator will handle more types of errors.
+
+    Example: @api_error_handler()
+
+    Args:
+
+    Returns:
+        Response: decorator
+
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           object: returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling errors.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               object: returns a decorated function object.
+            """
+            try:
+                return in_function(*args, **kwargs)
+
+            except Exception as exc:  # pylint: disable=broad-except
+                # log error, but return vague description to client.
+                logging.error(
+                    "%s: %s.",
+                    exc.__class__,
+                    exc,
+                )
+
+                return {
+                    "message": "Internal Server Error"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
         # set tag so we can assert if a function is secured via this decorator
         decorator.__wrapped__ = in_function
