@@ -152,10 +152,8 @@ class TestAudienceManagement(unittest.TestCase):
         doc = am.update_audience(
             self.database,
             set_audience[c.ID],
-            None,
-            None,
-            self.destination_ids,
-            self.user_id,
+            destination_ids=self.destination_ids,
+            user_id=self.user_id,
         )
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_NAME in doc)

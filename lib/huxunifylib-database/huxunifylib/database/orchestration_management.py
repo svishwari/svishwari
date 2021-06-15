@@ -4,6 +4,7 @@ to orchestration (audience/engagement) management.
 
 import logging
 import datetime
+from typing import Union
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -81,7 +82,7 @@ def get_audience(
     database: DatabaseClient,
     audience_id: ObjectId,
     include_users: bool = False,
-) -> dict:
+) -> Union[dict, None]:
     """A function to get an audience.
 
     Args:
@@ -89,7 +90,7 @@ def get_audience(
         audience_id (ObjectId): The Mongo DB ID of the audience.
         include_users (bool): Flag to include users.
     Returns:
-        dict:  An audience document.
+        Union[dict, None]:  An audience document.
 
     """
     doc = None
@@ -104,7 +105,7 @@ def get_audience(
                     [{"$match": {c.ID: audience_id}}] + USER_LOOKUP_PIPELINE
                 )
             )
-            return docs[0] if docs else {}
+            return docs[0] if docs else None
 
         return collection.find_one({c.ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
@@ -122,7 +123,7 @@ def get_audience(
 )
 def get_all_audiences(
     database: DatabaseClient, include_users: bool = False
-) -> list:
+) -> Union[list, None]:
     """A function to get all existing audiences.
 
     Args:
@@ -130,7 +131,7 @@ def get_all_audiences(
         include_users (bool): Flag to include users.
 
     Returns:
-        List: A list of all audiences.
+        Union[list, None]: A list of all audiences.
 
     """
 

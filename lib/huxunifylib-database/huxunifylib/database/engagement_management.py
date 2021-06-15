@@ -4,6 +4,7 @@ This module enables functionality related to engagement management.
 
 import logging
 import datetime
+from typing import Union
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -98,7 +99,7 @@ def set_engagement(
 )
 def get_engagements(
     database: DatabaseClient, include_users: bool = False
-) -> list:
+) -> Union[list, None]:
     """A function to get all engagements
 
     Args:
@@ -106,7 +107,7 @@ def get_engagements(
         include_users (bool): Flag to include users.
 
     Returns:
-        list: List of all engagement documents.
+        Union[list, None]: List of all engagement documents.
 
     """
 
@@ -134,7 +135,7 @@ def get_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
     include_users: bool = False,
-) -> dict:
+) -> Union[dict, None]:
     """A function to get an engagement based on ID
 
     Args:
@@ -143,7 +144,7 @@ def get_engagement(
         include_users (bool): Flag to include users.
 
     Returns:
-        dict: Dict of an engagement.
+        Union[dict, None]: Dict of an engagement.
 
     """
 
@@ -159,7 +160,7 @@ def get_engagement(
                     + USER_LOOKUP_PIPELINE
                 )
             )
-            return docs[0] if docs else {}
+            return docs[0] if docs else None
 
         return collection.find_one(
             {db_c.ID: engagement_id, db_c.DELETED: False}, {db_c.DELETED: 0}
