@@ -603,7 +603,7 @@ class DestinationDataExtPostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    def post(self, destination_id: str) -> Tuple[str, int]:
+    def post(self, destination_id: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
 
         ---
@@ -647,7 +647,7 @@ class DestinationDataExtPostView(SwaggerView):
                 data_extension_id = api_c.DATA_EXTENSION
                 # TODO : Assign data extension id once sfmc method is updated
                 connector.create_data_extension(body.get(api_c.DATA_EXTENSION))
-                return data_extension_id, HTTPStatus.OK
+                return {"data_extension_id": data_extension_id}, HTTPStatus.OK
 
             return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
         except Exception as exc:
