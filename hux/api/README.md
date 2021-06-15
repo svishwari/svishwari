@@ -264,19 +264,21 @@ There are two primary ways for connecting to the database
 
 
 ### Local MongoDB Setup
-To install MongoDB on local machine follow the instructions [here](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/#install-mongodb-community-edition)
+MongoDB Installation Steps
+* Download [MongoDB Community Server v3.6](https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.6.23-signed.msi)
+* To install MongoDB on local machine follow the instructions [here](https://docs.mongodb.com/v3.6/installation/)
 
 Steps to pre-populate use local MongoDB
 
-1. Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to build huxunifylib-database package
-2. Ensure to set the MONGO env variables in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) before you execute any of the scripts using the following commands in Command Prompt(cmd)
+* Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to build huxunifylib-database package
+* Ensure to set the MONGO env variables in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) before you execute any of the scripts using the following commands in Command Prompt(cmd)
    - `MONGO_DB_HOST=localhost`
    - `MONGO_DB_PORT=27017`
    - `MONGO_DB_USERNAME=''`
    - `MONGO_DB_PASSWORD=''`
    - `MONGO_DB_USE_SSL=False`
    
-3. Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to populate the data in your local database
+* Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to populate the data in your local database
 
 To use local database for development, set the following in `../../hux/api/settings.ini`.
    - `MONGO_DB_HOST=localhost`
