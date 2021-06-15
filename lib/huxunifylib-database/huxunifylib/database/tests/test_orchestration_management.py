@@ -6,6 +6,7 @@ import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
+from huxunifylib.database.user_management import set_user
 
 
 class TestAudienceManagement(unittest.TestCase):
@@ -18,6 +19,15 @@ class TestAudienceManagement(unittest.TestCase):
             "localhost", 27017, None, None
         ).connect()
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
+
+        # write a user to the database
+        self.user_name = "joey galloway"
+        self.user_id = set_user(
+            self.database,
+            "fake",
+            "joeygalloway@fake.com",
+            display_name=self.user_name,
+        )[c.ID]
 
         self.audience_filters = [
             {
@@ -65,6 +75,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "My Audience",
             self.audience_filters,
+            user_id=self.user_id,
         )
         return audience_doc
 
@@ -99,6 +110,17 @@ class TestAudienceManagement(unittest.TestCase):
             c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
 
+    def test_get_audience_with_user(self):
+        """Test get audience with user."""
+
+        set_audience = self._setup_audience()
+        audience_doc = am.get_audience(self.database, set_audience[c.ID], True)
+
+        self.assertIsNotNone(audience_doc)
+        self.assertIn(c.ID, audience_doc)
+        self.assertTrue(audience_doc[c.AUDIENCE_FILTERS])
+        self.assertEqual(audience_doc[c.CREATED_BY], self.user_name)
+
     def test_update_audience_name(self):
         """Test update audience name."""
 
@@ -128,7 +150,12 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertIsNotNone(audience_doc)
 
         doc = am.update_audience(
-            self.database, set_audience[c.ID], None, None, self.destination_ids
+            self.database,
+            set_audience[c.ID],
+            None,
+            None,
+            self.destination_ids,
+            self.user_id,
         )
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_NAME in doc)
@@ -184,6 +211,7 @@ class TestAudienceManagement(unittest.TestCase):
             set_audience[c.ID],
             set_audience[c.AUDIENCE_NAME],
             new_filters,
+            user_id=self.user_id,
         )
 
         self.assertTrue(doc is not None)
@@ -203,6 +231,7 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             self.destination_ids,
+            self.user_id,
         )
         doc = am.get_audience(self.database, set_audience[c.ID])
 
@@ -220,6 +249,7 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             self.destination_ids,
+            self.user_id,
         )
         doc = am.get_audience(self.database, set_audience[c.ID])
 
@@ -257,12 +287,14 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "New Audience 1",
             self.audience_filters,
+            user_id=self.user_id,
         )
 
         am.create_audience(
             self.database,
             "New Audience 2",
             self.audience_filters,
+            user_id=self.user_id,
         )
 
         audiences = am.get_all_audiences(self.database)
@@ -271,3 +303,33 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual(len(audiences), 3)
         self.assertEqual(audiences[0][c.AUDIENCE_NAME], "My Audience")
         self.assertEqual(audiences[1][c.AUDIENCE_NAME], "New Audience 1")
+
+    def test_get_all_audiences_with_users(self):
+        """Test get_all_audiences with users."""
+
+        self._setup_audience()
+        audiences = am.get_all_audiences(self.database, True)
+
+        self.assertIsNotNone(audiences)
+        self.assertEqual(len(audiences), 1)
+
+        am.create_audience(
+            self.database,
+            "Audience User",
+            self.audience_filters,
+            user_id=self.user_id,
+        )
+
+        am.create_audience(
+            self.database,
+            "New Audience User",
+            self.audience_filters,
+            user_id=self.user_id,
+        )
+
+        audiences = am.get_all_audiences(self.database, True)
+
+        self.assertIsNotNone(audiences)
+        self.assertTrue(
+            all(x[c.CREATED_BY] == self.user_name for x in audiences)
+        )

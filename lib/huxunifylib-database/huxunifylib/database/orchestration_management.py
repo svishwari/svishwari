@@ -77,13 +77,17 @@ def create_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
+def get_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    include_user: bool = False,
+) -> dict:
     """A function to get an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): The Mongo DB ID of the audience.
-
+        include_user (bool): Flag to include users.
     Returns:
         dict:  An audience document.
 
@@ -94,7 +98,15 @@ def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
 
     # Read the audience document which contains filtering rules
     try:
-        doc = collection.find_one({c.ID: audience_id})
+        if include_user:
+            docs = list(
+                collection.aggregate(
+                    [{"$match": {c.ID: audience_id}}] + USER_LOOKUP_PIPELINE
+                )
+            )
+            return docs[0] if docs else []
+
+        return collection.find_one({c.ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

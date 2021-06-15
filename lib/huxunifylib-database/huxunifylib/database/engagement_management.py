@@ -130,12 +130,17 @@ def get_engagements(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
+def get_engagement(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    include_user: bool = False,
+) -> dict:
     """A function to get an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectId of the engagement
+        include_user (bool): Flag to include users.
 
     Returns:
         dict: Dict of an engagement.
@@ -147,6 +152,15 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     ]
 
     try:
+        if include_user:
+            docs = list(
+                collection.aggregate(
+                    [{"$match": {db_c.ID: engagement_id}}]
+                    + USER_LOOKUP_PIPELINE
+                )
+            )
+            return docs[0] if docs else []
+
         return collection.find_one(
             {db_c.ID: engagement_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
