@@ -7,22 +7,46 @@
         v-for="(item, index) in overview"
         :key="index"
         :title="item.title"
-        :subtitle="item.subtitle"
         :icon="item.icon"
         :maxWidth="172"
         class="mr-4"
-      />
+      >
+        <template #subtitle-extended>
+          <span v-if="item.subtitle" class="font-weight-semi-bold">
+            {{ item.subtitle }}
+          </span>
+
+          <div v-if="item.destinations" class="d-flex align-center">
+            <Logo
+              class="mr-2"
+              v-for="destination in item.destinations"
+              :key="destination.type"
+              :type="destination.type"
+              :size="20"
+            />
+            <span
+              v-if="!item.destinations.length"
+              class="font-weight-semi-bold"
+            >
+              0
+            </span>
+          </div>
+        </template>
+      </MetricCard>
     </v-row>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+import Logo from "@/components/common/Logo.vue"
 import MetricCard from "@/components/common/MetricCard.vue"
 
 export default {
   name: "EngagementOverview",
 
   components: {
+    Logo,
     MetricCard,
   },
 
@@ -34,22 +58,31 @@ export default {
   },
 
   computed: {
-    numberOfDestinations() {
-      let count = 0
+    ...mapGetters({
+      destination: "destinations/single",
+    }),
 
-      Object.values(this.value.audiences).forEach((audience) => {
-        if (audience.destinations) {
-          count += Object.keys(audience.destinations).length
-        }
+    selectedAudiences() {
+      return Object.values(this.value.audiences)
+    },
+
+    selectedDestinationTypes() {
+      const allDestinationIds = this.selectedAudiences.map((audience) => {
+        return audience.destinations.map((destination) => {
+          return destination.id
+        })
       })
-
-      return count
+      const destinationIds = [...new Set(allDestinationIds.flat())]
+      const destinationTypes = destinationIds.map((id) => {
+        return this.destination(id)
+      })
+      return destinationTypes
     },
 
     sumAudienceSizes() {
       let size = 0
 
-      Object.values(this.value.audiences).forEach((audience) => {
+      this.selectedAudiences.forEach((audience) => {
         if (audience.size) {
           size += Number(audience.size)
         }
@@ -67,7 +100,7 @@ export default {
       return [
         {
           title: "Destinations",
-          subtitle: this.$options.filters.Numeric(this.numberOfDestinations),
+          destinations: this.selectedDestinationTypes,
         },
         {
           title: "Target size",

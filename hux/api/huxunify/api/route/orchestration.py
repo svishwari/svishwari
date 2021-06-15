@@ -292,13 +292,18 @@ class AudiencePostView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        audience_doc = orchestration_management.create_audience(
-            database=get_db_client(),
-            name=body[api_c.AUDIENCE_NAME],
-            audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-            destination_ids=body.get(api_c.DESTINATIONS_TAG),
-            user_id=user_id,
-        )
+        try:
+            audience_doc = orchestration_management.create_audience(
+                database=get_db_client(),
+                name=body[api_c.AUDIENCE_NAME],
+                audience_filters=body.get(api_c.AUDIENCE_FILTERS),
+                destination_ids=body.get(api_c.DESTINATIONS_TAG),
+                user_id=user_id,
+            )
+        except db_exceptions.DuplicateName:
+            return {
+                "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
+            }, HTTPStatus.BAD_REQUEST
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
