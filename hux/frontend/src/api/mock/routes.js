@@ -1,5 +1,6 @@
 import { Response } from "miragejs"
 import { customersOverview } from "./factories/customers"
+import { destinationsConstants } from "./factories/destination"
 import idrOverview from "./factories/identity"
 
 export const defineRoutes = (server) => {
@@ -28,77 +29,7 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
-  server.get("/destinations/constants", () => {
-    const code = 200
-    const headers = {}
-    const body = {
-      facebook: {
-        facebook_ad_account_id: {
-          name: "Ad Account ID",
-          type: "text",
-          required: true,
-          description: "Placeholder information text for 'Ad Account ID'",
-        },
-        facebook_app_id: {
-          name: "App ID",
-          type: "text",
-          required: true,
-          description: "Placeholder information text for 'App ID'",
-        },
-        facebook_access_token: {
-          name: "Access Token",
-          type: "password",
-          required: true,
-          description: "Placeholder information text for 'Access Token'",
-        },
-        facebook_app_secret: {
-          name: "App Secret",
-          type: "password",
-          required: true,
-          description: "Placeholder information text for 'App Secret'",
-        },
-      },
-      salesforce: {
-        sfmc_account_id: {
-          name: "Account ID",
-          type: "text",
-          required: true,
-          description: "Placeholder information text for 'Account ID'",
-        },
-        sfmc_auth_base_uri: {
-          name: "Auth Base URI",
-          type: "text",
-          required: true,
-          description: "Placeholder information text for 'Auth Base URI'",
-        },
-        sfmc_client_id: {
-          name: "Client ID",
-          type: "text",
-          required: true,
-          description: "Placeholder information text for 'Client ID'",
-        },
-        sfmc_client_secret: {
-          name: "Client Secret",
-          type: "password",
-          required: true,
-          description: "Placeholder information text for 'Client Secret'",
-        },
-        sfmc_rest_base_uri: {
-          name: "REST Base URI",
-          type: "text",
-          required: true,
-          description: "Placeholder information text for 'REST Base URI'",
-        },
-        sfmc_soap_base_uri: {
-          name: "Soap Base URI",
-          type: "text",
-          required: true,
-          description: null,
-        },
-      },
-    }
-    return new Response(code, headers, body)
-  })
+  server.get("/destinations/constants", () => destinationsConstants)
 
   // engagements
   server.get("/engagements")
@@ -121,6 +52,21 @@ export const defineRoutes = (server) => {
     const body = { message: "Successfully created delivery jobs" }
     return new Response(code, headers, body)
   })
+  // Audience Performances
+  server.get(
+    "/engagements/:id/audience-performance/email",
+    (schema, request) => {
+      const id = request.params.id
+      return schema.audiencePerformances.find(id)
+    }
+  )
+  server.get(
+    "/engagements/:id/audience-performance/display-ads",
+    (schema, request) => {
+      const id = request.params.id
+      return schema.audiencePerformances.find(id)
+    }
+  )
 
   // models
   server.get("/models")

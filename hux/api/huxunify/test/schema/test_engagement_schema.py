@@ -128,3 +128,20 @@ class EngagementSchemaTest(TestCase):
         doc = {"SomeRandomField": "Some Random String"}
 
         assert EngagementPutSchema().validate(doc) != {}
+
+    def test_successful_engagement_schedule_post_schema(self) -> None:
+        """Test Successful EngagementPostSchema Serialization
+        with a null delivery schedule.
+
+        Returns:
+            Response: None
+
+        """
+        doc = {
+            api_c.NAME: "Engagement 1",
+            api_c.DESCRIPTION: "Engagement 1 description",
+            db_c.AUDIENCES: [],
+            api_c.DELIVERY_SCHEDULE: None,
+        }
+
+        assert EngagementPostSchema().validate(doc) == {}

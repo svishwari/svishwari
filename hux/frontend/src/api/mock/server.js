@@ -1,5 +1,6 @@
-import { createServer, Factory, Model, Serializer } from "miragejs"
+import { belongsTo, createServer, Factory, hasMany, Model } from "miragejs"
 import config from "@/config"
+import AppSerializer from "./serializer"
 
 // routes
 import { defineRoutes } from "./routes"
@@ -11,22 +12,27 @@ import seeds from "./seeds"
 import audienceFactory from "./factories/audiences"
 import { customer, customerProfile } from "./factories/customers"
 import dataSourceFactory from "./factories/dataSource"
-import destinationFactory from "./factories/destination"
+import { destination as destinationFactory } from "./factories/destination"
 import engagementFactory from "./factories/engagement"
 import modelFactory from "./factories/model"
-import audienceFilterFactory from "./factories/audiencesFilter"
+import audiencePerformanceFactory from "./factories/audiencePerformance"
 
 export function makeServer({ environment = "development" } = {}) {
   // models
   const models = {
-    audience: Model,
+    audience: Model.extend({
+      destinations: hasMany("destination"),
+      engagements: hasMany("engagement"),
+    }),
     customer: Model,
     customerProfile: Model,
     dataSource: Model,
-    destination: Model,
-    engagement: Model,
+    destination: Model.extend({
+      destinationable: belongsTo({ polymorphic: true }),
+    }),
+    engagement: Model.extend(),
     model: Model,
-    audienceFilter: Model,
+    audiencePerformance: Model,
   }
 
   const factories = {
@@ -37,7 +43,7 @@ export function makeServer({ environment = "development" } = {}) {
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
     model: Factory.extend(modelFactory),
-    audienceFilter: Factory.extend(audienceFilterFactory),
+    audiencePerformance: Factory.extend(audiencePerformanceFactory),
   }
 
   const server = createServer({
@@ -55,9 +61,9 @@ export function makeServer({ environment = "development" } = {}) {
       this.passthrough(`${config.oktaUrl}/**`)
     },
     serializers: {
-      application: Serializer.extend({
-        embed: true,
-        root: false,
+      application: AppSerializer,
+      audience: AppSerializer.extend({
+        include: ["destinations", "engagements"],
       }),
     },
   })

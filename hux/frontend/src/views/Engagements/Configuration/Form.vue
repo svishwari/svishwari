@@ -84,6 +84,10 @@
               label: 'Target size',
             },
             {
+              key: 'destinations',
+              label: 'Destinations',
+            },
+            {
               key: 'manage',
             },
           ]"
@@ -99,6 +103,35 @@
                 }}
               </template>
             </Tooltip>
+          </template>
+
+          <template #field:destinations="row">
+            <div class="d-flex align-center">
+              <div class="d-flex align-center">
+                <Logo
+                  class="mr-2"
+                  v-for="destination in row.value"
+                  :key="destination.id"
+                  :type="destinationType(destination.id)"
+                  :size="20"
+                />
+              </div>
+
+              <Tooltip>
+                <template #label-content>
+                  <v-btn
+                    width="20"
+                    height="20"
+                    fab
+                    class="primary"
+                    @click="openSelectDestinationsDrawer(row.item.id)"
+                  >
+                    <v-icon size="16">mdi-plus</v-icon>
+                  </v-btn>
+                </template>
+                <template #hover-content>Add destination(s)</template>
+              </Tooltip>
+            </div>
           </template>
 
           <template #field:manage="row">
@@ -185,19 +218,28 @@
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
     />
+
+    <SelectDestinationsDrawer
+      v-model="value.audiences"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showSelectDestinationsDrawer"
+      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+    />
   </v-form>
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import FormStep from "@/components/common/FormStep.vue"
 import FormSteps from "@/components/common/FormSteps.vue"
 import HuxFooter from "@/components/common/HuxFooter.vue"
+import Logo from "@/components/common/Logo.vue"
 import TextField from "@/components/common/TextField.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
 import AddAudienceDrawer from "./Drawers/AddAudienceDrawer.vue"
+import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
+import SelectDestinationsDrawer from "./Drawers/SelectDestinationsDrawer.vue"
 
 export default {
   name: "EngagementsForm",
@@ -206,11 +248,13 @@ export default {
     DataCards,
     FormStep,
     FormSteps,
+    Logo,
     HuxFooter,
     TextField,
     Tooltip,
-    SelectAudiencesDrawer,
     AddAudienceDrawer,
+    SelectAudiencesDrawer,
+    SelectDestinationsDrawer,
   },
 
   props: {
@@ -224,10 +268,30 @@ export default {
     return {
       showSelectAudiencesDrawer: false,
       showAddAudiencesDrawer: false,
+      showSelectDestinationsDrawer: false,
+      selectedAudienceId: null,
     }
   },
 
   computed: {
+    ...mapGetters({
+      destination: "destinations/single",
+    }),
+
+    payload() {
+      return {
+        name: this.value.name,
+        description: this.value.description,
+        delivery_schedule: this.value.delivery_schedule,
+        audiences: Object.values(this.value.audiences).map((audience) => {
+          return {
+            id: audience.id,
+            destinations: audience.destinations,
+          }
+        }),
+      }
+    },
+
     isValid() {
       return this.value.name.length
     },
@@ -256,6 +320,7 @@ export default {
     closeAllDrawers() {
       this.showSelectAudiencesDrawer = false
       this.showAddAudiencesDrawer = false
+      this.showSelectDestinationsDrawer = false
     },
 
     openSelectAudiencesDrawer() {
@@ -268,6 +333,13 @@ export default {
       this.showAddAudiencesDrawer = true
     },
 
+    openSelectDestinationsDrawer(audienceId) {
+      // set the selected audience on which we want to manage its destinations
+      this.selectedAudienceId = audienceId
+      this.closeAllDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
+
     removeAudience(audience) {
       this.$delete(this.value.audiences, audience.id)
     },
@@ -276,8 +348,12 @@ export default {
       return Boolean(index === this.totalSelectedAudiences - 1)
     },
 
+    destinationType(id) {
+      return this.destination(id).type
+    },
+
     async addNewEngagement() {
-      const engagement = await this.addEngagement(this.value)
+      const engagement = await this.addEngagement(this.payload)
       this.$router.push({
         name: "EngagementDashboard",
         params: { id: engagement.id },
@@ -286,7 +362,7 @@ export default {
 
     async deliverNewEngagement() {
       try {
-        const engagement = await this.addEngagement(this.value)
+        const engagement = await this.addEngagement(this.payload)
         await this.deliverEngagement(engagement.id)
         this.$router.push({
           name: "EngagementDashboard",

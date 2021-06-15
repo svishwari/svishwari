@@ -1,4 +1,4 @@
-import DescriptiveCard from "@/components/common/cards/DescriptiveCard"
+import DescriptiveCard from "@/components/common/Cards/DescriptiveCard"
 import { shallowMount } from "@vue/test-utils"
 
 describe("Cards", () => {
