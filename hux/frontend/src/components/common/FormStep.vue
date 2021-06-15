@@ -10,7 +10,7 @@
       <span class="form-step__indicator rounded-circle">
         {{ step }}
       </span>
-      <div class="form-step__label">
+      <div class="form-step__label d-flex align-center">
         <slot v-if="$slots.label" name="label"></slot>
         <span v-else class="text-h5">{{ label || `Step ${step}` }}</span>
         <em v-if="optional" class="text-caption grey--text"> - Optional</em>

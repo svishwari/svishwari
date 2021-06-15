@@ -14,7 +14,6 @@ from marshmallow import ValidationError
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
-    constants as db_constants,
 )
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.util.general.const import FacebookCredentials
@@ -30,6 +29,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    get_user_id,
 )
 import huxunify.api.constants as api_c
 
@@ -193,7 +193,8 @@ class DestinationPutView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationPutSchema)
-    def put(self, destination_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def put(self, destination_id: str, user_id: ObjectId) -> Tuple[dict, int]:
         """Updates a destination.
 
         ---
@@ -202,14 +203,12 @@ class DestinationPutView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status.
 
         """
-
-        # TODO - implement after HUS-254 is done to grab user/okta_id
-        user_id = ObjectId()
 
         # load into the schema object
         try:
@@ -235,8 +234,6 @@ class DestinationPutView(SwaggerView):
                 )
                 is_added = True
 
-            # TODO - provide input user-id to delivery platform
-            #       create the destination after the PR 171 is merged
             # update the destination
             return (
                 destination_management.update_delivery_platform(
@@ -321,7 +318,7 @@ class DestinationValidatePostView(SwaggerView):
             "type": "object",
             "description": "Validate destination body.",
             "example": {
-                api_c.DESTINATION_TYPE: "Facebook",
+                api_c.DESTINATION_TYPE: "facebook",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
                     api_c.FACEBOOK_APP_SECRET: "717bdOQqZO99",
@@ -372,10 +369,7 @@ class DestinationValidatePostView(SwaggerView):
 
         try:
             # test the destination connection and update connection status
-            if (
-                body.get(api_c.DESTINATION_TYPE)
-                == db_constants.DELIVERY_PLATFORM_FACEBOOK
-            ):
+            if body.get(api_c.DESTINATION_TYPE) == api_c.FACEBOOK_TYPE:
                 destination_connector = FacebookConnector(
                     auth_details={
                         FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(

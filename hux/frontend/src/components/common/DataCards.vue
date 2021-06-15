@@ -103,6 +103,7 @@ export default {
       default: false,
     },
   },
+
   data() {
     return {
       sortBy: null,
