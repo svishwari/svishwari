@@ -7,12 +7,11 @@
       <template #right>
         <hux-button
           class="mr-4 pa-3"
-          isDisabled
           isCustomIcon
           isTile
           icon="customer-profiles"
           variant="white"
-          @click="viewAllCustomer()"
+          @click="customerProfilesDrawer = !customerProfilesDrawer"
         >
           View all customers
         </hux-button>
@@ -83,6 +82,7 @@
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
+    <CustomerDetails  v-model="customerProfilesDrawer" />
   </div>
 </template>
 
@@ -95,6 +95,7 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
+import CustomerDetails from "@/views/CustomerProfiles/Details"
 
 export default {
   name: "CustomerProfiles",
@@ -106,10 +107,12 @@ export default {
     Tooltip,
     huxButton,
     Icon,
+    CustomerDetails
   },
 
   data() {
     return {
+      customerProfilesDrawer: false,
       overviewListItems: [
         {
           title: "No. of customers",
