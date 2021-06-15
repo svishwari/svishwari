@@ -1,6 +1,7 @@
 """
 Purpose of this file is to house all tests related to orchestration
 """
+
 from http import HTTPStatus
 from unittest import TestCase, mock
 from bson import ObjectId
@@ -36,6 +37,11 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+VALID_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: "8548bfh8d",
+    api_c.EMAIL: "davesmith@fake.com",
+    api_c.NAME: "dave smith",
+}
 
 
 class OrchestrationRouteTest(TestCase):
@@ -57,6 +63,7 @@ class OrchestrationRouteTest(TestCase):
             f"/oauth2/v1/introspect?client_id="
             f"{self.config.OKTA_CLIENT_ID}"
         )
+        self.user_info_call = f"{self.config.OKTA_ISSUER}/oauth2/v1/userinfo"
         self.audience_api_endpoint = "/api/v1{}".format(
             api_c.AUDIENCE_ENDPOINT
         )
@@ -76,6 +83,14 @@ class OrchestrationRouteTest(TestCase):
             "huxunify.api.route.orchestration.get_db_client"
         ).start()
         get_db_client_mock.return_value = self.database
+        self.addCleanup(mock.patch.stopall)
+
+        # mock get_db_client()  for the userinfo utils.
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
         self.addCleanup(mock.patch.stopall)
 
         destinations = [
@@ -308,3 +323,48 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIn("rule_attributes", response.json)
         self.assertIn("text_operators", response.json)
+
+    @requests_mock.Mocker()
+    def test_create_audience(self, request_mocker: Mocker):
+        """Test create audience.
+
+        Args:
+            request_mocker (Mocker): Re quest mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [str(d[db_c.ID]) for d in self.destinations],
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(
+            audience_post[api_c.AUDIENCE_NAME],
+            response.json[api_c.AUDIENCE_NAME],
+        )
