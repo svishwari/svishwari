@@ -817,32 +817,6 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
-    def test_delete_engagement_non_existent_id(self, request_mocker: Mocker):
-        """Test delete engagement API with non-existent id
-
-        Args:
-            request_mocker (Mocker): Request mocker object.
-
-        Returns:
-
-        """
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-
-        engagement_id = ObjectId()
-        valid_response = {"message": api_c.OPERATION_FAILED}
-
-        response = self.app.delete(
-            (f"{BASE_URL}" f"{api_c.ENGAGEMENT_ENDPOINT}/" f"{engagement_id}"),
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
-        )
-
-        self.assertEqual(HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code)
-        self.assertEqual(valid_response, response.json)
-
-    @requests_mock.Mocker()
     def test_set_engagement_valid_request(self, request_mocker: Mocker):
         """
         Test set engagement API with valid params
