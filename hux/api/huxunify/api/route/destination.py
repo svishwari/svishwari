@@ -499,7 +499,7 @@ class DestinationDataExtView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     def get(self, destination_id: str) -> Tuple[list, int]:
-        """Retrieve destination data extensions.
+        """Retrieves destination data extensions.
 
         ---
         security:
@@ -586,15 +586,15 @@ class DestinationDataExtPostView(SwaggerView):
             "description": "Created destination data extension successfully.",
             "schema": {
                 "example": {
-                    "message": "Destination data ext is created successfully"
+                    "message": "Destination data extension is created successfully"
                 },
             },
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to create destination extension.",
+            "description": "Failed to create destination data extension.",
             "schema": {
                 "example": {
-                    "message": "Destination extension can not be created"
+                    "message": "Destination data extension cannot be created."
                 },
             },
         },
@@ -645,7 +645,7 @@ class DestinationDataExtPostView(SwaggerView):
                     )
                 )
                 data_extension_id = api_c.DATA_EXTENSION
-                # TODO : Assin data extension id once sfmc method is updated
+                # TODO : Assign data extension id once sfmc method is updated
                 connector.create_data_extension(body.get(api_c.DATA_EXTENSION))
                 return data_extension_id, HTTPStatus.OK
 

@@ -195,7 +195,7 @@ class DestinationConstantsSchema(Schema):
 
 class DestinationDataExtPostSchema(Schema):
     """
-    Destination data ext post schema class
+    Destination data extension post schema class
     """
 
     authentication_details = fields.Field()
@@ -205,7 +205,7 @@ class DestinationDataExtPostSchema(Schema):
 
 class DestinationDataExtGetSchema(Schema):
     """
-    Destination data ext get schema class
+    Destination data extension get schema class
     """
 
     data_extensions = fields.String()
