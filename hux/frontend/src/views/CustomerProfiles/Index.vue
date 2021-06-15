@@ -82,7 +82,7 @@
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
-    <CustomerDetails  v-model="customerProfilesDrawer" />
+    <CustomerDetails v-model="customerProfilesDrawer" />
   </div>
 </template>
 
@@ -196,7 +196,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      customers: "customers/list",
       overview: "customers/overview",
     }),
   },

@@ -2,15 +2,13 @@
   <Drawer v-model="localDrawer">
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3 ml-2 neroBlack--text">
-          Customers
-        </h3>
+        <h3 class="text-h3 ml-2 neroBlack--text">Customers</h3>
       </div>
     </template>
     <template #default>
       <PageHeader class="top-bar" :headerHeight="40">
         <template slot="left">
-          <v-icon size="18" color="black" >mdi-magnify</v-icon>
+          <v-icon size="18" color="black">mdi-magnify</v-icon>
         </template>
       </PageHeader>
       <hux-data-table :headers="columnDefs" :dataItems="customers">
@@ -21,21 +19,26 @@
             :style="{ width: header.width }"
           >
             <div v-if="header.value == 'id'">
-              <a>{{ item[header.value] }}</a>
+              <a @click="loadCustomerProfile(item[header.value])">{{ item[header.value] }}</a>
             </div>
-            <div v-if="header.value == 'first_name' || header.value == 'last_name'">
+            <div
+              v-if="header.value == 'first_name' || header.value == 'last_name'"
+            >
               <span v-if="item.last_name">{{ item.last_name }}, </span>
               <span v-if="item.first_name"> {{ item.first_name }}</span>
             </div>
             <div v-if="header.value == 'match_confidence'">
-              <hux-slider :readOnly="false" :isRangeSlider="false" :value="Math.round(item[header.value])"></hux-slider>
+              <hux-slider
+                :isRangeSlider="false"
+                :value="item[header.value]"
+              ></hux-slider>
             </div>
           </td>
         </template>
       </hux-data-table>
     </template>
     <template #footer-left>
-      <div class="d-flex align-baseline footer-font" >
+      <div class="d-flex align-baseline footer-font">
         {{ total_customers }} results
       </div>
     </template>
@@ -55,7 +58,7 @@ export default {
     Drawer,
     HuxDataTable,
     HuxSlider,
-    PageHeader
+    PageHeader,
   },
   data() {
     return {
@@ -78,22 +81,6 @@ export default {
           width: "auto",
         },
       ],
-
-      customers: [
-       { 
-        first_name: "Louisa", 
-        id: "1", 
-        last_name: "Reilly", 
-        match_confidence: 0.40447 
-       },
-        {
-          first_name: "Saumya",
-          id: "2",
-          last_name: "Vishwari",
-          match_confidence: 0.90714
-        },
-      ],
-      total_customers: 52456232
     }
   },
 
@@ -123,7 +110,24 @@ export default {
   computed: {
     ...mapGetters({
       customer: "customers/single",
+      customersList: "customers/list",
     }),
+
+    customers() {
+      let allCustomerList = JSON.parse(JSON.stringify(this.customersList));
+      allCustomerList.forEach((data) => {
+        data.match_confidence = parseInt(
+          this.$options.filters
+            .percentageConvert(data.match_confidence, true, true)
+            .slice(0, -1)
+        )
+      })
+      return allCustomerList
+    },
+
+    total_customers() {
+      return this.customersList.length
+    },
 
     id() {
       return this.$route.params.id
@@ -134,7 +138,10 @@ export default {
     ...mapActions({
       getCustomer: "customers/get",
     }),
-  },
+
+    loadCustomerProfile(huxId) {
+    }
+   },
 
   async mounted() {
     this.loading = true
@@ -145,33 +152,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .hux-data-table {
-      margin-top: 1px;
-  }
-  ::v-deep .v-sheet .theme--light .v-toolbar {
-    background: var(--v-aliceBlue-base);
-  }
-  ::v-deep .theme--light.v-sheet {
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-  }
-  .hux-data-table {
-    ::v-deep table {
-      .v-data-table-header {
-        tr {
-          height: 40px !important;
-        }
-        th {
-          background: var(--v-aliceBlue-base);
-        }
+.hux-data-table {
+  margin-top: 1px;
+}
+::v-deep .v-sheet .theme--light .v-toolbar {
+  background: var(--v-aliceBlue-base);
+}
+::v-deep .theme--light.v-sheet {
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+}
+.hux-data-table {
+  ::v-deep table {
+    .v-data-table-header {
+      tr {
+        height: 40px !important;
+      }
+      th {
+        background: var(--v-aliceBlue-base);
       }
     }
   }
-  .footer-font {
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 16px;
-    color: var(gray);
-  }
+}
+.footer-font {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(gray);
+}
 </style>
