@@ -88,11 +88,11 @@
           </v-card-title>
           <v-card-text class="pl-6 pr-6 pb-6">
             <div
-              class="blank-section rounded-lg pa-5"
+              class="empty-state pa-5 text--gray"
               v-if="engagement.audiences.length == 0"
             >
-              Nothing to show here yet. Add an audience and then assign a
-              destination.
+              Nothing to show here yet. Add an audience, assign and deliver that
+              audience to a destination.
             </div>
             <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
               <status-list
@@ -191,6 +191,11 @@ export default {
         description:
           "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear. ",
         audiences: [
+          {
+            audienceId: 1,
+            name: "Audience with no destination",
+            destinations: [],
+          },
           {
             audienceId: 1,
             name: "Audience - Main",
@@ -402,24 +407,25 @@ export default {
         {
           id: 1,
           title: "Spend",
+          field: "spend",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "spend")
             : "-",
-          width: "80px",
         },
         {
           id: 2,
+          field: "reach",
           title: "Reach",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "reach")
             : "-",
-          width: "90px",
         },
         {
           id: 3,
           title: "Impressions",
+          field: "impressions",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(
@@ -427,11 +433,11 @@ export default {
                 "impressions"
               )
             : "-",
-          width: "105px",
         },
         {
           id: 4,
           title: "Conversions",
+          field: "conversions",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(
@@ -439,29 +445,29 @@ export default {
                 "conversions"
               )
             : "-",
-          width: "105px",
         },
         {
           id: 5,
           title: "Clicks",
+          field: "clicks",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "clicks")
             : "-",
-          width: "90px",
         },
         {
           id: 6,
           title: "Frequency",
+          field: "frequency",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(this.audiencePerformanceAds["summary"], "frequency")
             : "-",
-          width: "100px",
         },
         {
           id: 7,
           title: "CPM",
+          field: "cost_per_thousand_impressions",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(
@@ -469,11 +475,11 @@ export default {
                 "cost_per_thousand_impressions"
               )
             : "-",
-          width: "90px",
         },
         {
           id: 8,
           title: "CTR",
+          field: "click_through_rate",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(
@@ -481,11 +487,11 @@ export default {
                 "click_through_rate"
               )
             : "-",
-          width: "90px",
         },
         {
           id: 9,
           title: "CPA",
+          field: "cost_per_action",
           value: this.audiencePerformanceAds
             ? this.audiencePerformanceAds &&
               this.fetchKey(
@@ -493,29 +499,28 @@ export default {
                 "cost_per_action"
               )
             : "-",
-          width: "90px",
         },
         {
           id: 10,
           title: "CPC",
+          field: "cost_per_click",
           value:
             this.audiencePerformanceAds &&
             this.fetchKey(
               this.audiencePerformanceAds["summary"],
               "cost_per_click"
             ),
-          width: "90px",
         },
         {
           id: 11,
           title: "Engagement rate",
+          field: "engagement_rate",
           value:
             this.audiencePerformanceAds &&
             this.fetchKey(
               this.audiencePerformanceAds["summary"],
               "engagement_rate"
             ),
-          width: "150px",
         },
       ]
     },
@@ -530,17 +535,18 @@ export default {
         {
           id: 1,
           title: "Sent",
+          field: "sent",
           value:
             this.audiencePerformanceEmail &&
             this.audiencePerformanceEmail["summary"]
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(this.audiencePerformanceEmail["summary"], "sent")
               : "-",
-          width: "90px",
         },
         {
           id: 2,
           title: "Hard bounces / Rate",
+          field: "hard_bounces|hard_bounces_rate",
           value: `${`${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
@@ -549,7 +555,7 @@ export default {
                   "hard_bounces"
                 )
               : "-"
-          } • ${
+          }|${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -557,12 +563,12 @@ export default {
                   "hard_bounces_rate"
                 )
               : "-"
-          }%`}`,
-          width: "150px",
+          }`}`,
         },
         {
           id: 3,
           title: "Delivered / Rate",
+          field: "delivered|delivered_rate",
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
@@ -571,7 +577,7 @@ export default {
                   "delivered"
                 )
               : "-"
-          } • ${
+          }|${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -579,26 +585,18 @@ export default {
                   "delivered_rate"
                 )
               : "-"
-          }%`,
-          width: "120px",
+          }`,
         },
         {
           id: 4,
           title: "Open / Rate",
+          field: "open|open_rate",
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.$options.filters.Numeric(
-                  this.fetchKey(
-                    this.audiencePerformanceEmail["summary"],
-                    "open"
-                  ),
-                  false,
-                  false,
-                  true
-                )
+                this.fetchKey(this.audiencePerformanceEmail["summary"], "open")
               : "-"
-          } • ${
+          }|${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -606,26 +604,21 @@ export default {
                   "open_rate"
                 )
               : "-"
-          }%`,
-          width: "122px",
+          }`,
         },
         {
           id: 5,
           title: "Click / CTR",
+          field: "clicks|click_through_rate",
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.$options.filters.Numeric(
-                  this.fetchKey(
-                    this.audiencePerformanceEmail["summary"],
-                    "clicks"
-                  ),
-                  false,
-                  false,
-                  true
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "clicks"
                 )
               : "-"
-          } • ${
+          }|${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -633,70 +626,55 @@ export default {
                   "click_through_rate"
                 )
               : "-"
-          }%`,
-          width: "122px",
+          }`,
         },
         {
           id: 6,
           title: "Click to open rate  ",
+          field: "click_to_open_rate",
           value: this.audiencePerformanceEmail
             ? this.audiencePerformanceEmail &&
               this.fetchKey(
                 this.audiencePerformanceEmail["summary"],
                 "click_to_open_rate"
-              ) + "%"
+              )
             : "-",
-          width: "135px",
         },
         {
           id: 7,
           title: "Unique clicks / Unique opens",
+          field: "unique_clicks|unique_opens",
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.$options.filters.Numeric(
-                  this.fetchKey(
-                    this.audiencePerformanceEmail["summary"],
-                    "unique_clicks"
-                  ),
-                  false,
-                  false,
-                  true
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "unique_clicks"
                 )
               : "-"
-          } • ${
+          }|${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.$options.filters.Numeric(
-                  this.fetchKey(
-                    this.audiencePerformanceEmail["summary"],
-                    "unique_opens"
-                  ),
-                  false,
-                  false,
-                  true
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "unique_opens"
                 )
               : "-"
-          }%`,
-          width: "200px",
+          }`,
         },
         {
           id: 8,
           title: "Unsubscribe / Rate",
+          field: "unsubscribe|unsubscribe_rate",
           value: `${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
-                this.$options.filters.Numeric(
-                  this.fetchKey(
-                    this.audiencePerformanceEmail["summary"],
-                    "unsubscribe"
-                  ),
-                  false,
-                  false,
-                  true
+                this.fetchKey(
+                  this.audiencePerformanceEmail["summary"],
+                  "unsubscribe"
                 )
               : "-"
-          } • ${
+          }|${
             this.audiencePerformanceEmail
               ? this.audiencePerformanceEmail &&
                 this.fetchKey(
@@ -704,8 +682,7 @@ export default {
                   "unsubscribe_rate"
                 )
               : "-"
-          }%`,
-          width: "140px",
+          }`,
         },
       ]
     },
@@ -759,9 +736,22 @@ export default {
   ::v-deep .mdi-checkbox-blank-circle {
     font-size: 18px;
   }
+  .empty-state {
+    background: var(--v-aliceBlue-base);
+    width: 100%;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--v-gray-base);
+    border: 1px solid var(--v-lightGrey-base);
+    box-sizing: border-box;
+    border-radius: 5px;
+  }
   .inner-wrap {
     .summary-wrap {
       flex-wrap: wrap;
+      .metric-card-wrapper {
+        padding: 10px 15px;
+      }
     }
     .summary-tab-wrap {
       .metric-card-wrapper {
@@ -816,7 +806,6 @@ export default {
             text-transform: inherit;
             padding: 8px;
             color: var(--v-primary-base);
-            cursor: default;
             font-size: 15px;
             line-height: 20px;
             svg {
