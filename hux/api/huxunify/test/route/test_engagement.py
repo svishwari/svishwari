@@ -19,6 +19,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import set_engagement, get_engagements
 from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
@@ -29,6 +30,7 @@ from huxunify.api.schema.engagement import (
     EmailSummary,
     EmailIndividualAudienceSummary, EngagementGetSchema,
 )
+from huxunify.api.data_connectors.aws import parameter_store
 
 
 BASE_URL = "/api/v1"
@@ -47,6 +49,7 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 
 
 def validate_schema(schema: Schema, response: dict) -> bool:
@@ -266,18 +269,17 @@ class TestEngagementDeliveryOperations(TestCase):
 
         destinations = [
             {
-                db_c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
-                db_c.DELIVERY_PLATFORM_TYPE: "salesforce",
-                db_c.STATUS: db_c.ACTIVE,
-                db_c.ENABLED: True,
-                db_c.ADDED: True,
-            },
-            {
                 db_c.DELIVERY_PLATFORM_NAME: "Facebook",
                 db_c.DELIVERY_PLATFORM_TYPE: "facebook",
-                db_c.STATUS: db_c.ACTIVE,
+                db_c.STATUS: db_c.STATUS_SUCCEEDED,
                 db_c.ENABLED: True,
                 db_c.ADDED: True,
+                db_c.DELIVERY_PLATFORM_AUTH: {
+                    api_c.FACEBOOK_ACCESS_TOKEN: "path1",
+                    api_c.FACEBOOK_APP_SECRET: "path2",
+                    api_c.FACEBOOK_APP_ID: "path3",
+                    api_c.FACEBOOK_AD_ACCOUNT_ID: "path4",
+                },
             },
         ]
 
@@ -335,14 +337,14 @@ class TestEngagementDeliveryOperations(TestCase):
                     {
                         db_c.OBJECT_ID: self.audiences[0][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
-                            {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
+                            {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
                         api_c.DESTINATIONS_TAG: [
-                            {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
+                            {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
                     },
@@ -369,8 +371,15 @@ class TestEngagementDeliveryOperations(TestCase):
             )
 
     @requests_mock.Mocker()
+    @mock.patch.object(parameter_store, "get_store_value")
+    @mock.patch.object(
+        AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE
+    )
+    @mock.patch.object(
+        AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
+    )
     def test_deliver_audience_for_an_engagement_valid_ids(
-        self, request_mocker: Mocker
+        self, request_mocker: Mocker, *_: None
     ):
         """
         Test delivery of an audience for an engagement
@@ -378,6 +387,7 @@ class TestEngagementDeliveryOperations(TestCase):
 
         Args:
             request_mocker (Mocker): Request mocker object.
+            *_ (None): Omit all extra keyword args the mock patches send.
 
         Returns:
 
@@ -397,16 +407,7 @@ class TestEngagementDeliveryOperations(TestCase):
             },
         )
 
-        valid_response = {
-            "message": (
-                f"Successfully created delivery job(s) "
-                f"for engagement ID {engagement_id} and "
-                f"audience ID {audience_id}"
-            )
-        }
-
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_an_engagement_invalid_audience_id(
@@ -511,8 +512,15 @@ class TestEngagementDeliveryOperations(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
+    @mock.patch.object(parameter_store, "get_store_value")
+    @mock.patch.object(
+        AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE
+    )
+    @mock.patch.object(
+        AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
+    )
     def test_deliver_destination_for_engagement_audience_valid_ids(
-        self, request_mocker: Mocker
+        self, request_mocker: Mocker, *_: None
     ):
         """
         Test delivery of a destination for an audience in engagement
@@ -520,6 +528,7 @@ class TestEngagementDeliveryOperations(TestCase):
 
         Args:
             request_mocker (Mocker): Request mocker object.
+            *_ (None): Omit all extra keyword args the mock patches send.
 
         Returns:
 
@@ -543,17 +552,7 @@ class TestEngagementDeliveryOperations(TestCase):
             },
         )
 
-        valid_response = {
-            "message": (
-                "Successfully created delivery job(s) for "
-                f"engagement ID {engagement_id} and "
-                f"audience ID {audience_id} to "
-                f"destination ID {destination_id}"
-            )
-        }
-
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_deliver_destination_for_non_existent_engagement(
@@ -651,7 +650,7 @@ class TestEngagementDeliveryOperations(TestCase):
         audience_id = self.audiences[1][db_c.ID]
 
         # Unattached destination id
-        destination_id = self.destinations[1][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
 
         response = self.app.post(
             (

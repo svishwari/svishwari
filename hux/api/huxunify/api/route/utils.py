@@ -8,6 +8,7 @@ from http import HTTPStatus
 
 from healthcheck import HealthCheck
 from decouple import config
+from bson import ObjectId
 from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
@@ -247,6 +248,12 @@ def get_user_id() -> object:
                object: returns a decorated function object.
             """
 
+            # override if flag set locally
+            if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
+                # return a default user id
+                kwargs[constants.OKTA_USER_ID] = ObjectId()
+                return in_function(*args, **kwargs)
+
             # get the auth token
             token_response = get_token_from_request(request)
 
@@ -275,6 +282,64 @@ def get_user_id() -> object:
 
             return in_function(*args, **kwargs)
 
+        return decorator
+
+    return wrapper
+
+
+def api_error_handler() -> object:
+    """
+    This decorator handles generic errors for API requests.
+
+    Eventually this decorator will handle more types of errors.
+
+    Example: @api_error_handler()
+
+    Args:
+
+    Returns:
+        Response: decorator
+
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           object: returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling errors.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               object: returns a decorated function object.
+            """
+            try:
+                return in_function(*args, **kwargs)
+
+            except Exception as exc:  # pylint: disable=broad-except
+                # log error, but return vague description to client.
+                logging.error(
+                    "%s: %s.",
+                    exc.__class__,
+                    exc,
+                )
+
+                return {
+                    "message": "Internal Server Error"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        # set tag so we can assert if a function is secured via this decorator
+        decorator.__wrapped__ = in_function
         return decorator
 
     return wrapper
