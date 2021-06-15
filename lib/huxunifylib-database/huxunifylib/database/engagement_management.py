@@ -140,7 +140,7 @@ def get_engagement(
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectId of the engagement
-        include_user (bool): Flag to include users.
+        include_users (bool): Flag to include users.
 
     Returns:
         dict: Dict of an engagement.
