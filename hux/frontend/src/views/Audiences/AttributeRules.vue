@@ -44,10 +44,10 @@
                   :labelText="fetchDropdownLabel(condition, 'attribute')"
                   :menuItem="attributeOptions"
                 />
-                <DropdownMenu
+                <hux-dropdown
                   v-model="condition.operator"
                   :labelText="fetchDropdownLabel(condition, 'operator')"
-                  :menuItem="conditionOptions"
+                  :menuItem="operatorOptions"
                   v-if="condition.attribute"
                 />
                 <TextField
@@ -108,7 +108,9 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex"
 import DropdownMenu from "../../components/common/DropdownMenu.vue"
+import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import huxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 
@@ -131,6 +133,7 @@ export default {
     DropdownMenu,
     TextField,
     huxSwitch,
+    HuxDropdown,
   },
   props: {
     rules: {
@@ -161,6 +164,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      ruleAttributes: "audiences/audiencesRules",
+    }),
+    operatorOptions() {
+      return this.ruleAttributes.text_operators
+    },
     lastIndex() {
       return this.rules.length - 1
     },

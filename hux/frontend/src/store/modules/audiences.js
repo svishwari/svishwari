@@ -14,7 +14,7 @@ const NEW_AUDIENCE = {
 const state = {
   audiences: [],
   newAudience: NEW_AUDIENCE,
-  constants: {}
+  constants: {},
 }
 
 const getters = {
@@ -36,7 +36,7 @@ const mutations = {
     Vue.set(state.audiences, item.id, item)
   },
   SET_CONSTANTS(state, item) {
-    Vue.set(state.constants, item)
+    Vue.set(state, 'constants', item)
   },
 }
 

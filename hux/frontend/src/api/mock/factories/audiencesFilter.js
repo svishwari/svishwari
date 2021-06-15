@@ -1,70 +1,73 @@
 const audienceFilterMock = {
-  model_scores() {
-    return {
-        propensity_to_unsubscribe: {
-            name: "Propensity to unsubscribe",
-            type: "range",
-            min: 0.0,
-            max: 1.0,
-            steps: 0.05,
+  rule_attributes: {
+    general: {
+      age: {
+        max: 100,
+        min: 0,
+        name: "Age",
+        type: "range",
+      },
+      email: {
+        name: "Email",
+        type: "text",
+      },
+      gender: {
+        name: "Gender",
+        options: [],
+        type: "text",
+      },
+      location: {
+        city: {
+          name: "City",
+          options: [],
+          type: "text",
         },
-        actual_lifetime_value: {
-            name: "Actual lifetime value",
-            type: "range",
-            min: 0,
-            max: 50000,
-            steps: 1000,
+        country: {
+          name: "Country",
+          options: [],
+          type: "text",
         },
-        propensity_to_purchase: {
-            name: "Propensity to purchase",
-            type: "range",
-            min: 0.0,
-            max: 1.0,
-            steps: 0.05,
+        name: "Location",
+        state: {
+          name: "State",
+          options: [],
+          type: "text",
         },
-    }
+        zip_code: {
+          name: "Zip code",
+          type: "text",
+        },
+      },
+    },
+    model_scores: {
+      actual_lifetime_value: {
+        max: 50000,
+        min: 0,
+        name: "Actual lifetime value",
+        steps: 1000,
+        type: "range",
+      },
+      propensity_to_purchase: {
+        max: 1,
+        min: 0,
+        name: "Propensity to purchase",
+        steps: 0.05,
+        type: "range",
+      },
+      propensity_to_unsubscribe: {
+        max: 1,
+        min: 0,
+        name: "Propensity to unsubscribe",
+        steps: 0.05,
+        type: "range",
+      },
+    },
   },
-  general() {
-    return {
-        age: {
-            name: "Age",
-            type: "range",
-            min: 0,
-            max: 100,
-            steps: 1,
-        },
-        email: { 
-            name: "Email", 
-            type: "text" 
-        },
-        gender: {
-            name: "Gender",
-            type: "text",
-            options: [],
-        },
-        location: {
-            name: "Location",
-            country: {
-                name: "Country",
-                type: "text",
-                options: [],
-            },
-            state: {
-                name: "State",
-                type: "text",
-                options: [],
-            },
-            city: {
-                name: "City",
-                type: "text",
-                options: [],
-            },
-            zip_code: { 
-                name: "Zip code", 
-                type: "text" 
-            },
-        },
-    }
+  text_operators: {
+    contains: "Contains",
+    does_not_contain: "Does not contain",
+    does_not_equal: "Does not equal",
+    equals: "Equals",
   },
 }
 export default audienceFilterMock

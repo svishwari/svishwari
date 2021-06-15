@@ -2,6 +2,7 @@ import { Response } from "miragejs"
 import { customersOverview } from "./factories/customers"
 import { destinationsConstants } from "./factories/destination"
 import idrOverview from "./factories/identity"
+import audienceFilterMock from "./factories/audiencesFilter"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -95,7 +96,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
     return schema.audiences.create(requestData)
   })
-  server.get("/audiences/rules", (schema) => {
-    return schema.audienceFilters.all()
+  server.get("/audiences/rules", () => {
+    return audienceFilterMock
   })
 }
