@@ -297,8 +297,11 @@ AUDIENCE_STATUS_DELIVERING = "Delivering"
 AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
-AUDIENCE_ROUTER_BATCH_SIZE = "audience_router_batch_size"
-AUDIENCE_ROUTER_STUB_TEST = "audience_router_stub_test"
+AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
+AUDIENCE_ROUTER_STUB_VALUE = "1"
+AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
+AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
+
 
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,
@@ -312,7 +315,7 @@ STUB_INSIGHTS_RESPONSE = {
     GENDER_OTHER: 0.25219,
 }
 
-PARAM_STORE_PREFIX = "huxunify"
+PARAM_STORE_PREFIX = "unified"
 PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the parameter store."
