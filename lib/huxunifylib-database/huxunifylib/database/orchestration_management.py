@@ -11,6 +11,7 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
 
 
 @retry(
@@ -108,12 +109,13 @@ def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences(
-    database: DatabaseClient,
+    database: DatabaseClient, include_users: bool = False
 ) -> list:
     """A function to get all existing audiences.
 
     Args:
         database (DatabaseClient): A database client.
+        include_users (bool): Flag to include users.
 
     Returns:
         List: A list of all audiences.
@@ -125,6 +127,10 @@ def get_all_audiences(
 
     # Get audience configurations and add to list
     try:
+        if include_users:
+            # lookup to users
+            return list(collection.aggregate(USER_LOOKUP_PIPELINE))
+
         return list(collection.find())
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

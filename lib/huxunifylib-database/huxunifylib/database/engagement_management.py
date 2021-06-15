@@ -12,6 +12,7 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
+from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
 
 
 @retry(
@@ -95,11 +96,14 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements(database: DatabaseClient) -> list:
+def get_engagements(
+    database: DatabaseClient, include_users: bool = False
+) -> list:
     """A function to get all engagements
 
     Args:
         database (DatabaseClient): A database client.
+        include_users (bool): Flag to include users.
 
     Returns:
         list: List of all engagement documents.
@@ -111,6 +115,10 @@ def get_engagements(database: DatabaseClient) -> list:
     ]
 
     try:
+        if include_users:
+            # lookup to users
+            return list(collection.aggregate(USER_LOOKUP_PIPELINE))
+
         return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
