@@ -99,19 +99,22 @@ const actions = {
     try {
       const payload = {
         name: engagement.name,
+
         description: engagement.description,
-        delivery_schedule:
-          engagement.delivery_schedule === 0
-            ? null
-            : {
-                end_date: "",
-                start_date: "",
-              },
+
+        // TODO: needs API support from in HUS-517/HUS-581
+        // delivery_schedule:
+        //   engagement.delivery_schedule === 0
+        //     ? null
+        //     : {
+        //         end_date: "",
+        //         start_date: "",
+        //       },
+
         audiences: Object.values(engagement.audiences).map((audience) => {
           return {
             id: audience.id,
-            // TODO: HUS-512
-            destinations: [],
+            destinations: audience.destinations,
           }
         }),
       }

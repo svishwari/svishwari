@@ -145,6 +145,7 @@ const facebook = {
   name: "Facebook",
   type: "facebook",
   is_enabled: true,
+  is_added: true,
 }
 
 const salesforce = {
@@ -219,8 +220,6 @@ const defaultAudience = ({ destinations = [], engagements = [] }) => {
 export default function (server) {
   // seed data sources
   server.create("dataSource", bluecore)
-  server.create("dataSource", facebook)
-  server.create("dataSource", salesforce)
   server.create("dataSource", netsuite)
   server.create("dataSource", aqfer)
   server.create("dataSource", amazonAdvertising)
@@ -248,16 +247,16 @@ export default function (server) {
   server.create("destination", twilio)
   server.create("destination", google)
   server.create("destination", tableau)
-  const facebookSeed = server.create("destination", facebook)
-  const salesforceSeed = server.create("destination", salesforce)
+  server.create("destination", salesforce)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
+  const facebookSeed = server.create("destination", facebook)
 
   // seed audiences
   server.create(
     "audience",
     defaultAudience({
-      destinations: [facebookSeed, salesforceSeed],
+      destinations: [facebookSeed],
     })
   )
   server.createList("audience", 10)

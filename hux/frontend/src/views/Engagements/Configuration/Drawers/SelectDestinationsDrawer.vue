@@ -9,7 +9,7 @@
 
       <div class="pa-8">
         <DataCards
-          :items="enabledDestinations"
+          :items="connectedDestinations"
           :fields="[
             {
               key: 'name',
@@ -20,6 +20,7 @@
               sortable: false,
             },
           ]"
+          empty="No destinations have been connected and added yet."
         >
           <template #field:name="{ item }">
             <div class="d-flex align-center">
@@ -32,6 +33,7 @@
               {{ item.name }}
             </div>
           </template>
+
           <template #field:manage="{ item }">
             <div class="d-flex align-center justify-end">
               <HuxButton
@@ -41,7 +43,7 @@
                 height="40"
                 icon="mdi-check"
                 iconPosition="left"
-                @click="remove(item)"
+                @click="undoAdd(item)"
               >
                 Added
               </HuxButton>
@@ -61,7 +63,9 @@
       </div>
     </template>
 
-    <template #footer-left> {{ enabledDestinations.length }} results </template>
+    <template #footer-left>
+      {{ connectedDestinations.length }} results
+    </template>
   </Drawer>
 </template>
 
@@ -121,12 +125,14 @@ export default {
       destinations: "destinations/list",
     }),
 
-    enabledDestinations() {
-      return this.destinations.filter((destination) => destination.is_enabled)
+    connectedDestinations() {
+      return this.destinations.filter((destination) => {
+        return destination.is_enabled && destination.is_added
+      })
     },
 
     selectedDestinations() {
-      if (this.selectedAudienceId) {
+      if (this.selectedAudienceId && this.value[this.selectedAudienceId]) {
         return this.value[this.selectedAudienceId].destinations
       }
       return []
@@ -146,7 +152,7 @@ export default {
       })
     },
 
-    remove(destination) {
+    undoAdd(destination) {
       const id = destination.id
       const index = this.selectedDestinations.findIndex(
         (destination) => destination.id === id
