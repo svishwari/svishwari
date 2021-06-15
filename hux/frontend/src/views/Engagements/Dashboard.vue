@@ -193,6 +193,11 @@ export default {
         audiences: [
           {
             audienceId: 1,
+            name: "Audience with no destination",
+            destinations: [],
+          },
+          {
+            audienceId: 1,
             name: "Audience - Main",
             destinations: [
               {
@@ -305,11 +310,6 @@ export default {
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
             ],
-          },
-          {
-            audienceId: 1,
-            name: "Empty Audience",
-            destinations: [],
           },
         ],
       },

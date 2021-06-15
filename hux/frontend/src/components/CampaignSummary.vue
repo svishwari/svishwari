@@ -407,6 +407,7 @@ export default {
         "clicks",
         "unique_clicks",
         "unique_opens",
+        "click_through_rate",
         "unsubscribe",
       ],
       percentileColumns: [
