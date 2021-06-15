@@ -99,7 +99,9 @@ const actions = {
     try {
       const payload = {
         name: engagement.name,
+
         description: engagement.description,
+
         delivery_schedule:
           engagement.delivery_schedule === 0
             ? null
@@ -107,11 +109,11 @@ const actions = {
                 end_date: "",
                 start_date: "",
               },
+
         audiences: Object.values(engagement.audiences).map((audience) => {
           return {
             id: audience.id,
-            // TODO: HUS-512
-            destinations: [],
+            destinations: audience.destinations,
           }
         }),
       }

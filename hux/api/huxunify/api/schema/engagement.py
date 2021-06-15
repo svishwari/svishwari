@@ -125,6 +125,11 @@ class EngagementPostSchema(Schema):
             Response: Returns a Engagement data source object
 
         """
+        # handle null delivery schedule
+        delivery_schedule = data.get(api_c.DELIVERY_SCHEDULE)
+        if not delivery_schedule:
+            data.pop(api_c.DELIVERY_SCHEDULE)
+
         for audience in data[api_c.AUDIENCES]:
             audience[api_c.ID] = ObjectId(audience[api_c.ID])
             for destination in audience[api_c.DESTINATIONS]:

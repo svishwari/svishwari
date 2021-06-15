@@ -6,7 +6,6 @@ from flask_marshmallow import Schema
 from marshmallow import fields
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.destinations import DestinationGetSchema
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import (
     must_not_be_blank,
@@ -43,10 +42,7 @@ class AudienceGetSchema(Schema):
         ],
     )
 
-    destinations = fields.List(
-        fields.Nested(DestinationGetSchema),
-        attribute=api_c.DESTINATIONS_TAG,
-    )
+    destinations = fields.List(fields.String())
     engagements = fields.List(
         fields.Dict(),
         attribute=api_c.AUDIENCE_ENGAGEMENTS,
