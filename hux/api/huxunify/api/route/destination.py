@@ -48,6 +48,43 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
+def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
+    """Set SFMC auth details
+    ---
+
+        Args:
+            sfmc_auth (dict): Auth details.
+
+        Returns:
+            Auth Object (dict): SFMC auth object.
+
+    """
+
+    return {
+        SFMCCredentials.SFMC_ACCOUNT_ID.value: sfmc_auth.get(
+            api_c.AUTHENTICATION_DETAILS
+        ).get(api_c.SFMC_ACCOUNT_ID),
+        SFMCCredentials.SFMC_AUTH_URL.value: sfmc_auth.get(
+            api_c.AUTHENTICATION_DETAILS
+        ).get(api_c.SFMC_AUTH_BASE_URI),
+        SFMCCredentials.SFMC_CLIENT_ID.value: sfmc_auth.get(
+            api_c.AUTHENTICATION_DETAILS
+        ).get(api_c.SFMC_CLIENT_ID),
+        SFMCCredentials.SFMC_CLIENT_SECRET.value: sfmc_auth.get(
+            api_c.AUTHENTICATION_DETAILS
+        ).get(api_c.SFMC_CLIENT_SECRET),
+        SFMCCredentials.SFMC_SOAP_ENDPOINT.value: sfmc_auth.get(
+            api_c.AUTHENTICATION_DETAILS
+        ).get(api_c.SFMC_SOAP_BASE_URI),
+        SFMCCredentials.SFMC_URL.value: sfmc_auth.get(
+            api_c.AUTHENTICATION_DETAILS
+        ).get(api_c.SFMC_REST_BASE_URI),
+        SFMCCredentials.SFMC_DEFAULT_WSDL.value: api_c.SFMC_DEFAULT_WSDL,
+        SFMCCredentials.SFMC_AUTH_FLAG.value: api_c.SFMC_AUTH_FLAG,
+        SFMCCredentials.SFMC_SCOPE.value: api_c.SFMC_SCOPE,
+    }
+
+
 @add_view_to_blueprint(
     dest_bp,
     f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
@@ -395,26 +432,9 @@ class DestinationValidatePostView(SwaggerView):
                 )
             elif body.get(api_c.DESTINATION_TYPE) == api_c.SFMC_TYPE:
                 destination_connector = SFMCConnector(
-                    auth_details={
-                        SFMCCredentials.SFMC_ACCOUNT_ID.name: body.get(
-                            api_c.AUTHENTICATION_DETAILS
-                        ).get(api_c.SFMC_ACCOUNT_ID),
-                        SFMCCredentials.SFMC_AUTH_URL.name: body.get(
-                            api_c.AUTHENTICATION_DETAILS
-                        ).get(api_c.SFMC_AUTH_BASE_URI),
-                        SFMCCredentials.SFMC_CLIENT_ID.name: body.get(
-                            api_c.AUTHENTICATION_DETAILS
-                        ).get(api_c.SFMC_CLIENT_ID),
-                        SFMCCredentials.SFMC_CLIENT_SECRET.name: body.get(
-                            api_c.AUTHENTICATION_DETAILS
-                        ).get(api_c.SFMC_CLIENT_SECRET),
-                        SFMCCredentials.SFMC_SOAP_ENDPOINT.name: body.get(
-                            api_c.AUTHENTICATION_DETAILS
-                        ).get(api_c.SFMC_SOAP_BASE_URI),
-                        SFMCCredentials.SFMC_URL.name: body.get(
-                            api_c.AUTHENTICATION_DETAILS
-                        ).get(api_c.SFMC_REST_BASE_URI),
-                    },
+                    auth_details=set_sfmc_auth_details(
+                        body.get()[api_c.AUTHENTICATION_DETAILS]
+                    )
                 )
             else:
                 return {
@@ -509,7 +529,9 @@ class DestinationDataExtView(SwaggerView):
         try:
             if destination[api_c.DELIVERY_PLATFORM_TYPE] == api_c.SFMC_TYPE:
                 connector = SFMCConnector(
-                    destination[api_c.AUTHENTICATION_DETAILS]
+                    auth_details=set_sfmc_auth_details(
+                        destination[api_c.AUTHENTICATION_DETAILS]
+                    )
                 )
                 ext_list = connector.get_list_of_data_extensions()
 
@@ -618,7 +640,9 @@ class DestinationDataExtPostView(SwaggerView):
         try:
             if destination[api_c.DELIVERY_PLATFORM_TYPE] == api_c.SFMC_TYPE:
                 connector = SFMCConnector(
-                    destination[api_c.AUTHENTICATION_DETAILS]
+                    auth_details=set_sfmc_auth_details(
+                        destination[api_c.AUTHENTICATION_DETAILS]
+                    )
                 )
                 data_extension_id = api_c.DATA_EXTENSION
                 # TODO : Assin data extension id once sfmc method is updated
