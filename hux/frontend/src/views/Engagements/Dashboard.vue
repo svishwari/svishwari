@@ -306,6 +306,11 @@ export default {
               },
             ],
           },
+          {
+            audienceId: 1,
+            name: "Empty Audience",
+            destinations: [],
+          },
         ],
       },
       loading: false,
