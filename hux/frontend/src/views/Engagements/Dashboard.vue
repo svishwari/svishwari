@@ -738,12 +738,11 @@ export default {
   }
   .empty-state {
     background: var(--v-aliceBlue-base);
-    opacity: 0.3;
     width: 100%;
     font-size: 14px;
     line-height: 22px;
     color: var(--v-gray-base);
-    border: 1px solid rgba(208, 208, 206, 0.3);
+    border: 1px solid var(--v-lightGrey-base);
     box-sizing: border-box;
     border-radius: 5px;
   }
