@@ -16,6 +16,45 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
 
 
+USER_LOOKUP_PIPELINE = [
+    # lookup the created by user to the user collection
+    {
+        "$lookup": {
+            "from": c.USER_COLLECTION,
+            "localField": c.CREATED_BY,
+            "foreignField": c.ID,
+            "as": "created_user",
+        }
+    },
+    # lookup the updated by user to the user collection
+    {
+        "$lookup": {
+            "from": c.USER_COLLECTION,
+            "localField": c.UPDATED_BY,
+            "foreignField": c.ID,
+            "as": "updated_user",
+        }
+    },
+    # extract the created and updated user
+    {"$unwind": {"path": "$created_user", "preserveNullAndEmptyArrays": True}},
+    {
+        "$unwind": {
+            "path": "$updated_user",
+            "preserveNullAndEmptyArrays": True,
+        },
+    },
+    # add two fields from the user object
+    {
+        "$addFields": {
+            "created_by": {"$ifNull": ["$created_user.display_name", ""]},
+            "updated_by": {"$ifNull": ["$updated_user.display_name", ""]},
+        }
+    },
+    # exclude the leftover user object
+    {"$project": {"created_user": 0, "updated_user": 0}},
+]
+
+
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),

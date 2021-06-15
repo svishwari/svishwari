@@ -8,9 +8,6 @@
     :value="openMenu"
   >
     <template #activator="{ on }">
-      <!-- <v-btn v-if="icon" :color="color" v-on="on">
-        <v-icon>{{ icon }}</v-icon>
-      </v-btn> -->
       <v-list-item
         v-if="isSubMenu"
         class="d-flex justify-space-between"
@@ -30,6 +27,7 @@
         icon=" mdi-chevron-down"
         iconPosition="right"
         class="ma-2"
+        :boxShadow="false"
       >
         {{ label }}
       </huxButton>

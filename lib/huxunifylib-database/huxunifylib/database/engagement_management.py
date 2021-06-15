@@ -14,6 +14,7 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
+from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
 
 
 @retry(
@@ -97,11 +98,14 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements(database: DatabaseClient) -> Union[list, None]:
+def get_engagements(
+    database: DatabaseClient, include_users: bool = False
+) -> Union[list, None]:
     """A function to get all engagements
 
     Args:
         database (DatabaseClient): A database client.
+        include_users (bool): Flag to include users.
 
     Returns:
         Union[list, None]: List of all engagement documents.
@@ -113,6 +117,10 @@ def get_engagements(database: DatabaseClient) -> Union[list, None]:
     ]
 
     try:
+        if include_users:
+            # lookup to users
+            return list(collection.aggregate(USER_LOOKUP_PIPELINE))
+
         return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -125,13 +133,16 @@ def get_engagements(database: DatabaseClient) -> Union[list, None]:
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_engagement(
-    database: DatabaseClient, engagement_id: ObjectId
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    include_users: bool = False,
 ) -> Union[dict, None]:
     """A function to get an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectId of the engagement
+        include_users (bool): Flag to include users.
 
     Returns:
         Union[dict, None]: Dict of an engagement.
@@ -143,6 +154,15 @@ def get_engagement(
     ]
 
     try:
+        if include_users:
+            docs = list(
+                collection.aggregate(
+                    [{"$match": {db_c.ID: engagement_id}}]
+                    + USER_LOOKUP_PIPELINE
+                )
+            )
+            return docs[0] if docs else None
+
         return collection.find_one(
             {db_c.ID: engagement_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )

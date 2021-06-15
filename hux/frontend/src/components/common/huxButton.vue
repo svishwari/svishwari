@@ -5,12 +5,13 @@
     :outlined="isOutlined"
     :tile="isTile"
     :color="variant"
-    :class="buttonSize"
+    :class="[buttonSize, { 'box-shadow-25': boxShadow }]"
     :width="width"
     :height="height"
     :icon="iconType"
     @click="onClick"
   >
+    <Icon v-if="isCustomIcon" class="mr-2" :type="icon" :size="24" />
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
     </v-icon>
@@ -27,8 +28,12 @@
 </template>
 
 <script>
+import Icon from "@/components/common/Icon"
 export default {
   name: "HuxButton",
+  components: {
+    Icon,
+  },
   data() {
     return {
       loader: null,
@@ -97,6 +102,16 @@ export default {
       type: Boolean,
       required: false,
       default: null,
+    },
+    boxShadow: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    isCustomIcon: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {
