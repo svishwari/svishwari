@@ -1,33 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Card Info Card info displays a default 1`] = `
-<v-card-stub loaderheight="4" tag="div" maxwidth="260px" minwidth="220px" class="text-center">
-  <v-btn-stub color="tertiary" elevation="2" tag="button" activeclass="" fab="true" type="button" class="mt-4">
-    <v-icon-stub color="primary" xlarge="" x-large="">
-      mdi-plus
-    </v-icon-stub>
-  </v-btn-stub>
-  <v-card-title-stub class="justify-center primary--text">
-    Info card title
-  </v-card-title-stub>
-  <v-card-subtitle-stub>
-    Info card description
-  </v-card-subtitle-stub>
-</v-card-stub>
+<v-hover-stub opendelay="0" closedelay="0">
+  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow">
+    <v-btn-stub color="zircon" elevation="0" outlined="true" tag="button" activeclass="" fab="true" type="button" class="mt-4">
+      <v-icon-stub color="primary" xlarge="" x-large="">
+        mdi-plus
+      </v-icon-stub>
+    </v-btn-stub>
+    <v-card-title-stub class="justify-center font-weight-regular primary--text">
+      Info card title
+    </v-card-title-stub>
+    <v-card-subtitle-stub class="neroBlack--text">
+      Info card description
+    </v-card-subtitle-stub>
+  </v-card-stub>
+</v-hover-stub>
 `;
 
 exports[`Card Info Card info displays custom properties 1`] = `
-<v-card-stub loaderheight="4" tag="div" maxwidth="260px" minwidth="220px" class="text-center">
-  <v-btn-stub color="tertiary" elevation="2" tag="button" activeclass="" fab="true" type="button" class="mt-4">
-    <v-icon-stub color="primary" xlarge="" x-large="">
-      mdi-facebook
-    </v-icon-stub>
-  </v-btn-stub>
-  <v-card-title-stub class="justify-center primary--text">
-    Add a Destination
-  </v-card-title-stub>
-  <v-card-subtitle-stub>
-    Choose a destination where your actionable intelligence will be consumed.
-  </v-card-subtitle-stub>
-</v-card-stub>
+<v-hover-stub opendelay="0" closedelay="0">
+  <v-card-stub loaderheight="4" tag="div" elevation="0" maxwidth="260px" minwidth="220px" hover="true" class="text-center rounded-lg card-info-wrapper card-shadow">
+    <v-btn-stub color="zircon" elevation="0" outlined="true" tag="button" activeclass="" fab="true" type="button" class="mt-4">
+      <v-icon-stub color="primary" xlarge="" x-large="">
+        mdi-facebook
+      </v-icon-stub>
+    </v-btn-stub>
+    <v-card-title-stub class="justify-center font-weight-regular primary--text">
+      Add a Destination
+    </v-card-title-stub>
+    <v-card-subtitle-stub class="neroBlack--text">
+      Choose a destination where your actionable intelligence will be consumed.
+    </v-card-subtitle-stub>
+  </v-card-stub>
+</v-hover-stub>
 `;

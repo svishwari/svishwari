@@ -9,7 +9,6 @@
         :items="dataItems"
         item-key="name"
         :items-per-page="-1"
-        :single-expand="true"
         fixed-header
         hide-default-footer
         must-sort
