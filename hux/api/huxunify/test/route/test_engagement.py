@@ -715,7 +715,7 @@ class TestEngagementRoutes(TestCase):
         )
 
         response = self.app.get(
-            (f"{BASE_URL}" f"{api_c.ENGAGEMENT_ENDPOINT}/" f"{engagement_id}"),
+            f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
                 "Content-Type": "application/json",
@@ -742,7 +742,7 @@ class TestEngagementRoutes(TestCase):
         valid_response = {"message": api_c.INVALID_ID}
 
         response = self.app.get(
-            (f"{BASE_URL}" f"{api_c.ENGAGEMENT_ENDPOINT}/" f"{engagement_id}"),
+            f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
                 "Content-Type": "application/json",
@@ -772,7 +772,7 @@ class TestEngagementRoutes(TestCase):
         valid_response = {"message": "Not found"}
 
         response = self.app.get(
-            (f"{BASE_URL}" f"{api_c.ENGAGEMENT_ENDPOINT}/" f"{engagement_id}"),
+            f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
                 "Content-Type": "application/json",
@@ -800,7 +800,7 @@ class TestEngagementRoutes(TestCase):
         valid_response = {"message": api_c.OPERATION_SUCCESS}
 
         response = self.app.delete(
-            (f"{BASE_URL}" f"{api_c.ENGAGEMENT_ENDPOINT}/" f"{engagement_id}"),
+            f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
                 "Content-Type": "application/json",
@@ -826,7 +826,7 @@ class TestEngagementRoutes(TestCase):
         valid_response = {"message": api_c.INVALID_ID}
 
         response = self.app.delete(
-            (f"{BASE_URL}" f"{api_c.ENGAGEMENT_ENDPOINT}/" f"{engagement_id}"),
+            f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers={
                 "Authorization": TEST_AUTH_TOKEN,
                 "Content-Type": "application/json",
@@ -906,7 +906,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     @requests_mock.Mocker()
-    def test_set_engagement_wo_description(self, request_mocker: Mocker):
+    def test_set_engagement_without_description(self, request_mocker: Mocker):
         """
         Test set engagement API without description
 
@@ -936,7 +936,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
 
     @requests_mock.Mocker()
-    def test_set_engagement_wo_name(self, request_mocker: Mocker):
+    def test_set_engagement_without_name(self, request_mocker: Mocker):
         """
         Test set engagement API without name
 
