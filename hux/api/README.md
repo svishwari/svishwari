@@ -271,12 +271,12 @@ MongoDB Installation Steps
 Steps to pre-populate use local MongoDB
 
 * Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to build huxunifylib-database package
-* Ensure to set the MONGO env variables in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) before you execute any of the scripts using the following commands in Command Prompt(cmd)
-   - `MONGO_DB_HOST=localhost`
-   - `MONGO_DB_PORT=27017`
-   - `MONGO_DB_USERNAME=''`
-   - `MONGO_DB_PASSWORD=''`
-   - `MONGO_DB_USE_SSL=False`
+* Ensure to set the MONGO env variables in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) before you execute any of the scripts using the following commands in Command Prompt(cmd) as shown below
+   - `set MONGO_DB_HOST=localhost`
+   - `set MONGO_DB_PORT=27017`
+   - `set MONGO_DB_USERNAME=''`
+   - `set MONGO_DB_PASSWORD=''`
+   - `set MONGO_DB_USE_SSL=False`
    
 * Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to populate the data in your local database
 
