@@ -296,7 +296,7 @@ class AudiencePostView(SwaggerView):
             )
         except db_exceptions.DuplicateName:
             return {
-                "message": f"duplicate name '{body[api_c.AUDIENCE_NAME]}'"
+                "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
             }, HTTPStatus.BAD_REQUEST
 
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
