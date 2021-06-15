@@ -89,7 +89,7 @@ class OrchestrationRouteTest(TestCase):
         get_db_client_mock.return_value = self.database
         self.addCleanup(mock.patch.stopall)
 
-        # mock get_db_client()  for the userinfo utils.
+        # mock get_db_client() for the userinfo utils.
         mock.patch(
             "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
@@ -342,7 +342,7 @@ class OrchestrationRouteTest(TestCase):
         """Test create audience.
 
         Args:
-            request_mocker (Mocker): Re quest mocker object.
+            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
