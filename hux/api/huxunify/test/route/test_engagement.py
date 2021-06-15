@@ -222,7 +222,9 @@ class TestEngagementMetricsEmail(TestCase):
         jsonresponse = json.loads(response.data)
 
         audience_performance = jsonresponse["audience_performance"][0]
-        result = validate_schema(EmailIndividualAudienceSummary(), audience_performance)
+        result = validate_schema(
+            EmailIndividualAudienceSummary(), audience_performance
+        )
         self.assertTrue(result)
 
 
@@ -254,7 +256,9 @@ class TestEngagementRoutes(TestCase):
         mongo_patch.start()
 
         # setup the mock DB client
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         get_db_client_mock = mock.patch(
             "huxunify.api.route.engagement.get_db_client"
@@ -361,12 +365,18 @@ class TestEngagementRoutes(TestCase):
 
         self.engagement_ids = []
         for engagement in engagements:
-            self.engagement_ids.append(str(set_engagement(self.database, **engagement)))
+            self.engagement_ids.append(
+                str(set_engagement(self.database, **engagement))
+            )
 
     @requests_mock.Mocker()
     @mock.patch.object(parameter_store, "get_store_value")
-    @mock.patch.object(AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE)
-    @mock.patch.object(AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE)
+    @mock.patch.object(
+        AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE
+    )
+    @mock.patch.object(
+        AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
+    )
     def test_deliver_audience_for_an_engagement_valid_ids(
         self, request_mocker: Mocker, *_: None
     ):
@@ -502,8 +512,12 @@ class TestEngagementRoutes(TestCase):
 
     @requests_mock.Mocker()
     @mock.patch.object(parameter_store, "get_store_value")
-    @mock.patch.object(AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE)
-    @mock.patch.object(AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE)
+    @mock.patch.object(
+        AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE
+    )
+    @mock.patch.object(
+        AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
+    )
     def test_deliver_destination_for_engagement_audience_valid_ids(
         self, request_mocker: Mocker, *_: None
     ):
@@ -577,7 +591,9 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
-    def test_deliver_destination_for_unattached_audience(self, request_mocker: Mocker):
+    def test_deliver_destination_for_unattached_audience(
+        self, request_mocker: Mocker
+    ):
         """
         Test delivery of a destination for an unattached audience
 
@@ -608,7 +624,9 @@ class TestEngagementRoutes(TestCase):
             },
         )
 
-        valid_response = {"message": "Audience is not attached to the engagement."}
+        valid_response = {
+            "message": "Audience is not attached to the engagement."
+        }
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -735,7 +753,9 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
-    def test_get_engagement_by_id_non_existent_id(self, request_mocker: Mocker):
+    def test_get_engagement_by_id_non_existent_id(
+        self, request_mocker: Mocker
+    ):
         """
         Test get engagements API with non-existent id
 
@@ -933,7 +953,9 @@ class TestEngagementRoutes(TestCase):
             db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
         }
 
-        valid_response = {db_c.ENGAGEMENT_NAME: ["Missing data for required field."]}
+        valid_response = {
+            db_c.ENGAGEMENT_NAME: ["Missing data for required field."]
+        }
 
         response = self.app.post(
             f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}",
