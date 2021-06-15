@@ -17,7 +17,7 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
-from huxunifylib.database.engagement_management import set_engagement
+from huxunifylib.database.engagement_management import set_engagement, get_engagements
 from huxunifylib.database.orchestration_management import create_audience
 
 from huxunify.api import constants as api_c
@@ -27,7 +27,7 @@ from huxunify.api.schema.engagement import (
     DisplayAdsSummary,
     DispAdIndividualAudienceSummary,
     EmailSummary,
-    EmailIndividualAudienceSummary,
+    EmailIndividualAudienceSummary, EngagementGetSchema,
 )
 
 
@@ -673,3 +673,361 @@ class TestEngagementDeliveryOperations(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+
+class TestEngagementRoutes(TestCase):
+    """
+    Purpose of this class is to test Engagements CRUD APIs
+    """
+
+    def setUp(self) -> None:
+        """
+        Setup resources before each test
+
+        Args:
+
+        Returns:
+        """
+        self.config = get_config("TEST")
+
+        self.introspect_call = (
+            f"{self.config.OKTA_ISSUER}"
+            f"/oauth2/v1/introspect?client_id="
+            f"{self.config.OKTA_CLIENT_ID}"
+        )
+
+        self.app = create_app().test_client()
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        get_db_client_mock = mock.patch(
+            "huxunify.api.route.engagement.get_db_client"
+        ).start()
+        get_db_client_mock.return_value = self.database
+        self.addCleanup(mock.patch.stopall)
+
+        destinations = [
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
+                db_c.DELIVERY_PLATFORM_TYPE: "salesforce",
+                db_c.STATUS: db_c.ACTIVE,
+                db_c.ENABLED: True,
+                db_c.ADDED: True,
+            },
+            {
+                db_c.DELIVERY_PLATFORM_NAME: "Facebook",
+                db_c.DELIVERY_PLATFORM_TYPE: "facebook",
+                db_c.STATUS: db_c.ACTIVE,
+                db_c.ENABLED: True,
+                db_c.ADDED: True,
+            },
+        ]
+
+        self.destinations = []
+        for destination in destinations:
+            self.destinations.append(
+                set_delivery_platform(self.database, **destination)
+            )
+
+        audiences = [
+            {
+                db_c.AUDIENCE_NAME: "Test Audience",
+                "audience_filters": [
+                    {
+                        api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                        api_c.AUDIENCE_SECTION_FILTERS: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                                api_c.AUDIENCE_FILTER_TYPE: "type",
+                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                            }
+                        ],
+                    }
+                ],
+                api_c.DESTINATION_IDS: [d[db_c.ID] for d in self.destinations],
+            },
+            {
+                db_c.AUDIENCE_NAME: "Test Audience No Destinations",
+                "audience_filters": [
+                    {
+                        api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                        api_c.AUDIENCE_SECTION_FILTERS: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                                api_c.AUDIENCE_FILTER_TYPE: "type",
+                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                            }
+                        ],
+                    }
+                ],
+            },
+        ]
+
+        self.audiences = []
+        for audience in audiences:
+            self.audiences.append(create_audience(self.database, **audience))
+
+        user_id = ObjectId()
+
+        engagements = [
+            {
+                db_c.ENGAGEMENT_NAME: "Test Engagement",
+                db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
+                db_c.AUDIENCES: [
+                    {
+                        db_c.OBJECT_ID: self.audiences[0][db_c.ID],
+                        api_c.DESTINATIONS_TAG: [
+                            {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
+                            for dest in self.destinations
+                        ],
+                    },
+                    {
+                        db_c.OBJECT_ID: self.audiences[1][db_c.ID],
+                        api_c.DESTINATIONS_TAG: [
+                            {db_c.DELIVERY_PLATFORM_ID: dest[db_c.ID]}
+                            for dest in self.destinations
+                        ],
+                    },
+                ],
+                db_c.USER_ID: user_id,
+            },
+            {
+                db_c.ENGAGEMENT_NAME: "Test Engagement No Destination",
+                db_c.ENGAGEMENT_DESCRIPTION: "test-engagement",
+                db_c.AUDIENCES: [
+                    {
+                        db_c.OBJECT_ID: self.audiences[1][db_c.ID],
+                        api_c.DESTINATIONS_TAG: [],
+                    },
+                ],
+                db_c.USER_ID: user_id,
+            },
+        ]
+
+        self.engagement_ids = []
+        for engagement in engagements:
+            self.engagement_ids.append(
+                str(set_engagement(self.database, **engagement))
+            )
+
+    @requests_mock.Mocker()
+    def test_get_engagements_success(self, request_mocker: Mocker):
+        """Test get all engagements API
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        valid_response = EngagementGetSchema().dump(
+            get_engagements(self.database), many=True
+        )
+
+        response = self.app.get(
+            f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}",
+            headers={"Authorization": TEST_AUTH_TOKEN},
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.json, valid_response)
+
+    # @requests_mock.Mocker()
+    # def test_get_engagement_by_id_valid_id(self, request_mocker: Mocker):
+    #     """Test get engagement API with valid id
+    #
+    #     Args:
+    #         request_mocker (Mocker): Request mocker object.
+    #
+    #     Returns:
+    #
+    #     """
+    #     request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+    #     # engagement = em.get_engagement(self.database, self.engagements[0])
+    #
+    #     # TODO - hook up after engagements PR is merged.
+    #     # response = self.app.get(
+    #     #     f"{self.engagements_endpoint}/{engagement[db_c.ID]}",
+    #     #     headers={"Authorization": TEST_AUTH_TOKEN},
+    #     #     follow_redirects=False,
+    #     # )
+    #     # self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    #     # self.assertEqual(response.json, response)
+    #
+    # @requests_mock.Mocker()
+    # def test_get_engagement_by_id_invalid_id(self, request_mocker: Mocker):
+    #     """Test get engagements API with invalid id
+    #
+    #     Args:
+    #         request_mocker (Mocker): Request mocker object.
+    #
+    #     Returns:
+    #
+    #     """
+    #     request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+    #
+    #     valid_response = {}
+    #     response = self.app.get(
+    #         "{}/{}".format(self.engagements_endpoint, "XYZ"),
+    #         headers={"Authorization": TEST_AUTH_TOKEN},
+    #     )
+    #
+    #     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    #
+    #     self.assertEqual(response.json, valid_response)
+    #
+    # @requests_mock.Mocker()
+    # def test_delete_engagement_valid_id(self, request_mocker: Mocker):
+    #     """Test delete engagement API with valid id
+    #
+    #     Args:
+    #         request_mocker (Mocker): Request mocker object.
+    #
+    #     Returns:
+    #
+    #     """
+    #     request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+    #     response = self.app.delete(
+    #         "{}/{}".format(self.engagements_endpoint, self.engagements[0]),
+    #         headers={"Authorization": TEST_AUTH_TOKEN},
+    #     )
+    #
+    #     self.assertEqual(response.status_code, HTTPStatus.OK)
+    #     self.assertEqual(response.json, {"message": api_c.OPERATION_SUCCESS})
+    #
+    # @requests_mock.Mocker()
+    # def test_delete_engagement_invalid_id(self, request_mocker: Mocker):
+    #     """Test delete engagement API with invalid id
+    #
+    #     Args:
+    #         request_mocker (Mocker): Request mocker object.
+    #
+    #     Returns:
+    #
+    #     """
+    #     request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+    #
+    #     valid_response = {"message": "Invalid Object ID."}
+    #
+    #     response = self.app.delete(
+    #         "{}/{}".format(self.engagements_endpoint, "XYZ"),
+    #         headers={"Authorization": TEST_AUTH_TOKEN},
+    #     )
+    #
+    #     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    #
+    #     self.assertEqual(response.json, valid_response)
+    #
+    # @requests_mock.Mocker()
+    # def test_set_engagement_valid_request(self, request_mocker: Mocker):
+    #     """Test set engagement API with valid params
+    #
+    #     Args:
+    #         request_mocker(Mocker): Request mocker object.
+    #
+    #     Returns:
+    #
+    #     """
+    #     request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+    #
+    #     # TODO - hook up after engagements PR is merged.
+    #     # engagement_get_schema = EngagementGetSchema()
+    #     # engagement = {
+    #     #     db_c.AUDIENCES: [
+    #     #         {
+    #     #             db_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
+    #     #             db_c.DESTINATIONS: [
+    #     #                 {
+    #     #                     db_c.DELIVERY_PLATFORM_CONTACT_LIST: "sfmc_extension_name",
+    #     #                     db_c.ID: "60ae035b6c5bf45da27f17e5",
+    #     #                 },
+    #     #                 {db_c.ID: "60ae035b6c5bf45da27f17e6"},
+    #     #             ],
+    #     #         }
+    #     #     ],
+    #     #     db_c.ENGAGEMENT_DESCRIPTION: "Test Engagement Description",
+    #     #     db_c.ENGAGEMENT_NAME: "Soumya's Test Engagement",
+    #     # }
+    #     #
+    #     # response = self.app.post(
+    #     #     self.engagements_endpoint,
+    #     #     data=json.dumps(engagement),
+    #     #     headers={
+    #     #         "Content-Type": "application/json",
+    #     #         "Authorization": "Bearer 12345678",
+    #     #     },
+    #     # )
+    #     #
+    #     # # Start of code to remove after DB patch fix
+    #     # valid_schema_response = {
+    #     #     "audiences": [
+    #     #         {
+    #     #             "audience_id": "60ae035b6c5bf45da27f17d6",
+    #     #             "deliveries": [
+    #     #                 "60ae035b6c5bf45da27f17e5",
+    #     #                 "60ae035b6c5bf45da27f17e6",
+    #     #             ],
+    #     #             "destination_ids": [
+    #     #                 {"id": "60ae035b6c5bf45da27f17d6", "name": "Facebook"}
+    #     #             ],
+    #     #         }
+    #     #     ],
+    #     #     "create_time": "2021-06-07T08:08:51.746Z",
+    #     #     "created_by": "string",
+    #     #     "delivery_schedule": {
+    #     #         "end_date": "2021-06-07T08:08:51.746Z",
+    #     #         "start_date": "2021-06-07T08:08:51.746Z",
+    #     #     },
+    #     #     "description": "string",
+    #     #     "id": "5f5f7262997acad4bac4373b",
+    #     #     "name": "string",
+    #     #     "status": "active",
+    #     #     "update_time": "2021-06-07T08:08:51.746Z",
+    #     #     "updated_by": "string",
+    #     # }
+    #     #
+    #     # status_code = response.status_code
+    #     # response_json = response.json
+    #     #
+    #     # self.assertEqual(status_code, HTTPStatus.CREATED)
+    #     # self.assertTrue(
+    #     #     validate_engagement_schema(engagement_get_schema, response_json)
+    #     # )
+    #
+    # @requests_mock.Mocker()
+    # def test_set_engagement_invalid_request(self, request_mocker: Mocker):
+    #     """Test set engagement API with invalid params
+    #
+    #     Args:
+    #         request_mocker (Mocker): Request mocker object
+    #
+    #     Returns:
+    #
+    #     """
+    #     request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+    #
+    #     engagement = {
+    #         db_c.AUDIENCES: [],
+    #         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: {},
+    #         db_c.ENGAGEMENT_DESCRIPTION: "Test Set Engagement",
+    #     }
+    #
+    #     response = self.app.post(
+    #         self.engagements_endpoint,
+    #         data=engagement,
+    #         headers={
+    #             "Content-Type": "application/json",
+    #             "Authorization": TEST_AUTH_TOKEN,
+    #         },
+    #     )
+    #
+    #     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
