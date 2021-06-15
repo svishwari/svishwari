@@ -30,7 +30,7 @@ def set_delivery_platform(
     name: str,
     authentication_details: dict = None,
     status: str = c.STATUS_PENDING,
-    enabled: bool = True,
+    enabled: bool = False,
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
