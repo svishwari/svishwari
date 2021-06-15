@@ -177,7 +177,8 @@ def delete_engagement(
             upsert=False,
             new=True,
         )
-        return doc[db_c.DELETED]
+        if doc:
+            return doc[db_c.DELETED]
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
