@@ -4,7 +4,7 @@
       <div class="heading font-weight-light neroBlack--text">
         Add an audience
       </div>
-      <div class="sub-heading font-weight-regular">
+      <div class="sub-heading text-h6 neroBlack--text">
         Build a target audience from the data you own. Add the attributes you
         want to involve in this particular audience and where you wish to send
         this audience.
@@ -46,9 +46,9 @@
                   backgroundColor="white"
                   required
                   v-model="audience.audienceName"
-                  class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
+                  class="mt-1 text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"
-                ></TextField>
+                />
               </v-col>
               <v-col cols="8">
                 <div class="mt-8 ml-15 text-caption neroBlack--text">
@@ -156,10 +156,9 @@
             isTile
             width="94"
             height="40"
-            class="ma-2 ml-0"
             @click.native="$router.go(-1)"
           >
-            Cancel
+            <span class="primary--text">Cancel</span>
           </huxButton>
         </template>
         <template #right>
@@ -168,7 +167,6 @@
             isTile
             width="94"
             height="44"
-            class="ma-2"
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
           >
@@ -512,7 +510,6 @@ export default {
     line-height: 40px;
   }
   .sub-heading {
-    font-size: 14px;
     line-height: 22px;
     max-width: 910px;
   }
@@ -563,32 +560,6 @@ export default {
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 12px 0px, 1px 12px;
-    }
-    .aud-name-field {
-      .v-input {
-        .v-input__control {
-          .v-input__slot {
-            min-height: 40px;
-            .v-text-field__slot {
-              .v-label {
-                top: 9px;
-              }
-            }
-            fieldset {
-              color: var(--v-lightGrey-base);
-            }
-          }
-        }
-        &.error--text {
-          .v-input__control {
-            .v-input__slot {
-              fieldset {
-                color: inherit;
-              }
-            }
-          }
-        }
-      }
     }
     .theme--light.v-timeline-item {
       .v-timeline-item__divider {
