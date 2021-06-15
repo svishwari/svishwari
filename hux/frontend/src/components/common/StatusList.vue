@@ -31,7 +31,7 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0">
+    <v-list dense class="pa-0" v-if="audience.destinations.length > 0">
       <v-list-item
         v-for="item in audience.destinations"
         :key="item.id"
@@ -88,7 +88,7 @@
               {{ getSize(item.size) }}
             </template>
             <template slot="hover-content">
-              {{ item.size | FormatSize }}
+              {{ item.size | Numeric(true, false) }}
             </template>
           </tooltip>
         </v-list-item-content>
@@ -107,6 +107,20 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <div
+      class="py-4 px-15 empty-destinations"
+      v-if="audience.destinations.length == 0"
+    >
+      <div class="no-destinations text--gray pb-5">
+        There are no destinations assigned to this audience.
+        <br />
+        Add onenow.
+        <br />
+        <v-icon size="30" class="add-icon cursor-pointer mt-3" color="primary">
+          mdi-plus-circle
+        </v-icon>
+      </div>
+    </div>
   </v-card>
 </template>
 
@@ -176,6 +190,13 @@ export default {
     flex-wrap: inherit;
     .top-action {
       color: var(--v-neroBlack-base);
+    }
+  }
+  .empty-destinations {
+    .no-destinations {
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
     }
   }
   .v-list {

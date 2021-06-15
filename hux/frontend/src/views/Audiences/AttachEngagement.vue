@@ -17,11 +17,6 @@
       </div>
     </template>
     <template #default>
-      <v-progress-linear
-        color="primary"
-        :active="loading"
-        :indeterminate="loading"
-      />
       <v-stepper v-if="!loading" v-model="viewStep">
         <v-stepper-items>
           <v-stepper-content step="1">
@@ -30,8 +25,8 @@
                 <template #icon>mdi-alert-circle-outline</template>
                 <template #title>Oops! There’s nothing here yet</template>
                 <template #subtitle>
-                  No engagements has been launched yet. Let’s create one <br />
-                  by clicking the new engagement button below.
+                  No engagements have been created yet. Let’s create one by
+                  clicking the new engagement button below.
                 </template>
                 <template #button>
                   <huxButton
@@ -120,24 +115,23 @@
                   labelText="Engagement name"
                   placeholder="Give this engagement a name"
                   v-model="newEngagement.name"
+                  height="40"
                   :rules="newEngagementRules"
                   required
                 />
                 <TextField
                   labelText="Description"
                   placeholder="What is the purpose of this engagement?"
+                  height="40"
                   v-model="newEngagement.description"
                 />
                 <div class="mb-2">
-                  Delivery schedule
-                  <v-menu max-width="184" open-on-hover offset-y>
+                  <span class="neroBlack--text text-caption">
+                    Delivery schedule
+                  </span>
+                  <v-menu max-width="240" open-on-hover offset-y>
                     <template #activator="{ on }">
-                      <v-icon
-                        v-on="on"
-                        color="secondary"
-                        :size="12"
-                        class="ml-1"
-                      >
+                      <v-icon v-on="on" color="primary" :size="12" class="ml-1">
                         mdi-information-outline
                       </v-icon>
                     </template>
@@ -166,7 +160,11 @@
                     v-model="newEngagement.delivery_schedule"
                     mandatory
                   >
-                    <v-btn>
+                    <v-btn
+                      class="active-delivery-option"
+                      height="40"
+                      width="175"
+                    >
                       <v-radio
                         :off-icon="
                           newEngagement.delivery_schedule == 0
@@ -176,7 +174,12 @@
                       />
                       <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
                     </v-btn>
-                    <v-btn disabled style="background: white !important">
+                    <v-btn
+                      disabled
+                      class="disabled-white-background"
+                      height="40"
+                      width="175"
+                    >
                       <v-radio
                         :off-icon="
                           newEngagement.delivery_schedule == 1
@@ -201,6 +204,7 @@
           variant="primary"
           :isTile="true"
           height="40"
+          width="146"
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
         >
@@ -221,9 +225,10 @@
           variant="white"
           :isTile="true"
           height="40"
+          width="146"
           @click.native="goToStep1()"
         >
-          Cancel &amp; back
+          <span class="primary--text">Cancel &amp; back</span>
         </huxButton>
       </div>
     </template>
@@ -429,6 +434,12 @@ export default {
           color: var(--v-primary-base) !important;
         }
       }
+    }
+    .active-delivery-option.v-btn.v-item--active {
+      border-color: var(--v-primary-base) !important;
+    }
+    .disabled-white-background {
+      background: white !important;
     }
   }
 }

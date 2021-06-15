@@ -38,6 +38,7 @@ pylint = {version="*", index="pypi"}
 black = { version = "*", pre="true"}
 safety = {version="*", index="pypi"}
 requests-mock= {version="1.9.2", index="pypi"}
+hypothesis = {version="*", index="pypi"}
 
 [requires]
 python_version = "3.7"

@@ -30,7 +30,7 @@ def set_delivery_platform(
     name: str,
     authentication_details: dict = None,
     status: str = c.STATUS_PENDING,
-    enabled: bool = True,
+    enabled: bool = False,
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
@@ -446,11 +446,8 @@ def set_platform_type(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -534,11 +531,8 @@ def update_delivery_platform(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -665,7 +659,7 @@ def create_delivery_platform_lookalike_audience(
         c.LOOKALIKE_AUD_NAME: name,
         c.LOOKALIKE_AUD_COUNTRY: country,
         c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
-        c.ENABLED: True,
+        c.DELETED: False,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
@@ -688,7 +682,7 @@ def create_delivery_platform_lookalike_audience(
             )
 
         ret_doc = collection.find_one(
-            {c.ID: inserted_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: inserted_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -720,7 +714,7 @@ def get_delivery_platform_lookalike_audience(
 
     try:
         ret_doc = collection.find_one(
-            {c.ID: lookalike_audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: lookalike_audience_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -750,7 +744,7 @@ def get_all_delivery_platform_lookalike_audiences(
     collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     try:
-        ret_docs = list(collection.find({c.ENABLED: True}, {c.ENABLED: 0}))
+        ret_docs = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -805,7 +799,7 @@ def update_lookalike_audience_name(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -847,7 +841,7 @@ def update_lookalike_audience_size_percentage(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -916,7 +910,7 @@ def update_lookalike_audience(
     try:
         if update_doc:
             ret_doc = collection.find_one_and_update(
-                {c.ID: lookalike_audience_id, c.ENABLED: True},
+                {c.ID: lookalike_audience_id, c.DELETED: False},
                 {"$set": update_doc},
                 upsert=False,
                 new=True,
@@ -977,7 +971,7 @@ def set_delivery_job(
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
             delivery_platform_generic_campaigns
         ),
-        c.ENABLED: True,
+        c.DELETED: False,
     }
     if engagement_id is not None:
         doc[c.ENGAGEMENT_ID] = engagement_id
@@ -993,7 +987,7 @@ def set_delivery_job(
 
         if delivery_job_id is not None:
             return collection.find_one(
-                {c.ID: delivery_job_id, c.ENABLED: True}, {c.ENABLED: 0}
+                {c.ID: delivery_job_id, c.DELETED: False}, {c.DELETED: 0}
             )
 
     except pymongo.errors.OperationFailure as exc:
@@ -1028,11 +1022,11 @@ def get_delivery_job(
 
     try:
         # set mongo_filter based on engagement id
-        mongo_filter = {c.ID: delivery_job_id, c.ENABLED: True}
+        mongo_filter = {c.ID: delivery_job_id, c.DELETED: False}
         if engagement_id is not None:
             mongo_filter[c.ENGAGEMENT_ID] = engagement_id
 
-        return collection.find_one(mongo_filter, {c.ENABLED: 0})
+        return collection.find_one(mongo_filter, {c.DELETED: 0})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -1074,7 +1068,7 @@ def set_delivery_job_status(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.ENABLED: True},
+            {c.ID: delivery_job_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1143,7 +1137,7 @@ def set_delivery_job_audience_size(
     # Update the doc.
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.ENABLED: True},
+            {c.ID: delivery_job_id, c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -1187,7 +1181,7 @@ def set_delivery_job_lookalike_audiences(
     # Update the doc.
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.ENABLED: True},
+            {c.ID: delivery_job_id, c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -1251,7 +1245,7 @@ def get_delivery_jobs(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        mongo_filter = {c.ENABLED: True}
+        mongo_filter = {c.DELETED: False}
         if audience_id:
             mongo_filter[c.AUDIENCE_ID] = audience_id
         if engagement_id:
@@ -1301,9 +1295,9 @@ def get_audience_recent_delivery_job(
             {
                 c.AUDIENCE_ID: audience_id,
                 c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-                c.ENABLED: True,
+                c.DELETED: False,
             },
-            {c.ENABLED: 0},
+            {c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1386,7 +1380,7 @@ def favorite_delivery_platform(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1426,7 +1420,7 @@ def unfavorite_delivery_platform(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1466,7 +1460,7 @@ def favorite_lookalike_audience(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1506,7 +1500,7 @@ def unfavorite_lookalike_audience(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1536,8 +1530,8 @@ def get_delivery_platform_delivery_jobs(
 
     try:
         cursor = collection.find(
-            {c.DELIVERY_PLATFORM_ID: delivery_platform_id, c.ENABLED: True},
-            {c.ENABLED: 0},
+            {c.DELIVERY_PLATFORM_ID: delivery_platform_id, c.DELETED: False},
+            {c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

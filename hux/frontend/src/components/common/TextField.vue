@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="text-field-hux">
     <label class="d-flex align-items-center mb-2">
       <span class="neroBlack--text text-caption">
         {{ labelText }}
@@ -118,3 +118,32 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.text-field-hux {
+  ::v-deep .v-input {
+    .v-input__control {
+      .v-input__slot {
+        min-height: 40px;
+        .v-text-field__slot {
+          .v-label {
+            top: 9px;
+          }
+        }
+        fieldset {
+          color: var(--v-lightGrey-base);
+        }
+      }
+    }
+    &.error--text {
+      .v-input__control {
+        .v-input__slot {
+          fieldset {
+            color: inherit;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

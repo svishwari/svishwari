@@ -59,9 +59,9 @@ steps:
     dockerfile: "Dockerfile"
     stage: "docker"
     build_arguments:
-      - OKTA_ISSUER=${{OKTA_ISSUER}}
-      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
       - API_URL=${{API_URL}}
+      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
+      - OKTA_ISSUER=${{OKTA_ISSUER}}
 
   Lint:
     stage: "lint"

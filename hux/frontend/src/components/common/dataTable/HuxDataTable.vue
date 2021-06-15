@@ -2,48 +2,51 @@
   <div class="hux-data-table">
     <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
+        :expanded.sync="expanded"
         :headers="headers"
-        :hide-default-footer="true"
+        :hide-default-header="!showHeader"
         :height="height"
         :items="dataItems"
-        :item-key="name"
-        :items-per-page="itemPerPage"
-        :sort-by="sortColumn"
+        item-key="name"
+        :items-per-page="-1"
         fixed-header
+        hide-default-footer
         must-sort
         sort-desc
+        single-select
       >
-        <template #body="{ items }" v-if="!nested">
-          <tbody class="data-table-body">
-            <tr
-              v-for="item in items"
-              :key="item.id"
-              class="data-table-row neroBlack--text"
-            >
-              <slot name="row-item" :item="item" />
+        <template #item="{ item, expand, isExpanded }" v-if="nested">
+          <slot
+            name="item-row"
+            :item="item"
+            :expand="expand"
+            :isExpanded="isExpanded"
+          ></slot>
+        </template>
+        <template v-for="h in headers" v-slot:[`header.${h.value}`]>
+          <tooltip :key="h.value" v-if="h.tooltipValue">
+            <template #label-content>
+              {{ h.text }}
+            </template>
+            <template #hover-content>
+              <span
+                v-html="h.tooltipValue.replace(/(?:\r\n|\r|\n)/g, '<br />')"
+              ></span>
+            </template>
+          </tooltip>
+          <template v-if="!h.tooltipValue">
+            {{ h.text }}
+          </template>
+        </template>
+        <template #body="{ headers, items }" v-if="!nested">
+          <tbody>
+            <tr v-for="item in items" :key="item.id">
+              <slot name="row-item" :item="item" :headers="headers" />
             </tr>
           </tbody>
         </template>
-        <template #item="{ item, expand, isExpanded }" v-if="nested">
-          <tr>
-            <td></td>
-            <td v-for="field in Object.keys(item)" :key="field.name">
-              <slot
-                name="table-row"
-                :field="field"
-                :item="item"
-                :expand="expand"
-                :isExpanded="isExpanded"
-              >
-              </slot>
-            </td>
-          </tr>
-        </template>
-        <template #expanded-item="{ item }" v-if="nested">
-          <tr v-for="(field, index) in item.child" :key="index">
-            <td></td>
-            <slot name="expanded-row" :field="field"></slot>
-          </tr>
+        <template #expanded-item="{ headers, item }">
+          <slot name="expanded-row" :headers="headers" :item="item" />
         </template>
       </v-data-table>
     </div>
@@ -51,10 +54,11 @@
 </template>
 
 <script>
+import Tooltip from "../Tooltip.vue"
 const ALL = -1
 export default {
   name: "HuxDataTable",
-  components: {},
+  components: { Tooltip },
   props: {
     dataItems: {
       type: Array,
@@ -75,6 +79,11 @@ export default {
       type: Number,
       required: false,
     },
+    showHeader: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     sortColumn: {
       type: String,
       required: false,
@@ -83,20 +92,25 @@ export default {
   },
   data() {
     return {
-      search: "",
       expanded: [],
       itemPerPage: ALL,
     }
   },
   computed: {
     fixedWidth() {
-      return (
-        this.headers
-          .filter((item) => item.fixed)
-          .map(({ width }) => width)
-          .map((item) => parseInt(item, 0))
-          .reduce((a, b) => a + b) + "px"
-      )
+      const fixedHeaders = this.headers.filter((item) => item.fixed)
+
+      return fixedHeaders.length > 0
+        ? fixedHeaders
+            .map(({ width }) => width)
+            .map((item) => parseInt(item, 0))
+            .reduce((a, b) => a + b) + "px"
+        : "0px"
+    },
+  },
+  methods: {
+    clickRow(_, event) {
+      event.expand(!event.isExpanded)
     },
   },
 }
@@ -152,7 +166,6 @@ export default {
       align-items: center;
       background: var(--v-white-base) !important;
       left: 0px;
-      height: 59.84px !important;
     }
     .fixed-header {
       position: absolute;
@@ -181,13 +194,8 @@ export default {
         }
       }
     }
-    .data-table-body {
-      .data-table-row {
-        height: 59.84px;
-        td {
-          font-size: 14px !important;
-        }
-      }
+    ::v-deep .v-data-table__expanded__content {
+      padding: 0px;
     }
   }
 }

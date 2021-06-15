@@ -1,0 +1,62 @@
+{
+    "engagements" : [
+        {
+            "id" : 1,
+            "name" : "Fall 2021",
+            "Audiences" : 2,
+            "Status" : "active",
+            "Size" : 64000,
+            "Delivery_schedule" : "Manual",
+            "Updated" : "2020-11-06T17:10:45.715Z",
+            "UpdatedBy" : { "first_name": "Bret", "last_name": "Gleichner"},
+            "create" : "2020-09-28T19:01:02.189Z",
+            "createdBy" : { "first_name": "Bret", "last_name": "Gleichner"}
+        },
+        {
+            "id" : 2,
+            "name" : "Winter",
+            "Audiences" : 3,
+            "Status" : "delivering",
+            "Size" : 476000000,
+            "Delivery_schedule" : "Manual",
+            "Updated" : "2020-11-06T17:10:45.715Z",
+            "UpdatedBy" : { "first_name": "Bret", "last_name": "Gleichner"},
+            "create" : "2020-09-28T19:01:02.189Z",
+            "createdBy" : { "first_name": "J", "last_name": "Shankar"},
+            "engagementList" : [
+                {
+                    "id" : 201,
+                    "name" : "Summer",
+                    "Size" : 64000,
+                    "Delivery_schedule" : "-",
+                    "Updated" : "2020-11-06T17:10:45.715Z",
+                    "UpdatedBy" : { "first_name": "Bret", "last_name": "Gleichner"},
+                    "create" : "2020-09-28T19:01:02.189Z",
+                    "createdBy" : { "first_name": "T", "last_name": "Shankar"}
+                },
+                {
+                    "id" : 202,
+                    "name" : "Texas",
+                    "Size" : 64000,
+                    "Delivery_schedule" : "-",
+                    "Updated" : "2020-11-06T17:10:45.715Z",
+                    "UpdatedBy" : { "first_name": "Bret", "last_name": "Gleichner"},
+                    "create" : "2020-09-28T19:01:02.189Z",
+                    "createdBy" : { "first_name": "T", "last_name": "Shankar"}
+                }
+            ]
+        },
+        {
+            "id" : 3,
+            "name" : "Default",
+            "Audiences" : null,
+            "Status" : "active",
+            "Size" : 64000,
+            "Delivery_schedule" : "Manual",
+            "Updated" : "2020-11-06T17:10:45.715Z",
+            "UpdatedBy" : { "first_name": "Bret", "last_name": "Gleichner"},
+            "create" : "2020-09-28T19:01:02.189Z",
+            "createdBy" : { "first_name": "T", "last_name": "Shankar"}
+        }
+    ]
+}

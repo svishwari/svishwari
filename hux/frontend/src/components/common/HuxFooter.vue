@@ -4,6 +4,7 @@
     app
     paddless
     fixed
+    height="80"
     inset
     color="background"
   >
