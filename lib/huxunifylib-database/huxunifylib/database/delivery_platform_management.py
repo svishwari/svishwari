@@ -70,6 +70,9 @@ def set_delivery_platform(
     if exists_flag:
         raise de.DuplicateName(name)
 
+    if delivery_platform_type not in c.SUPPORTED_DELIVERY_PLATFORMS:
+        raise de.UnknownDeliveryPlatformType(delivery_platform_type)
+
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
@@ -446,12 +449,7 @@ def set_platform_type(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
-    ]:
+    if delivery_platform_type not in c.SUPPORTED_DELIVERY_PLATFORMS:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
     doc = None
