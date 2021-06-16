@@ -12,12 +12,12 @@ FROM huxhub.repo.mgnt.in/node:lts-alpine as huxui-build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
-RUN npm install
-RUN npm install @vue/cli@4.5.6 -g
+RUN yarn ci
+RUN yarn global add @vue/cli@4.5.6
 COPY . /app
 COPY --from=base /tmp/env_file .env
-RUN npm run test:unit
-RUN npm run build
+RUN yarn test:unit
+RUN yarn build
 
 # production environment
 FROM huxhub.repo.mgnt.in/nginx:alpine

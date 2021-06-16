@@ -69,8 +69,8 @@ steps:
     image: huxhub.repo.mgnt.in/node:lts-alpine
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
-    - npm install
-    - npm run lint -- --no-fix
+    - yarn install
+    - yarn lint -- --no-fix
 
   PublishToArtifactory:
     stage: artifactory
