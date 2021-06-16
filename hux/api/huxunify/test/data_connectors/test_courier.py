@@ -150,7 +150,7 @@ class CourierTest(TestCase):
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
             api_c.DESTINATION_NAME: "Facebook",
-            api_c.DESTINATION_TYPE: "Facebook",
+            api_c.DELIVERY_PLATFORM_TYPE: "Facebook",
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.FACEBOOK_ACCESS_TOKEN: sample_auth,
                 api_c.FACEBOOK_APP_SECRET: sample_auth,
