@@ -218,7 +218,9 @@ class CourierTest(TestCase):
             "get_store_value",
             return_value="sample_auth",
         ):
-            env_dict, _ = map_destination_credentials_to_dict(destination)
+            env_dict, secret_dict = map_destination_credentials_to_dict(
+                destination
+            )
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
@@ -235,13 +237,18 @@ class CourierTest(TestCase):
                 SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
                     api_c.SFMC_ACCOUNT_ID
                 ],
-                SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
-                    api_c.SFMC_CLIENT_SECRET
-                ],
                 SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
                     api_c.SFMC_SOAP_BASE_URI
                 ],
                 SFMCCredentials.SFMC_URL.name: auth[api_c.SFMC_REST_BASE_URI],
+            },
+        )
+        self.assertDictEqual(
+            secret_dict,
+            {
+                SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
+                    api_c.SFMC_CLIENT_SECRET
+                ]
             },
         )
 
