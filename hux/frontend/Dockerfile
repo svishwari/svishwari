@@ -8,7 +8,7 @@ RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
     "\nVUE_APP_API_URL=$API_URL" \ > /tmp/env_file
 
 # build environment
-FROM huxhub.repo.mgnt.in/node:14 as huxui-build
+FROM huxhub.repo.mgnt.in/node:lts-alpine as huxui-build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
@@ -20,7 +20,7 @@ RUN npm run test:unit
 RUN npm run build
 
 # production environment
-FROM huxhub.repo.mgnt.in/nginx:1.16.0-alpine
+FROM huxhub.repo.mgnt.in/nginx:lts-alpine
 COPY --from=huxui-build /app/dist /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d
