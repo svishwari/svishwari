@@ -167,8 +167,9 @@ const routes = [
   },
   {
     path: "/customers/:id",
-    name: "CustomerDetails",
-    component: () => import("@/views/CustomerProfiles/CustomerDetails.vue"),
+    name: "CustomerProfileDetails",
+    component: () =>
+      import("@/views/CustomerProfiles/CustomerProfileDetails.vue"),
     meta: {
       layout: "app",
       title: "Customer Profile Details",

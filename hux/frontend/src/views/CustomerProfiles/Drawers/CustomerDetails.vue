@@ -5,12 +5,14 @@
         <h3 class="text-h3 ml-2 neroBlack--text">Customers</h3>
       </div>
     </template>
+
     <template #default>
       <PageHeader class="top-bar" :headerHeight="40">
         <template slot="left">
-          <v-icon size="18" color="black">mdi-magnify</v-icon>
+          <v-icon size="18" color="lightGrey">mdi-magnify</v-icon>
         </template>
       </PageHeader>
+      <v-progress-linear :active="loading" :indeterminate="loading" />
       <hux-data-table :headers="columnDefs" :dataItems="customers">
         <template #row-item="{ item }">
           <td
@@ -19,9 +21,15 @@
             :style="{ width: header.width }"
           >
             <div v-if="header.value == 'id'">
-              <a @click="loadCustomerProfile(item[header.value])">{{
-                item[header.value]
-              }}</a>
+              <router-link
+                :to="{
+                  name: 'CustomerProfileDetails',
+                  params: { id: item[header.value] },
+                }"
+                class="text-decoration-none"
+                append
+                >{{ item[header.value] }}
+              </router-link>
             </div>
             <div
               v-if="header.value == 'first_name' || header.value == 'last_name'"
@@ -41,7 +49,7 @@
     </template>
     <template #footer-left>
       <div class="d-flex align-baseline footer-font">
-        {{ total_customers }} results
+        {{ customersList.length }} results
       </div>
     </template>
   </Drawer>
@@ -50,7 +58,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import Drawer from "@/components/common/Drawer"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxSlider from "@/components/common/HuxSlider"
 import PageHeader from "@/components/PageHeader"
 
@@ -64,7 +72,7 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: true,
       localDrawer: this.value,
       columnDefs: [
         {
@@ -102,13 +110,13 @@ export default {
     },
     localDrawer: function () {
       this.$emit("input", this.localDrawer)
-      if (!this.localDrawer) {
-        this.$emit("onClose")
-      }
     },
-    finalEngagements: function (newVal) {
-      this.selectedEngagements = newVal
-    },
+  },
+
+  async updated() {
+    this.loading = true
+    await this.getCustomers()
+    this.loading = false
   },
 
   computed: {
@@ -128,11 +136,6 @@ export default {
       })
       return allCustomerList
     },
-
-    total_customers() {
-      return this.customersList.length
-    },
-
     id() {
       return this.$route.params.id
     },
@@ -141,11 +144,8 @@ export default {
   methods: {
     ...mapActions({
       getCustomer: "customers/get",
+      getCustomers: "customers/getAll",
     }),
-
-    loadCustomerProfile(huxId) {
-      this.getCustomer(huxId)
-    },
   },
 }
 </script>
