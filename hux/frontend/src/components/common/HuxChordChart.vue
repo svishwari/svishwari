@@ -18,9 +18,8 @@
           v-for="item in legendsData"
           :key="item.id"
           ><Icon :type="item.icon" :size="12" />
-          <span>{{item.prop}}</span>
-          </v-list-item-subtitle
-        >
+          <span>{{ item.prop }}</span>
+        </v-list-item-subtitle>
       </v-list-item-content>
       <div class="chart-section" ref="huxChart"></div>
     </v-list-item>
