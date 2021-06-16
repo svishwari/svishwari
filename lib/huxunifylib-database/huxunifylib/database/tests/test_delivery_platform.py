@@ -895,14 +895,13 @@ class TestDeliveryPlatform(unittest.TestCase):
     def test_get_performance_metrics_by_engagement(self):
         """Performance metrics are set and retrieved."""
 
-        delivery_job_id = self._set_delivery_job()
         end_time = datetime.datetime.utcnow()
         start_time = end_time - datetime.timedelta(days=7)
 
         engagement_id = ObjectId()
         delivery_platform_id = self.delivery_platform_doc[c.ID]
 
-        dpm.set_delivery_job(
+        doc = dpm.set_delivery_job(
             database=self.database,
             audience_id=ObjectId(),
             delivery_platform_id=delivery_platform_id,
@@ -914,7 +913,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             database=self.database,
             delivery_platform_id=delivery_platform_id,
             delivery_platform_name="Facebook",
-            delivery_job_id=delivery_job_id,
+            delivery_job_id=doc[c.ID],
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,

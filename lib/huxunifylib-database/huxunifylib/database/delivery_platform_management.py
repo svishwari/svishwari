@@ -1733,16 +1733,10 @@ def get_performance_metrics_by_engagement_id(
 
         # Get performance metrics for all delivery jobs
         collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
-        perf_metrics = []
-        for delivery_job in delivery_jobs:
-            perf_metrics.append(
-                list(
-                    collection.find(
-                        {c.DELIVERY_JOB_ID: delivery_job.get(c.ID)}
-                    )
-                )
-            )
-        return list(perf_metrics)
+        delivery_job_ids = [x[c.ID] for x in delivery_jobs]
+        return list(collection.find(
+            {c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}}
+        ))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
