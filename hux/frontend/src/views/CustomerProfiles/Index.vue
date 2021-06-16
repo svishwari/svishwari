@@ -209,7 +209,6 @@ export default {
     ...mapActions({
       getOverview: "customers/getOverview",
     }),
-    viewAllCustomer() {},
     mapOverviewData() {
       this.overviewListItems[0].subtitle = this.applyNumericFilter(
         this.overview.total_customers

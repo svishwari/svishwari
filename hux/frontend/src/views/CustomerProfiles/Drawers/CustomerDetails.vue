@@ -127,10 +127,6 @@ export default {
     customers() {
       return this.customersList
     },
-
-    id() {
-      return this.$route.params.id
-    },
   },
 
   methods: {
