@@ -17,7 +17,8 @@
           class="legend-section"
           v-for="item in legendsData"
           :key="item.id"
-          ><Icon :type="item.icon" :size="12" />
+          >
+          <Icon :type="item.icon" :size="12" />
           <span>{{ item.prop }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
