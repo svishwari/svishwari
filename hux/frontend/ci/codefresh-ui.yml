@@ -4,6 +4,7 @@ stages:
   - prepare
   - git
   - build_tag
+  - set_env
   - docker
   - lint
   - test
@@ -16,21 +17,10 @@ steps:
     title: Prepare Build Details
     type: parallel
     steps:
-      BuildName:
+      GetTriggerName:
         stage: prepare
-        title: Set build variables
-        image: huxhub.repo.mgnt.in/alpine
-        commands:
-          - cf_export BUILD_NAME=unified-ui
-          - cf_export JFROG_REGISTRY=unified-docker-dev-local
-          - cf_export SUB_REPO=hux/frontend
-          - cf_export PORT=80
-          - cf_export FILE_NAME=values-main-use1-hux-unified-dev1.yaml
-          # build vars
-          - cf_export API_URL="https://unified-api-dev.main.use1.hux-unified-dev1.in"
-          - cf_export OKTA_CLIENT_ID="0oab1i3ldgYyRvk5r2p7"
-          - cf_export OKTA_ISSUER="https://deloittedigital-ms.okta.com"
-
+        title: get trigger name using id from spec yaml      
+        type: deloittehux/get-trigger-name
       BuildNumber:
         stage: prepare
         title: Bump default BUILD_NUMBER annotation
@@ -51,6 +41,14 @@ steps:
     commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
+  set_env_var:
+    stage: set_env
+    title: Set environment variables
+    type: freestyle
+    image: alpine
+    working_directory: "${{CF_REPO_NAME}}"
+    commands: 
+      - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   DockerBuild:
     title: "Building Docker image"
