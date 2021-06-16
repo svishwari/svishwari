@@ -12,6 +12,7 @@ FROM huxhub.repo.mgnt.in/node:lts-alpine as huxui-build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
+COPY yarn.lock /app/yarn.lock
 RUN yarn ci
 RUN yarn global add @vue/cli@4.5.6
 COPY . /app
