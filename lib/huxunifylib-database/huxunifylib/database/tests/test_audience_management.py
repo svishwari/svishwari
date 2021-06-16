@@ -187,6 +187,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(audience_doc is not None)
         self.assertTrue(c.ID in audience_doc)
+        self.assertFalse(c.DELETED in audience_doc)
 
     def test_audience_count(self):
         """Created audiences are counted properly."""
@@ -429,6 +430,7 @@ class TestAudienceManagement(unittest.TestCase):
         )
 
         self.assertTrue(doc is not None)
+        self.assertFalse(c.DELETED in doc)
 
     def test_get_audience_name(self):
         """Test get audience name."""
@@ -582,6 +584,9 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
+        self.assertFalse(
+            [a for a in audiences if c.DELETED in a]
+        )
 
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
@@ -593,6 +598,9 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
+        self.assertFalse(
+            [a for a in audiences if c.DELETED in a]
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_favorite_audience(self):
