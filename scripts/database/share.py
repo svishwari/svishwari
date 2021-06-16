@@ -32,7 +32,8 @@ def get_mongo_client() -> MongoClient:
 
     if use_ssl:
         # grab the SSL cert path
-        ssl_cert_path = str(Path(__file__).parent.joinpath("rds-combined-ca-bundle.pem"))
-        mongo_config["ssl_ca_certs"] = ssl_cert_path
+        mongo_config["ssl_ca_certs"] = str(
+            Path(__file__).parent.joinpath("rds-combined-ca-bundle.pem")
+        )
 
     return MongoClient(**mongo_config)
