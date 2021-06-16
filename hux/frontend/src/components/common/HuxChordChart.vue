@@ -139,7 +139,7 @@ export default {
     margin-left: 8px;
     font-size: 12px;
     line-height: 16px;
-    color: var(--v-matterhorn-base) !important;
+    color: var(--v-gray-base) !important;
   }
 }
 
