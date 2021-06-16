@@ -1,12 +1,12 @@
 import Drawer from "@/components/common/Drawer"
-import { mount } from "@vue/test-utils"
+import { shallowMount } from "@vue/test-utils"
 import Vuetify from "vuetify"
 
 const vuetify = new Vuetify()
 
 describe("Drawer", () => {
   test("Drawer calls function on close", async () => {
-    const wrapper = mount(Drawer, {
+    const wrapper = shallowMount(Drawer, {
       propsData: {
         value: true,
       },

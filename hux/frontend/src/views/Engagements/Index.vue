@@ -14,7 +14,7 @@
       <template #right>
         <v-icon medium disabled color="primary refresh">mdi-refresh</v-icon>
         <router-link
-          :to="{ name: 'AudienceConfiguration' }"
+          :to="{ name: 'EngagementConfiguration' }"
           class="text-decoration-none"
           append
         >
