@@ -129,9 +129,9 @@ class TestCustomersOverview(unittest.TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     @requests_mock.Mocker()
-    def test_get_customer_by_id(self, request_mocker: Mocker):
+    def test_get_n_customers(self, request_mocker: Mocker):
         """
-        Test get customer by id
+        Test get no of customers
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -141,9 +141,10 @@ class TestCustomersOverview(unittest.TestCase):
         """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        customer_id = "1531-2039-22"
+        # TODO: Update with proper response and add assertion for it
+        no_of_customers = 2
         response = self.test_client.get(
-            f"{self.customers}/{customer_id}",
+            f"{self.customers}/{no_of_customers}",
             headers=self.headers,
         )
 
