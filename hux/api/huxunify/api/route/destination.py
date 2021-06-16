@@ -17,6 +17,7 @@ from huxunifylib.database import (
 )
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.util.general.const import FacebookCredentials
+from huxunifylib.database import constants as db_c
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
@@ -221,8 +222,18 @@ class DestinationPutView(SwaggerView):
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         authentication_parameters = None
+        destination_id = ObjectId(destination_id)
 
         try:
+            database = get_db_client()
+
+            # check if destination exists
+            destination = destination_management.get_delivery_platform(
+                database, destination_id
+            )
+            if not destination:
+                return {"message": "Not found"}, HTTPStatus.NOT_FOUND
+
             if auth_details:
                 # store the secrets for the updated authentication details
                 authentication_parameters = (
@@ -237,8 +248,11 @@ class DestinationPutView(SwaggerView):
             # update the destination
             return (
                 destination_management.update_delivery_platform(
-                    database=get_db_client(),
-                    delivery_platform_id=ObjectId(destination_id),
+                    database=database,
+                    delivery_platform_id=destination_id,
+                    delivery_platform_type=destination[
+                        db_c.DELIVERY_PLATFORM_TYPE
+                    ],
                     authentication_details=authentication_parameters,
                     added=is_added,
                     user_id=user_id,
@@ -367,9 +381,11 @@ class DestinationValidatePostView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
+        destination_type = str(body.get(api_c.DESTINATION_TYPE)).upper()
+
         try:
             # test the destination connection and update connection status
-            if body.get(api_c.DESTINATION_TYPE) == api_c.FACEBOOK_TYPE:
+            if destination_type == api_c.FACEBOOK_TYPE.upper():
                 destination_connector = FacebookConnector(
                     auth_details={
                         FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
