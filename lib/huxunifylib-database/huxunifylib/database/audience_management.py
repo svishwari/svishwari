@@ -634,7 +634,7 @@ def get_audience_name(
 
     doc = get_audience_config(database, audience_id)
 
-    if c.AUDIENCE_NAME in doc:
+    if doc is not None and c.AUDIENCE_NAME in doc:
         audience_name = doc[c.AUDIENCE_NAME]
 
     return audience_name
