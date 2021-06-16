@@ -528,7 +528,10 @@ class DestinationDataExtView(SwaggerView):
 
         ext_list = []
         try:
-            if destination[api_c.DELIVERY_PLATFORM_TYPE] == api_c.SFMC_TYPE:
+            if (
+                destination[api_c.DELIVERY_PLATFORM_TYPE].upper()
+                == api_c.SFMC_TYPE.upper()
+            ):
                 connector = SFMCConnector(
                     auth_details=set_sfmc_auth_details(
                         destination[api_c.AUTHENTICATION_DETAILS]
