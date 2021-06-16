@@ -62,6 +62,7 @@ class CustomerProfileSchema(Schema):
     last_email_open = DateTime(required=True)
     email = Str(required=True)
     phone = Str(required=True)
+    # redacted age to a string.
     age = Str(required=True)
     gender = Str(required=True)
     address = Str(required=True)
