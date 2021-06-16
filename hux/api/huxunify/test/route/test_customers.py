@@ -150,7 +150,7 @@ class TestCustomersOverview(unittest.TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     @requests_mock.Mocker()
-    def test_customeroverview_by_attributes(
+    def test_post_customeroverview_by_attributes(
         self, request_mocker: Mocker
     ) -> None:
         """

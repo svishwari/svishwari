@@ -15,7 +15,6 @@ from flasgger import SwaggerView
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
-    CustomerOverviewPostSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -154,7 +153,7 @@ class CustomerPostOverview(SwaggerView):
             "description": "Customer Profiles Overview",
             "schema": {
                 "type": "array",
-                "items": CustomerOverviewPostSchema,
+                "items": CustomerOverviewSchema,
             },
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -180,14 +179,8 @@ class CustomerPostOverview(SwaggerView):
         """
         # TODO: Integrate with CDM API /customer-profiles/insights once its ready
 
-        customer_overview_post_response = {
-            "body": get_customers_overview(),
-            "code": HTTPStatus.OK,
-            "message": "OK",
-        }
-
         return (
-            CustomerOverviewPostSchema().dump(customer_overview_post_response),
+            CustomerOverviewSchema().dump(get_customers_overview()),
             HTTPStatus.OK,
         )
 
