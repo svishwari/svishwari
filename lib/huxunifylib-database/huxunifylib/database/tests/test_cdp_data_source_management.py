@@ -1,5 +1,5 @@
 """Database client cdp data source management tests"""
-
+import string
 import unittest
 import mongomock
 from bson import ObjectId
@@ -202,7 +202,7 @@ class TestCdpDataSourceManagement(unittest.TestCase):
 
     @given(
         st.dictionaries(
-            keys=st.one_of(st.text(), st.floats()),
+            keys=st.text(alphabet=string.ascii_letters),
             values=st.one_of(st.text(), st.floats()),
         )
     )

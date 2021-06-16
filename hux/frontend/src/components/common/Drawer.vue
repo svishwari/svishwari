@@ -9,7 +9,7 @@
     hide-overlay
     temporary
   >
-    <v-toolbar width="100%">
+    <v-toolbar width="100%" class="box-shadow-25">
       <v-toolbar-title class="px-6">
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
@@ -24,8 +24,9 @@
         </v-icon>
       </template>
     </v-toolbar>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="drawer-content">
+    <div class="drawer-content pa-2">
       <slot></slot>
     </div>
 
@@ -33,6 +34,7 @@
       class="d-flex justify-space-between align-center px-6 py-5"
       absolute
       padless
+      height="80"
       color="white"
       elevation="5"
     >
@@ -89,6 +91,12 @@ export default {
       required: false,
       default: false,
     },
+
+    loading: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   computed: {
@@ -136,9 +144,6 @@ export default {
 .drawer-content {
   height: calc(100% - 130px);
   overflow-y: auto;
-}
-.v-footer {
-  height: 80px;
 }
 ::v-deep .v-icon.v-icon::after {
   content: none;

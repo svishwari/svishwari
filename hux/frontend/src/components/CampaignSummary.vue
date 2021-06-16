@@ -14,9 +14,77 @@
             :maxWidth="item.width"
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
-            :subtitle="item.value"
-            :interactable="false"
-          />
+          >
+            <template #subtitle-extended>
+              <span v-if="item.field.includes('|')">
+                <tooltip>
+                  <template #label-content>
+                    <span class="font-weight-semi-bold">
+                      <span
+                        v-if="numericColumns.includes(item.field.split('|')[0])"
+                      >
+                        {{
+                          item.value.split("|")[0] | Numeric(false, false, true)
+                        }}
+                      </span>
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    {{ item.value.split("|")[0] }}
+                  </template>
+                </tooltip>
+                &nbsp;&bull;&nbsp;
+                <tooltip>
+                  <template #label-content>
+                    <span class="font-weight-semi-bold">
+                      <span
+                        v-if="
+                          percentileColumns.includes(item.field.split('|')[1])
+                        "
+                      >
+                        {{
+                          item.value.split("|")[1]
+                            | Numeric(true, false, false, "%")
+                        }}
+                      </span>
+                      <span
+                        v-else-if="
+                          numericColumns.includes(item.field.split('|')[1])
+                        "
+                      >
+                        {{
+                          item.value.split("|")[1] | Numeric(false, false, true)
+                        }}
+                      </span>
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    {{ item.value.split("|")[1] }}
+                  </template>
+                </tooltip>
+              </span>
+              <span else>
+                <tooltip>
+                  <template #label-content>
+                    <span class="font-weight-semi-bold">
+                      <span v-if="numericColumns.includes(item.field)">
+                        {{ item.value | Numeric(false, false, true) }}
+                      </span>
+                      <span v-else-if="percentileColumns.includes(item.field)">
+                        {{ item.value | Numeric(true, false, false, "%") }}
+                      </span>
+                      <span v-else-if="currencyColumns.includes(item.field)">
+                        {{ item.value | Currency }}
+                      </span>
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    {{ item.value }}
+                  </template>
+                </tooltip>
+              </span>
+            </template>
+          </MetricCard>
         </div>
       </v-card-text>
     </v-card>
@@ -276,6 +344,8 @@ export default {
         },
       ],
       numericColumns: [
+        // Summary Columns
+        "sent",
         // Ads Columns
         "spend",
         "reach",
@@ -290,17 +360,20 @@ export default {
         "clicks",
         "unique_clicks",
         "unique_opens",
+        "click_through_rate",
         "unsubscribe",
       ],
       percentileColumns: [
         // Ads Columns
         "click_through_rate",
+
         "engagement_rate",
         // Email Columns
         "hard_bounces_rate",
         "delivered_rate",
         "open_rate",
-        "click_through_rate",
+        "click_to_open_rate",
+        "unsubscribe_rate",
       ],
       currencyColumns: [
         // Ads Columns
@@ -430,56 +503,7 @@ export default {
       return this.type === "ads" ? this.AdsHeaders : this.emailHeaders
     },
     summaryCards() {
-      if (this.summary.length === 0) return []
-      return this.summary.map((sum) => {
-        switch (sum.title) {
-          case "Spend":
-            sum["value"] =
-              "$" +
-              this.$options.filters.Numeric(sum["value"], false, false, true)
-            break
-          case "Reach":
-            sum["value"] = this.$options.filters.Numeric(sum["value"], true)
-            break
-          case "Sent":
-            sum["value"] = this.$options.filters.Numeric(
-              sum["value"],
-              false,
-              false,
-              true
-            )
-            break
-          case "Impressions":
-          case "Conversions":
-          case "Clicks":
-          case "Frequency":
-            sum["value"] = this.$options.filters.Numeric(
-              sum["value"],
-              false,
-              false,
-              true
-            )
-            break
-          case "CPM":
-          case "CPA":
-          case "CPC":
-            sum["value"] = this.$options.filters.Currency(sum["value"])
-            break
-          case "CTR":
-          case "Engagement rate":
-            sum["value"] = this.$options.filters.Numeric(
-              sum["value"],
-              true,
-              false,
-              false,
-              "%"
-            )
-            break
-          default:
-            break
-        }
-        return sum
-      })
+      return this.summary.length === 0 ? [] : this.summary
     },
   },
   props: {
