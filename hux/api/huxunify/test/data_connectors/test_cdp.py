@@ -41,14 +41,12 @@ class CDPTest(TestCase):
 
     @requests_mock.Mocker()
     @given(customer_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer_profiles(
-        self, request_mocker: Mocker, customer_id: str
-    ):
+    def test_get_customer(self, request_mocker: Mocker, customer_id: str):
         """Test get customer profiles
 
         Args:
             request_mocker (Mocker): Request mock object.
-            customer_id (str): string for testing customer.
+            customer_id (str): string for testing get customer.
 
         Returns:
 
