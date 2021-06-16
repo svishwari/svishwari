@@ -100,7 +100,7 @@ export default {
     sort: {
       type: String,
       required: false,
-      default: null,
+      default: "none",
     },
 
     bordered: {
@@ -133,7 +133,7 @@ export default {
   },
 
   mounted() {
-    if (this.sort !== null) {
+    if (this.sort !== "none") {
       if (this.sort === "asc") {
         // Sorts the list in ascending order
         this.sortDesc = false

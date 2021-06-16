@@ -143,7 +143,7 @@ export default {
     },
 
     onCancelAndBack() {
-      this.$emit("onCancelAndBackk")
+      this.$emit("onCancelAndBack")
       this.reset()
     },
 
