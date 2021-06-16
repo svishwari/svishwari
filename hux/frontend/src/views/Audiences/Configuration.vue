@@ -434,10 +434,9 @@ export default {
         this.destinationDrawer &&
         this.destinationDrawer.selectedDestination
       ) {
-        const existingIndex =
-          this.destinationDrawer.selectedDestination.findIndex(
-            (destination) => destination.type === selected.type
-          )
+        const existingIndex = this.destinationDrawer.selectedDestination.findIndex(
+          (destination) => destination.type === selected.type
+        )
         return existingIndex > -1
       }
     },
