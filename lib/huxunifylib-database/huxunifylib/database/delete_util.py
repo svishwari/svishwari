@@ -1,6 +1,6 @@
 """Utilities for deletion."""
 import logging
-from typing import Optional, Union
+from typing import Union
 
 from bson import ObjectId
 
