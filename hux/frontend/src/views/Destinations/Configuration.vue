@@ -75,6 +75,9 @@
           Validating...
         </hux-button>
       </div>
+      <div v-if="validationError" class="d-flex flex-wrap justify-end pt-2">
+        <span class="red--text text-caption">{{validationError}}</span>
+      </div>
     </v-form>
 
     <hux-footer slot="footer" max-width="850px">
@@ -181,6 +184,7 @@ export default {
       authenticationDetails: {},
       isValidated: false,
       isValidating: false,
+      validationError: null,
       isFormValid: false,
       rules: {
         required: (value) => !!value || "This is a required field",
@@ -244,6 +248,7 @@ export default {
 
     async validate() {
       this.isValidating = true
+      this.validationError = null
 
       try {
         await this.validateDestination({
@@ -252,8 +257,7 @@ export default {
         })
         this.isValidated = true
       } catch (error) {
-        // TODO we probably want to do more here when things arent valid
-        console.error(error)
+        this.validationError = error.message
       } finally {
         this.isValidating = false
       }
