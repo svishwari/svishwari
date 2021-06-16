@@ -8,6 +8,7 @@ import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import orchestration_management as om
 from huxunifylib.database import delivery_platform_management as dpm
+from huxunifylib.database.user_management import set_user
 
 
 class TestEngagementManagement(unittest.TestCase):
@@ -21,7 +22,14 @@ class TestEngagementManagement(unittest.TestCase):
         ).connect()
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
-        self.user_id = ObjectId()
+        # write a user to the database
+        self.user_name = "joey galloway"
+        self.user_id = set_user(
+            self.database,
+            "fake",
+            "joeygalloway@fake.com",
+            display_name=self.user_name,
+        )[c.ID]
 
         # setup the audience
         self.audience = om.create_audience(
@@ -103,6 +111,19 @@ class TestEngagementManagement(unittest.TestCase):
         # test for a list with data.
         self.assertTrue(em.get_engagements(database=self.database))
 
+    def test_get_engagements_with_users(self) -> None:
+        """Test get_engagements with users routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # test for a list with data.
+        engagements = em.get_engagements(self.database, True)
+        self.assertTrue(engagements)
+        self.assertEqual(engagements[0][c.CREATED_BY], self.user_name)
+
     def test_get_engagement(self) -> None:
         """Test get_engagement routine
 
@@ -122,6 +143,21 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertIsNotNone(engagement_doc)
+
+    def test_get_engagement_with_user(self) -> None:
+        """Test get_engagement with user routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # take the first document
+        engagement_doc = em.get_engagement(
+            self.database, self.engagement_id, True
+        )
+        self.assertTrue(engagement_doc)
+        self.assertEqual(engagement_doc[c.CREATED_BY], self.user_name)
 
     def test_update_engagement(self) -> None:
         """Test update_engagement routine
@@ -152,6 +188,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertNotIn(c.ENGAGEMENT_DELIVERY_SCHEDULE, engagement_doc)
         self.assertEqual(self.user_id, engagement_doc[c.CREATED_BY])
+        self.assertEqual(self.user_id, engagement_doc[c.UPDATED_BY])
 
     def test_update_engagement_bad_string_id(self) -> None:
         """Test update_engagement routine with a bad string id

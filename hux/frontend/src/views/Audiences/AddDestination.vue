@@ -76,9 +76,9 @@
         helpText="Extension name"
         height="40"
         backgroundColor="white"
-        class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
+        class="mt-1 text-caption neroBlack--text pt-2"
         required
-      ></TextField>
+      />
     </div>
 
     <div class="mt-6" v-if="!isActive">

@@ -3,8 +3,9 @@
     class="add-audience-drawer-wrapper"
     v-model="localToggle"
     :width="drawerWidth"
-    :disable-transition="isOpening"
+    :loading="loading"
     expandable
+    @onClose="closeDrawer()"
     @iconToggle="changeOverviewListItems"
   >
     <template #header-left>
@@ -12,8 +13,7 @@
     </template>
 
     <template #default>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-      <div class="pa-6">
+      <div class="pa-4">
         <h6 class="pb-6 text-h6 neroBlack--text">
           Build a target audience from the data you own.
         </h6>
@@ -40,7 +40,7 @@
             :subtitle="item.subtitle"
           />
         </div>
-        <hr class="mb-4" />
+        <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
           <attribute-rules :rules="attributeRules"></attribute-rules>
         </div>
@@ -48,7 +48,7 @@
     </template>
 
     <template #footer-left>
-      <v-btn tile color="white" @click="closeDrawer()">
+      <v-btn tile color="white" @click="onCancelAndBack()">
         <span class="primary--text">Cancel &amp; back</span>
       </v-btn>
       <v-btn
@@ -132,12 +132,6 @@ export default {
     },
   },
 
-  computed: {
-    isOpening() {
-      return this.localToggle
-    },
-  },
-
   methods: {
     ...mapActions({
       addAudience: "audiences/add",
@@ -148,6 +142,11 @@ export default {
       this.reset()
     },
 
+    onCancelAndBack() {
+      this.$emit("onCancelAndBackk")
+      this.reset()
+    },
+
     changeOverviewListItems(expanded) {
       this.expanded = expanded
     },
@@ -155,6 +154,7 @@ export default {
     reset() {
       this.$refs.newAudienceRef.reset()
       this.attributeRules = []
+      this.expanded = false
     },
 
     async add() {
@@ -221,7 +221,6 @@ export default {
   }
   hr {
     border-style: solid;
-    border-color: var(--v-zircon-base);
   }
 }
 </style>

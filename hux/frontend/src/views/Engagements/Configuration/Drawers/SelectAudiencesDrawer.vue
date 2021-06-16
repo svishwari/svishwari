@@ -1,13 +1,11 @@
 <template>
-  <Drawer v-model="localToggle" :width="640">
+  <Drawer v-model="localToggle" :width="640" :loading="loading">
     <template #header-left>
       <h3 class="text-h3">Add audiences to this engagement</h3>
     </template>
 
     <template #default>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-
-      <div class="pa-8">
+      <div class="pa-6">
         <v-btn tile color="primary" class="mb-4" @click="$emit('onAdd')">
           <v-icon>mdi-plus</v-icon>
           New audience
@@ -20,6 +18,7 @@
               key: 'name',
               label: 'Name',
               sortable: true,
+              col: '6',
             },
             {
               key: 'size',
@@ -54,6 +53,7 @@
                 height="40"
                 icon="mdi-check"
                 iconPosition="left"
+                :boxShadow="false"
                 @click="remove(row.item)"
               >
                 Added
@@ -64,6 +64,7 @@
                 variant="primary"
                 width="100"
                 height="40"
+                :boxShadow="false"
                 @click="add(row.item)"
               >
                 Add

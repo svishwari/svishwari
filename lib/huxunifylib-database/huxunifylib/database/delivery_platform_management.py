@@ -446,11 +446,8 @@ def set_platform_type(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -534,11 +531,8 @@ def update_delivery_platform(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -1660,8 +1654,8 @@ def get_performance_metrics(
             Min start time of metrics. Defaults to None.
         max_end_time (datetime.datetime, optional):
             Max start time of metrics. Defaults to None.
-        pending_transfer_for_feedback (bool, optional): If True, retrieve only
-            metrics that have not been transferred for feedback. Defaults to None.
+        pending_transfer_for_feedback (bool): If True, retrieve only
+            metrics that have not been transferred for feedback. Defaults to False.
 
     Raises:
         de.InvalidID: Invalid ID for delivery job.
@@ -1749,3 +1743,37 @@ set_transferred_for_feedback = partial(
     _set_performance_metrics_status,
     performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
 )
+
+
+def get_all_performance_metrics(
+    database: DatabaseClient,
+    pending_transfer_for_feedback: bool = False,
+) -> list:
+    """Retrieve all campaign performance metrics.
+
+    Args:
+        database (DatabaseClient): database client.
+        pending_transfer_for_feedback (bool): If True, retrieve only
+            metrics that have not been transferred for feedback. Defaults to False.
+
+    Returns:
+        list: list of performance metrics.
+    """
+
+    metric_docs = None
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    try:
+        if pending_transfer_for_feedback:
+            metric_docs = list(
+                collection.find(
+                    {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+                )
+            )
+        else:
+            metric_docs = list(collection.find())
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return metric_docs

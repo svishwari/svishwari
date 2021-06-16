@@ -217,6 +217,7 @@
       v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
+      @onCancelAndBack="openSelectAudiencesDrawer()"
     />
 
     <SelectDestinationsDrawer
