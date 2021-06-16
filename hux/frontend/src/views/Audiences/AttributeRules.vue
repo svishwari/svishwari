@@ -39,16 +39,18 @@
           <div class="condition-card col-10 pa-0">
             <div class="condition-container">
               <div class="condition-items col-10 pa-0">
-                <DropdownMenu
-                  v-model="condition.attribute"
-                  :labelText="fetchDropdownLabel(condition, 'attribute')"
-                  :menuItem="attributeOptions"
+                <hux-dropdown
+                  :selected="condition.attribute"
+                  :label="fetchDropdownLabel(condition, 'attribute')"
+                  @on-select="onSelect('attribute', condition, $event)"
+                  :items="attributeOptions"
                 />
                 <hux-dropdown
-                  v-model="condition.operator"
-                  :labelText="fetchDropdownLabel(condition, 'operator')"
-                  :menuItem="operatorOptions"
-                  v-if="condition.attribute"
+                  :label="fetchDropdownLabel(condition, 'operator')"
+                  :selected="condition.operator"
+                  @on-select="onSelect('operator', condition, $event)"
+                  :items="operatorOptions"
+                  v-if="isText(condition)"
                 />
                 <TextField
                   v-if="condition.operator"
@@ -108,8 +110,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
-import DropdownMenu from "../../components/common/DropdownMenu.vue"
+import { mapGetters } from "vuex"
 import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import huxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
@@ -130,7 +131,6 @@ const NEW_CONDITION = {
 export default {
   name: "AttributeRules",
   components: {
-    DropdownMenu,
     TextField,
     huxSwitch,
     HuxDropdown,
@@ -144,13 +144,6 @@ export default {
   },
   data() {
     return {
-      attributeOptions: [{ value: "Name" }],
-      conditionOptions: [
-        { value: "Contains" },
-        { value: "Does not contain" },
-        { value: "Equals" },
-        { value: "Does not equal" },
-      ],
       switchOptions: [
         {
           condition: true,
@@ -167,8 +160,42 @@ export default {
     ...mapGetters({
       ruleAttributes: "audiences/audiencesRules",
     }),
+    attributeOptions() {
+      const options = []
+      const masterAttributes = this.ruleAttributes.rule_attributes
+      Object.keys(masterAttributes).forEach((groupKey) => {
+        const _group_items = []
+        const order = groupKey.includes("model") ? 0 : 1
+        const group = {
+          name: groupKey,
+          isGroup: true,
+        }
+        _group_items.push(group)
+        _group_items.push(
+          ...Object.keys(masterAttributes[groupKey]).map((key) => {
+            const _subOption = masterAttributes[groupKey][key]
+            const hasSubOptins = Object.keys(_subOption).filter((item) =>
+              _subOption[item].hasOwnProperty("name")
+            )
+            if (hasSubOptins.length > 0) {
+              _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
+              hasSubOptins.forEach((key) => delete _subOption[key])
+            }
+            return _subOption
+          })
+        )
+        _group_items.forEach((item) => (item["order"] = order))
+        options.push(..._group_items)
+      })
+      return options.sort(function (a, b) {
+        return a.order < b.order
+      })
+    },
     operatorOptions() {
-      return this.ruleAttributes.text_operators
+      return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
+        key: key,
+        name: this.ruleAttributes.text_operators[key],
+      }))
     },
     lastIndex() {
       return this.rules.length - 1
@@ -177,6 +204,12 @@ export default {
   methods: {
     operandLabel(rule) {
       return rule.operand ? "AND" : "OR"
+    },
+    isText(condition) {
+      return condition.attribute ? condition.attribute[type] === "text" : false
+    },
+    onSelect(type, cond, item) {
+      cond[type] = item
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
