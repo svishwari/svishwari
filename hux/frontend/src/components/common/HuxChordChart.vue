@@ -17,19 +17,22 @@
           class="legend-section"
           v-for="item in legendsData"
           :key="item.id"
-          ><Icon :type="item.icon" :size="12" /><span>{{
-            item.prop
-          }}</span></v-list-item-subtitle
+          ><Icon :type="item.icon" :size="12" />
+          <span>{{item.prop}}</span>
+          </v-list-item-subtitle
         >
       </v-list-item-content>
-
       <div class="chart-section" ref="huxChart"></div>
     </v-list-item>
   </v-card>
 </template>
 
 <script>
-import * as d3 from "d3"
+import * as d3Chord from "d3-chord"
+import * as d3Shape from "d3-shape"
+import * as d3Scale from "d3-scale"
+import * as d3Select from "d3-selection"
+import * as d3Array from "d3-array"
 import Tooltip from "@/components/common/Tooltip"
 import Icon from "@/components/common/Icon"
 export default {
@@ -66,7 +69,7 @@ export default {
     },
 
     calculateChartValues() {
-      let svg = d3
+      let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
         .attr("width", this.width)
@@ -74,18 +77,21 @@ export default {
         .attr("outerRadius", this.outerRadius)
         .attr("innerRadius", this.innerRadius)
 
-      let chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending)
+      let chord = d3Chord
+        .chord()
+        .padAngle(0.05)
+        .sortSubgroups(d3Array.descending)
 
-      let arc = d3
+      let arc = d3Shape
         .arc()
         .innerRadius(this.innerRadius)
         .outerRadius(this.outerRadius)
 
-      let ribbon = d3.ribbon().radius(this.innerRadius)
+      let ribbon = d3Chord.ribbon().radius(this.innerRadius)
 
-      let color = d3
+      let color = d3Scale
         .scaleOrdinal()
-        .domain(d3.range(this.colorCodes.length))
+        .domain(d3Array.range(this.colorCodes.length))
         .range(this.colorCodes)
 
       let g = svg
