@@ -143,14 +143,16 @@ const twilioDS = {
 // destinations
 const facebook = {
   name: "Facebook",
-  type: "facebook",
+  // TODO: update this once ORCH-233 is addressed
+  type: "Facebook",
   is_enabled: true,
   is_added: true,
 }
 
 const salesforce = {
   name: "Salesforce Marketing Cloud",
-  type: "salesforce",
+  // TODO: update this once ORCH-233 is addressed
+  type: "SFMC",
   is_enabled: true,
 }
 
@@ -166,7 +168,8 @@ const google = {
 
 const twilio = {
   name: "Twilio",
-  type: "twilio",
+  // TODO: update this once ORCH-233 is addressed
+  type: "Twilio",
 }
 
 const tableau = {

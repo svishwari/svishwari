@@ -24,11 +24,17 @@ const getters = {
 const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
+      // TODO: remove this once ORCH-233 is addressed
+      if (item.type === "SFMC") item.type = "salesforce"
+      item.type = String(item.type).toLowerCase()
       Vue.set(state.items, item.id, item)
     })
   },
 
   SET_ONE(state, item) {
+    // TODO: remove this once ORCH-233 is addressed
+    if (item.type === "SFMC") item.type = "salesforce"
+    item.type = String(item.type).toLowerCase()
     Vue.set(state.items, item.id, item)
   },
 

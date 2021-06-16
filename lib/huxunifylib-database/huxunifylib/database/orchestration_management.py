@@ -4,6 +4,7 @@ to orchestration (audience/engagement) management.
 
 import logging
 import datetime
+from typing import Union
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -11,6 +12,7 @@ from tenacity import retry, wait_fixed, retry_if_exception_type
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
 
 
 @retry(
@@ -55,7 +57,7 @@ def create_audience(
     audience_doc = {
         c.AUDIENCE_NAME: name,
         c.AUDIENCE_FILTERS: audience_filters,
-        c.DESTINATIONS: destination_ids,
+        c.DESTINATIONS: destination_ids if destination_ids else [],
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.CREATED_BY: user_id,
@@ -76,15 +78,19 @@ def create_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
+def get_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    include_users: bool = False,
+) -> Union[dict, None]:
     """A function to get an audience.
 
     Args:
         database (DatabaseClient): A database client.
         audience_id (ObjectId): The Mongo DB ID of the audience.
-
+        include_users (bool): Flag to include users.
     Returns:
-        dict:  An audience document.
+        Union[dict, None]:  An audience document.
 
     """
     doc = None
@@ -93,7 +99,15 @@ def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
 
     # Read the audience document which contains filtering rules
     try:
-        doc = collection.find_one({c.ID: audience_id})
+        if include_users:
+            docs = list(
+                collection.aggregate(
+                    [{"$match": {c.ID: audience_id}}] + USER_LOOKUP_PIPELINE
+                )
+            )
+            return docs[0] if docs else None
+
+        return collection.find_one({c.ID: audience_id})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -108,15 +122,16 @@ def get_audience(database: DatabaseClient, audience_id: ObjectId) -> dict:
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_all_audiences(
-    database: DatabaseClient,
-) -> list:
+    database: DatabaseClient, include_users: bool = False
+) -> Union[list, None]:
     """A function to get all existing audiences.
 
     Args:
         database (DatabaseClient): A database client.
+        include_users (bool): Flag to include users.
 
     Returns:
-        List: A list of all audiences.
+        Union[list, None]: A list of all audiences.
 
     """
 
@@ -125,6 +140,10 @@ def get_all_audiences(
 
     # Get audience configurations and add to list
     try:
+        if include_users:
+            # lookup to users
+            return list(collection.aggregate(USER_LOOKUP_PIPELINE))
+
         return list(collection.find())
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

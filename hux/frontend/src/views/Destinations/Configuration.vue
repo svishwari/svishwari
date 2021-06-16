@@ -46,8 +46,8 @@
               :input-type="destinationFields[key].type"
               :help-text="destinationFields[key].description"
               @blur="resetValidation"
+              height="40"
               icon="mdi-alert-circle-outline"
-              class="mb-0"
             />
           </v-col>
         </v-row>
@@ -85,7 +85,7 @@
           :isTile="true"
           @click="cancel()"
         >
-          Cancel
+          <span class="primary--text">Cancel</span>
         </hux-button>
       </template>
       <template #right>
@@ -104,20 +104,19 @@
     <Drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
-          <p class="mb-0">(select one)</p>
+          <h5 class="text-h3 pr-2">Select a destination</h5>
+          <span class="text-caption gray--text">(select one)</span>
         </div>
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <p class="font-weight-regular mb-0">
+          <span class="text-caption gray--text">
             {{ destinations.length }} results
-          </p>
+          </span>
         </div>
       </template>
       <template #default>
-        <v-progress-linear :active="loading" :indeterminate="loading" />
-        <div v-if="!loading" class="ma-5 font-weight-light">
+        <div class="ma-3 font-weight-light">
           <CardHorizontal
             v-for="destination in enabledDestinations"
             :key="destination.id"

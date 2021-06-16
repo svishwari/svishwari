@@ -38,19 +38,25 @@ export default {
     round = false,
     abbreviate = false,
     approx = false,
+    percentage = false,
     append = ""
   ) {
     if (isNaN(value)) return ""
 
     let abrv = ""
 
+    if (percentage) {
+      value = value * 100
+      append = "%"
+    }
+
     if (abbreviate) {
       if (value >= 1000000) {
         value = value / 1000000
-        abrv = "m"
+        abrv = "M"
       } else if (value >= 1000) {
         value = value / 1000
-        abrv = "k"
+        abrv = "K"
       }
     }
     if (approx) {

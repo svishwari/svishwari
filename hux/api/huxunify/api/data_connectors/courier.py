@@ -43,7 +43,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
     secret_dict = {}
     if (
-        destination[db_const.DELIVERY_PLATFORM_NAME].upper()
+        destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
         == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
     ):
         # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
