@@ -17,7 +17,7 @@
           class="legend-section"
           v-for="item in legendsData"
           :key="item.id"
-          >
+        >
           <Icon :type="item.icon" :size="12" />
           <span>{{ item.prop }}</span>
         </v-list-item-subtitle>
@@ -39,14 +39,27 @@ export default {
   name: "hux-chord-chart",
   components: { Icon, Tooltip },
   props: {
+    /**
+     * Accepts an array of ranges in N*N matrix  format for creating chart arc & ribbon mapping
+     * must be match with no. of color codes
+     * eg: [1951, 0, 2060, 6171, 3622] for 5 color code ranges,
+     */
     chartInput: {
       type: Array,
       required: true,
     },
+    /**
+     * Accepts an Array of color codes for filling up chart arc.
+     * eg: ["#43b02a", "#efa34c"],
+     */
     colorCodes: {
       type: Array,
       required: true,
     },
+    /**
+     * Accepts an Array of Objects needs to map with legends.
+     * eg: {prop: '', icon: ''}
+     */
     chartLegendsData: {
       type: Array,
       required: true,
