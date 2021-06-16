@@ -111,9 +111,7 @@ class TestEngagementManagement(unittest.TestCase):
         # test for a list with data.
         engagement_docs = em.get_engagements(database=self.database)
         self.assertTrue(engagement_docs)
-        self.assertFalse(
-            [e for e in engagement_docs if c.DELETED in e]
-        )
+        self.assertFalse([e for e in engagement_docs if c.DELETED in e])
 
     def test_get_engagements_with_users(self) -> None:
         """Test get_engagements with users routine
@@ -511,6 +509,4 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertTrue(engagements)
         self.assertEqual(len(engagements), 3)
-        self.assertFalse(
-            [e for e in engagements if c.DELETED in e]
-        )
+        self.assertFalse([e for e in engagements if c.DELETED in e])

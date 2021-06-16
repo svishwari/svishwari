@@ -584,9 +584,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
-        self.assertFalse(
-            [a for a in audiences if c.DELETED in a]
-        )
+        self.assertFalse([a for a in audiences if c.DELETED in a])
 
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
@@ -598,9 +596,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
-        self.assertFalse(
-            [a for a in audiences if c.DELETED in a]
-        )
+        self.assertFalse([a for a in audiences if c.DELETED in a])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_favorite_audience(self):

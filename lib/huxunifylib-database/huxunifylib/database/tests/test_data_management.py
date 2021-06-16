@@ -193,9 +193,7 @@ class TestDataManagement(unittest.TestCase):
 
         self.assertTrue(data_sources_actual is not None)
         self.assertEqual(len(data_sources_actual), 1)
-        self.assertFalse(
-            [d for d in data_sources_actual if c.DELETED in d]
-        )
+        self.assertFalse([d for d in data_sources_actual if c.DELETED in d])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_data_source(self):

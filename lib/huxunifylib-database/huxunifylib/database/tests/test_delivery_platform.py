@@ -293,9 +293,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             docs[0][c.DELIVERY_PLATFORM_NAME],
             "My delivery platform for Facebook",
         )
-        self.assertFalse(
-            [d for d in docs if c.DELETED in d]
-        )
+        self.assertFalse([d for d in docs if c.DELETED in d])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform_with_user(self):
@@ -357,9 +355,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(platforms)
         self.assertEqual(len(platforms), 3)
-        self.assertFalse(
-            [p for p in platforms if c.DELETED in p]
-        )
+        self.assertFalse([p for p in platforms if c.DELETED in p])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_connection_status(self):
@@ -756,9 +752,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(docs is not None)
         self.assertEqual(len(docs), 2)
-        self.assertFalse(
-            [d for d in docs if c.DELETED in d]
-        )
+        self.assertFalse([d for d in docs if c.DELETED in d])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_update_lookalike_audience(self):
