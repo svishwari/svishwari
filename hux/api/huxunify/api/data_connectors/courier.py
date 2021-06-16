@@ -11,13 +11,18 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job_status,
 )
-from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
-from huxunify.api import constants as api_const, config as cfg
+from huxunifylib.util.general.const import (
+    MongoDBCredentials,
+    FacebookCredentials,
+)
+from huxunifylib.util.audience_router.const import AudienceRouterConfig
+from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
 
 
-def map_destination_credentials_to_dict(destination: dict) -> dict:
+def map_destination_credentials_to_dict(destination: dict) -> tuple:
     """Map destination credentials to a dictionary for aws batch.
     Handle any custom logic here in the future for new destination types.
 
@@ -25,18 +30,43 @@ def map_destination_credentials_to_dict(destination: dict) -> dict:
         destination (dict): The destination object.
 
     Returns:
-        dict: The credential dictionary.
+        tuple: The credential tuple for (env, secrets).
     """
-    cred_dict = {}
 
     # skip if no authentication details provided.
     if db_const.DELIVERY_PLATFORM_AUTH not in destination:
-        return cred_dict
+        raise KeyError(
+            f"No authentication details for {destination[db_const.DELIVERY_PLATFORM_NAME]}"
+        )
 
-    # assign the auth credentials to the secrets dict
-    for key, value in destination[db_const.DELIVERY_PLATFORM_AUTH].items():
-        cred_dict[key] = value
-    return cred_dict
+    # get auth
+    auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
+    secret_dict = {}
+    if (
+        destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
+        == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
+    ):
+        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
+        env_dict = {
+            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_AD_ACCOUNT_ID]
+            ),
+            FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_APP_ID]
+            ),
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_ACCESS_TOKEN]
+            ),
+            FacebookCredentials.FACEBOOK_APP_SECRET.name: parameter_store.get_store_value(
+                auth[api_const.FACEBOOK_APP_SECRET]
+            ),
+        }
+    else:
+        raise KeyError(
+            f"No configuration for {destination[db_const.DELIVERY_PLATFORM_NAME]}"
+        )
+
+    return env_dict, secret_dict
 
 
 class DestinationBatchJob:
@@ -156,16 +186,16 @@ class DestinationBatchJob:
 
 def get_destination_config(
     database: MongoClient,
-    destination_id,
     audience_id,
+    destination_id,
     audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
     Args:
         database (MongoClient): The mongo database client.
-        destination_id (ObjectId): The ID of the destination.
         audience_id (ObjectId): The ID of the audience.
+        destination_id (ObjectId): The ID of the destination.
         audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
@@ -183,109 +213,62 @@ def get_destination_config(
     # get the configuration values
     config = get_config()
 
-    # Setup AWS Batch env vars and secrets
-    aws_env_dict = {
-        db_const.DELIVERY_JOB_ID.upper(): str(
+    # get destination specific env values
+    ds_env_dict, ds_secret_dict = map_destination_credentials_to_dict(
+        delivery_platform
+    )
+
+    # Setup AWS Batch env dict
+    env_dict = {
+        AudienceRouterConfig.DELIVERY_JOB_ID.name: str(
             audience_delivery_job[db_const.ID]
         ),
-        api_const.BATCH_SIZE.upper(): str(audience_router_batch_size),
-        cfg.HOST: config.MONGO_DB_HOST,
-        cfg.PORT: config.MONGO_DB_PORT,
-        cfg.USER_NAME: config.MONGO_DB_USERNAME,
-        cfg.SSL_CERT_PATH: config.MONGO_SSL_CERT,
-        config.MONITORING_CONFIG_CONST: config.MONITORING_CONFIG,
+        AudienceRouterConfig.BATCH_SIZE.name: str(audience_router_batch_size),
+        MongoDBCredentials.MONGO_DB_HOST.name: config.MONGO_DB_HOST,
+        MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
+        MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
+        MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
+        api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
+        **ds_env_dict,
     }
 
-    aws_secret_dict = {
-        cfg.PASSWORD: config.MONGO_DB_PASSWORD,
-        **map_destination_credentials_to_dict(delivery_platform),
+    # setup the secrets dict
+    secret_dict = {
+        MongoDBCredentials.MONGO_DB_PASSWORD.name: api_const.AUDIENCE_ROUTER_MONGO_PASSWORD_FROM,
+        **ds_secret_dict,
     }
+
     return DestinationBatchJob(
         database,
         audience_delivery_job[db_const.ID],
-        aws_secret_dict,
-        aws_env_dict,
+        secret_dict,
+        env_dict,
     )
 
 
-def get_engagement(db_client: MongoClient, engagement_id: ObjectId) -> dict:
-    """Temp get engagement.
+def get_audience_destination_pairs(audiences: list) -> list:
+    """function to get all the audience destination pairs for a list
+    of audiences within an engagement.
 
     Args:
-        database (MongoClient): Mongo database client.
-        engagement_id (ObjectId): The engagement ObjectId.
+        audiences (list): list of audiences
 
     Returns:
-        dict: Returns an engagement.
-    """
-    # TODO - set engagement object when engagements are in Database Library
-    # simulate for now
-    engagements = db_client[db_const.DATA_MANAGEMENT_DATABASE]["engagements"]
-    return engagements.find_one(engagement_id)
-
-
-def get_delivery_route(
-    database: MongoClient,
-    engagement_id: ObjectId,
-    audience_ids: list = None,
-    destination_ids: list = None,
-) -> dict:
-    """Deliver engagements
-
-    Args:
-        database (MongoClient): Mongo database client.
-        engagement_id (ObjectId): The engagement ObjectId.
-        audience_ids (list): Optional Audience ID list.
-        destination_ids (list): Optional Destination ID list.
-
-    Returns:
-        dict: Returns the delivery route.
+        list: list of tuples [(audience_id, destination_id),..]
     """
 
-    if not ObjectId.is_valid(engagement_id):
-        raise Exception("Invalid engagement id.")
+    if not audiences or not any(x for x in audiences if x):
+        raise TypeError("Empty list provided.")
 
-    # get the engagements
-    engagement = get_engagement(database, engagement_id)
-    if not engagement[db_const.AUDIENCES]:
-        raise Exception("No audiences present on the engagement.")
+    # validate to ensure list of dicts has destinations
+    if any(x for x in audiences if db_const.DESTINATIONS not in x):
+        raise TypeError("must be a list of destinations.")
 
-    # ensure provided audiences are in the engagement
-    if audience_ids:
-        if not set(audience_ids).issubset(engagement[db_const.AUDIENCES]):
-            raise Exception(
-                "Some of the provided audiences are not in the engagement."
-            )
-        # grab matching audiences
-        audience_ids = [
-            a for a in engagement[db_const.AUDIENCES] if a in audience_ids
-        ]
-    else:
-        audience_ids = engagement[db_const.AUDIENCES]
-
-    # build route
-    delivery_route = {}
-    for audience_id in audience_ids:
-        # get the audience object
-        delivery_route[audience_id] = []
-
-        # process each destination listed in the audience
-        audience = get_audience(database, audience_id)
-        if db_const.DESTINATIONS not in audience:
-            continue
-
-        destinations = audience[db_const.DESTINATIONS]
-
-        if destination_ids:
-            # grab matching destinations
-            destination_ids = [d for d in destinations if d in destination_ids]
-        else:
-            destination_ids = destinations
-
-        # assign the destinations
-        delivery_route[audience_id] = destination_ids
-
-    return delivery_route
+    return [
+        [aud[db_const.OBJECT_ID], dest[db_const.OBJECT_ID]]
+        for aud in audiences
+        for dest in aud[db_const.DESTINATIONS]
+    ]
 
 
 if __name__ == "__main__":

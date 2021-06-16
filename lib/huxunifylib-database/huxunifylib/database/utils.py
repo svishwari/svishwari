@@ -100,7 +100,7 @@ def get_collection_count(
     try:
         return collection.count_documents(
             {
-                c.ENABLED: True,
+                c.DELETED: False,
             }
         )
     except pymongo.errors.OperationFailure as exc:

@@ -1,13 +1,11 @@
 <template>
-  <Drawer v-model="localToggle" :width="640">
+  <Drawer v-model="localToggle" :width="640" :loading="loading">
     <template #header-left>
       <h3 class="text-h3">Add audiences to this engagement</h3>
     </template>
 
     <template #default>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-
-      <div class="pa-8">
+      <div class="pa-6">
         <v-btn tile color="primary" class="mb-4" @click="$emit('onAdd')">
           <v-icon>mdi-plus</v-icon>
           New audience
@@ -20,6 +18,7 @@
               key: 'name',
               label: 'Name',
               sortable: true,
+              col: '6',
             },
             {
               key: 'size',
@@ -54,6 +53,7 @@
                 height="40"
                 icon="mdi-check"
                 iconPosition="left"
+                :boxShadow="false"
                 @click="remove(row.item)"
               >
                 Added
@@ -64,6 +64,7 @@
                 variant="primary"
                 width="100"
                 height="40"
+                :boxShadow="false"
                 @click="add(row.item)"
               >
                 Add
@@ -79,7 +80,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import { mapGetters } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
@@ -132,10 +133,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      getAudiences: "audiences/getAll",
-    }),
-
     isAdded(audience) {
       return Boolean(this.value[audience.id])
     },
@@ -145,18 +142,17 @@ export default {
         id: audience.id,
         name: audience.name,
         size: audience.size,
+        destinations: audience.destinations.map((destination) => {
+          return {
+            id: destination.id,
+          }
+        }),
       })
     },
 
     remove(audience) {
       this.$delete(this.value, audience.id)
     },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getAudiences()
-    this.loading = false
   },
 }
 </script>
