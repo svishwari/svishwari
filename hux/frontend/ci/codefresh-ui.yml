@@ -45,7 +45,7 @@ steps:
     stage: set_env
     title: Set environment variables
     type: freestyle
-    image: alpine
+    image: huxhub.repo.mgnt.in/alpine
     working_directory: "${{CF_REPO_NAME}}"
     commands: 
       - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
@@ -66,7 +66,7 @@ steps:
   Lint:
     stage: "lint"
     title: "Running lint"
-    image: node:14-alpine
+    image: huxhub.repo.mgnt.in/node:lts-alpine
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
     - npm install
@@ -90,7 +90,7 @@ steps:
     stage: argo-deploy
     description: "Deploy the application"
     type: freestyle
-    image: codefresh/cli:latest
+    image: huxhub.repo.mgnt.in/codefresh/cli:latest
     commands:
       - >-
         codefresh run Hux_Unified_Solution/unified_solution_cd -d -t
