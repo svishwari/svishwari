@@ -57,7 +57,7 @@ steps:
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
     - yarn install
-    - yarn lint -- --no-fix
+    - yarn lint --no-fix
 
   DockerBuild:
     title: "Building Docker image"
