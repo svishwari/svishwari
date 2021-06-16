@@ -67,7 +67,11 @@ export default {
   },
   data() {
     return {
-      currentValue: this.value,
+      currentValue: this.isRangeSlider ? this.value : parseInt(
+          this.$options.filters
+            .percentageConvert(this.value, true, true)
+            .slice(0, -1)
+        ),
       colorCombination: colors.gradientSliderColors,
     }
   },

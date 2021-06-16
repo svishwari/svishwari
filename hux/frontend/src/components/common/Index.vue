@@ -398,7 +398,7 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Score Slider</v-subheader>
-    <hux-slider :isRangeSlider="false" :value="45"></hux-slider>
+    <hux-slider :isRangeSlider="false" :value="0.450000"></hux-slider>
 
     <v-divider class="mt-10" />
 

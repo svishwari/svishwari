@@ -7,12 +7,12 @@
     </template>
 
     <template #default>
+      <v-progress-linear :active="loading" :indeterminate="loading" />
       <PageHeader class="top-bar" :headerHeight="40">
         <template slot="left">
           <v-icon size="18" color="lightGrey">mdi-magnify</v-icon>
         </template>
       </PageHeader>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
       <hux-data-table :headers="columnDefs" :dataItems="customers">
         <template #row-item="{ item }">
           <td
@@ -121,21 +121,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      customer: "customers/single",
       customersList: "customers/list",
     }),
 
     customers() {
-      let allCustomerList = JSON.parse(JSON.stringify(this.customersList))
-      allCustomerList.forEach((data) => {
-        data.match_confidence = parseInt(
-          this.$options.filters
-            .percentageConvert(data.match_confidence, true, true)
-            .slice(0, -1)
-        )
-      })
-      return allCustomerList
+      return this.customersList
     },
+
     id() {
       return this.$route.params.id
     },
@@ -143,7 +135,6 @@ export default {
 
   methods: {
     ...mapActions({
-      getCustomer: "customers/get",
       getCustomers: "customers/getAll",
     }),
   },
