@@ -133,13 +133,12 @@ export default {
   },
 
   mounted() {
-    if ( this.initialSort !== null ){
-      if ( this.initialSort === "asc") {
+    if (this.initialSort !== null) {
+      if (this.initialSort === "asc") {
         // Sorts the list in ascending order
         this.sortDesc = false
         this.setSortBy(this.fields[0].key)
-      }
-      else {
+      } else {
         // Sorts the list in descending order
         this.setSortBy(this.fields[0].key)
       }
