@@ -7,12 +7,11 @@
       <template #right>
         <hux-button
           class="mr-4 pa-3"
-          isDisabled
           isCustomIcon
           isTile
           icon="customer-profiles"
           variant="white"
-          @click="viewAllCustomer()"
+          @click="viewCustomerList()"
         >
           View all customers
         </hux-button>
@@ -20,69 +19,75 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="row px-15 mt-6 mb-6 row-margin" v-if="primaryItems">
-      <MetricCard
-        v-for="item in primaryItems"
-        class="card-margin"
-        :grow="item.toolTipText ? 1 : 0"
-        :icon="item.icon"
-        :key="item.title"
-        :subtitle="item.toolTipText ? item.subtitle : ''"
-        :title="item.title"
-      >
-        <template v-if="!item.toolTipText" #subtitle-extended>
-          <span class="font-weight-semi-bold"
-            >{{ item.date }} &bull;
-            {{ item.time }}
-          </span>
+    <div v-if="!loading">
+      <div class="row px-15 mt-6 mb-6 row-margin">
+        <MetricCard
+          v-for="item in primaryItems"
+          class="card-margin"
+          :grow="item.toolTipText ? 1 : 0"
+          :icon="item.icon"
+          :key="item.title"
+          :subtitle="item.toolTipText ? item.subtitle : ''"
+          :title="item.title"
+        >
+          <template v-if="!item.toolTipText" #subtitle-extended>
+            <span class="font-weight-semi-bold"
+              >{{ item.date }} &bull;
+              {{ item.time }}
+            </span>
+          </template>
+          <template v-if="item.toolTipText" #extra-item>
+            <Tooltip positionTop>
+              <template #label-content>
+                <Icon type="info" :size="12" />
+              </template>
+              <template #hover-content>
+                {{ item.toolTipText }}
+              </template>
+            </Tooltip>
+          </template>
+        </MetricCard>
+      </div>
+      <div class="px-15 my-1" v-if="overviewListItems">
+        <v-card class="rounded pa-5 box-shadow-5">
+          <div class="overview">Customer overview</div>
+          <div class="row overview-list mb-0 ml-0 mt-1">
+            <MetricCard
+              v-for="item in overviewListItems"
+              class="mr-3"
+              :key="item.title"
+              :grow="item.toolTipText ? 2 : 1"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :icon="item.icon"
+              :interactable="item.toolTipText ? true : false"
+              @click="item.toolTipText ? viewCustomerList() : ''"
+            >
+              <template v-if="item.toolTipText" #extra-item>
+                <Tooltip positionTop>
+                  <template #label-content>
+                    <Icon type="info" :size="12" />
+                  </template>
+                  <template #hover-content>
+                    {{ item.toolTipText }}
+                  </template>
+                </Tooltip>
+              </template>
+            </MetricCard>
+          </div>
+        </v-card>
+      </div>
+      <v-divider class="my-8"></v-divider>
+      <EmptyStateChart>
+        <template #chart-image>
+          <img
+            src="@/assets/images/empty-state-chart-3.png"
+            alt="Empty state"
+          />
         </template>
-        <template v-if="item.toolTipText" #extra-item>
-          <Tooltip positionTop>
-            <template #label-content>
-              <Icon type="info" :size="12" />
-            </template>
-            <template #hover-content>
-              {{ item.toolTipText }}
-            </template>
-          </Tooltip>
-        </template>
-      </MetricCard>
+      </EmptyStateChart>
+      <CustomerDetails v-model="customerProfilesDrawer" />
     </div>
-    <div class="px-15 my-1" v-if="overviewListItems">
-      <v-card class="rounded pa-5 box-shadow-5">
-        <div class="overview">Customer overview</div>
-        <div class="row overview-list mb-0 ml-0 mt-1">
-          <MetricCard
-            v-for="item in overviewListItems"
-            class="mr-3"
-            :key="item.title"
-            :grow="item.toolTipText ? 2 : 1"
-            :title="item.title"
-            :subtitle="item.subtitle"
-            :icon="item.icon"
-            :interactable="item.toolTipText ? true : false"
-            @click="item.toolTipText ? viewAllCustomer() : ''"
-          >
-            <template v-if="item.toolTipText" #extra-item>
-              <Tooltip positionTop>
-                <template #label-content>
-                  <Icon type="info" :size="12" />
-                </template>
-                <template #hover-content>
-                  {{ item.toolTipText }}
-                </template>
-              </Tooltip>
-            </template>
-          </MetricCard>
-        </div>
-      </v-card>
-    </div>
-    <v-divider class="my-8"></v-divider>
-    <EmptyStateChart>
-      <template #chart-image>
-        <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
-      </template>
-    </EmptyStateChart>
   </div>
 </template>
 
@@ -95,6 +100,7 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
+import CustomerDetails from "@/views/CustomerProfiles/Drawers/CustomerDetails"
 
 export default {
   name: "CustomerProfiles",
@@ -106,10 +112,12 @@ export default {
     Tooltip,
     huxButton,
     Icon,
+    CustomerDetails,
   },
 
   data() {
     return {
+      customerProfilesDrawer: false,
       overviewListItems: [
         {
           title: "No. of customers",
@@ -193,17 +201,14 @@ export default {
 
   computed: {
     ...mapGetters({
-      customers: "customers/list",
       overview: "customers/overview",
     }),
   },
 
   methods: {
     ...mapActions({
-      getCustomers: "customers/getAll",
       getOverview: "customers/getOverview",
     }),
-    viewAllCustomer() {},
     mapOverviewData() {
       this.overviewListItems[0].subtitle = this.applyNumericFilter(
         this.overview.total_customers
@@ -269,12 +274,14 @@ export default {
         return [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
       } else return ""
     },
+    viewCustomerList() {
+      this.customerProfilesDrawer = !this.customerProfilesDrawer
+    },
   },
 
   async mounted() {
     this.loading = true
     await this.getOverview()
-    await this.getCustomers()
     this.mapOverviewData()
     this.loading = false
   },
