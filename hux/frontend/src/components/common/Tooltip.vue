@@ -1,5 +1,5 @@
 <template>
-  <v-menu bottom offset-y open-on-hover>
+  <v-menu :top="positionTop" offset-y open-on-hover>
     <template #activator="{ on }">
       <span v-on="on">
         <slot name="label-content"></slot>
@@ -14,5 +14,12 @@
 <script>
 export default {
   name: "Tooltip",
+  props: {
+    positionTop: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
 }
 </script>

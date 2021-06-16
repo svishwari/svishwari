@@ -4,6 +4,9 @@ import { handleError } from "@/utils"
 
 const namespaced = true
 
+// TODO Remove the below once API Integration is done
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms))
+
 const NEW_AUDIENCE = {
   name: "",
   engagements: [],
@@ -15,6 +18,7 @@ const state = {
   audiences: [],
   newAudience: NEW_AUDIENCE,
   constants: {},
+  filterSize: {}
 }
 
 const getters = {
@@ -38,6 +42,9 @@ const mutations = {
   SET_CONSTANTS(state, item) {
     Vue.set(state, "constants", item)
   },
+  SET_FILTER_SIZE(state, size) {
+    Vue.set(state.filterSize, size.id, size)
+  }
 }
 
 const actions = {
@@ -147,6 +154,20 @@ const actions = {
       throw error
     }
   },
+  async fetchFilterSize({ commit }, filter) {
+    try {
+      await sleep(2000)
+      const response = {
+        data: { id: filter.id, size: Math.floor((Math.random() * 1000000) + 1) }
+      };
+      // const response = await api.audiences.getFilterSize(filter)
+      commit("SET_FILTER_SIZE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  }
 }
 
 export default {

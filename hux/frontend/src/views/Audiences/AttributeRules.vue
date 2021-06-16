@@ -53,11 +53,22 @@
                   v-if="isText(condition)"
                 />
                 <TextField
-                  v-if="condition.operator"
+                  v-if="condition.operator && isText(condition)"
                   v-model="condition.text"
                   placeholder="Text"
                   required
                   class="item-text-field"
+                  @blur="triggerSizing(condition)"
+                />
+                <hux-slider
+                  :isRangeSlider="true"
+                  :readOnly="false"
+                  :min="condition.attribute.min"
+                  :max="condition.attribute.max"
+                  :step="condition.attribute.steps"
+                  v-model="condition.inputRange"
+                  @onFinalValue="triggerSizing(condition)"
+                  v-if="condition.attribute && !isText(condition)"
                 />
               </div>
               <div class="condition-actions col-2 pa-0">
@@ -74,14 +85,19 @@
           </div>
           <div class="condition-summary col-2">
             <span class="title text-caption">Size</span>
-            <span class="value text-h6 pt-1 font-weight-semi-bold">{{
-              condition.outputSummary
-            }}</span>
+            <span class="value text-h6 pt-1 font-weight-semi-bold">
+              <v-progress-circular
+                :value="16"
+                indeterminate
+                v-if="condition.awaitingSize"
+              ></v-progress-circular>
+              {{ condition.outputSummary }}</span
+            >
           </div>
         </div>
 
         <div class="col-12 seperator mt-5 mb-1" v-if="index != lastIndex">
-          <hr />
+          <hr class="zircon" />
           <v-chip
             small
             class="mx-2 my-1 font-weight-semi-bold"
@@ -110,8 +126,9 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 import HuxDropdown from "../../components/common/HuxDropdown.vue"
+import HuxSlider from "../../components/common/HuxSlider.vue"
 import huxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 
@@ -125,7 +142,9 @@ const NEW_CONDITION = {
   attribute: "",
   operator: "",
   text: "",
-  outputSummary: "-",
+  inputRange: [0.15, 0.25],
+  awaitingSize: true,
+  outputSummary: "0",
 }
 
 export default {
@@ -134,6 +153,7 @@ export default {
     TextField,
     huxSwitch,
     HuxDropdown,
+    HuxSlider,
   },
   props: {
     rules: {
@@ -161,35 +181,38 @@ export default {
       ruleAttributes: "audiences/audiencesRules",
     }),
     attributeOptions() {
-      const options = []
-      const masterAttributes = this.ruleAttributes.rule_attributes
-      Object.keys(masterAttributes).forEach((groupKey) => {
-        const _group_items = []
-        const order = groupKey.includes("model") ? 0 : 1
-        const group = {
-          name: groupKey,
-          isGroup: true,
-        }
-        _group_items.push(group)
-        _group_items.push(
-          ...Object.keys(masterAttributes[groupKey]).map((key) => {
-            const _subOption = masterAttributes[groupKey][key]
-            const hasSubOptins = Object.keys(_subOption).filter((item) =>
-              _subOption[item].hasOwnProperty("name")
-            )
-            if (hasSubOptins.length > 0) {
-              _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
-              hasSubOptins.forEach((key) => delete _subOption[key])
-            }
-            return _subOption
-          })
-        )
-        _group_items.forEach((item) => (item["order"] = order))
-        options.push(..._group_items)
-      })
-      return options.sort(function (a, b) {
-        return a.order < b.order
-      })
+      if (this.ruleAttributes.rule_attributes) {
+        const options = []
+
+        const masterAttributes = this.ruleAttributes.rule_attributes
+        Object.keys(masterAttributes).forEach((groupKey) => {
+          const _group_items = []
+          const order = groupKey.includes("model") ? 0 : 1
+          const group = {
+            name: groupKey,
+            isGroup: true,
+          }
+          _group_items.push(group)
+          _group_items.push(
+            ...Object.keys(masterAttributes[groupKey]).map((key) => {
+              const _subOption = masterAttributes[groupKey][key]
+              const hasSubOptins = Object.keys(_subOption).filter((item) =>
+                _subOption[item].hasOwnProperty("name")
+              )
+              if (hasSubOptins.length > 0) {
+                _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
+                hasSubOptins.forEach((key) => delete _subOption[key])
+              }
+              return _subOption
+            })
+          )
+          _group_items.forEach((item) => (item["order"] = order))
+          options.push(..._group_items)
+        })
+        return options.sort(function (a, b) {
+          return a.order - b.order
+        })
+      } else return []
     },
     operatorOptions() {
       return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
@@ -202,14 +225,22 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      getRealtimeSize: "audiences/fetchFilterSize",
+    }),
     operandLabel(rule) {
       return rule.operand ? "AND" : "OR"
     },
     isText(condition) {
-      return condition.attribute ? condition.attribute[type] === "text" : false
+      return condition.attribute ? condition.attribute.type === "text" : false
     },
-    onSelect(type, cond, item) {
-      cond[type] = item
+    async triggerSizing(condition) {
+      condition.awaitingSize = true
+      await this.getRealtimeSize(condition)
+      condition.awaitingSize = false
+    },
+    onSelect(type, condition, item) {
+      condition[type] = item
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
@@ -233,7 +264,7 @@ export default {
     },
     fetchDropdownLabel(condition, type) {
       const prefix = "Select "
-      return condition[type] ? condition[type] : prefix + type
+      return prefix + type
     },
   },
 }
@@ -254,7 +285,6 @@ export default {
     position: relative;
     hr {
       border-style: solid;
-      border-color: var(--v-zircon-base);
     }
     .v-chip {
       position: absolute;

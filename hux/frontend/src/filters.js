@@ -38,19 +38,25 @@ export default {
     round = false,
     abbreviate = false,
     approx = false,
+    percentage = false,
     append = ""
   ) {
     if (isNaN(value)) return ""
 
     let abrv = ""
 
+    if (percentage) {
+      value = value * 100
+      append = "%"
+    }
+
     if (abbreviate) {
       if (value >= 1000000) {
         value = value / 1000000
-        abrv = "m"
+        abrv = "M"
       } else if (value >= 1000) {
         value = value / 1000
-        abrv = "k"
+        abrv = "K"
       }
     }
     if (approx) {
@@ -107,5 +113,26 @@ export default {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     })
+  },
+  /**
+   * Formats any input with decimal to percentage.
+   *
+   * @param {*} value The input eg. "0.893251"
+   * @returns output value eg. "90%"
+   */
+  percentageConvert(value, round = false, percentage = false, append = "") {
+    if (!value) return ""
+
+    if (percentage) {
+      value = value * 100
+      append = "%"
+    }
+
+    return (
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: round && Number(value) ? 0 : 2,
+      }) + append
+    )
   },
 }

@@ -6,7 +6,6 @@
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
-      max-width="300"
       close-on-click
       v-model="openMenu"
       class="hux-dropdown"
@@ -80,10 +79,7 @@ export default {
   },
   computed: {
     optionSelected() {
-      const filteredOption = this.items.filter(
-        (item) => item.key === this.selected
-      )
-      return filteredOption.length > 0 ? filteredOption[0] : this.label
+      return this.selected || this.label
     },
   },
   props: {
@@ -92,7 +88,7 @@ export default {
     },
     label: {
       type: String,
-      required: true,
+      required: false,
       default: "Select Option",
     },
     icon: String,
