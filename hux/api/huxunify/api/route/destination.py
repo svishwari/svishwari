@@ -62,23 +62,23 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
 
     return {
         SFMCCredentials.SFMC_ACCOUNT_ID.value: sfmc_auth.get(
-            api_c.AUTHENTICATION_DETAILS
-        ).get(api_c.SFMC_ACCOUNT_ID),
+            api_c.SFMC_ACCOUNT_ID
+        ),
         SFMCCredentials.SFMC_AUTH_URL.value: sfmc_auth.get(
-            api_c.AUTHENTICATION_DETAILS
-        ).get(api_c.SFMC_AUTH_BASE_URI),
+            api_c.SFMC_AUTH_BASE_URI
+        ),
         SFMCCredentials.SFMC_CLIENT_ID.value: sfmc_auth.get(
-            api_c.AUTHENTICATION_DETAILS
-        ).get(api_c.SFMC_CLIENT_ID),
+            api_c.SFMC_CLIENT_ID
+        ),
         SFMCCredentials.SFMC_CLIENT_SECRET.value: sfmc_auth.get(
-            api_c.AUTHENTICATION_DETAILS
-        ).get(api_c.SFMC_CLIENT_SECRET),
+            api_c.SFMC_CLIENT_SECRET
+        ),
         SFMCCredentials.SFMC_SOAP_ENDPOINT.value: sfmc_auth.get(
-            api_c.AUTHENTICATION_DETAILS
-        ).get(api_c.SFMC_SOAP_BASE_URI),
+            api_c.SFMC_SOAP_BASE_URI
+        ),
         SFMCCredentials.SFMC_URL.value: sfmc_auth.get(
-            api_c.AUTHENTICATION_DETAILS
-        ).get(api_c.SFMC_REST_BASE_URI),
+            api_c.SFMC_REST_BASE_URI
+        ),
         # TODO HUS-548: Remove these constants when SFMC connector library supports this.
         SFMCCredentials.SFMC_DEFAULT_WSDL.value: api_c.SFMC_DEFAULT_WSDL,
         SFMCCredentials.SFMC_AUTH_FLAG.value: api_c.SFMC_AUTH_FLAG,
@@ -431,24 +431,27 @@ class DestinationValidatePostView(SwaggerView):
                         ),
                     },
                 )
+                if destination_connector.check_connection():
+                    return {
+                        "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                    }, HTTPStatus.OK
             elif (
                 body.get(api_c.DESTINATION_TYPE).upper()
                 == api_c.SFMC_TYPE.upper()
             ):
-                destination_connector = SFMCConnector(
+                SFMCConnector(
                     auth_details=set_sfmc_auth_details(
-                        body.get()[api_c.AUTHENTICATION_DETAILS]
+                        body.get(api_c.AUTHENTICATION_DETAILS)
                     )
                 )
+
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                }, HTTPStatus.OK
             else:
                 return {
                     "message": api_c.DESTINATION_NOT_SUPPORTED
                 }, HTTPStatus.BAD_REQUEST
-            # TODO : Add support for other connectors like SFMC
-            if destination_connector.check_connection():
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
-                }, HTTPStatus.OK
 
         except Exception as exc:
             logging.error(
