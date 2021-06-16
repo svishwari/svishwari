@@ -16,4 +16,5 @@ def get_customer_profile(customer_body: dict) -> dict:
         dict: dictionary containing the customer profile
 
     """
+    # TODO: hookup in HUS-360
     return redact_fields(customer_body, api_c.CUSTOMER_PROFILE_REDACTED_FIELDS)
