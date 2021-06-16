@@ -6,7 +6,8 @@ Paths for customer API
 from http import HTTPStatus
 from typing import Tuple
 import datetime
-from random import randint, uniform, choice
+from random import randint, uniform
+from faker import Faker
 
 from flask import Blueprint
 from flask_apispec import marshal_with
@@ -29,6 +30,9 @@ from huxunify.api import constants as api_c
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
+
+
+faker = Faker()
 
 
 @customers_bp.before_request
@@ -159,54 +163,18 @@ class CustomerDashboardOverview(SwaggerView):
         )
 
 
-def get_stub_customer() -> dict:
-    """Fetch customer's stub data.
-
-    Args:
-
-    Returns:
-        dict of stub of customer
-
-    """
-    random_first_names = [
-        "Maryjane",
-        "Lillianna",
-        "Bertie",
-        "Bailey",
-        "Bridger",
-    ]
-    random_last_names = ["Warren", "Holder", "Greene", "Robinson", "Fox"]
-    stub_customer = {
-        "id": "1531-2039-22",
-        "first_name": choice(random_first_names),
-        "last_name": choice(random_last_names),
-        "match_confidence": round(uniform(0, 1), 5),
-    }
-    return stub_customer
-
-
 @add_view_to_blueprint(
     customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "Customersview"
 )
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}/<no_of_customers>",
+    f"/{api_c.CUSTOMERS_ENDPOINT}",
     "Customersview_no_of_cust",
 )
 class Customersview(SwaggerView):
     """
     Customers Overview class
     """
-
-    parameters = [
-        {
-            "name": "no_of_customers",
-            "description": "No of Customers",
-            "type": "int",
-            "in": "path",
-            "example": 4,
-        }
-    ]
 
     responses = {
         HTTPStatus.OK.value: {
@@ -221,7 +189,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    def get(self, no_of_customers: int = 2) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
         ---
@@ -232,10 +200,18 @@ class Customersview(SwaggerView):
             Tuple[dict, int] dict of Customers and http code
         """
 
+        customer_count = randint(200, 1000)
         customers_stub_data = {
-            "total_customers": 52456232,
+            "total_customers": customer_count,
             "customers": [
-                get_stub_customer() for i in range(int(no_of_customers))
+                {
+                    "id": f"{randint(1000, 9999)}-"
+                    f"{randint(1000, 9999)}-{randint(10, 99)}",
+                    "first_name": faker.first_name(),
+                    "last_name": faker.last_name(),
+                    "match_confidence": round(uniform(0, 1), 5),
+                }
+                for _ in range(customer_count)
             ],
         }
 
@@ -296,7 +272,71 @@ class CustomerProfileSearch(SwaggerView):
         """
 
         try:
-            return api_c.MOCK_CUSTOMER_PROFILE_RESPONSE, HTTPStatus.OK.value
+            first_name = faker.first_name()
+            last_name = faker.last_name()
+            return {
+                "id": customer_id,
+                "first_name": first_name,
+                "last_name": last_name,
+                "match_confidence": round(uniform(0, 1), 5),
+                "since": faker.date_time_between("-1y", "now"),
+                "ltv_actual": round(uniform(20, 60), 2),
+                "ltv_predicted": round(uniform(20, 60), 2),
+                "conversion_time": faker.date_time_between("-1y", "now"),
+                "churn_rate": randint(1, 10),
+                "last_click": faker.date_time_between("-1y", "now"),
+                "last_purchase": faker.date_time_between("-1y", "now"),
+                "last_email_open": faker.date_time_between("-1y", "now"),
+                "email": f"{first_name}_{last_name}@fake.com",
+                "phone": faker.phone_number(),
+                "age": randint(21, 88),
+                "gender": "",
+                "address": faker.street_address(),
+                "city": faker.city(),
+                "state": faker.state(),
+                "zip": faker.postcode(),
+                "preference_email": False,
+                "preference_push": False,
+                "preference_sms": False,
+                "preference_in_app": False,
+                "identity_resolution": {
+                    "name": {
+                        "percentage": 0.26,
+                        "data_sources": [
+                            {
+                                "id": "585t749997acad4bac4373b",
+                                "name": "Adobe Experience",
+                                "type": "adobe-experience",
+                                "percentage": 0.49,
+                            },
+                            {
+                                "id": "685t749997acad4bac4373b",
+                                "name": "Google Analytics",
+                                "type": "google-analytics",
+                                "percentage": 0.51,
+                            },
+                        ],
+                    },
+                    "address": {
+                        "percentage": 0.34,
+                        "data_sources": [],
+                    },
+                    "email": {
+                        "percentage": 0.2,
+                        "data_sources": [],
+                    },
+                    "phone": {
+                        "percentage": 0.1,
+                        "data_sources": [],
+                    },
+                    "cookie": {
+                        "percentage": 0.1,
+                        "data_sources": [],
+                    },
+                },
+                "propensity_to_unsubscribe": round(uniform(0, 1), 2),
+                "propensity_to_purchase": round(uniform(0, 1), 2),
+            }, HTTPStatus.OK.value
             # TODO use real call when available
             # return cdp.get_customer_profile(customer_id), HTTPStatus.OK.value
         except Exception as exc:
