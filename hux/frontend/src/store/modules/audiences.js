@@ -36,7 +36,7 @@ const mutations = {
     Vue.set(state.audiences, item.id, item)
   },
   SET_CONSTANTS(state, item) {
-    Vue.set(state, 'constants', item)
+    Vue.set(state, "constants", item)
   },
 }
 
