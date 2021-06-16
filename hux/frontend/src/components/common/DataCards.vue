@@ -97,7 +97,7 @@ export default {
       default: "No items available.",
     },
 
-    initialSort: {
+    sort: {
       type: String,
       required: false,
       default: null,
@@ -133,8 +133,8 @@ export default {
   },
 
   mounted() {
-    if (this.initialSort !== null) {
-      if (this.initialSort === "asc") {
+    if (this.sort !== null) {
+      if (this.sort === "asc") {
         // Sorts the list in ascending order
         this.sortDesc = false
         this.setSortBy(this.fields[0].key)
