@@ -6,7 +6,7 @@ Paths for customer API
 from http import HTTPStatus
 from typing import Tuple
 import datetime
-from random import randint, uniform, choice
+from random import randint, uniform
 from faker import Faker
 
 from flask import Blueprint
@@ -290,15 +290,7 @@ class CustomerProfileSearch(SwaggerView):
                 "email": f"{first_name}_{last_name}@fake.com",
                 "phone": faker.phone_number(),
                 "age": randint(21, 88),
-                "gender": choice(
-                    [
-                        "male",
-                        "female",
-                        "transgender",
-                        "other",
-                        "prefer not to say",
-                    ]
-                ),
+                "gender": "",
                 "address": faker.street_address(),
                 "city": faker.city(),
                 "state": faker.state(),
@@ -309,36 +301,36 @@ class CustomerProfileSearch(SwaggerView):
                 "preference_in_app": False,
                 "identity_resolution": {
                     "name": {
-                        "percentage": round(uniform(0, 1), 2),
+                        "percentage": 0.26,
                         "data_sources": [
                             {
                                 "id": "585t749997acad4bac4373b",
                                 "name": "Adobe Experience",
                                 "type": "adobe-experience",
-                                "percentage": round(uniform(0, 1), 2),
+                                "percentage": 0.49,
                             },
                             {
                                 "id": "685t749997acad4bac4373b",
                                 "name": "Google Analytics",
                                 "type": "google-analytics",
-                                "percentage": round(uniform(0, 1), 2),
+                                "percentage": 0.51,
                             },
                         ],
                     },
                     "address": {
-                        "percentage": round(uniform(0, 1), 2),
+                        "percentage": 0.34,
                         "data_sources": [],
                     },
                     "email": {
-                        "percentage": round(uniform(0, 1), 2),
+                        "percentage": 0.2,
                         "data_sources": [],
                     },
                     "phone": {
-                        "percentage": round(uniform(0, 1), 2),
+                        "percentage": 0.1,
                         "data_sources": [],
                     },
                     "cookie": {
-                        "percentage": round(uniform(0, 1), 2),
+                        "percentage": 0.1,
                         "data_sources": [],
                     },
                 },
