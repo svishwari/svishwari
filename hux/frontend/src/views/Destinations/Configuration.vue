@@ -76,7 +76,7 @@
         </hux-button>
       </div>
       <div v-if="validationError" class="d-flex flex-wrap justify-end pt-2">
-        <span class="red--text text-caption">{{validationError}}</span>
+        <span class="red--text text-caption">{{ validationError }}</span>
       </div>
     </v-form>
 
