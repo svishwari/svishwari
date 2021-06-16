@@ -16,6 +16,7 @@ pytest = "*"
 pylint = "*"
 black = { version = "*", pre="true"}
 safety = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.7"
