@@ -234,14 +234,6 @@ class AudiencePostView(SwaggerView):
             "description": "Input Audience body.",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.DESTINATIONS_TAG: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
-                ],
-                api_c.AUDIENCE_ENGAGEMENTS: [
-                    "84759317897acad4bac4373b",
-                    "46826317897acad4bac4373b",
-                ],
                 api_c.AUDIENCE_FILTERS: [
                     {
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
@@ -297,7 +289,6 @@ class AudiencePostView(SwaggerView):
                 database=get_db_client(),
                 name=body[api_c.AUDIENCE_NAME],
                 audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-                destination_ids=body.get(api_c.DESTINATIONS_TAG),
                 user_id=user_id,
             )
         except db_exceptions.DuplicateName:
