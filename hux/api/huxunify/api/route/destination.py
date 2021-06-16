@@ -510,7 +510,7 @@ class DestinationDataExtView(SwaggerView):
             destination_id (str): Destination ID.
 
         Returns:
-            Tuple[dict, int]: List of data extensions, HTTP Status.
+            Tuple[list, int]: List of data extensions, HTTP Status.
 
         """
 
