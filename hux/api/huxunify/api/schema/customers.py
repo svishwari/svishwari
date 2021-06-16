@@ -5,7 +5,6 @@ Schemas for the Customers API
 from flask_marshmallow import Schema
 from marshmallow.fields import (
     Str,
-    Int,
     Float,
     DateTime,
     Boolean,
@@ -63,7 +62,7 @@ class CustomerProfileSchema(Schema):
     last_email_open = DateTime(required=True)
     email = Str(required=True)
     phone = Str(required=True)
-    age = Int(required=True)
+    age = Str(required=True)
     gender = Str(required=True)
     address = Str(required=True)
     city = Str(required=True)

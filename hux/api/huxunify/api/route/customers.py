@@ -18,8 +18,9 @@ from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
     secured,
     add_view_to_blueprint,
-    handle_api_exception,
+    api_error_handler,
 )
+from huxunify.api.data_connectors.cdp import get_customer_profile
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
     CustomerOverviewSchema,
@@ -256,6 +257,7 @@ class CustomerProfileSearch(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
     @marshal_with(CustomerProfileSchema)
+    @api_error_handler()
     def get(self, customer_id: str) -> Tuple[dict, int]:
         """Retrieves a customer profile.
 
@@ -271,75 +273,70 @@ class CustomerProfileSearch(SwaggerView):
 
         """
 
-        try:
-            first_name = faker.first_name()
-            last_name = faker.last_name()
-            return {
-                "id": customer_id,
-                "first_name": first_name,
-                "last_name": last_name,
-                "match_confidence": round(uniform(0, 1), 5),
-                "since": faker.date_time_between("-1y", "now"),
-                "ltv_actual": round(uniform(20, 60), 2),
-                "ltv_predicted": round(uniform(20, 60), 2),
-                "conversion_time": faker.date_time_between("-1y", "now"),
-                "churn_rate": randint(1, 10),
-                "last_click": faker.date_time_between("-1y", "now"),
-                "last_purchase": faker.date_time_between("-1y", "now"),
-                "last_email_open": faker.date_time_between("-1y", "now"),
-                "email": f"{first_name}_{last_name}@fake.com",
-                "phone": faker.phone_number(),
-                "age": randint(21, 88),
-                "gender": "",
-                "address": faker.street_address(),
-                "city": faker.city(),
-                "state": faker.state(),
-                "zip": faker.postcode(),
-                "preference_email": False,
-                "preference_push": False,
-                "preference_sms": False,
-                "preference_in_app": False,
-                "identity_resolution": {
-                    "name": {
-                        "percentage": 0.26,
-                        "data_sources": [
-                            {
-                                "id": "585t749997acad4bac4373b",
-                                "name": "Adobe Experience",
-                                "type": "adobe-experience",
-                                "percentage": 0.49,
-                            },
-                            {
-                                "id": "685t749997acad4bac4373b",
-                                "name": "Google Analytics",
-                                "type": "google-analytics",
-                                "percentage": 0.51,
-                            },
-                        ],
-                    },
-                    "address": {
-                        "percentage": 0.34,
-                        "data_sources": [],
-                    },
-                    "email": {
-                        "percentage": 0.2,
-                        "data_sources": [],
-                    },
-                    "phone": {
-                        "percentage": 0.1,
-                        "data_sources": [],
-                    },
-                    "cookie": {
-                        "percentage": 0.1,
-                        "data_sources": [],
-                    },
+        first_name = faker.first_name()
+        last_name = faker.last_name()
+        customer_body = {
+            "id": str(customer_id),
+            "first_name": first_name,
+            "last_name": last_name,
+            "match_confidence": round(uniform(0, 1), 5),
+            "since": faker.date_time_between("-1y", "now"),
+            "ltv_actual": round(uniform(20, 60), 2),
+            "ltv_predicted": round(uniform(20, 60), 2),
+            "conversion_time": faker.date_time_between("-1y", "now"),
+            "churn_rate": randint(1, 10),
+            "last_click": faker.date_time_between("-1y", "now"),
+            "last_purchase": faker.date_time_between("-1y", "now"),
+            "last_email_open": faker.date_time_between("-1y", "now"),
+            "email": f"{first_name}_{last_name}@fake.com",
+            "phone": faker.phone_number(),
+            "age": randint(21, 88),
+            "gender": "",
+            "address": faker.street_address(),
+            "city": faker.city(),
+            "state": faker.state(),
+            "zip": faker.postcode(),
+            "preference_email": False,
+            "preference_push": False,
+            "preference_sms": False,
+            "preference_in_app": False,
+            "identity_resolution": {
+                "name": {
+                    "percentage": 0.26,
+                    "data_sources": [
+                        {
+                            "id": "585t749997acad4bac4373b",
+                            "name": "Adobe Experience",
+                            "type": "adobe-experience",
+                            "percentage": 0.49,
+                        },
+                        {
+                            "id": "685t749997acad4bac4373b",
+                            "name": "Google Analytics",
+                            "type": "google-analytics",
+                            "percentage": 0.51,
+                        },
+                    ],
                 },
-                "propensity_to_unsubscribe": round(uniform(0, 1), 2),
-                "propensity_to_purchase": round(uniform(0, 1), 2),
-            }, HTTPStatus.OK.value
-            # TODO use real call when available
-            # return cdp.get_customer_profile(customer_id), HTTPStatus.OK.value
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get customer profile."
-            ) from exc
+                "address": {
+                    "percentage": 0.34,
+                    "data_sources": [],
+                },
+                "email": {
+                    "percentage": 0.2,
+                    "data_sources": [],
+                },
+                "phone": {
+                    "percentage": 0.1,
+                    "data_sources": [],
+                },
+                "cookie": {
+                    "percentage": 0.1,
+                    "data_sources": [],
+                },
+            },
+            "propensity_to_unsubscribe": round(uniform(0, 1), 2),
+            "propensity_to_purchase": round(uniform(0, 1), 2),
+        }
+
+        return get_customer_profile(customer_body), HTTPStatus.OK.value
