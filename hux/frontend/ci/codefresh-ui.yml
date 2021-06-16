@@ -66,7 +66,7 @@ steps:
   Lint:
     stage: "lint"
     title: "Running lint"
-    image: huxhub.repo.mgnt.in/node:14-alpine
+    image: huxhub.repo.mgnt.in/alpine
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
     - npm install
