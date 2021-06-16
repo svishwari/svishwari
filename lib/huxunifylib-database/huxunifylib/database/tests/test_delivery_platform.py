@@ -1216,4 +1216,3 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
             self.assertIn(c.ENGAGEMENT_ID, delivery_job)
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
-            self.assertFalse(c.DELETED in delivery_job)

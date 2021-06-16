@@ -318,7 +318,6 @@ class TestDataManagement(unittest.TestCase):
         self.assertEqual(
             doc[c.DATA_SOURCE_LOCATION_DETAILS], updated_location_details
         )
-        self.assertFalse(c.DELETED in doc)
 
         # Test updating data source with a successful ingestion job
         status = c.STATUS_SUCCEEDED
