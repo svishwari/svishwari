@@ -8,6 +8,7 @@ import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import orchestration_management as om
 from huxunifylib.database import delivery_platform_management as dpm
+from huxunifylib.database.user_management import set_user
 
 
 class TestEngagementManagement(unittest.TestCase):
@@ -21,14 +22,21 @@ class TestEngagementManagement(unittest.TestCase):
         ).connect()
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
-        self.user_id = ObjectId()
+        # write a user to the database
+        self.user_name = "joey galloway"
+        self.user_id = set_user(
+            self.database,
+            "fake",
+            "joeygalloway@fake.com",
+            display_name=self.user_name,
+        )[c.ID]
 
         # setup the audience
         self.audience = om.create_audience(
             self.database, "all", [], self.user_id
         )
 
-        self.audience[c.ID] = self.audience[c.ID]
+        self.audience[c.OBJECT_ID] = self.audience[c.ID]
 
         self.engagement_id = em.set_engagement(
             self.database,
@@ -81,7 +89,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # change audience_id to string
         audience = self.audience.copy()
-        audience[c.ID] = str(audience[c.ID])
+        audience[c.OBJECT_ID] = str(audience[c.OBJECT_ID])
 
         with self.assertRaises(ValueError):
             em.set_engagement(
@@ -103,6 +111,19 @@ class TestEngagementManagement(unittest.TestCase):
         # test for a list with data.
         self.assertTrue(em.get_engagements(database=self.database))
 
+    def test_get_engagements_with_users(self) -> None:
+        """Test get_engagements with users routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # test for a list with data.
+        engagements = em.get_engagements(self.database, True)
+        self.assertTrue(engagements)
+        self.assertEqual(engagements[0][c.CREATED_BY], self.user_name)
+
     def test_get_engagement(self) -> None:
         """Test get_engagement routine
 
@@ -122,6 +143,21 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertIsNotNone(engagement_doc)
+
+    def test_get_engagement_with_user(self) -> None:
+        """Test get_engagement with user routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # take the first document
+        engagement_doc = em.get_engagement(
+            self.database, self.engagement_id, True
+        )
+        self.assertTrue(engagement_doc)
+        self.assertEqual(engagement_doc[c.CREATED_BY], self.user_name)
 
     def test_update_engagement(self) -> None:
         """Test update_engagement routine
@@ -152,6 +188,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertNotIn(c.ENGAGEMENT_DELIVERY_SCHEDULE, engagement_doc)
         self.assertEqual(self.user_id, engagement_doc[c.CREATED_BY])
+        self.assertEqual(self.user_id, engagement_doc[c.UPDATED_BY])
 
     def test_update_engagement_bad_string_id(self) -> None:
         """Test update_engagement routine with a bad string id
@@ -170,7 +207,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # change audience_id to string
         audience = self.audience.copy()
-        audience[c.ID] = str(audience[c.ID])
+        audience[c.OBJECT_ID] = str(audience[c.OBJECT_ID])
 
         with self.assertRaises(ValueError):
             em.update_engagement(
@@ -226,19 +263,19 @@ class TestEngagementManagement(unittest.TestCase):
             c.ENGAGEMENT_DESCRIPTION: "high ltv for spring 2024",
             c.AUDIENCES: [
                 {
-                    c.ID: ObjectId(),
+                    c.OBJECT_ID: ObjectId(),
                     c.DESTINATIONS: [
                         {
-                            c.ID: ObjectId(),
+                            c.OBJECT_ID: ObjectId(),
                             c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
                         },
-                        {c.ID: ObjectId()},
-                        {c.ID: ObjectId()},
+                        {c.OBJECT_ID: ObjectId()},
+                        {c.OBJECT_ID: ObjectId()},
                     ],
                 },
                 {
-                    c.ID: ObjectId(),
-                    c.DESTINATIONS: [{c.ID: ObjectId()}],
+                    c.OBJECT_ID: ObjectId(),
+                    c.DESTINATIONS: [{c.OBJECT_ID: ObjectId()}],
                 },
             ],
         }
@@ -288,14 +325,17 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.ID],
-            self.audience[c.ID],
+            engagement[c.AUDIENCES][0][c.OBJECT_ID],
+            self.audience[c.OBJECT_ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
         # remove an audience
         result = em.remove_audiences_from_engagement(
-            self.database, engagement_id, self.user_id, [self.audience[c.ID]]
+            self.database,
+            engagement_id,
+            self.user_id,
+            [self.audience[c.OBJECT_ID]],
         )
         self.assertTrue(result)
 
@@ -329,8 +369,8 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.ID],
-            self.audience[c.ID],
+            engagement[c.AUDIENCES][0][c.OBJECT_ID],
+            self.audience[c.OBJECT_ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
@@ -340,7 +380,7 @@ class TestEngagementManagement(unittest.TestCase):
                 self.database,
                 engagement_id,
                 self.user_id,
-                [str(self.audience[c.ID])],
+                [str(self.audience[c.OBJECT_ID])],
             )
 
     def test_set_engagement_attach_audience_after(self) -> None:
@@ -365,14 +405,14 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.ID],
-            self.audience[c.ID],
+            engagement[c.AUDIENCES][0][c.OBJECT_ID],
+            self.audience[c.OBJECT_ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
         # setup a few destinations
         new_audience = {
-            c.ID: ObjectId(),
+            c.OBJECT_ID: ObjectId(),
             c.DESTINATIONS: self.destinations,
         }
 
@@ -412,14 +452,14 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.AUDIENCES, engagement)
         self.assertEqual(len(engagement[c.AUDIENCES]), 1)
         self.assertEqual(
-            engagement[c.AUDIENCES][0][c.ID],
-            self.audience[c.ID],
+            engagement[c.AUDIENCES][0][c.OBJECT_ID],
+            self.audience[c.OBJECT_ID],
         )
         self.assertIsInstance(engagement_id, ObjectId)
 
         # setup a few destinations
         new_audience = {
-            c.ID: str(ObjectId()),
+            c.OBJECT_ID: str(ObjectId()),
             c.DESTINATIONS: self.destinations,
         }
 
@@ -453,7 +493,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.assertIn(c.AUDIENCES, engagement)
             self.assertEqual(len(engagement[c.AUDIENCES]), 1)
             self.assertEqual(
-                engagement[c.AUDIENCES][0][c.ID],
+                engagement[c.AUDIENCES][0][c.OBJECT_ID],
                 self.audience[c.ID],
             )
             self.assertIsInstance(engagement_id, ObjectId)

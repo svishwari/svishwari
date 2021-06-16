@@ -15,6 +15,7 @@ module.exports = {
     quotes: ["error", "double"],
     "comma-dangle": ["error", "always-multiline"],
     "prettier/prettier": "error",
+    "vue/valid-v-slot": "off",
   },
   overrides: [
     {

@@ -4,6 +4,7 @@ This module enables functionality related to engagement management.
 
 import logging
 import datetime
+from typing import Union
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -12,6 +13,7 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
+from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
 
 
 @retry(
@@ -72,7 +74,7 @@ def set_engagement(
     for audience in audiences:
         doc[db_c.AUDIENCES].append(
             {
-                db_c.ID: audience[db_c.ID],
+                db_c.OBJECT_ID: audience[db_c.OBJECT_ID],
                 db_c.DESTINATIONS: audience[db_c.DESTINATIONS],
             }
         )
@@ -95,14 +97,17 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements(database: DatabaseClient) -> list:
+def get_engagements(
+    database: DatabaseClient, include_users: bool = False
+) -> Union[list, None]:
     """A function to get all engagements
 
     Args:
         database (DatabaseClient): A database client.
+        include_users (bool): Flag to include users.
 
     Returns:
-        list: List of all engagement documents.
+        Union[list, None]: List of all engagement documents.
 
     """
 
@@ -111,6 +116,10 @@ def get_engagements(database: DatabaseClient) -> list:
     ]
 
     try:
+        if include_users:
+            # lookup to users
+            return list(collection.aggregate(USER_LOOKUP_PIPELINE))
+
         return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -122,15 +131,20 @@ def get_engagements(database: DatabaseClient) -> list:
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
+def get_engagement(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    include_users: bool = False,
+) -> Union[dict, None]:
     """A function to get an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectId of the engagement
+        include_users (bool): Flag to include users.
 
     Returns:
-        dict: Dict of an engagement.
+        Union[dict, None]: Dict of an engagement.
 
     """
 
@@ -139,6 +153,15 @@ def get_engagement(database: DatabaseClient, engagement_id: ObjectId) -> dict:
     ]
 
     try:
+        if include_users:
+            docs = list(
+                collection.aggregate(
+                    [{"$match": {db_c.ID: engagement_id}}]
+                    + USER_LOOKUP_PIPELINE
+                )
+            )
+            return docs[0] if docs else None
+
         return collection.find_one(
             {db_c.ID: engagement_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
@@ -287,8 +310,8 @@ def remove_audiences_from_engagement(
             {db_c.ID: engagement_id},
             {
                 "$pull": {
-                    f"{db_c.AUDIENCES}.{db_c.ID}": {
-                        db_c.ID: {"$in": audience_ids}
+                    f"{db_c.AUDIENCES}": {
+                        db_c.OBJECT_ID: {"$in": audience_ids}
                     }
                 },
                 "$set": {
@@ -373,11 +396,11 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
     for audience in audiences:
         if not isinstance(audience, dict):
             raise AttributeError("Audience must be a dict.")
-        if db_c.ID not in audience:
-            raise KeyError(f"Missing audience {db_c.ID}.")
-        if not isinstance(audience[db_c.ID], ObjectId):
+        if db_c.OBJECT_ID not in audience:
+            raise KeyError(f"Missing audience {db_c.OBJECT_ID}.")
+        if not isinstance(audience[db_c.OBJECT_ID], ObjectId):
             raise ValueError("Must provide an ObjectId.")
-        if not ObjectId(audience[db_c.ID]):
+        if not ObjectId(audience[db_c.OBJECT_ID]):
             raise ValueError("Invalid object id value.")
 
 
@@ -407,7 +430,7 @@ def get_engagements_by_audience(
         return list(
             collection.find(
                 {
-                    f"{db_c.AUDIENCES}.{db_c.ID}": audience_id,
+                    f"{db_c.AUDIENCES}.{db_c.OBJECT_ID}": audience_id,
                     db_c.DELETED: False,
                 },
                 {db_c.DELETED: 0},

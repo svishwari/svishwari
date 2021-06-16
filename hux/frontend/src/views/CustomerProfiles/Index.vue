@@ -1,0 +1,316 @@
+<template>
+  <div class="customer-dashboard-wrap">
+    <PageHeader class="background-border">
+      <template #left>
+        <Breadcrumb :items="items" />
+      </template>
+      <template #right>
+        <hux-button
+          class="mr-4 pa-3"
+          isCustomIcon
+          isTile
+          icon="customer-profiles"
+          variant="white"
+          @click="viewCustomerList()"
+        >
+          View all customers
+        </hux-button>
+        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
+      </template>
+    </PageHeader>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <div v-if="!loading">
+      <div class="row px-15 mt-6 mb-6 row-margin">
+        <MetricCard
+          v-for="item in primaryItems"
+          class="card-margin"
+          :grow="item.toolTipText ? 1 : 0"
+          :icon="item.icon"
+          :key="item.title"
+          :subtitle="item.toolTipText ? item.subtitle : ''"
+          :title="item.title"
+        >
+          <template v-if="!item.toolTipText" #subtitle-extended>
+            <span class="font-weight-semi-bold"
+              >{{ item.date }} &bull;
+              {{ item.time }}
+            </span>
+          </template>
+          <template v-if="item.toolTipText" #extra-item>
+            <Tooltip positionTop>
+              <template #label-content>
+                <Icon type="info" :size="12" />
+              </template>
+              <template #hover-content>
+                {{ item.toolTipText }}
+              </template>
+            </Tooltip>
+          </template>
+        </MetricCard>
+      </div>
+      <div class="px-15 my-1" v-if="overviewListItems">
+        <v-card class="rounded pa-5 box-shadow-5">
+          <div class="overview">Customer overview</div>
+          <div class="row overview-list mb-0 ml-0 mt-1">
+            <MetricCard
+              v-for="item in overviewListItems"
+              class="mr-3"
+              :key="item.title"
+              :grow="item.toolTipText ? 2 : 1"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :icon="item.icon"
+              :interactable="item.toolTipText ? true : false"
+              @click="item.toolTipText ? viewCustomerList() : ''"
+            >
+              <template v-if="item.toolTipText" #extra-item>
+                <Tooltip positionTop>
+                  <template #label-content>
+                    <Icon type="info" :size="12" />
+                  </template>
+                  <template #hover-content>
+                    {{ item.toolTipText }}
+                  </template>
+                </Tooltip>
+              </template>
+            </MetricCard>
+          </div>
+        </v-card>
+      </div>
+      <v-divider class="my-8"></v-divider>
+      <EmptyStateChart>
+        <template #chart-image>
+          <img
+            src="@/assets/images/empty-state-chart-3.png"
+            alt="Empty state"
+          />
+        </template>
+      </EmptyStateChart>
+      <CustomerDetails v-model="customerProfilesDrawer" />
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapActions, mapGetters } from "vuex"
+import PageHeader from "@/components/PageHeader"
+import Breadcrumb from "@/components/common/Breadcrumb"
+import Tooltip from "@/components/common/Tooltip.vue"
+import MetricCard from "@/components/common/MetricCard"
+import EmptyStateChart from "@/components/common/EmptyStateChart"
+import huxButton from "@/components/common/huxButton"
+import Icon from "@/components/common/Icon"
+import CustomerDetails from "@/views/CustomerProfiles/Drawers/CustomerDetails"
+
+export default {
+  name: "CustomerProfiles",
+  components: {
+    MetricCard,
+    EmptyStateChart,
+    PageHeader,
+    Breadcrumb,
+    Tooltip,
+    huxButton,
+    Icon,
+    CustomerDetails,
+  },
+
+  data() {
+    return {
+      customerProfilesDrawer: false,
+      overviewListItems: [
+        {
+          title: "No. of customers",
+          subtitle: "",
+          toolTipText:
+            "Total no. of unique hux ids generated to represent a customer.",
+        },
+        { title: "Countries", subtitle: "", icon: "mdi-earth" },
+        { title: "US States", subtitle: "", icon: "mdi-map" },
+        { title: "Cities", subtitle: "", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
+      ],
+      primaryItems: [
+        {
+          title: "Total no. of records",
+          subtitle: "",
+          toolTipText: "Total no. of input records across all data feeds.",
+        },
+        {
+          title: "Match rate",
+          subtitle: "",
+          toolTipText:
+            "Percentage of input records that are consolidated into Hux Ids.",
+        },
+        {
+          title: "Unique Hux IDs",
+          subtitle: "",
+          toolTipText:
+            "Total Hux Ids that represent an anonymous or known customer.",
+        },
+        {
+          title: "Anonymous IDs",
+          subtitle: "",
+          toolTipText:
+            "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
+        },
+        {
+          title: "Known IDs",
+          subtitle: "",
+          toolTipText:
+            "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number.",
+        },
+        {
+          title: "Individual IDs",
+          subtitle: "",
+          toolTipText:
+            "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
+        },
+        {
+          title: "Household IDs",
+          subtitle: "",
+          toolTipText:
+            "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
+        },
+        {
+          title: "Updated",
+          subtitle: "",
+          date: "",
+          time: "",
+        },
+      ],
+      items: [
+        {
+          text: "Customer Profiles",
+          disabled: true,
+          href: "/customers",
+          icon: "customer-profiles",
+        },
+        {
+          text: "",
+          disabled: true,
+          href: this.$route.path,
+        },
+      ],
+      loading: false,
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      overview: "customers/overview",
+    }),
+  },
+
+  methods: {
+    ...mapActions({
+      getOverview: "customers/getOverview",
+    }),
+    mapOverviewData() {
+      this.overviewListItems[0].subtitle = this.applyNumericFilter(
+        this.overview.total_customers
+      )
+      this.overviewListItems[1].subtitle = this.overview.total_countries
+      this.overviewListItems[2].subtitle = this.overview.total_us_states
+      this.overviewListItems[3].subtitle = this.overview.total_cities
+      this.overviewListItems[4].subtitle =
+        this.overview.min_age + "-" + this.overview.max_age
+
+      this.overviewListItems[5].subtitle = this.applyPercentageFilter(
+        this.overview.gender_men
+      )
+      this.overviewListItems[6].subtitle = this.applyPercentageFilter(
+        this.overview.gender_women
+      )
+      this.overviewListItems[7].subtitle = this.applyPercentageFilter(
+        this.overview.gender_other
+      )
+
+      this.primaryItems[0].subtitle = this.applyNumericFilter(
+        this.overview.total_records
+      )
+      this.primaryItems[1].subtitle = this.applyPercentageFilter(
+        this.overview.match_rate
+      )
+      this.primaryItems[2].subtitle = this.applyNumericFilter(
+        this.overview.total_unique_ids
+      )
+      this.primaryItems[3].subtitle = this.applyNumericFilter(
+        this.overview.total_unknown_ids
+      )
+      this.primaryItems[4].subtitle = this.applyNumericFilter(
+        this.overview.total_known_ids
+      )
+      this.primaryItems[5].subtitle = this.applyNumericFilter(
+        this.overview.total_individual_ids
+      )
+      this.primaryItems[6].subtitle = this.applyNumericFilter(
+        this.overview.total_household_ids
+      )
+      ;[
+        this.primaryItems[7].date,
+        this.primaryItems[7].time,
+      ] = this.dateTimeFormatter(this.overview.updated)
+    },
+    applyNumericFilter(value) {
+      return value
+        ? this.$options.filters.Numeric(value, true, false, true)
+        : ""
+    },
+    applyPercentageFilter(value) {
+      return value
+        ? this.$options.filters.percentageConvert(value, true, true)
+        : ""
+    },
+    dateTimeFormatter(value) {
+      if (value) {
+        let updatedTime = this.$options.filters
+          .Date(value, "calendar")
+          .split(" at ")
+
+        return [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
+      } else return ""
+    },
+    viewCustomerList() {
+      this.customerProfilesDrawer = !this.customerProfilesDrawer
+    },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getOverview()
+    this.mapOverviewData()
+    this.loading = false
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+::v-deep .v-btn {
+  &:not(.v-btn--round).v-size--default {
+    height: 28px;
+    min-width: 178px;
+  }
+  .v-btn__content {
+    color: var(--v-cerulean-base) !important;
+  }
+}
+
+.row-margin {
+  margin-left: -6px;
+  margin-right: -6px;
+}
+
+.card-margin {
+  margin: 6px !important;
+}
+
+.customer-dashboard-wrap {
+  ::v-deep .mdi-chevron-right::before {
+    content: none;
+  }
+}
+</style>

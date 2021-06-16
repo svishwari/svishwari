@@ -7,7 +7,7 @@
     nudge-top="10px"
     open-on-hover
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <div class="px-4 border-start border-zircon" :class="statClass" v-on="on">
         <h4 class="text-h4 mb-0">{{ value }}</h4>
         <div class="text-caption gray--text">{{ label }}</div>

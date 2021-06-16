@@ -3,16 +3,17 @@
     class="add-audience-drawer-wrapper"
     v-model="localToggle"
     :width="drawerWidth"
-    :disable-transition="isOpening"
+    :loading="loading"
     expandable
+    @onClose="closeDrawer()"
+    @iconToggle="changeOverviewListItems"
   >
     <template #header-left>
       <h3 class="text-h3">Create a new audience</h3>
     </template>
 
     <template #default>
-      <v-progress-linear :active="loading" :indeterminate="loading" />
-      <div class="pa-6">
+      <div class="pa-4">
         <h6 class="pb-6 text-h6 neroBlack--text">
           Build a target audience from the data you own.
         </h6>
@@ -31,17 +32,15 @@
         </div>
         <div class="d-flex align-center pb-4">
           <MetricCard
-            class="list-item ma-0 mr-3"
             v-for="(item, i) in overviewListItems"
-            :height="68"
-            :width="i == 0 ? 151 : 78"
+            class="list-item ma-0 mr-3"
+            :class="{ 'd-none': i > overviewListItems.length - 3 && !expanded }"
             :key="i"
             :title="item.title"
             :subtitle="item.subtitle"
-            :interactable="false"
           />
         </div>
-        <hr class="mb-4" />
+        <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
           <attribute-rules :rules="attributeRules"></attribute-rules>
         </div>
@@ -49,7 +48,7 @@
     </template>
 
     <template #footer-left>
-      <v-btn tile color="white" @click="closeDrawer()">
+      <v-btn tile color="white" @click="onCancelAndBack()">
         <span class="primary--text">Cancel &amp; back</span>
       </v-btn>
       <v-btn
@@ -109,16 +108,17 @@ export default {
         name: "",
       },
       overviewListItems: [
-        { title: "Target size", subtitle: "34,203,204" },
+        { title: "Target size", subtitle: "34.2M" },
         { title: "Countries", subtitle: "2" },
         { title: "US States", subtitle: "52" },
-        { title: "Cities", subtitle: "19,495" },
+        { title: "Cities", subtitle: "-" },
         { title: "Age", subtitle: "-" },
         { title: "Women", subtitle: "52%" },
         { title: "Men", subtitle: "46%" },
         { title: "Other", subtitle: "2%" },
       ],
       attributeRules: [],
+      expanded: false,
     }
   },
 
@@ -132,12 +132,6 @@ export default {
     },
   },
 
-  computed: {
-    isOpening() {
-      return this.localToggle
-    },
-  },
-
   methods: {
     ...mapActions({
       addAudience: "audiences/add",
@@ -148,9 +142,19 @@ export default {
       this.reset()
     },
 
+    onCancelAndBack() {
+      this.$emit("onCancelAndBackk")
+      this.reset()
+    },
+
+    changeOverviewListItems(expanded) {
+      this.expanded = expanded
+    },
+
     reset() {
       this.$refs.newAudienceRef.reset()
       this.attributeRules = []
+      this.expanded = false
     },
 
     async add() {
@@ -216,7 +220,6 @@ export default {
   }
   hr {
     border-style: solid;
-    border-color: var(--v-zircon-base);
   }
 }
 </style>

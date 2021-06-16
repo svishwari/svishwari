@@ -6,12 +6,17 @@ const namespaced = true
 
 const state = {
   items: {},
-  constants: null,
+  constants: {},
   availableDestinations: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
+
+  single: (state) => (id) => state.items[id],
+
+  enabledDestination: (state) =>
+    Object.values(state.items).filter((item) => item.is_enabled),
 
   constants: (state) => state.constants,
 
@@ -21,11 +26,17 @@ const getters = {
 const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
+      // TODO: remove this once ORCH-233 is addressed
+      if (item.type === "SFMC") item.type = "salesforce"
+      item.type = String(item.type).toLowerCase()
       Vue.set(state.items, item.id, item)
     })
   },
 
   SET_ONE(state, item) {
+    // TODO: remove this once ORCH-233 is addressed
+    if (item.type === "SFMC") item.type = "salesforce"
+    item.type = String(item.type).toLowerCase()
     Vue.set(state.items, item.id, item)
   },
 

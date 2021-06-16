@@ -38,33 +38,39 @@ export default {
     round = false,
     abbreviate = false,
     approx = false,
+    percentage = false,
     append = ""
   ) {
     if (isNaN(value)) return ""
 
     let abrv = ""
 
+    if (percentage) {
+      value = value * 100
+      append = "%"
+    }
+
     if (abbreviate) {
       if (value >= 1000000) {
         value = value / 1000000
-        abrv = "m"
+        abrv = "M"
       } else if (value >= 1000) {
         value = value / 1000
-        abrv = "k"
+        abrv = "K"
       }
     }
     if (approx) {
       // Nine Zeroes for Billions
       value =
         Math.abs(Number(value)) >= 1.0e9
-          ? (Math.abs(Number(value)) / 1.0e9).toFixed(2) + "B"
+          ? (Math.abs(Number(value)) / 1.0e9).toFixed(1) + "B"
           : // Six Zeroes for Millions
           Math.abs(Number(value)) >= 1.0e6
-          ? (Math.abs(Number(value)) / 1.0e6).toFixed(2) + "M"
+          ? (Math.abs(Number(value)) / 1.0e6).toFixed(1) + "M"
           : // Three Zeroes for Thousands
           Math.abs(Number(value)) >= 1.0e3
-          ? (Math.abs(Number(value)) / 1.0e3).toFixed(2) + "K"
-          : this.FormatSize(Math.abs(Number(value)))
+          ? (Math.abs(Number(value)) / 1.0e3).toFixed(1) + "K"
+          : Math.abs(Number(value))
     }
 
     return approx
@@ -84,10 +90,9 @@ export default {
    * @returns Title cased string eg. "Active Customers"
    */
   TitleCase(value) {
-    return value
-      .replace(/([A-Z])/g, (match) => ` ${match}`)
-      .replace(/^./, (match) => match.toUpperCase())
-      .trim()
+    return value.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    })
   },
   /**
    * Formats any string(fullname) to shortname.
@@ -100,5 +105,34 @@ export default {
       .split(" ")
       .map((n) => n[0])
       .join("")
+  },
+  Currency(value) {
+    return Number(value).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+  },
+  /**
+   * Formats any input with decimal to percentage.
+   *
+   * @param {*} value The input eg. "0.893251"
+   * @returns output value eg. "90%"
+   */
+  percentageConvert(value, round = false, percentage = false, append = "") {
+    if (!value) return ""
+
+    if (percentage) {
+      value = value * 100
+      append = "%"
+    }
+
+    return (
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: round && Number(value) ? 0 : 2,
+      }) + append
+    )
   },
 }

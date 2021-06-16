@@ -64,7 +64,7 @@ export default {
 
 <style lang="scss" scoped>
 .descriptive-card {
-  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05) !important;
+  @extend .box-shadow-5;
   color: var(--v-neroblack-base);
   cursor: default;
   font-weight: normal;

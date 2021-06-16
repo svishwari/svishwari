@@ -146,22 +146,33 @@ const routes = [
     },
   },
   {
-    path: "/identity",
-    name: "Identity",
-    component: () => import("@/views/Identity"),
+    path: "/identity-resolution",
+    name: "IdentityResolution",
+    component: () => import("@/views/IdentityResolution/Index"),
     meta: {
       layout: "app",
-      title: "Identity",
+      title: "Identity Resolution",
       requiresAuth: true,
     },
   },
   {
-    path: "/profiles",
-    name: "Profiles",
-    component: () => import("@/views/Profiles"),
+    path: "/customers",
+    name: "CustomerProfiles",
+    component: () => import("@/views/CustomerProfiles/Index"),
     meta: {
       layout: "app",
-      title: "Profiles",
+      title: "Customer Profiles",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/customers/:id",
+    name: "CustomerProfileDetails",
+    component: () =>
+      import("@/views/CustomerProfiles/CustomerProfileDetails.vue"),
+    meta: {
+      layout: "app",
+      title: "Customer Profile Details",
       requiresAuth: true,
     },
   },

@@ -1,6 +1,6 @@
 <template>
   <Drawer v-model="localDrawer" @onClose="goToStep1()">
-    <template v-slot:header-left>
+    <template #header-left>
       <div class="d-flex align-center">
         <Icon
           v-if="viewStep == '1'"
@@ -16,26 +16,20 @@
         </h3>
       </div>
     </template>
-    <template v-slot:default>
-      <v-progress-linear
-        color="primary"
-        :active="loading"
-        :indeterminate="loading"
-      />
+    <template #default>
       <v-stepper v-if="!loading" v-model="viewStep">
         <v-stepper-items>
           <v-stepper-content step="1">
             <div v-if="!areEngagementAlreadyCreated">
               <EmptyPage>
-                <template v-slot:icon>mdi-alert-circle-outline</template>
-                <template v-slot:title>Oops! There’s nothing here yet</template>
-                <template v-slot:subtitle>
-                  No engagements has been launched yet. Let’s create one <br />
-                  by clicking the new engagement button below.
+                <template #icon>mdi-alert-circle-outline</template>
+                <template #title>Oops! There’s nothing here yet</template>
+                <template #subtitle>
+                  No engagements have been created yet. Let’s create one by
+                  clicking the new engagement button below.
                 </template>
-                <template v-slot:button>
+                <template #button>
                   <huxButton
-                    ButtonText="New engagement"
                     icon="mdi-plus"
                     iconPosition="left"
                     variant="primary"
@@ -43,7 +37,9 @@
                     :isTile="true"
                     @click="goToStep2()"
                     class="ma-2"
-                  ></huxButton>
+                  >
+                    New engagement
+                  </huxButton>
                 </template>
               </EmptyPage>
             </div>
@@ -53,14 +49,15 @@
                 required to have at least one selected.
               </h6>
               <huxButton
-                ButtonText="New engagement"
                 icon="mdi-plus"
                 iconPosition="left"
                 variant="primary"
                 :isTile="true"
                 height="40"
                 @click="goToAddNewEngagement()"
-              ></huxButton>
+              >
+                New engagement
+              </huxButton>
               <div class="engagement-list-wrap mt-6">
                 <div>
                   <span class="text-caption">Engagement name</span>
@@ -83,12 +80,12 @@
                   class="my-3"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">
-                    <template v-slot:activator="{ on }">
+                    <template #activator="{ on }">
                       <div v-on="on" class="pl-2 font-weight-regular">
                         {{ engagement.name }}
                       </div>
                     </template>
-                    <template v-slot:default>
+                    <template #default>
                       <div class="px-4 py-2 white">
                         <div class="neroBlack--text text-caption">Name</div>
                         <div class="lightGreyText--text text-caption mt-1">
@@ -118,28 +115,27 @@
                   labelText="Engagement name"
                   placeholder="Give this engagement a name"
                   v-model="newEngagement.name"
+                  height="40"
                   :rules="newEngagementRules"
                   required
                 />
                 <TextField
                   labelText="Description"
                   placeholder="What is the purpose of this engagement?"
+                  height="40"
                   v-model="newEngagement.description"
                 />
                 <div class="mb-2">
-                  Delivery schedule
-                  <v-menu max-width="184" open-on-hover offset-y>
-                    <template v-slot:activator="{ on }">
-                      <v-icon
-                        v-on="on"
-                        color="secondary"
-                        :size="12"
-                        class="ml-1"
-                      >
+                  <span class="neroBlack--text text-caption">
+                    Delivery schedule
+                  </span>
+                  <v-menu max-width="240" open-on-hover offset-y>
+                    <template #activator="{ on }">
+                      <v-icon v-on="on" color="primary" :size="12" class="ml-1">
                         mdi-information-outline
                       </v-icon>
                     </template>
-                    <template v-slot:default>
+                    <template #default>
                       <div class="px-4 py-2 white">
                         <div class="neroBlack--text text-caption">
                           Manual delivery
@@ -164,7 +160,11 @@
                     v-model="newEngagement.delivery_schedule"
                     mandatory
                   >
-                    <v-btn>
+                    <v-btn
+                      class="active-delivery-option"
+                      height="40"
+                      width="175"
+                    >
                       <v-radio
                         :off-icon="
                           newEngagement.delivery_schedule == 0
@@ -174,7 +174,12 @@
                       />
                       <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
                     </v-btn>
-                    <v-btn disabled style="background: white !important">
+                    <v-btn
+                      disabled
+                      class="disabled-white-background"
+                      height="40"
+                      width="175"
+                    >
                       <v-radio
                         :off-icon="
                           newEngagement.delivery_schedule == 1
@@ -193,20 +198,22 @@
         </v-stepper-items>
       </v-stepper>
     </template>
-    <template v-slot:footer-right>
+    <template #footer-right>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Create &amp; add"
           variant="primary"
           :isTile="true"
           height="40"
+          width="146"
           :isDisabled="!newEngagementValid"
           @click.native="addEngagement()"
-        />
+        >
+          Create &amp; add
+        </huxButton>
       </div>
     </template>
 
-    <template v-slot:footer-left>
+    <template #footer-left>
       <div
         class="d-flex align-baseline"
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
@@ -215,12 +222,14 @@
       </div>
       <div class="d-flex align-baseline" v-if="viewStep == 2">
         <huxButton
-          ButtonText="Cancel &amp; back"
           variant="white"
           :isTile="true"
           height="40"
+          width="146"
           @click.native="goToStep1()"
-        ></huxButton>
+        >
+          <span class="primary--text">Cancel &amp; back</span>
+        </huxButton>
       </div>
     </template>
   </Drawer>
@@ -425,6 +434,12 @@ export default {
           color: var(--v-primary-base) !important;
         }
       }
+    }
+    .active-delivery-option.v-btn.v-item--active {
+      border-color: var(--v-primary-base) !important;
+    }
+    .disabled-white-background {
+      background: white !important;
     }
   }
 }

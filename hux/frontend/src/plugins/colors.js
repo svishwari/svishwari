@@ -25,6 +25,8 @@ export default {
   dullBlue: "#b7cfd9",
   persianGreen: "#00abab",
   appBodyGrey: "#f8f9fa",
+  smoke: "#ECECEC",
+  cerulean: "#006699",
   gradientSliderColors: [
     "#ec5b54",
     "#f76d48",

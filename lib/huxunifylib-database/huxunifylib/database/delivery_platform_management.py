@@ -30,7 +30,7 @@ def set_delivery_platform(
     name: str,
     authentication_details: dict = None,
     status: str = c.STATUS_PENDING,
-    enabled: bool = True,
+    enabled: bool = False,
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
@@ -102,8 +102,12 @@ def set_delivery_platform(
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
             return collection.find_one(
-                {c.ID: delivery_platform_id, c.ENABLED: enabled},
-                {c.ENABLED: 0},
+                {
+                    c.ID: delivery_platform_id,
+                    c.ENABLED: enabled,
+                    c.DELETED: False,
+                },
+                {c.DELETED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -237,8 +241,9 @@ def set_connection_status(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -303,8 +308,9 @@ def set_authentication_details(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -386,8 +392,9 @@ def set_name(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -439,11 +446,8 @@ def set_platform_type(
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -458,8 +462,9 @@ def set_platform_type(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
+            {c.DELETED: 0},
             upsert=False,
             new=True,
         )
@@ -497,6 +502,7 @@ def get_platform_type(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+# pylint: disable=too-many-locals
 def update_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
@@ -505,6 +511,8 @@ def update_delivery_platform(
     authentication_details: dict = None,
     added: bool = None,
     user_id: ObjectId = None,
+    enabled: bool = None,
+    deleted: bool = None,
 ) -> dict:
     """A function to update delivery platform configuration.
 
@@ -516,16 +524,15 @@ def update_delivery_platform(
         authentication_details (dict): A dict containing delivery platform authentication details.
         added (bool): if the delivery platform is added.
         user_id (ObjectId): User id of user updating delivery platform. This is Optional.
+        enabled (bool): if the delivery platform is enabled.
+        deleted (bool): if the delivery platform is deleted (soft-delete).
 
     Returns:
         dict: Updated delivery platform configuration.
     """
 
-    if delivery_platform_type not in [
-        c.DELIVERY_PLATFORM_FACEBOOK,
-        c.DELIVERY_PLATFORM_AMAZON,
-        c.DELIVERY_PLATFORM_GOOGLE,
-        c.DELIVERY_PLATFORM_SFMC,
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
     ]:
         raise de.UnknownDeliveryPlatformType(delivery_platform_type)
 
@@ -556,6 +563,12 @@ def update_delivery_platform(
 
     if added is not None:
         update_doc[c.ADDED] = added
+
+    if enabled is not None:
+        update_doc[c.ENABLED] = enabled
+
+    if deleted is not None:
+        update_doc[c.DELETED] = deleted
 
     # Add user object only if it is available
     if ObjectId.is_valid(user_id) and name_exists(
@@ -646,7 +659,7 @@ def create_delivery_platform_lookalike_audience(
         c.LOOKALIKE_AUD_NAME: name,
         c.LOOKALIKE_AUD_COUNTRY: country,
         c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
-        c.ENABLED: True,
+        c.DELETED: False,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
@@ -669,7 +682,7 @@ def create_delivery_platform_lookalike_audience(
             )
 
         ret_doc = collection.find_one(
-            {c.ID: inserted_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: inserted_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -701,7 +714,7 @@ def get_delivery_platform_lookalike_audience(
 
     try:
         ret_doc = collection.find_one(
-            {c.ID: lookalike_audience_id, c.ENABLED: True}, {c.ENABLED: 0}
+            {c.ID: lookalike_audience_id, c.DELETED: False}, {c.DELETED: 0}
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -731,7 +744,7 @@ def get_all_delivery_platform_lookalike_audiences(
     collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
 
     try:
-        ret_docs = list(collection.find({c.ENABLED: True}, {c.ENABLED: 0}))
+        ret_docs = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -786,7 +799,7 @@ def update_lookalike_audience_name(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -828,7 +841,7 @@ def update_lookalike_audience_size_percentage(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -897,7 +910,7 @@ def update_lookalike_audience(
     try:
         if update_doc:
             ret_doc = collection.find_one_and_update(
-                {c.ID: lookalike_audience_id, c.ENABLED: True},
+                {c.ID: lookalike_audience_id, c.DELETED: False},
                 {"$set": update_doc},
                 upsert=False,
                 new=True,
@@ -958,7 +971,7 @@ def set_delivery_job(
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
             delivery_platform_generic_campaigns
         ),
-        c.ENABLED: True,
+        c.DELETED: False,
     }
     if engagement_id is not None:
         doc[c.ENGAGEMENT_ID] = engagement_id
@@ -974,7 +987,7 @@ def set_delivery_job(
 
         if delivery_job_id is not None:
             return collection.find_one(
-                {c.ID: delivery_job_id, c.ENABLED: True}, {c.ENABLED: 0}
+                {c.ID: delivery_job_id, c.DELETED: False}, {c.DELETED: 0}
             )
 
     except pymongo.errors.OperationFailure as exc:
@@ -1009,11 +1022,11 @@ def get_delivery_job(
 
     try:
         # set mongo_filter based on engagement id
-        mongo_filter = {c.ID: delivery_job_id, c.ENABLED: True}
+        mongo_filter = {c.ID: delivery_job_id, c.DELETED: False}
         if engagement_id is not None:
             mongo_filter[c.ENGAGEMENT_ID] = engagement_id
 
-        return collection.find_one(mongo_filter, {c.ENABLED: 0})
+        return collection.find_one(mongo_filter, {c.DELETED: 0})
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -1055,7 +1068,7 @@ def set_delivery_job_status(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.ENABLED: True},
+            {c.ID: delivery_job_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1124,7 +1137,7 @@ def set_delivery_job_audience_size(
     # Update the doc.
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.ENABLED: True},
+            {c.ID: delivery_job_id, c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -1168,7 +1181,7 @@ def set_delivery_job_lookalike_audiences(
     # Update the doc.
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_job_id, c.ENABLED: True},
+            {c.ID: delivery_job_id, c.DELETED: False},
             {"$set": update_dict},
             upsert=False,
             return_document=pymongo.ReturnDocument.AFTER,
@@ -1232,7 +1245,7 @@ def get_delivery_jobs(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        mongo_filter = {c.ENABLED: True}
+        mongo_filter = {c.DELETED: False}
         if audience_id:
             mongo_filter[c.AUDIENCE_ID] = audience_id
         if engagement_id:
@@ -1282,9 +1295,9 @@ def get_audience_recent_delivery_job(
             {
                 c.AUDIENCE_ID: audience_id,
                 c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-                c.ENABLED: True,
+                c.DELETED: False,
             },
-            {c.ENABLED: 0},
+            {c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1367,7 +1380,7 @@ def favorite_delivery_platform(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1407,7 +1420,7 @@ def unfavorite_delivery_platform(
 
     try:
         doc = collection.find_one_and_update(
-            {c.ID: delivery_platform_id, c.ENABLED: True},
+            {c.ID: delivery_platform_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1447,7 +1460,7 @@ def favorite_lookalike_audience(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1487,7 +1500,7 @@ def unfavorite_lookalike_audience(
 
     try:
         ret_doc = collection.find_one_and_update(
-            {c.ID: lookalike_audience_id, c.ENABLED: True},
+            {c.ID: lookalike_audience_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
             new=True,
@@ -1517,8 +1530,8 @@ def get_delivery_platform_delivery_jobs(
 
     try:
         cursor = collection.find(
-            {c.DELIVERY_PLATFORM_ID: delivery_platform_id, c.ENABLED: True},
-            {c.ENABLED: 0},
+            {c.DELIVERY_PLATFORM_ID: delivery_platform_id, c.DELETED: False},
+            {c.DELETED: 0},
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -1641,8 +1654,8 @@ def get_performance_metrics(
             Min start time of metrics. Defaults to None.
         max_end_time (datetime.datetime, optional):
             Max start time of metrics. Defaults to None.
-        pending_transfer_for_feedback (bool, optional): If True, retrieve only
-            metrics that have not been transferred for feedback. Defaults to None.
+        pending_transfer_for_feedback (bool): If True, retrieve only
+            metrics that have not been transferred for feedback. Defaults to False.
 
     Raises:
         de.InvalidID: Invalid ID for delivery job.
@@ -1730,3 +1743,37 @@ set_transferred_for_feedback = partial(
     _set_performance_metrics_status,
     performance_metrics_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
 )
+
+
+def get_all_performance_metrics(
+    database: DatabaseClient,
+    pending_transfer_for_feedback: bool = False,
+) -> list:
+    """Retrieve all campaign performance metrics.
+
+    Args:
+        database (DatabaseClient): database client.
+        pending_transfer_for_feedback (bool): If True, retrieve only
+            metrics that have not been transferred for feedback. Defaults to False.
+
+    Returns:
+        list: list of performance metrics.
+    """
+
+    metric_docs = None
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    try:
+        if pending_transfer_for_feedback:
+            metric_docs = list(
+                collection.find(
+                    {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+                )
+            )
+        else:
+            metric_docs = list(collection.find())
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return metric_docs

@@ -8,8 +8,7 @@ from typing import Tuple
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
-from flask import Blueprint, request
-from flask_apispec import marshal_with
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
@@ -33,19 +32,27 @@ from huxunify.api.schema.engagement import (
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
+    AudiencePerformanceDisplayAdsSchema,
+    AudiencePerformanceEmailSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    api_error_handler,
+    get_user_id,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.courier import (
+    get_destination_config,
+    get_audience_destination_pairs,
+)
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
-# TODO - implement after HUS-443 is done to grab user/okta_id
+
 # TODO Add updated_by fields to engagement_mgmt in set, update and delete methods
 @engagement_bp.before_request
 @secured()
@@ -72,7 +79,6 @@ class EngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
@@ -88,7 +94,14 @@ class EngagementSearch(SwaggerView):
         """
 
         try:
-            return get_engagements(get_db_client()), HTTPStatus.OK.value
+            return (
+                jsonify(
+                    EngagementGetSchema().dump(
+                        get_engagements(get_db_client()), many=True
+                    )
+                ),
+                HTTPStatus.OK.value,
+            )
 
         except Exception as exc:
 
@@ -137,7 +150,6 @@ class IndividualEngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @marshal_with(EngagementGetSchema)
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
@@ -157,11 +169,16 @@ class IndividualEngagementSearch(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         try:
+            eng = get_engagement(
+                get_db_client(), engagement_id=ObjectId(engagement_id)
+            )
+
+            if not eng:
+                return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
+
             return (
-                get_engagement(
-                    get_db_client(), engagement_id=ObjectId(engagement_id)
-                ),
-                HTTPStatus.OK.value,
+                EngagementGetSchema().dump(eng),
+                HTTPStatus.OK,
             )
 
         except Exception as exc:
@@ -198,8 +215,8 @@ class SetEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        db_c.DESTINATIONS: [
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e5",
                                 "contact_list": "sfmc_extension_name",
@@ -305,6 +322,14 @@ class UpdateEngagement(SwaggerView):
 
     parameters = [
         {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
             "name": "body",
             "in": "body",
             "type": "object",
@@ -314,16 +339,19 @@ class UpdateEngagement(SwaggerView):
                 db_c.ENGAGEMENT_DESCRIPTION: "Engagement Description",
                 db_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ],
-                db_c.ENGAGEMENT_DELIVERY_SCHEDULE: None,
             },
-        }
+        },
     ]
 
     responses = {
@@ -339,7 +367,8 @@ class UpdateEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def put(self, engagement_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def put(self, engagement_id: str, user_id: ObjectId) -> Tuple[dict, int]:
         """Updates an engagement.
 
         ---
@@ -348,6 +377,7 @@ class UpdateEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Engagement updated, HTTP status.
@@ -356,8 +386,6 @@ class UpdateEngagement(SwaggerView):
 
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
-        user_id = ObjectId()
 
         try:
             body = EngagementPostSchema().load(request.get_json())
@@ -510,10 +538,14 @@ class AddAudienceEngagement(SwaggerView):
             "example": {
                 api_c.AUDIENCES: [
                     {
-                        api_c.AUDIENCE_ID: "60ae035b6c5bf45da27f17d6",
-                        api_c.DESTINATION_IDS: [
-                            "60ae035b6c5bf45da27f17e5",
-                            "60ae035b6c5bf45da27f17e6",
+                        api_c.ID: "60ae035b6c5bf45da27f17d6",
+                        api_c.DESTINATIONS: [
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e5",
+                            },
+                            {
+                                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                            },
                         ],
                     }
                 ]
@@ -534,7 +566,8 @@ class AddAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def post(self, engagement_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def post(self, engagement_id: str, user_id: ObjectId) -> Tuple[dict, int]:
         """Adds audience to engagement.
 
         ---
@@ -543,6 +576,7 @@ class AddAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience Engagement added, HTTP status.
@@ -551,8 +585,6 @@ class AddAudienceEngagement(SwaggerView):
 
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
-        user_id = ObjectId()
 
         try:
             body = AudienceEngagementSchema().load(
@@ -563,7 +595,10 @@ class AddAudienceEngagement(SwaggerView):
 
         try:
             append_audiences_to_engagement(
-                get_db_client(), engagement_id, user_id, body[api_c.AUDIENCES]
+                get_db_client(),
+                ObjectId(engagement_id),
+                user_id,
+                body[api_c.AUDIENCES],
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:
@@ -625,7 +660,10 @@ class DeleteAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def delete(self, engagement_id: str) -> Tuple[dict, int]:
+    @get_user_id()
+    def delete(
+        self, engagement_id: str, user_id: ObjectId
+    ) -> Tuple[dict, int]:
         """Deletes audience from engagement.
 
         ---
@@ -634,6 +672,7 @@ class DeleteAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
+            user_id (ObjectId): user_id extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience deleted from engagement, HTTP status
@@ -643,21 +682,24 @@ class DeleteAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        user_id = ObjectId()
-
+        audience_ids = []
         try:
             body = AudienceEngagementDeleteSchema().load(
                 request.get_json(), partial=True
             )
+            for audience_id in body[api_c.AUDIENCE_IDS]:
+                if not ObjectId.is_valid(audience_id):
+                    return HTTPStatus.BAD_REQUEST
+                audience_ids.append(ObjectId(audience_id))
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
             remove_audiences_from_engagement(
                 get_db_client(),
-                engagement_id,
+                ObjectId(engagement_id),
                 user_id,
-                body[api_c.AUDIENCE_IDS],
+                audience_ids,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
         except Exception as exc:
@@ -692,7 +734,7 @@ class EngagementDeliverView(SwaggerView):
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "5f5f7262997acad4bac4373b",
+            "example": "60bfeaa3fa9ba04689906f7a",
         }
     ]
 
@@ -712,6 +754,7 @@ class EngagementDeliverView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, engagement_id: str) -> Tuple[dict, int]:
         """Delivers all audiences for an engagement.
 
@@ -728,10 +771,6 @@ class EngagementDeliverView(SwaggerView):
 
         """
 
-        # TODO - implement after HUS-479 is done
-        # pylint: disable=unused-variable
-        user_id = ObjectId()
-
         # validate object id
         if not ObjectId.is_valid(engagement_id):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
@@ -740,17 +779,29 @@ class EngagementDeliverView(SwaggerView):
         engagement_id = ObjectId(engagement_id)
 
         # check if engagement exists
-        engagement = get_engagement(get_db_client(), engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
                 "message": "Engagement does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate delivery route
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # submit jobs for all the audience/destination pairs
+        delivery_job_ids = []
+
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
+            batch_destination = get_destination_config(database, *pair)
+            batch_destination.register()
+            batch_destination.submit()
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
+
         return {
             "message": f"Successfully created delivery job(s) "
-            f"for engagement ID {engagement_id}"
+            f"{','.join(delivery_job_ids)}"
         }, HTTPStatus.OK
 
 
@@ -799,6 +850,7 @@ class EngagementDeliverAudienceView(SwaggerView):
     tags = [api_c.DELIVERY_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
         """Delivers one audience for an engagement.
 
@@ -816,10 +868,6 @@ class EngagementDeliverAudienceView(SwaggerView):
 
         """
 
-        # TODO - implement after HUS-479 is done
-        # pylint: disable=unused-variable
-        user_id = ObjectId()
-
         # validate object id
         if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
             return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
@@ -829,7 +877,8 @@ class EngagementDeliverAudienceView(SwaggerView):
         audience_id = ObjectId(audience_id)
 
         # check if engagement exists
-        engagement = get_engagement(get_db_client(), engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
                 "message": "Engagement does not exist."
@@ -842,28 +891,35 @@ class EngagementDeliverAudienceView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
             }, HTTPStatus.BAD_REQUEST
 
         # validate the audience exists
-        if not orchestration_management.get_audience(
-            get_db_client(), audience_id
-        ):
+        if not orchestration_management.get_audience(database, audience_id):
             return {
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate delivery route
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # submit jobs for the audience/destination pairs
+        delivery_job_ids = []
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
+            if pair[0] != audience_id:
+                continue
+            batch_destination = get_destination_config(database, *pair)
+            batch_destination.register()
+            batch_destination.submit()
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
+
         return {
             "message": f"Successfully created delivery job(s) "
-            f"for engagement ID {engagement_id} and "
-            f"audience ID {audience_id}"
+            f"{','.join(delivery_job_ids)}"
         }, HTTPStatus.OK
 
 
@@ -922,6 +978,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
+    @api_error_handler()
     def post(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
@@ -942,10 +999,6 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         """
 
-        # TODO - implement after HUS-479 is done
-        # pylint: disable=unused-variable
-        user_id = ObjectId()
-
         # validate object id
         if not all(
             ObjectId.is_valid(x)
@@ -959,7 +1012,8 @@ class EngagementDeliverDestinationView(SwaggerView):
         destination_id = ObjectId(destination_id)
 
         # check if engagement exists
-        engagement = get_engagement(get_db_client(), engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
                 "message": "Engagement does not exist."
@@ -972,9 +1026,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
-        audience_ids = [
-            x[db_c.AUDIENCE_ID] for x in engagement[db_c.AUDIENCES]
-        ]
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
                 "message": "Audience is not attached to the engagement."
@@ -984,17 +1036,18 @@ class EngagementDeliverDestinationView(SwaggerView):
         valid_destination = False
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if destination_id == destination[db_c.DELIVERY_PLATFORM_ID]:
+                if destination_id == destination[db_c.OBJECT_ID]:
                     valid_destination = True
 
         if not valid_destination:
             return {
-                "message": "Destination is not attached to the engagement audience."
+                "message": "Destination is not attached to the "
+                "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
         # validate destination exists
         destination = delivery_platform_management.get_delivery_platform(
-            get_db_client(), destination_id
+            database, destination_id
         )
         if not destination:
             return {
@@ -1002,20 +1055,288 @@ class EngagementDeliverDestinationView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # validate the audience exists
-        audience = orchestration_management.get_audience(
-            get_db_client(), audience_id
-        )
+        audience = orchestration_management.get_audience(database, audience_id)
         if not audience:
             return {
                 "message": "Audience does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        # TODO - hook up to connectors for HUS-437 in Sprint 10
+        # submit jobs for the audience/destination pairs
+        delivery_job_ids = []
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
+            if pair != [audience_id, destination_id]:
+                continue
+            batch_destination = get_destination_config(database, *pair)
+            batch_destination.register()
+            batch_destination.submit()
+            delivery_job_ids.append(
+                str(batch_destination.audience_delivery_job_id)
+            )
 
         # validate delivery route
         return {
-            "message": f"Successfully created delivery job(s)"
-            f" for engagement ID {engagement_id} "
-            f"and audience ID {audience_id} to "
-            f"destination ID {destination_id}"
+            "message": f"Successfully created delivery job(s) "
+            f"{','.join(delivery_job_ids)}"
         }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.DISPLAY_ADS}",
+    "AudiencePerformanceDisplayAdsSchema",
+)
+class EngagementMetricsDisplayAds(SwaggerView):
+    """
+    Display Ads Engagement Metrics
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60b8d6d7d3cf80b4edcd890b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Display Ads Performance Metrics",
+            "schema": {
+                "example": {
+                    "display_ads_summary": "Audience Metrics Display Ad"
+                },
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    # pylint: disable=unused-argument
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
+        """Retrieves display ad performance metrics.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): ID of an engagement
+
+        Returns:
+            Tuple[dict, int]: Response of Display Ads Performance Metrics,
+                HTTP Status Code
+
+        """
+
+        display_ads = {
+            "summary": {
+                api_c.SPEND: 2000000,
+                api_c.REACH: 500000,
+                api_c.IMPRESSIONS: 456850,
+                api_c.CONVERSIONS: 521006,
+                api_c.CLICKS: 498587,
+                api_c.FREQUENCY: 500,
+                api_c.CPM: 850,
+                api_c.CTR: 0.5201,
+                api_c.CPA: 652,
+                api_c.CPC: 485,
+                api_c.ENGAGEMENT_RATE: 0.5601,
+            },
+            "audience_performance": [
+                {
+                    api_c.AUDIENCE_NAME: "audience_1",
+                    api_c.SPEND: 2000000,
+                    api_c.REACH: 500000,
+                    api_c.IMPRESSIONS: 456850,
+                    api_c.CONVERSIONS: 521006,
+                    api_c.CLICKS: 498587,
+                    api_c.FREQUENCY: 500,
+                    api_c.CPM: 850,
+                    api_c.CTR: 0.5201,
+                    api_c.CPA: 652,
+                    api_c.CPC: 485,
+                    api_c.ENGAGEMENT_RATE: 0.5601,
+                    "campaigns": [
+                        {
+                            api_c.DESTINATION_NAME: "Facebook",
+                            api_c.IS_MAPPED: True,
+                            api_c.SPEND: 2000000,
+                            api_c.REACH: 500000,
+                            api_c.IMPRESSIONS: 456850,
+                            api_c.CONVERSIONS: 521006,
+                            api_c.CLICKS: 498587,
+                            api_c.FREQUENCY: 500,
+                            api_c.CPM: 850,
+                            api_c.CTR: 0.5201,
+                            api_c.CPA: 652,
+                            api_c.CPC: 485,
+                            api_c.ENGAGEMENT_RATE: 0.5601,
+                        },
+                        {
+                            api_c.DESTINATION_NAME: "Salesforce Marketing Cloud",
+                            api_c.IS_MAPPED: True,
+                            api_c.SPEND: 2000000,
+                            api_c.REACH: 500000,
+                            api_c.IMPRESSIONS: 456850,
+                            api_c.CONVERSIONS: 521006,
+                            api_c.CLICKS: 498587,
+                            api_c.FREQUENCY: 500,
+                            api_c.CPM: 850,
+                            api_c.CTR: 0.5201,
+                            api_c.CPA: 652,
+                            api_c.CPC: 485,
+                            api_c.ENGAGEMENT_RATE: 0.5601,
+                        },
+                    ],
+                },
+            ],
+        }
+        return (
+            AudiencePerformanceDisplayAdsSchema().dump(display_ads),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/"
+    f"{api_c.EMAIL}",
+    "AudiencePerformanceEmailSchema",
+)
+class EngagementMetricsEmail(SwaggerView):
+    """
+    Email Engagement Metrics
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60b8d6d7d3cf80b4edcd890b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Email Audience Performance Metrics",
+            "schema": {
+                "example": {"email_summary": "Audience Metrics Email"},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve email engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    # pylint: disable=unused-argument
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
+        """Retrieves email performance metrics.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): ID of an engagement
+
+        Returns:
+            Tuple[dict, int]: Response of Email Performance Metrics,
+                HTTP Status Code
+
+        """
+
+        email = {
+            "summary": {
+                api_c.EMAIL: 1200000,
+                api_c.SENT: 125,
+                api_c.HARD_BOUNCES: 0.1,
+                api_c.DELIVERED: 125,
+                api_c.DELIVERED_RATE: 0.1,
+                api_c.OPEN: 365200,
+                api_c.OPEN_RATE: 0.1,
+                api_c.CLICKS: 365200,
+                api_c.CTR: 0.7208,
+                api_c.COTR: 0.7208,
+                api_c.UNIQUE_CLICKS: 365200,
+                api_c.UNIQUE_OPENS: 225100,
+                api_c.UNSUBSCRIBE: 365200,
+                api_c.UNSUBSCRIBE_RATE: 0.7208,
+            },
+            "audience_performance": [
+                {
+                    api_c.AUDIENCE_NAME: "audience_1",
+                    api_c.EMAIL: 1200000,
+                    api_c.SENT: 125,
+                    api_c.HARD_BOUNCES: 0.1,
+                    api_c.DELIVERED: 125,
+                    api_c.DELIVERED_RATE: 0.1,
+                    api_c.OPEN: 365200,
+                    api_c.OPEN_RATE: 0.1,
+                    api_c.CLICKS: 365200,
+                    api_c.CTR: 0.7208,
+                    api_c.COTR: 0.7208,
+                    api_c.UNIQUE_CLICKS: 365200,
+                    api_c.UNIQUE_OPENS: 225100,
+                    api_c.UNSUBSCRIBE: 365200,
+                    api_c.UNSUBSCRIBE_RATE: 0.7208,
+                    "campaigns": [
+                        {
+                            api_c.DESTINATION_NAME: "Facebook",
+                            api_c.IS_MAPPED: True,
+                            api_c.EMAIL: 1200000,
+                            api_c.SENT: 125,
+                            api_c.HARD_BOUNCES: 0.1,
+                            api_c.DELIVERED: 125,
+                            api_c.DELIVERED_RATE: 0.1,
+                            api_c.OPEN: 365200,
+                            api_c.OPEN_RATE: 0.1,
+                            api_c.CLICKS: 365200,
+                            api_c.CTR: 0.7208,
+                            api_c.COTR: 0.7208,
+                            api_c.UNIQUE_CLICKS: 365200,
+                            api_c.UNIQUE_OPENS: 225100,
+                            api_c.UNSUBSCRIBE: 365200,
+                            api_c.UNSUBSCRIBE_RATE: 0.7208,
+                        },
+                        {
+                            api_c.DESTINATION_NAME: "Salesforce Marketing Cloud",
+                            api_c.IS_MAPPED: True,
+                            api_c.EMAIL: 1200000,
+                            api_c.SENT: 125,
+                            api_c.HARD_BOUNCES: 0.1,
+                            api_c.DELIVERED: 125,
+                            api_c.DELIVERED_RATE: 0.1,
+                            api_c.OPEN: 365200,
+                            api_c.OPEN_RATE: 0.1,
+                            api_c.CLICKS: 365200,
+                            api_c.CTR: 0.7208,
+                            api_c.COTR: 0.7208,
+                            api_c.UNIQUE_CLICKS: 365200,
+                            api_c.UNIQUE_OPENS: 225100,
+                            api_c.UNSUBSCRIBE: 365200,
+                            api_c.UNSUBSCRIBE_RATE: 0.7208,
+                        },
+                    ],
+                },
+            ],
+        }
+        return (
+            AudiencePerformanceEmailSchema().dump(email),
+            HTTPStatus.OK,
+        )

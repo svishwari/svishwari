@@ -10,11 +10,9 @@
     <label class="d-flex mb-2 neroBlack--text">Select a destination</label>
 
     <div class="d-flex align-center mb-10">
-      <template v-if="isDestinationSelected">
-        <Logo :type="destination.type" />
-        <span class="pl-2">
-          {{ destination.name }}
-        </span>
+      <template v-if="selectedDestination">
+        <Logo :type="selectedDestination.type" />
+        <span class="pl-2">{{ selectedDestination.name }}</span>
         <a class="pl-2" color="primary" @click="toggleDrawer()">Change</a>
       </template>
       <template v-else>
@@ -25,39 +23,38 @@
     </div>
 
     <v-form
+      v-if="selectedDestination && destinationFields"
       v-model="isFormValid"
-      v-if="isDestinationSelected && destinationFields"
     >
       <div class="destination-auth-wrap background pa-5 rounded mb-10">
         <v-row>
           <v-col
+            v-for="key in Object.keys(destinationFields)"
+            :key="key"
             cols="6"
-            v-for="fieldKey in Object.keys(destinationFields)"
-            :key="fieldKey"
           >
             <TextField
-              v-model="authenticationDetails[fieldKey]"
-              :label-text="destinationFields[fieldKey].name"
-              :required="destinationFields[fieldKey].required"
+              v-model="authenticationDetails[key]"
+              :label-text="destinationFields[key].name"
+              :required="destinationFields[key].required"
               :rules="[rules.required]"
               :placeholderText="
-                destinationFields[fieldKey].type == 'text'
-                  ? `Enter ${destinationFields[fieldKey].name}`
+                destinationFields[key].type == 'text'
+                  ? `Enter ${destinationFields[key].name}`
                   : `**********`
               "
-              :input-type="destinationFields[fieldKey].type"
-              :help-text="destinationFields[fieldKey].description"
+              :input-type="destinationFields[key].type"
+              :help-text="destinationFields[key].description"
               @blur="resetValidation"
+              height="40"
               icon="mdi-alert-circle-outline"
-              class="mb-0"
-            ></TextField>
+            />
           </v-col>
         </v-row>
       </div>
       <div class="d-flex flex-wrap justify-end">
         <hux-button
           v-if="!isValidating"
-          :button-text="isValidated ? 'Success!' : 'Validate connection'"
           :icon="isValidated ? 'mdi-check' : null"
           :icon-position="isValidated ? 'left' : null"
           :variant="isValidated ? 'success' : 'primary'"
@@ -65,84 +62,87 @@
           :isTile="true"
           :isDisabled="!isFormValid"
           @click="validate()"
-        ></hux-button>
+        >
+          {{ isValidated ? "Success!" : "Validate connection" }}
+        </hux-button>
         <hux-button
           v-if="isValidating"
           class="processing-button"
-          button-text="Validating..."
           variant="primary"
           size="large"
           :isTile="true"
-        ></hux-button>
+        >
+          Validating...
+        </hux-button>
       </div>
     </v-form>
 
     <hux-footer slot="footer" max-width="850px">
-      <template v-slot:left>
+      <template #left>
         <hux-button
-          button-text="Cancel"
           variant="tertiary"
           size="large"
           :isTile="true"
           @click="cancel()"
-        ></hux-button>
+        >
+          <span class="primary--text">Cancel</span>
+        </hux-button>
       </template>
-      <template v-slot:right>
+      <template #right>
         <hux-button
-          button-text="Add &amp; return"
           variant="primary"
           size="large"
           :isTile="true"
           :isDisabled="!isValidated"
           @click="add()"
-        ></hux-button>
+        >
+          Add &amp; return
+        </hux-button>
       </template>
     </hux-footer>
 
     <Drawer v-model="drawer">
-      <template v-slot:header-left>
+      <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h5 font-weight-regular pr-2">Select a destination</h5>
-          <p class="mb-0">(select one)</p>
+          <h5 class="text-h3 pr-2">Select a destination</h5>
+          <span class="text-caption gray--text">(select one)</span>
         </div>
       </template>
-      <template v-slot:footer-left>
+      <template #footer-left>
         <div class="d-flex align-baseline">
-          <p class="font-weight-regular mb-0">
+          <span class="text-caption gray--text">
             {{ destinations.length }} results
-          </p>
+          </span>
         </div>
       </template>
-      <template v-slot:default>
-        <div class="ma-5 font-weight-light">
+      <template #default>
+        <div class="ma-3 font-weight-light">
           <CardHorizontal
-            v-for="(destination, index) in enabledDestinations"
+            v-for="destination in enabledDestinations"
             :key="destination.id"
             :title="destination.name"
             :icon="destination.type"
-            :isAdded="destination.is_added || index == selectedDestinationIndex"
+            :isAdded="destination.is_added || isSelected(destination.id)"
             :isAvailable="destination.is_enabled"
             :isAlreadyAdded="destination.is_added"
-            @click="onSelectDestination(index)"
+            @click="onSelectDestination(destination.id)"
             class="my-3"
           />
 
           <v-divider style="border-color: var(--v-zircon-base)" />
 
           <CardHorizontal
-            v-for="(destination, index) in disabledDestinations"
+            v-for="destination in disabledDestinations"
             :key="destination.id"
             :title="destination.name"
             :icon="destination.type"
-            :isAdded="destination.is_added || index == selectedDestinationIndex"
+            :isAdded="destination.is_added || isSelected(destination.id)"
             hideButton
             :isAvailable="destination.is_enabled"
             :isAlreadyAdded="destination.is_added"
             class="my-3"
           >
-            <span class="font-weight-light letter-spacing-sm"
-              ><i>Coming soon</i></span
-            >
+            <i class="font-weight-light letter-spacing-sm">Coming soon</i>
           </CardHorizontal>
         </div>
       </template>
@@ -161,7 +161,7 @@ import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 
 export default {
-  name: "add-destination",
+  name: "ConfigureDestination",
 
   components: {
     Page,
@@ -175,8 +175,9 @@ export default {
 
   data() {
     return {
+      loading: false,
       drawer: false,
-      selectedDestinationIndex: -1,
+      selectedDestinationId: null,
       authenticationDetails: {},
       isValidated: false,
       isValidating: false,
@@ -190,19 +191,18 @@ export default {
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
+      destination: "destinations/single",
       destinationConstants: "destinations/constants",
     }),
 
-    destination() {
-      return this.destinations[this.selectedDestinationIndex] || null
+    selectedDestination() {
+      return this.selectedDestinationId
+        ? this.destination(this.selectedDestinationId)
+        : null
     },
 
     destinationFields() {
-      return this.destinationConstants[this.destination.type] || null
-    },
-
-    isDestinationSelected() {
-      return Boolean(this.destination)
+      return this.destinationConstants[this.selectedDestination.type] || null
     },
 
     enabledDestinations() {
@@ -227,11 +227,15 @@ export default {
       this.drawer = !this.drawer
     },
 
-    onSelectDestination(index) {
-      this.selectedDestinationIndex = index
-      this.isValidated = false
+    isSelected(id) {
+      return this.selectedDestination && this.selectedDestination.id === id
+    },
+
+    onSelectDestination(id) {
+      this.selectedDestinationId = id
+      this.resetValidation()
       this.authenticationDetails = {}
-      setTimeout(() => (this.drawer = false), 470)
+      this.drawer = false
     },
 
     resetValidation() {
@@ -243,7 +247,7 @@ export default {
 
       try {
         await this.validateDestination({
-          type: this.destination.type,
+          type: this.selectedDestination.type,
           authentication_details: this.authenticationDetails,
         })
         this.isValidated = true
@@ -258,7 +262,7 @@ export default {
     async add() {
       try {
         await this.addDestination({
-          id: this.destination.id,
+          id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
         })
         this.$router.push({ name: "Connections" })
@@ -274,11 +278,16 @@ export default {
   },
 
   async mounted() {
-    await this.getDestinationConstants()
-    await this.getDestinations()
+    this.loading = true
+
     if (this.$route.query.select) {
       this.drawer = true
     }
+
+    await this.getDestinationConstants()
+    await this.getDestinations()
+
+    this.loading = false
   },
 }
 </script>

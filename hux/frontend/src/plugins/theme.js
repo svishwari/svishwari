@@ -27,4 +27,6 @@ export default {
   pillBlue: colors.dullBlue,
   persianGreen: colors.persianGreen,
   appBodyGrey: colors.appBodyGrey,
+  smoke: colors.smoke,
+  cerulean: colors.cerulean,
 }

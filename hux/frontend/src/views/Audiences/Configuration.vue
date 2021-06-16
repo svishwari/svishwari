@@ -4,7 +4,7 @@
       <div class="heading font-weight-light neroBlack--text">
         Add an audience
       </div>
-      <div class="sub-heading font-weight-regular">
+      <div class="sub-heading text-h6 neroBlack--text">
         Build a target audience from the data you own. Add the attributes you
         want to involve in this particular audience and where you wish to send
         this audience.
@@ -16,16 +16,13 @@
       <div class="row overview-list mb-0 ml-0 mt-1">
         <MetricCard
           class="list-item mr-3"
-          width="11.368852459016393%"
-          :min-width="126.5"
-          :height="80"
           v-for="(item, i) in overviewListItems"
           :key="i"
+          :grow="i === 0 ? 2 : 1"
           :title="item.title"
           :subtitle="item.subtitle"
           :icon="item.icon"
-          :interactable="false"
-        ></MetricCard>
+        />
       </div>
       <v-divider class="divider mt-2 mb-9"></v-divider>
     </div>
@@ -34,7 +31,7 @@
       <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
         <v-timeline align-top dense class="">
           <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>1</span>
             </template>
             <v-row class="pt-1">
@@ -49,9 +46,9 @@
                   backgroundColor="white"
                   required
                   v-model="audience.audienceName"
-                  class="mt-1 aud-name-field text-caption neroBlack--text pt-2"
+                  class="mt-1 text-caption neroBlack--text pt-2"
                   :rules="audienceNamesRules"
-                ></TextField>
+                />
               </v-col>
               <v-col cols="8">
                 <div class="mt-8 ml-15 text-caption neroBlack--text">
@@ -86,7 +83,7 @@
             </v-row>
           </v-timeline-item>
           <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>2</span>
             </template>
             <v-row class="pt-1 pr-0">
@@ -97,7 +94,7 @@
             color="blue"
             class="timeline-section disable-down-timeline mb-15"
           >
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>3</span>
             </template>
             <v-row class="pt-1">
@@ -112,21 +109,32 @@
                     class="add-icon mt-1"
                     color="primary"
                     @click="toggleDrawer()"
-                    >mdi-plus-circle</v-icon
                   >
-                  <Logo
-                    class="added-logo ml-2"
-                    v-for="destination in audience.destinations"
-                    :key="destination.id"
-                    :type="destination.type"
-                    :size="18"
-                  />
+                    mdi-plus-circle
+                  </v-icon>
+                  <tooltip>
+                    <template slot="label-content">
+                      <Logo
+                        class="added-logo ml-2"
+                        v-for="destination in audience.destinations"
+                        :key="destination.id"
+                        :type="destination.type"
+                        :size="18"
+                        @mouseover.native="hoverItem = destination.name"
+                      />
+                    </template>
+                    <template slot="hover-content">
+                      <div class="d-flex align-center">
+                        Remove {{ hoverItem }}
+                      </div>
+                    </template>
+                  </tooltip>
                 </div>
               </v-col>
             </v-row>
           </v-timeline-item>
           <v-timeline-item class="timeline-section disabled">
-            <template v-slot:icon class="timeline-icon-section">
+            <template #icon class="timeline-icon-section">
               <span>4</span>
             </template>
             <v-row class="pt-1">
@@ -142,59 +150,59 @@
       </v-form>
 
       <HuxFooter maxWidth="inherit">
-        <template v-slot:left>
+        <template #left>
           <huxButton
-            ButtonText="Cancel"
             variant="white"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="40"
-            class="ma-2 ml-0"
             @click.native="$router.go(-1)"
-          ></huxButton>
+          >
+            <span class="primary--text">Cancel</span>
+          </huxButton>
         </template>
-        <template v-slot:right>
+        <template #right>
           <huxButton
-            ButtonText="Create"
             variant="primary"
-            v-bind:isTile="true"
+            isTile
             width="94"
             height="44"
-            class="ma-2"
             @click="createAudience()"
             :isDisabled="!isAudienceFormValid"
-          ></huxButton>
+          >
+            Create
+          </huxButton>
         </template>
       </HuxFooter>
       <!-- Add destination workflow -->
-      <drawer v-model="destinationDrawer.insideFlow">
-        <template v-slot:header-left>
+      <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
+        <template #header-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
           >
-            <h5 class="text-h5 font-weight-regular pr-2">
+            <h3 class="text-h3 font-weight-light pr-2">
               Select a destination to add
-            </h5>
+            </h3>
           </div>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 2"
           >
-            <h5 class="text-h5 font-weight-regular pr-2 d-flex align-center">
+            <h3 class="text-h3 pr-2 d-flex align-center">
               <Logo :type="destinationDrawer.selectedDestination[0].type" />
-              <div class="pl-2 font-weight-regular">
+              <div class="pl-2 font-weight-light">
                 {{ destinationDrawer.selectedDestination[0].name }}
               </div>
-            </h5>
+            </h3>
           </div>
         </template>
 
-        <template v-slot:default>
-          <v-stepper v-model="destinationDrawer.viewStep">
+        <template #default>
+          <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
             <v-stepper-items>
               <v-stepper-content step="1">
-                <div class="ma-5">
+                <div>
                   <CardHorizontal
                     v-for="destination in destinationsList"
                     :key="destination.id"
@@ -206,7 +214,7 @@
                     "
                     :isAvailable="destination.is_enabled"
                     :isAlreadyAdded="destination.is_added"
-                    @click="onSelectDestination(index, destination)"
+                    @click="onSelectDestination(destination)"
                     class="my-3"
                   />
                 </div>
@@ -218,24 +226,25 @@
           </v-stepper>
         </template>
 
-        <template v-slot:footer-right>
+        <template #footer-right>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Add"
               variant="primary"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
               class="ma-2"
               @click="addDestinationToAudience()"
-            ></huxButton>
+            >
+              Add
+            </huxButton>
           </div>
         </template>
 
-        <template v-slot:footer-left>
+        <template #footer-left>
           <div
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
@@ -247,14 +256,15 @@
             v-if="destinationDrawer.viewStep == 2"
           >
             <huxButton
-              ButtonText="Back"
               variant="white"
-              v-bind:isTile="true"
+              isTile
               width="80"
               height="40"
-              class="ma-2"
+              class="ma-2 drawer-back"
               @click.native="destinationDrawer.viewStep = 1"
-            ></huxButton>
+            >
+              Back
+            </huxButton>
           </div>
         </template>
       </drawer>
@@ -281,6 +291,7 @@ import CardHorizontal from "@/components/common/CardHorizontal"
 import AddDestination from "@/views/Audiences/AddDestination"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import Logo from "@/components/common/Logo"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "Configuration",
@@ -296,6 +307,7 @@ export default {
     AddDestination,
     Logo,
     AttachEngagement,
+    Tooltip,
   },
   data() {
     return {
@@ -332,6 +344,7 @@ export default {
         viewStep: 1,
         selectedDestination: [],
       },
+      hoverItem: "",
     }
   },
 
@@ -394,7 +407,7 @@ export default {
       this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
     },
 
-    onSelectDestination(index, selected) {
+    onSelectDestination(selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
         if (selected && selected.type === "salesforce") {
@@ -405,6 +418,13 @@ export default {
         } else {
           this.audience.destinations.push(selected)
           this.toggleDrawer()
+        }
+      } else {
+        var idx = this.audience.destinations.findIndex(
+          (item) => item.id == selected.id
+        )
+        if (idx > -1) {
+          this.audience.destinations.splice(idx, 1)
         }
       }
     },
@@ -497,7 +517,6 @@ export default {
     line-height: 40px;
   }
   .sub-heading {
-    font-size: 14px;
     line-height: 22px;
     max-width: 910px;
   }
@@ -549,32 +568,6 @@ export default {
       background-repeat: repeat-x, repeat-y;
       background-size: 12px 0px, 1px 12px;
     }
-    .aud-name-field {
-      .v-input {
-        .v-input__control {
-          .v-input__slot {
-            min-height: 40px;
-            .v-text-field__slot {
-              .v-label {
-                top: 9px;
-              }
-            }
-            fieldset {
-              color: var(--v-lightGrey-base);
-            }
-          }
-        }
-        &.error--text {
-          .v-input__control {
-            .v-input__slot {
-              fieldset {
-                color: inherit;
-              }
-            }
-          }
-        }
-      }
-    }
     .theme--light.v-timeline-item {
       .v-timeline-item__divider {
         .v-timeline-item__dot {
@@ -607,6 +600,21 @@ export default {
     }
     .added-logo {
       margin-top: 6px;
+      &:hover {
+        width: 18px;
+        height: 18px;
+        background-image: url("../../assets/images/delete_outline.png");
+        background-size: 18px 18px;
+      }
+    }
+  }
+
+  .destination-drawer {
+    .stepper {
+      box-shadow: none !important;
+    }
+    .drawer-back {
+      @extend .box-shadow-25;
     }
   }
 }

@@ -7,10 +7,10 @@
       :sort-desc.sync="sortDesc"
       hide-default-footer
     >
-      <template v-slot:default="props">
+      <template #default="props">
         <!-- header -->
         <v-row align="center" no-gutters :class="{ 'pl-2': bordered }">
-          <v-col v-for="field in fields" :key="field.label">
+          <v-col v-for="field in fields" :key="field.label" :cols="field.col">
             <div class="px-4 py-2">
               <span class="text-caption">
                 {{ field.label }}
@@ -43,7 +43,7 @@
           class="data-card mb-2"
         >
           <v-row align="center" no-gutters>
-            <v-col v-for="field in fields" :key="field.key">
+            <v-col v-for="field in fields" :key="field.key" :cols="field.col">
               <div class="pa-4">
                 <!-- cell slot -->
                 <slot
@@ -62,7 +62,7 @@
       </template>
 
       <!-- empty slot -->
-      <template v-slot:no-data>
+      <template #no-data>
         <v-alert color="background" class="empty-card">
           <v-row align="center">
             <slot v-if="$slots.empty" name="empty"></slot>
@@ -103,10 +103,11 @@ export default {
       default: false,
     },
   },
+
   data() {
     return {
       sortBy: null,
-      sortDesc: true,
+      sortDesc: false,
       itemsPerPage: ALL,
     }
   },
@@ -124,12 +125,17 @@ export default {
       return Boolean(this.sortBy === key)
     },
   },
+
+  mounted() {
+    // Sort the list in ascending order by default
+    this.setSortBy(this.fields[0].key)
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .data-card {
-  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05) !important;
+  @extend .box-shadow-5;
 }
 
 .empty-card {

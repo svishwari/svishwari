@@ -20,7 +20,7 @@
       v-model="currentValue"
       @end="onFinalValue"
     >
-      <template v-slot:append>
+      <template #append>
         <span
           class="slider-value-display"
           :style="{
@@ -67,7 +67,13 @@ export default {
   },
   data() {
     return {
-      currentValue: this.value,
+      currentValue: this.isRangeSlider
+        ? this.value
+        : parseInt(
+            this.$options.filters
+              .percentageConvert(this.value, true, true)
+              .slice(0, -1)
+          ),
       colorCombination: colors.gradientSliderColors,
     }
   },
