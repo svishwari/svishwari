@@ -3,6 +3,7 @@
 Schemas for the Customers API
 """
 from flask_marshmallow import Schema
+from marshmallow import fields
 from marshmallow.fields import (
     Str,
     Int,
@@ -102,6 +103,14 @@ class CustomerOverviewSchema(Schema):
     max_ltv_predicted = Float(required=True)
     min_ltv_actual = Float(required=True)
     max_ltv_actual = Float(required=True)
+
+
+class CustomerOverviewPostSchema(Schema):
+    """Customer Overview Post Schema Class"""
+
+    body = fields.Nested(CustomerOverviewSchema)
+    code = fields.Integer()
+    message = fields.String()
 
 
 class CustomersSchema(Schema):

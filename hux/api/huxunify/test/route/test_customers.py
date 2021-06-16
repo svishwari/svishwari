@@ -148,3 +148,36 @@ class TestCustomersOverview(unittest.TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    @requests_mock.Mocker()
+    def test_customeroverview_by_attributes(
+        self, request_mocker: Mocker
+    ) -> None:
+        """
+        Test get customer over by attributes
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        filter_attributes = {
+            "filters": {
+                "section_aggregator": "ALL",
+                "section_filters": [
+                    {"field": "country", "type": "equals", "value": "us"}
+                ],
+            }
+        }
+
+        response = self.test_client.post(
+            f"{self.customers}/{api_c.OVERVIEW}",
+            data=filter_attributes,
+            headers=self.headers,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)

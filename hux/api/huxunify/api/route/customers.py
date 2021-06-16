@@ -13,7 +13,10 @@ from flask import Blueprint
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
-from huxunify.api.schema.customers import CustomerProfileSchema
+from huxunify.api.schema.customers import (
+    CustomerProfileSchema,
+    CustomerOverviewPostSchema,
+)
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
     secured,
@@ -30,7 +33,6 @@ from huxunify.api import constants as api_c
 customers_bp = Blueprint(
     api_c.CUSTOMERS_ENDPOINT, import_name=__name__, url_prefix="/cdp"
 )
-
 
 faker = Faker()
 
@@ -117,6 +119,75 @@ class CustomerOverview(SwaggerView):
 
         return (
             CustomerOverviewSchema().dump(customers_overview_data),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.OVERVIEW}",
+    "CustomerOverviewPostSchema",
+)
+class CustomerPostOverview(SwaggerView):
+    """
+    Customers Post Overview class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "description": "Audience Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": {
+                    "section_aggregator": "ALL",
+                    "section_filters": [
+                        {"field": "country", "type": "equals", "value": "us"}
+                    ],
+                }
+            },
+        }
+    ]
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "description": "Customer Profiles Overview",
+            "schema": {
+                "type": "array",
+                "items": CustomerOverviewPostSchema,
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers overview"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def post(self) -> Tuple[dict, int]:
+        """Retrieves a customer data overview.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+
+
+        Returns:
+            Tuple[dict, int] dict of Customer data overview and http code
+        """
+        # TODO: Integrate with CDM API /customer-profiles/insights once its ready
+
+        customer_overview_post_response = {
+            "body": get_customers_overview(),
+            "code": HTTPStatus.OK,
+            "message": "OK",
+        }
+
+        return (
+            CustomerOverviewPostSchema().dump(customer_overview_post_response),
             HTTPStatus.OK,
         )
 
