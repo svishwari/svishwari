@@ -103,8 +103,12 @@ def set_delivery_platform(
         delivery_platform_id = collection.insert_one(doc).inserted_id
         if delivery_platform_id is not None:
             return collection.find_one(
-                {c.ID: delivery_platform_id, c.ENABLED: enabled},
-                {c.ENABLED: 0},
+                {
+                    c.ID: delivery_platform_id,
+                    c.ENABLED: enabled,
+                    c.DELETED: False,
+                },
+                {c.DELETED: 0},
             )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)

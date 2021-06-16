@@ -3,7 +3,7 @@
 
 import logging
 import datetime
-from typing import Any, Union, Optional
+from typing import Any, Union
 import pandas as pd
 from bson import ObjectId
 import pymongo
@@ -247,7 +247,7 @@ def get_data_source_non_breakdown_fields(
     cur_doc = get_data_source(database, data_source_id)
 
     non_breakdown_fields = []
-    if c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
+    if cur_doc is not None and c.DATA_SOURCE_NON_BREAKDOWN_FIELDS in cur_doc:
         non_breakdown_fields = cur_doc[c.DATA_SOURCE_NON_BREAKDOWN_FIELDS]
 
     return non_breakdown_fields
@@ -661,8 +661,8 @@ def set_ingestion_job(
         logging.error(exc)
 
     # Update recent ingestion job info of the data source
-    if ingestion_job_id and ingestion_job_doc is not None:
-        update_data_source_recent_ingestion_job_id(
+    if ingestion_job_id is not None:
+        doc = update_data_source_recent_ingestion_job_id(
             database,
             data_source_id,
             ingestion_job_id,
@@ -1136,7 +1136,7 @@ def append_ingested_data_stats(
 )
 def get_all_data_source_ids(
     database: DatabaseClient,
-) -> Optional[list]:
+) -> Union[list, None]:
     """A function to get all existing data source IDs.
 
     Args:

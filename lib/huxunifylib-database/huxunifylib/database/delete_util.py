@@ -1,6 +1,6 @@
 """Utilities for deletion."""
 import logging
-from typing import Optional
+from typing import Optional, Union
 
 from bson import ObjectId
 
@@ -25,7 +25,7 @@ def get_docs_bulk(
     collection_name: str,
     field_name: str,
     ids_only: bool = False,
-) -> Optional[list]:
+) -> Union[list, None]:
     """A function to get a list of documents.
 
     Args:
@@ -487,18 +487,17 @@ def delete_audiences_bulk(
         False,
     )
 
-    if delivery_jobs is not None:
-        delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
+    delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
 
-        if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
-            # Delete dependent lookalike audiences
-            all_lookalike_ids = []
-            for delivery_doc in delivery_jobs:
-                lookalike_ids = delivery_doc.get(
-                    c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
-                )
-                if lookalike_ids is not None:
-                    all_lookalike_ids += lookalike_ids
+    if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
+        # Delete dependent lookalike audiences
+        all_lookalike_ids = []
+        for delivery_doc in delivery_jobs:
+            lookalike_ids = delivery_doc.get(
+                c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
+            )
+            if lookalike_ids is not None:
+                all_lookalike_ids += lookalike_ids
 
         if delete_lookalike_audiences_bulk(database, all_lookalike_ids):
             # Delete audiences
@@ -531,19 +530,17 @@ def delete_delivery_platforms_bulk(
         False,
     )
 
-    if delivery_jobs is not None:
-        delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
+    delivery_job_ids = [doc[c.ID] for doc in delivery_jobs]
 
-        if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
-            # Delete dependent lookalike audiences
-            all_lookalike_ids = []
-            if delivery_jobs:
-                for delivery_doc in delivery_jobs:
-                    lookalike_ids = delivery_doc.get(
-                        c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
-                    )
-                    if lookalike_ids:
-                        all_lookalike_ids += lookalike_ids
+    if delete_bulk(database, delivery_job_ids, c.DELIVERY_JOBS_COLLECTION):
+        # Delete dependent lookalike audiences
+        all_lookalike_ids = []
+        for delivery_doc in delivery_jobs:
+            lookalike_ids = delivery_doc.get(
+                c.DELIVERY_PLATFORM_LOOKALIKE_AUDS
+            )
+            if lookalike_ids:
+                all_lookalike_ids += lookalike_ids
 
         if delete_lookalike_audiences_bulk(database, all_lookalike_ids):
             # Delete delivery platforms
@@ -577,15 +574,10 @@ def delete_data_sources_bulk(
         True,
     )
 
-    if ingestion_jobs is not None:
-        ingestion_job_ids = [doc[c.ID] for doc in ingestion_jobs]
+    ingestion_job_ids = [doc[c.ID] for doc in ingestion_jobs]
 
-        if delete_bulk(
-            database, ingestion_job_ids, c.INGESTION_JOBS_COLLECTION
-        ):
-            if delete_bulk(
-                database, data_source_ids, c.DATA_SOURCES_COLLECTION
-            ):
-                return True
+    if delete_bulk(database, ingestion_job_ids, c.INGESTION_JOBS_COLLECTION):
+        if delete_bulk(database, data_source_ids, c.DATA_SOURCES_COLLECTION):
+            return True
 
     return False
