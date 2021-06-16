@@ -198,16 +198,6 @@ class Customersview(SwaggerView):
     Customers Overview class
     """
 
-    parameters = [
-        {
-            "name": "no_of_customers",
-            "description": "No of Customers",
-            "type": "int",
-            "in": "path",
-            "example": 4,
-        }
-    ]
-
     responses = {
         HTTPStatus.OK.value: {
             "schema": CustomersSchema,
@@ -221,7 +211,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    def get(self, no_of_customers: int = 2) -> Tuple[dict, int]:
+    def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
         ---
@@ -234,9 +224,7 @@ class Customersview(SwaggerView):
 
         customers_stub_data = {
             "total_customers": 52456232,
-            "customers": [
-                get_stub_customer() for i in range(int(no_of_customers))
-            ],
+            "customers": [get_stub_customer() for i in range(int(1000))],
         }
 
         return (

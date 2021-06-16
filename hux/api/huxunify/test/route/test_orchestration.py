@@ -387,7 +387,7 @@ class OrchestrationRouteTest(TestCase):
 
     @requests_mock.Mocker()
     def test_create_audience_with_no_engagement(self, request_mocker: Mocker):
-        """Test create audience with out engagement ids.
+        """Test create audience without engagement ids.
 
         Args:
             request_mocker (Mocker): Request mocker object.

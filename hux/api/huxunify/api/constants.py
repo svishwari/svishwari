@@ -99,6 +99,7 @@ SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
 SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
+# TODO: Remove these constants whem SFMC connector library supports this.
 SFMC_DEFAULT_WSDL = ("https://webservice.exacttarget.com/etframework.wsdl",)
 SFMC_AUTH_FLAG = (True,)
 SFMC_SCOPE = (
