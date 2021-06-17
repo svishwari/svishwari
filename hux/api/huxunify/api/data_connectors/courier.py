@@ -43,8 +43,8 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     # get auth
     auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
     if (
-        destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
-        == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_FACEBOOK
     ):
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
@@ -64,8 +64,8 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
 
     elif (
-        destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
-        == db_const.DELIVERY_PLATFORM_SFMC.upper()
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_SFMC
     ):
         env_dict = {
             SFMCCredentials.SFMC_CLIENT_ID.name: parameter_store.get_store_value(

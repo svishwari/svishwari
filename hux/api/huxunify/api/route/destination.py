@@ -381,11 +381,9 @@ class DestinationValidatePostView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        destination_type = str(body.get(api_c.DESTINATION_TYPE)).upper()
-
         try:
             # test the destination connection and update connection status
-            if destination_type == api_c.FACEBOOK_TYPE.upper():
+            if body.get(api_c.DESTINATION_TYPE) == api_c.FACEBOOK_TYPE:
                 destination_connector = FacebookConnector(
                     auth_details={
                         FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
