@@ -2,7 +2,7 @@
 
 Brief summary of the changes
 
-### What was wrong
+### What was wrong?
 
 Description of what was the root cause of the issue.
 
