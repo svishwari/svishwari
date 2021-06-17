@@ -78,7 +78,7 @@ def get_all_data_sources(database: DatabaseClient) -> Union[list, None]:
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list,None]: List of all data sources or None
+        Union[list, None]: List of all data sources or None
 
     """
     collection = database[c.DATA_MANAGEMENT_DATABASE][
