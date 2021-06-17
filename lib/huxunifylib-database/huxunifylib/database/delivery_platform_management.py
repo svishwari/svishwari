@@ -1709,7 +1709,7 @@ def get_performance_metrics(
 def get_performance_metrics_by_engagement_id(
     database: DatabaseClient,
     engagement_id: ObjectId,
-) -> list:
+) -> Union[list, None]:
     """Retrieve campaign performance metrics using engagement id.
 
     Args:
@@ -1720,7 +1720,7 @@ def get_performance_metrics_by_engagement_id(
         de.InvalidID: Invalid ID for engagement.
 
     Returns:
-        list: list of metrics.
+        Union[list, None]: list of metrics or None
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
