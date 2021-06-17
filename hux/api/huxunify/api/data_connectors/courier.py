@@ -233,15 +233,6 @@ def get_destination_config(
         database, audience_id, destination_id, []
     )
 
-    # set enabled true - temp solution
-    collection = database[db_const.DATA_MANAGEMENT_DATABASE][
-        db_const.DELIVERY_JOBS_COLLECTION
-    ]
-    collection.find_one_and_update(
-        {db_const.ID: audience_delivery_job[db_const.ID]},
-        {"$set": {db_const.ENABLED: True}},
-    )
-
     delivery_platform = get_delivery_platform(
         database,
         destination_id,
