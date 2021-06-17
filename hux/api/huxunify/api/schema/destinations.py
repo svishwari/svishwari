@@ -80,21 +80,21 @@ class FacebookAuthConstants(Schema):
         """
         ordered = True
 
-    facebook_app_id = fields.Dict(
-        required=True,
-        validate=must_not_be_blank,
-        example={
-            api_c.NAME: "App ID",
-            api_c.TYPE: "text",
-            api_c.REQUIRED: True,
-            api_c.DESCRIPTION: None,
-        },
-    )
     facebook_ad_account_id = fields.Dict(
         required=True,
         validate=must_not_be_blank,
         example={
             api_c.NAME: "Ad Account ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    facebook_app_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "App ID",
             api_c.TYPE: "text",
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
