@@ -354,7 +354,8 @@ class AudiencePostView(SwaggerView):
                     database, engagement_id
                 ):
                     return {
-                        "message": f"Engagement with ID {engagement_id} does not exist."
+                        "message": f"Engagement with ID {engagement_id} "
+                        f"does not exist."
                     }
                 engagement_ids.append(engagement_id)
 
