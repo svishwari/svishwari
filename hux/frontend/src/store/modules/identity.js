@@ -51,8 +51,6 @@ const state = {
 }
 
 const getters = {
-  temp: (state) => state.overview,
-
   overview: (state) => {
     return Object.keys(METRICS).map((metric) => {
       return {
