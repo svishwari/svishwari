@@ -901,11 +901,17 @@ class TestDeliveryPlatform(unittest.TestCase):
         engagement_id = ObjectId()
         delivery_platform_id = self.delivery_platform_doc[c.ID]
 
+        dpm.set_connection_status(
+            self.database,
+            self.delivery_platform_doc[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+
         doc = dpm.set_delivery_job(
-            database=self.database,
-            audience_id=ObjectId(),
-            delivery_platform_id=delivery_platform_id,
-            delivery_platform_generic_campaigns=[],
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
             engagement_id=engagement_id,
         )
 
