@@ -105,6 +105,8 @@ class Config:
         "Authorization": "",
     }
 
+    JSON_SORT_KEYS = False
+
 
 class ProductionConfig(Config):
     """
