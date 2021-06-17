@@ -66,7 +66,7 @@
                   :min="condition.attribute.min"
                   :max="condition.attribute.max"
                   :step="condition.attribute.steps"
-                  v-model="condition.inputRange"
+                  v-model="condition.range"
                   @onFinalValue="triggerSizing(condition)"
                   v-if="condition.attribute && !isText(condition)"
                 />
@@ -91,8 +91,10 @@
                 indeterminate
                 v-if="condition.awaitingSize"
               ></v-progress-circular>
-              {{ condition.outputSummary }}</span
-            >
+              <span v-if="!condition.awaitingSize">
+                {{ fetchSize(condition.id) | Numeric(false, false, true) }}
+              </span>
+            </span>
           </div>
         </div>
 
@@ -142,8 +144,8 @@ const NEW_CONDITION = {
   attribute: "",
   operator: "",
   text: "",
-  inputRange: [0.15, 0.25],
-  awaitingSize: true,
+  range: [],
+  awaitingSize: false,
   outputSummary: "0",
 }
 
@@ -179,6 +181,7 @@ export default {
   computed: {
     ...mapGetters({
       ruleAttributes: "audiences/audiencesRules",
+      sizes: "audiences/sizeDetails",
     }),
     attributeOptions() {
       if (this.ruleAttributes.rule_attributes) {
@@ -189,20 +192,22 @@ export default {
           const _group_items = []
           const order = groupKey.includes("model") ? 0 : 1
           const group = {
-            name: groupKey,
+            name: groupKey.replace("_", " "),
             isGroup: true,
           }
           _group_items.push(group)
           _group_items.push(
             ...Object.keys(masterAttributes[groupKey]).map((key) => {
               const _subOption = masterAttributes[groupKey][key]
-              const hasSubOptins = Object.keys(_subOption).filter((item) =>
-                _subOption[item].hasOwnProperty("name")
+              const hasSubOptins = Object.keys(_subOption).filter(
+                (item) => !!_subOption[item]["name"]
               )
               if (hasSubOptins.length > 0) {
                 _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
                 hasSubOptins.forEach((key) => delete _subOption[key])
               }
+              if (groupKey.includes("model")) _subOption["modelIcon"] = true
+              _subOption.key = key
               return _subOption
             })
           )
@@ -228,6 +233,9 @@ export default {
     ...mapActions({
       getRealtimeSize: "audiences/fetchFilterSize",
     }),
+    fetchSize(id) {
+      return this.sizes[id] ? this.sizes[id].size : "0"
+    },
     operandLabel(rule) {
       return rule.operand ? "AND" : "OR"
     },
@@ -241,6 +249,18 @@ export default {
     },
     onSelect(type, condition, item) {
       condition[type] = item
+      if (type === "attribute") {
+        condition.operator = ""
+        condition.text = ""
+        condition.range = [condition.attribute.min, condition.attribute.max]
+        condition.awaitingSize = false
+        condition.outputSummary = 0
+      } else if (type === "operator") {
+        condition.text = ""
+        condition.range = []
+        condition.awaitingSize = false
+        condition.outputSummary = 0
+      }
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
@@ -346,6 +366,11 @@ export default {
               }
             }
             .v-text-field__details {
+              display: none;
+            }
+          }
+          .hux-range-slider {
+            .v-messages {
               display: none;
             }
           }

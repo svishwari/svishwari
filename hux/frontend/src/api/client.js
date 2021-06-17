@@ -50,4 +50,8 @@ client["audiences"].getConstants = () => {
   return http.get("/audiences/rules")
 }
 
+client["audiences"].filterSize = () => {
+  http.post("/audiences/rules/size")
+}
+
 export default client

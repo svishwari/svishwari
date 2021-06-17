@@ -11,15 +11,12 @@
       class="hux-dropdown"
     >
       <template #activator="{ on }">
-        <!-- <v-btn v-if="icon" :color="color" v-on="on">
-        <v-icon>{{ icon }}</v-icon>
-      </v-btn> -->
         <v-list-item
           v-if="isSubMenu"
           class="d-flex justify-space-between"
           v-on="on"
         >
-          {{ optionSelected["name"] || label }}
+          {{ label }}
           <div class="flex-grow-1"></div>
           <v-icon>mdi-chevron-right</v-icon>
         </v-list-item>
@@ -28,43 +25,52 @@
           :v-on="on"
           @click="openMenu = true"
           text
-          :isOutlined="true"
           width="200"
           icon=" mdi-chevron-down"
           iconPosition="right"
           tile
           class="ma-2 main-button"
         >
-          {{ optionSelected["name"] || label }}
+          {{ isSubMenu ? item.name : optionSelected["name"] || label }}
         </huxButton>
       </template>
       <v-list>
         <template v-for="(item, index) in items">
-          <v-divider v-if="item.isDivider" :key="index" />
-          <span v-if="item.isGroup" :key="item.name" class="group_name">{{
-            item.name
-          }}</span>
-          <hux-dropdown
-            v-else-if="item.menu"
-            :key="index"
-            :label="item.name"
-            :items="item.menu"
-            @on-select="onSelect"
-            :is-open-on-hover="false"
-            :is-offset-x="true"
-            :is-offset-y="false"
-            :is-sub-menu="true"
-            :selected="selected"
-          />
-          <v-list-item v-else :key="index" @click="onSelect(item)">
-            <v-list-item-title>
-              <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
+          <div class="dropdown-menuitems" :key="index">
+            <v-divider v-if="item.isDivider" :key="index" />
+            <div
+              v-if="item.isGroup"
+              :key="item.name"
+              class="group_title px-4 d-flex align-center"
+            >
               {{ item.name }}
-              <v-icon :color="color" v-if="optionSelected.name == item.name"
-                >mdi-check</v-icon
-              >
-            </v-list-item-title>
-          </v-list-item>
+            </div>
+            <hux-dropdown
+              v-else-if="item.menu"
+              :key="index"
+              :label="item.name"
+              :items="item.menu"
+              @on-select="onSelect"
+              :is-open-on-hover="false"
+              :is-offset-x="true"
+              :is-offset-y="false"
+              :is-sub-menu="true"
+              :selected="selected"
+            />
+            <v-list-item v-else :key="index" @click="onSelect(item)">
+              <v-list-item-title class="d-flex align-center">
+                <v-icon
+                  :color="color"
+                  size="16"
+                  v-if="optionSelected.name == item.name"
+                  >mdi-check</v-icon
+                >
+                <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
+                <icon type="model" :size="21" v-if="item.modelIcon" />
+                {{ item.name }}
+              </v-list-item-title>
+            </v-list-item>
+          </div>
         </template>
       </v-list>
     </v-menu>
@@ -72,10 +78,12 @@
 </template>
 <script>
 import huxButton from "@/components/common/huxButton"
+import Icon from "./Icon.vue"
 export default {
   name: "hux-dropdown",
   components: {
     huxButton,
+    Icon,
   },
   computed: {
     optionSelected() {
@@ -120,6 +128,42 @@ export default {
     height: 36px;
     min-width: 64px;
     padding: 0 16px;
+    border-style: solid !important;
+    border-width: 1px;
+    border-color: var(--v-lightGrey-base) !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    background-color: var(--v-white-base) !important;
+    background: var(--v-white-base) !important;
+    font-size: 14px;
+    line-height: 22px;
+    width: auto !important;
+    min-width: 200px;
+    color: var(--v-neroBlack-base);
+    ::v-deep .v-btn__content {
+      .spacer {
+        &:nth-child(2) {
+          display: none;
+        }
+      }
+    }
+  }
+}
+.dropdown-menuitems {
+  width: 230px;
+  font-size: 14px;
+  line-height: 22px !important;
+
+  color: var(--v-neroBlack-base);
+  .v-list-item {
+    min-height: 32px;
+    .v-list-item__title {
+      line-height: 22px !important;
+    }
+  }
+  .group_title {
+    text-transform: uppercase;
+    color: var(--v-gray-base);
   }
 }
 </style>

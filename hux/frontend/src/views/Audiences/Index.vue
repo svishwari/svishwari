@@ -256,6 +256,13 @@ export default {
   }
   .hux-data-table {
     margin-top: 1px;
+    table {
+      tr {
+        td {
+          font-size: 14px;
+        }
+      }
+    }
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;

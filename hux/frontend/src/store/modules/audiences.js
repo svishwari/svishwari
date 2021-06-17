@@ -18,7 +18,7 @@ const state = {
   audiences: [],
   newAudience: NEW_AUDIENCE,
   constants: {},
-  filterSize: {}
+  realtimeSizes: {},
 }
 
 const getters = {
@@ -27,6 +27,7 @@ const getters = {
     return state.audiences[id]
   },
   audiencesRules: (state) => state.constants,
+  sizeDetails: (state) => state.realtimeSizes,
 }
 
 const mutations = {
@@ -43,8 +44,8 @@ const mutations = {
     Vue.set(state, "constants", item)
   },
   SET_FILTER_SIZE(state, size) {
-    Vue.set(state.filterSize, size.id, size)
-  }
+    Vue.set(state.realtimeSizes, size.id, size)
+  },
 }
 
 const actions = {
@@ -158,8 +159,9 @@ const actions = {
     try {
       await sleep(2000)
       const response = {
-        data: { id: filter.id, size: Math.floor((Math.random() * 1000000) + 1) }
-      };
+        data: { id: filter.id, size: Math.floor(Math.random() * 1000000 + 1) },
+      }
+
       // const response = await api.audiences.getFilterSize(filter)
       commit("SET_FILTER_SIZE", response.data)
       return response.data
@@ -167,7 +169,7 @@ const actions = {
       handleError(error)
       throw error
     }
-  }
+  },
 }
 
 export default {

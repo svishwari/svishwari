@@ -1,281 +1,302 @@
 <template>
-  <page class="white create-audience-wrap" maxWidth="100%">
-    <div>
-      <div class="heading font-weight-light neroBlack--text">
-        Add an audience
-      </div>
-      <div class="sub-heading text-h6 neroBlack--text">
-        Build a target audience from the data you own. Add the attributes you
-        want to involve in this particular audience and where you wish to send
-        this audience.
-      </div>
+  <div>
+    <v-progress-linear :active="loading" :indeterminate="loading" />
+    <page class="white create-audience-wrap" maxWidth="100%">
+      <div>
+        <div class="heading font-weight-light neroBlack--text">
+          Add an audience
+        </div>
+        <div class="sub-heading text-h6 neroBlack--text">
+          Build a target audience from the data you own. Add the attributes you
+          want to involve in this particular audience and where you wish to send
+          this audience.
+        </div>
 
-      <div class="overview font-weight-regular neroBlack--text mt-15">
-        Audience overview
-      </div>
-      <div class="row overview-list mb-0 ml-0 mt-1">
-        <MetricCard
-          class="list-item mr-3"
-          v-for="(item, i) in overviewListItems"
-          :key="i"
-          :grow="i === 0 ? 2 : 1"
-          :title="item.title"
-          :subtitle="item.subtitle"
-          :icon="item.icon"
-        />
-      </div>
-      <v-divider class="divider mt-2 mb-9"></v-divider>
-    </div>
-
-    <div class="timeline-wrapper">
-      <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
-        <v-timeline align-top dense class="">
-          <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template #icon class="timeline-icon-section">
-              <span>1</span>
+        <div class="overview font-weight-regular neroBlack--text mt-15">
+          Audience overview
+        </div>
+        <div class="row overview-list mb-0 ml-0 mt-1">
+          <MetricCard
+            class="list-item mr-3"
+            v-for="(item, i) in overviewListItems"
+            :key="i"
+            :grow="i === 0 ? 2 : 1"
+            :title="item.title"
+            :icon="item.icon"
+          >
+            <template slot="subtitle-extended">
+              <tooltip>
+                <template slot="label-content">
+                  <span class="font-weight-semi-bold">
+                    {{ getFormattedValue(item) }}
+                  </span>
+                </template>
+                <template slot="hover-content">
+                  {{ item.subtitle | Empty }}
+                </template>
+              </tooltip>
             </template>
-            <v-row class="pt-1">
-              <v-col cols="4">
-                <strong class="text-h5 neroBlack--text"
-                  >General information</strong
-                >
-                <TextField
-                  placeholderText="What is the name for this audience ?"
-                  height="40"
-                  labelText="Audience name"
-                  backgroundColor="white"
-                  required
-                  v-model="audience.audienceName"
-                  class="mt-1 text-caption neroBlack--text pt-2"
-                  :rules="audienceNamesRules"
-                />
-              </v-col>
-              <v-col cols="8">
-                <div class="mt-8 ml-15 text-caption neroBlack--text">
-                  Add to an engagement -
-                  <i style="tilt">you must have at least one</i>
-                  <div class="mt-2 d-flex align-center">
-                    <v-icon
-                      size="30"
-                      class="add-icon cursor-pointer"
-                      color="primary"
-                      @click="engagementDrawer = !engagementDrawer"
-                      >mdi-plus-circle</v-icon
-                    >
-                    <div>
-                      <v-chip
-                        v-for="item in selectedEngagements"
-                        :close="isMinEngagementSelected"
-                        small
-                        class="mx-2 my-1 font-weight-semi-bold"
-                        text-color="primary"
-                        color="pillBlue"
-                        close-icon="mdi-close"
-                        @click:close="detachEngagement(item)"
-                        :key="item.id"
+          </MetricCard>
+        </div>
+        <v-divider class="divider mt-2 mb-9"></v-divider>
+      </div>
+
+      <div class="timeline-wrapper">
+        <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
+          <v-timeline align-top dense class="">
+            <v-timeline-item color="blue" class="timeline-section mb-7">
+              <template #icon class="timeline-icon-section">
+                <span>1</span>
+              </template>
+              <v-row class="pt-1">
+                <v-col cols="4">
+                  <strong class="text-h5 neroBlack--text"
+                    >General information</strong
+                  >
+                  <TextField
+                    placeholderText="What is the name for this audience ?"
+                    height="40"
+                    labelText="Audience name"
+                    backgroundColor="white"
+                    required
+                    v-model="audience.audienceName"
+                    class="mt-1 text-caption neroBlack--text pt-2"
+                    :rules="audienceNamesRules"
+                  />
+                </v-col>
+                <v-col cols="8">
+                  <div class="mt-8 ml-15 text-caption neroBlack--text">
+                    Add to an engagement -
+                    <i style="tilt">you must have at least one</i>
+                    <div class="mt-2 d-flex align-center">
+                      <v-icon
+                        size="30"
+                        class="add-icon cursor-pointer"
+                        color="primary"
+                        @click="engagementDrawer = !engagementDrawer"
+                        >mdi-plus-circle</v-icon
                       >
-                        {{ item.name }}
-                      </v-chip>
+                      <div>
+                        <v-chip
+                          v-for="item in selectedEngagements"
+                          :close="isMinEngagementSelected"
+                          small
+                          class="mx-2 my-1 font-weight-semi-bold"
+                          text-color="primary"
+                          color="pillBlue"
+                          close-icon="mdi-close"
+                          @click:close="detachEngagement(item)"
+                          :key="item.id"
+                        >
+                          {{ item.name }}
+                        </v-chip>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </v-col>
-            </v-row>
-          </v-timeline-item>
-          <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template #icon class="timeline-icon-section">
-              <span>2</span>
-            </template>
-            <v-row class="pt-1 pr-0">
-              <attribute-rules :rules="attributeRules"></attribute-rules>
-            </v-row>
-          </v-timeline-item>
-          <v-timeline-item
-            color="blue"
-            class="timeline-section disable-down-timeline mb-15"
-          >
-            <template #icon class="timeline-icon-section">
-              <span>3</span>
-            </template>
-            <v-row class="pt-1">
-              <v-col cols="12">
-                <strong class="text-h5 neroBlack--text">
-                  Select destination(s) -
-                  <i style="font-size: 12px">Optional</i>
-                </strong>
-                <div class="d-flex align-center">
-                  <v-icon
-                    size="30"
-                    class="add-icon mt-1"
-                    color="primary"
-                    @click="toggleDrawer()"
-                  >
-                    mdi-plus-circle
-                  </v-icon>
-                  <tooltip>
-                    <template slot="label-content">
-                      <Logo
-                        class="added-logo ml-2"
-                        v-for="destination in audience.destinations"
-                        :key="destination.id"
-                        :type="destination.type"
-                        :size="18"
-                        @mouseover.native="hoverItem = destination.name"
-                      />
-                    </template>
-                    <template slot="hover-content">
-                      <div class="d-flex align-center">
-                        Remove {{ hoverItem }}
-                      </div>
-                    </template>
-                  </tooltip>
-                </div>
-              </v-col>
-            </v-row>
-          </v-timeline-item>
-          <v-timeline-item class="timeline-section disabled">
-            <template #icon class="timeline-icon-section">
-              <span>4</span>
-            </template>
-            <v-row class="pt-1">
-              <v-col cols="12">
-                <strong class="text-h5"
-                  >Create a lookalike audience -
-                  <i>This feature will be coming soon</i>
-                </strong>
-              </v-col>
-            </v-row>
-          </v-timeline-item>
-        </v-timeline>
-      </v-form>
-
-      <HuxFooter maxWidth="inherit">
-        <template #left>
-          <huxButton
-            variant="white"
-            isTile
-            width="94"
-            height="40"
-            @click.native="$router.go(-1)"
-          >
-            <span class="primary--text">Cancel</span>
-          </huxButton>
-        </template>
-        <template #right>
-          <huxButton
-            variant="primary"
-            isTile
-            width="94"
-            height="44"
-            @click="createAudience()"
-            :isDisabled="!isAudienceFormValid"
-          >
-            Create
-          </huxButton>
-        </template>
-      </HuxFooter>
-      <!-- Add destination workflow -->
-      <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
-        <template #header-left>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 1"
-          >
-            <h3 class="text-h3 font-weight-light pr-2">
-              Select a destination to add
-            </h3>
-          </div>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 2"
-          >
-            <h3 class="text-h3 pr-2 d-flex align-center">
-              <Logo :type="destinationDrawer.selectedDestination[0].type" />
-              <div class="pl-2 font-weight-light">
-                {{ destinationDrawer.selectedDestination[0].name }}
-              </div>
-            </h3>
-          </div>
-        </template>
-
-        <template #default>
-          <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
-            <v-stepper-items>
-              <v-stepper-content step="1">
-                <div>
-                  <CardHorizontal
-                    v-for="destination in destinations"
-                    :key="destination.id"
-                    :title="destination.name"
-                    :icon="destination.type"
-                    :isAdded="
-                      destination.is_added ||
-                      isDestinationAdded(destination.type)
-                    "
-                    :isAvailable="destination.is_enabled"
-                    :isAlreadyAdded="destination.is_added"
-                    @click="onSelectDestination(destination)"
-                    class="my-3"
-                  />
-                </div>
-              </v-stepper-content>
-              <v-stepper-content step="2">
-                <AddDestination />
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </template>
-
-        <template #footer-right>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 2"
-          >
-            <huxButton
-              variant="primary"
-              isTile
-              width="80"
-              height="40"
-              class="ma-2"
-              @click="addDestinationToAudience()"
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+            <v-timeline-item color="blue" class="timeline-section mb-7">
+              <template #icon class="timeline-icon-section">
+                <span>2</span>
+              </template>
+              <v-row class="pt-1 pr-0">
+                <attribute-rules :rules="attributeRules"></attribute-rules>
+              </v-row>
+            </v-timeline-item>
+            <v-timeline-item
+              color="blue"
+              class="timeline-section disable-down-timeline mb-15"
             >
-              Add
-            </huxButton>
-          </div>
-        </template>
+              <template #icon class="timeline-icon-section">
+                <span>3</span>
+              </template>
+              <v-row class="pt-1">
+                <v-col cols="12">
+                  <strong class="text-h5 neroBlack--text">
+                    Select destination(s) -
+                    <i style="font-size: 12px">Optional</i>
+                  </strong>
+                  <div class="d-flex align-center">
+                    <v-icon
+                      size="30"
+                      class="add-icon mt-1"
+                      color="primary"
+                      @click="toggleDrawer()"
+                    >
+                      mdi-plus-circle
+                    </v-icon>
+                    <tooltip>
+                      <template slot="label-content">
+                        <Logo
+                          class="added-logo ml-2"
+                          v-for="destination in audience.destinations"
+                          :key="destination.id"
+                          :type="destination.type"
+                          :size="18"
+                          @mouseover.native="hoverItem = destination.name"
+                        />
+                      </template>
+                      <template slot="hover-content">
+                        <div class="d-flex align-center">
+                          Remove {{ hoverItem }}
+                        </div>
+                      </template>
+                    </tooltip>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+            <v-timeline-item class="timeline-section disabled">
+              <template #icon class="timeline-icon-section">
+                <span>4</span>
+              </template>
+              <v-row class="pt-1">
+                <v-col cols="12">
+                  <strong class="text-h5"
+                    >Create a lookalike audience -
+                    <i>This feature will be coming soon</i>
+                  </strong>
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+          </v-timeline>
+        </v-form>
 
-        <template #footer-left>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 1"
-          >
-            {{ destinations.length }} results
-          </div>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 2"
-          >
+        <HuxFooter maxWidth="inherit">
+          <template #left>
             <huxButton
               variant="white"
               isTile
-              width="80"
+              width="94"
               height="40"
-              class="ma-2 drawer-back"
-              @click.native="destinationDrawer.viewStep = 1"
+              @click.native="$router.go(-1)"
             >
-              Back
+              <span class="primary--text">Cancel</span>
             </huxButton>
-          </div>
-        </template>
-      </drawer>
-      <!-- Engagement workflow -->
-      <AttachEngagement
-        v-model="engagementDrawer"
-        :finalEngagements="selectedEngagements"
-        @onEngagementChange="setSelectedEngagements"
-      />
-    </div>
-  </page>
+          </template>
+          <template #right>
+            <huxButton
+              variant="primary"
+              isTile
+              width="94"
+              height="44"
+              @click="createAudience()"
+              :isDisabled="!isAudienceFormValid"
+            >
+              Create
+            </huxButton>
+          </template>
+        </HuxFooter>
+        <!-- Add destination workflow -->
+        <drawer
+          v-model="destinationDrawer.insideFlow"
+          class="destination-drawer"
+        >
+          <template #header-left>
+            <div
+              class="d-flex align-baseline"
+              v-if="destinationDrawer.viewStep == 1"
+            >
+              <h3 class="text-h3 font-weight-light pr-2">
+                Select a destination to add
+              </h3>
+            </div>
+            <div
+              class="d-flex align-baseline"
+              v-if="destinationDrawer.viewStep == 2"
+            >
+              <h3 class="text-h3 pr-2 d-flex align-center">
+                <Logo :type="destinationDrawer.selectedDestination[0].type" />
+                <div class="pl-2 font-weight-light">
+                  {{ destinationDrawer.selectedDestination[0].name }}
+                </div>
+              </h3>
+            </div>
+          </template>
+
+          <template #default>
+            <v-stepper
+              v-model="destinationDrawer.viewStep"
+              class="stepper mt-1"
+            >
+              <v-stepper-items>
+                <v-stepper-content step="1">
+                  <div>
+                    <CardHorizontal
+                      v-for="destination in destinations"
+                      :key="destination.id"
+                      :title="destination.name"
+                      :icon="destination.type"
+                      :isAdded="
+                        destination.is_added ||
+                        isDestinationAdded(destination.type)
+                      "
+                      :isAvailable="destination.is_enabled"
+                      :isAlreadyAdded="destination.is_added"
+                      @click="onSelectDestination(destination)"
+                      class="my-3"
+                    />
+                  </div>
+                </v-stepper-content>
+                <v-stepper-content step="2">
+                  <AddDestination />
+                </v-stepper-content>
+              </v-stepper-items>
+            </v-stepper>
+          </template>
+
+          <template #footer-right>
+            <div
+              class="d-flex align-baseline"
+              v-if="destinationDrawer.viewStep == 2"
+            >
+              <huxButton
+                variant="primary"
+                isTile
+                width="80"
+                height="40"
+                class="ma-2"
+                @click="addDestinationToAudience()"
+              >
+                Add
+              </huxButton>
+            </div>
+          </template>
+
+          <template #footer-left>
+            <div
+              class="d-flex align-baseline"
+              v-if="destinationDrawer.viewStep == 1"
+            >
+              {{ destinations.length }} results
+            </div>
+            <div
+              class="d-flex align-baseline"
+              v-if="destinationDrawer.viewStep == 2"
+            >
+              <huxButton
+                variant="white"
+                isTile
+                width="80"
+                height="40"
+                class="ma-2 drawer-back"
+                @click.native="destinationDrawer.viewStep = 1"
+              >
+                Back
+              </huxButton>
+            </div>
+          </template>
+        </drawer>
+        <!-- Engagement workflow -->
+        <AttachEngagement
+          v-model="engagementDrawer"
+          :finalEngagements="selectedEngagements"
+          @onEngagementChange="setSelectedEngagements"
+        />
+      </div>
+    </page>
+  </div>
 </template>
 
 <script>
@@ -314,14 +335,14 @@ export default {
       // selectedDestinationIndex: -1,
       // selectedDestination: null,
       overviewListItems: [
-        { title: "Target size", subtitle: "34,203,204" },
-        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
-        { title: "US States", subtitle: "52", icon: "mdi-map" },
-        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
-        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
-        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
-        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
-        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+        { title: "Target size", subtitle: "" },
+        { title: "Countries", subtitle: "", icon: "mdi-earth" },
+        { title: "US States", subtitle: "", icon: "mdi-map" },
+        { title: "Cities", subtitle: "", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
       ],
 
       engagementDrawer: false,
@@ -345,6 +366,7 @@ export default {
         selectedDestination: [],
       },
       hoverItem: "",
+      loading: false,
     }
   },
 
@@ -352,6 +374,8 @@ export default {
     ...mapGetters({
       destinations: "destinations/enabledDestination",
       AudiencesRules: "audiences/audiencesRules",
+      getAudience: "audiences/audience",
+      overview: "customers/overview",
     }),
 
     destination() {
@@ -361,15 +385,19 @@ export default {
     isDestinationSelected() {
       return Boolean(this.destination)
     },
+
     attributeRules() {
       return this.audience ? this.audience.attributeRules : []
     },
+
     isMinEngagementSelected() {
       return this.selectedEngagements.length > 1
     },
+
     isAudienceFormValid() {
       return !!this.audience.audienceName && this.selectedEngagements.length > 0
     },
+
     selectedEngagementIds() {
       // This will be used when sending data to create an audience
       return this.selectedEngagements.map((each) => {
@@ -384,7 +412,48 @@ export default {
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
       getAudiencesRules: "audiences/fetchConstants",
+      getAudienceById: "audiences/getAudienceById",
+      getOverview: "customers/getOverview",
     }),
+
+    getFormattedValue(item) {
+      switch (item.title) {
+        case "Target size":
+        case "Countries":
+        case "US States":
+        case "Cities":
+          return this.$options.filters.Numeric(
+            item.subtitle,
+            false,
+            false,
+            true
+          )
+        case "Women":
+        case "Men":
+        case "Other":
+          return this.$options.filters.percentageConvert(
+            item.subtitle,
+            true,
+            true
+          )
+        default:
+          return item.subtitle
+      }
+      return "Numeric(false, false, true) | Empty"
+    },
+
+    // Mapping Overview Data
+    mapCDMOverview() {
+      this.overviewListItems[0].subtitle = this.overview.total_customers
+      this.overviewListItems[1].subtitle = this.overview.total_countries
+      this.overviewListItems[2].subtitle = this.overview.total_us_states
+      this.overviewListItems[3].subtitle = this.overview.total_cities
+      this.overviewListItems[4].subtitle = this.overview.max_age
+      this.overviewListItems[5].subtitle = this.overview.gender_women
+      this.overviewListItems[6].subtitle = this.overview.gender_men
+      this.overviewListItems[7].subtitle = this.overview.gender_other
+    },
+
     // Engagements
     detachEngagement(engagement) {
       const existingIndex = this.selectedEngagements.findIndex(
@@ -394,6 +463,7 @@ export default {
         this.selectedEngagements.splice(existingIndex, 1)
       }
     },
+
     setSelectedEngagements(engagementsList) {
       this.selectedEngagements = engagementsList
     },
@@ -424,6 +494,7 @@ export default {
         }
       }
     },
+
     addDestinationToAudience() {
       this.audience.destinations.push(
         ...this.destinationDrawer.selectedDestination
@@ -442,6 +513,7 @@ export default {
         return existingIndex > -1
       }
     },
+
     isDestinationAdded(title) {
       if (this.audience && this.audience.destinations) {
         const existingIndex = this.audience.destinations.findIndex(
@@ -478,15 +550,26 @@ export default {
           filter.section_filters.push({
             field: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
-            ].attribute,
+            ].attribute.key,
             type: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
-            ].operator,
+            ].operator
+              ? this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].operator.key
+              : "range",
             value: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
-            ].text,
+            ].operator
+              ? this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].text
+              : this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].range,
           })
         }
+        debugger
         filtersArray.push(filter)
       }
       const payload = {
@@ -500,8 +583,13 @@ export default {
     },
   },
   async mounted() {
+    this.loading = true
+    await this.getOverview()
+    if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
     await this.getDestinations()
     await this.getAudiencesRules()
+    this.mapCDMOverview()
+    this.loading = false
   },
 }
 </script>

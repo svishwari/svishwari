@@ -1,4 +1,4 @@
-const audienceFilterMock = {
+const attributeRules = {
   rule_attributes: {
     general: {
       age: {
@@ -70,4 +70,4 @@ const audienceFilterMock = {
     equals: "Equals",
   },
 }
-export default audienceFilterMock
+export default attributeRules

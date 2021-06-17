@@ -2,11 +2,11 @@
   <tooltip>
     <template slot="label-content">
       <span class="neroBlack--text">
-        {{ value | Numeric(false, false, true) | Empty }}
+        {{ Value | Numeric(false, false, true) | Empty }}
       </span>
     </template>
     <template slot="hover-content">
-      {{ value | Numeric(true) | Empty }}
+      {{ Value | Numeric(true) | Empty }}
     </template>
   </tooltip>
 </template>
@@ -20,6 +20,11 @@ export default Vue.extend({
     value: {
       type: Number,
       required: true,
+    },
+  },
+  computed: {
+    Value() {
+      return this.value ? this.value : 0
     },
   },
 })

@@ -36,7 +36,9 @@
             <span class="mr-2">
               <tooltip>
                 <template slot="label-content">
-                  {{ summaryCards[1].value }}
+                  <span class="font-weight-semi-bold">
+                    {{ summaryCards[1].value }}
+                  </span>
                 </template>
                 <template slot="hover-content">
                   {{ summaryCards[1].hoverValue | Date | Empty }}
@@ -51,7 +53,9 @@
             <span class="mr-2">
               <tooltip>
                 <template slot="label-content">
-                  {{ summaryCards[2].value }}
+                  <span class="font-weight-semi-bold">
+                    {{ summaryCards[2].value }}
+                  </span>
                 </template>
                 <template slot="hover-content">
                   {{ summaryCards[2].hoverValue | Date | Empty }}
