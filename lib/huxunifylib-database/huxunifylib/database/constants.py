@@ -229,6 +229,9 @@ METRICS_DELIVERY_PLATFORM_NAME = "delivery_platform_name"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"
+PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
+DATA_EXTENSION_NAME = "data_extension_name"
+DATA_EXTENSION_ID = "data_extension_id"
 
 # Data source constants
 FIELD_SPECIAL_TYPE = "special_type"
