@@ -165,11 +165,12 @@ class CourierTest(TestCase):
             "get_store_value",
             return_value="sample_auth",
         ):
-            env_dict, _ = map_destination_credentials_to_dict(destination)
+            env_dict, secret_dict = map_destination_credentials_to_dict(
+                destination
+            )
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
-        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
         self.assertDictEqual(
             env_dict,
             {
@@ -179,10 +180,15 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
-                FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
+            },
+        )
+        self.assertEqual(
+            secret_dict,
+            {
+                FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
                     api_c.FACEBOOK_ACCESS_TOKEN
                 ],
-                FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
+                FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
                     api_c.FACEBOOK_APP_SECRET
                 ],
             },
@@ -201,8 +207,8 @@ class CourierTest(TestCase):
         sample_auth = "sample_auth"
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
-            api_c.DESTINATION_NAME: "SFMC",
-            api_c.DELIVERY_PLATFORM_TYPE: "SFMC",
+            api_c.DESTINATION_NAME: c.DELIVERY_PLATFORM_SFMC,
+            api_c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.SFMC_CLIENT_ID: sample_auth,
                 api_c.SFMC_AUTH_BASE_URI: sample_auth,
@@ -224,7 +230,6 @@ class CourierTest(TestCase):
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
-        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
         self.assertDictEqual(
             env_dict,
             {
