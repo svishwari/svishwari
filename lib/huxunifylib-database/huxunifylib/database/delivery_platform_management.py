@@ -70,6 +70,11 @@ def set_delivery_platform(
     if exists_flag:
         raise de.DuplicateName(name)
 
+    if delivery_platform_type.upper() not in [
+        x.upper() for x in c.SUPPORTED_DELIVERY_PLATFORMS
+    ]:
+        raise de.UnknownDeliveryPlatformType(delivery_platform_type)
+
     # Get current time
     curr_time = datetime.datetime.utcnow()
 
