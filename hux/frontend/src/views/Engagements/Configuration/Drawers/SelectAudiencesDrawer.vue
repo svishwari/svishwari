@@ -13,6 +13,7 @@
 
         <DataCards
           :items="audiences"
+          sort="asc"
           :fields="[
             {
               key: 'name',
