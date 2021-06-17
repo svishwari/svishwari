@@ -403,7 +403,7 @@ class OrchestrationRouteTest(TestCase):
     def test_create_audience_with_no_destinations_no_engagements(
         self, request_mocker: Mocker
     ):
-        """Test create audience with no destinations and engagements
+        """Test create audience with no destinations or engagements
 
         Args:
             request_mocker (Mocker): Request mocker object.
