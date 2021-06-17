@@ -5,6 +5,7 @@ to orchestration (audience/engagement) management.
 import logging
 import datetime
 from typing import Union
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -25,7 +26,7 @@ def create_audience(
     audience_filters: list,
     destination_ids: list = None,
     user_id: ObjectId = None,
-) -> dict:
+) -> Union[dict, None]:
     """A function to create an audience.
 
     Args:
@@ -38,7 +39,7 @@ def create_audience(
         user_id (ObjectId): Object id of user creating / updating the audience
 
     Returns:
-        dict: MongoDB audience doc.
+        Union[list, None]: MongoDB audience doc.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -162,7 +163,7 @@ def update_audience(
     audience_filters: list = None,
     destination_ids: list = None,
     user_id: ObjectId = None,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update an audience.
     Args:
         database (DatabaseClient): A database client.
@@ -174,7 +175,7 @@ def update_audience(
             ids attached to the audience
         user_id (ObjectId): Object id of user creating / updating the audience
     Returns:
-        dict: Updated audience configuration dict.
+        Union[dict, None]: Updated audience configuration dict.
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
