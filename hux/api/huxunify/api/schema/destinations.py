@@ -74,10 +74,12 @@ class FacebookAuthConstants(Schema):
     """
     Facebook Auth constants schema class
     """
+
     class Meta:
         """
         set the ordering of facebook auth constants
         """
+
         ordered = True
 
     facebook_ad_account_id = fields.Dict(
@@ -122,11 +124,11 @@ class FacebookAuthConstants(Schema):
     )
 
 
-
 class SFMCAuthConstants(Schema):
     """
     SFMC Auth constants schema class
     """
+
     class Meta:
         """
         set the ordering of sfmc auth constants
@@ -200,10 +202,12 @@ class DestinationConstantsSchema(Schema):
     """
     Destination constants schema class
     """
+
     class Meta:
         """
         set the ordering of destination constants
         """
+
         ordered = True
 
     facebook = fields.Nested(FacebookAuthConstants)
