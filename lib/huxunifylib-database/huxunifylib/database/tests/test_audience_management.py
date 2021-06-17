@@ -1,6 +1,8 @@
 """Audience Management tests."""
 
 import unittest
+from typing import Union
+
 import mongomock
 import pandas as pd
 import huxunifylib.database.audience_management as am
@@ -114,7 +116,7 @@ class TestAudienceManagement(unittest.TestCase):
         )
         return ingestion_job_doc
 
-    def _setup_audience(self) -> dict:
+    def _setup_audience(self) -> Union[tuple, dict]:
 
         ingestion_job_doc = self._setup_ingestion_job()
         ingestion_job_id = ingestion_job_doc[c.ID]
@@ -133,7 +135,7 @@ class TestAudienceManagement(unittest.TestCase):
         )
         return audience_doc, ingestion_job_doc
 
-    def _setup_ingestion_succeeded_and_audience(self) -> dict:
+    def _setup_ingestion_succeeded_and_audience(self) -> None:
 
         ingestion_job_doc = self._setup_ingestion_job()
         ingestion_job_id = ingestion_job_doc[c.ID]
@@ -187,6 +189,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertTrue(audience_doc is not None)
         self.assertTrue(c.ID in audience_doc)
+        self.assertFalse(c.DELETED in audience_doc)
 
     def test_audience_count(self):
         """Created audiences are counted properly."""
@@ -429,6 +432,7 @@ class TestAudienceManagement(unittest.TestCase):
         )
 
         self.assertTrue(doc is not None)
+        self.assertFalse(c.DELETED in doc)
 
     def test_get_audience_name(self):
         """Test get audience name."""
@@ -582,6 +586,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
+        self.assertFalse([a for a in audiences if c.DELETED in a])
 
     def test_get_all_audiences(self):
         """Test get_all_audiences."""
@@ -593,6 +598,7 @@ class TestAudienceManagement(unittest.TestCase):
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
+        self.assertFalse([a for a in audiences if c.DELETED in a])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_favorite_audience(self):

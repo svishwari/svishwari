@@ -1,5 +1,7 @@
 """Utilities for deletion."""
 import logging
+from typing import Union
+
 from bson import ObjectId
 
 import pymongo
@@ -23,7 +25,7 @@ def get_docs_bulk(
     collection_name: str,
     field_name: str,
     ids_only: bool = False,
-) -> list:
+) -> Union[list, None]:
     """A function to get a list of documents.
 
     Args:

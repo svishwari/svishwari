@@ -15,6 +15,7 @@ from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
+    SFMCCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api.data_connectors.aws import parameter_store
@@ -43,7 +44,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
     secret_dict = {}
     if (
-        destination[db_const.DELIVERY_PLATFORM_NAME].upper()
+        destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
         == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
     ):
         # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
@@ -61,9 +62,35 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
                 auth[api_const.FACEBOOK_APP_SECRET]
             ),
         }
+    elif (
+        destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
+        == db_const.DELIVERY_PLATFORM_SFMC.upper()
+    ):
+        env_dict = {
+            SFMCCredentials.SFMC_CLIENT_ID.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_CLIENT_ID]
+            ),
+            SFMCCredentials.SFMC_AUTH_URL.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_AUTH_BASE_URI]
+            ),
+            SFMCCredentials.SFMC_ACCOUNT_ID.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_ACCOUNT_ID]
+            ),
+            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_SOAP_BASE_URI]
+            ),
+            SFMCCredentials.SFMC_URL.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_REST_BASE_URI]
+            ),
+        }
+        secret_dict = {
+            SFMCCredentials.SFMC_CLIENT_SECRET.name: parameter_store.get_store_value(
+                auth[api_const.SFMC_CLIENT_SECRET]
+            )
+        }
     else:
         raise KeyError(
-            f"No configuration for {destination[db_const.DELIVERY_PLATFORM_NAME]}"
+            f"No configuration for destination type: {destination[db_const.DELIVERY_PLATFORM_TYPE]}"
         )
 
     return env_dict, secret_dict

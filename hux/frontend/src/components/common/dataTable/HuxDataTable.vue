@@ -37,6 +37,19 @@
           <template v-if="!h.tooltipValue">
             {{ h.text }}
           </template>
+          <Tooltip :key="h.value" v-if="h.hoverTooltip" positionTop>
+            <template #label-content>
+              <Icon
+                type="info"
+                :size="8"
+                :key="h.value"
+                v-if="h.hoverTooltip"
+              />
+            </template>
+            <template #hover-content>
+              {{ h.hoverTooltip }}
+            </template>
+          </Tooltip>
         </template>
         <template #body="{ headers, items }" v-if="!nested">
           <tbody>
@@ -55,10 +68,11 @@
 
 <script>
 import Tooltip from "../Tooltip.vue"
+import Icon from "@/components/common/Icon"
 const ALL = -1
 export default {
   name: "HuxDataTable",
-  components: { Tooltip },
+  components: { Tooltip, Icon },
   props: {
     dataItems: {
       type: Array,

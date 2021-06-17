@@ -5,6 +5,7 @@ This module enables functionality related to engagement management.
 import logging
 import datetime
 from typing import Union
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -221,7 +222,7 @@ def update_engagement(
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update fields in an engagement
 
     Args:
@@ -234,7 +235,7 @@ def update_engagement(
         delivery_schedule (dict): delivery schedule dict.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     if audiences:
@@ -285,7 +286,7 @@ def remove_audiences_from_engagement(
     engagement_id: ObjectId,
     user_id: ObjectId,
     audience_ids: list,
-) -> dict:
+) -> Union[dict, None]:
     """A function to allow for removing audiences from an engagement.
 
     Args:
@@ -295,7 +296,7 @@ def remove_audiences_from_engagement(
         audience_ids (list): list of audience ObjectIds.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -340,7 +341,7 @@ def append_audiences_to_engagement(
     engagement_id: ObjectId,
     user_id: ObjectId,
     audiences: list,
-) -> dict:
+) -> Union[dict, None]:
     """A function to allow for appending audiences to an engagement.
 
     Args:
@@ -350,7 +351,7 @@ def append_audiences_to_engagement(
         audiences (list): list of audiences.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -410,7 +411,7 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
 )
 def get_engagements_by_audience(
     database: DatabaseClient, audience_id: ObjectId
-) -> list:
+) -> Union[list, None]:
     """A function to get a list of engagements by audience_id
 
     Args:
@@ -418,7 +419,7 @@ def get_engagements_by_audience(
         audience_id (ObjectId): ObjectId of an audience
 
     Returns:
-        list: list of engagements.
+        Union[list, None]: list of engagements.
 
     """
 
