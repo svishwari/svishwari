@@ -31,8 +31,8 @@
           :title="item.title"
         >
           <template v-if="!item.toolTipText" #subtitle-extended>
-            <span class="font-weight-semi-bold"
-              >{{ item.date }} &bull;
+            <span class="font-weight-semi-bold">
+              {{ item.date }} &bull;
               {{ item.time }}
             </span>
           </template>
@@ -209,6 +209,7 @@ export default {
     ...mapActions({
       getOverview: "customers/getOverview",
     }),
+    // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
       this.overviewListItems[0].subtitle = this.applyNumericFilter(
         this.overview.total_customers
@@ -250,10 +251,11 @@ export default {
       this.primaryItems[6].subtitle = this.applyNumericFilter(
         this.overview.total_household_ids
       )
-      ;[
-        this.primaryItems[7].date,
-        this.primaryItems[7].time,
-      ] = this.dateTimeFormatter(this.overview.updated)
+      let date = ""
+      let time = ""
+      ;[date, time] = this.dateTimeFormatter(this.overview.updated)
+      this.primaryItems[7].date = date
+      this.primaryItems[7].time = time
     },
     applyNumericFilter(value) {
       return value
