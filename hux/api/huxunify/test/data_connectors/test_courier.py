@@ -22,6 +22,7 @@ from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunifylib.util.general.const import (
     FacebookCredentials,
+    SFMCCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_c
@@ -136,7 +137,7 @@ class CourierTest(TestCase):
         self.engagement = get_engagement(self.database, engagement_id)
         self.assertTrue(self.engagement)
 
-    def test_map_destination_credentials(self):
+    def test_map_destination_credentials_facebook(self):
         """Test mapping of destination credentials for submitting to AWS Batch.
 
         Args:
@@ -184,6 +185,70 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
                     api_c.FACEBOOK_APP_SECRET
                 ],
+            },
+        )
+
+    def test_map_destination_credentials_sfmc(self):
+        """Test mapping of destination credentials for submitting to AWS Batch.
+
+        Args:
+
+        Returns:
+
+        """
+
+        # setup destination object with synthetic credentials.
+        sample_auth = "sample_auth"
+        destination = {
+            api_c.DESTINATION_ID: ObjectId(),
+            api_c.DESTINATION_NAME: "SFMC",
+            api_c.DELIVERY_PLATFORM_TYPE: "SFMC",
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.SFMC_CLIENT_ID: sample_auth,
+                api_c.SFMC_AUTH_BASE_URI: sample_auth,
+                api_c.SFMC_ACCOUNT_ID: sample_auth,
+                api_c.SFMC_CLIENT_SECRET: sample_auth,
+                api_c.SFMC_SOAP_BASE_URI: sample_auth,
+                api_c.SFMC_REST_BASE_URI: sample_auth,
+            },
+        }
+
+        with mock.patch.object(
+            parameter_store,
+            "get_store_value",
+            return_value="sample_auth",
+        ):
+            env_dict, secret_dict = map_destination_credentials_to_dict(
+                destination
+            )
+
+        # ensure mapping.
+        auth = destination[api_c.AUTHENTICATION_DETAILS]
+        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
+        self.assertDictEqual(
+            env_dict,
+            {
+                SFMCCredentials.SFMC_CLIENT_ID.name: auth[
+                    api_c.SFMC_CLIENT_ID
+                ],
+                SFMCCredentials.SFMC_AUTH_URL.name: auth[
+                    api_c.SFMC_AUTH_BASE_URI
+                ],
+                SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
+                    api_c.SFMC_ACCOUNT_ID
+                ],
+                SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
+                    api_c.SFMC_SOAP_BASE_URI
+                ],
+                SFMCCredentials.SFMC_URL.name: auth[api_c.SFMC_REST_BASE_URI],
+            },
+        )
+        self.assertDictEqual(
+            secret_dict,
+            {
+                SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
+                    api_c.SFMC_CLIENT_SECRET
+                ]
             },
         )
 

@@ -28,7 +28,7 @@ def set_constant(
     database: DatabaseClient,
     constant_name: str,
     constant_value: Any,
-) -> dict:
+) -> Union[dict, None]:
     """A function to set a data source constant.
 
     Args:
@@ -37,7 +37,7 @@ def set_constant(
         constant_value (Any): Value of the constant.
 
     Returns:
-        dict: MongoDB document.
+        Union[dict, None]: MongoDB document.
     """
 
     constant_doc = None
@@ -64,7 +64,9 @@ def set_constant(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_constant(database: DatabaseClient, constant_name: str) -> dict:
+def get_constant(
+    database: DatabaseClient, constant_name: str
+) -> Union[dict, None]:
     """A function to get a data source constant.
 
     Args:
@@ -72,7 +74,7 @@ def get_constant(database: DatabaseClient, constant_name: str) -> dict:
         constant_name (str): Name of the constant.
 
     Returns:
-        dict: The corresponding MongoDB document.
+        Union[dict, None]: The corresponding MongoDB document.
     """
 
     doc = None
@@ -99,7 +101,7 @@ def set_data_source(
     location_type: str,
     location_details: dict,
     fields: list,
-) -> dict:
+) -> Union[dict, None]:
     """A function to set a data source.
 
     Args:
@@ -112,7 +114,7 @@ def set_data_source(
         fields (list): A list of fields of data source.
 
     Returns:
-        dict: MongoDB document.
+        Union[dict, None]: MongoDB document.
 
     """
 
@@ -174,7 +176,7 @@ def set_data_source(
 )
 def get_data_source(
     database: DatabaseClient, data_source_id: ObjectId
-) -> dict:
+) -> Union[dict, None]:
     """A function to get a data source.
 
     Args:
@@ -182,7 +184,7 @@ def get_data_source(
         data_source_id (ObjectId): MongoDB document ID of data source.
 
     Returns:
-        dict: Data source configuration.
+        Union[dict, None]: Data source configuration.
 
     """
 
@@ -229,7 +231,7 @@ def get_all_data_sources(database: DatabaseClient) -> list:
 def get_data_source_non_breakdown_fields(
     database: DatabaseClient,
     data_source_id: ObjectId,
-) -> dict:
+) -> list:
     """A function to get a list of non breakdown fields of a data source.
 
     Args:
@@ -259,8 +261,8 @@ def update_data_source_param(
     database: DatabaseClient,
     data_source_id: ObjectId,
     param_name: str,
-    param_value: Union[str, dict, list],
-) -> dict:
+    param_value: Union[str, dict, list, bool],
+) -> Union[dict, None]:
     """A function to update a data source parameter.
 
     Args:
@@ -270,7 +272,7 @@ def update_data_source_param(
         param_value (Union[str, dict, list])): Updated value of the parameter.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
     doc = None
@@ -313,7 +315,7 @@ def update_data_source_name(
     database: DatabaseClient,
     data_source_id: ObjectId,
     name: str,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update data source name.
 
     Args:
@@ -322,7 +324,7 @@ def update_data_source_name(
         name (str): New name of the data source.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -337,6 +339,7 @@ def update_data_source_name(
 
     if exists_flag:
         cur_doc = get_data_source(database, data_source_id)
+
         if cur_doc[c.DATA_SOURCE_NAME] != name:
             raise de.DuplicateName(name)
 
@@ -352,7 +355,7 @@ def update_data_source_format(
     database: DatabaseClient,
     data_source_id: ObjectId,
     data_source_format: str,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update data source format.
 
     Args:
@@ -361,7 +364,7 @@ def update_data_source_format(
         data_source_format (str): New data source format.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -377,7 +380,7 @@ def update_data_source_location_type(
     database: DatabaseClient,
     data_source_id: ObjectId,
     location_type: str,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update data source location type.
 
     Args:
@@ -386,7 +389,7 @@ def update_data_source_location_type(
         location_type (str): New data source location type.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -402,7 +405,7 @@ def update_data_source_location_details(
     database: DatabaseClient,
     data_source_id: ObjectId,
     location_details: dict,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update data source location details.
 
     Args:
@@ -411,7 +414,7 @@ def update_data_source_location_details(
         location_details (dict): New data source location details.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -427,7 +430,7 @@ def update_data_source_fields(
     database: DatabaseClient,
     data_source_id: ObjectId,
     fields: list,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update data source fields.
 
     Args:
@@ -436,7 +439,7 @@ def update_data_source_fields(
         fields (list): New data source fields.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -456,7 +459,7 @@ def update_data_source_recent_ingestion_job_id(
     database: DatabaseClient,
     data_source_id: ObjectId,
     recent_ingestion_job_id: ObjectId,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update data source recent ingestion job ID.
 
     Args:
@@ -465,7 +468,7 @@ def update_data_source_recent_ingestion_job_id(
         recent_ingestion_job_id (ObjectId): MongoDB ID of the most recent ingestion job.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -481,7 +484,7 @@ def update_data_source_recent_ingestion_job_status(
     database: DatabaseClient,
     data_source_id: ObjectId,
     recent_ingestion_job_status: str,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update the status of a data source's
     most recent ingestion job.
 
@@ -491,7 +494,7 @@ def update_data_source_recent_ingestion_job_status(
         recent_ingestion_job_status (str): Status of the  most recent ingestion job.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -511,7 +514,7 @@ def update_data_source_non_breakdown_fields(
     database: DatabaseClient,
     data_source_id: ObjectId,
     non_breakdown_fields: list,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update non breakdown fields for a data source.
 
     Args:
@@ -520,7 +523,7 @@ def update_data_source_non_breakdown_fields(
         non_breakdown_fields (list): List of non breakdown fields.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -544,7 +547,7 @@ def update_data_source(
     location_type: str = None,
     location_details: dict = None,
     fields: list = None,
-):
+) -> Union[dict, None]:
     """A function to update data source configuration.
 
     Args:
@@ -557,7 +560,7 @@ def update_data_source(
         fields (list): Updated data source field definition.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
     doc = None
@@ -619,7 +622,7 @@ def update_data_source(
 )
 def set_ingestion_job(
     database: DatabaseClient, data_source_id: ObjectId
-) -> dict:
+) -> Union[dict, None]:
     """A function to set an ingestion job.
 
     Args:
@@ -627,7 +630,7 @@ def set_ingestion_job(
         data_source_id (ObjectId): MongoDB document ID of data source.
 
     Returns:
-        dict: Ingestion job configuration.
+        Union[dict, None]: Ingestion job configuration.
 
     """
 
@@ -664,6 +667,7 @@ def set_ingestion_job(
             data_source_id,
             ingestion_job_id,
         )
+
         update_data_source_recent_ingestion_job_status(
             database=database,
             data_source_id=data_source_id,
@@ -787,7 +791,7 @@ def set_ingestion_job_status_no_default_audience(
     ingestion_job_id: ObjectId,
     job_status: str,
     status_msg: str,
-) -> dict:
+) -> Union[dict, None]:
 
     """Set ingestion job status, but do not create default adience when
     ingestion job succeeded.
@@ -800,7 +804,7 @@ def set_ingestion_job_status_no_default_audience(
         status_msg (str): Additional details related to the current job status.
 
     Returns:
-        dict: Updated ingestion job configuration.
+        Union[dict, None]: Updated ingestion job configuration.
     """
 
     doc = None
@@ -916,7 +920,7 @@ def get_ingestion_job_data_source_fields(
 def get_ingestion_job_custom_fields(
     database: DatabaseClient,
     ingestion_job_id: ObjectId,
-) -> dict:
+) -> list:
     """A function to get a list of custom fields of a ingestion job.
 
     Args:
@@ -1132,7 +1136,7 @@ def append_ingested_data_stats(
 )
 def get_all_data_source_ids(
     database: DatabaseClient,
-) -> list:
+) -> Union[list, None]:
     """A function to get all existing data source IDs.
 
     Args:
@@ -1186,7 +1190,7 @@ def get_data_source_recent_ingestion_job_id(
 def favorite_data_source(
     database: DatabaseClient,
     data_source_id: ObjectId,
-) -> dict:
+) -> Union[dict, None]:
     """A function to favorite a data source.
 
     Args:
@@ -1194,7 +1198,7 @@ def favorite_data_source(
         data_source_id (ObjectId): MongoDB ID of data source.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
@@ -1209,7 +1213,7 @@ def favorite_data_source(
 def unfavorite_data_source(
     database: DatabaseClient,
     data_source_id: ObjectId,
-) -> dict:
+) -> Union[dict, None]:
     """A function to unfavorite a data source.
 
     Args:
@@ -1217,7 +1221,7 @@ def unfavorite_data_source(
         data_source_id (ObjectId): MongoDB ID of data source.
 
     Returns:
-        dict: Updated data source configuration.
+        Union[dict, None]: Updated data source configuration.
 
     """
 
