@@ -90,7 +90,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
     else:
         raise KeyError(
-            f"No configuration for {destination[db_const.DELIVERY_PLATFORM_TYPE]}"
+            f"No configuration for destination type: {destination[db_const.DELIVERY_PLATFORM_TYPE]}"
         )
 
     return env_dict, secret_dict
