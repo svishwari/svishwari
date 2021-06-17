@@ -75,6 +75,13 @@ class FacebookAuthConstants(Schema):
     Facebook Auth constants schema class
     """
 
+    class Meta:
+        """
+        set the ordering of facebook auth constants
+        """
+
+        ordered = True
+
     facebook_ad_account_id = fields.Dict(
         required=True,
         validate=must_not_be_blank,
@@ -121,6 +128,13 @@ class SFMCAuthConstants(Schema):
     """
     SFMC Auth constants schema class
     """
+
+    class Meta:
+        """
+        set the ordering of sfmc auth constants
+        """
+
+        ordered = True
 
     sfmc_client_id = fields.Dict(
         required=True,
@@ -188,6 +202,13 @@ class DestinationConstantsSchema(Schema):
     """
     Destination constants schema class
     """
+
+    class Meta:
+        """
+        set the ordering of destination constants
+        """
+
+        ordered = True
 
     facebook = fields.Nested(FacebookAuthConstants)
     salesforce = fields.Nested(SFMCAuthConstants)
