@@ -2,6 +2,8 @@
 
 import logging
 from collections import defaultdict
+from typing import Union
+
 from bson import ObjectId
 import pymongo
 import pandas as pd
@@ -232,7 +234,10 @@ def validate_data_source_fields(fields: list) -> None:
         fields (list): Data source fields.
 
     """
-    types_dict = {"special_type_dict": dict(), "field_mapping_dict": dict()}
+    types_dict: dict = {
+        "special_type_dict": dict(),
+        "field_mapping_dict": dict(),
+    }
 
     for field_item in fields:
         if (
@@ -310,7 +315,7 @@ def update_audience_doc(
     database: DatabaseClient,
     audience_id: ObjectId,
     update_dict: dict,
-) -> dict:
+) -> Union[dict, None]:
     """Update MongoDb document.
 
     Args:

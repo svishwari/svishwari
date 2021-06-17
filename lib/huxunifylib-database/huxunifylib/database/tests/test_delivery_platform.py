@@ -162,6 +162,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
         self.assertTrue(doc[c.ID] is not None)
+        self.assertFalse(c.DELETED in doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_duplicate_delivery_platform_facebook(self):
@@ -197,6 +198,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
         self.assertIsNotNone(doc[c.ID])
+        self.assertFalse(c.DELETED in doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_platform_facebook_with_user(self):
@@ -212,6 +214,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
         self.assertIsNotNone(doc[c.ID])
+        self.assertFalse(c.DELETED in doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_deleted_delivery_platform(self):
@@ -290,6 +293,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             docs[0][c.DELIVERY_PLATFORM_NAME],
             "My delivery platform for Facebook",
         )
+        self.assertFalse([d for d in docs if c.DELETED in d])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform_with_user(self):
@@ -340,6 +344,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], self.auth_details_sfmc)
         self.assertEqual(doc[c.DELIVERY_PLATFORM_STATUS], c.STATUS_PENDING)
+        self.assertFalse(c.DELETED in doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_delivery_platforms(self):
@@ -350,6 +355,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(platforms)
         self.assertEqual(len(platforms), 3)
+        self.assertFalse([p for p in platforms if c.DELETED in p])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_connection_status(self):
@@ -694,6 +700,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.LOOKALIKE_AUD_NAME in doc)
         self.assertTrue(c.LOOKALIKE_AUD_COUNTRY in doc)
         self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
+        self.assertFalse(c.DELETED in doc)
 
         # check if lookalike audiences is set for the delivery job
         updated_delivery_job_doc = dpm.get_delivery_job(
@@ -715,6 +722,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         self.assertTrue(doc is not None)
+        self.assertFalse(c.DELETED in doc)
 
         # check if lookalike audiences are appended in the delivery job
         updated_delivery_job_doc = dpm.get_delivery_job(
@@ -744,6 +752,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(docs is not None)
         self.assertEqual(len(docs), 2)
+        self.assertFalse([d for d in docs if c.DELETED in d])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_update_lookalike_audience(self):
@@ -1152,6 +1161,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
         self.assertIn(c.ENGAGEMENT_ID, delivery_job)
         self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
+        self.assertFalse(c.DELETED in delivery_job)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_jobs_with_engagement(self):

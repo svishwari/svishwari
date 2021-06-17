@@ -439,7 +439,6 @@ export default {
         default:
           return item.subtitle
       }
-      return "Numeric(false, false, true) | Empty"
     },
 
     // Mapping Overview Data
