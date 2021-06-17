@@ -328,8 +328,8 @@ class AudiencePostView(SwaggerView):
                     database, destination[db_c.OBJECT_ID]
                 ):
                     return {
-                        "message": f"Destination does not exist "
-                        f"{destination[db_c.OBJECT_ID]}"
+                        "message": f"Destination with ID "
+                        f"{destination[db_c.OBJECT_ID]} does not exist."
                     }
                 destinations.append(
                     {db_c.OBJECT_ID: destination[db_c.OBJECT_ID]}
