@@ -1756,7 +1756,7 @@ set_transferred_for_feedback = partial(
 def get_all_performance_metrics(
     database: DatabaseClient,
     pending_transfer_for_feedback: bool = False,
-) -> list:
+) -> Union[list, None]:
     """Retrieve all campaign performance metrics.
 
     Args:
@@ -1765,7 +1765,7 @@ def get_all_performance_metrics(
             metrics that have not been transferred for feedback. Defaults to False.
 
     Returns:
-        list: list of performance metrics.
+        Union[list, None]: list of performance metrics.
     """
 
     metric_docs = None
