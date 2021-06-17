@@ -141,7 +141,6 @@ class TestCustomersOverview(unittest.TestCase):
         """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        # TODO: Update with proper response and add assertion for it
         customer_id = "1531-2039-22"
         response = self.test_client.get(
             f"{self.customers}/{customer_id}",
