@@ -105,6 +105,7 @@ class Config:
         "Authorization": "",
     }
 
+    # Preserve ordering in json
     JSON_SORT_KEYS = False
 
 
