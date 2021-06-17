@@ -42,12 +42,10 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
     # get auth
     auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
-    secret_dict = {}
     if (
         destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
         == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
     ):
-        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
                 auth[api_const.FACEBOOK_AD_ACCOUNT_ID]
@@ -55,13 +53,16 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
                 auth[api_const.FACEBOOK_APP_ID]
             ),
-            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: parameter_store.get_store_value(
-                auth[api_const.FACEBOOK_ACCESS_TOKEN]
-            ),
-            FacebookCredentials.FACEBOOK_APP_SECRET.name: parameter_store.get_store_value(
-                auth[api_const.FACEBOOK_APP_SECRET]
-            ),
         }
+        secret_dict = {
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
+                api_const.FACEBOOK_ACCESS_TOKEN
+            ],
+            FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
+                api_const.FACEBOOK_APP_SECRET
+            ],
+        }
+
     elif (
         destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
         == db_const.DELIVERY_PLATFORM_SFMC.upper()
