@@ -204,7 +204,7 @@
               <v-stepper-content step="1">
                 <div>
                   <CardHorizontal
-                    v-for="destination in destinations"
+                    v-for="destination in destinationsList"
                     :key="destination.id"
                     :title="destination.name"
                     :icon="destination.type"
@@ -249,7 +249,7 @@
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
           >
-            {{ destinations.length }} results
+            {{ destinationsList.length }} results
           </div>
           <div
             class="d-flex align-baseline"
@@ -350,8 +350,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      destinations: "destinations/enabledDestination",
+      destinations: "destinations/list",
+      availableDestinations: "destinations/availableDestinations",
     }),
+
+    destinationsList() {
+      return this.availableDestinations
+    },
 
     destination() {
       return this.destinations[this.selectedDestinationIndex] || null
@@ -382,6 +387,7 @@ export default {
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
+      getAvailableDestinations: "destinations/getAvailableDestinations",
     }),
     // Engagements
     detachEngagement(engagement) {
@@ -500,6 +506,7 @@ export default {
   },
   async mounted() {
     await this.getDestinations()
+    await this.getAvailableDestinations()
   },
 }
 </script>
