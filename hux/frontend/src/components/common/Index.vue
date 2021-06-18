@@ -404,10 +404,36 @@
 
     <v-subheader>Hux Chord Chart</v-subheader>
     <hux-chord-chart
-      :chartInput="chartData"
+      v-model="chartData"
       :colorCodes="colorCodes"
       :chartLegendsData="chartLegendsData"
-    ></hux-chord-chart>
+    />
+
+    <v-row class="my-4" no-gutters>
+      <v-col></v-col>
+      <v-col v-for="(legend, index) in chartLegendsData" :key="legend">
+        <label :style="`color:${colorCodes[index]}`">
+          <strong>{{ legend.prop }}</strong>
+        </label>
+      </v-col>
+    </v-row>
+    <v-row v-for="(row, index) in chartData" :key="row" class="mt-4">
+      <v-col>
+        <label :style="`color:${colorCodes[index]}`">
+          <strong>{{ chartLegendsData[index].prop }}</strong>
+        </label>
+      </v-col>
+      <v-col v-for="(value, subindex) in row" :key="value">
+        <v-text-field
+          v-model.lazy="chartData[index][subindex]"
+          v-show="index !== subindex"
+          solo
+          dense
+          type="number"
+          class="pa-0"
+        />
+      </v-col>
+    </v-row>
 
     <v-divider class="mt-10" />
 
@@ -886,20 +912,52 @@ export default {
         { text: "Created", value: "created" },
         { text: "Created By", value: "createdBy" },
       ],
+      chordDiagram: {
+        name: {
+          prop: "Name",
+          icon: "name",
+          color: "#005587",
+          data: [1951, 0, 2060, 6171, 3622],
+        },
+        address: {
+          prop: "Address",
+          icon: "address",
+          color: "#da291c",
+          data: [500, 400, 300, 5200, 4500],
+        },
+        email: {
+          prop: "Email",
+          icon: "email",
+          color: "#00a3e0",
+          data: [11975, 5871, 8916, 2868, 2300],
+        },
+        phone: {
+          prop: "Phone",
+          icon: "phone",
+          color: "#43b02a",
+          data: [1951, 10048, 2060, 6171, 2800],
+        },
+        cookie: {
+          prop: "Cookie",
+          icon: "cookie",
+          color: "#efa34c",
+          data: [8010, 16145, 8090, 8045, 8377],
+        },
+      },
       chartData: [
-        [1951, 0, 2060, 6171, 3622],
-        [500, 400, 300, 5200, 4500],
-        [11975, 5871, 8916, 2868, 2300],
-        [1951, 10048, 2060, 6171, 2800],
-        [8010, 16145, 8090, 8045, 8377],
+        [0, 30, 40, 10, 20],
+        [10, 0, 30, 50, 10],
+        [20, 20, 0, 50, 10],
+        [10, 45, 35, 0, 10],
+        [40, 35, 15, 10, 0],
       ],
-      colorCodes: ["#43b02a", "#efa34c", "#005587", "#00a3e0", "#da291c"],
+      colorCodes: ["#005587", "#da291c", "#00a3e0", "#43b02a", "#efa34c"],
       chartLegendsData: [
-        { prop: "Name", icon: "name" },
-        { prop: "Address", icon: "address" },
-        { prop: "Email", icon: "email" },
-        { prop: "Phone", icon: "phone" },
-        { prop: "Cookie", icon: "cookie" },
+        { prop: "Name", icon: "name", color: "#005587" },
+        { prop: "Address", icon: "address", color: "#da291c" },
+        { prop: "Email", icon: "email", color: "#00a3e0" },
+        { prop: "Phone", icon: "phone", color: "#43b02a" },
+        { prop: "Cookie", icon: "cookie", color: "#efa34c" },
       ],
     }
   },
