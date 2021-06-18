@@ -408,32 +408,33 @@
       :colorCodes="colorCodes"
       :chartLegendsData="chartLegendsData"
     />
-
-    <v-row class="my-4" no-gutters>
-      <v-col></v-col>
-      <v-col v-for="(legend, index) in chartLegendsData" :key="legend">
-        <label :style="`color:${colorCodes[index]}`">
-          <strong>{{ legend.prop }}</strong>
-        </label>
-      </v-col>
-    </v-row>
-    <v-row v-for="(row, index) in chartData" :key="row" class="mt-4">
-      <v-col>
-        <label :style="`color:${colorCodes[index]}`">
-          <strong>{{ chartLegendsData[index].prop }}</strong>
-        </label>
-      </v-col>
-      <v-col v-for="(value, subindex) in row" :key="value">
-        <v-text-field
-          v-model.lazy="chartData[index][subindex]"
-          v-show="index !== subindex"
-          solo
-          dense
-          type="number"
-          class="pa-0"
-        />
-      </v-col>
-    </v-row>
+    <v-container class="my-4">
+      <v-row align="baseline">
+        <v-col></v-col>
+        <v-col v-for="(legend, index) in chartLegendsData" :key="legend">
+          <label :style="`color:${colorCodes[index]}`">
+            <strong>{{ legend.prop }}</strong>
+          </label>
+        </v-col>
+      </v-row>
+      <v-row v-for="(row, index) in chartData" :key="row" align="center">
+        <v-col class="text-right">
+          <label :style="`color:${colorCodes[index]}`">
+            <strong>{{ chartLegendsData[index].prop }}</strong>
+          </label>
+        </v-col>
+        <v-col v-for="(value, subindex) in row" :key="value">
+          <input
+            v-model.lazy="chartData[index][subindex]"
+            v-if="index !== subindex"
+            solo
+            dense
+            type="number"
+            class="white pa-2 shadow"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
 
     <v-divider class="mt-10" />
 
@@ -946,10 +947,10 @@ export default {
       },
       chartData: [
         [0, 30, 40, 10, 20],
-        [10, 0, 30, 50, 10],
-        [20, 20, 0, 50, 10],
-        [10, 45, 35, 0, 10],
-        [40, 35, 15, 10, 0],
+        [30, 0, 15, 45, 10],
+        [40, 15, 0, 25, 10],
+        [10, 45, 25, 0, 20],
+        [20, 10, 10, 20, 0],
       ],
       colorCodes: ["#005587", "#da291c", "#00a3e0", "#43b02a", "#efa34c"],
       chartLegendsData: [
