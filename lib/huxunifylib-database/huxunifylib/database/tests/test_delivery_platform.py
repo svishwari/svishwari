@@ -510,7 +510,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME:
                 "HUX Performance Indicator",
             c.DELIVERY_PLATFORM_SFMC_DATA_EXT_ID:
-                "ED226F5B-A7B9-4C54-B369-26787B1792F6",
+                "ED226F5G-A7B9-4C54-B369-26787B1792F6",
         }
 
         doc = dpm.update_delivery_platform(
