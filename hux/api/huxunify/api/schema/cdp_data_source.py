@@ -3,9 +3,10 @@ Schemas for cdp data sources API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import post_dump
-from marshmallow.fields import Str, Int, Bool
-from huxunifylib.database.constants import ID, CDP_DATA_SOURCE_ID
+from marshmallow import post_dump, fields
+from marshmallow.validate import OneOf
+
+import huxunifylib.database.constants as db_c
 from huxunify.api.schema.utils import validate_object_id, must_not_be_blank
 from huxunify.api import constants as api_c
 
@@ -15,8 +16,14 @@ class CdpDataSourcePostSchema(Schema):
     CdpDataSourcePostSchema.
     """
 
-    name = Str(required=True, validate=must_not_be_blank)
-    category = Str(required=True, validate=must_not_be_blank)
+    name = fields.Str(
+        required=True,
+        validate=must_not_be_blank
+    )
+    category = fields.Str(
+        required=True,
+        validate=must_not_be_blank
+    )
 
 
 class CdpDataSourceSchema(Schema):
@@ -24,19 +31,32 @@ class CdpDataSourceSchema(Schema):
     CdpDataSourceSchema
     """
 
-    _id = Str(
+    _id = fields.Str(
         data_key=api_c.ID,
         example="5f5f7262997acad4bac4373b",
         required=True,
         validate=validate_object_id,
     )
-    name = Str(required=True)
-    category = Str(required=True)
-    feed_count = Int()
-    status = Str()
-    is_added = Bool(attribute="added")
-    is_enabled = Bool(attribute="enabled")
-    type = Str()
+    name = fields.Str(required=True)
+    category = fields.Str(required=True)
+    feed_count = fields.Int()
+    status = fields.Str(
+        attribute=api_c.CONNECTION_STATUS,
+        validate=[
+            OneOf(
+                choices=[
+                    db_c.STATUS_PENDING,
+                    db_c.STATUS_IN_PROGRESS,
+                    db_c.STATUS_FAILED,
+                    db_c.STATUS_SUCCEEDED,
+                ]
+            )
+        ],
+        default=db_c.PENDING
+    )
+    is_added = fields.Bool(attribute="added")
+    is_enabled = fields.Bool(attribute="enabled")
+    type = fields.Str()
 
     @post_dump
     # pylint: disable=unused-argument
@@ -52,8 +72,8 @@ class CdpDataSourceSchema(Schema):
 
         """
         # map id to data_source_id
-        if ID in data:
-            data[CDP_DATA_SOURCE_ID] = str(data[ID])
-            del data[ID]
+        if db_c.ID in data:
+            data[db_c.CDP_DATA_SOURCE_ID] = str(data[db_c.ID])
+            del data[db_c.ID]
 
         return data

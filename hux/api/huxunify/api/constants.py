@@ -71,14 +71,14 @@ ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 
-STATUS_ACTIVE = "active"
-STATUS_INACTIVE = "inactive"
-STATUS_DRAFT = "draft"
-ENGAGEMENT_STATUSES = [
-    STATUS_ACTIVE,
-    STATUS_INACTIVE,
-    STATUS_DRAFT,
-]
+STATUS_ACTIVE = "Active"
+STATUS_INACTIVE = "Inactive"
+STATUS_DRAFT = "Draft"
+# ENGAGEMENT_STATUSES = [
+#     STATUS_ACTIVE,
+#     STATUS_INACTIVE,
+#     STATUS_DRAFT,
+# ]
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"

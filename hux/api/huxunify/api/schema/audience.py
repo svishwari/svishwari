@@ -5,7 +5,9 @@ Purpose of this file is to house the audience schema
 from flask_marshmallow import Schema
 from marshmallow.fields import Str, Integer
 from marshmallow.fields import List, Dict
-from marshmallow.validate import Length
+from marshmallow.validate import Length, OneOf
+
+import huxunify.api.constants as api_c
 
 
 class AudienceSchema(Schema):
@@ -57,7 +59,21 @@ class AudienceDeliverySchema(Schema):
         ]
 
     delivery_platform_id = Str()
-    audience_delivery_status = Str()
+    audience_delivery_status = Str(
+        attribute=api_c.STATUS,
+        required=True,
+        validate=OneOf(
+            choices=[
+                api_c.AUDIENCE_STATUS_PENDING,
+                api_c.AUDIENCE_STATUS_DRAFT,
+                api_c.AUDIENCE_STATUS_DELIVERING,
+                api_c.AUDIENCE_STATUS_DELIVERED,
+                api_c.AUDIENCE_STATUS_ERROR,
+                api_c.AUDIENCE_STATUS_PAUSED,
+            ]
+        ),
+        default=api_c.STATUS_DRAFT,
+    )
     completed = Str()
     audience_id = Str()
     delivery_job_id = Str()
