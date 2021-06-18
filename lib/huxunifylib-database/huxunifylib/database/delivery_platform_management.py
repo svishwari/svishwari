@@ -1380,15 +1380,15 @@ def update_delivery_platform_generic_campaigns(
         Union[dict, None]: Updated delivery job configuration.
     """
 
-    doc = get_delivery_job(database, delivery_job_id)[
+    current_campaigns = get_delivery_job(database, delivery_job_id)[
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
     ]
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
 
-    doc.append(generic_campaign)
+    current_campaigns.append(generic_campaign)
     update_doc = {}
-    update_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS] = doc
+    update_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS] = current_campaigns
     try:
         doc = collection.find_one_and_update(
             {c.ID: delivery_job_id, c.DELETED: False},
