@@ -78,13 +78,13 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["active", "success", "delivered"],
-        Inactive: ["caution"],
-        Activating: ["activating"],
-        Draft: ["draft"],
-        Disabled: ["disabled"],
-        Error: ["error"],
-        Pending: ["pending", "delivering"],
+        Active: ["Active", "Success", "Delivered"],
+        Inactive: ["Caution"],
+        Activating: ["Activating"],
+        Draft: ["Draft"],
+        Disabled: ["Disabled"],
+        Error: ["Error"],
+        Pending: ["Pending", "Delivering"],
       },
     }
   },
