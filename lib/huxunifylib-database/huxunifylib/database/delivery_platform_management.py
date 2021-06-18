@@ -224,7 +224,6 @@ def set_connection_status(
     delivery_platform_id: ObjectId,
     connection_status: str,
 ) -> Union[dict, None]:
-
     """A function to set the status of connection to a delivery platform.
 
     Args:
@@ -510,7 +509,7 @@ def get_platform_type(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-# pylint: disable=too-many-locals
+# pylint: disable=too-many-locals,too-many-branches
 def update_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
@@ -521,6 +520,7 @@ def update_delivery_platform(
     user_id: ObjectId = None,
     enabled: bool = None,
     deleted: bool = None,
+    performance_de: dict = None,
 ) -> Union[dict, None]:
     """A function to update delivery platform configuration.
 
@@ -534,7 +534,7 @@ def update_delivery_platform(
         user_id (ObjectId): User id of user updating delivery platform. This is Optional.
         enabled (bool): if the delivery platform is enabled.
         deleted (bool): if the delivery platform is deleted (soft-delete).
-
+        performance_de (dict): Performance Data Extension for only SFMC
     Returns:
         Union[dict, None]: Updated delivery platform configuration.
     """
@@ -556,18 +556,30 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_NAME,
         name,
     )
-
+    cur_doc = None
     if exists_flag:
         cur_doc = get_delivery_platform(database, delivery_platform_id)
         if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
             raise de.DuplicateName(name)
 
-    update_doc = {
-        c.DELIVERY_PLATFORM_NAME: name,
-        c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-        c.DELIVERY_PLATFORM_AUTH: authentication_details,
-        c.UPDATE_TIME: datetime.datetime.utcnow(),
-    }
+    if (
+        cur_doc is not None
+        and cur_doc[c.DELIVERY_PLATFORM_TYPE] == "salesforce"
+    ):
+        update_doc = {
+            c.DELIVERY_PLATFORM_NAME: name,
+            c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+            c.DELIVERY_PLATFORM_AUTH: authentication_details,
+            c.UPDATE_TIME: datetime.datetime.utcnow(),
+            c.DELIVERY_PLATFORM_SFMC_DATA_EXTENSION: performance_de,
+        }
+    else:
+        update_doc = {
+            c.DELIVERY_PLATFORM_NAME: name,
+            c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+            c.DELIVERY_PLATFORM_AUTH: authentication_details,
+            c.UPDATE_TIME: datetime.datetime.utcnow(),
+        }
 
     if added is not None:
         update_doc[c.ADDED] = added
@@ -1315,7 +1327,6 @@ def get_audience_recent_delivery_job(
 
     # if delivery jobs were retrieved
     if len(delivery_jobs) > 0:
-
         # sort the list by the delivery job ID and return the
         # most recent ID
         delivery_jobs.sort(key=itemgetter(c.ID), reverse=True)
