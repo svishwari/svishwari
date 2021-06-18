@@ -4,6 +4,7 @@ This module enables functionality related to delivery platform management.
 # pylint: disable=C0302
 
 import logging
+from typing import Union
 from functools import partial
 import datetime
 from operator import itemgetter
