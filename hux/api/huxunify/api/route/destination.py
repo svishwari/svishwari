@@ -79,10 +79,6 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
         SFMCCredentials.SFMC_URL.value: sfmc_auth.get(
             api_c.SFMC_REST_BASE_URI
         ),
-        # TODO HUS-548: Remove these constants when SFMC connector library supports this.
-        SFMCCredentials.SFMC_DEFAULT_WSDL.value: api_c.SFMC_DEFAULT_WSDL,
-        SFMCCredentials.SFMC_AUTH_FLAG.value: api_c.SFMC_AUTH_FLAG,
-        SFMCCredentials.SFMC_SCOPE.value: api_c.SFMC_SCOPE,
     }
 
 
