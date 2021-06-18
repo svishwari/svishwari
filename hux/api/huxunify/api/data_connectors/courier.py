@@ -11,6 +11,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job_status,
 )
+
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
@@ -42,9 +43,10 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
     # get auth
     auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
+
     if (
         destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_FACEBOOK
+        == "Facebook"  # db_const.DELIVERY_PLATFORM_FACEBOOK
     ):
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
@@ -55,10 +57,10 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             ),
         }
         secret_dict = {
-            FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
                 api_const.FACEBOOK_ACCESS_TOKEN
             ],
-            FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
+            FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
                 api_const.FACEBOOK_APP_SECRET
             ],
         }
@@ -231,6 +233,22 @@ def get_destination_config(
     """
     audience_delivery_job = set_delivery_job(
         database, audience_id, destination_id, []
+    )
+
+    # ORCH delivery job enbabled must be true
+    database[db_const.DATA_MANAGEMENT_DATABASE][
+        db_const.DELIVERY_JOBS_COLLECTION
+    ].find_one_and_update(
+        {db_const.ID: audience_delivery_job[db_const.ID]},
+        {"$set": {db_const.ENABLED: True}},
+    )
+
+    # ORCH audience enabled must be true
+    database[db_const.DATA_MANAGEMENT_DATABASE][
+        db_const.AUDIENCES_COLLECTION
+    ].find_one_and_update(
+        {db_const.ID: audience_id},
+        {"$set": {db_const.ENABLED: True}},
     )
 
     delivery_platform = get_delivery_platform(
