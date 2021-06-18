@@ -564,7 +564,7 @@ def update_delivery_platform(
 
     if (
         cur_doc is not None
-        and cur_doc[c.DELIVERY_PLATFORM_TYPE] == "salesforce"
+        and cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC
     ):
         update_doc = {
             c.DELIVERY_PLATFORM_NAME: name,
