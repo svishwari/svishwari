@@ -210,6 +210,7 @@ INVALID_COMPONENT_NAME = "Invalid component name."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_IDS = "engagement_ids"
 ENGAGEMENT_NAME = "engagement_name"
 ENGAGEMENT_ENDPOINT = "/engagements"
 ENGAGEMENT_TAG = "engagements"
