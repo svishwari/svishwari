@@ -556,30 +556,21 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_NAME,
         name,
     )
-    cur_doc = None
+    # cur_doc = None
     if exists_flag:
         cur_doc = get_delivery_platform(database, delivery_platform_id)
         if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
             raise de.DuplicateName(name)
 
-    if (
-        cur_doc is not None
-        and cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC
-    ):
-        update_doc = {
-            c.DELIVERY_PLATFORM_NAME: name,
-            c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-            c.DELIVERY_PLATFORM_AUTH: authentication_details,
-            c.UPDATE_TIME: datetime.datetime.utcnow(),
-            c.DELIVERY_PLATFORM_SFMC_DATA_EXTENSION: performance_de,
-        }
-    else:
-        update_doc = {
-            c.DELIVERY_PLATFORM_NAME: name,
-            c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
-            c.DELIVERY_PLATFORM_AUTH: authentication_details,
-            c.UPDATE_TIME: datetime.datetime.utcnow(),
-        }
+    update_doc = {
+        c.DELIVERY_PLATFORM_NAME: name,
+        c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+        c.DELIVERY_PLATFORM_AUTH: authentication_details,
+        c.UPDATE_TIME: datetime.datetime.utcnow(),
+    }
+
+    if cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC:
+        update_doc[c.DELIVERY_PLATFORM_SFMC_DATA_EXTENSION] = performance_de
 
     if added is not None:
         update_doc[c.ADDED] = added
