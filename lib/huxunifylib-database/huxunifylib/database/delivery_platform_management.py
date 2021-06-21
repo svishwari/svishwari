@@ -573,7 +573,7 @@ def update_delivery_platform(
         cur_doc is not None
         and cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC
     ):
-        update_doc[c.DELIVERY_PLATFORM_SFMC_DATA_EXTENSION] = performance_de
+        update_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION] = performance_de
 
     if added is not None:
         update_doc[c.ADDED] = added

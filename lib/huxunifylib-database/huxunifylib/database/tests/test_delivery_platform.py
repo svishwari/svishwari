@@ -525,7 +525,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_id=self.delivery_platform_doc_sfmc[c.ID],
         )
 
-        self.assertTrue(get_doc[c.DELIVERY_PLATFORM_SFMC_DATA_EXTENSION])
+        self.assertTrue(get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_job(self):
