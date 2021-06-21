@@ -93,7 +93,10 @@ def set_delivery_platform(
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
     }
-    if delivery_platform_type == c.DELIVERY_PLATFORM_SFMC:
+    if (
+        delivery_platform_type == c.DELIVERY_PLATFORM_SFMC
+        and performance_de is not None
+    ):
         doc[c.PERFORMANCE_METRICS_DATA_EXTENSION] = performance_de
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
