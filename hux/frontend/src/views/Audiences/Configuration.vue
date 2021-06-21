@@ -1,302 +1,293 @@
 <template>
-  <div>
-    <v-progress-linear :active="loading" :indeterminate="loading" />
-    <page class="white create-audience-wrap" maxWidth="100%">
-      <div>
-        <div class="heading font-weight-light neroBlack--text">
-          Add an audience
-        </div>
-        <div class="sub-heading text-h6 neroBlack--text">
-          Build a target audience from the data you own. Add the attributes you
-          want to involve in this particular audience and where you wish to send
-          this audience.
-        </div>
-
-        <div class="overview font-weight-regular neroBlack--text mt-15">
-          Audience overview
-        </div>
-        <div class="row overview-list mb-0 ml-0 mt-1">
-          <MetricCard
-            class="list-item mr-3"
-            v-for="(item, i) in overviewListItems"
-            :key="i"
-            :grow="i === 0 ? 2 : 1"
-            :title="item.title"
-            :icon="item.icon"
-          >
-            <template slot="subtitle-extended">
-              <tooltip>
-                <template slot="label-content">
-                  <span class="font-weight-semi-bold">
-                    {{ getFormattedValue(item) }}
-                  </span>
-                </template>
-                <template slot="hover-content">
-                  {{ item.subtitle | Empty }}
-                </template>
-              </tooltip>
-            </template>
-          </MetricCard>
-        </div>
-        <v-divider class="divider mt-2 mb-9"></v-divider>
+  <page class="white create-audience-wrap" maxWidth="100%">
+    <div>
+      <div class="heading font-weight-light neroBlack--text">
+        Add an audience
+      </div>
+      <div class="sub-heading text-h6 neroBlack--text">
+        Build a target audience from the data you own. Add the attributes you
+        want to involve in this particular audience and where you wish to send
+        this audience.
       </div>
 
-      <div class="timeline-wrapper">
-        <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
-          <v-timeline align-top dense class="">
-            <v-timeline-item color="blue" class="timeline-section mb-7">
-              <template #icon class="timeline-icon-section">
-                <span>1</span>
+      <div class="overview font-weight-regular neroBlack--text mt-15">
+        Audience overview
+      </div>
+      <div class="row overview-list mb-0 ml-0 mt-1">
+        <MetricCard
+          class="list-item mr-3"
+          v-for="(item, i) in overviewListItems"
+          :key="i"
+          :grow="i === 0 ? 2 : 1"
+          :title="item.title"
+          :icon="item.icon"
+        >
+          <template slot="subtitle-extended">
+            <tooltip>
+              <template slot="label-content">
+                <span class="font-weight-semi-bold">
+                  {{ getFormattedValue(item) }}
+                </span>
               </template>
-              <v-row class="pt-1">
-                <v-col cols="4">
-                  <strong class="text-h5 neroBlack--text"
-                    >General information</strong
-                  >
-                  <TextField
-                    placeholderText="What is the name for this audience ?"
-                    height="40"
-                    labelText="Audience name"
-                    backgroundColor="white"
-                    required
-                    v-model="audience.audienceName"
-                    class="mt-1 text-caption neroBlack--text pt-2"
-                    :rules="audienceNamesRules"
-                  />
-                </v-col>
-                <v-col cols="8">
-                  <div class="mt-8 ml-15 text-caption neroBlack--text">
-                    Add to an engagement -
-                    <i style="tilt">you must have at least one</i>
-                    <div class="mt-2 d-flex align-center">
-                      <v-icon
-                        size="30"
-                        class="add-icon cursor-pointer"
-                        color="primary"
-                        @click="engagementDrawer = !engagementDrawer"
-                        >mdi-plus-circle</v-icon
-                      >
-                      <div>
-                        <v-chip
-                          v-for="item in selectedEngagements"
-                          :close="isMinEngagementSelected"
-                          small
-                          class="mx-2 my-1 font-weight-semi-bold"
-                          text-color="primary"
-                          color="pillBlue"
-                          close-icon="mdi-close"
-                          @click:close="detachEngagement(item)"
-                          :key="item.id"
-                        >
-                          {{ item.name }}
-                        </v-chip>
-                      </div>
-                    </div>
-                  </div>
-                </v-col>
-              </v-row>
-            </v-timeline-item>
-            <v-timeline-item color="blue" class="timeline-section mb-7">
-              <template #icon class="timeline-icon-section">
-                <span>2</span>
+              <template slot="hover-content">
+                {{ item.subtitle | Empty }}
               </template>
-              <v-row class="pt-1 pr-0">
-                <attribute-rules :rules="attributeRules"></attribute-rules>
-              </v-row>
-            </v-timeline-item>
-            <v-timeline-item
-              color="blue"
-              class="timeline-section disable-down-timeline mb-15"
-            >
-              <template #icon class="timeline-icon-section">
-                <span>3</span>
-              </template>
-              <v-row class="pt-1">
-                <v-col cols="12">
-                  <strong class="text-h5 neroBlack--text">
-                    Select destination(s) -
-                    <i style="font-size: 12px">Optional</i>
-                  </strong>
-                  <div class="d-flex align-center">
+            </tooltip>
+          </template>
+        </MetricCard>
+      </div>
+      <v-divider class="divider mt-2 mb-9"></v-divider>
+    </div>
+
+    <div class="timeline-wrapper">
+      <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
+        <v-timeline align-top dense class="">
+          <v-timeline-item color="blue" class="timeline-section mb-7">
+            <template #icon class="timeline-icon-section">
+              <span>1</span>
+            </template>
+            <v-row class="pt-1">
+              <v-col cols="4">
+                <strong class="text-h5 neroBlack--text"
+                  >General information</strong
+                >
+                <TextField
+                  placeholderText="What is the name for this audience ?"
+                  height="40"
+                  labelText="Audience name"
+                  backgroundColor="white"
+                  required
+                  v-model="audience.audienceName"
+                  class="mt-1 text-caption neroBlack--text pt-2"
+                  :rules="audienceNamesRules"
+                />
+              </v-col>
+              <v-col cols="8">
+                <div class="mt-8 ml-15 text-caption neroBlack--text">
+                  Add to an engagement -
+                  <i style="tilt">you must have at least one</i>
+                  <div class="mt-2 d-flex align-center">
                     <v-icon
                       size="30"
-                      class="add-icon mt-1"
+                      class="add-icon cursor-pointer"
                       color="primary"
-                      @click="toggleDrawer()"
+                      @click="engagementDrawer = !engagementDrawer"
+                      >mdi-plus-circle</v-icon
                     >
-                      mdi-plus-circle
-                    </v-icon>
-                    <tooltip>
-                      <template slot="label-content">
-                        <Logo
-                          class="added-logo ml-2"
-                          v-for="destination in audience.destinations"
-                          :key="destination.id"
-                          :type="destination.type"
-                          :size="18"
-                          @mouseover.native="hoverItem = destination.name"
-                        />
-                      </template>
-                      <template slot="hover-content">
-                        <div class="d-flex align-center">
-                          Remove {{ hoverItem }}
-                        </div>
-                      </template>
-                    </tooltip>
+                    <div>
+                      <v-chip
+                        v-for="item in selectedEngagements"
+                        :close="isMinEngagementSelected"
+                        small
+                        class="mx-2 my-1 font-weight-semi-bold"
+                        text-color="primary"
+                        color="pillBlue"
+                        close-icon="mdi-close"
+                        @click:close="detachEngagement(item)"
+                        :key="item.id"
+                      >
+                        {{ item.name }}
+                      </v-chip>
+                    </div>
                   </div>
-                </v-col>
-              </v-row>
-            </v-timeline-item>
-            <v-timeline-item class="timeline-section disabled">
-              <template #icon class="timeline-icon-section">
-                <span>4</span>
-              </template>
-              <v-row class="pt-1">
-                <v-col cols="12">
-                  <strong class="text-h5"
-                    >Create a lookalike audience -
-                    <i>This feature will be coming soon</i>
-                  </strong>
-                </v-col>
-              </v-row>
-            </v-timeline-item>
-          </v-timeline>
-        </v-form>
+                </div>
+              </v-col>
+            </v-row>
+          </v-timeline-item>
+          <v-timeline-item color="blue" class="timeline-section mb-7">
+            <template #icon class="timeline-icon-section">
+              <span>2</span>
+            </template>
+            <v-row class="pt-1 pr-0">
+              <attribute-rules :rules="attributeRules"></attribute-rules>
+            </v-row>
+          </v-timeline-item>
+          <v-timeline-item
+            color="blue"
+            class="timeline-section disable-down-timeline mb-15"
+          >
+            <template #icon class="timeline-icon-section">
+              <span>3</span>
+            </template>
+            <v-row class="pt-1">
+              <v-col cols="12">
+                <strong class="text-h5 neroBlack--text">
+                  Select destination(s) -
+                  <i style="font-size: 12px">Optional</i>
+                </strong>
+                <div class="d-flex align-center">
+                  <v-icon
+                    size="30"
+                    class="add-icon mt-1"
+                    color="primary"
+                    @click="toggleDrawer()"
+                  >
+                    mdi-plus-circle
+                  </v-icon>
+                  <tooltip>
+                    <template slot="label-content">
+                      <Logo
+                        class="added-logo ml-2"
+                        v-for="destination in audience.destinations"
+                        :key="destination.id"
+                        :type="destination.type"
+                        :size="18"
+                        @mouseover.native="hoverItem = destination.name"
+                      />
+                    </template>
+                    <template slot="hover-content">
+                      <div class="d-flex align-center">
+                        Remove {{ hoverItem }}
+                      </div>
+                    </template>
+                  </tooltip>
+                </div>
+              </v-col>
+            </v-row>
+          </v-timeline-item>
+          <v-timeline-item class="timeline-section disabled">
+            <template #icon class="timeline-icon-section">
+              <span>4</span>
+            </template>
+            <v-row class="pt-1">
+              <v-col cols="12">
+                <strong class="text-h5"
+                  >Create a lookalike audience -
+                  <i>This feature will be coming soon</i>
+                </strong>
+              </v-col>
+            </v-row>
+          </v-timeline-item>
+        </v-timeline>
+      </v-form>
 
-        <HuxFooter maxWidth="inherit">
-          <template #left>
-            <huxButton
-              variant="white"
-              isTile
-              width="94"
-              height="40"
-              @click.native="$router.go(-1)"
-            >
-              <span class="primary--text">Cancel</span>
-            </huxButton>
-          </template>
-          <template #right>
+      <HuxFooter maxWidth="inherit">
+        <template #left>
+          <huxButton
+            variant="white"
+            isTile
+            width="94"
+            height="40"
+            @click.native="$router.go(-1)"
+          >
+            <span class="primary--text">Cancel</span>
+          </huxButton>
+        </template>
+        <template #right>
+          <huxButton
+            variant="primary"
+            isTile
+            width="94"
+            height="44"
+            @click="createAudience()"
+            :isDisabled="!isAudienceFormValid"
+          >
+            Create
+          </huxButton>
+        </template>
+      </HuxFooter>
+      <!-- Add destination workflow -->
+      <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
+        <template #header-left>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
+            <h3 class="text-h3 font-weight-light pr-2">
+              Select a destination to add
+            </h3>
+          </div>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
+            <h3 class="text-h3 pr-2 d-flex align-center">
+              <Logo :type="destinationDrawer.selectedDestination[0].type" />
+              <div class="pl-2 font-weight-light">
+                {{ destinationDrawer.selectedDestination[0].name }}
+              </div>
+            </h3>
+          </div>
+        </template>
+
+        <template #default>
+          <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <div>
+                  <CardHorizontal
+                    v-for="destination in destinationsList"
+                    :key="destination.id"
+                    :title="destination.name"
+                    :icon="destination.type"
+                    :isAdded="
+                      destination.is_added ||
+                      isDestinationAdded(destination.type)
+                    "
+                    :isAvailable="destination.is_enabled"
+                    :isAlreadyAdded="destination.is_added"
+                    @click="onSelectDestination(destination)"
+                    class="my-3"
+                  />
+                </div>
+              </v-stepper-content>
+              <v-stepper-content step="2">
+                <AddDestination />
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </template>
+
+        <template #footer-right>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
             <huxButton
               variant="primary"
               isTile
-              width="94"
-              height="44"
-              @click="createAudience()"
-              :isDisabled="!isAudienceFormValid"
+              width="80"
+              height="40"
+              class="ma-2"
+              @click="addDestinationToAudience()"
             >
-              Create
+              Add
             </huxButton>
-          </template>
-        </HuxFooter>
-        <!-- Add destination workflow -->
-        <drawer
-          v-model="destinationDrawer.insideFlow"
-          class="destination-drawer"
-        >
-          <template #header-left>
-            <div
-              class="d-flex align-baseline"
-              v-if="destinationDrawer.viewStep == 1"
-            >
-              <h3 class="text-h3 font-weight-light pr-2">
-                Select a destination to add
-              </h3>
-            </div>
-            <div
-              class="d-flex align-baseline"
-              v-if="destinationDrawer.viewStep == 2"
-            >
-              <h3 class="text-h3 pr-2 d-flex align-center">
-                <Logo :type="destinationDrawer.selectedDestination[0].type" />
-                <div class="pl-2 font-weight-light">
-                  {{ destinationDrawer.selectedDestination[0].name }}
-                </div>
-              </h3>
-            </div>
-          </template>
+          </div>
+        </template>
 
-          <template #default>
-            <v-stepper
-              v-model="destinationDrawer.viewStep"
-              class="stepper mt-1"
+        <template #footer-left>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 1"
+          >
+            {{ destinationsList.length }} results
+          </div>
+          <div
+            class="d-flex align-baseline"
+            v-if="destinationDrawer.viewStep == 2"
+          >
+            <huxButton
+              variant="white"
+              isTile
+              width="80"
+              height="40"
+              class="ma-2 drawer-back"
+              @click.native="destinationDrawer.viewStep = 1"
             >
-              <v-stepper-items>
-                <v-stepper-content step="1">
-                  <div>
-                    <CardHorizontal
-                      v-for="destination in destinations"
-                      :key="destination.id"
-                      :title="destination.name"
-                      :icon="destination.type"
-                      :isAdded="
-                        destination.is_added ||
-                        isDestinationAdded(destination.type)
-                      "
-                      :isAvailable="destination.is_enabled"
-                      :isAlreadyAdded="destination.is_added"
-                      @click="onSelectDestination(destination)"
-                      class="my-3"
-                    />
-                  </div>
-                </v-stepper-content>
-                <v-stepper-content step="2">
-                  <AddDestination />
-                </v-stepper-content>
-              </v-stepper-items>
-            </v-stepper>
-          </template>
-
-          <template #footer-right>
-            <div
-              class="d-flex align-baseline"
-              v-if="destinationDrawer.viewStep == 2"
-            >
-              <huxButton
-                variant="primary"
-                isTile
-                width="80"
-                height="40"
-                class="ma-2"
-                @click="addDestinationToAudience()"
-              >
-                Add
-              </huxButton>
-            </div>
-          </template>
-
-          <template #footer-left>
-            <div
-              class="d-flex align-baseline"
-              v-if="destinationDrawer.viewStep == 1"
-            >
-              {{ destinations.length }} results
-            </div>
-            <div
-              class="d-flex align-baseline"
-              v-if="destinationDrawer.viewStep == 2"
-            >
-              <huxButton
-                variant="white"
-                isTile
-                width="80"
-                height="40"
-                class="ma-2 drawer-back"
-                @click.native="destinationDrawer.viewStep = 1"
-              >
-                Back
-              </huxButton>
-            </div>
-          </template>
-        </drawer>
-        <!-- Engagement workflow -->
-        <AttachEngagement
-          v-model="engagementDrawer"
-          :finalEngagements="selectedEngagements"
-          @onEngagementChange="setSelectedEngagements"
-        />
-      </div>
-    </page>
-  </div>
+              Back
+            </huxButton>
+          </div>
+        </template>
+      </drawer>
+      <!-- Engagement workflow -->
+      <AttachEngagement
+        v-model="engagementDrawer"
+        :finalEngagements="selectedEngagements"
+        @onEngagementChange="setSelectedEngagements"
+      />
+    </div>
+  </page>
 </template>
 
 <script>
@@ -376,7 +367,13 @@ export default {
       AudiencesRules: "audiences/audiencesRules",
       getAudience: "audiences/audience",
       overview: "customers/overview",
+      destinations: "destinations/list",
+      availableDestinations: "destinations/availableDestinations",
     }),
+
+    destinationsList() {
+      return this.availableDestinations
+    },
 
     destination() {
       return this.destinations[this.selectedDestinationIndex] || null
@@ -414,6 +411,7 @@ export default {
       getAudiencesRules: "audiences/fetchConstants",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
+      getAvailableDestinations: "destinations/getAvailableDestinations",
     }),
 
     getFormattedValue(item) {
@@ -589,6 +587,7 @@ export default {
     await this.getAudiencesRules()
     this.mapCDMOverview()
     this.loading = false
+    await this.getAvailableDestinations()
   },
 }
 </script>
