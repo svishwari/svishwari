@@ -118,9 +118,15 @@
                         class="added-logo ml-2 svg-icon"
                         v-for="destination in audience.destinations"
                         :key="destination.id"
-                        :type="( hoverId == destination.id && deleteIcon ) || destination.type"
+                        :type="
+                          (hoverId == destination.id && deleteIcon) ||
+                          destination.type
+                        "
                         :size="iconSize"
-                        @mouseover.native="hoverItem = destination;mouseover(destination.id)"
+                        @mouseover.native="
+                          hoverItem = destination
+                          mouseover(destination.id)
+                        "
                         @mouseout.native="mouseout()"
                         @click.native="removeDestination(hoverItem.id)"
                       />
@@ -517,16 +523,16 @@ export default {
         this.mouseout()
       }
     },
-    mouseover(id){
-      this.deleteIcon = 'delete'
-       this.hoverId = id
+    mouseover(id) {
+      this.deleteIcon = "delete"
+      this.hoverId = id
       this.iconSize = 18
     },
-    mouseout(){
-       this.deleteIcon = null
-       this.hoverId = null
-       this.iconSize = 18
-    }
+    mouseout() {
+      this.deleteIcon = null
+      this.hoverId = null
+      this.iconSize = 18
+    },
   },
   async mounted() {
     await this.getDestinations()
