@@ -5,7 +5,7 @@
         {{ Value | Numeric(false, false, true) | Empty }}
       </span>
     </template>
-    <template slot="hover-content">
+    <template #hover-content>
       {{ Value | Numeric(true) | Empty }}
     </template>
   </tooltip>
