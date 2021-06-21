@@ -65,7 +65,7 @@ class EngagementGetSchema(Schema):
                 api_c.STATUS_ERROR,
             ]
         ),
-        default=api_c.STATUS_DRAFT
+        default=api_c.STATUS_DRAFT,
     )
     delivery_schedule = fields.Nested(
         DeliverySchedule,
