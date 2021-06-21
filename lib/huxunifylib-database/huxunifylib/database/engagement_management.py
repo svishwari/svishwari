@@ -68,18 +68,16 @@ def set_engagement(
         db_c.UPDATED_BY: "",
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.DELETED: deleted,
-        db_c.AUDIENCES: [],
-    }
-
-    # attach the audiences to the engagement
-    for audience in audiences:
-        # type: ignore
-        doc[db_c.AUDIENCES].append(
+        db_c.AUDIENCES: [
             {
-                db_c.OBJECT_ID: audience[db_c.OBJECT_ID],
-                db_c.DESTINATIONS: audience[db_c.DESTINATIONS],
+                db_c.OBJECT_ID: x[db_c.OBJECT_ID],
+                db_c.DESTINATIONS: x[db_c.DESTINATIONS],
             }
-        )
+            for x in audiences
+        ]
+        if audiences
+        else [],
+    }
 
     if delivery_schedule:
         doc[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = delivery_schedule
