@@ -53,6 +53,10 @@ def set_delivery_platform(
         deleted (bool): if the delivery platform is deleted (soft-delete).
         user_id (ObjectId): User id of user creating delivery platform.
             This is Optional.
+        data_extension_name (str): Name of data extension in SFMC
+            where performance metrics is stored
+        data_extension_id (str): Id of data extension in SFMC
+            where performance metrics is stored
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
