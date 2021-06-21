@@ -569,7 +569,10 @@ def update_delivery_platform(
         c.UPDATE_TIME: datetime.datetime.utcnow(),
     }
 
-    if cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC:
+    if (
+        cur_doc is not None
+        and cur_doc[c.DELIVERY_PLATFORM_TYPE] == c.DELIVERY_PLATFORM_SFMC
+    ):
         update_doc[c.DELIVERY_PLATFORM_SFMC_DATA_EXTENSION] = performance_de
 
     if added is not None:
