@@ -15,10 +15,10 @@ from marshmallow import ValidationError
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
+import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.connectors.connector_sfmc import SFMCConnector
-from huxunifylib.database import constants as db_c
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
