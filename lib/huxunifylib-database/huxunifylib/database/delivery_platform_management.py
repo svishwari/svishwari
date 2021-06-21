@@ -556,7 +556,7 @@ def update_delivery_platform(
         c.DELIVERY_PLATFORM_NAME,
         name,
     )
-    # cur_doc = None
+    cur_doc = None
     if exists_flag:
         cur_doc = get_delivery_platform(database, delivery_platform_id)
         if cur_doc[c.DELIVERY_PLATFORM_NAME] != name:
