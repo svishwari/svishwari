@@ -315,7 +315,7 @@ class BatchUpdateDataSources(SwaggerView):
                 api_c.CDP_DATA_SOURCE_IDS: ["60ae035b6c5bf45da27f17d6"],
                 api_c.BODY: {
                     api_c.IS_ADDED: True,
-                    api_c.STATUS: api_c.AUDIENCE_STATUS_PENDING,
+                    api_c.STATUS: api_c.STATUS_PENDING,
                 },
             },
         },
