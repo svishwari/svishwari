@@ -22,14 +22,14 @@
           :title="item.title"
           :icon="item.icon"
         >
-          <template slot="subtitle-extended">
+          <template #subtitle-extended>
             <tooltip>
               <template #label-content>
                 <span class="font-weight-semi-bold">
                   {{ getFormattedValue(item) }}
                 </span>
               </template>
-              <template slot="hover-content">
+              <template #hover-content>
                 {{ item.subtitle | Empty }}
               </template>
             </tooltip>
@@ -125,7 +125,7 @@
                     mdi-plus-circle
                   </v-icon>
                   <tooltip>
-                    <template slot="label-content">
+                    <template #label-content>
                       <Logo
                         class="added-logo ml-2"
                         v-for="destination in audience.destinations"
@@ -135,7 +135,7 @@
                         @mouseover.native="hoverItem = destination.name"
                       />
                     </template>
-                    <template slot="hover-content">
+                    <template #hover-content>
                       <div class="d-flex align-center">
                         Remove {{ hoverItem }}
                       </div>

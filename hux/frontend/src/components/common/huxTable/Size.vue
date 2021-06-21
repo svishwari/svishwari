@@ -1,6 +1,6 @@
 <template>
   <tooltip>
-    <template slot="label-content">
+    <template #label-content>
       <span class="neroBlack--text">
         {{ Value | Numeric(false, false, true) | Empty }}
       </span>
