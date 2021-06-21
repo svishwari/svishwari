@@ -122,7 +122,8 @@
                         :size="18"
                         @mouseover.native="hoverItem = destination"
                       />
-                      <Logo class="delete-icon"
+                      <Logo
+                        class="delete-icon"
                         type="delete"
                         :size="28"
                         @click.native="removeDestination(hoverItem.id)"
@@ -508,14 +509,14 @@ export default {
       await this.addAudienceToDB(payload)
       this.$router.push({ name: "Audiences" })
     },
-    removeDestination(id){
+    removeDestination(id) {
       const existingIndex = this.audience.destinations.findIndex(
         (each) => id === each.id
       )
       if (existingIndex > -1) {
         this.audience.destinations.splice(existingIndex, 1)
       }
-    }
+    },
   },
   async mounted() {
     await this.getDestinations()
@@ -621,10 +622,10 @@ export default {
     .delete-icon {
       display: none;
     }
-    .svg-icon:hover{
+    .svg-icon:hover {
       display: none;
     }
-    .svg-icon:hover ~ .delete-icon{
+    .svg-icon:hover ~ .delete-icon {
       display: block;
     }
   }
