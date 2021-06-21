@@ -40,7 +40,7 @@ const attributeRules = {
       },
     },
     model_scores: {
-      actual_lifetime_value: {
+      predicted_lifetime_value: {
         max: 50000,
         min: 0,
         name: "Actual lifetime value",
