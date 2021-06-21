@@ -253,7 +253,7 @@ class CustomerDashboardOverview(SwaggerView):
 )
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}",
+    api_c.CUSTOMERS_ENDPOINT,
     "Customersview_no_of_cust",
 )
 class Customersview(SwaggerView):
