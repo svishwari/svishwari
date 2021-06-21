@@ -107,7 +107,7 @@
     <Drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h3 pr-2">Select a destination</h5>
+          <h5 class="text-h3 pr-2 neroBlack--text">Select a destination</h5>
           <span class="text-caption gray--text">(select one)</span>
         </div>
       </template>

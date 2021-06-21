@@ -118,7 +118,7 @@
                         class="added-logo ml-2"
                         v-for="destination in audience.destinations"
                         :key="destination.id"
-                        :type="destination.type"
+                        :type="destination.type.toLowerCase()"
                         :size="18"
                         @mouseover.native="hoverItem = destination.name"
                       />
@@ -207,7 +207,7 @@
                     v-for="destination in destinationsList"
                     :key="destination.id"
                     :title="destination.name"
-                    :icon="destination.type"
+                    :icon="destination.type.toLowerCase()"
                     :isAdded="
                       destination.is_added ||
                       isDestinationAdded(destination.type)
