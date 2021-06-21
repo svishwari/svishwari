@@ -90,7 +90,7 @@
                 :value="16"
                 indeterminate
                 v-if="condition.awaitingSize"
-              ></v-progress-circular>
+              />
               <span v-if="!condition.awaitingSize">
                 {{ fetchSize(condition.id) | Numeric(false, false, true) }}
               </span>
@@ -213,7 +213,6 @@ export default {
               )
               if (hasSubOptins.length > 0) {
                 _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
-                // hasSubOptins.forEach((key) => {delete _subOption[key])
               }
               if (groupKey.includes("model")) _subOption["modelIcon"] = true
               _subOption.key = key
