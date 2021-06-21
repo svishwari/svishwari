@@ -230,13 +230,13 @@ class AudiencePostView(SwaggerView):
             "description": "Input Audience body.",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.DESTINATIONS_TAG: [
+                api_c.DESTINATIONS: [
                     {
                         "id": "60ae035b6c5bf45da27f17d6",
                         "data_extension_id": "data_extension_id",
                     }
                 ],
-                api_c.ENGAGEMENT_IDS: [
+                api_c.AUDIENCE_ENGAGEMENTS: [
                     "71364317897acad4bac4373b",
                     "67589317897acad4bac4373b",
                 ],
@@ -332,9 +332,9 @@ class AudiencePostView(SwaggerView):
                     }
 
         engagement_ids = []
-        if api_c.ENGAGEMENT_IDS in body:
+        if api_c.AUDIENCE_ENGAGEMENTS in body:
             # validate list of dict objects
-            for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+            for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
                 # validate object id
                 if not ObjectId.is_valid(engagement_id):
                     return {
