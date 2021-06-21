@@ -24,7 +24,7 @@
         >
           <template slot="subtitle-extended">
             <tooltip>
-              <template slot="label-content">
+              <template #label-content>
                 <span class="font-weight-semi-bold">
                   {{ getFormattedValue(item) }}
                 </span>
