@@ -7,10 +7,12 @@ export const defineRoutes = (server) => {
   // data sources
   server.get("/data-sources")
 
-  server.put("/data-sources", (schema, request) => {
+  server.patch("/data-sources", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 
-    return schema.dataSources.find(requestData).update({ is_added: true })
+    return schema.dataSources
+      .find(requestData.data_source_ids)
+      .update(requestData.body)
   })
 
   // destinations

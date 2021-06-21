@@ -131,7 +131,7 @@ export default {
           }
         }
         fieldset {
-          color: var(--v-lightGrey-base);
+          color: var(--v-lightGrey-base) !important;
         }
       }
     }
