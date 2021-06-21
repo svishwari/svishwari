@@ -219,7 +219,6 @@ class DestinationDataExtPostSchema(Schema):
     Destination data extension post schema class
     """
 
-    authentication_details = fields.Field()
     data_extension = fields.String()
     type = fields.String()
 

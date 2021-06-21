@@ -103,8 +103,8 @@ class AudiencePostSchema(AudiencePutSchema):
         attribute=api_c.DESTINATIONS,
         example=[
             {
-                "id": "60ae035b6c5bf45da27f17d6",
-                "data_extension_id": "data_extension_id",
+                api_c.ID: "60ae035b6c5bf45da27f17d6",
+                api_c.DATA_EXTENSION_ID: "data_extension_id",
             }
         ],
     )

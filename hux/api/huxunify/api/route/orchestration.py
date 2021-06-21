@@ -54,7 +54,7 @@ def before_request():
 
 
 def add_destinations(destinations) -> list:
-    """Fetch destinations data using destination ids.
+    """Add destinations data using destination ids.
     ---
         Args:
             destinations (list): Destinations list.

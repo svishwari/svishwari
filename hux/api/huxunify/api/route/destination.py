@@ -15,6 +15,7 @@ from marshmallow import ValidationError
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
+import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.connectors.connector_sfmc import SFMCConnector
@@ -431,7 +432,9 @@ class DestinationValidatePostView(SwaggerView):
                     return {
                         "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
                     }, HTTPStatus.OK
-            elif body.get(api_c.DESTINATION_TYPE) == api_c.SFMC_TYPE:
+            elif (
+                body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC
+            ):
                 SFMCConnector(
                     auth_details=set_sfmc_auth_details(
                         body.get(api_c.AUTHENTICATION_DETAILS)
@@ -527,7 +530,10 @@ class DestinationDataExtView(SwaggerView):
 
         ext_list = []
         try:
-            if destination[api_c.DELIVERY_PLATFORM_TYPE] == api_c.SFMC_TYPE:
+            if (
+                destination[api_c.DELIVERY_PLATFORM_TYPE]
+                == db_c.DELIVERY_PLATFORM_SFMC
+            ):
                 connector = SFMCConnector(
                     auth_details=set_sfmc_auth_details(
                         destination[api_c.AUTHENTICATION_DETAILS]
@@ -638,7 +644,10 @@ class DestinationDataExtPostView(SwaggerView):
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
         try:
-            if destination[api_c.DELIVERY_PLATFORM_TYPE] == api_c.SFMC_TYPE:
+            if (
+                destination[api_c.DELIVERY_PLATFORM_TYPE]
+                == db_c.DELIVERY_PLATFORM_SFMC
+            ):
                 connector = SFMCConnector(
                     auth_details=set_sfmc_auth_details(
                         destination[api_c.AUTHENTICATION_DETAILS]
