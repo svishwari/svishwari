@@ -36,7 +36,7 @@ def set_engagement(
         name (str): Name of the engagement.
         description (str): Description of the engagement.
         audiences (list): List of audiences assigned to the engagement.
-        user_name (str): username.
+        user_name (str): Name of the user creating the engagement.
         delivery_schedule (dict): Delivery Schedule dict
         deleted (bool): if the engagement is deleted (soft-delete).
     Returns:
@@ -208,7 +208,7 @@ def update_engagement(
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
-        user_name (str): username.
+        user_name (str): Name of the user updating the engagement.
         name (str): Name of the engagement.
         description (str): Descriptions of the engagement.
         audiences (list): list of audiences.
@@ -272,7 +272,7 @@ def remove_audiences_from_engagement(
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
-        user_name (str): username.
+        user_name (str): Name of the user removing the engaged audience.
         audience_ids (list): list of audience ObjectIds.
 
     Returns:
@@ -327,7 +327,7 @@ def append_audiences_to_engagement(
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
-        user_name (str): username.
+        user_name (str): Name of the user attaching the audience.
         audiences (list): list of audiences.
 
     Returns:
