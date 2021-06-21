@@ -34,7 +34,7 @@ def set_delivery_platform(
     enabled: bool = False,
     added: bool = False,
     deleted: bool = False,
-    user_id: ObjectId = None,
+    user_name: str = None,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -49,7 +49,7 @@ def set_delivery_platform(
         enabled (bool): if the delivery platform is enabled.
         added (bool): if the delivery platform is added.
         deleted (bool): if the delivery platform is deleted (soft-delete).
-        user_id (ObjectId): User id of user creating delivery platform.
+        user_name (ObjectId): Username of user creating delivery platform.
             This is Optional.
 
     Returns:
@@ -94,15 +94,9 @@ def set_delivery_platform(
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
     # Add user object only if it is available
-    if ObjectId.is_valid(user_id) and name_exists(
-        database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.USER_COLLECTION,
-        c.OKTA_ID,
-        user_id,
-    ):
-        doc[c.CREATED_BY] = user_id
-        doc[c.UPDATED_BY] = user_id
+    if user_name:
+        doc[c.CREATED_BY] = user_name
+        doc[c.UPDATED_BY] = user_name
 
     try:
         delivery_platform_id = collection.insert_one(doc).inserted_id
@@ -518,7 +512,7 @@ def update_delivery_platform(
     delivery_platform_type: str = None,
     authentication_details: dict = None,
     added: bool = None,
-    user_id: ObjectId = None,
+    user_name: str = None,
     enabled: bool = None,
     deleted: bool = None,
 ) -> Union[dict, None]:
@@ -531,7 +525,7 @@ def update_delivery_platform(
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
         added (bool): if the delivery platform is added.
-        user_id (ObjectId): User id of user updating delivery platform. This is Optional.
+        user_name (str): Username of user updating delivery platform. This is Optional.
         enabled (bool): if the delivery platform is enabled.
         deleted (bool): if the delivery platform is deleted (soft-delete).
 
@@ -579,14 +573,8 @@ def update_delivery_platform(
         update_doc[c.DELETED] = deleted
 
     # Add user object only if it is available
-    if ObjectId.is_valid(user_id) and name_exists(
-        database,
-        c.DATA_MANAGEMENT_DATABASE,
-        c.USER_COLLECTION,
-        c.OKTA_ID,
-        user_id,
-    ):
-        update_doc[c.UPDATED_BY] = user_id
+    if user_name:
+        update_doc[c.UPDATED_BY] = user_name
 
     for item in list(update_doc):
         if update_doc[item] is None:
