@@ -46,7 +46,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
     if (
         destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == "Facebook"  # db_const.DELIVERY_PLATFORM_FACEBOOK
+        == db_const.DELIVERY_PLATFORM_FACEBOOK
     ):
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
@@ -233,22 +233,6 @@ def get_destination_config(
     """
     audience_delivery_job = set_delivery_job(
         database, audience_id, destination_id, []
-    )
-
-    # ORCH delivery job enbabled must be true
-    database[db_const.DATA_MANAGEMENT_DATABASE][
-        db_const.DELIVERY_JOBS_COLLECTION
-    ].find_one_and_update(
-        {db_const.ID: audience_delivery_job[db_const.ID]},
-        {"$set": {db_const.ENABLED: True}},
-    )
-
-    # ORCH audience enabled must be true
-    database[db_const.DATA_MANAGEMENT_DATABASE][
-        db_const.AUDIENCES_COLLECTION
-    ].find_one_and_update(
-        {db_const.ID: audience_id},
-        {"$set": {db_const.ENABLED: True}},
     )
 
     delivery_platform = get_delivery_platform(

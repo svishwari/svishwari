@@ -98,7 +98,7 @@ class Config:
         AUDIENCE_ROUTER_IMAGE_CONST,
         default=(
             "602322178640.dkr.ecr.us-east-1.amazonaws.com/"
-            "audience_router:1.0.0"
+            "audience_router:latest"
         ),
     )
 
