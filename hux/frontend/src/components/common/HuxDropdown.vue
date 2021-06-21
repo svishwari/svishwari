@@ -13,12 +13,12 @@
       <template #activator="{ on }">
         <v-list-item
           v-if="isSubMenu"
-          class="d-flex justify-space-between"
+          class="d-flex justify-space-between pr-1"
           v-on="on"
         >
           {{ label }}
           <div class="flex-grow-1"></div>
-          <v-icon>mdi-chevron-right</v-icon>
+          <v-icon color="primary">mdi-chevron-right</v-icon>
         </v-list-item>
         <huxButton
           v-else
@@ -29,7 +29,7 @@
           icon=" mdi-chevron-down"
           iconPosition="right"
           tile
-          class="ma-2 main-button"
+          class="ma-2 main-button pr-1"
         >
           {{ isSubMenu ? item.name : optionSelected["name"] || label }}
         </huxButton>
@@ -125,7 +125,7 @@ export default {
 <style lang="scss" scoped>
 .hux-dropdown {
   .main-button {
-    height: 36px;
+    height: 32px;
     min-width: 64px;
     padding: 0 16px;
     border-style: solid !important;
@@ -146,11 +146,14 @@ export default {
           display: none;
         }
       }
+      .v-icon {
+        color: var(--v-primary-base);
+      }
     }
   }
 }
 .dropdown-menuitems {
-  width: 230px;
+  min-width: 230px;
   font-size: 14px;
   line-height: 22px !important;
 

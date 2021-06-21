@@ -569,7 +569,6 @@ export default {
                 ].range,
           })
         }
-        debugger
         filtersArray.push(filter)
       }
       const payload = {
