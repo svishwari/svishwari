@@ -90,7 +90,7 @@
                 :value="16"
                 indeterminate
                 v-if="condition.awaitingSize"
-              ></v-progress-circular>
+              />
               <span v-if="!condition.awaitingSize">
                 {{ fetchSize(condition.id) | Numeric(false, false, true) }}
               </span>
