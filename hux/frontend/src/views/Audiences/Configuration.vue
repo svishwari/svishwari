@@ -112,20 +112,25 @@
                   >
                     mdi-plus-circle
                   </v-icon>
-                  <tooltip>
+                  <tooltip class="hover-tooltip">
                     <template slot="label-content">
                       <Logo
-                        class="added-logo ml-2"
+                        class="added-logo ml-2 svg-icon"
                         v-for="destination in audience.destinations"
                         :key="destination.id"
                         :type="destination.type"
                         :size="18"
-                        @mouseover.native="hoverItem = destination.name"
+                        @mouseover.native="hoverItem = destination"
+                      />
+                      <Logo class="delete-icon"
+                        type="delete"
+                        :size="28"
+                        @click.native="removeDestination(hoverItem.id)"
                       />
                     </template>
                     <template slot="hover-content">
-                      <div class="d-flex align-center">
-                        Remove {{ hoverItem }}
+                      <div class="d-flex align-center hover-content">
+                        Remove {{ hoverItem.name }}
                       </div>
                     </template>
                   </tooltip>
@@ -503,6 +508,14 @@ export default {
       await this.addAudienceToDB(payload)
       this.$router.push({ name: "Audiences" })
     },
+    removeDestination(id){
+      const existingIndex = this.audience.destinations.findIndex(
+        (each) => id === each.id
+      )
+      if (existingIndex > -1) {
+        this.audience.destinations.splice(existingIndex, 1)
+      }
+    }
   },
   async mounted() {
     await this.getDestinations()
@@ -601,12 +614,18 @@ export default {
     }
     .added-logo {
       margin-top: 6px;
-      &:hover {
-        width: 18px;
-        height: 18px;
-        background-image: url("../../assets/images/delete_outline.png");
-        background-size: 18px 18px;
-      }
+    }
+    .svg-icon {
+      display: block;
+    }
+    .delete-icon {
+      display: none;
+    }
+    .svg-icon:hover{
+      display: none;
+    }
+    .svg-icon:hover ~ .delete-icon{
+      display: block;
     }
   }
 
@@ -617,6 +636,10 @@ export default {
     .drawer-back {
       @extend .box-shadow-25;
     }
+  }
+
+  .v-menu__content {
+    top: 800px !important;
   }
 }
 </style>
