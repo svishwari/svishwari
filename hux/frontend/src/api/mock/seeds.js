@@ -5,7 +5,7 @@ const bluecore = {
   type: "bluecore",
   is_enabled: true,
   is_added: true,
-  status: "active",
+  status: "Active",
 }
 
 const netsuite = {
@@ -196,7 +196,7 @@ const defaultEngagement = {
 // models
 const unsubscribeModel = {
   name: "Propensity to Unsubscribe",
-  status: "pending",
+  status: "Pending",
 }
 
 // audiences

@@ -34,10 +34,11 @@ class DestinationGetSchema(Schema):
         validate=[
             OneOf(
                 choices=[
-                    db_c.STATUS_PENDING,
-                    db_c.STATUS_IN_PROGRESS,
-                    db_c.STATUS_FAILED,
-                    db_c.STATUS_SUCCEEDED,
+                    api_c.STATUS_NOT_DELIVERED,
+                    api_c.STATUS_DELIVERING,
+                    api_c.STATUS_DELIVERED,
+                    api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ERROR,
                 ]
             )
         ],
@@ -136,16 +137,6 @@ class SFMCAuthConstants(Schema):
 
         ordered = True
 
-    sfmc_client_id = fields.Dict(
-        required=True,
-        validate=must_not_be_blank,
-        example={
-            api_c.NAME: "Client ID",
-            api_c.TYPE: "text",
-            api_c.REQUIRED: True,
-            api_c.DESCRIPTION: None,
-        },
-    )
     sfmc_account_id = fields.Dict(
         required=True,
         validate=must_not_be_blank,
@@ -156,21 +147,31 @@ class SFMCAuthConstants(Schema):
             api_c.DESCRIPTION: None,
         },
     )
-    sfmc_client_secret = fields.Dict(
-        required=True,
-        validate=must_not_be_blank,
-        example={
-            api_c.NAME: "Client Secret",
-            api_c.TYPE: "text",
-            api_c.REQUIRED: True,
-            api_c.DESCRIPTION: None,
-        },
-    )
     sfmc_auth_base_uri = fields.Dict(
         required=True,
         validate=must_not_be_blank,
         example={
             api_c.NAME: "Auth Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_client_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_client_secret = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client Secret",
             api_c.TYPE: "text",
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,

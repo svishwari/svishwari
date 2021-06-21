@@ -13,8 +13,14 @@ from huxunifylib.database import constants as db_c, data_management
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
-from huxunifylib.database.engagement_management import set_engagement
-from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.database.engagement_management import (
+    set_engagement,
+    get_engagements_by_audience,
+)
+from huxunifylib.database.orchestration_management import (
+    create_audience,
+    get_audience,
+)
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 
@@ -338,8 +344,8 @@ class OrchestrationRouteTest(TestCase):
         self.assertIn("text_operators", response.json)
 
     @requests_mock.Mocker()
-    def test_create_audience(self, request_mocker: Mocker):
-        """Test create audience.
+    def test_create_audience_with_destination(self, request_mocker: Mocker):
+        """Test create audience with destination.
 
         Args:
             request_mocker (Mocker): Request mocker object.
@@ -365,7 +371,9 @@ class OrchestrationRouteTest(TestCase):
                     ],
                 }
             ],
-            api_c.DESTINATIONS: [str(d[db_c.ID]) for d in self.destinations],
+            api_c.DESTINATIONS: [
+                {db_c.OBJECT_ID: str(d[db_c.ID])} for d in self.destinations
+            ],
         }
 
         response = self.test_client.post(
@@ -381,3 +389,151 @@ class OrchestrationRouteTest(TestCase):
             audience_post[api_c.AUDIENCE_NAME],
             response.json[api_c.AUDIENCE_NAME],
         )
+
+        # validate audience in db
+        audience_doc = get_audience(
+            self.database, ObjectId(response.json[db_c.OBJECT_ID])
+        )
+        self.assertListEqual(
+            audience_doc[db_c.DESTINATIONS],
+            [d[db_c.ID] for d in self.destinations],
+        )
+
+    @requests_mock.Mocker()
+    def test_create_audience_with_no_destinations_no_engagements(
+        self, request_mocker: Mocker
+    ):
+        """Test create audience with no destinations or engagements
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(
+            audience_post[api_c.AUDIENCE_NAME],
+            response.json[api_c.AUDIENCE_NAME],
+        )
+
+        # validate audience in db
+        audience_doc = get_audience(
+            self.database, ObjectId(response.json[db_c.OBJECT_ID])
+        )
+        # test empty list
+        self.assertFalse(
+            audience_doc[db_c.DESTINATIONS],
+        )
+
+        self.assertFalse(
+            get_engagements_by_audience(self.database, audience_doc[db_c.ID])
+        )
+
+    @requests_mock.Mocker()
+    def test_create_audience_with_engagements(self, request_mocker: Mocker):
+        """Test create audience with engagements.
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Engagements",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {db_c.OBJECT_ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+            api_c.AUDIENCE_ENGAGEMENTS: self.engagement_ids,
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(
+            audience_post[api_c.AUDIENCE_NAME],
+            response.json[api_c.AUDIENCE_NAME],
+        )
+
+        # validate audience in db
+        audience_doc = get_audience(
+            self.database, ObjectId(response.json[db_c.OBJECT_ID])
+        )
+        # test destinations
+        self.assertListEqual(
+            audience_doc[db_c.DESTINATIONS],
+            [d[db_c.ID] for d in self.destinations],
+        )
+
+        expected_audience = {
+            db_c.OBJECT_ID: audience_doc[db_c.ID],
+            db_c.DESTINATIONS: [
+                {db_c.OBJECT_ID: [d[db_c.ID] for d in self.destinations][0]}
+            ],
+        }
+
+        # validate the audience is attached to the engagement
+        engagements = get_engagements_by_audience(
+            self.database, audience_doc[db_c.ID]
+        )
+        for engagement in engagements:
+            # get the attached audience and nested destinations
+            engaged_audiences = [
+                x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+            ]
+            engaged_audience = engagement[db_c.AUDIENCES][
+                engaged_audiences.index(audience_doc[db_c.ID])
+            ]
+
+            self.assertDictEqual(engaged_audience, expected_audience)

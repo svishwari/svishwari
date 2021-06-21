@@ -56,7 +56,16 @@ class EngagementGetSchema(Schema):
     status = fields.String(
         attribute=api_c.STATUS,
         required=True,
-        validate=validate.OneOf(api_c.ENGAGEMENT_STATUSES),
+        validate=validate.OneOf(
+            choices=[
+                api_c.STATUS_ACTIVE,
+                api_c.STATUS_INACTIVE,
+                api_c.STATUS_DELIVERING,
+                api_c.STATUS_DRAFT,
+                api_c.STATUS_ERROR,
+            ]
+        ),
+        default=api_c.STATUS_DRAFT,
     )
     delivery_schedule = fields.Nested(
         DeliverySchedule,
@@ -224,6 +233,11 @@ class DisplayAdsSummary(Schema):
     Schema for Display Ads Summary
     """
 
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
     spend = fields.Float()
     reach = fields.Integer()
     impressions = fields.Integer()
@@ -242,6 +256,11 @@ class DispAdIndividualCampaignSummary(DisplayAdsSummary):
     Schema for Individual Campaign Summary
     """
 
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
     name = fields.String()
     is_mapped = fields.Boolean()
 
@@ -251,6 +270,11 @@ class DispAdIndividualAudienceSummary(DisplayAdsSummary):
     Schema for Individual Audience Summary
     """
 
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
     name = fields.String()
     campaigns = fields.List(fields.Nested(DispAdIndividualCampaignSummary))
 
@@ -259,6 +283,11 @@ class AudiencePerformanceDisplayAdsSchema(Schema):
     """
     Schema for Performance Metrics of Display Ads
     """
+
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
 
     summary = fields.Nested(DisplayAdsSummary)
     audience_performance = fields.List(
@@ -270,6 +299,11 @@ class EmailSummary(Schema):
     """
     Schema for Summary Performance Metrics of Email
     """
+
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
 
     sent = fields.Integer()
     hard_bounces = fields.Integer()
@@ -292,6 +326,11 @@ class EmailIndividualCampaignSummary(EmailSummary):
     Schema for Individual Campaign Summary of Email
     """
 
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
     name = fields.String()
     is_mapped = fields.Boolean()
 
@@ -301,6 +340,11 @@ class EmailIndividualAudienceSummary(EmailSummary):
     Schema for Individual Audience Summary of Email
     """
 
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
     name = fields.String()
     campaigns = fields.List(fields.Nested(EmailIndividualCampaignSummary))
 
@@ -309,6 +353,11 @@ class AudiencePerformanceEmailSchema(Schema):
     """
     Schema for Performance Metrics of Email
     """
+
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
 
     summary = fields.Nested(EmailSummary)
     audience_performance = fields.List(

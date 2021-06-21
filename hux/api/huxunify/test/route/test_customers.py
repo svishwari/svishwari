@@ -1,7 +1,7 @@
 """
 Purpose of this file is to house all the customers api tests
 """
-
+import json
 import unittest
 from http import HTTPStatus
 
@@ -14,7 +14,6 @@ import huxunifylib.database.constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
-
 
 BASE_ENDPOINT = "/api/v1"
 TEST_AUTH_TOKEN = "Bearer 12345678"
@@ -144,6 +143,40 @@ class TestCustomersOverview(unittest.TestCase):
         customer_id = "1531-2039-22"
         response = self.test_client.get(
             f"{self.customers}/{customer_id}",
+            headers=self.headers,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    @requests_mock.Mocker()
+    def test_post_customeroverview_by_attributes(
+        self, request_mocker: Mocker
+    ) -> None:
+        """
+        Test get customer over by attributes
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+            None
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        filter_attributes = {
+            "filters": {
+                "section_aggregator": "ALL",
+                "section_filters": [
+                    {"field": "max_age", "type": "equals", "value": 87},
+                    {"field": "min_age", "type": "equals", "value": 25},
+                ],
+            }
+        }
+
+        response = self.test_client.post(
+            f"{self.customers}/{api_c.OVERVIEW}",
+            data=json.dumps(filter_attributes),
             headers=self.headers,
         )
 

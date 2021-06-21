@@ -7,5 +7,5 @@ export default {
 
   is_added: false,
 
-  status: "pending",
+  status: "Pending",
 }
