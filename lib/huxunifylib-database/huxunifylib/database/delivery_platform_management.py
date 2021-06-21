@@ -50,7 +50,7 @@ def set_delivery_platform(
         enabled (bool): if the delivery platform is enabled.
         added (bool): if the delivery platform is added.
         deleted (bool): if the delivery platform is deleted (soft-delete).
-        user_name (str): Username of user creating delivery platform.
+        user_name (str): Name of the user creating the delivery platform.
             This is Optional.
         performance_de (dict): A dictionary consisting of name and id of
             the performance metrics data extension
@@ -101,7 +101,7 @@ def set_delivery_platform(
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
-    # Add user object only if it is available
+    # Add user name only if it is available
     if user_name:
         doc[c.CREATED_BY] = user_name
         doc[c.UPDATED_BY] = user_name
@@ -533,7 +533,8 @@ def update_delivery_platform(
         delivery_platform_type (str): Delivery platform type.
         authentication_details (dict): A dict containing delivery platform authentication details.
         added (bool): if the delivery platform is added.
-        user_name (str): Username of user updating delivery platform. This is Optional.
+        user_name (str): Name of the user updating the delivery platform.
+            This is Optional.
         enabled (bool): if the delivery platform is enabled.
         deleted (bool): if the delivery platform is deleted (soft-delete).
 
@@ -580,7 +581,7 @@ def update_delivery_platform(
     if deleted is not None:
         update_doc[c.DELETED] = deleted
 
-    # Add user object only if it is available
+    # Add user name only if it is available
     if user_name:
         update_doc[c.UPDATED_BY] = user_name
 

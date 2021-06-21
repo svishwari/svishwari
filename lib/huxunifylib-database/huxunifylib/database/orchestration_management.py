@@ -36,7 +36,7 @@ def create_audience(
         These are aggregated using "OR".
         destination_ids (list): List of destination
             / delivery platform ids attached to the audience
-        user_name (str): Username of the user creating / updating the audience
+        user_name (str): Name of the user creating / updating the audience
 
     Returns:
         Union[list, None]: MongoDB audience doc.
@@ -173,7 +173,7 @@ def update_audience(
             These are aggregated using "OR".
         destination_ids (list): List of destination / delivery platform
             ids attached to the audience
-        user_name (str): Username of user creating / updating the audience
+        user_name (str): Name of the user creating / updating the audience
     Returns:
         Union[dict, None]: Updated audience configuration dict.
     """
