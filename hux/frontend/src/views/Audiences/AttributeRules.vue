@@ -204,7 +204,6 @@ export default {
               )
               if (hasSubOptins.length > 0) {
                 _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
-                // hasSubOptins.forEach((key) => {delete _subOption[key])
               }
               if (groupKey.includes("model")) _subOption["modelIcon"] = true
               _subOption.key = key
