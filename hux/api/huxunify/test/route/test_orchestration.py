@@ -529,14 +529,14 @@ class OrchestrationRouteTest(TestCase):
         )
         for engagement in engagements:
             # get the attached audience and nested destinations
-            engaged_audiences = [
+            engagement_audiences = [
                 x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
             ]
-            engaged_audience = engagement[db_c.AUDIENCES][
-                engaged_audiences.index(audience_doc[db_c.ID])
+            engagement_audience = engagement[db_c.AUDIENCES][
+                engagement_audiences.index(audience_doc[db_c.ID])
             ]
 
-            self.assertDictEqual(engaged_audience, expected_audience)
+            self.assertDictEqual(engagement_audience, expected_audience)
 
     @requests_mock.Mocker()
     def test_create_audience_with_no_engagement(self, request_mocker: Mocker):

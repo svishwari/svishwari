@@ -345,7 +345,7 @@ class AudiencePostView(SwaggerView):
                 # map to an object ID field
                 engagement_id = ObjectId(engagement_id)
 
-                # validate the destination object exists.
+                # validate the engagement object exists.
                 if not engagement_management.get_engagement(
                     database, engagement_id
                 ):
