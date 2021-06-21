@@ -1363,6 +1363,49 @@ def get_ingestion_job_audience_delivery_jobs(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def update_delivery_platform_generic_campaigns(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    generic_campaign: dict,
+) -> Union[dict, None]:
+
+    """A function to update delivery platform generic campaigns.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_job_id (ObjectId): MongoDB document ID of delivery job.
+        generic_campaign (dict): generic campaign details to be added.
+
+    Returns:
+        Union[dict, None]: Updated delivery job configuration.
+    """
+
+    current_campaigns = get_delivery_job(database, delivery_job_id)[
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
+    ]
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+
+    current_campaigns.append(generic_campaign)
+    update_doc = {}
+    update_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS] = current_campaigns
+    try:
+        doc = collection.find_one_and_update(
+            {c.ID: delivery_job_id, c.DELETED: False},
+            {"$set": update_doc},
+            upsert=False,
+            new=True,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return doc
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def favorite_delivery_platform(
     database: DatabaseClient,
     delivery_platform_id: ObjectId,
