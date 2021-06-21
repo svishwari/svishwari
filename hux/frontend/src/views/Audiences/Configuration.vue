@@ -118,14 +118,10 @@
                         class="added-logo ml-2 svg-icon"
                         v-for="destination in audience.destinations"
                         :key="destination.id"
-                        :type="destination.type"
-                        :size="18"
-                        @mouseover.native="hoverItem = destination"
-                      />
-                      <Logo
-                        class="delete-icon"
-                        type="delete"
-                        :size="28"
+                        :type="( hoverId == destination.id && deleteIcon ) || destination.type"
+                        :size="iconSize"
+                        @mouseover.native="hoverItem = destination;mouseover(destination.id)"
+                        @mouseout.native="mouseout()"
                         @click.native="removeDestination(hoverItem.id)"
                       />
                     </template>
@@ -351,6 +347,9 @@ export default {
         selectedDestination: [],
       },
       hoverItem: "",
+      deleteIcon: null,
+      iconSize: 18,
+      hoverId: null,
     }
   },
 
@@ -515,8 +514,19 @@ export default {
       )
       if (existingIndex > -1) {
         this.audience.destinations.splice(existingIndex, 1)
+        this.mouseout()
       }
     },
+    mouseover(id){
+      this.deleteIcon = 'delete'
+       this.hoverId = id
+      this.iconSize = 18
+    },
+    mouseout(){
+       this.deleteIcon = null
+       this.hoverId = null
+       this.iconSize = 18
+    }
   },
   async mounted() {
     await this.getDestinations()
@@ -615,18 +625,6 @@ export default {
     }
     .added-logo {
       margin-top: 6px;
-    }
-    .svg-icon {
-      display: block;
-    }
-    .delete-icon {
-      display: none;
-    }
-    .svg-icon:hover {
-      display: none;
-    }
-    .svg-icon:hover ~ .delete-icon {
-      display: block;
     }
   }
 
