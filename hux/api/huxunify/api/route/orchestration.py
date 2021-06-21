@@ -236,7 +236,7 @@ class AudiencePostView(SwaggerView):
                         "data_extension_id": "data_extension_id",
                     }
                 ],
-                api_c.AUDIENCE_ENGAGEMENTS: [
+                api_c.ENGAGEMENT_IDS: [
                     "71364317897acad4bac4373b",
                     "67589317897acad4bac4373b",
                 ],
@@ -269,6 +269,8 @@ class AudiencePostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
     @get_user_id()
     def post(self, user_id) -> Tuple[dict, int]:  # pylint: disable=no-self-use
         """Creates a new audience.
@@ -290,29 +292,92 @@ class AudiencePostView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        if body.get(api_c.ENGAGEMENT_TAG) is None:
-            return {
-                "message": "Audience needs to have at least one engagement."
-            }, HTTPStatus.BAD_REQUEST
+        # validate destinations
+        database = get_db_client()
+        if db_c.DESTINATIONS in body:
+            # validate list of dict objects
+            for destination in body[db_c.DESTINATIONS]:
+                # check if dict instance
+                if not isinstance(destination, dict):
+                    return {
+                        "message": "destinations must be objects"
+                    }, HTTPStatus.BAD_REQUEST
+
+                # check if destination id assigned
+                if db_c.OBJECT_ID not in destination:
+                    return {
+                        "message": f"{destination} missing the "
+                        f"{db_c.OBJECT_ID} field."
+                    }, HTTPStatus.BAD_REQUEST
+
+                # validate object id
+                if not ObjectId.is_valid(destination[db_c.OBJECT_ID]):
+                    return {
+                        "message": f"{destination} has an invalid "
+                        f"{db_c.OBJECT_ID} field."
+                    }, HTTPStatus.BAD_REQUEST
+
+                # map to an object ID field
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
+
+                # validate the destination object exists.
+                if not destination_management.get_delivery_platform(
+                    database, destination[db_c.OBJECT_ID]
+                ):
+                    return {
+                        "message": f"Destination with ID "
+                        f"{destination[db_c.OBJECT_ID]} does not exist."
+                    }
+
+        engagement_ids = []
+        if api_c.ENGAGEMENT_IDS in body:
+            # validate list of dict objects
+            for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+                # validate object id
+                if not ObjectId.is_valid(engagement_id):
+                    return {
+                        "message": f"{engagement_id} has an invalid "
+                        f"{db_c.OBJECT_ID} field."
+                    }, HTTPStatus.BAD_REQUEST
+
+                # map to an object ID field
+                engagement_id = ObjectId(engagement_id)
+
+                # validate the destination object exists.
+                if not engagement_management.get_engagement(
+                    database, engagement_id
+                ):
+                    return {
+                        "message": f"Engagement with ID {engagement_id} "
+                        f"does not exist."
+                    }
+                engagement_ids.append(engagement_id)
 
         try:
+            # create the audience
             audience_doc = orchestration_management.create_audience(
-                database=get_db_client(),
+                database=database,
                 name=body[api_c.AUDIENCE_NAME],
                 audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-                destination_ids=body.get(api_c.DESTINATIONS_TAG),
+                destination_ids=body.get(api_c.DESTINATIONS),
                 user_id=user_id,
             )
 
-            for engagement in body.get(api_c.ENGAGEMENT_TAG):
-                audience = {
-                    api_c.ID: audience_doc.get(db_c.ID),
-                    api_c.DESTINATIONS: body.get(api_c.DESTINATIONS_TAG),
-                }
+            # attach the audience to each of the engagements
+            for engagement_id in engagement_ids:
                 engagement_management.append_audiences_to_engagement(
-                    get_db_client(), engagement, user_id, [audience]
+                    database,
+                    engagement_id,
+                    user_id,
+                    [
+                        {
+                            db_c.OBJECT_ID: audience_doc[db_c.ID],
+                            db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
+                        }
+                    ],
                 )
-
         except db_exceptions.DuplicateName:
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
@@ -353,7 +418,7 @@ class AudiencePutView(SwaggerView):
                         "data_extension_id": "data_extension_id",
                     }
                 ],
-                api_c.AUDIENCE_ENGAGEMENTS: [
+                api_c.ENGAGEMENT_IDS: [
                     "76859317897acad4bac4373b",
                     "46826317897acad4bac4373b",
                 ],
@@ -419,6 +484,7 @@ class AudiencePutView(SwaggerView):
             user_id=user_id,
         )
 
+        # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
 

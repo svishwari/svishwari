@@ -142,7 +142,13 @@ export default {
       }
     },
     addDataSources: function () {
-      this.batchAddDataSources(this.selectedDataSourceIds)
+      this.batchAddDataSources({
+        body: {
+          is_added: true,
+          status: "Pending",
+        },
+        data_source_ids: this.selectedDataSourceIds,
+      })
       this.closeAddDataSource()
     },
     closeAddDataSource: function () {

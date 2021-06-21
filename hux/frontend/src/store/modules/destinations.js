@@ -6,8 +6,8 @@ const namespaced = true
 
 const state = {
   items: {},
-
   constants: {},
+  availableDestinations: {},
 }
 
 const getters = {
@@ -19,21 +19,38 @@ const getters = {
     Object.values(state.items).filter((item) => item.is_enabled),
 
   constants: (state) => state.constants,
+
+  availableDestinations: (state) => Object.values(state.availableDestinations),
 }
 
 const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
+      // TODO: remove this once ORCH-233 is addressed
+      if (item.type === "SFMC") item.type = "salesforce"
+      item.type = String(item.type).toLowerCase()
       Vue.set(state.items, item.id, item)
     })
   },
 
   SET_ONE(state, item) {
+    // TODO: remove this once ORCH-233 is addressed
+    if (item.type === "SFMC") item.type = "salesforce"
+    item.type = String(item.type).toLowerCase()
     Vue.set(state.items, item.id, item)
   },
 
   SET_CONSTANTS(state, data) {
     Vue.set(state, "constants", data)
+  },
+  // TODO: Redesign this solution as this is a workaround for the destinations drawer on the audience setup page
+  SET_AVAILABLE_DESTINATIONS(state, items) {
+    items.forEach((item) => {
+      if (item.is_added) {
+        item.is_added = false
+        Vue.set(state.availableDestinations, item.id, item)
+      }
+    })
   },
 }
 
@@ -88,6 +105,16 @@ const actions = {
     try {
       const response = await api.destinations.constants()
       commit("SET_CONSTANTS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getAvailableDestinations({ commit }) {
+    try {
+      const response = await api.destinations.all()
+      commit("SET_AVAILABLE_DESTINATIONS", response.data)
     } catch (error) {
       handleError(error)
       throw error

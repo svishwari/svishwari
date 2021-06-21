@@ -7,6 +7,8 @@ import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import orchestration_management as om
+from huxunifylib.database import audience_management as am
+from huxunifylib.database import data_management as dm
 from huxunifylib.database import delivery_platform_management as dpm
 from huxunifylib.database.user_management import set_user
 
@@ -109,7 +111,9 @@ class TestEngagementManagement(unittest.TestCase):
         """
 
         # test for a list with data.
-        self.assertTrue(em.get_engagements(database=self.database))
+        engagement_docs = em.get_engagements(database=self.database)
+        self.assertTrue(engagement_docs)
+        self.assertFalse([e for e in engagement_docs if c.DELETED in e])
 
     def test_get_engagements_with_users(self) -> None:
         """Test get_engagements with users routine
@@ -143,6 +147,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertIsNotNone(engagement_doc)
+        self.assertFalse(c.DELETED in engagement_doc)
 
     def test_get_engagement_with_user(self) -> None:
         """Test get_engagement with user routine
@@ -468,6 +473,86 @@ class TestEngagementManagement(unittest.TestCase):
                 self.database, engagement_id, self.user_id, [new_audience]
             )
 
+    def test_set_engagement_attach_lookalike_audience(self):
+        """Test creating an engagement and attaching a lookalike audience after
+
+        Returns:
+            Response: None
+
+        """
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement 2",
+            "Engagement 2 Description",
+            [self.audience],
+            self.user_id,
+        )
+
+        # create an ingestion job
+        data_source_id = ObjectId()
+        ingestion_job = dm.set_ingestion_job(self.database, data_source_id)
+        ingestion_job_id = ingestion_job[c.ID]
+
+        # create a delivery platform
+        delivery_platform = dpm.set_delivery_platform(
+            self.database,
+            "Facebook",
+            "Facebook Delivery Platform",
+            authentication_details={},
+        )
+        delivery_platform_id = delivery_platform[c.ID]
+
+        # create a source audience
+        source_audience = am.create_audience(
+            self.database, "Source Audience", [], ingestion_job_id
+        )
+        source_audience_id = source_audience[c.ID]
+
+        # create a lookalike audience
+        lookalike_audience = dpm.create_delivery_platform_lookalike_audience(
+            self.database,
+            delivery_platform_id,
+            source_audience_id,
+            "LA Audience",
+            0.55,
+        )
+
+        engagement = em.get_engagement(self.database, engagement_id)
+
+        # check engagement
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+        self.assertEqual(
+            engagement[c.AUDIENCES][0][c.OBJECT_ID],
+            self.audience[c.OBJECT_ID],
+        )
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        new_lookalike_audience = {
+            c.LOOKALIKE: True,
+            c.OBJECT_ID: lookalike_audience[c.ID],
+            c.LOOKALIKE_SOURCE_AUD_ID: source_audience_id,
+            c.LOOKALIKE_AUD_NAME: lookalike_audience[c.NAME],
+        }
+
+        # attach the lookalike audience
+        result = em.append_audiences_to_engagement(
+            self.database,
+            engagement_id,
+            self.user_id,
+            [new_lookalike_audience],
+        )
+        self.assertTrue(result)
+
+        # ensure the audience was updated
+        updated = em.get_engagement(self.database, engagement_id)
+        self.assertIn(c.AUDIENCES, updated)
+
+        # test audience appears as expected
+        self.assertTrue(updated[c.AUDIENCES])
+        self.assertEqual(len(updated[c.AUDIENCES]), 2)
+        self.assertTrue(updated[c.AUDIENCES][1][c.LOOKALIKE])
+
     def test_get_engagements_via_audience_id(self) -> None:
         """Test getting engagements with an audience_id
 
@@ -506,3 +591,4 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertTrue(engagements)
         self.assertEqual(len(engagements), 3)
+        self.assertFalse([e for e in engagements if c.DELETED in e])

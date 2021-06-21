@@ -118,7 +118,7 @@
                         class="added-logo ml-2"
                         v-for="destination in audience.destinations"
                         :key="destination.id"
-                        :type="destination.type"
+                        :type="destination.type.toLowerCase()"
                         :size="18"
                         @mouseover.native="hoverItem = destination.name"
                       />
@@ -204,10 +204,10 @@
               <v-stepper-content step="1">
                 <div>
                   <CardHorizontal
-                    v-for="destination in destinations"
+                    v-for="destination in destinationsList"
                     :key="destination.id"
                     :title="destination.name"
-                    :icon="destination.type"
+                    :icon="destination.type.toLowerCase()"
                     :isAdded="
                       destination.is_added ||
                       isDestinationAdded(destination.type)
@@ -249,7 +249,7 @@
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
           >
-            {{ destinations.length }} results
+            {{ destinationsList.length }} results
           </div>
           <div
             class="d-flex align-baseline"
@@ -350,8 +350,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      destinations: "destinations/enabledDestination",
+      destinations: "destinations/list",
+      availableDestinations: "destinations/availableDestinations",
     }),
+
+    destinationsList() {
+      return this.availableDestinations
+    },
 
     destination() {
       return this.destinations[this.selectedDestinationIndex] || null
@@ -382,6 +387,7 @@ export default {
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
+      getAvailableDestinations: "destinations/getAvailableDestinations",
     }),
     // Engagements
     detachEngagement(engagement) {
@@ -434,9 +440,10 @@ export default {
         this.destinationDrawer &&
         this.destinationDrawer.selectedDestination
       ) {
-        const existingIndex = this.destinationDrawer.selectedDestination.findIndex(
-          (destination) => destination.type === selected.type
-        )
+        const existingIndex =
+          this.destinationDrawer.selectedDestination.findIndex(
+            (destination) => destination.type === selected.type
+          )
         return existingIndex > -1
       }
     },
@@ -474,15 +481,15 @@ export default {
           conditionIndex++
         ) {
           filter.section_filters.push({
-            field: this.audience.attributeRules[ruleIndex].conditions[
-              conditionIndex
-            ].attribute,
+            field:
+              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
+                .attribute,
             type: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
             ].operator,
-            value: this.audience.attributeRules[ruleIndex].conditions[
-              conditionIndex
-            ].text,
+            value:
+              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
+                .text,
           })
         }
         filtersArray.push(filter)
@@ -499,6 +506,7 @@ export default {
   },
   async mounted() {
     await this.getDestinations()
+    await this.getAvailableDestinations()
   },
 }
 </script>
