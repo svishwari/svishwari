@@ -35,7 +35,7 @@ def set_delivery_platform(
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
-    performance_de: dict =None
+    performance_de: dict = None,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
