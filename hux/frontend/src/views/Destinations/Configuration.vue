@@ -45,7 +45,7 @@
               "
               :input-type="destinationFields[key].type"
               :help-text="destinationFields[key].description"
-              @blur="resetValidation"
+              @blur="reset"
               height="40"
               icon="mdi-alert-circle-outline"
             />
@@ -78,6 +78,27 @@
       <div v-if="validationError" class="d-flex flex-wrap justify-end pt-2">
         <span class="red--text text-caption">{{ validationError }}</span>
       </div>
+      <div
+        v-if="isSFMCSelected && isValidated"
+        class="destination-auth-wrap background pa-4 rounded mt-10"
+      >
+        <v-row>
+          <v-col cols="6" class="sfmc-data-extension">
+            <div class="text-caption neroBlack--text pb-2">
+              Performance metric data extension name
+            </div>
+            <v-select
+              :items="dataExtensionNames"
+              placeholder="Select"
+              dense
+              outlined
+              @input="onDataExtensionSelection"
+              background-color="white"
+              append-icon="mdi-chevron-down"
+            />
+          </v-col>
+        </v-row>
+      </div>
     </v-form>
 
     <hux-footer slot="footer" max-width="850px">
@@ -96,7 +117,7 @@
           variant="primary"
           size="large"
           :isTile="true"
-          :isDisabled="!isValidated"
+          :isDisabled="!isFullyConfigured"
           @click="add()"
         >
           Add &amp; return
@@ -184,11 +205,14 @@ export default {
       authenticationDetails: {},
       isValidated: false,
       isValidating: false,
+      isFullyConfigured: false,
       validationError: null,
       isFormValid: false,
       rules: {
         required: (value) => !!value || "This is a required field",
       },
+      selectedDataExtension: null,
+      dataExtensions: [],
     }
   },
 
@@ -216,6 +240,19 @@ export default {
     disabledDestinations() {
       return this.destinations.filter((each) => !each.is_enabled)
     },
+
+    isSFMCSelected() {
+      return this.selectedDestination.type === "salesforce"
+    },
+
+    dataExtensionNames() {
+      return this.dataExtensions.map((each) => {
+        return {
+          text: each.data_extension_name,
+          value: each.data_extension_id,
+        }
+      })
+    },
   },
 
   methods: {
@@ -237,13 +274,25 @@ export default {
 
     onSelectDestination(id) {
       this.selectedDestinationId = id
-      this.resetValidation()
+      this.reset()
       this.authenticationDetails = {}
       this.drawer = false
     },
 
-    resetValidation() {
+    reset() {
       this.isValidated = false
+      this.isFullyConfigured = false
+    },
+
+    onDataExtensionSelection(value) {
+      this.selectedDataExtension = this.dataExtensions.filter(
+        (each) => each.data_extension_id === value
+      )[0]
+      this.setConfigured()
+    },
+
+    setConfigured() {
+      this.isFullyConfigured = true
     },
 
     async validate() {
@@ -251,13 +300,18 @@ export default {
       this.validationError = null
 
       try {
-        await this.validateDestination({
+        const response = await this.validateDestination({
           type: this.selectedDestination.type,
           authentication_details: this.authenticationDetails,
         })
+        if (this.isSFMCSelected) {
+          this.dataExtensions = response.performance_metrics_data_extensions
+        } else {
+          this.setConfigured()
+        }
         this.isValidated = true
       } catch (error) {
-        this.validationError = error.message
+        this.validationError = error.response.data.message
       } finally {
         this.isValidating = false
       }
@@ -265,10 +319,15 @@ export default {
 
     async add() {
       try {
-        await this.addDestination({
+        let data = {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
-        })
+        }
+
+        if (this.isSFMCSelected) {
+          data.performance_metrics_data_extension = this.selectedDataExtension
+        }
+        await this.addDestination(data)
         this.$router.push({ name: "Connections" })
       } catch (error) {
         console.error(error)
@@ -299,5 +358,18 @@ export default {
 <style lang="scss" scoped>
 .destination-auth-wrap {
   border: 1px solid var(--v-zircon-base) !important;
+  .sfmc-data-extension {
+    ::v-deep .v-input {
+      .v-input__control {
+        .v-input__slot {
+          min-height: 40px;
+          fieldset {
+            color: var(--v-lightGrey-base) !important;
+            border-width: 1px !important;
+          }
+        }
+      }
+    }
+  }
 }
 </style>
