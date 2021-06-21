@@ -368,6 +368,9 @@ export default {
             border-width: 1px !important;
           }
         }
+        .v-text-field__details {
+          display: none;
+        }
       }
     }
   }
