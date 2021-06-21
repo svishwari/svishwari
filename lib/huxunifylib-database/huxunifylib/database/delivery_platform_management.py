@@ -50,7 +50,7 @@ def set_delivery_platform(
         enabled (bool): if the delivery platform is enabled.
         added (bool): if the delivery platform is added.
         deleted (bool): if the delivery platform is deleted (soft-delete).
-        user_name (ObjectId): Username of user creating delivery platform.
+        user_name (str): Username of user creating delivery platform.
             This is Optional.
         performance_de (dict): A dictionary consisting of name and id of
             the performance metrics data extension
