@@ -147,7 +147,7 @@ const actions = {
   },
   async fetchConstants({ commit }) {
     try {
-      const response = await api.audiences.getConstants()
+      const response = await api.audiences.getRules()
       commit("SET_CONSTANTS", response.data)
       return response.data
     } catch (error) {
@@ -155,6 +155,7 @@ const actions = {
       throw error
     }
   },
+  // TODO Needs API Integration followed under HUS-567
   async fetchFilterSize({ commit }, filter) {
     try {
       await sleep(2000)

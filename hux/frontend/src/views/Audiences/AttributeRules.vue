@@ -183,6 +183,15 @@ export default {
       ruleAttributes: "audiences/audiencesRules",
       sizes: "audiences/sizeDetails",
     }),
+
+    /**
+     * This attributeOptions is transforming the API attributeRules into the Options Array
+     *
+     * Segregating the Groups which are the parent key.
+     * Appending the sub options next to the group label.
+     *
+     * Also, having an Top Priority Order to Models.
+     */
     attributeOptions() {
       if (this.ruleAttributes.rule_attributes) {
         const options = []

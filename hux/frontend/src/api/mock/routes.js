@@ -104,7 +104,5 @@ export const defineRoutes = (server) => {
     })
     return schema.audiences.create(requestData)
   })
-  server.get("/audiences/rules", () => {
-    return attributeRules
-  })
+  server.get("/audiences/rules", () => attributeRules)
 }

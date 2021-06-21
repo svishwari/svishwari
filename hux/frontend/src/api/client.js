@@ -46,7 +46,7 @@ client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
 client["identity"].overview = () => {
   return http.get("/idr/overview")
 }
-client["audiences"].getConstants = () => {
+client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
