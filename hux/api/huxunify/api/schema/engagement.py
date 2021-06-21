@@ -60,7 +60,9 @@ class EngagementGetSchema(Schema):
             choices=[
                 api_c.STATUS_ACTIVE,
                 api_c.STATUS_INACTIVE,
+                api_c.STATUS_DELIVERING,
                 api_c.STATUS_DRAFT,
+                api_c.STATUS_ERROR,
             ]
         ),
         default=api_c.STATUS_DRAFT

@@ -41,7 +41,6 @@ class CdpDataSourceSchema(Schema):
     category = fields.Str(required=True)
     feed_count = fields.Int()
     status = fields.Str(
-        attribute=api_c.CONNECTION_STATUS,
         validate=[
             OneOf(
                 choices=[

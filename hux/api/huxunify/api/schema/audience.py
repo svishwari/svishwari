@@ -64,12 +64,12 @@ class AudienceDeliverySchema(Schema):
         required=True,
         validate=OneOf(
             choices=[
-                api_c.AUDIENCE_STATUS_PENDING,
-                api_c.AUDIENCE_STATUS_DRAFT,
-                api_c.AUDIENCE_STATUS_DELIVERING,
-                api_c.AUDIENCE_STATUS_DELIVERED,
-                api_c.AUDIENCE_STATUS_ERROR,
-                api_c.AUDIENCE_STATUS_PAUSED,
+                api_c.STATUS_PENDING,
+                api_c.STATUS_DRAFT,
+                api_c.STATUS_DELIVERING,
+                api_c.STATUS_DELIVERED,
+                api_c.STATUS_ERROR,
+                api_c.STATUS_PAUSED,
             ]
         ),
         default=api_c.STATUS_DRAFT,
