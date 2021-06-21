@@ -16,14 +16,8 @@ class CdpDataSourcePostSchema(Schema):
     CdpDataSourcePostSchema.
     """
 
-    name = fields.Str(
-        required=True,
-        validate=must_not_be_blank
-    )
-    category = fields.Str(
-        required=True,
-        validate=must_not_be_blank
-    )
+    name = fields.Str(required=True, validate=must_not_be_blank)
+    category = fields.Str(required=True, validate=must_not_be_blank)
 
 
 class CdpDataSourceSchema(Schema):
