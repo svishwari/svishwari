@@ -8,11 +8,9 @@
         @click="toggleClass($event)"
       >
         <div class="child mt-4">
-          <div class="icon">
-            <v-icon color="info" size="44" class="ml-2" v-if="isActive">
-              mdi-check-circle
-            </v-icon>
-          </div>
+          <v-icon color="info" size="50" class="ml-2" v-if="isActive">
+            mdi-check-circle
+          </v-icon>
           <extensionInactive1 v-if="!isActive" />
           <div class="label primary--text">New data extension</div>
         </div>
@@ -23,11 +21,9 @@
         @click="toggleClass($event)"
       >
         <div class="child mt-4">
-          <div class="icon">
-            <v-icon color="info" size="44" class="ml-2" v-if="!isActive">
-              mdi-check-circle
-            </v-icon>
-          </div>
+          <v-icon color="info" size="50" class="ml-2" v-if="!isActive">
+            mdi-check-circle
+          </v-icon>
           <extensionInactive2 v-if="isActive" />
           <div class="label primary--text">Existing data extension</div>
         </div>
@@ -149,6 +145,9 @@ export default {
       border: 1px solid var(--v-primary-base);
     }
     .child {
+      .v-icon {
+        margin-top: -3px;
+      }
       .label {
         color: var(--v-darkBlue-base);
       }

@@ -415,7 +415,7 @@ export default {
     onSelectDestination(selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
-        if (selected && selected.type === "salesforce") {
+        if (selected && selected.type === "SFMC") {
           if (!this.isDestinationAddedOnDrawer(selected)) {
             this.destinationDrawer.selectedDestination.push(selected)
           }
