@@ -82,11 +82,6 @@ STATUS_PENDING = "Pending"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
-# ENGAGEMENT_STATUSES = [
-#     STATUS_ACTIVE,
-#     STATUS_INACTIVE,
-#     STATUS_DRAFT,
-# ]
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
