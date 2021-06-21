@@ -56,7 +56,16 @@ class EngagementGetSchema(Schema):
     status = fields.String(
         attribute=api_c.STATUS,
         required=True,
-        validate=validate.OneOf(api_c.ENGAGEMENT_STATUSES),
+        validate=validate.OneOf(
+            choices=[
+                api_c.STATUS_ACTIVE,
+                api_c.STATUS_INACTIVE,
+                api_c.STATUS_DELIVERING,
+                api_c.STATUS_DRAFT,
+                api_c.STATUS_ERROR,
+            ]
+        ),
+        default=api_c.STATUS_DRAFT,
     )
     delivery_schedule = fields.Nested(
         DeliverySchedule,

@@ -73,6 +73,7 @@ def set_engagement(
 
     # attach the audiences to the engagement
     for audience in audiences:
+        # type: ignore
         doc[db_c.AUDIENCES].append(
             {
                 db_c.OBJECT_ID: audience[db_c.OBJECT_ID],
