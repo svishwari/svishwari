@@ -35,8 +35,7 @@ def set_delivery_platform(
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
-    data_extension_name: str = None,
-    data_extension_id: str = None,
+    performance_de: dict =None
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -53,10 +52,8 @@ def set_delivery_platform(
         deleted (bool): if the delivery platform is deleted (soft-delete).
         user_id (ObjectId): User id of user creating delivery platform.
             This is Optional.
-        data_extension_name (str): Name of data extension in SFMC
-            where performance metrics is stored
-        data_extension_id (str): Id of data extension in SFMC
-            where performance metrics is stored
+        performance_de (dict): A dictionary consisting of name and id of
+            the performance metrics data extension
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
@@ -97,10 +94,7 @@ def set_delivery_platform(
         c.FAVORITE: False,
     }
     if delivery_platform_type == c.DELIVERY_PLATFORM_SFMC:
-        doc[c.PERFORMANCE_METRICS_DATA_EXTENSION] = {
-            c.DATA_EXTENSION_NAME: data_extension_name,
-            c.DATA_EXTENSION_ID: data_extension_id,
-        }
+        doc[c.PERFORMANCE_METRICS_DATA_EXTENSION] = performance_de
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
