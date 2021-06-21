@@ -210,6 +210,9 @@ DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
 INVALID_COMPONENT_NAME = "Invalid component name."
+DATA_EXTENSION = "data-extensions"
+DATA_EXTENSION_ID = "data_extension_id"
+DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"

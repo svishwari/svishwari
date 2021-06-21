@@ -372,7 +372,7 @@ class OrchestrationRouteTest(TestCase):
                 }
             ],
             api_c.DESTINATIONS: [
-                {db_c.OBJECT_ID: str(d[db_c.ID])} for d in self.destinations
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
             ],
         }
 
@@ -396,7 +396,7 @@ class OrchestrationRouteTest(TestCase):
         )
         self.assertListEqual(
             audience_doc[db_c.DESTINATIONS],
-            [d[db_c.ID] for d in self.destinations],
+            [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
     @requests_mock.Mocker()
@@ -513,7 +513,7 @@ class OrchestrationRouteTest(TestCase):
         # test destinations
         self.assertListEqual(
             audience_doc[db_c.DESTINATIONS],
-            [d[db_c.ID] for d in self.destinations],
+            [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
         expected_audience = {
@@ -529,11 +529,54 @@ class OrchestrationRouteTest(TestCase):
         )
         for engagement in engagements:
             # get the attached audience and nested destinations
-            engaged_audiences = [
+            engagement_audiences = [
                 x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
             ]
-            engaged_audience = engagement[db_c.AUDIENCES][
-                engaged_audiences.index(audience_doc[db_c.ID])
+            engagement_audience = engagement[db_c.AUDIENCES][
+                engagement_audiences.index(audience_doc[db_c.ID])
             ]
 
-            self.assertDictEqual(engaged_audience, expected_audience)
+            self.assertDictEqual(engagement_audience, expected_audience)
+
+    @requests_mock.Mocker()
+    def test_create_audience_with_no_engagement(self, request_mocker: Mocker):
+        """Test create audience without engagement ids.
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
