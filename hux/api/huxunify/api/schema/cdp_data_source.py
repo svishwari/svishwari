@@ -44,14 +44,12 @@ class CdpDataSourceSchema(Schema):
         validate=[
             OneOf(
                 choices=[
-                    db_c.STATUS_PENDING,
-                    db_c.STATUS_IN_PROGRESS,
-                    db_c.STATUS_FAILED,
-                    db_c.STATUS_SUCCEEDED,
+                    api_c.STATUS_ACTIVE,
+                    api_c.STATUS_PENDING,
                 ]
             )
         ],
-        default=db_c.PENDING
+        default=api_c.STATUS_ACTIVE,
     )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
