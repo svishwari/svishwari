@@ -35,6 +35,8 @@ def set_delivery_platform(
     added: bool = False,
     deleted: bool = False,
     user_id: ObjectId = None,
+    data_extension_name: str = None,
+    data_extension_id: str = None,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -90,6 +92,11 @@ def set_delivery_platform(
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
     }
+    if delivery_platform_type == c.DELIVERY_PLATFORM_SFMC:
+        doc[c.PERFORMANCE_METRICS_DATA_EXTENSION] = {
+            c.DATA_EXTENSION_NAME: data_extension_name,
+            c.DATA_EXTENSION_ID: data_extension_id,
+        }
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
 
