@@ -367,7 +367,6 @@ export default {
       AudiencesRules: "audiences/audiencesRules",
       getAudience: "audiences/audience",
       overview: "customers/overview",
-      destinations: "destinations/list",
       availableDestinations: "destinations/availableDestinations",
     }),
 
