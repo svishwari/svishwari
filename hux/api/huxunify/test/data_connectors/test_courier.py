@@ -202,7 +202,7 @@ class CourierTest(TestCase):
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
             api_c.DESTINATION_NAME: api_c.SFMC_NAME,
-            api_c.DELIVERY_PLATFORM_TYPE: api_c.SFMC_TYPE,
+            api_c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.SFMC_CLIENT_ID: sample_auth,
                 api_c.SFMC_AUTH_BASE_URI: sample_auth,

@@ -526,7 +526,9 @@ class DestinationDataExtView(SwaggerView):
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
         ):
-            return HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+            }, HTTPStatus.BAD_REQUEST
 
         ext_list = []
         try:
@@ -634,7 +636,9 @@ class DestinationDataExtPostView(SwaggerView):
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
         ):
-            return HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+            }, HTTPStatus.BAD_REQUEST
 
         try:
             body = DestinationDataExtPostSchema().load(
