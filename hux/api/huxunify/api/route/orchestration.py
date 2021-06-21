@@ -53,21 +53,17 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(destination_ids) -> list:
-    """Fetch destinations data using destination ids.
-
+def add_destinations(destinations) -> list:
+    """Add destinations data using destination ids.
     ---
-
         Args:
-            destination_ids (list): Destinations Ids.
-
+            destinations (list): Destinations list.
         Returns:
             destinations (list): Destination objects.
-
     """
 
-    if destination_ids is not None:
-        object_ids = [ObjectId(x) for x in destination_ids]
+    if destinations is not None:
+        object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
         return destination_management.get_delivery_platforms_by_id(
             get_db_client(), object_ids
         )
@@ -236,10 +232,14 @@ class AudiencePostView(SwaggerView):
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS: [
                     {
-                        api_c.ID: "60c8a8e84dea6a7717046bd8",
-                    },
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension_id": "data_extension_id",
+                    }
                 ],
-                api_c.ENGAGEMENT_IDS: ["60c7e11adb1471dbc0e0d470"],
+                api_c.AUDIENCE_ENGAGEMENTS: [
+                    "71364317897acad4bac4373b",
+                    "67589317897acad4bac4373b",
+                ],
                 api_c.AUDIENCE_FILTERS: [
                     {
                         api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
@@ -294,7 +294,6 @@ class AudiencePostView(SwaggerView):
 
         # validate destinations
         database = get_db_client()
-        destinations = []
         if db_c.DESTINATIONS in body:
             # validate list of dict objects
             for destination in body[db_c.DESTINATIONS]:
@@ -331,14 +330,11 @@ class AudiencePostView(SwaggerView):
                         "message": f"Destination with ID "
                         f"{destination[db_c.OBJECT_ID]} does not exist."
                     }
-                destinations.append(
-                    {db_c.OBJECT_ID: destination[db_c.OBJECT_ID]}
-                )
 
         engagement_ids = []
-        if api_c.ENGAGEMENT_IDS in body:
+        if api_c.AUDIENCE_ENGAGEMENTS in body:
             # validate list of dict objects
-            for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+            for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
                 # validate object id
                 if not ObjectId.is_valid(engagement_id):
                     return {
@@ -349,7 +345,7 @@ class AudiencePostView(SwaggerView):
                 # map to an object ID field
                 engagement_id = ObjectId(engagement_id)
 
-                # validate the destination object exists.
+                # validate the engagement object exists.
                 if not engagement_management.get_engagement(
                     database, engagement_id
                 ):
@@ -365,7 +361,7 @@ class AudiencePostView(SwaggerView):
                 database=database,
                 name=body[api_c.AUDIENCE_NAME],
                 audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-                destination_ids=[x[db_c.OBJECT_ID] for x in destinations],
+                destination_ids=body.get(api_c.DESTINATIONS),
                 user_id=user_id,
             )
 
@@ -378,7 +374,7 @@ class AudiencePostView(SwaggerView):
                     [
                         {
                             db_c.OBJECT_ID: audience_doc[db_c.ID],
-                            db_c.DESTINATIONS: destinations,
+                            db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
                         }
                     ],
                 )
@@ -417,10 +413,12 @@ class AudiencePutView(SwaggerView):
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS_TAG: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
+                    {
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension_id": "data_extension_id",
+                    }
                 ],
-                api_c.AUDIENCE_ENGAGEMENTS: [
+                api_c.ENGAGEMENT_IDS: [
                     "76859317897acad4bac4373b",
                     "46826317897acad4bac4373b",
                 ],
@@ -486,6 +484,7 @@ class AudiencePutView(SwaggerView):
             user_id=user_id,
         )
 
+        # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
 
