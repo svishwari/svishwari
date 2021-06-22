@@ -260,9 +260,7 @@ class AudiencePostView(SwaggerView):
     # pylint: disable=too-many-branches
     # pylint: disable=no-self-use
     @get_user_name()
-    def post(
-        self, user_name: str
-    ) -> Tuple[dict, int]:  # pylint: disable=no-self-use
+    def post(self, user_name: str) -> Tuple[dict, int]:
         """Creates a new audience.
 
         ---
