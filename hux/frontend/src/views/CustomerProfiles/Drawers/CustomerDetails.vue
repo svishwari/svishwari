@@ -31,7 +31,10 @@
                 >{{ item[header.value] }}
               </router-link>
             </div>
-            <div v-if="header.value == 'first_name' || header.value == 'last_name'" class="fontBody">
+            <div
+              v-if="header.value == 'first_name' || header.value == 'last_name'"
+              class="fontBody"
+            >
               <span v-if="item.last_name">{{ item.last_name }}, </span>
               <span v-if="item.first_name"> {{ item.first_name }}</span>
             </div>
@@ -124,9 +127,8 @@ export default {
     }),
 
     customers() {
-      return this.customersList.sort(function(a, b) {
-        return (a.id - b.id);
-      })
+      let sortedCustomerList = this.customersList
+      return sortedCustomerList.sort((a, b) => a.id - b.id)
     },
   },
 
@@ -139,52 +141,52 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .hux-data-table {
-    margin-top: 1px;
+.hux-data-table {
+  margin-top: 1px;
+}
+::v-deep .v-toolbar__content {
+  .px-6 {
+    padding-left: 14px !important;
   }
-  ::v-deep .v-toolbar__content {
-    .px-6 {
-      padding-left: 14px !important;
-    }
-  }
-  ::v-deep .v-sheet .theme--light .v-toolbar {
-    background: var(--v-aliceBlue-base);
-  }
-  ::v-deep .theme--light.v-sheet {
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-  }
-  .hux-data-table {
-    ::v-deep table {
-      .v-data-table-header {
-        tr {
-          height: 40px !important;
-        }
-        th {
-          background: var(--v-aliceBlue-base);
-        }
+}
+::v-deep .v-sheet .theme--light .v-toolbar {
+  background: var(--v-aliceBlue-base);
+}
+::v-deep .theme--light.v-sheet {
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+}
+.hux-data-table {
+  ::v-deep table {
+    .v-data-table-header {
+      tr {
+        height: 40px !important;
+      }
+      th {
+        background: var(--v-aliceBlue-base);
       }
     }
   }
-  .footer-font {
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 16px;
-    color: var(gray);
+}
+.footer-font {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(gray);
+}
+.fontBody {
+  font-size: 14px;
+}
+::v-deep .v-navigation-drawer__content {
+  .pa-2 {
+    padding: 0px !important;
   }
-  .fontBody {
-    font-size: 14px;
+  .px-8 {
+    padding-left: 16px !important;
   }
-  ::v-deep .v-navigation-drawer__content {
-    .pa-2 {
-      padding: 0px !important;
-    }
-    .px-8 {
-      padding-left: 16px !important;
-    }
-  }
-  .slider-margin {
-    margin-bottom: -22px;
-  }
+}
+.slider-margin {
+  margin-bottom: -22px;
+}
 </style>
