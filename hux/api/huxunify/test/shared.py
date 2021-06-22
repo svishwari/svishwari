@@ -7,6 +7,10 @@ TEST_AUTH_TOKEN = "Bearer 12345678"
 AUTH_HEADER = {
     "Authorization": TEST_AUTH_TOKEN,
 }
+STANDARD_HEADERS = {
+    "Authorization": TEST_AUTH_TOKEN,
+    "Content-Type": "application/json"
+}
 VALID_RESPONSE = {
     "active": True,
     "scope": "openid email profile",

@@ -12,6 +12,7 @@ from flask_marshmallow import Schema
 from marshmallow import ValidationError
 from requests_mock import Mocker
 
+from huxunify.test.shared import BASE_ENDPOINT, TEST_AUTH_TOKEN
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
@@ -20,8 +21,7 @@ from huxunify.api import constants as api_c
 from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
 from huxunify.app import create_app
 
-BASE_ENDPOINT = "/api/v1"
-TEST_AUTH_TOKEN = "Bearer 12345678"
+
 VALID_RESPONSE = {
     "active": True,
     "scope": "openid email profile",
