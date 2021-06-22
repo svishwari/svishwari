@@ -83,6 +83,40 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
     }
 
 
+def set_sfmc_auth_from_parameter_store(auth: dict) -> dict:
+    """Set SFMC auth details from parameter store
+    ---
+
+        Args:
+            auth (dict): Destinations Auth details.
+
+        Returns:
+            Auth Object (dict): SFMC auth object.
+
+    """
+
+    return {
+        SFMCCredentials.SFMC_ACCOUNT_ID.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_ACCOUNT_ID]
+        ),
+        SFMCCredentials.SFMC_AUTH_URL.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_AUTH_BASE_URI]
+        ),
+        SFMCCredentials.SFMC_CLIENT_ID.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_CLIENT_ID]
+        ),
+        SFMCCredentials.SFMC_CLIENT_SECRET.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_CLIENT_SECRET]
+        ),
+        SFMCCredentials.SFMC_SOAP_ENDPOINT.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_SOAP_BASE_URI]
+        ),
+        SFMCCredentials.SFMC_URL.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_REST_BASE_URI]
+        ),
+    }
+
+
 @add_view_to_blueprint(
     dest_bp,
     f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
@@ -532,8 +566,8 @@ class DestinationDataExtView(SwaggerView):
         if destination_id is None or not ObjectId.is_valid(destination_id):
             return HTTPStatus.BAD_REQUEST
 
-        destination = destination_management.get_delivery_platforms_by_id(
-            get_db_client(), destination_id
+        destination = destination_management.get_delivery_platform(
+            get_db_client(), ObjectId(destination_id)
         )
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
@@ -550,7 +584,7 @@ class DestinationDataExtView(SwaggerView):
                 == db_c.DELIVERY_PLATFORM_SFMC
             ):
                 connector = SFMCConnector(
-                    auth_details=set_sfmc_auth_details(
+                    auth_details=set_sfmc_auth_from_parameter_store(
                         destination[api_c.AUTHENTICATION_DETAILS]
                     )
                 )
@@ -666,7 +700,7 @@ class DestinationDataExtPostView(SwaggerView):
                 == db_c.DELIVERY_PLATFORM_SFMC
             ):
                 connector = SFMCConnector(
-                    auth_details=set_sfmc_auth_details(
+                    auth_details=set_sfmc_auth_from_parameter_store(
                         destination[api_c.AUTHENTICATION_DETAILS]
                     )
                 )
