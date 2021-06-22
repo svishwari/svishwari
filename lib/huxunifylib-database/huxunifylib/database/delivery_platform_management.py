@@ -7,6 +7,7 @@ import logging
 from functools import partial
 import datetime
 from operator import itemgetter
+from typing import Union
 
 from bson import ObjectId
 import pymongo
