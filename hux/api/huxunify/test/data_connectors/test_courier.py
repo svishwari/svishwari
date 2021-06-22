@@ -65,7 +65,9 @@ class CourierTest(TestCase):
 
         # create the list of destinations
         destinations = []
-        for destination in [(api_c.FACEBOOK_NAME, self.auth_details_facebook)]:
+        for destination in [
+            (c.DELIVERY_PLATFORM_FACEBOOK, self.auth_details_facebook)
+        ]:
             # TODO - remove when we remove delivery-platform types
             destination_doc = set_delivery_platform(
                 self.database,

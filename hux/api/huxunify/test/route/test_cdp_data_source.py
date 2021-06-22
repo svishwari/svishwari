@@ -100,7 +100,10 @@ class CdpDataSourcesTest(TestCase):
 
         # create data sources first
         self.data_sources = []
-        for ds_name in [api_c.FACEBOOK_NAME, api_c.SFMC_NAME]:
+        for ds_name in [
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            db_c.DELIVERY_PLATFORM_SFMC,
+        ]:
             self.data_sources.append(
                 CdpDataSourceSchema().dump(
                     create_data_source(self.database, ds_name, "")

@@ -420,7 +420,7 @@ class DestinationValidatePostView(SwaggerView):
 
         try:
             # test the destination connection and update connection status
-            if body.get(api_c.DESTINATION_TYPE) == api_c.FACEBOOK_TYPE:
+            if body.get(db_c.TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
                 destination_connector = FacebookConnector(
                     auth_details={
                         FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
