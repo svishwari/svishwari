@@ -68,10 +68,10 @@ class TestEngagementManagement(unittest.TestCase):
             c.DELIVERY_PLATFORM_FACEBOOK,
             "My delivery platform for Facebook",
             {
-                "facebook_access_token": "path1",
-                "facebook_app_secret": "path2",
-                "facebook_app_id": "path3",
-                "facebook_ad_account_id": "path4",
+                "sample_access_token": "path1",
+                "sample_app_secret": "path2",
+                "sample_app_id": "path3",
+                "sample_ad_account_id": "path4",
             },
         )
 
@@ -664,11 +664,11 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         # validate the delivery job was set correctly
-        engagements = self.database[c.DATA_MANAGEMENT_DATABASE][
+        engagement_collection = self.database[c.DATA_MANAGEMENT_DATABASE][
             c.ENGAGEMENTS_COLLECTION
         ]
         self.assertTrue(
-            engagements.find_one(
+            engagement_collection.find_one(
                 {
                     c.ID: engagement_id,
                     c.DELETED: False,
