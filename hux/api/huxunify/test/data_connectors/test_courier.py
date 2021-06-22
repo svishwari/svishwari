@@ -187,10 +187,10 @@ class CourierTest(TestCase):
         self.assertEqual(
             secret_dict,
             {
-                FacebookCredentials.FACEBOOK_ACCESS_TOKEN_VALUE_FROM.name: auth[
+                FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
                     api_c.FACEBOOK_ACCESS_TOKEN
                 ],
-                FacebookCredentials.FACEBOOK_APP_SECRET_VALUE_FROM.name: auth[
+                FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
                     api_c.FACEBOOK_APP_SECRET
                 ],
             },
