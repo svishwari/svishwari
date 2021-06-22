@@ -1,12 +1,8 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
-import audiencePerformanceMock from "@/api/mock/factories/audiencePerformance"
 
 const namespaced = true
-
-// TODO Remove the below once API Integration is done
-const sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
 const state = {
   items: {},
