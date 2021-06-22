@@ -60,14 +60,16 @@ export const defineRoutes = (server) => {
     "/engagements/:id/audience-performance/email",
     (schema, request) => {
       const id = request.params.id
-      return schema.audiencePerformances.find(id)
+      const response = schema.audiencePerformances.find(id)
+      return response["email_audience_performance"]
     }
   )
   server.get(
     "/engagements/:id/audience-performance/display-ads",
     (schema, request) => {
       const id = request.params.id
-      return schema.audiencePerformances.find(id)
+      const response = schema.audiencePerformances.find(id)
+      return response["displayads_audience_performance"]
     }
   )
 

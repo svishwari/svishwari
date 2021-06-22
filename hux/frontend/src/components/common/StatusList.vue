@@ -114,7 +114,7 @@
       <div class="no-destinations text--gray pb-5">
         There are no destinations assigned to this audience.
         <br />
-        Add onenow.
+        Add one now.
         <br />
         <v-icon size="30" class="add-icon cursor-pointer mt-3" color="primary">
           mdi-plus-circle
@@ -173,7 +173,7 @@ export default {
 
 <style lang="scss" scoped>
 .status-card {
-  min-width: 310px;
+  width: 310px;
   background: var(--v-white-base);
 
   border: 1px solid var(--v-zircon-base);

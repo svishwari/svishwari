@@ -214,7 +214,7 @@ export default {
               {
                 id: 2,
                 type: "facebook",
-                status: "Delivered",
+                status: "Not Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -726,7 +726,7 @@ export default {
   },
   async mounted() {
     this.loading = true
-    // this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
+    this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
     this.loading = false
   },
 }
