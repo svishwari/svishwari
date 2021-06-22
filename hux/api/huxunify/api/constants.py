@@ -1,4 +1,7 @@
 """This module contains connector defines."""
+
+from huxunifylib.database import constants as db_c
+
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
 # general defines
@@ -84,16 +87,12 @@ STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
 
 # Facebook connector defines
-FACEBOOK_NAME = "Facebook"
-FACEBOOK_TYPE = "facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
 FACEBOOK_APP_ID = "facebook_app_id"
 FACEBOOK_APP_SECRET = "facebook_app_secret"
 FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 
 # SFMC connector defines
-SFMC_NAME = "SFMC"
-SFMC_TYPE = "salesforce"
 SFMC_CLIENT_ID = "sfmc_client_id"
 SFMC_CLIENT_SECRET = "sfmc_client_secret"
 SFMC_ACCOUNT_ID = "sfmc_account_id"
@@ -107,7 +106,7 @@ OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
 DESTINATION_CONSTANTS = {
-    FACEBOOK_TYPE: {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: {
         FACEBOOK_AD_ACCOUNT_ID: {
             NAME: "Ad Account ID",
             TYPE: "text",
@@ -133,7 +132,7 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
-    SFMC_TYPE: {
+    db_c.DELIVERY_PLATFORM_SFMC: {
         SFMC_ACCOUNT_ID: {
             NAME: "Account ID",
             TYPE: "text",

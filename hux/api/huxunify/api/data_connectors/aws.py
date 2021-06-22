@@ -14,25 +14,19 @@ class ParameterStore:
     """Interact with AWS Parameter Store."""
 
     @staticmethod
-    def store_secret(
-        name: str,
-        secret: str,
-        overwrite: bool,
-        path: str = None,
-    ) -> dict:
+    def store_secret(name: str, secret: str, overwrite: bool) -> dict:
         """Store secrets.
 
         Args:
             name (str): Name of the parameter.
             secret (str): The parameter value that you want to add to the store.
             overwrite (bool): Overwrite an existing parameter.
-            path (str): Hierarchy of the parameter. (e.g: /Dev/DBServer/MySQL/db-string13)
         Returns:
             dict: boto3 response.
         """
         try:
             return get_aws_client(api_c.AWS_SSM_NAME).put_parameter(
-                Name=f"{path}/{name}" if path else name,
+                Name=name,
                 Value=secret,
                 Type="SecureString",
                 Overwrite=overwrite,
@@ -41,15 +35,12 @@ class ParameterStore:
             raise error
 
     @staticmethod
-    def get_store_value(
-        name: str, path: str = None, value: str = "Value"
-    ) -> str:
+    def get_store_value(name: str, value: str = "Value") -> str:
         """
         Retrieve a parameter/value from the param store.
 
         Args:
             name (str): Name of the parameter.
-            path (str): Hierarchy of the parameter. (e.g: /Dev/DBServer/MySQL/db-string13)
             value (str): Name of the value to get (i.e. Name or Value)
         Returns:
             str: Parameter Value.
@@ -58,7 +49,7 @@ class ParameterStore:
             return (
                 get_aws_client(api_c.AWS_SSM_NAME)
                 .get_parameter(
-                    Name=f"{path}/{name}" if path else name,
+                    Name=name,
                     WithDecryption=True,
                 )
                 .get("Parameter")
@@ -81,24 +72,21 @@ class ParameterStore:
             destination_id (str): destinations ID.
 
         Returns:
-            ssm_params (dict): The key/path to where the parameters are stored.
+            ssm_params (dict): The key to where the parameters are stored.
         """
         ssm_params = {}
-        path = f"/{api_c.PARAM_STORE_PREFIX}/{destination_id}"
 
         for (
             parameter_name,
             secret,
         ) in authentication_details.items():
-            ssm_params[parameter_name] = (
-                f"{path}/{parameter_name}" if path else parameter_name
-            )
+            param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
+            ssm_params[parameter_name] = param_name
             try:
                 parameter_store.store_secret(
-                    name=parameter_name,
+                    name=param_name,
                     secret=secret,
                     overwrite=is_updated,
-                    path=path,
                 )
             except botocore.exceptions.ClientError as exc:
                 raise ProblemException(
