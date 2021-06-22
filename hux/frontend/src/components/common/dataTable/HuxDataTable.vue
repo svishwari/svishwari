@@ -41,7 +41,7 @@
             <template #label-content>
               <Icon
                 type="info"
-                :size="8"
+                :size="12"
                 :key="h.value"
                 v-if="h.hoverTooltip"
               />

@@ -20,20 +20,18 @@
             :key="header.value"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'id'">
+            <div v-if="header.value == 'id'" class="fontBody">
               <router-link
                 :to="{
                   name: 'CustomerProfileDetails',
                   params: { id: item[header.value] },
                 }"
-                class="text-decoration-none"
+                class="text-decoration-none fontBody"
                 append
                 >{{ item[header.value] }}
               </router-link>
             </div>
-            <div
-              v-if="header.value == 'first_name' || header.value == 'last_name'"
-            >
+            <div v-if="header.value == 'first_name' || header.value == 'last_name'" class="fontBody">
               <span v-if="item.last_name">{{ item.last_name }}, </span>
               <span v-if="item.first_name"> {{ item.first_name }}</span>
             </div>
@@ -41,6 +39,7 @@
               <hux-slider
                 :isRangeSlider="false"
                 :value="item[header.value]"
+                class="slider-margin"
               ></hux-slider>
             </div>
           </td>
@@ -88,7 +87,7 @@ export default {
         {
           text: "Match confidence",
           value: "match_confidence",
-          width: "250px",
+          width: "200px",
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
         },
@@ -125,7 +124,9 @@ export default {
     }),
 
     customers() {
-      return this.customersList
+      return this.customersList.sort(function(a, b) {
+        return (a.id - b.id);
+      })
     },
   },
 
@@ -138,33 +139,52 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.hux-data-table {
-  margin-top: 1px;
-}
-::v-deep .v-sheet .theme--light .v-toolbar {
-  background: var(--v-aliceBlue-base);
-}
-::v-deep .theme--light.v-sheet {
-  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-}
-.hux-data-table {
-  ::v-deep table {
-    .v-data-table-header {
-      tr {
-        height: 40px !important;
-      }
-      th {
-        background: var(--v-aliceBlue-base);
+  .hux-data-table {
+    margin-top: 1px;
+  }
+  ::v-deep .v-toolbar__content {
+    .px-6 {
+      padding-left: 14px !important;
+    }
+  }
+  ::v-deep .v-sheet .theme--light .v-toolbar {
+    background: var(--v-aliceBlue-base);
+  }
+  ::v-deep .theme--light.v-sheet {
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+  }
+  .hux-data-table {
+    ::v-deep table {
+      .v-data-table-header {
+        tr {
+          height: 40px !important;
+        }
+        th {
+          background: var(--v-aliceBlue-base);
+        }
       }
     }
   }
-}
-.footer-font {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(gray);
-}
+  .footer-font {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(gray);
+  }
+  .fontBody {
+    font-size: 14px;
+  }
+  ::v-deep .v-navigation-drawer__content {
+    .pa-2 {
+      padding: 0px !important;
+    }
+    .px-8 {
+      padding-left: 16px !important;
+    }
+  }
+  .slider-margin {
+    margin-bottom: -22px;
+  }
 </style>
