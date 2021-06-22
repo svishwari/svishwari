@@ -4,7 +4,6 @@ This module enables functionality related to delivery platform management.
 # pylint: disable=C0302
 
 import logging
-from typing import Union
 from functools import partial
 import datetime
 from operator import itemgetter
@@ -945,6 +944,7 @@ def set_delivery_job(
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
     engagement_id: ObjectId = None,
+    delivery_platform_config: dict = None,
 ) -> Union[dict, None]:
     """A function to set an audience delivery job.
 
@@ -954,6 +954,8 @@ def set_delivery_job(
         delivery_platform_id (ObjectId): Delivery platform ID.
         delivery_platform_generic_campaigns (list): generic campaign IDs.
         engagement_id (ObjectId): Engagement ID.
+        delivery_platform_config (dict): the delivery platform config
+            object that holds the data extensions
     Returns:
         Union[dict, None]: Delivery job configuration.
 
@@ -987,6 +989,9 @@ def set_delivery_job(
     }
     if engagement_id is not None:
         doc[c.ENGAGEMENT_ID] = engagement_id
+
+    if delivery_platform_config is not None:
+        doc[c.DELIVERY_PLATFORM_CONFIG] = delivery_platform_config
 
     try:
         delivery_job_id = collection.insert_one(doc).inserted_id
