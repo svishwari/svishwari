@@ -20,7 +20,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
     # get config
     config = get_config()
 
-    # submit the post request to get models
+    # submit the post request to get documentation
     try:
         response = requests.get(
             f"{config.CDP_SERVICE}/docs",
