@@ -118,6 +118,7 @@ class OrchestrationRouteTest(TestCase):
                 },
             },
         ]
+        self.user_name = "Joe Smithers"
 
         self.destinations = []
         for destination in destinations:
@@ -140,7 +141,10 @@ class OrchestrationRouteTest(TestCase):
                         ],
                     }
                 ],
-                api_c.DESTINATION_IDS: [d[db_c.ID] for d in self.destinations],
+                api_c.USER_NAME: self.user_name,
+                api_c.DESTINATION_IDS: [
+                    {db_c.OBJECT_ID: d[db_c.ID]} for d in self.destinations
+                ],
             },
             {
                 db_c.AUDIENCE_NAME: "Test Audience No Destinations",
@@ -156,14 +160,13 @@ class OrchestrationRouteTest(TestCase):
                         ],
                     }
                 ],
+                api_c.USER_NAME: self.user_name,
             },
         ]
 
         self.audiences = []
         for audience in audiences:
             self.audiences.append(create_audience(self.database, **audience))
-
-        user_id = ObjectId()
 
         engagements = [
             {
@@ -185,7 +188,7 @@ class OrchestrationRouteTest(TestCase):
                         ],
                     },
                 ],
-                db_c.USER_ID: user_id,
+                api_c.USER_NAME: self.user_name,
             },
             {
                 db_c.ENGAGEMENT_NAME: "Test Engagement No Destination",
@@ -196,7 +199,7 @@ class OrchestrationRouteTest(TestCase):
                         api_c.DESTINATIONS_TAG: [],
                     },
                 ],
-                db_c.USER_ID: user_id,
+                api_c.USER_NAME: self.user_name,
             },
         ]
 
@@ -580,3 +583,55 @@ class OrchestrationRouteTest(TestCase):
             },
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
+
+    @requests_mock.Mocker()
+    def test_get_audience(self, request_mocker: Mocker):
+        """Test get audience.
+        Args:
+            request_mocker (Mocker): Request mocker object.
+        Returns:
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+            },
+        )
+        audience = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
+        )
+        self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+
+    @requests_mock.Mocker()
+    def test_get_audiences(self, request_mocker: Mocker):
+        """Test get audiences.
+        Args:
+            request_mocker (Mocker): Request mocker object.
+        Returns:
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}",
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+            },
+        )
+        audiences = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(audiences)
+
+        audience_ids = [ObjectId(x[db_c.ID]) for x in self.audiences]
+        return_ids = [ObjectId(x[db_c.OBJECT_ID]) for x in audiences]
+
+        self.assertListEqual(audience_ids, return_ids)
+        for audience in audiences:
+            self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
