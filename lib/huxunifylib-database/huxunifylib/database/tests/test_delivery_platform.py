@@ -496,6 +496,43 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(doc[c.ADDED])
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_update_sfmc_performance_data_extension(self) -> None:
+        """
+        For testing update of Performance Data Extension only for SFMC
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        performance_data_extension = {
+            c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "HUX Performance Ext",
+            c.DELIVERY_PLATFORM_SFMC_DATA_EXT_ID: "ED-26787B1792F6",
+        }
+
+        _ = dpm.update_delivery_platform(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc_sfmc[c.ID],
+            name="My delivery platform for SFMC",
+            delivery_platform_type=c.DELIVERY_PLATFORM_SFMC,
+            added=True,
+            performance_de=performance_data_extension,
+        )
+
+        get_doc = dpm.get_delivery_platform(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc_sfmc[c.ID],
+        )
+
+        self.assertTrue(get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION])
+
+        self.assertEqual(
+            get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION],
+            performance_data_extension,
+        )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_job(self):
         """Test set_delivery_job."""
 
@@ -901,6 +938,55 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_performance_metrics_by_engagement(self):
+        """Performance metrics are set and retrieved."""
+
+        end_time = datetime.datetime.utcnow()
+        start_time = end_time - datetime.timedelta(days=7)
+
+        engagement_id = ObjectId()
+        delivery_platform_id = self.delivery_platform_doc[c.ID]
+
+        dpm.set_connection_status(
+            self.database,
+            self.delivery_platform_doc[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+
+        doc = dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+            engagement_id=engagement_id,
+        )
+
+        dpm.set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=delivery_platform_id,
+            delivery_platform_name="Facebook",
+            delivery_job_id=doc[c.ID],
+            metrics_dict={"Clicks": 10000, "Conversions": 50},
+            start_time=start_time,
+            end_time=end_time,
+            generic_campaign_id=[],
+        )
+
+        metrics_list = dpm.get_performance_metrics_by_engagement_id(
+            self.database, engagement_id
+        )
+
+        self.assertTrue(metrics_list is not None)
+        self.assertEqual(len(metrics_list), 1)
+
+        metrics_list = dpm.get_performance_metrics_by_engagement_id(
+            self.database, ObjectId()
+        )
+
+        self.assertTrue(metrics_list is not None)
+        self.assertEqual(len(metrics_list), 0)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_performance_metrics_status(self):
         """Performance metrics status is set properly."""
 
@@ -1094,7 +1180,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.delivery_platform_doc,
             self.delivery_platform_doc_sfmc,
         ]:
-
             # set status
             self.assertIsNotNone(
                 dpm.set_connection_status(
@@ -1174,7 +1259,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.delivery_platform_doc,
             self.delivery_platform_doc_sfmc,
         ]:
-
             # set status
             self.assertIsNotNone(
                 dpm.set_connection_status(

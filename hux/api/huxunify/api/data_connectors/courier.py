@@ -11,6 +11,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job_status,
 )
+
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
@@ -42,12 +43,11 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
 
     # get auth
     auth = destination[db_const.DELIVERY_PLATFORM_AUTH]
-    secret_dict = {}
+
     if (
-            destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
-            == db_const.DELIVERY_PLATFORM_FACEBOOK.upper()
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_FACEBOOK
     ):
-        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
         env_dict = {
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
                 auth[api_const.FACEBOOK_AD_ACCOUNT_ID]
@@ -55,16 +55,19 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
                 auth[api_const.FACEBOOK_APP_ID]
             ),
-            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: parameter_store.get_store_value(
-                auth[api_const.FACEBOOK_ACCESS_TOKEN]
-            ),
-            FacebookCredentials.FACEBOOK_APP_SECRET.name: parameter_store.get_store_value(
-                auth[api_const.FACEBOOK_APP_SECRET]
-            ),
         }
+        secret_dict = {
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
+                api_const.FACEBOOK_ACCESS_TOKEN
+            ],
+            FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
+                api_const.FACEBOOK_APP_SECRET
+            ],
+        }
+
     elif (
-            destination[db_const.DELIVERY_PLATFORM_TYPE].upper()
-            == "SFMC"  # db_const.DELIVERY_PLATFORM_SFMC.upper()
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_SFMC
     ):
         env_dict = {
             SFMCCredentials.SFMC_CLIENT_ID.name: parameter_store.get_store_value(
