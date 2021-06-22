@@ -633,7 +633,14 @@ class DestinationDataExtPostView(SwaggerView):
             "in": "path",
             "required": "true",
             "example": "5f5f7262997acad4bac4373b",
-        }
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Audience body.",
+            "example": {api_c.DATA_EXTENSION_NAME: "data_ext_name"},
+        },
     ]
 
     responses = {
@@ -676,8 +683,8 @@ class DestinationDataExtPostView(SwaggerView):
         if destination_id is None or not ObjectId.is_valid(destination_id):
             return HTTPStatus.BAD_REQUEST
 
-        destination = destination_management.get_delivery_platforms_by_id(
-            get_db_client(), destination_id
+        destination = destination_management.get_delivery_platform(
+            get_db_client(), ObjectId(destination_id)
         )
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
@@ -706,7 +713,9 @@ class DestinationDataExtPostView(SwaggerView):
                 )
                 data_extension_id = api_c.DATA_EXTENSION
                 # TODO : Assign data extension id once sfmc method is updated
-                connector.create_data_extension(body.get(api_c.DATA_EXTENSION))
+                connector.create_data_extension(
+                    body.get(api_c.DATA_EXTENSION_NAME)
+                )
                 return {"data_extension_id": data_extension_id}, HTTPStatus.OK
 
             return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
