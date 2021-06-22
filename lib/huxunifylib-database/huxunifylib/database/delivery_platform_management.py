@@ -7,7 +7,6 @@ import logging
 from functools import partial
 import datetime
 from operator import itemgetter
-from typing import Union
 
 from bson import ObjectId
 import pymongo
@@ -1877,3 +1876,111 @@ def get_all_performance_metrics(
         logging.error(exc)
 
     return metric_docs
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_individual_performance_metrics(
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    delivery_platform_name: str,
+    delivery_job_id: ObjectId,
+    generic_campaign_id: list,
+    metrics_dict: dict,
+) -> Union[dict, None]:
+    """Store individual performance metrics.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_id (ObjectId): delivery platform ID
+        delivery_platform_name (str): delivery platform name
+        delivery_job_id (ObjectId): The delivery job ID of audience.
+        generic_campaign_id: (dict): generic campaign ID
+        metrics_dict (dict): A dict containing individual performance metrics.
+
+    Returns:
+        Union[dict, None]: MongoDB metrics doc.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.INDIVIDUAL_PERFORMANCE_METRICS_COLLECTION]
+
+    # Check validity of delivery job ID
+    if not get_delivery_job(database, delivery_job_id):
+        raise de.InvalidID(delivery_job_id)
+
+    # Get current time
+    curr_time = datetime.datetime.utcnow()
+
+    doc = {
+        c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
+        c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
+        c.DELIVERY_JOB_ID: delivery_job_id,
+        c.CREATE_TIME: curr_time,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
+        c.PERFORMANCE_METRICS: metrics_dict,
+        # By default not transferred for feedback to CDM yet
+        c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
+    }
+
+    try:
+        metrics_id = collection.insert_one(doc).inserted_id
+        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        if metrics_id:
+            return collection.find_one({c.ID: metrics_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_individual_performance_metrics(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    pending_transfer_for_feedback: bool = False,
+) -> Union[list, None]:
+    """Retrieve individual campaign performance metrics.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+        pending_transfer_for_feedback (bool): If True, retrieve only
+            metrics that have not been transferred for feedback. Defaults to False.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
+
+    Returns:
+        Union[list, None]: list of metrics.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.INDIVIDUAL_PERFORMANCE_METRICS_COLLECTION]
+
+    # Check validity of delivery job ID
+    doc = get_delivery_job(database, delivery_job_id)
+    if not doc:
+        raise de.InvalidID(delivery_job_id)
+
+    metric_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
+
+    if pending_transfer_for_feedback:
+        metric_queries.append(
+            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+        )
+
+    mongo_query = {"$and": metric_queries}
+
+    try:
+        cursor = collection.find(mongo_query)
+        return list(cursor)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

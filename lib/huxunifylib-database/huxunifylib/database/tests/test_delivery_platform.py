@@ -32,7 +32,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.generic_campaigns = [
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
         ]
-
+        self.individual_generic_campaigns = [
+            {"engagement_id": "engage_id_1", "audience_id": "audience_id_1"}
+        ]
         # Set delivery platform
         self.auth_details_facebook = {
             "facebook_access_token": "path1",
@@ -1338,3 +1340,43 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
             self.assertIn(c.ENGAGEMENT_ID, delivery_job)
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_individual_performance_metrics(self):
+        """Individual Performance metrics are set and retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+
+        doc = dpm.set_individual_performance_metrics(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Salesforce",
+            delivery_job_id=delivery_job_id,
+            metrics_dict={
+                "event": "sent",
+                "event_date": "2021-06-17T12:21:27.970Z",
+            },
+            generic_campaign_id=self.individual_generic_campaigns[0],
+        )
+
+        self.assertTrue(doc is not None)
+
+        metrics_list = dpm.get_individual_performance_metrics(
+            self.database, delivery_job_id
+        )
+
+        self.assertTrue(metrics_list is not None)
+        self.assertEqual(len(metrics_list), 1)
+
+        doc = metrics_list[0]
+
+        self.assertTrue(doc is not None)
+        self.assertIn(c.DELIVERY_JOB_ID, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
+        self.assertIn(c.CREATE_TIME, doc)
+        self.assertIn(c.PERFORMANCE_METRICS, doc)
+        self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
+
+        # Status is to be set to non-transferred automatically
+        self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
