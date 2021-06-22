@@ -66,7 +66,7 @@ const idrBreakdown = (identifier, percentage) => {
       return cooccurrenceItem(identifier, cooccurence)
     }),
     percentage: percentage,
-    count: percentage * 100,
+    count: Math.round(percentage * cooccurrencesTotal),
   }
 }
 
