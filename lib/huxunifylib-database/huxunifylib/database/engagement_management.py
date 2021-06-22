@@ -462,3 +462,63 @@ def validate_object_id_list(
     for object_id in object_ids:
         if not isinstance(object_id, ObjectId):
             raise ValueError("Must provide an ObjectId.")
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def add_delivery_job(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    delivery_job_id: ObjectId,
+) -> Union[dict, None]:
+    """A function to update fields in an engagement
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): ObjectID of the engagement.
+        audience_id (ObjectId): ObjectID of the audience.
+        destination_id (ObjectId): ObjectID of the destination.
+        delivery_job_id (ObjectId): ObjectID of the delivery job.
+
+    Returns:
+        Union[dict, None]: dict object of the engagement that has been updated
+    """
+
+    # get the engagement collection
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    try:
+        return collection.find_one_and_update(
+            {
+                db_c.ID: engagement_id,
+                db_c.DELETED: False,
+                db_c.AUDIENCES: {
+                    "$elemMatch": {
+                        db_c.OBJECT_ID: audience_id,
+                        db_c.DESTINATIONS: {
+                            "$elemMatch": {db_c.OBJECT_ID: destination_id}
+                        },
+                    }
+                },
+            },
+            {
+                "$set": {
+                    f"{db_c.AUDIENCES}.$.{db_c.DESTINATIONS}."
+                    f"$.{db_c.DELIVERY_JOB_ID}": delivery_job_id
+                }
+            },
+            {db_c.DELETED: 0},
+            upsert=False,
+            new=True,
+        )
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
