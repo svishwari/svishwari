@@ -526,6 +526,8 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         self.assertTrue(get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION])
+        self.assertEqual(get_doc[c.PERFORMANCE_METRICS_DATA_EXTENSION],
+                         performance_data_extension)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_job(self):
