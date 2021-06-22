@@ -88,7 +88,7 @@ def set_sfmc_auth_from_parameter_store(auth: dict) -> dict:
     ---
 
         Args:
-            auth (dict): Destinations Auth details.
+            auth (dict): Destination Auth details.
 
         Returns:
             Auth Object (dict): SFMC auth object.
@@ -538,7 +538,7 @@ class DestinationDataExtView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Retrieved destination data extensions.",
-            "schema": DestinationDataExtGetSchema,
+            "schema": {"type": "array", "items": DestinationDataExtGetSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve destination data extensions.",
