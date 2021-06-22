@@ -17,7 +17,7 @@ Object.keys(resources).forEach((resource) => {
     delete: (resourceId) => http.delete(`${endpoint}/${resourceId}`),
     find: (resourceId) => http.get(`${endpoint}/${resourceId}`),
     update: (resourceId, data) => http.put(`${endpoint}/${resourceId}`, data),
-    batchUpdate: (data) => http.put(`${endpoint}`, data),
+    batchUpdate: (data) => http.patch(`${endpoint}`, data),
     constants: () => http.get(`${endpoint}/constants`),
   }
 })
@@ -45,6 +45,13 @@ client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
 
 client["identity"].overview = () => {
   return http.get("/idr/overview")
+}
+client["audiences"].getRules = () => {
+  return http.get("/audiences/rules")
+}
+
+client["audiences"].filterSize = () => {
+  return http.post("/audiences/rules/size")
 }
 
 export default client

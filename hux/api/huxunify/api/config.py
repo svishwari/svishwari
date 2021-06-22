@@ -50,6 +50,7 @@ class Config:
     MONGO_SSL_CERT = str(
         Path(__file__).parent.parent.joinpath("rds-combined-ca-bundle.pem")
     )
+
     MONGO_DB_CONFIG = {
         "host": MONGO_DB_HOST,
         "port": MONGO_DB_PORT,
@@ -95,7 +96,10 @@ class Config:
     AUDIENCE_ROUTER_IMAGE_CONST = "AUDIENCE-ROUTER-IMAGE"
     AUDIENCE_ROUTER_IMAGE = config(
         AUDIENCE_ROUTER_IMAGE_CONST,
-        default="602322178640.dkr.ecr.us-east-1.amazonaws.com/audience_router:1.0.0",
+        default=(
+            "602322178640.dkr.ecr.us-east-1.amazonaws.com/"
+            "audience_router:1.0.0"
+        ),
     )
 
     # CDP
@@ -104,6 +108,9 @@ class Config:
     CDP_HEADERS = {
         "Authorization": "",
     }
+
+    # Preserve ordering in json
+    JSON_SORT_KEYS = False
 
 
 class ProductionConfig(Config):

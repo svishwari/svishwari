@@ -143,7 +143,7 @@ export default {
     },
 
     onCancelAndBack() {
-      this.$emit("onCancelAndBackk")
+      this.$emit("onCancelAndBack")
       this.reset()
     },
 
@@ -178,12 +178,13 @@ export default {
             conditionIndex++
           ) {
             filter.section_filters.push({
-              field: this.attributeRules[ruleIndex].conditions[conditionIndex]
-                .attribute,
+              field:
+                this.attributeRules[ruleIndex].conditions[conditionIndex]
+                  .attribute,
               type: this.attributeRules[ruleIndex].conditions[conditionIndex]
                 .operator,
-              value: this.attributeRules[ruleIndex].conditions[conditionIndex]
-                .text,
+              value:
+                this.attributeRules[ruleIndex].conditions[conditionIndex].text,
             })
           }
           filtersArray.push(filter)

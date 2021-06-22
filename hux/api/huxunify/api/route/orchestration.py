@@ -53,21 +53,17 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(destination_ids) -> list:
-    """Fetch destinations data using destination ids.
-
+def add_destinations(destinations) -> list:
+    """Add destinations data using destination ids.
     ---
-
         Args:
-            destination_ids (list): Destinations Ids.
-
+            destinations (list): Destinations list.
         Returns:
             destinations (list): Destination objects.
-
     """
 
-    if destination_ids is not None:
-        object_ids = [ObjectId(x) for x in destination_ids]
+    if destinations is not None:
+        object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
         return destination_management.get_delivery_platforms_by_id(
             get_db_client(), object_ids
         )
@@ -234,13 +230,15 @@ class AudiencePostView(SwaggerView):
             "description": "Input Audience body.",
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
-                api_c.DESTINATIONS_TAG: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
+                api_c.DESTINATIONS: [
+                    {
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension_id": "data_extension_id",
+                    }
                 ],
                 api_c.AUDIENCE_ENGAGEMENTS: [
-                    "84759317897acad4bac4373b",
-                    "46826317897acad4bac4373b",
+                    "71364317897acad4bac4373b",
+                    "67589317897acad4bac4373b",
                 ],
                 api_c.AUDIENCE_FILTERS: [
                     {
@@ -271,6 +269,8 @@ class AudiencePostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
     @get_user_id()
     def post(self, user_id) -> Tuple[dict, int]:  # pylint: disable=no-self-use
         """Creates a new audience.
@@ -292,14 +292,92 @@ class AudiencePostView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
+        # validate destinations
+        database = get_db_client()
+        if db_c.DESTINATIONS in body:
+            # validate list of dict objects
+            for destination in body[db_c.DESTINATIONS]:
+                # check if dict instance
+                if not isinstance(destination, dict):
+                    return {
+                        "message": "destinations must be objects"
+                    }, HTTPStatus.BAD_REQUEST
+
+                # check if destination id assigned
+                if db_c.OBJECT_ID not in destination:
+                    return {
+                        "message": f"{destination} missing the "
+                        f"{db_c.OBJECT_ID} field."
+                    }, HTTPStatus.BAD_REQUEST
+
+                # validate object id
+                if not ObjectId.is_valid(destination[db_c.OBJECT_ID]):
+                    return {
+                        "message": f"{destination} has an invalid "
+                        f"{db_c.OBJECT_ID} field."
+                    }, HTTPStatus.BAD_REQUEST
+
+                # map to an object ID field
+                destination[db_c.OBJECT_ID] = ObjectId(
+                    destination[db_c.OBJECT_ID]
+                )
+
+                # validate the destination object exists.
+                if not destination_management.get_delivery_platform(
+                    database, destination[db_c.OBJECT_ID]
+                ):
+                    return {
+                        "message": f"Destination with ID "
+                        f"{destination[db_c.OBJECT_ID]} does not exist."
+                    }
+
+        engagement_ids = []
+        if api_c.AUDIENCE_ENGAGEMENTS in body:
+            # validate list of dict objects
+            for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
+                # validate object id
+                if not ObjectId.is_valid(engagement_id):
+                    return {
+                        "message": f"{engagement_id} has an invalid "
+                        f"{db_c.OBJECT_ID} field."
+                    }, HTTPStatus.BAD_REQUEST
+
+                # map to an object ID field
+                engagement_id = ObjectId(engagement_id)
+
+                # validate the engagement object exists.
+                if not engagement_management.get_engagement(
+                    database, engagement_id
+                ):
+                    return {
+                        "message": f"Engagement with ID {engagement_id} "
+                        f"does not exist."
+                    }
+                engagement_ids.append(engagement_id)
+
         try:
+            # create the audience
             audience_doc = orchestration_management.create_audience(
-                database=get_db_client(),
+                database=database,
                 name=body[api_c.AUDIENCE_NAME],
                 audience_filters=body.get(api_c.AUDIENCE_FILTERS),
-                destination_ids=body.get(api_c.DESTINATIONS_TAG),
+                destination_ids=body.get(api_c.DESTINATIONS),
                 user_id=user_id,
             )
+
+            # attach the audience to each of the engagements
+            for engagement_id in engagement_ids:
+                engagement_management.append_audiences_to_engagement(
+                    database,
+                    engagement_id,
+                    user_id,
+                    [
+                        {
+                            db_c.OBJECT_ID: audience_doc[db_c.ID],
+                            db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
+                        }
+                    ],
+                )
         except db_exceptions.DuplicateName:
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
@@ -335,10 +413,12 @@ class AudiencePutView(SwaggerView):
             "example": {
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS_TAG: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
+                    {
+                        "id": "60ae035b6c5bf45da27f17d6",
+                        "data_extension_id": "data_extension_id",
+                    }
                 ],
-                api_c.AUDIENCE_ENGAGEMENTS: [
+                api_c.ENGAGEMENT_IDS: [
                     "76859317897acad4bac4373b",
                     "46826317897acad4bac4373b",
                 ],
@@ -404,6 +484,7 @@ class AudiencePutView(SwaggerView):
             user_id=user_id,
         )
 
+        # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
 

@@ -39,23 +39,36 @@
           <div class="condition-card col-10 pa-0">
             <div class="condition-container">
               <div class="condition-items col-10 pa-0">
-                <DropdownMenu
-                  v-model="condition.attribute"
-                  :labelText="fetchDropdownLabel(condition, 'attribute')"
-                  :menuItem="attributeOptions"
+                <hux-dropdown
+                  :selected="condition.attribute"
+                  :label="fetchDropdownLabel(condition, 'attribute')"
+                  @on-select="onSelect('attribute', condition, $event)"
+                  :items="attributeOptions"
                 />
-                <DropdownMenu
-                  v-model="condition.operator"
-                  :labelText="fetchDropdownLabel(condition, 'operator')"
-                  :menuItem="conditionOptions"
-                  v-if="condition.attribute"
+                <hux-dropdown
+                  :label="fetchDropdownLabel(condition, 'operator')"
+                  :selected="condition.operator"
+                  @on-select="onSelect('operator', condition, $event)"
+                  :items="operatorOptions"
+                  v-if="isText(condition)"
                 />
                 <TextField
-                  v-if="condition.operator"
+                  v-if="condition.operator && isText(condition)"
                   v-model="condition.text"
                   placeholder="Text"
                   required
                   class="item-text-field"
+                  @blur="triggerSizing(condition)"
+                />
+                <hux-slider
+                  :isRangeSlider="true"
+                  :readOnly="false"
+                  :min="condition.attribute.min"
+                  :max="condition.attribute.max"
+                  :step="condition.attribute.steps"
+                  v-model="condition.range"
+                  @onFinalValue="triggerSizing(condition)"
+                  v-if="condition.attribute && !isText(condition)"
                 />
               </div>
               <div class="condition-actions col-2 pa-0">
@@ -72,9 +85,16 @@
           </div>
           <div class="condition-summary col-2">
             <span class="title text-caption">Size</span>
-            <span class="value text-h6 pt-1 font-weight-semi-bold">{{
-              condition.outputSummary
-            }}</span>
+            <span class="value text-h6 pt-1 font-weight-semi-bold">
+              <v-progress-circular
+                :value="16"
+                indeterminate
+                v-if="condition.awaitingSize"
+              />
+              <span v-if="!condition.awaitingSize">
+                {{ fetchSize(condition.id) | Numeric(false, false, true) }}
+              </span>
+            </span>
           </div>
         </div>
 
@@ -108,7 +128,9 @@
 </template>
 
 <script>
-import DropdownMenu from "../../components/common/DropdownMenu.vue"
+import { mapGetters, mapActions } from "vuex"
+import HuxDropdown from "../../components/common/HuxDropdown.vue"
+import HuxSlider from "../../components/common/HuxSlider.vue"
 import huxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 
@@ -122,15 +144,18 @@ const NEW_CONDITION = {
   attribute: "",
   operator: "",
   text: "",
+  range: [],
+  awaitingSize: false,
   outputSummary: "0",
 }
 
 export default {
   name: "AttributeRules",
   components: {
-    DropdownMenu,
     TextField,
     huxSwitch,
+    HuxDropdown,
+    HuxSlider,
   },
   props: {
     rules: {
@@ -141,13 +166,6 @@ export default {
   },
   data() {
     return {
-      attributeOptions: [{ value: "Name" }],
-      conditionOptions: [
-        { value: "Contains" },
-        { value: "Does not contain" },
-        { value: "Equals" },
-        { value: "Does not equal" },
-      ],
       switchOptions: [
         {
           condition: true,
@@ -161,13 +179,96 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      ruleAttributes: "audiences/audiencesRules",
+      sizes: "audiences/sizeDetails",
+    }),
+
+    /**
+     * This attributeOptions is transforming the API attributeRules into the Options Array
+     *
+     * Segregating the Groups which are the parent key.
+     * Appending the sub options next to the group label.
+     *
+     * Also, having an Top Priority Order to Models.
+     */
+    attributeOptions() {
+      if (this.ruleAttributes.rule_attributes) {
+        const options = []
+
+        const masterAttributes = this.ruleAttributes.rule_attributes
+        Object.keys(masterAttributes).forEach((groupKey) => {
+          const _group_items = []
+          const order = groupKey.includes("model") ? 0 : 1
+          const group = {
+            name: groupKey.replace("_", " "),
+            isGroup: true,
+          }
+          _group_items.push(group)
+          _group_items.push(
+            ...Object.keys(masterAttributes[groupKey]).map((key) => {
+              const _subOption = masterAttributes[groupKey][key]
+              const hasSubOptins = Object.keys(_subOption).filter(
+                (item) => !!_subOption[item]["name"]
+              )
+              if (hasSubOptins.length > 0) {
+                _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
+              }
+              if (groupKey.includes("model")) _subOption["modelIcon"] = true
+              _subOption.key = key
+              return _subOption
+            })
+          )
+          _group_items.forEach((item) => (item["order"] = order))
+          options.push(..._group_items)
+        })
+        return options.sort(function (a, b) {
+          return a.order - b.order
+        })
+      } else return []
+    },
+    operatorOptions() {
+      return Object.keys(this.ruleAttributes.text_operators).map((key) => ({
+        key: key,
+        name: this.ruleAttributes.text_operators[key],
+      }))
+    },
     lastIndex() {
       return this.rules.length - 1
     },
   },
   methods: {
+    ...mapActions({
+      getRealtimeSize: "audiences/fetchFilterSize",
+    }),
+    fetchSize(id) {
+      return this.sizes[id] ? this.sizes[id].size : "0"
+    },
     operandLabel(rule) {
       return rule.operand ? "AND" : "OR"
+    },
+    isText(condition) {
+      return condition.attribute ? condition.attribute.type === "text" : false
+    },
+    async triggerSizing(condition) {
+      condition.awaitingSize = true
+      await this.getRealtimeSize(condition)
+      condition.awaitingSize = false
+    },
+    onSelect(type, condition, item) {
+      condition[type] = item
+      if (type === "attribute") {
+        condition.operator = ""
+        condition.text = ""
+        condition.range = [condition.attribute.min, condition.attribute.max]
+        condition.awaitingSize = false
+        condition.outputSummary = 0
+      } else if (type === "operator") {
+        condition.text = ""
+        condition.range = []
+        condition.awaitingSize = false
+        condition.outputSummary = 0
+      }
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
@@ -191,7 +292,7 @@ export default {
     },
     fetchDropdownLabel(condition, type) {
       const prefix = "Select "
-      return condition[type] ? condition[type] : prefix + type
+      return prefix + type
     },
   },
 }
@@ -273,6 +374,11 @@ export default {
               }
             }
             .v-text-field__details {
+              display: none;
+            }
+          }
+          .hux-range-slider {
+            .v-messages {
               display: none;
             }
           }

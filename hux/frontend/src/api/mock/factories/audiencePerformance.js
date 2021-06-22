@@ -37,7 +37,7 @@ const audiencePerformanceMock = {
         }
         fake["campaigns"] = (() => {
           let campaignArray = []
-          let limit = faker.datatype.number({ min: 2, max: 3 })
+          let limit = faker.datatype.number({ min: 1, max: 1 })
           for (let i = 0; i < limit; i++) {
             let fakeCampaign = {
               name: faker.random.arrayElement([
@@ -123,7 +123,7 @@ const audiencePerformanceMock = {
         }
         fake["campaigns"] = (() => {
           let campaignArray = []
-          let limit = faker.datatype.number({ min: 2, max: 3 })
+          let limit = faker.datatype.number({ min: 1, max: 1 })
           for (let i = 0; i < limit; i++) {
             let fakeCampaign = {
               name: faker.random.arrayElement([

@@ -7,8 +7,9 @@ import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import orchestration_management as om
+from huxunifylib.database import audience_management as am
+from huxunifylib.database import data_management as dm
 from huxunifylib.database import delivery_platform_management as dpm
-from huxunifylib.database.user_management import set_user
 
 
 class TestEngagementManagement(unittest.TestCase):
@@ -24,16 +25,10 @@ class TestEngagementManagement(unittest.TestCase):
 
         # write a user to the database
         self.user_name = "joey galloway"
-        self.user_id = set_user(
-            self.database,
-            "fake",
-            "joeygalloway@fake.com",
-            display_name=self.user_name,
-        )[c.ID]
 
         # setup the audience
         self.audience = om.create_audience(
-            self.database, "all", [], self.user_id
+            self.database, "all", [], self.user_name
         )
 
         self.audience[c.OBJECT_ID] = self.audience[c.ID]
@@ -43,7 +38,7 @@ class TestEngagementManagement(unittest.TestCase):
             "Spring 2021",
             "spring of 2021",
             [self.audience],
-            self.user_id,
+            self.user_name,
         )
 
         # setup a few destinations
@@ -57,7 +52,7 @@ class TestEngagementManagement(unittest.TestCase):
                     self.database,
                     destination,
                     destination,
-                    user_id=self.user_id,
+                    user_name=self.user_name,
                 )
             )
 
@@ -74,7 +69,7 @@ class TestEngagementManagement(unittest.TestCase):
             "Engagement 2",
             "Engagement 2 Description",
             [self.audience],
-            self.user_id,
+            self.user_name,
         )
 
         self.assertIsInstance(engagement_id, ObjectId)
@@ -97,7 +92,7 @@ class TestEngagementManagement(unittest.TestCase):
                 "Engagement string audience",
                 "string audience",
                 [audience],
-                self.user_id,
+                self.user_name,
             )
 
     def test_get_engagements(self) -> None:
@@ -109,7 +104,9 @@ class TestEngagementManagement(unittest.TestCase):
         """
 
         # test for a list with data.
-        self.assertTrue(em.get_engagements(database=self.database))
+        engagement_docs = em.get_engagements(database=self.database)
+        self.assertTrue(engagement_docs)
+        self.assertFalse([e for e in engagement_docs if c.DELETED in e])
 
     def test_get_engagements_with_users(self) -> None:
         """Test get_engagements with users routine
@@ -120,7 +117,7 @@ class TestEngagementManagement(unittest.TestCase):
         """
 
         # test for a list with data.
-        engagements = em.get_engagements(self.database, True)
+        engagements = em.get_engagements(self.database)
         self.assertTrue(engagements)
         self.assertEqual(engagements[0][c.CREATED_BY], self.user_name)
 
@@ -143,6 +140,7 @@ class TestEngagementManagement(unittest.TestCase):
         )
 
         self.assertIsNotNone(engagement_doc)
+        self.assertFalse(c.DELETED in engagement_doc)
 
     def test_get_engagement_with_user(self) -> None:
         """Test get_engagement with user routine
@@ -153,9 +151,7 @@ class TestEngagementManagement(unittest.TestCase):
         """
 
         # take the first document
-        engagement_doc = em.get_engagement(
-            self.database, self.engagement_id, True
-        )
+        engagement_doc = em.get_engagement(self.database, self.engagement_id)
         self.assertTrue(engagement_doc)
         self.assertEqual(engagement_doc[c.CREATED_BY], self.user_name)
 
@@ -177,7 +173,7 @@ class TestEngagementManagement(unittest.TestCase):
         engagement_doc = em.update_engagement(
             self.database,
             engagement_id,
-            self.user_id,
+            self.user_name,
             new_name,
             new_description,
         )
@@ -187,8 +183,8 @@ class TestEngagementManagement(unittest.TestCase):
             engagement_doc[c.ENGAGEMENT_DESCRIPTION], new_description
         )
         self.assertNotIn(c.ENGAGEMENT_DELIVERY_SCHEDULE, engagement_doc)
-        self.assertEqual(self.user_id, engagement_doc[c.CREATED_BY])
-        self.assertEqual(self.user_id, engagement_doc[c.UPDATED_BY])
+        self.assertEqual(self.user_name, engagement_doc[c.CREATED_BY])
+        self.assertEqual(self.user_name, engagement_doc[c.UPDATED_BY])
 
     def test_update_engagement_bad_string_id(self) -> None:
         """Test update_engagement routine with a bad string id
@@ -213,7 +209,7 @@ class TestEngagementManagement(unittest.TestCase):
             em.update_engagement(
                 self.database,
                 engagement_id,
-                self.user_id,
+                self.user_name,
                 new_name,
                 new_description,
                 [audience],
@@ -233,7 +229,7 @@ class TestEngagementManagement(unittest.TestCase):
             "Fall 2024",
             "fall of 2024",
             [self.audience],
-            self.user_id,
+            self.user_name,
         )
 
         self.assertIsInstance(engagement_id, ObjectId)
@@ -285,7 +281,7 @@ class TestEngagementManagement(unittest.TestCase):
             new_engagement[c.ENGAGEMENT_NAME],
             new_engagement[c.ENGAGEMENT_DESCRIPTION],
             new_engagement[c.AUDIENCES],
-            self.user_id,
+            self.user_name,
         )
 
         # validate it was created
@@ -316,7 +312,7 @@ class TestEngagementManagement(unittest.TestCase):
             "Engagement 2",
             "Engagement 2 Description",
             [self.audience],
-            self.user_id,
+            self.user_name,
         )
 
         engagement = em.get_engagement(self.database, engagement_id)
@@ -334,7 +330,7 @@ class TestEngagementManagement(unittest.TestCase):
         result = em.remove_audiences_from_engagement(
             self.database,
             engagement_id,
-            self.user_id,
+            self.user_name,
             [self.audience[c.OBJECT_ID]],
         )
         self.assertTrue(result)
@@ -360,7 +356,7 @@ class TestEngagementManagement(unittest.TestCase):
             "Engagement 2",
             "Engagement 2 Description",
             [self.audience],
-            self.user_id,
+            self.user_name,
         )
 
         engagement = em.get_engagement(self.database, engagement_id)
@@ -379,7 +375,7 @@ class TestEngagementManagement(unittest.TestCase):
             em.remove_audiences_from_engagement(
                 self.database,
                 engagement_id,
-                self.user_id,
+                self.user_name,
                 [str(self.audience[c.OBJECT_ID])],
             )
 
@@ -396,7 +392,7 @@ class TestEngagementManagement(unittest.TestCase):
             "Engagement 2",
             "Engagement 2 Description",
             [self.audience],
-            self.user_id,
+            self.user_name,
         )
 
         engagement = em.get_engagement(self.database, engagement_id)
@@ -417,7 +413,7 @@ class TestEngagementManagement(unittest.TestCase):
         }
 
         result = em.append_audiences_to_engagement(
-            self.database, engagement_id, self.user_id, [new_audience]
+            self.database, engagement_id, self.user_name, [new_audience]
         )
         self.assertTrue(result)
 
@@ -443,7 +439,7 @@ class TestEngagementManagement(unittest.TestCase):
             "Engagement 2",
             "Engagement 2 Description",
             [self.audience],
-            self.user_id,
+            self.user_name,
         )
 
         engagement = em.get_engagement(self.database, engagement_id)
@@ -465,8 +461,88 @@ class TestEngagementManagement(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             em.append_audiences_to_engagement(
-                self.database, engagement_id, self.user_id, [new_audience]
+                self.database, engagement_id, self.user_name, [new_audience]
             )
+
+    def test_set_engagement_attach_lookalike_audience(self):
+        """Test creating an engagement and attaching a lookalike audience after
+
+        Returns:
+            Response: None
+
+        """
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement 2",
+            "Engagement 2 Description",
+            [self.audience],
+            self.user_name,
+        )
+
+        # create an ingestion job
+        data_source_id = ObjectId()
+        ingestion_job = dm.set_ingestion_job(self.database, data_source_id)
+        ingestion_job_id = ingestion_job[c.ID]
+
+        # create a delivery platform
+        delivery_platform = dpm.set_delivery_platform(
+            self.database,
+            "Facebook",
+            "Facebook Delivery Platform",
+            authentication_details={},
+        )
+        delivery_platform_id = delivery_platform[c.ID]
+
+        # create a source audience
+        source_audience = am.create_audience(
+            self.database, "Source Audience", [], ingestion_job_id
+        )
+        source_audience_id = source_audience[c.ID]
+
+        # create a lookalike audience
+        lookalike_audience = dpm.create_delivery_platform_lookalike_audience(
+            self.database,
+            delivery_platform_id,
+            source_audience_id,
+            "LA Audience",
+            0.55,
+        )
+
+        engagement = em.get_engagement(self.database, engagement_id)
+
+        # check engagement
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+        self.assertEqual(
+            engagement[c.AUDIENCES][0][c.OBJECT_ID],
+            self.audience[c.OBJECT_ID],
+        )
+        self.assertIsInstance(engagement_id, ObjectId)
+
+        new_lookalike_audience = {
+            c.LOOKALIKE: True,
+            c.OBJECT_ID: lookalike_audience[c.ID],
+            c.LOOKALIKE_SOURCE_AUD_ID: source_audience_id,
+            c.LOOKALIKE_AUD_NAME: lookalike_audience[c.NAME],
+        }
+
+        # attach the lookalike audience
+        result = em.append_audiences_to_engagement(
+            self.database,
+            engagement_id,
+            self.user_name,
+            [new_lookalike_audience],
+        )
+        self.assertTrue(result)
+
+        # ensure the audience was updated
+        updated = em.get_engagement(self.database, engagement_id)
+        self.assertIn(c.AUDIENCES, updated)
+
+        # test audience appears as expected
+        self.assertTrue(updated[c.AUDIENCES])
+        self.assertEqual(len(updated[c.AUDIENCES]), 2)
+        self.assertTrue(updated[c.AUDIENCES][1][c.LOOKALIKE])
 
     def test_get_engagements_via_audience_id(self) -> None:
         """Test getting engagements with an audience_id
@@ -484,7 +560,7 @@ class TestEngagementManagement(unittest.TestCase):
                 f"Engagement {item}",
                 f"Engagement {item} Description",
                 [self.audience],
-                self.user_id,
+                self.user_name,
             )
 
             engagement = em.get_engagement(self.database, engagement_id)
@@ -506,3 +582,4 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertTrue(engagements)
         self.assertEqual(len(engagements), 3)
+        self.assertFalse([e for e in engagements if c.DELETED in e])

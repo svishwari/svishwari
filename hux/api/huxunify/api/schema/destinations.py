@@ -34,10 +34,11 @@ class DestinationGetSchema(Schema):
         validate=[
             OneOf(
                 choices=[
-                    db_c.STATUS_PENDING,
-                    db_c.STATUS_IN_PROGRESS,
-                    db_c.STATUS_FAILED,
-                    db_c.STATUS_SUCCEEDED,
+                    api_c.STATUS_NOT_DELIVERED,
+                    api_c.STATUS_DELIVERING,
+                    api_c.STATUS_DELIVERED,
+                    api_c.STATUS_DELIVERY_PAUSED,
+                    api_c.STATUS_ERROR,
                 ]
             )
         ],
@@ -74,6 +75,13 @@ class FacebookAuthConstants(Schema):
     """
     Facebook Auth constants schema class
     """
+
+    class Meta:
+        """
+        set the ordering of facebook auth constants
+        """
+
+        ordered = True
 
     facebook_ad_account_id = fields.Dict(
         required=True,
@@ -122,16 +130,13 @@ class SFMCAuthConstants(Schema):
     SFMC Auth constants schema class
     """
 
-    sfmc_client_id = fields.Dict(
-        required=True,
-        validate=must_not_be_blank,
-        example={
-            api_c.NAME: "Client ID",
-            api_c.TYPE: "text",
-            api_c.REQUIRED: True,
-            api_c.DESCRIPTION: None,
-        },
-    )
+    class Meta:
+        """
+        set the ordering of sfmc auth constants
+        """
+
+        ordered = True
+
     sfmc_account_id = fields.Dict(
         required=True,
         validate=must_not_be_blank,
@@ -142,21 +147,31 @@ class SFMCAuthConstants(Schema):
             api_c.DESCRIPTION: None,
         },
     )
-    sfmc_client_secret = fields.Dict(
-        required=True,
-        validate=must_not_be_blank,
-        example={
-            api_c.NAME: "Client Secret",
-            api_c.TYPE: "text",
-            api_c.REQUIRED: True,
-            api_c.DESCRIPTION: None,
-        },
-    )
     sfmc_auth_base_uri = fields.Dict(
         required=True,
         validate=must_not_be_blank,
         example={
             api_c.NAME: "Auth Base URI",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_client_id = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client ID",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+    sfmc_client_secret = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Client Secret",
             api_c.TYPE: "text",
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
@@ -189,5 +204,30 @@ class DestinationConstantsSchema(Schema):
     Destination constants schema class
     """
 
+    class Meta:
+        """
+        set the ordering of destination constants
+        """
+
+        ordered = True
+
     facebook = fields.Nested(FacebookAuthConstants)
     salesforce = fields.Nested(SFMCAuthConstants)
+
+
+class DestinationDataExtPostSchema(Schema):
+    """
+    Destination data extension post schema class
+    """
+
+    data_extension = fields.String()
+    type = fields.String()
+
+
+class DestinationDataExtGetSchema(Schema):
+    """
+    Destination data extension get schema class
+    """
+
+    name = fields.Field(attribute="Name")
+    data_extension_id = fields.String(attribute="CustomerKey")
