@@ -913,38 +913,6 @@ export default {
         { text: "Created", value: "created" },
         { text: "Created By", value: "createdBy" },
       ],
-      chordDiagram: {
-        name: {
-          prop: "Name",
-          icon: "name",
-          color: "#005587",
-          data: [1951, 0, 2060, 6171, 3622],
-        },
-        address: {
-          prop: "Address",
-          icon: "address",
-          color: "#da291c",
-          data: [500, 400, 300, 5200, 4500],
-        },
-        email: {
-          prop: "Email",
-          icon: "email",
-          color: "#00a3e0",
-          data: [11975, 5871, 8916, 2868, 2300],
-        },
-        phone: {
-          prop: "Phone",
-          icon: "phone",
-          color: "#43b02a",
-          data: [1951, 10048, 2060, 6171, 2800],
-        },
-        cookie: {
-          prop: "Cookie",
-          icon: "cookie",
-          color: "#efa34c",
-          data: [8010, 16145, 8090, 8045, 8377],
-        },
-      },
       chartData: [
         [0, 30, 40, 10, 20],
         [30, 0, 15, 45, 10],

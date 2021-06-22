@@ -39,12 +39,12 @@ export const destinationsConstants = {
   facebook: {
     facebook_ad_account_id: field({ name: "Ad Account ID" }),
     facebook_app_id: field({ name: "App ID" }),
-    facebook_access_token: field({
-      name: "Access Token",
-      type: "password",
-    }),
     facebook_app_secret: field({
       name: "App Secret",
+      type: "password",
+    }),
+    facebook_access_token: field({
+      name: "Access Token",
       type: "password",
     }),
   },
