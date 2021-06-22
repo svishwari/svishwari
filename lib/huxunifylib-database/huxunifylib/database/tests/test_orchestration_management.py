@@ -6,7 +6,6 @@ import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
-from huxunifylib.database.user_management import set_user
 
 
 class TestAudienceManagement(unittest.TestCase):
@@ -22,13 +21,6 @@ class TestAudienceManagement(unittest.TestCase):
 
         # write a user to the database
         self.user_name = "joey galloway"
-        self.user_id = set_user(
-            self.database,
-            "fake",
-            "joeygalloway@fake.com",
-            display_name=self.user_name,
-        )[c.ID]
-
         self.audience_filters = [
             {
                 "section_aggregator": c.AUDIENCE_FILTER_AGGREGATOR_ALL,
@@ -75,7 +67,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "My Audience",
             self.audience_filters,
-            user_id=self.user_id,
+            user_name=self.user_name,
         )
         return audience_doc
 
@@ -114,7 +106,7 @@ class TestAudienceManagement(unittest.TestCase):
         """Test get audience with user."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[c.ID], True)
+        audience_doc = am.get_audience(self.database, set_audience[c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertIn(c.ID, audience_doc)
@@ -153,7 +145,7 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             set_audience[c.ID],
             destination_ids=self.destination_ids,
-            user_id=self.user_id,
+            user_name=self.user_name,
         )
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_NAME in doc)
@@ -209,7 +201,7 @@ class TestAudienceManagement(unittest.TestCase):
             set_audience[c.ID],
             set_audience[c.AUDIENCE_NAME],
             new_filters,
-            user_id=self.user_id,
+            user_name=self.user_name,
         )
 
         self.assertTrue(doc is not None)
@@ -229,7 +221,7 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             self.destination_ids,
-            self.user_id,
+            self.user_name,
         )
         doc = am.get_audience(self.database, set_audience[c.ID])
 
@@ -247,7 +239,7 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             self.destination_ids,
-            self.user_id,
+            self.user_name,
         )
         doc = am.get_audience(self.database, set_audience[c.ID])
 
@@ -285,14 +277,14 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "New Audience 1",
             self.audience_filters,
-            user_id=self.user_id,
+            user_name=self.user_name,
         )
 
         am.create_audience(
             self.database,
             "New Audience 2",
             self.audience_filters,
-            user_id=self.user_id,
+            user_name=self.user_name,
         )
 
         audiences = am.get_all_audiences(self.database)
@@ -306,7 +298,7 @@ class TestAudienceManagement(unittest.TestCase):
         """Test get_all_audiences with users."""
 
         self._setup_audience()
-        audiences = am.get_all_audiences(self.database, True)
+        audiences = am.get_all_audiences(self.database)
 
         self.assertIsNotNone(audiences)
         self.assertEqual(len(audiences), 1)
@@ -315,17 +307,17 @@ class TestAudienceManagement(unittest.TestCase):
             self.database,
             "Audience User",
             self.audience_filters,
-            user_id=self.user_id,
+            user_name=self.user_name,
         )
 
         am.create_audience(
             self.database,
             "New Audience User",
             self.audience_filters,
-            user_id=self.user_id,
+            user_name=self.user_name,
         )
 
-        audiences = am.get_all_audiences(self.database, True)
+        audiences = am.get_all_audiences(self.database)
 
         self.assertIsNotNone(audiences)
         self.assertTrue(
