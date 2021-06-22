@@ -46,5 +46,12 @@ client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
 client["identity"].overview = () => {
   return http.get("/idr/overview")
 }
+client["audiences"].getRules = () => {
+  return http.get("/audiences/rules")
+}
+
+client["audiences"].filterSize = () => {
+  return http.post("/audiences/rules/size")
+}
 
 export default client

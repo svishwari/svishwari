@@ -2,7 +2,7 @@
   <div class="engagement-dash">
     <!-- Page Header -->
     <PageHeader class="d-flex">
-      <template slot="left">
+      <template #left>
         <div class="d-flex align-center bread-crumb">
           <Breadcrumb :items="breadcrumbItems" />
           <div class="ml-3">
@@ -10,7 +10,7 @@
           </div>
         </div>
       </template>
-      <template slot="right">
+      <template #right>
         <v-icon size="22" :disabled="true" class="mr-2">mdi-refresh</v-icon>
         <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1">
           mdi-pencil
@@ -32,13 +32,15 @@
         >
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[1].title">
-          <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
+          <template #subtitle-extended v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
-                <template slot="label-content">
-                  {{ summaryCards[1].value }}
+                <template #label-content>
+                  <span class="font-weight-semi-bold">
+                    {{ summaryCards[1].value }}
+                  </span>
                 </template>
-                <template slot="hover-content">
+                <template #hover-content>
                   {{ summaryCards[1].hoverValue | Date | Empty }}
                 </template>
               </tooltip>
@@ -47,13 +49,15 @@
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[2].title">
-          <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
+          <template #subtitle-extended v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
-                <template slot="label-content">
-                  {{ summaryCards[2].value }}
+                <template #label-content>
+                  <span class="font-weight-semi-bold">
+                    {{ summaryCards[2].value }}
+                  </span>
                 </template>
-                <template slot="hover-content">
+                <template #hover-content>
                   {{ summaryCards[2].hoverValue | Date | Empty }}
                 </template>
               </tooltip>

@@ -42,7 +42,7 @@ class EngagementGetSchema(Schema):
                 api_c.DESTINATIONS: [
                     {
                         "id": "60ae035b6c5bf45da27f17d6",
-                        # TODO - hook up extension for HUS-458
+                        "data_extension_id": "data_extension_id",
                         "contact_list": "sfmc_extension_name",
                     },
                 ],
@@ -56,7 +56,16 @@ class EngagementGetSchema(Schema):
     status = fields.String(
         attribute=api_c.STATUS,
         required=True,
-        validate=validate.OneOf(api_c.ENGAGEMENT_STATUSES),
+        validate=validate.OneOf(
+            choices=[
+                api_c.STATUS_ACTIVE,
+                api_c.STATUS_INACTIVE,
+                api_c.STATUS_DELIVERING,
+                api_c.STATUS_DRAFT,
+                api_c.STATUS_ERROR,
+            ]
+        ),
+        default=api_c.STATUS_DRAFT,
     )
     delivery_schedule = fields.Nested(
         DeliverySchedule,
@@ -104,6 +113,7 @@ class EngagementPostSchema(Schema):
                 api_c.DESTINATIONS: [
                     {
                         api_c.ID: "60ae035b6c5bf45da27f17e5",
+                        "data_extension_id": "data_extension_id",
                     },
                     {
                         api_c.ID: "60ae035b6c5bf45da27f17e6",

@@ -71,14 +71,17 @@ ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 
-STATUS_ACTIVE = "active"
-STATUS_INACTIVE = "inactive"
-STATUS_DRAFT = "draft"
-ENGAGEMENT_STATUSES = [
-    STATUS_ACTIVE,
-    STATUS_INACTIVE,
-    STATUS_DRAFT,
-]
+STATUS_NOT_DELIVERED = "Not Delivered"
+STATUS_DELIVERED = "Delivered"
+STATUS_DELIVERING = "Delivering"
+STATUS_DELIVERY_PAUSED = "Delivery Paused"
+STATUS_ACTIVE = "Active"
+STATUS_INACTIVE = "Inactive"
+STATUS_DRAFT = "Draft"
+STATUS_PENDING = "Pending"
+STATUS_ERROR = "Error"
+STATUS_PAUSED = "Paused"
+STATUS_STOPPED = "Stopped"
 
 # Facebook connector defines
 FACEBOOK_NAME = "Facebook"
@@ -207,6 +210,9 @@ DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
 INVALID_COMPONENT_NAME = "Invalid component name."
+DATA_EXTENSION = "data-extensions"
+DATA_EXTENSION_ID = "data_extension_id"
+DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
@@ -293,12 +299,6 @@ AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE = "audience_size"
 AUDIENCE_STATUS = "audience_status"
-AUDIENCE_STATUS_PENDING = "Pending"
-AUDIENCE_STATUS_DELIVERED = "Delivered"
-AUDIENCE_STATUS_DELIVERING = "Delivering"
-AUDIENCE_STATUS_DRAFT = "Draft"
-AUDIENCE_STATUS_ERROR = "Error"
-AUDIENCE_STATUS_PAUSED = "Paused"
 AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
 AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
