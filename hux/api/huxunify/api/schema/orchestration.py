@@ -6,7 +6,6 @@ from flask_marshmallow import Schema
 from marshmallow import fields
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
@@ -73,12 +72,8 @@ class AudienceGetSchema(Schema):
 
     create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
-    created_by = fields.Nested(
-        UserSchema(only=("first_name", "last_name", "_id"))
-    )
-    updated_by = fields.Nested(
-        UserSchema(only=("first_name", "last_name", "_id"))
-    )
+    created_by = fields.String()
+    updated_by = fields.String()
 
 
 class AudiencePutSchema(Schema):

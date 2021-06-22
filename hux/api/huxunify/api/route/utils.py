@@ -17,7 +17,7 @@ from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database.user_management import get_user, set_user
-from huxunifylib.database.constants import ID
+from huxunifylib.database.constants import USER_DISPLAY_NAME
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -213,11 +213,11 @@ def secured() -> object:
     return wrapper
 
 
-def get_user_id() -> object:
+def get_user_name() -> object:
     """
-    This decorator takes an API request and extracts the user id.
+    This decorator takes an API request and extracts the user namr.
 
-    Example: @get_user_id()
+    Example: @get_user_name()
 
     Args:
 
@@ -238,7 +238,7 @@ def get_user_id() -> object:
 
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
-            """Decorator for extracting the user_id
+            """Decorator for extracting the user_name
 
             Args:
                 *args (object): function arguments.
@@ -269,15 +269,15 @@ def get_user_id() -> object:
             user = get_user(database, user_info[constants.OKTA_ID_SUB])
 
             # return found user, or create one and return it.
-            kwargs[constants.OKTA_USER_ID] = (
-                user[ID]
+            kwargs[constants.USER_NAME] = (
+                user[USER_DISPLAY_NAME]
                 if user
                 else set_user(
                     database,
                     user_info[constants.OKTA_ID_SUB],
                     user_info[constants.EMAIL],
                     display_name=user_info[constants.NAME],
-                )[ID]
+                )[USER_DISPLAY_NAME]
             )
 
             return in_function(*args, **kwargs)
