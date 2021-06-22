@@ -25,7 +25,7 @@ def create_audience(
     name: str,
     audience_filters: list,
     destination_ids: list = None,
-    user_id: ObjectId = None,
+    user_name: str = None,
 ) -> Union[dict, None]:
     """A function to create an audience.
 
@@ -36,7 +36,7 @@ def create_audience(
         These are aggregated using "OR".
         destination_ids (list): List of destination
             / delivery platform ids attached to the audience
-        user_id (ObjectId): Object id of user creating / updating the audience
+        user_name (str): Name of the user creating / updating the audience
 
     Returns:
         Union[list, None]: MongoDB audience doc.
@@ -61,8 +61,8 @@ def create_audience(
         c.DESTINATIONS: destination_ids if destination_ids else [],
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
-        c.CREATED_BY: user_id,
-        c.UPDATED_BY: user_id,
+        c.CREATED_BY: user_name,
+        c.UPDATED_BY: user_name,
     }
 
     try:
@@ -162,7 +162,7 @@ def update_audience(
     name: str = None,
     audience_filters: list = None,
     destination_ids: list = None,
-    user_id: ObjectId = None,
+    user_name: str = None,
 ) -> Union[dict, None]:
     """A function to update an audience.
     Args:
@@ -173,7 +173,7 @@ def update_audience(
             These are aggregated using "OR".
         destination_ids (list): List of destination / delivery platform
             ids attached to the audience
-        user_id (ObjectId): Object id of user creating / updating the audience
+        user_name (str): Name of the user creating / updating the audience
     Returns:
         Union[dict, None]: Updated audience configuration dict.
     """
@@ -205,7 +205,8 @@ def update_audience(
         updated_audience_doc[c.AUDIENCE_FILTERS] = audience_filters
     if destination_ids is not None:
         updated_audience_doc[c.DESTINATIONS] = destination_ids
-    updated_audience_doc[c.UPDATED_BY] = user_id
+    if user_name:
+        updated_audience_doc[c.UPDATED_BY] = user_name
     updated_audience_doc[c.UPDATE_TIME] = curr_time
 
     try:
