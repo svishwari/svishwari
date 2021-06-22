@@ -22,7 +22,7 @@
       <v-icon color="columbiaBlue" class="mr-2">
         mdi-checkbox-blank-circle
       </v-icon>
-      <span v-if="showLabel">{{ status | TitleCase }} </span>
+      <span v-if="showLabel">{{ status }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
@@ -32,7 +32,7 @@
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+        {{ status }}
       </div>
     </v-menu>
   </div>
@@ -99,7 +99,7 @@ export default {
     return {
       Statuses: {
         Active: ["Active", "Success", "Delivered"],
-        Inactive: ["Caution", "Notdelivered"],
+        Inactive: ["Caution", "Not Delivered"],
         Activating: ["Activating"],
         Draft: ["Draft"],
         Disabled: ["Disabled"],

@@ -214,7 +214,7 @@ export default {
               {
                 id: 2,
                 type: "facebook",
-                status: "Notdelivered",
+                status: "Not Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
