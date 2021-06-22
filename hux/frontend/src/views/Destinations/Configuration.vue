@@ -335,21 +335,5 @@ export default {
 <style lang="scss" scoped>
 .destination-auth-wrap {
   border: 1px solid var(--v-zircon-base) !important;
-  .sfmc-data-extension {
-    ::v-deep .v-input {
-      .v-input__control {
-        .v-input__slot {
-          min-height: 40px;
-          fieldset {
-            color: var(--v-lightGrey-base) !important;
-            border-width: 1px !important;
-          }
-        }
-        .v-text-field__details {
-          display: none;
-        }
-      }
-    }
-  }
 }
 </style>
