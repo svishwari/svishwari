@@ -4,6 +4,7 @@ This module enables functionality related to delivery platform management.
 # pylint: disable=C0302
 
 import logging
+from typing import Union
 from functools import partial
 import datetime
 from operator import itemgetter
@@ -1743,6 +1744,47 @@ def get_performance_metrics(
     try:
         cursor = collection.find(mongo_query)
         return list(cursor)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_performance_metrics_by_engagement_id(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+) -> Union[list, None]:
+    """Retrieve campaign performance metrics using engagement id.
+
+    Args:
+        database (DatabaseClient): database client.
+        engagement_id (ObjectId): Engagement ID.
+
+    Raises:
+        de.InvalidID: Invalid ID for engagement.
+
+    Returns:
+        Union[list, None]: list of metrics or None
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+
+    # Get delivery jobs using engagement id
+    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+
+    try:
+        delivery_jobs = collection.find({c.ENGAGEMENT_ID: engagement_id})
+
+        # Get performance metrics for all delivery jobs
+        collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+        delivery_job_ids = [x[c.ID] for x in delivery_jobs]
+        return list(
+            collection.find({c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}})
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
