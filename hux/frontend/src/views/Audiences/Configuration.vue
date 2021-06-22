@@ -122,7 +122,7 @@
                           (hoverId == destination.id && deleteIcon) ||
                           destination.type
                         "
-                        :size="iconSize"
+                        :size="18"
                         @mouseover.native="
                           hoverItem = destination
                           mouseover(destination.id)
@@ -354,7 +354,6 @@ export default {
       },
       hoverItem: "",
       deleteIcon: null,
-      iconSize: 18,
       hoverId: null,
     }
   },
@@ -526,12 +525,10 @@ export default {
     mouseover(id) {
       this.deleteIcon = "delete"
       this.hoverId = id
-      this.iconSize = 18
     },
     mouseout() {
       this.deleteIcon = null
       this.hoverId = null
-      this.iconSize = 18
     },
   },
   async mounted() {
