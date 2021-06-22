@@ -79,25 +79,10 @@
         <span class="red--text text-caption">{{ validationError }}</span>
       </div>
       <div
-        v-if="isSFMCSelected && isValidated"
+        v-if="isSalesforceSelected && isValidated"
         class="destination-auth-wrap background pa-4 rounded mt-10"
       >
-        <v-row>
-          <v-col cols="6" class="sfmc-data-extension">
-            <div class="text-caption neroBlack--text pb-2">
-              Performance metric data extension name
-            </div>
-            <v-select
-              :items="dataExtensionNames"
-              placeholder="Select"
-              dense
-              outlined
-              @input="onDataExtensionSelection"
-              background-color="white"
-              append-icon="mdi-chevron-down"
-            />
-          </v-col>
-        </v-row>
+        <Salesforce :dataExtensions="dataExtensions" @select="setExtension" />
       </div>
     </v-form>
 
@@ -184,6 +169,8 @@ import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 
+import Salesforce from "./Configuration/Salesforce"
+
 export default {
   name: "ConfigureDestination",
 
@@ -195,6 +182,7 @@ export default {
     huxButton,
     TextField,
     Logo,
+    Salesforce,
   },
 
   data() {
@@ -205,7 +193,6 @@ export default {
       authenticationDetails: {},
       isValidated: false,
       isValidating: false,
-      isFullyConfigured: false,
       validationError: null,
       isFormValid: false,
       rules: {
@@ -241,17 +228,16 @@ export default {
       return this.destinations.filter((each) => !each.is_enabled)
     },
 
-    isSFMCSelected() {
-      return this.selectedDestination.type === "salesforce"
+    isSalesforceSelected() {
+      return this.selectedDestination !== null
+        ? this.selectedDestination.type === "salesforce"
+        : false
     },
 
-    dataExtensionNames() {
-      return this.dataExtensions.map((each) => {
-        return {
-          text: each.data_extension_name,
-          value: each.data_extension_id,
-        }
-      })
+    isFullyConfigured() {
+      return this.isSalesforceSelected
+        ? this.selectedDataExtension !== null
+        : this.isValidated
     },
   },
 
@@ -263,6 +249,10 @@ export default {
       addDestination: "destinations/add",
       validateDestination: "destinations/validate",
     }),
+
+    setExtension(data) {
+      this.selectedDataExtension = data
+    },
 
     toggleDrawer() {
       this.drawer = !this.drawer
@@ -281,18 +271,7 @@ export default {
 
     reset() {
       this.isValidated = false
-      this.isFullyConfigured = false
-    },
-
-    onDataExtensionSelection(value) {
-      this.selectedDataExtension = this.dataExtensions.filter(
-        (each) => each.data_extension_id === value
-      )[0]
-      this.setConfigured()
-    },
-
-    setConfigured() {
-      this.isFullyConfigured = true
+      this.selectedDataExtension = null
     },
 
     async validate() {
@@ -304,10 +283,8 @@ export default {
           type: this.selectedDestination.type,
           authentication_details: this.authenticationDetails,
         })
-        if (this.isSFMCSelected) {
+        if (this.isSalesforceSelected) {
           this.dataExtensions = response.performance_metrics_data_extensions
-        } else {
-          this.setConfigured()
         }
         this.isValidated = true
       } catch (error) {
@@ -324,7 +301,7 @@ export default {
           authentication_details: this.authenticationDetails,
         }
 
-        if (this.isSFMCSelected) {
+        if (this.isSalesforceSelected) {
           data.performance_metrics_data_extension = this.selectedDataExtension
         }
         await this.addDestination(data)
