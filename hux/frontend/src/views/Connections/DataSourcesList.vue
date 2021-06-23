@@ -21,7 +21,7 @@
         :title="dataSource.name"
         :icon="dataSource.type"
         hideButton
-        class="mb-3 list"
+        class="mb-3 pr-10 list"
       >
         <Status :status="dataSource.status" />
       </CardHorizontal>
@@ -76,7 +76,6 @@ export default {
 <style lang="scss" scoped>
 .list-wrapper {
   .list {
-    padding-right: 42px !important;
     &:hover {
       cursor: auto;
     }
