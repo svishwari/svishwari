@@ -22,6 +22,8 @@ const getters = {
 const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
+      item.audienceList = []
+      item.status = String(item.status).toLowerCase()
       Vue.set(state.items, item.id, item)
     })
   },
@@ -42,6 +44,10 @@ const mutations = {
     }
     Vue.set(state.audiencePerformance, type, audiencePerformanceObject)
   },
+  SET_AUDIENCE_LIST(state, payload) {
+    console.log(payload.data);
+    state.items[payload.id].audienceList = payload.data
+  }
 }
 
 const actions = {
@@ -147,6 +153,10 @@ const actions = {
       handleError(error)
       throw error
     }
+  },
+
+  updateAudienceList({ commit }, payload) {
+    commit('SET_AUDIENCE_LIST', payload);
   },
 }
 

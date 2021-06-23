@@ -32,7 +32,7 @@
         </router-link>
       </template>
     </PageHeader>
-    <v-progress-linear :active="!loading" :indeterminate="!loading" />
+     <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table :headers="columnDefs" :dataItems="rowData" nested>
       <template #item-row="{ item, expand, isExpanded }">
         <tr>
@@ -50,42 +50,53 @@
               {{ item.isExpanded }}
               <v-icon
                 :class="{ 'normal-icon': isExpanded }"
-                @click="expand(!isExpanded)"
+                @click="
+                  expand(!isExpanded)
+                  getAudiencesForEngagement(item)
+                "
               >
                 mdi-chevron-right
               </v-icon>
               <tooltip>
                 <template #label-content>
-                  <span class="primary--text"> {{ item[header.value] }} </span>
+                  <router-link
+                    :to="{
+                      name: 'EngagementDashboard',
+                      params: { id: item['id'] },
+                    }"
+                    class="text-decoration-none primary--text"
+                    append
+                    >{{ item[header.value] }}
+                  </router-link>
                 </template>
                 <template #hover-content>
                   {{ item[header.value] }}
                 </template>
               </tooltip>
             </div>
-            <div v-if="header.value == 'Audiences'">
-              {{ item[header.value] }}
+            <div v-if="header.value == 'audiences'">
+              {{ item[header.value].length }}
             </div>
-            <div v-if="header.value == 'Status'">
+            <div v-if="header.value == 'status'">
               <status :status="item[header.value]" collapsed class="d-flex" />
             </div>
-            <div v-if="header.value == 'Size'">
+            <div v-if="header.value == 'size'">
               <size :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'Delivery_schedule'">
-              {{ item[header.value] }}
+            <div v-if="header.value == 'delivery_schedule'">
+              {{ delivery_schedule }}
             </div>
-            <div v-if="header.value == 'Updated'">
+            <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'UpdatedBy'">
-              <avatar :name="getName(item[header.value])" />
+            <div v-if="header.value == 'updated_by'">
+              <avatar :name="item[header.value]" />
             </div>
-            <div v-if="header.value == 'create'">
+            <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'createdBy'">
-              <avatar :name="getName(item[header.value])" />
+            <div v-if="header.value == 'created_by'">
+              <avatar :name="item[header.value]" />
             </div>
           </td>
         </tr>
@@ -94,14 +105,14 @@
         <td
           :colspan="headers.length"
           class="pa-0 child"
-          v-if="item.engagementList"
+          v-if="item.audiences.length > 0"
         >
           <hux-data-table
             :headers="headers"
-            :dataItems="item.engagementList"
+            :dataItems="item.audienceList"
             :showHeader="false"
             class="expanded-table"
-            v-if="item"
+            v-if="item.audiences.length > 0"
           >
             <template #row-item="{ item }">
               <td
@@ -113,31 +124,37 @@
                 <div v-if="header.value == 'name'">
                   <tooltip>
                     <template #label-content>
-                      <span class="primary--text">
-                        {{ item[header.value] }}
-                      </span>
+                      <router-link
+                        :to="{
+                          name: 'AudienceInsight',
+                          params: { id: item['id'] },
+                        }"
+                        class="text-decoration-none primary--text"
+                        append
+                        >{{ item[header.value] }}
+                      </router-link>
                     </template>
                     <template #hover-content>
                       {{ item[header.value] }}
                     </template>
                   </tooltip>
                 </div>
-                <div v-if="header.value == 'Size'">
+                <div v-if="header.value == 'size'">
                   <size :value="item[header.value]" />
                 </div>
-                <div v-if="header.value == 'Delivery_schedule'">
+                <div v-if="header.value == 'delivery_schedule'">
                   {{ item[header.value] }}
                 </div>
-                <div v-if="header.value == 'Updated'">
+                <div v-if="header.value == 'update_time'">
                   <time-stamp :value="item[header.value]" />
                 </div>
-                <div v-if="header.value == 'UpdatedBy'">
+                <div v-if="header.value == 'updated_by'">
                   <avatar :name="getName(item[header.value])" />
                 </div>
-                <div v-if="header.value == 'create'">
+                <div v-if="header.value == 'create_time'">
                   <time-stamp :value="item[header.value]" />
                 </div>
-                <div v-if="header.value == 'createdBy'">
+                <div v-if="header.value == 'created_by'">
                   <avatar :name="getName(item[header.value])" />
                 </div>
               </td>
@@ -179,7 +196,7 @@
 </template>
 
 <script>
-import rowData from "./data.json"
+import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -214,25 +231,34 @@ export default {
         },
       ],
       loading: true,
-      rowData: rowData.engagements,
+      rowData: [],
+      delivery_schedule: "Manual",
+      audienceList: [],
       columnDefs: [
         { text: "Engagement name", value: "name", width: "278px" },
-        { text: "Audiences", value: "Audiences", width: "278px" },
-        { text: "Status", value: "Status", width: "278px" },
-        { text: "Size", value: "Size", width: "278px" },
+        { text: "Audiences", value: "audiences", width: "278px" },
+        { text: "Status", value: "status", width: "278px" },
+        { text: "Size", value: "size", width: "278px" },
         {
           text: "Delivery schedule",
-          value: "Delivery_schedule",
+          value: "delivery_schedule",
           width: "278px",
         },
-        { text: "Last updated", value: "Updated", width: "278px" },
-        { text: "Last updated by", value: "UpdatedBy", width: "278px" },
-        { text: "Created", value: "create", width: "278px" },
-        { text: "Created by", value: "createdBy", width: "278px" },
+        { text: "Last updated", value: "update_time", width: "278px" },
+        { text: "Last updated by", value: "updated_by", width: "278px" },
+        { text: "Created", value: "create_time", width: "278px" },
+        { text: "Created by", value: "created_by", width: "278px" },
       ],
     }
   },
   computed: {
+    ...mapGetters({
+      engagementData: "engagements/list",
+      audiencesData: "audiences/audience",
+    }),
+    audience(id) {
+      return this.audiencesData(id)
+    },
     subHeaders() {
       const _headers = JSON.parse(JSON.stringify(this.columnDefs))
       _headers.splice(1, 2)
@@ -240,9 +266,29 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      getAllEngagements: "engagements/getAll",
+      getAudienceById: "audiences/getAudienceById",
+      updateAudienceList: "engagements/updateAudienceList",
+    }),
     getName(item) {
       return item.first_name + " " + item.last_name
     },
+    async getAudiencesForEngagement(item) {
+      this.audienceList = []
+      let audienceIds = item.audiences.map((key) => key.id)
+      for (let id of audienceIds) {
+        await this.getAudienceById(id)
+        this.audienceList.push(this.audiencesData(id))
+      }
+      this.updateAudienceList({ id: item.id, data: this.audienceList })
+    },
+  },
+  async mounted() {
+    this.loading = true
+    await this.getAllEngagements()
+    this.rowData = this.engagementData
+    this.loading = false
   },
 }
 </script>
