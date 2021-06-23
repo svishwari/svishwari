@@ -5,9 +5,9 @@
       d-flex
       justify-space-between
       align-center
-      px-8
       py-5
-    "
+    " 
+    :class="paddingchanges ? paddingchanges : 'px-8'"
     elevation="1"
     tile
     :color="bgColor"
@@ -64,6 +64,11 @@ export default {
       type: Number,
       required: false,
       default: undefined,
+    },
+
+    paddingchanges: {
+      type: String,
+      required: false,
     },
   },
 }
