@@ -222,7 +222,8 @@
                     :icon="destination.type.toLowerCase()"
                     :enableBlueBackground="
                       destination.is_added ||
-                      isDestinationAdded(destination.type)"
+                      isDestinationAdded(destination.type)
+                    "
                     :isAdded="
                       destination.is_added ||
                       isDestinationAdded(destination.type)

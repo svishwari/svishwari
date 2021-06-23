@@ -1,7 +1,12 @@
 <template>
   <v-col cols="12" class="attribute-rule pt-0 pl-0 pr-0">
     <v-col cols="12" class="pa-0">
-      <strong :class="{'text-h5 neroBlack--text' : true,  'text-caption': applyCaptionStyle}">
+      <strong
+        :class="{
+          'text-h5 neroBlack--text': true,
+          'text-caption': applyCaptionStyle,
+        }"
+      >
         Select attribute(s) - <i style="font-size: 12px">Optional</i>
       </strong>
       <v-card
@@ -165,9 +170,9 @@ export default {
     },
     applyCaptionStyle: {
       type: Boolean,
-      required:false,
-      default: false
-    }
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -219,7 +224,7 @@ export default {
               if (hasSubOptins.length > 0) {
                 _subOption["menu"] = hasSubOptins.map((key) => {
                   const subOption = _subOption[key]
-                  subOption['key'] = subOption.name
+                  subOption["key"] = subOption.name
                   return subOption
                 })
               }
@@ -295,13 +300,13 @@ export default {
     },
     getPlaceHolderText(condition) {
       switch (condition.attribute.key) {
-        case 'email':
+        case "email":
           return "example@email.com"
-        case 'gender':
+        case "gender":
           return "Type male, female, or other"
-        case 'City':
-        case 'Country':
-        case 'State':
+        case "City":
+        case "Country":
+        case "State":
           return condition.attribute.key + " name"
         default:
           return condition.attribute.key

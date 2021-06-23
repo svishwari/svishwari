@@ -130,9 +130,9 @@ export default {
   },
 
   computed: {
-    // ...mapGetters({
-    //   audiences: "audiences/list",
-    // }),
+    ...mapGetters({
+      audiences: "audiences/list",
+    }),
   },
 
   methods: {
