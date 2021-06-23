@@ -9,7 +9,7 @@ import { defineRoutes } from "./routes"
 import seeds from "./seeds"
 
 // factories
-import audienceFactory from "./factories/audiences"
+import { audience as audienceFactory } from "./factories/audiences"
 import { customer, customerProfile } from "./factories/customers"
 import dataSourceFactory from "./factories/dataSource"
 import { destination as destinationFactory } from "./factories/destination"
