@@ -152,8 +152,9 @@ const facebook = {
 const salesforce = {
   name: "Salesforce Marketing Cloud",
   // TODO: update this once ORCH-233 is addressed
-  type: "SFMC",
+  type: "sfmc",
   is_enabled: true,
+  is_added: true,
 }
 
 const adobe = {
@@ -276,4 +277,7 @@ export default function (server) {
 
   // seed customers
   server.createList("customer", 1000)
+
+  // seed data-extensions
+  server.createList("dataExtension", 5)
 }

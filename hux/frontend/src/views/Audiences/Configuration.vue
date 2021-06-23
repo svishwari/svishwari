@@ -232,7 +232,7 @@
                 </div>
               </v-stepper-content>
               <v-stepper-content step="2">
-                <AddDestination />
+                <AddDestination @onformchange="validateForm" :dropdownItems="dataExtensions" ref="childComponent"/>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -249,6 +249,7 @@
               width="80"
               height="40"
               class="ma-2"
+              :disabled="!addDestinationFormValid"
               @click="addDestinationToAudience()"
             >
               Add
@@ -358,6 +359,7 @@ export default {
       },
       hoverItem: "",
       loading: false,
+      addDestinationFormValid: false,
     }
   },
 
@@ -368,6 +370,7 @@ export default {
       getAudience: "audiences/audience",
       overview: "customers/overview",
       availableDestinations: "destinations/availableDestinations",
+      dataExtensions: "destinations/dataExtensions",
     }),
 
     destinationsList() {
@@ -411,6 +414,7 @@ export default {
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
       getAvailableDestinations: "destinations/getAvailableDestinations",
+      dataExtensionLists: "destinations/dataExtensions",
     }),
 
     getFormattedValue(item) {
@@ -467,16 +471,19 @@ export default {
     // Destinations
     toggleDrawer() {
       this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
+      this.destinationDrawer.viewStep = 1
     },
 
-    onSelectDestination(selected) {
+    async onSelectDestination(selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
-        if (selected && selected.type === "salesforce") {
+        if (selected && selected.type === "sfmc") {
           if (!this.isDestinationAddedOnDrawer(selected)) {
             this.destinationDrawer.selectedDestination.push(selected)
           }
+          await this.dataExtensionLists(1)
           this.destinationDrawer.viewStep = 2
+          this.$refs.childComponent.resetForm();
         } else {
           this.audience.destinations.push(selected)
           this.toggleDrawer()
@@ -576,6 +583,9 @@ export default {
       }
       await this.addAudienceToDB(payload)
       this.$router.push({ name: "Audiences" })
+    },
+    validateForm(value) {
+      this.addDestinationFormValid = value
     },
   },
   async mounted() {
