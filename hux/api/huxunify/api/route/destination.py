@@ -516,7 +516,7 @@ class DestinationValidatePostView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSION}",
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSIONS}",
     "DestinationDataExtView",
 )
 class DestinationDataExtView(SwaggerView):
@@ -617,7 +617,7 @@ class DestinationDataExtView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSION}",
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSIONS}",
     "DestinationDataExtPostView",
 )
 class DestinationDataExtPostView(SwaggerView):
@@ -639,7 +639,7 @@ class DestinationDataExtPostView(SwaggerView):
             "in": "body",
             "type": "object",
             "description": "Input Audience body.",
-            "example": {api_c.DATA_EXTENSION_NAME: "data_ext_name"},
+            "example": {api_c.DATA_EXTENSION: "data_ext_name"},
         },
     ]
 
@@ -711,11 +711,9 @@ class DestinationDataExtPostView(SwaggerView):
                         destination[api_c.AUTHENTICATION_DETAILS]
                     )
                 )
-                data_extension_id = api_c.DATA_EXTENSION
+                data_extension_id = api_c.DATA_EXTENSIONS
                 # TODO : Assign data extension id once sfmc method is updated
-                connector.create_data_extension(
-                    body.get(api_c.DATA_EXTENSION_NAME)
-                )
+                connector.create_data_extension(body.get(api_c.DATA_EXTENSION))
                 return {"data_extension_id": data_extension_id}, HTTPStatus.OK
 
             return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST
