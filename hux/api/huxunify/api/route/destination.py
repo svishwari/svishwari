@@ -33,7 +33,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
-    get_user_id,
+    get_user_name,
 )
 import huxunify.api.constants as api_c
 
@@ -231,8 +231,8 @@ class DestinationPutView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationPutSchema)
-    @get_user_id()
-    def put(self, destination_id: str, user_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates a destination.
 
         ---
@@ -241,7 +241,7 @@ class DestinationPutView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
-            user_id (ObjectId): user_id extracted from Okta.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status.
@@ -259,8 +259,18 @@ class DestinationPutView(SwaggerView):
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         authentication_parameters = None
+        destination_id = ObjectId(destination_id)
 
         try:
+            database = get_db_client()
+
+            # check if destination exists
+            destination = destination_management.get_delivery_platform(
+                database, destination_id
+            )
+            if not destination:
+                return {"message": "Not found"}, HTTPStatus.NOT_FOUND
+
             if auth_details:
                 # store the secrets for the updated authentication details
                 authentication_parameters = (
@@ -275,11 +285,14 @@ class DestinationPutView(SwaggerView):
             # update the destination
             return (
                 destination_management.update_delivery_platform(
-                    database=get_db_client(),
-                    delivery_platform_id=ObjectId(destination_id),
+                    database=database,
+                    delivery_platform_id=destination_id,
+                    delivery_platform_type=destination[
+                        db_c.DELIVERY_PLATFORM_TYPE
+                    ],
                     authentication_details=authentication_parameters,
                     added=is_added,
-                    user_id=user_id,
+                    user_name=user_name,
                 ),
                 HTTPStatus.OK,
             )
@@ -407,7 +420,7 @@ class DestinationValidatePostView(SwaggerView):
 
         try:
             # test the destination connection and update connection status
-            if body.get(api_c.DESTINATION_TYPE) == api_c.FACEBOOK_TYPE:
+            if body.get(db_c.TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
                 destination_connector = FacebookConnector(
                     auth_details={
                         FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
