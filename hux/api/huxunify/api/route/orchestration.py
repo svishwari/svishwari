@@ -579,7 +579,7 @@ class AudienceDeliverView(SwaggerView):
             ):
                 if pair[0] != audience_id:
                     continue
-                batch_destination = get_destination_config(database, *pair)
+                batch_destination = get_destination_config(database, engagement[db_c.OBJECT_ID], *pair)
                 batch_destination.register()
                 batch_destination.submit()
                 delivery_job_ids.append(

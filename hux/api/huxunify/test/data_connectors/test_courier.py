@@ -319,7 +319,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, *pair
+                    self.database, ObjectId(), *pair
                 )
             self.assertIsNotNone(batch_destination.aws_envs)
             self.assertIsNotNone(batch_destination.aws_secrets)
@@ -353,7 +353,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, *pair
+                    self.database, ObjectId(), *pair
                 )
             batch_destination.aws_envs[
                 AudienceRouterConfig.BATCH_SIZE.name
@@ -395,7 +395,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, *pair
+                    self.database, ObjectId(), *pair
                 )
 
             # Register job

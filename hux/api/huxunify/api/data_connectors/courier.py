@@ -211,31 +211,33 @@ class DestinationBatchJob:
         )
         self.result = status
 
-
 def get_destination_config(
     database: MongoClient,
-    audience_id,
-    destination_id,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination: dict,
     audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
     Args:
         database (MongoClient): The mongo database client.
+        engagement_id (ObjectId): The ID of the engagement.
         audience_id (ObjectId): The ID of the audience.
-        destination_id (ObjectId): The ID of the destination.
+        destination (dict): Destination object.
         audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
         DestinationBatchJob: Destination batch job object.
     """
+
     audience_delivery_job = set_delivery_job(
-        database, audience_id, destination_id, []
+        database, audience_id, destination[db_const.OBJECT_ID], [], engagement_id, destination.get(db_const.DELIVERY_PLATFORM_CONFIG)
     )
 
     delivery_platform = get_delivery_platform(
         database,
-        destination_id,
+        destination[db_const.OBJECT_ID],
     )
 
     # get the configuration values
@@ -293,7 +295,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         raise TypeError("must be a list of destinations.")
 
     return [
-        [aud[db_const.OBJECT_ID], dest[db_const.OBJECT_ID]]
+        [aud[db_const.OBJECT_ID], dest]
         for aud in audiences
         for dest in aud[db_const.DESTINATIONS]
     ]
