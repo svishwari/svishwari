@@ -182,6 +182,7 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
+                api_c.AUDIENCE_ROUTER_STUB_TEST: "1",
             },
         )
         self.assertEqual(
@@ -218,6 +219,7 @@ class CourierTest(TestCase):
                 api_c.SFMC_CLIENT_SECRET: sample_auth,
                 api_c.SFMC_SOAP_BASE_URI: sample_auth,
                 api_c.SFMC_REST_BASE_URI: sample_auth,
+                api_c.SFMC_DEFAULT_WSDL: sample_auth,
             },
         }
 
@@ -248,6 +250,13 @@ class CourierTest(TestCase):
                     api_c.SFMC_SOAP_BASE_URI
                 ],
                 SFMCCredentials.SFMC_URL.name: auth[api_c.SFMC_REST_BASE_URI],
+                SFMCCredentials.SFMC_DEFAULT_WSDL.name: auth[
+                    api_c.SFMC_DEFAULT_WSDL
+                ],
+                SFMCCredentials.SFMC_AUTH_FLAG.name: "True",
+                SFMCCredentials.SFMC_SCOPE.name: "data_extensions_read "
+                "data_extensions_write "
+                "list_and_subscribers_read",
             },
         )
         self.assertDictEqual(
