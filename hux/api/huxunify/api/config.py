@@ -102,9 +102,11 @@ class Config:
         ),
     )
 
-    # CDP
-    # TODO config details needed for this. These values are not real
-    CDP_SERVICE = "https://cdp.deloittehux.com"
+    # TODO remove the verify=False once the SSL is valid for CDM
+    CDP_SERVICE = config(
+        "CDP_SERVICE",
+        default="https://customer-profile-master.main.use1.k8s.huxdev.in",
+    )
     CDP_HEADERS = {
         "Authorization": "",
     }
