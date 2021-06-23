@@ -1342,7 +1342,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
 
     @mongomock.patch(servers=(("localhost", 27017),))
-    def test_set_get_individual_performance_metrics(self):
+    def test_set_get_campaign_activity(self):
         """Campaign Activity docs are set and retrieved."""
 
         delivery_job_id = self._set_delivery_job()
