@@ -152,7 +152,7 @@ export default {
       newEngagementValid: false,
       newEngagementRules: [
         (v) => !!v || "Engagement name is required",
-        (v) =>
+        (v) => // eslint-disable-next-line no-useless-escape
           /^[^!@#$%^*()={}\/.<>":?|,_&]*$/.test(v) ||
           "You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / : ? | , _ &",
       ],
