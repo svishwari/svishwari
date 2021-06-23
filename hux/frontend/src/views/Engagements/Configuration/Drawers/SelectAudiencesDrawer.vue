@@ -115,7 +115,6 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      audiences: [],
     }
   },
 
