@@ -1,39 +1,13 @@
 import faker from "faker"
 
-const audienceMock = {
-  name(i) {
-    return `Audience ${i + 1}`
-  },
-
-  size() {
-    return faker.datatype.number({ min: 10000000, max: 999999999 })
-  },
-  create_time() {
-    return faker.date.past()
-  },
-
-  created_by() {
-    return {
-      first_name: `${faker.name.firstName()}`,
-      id: "608265eb0a98afab01216c61",
-      last_name: `${faker.name.lastName()}`,
-    }
-  },
-
-  update_time() {
-    return faker.date.past()
-  },
-  last_delivered() {
-    return faker.date.past()
-  },
-
-  updated_by() {
-    return {
-      first_name: `${faker.name.firstName()}`,
-      id: "608265eb0a98afab01216c61",
-      last_name: `${faker.name.lastName()}`,
-    }
-  },
+export default {
+  name: (index) => `My audience ${index + 1}`,
+  size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
+  last_delivered: () => faker.date.recent(),
+  create_time: () => faker.date.recent(),
+  created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+  update_time: () => faker.date.recent(),
+  updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   audience_insights() {
     return {
       gender_men: 0.47,
@@ -48,4 +22,3 @@ const audienceMock = {
     }
   },
 }
-export default audienceMock
