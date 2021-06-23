@@ -370,8 +370,6 @@ export default {
       },
       hoverItem: "",
       loading: false,
-      deleteIcon: null,
-      hoverId: null,
     }
   },
 
