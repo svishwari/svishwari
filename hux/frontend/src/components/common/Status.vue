@@ -17,6 +17,26 @@
     </v-menu>
   </div>
 
+  <div v-else-if="Statuses.Inactive.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="columbiaBlue" class="mr-2">
+        mdi-checkbox-blank-circle
+      </v-icon>
+      <span v-if="showLabel">{{ status }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="columbiaBlue" class="mr-2">
+          mdi-checkbox-blank-circle
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status }}
+      </div>
+    </v-menu>
+  </div>
+
   <div v-else-if="Statuses.Activating.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
       <span class="half-left-circle success" />
@@ -78,13 +98,13 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["active", "success", "delivered"],
-        Inactive: ["caution"],
-        Activating: ["activating"],
-        Draft: ["draft"],
-        Disabled: ["disabled"],
-        Error: ["error"],
-        Pending: ["pending", "delivering"],
+        Active: ["Active", "Success", "Delivered"],
+        Inactive: ["Caution", "Not Delivered"],
+        Activating: ["Activating"],
+        Draft: ["Draft"],
+        Disabled: ["Disabled"],
+        Error: ["Error"],
+        Pending: ["Pending", "Delivering"],
       },
     }
   },

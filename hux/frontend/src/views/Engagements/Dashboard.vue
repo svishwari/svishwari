@@ -2,7 +2,7 @@
   <div class="engagement-dash">
     <!-- Page Header -->
     <PageHeader class="d-flex">
-      <template slot="left">
+      <template #left>
         <div class="d-flex align-center bread-crumb">
           <Breadcrumb :items="breadcrumbItems" />
           <div class="ml-3">
@@ -10,7 +10,7 @@
           </div>
         </div>
       </template>
-      <template slot="right">
+      <template #right>
         <v-icon size="22" :disabled="true" class="mr-2">mdi-refresh</v-icon>
         <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1">
           mdi-pencil
@@ -32,13 +32,15 @@
         >
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[1].title">
-          <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
+          <template #subtitle-extended v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
-                <template slot="label-content">
-                  {{ summaryCards[1].value }}
+                <template #label-content>
+                  <span class="font-weight-semi-bold">
+                    {{ summaryCards[1].value }}
+                  </span>
                 </template>
-                <template slot="hover-content">
+                <template #hover-content>
                   {{ summaryCards[1].hoverValue | Date | Empty }}
                 </template>
               </tooltip>
@@ -47,13 +49,15 @@
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[2].title">
-          <template slot="subtitle-extended" v-if="summaryCards[1].subLabel">
+          <template #subtitle-extended v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
-                <template slot="label-content">
-                  {{ summaryCards[2].value }}
+                <template #label-content>
+                  <span class="font-weight-semi-bold">
+                    {{ summaryCards[2].value }}
+                  </span>
                 </template>
-                <template slot="hover-content">
+                <template #hover-content>
                   {{ summaryCards[2].hoverValue | Date | Empty }}
                 </template>
               </tooltip>
@@ -182,7 +186,7 @@ export default {
       engagement: {
         id: Math.floor(Math.random() * 10) + 1,
         name: "Engagement name",
-        status: "active",
+        status: "Active",
         schedule: "Manual",
         update_time: "2020-07-10T11:45:01.984Z",
         updated_by: "Rahul Goel",
@@ -203,28 +207,28 @@ export default {
               {
                 id: 1,
                 type: "mailchimp",
-                status: "delivered",
+                status: "Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 2,
                 type: "facebook",
-                status: "delivered",
+                status: "Not Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 3,
                 type: "insightIQ",
-                status: "delivered",
+                status: "Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 4,
                 type: "adobe-experience",
-                status: "delivering",
+                status: "Delivering",
                 size: null,
                 lastDeliveredOn: null,
               },
@@ -237,7 +241,7 @@ export default {
               {
                 id: 1,
                 type: "mailchimp",
-                status: "delivered",
+                status: "Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -245,14 +249,14 @@ export default {
               {
                 id: 2,
                 type: "facebook",
-                status: "delivered",
+                status: "Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 3,
                 type: "insightIQ",
-                status: "delivering",
+                status: "Delivering",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -265,14 +269,14 @@ export default {
               {
                 id: 1,
                 type: "mailchimp",
-                status: "delivering",
+                status: "Delivering",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 2,
                 type: "facebook",
-                status: "delivered",
+                status: "Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -285,14 +289,14 @@ export default {
               {
                 id: 1,
                 type: "mailchimp",
-                status: "delivering",
+                status: "Delivering",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
               {
                 id: 2,
                 type: "facebook",
-                status: "delivered",
+                status: "Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -305,7 +309,7 @@ export default {
               {
                 id: 2,
                 type: "facebook",
-                status: "delivered",
+                status: "Delivered",
                 size: 356046921,
                 lastDeliveredOn: "2021-01-13T22:04:33.187Z",
               },
@@ -722,7 +726,7 @@ export default {
   },
   async mounted() {
     this.loading = true
-    // this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
+    this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
     this.loading = false
   },
 }

@@ -41,7 +41,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     api_error_handler,
-    get_user_id,
+    get_user_name,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -244,7 +244,8 @@ class SetEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    def post(self) -> Tuple[dict, int]:
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
         """Creates a new engagement.
 
         ---
@@ -252,6 +253,7 @@ class SetEngagement(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Engagement created, HTTP status.
@@ -278,7 +280,7 @@ class SetEngagement(SwaggerView):
                 delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
                 if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
                 else None,
-                user_id=ObjectId(),
+                user_name=user_name,
             )
 
             return (
@@ -367,8 +369,8 @@ class UpdateEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @get_user_id()
-    def put(self, engagement_id: str, user_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def put(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates an engagement.
 
         ---
@@ -377,7 +379,7 @@ class UpdateEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
-            user_id (ObjectId): user_id extracted from Okta.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Engagement updated, HTTP status.
@@ -396,7 +398,7 @@ class UpdateEngagement(SwaggerView):
             engagement = update_engagement(
                 database=get_db_client(),
                 engagement_id=ObjectId(engagement_id),
-                user_id=user_id,
+                user_name=user_name,
                 name=body[db_c.ENGAGEMENT_NAME],
                 description=body[db_c.ENGAGEMENT_DESCRIPTION]
                 if db_c.ENGAGEMENT_DESCRIPTION in body
@@ -566,8 +568,8 @@ class AddAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @get_user_id()
-    def post(self, engagement_id: str, user_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def post(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Adds audience to engagement.
 
         ---
@@ -576,7 +578,7 @@ class AddAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
-            user_id (ObjectId): user_id extracted from Okta.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience Engagement added, HTTP status.
@@ -597,7 +599,7 @@ class AddAudienceEngagement(SwaggerView):
             append_audiences_to_engagement(
                 get_db_client(),
                 ObjectId(engagement_id),
-                user_id,
+                user_name,
                 body[api_c.AUDIENCES],
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
@@ -660,10 +662,8 @@ class DeleteAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @get_user_id()
-    def delete(
-        self, engagement_id: str, user_id: ObjectId
-    ) -> Tuple[dict, int]:
+    @get_user_name()
+    def delete(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes audience from engagement.
 
         ---
@@ -672,7 +672,7 @@ class DeleteAudienceEngagement(SwaggerView):
 
         Args:
             engagement_id (str): Engagement id
-            user_id (ObjectId): user_id extracted from Okta.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience deleted from engagement, HTTP status
@@ -698,7 +698,7 @@ class DeleteAudienceEngagement(SwaggerView):
             remove_audiences_from_engagement(
                 get_db_client(),
                 ObjectId(engagement_id),
-                user_id,
+                user_name,
                 audience_ids,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
@@ -1265,7 +1265,8 @@ class EngagementMetricsEmail(SwaggerView):
             "summary": {
                 api_c.EMAIL: 1200000,
                 api_c.SENT: 125,
-                api_c.HARD_BOUNCES: 0.1,
+                api_c.HARD_BOUNCES: 125,
+                api_c.HARD_BOUNCES_RATE: 0.1,
                 api_c.DELIVERED: 125,
                 api_c.DELIVERED_RATE: 0.1,
                 api_c.OPEN: 365200,
@@ -1283,7 +1284,8 @@ class EngagementMetricsEmail(SwaggerView):
                     api_c.AUDIENCE_NAME: "audience_1",
                     api_c.EMAIL: 1200000,
                     api_c.SENT: 125,
-                    api_c.HARD_BOUNCES: 0.1,
+                    api_c.HARD_BOUNCES: 125,
+                    api_c.HARD_BOUNCES_RATE: 0.1,
                     api_c.DELIVERED: 125,
                     api_c.DELIVERED_RATE: 0.1,
                     api_c.OPEN: 365200,
@@ -1301,7 +1303,8 @@ class EngagementMetricsEmail(SwaggerView):
                             api_c.IS_MAPPED: True,
                             api_c.EMAIL: 1200000,
                             api_c.SENT: 125,
-                            api_c.HARD_BOUNCES: 0.1,
+                            api_c.HARD_BOUNCES: 125,
+                            api_c.HARD_BOUNCES_RATE: 0.1,
                             api_c.DELIVERED: 125,
                             api_c.DELIVERED_RATE: 0.1,
                             api_c.OPEN: 365200,
@@ -1319,7 +1322,8 @@ class EngagementMetricsEmail(SwaggerView):
                             api_c.IS_MAPPED: True,
                             api_c.EMAIL: 1200000,
                             api_c.SENT: 125,
-                            api_c.HARD_BOUNCES: 0.1,
+                            api_c.HARD_BOUNCES: 125,
+                            api_c.HARD_BOUNCES_RATE: 0.1,
                             api_c.DELIVERED: 125,
                             api_c.DELIVERED_RATE: 0.1,
                             api_c.OPEN: 365200,

@@ -10,6 +10,7 @@ from bson import ObjectId
 from flask_marshmallow import Schema
 from marshmallow import ValidationError
 from marshmallow.fields import Boolean, DateTime, Int, Str, Float
+from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 
 # get random data back based on marshmallow field type
@@ -83,9 +84,9 @@ def validate_dest_constants(data: dict) -> None:
 
     # check which destination auth is being set
     if api_c.FACEBOOK_APP_ID in data:
-        destination_key_name = api_c.FACEBOOK_NAME
+        destination_key_name = db_c.DELIVERY_PLATFORM_FACEBOOK
     elif api_c.SFMC_ACCOUNT_ID in data:
-        destination_key_name = api_c.SFMC_NAME
+        destination_key_name = db_c.DELIVERY_PLATFORM_SFMC
     else:
         raise ValidationError(api_c.INVALID_DESTINATION_AUTH)
 

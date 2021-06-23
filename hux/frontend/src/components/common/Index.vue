@@ -359,7 +359,7 @@
       description="Propensity of a customer making a purchase after receiving an email."
     >
       <template slot="top">
-        <Status status="pending" collapsed class="d-flex" />
+        <Status status="Pending" collapsed class="d-flex" />
       </template>
 
       <template slot="default">

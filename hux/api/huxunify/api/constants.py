@@ -1,4 +1,7 @@
 """This module contains connector defines."""
+
+from huxunifylib.database import constants as db_c
+
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
 # general defines
@@ -71,26 +74,25 @@ ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 
-STATUS_ACTIVE = "active"
-STATUS_INACTIVE = "inactive"
-STATUS_DRAFT = "draft"
-ENGAGEMENT_STATUSES = [
-    STATUS_ACTIVE,
-    STATUS_INACTIVE,
-    STATUS_DRAFT,
-]
+STATUS_NOT_DELIVERED = "Not Delivered"
+STATUS_DELIVERED = "Delivered"
+STATUS_DELIVERING = "Delivering"
+STATUS_DELIVERY_PAUSED = "Delivery Paused"
+STATUS_ACTIVE = "Active"
+STATUS_INACTIVE = "Inactive"
+STATUS_DRAFT = "Draft"
+STATUS_PENDING = "Pending"
+STATUS_ERROR = "Error"
+STATUS_PAUSED = "Paused"
+STATUS_STOPPED = "Stopped"
 
 # Facebook connector defines
-FACEBOOK_NAME = "Facebook"
-FACEBOOK_TYPE = "facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
 FACEBOOK_APP_ID = "facebook_app_id"
 FACEBOOK_APP_SECRET = "facebook_app_secret"
 FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 
 # SFMC connector defines
-SFMC_NAME = "SFMC"
-SFMC_TYPE = "salesforce"
 SFMC_CLIENT_ID = "sfmc_client_id"
 SFMC_CLIENT_SECRET = "sfmc_client_secret"
 SFMC_ACCOUNT_ID = "sfmc_account_id"
@@ -104,7 +106,7 @@ OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
 DESTINATION_CONSTANTS = {
-    FACEBOOK_TYPE: {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: {
         FACEBOOK_AD_ACCOUNT_ID: {
             NAME: "Ad Account ID",
             TYPE: "text",
@@ -130,7 +132,7 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
-    SFMC_TYPE: {
+    db_c.DELIVERY_PLATFORM_SFMC: {
         SFMC_ACCOUNT_ID: {
             NAME: "Account ID",
             TYPE: "text",
@@ -207,9 +209,13 @@ DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
 INVALID_COMPONENT_NAME = "Invalid component name."
+DATA_EXTENSION = "data-extensions"
+DATA_EXTENSION_ID = "data_extension_id"
+DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT_IDS = "engagement_ids"
 ENGAGEMENT_NAME = "engagement_name"
 ENGAGEMENT_ENDPOINT = "/engagements"
 ENGAGEMENT_TAG = "engagements"
@@ -235,6 +241,7 @@ IS_MAPPED = "is_mapped"
 EMAIL = "email"
 SENT = "sent"
 HARD_BOUNCES = "hard_bounces"
+HARD_BOUNCES_RATE = "hard_bounces_rate"
 DELIVERED = "delivered"
 DELIVERED_RATE = "delivered_rate"
 OPEN = "open"
@@ -291,12 +298,6 @@ AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE = "audience_size"
 AUDIENCE_STATUS = "audience_status"
-AUDIENCE_STATUS_PENDING = "Pending"
-AUDIENCE_STATUS_DELIVERED = "Delivered"
-AUDIENCE_STATUS_DELIVERING = "Delivering"
-AUDIENCE_STATUS_DRAFT = "Draft"
-AUDIENCE_STATUS_ERROR = "Error"
-AUDIENCE_STATUS_PAUSED = "Paused"
 AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
 AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
@@ -323,6 +324,7 @@ PARAMETER_STORE_ERROR_MSG = (
 
 # users
 USER_TAG = "user"
+USER_NAME = "user_name"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 

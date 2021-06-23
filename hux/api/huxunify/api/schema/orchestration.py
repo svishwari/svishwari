@@ -6,11 +6,11 @@ from flask_marshmallow import Schema
 from marshmallow import fields
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
-from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
 )
+from huxunify.api.schema.destinations import DestinationGetSchema
 
 
 class AudienceGetSchema(Schema):
@@ -42,7 +42,7 @@ class AudienceGetSchema(Schema):
         ],
     )
 
-    destinations = fields.List(fields.String())
+    destinations = fields.List(fields.Nested(DestinationGetSchema))
     engagements = fields.List(
         fields.Dict(),
         attribute=api_c.AUDIENCE_ENGAGEMENTS,
@@ -73,12 +73,8 @@ class AudienceGetSchema(Schema):
 
     create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
-    created_by = fields.Nested(
-        UserSchema(only=("first_name", "last_name", "_id"))
-    )
-    updated_by = fields.Nested(
-        UserSchema(only=("first_name", "last_name", "_id"))
-    )
+    created_by = fields.String()
+    updated_by = fields.String()
 
 
 class AudiencePutSchema(Schema):
@@ -98,6 +94,15 @@ class AudiencePostSchema(AudiencePutSchema):
     """
 
     name = fields.String(validate=must_not_be_blank)
-    destinations = fields.List(fields.String())
-    engagements = fields.List(fields.String())
+    destinations = fields.List(
+        fields.Dict(),
+        attribute=api_c.DESTINATIONS,
+        example=[
+            {
+                api_c.ID: "60ae035b6c5bf45da27f17d6",
+                api_c.DATA_EXTENSION_ID: "data_extension_id",
+            }
+        ],
+    )
+    engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())

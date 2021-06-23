@@ -97,6 +97,12 @@ export default {
       default: "No items available.",
     },
 
+    sort: {
+      type: String,
+      required: false,
+      default: "none",
+    },
+
     bordered: {
       type: Boolean,
       required: false,
@@ -107,7 +113,7 @@ export default {
   data() {
     return {
       sortBy: null,
-      sortDesc: false,
+      sortDesc: true,
       itemsPerPage: ALL,
     }
   },
@@ -127,8 +133,16 @@ export default {
   },
 
   mounted() {
-    // Sort the list in ascending order by default
-    this.setSortBy(this.fields[0].key)
+    if (this.sort !== "none") {
+      if (this.sort === "asc") {
+        // Sorts the list in ascending order
+        this.sortDesc = false
+        this.setSortBy(this.fields[0].key)
+      } else {
+        // Sorts the list in descending order
+        this.setSortBy(this.fields[0].key)
+      }
+    }
   },
 }
 </script>

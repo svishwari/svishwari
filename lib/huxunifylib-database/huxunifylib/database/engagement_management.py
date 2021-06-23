@@ -5,6 +5,7 @@ This module enables functionality related to engagement management.
 import logging
 import datetime
 from typing import Union
+
 from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
@@ -13,7 +14,6 @@ import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
-from huxunifylib.database.user_management import USER_LOOKUP_PIPELINE
 
 
 @retry(
@@ -25,7 +25,7 @@ def set_engagement(
     name: str,
     description: str,
     audiences: list,
-    user_id: ObjectId,
+    user_name: str,
     delivery_schedule: dict = None,
     deleted: bool = False,
 ) -> ObjectId:
@@ -36,7 +36,7 @@ def set_engagement(
         name (str): Name of the engagement.
         description (str): Description of the engagement.
         audiences (list): List of audiences assigned to the engagement.
-        user_id (ObjectId): ObjectID of user.
+        user_name (str): Name of the user creating the engagement.
         delivery_schedule (dict): Delivery Schedule dict
         deleted (bool): if the engagement is deleted (soft-delete).
     Returns:
@@ -64,20 +64,20 @@ def set_engagement(
         db_c.ENGAGEMENT_NAME: name,
         db_c.ENGAGEMENT_DESCRIPTION: description,
         db_c.CREATE_TIME: datetime.datetime.utcnow(),
-        db_c.CREATED_BY: user_id,
+        db_c.CREATED_BY: user_name,
+        db_c.UPDATED_BY: "",
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.DELETED: deleted,
-        db_c.AUDIENCES: [],
-    }
-
-    # attach the audiences to the engagement
-    for audience in audiences:
-        doc[db_c.AUDIENCES].append(
+        db_c.AUDIENCES: [
             {
-                db_c.OBJECT_ID: audience[db_c.OBJECT_ID],
-                db_c.DESTINATIONS: audience[db_c.DESTINATIONS],
+                db_c.OBJECT_ID: x[db_c.OBJECT_ID],
+                db_c.DESTINATIONS: x[db_c.DESTINATIONS],
             }
-        )
+            for x in audiences
+        ]
+        if audiences
+        else [],
+    }
 
     if delivery_schedule:
         doc[db_c.ENGAGEMENT_DELIVERY_SCHEDULE] = delivery_schedule
@@ -97,14 +97,11 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements(
-    database: DatabaseClient, include_users: bool = False
-) -> Union[list, None]:
+def get_engagements(database: DatabaseClient) -> Union[list, None]:
     """A function to get all engagements
 
     Args:
         database (DatabaseClient): A database client.
-        include_users (bool): Flag to include users.
 
     Returns:
         Union[list, None]: List of all engagement documents.
@@ -116,10 +113,6 @@ def get_engagements(
     ]
 
     try:
-        if include_users:
-            # lookup to users
-            return list(collection.aggregate(USER_LOOKUP_PIPELINE))
-
         return list(collection.find({db_c.DELETED: False}, {db_c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -132,16 +125,13 @@ def get_engagements(
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def get_engagement(
-    database: DatabaseClient,
-    engagement_id: ObjectId,
-    include_users: bool = False,
+    database: DatabaseClient, engagement_id: ObjectId
 ) -> Union[dict, None]:
     """A function to get an engagement based on ID
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectId of the engagement
-        include_users (bool): Flag to include users.
 
     Returns:
         Union[dict, None]: Dict of an engagement.
@@ -153,15 +143,6 @@ def get_engagement(
     ]
 
     try:
-        if include_users:
-            docs = list(
-                collection.aggregate(
-                    [{"$match": {db_c.ID: engagement_id}}]
-                    + USER_LOOKUP_PIPELINE
-                )
-            )
-            return docs[0] if docs else None
-
         return collection.find_one(
             {db_c.ID: engagement_id, db_c.DELETED: False}, {db_c.DELETED: 0}
         )
@@ -216,25 +197,25 @@ def delete_engagement(
 def update_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
-    user_id: ObjectId,
+    user_name: str,
     name: str = None,
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
-) -> dict:
+) -> Union[dict, None]:
     """A function to update fields in an engagement
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
-        user_id (ObjectId): ObjectID of user.
+        user_name (str): Name of the user updating the engagement.
         name (str): Name of the engagement.
         description (str): Descriptions of the engagement.
         audiences (list): list of audiences.
         delivery_schedule (dict): delivery schedule dict.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     if audiences:
@@ -250,7 +231,7 @@ def update_engagement(
         db_c.AUDIENCES: audiences,
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-        db_c.UPDATED_BY: user_id,
+        db_c.UPDATED_BY: user_name,
     }
 
     # remove dict entries that are None
@@ -283,19 +264,19 @@ def update_engagement(
 def remove_audiences_from_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
-    user_id: ObjectId,
+    user_name: str,
     audience_ids: list,
-) -> dict:
+) -> Union[dict, None]:
     """A function to allow for removing audiences from an engagement.
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
-        user_id (ObjectId): ObjectID of user.
+        user_name (str): Name of the user removing the engaged audience.
         audience_ids (list): list of audience ObjectIds.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -316,7 +297,7 @@ def remove_audiences_from_engagement(
                 },
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                    db_c.UPDATED_BY: user_id,
+                    db_c.UPDATED_BY: user_name,
                 },
             },
             upsert=False,
@@ -338,19 +319,19 @@ def remove_audiences_from_engagement(
 def append_audiences_to_engagement(
     database: DatabaseClient,
     engagement_id: ObjectId,
-    user_id: ObjectId,
+    user_name: str,
     audiences: list,
-) -> dict:
+) -> Union[dict, None]:
     """A function to allow for appending audiences to an engagement.
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): ObjectID of the engagement to be updated.
-        user_id (ObjectId): ObjectID of user.
+        user_name (str): Name of the user attaching the audience.
         audiences (list): list of audiences.
 
     Returns:
-        dict: dict object of the engagement that has been updated
+        Union[dict, None]: dict object of the engagement that has been updated
     """
 
     # validate audiences
@@ -366,7 +347,7 @@ def append_audiences_to_engagement(
             {
                 "$set": {
                     db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                    db_c.UPDATED_BY: user_id,
+                    db_c.UPDATED_BY: user_name,
                 },
                 "$push": {db_c.AUDIENCES: {"$each": audiences}},
             },
@@ -410,7 +391,7 @@ def validate_audiences(audiences: list, check_empty: bool = True) -> None:
 )
 def get_engagements_by_audience(
     database: DatabaseClient, audience_id: ObjectId
-) -> list:
+) -> Union[list, None]:
     """A function to get a list of engagements by audience_id
 
     Args:
@@ -418,7 +399,7 @@ def get_engagements_by_audience(
         audience_id (ObjectId): ObjectId of an audience
 
     Returns:
-        list: list of engagements.
+        Union[list, None]: list of engagements.
 
     """
 

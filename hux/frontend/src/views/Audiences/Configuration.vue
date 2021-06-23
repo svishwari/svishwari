@@ -20,9 +20,21 @@
           :key="i"
           :grow="i === 0 ? 2 : 1"
           :title="item.title"
-          :subtitle="item.subtitle"
           :icon="item.icon"
-        />
+        >
+          <template #subtitle-extended>
+            <tooltip>
+              <template #label-content>
+                <span class="font-weight-semi-bold">
+                  {{ getFormattedValue(item) }}
+                </span>
+              </template>
+              <template #hover-content>
+                {{ item.subtitle | Empty }}
+              </template>
+            </tooltip>
+          </template>
+        </MetricCard>
       </div>
       <v-divider class="divider mt-2 mb-9"></v-divider>
     </div>
@@ -113,17 +125,17 @@
                     mdi-plus-circle
                   </v-icon>
                   <tooltip>
-                    <template slot="label-content">
+                    <template #label-content>
                       <Logo
                         class="added-logo ml-2"
                         v-for="destination in audience.destinations"
                         :key="destination.id"
-                        :type="destination.type"
+                        :type="destination.type.toLowerCase()"
                         :size="18"
                         @mouseover.native="hoverItem = destination.name"
                       />
                     </template>
-                    <template slot="hover-content">
+                    <template #hover-content>
                       <div class="d-flex align-center">
                         Remove {{ hoverItem }}
                       </div>
@@ -204,10 +216,10 @@
               <v-stepper-content step="1">
                 <div>
                   <CardHorizontal
-                    v-for="destination in destinations"
+                    v-for="destination in destinationsList"
                     :key="destination.id"
                     :title="destination.name"
-                    :icon="destination.type"
+                    :icon="destination.type.toLowerCase()"
                     :isAdded="
                       destination.is_added ||
                       isDestinationAdded(destination.type)
@@ -249,7 +261,7 @@
             class="d-flex align-baseline"
             v-if="destinationDrawer.viewStep == 1"
           >
-            {{ destinations.length }} results
+            {{ destinationsList.length }} results
           </div>
           <div
             class="d-flex align-baseline"
@@ -314,14 +326,14 @@ export default {
       // selectedDestinationIndex: -1,
       // selectedDestination: null,
       overviewListItems: [
-        { title: "Target size", subtitle: "34,203,204" },
-        { title: "Countries", subtitle: "2", icon: "mdi-earth" },
-        { title: "US States", subtitle: "52", icon: "mdi-map" },
-        { title: "Cities", subtitle: "19,495", icon: "mdi-map-marker-radius" },
-        { title: "Age", subtitle: "-", icon: "mdi-cake-variant" },
-        { title: "Women", subtitle: "52%", icon: "mdi-gender-female" },
-        { title: "Men", subtitle: "46%", icon: "mdi-gender-male" },
-        { title: "Other", subtitle: "2%", icon: "mdi-gender-male-female" },
+        { title: "Target size", subtitle: "" },
+        { title: "Countries", subtitle: "", icon: "mdi-earth" },
+        { title: "US States", subtitle: "", icon: "mdi-map" },
+        { title: "Cities", subtitle: "", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
       ],
 
       engagementDrawer: false,
@@ -345,13 +357,22 @@ export default {
         selectedDestination: [],
       },
       hoverItem: "",
+      loading: false,
     }
   },
 
   computed: {
     ...mapGetters({
       destinations: "destinations/enabledDestination",
+      AudiencesRules: "audiences/audiencesRules",
+      getAudience: "audiences/audience",
+      overview: "customers/overview",
+      availableDestinations: "destinations/availableDestinations",
     }),
+
+    destinationsList() {
+      return this.availableDestinations
+    },
 
     destination() {
       return this.destinations[this.selectedDestinationIndex] || null
@@ -360,15 +381,19 @@ export default {
     isDestinationSelected() {
       return Boolean(this.destination)
     },
+
     attributeRules() {
       return this.audience ? this.audience.attributeRules : []
     },
+
     isMinEngagementSelected() {
       return this.selectedEngagements.length > 1
     },
+
     isAudienceFormValid() {
       return !!this.audience.audienceName && this.selectedEngagements.length > 0
     },
+
     selectedEngagementIds() {
       // This will be used when sending data to create an audience
       return this.selectedEngagements.map((each) => {
@@ -382,7 +407,49 @@ export default {
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
+      getAudiencesRules: "audiences/fetchConstants",
+      getAudienceById: "audiences/getAudienceById",
+      getOverview: "customers/getOverview",
+      getAvailableDestinations: "destinations/getAvailableDestinations",
     }),
+
+    getFormattedValue(item) {
+      switch (item.title) {
+        case "Target size":
+        case "Countries":
+        case "US States":
+        case "Cities":
+          return this.$options.filters.Numeric(
+            item.subtitle,
+            false,
+            false,
+            true
+          )
+        case "Women":
+        case "Men":
+        case "Other":
+          return this.$options.filters.percentageConvert(
+            item.subtitle,
+            true,
+            true
+          )
+        default:
+          return item.subtitle
+      }
+    },
+
+    // Mapping Overview Data
+    mapCDMOverview() {
+      this.overviewListItems[0].subtitle = this.overview.total_customers
+      this.overviewListItems[1].subtitle = this.overview.total_countries
+      this.overviewListItems[2].subtitle = this.overview.total_us_states
+      this.overviewListItems[3].subtitle = this.overview.total_cities
+      this.overviewListItems[4].subtitle = this.overview.max_age
+      this.overviewListItems[5].subtitle = this.overview.gender_women
+      this.overviewListItems[6].subtitle = this.overview.gender_men
+      this.overviewListItems[7].subtitle = this.overview.gender_other
+    },
+
     // Engagements
     detachEngagement(engagement) {
       const existingIndex = this.selectedEngagements.findIndex(
@@ -392,6 +459,7 @@ export default {
         this.selectedEngagements.splice(existingIndex, 1)
       }
     },
+
     setSelectedEngagements(engagementsList) {
       this.selectedEngagements = engagementsList
     },
@@ -422,6 +490,7 @@ export default {
         }
       }
     },
+
     addDestinationToAudience() {
       this.audience.destinations.push(
         ...this.destinationDrawer.selectedDestination
@@ -434,12 +503,14 @@ export default {
         this.destinationDrawer &&
         this.destinationDrawer.selectedDestination
       ) {
-        const existingIndex = this.destinationDrawer.selectedDestination.findIndex(
-          (destination) => destination.type === selected.type
-        )
+        const existingIndex =
+          this.destinationDrawer.selectedDestination.findIndex(
+            (destination) => destination.type === selected.type
+          )
         return existingIndex > -1
       }
     },
+
     isDestinationAdded(title) {
       if (this.audience && this.audience.destinations) {
         const existingIndex = this.audience.destinations.findIndex(
@@ -474,15 +545,25 @@ export default {
           conditionIndex++
         ) {
           filter.section_filters.push({
-            field: this.audience.attributeRules[ruleIndex].conditions[
-              conditionIndex
-            ].attribute,
+            field:
+              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
+                .attribute.key,
             type: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
-            ].operator,
+            ].operator
+              ? this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].operator.key
+              : "range",
             value: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
-            ].text,
+            ].operator
+              ? this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].text
+              : this.audience.attributeRules[ruleIndex].conditions[
+                  conditionIndex
+                ].range,
           })
         }
         filtersArray.push(filter)
@@ -498,7 +579,14 @@ export default {
     },
   },
   async mounted() {
+    this.loading = true
+    await this.getOverview()
+    if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
     await this.getDestinations()
+    await this.getAudiencesRules()
+    this.mapCDMOverview()
+    this.loading = false
+    await this.getAvailableDestinations()
   },
 }
 </script>
