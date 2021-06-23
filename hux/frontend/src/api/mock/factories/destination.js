@@ -58,3 +58,17 @@ export const destinationsConstants = {
     sfmc_soap_base_uri: field({ name: "Soap Base URI" }),
   },
 }
+
+/**
+ * Destination data extensions
+ */
+export const destinationsDataExtensions = () => {
+  let dataExtensions = []
+  for (let i = 0; i < 10; i++) {
+    dataExtensions.push({
+      data_extension_name: faker.company.companyName(),
+      data_extension_id: faker.datatype.uuid(),
+    })
+  }
+  return dataExtensions
+}

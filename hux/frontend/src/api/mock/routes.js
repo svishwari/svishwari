@@ -1,6 +1,9 @@
 import { Response } from "miragejs"
 import { customersOverview } from "./factories/customers"
-import { destinationsConstants } from "./factories/destination"
+import {
+  destinationsConstants,
+  destinationsDataExtensions,
+} from "./factories/destination"
 import idrOverview from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 
@@ -25,10 +28,15 @@ export const defineRoutes = (server) => {
     return schema.destinations.find(id).update({ is_added: true })
   })
 
-  server.post("/destinations/validate", () => {
+  server.post("/destinations/validate", (_, request) => {
     const code = 200
     const headers = {}
     const body = { message: "Destination authentication details are valid" }
+    const requestData = JSON.parse(request.requestBody)
+
+    if (requestData.type === "salesforce") {
+      body.performance_metrics_data_extensions = destinationsDataExtensions()
+    }
     return new Response(code, headers, body)
   })
 
