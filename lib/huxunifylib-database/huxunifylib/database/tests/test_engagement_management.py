@@ -56,6 +56,25 @@ class TestEngagementManagement(unittest.TestCase):
                 )
             )
 
+        self.destination = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform for Facebook",
+            {
+                "sample_access_token": "path1",
+                "sample_app_secret": "path2",
+                "sample_app_id": "path3",
+                "sample_ad_account_id": "path4",
+            },
+        )
+
+        # setup the delivery platform connection status
+        dpm.set_connection_status(
+            self.database,
+            self.destination[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+
     def test_set_engagement(self) -> None:
         """Test set_engagement routine
 
@@ -583,3 +602,80 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertTrue(engagements)
         self.assertEqual(len(engagements), 3)
         self.assertFalse([e for e in engagements if c.DELETED in e])
+
+    def test_add_delivery_jobs_to_engaged_audience_destination(self) -> None:
+        """Test adding a delivery job to the engaged_audience_destination
+
+        Returns:
+            Response: None
+
+        """
+
+        # create an engagement
+        new_engagement = {
+            c.ENGAGEMENT_NAME: "Spring 2027",
+            c.ENGAGEMENT_DESCRIPTION: "high ltv for spring 2027",
+            c.AUDIENCES: [
+                {
+                    c.OBJECT_ID: self.audience[c.ID],
+                    c.DESTINATIONS: [
+                        {c.OBJECT_ID: self.destination[c.ID]},
+                    ],
+                },
+            ],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            new_engagement[c.ENGAGEMENT_NAME],
+            new_engagement[c.ENGAGEMENT_DESCRIPTION],
+            new_engagement[c.AUDIENCES],
+            self.user_id,
+        )
+
+        # get engagement to verify that it was created
+        self.assertTrue(engagement_id)
+
+        # create a delivery job
+        audience_delivery_job = dpm.set_delivery_job(
+            self.database,
+            self.audience[c.ID],
+            self.destination[c.ID],
+            [],
+            engagement_id,
+        )
+        self.assertTrue(audience_delivery_job)
+
+        em.add_delivery_job(
+            self.database,
+            engagement_id,
+            self.audience[c.ID],
+            self.destination[c.ID],
+            audience_delivery_job[c.ID],
+        )
+
+        # validate the delivery job was set correctly
+        engagement_collection = self.database[c.DATA_MANAGEMENT_DATABASE][
+            c.ENGAGEMENTS_COLLECTION
+        ]
+        self.assertTrue(
+            engagement_collection.find_one(
+                {
+                    c.ID: engagement_id,
+                    c.DELETED: False,
+                    c.AUDIENCES: {
+                        "$elemMatch": {
+                            c.OBJECT_ID: self.audience[c.ID],
+                            c.DESTINATIONS: {
+                                "$elemMatch": {
+                                    c.OBJECT_ID: self.destination[c.ID],
+                                    c.DELIVERY_JOB_ID: audience_delivery_job[
+                                        c.ID
+                                    ],
+                                }
+                            },
+                        }
+                    },
+                }
+            )
+        )
