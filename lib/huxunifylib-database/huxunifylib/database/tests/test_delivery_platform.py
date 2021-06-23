@@ -1343,40 +1343,38 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_get_individual_performance_metrics(self):
-        """Individual Performance metrics are set and retrieved."""
+        """Campaign Activity docs are set and retrieved."""
 
         delivery_job_id = self._set_delivery_job()
 
-        doc = dpm.set_individual_performance_metrics(
+        doc = dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
             delivery_platform_name="Salesforce",
             delivery_job_id=delivery_job_id,
-            metrics_dict={
+            event_dict={
                 "event": "sent",
                 "event_date": "2021-06-17T12:21:27.970Z",
             },
             generic_campaign_id=self.individual_generic_campaigns[0],
         )
 
-        self.assertTrue(doc is not None)
+        self.assertIsNotNone(doc)
 
-        metrics_list = dpm.get_individual_performance_metrics(
-            self.database, delivery_job_id
-        )
+        events_list = dpm.get_campaign_activity(self.database, delivery_job_id)
 
-        self.assertTrue(metrics_list is not None)
-        self.assertEqual(len(metrics_list), 1)
+        self.assertIsNotNone(events_list)
+        self.assertEqual(len(events_list), 1)
 
-        doc = metrics_list[0]
+        doc = events_list[0]
 
-        self.assertTrue(doc is not None)
+        self.assertIsNotNone(doc)
         self.assertIn(c.DELIVERY_JOB_ID, doc)
         self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
         self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
         self.assertIn(c.CREATE_TIME, doc)
-        self.assertIn(c.PERFORMANCE_METRICS, doc)
+        self.assertIn(c.EVENT_DETAILS, doc)
         self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
 
         # Status is to be set to non-transferred automatically
-        self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
+        self.assertFalse(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
