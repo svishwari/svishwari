@@ -294,7 +294,7 @@ class CourierTest(TestCase):
         self.assertTrue(delivery_route)
 
         expected_route = [
-            [self.audience_one[c.ID], self.audience_one[c.DESTINATIONS][0]]
+            [self.audience_one[c.ID], {c.OBJECT_ID: self.audience_one[c.DESTINATIONS][0]}]
         ]
 
         self.assertListEqual(expected_route, delivery_route)
