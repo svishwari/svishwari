@@ -188,6 +188,39 @@ def get_delivery_platform(
 
     return None
 
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_delivery_platform_by_type(
+    database: DatabaseClient,
+    delivery_platform_type: str,
+) -> Union[dict, None]:
+    """A function to get a delivery platform by type.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_name (str): The MongoDB Name of the delivery platform.
+
+    Returns:
+        Union[dict, None]: Delivery platform configuration.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    try:
+        return collection.find_one(
+            {
+                c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+                c.DELETED: False,
+            },
+            {c.DELETED: 0},
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
 
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
