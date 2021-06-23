@@ -80,6 +80,15 @@ const actions = {
       const body = {
         authentication_details: destination.authentication_details,
       }
+      if (
+        Object.prototype.hasOwnProperty.call(
+          destination,
+          "performance_metrics_data_extension"
+        )
+      ) {
+        body.performance_metrics_data_extension =
+          destination.performance_metrics_data_extension
+      }
       const response = await api.destinations.update(destination.id, body)
       commit("SET_ONE", response.data)
     } catch (error) {
@@ -94,7 +103,8 @@ const actions = {
         type: destination.type,
         authentication_details: destination.authentication_details,
       }
-      await api.destinations.validate(body)
+      const response = await api.destinations.validate(body)
+      return response.data
     } catch (error) {
       handleError(error)
       throw error
