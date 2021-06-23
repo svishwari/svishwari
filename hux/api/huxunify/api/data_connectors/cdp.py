@@ -25,6 +25,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         response = requests.get(
             f"{config.CDP_SERVICE}/docs",
             headers=config.CDP_HEADERS,
+            verify=False,
         )
         return response.status_code, "CDM available."
 

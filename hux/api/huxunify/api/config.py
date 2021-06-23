@@ -103,7 +103,10 @@ class Config:
     )
 
     # CDP
-    CDP_SERVICE = "https://customer-profile-master.main.use1.k8s.huxdev.in"
+    CDP_SERVICE = config(
+        "CDP_SERVICE",
+        default="https://customer-profile-master.main.use1.k8s.huxdev.in",
+    )
     CDP_HEADERS = {
         "Authorization": "",
     }
