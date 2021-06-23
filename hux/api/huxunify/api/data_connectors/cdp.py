@@ -34,7 +34,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
 
 
 def get_customer_profiles() -> dict:
-    """Retrieves a customer profiles.
+    """Retrieves customer profiles.
 
     Args:
 
@@ -63,7 +63,7 @@ def get_customer_profiles() -> dict:
 
 
 def get_customer_profile(hux_id: str) -> dict:
-    """Retrieves a customer profiles.
+    """Retrieves a customer profile.
 
     Args:
         hux_id (str): input hux id for a customer.

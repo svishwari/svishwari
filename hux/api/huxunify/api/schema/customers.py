@@ -2,7 +2,7 @@
 """
 Schemas for the Customers API
 """
-from random import uniform
+
 from flask_marshmallow import Schema
 from marshmallow.fields import (
     Str,
@@ -98,10 +98,10 @@ class CustomerOverviewSchema(Schema):
     gender_women = Float(required=True)
     gender_men = Float(required=True)
     gender_other = Float(required=True)
-    min_ltv_predicted = Float(required=True, default=round(uniform(1, 100), 4))
-    max_ltv_predicted = Float(required=True, default=round(uniform(1, 100), 4))
-    min_ltv_actual = Float(required=True, default=round(uniform(1, 100), 4))
-    max_ltv_actual = Float(required=True, default=round(uniform(1, 100), 4))
+    min_ltv_predicted = Float(required=True)
+    max_ltv_predicted = Float(required=True)
+    min_ltv_actual = Float(required=True)
+    max_ltv_actual = Float(required=True)
 
 
 class CustomersSchema(Schema):
