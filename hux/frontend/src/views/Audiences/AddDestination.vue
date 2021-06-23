@@ -152,8 +152,10 @@ export default {
       newEngagementValid: false,
       newEngagementRules: [
         (v) => !!v || "Engagement name is required",
-        (v) => // eslint-disable-next-line no-useless-escape
+        (v) =>
+          // eslint-disable-next-line no-useless-escape
           /^[^!@#$%^*()={}\/.<>":?|,_&]*$/.test(v) ||
+          // eslint-disable-next-line no-useless-escape
           "You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / : ? | , _ &",
       ],
       selectedLabel: "Select an existing data extension",
