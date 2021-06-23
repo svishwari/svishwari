@@ -45,7 +45,7 @@
               "
               :input-type="destinationFields[key].type"
               :help-text="destinationFields[key].description"
-              @blur="resetValidation"
+              @blur="reset"
               height="40"
               icon="mdi-alert-circle-outline"
             />
@@ -78,6 +78,12 @@
       <div v-if="validationError" class="d-flex flex-wrap justify-end pt-2">
         <span class="red--text text-caption">{{ validationError }}</span>
       </div>
+      <div
+        v-if="isSalesforceSelected && isValidated"
+        class="destination-auth-wrap background pa-4 rounded mt-10"
+      >
+        <Salesforce :dataExtensions="dataExtensions" @select="setExtension" />
+      </div>
     </v-form>
 
     <hux-footer slot="footer" max-width="850px">
@@ -96,7 +102,7 @@
           variant="primary"
           size="large"
           :isTile="true"
-          :isDisabled="!isValidated"
+          :isDisabled="!isFullyConfigured"
           @click="add()"
         >
           Add &amp; return
@@ -163,6 +169,8 @@ import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 
+import Salesforce from "./Configuration/Salesforce"
+
 export default {
   name: "ConfigureDestination",
 
@@ -174,6 +182,7 @@ export default {
     huxButton,
     TextField,
     Logo,
+    Salesforce,
   },
 
   data() {
@@ -189,6 +198,8 @@ export default {
       rules: {
         required: (value) => !!value || "This is a required field",
       },
+      selectedDataExtension: null,
+      dataExtensions: [],
     }
   },
 
@@ -216,6 +227,18 @@ export default {
     disabledDestinations() {
       return this.destinations.filter((each) => !each.is_enabled)
     },
+
+    isSalesforceSelected() {
+      return this.selectedDestination !== null
+        ? this.selectedDestination.type === "salesforce"
+        : false
+    },
+
+    isFullyConfigured() {
+      return this.isSalesforceSelected
+        ? this.selectedDataExtension !== null
+        : this.isValidated
+    },
   },
 
   methods: {
@@ -227,6 +250,10 @@ export default {
       validateDestination: "destinations/validate",
     }),
 
+    setExtension(data) {
+      this.selectedDataExtension = data
+    },
+
     toggleDrawer() {
       this.drawer = !this.drawer
     },
@@ -237,13 +264,14 @@ export default {
 
     onSelectDestination(id) {
       this.selectedDestinationId = id
-      this.resetValidation()
+      this.reset()
       this.authenticationDetails = {}
       this.drawer = false
     },
 
-    resetValidation() {
+    reset() {
       this.isValidated = false
+      this.selectedDataExtension = null
     },
 
     async validate() {
@@ -251,13 +279,16 @@ export default {
       this.validationError = null
 
       try {
-        await this.validateDestination({
+        const response = await this.validateDestination({
           type: this.selectedDestination.type,
           authentication_details: this.authenticationDetails,
         })
+        if (this.isSalesforceSelected) {
+          this.dataExtensions = response.performance_metrics_data_extensions
+        }
         this.isValidated = true
       } catch (error) {
-        this.validationError = error.message
+        this.validationError = error.response.data.message
       } finally {
         this.isValidating = false
       }
@@ -265,10 +296,15 @@ export default {
 
     async add() {
       try {
-        await this.addDestination({
+        let data = {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
-        })
+        }
+
+        if (this.isSalesforceSelected) {
+          data.performance_metrics_data_extension = this.selectedDataExtension
+        }
+        await this.addDestination(data)
         this.$router.push({ name: "Connections" })
       } catch (error) {
         console.error(error)

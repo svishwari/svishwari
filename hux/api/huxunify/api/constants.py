@@ -1,4 +1,7 @@
 """This module contains connector defines."""
+
+from huxunifylib.database import constants as db_c
+
 DEVELOPMENT_MODE = "development"
 PRODUCTION_MODE = "production"
 # general defines
@@ -84,16 +87,12 @@ STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
 
 # Facebook connector defines
-FACEBOOK_NAME = "Facebook"
-FACEBOOK_TYPE = "facebook"
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
 FACEBOOK_APP_ID = "facebook_app_id"
 FACEBOOK_APP_SECRET = "facebook_app_secret"
 FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 
 # SFMC connector defines
-SFMC_NAME = "SFMC"
-SFMC_TYPE = "salesforce"
 SFMC_CLIENT_ID = "sfmc_client_id"
 SFMC_CLIENT_SECRET = "sfmc_client_secret"
 SFMC_ACCOUNT_ID = "sfmc_account_id"
@@ -107,7 +106,7 @@ OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
 DESTINATION_CONSTANTS = {
-    FACEBOOK_TYPE: {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: {
         FACEBOOK_AD_ACCOUNT_ID: {
             NAME: "Ad Account ID",
             TYPE: "text",
@@ -133,7 +132,7 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
-    SFMC_TYPE: {
+    db_c.DELIVERY_PLATFORM_SFMC: {
         SFMC_ACCOUNT_ID: {
             NAME: "Account ID",
             TYPE: "text",
@@ -210,7 +209,8 @@ DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
 INVALID_COMPONENT_NAME = "Invalid component name."
-DATA_EXTENSION = "data-extensions"
+DATA_EXTENSIONS = "data-extensions"
+DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
@@ -325,6 +325,7 @@ PARAMETER_STORE_ERROR_MSG = (
 
 # users
 USER_TAG = "user"
+USER_NAME = "user_name"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 

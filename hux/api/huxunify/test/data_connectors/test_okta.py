@@ -8,13 +8,13 @@ import requests_mock
 import mongomock
 from requests_mock import Mocker
 from flask import Flask
-from bson import json_util, ObjectId
+from bson import json_util
 from hypothesis import given, strategies as st
 from huxunifylib.database.client import DatabaseClient
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors import okta
-from huxunify.api.route.utils import secured, get_user_id
+from huxunify.api.route.utils import secured, get_user_name
 from huxunify.api.data_connectors.okta import (
     get_user_info,
     get_token_from_request,
@@ -280,7 +280,7 @@ class OktaTest(TestCase):
         invalid_header = (constants.INVALID_AUTH_HEADER, 401)
         with Flask("invalid_test").test_request_context("/"):
 
-            @get_user_id()
+            @get_user_name()
             def demo_endpoint():
                 return True
 
@@ -306,12 +306,12 @@ class OktaTest(TestCase):
             "/", headers={"Authorization": "Bearer 12345678"}
         ):
 
-            @get_user_id()
-            def demo_endpoint(user_id=None):
-                return user_id
+            @get_user_name()
+            def demo_endpoint(user_name=None):
+                return user_name
 
             # true means the endpoint and token call were succesfully passed.
-            self.assertIsInstance(demo_endpoint(), ObjectId)
+            self.assertIsInstance(demo_endpoint(), str)
 
     @given(access_token=st.one_of(st.text(), st.floats(), st.none()))
     @requests_mock.Mocker()

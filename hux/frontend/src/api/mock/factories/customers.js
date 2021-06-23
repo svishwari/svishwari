@@ -14,17 +14,59 @@ const someValue = () => {
   return faker.datatype.float({ min: 100, max: 1000, precision: 0.01 })
 }
 
-const idrBreakdown = (percentage) => {
+// Example:
+//              co-occurrences:
+// identifier:  name address email phone cookie
+//       name      0    5871  8916  2689  11975
+//    address   7124       0  8241  5021   5202
+//      email    912   6251      0  9150   4002
+//      phone   4231   2104   5699     0   1924
+//     cookie  11975   1324   1555  5929      0
+
+const identifiers = ["name", "address", "email", "phone", "cookie"]
+
+const cooccurrenceMatrix = [
+  [0, 5871, 8916, 2689, 11975],
+  [7124, 0, 8241, 5021, 5202],
+  [912, 6251, 0, 9150, 4002],
+  [4231, 2104, 5699, 0, 1924],
+  [11975, 1324, 1555, 5929, 0],
+]
+
+const cooccurrencesTotal = cooccurrenceMatrix.flat().reduce((a, b) => a + b, 0)
+
+const cooccurrenceItem = (identifier, cooccurence) => {
+  const identifierIndex = identifiers.findIndex((val) => val === identifier)
+  const cooccurenceIndex = identifiers.findIndex((val) => val === cooccurence)
+  const count = cooccurrenceMatrix[identifierIndex][cooccurenceIndex]
+  return {
+    identifier: cooccurence,
+    count: count,
+    percentage: count / cooccurrencesTotal,
+  }
+}
+
+const idrBreakdown = (identifier, percentage) => {
   return {
     data_sources: [
       {
         id: "1",
         name: "Bluecore",
-        percentage: percentage,
         type: "bluecore",
+        percentage: 0.45,
+      },
+      {
+        id: "2",
+        name: "Netsuite",
+        type: "netsuite",
+        percentage: 0.65,
       },
     ],
+    cooccurrences: identifiers.map((cooccurence) => {
+      return cooccurrenceItem(identifier, cooccurence)
+    }),
     percentage: percentage,
+    count: Math.round(percentage * cooccurrencesTotal),
   }
 }
 
@@ -53,11 +95,11 @@ export const customerProfile = {
   email: REDACTED,
   gender: REDACTED,
   identity_resolution: {
-    address: idrBreakdown(0.4),
-    cookie: idrBreakdown(0.1),
-    email: idrBreakdown(0.2),
-    name: idrBreakdown(0.2),
-    phone: idrBreakdown(0.1),
+    name: idrBreakdown("name", 0.2),
+    address: idrBreakdown("address", 0.4),
+    email: idrBreakdown("email", 0.2),
+    phone: idrBreakdown("phone", 0.1),
+    cookie: idrBreakdown("cookie", 0.1),
   },
   last_click: () => faker.date.recent(30),
   last_email_open: () => faker.date.recent(30),
