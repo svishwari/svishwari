@@ -188,6 +188,7 @@ def get_delivery_platform(
 
     return None
 
+
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
