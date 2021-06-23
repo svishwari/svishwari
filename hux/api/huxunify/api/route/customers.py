@@ -60,10 +60,7 @@ class CustomerOverview(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Customer Profiles Overview",
-            "schema": {
-                "type": "array",
-                "items": CustomerOverviewSchema,
-            },
+            "schema": CustomerOverviewSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get customers overview"
@@ -135,10 +132,7 @@ class CustomerPostOverview(SwaggerView):
     responses = {
         HTTPStatus.CREATED.value: {
             "description": "Customer Profiles Overview",
-            "schema": {
-                "type": "array",
-                "items": CustomerOverviewSchema,
-            },
+            "schema": CustomerOverviewSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to get customers overview"

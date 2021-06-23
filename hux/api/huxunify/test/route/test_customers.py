@@ -1,6 +1,7 @@
 """
 Purpose of this file is to house all the customers api tests
 """
+import string
 import json
 import unittest
 from http import HTTPStatus
@@ -8,9 +9,11 @@ from http import HTTPStatus
 import mongomock
 import requests_mock
 from requests_mock import Mocker
+from hypothesis import given, strategies as st
 
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
+from huxunify.test.shared import CUSTOMER_INSIGHT_RESPONSE
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
@@ -82,12 +85,38 @@ class TestCustomersOverview(unittest.TestCase):
 
         """
 
+        expected_response = {
+            "code": 200,
+            "body": [
+                {
+                    "hux_id": "1531-2039-22",
+                    "first_name": "Bertie",
+                    "last_name": "Fox",
+                    "match_confidence": 0.97,
+                },
+            ],
+            "message": "ok",
+        }
+
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(
+            f"{self.config.CDP_SERVICE}/customer-profiles",
+            json=expected_response,
+        )
+
         response = self.test_client.get(
             self.customers,
             headers=self.headers,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        data = response.json
+
+        self.assertEqual(data[api_c.TOTAL_CUSTOMERS], 1)
+        self.assertTrue(data[api_c.CUSTOMERS_TAG])
+        customer = data[api_c.CUSTOMERS_TAG][0]
+        self.assertEqual(customer[api_c.FIRST_NAME], "Bertie")
+        self.assertEqual(customer[api_c.LAST_NAME], "Fox")
+        self.assertEqual(customer[api_c.MATCH_CONFIDENCE], 0.97)
 
     @requests_mock.Mocker()
     def test_get_customer_overview(self, request_mocker: Mocker):
@@ -102,11 +131,21 @@ class TestCustomersOverview(unittest.TestCase):
         """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+
+        request_mocker.post(
+            f"{self.config.CDP_SERVICE}/customer-profiles/insights",
+            json=CUSTOMER_INSIGHT_RESPONSE,
+        )
+
         response = self.test_client.get(
             f"{self.customers}/{api_c.OVERVIEW}",
             headers=self.headers,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        data = response.json
+        self.assertTrue(data[api_c.TOTAL_RECORDS])
+        self.assertTrue(data[api_c.MATCH_RATE])
 
     @requests_mock.Mocker()
     def test_get_idr_overview(self, request_mocker: Mocker):
@@ -121,26 +160,59 @@ class TestCustomersOverview(unittest.TestCase):
         """
 
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.post(
+            f"{self.config.CDP_SERVICE}/customer-profiles/insights",
+            json=CUSTOMER_INSIGHT_RESPONSE,
+        )
         response = self.test_client.get(
             f"{self.idr}/{api_c.OVERVIEW}",
             headers=self.headers,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        data = response.json
+        self.assertTrue(data[api_c.TOTAL_RECORDS])
+        self.assertTrue(data[api_c.MATCH_RATE])
 
     @requests_mock.Mocker()
-    def test_get_customer_by_id(self, request_mocker: Mocker):
+    @given(customer_id=st.text(alphabet=string.ascii_letters))
+    def test_get_customer_by_id(
+        self, request_mocker: Mocker, customer_id: str
+    ):
         """
         Test get customer by id
 
         Args:
             request_mocker (Mocker): Request mocker object.
+            customer_id (str): string for testing get customer.
 
         Returns:
 
         """
 
+        if not customer_id:
+            return
+
+        expected_response = {
+            "code": 200,
+            "body": {
+                "hux_id": customer_id,
+                api_c.FIRST_NAME: "Bertie",
+                api_c.LAST_NAME: "Fox",
+                api_c.EMAIL: "fake@fake.com",
+                api_c.GENDER: "test_gender",
+                api_c.CITY: "test_city",
+                api_c.ADDRESS: "test_address",
+                api_c.AGE: "test_age",
+            },
+            "message": "ok",
+        }
+
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        customer_id = "1531-2039-22"
+        request_mocker.get(
+            f"{self.config.CDP_SERVICE}/customer-profiles/{customer_id}",
+            json=expected_response,
+        )
+
         response = self.test_client.get(
             f"{self.customers}/{customer_id}",
             headers=self.headers,
@@ -148,8 +220,18 @@ class TestCustomersOverview(unittest.TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        data = response.json
+        self.assertTrue(data[api_c.FIRST_NAME])
+        self.assertTrue(data[api_c.LAST_NAME])
+        self.assertEqual(data[api_c.EMAIL], api_c.REDACTED)
+        self.assertEqual(data[api_c.GENDER], api_c.REDACTED)
+        self.assertEqual(data[api_c.CITY], api_c.REDACTED)
+        self.assertEqual(data[api_c.ADDRESS], api_c.REDACTED)
+        self.assertEqual(data[api_c.AGE], api_c.REDACTED)
+
     @requests_mock.Mocker()
-    def test_post_customeroverview_by_attributes(
+    def test_post_customer_overview_by_attributes(
         self, request_mocker: Mocker
     ) -> None:
         """
@@ -174,6 +256,11 @@ class TestCustomersOverview(unittest.TestCase):
             }
         }
 
+        request_mocker.post(
+            f"{self.config.CDP_SERVICE}/customer-profiles/insights",
+            json=CUSTOMER_INSIGHT_RESPONSE,
+        )
+
         response = self.test_client.post(
             f"{self.customers}/{api_c.OVERVIEW}",
             data=json.dumps(filter_attributes),
@@ -181,3 +268,6 @@ class TestCustomersOverview(unittest.TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        data = response.json
+        self.assertTrue(data[api_c.TOTAL_RECORDS])
+        self.assertTrue(data[api_c.MATCH_RATE])
