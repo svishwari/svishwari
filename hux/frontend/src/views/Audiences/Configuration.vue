@@ -120,7 +120,7 @@
                     size="30"
                     class="add-icon mt-1"
                     color="primary"
-                    @click="toggleDrawer()"
+                    @click="openSelectDestinationsDrawer()"
                   >
                     mdi-plus-circle
                   </v-icon>
@@ -128,9 +128,9 @@
                     <template #label-content>
                       <Logo
                         class="added-logo ml-2"
-                        v-for="destination in audience.destinations"
+                        v-for="destination in selectedDestinations"
                         :key="destination.id"
-                        :type="destination.type.toLowerCase()"
+                        :type="destination.type"
                         :size="18"
                         @mouseover.native="hoverItem = destination.name"
                       />
@@ -186,107 +186,33 @@
           </huxButton>
         </template>
       </HuxFooter>
-      <!-- Add destination workflow -->
-      <drawer v-model="destinationDrawer.insideFlow" class="destination-drawer">
-        <template #header-left>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 1"
-          >
-            <h3 class="text-h3 font-weight-light pr-2">
-              Select a destination to add
-            </h3>
-          </div>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 2"
-          >
-            <h3 class="text-h3 pr-2 d-flex align-center">
-              <Logo :type="destinationDrawer.selectedDestination[0].type" />
-              <div class="pl-2 font-weight-light">
-                {{ destinationDrawer.selectedDestination[0].name }}
-              </div>
-            </h3>
-          </div>
-        </template>
-
-        <template #default>
-          <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
-            <v-stepper-items>
-              <v-stepper-content step="1">
-                <div>
-                  <CardHorizontal
-                    v-for="destination in destinationsList"
-                    :key="destination.id"
-                    :title="destination.name"
-                    :icon="destination.type.toLowerCase()"
-                    :isAdded="
-                      destination.is_added ||
-                      isDestinationAdded(destination.type)
-                    "
-                    :isAvailable="destination.is_enabled"
-                    :isAlreadyAdded="destination.is_added"
-                    @click="onSelectDestination(destination)"
-                    class="my-3"
-                  />
-                </div>
-              </v-stepper-content>
-              <v-stepper-content step="2">
-                <AddDestination />
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </template>
-
-        <template #footer-right>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 2"
-          >
-            <huxButton
-              variant="primary"
-              isTile
-              width="80"
-              height="40"
-              class="ma-2"
-              @click="addDestinationToAudience()"
-            >
-              Add
-            </huxButton>
-          </div>
-        </template>
-
-        <template #footer-left>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 1"
-          >
-            {{ destinationsList.length }} results
-          </div>
-          <div
-            class="d-flex align-baseline"
-            v-if="destinationDrawer.viewStep == 2"
-          >
-            <huxButton
-              variant="white"
-              isTile
-              width="80"
-              height="40"
-              class="ma-2 drawer-back"
-              @click.native="destinationDrawer.viewStep = 1"
-            >
-              Back
-            </huxButton>
-          </div>
-        </template>
-      </drawer>
-      <!-- Engagement workflow -->
-      <AttachEngagement
-        v-model="engagementDrawer"
-        :finalEngagements="selectedEngagements"
-        @onEngagementChange="setSelectedEngagements"
-      />
     </div>
+
+    <!-- Add destination workflow -->
+    <SelectDestinationsDrawer
+      v-model="selectedDestinations"
+      :toggle="showSelectDestinationsDrawer"
+      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+      @onSalesforceAdd="openSalesforceExtensionDrawer"
+      @onSalesforceRemove="deleteSalesforceExtension"
+    />
+
+    <!-- Salesforce extension workflow -->
+    <SalesforceExtensionDrawer
+      v-model="selectedDestinations"
+      :toggle="showSalesforceExtensionDrawer"
+      :destination="salesforceDestination"
+      @onToggle="(val) => (showSalesforceExtensionDrawer = val)"
+      @onAdd="addDataExtension"
+      @onBack="openSelectDestinationsDrawer"
+    />
+
+    <!-- Engagement workflow -->
+    <AttachEngagement
+      v-model="engagementDrawer"
+      :finalEngagements="selectedEngagements"
+      @onEngagementChange="setSelectedEngagements"
+    />
   </page>
 </template>
 
@@ -297,11 +223,10 @@ import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
-import Drawer from "@/components/common/Drawer"
 import AttributeRules from "./AttributeRules.vue"
-import CardHorizontal from "@/components/common/CardHorizontal"
-import AddDestination from "@/views/Audiences/AddDestination"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
+import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
+import SalesforceExtensionDrawer from "@/views/Audiences/Configuration/Drawers/SalesforceExtension"
 import Logo from "@/components/common/Logo"
 import Tooltip from "@/components/common/Tooltip.vue"
 
@@ -313,18 +238,15 @@ export default {
     HuxFooter,
     huxButton,
     TextField,
-    Drawer,
     AttributeRules,
-    CardHorizontal,
-    AddDestination,
     Logo,
     AttachEngagement,
     Tooltip,
+    SelectDestinationsDrawer,
+    SalesforceExtensionDrawer,
   },
   data() {
     return {
-      // selectedDestinationIndex: -1,
-      // selectedDestination: null,
       overviewListItems: [
         { title: "Target size", subtitle: "" },
         { title: "Countries", subtitle: "", icon: "mdi-earth" },
@@ -335,12 +257,16 @@ export default {
         { title: "Men", subtitle: "", icon: "mdi-gender-male" },
         { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
       ],
+      selectedDestinations: [],
+      showSelectDestinationsDrawer: false,
+      showSalesforceExtensionDrawer: false,
+      salesforceDestination: {},
+      salesforceDestinations: [],
 
       engagementDrawer: false,
       audience: {
         name: null,
         attributeRules: [],
-        destinations: [],
       },
       selectedEngagements: [],
       newEngagementValid: true,
@@ -351,11 +277,6 @@ export default {
       },
       audienceNamesRules: [(v) => !!v || "Audience name is required"],
       isFormValid: false,
-      destinationDrawer: {
-        insideFlow: false,
-        viewStep: 1,
-        selectedDestination: [],
-      },
       hoverItem: "",
       loading: false,
     }
@@ -367,20 +288,7 @@ export default {
       AudiencesRules: "audiences/audiencesRules",
       getAudience: "audiences/audience",
       overview: "customers/overview",
-      availableDestinations: "destinations/availableDestinations",
     }),
-
-    destinationsList() {
-      return this.availableDestinations
-    },
-
-    destination() {
-      return this.destinations[this.selectedDestinationIndex] || null
-    },
-
-    isDestinationSelected() {
-      return Boolean(this.destination)
-    },
 
     attributeRules() {
       return this.audience ? this.audience.attributeRules : []
@@ -404,14 +312,40 @@ export default {
 
   methods: {
     ...mapActions({
-      getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
       getAudiencesRules: "audiences/fetchConstants",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
-      getAvailableDestinations: "destinations/getAvailableDestinations",
     }),
+
+    addDataExtension(data) {
+      this.salesforceDestinations.push(data)
+    },
+
+    deleteSalesforceExtension(destination) {
+      let index = this.salesforceDestinations.findIndex((each) => {
+        each.id === destination.id
+      })
+      this.salesforceDestinations.splice(index, 1)
+    },
+
+    closeAllDrawers() {
+      this.engagementDrawer = false
+      this.showSelectDestinationsDrawer = false
+      this.showSalesforceExtensionDrawer = false
+    },
+
+    openSelectDestinationsDrawer() {
+      this.closeAllDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
+
+    openSalesforceExtensionDrawer(destination) {
+      this.closeAllDrawers()
+      this.salesforceDestination = destination
+      this.showSalesforceExtensionDrawer = true
+    },
 
     getFormattedValue(item) {
       switch (item.title) {
@@ -464,65 +398,19 @@ export default {
       this.selectedEngagements = engagementsList
     },
 
-    // Destinations
-    toggleDrawer() {
-      this.destinationDrawer.insideFlow = !this.destinationDrawer.insideFlow
-    },
-
-    onSelectDestination(selected) {
-      // check to avoid duplicate destination
-      if (!this.isDestinationAdded(selected.type)) {
-        if (selected && selected.type === "salesforce") {
-          if (!this.isDestinationAddedOnDrawer(selected)) {
-            this.destinationDrawer.selectedDestination.push(selected)
-          }
-          this.destinationDrawer.viewStep = 2
-        } else {
-          this.audience.destinations.push(selected)
-          this.toggleDrawer()
-        }
-      } else {
-        var idx = this.audience.destinations.findIndex(
-          (item) => item.id == selected.id
-        )
-        if (idx > -1) {
-          this.audience.destinations.splice(idx, 1)
-        }
-      }
-    },
-
-    addDestinationToAudience() {
-      this.audience.destinations.push(
-        ...this.destinationDrawer.selectedDestination
-      )
-      this.destinationDrawer.insideFlow = false
-      this.destinationDrawer.viewStep = 1
-    },
-    isDestinationAddedOnDrawer(selected) {
-      if (
-        this.destinationDrawer &&
-        this.destinationDrawer.selectedDestination
-      ) {
-        const existingIndex =
-          this.destinationDrawer.selectedDestination.findIndex(
-            (destination) => destination.type === selected.type
-          )
-        return existingIndex > -1
-      }
-    },
-
-    isDestinationAdded(title) {
-      if (this.audience && this.audience.destinations) {
-        const existingIndex = this.audience.destinations.findIndex(
-          (destination) => destination.type === title
-        )
-        return existingIndex > -1
-      }
-    },
     async createAudience() {
-      const destinationIdArray = this.audience.destinations.map(
-        (destination) => destination.id
-      )
+      let filteredDestinations = []
+
+      for (let i = 0; i < this.selectedDestinations.length; i++) {
+        if (this.selectedDestinations[i].type !== "salesforce") {
+          filteredDestinations.push({
+            id: this.selectedDestinations[i].id,
+          })
+        }
+      }
+
+      filteredDestinations.push(...this.salesforceDestinations)
+
       const engagementIdArray = this.selectedEngagements.map(
         (engagement) => engagement.id
       )
@@ -569,7 +457,7 @@ export default {
         filtersArray.push(filter)
       }
       const payload = {
-        destinations: destinationIdArray,
+        destinations: filteredDestinations,
         engagements: engagementIdArray,
         filters: filtersArray,
         name: this.audience.audienceName,
@@ -582,11 +470,9 @@ export default {
     this.loading = true
     await this.getOverview()
     if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
-    await this.getDestinations()
     await this.getAudiencesRules()
     this.mapCDMOverview()
     this.loading = false
-    await this.getAvailableDestinations()
   },
 }
 </script>

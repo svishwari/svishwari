@@ -141,9 +141,10 @@ export default {
 
   methods: {
     isAdded(id) {
-      return this.selectedDestinations.filter(
-        (destination) => destination.id === id
-      ).length
+      return Boolean(
+        this.selectedDestinations.filter((destination) => destination.id === id)
+          .length
+      )
     },
 
     add(destination) {
