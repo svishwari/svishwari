@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list-wrapper">
     <div class="d-flex align-end mb-4">
       <Icon type="data-sources-list" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
@@ -21,7 +21,7 @@
         :title="dataSource.name"
         :icon="dataSource.type"
         hideButton
-        class="mb-3"
+        class="mb-3 list"
       >
         <Status :status="dataSource.status" />
       </CardHorizontal>
@@ -73,3 +73,13 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.list-wrapper {
+  .list {
+    padding-right: 42px !important;
+    &:hover{
+      cursor: auto;
+    }
+  }
+}
+</style>

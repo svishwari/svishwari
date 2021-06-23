@@ -165,6 +165,9 @@ export default {
         &.v-card--disabled {
           background: var(--v-background-base);
         }
+        &:hover {
+        box-shadow: 0px 0px 10px 2px rgba(117, 123, 123, 0.3) !important;
+        }
       }
     }
   }
