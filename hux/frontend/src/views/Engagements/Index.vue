@@ -32,7 +32,7 @@
         </router-link>
       </template>
     </PageHeader>
-     <v-progress-linear :active="loading" :indeterminate="loading" />
+    <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table :headers="columnDefs" :dataItems="rowData" nested>
       <template #item-row="{ item, expand, isExpanded }">
         <tr>

@@ -41,7 +41,7 @@ const mutations = {
   },
   SET_AUDIENCE_LIST(state, payload) {
     state.items[payload.id].audienceList = payload.data
-  }
+  },
 }
 
 const actions = {
@@ -131,7 +131,7 @@ const actions = {
   },
 
   updateAudienceList({ commit }, payload) {
-    commit('SET_AUDIENCE_LIST', payload);
+    commit("SET_AUDIENCE_LIST", payload)
   },
 }
 
