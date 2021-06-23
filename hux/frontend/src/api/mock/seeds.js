@@ -152,9 +152,8 @@ const facebook = {
 const salesforce = {
   name: "Salesforce Marketing Cloud",
   // TODO: update this once ORCH-233 is addressed
-  type: "sfmc",
+  type: "SFMC",
   is_enabled: true,
-  is_added: true,
 }
 
 const adobe = {
