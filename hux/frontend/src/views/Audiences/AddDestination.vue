@@ -1,6 +1,10 @@
 <template>
   <div class="add-destination-wrapper font-weight-regular">
-    <v-form @input="validateForm()" ref="addDestinationRef" v-model="newEngagementValid">
+    <v-form
+      @input="validateForm()"
+      ref="addDestinationRef"
+      v-model="newEngagementValid"
+    >
       <span class="neroBlack--text text-caption">Extension type</span>
       <div class="d-flex align-center mt-2">
         <div
@@ -90,11 +94,12 @@
           Existing data extension
         </label>
 
-         <hux-dropdown class="extension-dropdown"
-            :label="selectedLabel"
-            :items="operatorOptions"
-            @on-select="onSelect($event)"
-          />
+        <hux-dropdown
+          class="extension-dropdown"
+          :label="selectedLabel"
+          :items="operatorOptions"
+          @on-select="onSelect($event)"
+        />
 
         <v-card elevation="1">
           <v-card-text>
@@ -104,7 +109,8 @@
               </v-icon>
               <div class="feedback info--text">FEEDBACK</div>
               <div class="mx-2">
-                Modifying this data extension may impact any independent journey.
+                Modifying this data extension may impact any independent
+                journey.
               </div>
             </v-row>
           </v-card-text>
@@ -114,19 +120,23 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex"
 import TextField from "@/components/common/TextField"
 import HuxDropdown from "@/components/common/HuxDropdown.vue"
 import extensionInactive1 from "../../assets/logos/extension-inactive-1.svg"
 import extensionInactive2 from "../../assets/logos/extension-inactive-2.svg"
 export default {
   name: "AddDestination",
-  components: { TextField, extensionInactive1, extensionInactive2, HuxDropdown },
-  props: { 
-     dropdownItems: Array,
+  components: {
+    TextField,
+    extensionInactive1,
+    extensionInactive2,
+    HuxDropdown,
+  },
+  props: {
+    dropdownItems: Array,
   },
   computed: {
-     operatorOptions() {
+    operatorOptions() {
       return Object.keys(this.dropdownItems).map((key) => ({
         key: this.dropdownItems[key].id,
         name: this.dropdownItems[key].data_extension_id,
@@ -140,10 +150,13 @@ export default {
       extension: null,
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
       newEngagementValid: false,
-      newEngagementRules: [(v) => !!v || "Engagement name is required",
-        (v) => /^[^!@#$%^*()={}\.<>":?|,_&]*$/.test(v) || 'You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / " : ? | , _ &'
+      newEngagementRules: [
+        (v) => !!v || "Engagement name is required",
+        (v) =>
+          /^[^!@#$%^*()={}\/.<>":?|,_&]*$/.test(v) ||
+          "You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / : ? | , _ &",
       ],
-      selectedLabel: 'Select an existing data extension'
+      selectedLabel: "Select an existing data extension",
     }
   },
   methods: {
@@ -152,19 +165,19 @@ export default {
         this.isActive = !this.isActive
       }
     },
-    validateForm(){
-       this.$emit("onformchange", this.newEngagementValid)
+    validateForm() {
+      this.$emit("onformchange", this.newEngagementValid)
     },
     onSelect(item) {
       this.selectedLabel = item.name
     },
-    resetLabel(){
-      this.selectedLabel = 'Select an existing data extension'
+    resetLabel() {
+      this.selectedLabel = "Select an existing data extension"
     },
-    resetForm: function() {
-        this.resetLabel()
-        this.isActive = true
-    }
+    resetForm: function () {
+      this.resetLabel()
+      this.isActive = true
+    },
   },
 }
 </script>

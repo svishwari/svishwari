@@ -232,7 +232,11 @@
                 </div>
               </v-stepper-content>
               <v-stepper-content step="2">
-                <AddDestination @onformchange="validateForm" :dropdownItems="dataExtensions" ref="childComponent"/>
+                <AddDestination
+                  @onformchange="validateForm"
+                  :dropdownItems="dataExtensions"
+                  ref="childComponent"
+                />
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -483,7 +487,7 @@ export default {
           }
           await this.dataExtensionLists(1)
           this.destinationDrawer.viewStep = 2
-          this.$refs.childComponent.resetForm();
+          this.$refs.childComponent.resetForm()
         } else {
           this.audience.destinations.push(selected)
           this.toggleDrawer()

@@ -138,7 +138,6 @@ const actions = {
       throw error
     }
   },
-  
 }
 
 export default {
