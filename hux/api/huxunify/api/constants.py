@@ -324,6 +324,7 @@ PARAMETER_STORE_ERROR_MSG = (
 
 # users
 USER_TAG = "user"
+USER_NAME = "user_name"
 USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 

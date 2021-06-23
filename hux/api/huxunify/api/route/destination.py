@@ -33,7 +33,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
-    get_user_id,
+    get_user_name,
 )
 import huxunify.api.constants as api_c
 
@@ -231,8 +231,8 @@ class DestinationPutView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @marshal_with(DestinationPutSchema)
-    @get_user_id()
-    def put(self, destination_id: str, user_id: ObjectId) -> Tuple[dict, int]:
+    @get_user_name()
+    def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates a destination.
 
         ---
@@ -241,7 +241,7 @@ class DestinationPutView(SwaggerView):
 
         Args:
             destination_id (str): Destination ID.
-            user_id (ObjectId): user_id extracted from Okta.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Destination doc, HTTP status.
@@ -292,7 +292,7 @@ class DestinationPutView(SwaggerView):
                     ],
                     authentication_details=authentication_parameters,
                     added=is_added,
-                    user_id=user_id,
+                    user_name=user_name,
                 ),
                 HTTPStatus.OK,
             )
