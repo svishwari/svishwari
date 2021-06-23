@@ -83,6 +83,40 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
     }
 
 
+def set_sfmc_auth_from_parameter_store(auth: dict) -> dict:
+    """Set SFMC auth details from parameter store
+    ---
+
+        Args:
+            auth (dict): Destination Auth details.
+
+        Returns:
+            Auth Object (dict): SFMC auth object.
+
+    """
+
+    return {
+        SFMCCredentials.SFMC_ACCOUNT_ID.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_ACCOUNT_ID]
+        ),
+        SFMCCredentials.SFMC_AUTH_URL.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_AUTH_BASE_URI]
+        ),
+        SFMCCredentials.SFMC_CLIENT_ID.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_CLIENT_ID]
+        ),
+        SFMCCredentials.SFMC_CLIENT_SECRET.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_CLIENT_SECRET]
+        ),
+        SFMCCredentials.SFMC_SOAP_ENDPOINT.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_SOAP_BASE_URI]
+        ),
+        SFMCCredentials.SFMC_URL.value: parameter_store.get_store_value(
+            auth[api_c.SFMC_REST_BASE_URI]
+        ),
+    }
+
+
 @add_view_to_blueprint(
     dest_bp,
     f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>",
@@ -482,7 +516,7 @@ class DestinationValidatePostView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSION}",
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSIONS}",
     "DestinationDataExtView",
 )
 class DestinationDataExtView(SwaggerView):
@@ -504,7 +538,7 @@ class DestinationDataExtView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Retrieved destination data extensions.",
-            "schema": DestinationDataExtGetSchema,
+            "schema": {"type": "array", "items": DestinationDataExtGetSchema},
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve destination data extensions.",
@@ -532,8 +566,8 @@ class DestinationDataExtView(SwaggerView):
         if destination_id is None or not ObjectId.is_valid(destination_id):
             return HTTPStatus.BAD_REQUEST
 
-        destination = destination_management.get_delivery_platforms_by_id(
-            get_db_client(), destination_id
+        destination = destination_management.get_delivery_platform(
+            get_db_client(), ObjectId(destination_id)
         )
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
@@ -550,7 +584,7 @@ class DestinationDataExtView(SwaggerView):
                 == db_c.DELIVERY_PLATFORM_SFMC
             ):
                 connector = SFMCConnector(
-                    auth_details=set_sfmc_auth_details(
+                    auth_details=set_sfmc_auth_from_parameter_store(
                         destination[api_c.AUTHENTICATION_DETAILS]
                     )
                 )
@@ -583,7 +617,7 @@ class DestinationDataExtView(SwaggerView):
 
 @add_view_to_blueprint(
     dest_bp,
-    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSION}",
+    f"{api_c.DESTINATIONS_ENDPOINT}/<destination_id>/{api_c.DATA_EXTENSIONS}",
     "DestinationDataExtPostView",
 )
 class DestinationDataExtPostView(SwaggerView):
@@ -599,7 +633,14 @@ class DestinationDataExtPostView(SwaggerView):
             "in": "path",
             "required": "true",
             "example": "5f5f7262997acad4bac4373b",
-        }
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Audience body.",
+            "example": {api_c.DATA_EXTENSION: "data_ext_name"},
+        },
     ]
 
     responses = {
@@ -642,8 +683,8 @@ class DestinationDataExtPostView(SwaggerView):
         if destination_id is None or not ObjectId.is_valid(destination_id):
             return HTTPStatus.BAD_REQUEST
 
-        destination = destination_management.get_delivery_platforms_by_id(
-            get_db_client(), destination_id
+        destination = destination_management.get_delivery_platform(
+            get_db_client(), ObjectId(destination_id)
         )
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
@@ -666,11 +707,11 @@ class DestinationDataExtPostView(SwaggerView):
                 == db_c.DELIVERY_PLATFORM_SFMC
             ):
                 connector = SFMCConnector(
-                    auth_details=set_sfmc_auth_details(
+                    auth_details=set_sfmc_auth_from_parameter_store(
                         destination[api_c.AUTHENTICATION_DETAILS]
                     )
                 )
-                data_extension_id = api_c.DATA_EXTENSION
+                data_extension_id = api_c.DATA_EXTENSIONS
                 # TODO : Assign data extension id once sfmc method is updated
                 connector.create_data_extension(body.get(api_c.DATA_EXTENSION))
                 return {"data_extension_id": data_extension_id}, HTTPStatus.OK
