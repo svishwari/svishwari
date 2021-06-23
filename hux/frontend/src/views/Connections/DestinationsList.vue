@@ -66,7 +66,7 @@ export default {
 <style lang="scss" scoped>
 .list-wrapper {
   .list {
-    &:hover{
+    &:hover {
       cursor: auto;
     }
   }

@@ -77,7 +77,7 @@ export default {
 .list-wrapper {
   .list {
     padding-right: 42px !important;
-    &:hover{
+    &:hover {
       cursor: auto;
     }
   }
