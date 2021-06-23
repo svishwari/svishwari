@@ -14,7 +14,7 @@ const someValue = () => {
   return faker.datatype.float({ min: 100, max: 1000, precision: 0.01 })
 }
 
-// Example:
+// Examples:
 //              co-occurrences:
 // identifier:  name address email phone cookie
 //       name      0    5871  8916  2689  11975
@@ -22,7 +22,6 @@ const someValue = () => {
 //      email    912   6251      0  9150   4002
 //      phone   4231   2104   5699     0   1924
 //     cookie  11975   1324   1555  5929      0
-
 
 const identifiers = ["name", "address", "email", "phone", "cookie"]
 
