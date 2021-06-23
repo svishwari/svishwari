@@ -603,10 +603,6 @@ export default {
           }
         }
         th:nth-child(1) {
-          position: sticky;
-          top: 0;
-          left: 0;
-          z-index: 4;
           border-right: thin solid rgba(0, 0, 0, 0.12);
         }
         border-radius: 12px 12px 0px 0px;
@@ -622,10 +618,6 @@ export default {
           color: var(--v-neroBlack-base);
         }
         td:nth-child(1) {
-          position: sticky;
-          top: 0;
-          left: 0;
-          z-index: 4;
           background: var(--v-white-base);
           border-right: thin solid rgba(0, 0, 0, 0.12);
           &:hover {
