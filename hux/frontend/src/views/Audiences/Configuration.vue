@@ -124,7 +124,10 @@
                   >
                     mdi-plus-circle
                   </v-icon>
-                  <tooltip v-for="destination in audience.destinations" :key="destination.id">
+                  <tooltip
+                    v-for="destination in audience.destinations"
+                    :key="destination.id"
+                  >
                     <template #label-content>
                       <div class="destination-logo-wrapper">
                         <div class="logo-wrapper">
