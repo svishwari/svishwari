@@ -10,7 +10,7 @@ from hypothesis import given, strategies as st
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
-from huxunify.test import shared as sh
+from huxunify.test import constants as sh
 from huxunify.app import create_app
 
 

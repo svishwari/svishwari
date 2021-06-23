@@ -12,7 +12,7 @@ from flask_marshmallow import Schema
 from marshmallow import ValidationError
 from requests_mock import Mocker
 
-from huxunify.test.shared import BASE_ENDPOINT, TEST_AUTH_TOKEN
+from huxunify.test.constants import BASE_ENDPOINT, TEST_AUTH_TOKEN
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
