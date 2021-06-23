@@ -2,7 +2,7 @@ import faker from "faker"
 
 const audienceData = () => {
   return {
-    id: aker.datatype.number({ min: 1, max: 10 }),
+    id: faker.datatype.number({ min: 1, max: 10 }),
     destinations: {
       id: "60ae035b6c5bf45da27f17d6",
       data_extension_id: "data_extension_id",

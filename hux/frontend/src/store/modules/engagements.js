@@ -19,7 +19,6 @@ const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
       item.audienceList = []
-      item.status = String(item.status).toLowerCase()
       Vue.set(state.items, item.id, item)
     })
   },
