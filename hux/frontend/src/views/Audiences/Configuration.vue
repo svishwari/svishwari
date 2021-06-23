@@ -98,9 +98,9 @@
             <template #icon class="timeline-icon-section">
               <span>2</span>
             </template>
-            <v-row class="pt-1 pr-0">
+            <v-col class="pt-1 pa-0">
               <attribute-rules :rules="attributeRules"></attribute-rules>
-            </v-row>
+            </v-col>
           </v-timeline-item>
           <v-timeline-item
             color="blue"
@@ -214,12 +214,15 @@
           <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
             <v-stepper-items>
               <v-stepper-content step="1">
-                <div>
+                <div class="mx-1">
                   <CardHorizontal
                     v-for="destination in destinationsList"
                     :key="destination.id"
                     :title="destination.name"
                     :icon="destination.type.toLowerCase()"
+                    :enableBlueBackground="
+                      destination.is_added ||
+                      isDestinationAdded(destination.type)"
                     :isAdded="
                       destination.is_added ||
                       isDestinationAdded(destination.type)

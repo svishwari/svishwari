@@ -14,6 +14,7 @@
         <DataCards
           :items="audiences"
           sort="asc"
+          empty="No audiences have been created."
           :fields="[
             {
               key: 'name',
@@ -114,6 +115,7 @@ export default {
     return {
       localToggle: false,
       loading: false,
+      audiences: [],
     }
   },
 
@@ -128,9 +130,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      audiences: "audiences/list",
-    }),
+    // ...mapGetters({
+    //   audiences: "audiences/list",
+    // }),
   },
 
   methods: {

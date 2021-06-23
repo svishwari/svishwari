@@ -41,7 +41,7 @@
             <div
               v-if="item.isGroup"
               :key="item.name"
-              class="group_title px-4 d-flex align-center"
+              :class="{'group_title px-4 d-flex align-center': true, 'mt-2': index != 0 }"
             >
               {{ item.name }}
             </div>
