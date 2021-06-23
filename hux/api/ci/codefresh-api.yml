@@ -9,6 +9,7 @@ stages:
   - set_env
   - docker
   - py37_check
+  - coverage_check
   - safety_style_check
   - artifactory
   - argo-deploy
@@ -80,20 +81,36 @@ steps:
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
 
-  py37_check:
-    stage: "py37_check"
-    title: "Tox - py37"
+#  py37_check:
+#    stage: "py37_check"
+#    title: "Tox - py37"
+#    image: "${{build_image}}"
+#    working_directory: '/app/hux-unified/api'
+#    description: "run tests using tox"
+#    commands:
+#      - pip install tox
+#      - tox -e ${TOXENV} -- --skip-model-generate
+#    scale:
+#      py37:
+#        title: 'py37'
+#        environment:
+#          - TOXENV=py37
+#    fail_fast: false
+
+  coverage_check:
+    stage: "coverage_check"
+    title: "Tox - coverage"
     image: "${{build_image}}"
     working_directory: '/app/hux-unified/api'
-    description: "run tests using tox"
+    description: "run coverage checks using tox"
     commands:
       - pip install tox
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
       py37:
-        title: 'py37'
+        title: 'checkCoverage'
         environment:
-          - TOXENV=py37
+          - TOXENV=checkCoverage
     fail_fast: false
 
   safety_style_check:
