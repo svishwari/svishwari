@@ -263,6 +263,7 @@ export default function (server) {
     })
   )
   server.createList("audience", 10)
+  server.create("audience", { created_by: null, updated_by: null })
 
   // seed engagements
   server.createList("engagement", 5)
