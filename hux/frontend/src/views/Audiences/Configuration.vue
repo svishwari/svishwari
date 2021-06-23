@@ -126,26 +126,23 @@
                   </v-icon>
                   <tooltip>
                     <template #label-content>
-                      <Logo
-                        class="added-logo ml-2 svg-icon"
-                        v-for="destination in audience.destinations"
-                        :key="destination.id"
-                        :type="
-                          (hoverId == destination.id && deleteIcon) ||
-                          destination.type.toLowerCase()
-                        "
-                        :size="18"
-                        @mouseover.native="
-                          hoverItem = destination
-                          mouseover(destination.id)
-                        "
-                        @mouseout.native="mouseout()"
-                        @click.native="removeDestination(hoverItem.id)"
-                      />
+                      <div class="destination-logo-wrapper">
+                        <div class="logo-wrapper" v-for="destination in audience.destinations"
+                          :key="destination.id">
+                          <Logo
+                            class="added-logo ml-2 svg-icon"
+                            :type=" destination.type.toLowerCase()"
+                            :size="18"
+                            @click.native="removeDestination(destination.id)"
+                            @mouseover.native="hoverItem = destination.name"
+                          />
+                          <Logo class="delete-icon" type="delete" @click.native="removeDestination(destination.id)"/>
+                        </div>
+                      </div>
                     </template>
                     <template #hover-content>
                       <div class="d-flex align-center">
-                        Remove {{ hoverItem.name }}
+                        Remove {{ hoverItem }}
                       </div>
                     </template>
                   </tooltip>
@@ -593,16 +590,7 @@ export default {
       )
       if (existingIndex > -1) {
         this.audience.destinations.splice(existingIndex, 1)
-        this.mouseout()
       }
-    },
-    mouseover(id) {
-      this.deleteIcon = "delete"
-      this.hoverId = id
-    },
-    mouseout() {
-      this.deleteIcon = null
-      this.hoverId = null
     },
   },
   async mounted() {
@@ -706,8 +694,27 @@ export default {
         }
       }
     }
-    .added-logo {
-      margin-top: 6px;
+    .destination-logo-wrapper {
+      display: inline-flex;
+      .logo-wrapper {
+        position: relative;
+        .added-logo {
+          margin-top: 8px;
+        }
+        .delete-icon {
+          z-index: 1;
+          position: absolute;
+          left: 3px;
+          top: 5px;
+          background: var(--v-white-base);
+          display: none;
+        }
+        &:hover {
+          .delete-icon {
+            display: block;
+          }
+        }
+      }
     }
   }
 
@@ -718,10 +725,6 @@ export default {
     .drawer-back {
       @extend .box-shadow-25;
     }
-  }
-
-  .v-menu__content {
-    top: 800px !important;
   }
 }
 </style>
