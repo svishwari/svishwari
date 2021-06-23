@@ -41,6 +41,18 @@ steps:
     commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
+  VersionTag:
+    stage: build_tag
+    description: Set docker tag based Git tag
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
+    when:
+      branch:
+        only:
+          - /^app.*/i
+
   set_env_var:
     stage: set_env
     title: Set environment variables
@@ -85,6 +97,7 @@ steps:
       branch:
         only:
           - main
+          - /^app.*/i
 
   Deployment:
     stage: argo-deploy
@@ -103,3 +116,4 @@ steps:
       branch:
         only:
           - main
+          - /^app.*/i
