@@ -10,6 +10,7 @@ from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
 )
+from huxunify.api.schema.destinations import DestinationGetSchema
 
 
 class AudienceGetSchema(Schema):
@@ -41,7 +42,7 @@ class AudienceGetSchema(Schema):
         ],
     )
 
-    destinations = fields.List(fields.String())
+    destinations = fields.List(fields.Nested(DestinationGetSchema))
     engagements = fields.List(
         fields.Dict(),
         attribute=api_c.AUDIENCE_ENGAGEMENTS,
