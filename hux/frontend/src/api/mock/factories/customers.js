@@ -23,6 +23,7 @@ const someValue = () => {
 //      phone   4231   2104   5699     0   1924
 //     cookie  11975   1324   1555  5929      0
 
+
 const identifiers = ["name", "address", "email", "phone", "cookie"]
 
 const cooccurrenceMatrix = [
