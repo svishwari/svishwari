@@ -792,7 +792,9 @@ class EngagementDeliverView(SwaggerView):
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
-            batch_destination = get_destination_config(database, engagement_id, *pair)
+            batch_destination = get_destination_config(
+                database, engagement_id, *pair
+            )
             batch_destination.register()
             batch_destination.submit()
             delivery_job_ids.append(
@@ -910,7 +912,9 @@ class EngagementDeliverAudienceView(SwaggerView):
         ):
             if pair[0] != audience_id:
                 continue
-            batch_destination = get_destination_config(database, engagement_id, *pair)
+            batch_destination = get_destination_config(
+                database, engagement_id, *pair
+            )
             batch_destination.register()
             batch_destination.submit()
             delivery_job_ids.append(
@@ -1068,7 +1072,9 @@ class EngagementDeliverDestinationView(SwaggerView):
         ):
             if pair != [audience_id, destination_id]:
                 continue
-            batch_destination = get_destination_config(database, engagement_id, *pair)
+            batch_destination = get_destination_config(
+                database, engagement_id, *pair
+            )
             batch_destination.register()
             batch_destination.submit()
             delivery_job_ids.append(

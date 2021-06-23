@@ -96,6 +96,7 @@ FACEBOOK_ACCESS_TOKEN = "facebook_access_token"
 SFMC_CLIENT_ID = "sfmc_client_id"
 SFMC_CLIENT_SECRET = "sfmc_client_secret"
 SFMC_ACCOUNT_ID = "sfmc_account_id"
+SFMC_DEFAULT_WSDL = "sfmc_default_wsdl"
 SFMC_AUTH_BASE_URI = "sfmc_auth_base_uri"
 SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
@@ -165,6 +166,12 @@ DESTINATION_CONSTANTS = {
         },
         SFMC_SOAP_BASE_URI: {
             NAME: "Soap Base URI",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+        SFMC_DEFAULT_WSDL: {
+            NAME: "Default WSDL",
             TYPE: "text",
             REQUIRED: True,
             DESCRIPTION: None,

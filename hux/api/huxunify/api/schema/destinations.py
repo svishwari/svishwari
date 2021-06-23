@@ -197,6 +197,16 @@ class SFMCAuthConstants(Schema):
             api_c.DESCRIPTION: None,
         },
     )
+    sfmc_default_wsdl = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Default WSDL",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
 
 
 class DestinationConstantsSchema(Schema):
