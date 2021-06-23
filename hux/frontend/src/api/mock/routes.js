@@ -82,10 +82,13 @@ export const defineRoutes = (server) => {
       total_customers: 827438924,
     }
   })
+
+  // customers by id
   server.get("/customers/:id", (schema, request) => {
     const id = request.params.id
     return server.create("customerProfile", schema.customers.find(id).attrs)
   })
+
   server.get("/customers/overview", () => customersOverview)
 
   // identity resolution

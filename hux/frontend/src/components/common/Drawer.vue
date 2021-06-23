@@ -26,7 +26,7 @@
     </v-toolbar>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="drawer-content" :class=" drawerpadding ? drawerpadding : 'pa-2' " >
+    <div class="drawer-content" :class="drawerpadding ? drawerpadding : 'pa-2'">
       <slot></slot>
     </div>
 
@@ -106,7 +106,7 @@ export default {
     headerpadding: {
       type: String,
       required: false,
-    }
+    },
   },
 
   computed: {

@@ -1,12 +1,6 @@
 <template>
   <v-card
-    class="
-      page-header--wrap
-      d-flex
-      justify-space-between
-      align-center
-      py-5
-    " 
+    class="page-header--wrap d-flex justify-space-between align-center py-5"
     :class="paddingchanges ? paddingchanges : 'px-8'"
     elevation="1"
     tile

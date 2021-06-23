@@ -503,10 +503,9 @@ export default {
         this.destinationDrawer &&
         this.destinationDrawer.selectedDestination
       ) {
-        const existingIndex =
-          this.destinationDrawer.selectedDestination.findIndex(
-            (destination) => destination.type === selected.type
-          )
+        const existingIndex = this.destinationDrawer.selectedDestination.findIndex(
+          (destination) => destination.type === selected.type
+        )
         return existingIndex > -1
       }
     },
@@ -545,9 +544,9 @@ export default {
           conditionIndex++
         ) {
           filter.section_filters.push({
-            field:
-              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
-                .attribute.key,
+            field: this.audience.attributeRules[ruleIndex].conditions[
+              conditionIndex
+            ].attribute.key,
             type: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
             ].operator
