@@ -127,16 +127,23 @@
                   <tooltip>
                     <template #label-content>
                       <div class="destination-logo-wrapper">
-                        <div class="logo-wrapper" v-for="destination in audience.destinations"
-                          :key="destination.id">
+                        <div
+                          class="logo-wrapper"
+                          v-for="destination in audience.destinations"
+                          :key="destination.id"
+                        >
                           <Logo
                             class="added-logo ml-2 svg-icon"
-                            :type=" destination.type.toLowerCase()"
+                            :type="destination.type.toLowerCase()"
                             :size="18"
                             @click.native="removeDestination(destination.id)"
                             @mouseover.native="hoverItem = destination.name"
                           />
-                          <Logo class="delete-icon" type="delete" @click.native="removeDestination(destination.id)"/>
+                          <Logo
+                            class="delete-icon"
+                            type="delete"
+                            @click.native="removeDestination(destination.id)"
+                          />
                         </div>
                       </div>
                     </template>
