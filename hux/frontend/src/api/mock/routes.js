@@ -93,7 +93,6 @@ export const defineRoutes = (server) => {
     }
   })
 
-  // customers by id
   server.get("/customers/:id", (schema, request) => {
     const id = request.params.id
     return server.create("customerProfile", schema.customers.find(id).attrs)
