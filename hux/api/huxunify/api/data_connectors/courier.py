@@ -81,20 +81,14 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             SFMCCredentials.SFMC_ACCOUNT_ID.name: parameter_store.get_store_value(
                 auth[api_const.SFMC_ACCOUNT_ID]
             ),
-            SFMCCredentials.SFMC_DEFAULT_WSDL.name: parameter_store.get_store_value(
-                auth[api_const.SFMC_DEFAULT_WSDL]
-            ),
             SFMCCredentials.SFMC_SOAP_ENDPOINT.name: parameter_store.get_store_value(
                 auth[api_const.SFMC_SOAP_BASE_URI]
             ),
             SFMCCredentials.SFMC_URL.name: parameter_store.get_store_value(
                 auth[api_const.SFMC_REST_BASE_URI]
             ),
-            # ORCH has a PR so HUS does not have to submit the SFMC_SCOP and SFMC_AUTH
-            SFMCCredentials.SFMC_SCOPE.name: "data_extensions_read data_extensions_write"
-            " list_and_subscribers_read",
-            SFMCCredentials.SFMC_AUTH_FLAG.name: "True",
         }
+
         secret_dict = {
             SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
                 api_const.SFMC_CLIENT_SECRET
