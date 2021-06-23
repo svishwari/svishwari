@@ -124,20 +124,14 @@
                   >
                     mdi-plus-circle
                   </v-icon>
-                  <tooltip>
+                  <tooltip v-for="destination in audience.destinations" :key="destination.id">
                     <template #label-content>
                       <div class="destination-logo-wrapper">
-                        <div
-                          class="logo-wrapper"
-                          v-for="destination in audience.destinations"
-                          :key="destination.id"
-                        >
+                        <div class="logo-wrapper">
                           <Logo
                             class="added-logo ml-2 svg-icon"
                             :type="destination.type.toLowerCase()"
                             :size="18"
-                            @click.native="removeDestination(destination.id)"
-                            @mouseover.native="hoverItem = destination.name"
                           />
                           <Logo
                             class="delete-icon"
@@ -149,7 +143,7 @@
                     </template>
                     <template #hover-content>
                       <div class="d-flex align-center">
-                        Remove {{ hoverItem }}
+                        Remove {{ destination.name }}
                       </div>
                     </template>
                   </tooltip>
@@ -368,7 +362,6 @@ export default {
         viewStep: 1,
         selectedDestination: [],
       },
-      hoverItem: "",
       loading: false,
     }
   },
