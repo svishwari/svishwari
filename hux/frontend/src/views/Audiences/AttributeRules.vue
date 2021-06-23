@@ -1,7 +1,12 @@
 <template>
   <v-col cols="12" class="attribute-rule pt-0 pl-0 pr-0">
-    <v-col cols="12" class="pr-0">
-      <strong class="text-h5 neroBlack--text">
+    <v-col cols="12" class="pa-0">
+      <strong
+        :class="{
+          'text-h5 neroBlack--text': true,
+          'text-caption': applyCaptionStyle,
+        }"
+      >
         Select attribute(s) - <i style="font-size: 12px">Optional</i>
       </strong>
       <v-card
@@ -55,7 +60,7 @@
                 <TextField
                   v-if="condition.operator && isText(condition)"
                   v-model="condition.text"
-                  placeholder="Text"
+                  :placeholder="getPlaceHolderText(condition)"
                   required
                   class="item-text-field"
                   @blur="triggerSizing(condition)"
@@ -163,6 +168,11 @@ export default {
       required: true,
       default: () => [],
     },
+    applyCaptionStyle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -212,7 +222,11 @@ export default {
                 (item) => !!_subOption[item]["name"]
               )
               if (hasSubOptins.length > 0) {
-                _subOption["menu"] = hasSubOptins.map((key) => _subOption[key])
+                _subOption["menu"] = hasSubOptins.map((key) => {
+                  const subOption = _subOption[key]
+                  subOption["key"] = subOption.name
+                  return subOption
+                })
               }
               if (groupKey.includes("model")) _subOption["modelIcon"] = true
               _subOption.key = key
@@ -282,6 +296,20 @@ export default {
         this.rules.splice(indx, 1)
       } else {
         parent.conditions.splice(child, 1)
+      }
+    },
+    getPlaceHolderText(condition) {
+      switch (condition.attribute.key) {
+        case "email":
+          return "example@email.com"
+        case "gender":
+          return "Type male, female, or other"
+        case "City":
+        case "Country":
+        case "State":
+          return condition.attribute.key + " name"
+        default:
+          return condition.attribute.key
       }
     },
     addNewSection() {
