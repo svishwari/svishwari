@@ -201,7 +201,7 @@ def get_delivery_platform_by_type(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_platform_name (str): The MongoDB Name of the delivery platform.
+        delivery_platform_type (str): The delivery platform type.
 
     Returns:
         Union[dict, None]: Delivery platform configuration.
