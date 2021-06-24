@@ -630,7 +630,7 @@ class TestEngagementManagement(unittest.TestCase):
             new_engagement[c.ENGAGEMENT_NAME],
             new_engagement[c.ENGAGEMENT_DESCRIPTION],
             new_engagement[c.AUDIENCES],
-            self.user_id,
+            self.user_name,
         )
 
         # get engagement to verify that it was created
