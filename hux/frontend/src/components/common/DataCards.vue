@@ -138,17 +138,6 @@ export default {
       return Boolean(this.sortBy === key)
     },
 
-    isAdded(item) {
-      if (Array.isArray(this.selected)) {
-        return Boolean(
-          this.selected &&
-            this.selected.filter((selectedItem) => selectedItem.id === item.id)
-              .length > 0
-        )
-      } else {
-        return Boolean(this.selected && this.selected[item.id])
-      }
-    },
   },
 
   mounted() {
