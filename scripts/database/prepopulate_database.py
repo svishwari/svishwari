@@ -9,14 +9,13 @@ from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
-from share import get_mongo_client
+from scripts.database.share import get_mongo_client
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
 
 # Initiate Data Base client
 DB_CLIENT = get_mongo_client()
-
 
 # Data Sources List
 DATA_SOURCES = [
@@ -299,39 +298,49 @@ DELIVERY_PLATFORMS = [
     },
 ]
 
-# drop collections for writing.
-collections = [c.CDP_DATA_SOURCES_COLLECTION, c.DELIVERY_PLATFORM_COLLECTION]
-for collection in collections:
-    DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][collection].drop()
 
-# Inserting Data Sources into Data Sources Collection
-logging.info("Prepopulate data sources.")
-inserted_ids = []
-for i, data_source in enumerate(DATA_SOURCES):
-    result_id = create_data_source(
-        DB_CLIENT,
-        data_source[c.DATA_SOURCE_NAME],
-        category="",
-        added=data_source[c.ADDED],
-        enabled=data_source[c.ENABLED],
-        source_type=data_source[c.DATA_SOURCE_TYPE],
-        status=data_source[c.STATUS],
-    )[c.ID]
-    logging.info("Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id)
-logging.info("Prepopulate data sources complete.")
+def drop_collections(DB_CLIENT) -> None:
+    # drop collections for writing.
+    collections = [c.CDP_DATA_SOURCES_COLLECTION, c.DELIVERY_PLATFORM_COLLECTION]
+    for collection in collections:
+        DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][collection].drop()
 
 
-# Insertion of Delivery Platforms Collection
-logging.info("Prepopulate destinations.")
-inserted_ids = []
-for i, delivery_platform in enumerate(DELIVERY_PLATFORMS):
-    result_id = set_delivery_platform(
-        DB_CLIENT,
-        **delivery_platform,
-    )[c.ID]
-    logging.info(
-        "Added %s, %s.", delivery_platform[c.DELIVERY_PLATFORM_NAME], result_id
-    )
-logging.info("Prepopulate destinations complete.")
+def insert_data_sources(DB_CLIENT, DATA_SOURCES) -> None:
+    # Inserting Data Sources into Data Sources Collection
+    logging.info("Prepopulate data sources.")
+    inserted_ids = []
+    for i, data_source in enumerate(DATA_SOURCES):
+        result_id = create_data_source(
+            DB_CLIENT,
+            data_source[c.DATA_SOURCE_NAME],
+            category="",
+            added=data_source[c.ADDED],
+            enabled=data_source[c.ENABLED],
+            source_type=data_source[c.DATA_SOURCE_TYPE],
+            status=data_source[c.STATUS],
+        )[c.ID]
+        logging.info("Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id)
+    logging.info("Prepopulate data sources complete.")
 
-logging.info("Prepopulate complete.")
+
+def insert_delivery_platforms(DB_CLIENT, DELIVERY_PLATFORMS) -> None:
+    # Insertion of Delivery Platforms Collection
+    logging.info("Prepopulate destinations.")
+    inserted_ids = []
+    for i, delivery_platform in enumerate(DELIVERY_PLATFORMS):
+        result_id = set_delivery_platform(
+            DB_CLIENT,
+            **delivery_platform,
+        )[c.ID]
+        logging.info(
+            "Added %s, %s.", delivery_platform[c.DELIVERY_PLATFORM_NAME], result_id
+        )
+    logging.info("Prepopulate destinations complete.")
+
+
+if __name__ == "__main__":
+    drop_collections(DB_CLIENT)
+    insert_data_sources(DB_CLIENT, DATA_SOURCES)
+    insert_delivery_platforms(DB_CLIENT, DELIVERY_PLATFORMS)
+    logging.info("Prepopulate complete.")

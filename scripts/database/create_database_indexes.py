@@ -12,9 +12,11 @@
 """
 
 import logging
+from typing import List
+
 from pymongo import ASCENDING
 
-from share import get_mongo_client
+from scripts.database.share import get_mongo_client
 import huxunifylib.database.constants as c
 
 # Setup logging
@@ -76,37 +78,45 @@ INDEX_LIST = [
 # Get database
 DM_DB = DB_CLIENT[c.DATA_MANAGEMENT_DATABASE]
 
-# Loop through the list and set the indexes
-for item in INDEX_LIST:
 
-    database_name = item[0]
-    collection_name = item[1]
-    index_list = item[2]
+def set_indexes(DB_CLIENT, INDEX_LIST) -> None:
+    # Loop through the list and set the indexes
+    for item in INDEX_LIST:
+        database_name = item[0]
+        collection_name = item[1]
+        index_list = item[2]
 
-    collection = DB_CLIENT[database_name][collection_name]
+        collection = DB_CLIENT[database_name][collection_name]
+
+        logging.info(
+            "Creating an index with settings <%s> in collection <%s>...",
+            index_list,
+            collection.full_name,
+        )
+
+        collection.create_index(index_list)
+
+
+def add_unique_compound_index(DB_CLIENT) -> None:
+    # Add a unique compound index for customer ID
+    collection = DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][c.INGESTED_DATA_COLLECTION]
+
+    field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
+    collection.create_index(
+        [(field_str, ASCENDING), (c.JOB_ID, ASCENDING)],
+        unique=True,
+    )
 
     logging.info(
-        "Creating an index with settings <%s> in collection <%s>...",
-        index_list,
+        "Creating an unique compound index <(%s, %s)> in collection <%s>...",
+        field_str,
+        c.JOB_ID,
         collection.full_name,
     )
 
-    collection.create_index(index_list)
+    logging.info("Done with creating indexes!")
 
-# Add a unique compound index for customer ID
-collection = DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][c.INGESTED_DATA_COLLECTION]
 
-field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
-collection.create_index(
-    [(field_str, ASCENDING), (c.JOB_ID, ASCENDING)],
-    unique=True,
-)
-
-logging.info(
-    "Creating an unique compound index <(%s, %s)> in collection <%s>...",
-    field_str,
-    c.JOB_ID,
-    collection.full_name,
-)
-
-logging.info("Done with creating indexes!")
+if __name__ == "__main__":
+    set_indexes(DB_CLIENT, INDEX_LIST)
+    add_unique_compound_index(DB_CLIENT)

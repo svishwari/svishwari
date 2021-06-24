@@ -22,12 +22,7 @@ def get_mongo_client() -> MongoClient:
     use_ssl = host not in ["localhost", None]
 
     mongo_config = dict(
-        host=host,
-        port=port,
-        w=1,
-        username=user_name,
-        password=password,
-        ssl=use_ssl
+        host=host, port=port, w=1, username=user_name, password=password, ssl=use_ssl
     )
 
     if use_ssl:
