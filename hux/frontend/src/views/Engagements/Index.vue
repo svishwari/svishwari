@@ -66,7 +66,8 @@
                     }"
                     class="text-decoration-none primary--text"
                     append
-                    >{{ item[header.value] }}
+                    >
+                    {{ item[header.value] }}
                   </router-link>
                 </template>
                 <template #hover-content>
@@ -84,7 +85,7 @@
               <size :value="item[header.value]" />
             </div>
             <div v-if="header.value == 'delivery_schedule'">
-              {{ delivery_schedule }}
+              {{ manualDeliverySchedule }}
             </div>
             <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
@@ -107,6 +108,7 @@
           class="pa-0 child"
           v-if="item.audiences.length > 0"
         >
+          <v-progress-linear :active="subLoading" :indeterminate="subLoading" />
           <hux-data-table
             :headers="headers"
             :dataItems="item.audienceList"
@@ -164,7 +166,7 @@
       </template>
     </hux-data-table>
 
-    <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
+    <v-row class="pt-3 pb-7 pl-3" v-if="loading">
       <EmptyPage>
         <template #icon>mdi-alert-circle-outline</template>
         <template #title>Oops! There’s nothing here yet</template>
@@ -231,8 +233,9 @@ export default {
         },
       ],
       loading: true,
+      subLoading: true,
       rowData: [],
-      delivery_schedule: "Manual",
+      manualDeliverySchedule: "Manual",
       audienceList: [],
       columnDefs: [
         { text: "Engagement name", value: "name", width: "300px" },
@@ -274,14 +277,17 @@ export default {
     getName(item) {
       return item.first_name + " " + item.last_name
     },
+    // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
+      this.subLoading = true;
       this.audienceList = []
       let audienceIds = item.audiences.map((key) => key.id)
       for (let id of audienceIds) {
         await this.getAudienceById(id)
         this.audienceList.push(this.audiencesData(id))
       }
-      this.updateAudienceList({ id: item.id, data: this.audienceList })
+      await this.updateAudienceList({ id: item.id, data: this.audienceList })
+      this.subLoading = false;
     },
   },
   async mounted() {

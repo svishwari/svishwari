@@ -40,7 +40,10 @@ const mutations = {
     Vue.set(state.audiencePerformance, type, audiencePerformanceObject)
   },
   SET_AUDIENCE_LIST(state, payload) {
-    state.items[payload.id].audienceList = payload.data
+    let engagement = state.items[payload.id]
+    if (engagement.audienceList.length == 0) {
+      engagement.audienceList = payload.data
+    }
   },
 }
 

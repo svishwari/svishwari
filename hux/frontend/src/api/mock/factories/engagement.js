@@ -1,19 +1,33 @@
 import faker from "faker"
 
+const deliveriesData = () => faker.datatype.number({ min: 1, max: 10 })
+
+const destinationData = () => {
+  return {
+    id: faker.datatype.number({ min: 1, max: 10 }),
+    data_extension_id: faker.datatype.number({ min: 1, max: 10 }),
+    contact_list: "faker data"
+  }
+}
+
 const audienceData = () => {
   return {
     id: faker.datatype.number({ min: 1, max: 10 }),
-    destinations: {
-      id: "60ae035b6c5bf45da27f17d6",
-      data_extension_id: "data_extension_id",
-      contact_list: "sfmc_extension_name",
-    },
-    deliveries: ["60ae035b6c5bf45da27f17e5", "60ae035b6c5bf45da27f17e6"],
+    destinations: createDestinations(3),
+    deliveries: createDeliveries(2),
   }
 }
 
 const createAudiences = (numAudiences = 3) => {
   return Array.from({ length: numAudiences }, audienceData)
+}
+
+const createDestinations = (numDestinations = 3) => {
+  return Array.from({ length: numDestinations }, destinationData)
+}
+
+const createDeliveries = (numDeliveries = 3) => {
+  return Array.from({ length: numDeliveries }, deliveriesData)
 }
 
 const engagementMock = {
