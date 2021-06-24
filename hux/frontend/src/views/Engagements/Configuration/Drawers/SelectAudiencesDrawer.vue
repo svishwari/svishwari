@@ -15,7 +15,7 @@
           :items="audiences"
           sort="asc"
           empty="No audiences have been created."
-          :selected="value"
+          selectedKey="is_added"
           :fields="[
             {
               key: 'name',
