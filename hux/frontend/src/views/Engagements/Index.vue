@@ -38,9 +38,14 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <hux-data-table :headers="columnDefs" :dataItems="rowData" nested v-if="rowData.length > 0">
+    <hux-data-table
+      :headers="columnDefs"
+      :dataItems="rowData"
+      nested
+      v-if="rowData.length > 0"
+    >
       <template #item-row="{ item, expand, isExpanded }">
-        <tr :class="{ 'expanded-row' : isExpanded}">
+        <tr :class="{ 'expanded-row': isExpanded }">
           <td
             v-for="header in columnDefs"
             :key="header.value"
@@ -48,7 +53,7 @@
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
-              'expanded-row' : isExpanded
+              'expanded-row': isExpanded,
             }"
             :style="{ width: header.width, left: 0 }"
           >
@@ -57,12 +62,18 @@
                 :value="item[header.value]"
                 :menuOptions="actionItems"
                 routeName="EngagementDashboard"
-                :routeParam="item['id']">
+                :routeParam="item['id']"
+              >
                 <template #expand-icon>
-                  <v-icon v-if="item.audiences.length > 0"
-                      :class="{ 'normal-icon': isExpanded }"
-                      @click="expand(!isExpanded);getAudiencesForEngagement(item)">
-                      mdi-chevron-right
+                  <v-icon
+                    v-if="item.audiences.length > 0"
+                    :class="{ 'normal-icon': isExpanded }"
+                    @click="
+                      expand(!isExpanded)
+                      getAudiencesForEngagement(item)
+                    "
+                  >
+                    mdi-chevron-right
                   </v-icon>
                 </template>
               </menu-cell>
@@ -71,7 +82,12 @@
               {{ item[header.value].length }}
             </div>
             <div v-if="header.value == 'status'">
-              <status :status="item[header.value]" :showLabel="true" collapsed class="d-flex" />
+              <status
+                :status="item[header.value]"
+                :showLabel="true"
+                collapsed
+                class="d-flex"
+              />
             </div>
             <div v-if="header.value == 'size'">
               <size :value="item[header.value]" />
@@ -143,7 +159,7 @@
                   {{ item[header.value] }}
                 </div>
                 <div v-if="header.value == 'update_time'">
-                  <div class="ml-16 pl-4" style="width: max-content;">
+                  <div class="ml-16 pl-4" style="width: max-content">
                     <time-stamp :value="item[header.value]" />
                   </div>
                 </div>
@@ -193,7 +209,7 @@
               isTile
               class="ma-2 font-weight-regular"
             >
-            Engagement
+              Engagement
             </huxButton>
           </router-link>
         </template>
@@ -304,7 +320,9 @@ export default {
   async mounted() {
     this.loading = true
     await this.getAllEngagements()
-    this.rowData = this.engagementData.sort((a,b) => (a.name > b.name ? 1 : -1))
+    this.rowData = this.engagementData.sort((a, b) =>
+      a.name > b.name ? 1 : -1
+    )
     this.loading = false
   },
 }
@@ -354,7 +372,7 @@ export default {
       .expanded-row {
         background-color: var(--v-aliceBlue-base) !important;
       }
-       .v-data-table-header {
+      .v-data-table-header {
         th {
           background: var(--v-aliceBlue-base);
           &:first-child {
@@ -417,12 +435,12 @@ export default {
     .v-data-table__wrapper {
       box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
       .child-row {
-        padding-left:317px;
+        padding-left: 317px;
         border-right: none;
       }
     }
     td:nth-child(1) {
-          background: none;
+      background: none;
     }
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
