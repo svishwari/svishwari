@@ -977,7 +977,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             generic_campaign_id=[],
         )
 
-        metrics_list = dpm.get_performance_metrics_by_engagement_detail(
+        metrics_list = dpm.get_performance_metrics_by_engagement_details(
             self.database, engagement_id, [delivery_platform_id]
         )
 
@@ -988,7 +988,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database, ObjectId(), delivery_platform_id
         )
 
-        self.assertTrue(metrics_list is not None)
+        self.assertIsNotNone(metrics_list)
         self.assertEqual(len(metrics_list), 0)
 
         metrics_list = dpm.get_performance_metrics_by_engagement_detail(
@@ -1376,7 +1376,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database, doc[c.ID], self.generic_campaigns
         )
 
-        self.assertTrue(updated_doc is not None)
+        self.assertIsNotNone(updated_doc)
         self.assertEqual(
             len(updated_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1
         )
@@ -1401,7 +1401,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             engagement_id=engagement_id,
         )
 
-        self.assertTrue(doc is not None)
+        self.assertIsNotNone(doc)
 
         delivery_jobs = dpm.get_delivery_job_engagement_detail(
             self.database,

@@ -1088,13 +1088,13 @@ def get_delivery_job(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivery_job_engagement_detail(
+def get_delivery_jobs_by_engagement_details(
     database: DatabaseClient,
     engagement_id: ObjectId,
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
 ) -> Union[list, None]:
-    """A function to get an delivery job using enagement/audience/delivery_platform id.
+    """A function to get delivery jobs based on engagement details.
 
     Args:
         database (DatabaseClient): A database client.
@@ -1103,7 +1103,7 @@ def get_delivery_job_engagement_detail(
         delivery_platform_id (ObjectId): Delivery platform id.
 
     Returns:
-        Union[list, None]: Delivery job configuration.
+        Union[list, None]: List of matching delivery jobs, if any.
 
     """
 
@@ -1477,11 +1477,10 @@ def create_delivery_job_generic_campaigns(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
 
-    update_doc = {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign}
     try:
         return collection.find_one_and_update(
             {c.ID: delivery_job_id, c.DELETED: False},
-            {"$set": update_doc},
+            {"$set": {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign}},
             upsert=False,
             new=True,
         )
@@ -1513,11 +1512,10 @@ def delete_delivery_job_generic_campaigns(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
 
-    update_doc = {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: []}
     try:
         return collection.update_many(
             {c.ID: {"$in": delivery_job_ids}, c.DELETED: False},
-            {"$set": update_doc},
+            {"$set": {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: []}},
             upsert=False,
         ).modified_count
     except pymongo.errors.OperationFailure as exc:
@@ -1918,7 +1916,7 @@ def get_performance_metrics(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_performance_metrics_by_engagement_detail(
+def get_performance_metrics_by_engagement_details(
     database: DatabaseClient,
     engagement_id: ObjectId,
     destination_ids: list,
