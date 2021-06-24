@@ -235,6 +235,11 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertIsNotNone(doc)
 
+        doc = dpm.get_delivery_platform_by_type(
+            self.database, self.delivery_platform_doc[c.DELIVERY_PLATFORM_TYPE]
+        )
+        self.assertIsNotNone(doc)
+
         dpm.update_delivery_platform(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc[c.ID],
