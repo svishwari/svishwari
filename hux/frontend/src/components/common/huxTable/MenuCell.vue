@@ -1,6 +1,7 @@
 <template>
   <v-row class="menu-cell-wrapper">
     <v-col class="d-flex pr-0">
+      <slot name="expand-icon"></slot>
       <router-link :to="routePath" class="text-decoration-none" append>
         <tooltip>
           <template slot="label-content">
