@@ -154,6 +154,7 @@ const salesforce = {
   // TODO: update this once ORCH-233 is addressed
   type: "SFMC",
   is_enabled: true,
+  is_added: true,
 }
 
 const adobe = {

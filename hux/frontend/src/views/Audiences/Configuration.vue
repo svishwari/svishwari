@@ -298,7 +298,6 @@ export default {
       AudiencesRules: "audiences/audiencesRules",
       getAudience: "audiences/audience",
       overview: "customers/overview",
-      dataExtensions: "destinations/dataExtensions",
     }),
 
     attributeRules() {
@@ -328,7 +327,6 @@ export default {
       getAudiencesRules: "audiences/fetchConstants",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
-      dataExtensionLists: "destinations/dataExtensions",
     }),
 
     addDataExtension(data) {
