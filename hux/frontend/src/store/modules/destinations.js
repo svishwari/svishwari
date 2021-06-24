@@ -8,6 +8,7 @@ const state = {
   items: {},
   constants: {},
   availableDestinations: {},
+  dataExtensions: [],
 }
 
 const getters = {
@@ -21,6 +22,8 @@ const getters = {
   constants: (state) => state.constants,
 
   availableDestinations: (state) => Object.values(state.availableDestinations),
+
+  dataExtensions: (state) => Object.values(state.dataExtensions),
 }
 
 const mutations = {
@@ -50,6 +53,11 @@ const mutations = {
         item.is_added = false
         Vue.set(state.availableDestinations, item.id, item)
       }
+    })
+  },
+  SET_DATAEXTENSIONS(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.dataExtensions, item.id, item)
     })
   },
 }
@@ -125,6 +133,16 @@ const actions = {
     try {
       const response = await api.destinations.all()
       commit("SET_AVAILABLE_DESTINATIONS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async dataExtensions({ commit }, id) {
+    try {
+      const response = await api.destinations.dataExtensions(id)
+      commit("SET_DATAEXTENSIONS", response.data)
     } catch (error) {
       handleError(error)
       throw error

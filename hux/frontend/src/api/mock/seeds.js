@@ -276,4 +276,7 @@ export default function (server) {
 
   // seed customers
   server.createList("customer", 1000)
+
+  // seed data-extensions
+  server.createList("dataExtension", 5)
 }
