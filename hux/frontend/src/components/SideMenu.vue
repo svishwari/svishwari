@@ -51,14 +51,19 @@
 
       <v-list-item class="my-2" v-if="!item.menu" :to="item.link">
         <v-list-item-icon class="my-3" v-if="item.icon">
-           <Tooltip :key="item.title" v-if="item.title" positionTop color="black">
+          <Tooltip
+            :key="item.title"
+            v-if="item.title"
+            positionTop
+            color="black"
+          >
             <template #label-content>
-               <Icon :type="item.icon" :size="iconSize" color="white" />
+              <Icon :type="item.icon" :size="iconSize" color="white" />
             </template>
             <template #hover-content>
               {{ item.title }}
             </template>
-           </Tooltip>
+          </Tooltip>
         </v-list-item-icon>
         <v-list-item-title class="white--text">
           {{ item.title }}
@@ -72,15 +77,19 @@
           :to="menu.link"
         >
           <v-list-item-icon class="my-3" v-if="menu.icon">
-            <Tooltip :key="menu.title" v-if="menu.icon" positionTop color="black">
-            <template #label-content>
-            <Icon :type="menu.icon" :size="iconSize" color="white" />
-            </template>
-            <template #hover-content>
-              {{ menu.title }}
-            </template>
+            <Tooltip
+              :key="menu.title"
+              v-if="menu.icon"
+              positionTop
+              color="black"
+            >
+              <template #label-content>
+                <Icon :type="menu.icon" :size="iconSize" color="white" />
+              </template>
+              <template #hover-content>
+                {{ menu.title }}
+              </template>
             </Tooltip>
-            
           </v-list-item-icon>
           <v-list-item-title class="white--text">
             {{ menu.title }}

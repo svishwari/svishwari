@@ -1,12 +1,6 @@
 <template>
   <v-card
-    class="
-      page-header--wrap
-      d-flex
-      justify-space-between
-      align-center
-      px-8
-    "
+    class="page-header--wrap d-flex justify-space-between align-center px-8"
     :class="headerHightChanges"
     elevation="1"
     tile
@@ -68,8 +62,8 @@ export default {
     headerHightChanges: {
       type: String,
       required: false,
-      default: 'py-5',
-    }
+      default: "py-5",
+    },
   },
 }
 </script>

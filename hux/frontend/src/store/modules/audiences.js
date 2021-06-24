@@ -32,10 +32,10 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
-    let getAudience = items.sort(function(a, b){
-      return a.name === b.name ? 0 : a.name < b.name ? -1 : 1;
-  })
-  getAudience.forEach((item) => {
+    let getAudience = items.sort(function (a, b) {
+      return a.name === b.name ? 0 : a.name < b.name ? -1 : 1
+    })
+    getAudience.forEach((item) => {
       Vue.set(state.audiences, item.id, item)
     })
   },

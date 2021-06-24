@@ -15,7 +15,9 @@
         >
           View all customers
         </hux-button>
-        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+          mdi-download
+        </v-icon>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -316,6 +318,6 @@ export default {
   }
 }
 .icon-border {
-    cursor: default !important;
+  cursor: default !important;
 }
 </style>
