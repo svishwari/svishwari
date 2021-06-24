@@ -111,10 +111,9 @@ export default {
       required: false,
       default: false,
     },
-    selected: {
-      type: [Object, Array],
+    selectedKey: {
+      type: String,
       required: false,
-      default: [],
     },
   },
 
