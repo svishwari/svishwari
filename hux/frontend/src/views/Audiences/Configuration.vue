@@ -491,8 +491,6 @@ export default {
     },
 
     async onSelectDestination(selected) {
-      console.log(selected)
-      debugger
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
         if (selected && selected.type === "SFMC") {
