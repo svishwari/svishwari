@@ -28,80 +28,87 @@
         </v-icon>
       </v-card>
     </v-col>
-    <v-col col="12" v-if="rules.length > 0" class="pt-0 pr-0">
+    <v-col col="12" v-if="rules.length > 0" class="pt-0 pr-0 pa-0">
       <div v-for="(rule, index) in rules" :key="`rule-${index}`">
-        <div class="d-flex align-center mb-2 col-12 pa-0">
+        <div
+          class="d-flex align-center col-12 pa-0 neroBlack--text text-caption"
+        >
           <span class="mr-2">Match</span>
           <huxSwitch v-model="rule.operand" :switchLabels="switchOptions" />
           of the following
         </div>
 
-        <div
+        <v-col
+          col="12"
           v-for="(condition, ixcondition) in rule.conditions"
           :key="`${index}-ruleCondition-${ixcondition}`"
-          class="rule-section mb-2"
+          class="rule-section pa-0 mb-2"
         >
-          <div class="condition-card col-10 pa-0">
-            <div class="condition-container">
-              <div class="condition-items col-10 pa-0">
-                <hux-dropdown
-                  :selected="condition.attribute"
-                  :label="fetchDropdownLabel(condition, 'attribute')"
-                  @on-select="onSelect('attribute', condition, $event)"
-                  :items="attributeOptions"
-                />
-                <hux-dropdown
-                  :label="fetchDropdownLabel(condition, 'operator')"
-                  :selected="condition.operator"
-                  @on-select="onSelect('operator', condition, $event)"
-                  :items="operatorOptions"
-                  v-if="isText(condition)"
-                />
-                <TextField
-                  v-if="condition.operator && isText(condition)"
-                  v-model="condition.text"
-                  :placeholder="getPlaceHolderText(condition)"
-                  required
-                  class="item-text-field"
-                  @blur="triggerSizing(condition)"
-                />
-                <hux-slider
-                  :isRangeSlider="true"
-                  :readOnly="false"
-                  :min="condition.attribute.min"
-                  :max="condition.attribute.max"
-                  :step="condition.attribute.steps"
-                  v-model="condition.range"
-                  @onFinalValue="triggerSizing(condition)"
-                  v-if="condition.attribute && !isText(condition)"
-                />
-              </div>
-              <div class="condition-actions col-2 pa-0">
-                <v-icon @click="addNewCondition(rule.id)" color="primary"
-                  >mdi-plus-circle</v-icon
-                >
-                <v-icon
-                  @click="removeCondition(rule, ixcondition)"
-                  color="primary"
-                  >mdi-delete-outline</v-icon
-                >
+          <v-col md="10" class="pa-0">
+            <div class="condition-card">
+              <div class="condition-container">
+                <div class="condition-items col-10 pa-0">
+                  <hux-dropdown
+                    :selected="condition.attribute"
+                    :label="fetchDropdownLabel(condition, 'attribute')"
+                    @on-select="onSelect('attribute', condition, $event)"
+                    :items="attributeOptions"
+                  />
+                  <hux-dropdown
+                    :label="fetchDropdownLabel(condition, 'operator')"
+                    :selected="condition.operator"
+                    @on-select="onSelect('operator', condition, $event)"
+                    :items="operatorOptions"
+                    v-if="isText(condition)"
+                  />
+                  <TextField
+                    v-if="condition.operator && isText(condition)"
+                    v-model="condition.text"
+                    :placeholder="getPlaceHolderText(condition)"
+                    required
+                    class="item-text-field"
+                    @blur="triggerSizing(condition)"
+                  />
+                  <hux-slider
+                    :isRangeSlider="true"
+                    :readOnly="false"
+                    :min="condition.attribute.min"
+                    :max="condition.attribute.max"
+                    :step="condition.attribute.steps"
+                    v-model="condition.range"
+                    @onFinalValue="triggerSizing(condition)"
+                    v-if="condition.attribute && !isText(condition)"
+                  />
+                </div>
+                <div class="condition-actions col-2 pa-0">
+                  <v-icon @click="addNewCondition(rule.id)" color="primary"
+                    >mdi-plus-circle</v-icon
+                  >
+                  <v-icon
+                    @click="removeCondition(rule, ixcondition)"
+                    color="primary"
+                    >mdi-delete-outline</v-icon
+                  >
+                </div>
               </div>
             </div>
-          </div>
-          <div class="condition-summary col-2">
-            <span class="title text-caption">Size</span>
-            <span class="value text-h6 pt-1 font-weight-semi-bold">
-              <v-progress-circular
-                :value="16"
-                indeterminate
-                v-if="condition.awaitingSize"
-              />
-              <span v-if="!condition.awaitingSize">
-                {{ fetchSize(condition.id) | Numeric(false, false, true) }}
+          </v-col>
+          <v-col md="2" class="pr-0 py-0 pl-5">
+            <div class="condition-summary">
+              <span class="title text-caption">Size</span>
+              <span class="value text-h6 pt-1 font-weight-semi-bold">
+                <v-progress-circular
+                  :value="16"
+                  indeterminate
+                  v-if="condition.awaitingSize"
+                />
+                <span v-if="!condition.awaitingSize">
+                  {{ fetchSize(condition.id) | Numeric(false, false, true) }}
+                </span>
               </span>
-            </span>
-          </div>
-        </div>
+            </div>
+          </v-col>
+        </v-col>
 
         <div class="col-12 seperator mt-5 mb-1" v-if="index != lastIndex">
           <hr class="zircon" />
@@ -117,16 +124,20 @@
         </div>
       </div>
       <div class="add-section-wrap">
-        <div class="add-section pl-4 col-10">
-          <v-btn icon color="primary" @click="addNewSection()">
-            <v-icon>mdi-plus-circle</v-icon>
-          </v-btn>
-          <span class="primary--text pl-1">New section</span>
-        </div>
-        <div class="condition-summary col-2">
-          <span class="title text-caption">Result Size</span>
-          <span class="value text-h6 pt-1 font-weight-semi-bold">35.6M</span>
-        </div>
+        <v-col md="10" class="pa-0 pt-3">
+          <div class="add-section pa-5">
+            <v-btn icon color="primary" @click="addNewSection()">
+              <v-icon>mdi-plus-circle</v-icon>
+            </v-btn>
+            <span class="primary--text pl-1">New section</span>
+          </div>
+        </v-col>
+        <v-col md="2" class="pr-0 pl-5">
+          <div class="condition-summary">
+            <span class="title text-caption">Result Size</span>
+            <span class="value text-h6 pt-1 font-weight-semi-bold">35.6M</span>
+          </div>
+        </v-col>
       </div>
     </v-col>
   </v-col>
@@ -254,6 +265,7 @@ export default {
   methods: {
     ...mapActions({
       getRealtimeSize: "audiences/fetchFilterSize",
+      getAudiencesRules: "audiences/fetchConstants",
     }),
     fetchSize(id) {
       return this.sizes[id] ? this.sizes[id].size : "0"
@@ -323,6 +335,9 @@ export default {
       return prefix + type
     },
   },
+  async mounted() {
+    await this.getAudiencesRules()
+  },
 }
 </script>
 
@@ -357,6 +372,7 @@ export default {
       border-left: solid 10px var(--v-aliceBlue-base);
       display: flex;
       align-items: center;
+      height: 60px;
       .condition-container {
         width: 100%;
         display: flex;
@@ -367,6 +383,11 @@ export default {
           display: flex;
           align-items: center;
           width: 100%;
+          .hux-dropdown {
+            .v-btn__content {
+              color: var(--v-gray-base);
+            }
+          }
           .avatar-menu {
             margin-right: 20px;
             max-width: 200px;
@@ -428,17 +449,16 @@ export default {
       border-radius: 5px;
       display: flex;
       align-items: center;
+      height: 60px;
     }
   }
   ::v-deep .condition-summary {
     border: solid 1px var(--v-zircon-base);
     border-radius: 10px;
-    margin-left: 15px;
     background: var(--v-background-base);
     padding: 10px 15px;
     display: flex;
     flex-direction: column;
-    width: 120px;
     .title {
       line-height: 16px;
     }
