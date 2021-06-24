@@ -97,7 +97,7 @@
         <hux-dropdown
           class="extension-dropdown"
           :label="selectedLabel"
-          :items="operatorOptions"
+          :items="dropdownOptions"
           @on-select="onSelect($event)"
         />
 
@@ -136,10 +136,10 @@ export default {
     dropdownItems: Array,
   },
   computed: {
-    operatorOptions() {
+    dropdownOptions() {
       return Object.keys(this.dropdownItems).map((key) => ({
-        key: this.dropdownItems[key].id,
-        name: this.dropdownItems[key].data_extension_id,
+        key: this.dropdownItems[key].data_extension_id,
+        name: this.dropdownItems[key].name,
       }))
     },
   },
@@ -198,6 +198,9 @@ export default {
       border: 1px solid var(--v-primary-base);
     }
     .child {
+      .v-icon {
+        margin-top: -3px;
+      }
       .label {
         color: var(--v-darkBlue-base);
       }

@@ -39,12 +39,12 @@ export const destinationsConstants = {
   facebook: {
     facebook_ad_account_id: field({ name: "Ad Account ID" }),
     facebook_app_id: field({ name: "App ID" }),
-    facebook_access_token: field({
-      name: "Access Token",
-      type: "password",
-    }),
     facebook_app_secret: field({
       name: "App Secret",
+      type: "password",
+    }),
+    facebook_access_token: field({
+      name: "Access Token",
       type: "password",
     }),
   },
@@ -57,4 +57,18 @@ export const destinationsConstants = {
     sfmc_rest_base_uri: field({ name: "REST Base URI" }),
     sfmc_soap_base_uri: field({ name: "Soap Base URI" }),
   },
+}
+
+/**
+ * Destination data extensions
+ */
+export const destinationsDataExtensions = () => {
+  let dataExtensions = []
+  for (let i = 0; i < 10; i++) {
+    dataExtensions.push({
+      data_extension_name: faker.company.companyName(),
+      data_extension_id: faker.datatype.uuid(),
+    })
+  }
+  return dataExtensions
 }

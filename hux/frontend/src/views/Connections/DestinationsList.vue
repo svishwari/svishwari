@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list-wrapper">
     <div class="d-flex align-end mb-4">
       <Icon type="destinations" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
@@ -17,7 +17,7 @@
         :title="destination.name"
         :icon="destination.type"
         hideButton
-        class="mb-3"
+        class="mb-3 list"
       />
     </template>
     <EmptyStateData v-else>
@@ -63,3 +63,12 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+.list-wrapper {
+  .list {
+    &:hover {
+      cursor: auto;
+    }
+  }
+}
+</style>

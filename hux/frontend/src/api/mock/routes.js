@@ -1,6 +1,9 @@
 import { Response } from "miragejs"
 import { customersOverview } from "./factories/customers"
-import { destinationsConstants } from "./factories/destination"
+import {
+  destinationsConstants,
+  destinationsDataExtensions,
+} from "./factories/destination"
 import idrOverview from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 
@@ -26,10 +29,15 @@ export const defineRoutes = (server) => {
   })
   server.get("/destinations/:destinationId/data-extensions")
 
-  server.post("/destinations/validate", () => {
+  server.post("/destinations/validate", (_, request) => {
     const code = 200
     const headers = {}
     const body = { message: "Destination authentication details are valid" }
+    const requestData = JSON.parse(request.requestBody)
+
+    if (requestData.type === "salesforce") {
+      body.performance_metrics_data_extensions = destinationsDataExtensions()
+    }
     return new Response(code, headers, body)
   })
 
@@ -61,14 +69,16 @@ export const defineRoutes = (server) => {
     "/engagements/:id/audience-performance/email",
     (schema, request) => {
       const id = request.params.id
-      return schema.audiencePerformances.find(id)
+      const response = schema.audiencePerformances.find(id)
+      return response["email_audience_performance"]
     }
   )
   server.get(
     "/engagements/:id/audience-performance/display-ads",
     (schema, request) => {
       const id = request.params.id
-      return schema.audiencePerformances.find(id)
+      const response = schema.audiencePerformances.find(id)
+      return response["displayads_audience_performance"]
     }
   )
 

@@ -193,6 +193,40 @@ def get_delivery_platform(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_delivery_platform_by_type(
+    database: DatabaseClient,
+    delivery_platform_type: str,
+) -> Union[dict, None]:
+    """A function to get a delivery platform by type.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_type (str): The delivery platform type.
+
+    Returns:
+        Union[dict, None]: Delivery platform configuration.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_PLATFORM_COLLECTION]
+    try:
+        return collection.find_one(
+            {
+                c.DELIVERY_PLATFORM_TYPE: delivery_platform_type,
+                c.DELETED: False,
+            },
+            {c.DELETED: 0},
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_all_delivery_platforms(
     database: DatabaseClient,
 ) -> Union[list, None]:
@@ -944,6 +978,7 @@ def set_delivery_job(
     delivery_platform_id: ObjectId,
     delivery_platform_generic_campaigns: list,
     engagement_id: ObjectId = None,
+    delivery_platform_config: dict = None,
 ) -> Union[dict, None]:
     """A function to set an audience delivery job.
 
@@ -953,6 +988,8 @@ def set_delivery_job(
         delivery_platform_id (ObjectId): Delivery platform ID.
         delivery_platform_generic_campaigns (list): generic campaign IDs.
         engagement_id (ObjectId): Engagement ID.
+        delivery_platform_config (dict): the delivery platform config
+            object that holds the data extensions
     Returns:
         Union[dict, None]: Delivery job configuration.
 
@@ -986,6 +1023,9 @@ def set_delivery_job(
     }
     if engagement_id is not None:
         doc[c.ENGAGEMENT_ID] = engagement_id
+
+    if delivery_platform_config is not None:
+        doc[c.DELIVERY_PLATFORM_CONFIG] = delivery_platform_config
 
     try:
         delivery_job_id = collection.insert_one(doc).inserted_id
@@ -1743,6 +1783,47 @@ def get_performance_metrics(
     try:
         cursor = collection.find(mongo_query)
         return list(cursor)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_performance_metrics_by_engagement_id(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+) -> Union[list, None]:
+    """Retrieve campaign performance metrics using engagement id.
+
+    Args:
+        database (DatabaseClient): database client.
+        engagement_id (ObjectId): Engagement ID.
+
+    Raises:
+        de.InvalidID: Invalid ID for engagement.
+
+    Returns:
+        Union[list, None]: list of metrics or None
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+
+    # Get delivery jobs using engagement id
+    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+
+    try:
+        delivery_jobs = collection.find({c.ENGAGEMENT_ID: engagement_id})
+
+        # Get performance metrics for all delivery jobs
+        collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+        delivery_job_ids = [x[c.ID] for x in delivery_jobs]
+        return list(
+            collection.find({c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}})
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

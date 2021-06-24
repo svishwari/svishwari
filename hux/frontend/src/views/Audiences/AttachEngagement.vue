@@ -77,7 +77,7 @@
                   :isAdded="isEngagementSelected(engagement)"
                   :enableBlueBackground="isEngagementSelected(engagement)"
                   @click="onEngagementClick(engagement)"
-                  class="my-3"
+                  class="my-3 mb-4 mt-1"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">
                     <template #activator="{ on }">
@@ -422,6 +422,9 @@ export default {
       &.v-btn--active {
         border: 1px solid var(--v-primary-base) !important;
         color: var(--v-primary-base) !important;
+        &::before {
+          opacity: 0;
+        }
         .v-icon {
           &.ico {
             width: 13.44px;

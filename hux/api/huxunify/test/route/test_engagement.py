@@ -18,9 +18,9 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.engagement_management import (
     set_engagement,
     get_engagements,
-    get_engagement,
 )
 from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
@@ -30,7 +30,6 @@ from huxunify.api.schema.engagement import (
     DispAdIndividualAudienceSummary,
     EmailSummary,
     EmailIndividualAudienceSummary,
-    EngagementGetSchema,
 )
 from huxunify.api.data_connectors.aws import parameter_store
 
@@ -50,6 +49,11 @@ VALID_RESPONSE = {
     "token_type": "Bearer",
     "client_id": "1234",
     "uid": "1234567",
+}
+VALID_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: "8548bfh8d",
+    api_c.EMAIL: "davesmith@fake.com",
+    api_c.NAME: "dave smith",
 }
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 
@@ -228,6 +232,7 @@ class TestEngagementMetricsEmail(TestCase):
         self.assertTrue(result)
 
 
+# pylint: disable=too-many-instance-attributes
 class TestEngagementRoutes(TestCase):
     """
     Tests for Engagement APIs
@@ -248,6 +253,7 @@ class TestEngagementRoutes(TestCase):
             f"/oauth2/v1/introspect?client_id="
             f"{self.config.OKTA_CLIENT_ID}"
         )
+        self.user_info_call = f"{self.config.OKTA_ISSUER}/oauth2/v1/userinfo"
 
         self.app = create_app().test_client()
 
@@ -265,6 +271,23 @@ class TestEngagementRoutes(TestCase):
         ).start()
         get_db_client_mock.return_value = self.database
         self.addCleanup(mock.patch.stopall)
+
+        # mock get_db_client() for the userinfo utils.
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        self.addCleanup(mock.patch.stopall)
+
+        # write a user to the database
+        self.user_name = "felix hernandez"
+        set_user(
+            self.database,
+            "fake",
+            "felix_hernandez@fake.com",
+            display_name=self.user_name,
+        )
 
         destinations = [
             {
@@ -322,11 +345,9 @@ class TestEngagementRoutes(TestCase):
             },
         ]
 
-        self.audiences = []
-        for audience in audiences:
-            self.audiences.append(create_audience(self.database, **audience))
-
-        user_id = ObjectId()
+        self.audiences = [
+            create_audience(self.database, **x) for x in audiences
+        ]
 
         engagements = [
             {
@@ -348,7 +369,7 @@ class TestEngagementRoutes(TestCase):
                         ],
                     },
                 ],
-                db_c.USER_ID: user_id,
+                api_c.USER_NAME: self.user_name,
             },
             {
                 db_c.ENGAGEMENT_NAME: "Test Engagement No Destination",
@@ -359,15 +380,13 @@ class TestEngagementRoutes(TestCase):
                         api_c.DESTINATIONS_TAG: [],
                     },
                 ],
-                db_c.USER_ID: user_id,
+                api_c.USER_NAME: self.user_name,
             },
         ]
 
-        self.engagement_ids = []
-        for engagement in engagements:
-            self.engagement_ids.append(
-                str(set_engagement(self.database, **engagement))
-            )
+        self.engagement_ids = [
+            str(set_engagement(self.database, **x)) for x in engagements
+        ]
 
     @requests_mock.Mocker()
     @mock.patch.object(parameter_store, "get_store_value")
@@ -685,16 +704,18 @@ class TestEngagementRoutes(TestCase):
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
-        res = get_engagements(self.database)
-        valid_response = EngagementGetSchema().dump(res, many=True)
+        expected_engagements = get_engagements(self.database)
 
         response = self.app.get(
             f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}",
             headers={"Authorization": TEST_AUTH_TOKEN},
         )
 
+        engagements = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(valid_response, response.json)
+        self.assertEqual(len(engagements), len(expected_engagements))
+        for engagement in engagements:
+            self.assertEqual(self.user_name, engagement[db_c.CREATED_BY])
 
     @requests_mock.Mocker()
     def test_get_engagement_by_id_valid_id(self, request_mocker: Mocker):
@@ -710,10 +731,6 @@ class TestEngagementRoutes(TestCase):
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         engagement_id = self.engagement_ids[0]
-        engagement = EngagementGetSchema().dump(
-            get_engagement(self.database, ObjectId(engagement_id))
-        )
-
         response = self.app.get(
             f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
             headers={
@@ -722,7 +739,9 @@ class TestEngagementRoutes(TestCase):
             },
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(engagement, response.json)
+        return_engagement = response.json
+        self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
+        self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
 
     @requests_mock.Mocker()
     def test_get_engagement_by_id_invalid_id(self, request_mocker: Mocker):
@@ -848,6 +867,7 @@ class TestEngagementRoutes(TestCase):
 
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         engagement = {
             db_c.AUDIENCES: [
@@ -886,6 +906,7 @@ class TestEngagementRoutes(TestCase):
 
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         engagement = {
             db_c.AUDIENCES: [],
@@ -917,6 +938,7 @@ class TestEngagementRoutes(TestCase):
 
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         engagement = {
             db_c.AUDIENCES: [],
@@ -947,6 +969,7 @@ class TestEngagementRoutes(TestCase):
 
         """
         request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         engagement = {
             db_c.AUDIENCES: [],

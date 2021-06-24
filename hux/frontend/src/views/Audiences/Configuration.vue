@@ -98,9 +98,9 @@
             <template #icon class="timeline-icon-section">
               <span>2</span>
             </template>
-            <v-row class="pt-1 pr-0">
+            <v-col class="pt-1 pa-0">
               <attribute-rules :rules="attributeRules"></attribute-rules>
-            </v-row>
+            </v-col>
           </v-timeline-item>
           <v-timeline-item
             color="blue"
@@ -124,20 +124,29 @@
                   >
                     mdi-plus-circle
                   </v-icon>
-                  <tooltip>
+                  <tooltip
+                    v-for="destination in audience.destinations"
+                    :key="destination.id"
+                  >
                     <template #label-content>
-                      <Logo
-                        class="added-logo ml-2"
-                        v-for="destination in audience.destinations"
-                        :key="destination.id"
-                        :type="destination.type.toLowerCase()"
-                        :size="18"
-                        @mouseover.native="hoverItem = destination.name"
-                      />
+                      <div class="destination-logo-wrapper">
+                        <div class="logo-wrapper">
+                          <Logo
+                            class="added-logo ml-2 svg-icon"
+                            :type="destination.type.toLowerCase()"
+                            :size="18"
+                          />
+                          <Logo
+                            class="delete-icon"
+                            type="delete"
+                            @click.native="removeDestination(destination.id)"
+                          />
+                        </div>
+                      </div>
                     </template>
                     <template #hover-content>
                       <div class="d-flex align-center">
-                        Remove {{ hoverItem }}
+                        Remove {{ destination.name }}
                       </div>
                     </template>
                   </tooltip>
@@ -214,12 +223,16 @@
           <v-stepper v-model="destinationDrawer.viewStep" class="stepper mt-1">
             <v-stepper-items>
               <v-stepper-content step="1">
-                <div>
+                <div class="mx-1">
                   <CardHorizontal
                     v-for="destination in destinationsList"
                     :key="destination.id"
                     :title="destination.name"
                     :icon="destination.type.toLowerCase()"
+                    :enableBlueBackground="
+                      destination.is_added ||
+                      isDestinationAdded(destination.type)
+                    "
                     :isAdded="
                       destination.is_added ||
                       isDestinationAdded(destination.type)
@@ -361,7 +374,6 @@ export default {
         viewStep: 1,
         selectedDestination: [],
       },
-      hoverItem: "",
       loading: false,
       addDestinationFormValid: false,
     }
@@ -481,7 +493,7 @@ export default {
     async onSelectDestination(selected) {
       // check to avoid duplicate destination
       if (!this.isDestinationAdded(selected.type)) {
-        if (selected && selected.type === "sfmc") {
+        if (selected && selected.type === "SFMC") {
           if (!this.isDestinationAddedOnDrawer(selected)) {
             this.destinationDrawer.selectedDestination.push(selected)
           }
@@ -591,6 +603,14 @@ export default {
     validateForm(value) {
       this.addDestinationFormValid = value
     },
+    removeDestination(id) {
+      const existingIndex = this.audience.destinations.findIndex(
+        (each) => id === each.id
+      )
+      if (existingIndex > -1) {
+        this.audience.destinations.splice(existingIndex, 1)
+      }
+    },
   },
   async mounted() {
     this.loading = true
@@ -693,13 +713,26 @@ export default {
         }
       }
     }
-    .added-logo {
-      margin-top: 6px;
-      &:hover {
-        width: 18px;
-        height: 18px;
-        background-image: url("../../assets/images/delete_outline.png");
-        background-size: 18px 18px;
+    .destination-logo-wrapper {
+      display: inline-flex;
+      .logo-wrapper {
+        position: relative;
+        .added-logo {
+          margin-top: 8px;
+        }
+        .delete-icon {
+          z-index: 1;
+          position: absolute;
+          left: 3px;
+          top: 5px;
+          background: var(--v-white-base);
+          display: none;
+        }
+        &:hover {
+          .delete-icon {
+            display: block;
+          }
+        }
       }
     }
   }

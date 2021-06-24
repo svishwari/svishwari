@@ -1,12 +1,8 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
-import audiencePerformanceMock from "@/api/mock/factories/audiencePerformance"
 
 const namespaced = true
-
-// TODO Remove the below once API Integration is done
-const sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
 const state = {
   items: {},
@@ -36,9 +32,9 @@ const mutations = {
      */
     let audiencePerformanceObject = {}
     if (type === "ads") {
-      audiencePerformanceObject = item["displayads_audience_performance"]
+      audiencePerformanceObject = item
     } else {
-      audiencePerformanceObject = item["email_audience_performance"]
+      audiencePerformanceObject = item
     }
     Vue.set(state.audiencePerformance, type, audiencePerformanceObject)
   },
@@ -66,33 +62,10 @@ const actions = {
   },
 
   async getAudiencePerformance({ commit }, payload) {
-    /**
-     * TODO Comment the below code to enable the API Integration
-     *  Mock STUB begin here
-     */
-    await sleep(2000)
-    const data = audiencePerformanceMock
-    if (typeof data.displayads_audience_performance.summary === "function") {
-      data.displayads_audience_performance.summary =
-        data.displayads_audience_performance.summary()
-      data.displayads_audience_performance.audience_performance =
-        data.displayads_audience_performance.audience_performance()
-      data.email_audience_performance.summary =
-        data.email_audience_performance.summary()
-      data.email_audience_performance.audience_performance =
-        data.email_audience_performance.audience_performance()
-    }
-    const response = {
-      data: data,
-    }
-    /**
-     * *  Mock STUB ends here
-     *  TODO Uncomment the below code to enable the API Integration
-     */
-    // const response = await api.engagements.fetchAudiencePerformance(
-    //   payload.id,
-    //   payload.type
-    // )
+    const response = await api.engagements.fetchAudiencePerformance(
+      payload.id,
+      payload.type
+    )
     commit("SET_AUDIENCE_PERFORMANCE", {
       item: response.data,
       type: payload.type,

@@ -14,6 +14,7 @@
         <DataCards
           :items="audiences"
           sort="asc"
+          empty="No audiences have been created."
           :fields="[
             {
               key: 'name',

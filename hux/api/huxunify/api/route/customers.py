@@ -151,18 +151,28 @@ class CustomerPostOverview(SwaggerView):
             "type": "object",
             "in": "body",
             "example": {
-                "filters": {
-                    "section_aggregator": "ALL",
-                    "section_filters": [
-                        {"field": "max_age", "type": "equals", "value": 87},
-                        {"field": "min_age", "type": "equals", "value": 25},
-                        {
-                            "field": "match_rate",
-                            "type": "equals",
-                            "value": 0.5,
-                        },
-                    ],
-                }
+                "filters": [
+                    {
+                        "section_aggregator": "ALL",
+                        "section_filters": [
+                            {
+                                "field": "max_age",
+                                "type": "equals",
+                                "value": 87,
+                            },
+                            {
+                                "field": "min_age",
+                                "type": "equals",
+                                "value": 25,
+                            },
+                            {
+                                "field": "match_rate",
+                                "type": "equals",
+                                "value": 0.5,
+                            },
+                        ],
+                    }
+                ]
             },
         }
     ]
@@ -198,10 +208,8 @@ class CustomerPostOverview(SwaggerView):
         # TODO: Integrate with CDM API /customer-profiles/insights once its ready
         body = request.json
 
-        filters_list = body["filters"]["section_filters"]
-        filters = {filt["field"]: filt["value"] for filt in filters_list}
         return (
-            CustomerOverviewSchema().dump(get_customers_overview(filters)),
+            CustomerOverviewSchema().dump(get_customers_overview(body)),
             HTTPStatus.OK,
         )
 

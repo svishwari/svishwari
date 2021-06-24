@@ -13,7 +13,6 @@ from marshmallow import ValidationError, INCLUDE
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
-    user_management,
     orchestration_management,
     db_exceptions,
     engagement_management,
@@ -33,7 +32,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     api_error_handler,
-    get_user_id,
+    get_user_name,
 )
 from huxunify.api.data_connectors.courier import (
     get_destination_config,
@@ -106,12 +105,6 @@ class AudienceView(SwaggerView):
         for audience in audiences:
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 audience.get(api_c.DESTINATIONS_TAG)
-            )
-            audience[api_c.CREATED_BY] = user_management.get_user(
-                get_db_client(), audience.get(api_c.CREATED_BY)
-            )
-            audience[api_c.UPDATED_BY] = user_management.get_user(
-                get_db_client(), audience.get(api_c.UPDATED_BY)
             )
 
             # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
@@ -190,12 +183,6 @@ class AudienceGetView(SwaggerView):
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
             audience.get(api_c.DESTINATIONS_TAG)
         )
-        audience[api_c.CREATED_BY] = user_management.get_user(
-            get_db_client(), audience.get(api_c.CREATED_BY)
-        )
-        audience[api_c.UPDATED_BY] = user_management.get_user(
-            get_db_client(), audience.get(api_c.UPDATED_BY)
-        )
 
         # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
         # Add stub insights, size, last_delivered_on for test purposes.
@@ -271,8 +258,9 @@ class AudiencePostView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-branches
-    @get_user_id()
-    def post(self, user_id) -> Tuple[dict, int]:  # pylint: disable=no-self-use
+    # pylint: disable=no-self-use
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
         """Creates a new audience.
 
         ---
@@ -280,7 +268,7 @@ class AudiencePostView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            user_id (ObjectId): user_id extracted from Okta.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Created audience, HTTP status.
@@ -362,7 +350,7 @@ class AudiencePostView(SwaggerView):
                 name=body[api_c.AUDIENCE_NAME],
                 audience_filters=body.get(api_c.AUDIENCE_FILTERS),
                 destination_ids=body.get(api_c.DESTINATIONS),
-                user_id=user_id,
+                user_name=user_name,
             )
 
             # attach the audience to each of the engagements
@@ -370,7 +358,7 @@ class AudiencePostView(SwaggerView):
                 engagement_management.append_audiences_to_engagement(
                     database,
                     engagement_id,
-                    user_id,
+                    user_name,
                     [
                         {
                             db_c.OBJECT_ID: audience_doc[db_c.ID],
@@ -452,8 +440,8 @@ class AudiencePutView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
-    @get_user_id()
-    def put(self, audience_id: str, user_id: str) -> Tuple[dict, int]:
+    @get_user_name()
+    def put(self, audience_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates an audience.
 
         ---
@@ -462,7 +450,7 @@ class AudiencePutView(SwaggerView):
 
         Args:
             audience_id (str): Audience ID.
-            user_id (ObjectId): user_id extracted from Okta.
+            user_name (str): user_name extracted from Okta.
 
         Returns:
             Tuple[dict, int]: Audience doc, HTTP status.
@@ -481,7 +469,7 @@ class AudiencePutView(SwaggerView):
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
             destination_ids=body.get(api_c.DESTINATIONS_TAG),
-            user_id=user_id,
+            user_name=user_name,
         )
 
         # TODO : attach the audience to each of the engagements
@@ -633,20 +621,6 @@ class AudienceRules(SwaggerView):
                 "model_scores": {
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
-                        "type": "range",
-                        "min": 0.0,
-                        "max": 1.0,
-                        "steps": 0.05,
-                    },
-                    "actual_lifetime_value": {
-                        "name": "Actual lifetime value",
-                        "type": "range",
-                        "min": 0,
-                        "max": 50000,
-                        "steps": 1000,
-                    },
-                    "propensity_to_purchase": {
-                        "name": "Propensity to purchase",
                         "type": "range",
                         "min": 0.0,
                         "max": 1.0,

@@ -65,7 +65,9 @@ class CourierTest(TestCase):
 
         # create the list of destinations
         destinations = []
-        for destination in [(api_c.FACEBOOK_NAME, self.auth_details_facebook)]:
+        for destination in [
+            (c.DELIVERY_PLATFORM_FACEBOOK, self.auth_details_facebook)
+        ]:
             # TODO - remove when we remove delivery-platform types
             destination_doc = set_delivery_platform(
                 self.database,
@@ -150,8 +152,8 @@ class CourierTest(TestCase):
         sample_auth = "sample_auth"
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
-            api_c.DESTINATION_NAME: "Facebook",
-            api_c.DELIVERY_PLATFORM_TYPE: "Facebook",
+            api_c.DESTINATION_NAME: c.DELIVERY_PLATFORM_FACEBOOK,
+            api_c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_FACEBOOK,
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.FACEBOOK_ACCESS_TOKEN: sample_auth,
                 api_c.FACEBOOK_APP_SECRET: sample_auth,
@@ -165,11 +167,12 @@ class CourierTest(TestCase):
             "get_store_value",
             return_value="sample_auth",
         ):
-            env_dict, _ = map_destination_credentials_to_dict(destination)
+            env_dict, secret_dict = map_destination_credentials_to_dict(
+                destination
+            )
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
-        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
         self.assertDictEqual(
             env_dict,
             {
@@ -179,6 +182,11 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
+            },
+        )
+        self.assertEqual(
+            secret_dict,
+            {
                 FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
                     api_c.FACEBOOK_ACCESS_TOKEN
                 ],
@@ -201,7 +209,7 @@ class CourierTest(TestCase):
         sample_auth = "sample_auth"
         destination = {
             api_c.DESTINATION_ID: ObjectId(),
-            api_c.DESTINATION_NAME: api_c.SFMC_NAME,
+            api_c.DESTINATION_NAME: c.DELIVERY_PLATFORM_SFMC,
             api_c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
             api_c.AUTHENTICATION_DETAILS: {
                 api_c.SFMC_CLIENT_ID: sample_auth,
@@ -224,7 +232,6 @@ class CourierTest(TestCase):
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
-        # TODO HUS-582 work with ORCH so we dont' have to send creds in env_dict
         self.assertDictEqual(
             env_dict,
             {

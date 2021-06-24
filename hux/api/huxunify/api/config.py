@@ -98,13 +98,15 @@ class Config:
         AUDIENCE_ROUTER_IMAGE_CONST,
         default=(
             "602322178640.dkr.ecr.us-east-1.amazonaws.com/"
-            "audience_router:1.0.0"
+            "audience_router:latest"
         ),
     )
 
-    # CDP
-    # TODO config details needed for this. These values are not real
-    CDP_SERVICE = "https://cdp.deloittehux.com"
+    # TODO remove the verify=False once the SSL is valid for CDM
+    CDP_SERVICE = config(
+        "CDP_SERVICE",
+        default="https://customer-profile-master.main.use1.k8s.huxdev.in",
+    )
     CDP_HEADERS = {
         "Authorization": "",
     }
