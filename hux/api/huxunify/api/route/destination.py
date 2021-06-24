@@ -294,6 +294,7 @@ class DestinationPutView(SwaggerView):
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         performance_de = body.get(api_c.PERFORMANCE_METRICS_DATA_EXTENSION)
+        authentication_parameters = None
         destination_id = ObjectId(destination_id)
 
         try:
@@ -317,7 +318,10 @@ class DestinationPutView(SwaggerView):
                 )
                 is_added = True
 
-                destination_update_dict = dict(
+            # update the destination
+            return (
+                destination_management.update_delivery_platform(
+                    database=database,
                     delivery_platform_id=destination_id,
                     delivery_platform_type=destination[
                         db_c.DELIVERY_PLATFORM_TYPE
@@ -326,12 +330,6 @@ class DestinationPutView(SwaggerView):
                     added=is_added,
                     user_name=user_name,
                     performance_de=performance_de,
-                )
-
-            # update the destination
-            return (
-                destination_management.update_delivery_platform(
-                    database=database, **destination_update_dict
                 ),
                 HTTPStatus.OK,
             )
