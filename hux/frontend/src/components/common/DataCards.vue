@@ -41,7 +41,7 @@
           :key="index"
           :class="{
             'bordered-card': bordered,
-            'data-card-selected': isAdded(item),
+            'data-card-selected': item[selectedKey],
           }"
           class="data-card mb-4"
         >
