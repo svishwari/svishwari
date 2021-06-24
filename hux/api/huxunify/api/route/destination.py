@@ -19,6 +19,7 @@ import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.connectors.connector_sfmc import SFMCConnector
+from huxunifylib.connectors.connector_exceptions import AuthenticationFailed
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
@@ -292,7 +293,7 @@ class DestinationPutView(SwaggerView):
 
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
-        authentication_parameters = None
+        performance_de = body.get(api_c.PERFORMANCE_METRICS_DATA_EXTENSION)
         destination_id = ObjectId(destination_id)
 
         try:
@@ -316,10 +317,7 @@ class DestinationPutView(SwaggerView):
                 )
                 is_added = True
 
-            # update the destination
-            return (
-                destination_management.update_delivery_platform(
-                    database=database,
+                destination_update_dict = dict(
                     delivery_platform_id=destination_id,
                     delivery_platform_type=destination[
                         db_c.DELIVERY_PLATFORM_TYPE
@@ -327,6 +325,13 @@ class DestinationPutView(SwaggerView):
                     authentication_details=authentication_parameters,
                     added=is_added,
                     user_name=user_name,
+                    performance_de=performance_de,
+                )
+
+            # update the destination
+            return (
+                destination_management.update_delivery_platform(
+                    database=database, **destination_update_dict
                 ),
                 HTTPStatus.OK,
             )
@@ -482,36 +487,38 @@ class DestinationValidatePostView(SwaggerView):
             elif (
                 body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC
             ):
-                SFMCConnector(
+                connector = SFMCConnector(
                     auth_details=set_sfmc_auth_details(
                         body.get(api_c.AUTHENTICATION_DETAILS)
                     )
                 )
 
+                ext_list = connector.get_list_of_data_extensions()
+
                 return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+                    "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
+                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: jsonify(
+                        DestinationDataExtGetSchema().dump(ext_list, many=True)
+                    ),
                 }, HTTPStatus.OK
             else:
                 return {
                     "message": api_c.DESTINATION_NOT_SUPPORTED
                 }, HTTPStatus.BAD_REQUEST
 
-        except Exception as exc:
+        except AuthenticationFailed as exc:
             logging.error(
                 "%s. Reason:[%s: %s].",
                 api_c.DESTINATION_AUTHENTICATION_FAILED,
                 exc.__class__,
                 exc,
             )
-            raise ProblemException(
-                status=int(HTTPStatus.BAD_REQUEST.value),
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=api_c.DESTINATION_AUTHENTICATION_FAILED,
-            ) from exc
 
-        return {
-            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-        }, HTTPStatus.BAD_REQUEST
+            return {
+                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+            }, HTTPStatus.BAD_REQUEST
+
+        return None
 
 
 @add_view_to_blueprint(

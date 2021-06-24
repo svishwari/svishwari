@@ -46,6 +46,15 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
+    performance_de = fields.Dict(
+        attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
+        example={
+            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+        },
+        required=False,
+        allow_none=True,
+    )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
     create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
@@ -60,6 +69,15 @@ class DestinationPutSchema(Schema):
     """
 
     authentication_details = fields.Field()
+    performance_de = fields.Dict(
+        attribute=api_c.PERFORMANCE_METRICS_DATA_EXTENSION,
+        example={
+            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+        },
+        required=False,
+        allow_none=True,
+    )
 
 
 class DestinationValidationSchema(Schema):
@@ -132,7 +150,7 @@ class SFMCAuthConstants(Schema):
 
     class Meta:
         """
-        set the ordering of sfmc auth constants
+        set the ordering of sfmc.py auth constants
         """
 
         ordered = True
