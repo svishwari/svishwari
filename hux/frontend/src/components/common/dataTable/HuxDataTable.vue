@@ -1,6 +1,6 @@
 <template>
   <div class="hux-data-table">
-    <div class="table-overflow">
+    <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
         :expanded.sync="expanded"
         :headers="headers"
