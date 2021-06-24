@@ -7,6 +7,7 @@ const namespaced = true
 const state = {
   items: {},
   constants: {},
+  dataExtensions: [],
 }
 
 const getters = {
@@ -18,6 +19,8 @@ const getters = {
     Object.values(state.items).filter((item) => item.is_enabled),
 
   constants: (state) => state.constants,
+
+  dataExtensions: (state) => Object.values(state.dataExtensions),
 }
 
 const mutations = {
@@ -39,6 +42,12 @@ const mutations = {
 
   SET_CONSTANTS(state, data) {
     Vue.set(state, "constants", data)
+  },
+  
+  SET_DATAEXTENSIONS(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.dataExtensions, item.id, item)
+    })
   },
 }
 
@@ -103,6 +112,16 @@ const actions = {
     try {
       const response = await api.destinations.constants()
       commit("SET_CONSTANTS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async dataExtensions({ commit }, id) {
+    try {
+      const response = await api.destinations.dataExtensions(id)
+      commit("SET_DATAEXTENSIONS", response.data)
     } catch (error) {
       handleError(error)
       throw error

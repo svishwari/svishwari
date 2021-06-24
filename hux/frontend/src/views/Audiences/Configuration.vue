@@ -288,6 +288,7 @@ export default {
       isFormValid: false,
       hoverItem: "",
       loading: false,
+      addDestinationFormValid: false,
     }
   },
 
@@ -297,6 +298,7 @@ export default {
       AudiencesRules: "audiences/audiencesRules",
       getAudience: "audiences/audience",
       overview: "customers/overview",
+      dataExtensions: "destinations/dataExtensions",
     }),
 
     attributeRules() {
@@ -326,6 +328,7 @@ export default {
       getAudiencesRules: "audiences/fetchConstants",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
+      dataExtensionLists: "destinations/dataExtensions",
     }),
 
     addDataExtension(data) {
@@ -480,6 +483,9 @@ export default {
       }
       let index = this.selectedDestinations.indexOf(destination)
       this.selectedDestinations.splice(index, 1)
+    },
+    validateForm(value) {
+      this.addDestinationFormValid = value
     },
   },
   async mounted() {
