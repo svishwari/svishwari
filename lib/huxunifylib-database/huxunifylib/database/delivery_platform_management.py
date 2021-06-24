@@ -1088,6 +1088,55 @@ def get_delivery_job(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_delivery_job_engagement_detail(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    delivery_platform_id: ObjectId,
+) -> list:
+    """A function to get an delivery job using enagement/audience/delivery_platform id.
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): Engagement id.
+        audience_id (ObjectId): Audience id.
+        delivery_platform_id (ObjectId): Delivery platform id.
+
+    Returns:
+        Union[dict, None]: Delivery job configuration.
+
+    """
+
+    if (
+        engagement_id is None
+        or audience_id is None
+        or delivery_platform_id is None
+    ):
+        de.InvalidID()
+
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.DELIVERY_JOBS_COLLECTION]
+
+    try:
+        # set mongo_filter based on engagement/audience/delivery platform id
+        mongo_filter = {
+            c.ENGAGEMENT_ID: engagement_id,
+            c.AUDIENCE_ID: audience_id,
+            c.DELIVERY_PLATFORM_ID: delivery_platform_id,
+            c.DELETED: False,
+        }
+
+        return list(collection.find(mongo_filter, {c.DELETED: 0}))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def set_delivery_job_status(
     database: DatabaseClient, delivery_job_id: ObjectId, job_status: str
 ) -> Union[dict, None]:
@@ -1399,6 +1448,85 @@ def get_ingestion_job_audience_delivery_jobs(
                 all_delivery_jobs += delivery_jobs
 
     return all_delivery_jobs
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def create_delivery_job_generic_campaigns(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    generic_campaign: list,
+) -> Union[dict, None]:
+
+    """A function to create/update delivery platform generic campaigns.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_job_id (ObjectId): MongoDB document ID of delivery job.
+        generic_campaign (list): generic campaign details to be added.
+
+    Returns:
+        Union[dict, None]: Updated delivery job configuration.
+    """
+
+    if get_delivery_job(database, delivery_job_id) is None:
+        raise de.InvalidID(delivery_job_id)
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+
+    update_doc = {}
+    update_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS] = generic_campaign
+    try:
+        doc = collection.find_one_and_update(
+            {c.ID: delivery_job_id, c.DELETED: False},
+            {"$set": update_doc},
+            upsert=False,
+            new=True,
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return doc
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_delivery_job_generic_campaigns(
+    database: DatabaseClient,
+    delivery_job_ids: list,
+) -> int:
+
+    """A function to update delivery platform generic campaigns.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_job_id (ObjectId): MongoDB document ID of delivery job.
+        generic_campaign (list): generic campaign details to be added.
+
+    Returns:
+        Union[dict, None]: Updated delivery job configuration.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
+
+    update_doc = {}
+    update_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS] = []
+    try:
+        return collection.update_many(
+            {c.ID: {"$in": delivery_job_ids}, c.DELETED: False},
+            {"$set": update_doc},
+            upsert=False,
+        ).modified_count
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return 0
 
 
 @retry(
@@ -1793,15 +1921,17 @@ def get_performance_metrics(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_performance_metrics_by_engagement_id(
+def get_performance_metrics_by_engagement_detail(
     database: DatabaseClient,
     engagement_id: ObjectId,
+    destination_ids: list,
 ) -> Union[list, None]:
     """Retrieve campaign performance metrics using engagement id.
 
     Args:
         database (DatabaseClient): database client.
         engagement_id (ObjectId): Engagement ID.
+        destination_ids (ObjectId): Destination IDs.
 
     Raises:
         de.InvalidID: Invalid ID for engagement.
@@ -1816,8 +1946,14 @@ def get_performance_metrics_by_engagement_id(
     collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        delivery_jobs = collection.find({c.ENGAGEMENT_ID: engagement_id})
-
+        delivery_jobs = list(
+            collection.find(
+                {
+                    c.ENGAGEMENT_ID: engagement_id,
+                    c.DELIVERY_PLATFORM_ID: {"$in": destination_ids},
+                }
+            )
+        )
         # Get performance metrics for all delivery jobs
         collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
         delivery_job_ids = [x[c.ID] for x in delivery_jobs]
