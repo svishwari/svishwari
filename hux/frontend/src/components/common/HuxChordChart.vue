@@ -44,7 +44,7 @@ export default {
      * must be match with no. of color codes
      * eg: [1951, 0, 2060, 6171, 3622] for 5 color code ranges,
      */
-    chartInput: {
+    value: {
       type: Array,
       required: true,
     },
@@ -82,6 +82,8 @@ export default {
     },
 
     calculateChartValues() {
+      const padAngle = 0.03
+
       let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
@@ -92,7 +94,7 @@ export default {
 
       let chord = d3Chord
         .chord()
-        .padAngle(0.05)
+        .padAngle(padAngle)
         .sortSubgroups(d3Array.descending)
 
       let arc = d3Shape
@@ -100,7 +102,7 @@ export default {
         .innerRadius(this.innerRadius)
         .outerRadius(this.outerRadius)
 
-      let ribbon = d3Chord.ribbon().radius(this.innerRadius)
+      let ribbon = d3Chord.ribbon().radius(this.innerRadius).padAngle(padAngle)
 
       let color = d3Scale
         .scaleOrdinal()
@@ -111,9 +113,9 @@ export default {
         .append("g")
         .attr(
           "transform",
-          "translate(" + this.width / 2 + "," + this.height / 2 + ")"
+          "translate(" + this.width * 0.5 + "," + this.height * 0.5 + ")"
         )
-        .datum(chord(this.chartInput))
+        .datum(chord(this.value))
 
       let group = g
         .append("g")
@@ -137,8 +139,24 @@ export default {
         .attr("d", ribbon)
         .attr("fill-opacity", "0.5")
         .style("fill", () => "#d3d3d3")
+        .on("mouseover", (event) => {
+          const el = d3Select.select(event.srcElement)
+          el.attr("fill-opacity", "1").style("fill", () => "#888")
+        })
+        .on("mouseout", (event) => {
+          const el = d3Select.select(event.srcElement)
+          el.attr("fill-opacity", "0.5").style("fill", () => "#d3d3d3")
+        })
     },
   },
+
+  watch: {
+    value: function () {
+      d3Select.select(this.$refs.huxChart).select("svg").remove()
+      this.calculateChartValues()
+    },
+  },
+
   mounted() {
     this.initializeValues()
     this.calculateChartValues()
@@ -154,10 +172,6 @@ export default {
     line-height: 16px;
     color: var(--v-gray-base) !important;
   }
-}
-
-.ribbons {
-  fill-opacity: 0.67;
 }
 
 .title-section {

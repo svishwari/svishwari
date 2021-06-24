@@ -404,10 +404,37 @@
 
     <v-subheader>Hux Chord Chart</v-subheader>
     <hux-chord-chart
-      :chartInput="chartData"
+      v-model="chartData"
       :colorCodes="colorCodes"
       :chartLegendsData="chartLegendsData"
-    ></hux-chord-chart>
+    />
+    <v-container class="my-4">
+      <v-row align="baseline">
+        <v-col></v-col>
+        <v-col v-for="(legend, index) in chartLegendsData" :key="legend">
+          <label :style="`color:${colorCodes[index]}`">
+            <strong>{{ legend.prop }}</strong>
+          </label>
+        </v-col>
+      </v-row>
+      <v-row v-for="(row, index) in chartData" :key="row" align="center">
+        <v-col class="text-right">
+          <label :style="`color:${colorCodes[index]}`">
+            <strong>{{ chartLegendsData[index].prop }}</strong>
+          </label>
+        </v-col>
+        <v-col v-for="(value, subindex) in row" :key="value">
+          <input
+            v-model.lazy="chartData[index][subindex]"
+            v-if="index !== subindex"
+            solo
+            dense
+            type="number"
+            class="white pa-2 shadow"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
 
     <v-divider class="mt-10" />
 
@@ -887,19 +914,19 @@ export default {
         { text: "Created By", value: "createdBy" },
       ],
       chartData: [
-        [0, 5871, 8916, 2689, 11975],
-        [7124, 0, 8241, 5021, 5202],
-        [912, 6251, 0, 9150, 4002],
-        [4231, 2104, 5699, 0, 1924],
-        [11975, 1324, 1555, 5929, 0],
+        [0, 30, 40, 10, 20],
+        [30, 0, 15, 45, 10],
+        [40, 15, 0, 25, 10],
+        [10, 45, 25, 0, 20],
+        [20, 10, 10, 20, 0],
       ],
-      colorCodes: ["#43b02a", "#efa34c", "#005587", "#00a3e0", "#da291c"],
+      colorCodes: ["#005587", "#da291c", "#00a3e0", "#43b02a", "#efa34c"],
       chartLegendsData: [
-        { prop: "Name", icon: "name" },
-        { prop: "Address", icon: "address" },
-        { prop: "Email", icon: "email" },
-        { prop: "Phone", icon: "phone" },
-        { prop: "Cookie", icon: "cookie" },
+        { prop: "Name", icon: "name", color: "#005587" },
+        { prop: "Address", icon: "address", color: "#da291c" },
+        { prop: "Email", icon: "email", color: "#00a3e0" },
+        { prop: "Phone", icon: "phone", color: "#43b02a" },
+        { prop: "Cookie", icon: "cookie", color: "#efa34c" },
       ],
     }
   },
