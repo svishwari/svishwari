@@ -106,12 +106,16 @@ export const defineRoutes = (server) => {
   server.get("/audiences/:id")
   server.post("/audiences", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
-    requestData.engagements = requestData.engagements.map((id) => {
-      return schema.engagements.find(id)
-    })
-    requestData.destinations = requestData.destinations.map((id) => {
-      return schema.destinations.find(id)
-    })
+    if (requestData.engagements) {
+      requestData.engagements = requestData.engagements.map((id) => {
+        return schema.engagements.find(id)
+      })
+    }
+    if (requestData.destinations) {
+      requestData.destinations = requestData.destinations.map((id) => {
+        return schema.destinations.find(id)
+      })
+    }
     return schema.audiences.create(requestData)
   })
   server.get("/audiences/rules", () => attributeRules)

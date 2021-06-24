@@ -172,7 +172,9 @@
                             : '$radioOff'
                         "
                       />
-                      <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
+                      <v-icon class="ico primary--text" size="16"
+                        >mdi-gesture-tap</v-icon
+                      >Manual
                     </v-btn>
                     <v-btn
                       disabled
@@ -215,7 +217,7 @@
 
     <template #footer-left>
       <div
-        class="d-flex align-baseline"
+        class="d-flex align-baseline gray--text text-caption"
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
       >
         {{ engagements.length }} results
@@ -427,9 +429,6 @@ export default {
         }
         .v-icon {
           &.ico {
-            width: 13.44px;
-            height: 12.5px;
-            color: var(--v-secondary-base) !important;
             margin-right: 9px;
           }
         }

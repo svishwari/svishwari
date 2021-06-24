@@ -262,7 +262,7 @@
 
         <template #footer-left>
           <div
-            class="d-flex align-baseline"
+            class="d-flex align-baseline gray--text text-caption"
             v-if="destinationDrawer.viewStep == 1"
           >
             {{ destinationsList.length }} results
@@ -411,7 +411,6 @@ export default {
       getDestinations: "destinations/getAll",
       fetchEngagements: "engagements/getAll",
       addAudienceToDB: "audiences/add",
-      getAudiencesRules: "audiences/fetchConstants",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
       getAvailableDestinations: "destinations/getAvailableDestinations",
@@ -587,7 +586,6 @@ export default {
     await this.getOverview()
     if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
     await this.getDestinations()
-    await this.getAudiencesRules()
     this.mapCDMOverview()
     this.loading = false
     await this.getAvailableDestinations()
