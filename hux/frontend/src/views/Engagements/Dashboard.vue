@@ -190,7 +190,7 @@ export default {
         schedule: "Manual",
         update_time: "2020-07-10T11:45:01.984Z",
         updated_by: "Rahul Goel",
-        created_time: "2020-07-10T11:45:01.984Z",
+        create_time: "2020-07-10T11:45:01.984Z",
         created_by: "Mohit Bansal",
         description:
           "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear. ",
@@ -383,9 +383,9 @@ export default {
           id: 3,
           title: "Created",
           value: this.getDateStamp(
-            this.fetchKey(this.engagement, "created_time")
+            this.fetchKey(this.engagement, "create_time")
           ),
-          hoverValue: this.fetchKey(this.engagement, "created_time"),
+          hoverValue: this.fetchKey(this.engagement, "create_time"),
           subLabel: this.fetchKey(this.engagement, "created_by"),
           width: "19%",
           minWidth: "164px",
