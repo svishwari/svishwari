@@ -9,7 +9,6 @@ from connexion.exceptions import ProblemException
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
 from huxunifylib.database import (
@@ -265,7 +264,6 @@ class DestinationPutView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
-    #@marshal_with(DestinationPutSchema)
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates a destination.
@@ -309,45 +307,33 @@ class DestinationPutView(SwaggerView):
 
             if auth_details:
                 # store the secrets for the updated authentication details
-                # authentication_parameters = (
-                #     parameter_store.set_destination_authentication_secrets(
-                #         authentication_details=auth_details,
-                #         is_updated=True,
-                #         destination_id=destination_id,
-                #     )
-                # )
+                authentication_parameters = (
+                    parameter_store.set_destination_authentication_secrets(
+                        authentication_details=auth_details,
+                        is_updated=True,
+                        destination_id=destination_id,
+                    )
+                )
                 is_added = True
 
-            doc=destination_management.update_delivery_platform(
-                    database=database,
-                    delivery_platform_id=destination_id,
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
-                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    authentication_details=authentication_parameters,
-                    added=is_added,
-                    user_name=user_name,
-                    performance_de=performance_de,)
-
-            temp_doc=DestinationGetSchema().dump(doc)
-            return temp_doc,HTTPStatus.OK
             # update the destination
-            # return (
-            #     destination_management.update_delivery_platform(
-            #         database=database,
-            #         delivery_platform_id=destination_id,
-            #         delivery_platform_type=destination[
-            #             db_c.DELIVERY_PLATFORM_TYPE
-            #         ],
-            #         name=destination[db_c.DELIVERY_PLATFORM_NAME],
-            #         authentication_details=authentication_parameters,
-            #         added=is_added,
-            #         user_name=user_name,
-            #         performance_de=performance_de,
-            #     ),
-            #     HTTPStatus.OK,
-            # )
+            return (
+                DestinationGetSchema().dump(
+                    destination_management.update_delivery_platform(
+                        database=database,
+                        delivery_platform_id=destination_id,
+                        delivery_platform_type=destination[
+                            db_c.DELIVERY_PLATFORM_TYPE
+                        ],
+                        name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                        authentication_details=authentication_parameters,
+                        added=is_added,
+                        user_name=user_name,
+                        performance_de=performance_de,
+                    )
+                ),
+                HTTPStatus.OK,
+            )
 
         except Exception as exc:
             logging.error(
