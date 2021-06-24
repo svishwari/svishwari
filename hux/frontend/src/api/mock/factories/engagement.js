@@ -6,7 +6,7 @@ const destinationData = () => {
   return {
     id: faker.datatype.number({ min: 1, max: 10 }),
     data_extension_id: faker.datatype.number({ min: 1, max: 10 }),
-    contact_list: "faker data"
+    contact_list: "faker data",
   }
 }
 

@@ -66,7 +66,7 @@
                     }"
                     class="text-decoration-none primary--text"
                     append
-                    >
+                  >
                     {{ item[header.value] }}
                   </router-link>
                 </template>
@@ -279,7 +279,7 @@ export default {
     },
     // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
-      this.subLoading = true;
+      this.subLoading = true
       this.audienceList = []
       let audienceIds = item.audiences.map((key) => key.id)
       for (let id of audienceIds) {
@@ -287,7 +287,7 @@ export default {
         this.audienceList.push(this.audiencesData(id))
       }
       await this.updateAudienceList({ id: item.id, data: this.audienceList })
-      this.subLoading = false;
+      this.subLoading = false
     },
   },
   async mounted() {
