@@ -103,7 +103,7 @@
                   v-if="condition.awaitingSize"
                 />
                 <span v-if="!condition.awaitingSize">
-                  {{ fetchSize(condition.id) | Numeric(false, false, true) }}
+                  {{ condition.size | Numeric(false, false, true) }}
                 </span>
               </span>
             </div>
@@ -135,7 +135,16 @@
         <v-col md="2" class="pr-0 pl-5">
           <div class="condition-summary">
             <span class="title text-caption">Result Size</span>
-            <span class="value text-h6 pt-1 font-weight-semi-bold">35.6M</span>
+            <span class="value text-h6 pt-1 font-weight-semi-bold">
+              <v-progress-circular
+                :value="16"
+                indeterminate
+                v-if="loadingOverAllSize"
+              />
+              <span v-else>
+                {{ overAllSize | Numeric(false, false, true) }}
+              </span>
+            </span>
           </div>
         </v-col>
       </div>
@@ -197,12 +206,13 @@ export default {
           label: "ANY",
         },
       ],
+      loadingOverAllSize: false,
+      overAllSize: 0,
     }
   },
   computed: {
     ...mapGetters({
       ruleAttributes: "audiences/audiencesRules",
-      sizes: "audiences/sizeDetails",
     }),
 
     /**
@@ -267,9 +277,6 @@ export default {
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
     }),
-    fetchSize(id) {
-      return this.sizes[id] ? this.sizes[id].size : "0"
-    },
     operandLabel(rule) {
       return rule.operand ? "AND" : "OR"
     },
@@ -278,9 +285,70 @@ export default {
     },
     async triggerSizing(condition) {
       condition.awaitingSize = true
-      await this.getRealtimeSize(condition)
+      this.getOverallSize()
+      let value = null
+      let type = null
+      if (condition.attribute.type === "range") {
+        value = [...condition.range]
+        type = "range"
+      } else {
+        value = condition.text
+        type = condition.operator.key
+      }
+      let filterJSON = {
+        filters: [
+          {
+            section_aggregator: "ALL",
+            section_filters: [
+              {
+                field: condition.attribute.key,
+                type: type,
+                value: value,
+              },
+            ],
+          },
+        ],
+      }
+      let data = await this.getRealtimeSize(filterJSON)
+      condition.size = data.total_records
       condition.awaitingSize = false
     },
+
+    async getOverallSize() {
+      this.loadingOverAllSize = true
+      let filterJSON = {
+        filters: [],
+      }
+      for (let i = 0; i < this.rules.length; i++) {
+        let aggregatorOperand = this.rules[i].operand ? "ALL" : "ANY"
+        let attributeRulesArray = []
+        for (let j = 0; j < this.rules[i].conditions.length; j++) {
+          let value = null
+          let type = ""
+          if (this.rules[i].conditions[j].attribute.type === "range") {
+            value = [...this.rules[i].conditions[j].range]
+            type = "range"
+          } else {
+            value = this.rules[i].conditions[j].text
+            type = this.rules[i].conditions[j].operator.key
+          }
+          attributeRulesArray.push({
+            field: this.rules[i].conditions[j].attribute.key,
+            type: type,
+            value: value,
+          })
+        }
+        let sectionObject = {
+          section_aggregator: aggregatorOperand,
+          section_filters: attributeRulesArray,
+        }
+        filterJSON.filters.push(sectionObject)
+      }
+      let data = await this.getRealtimeSize(filterJSON)
+      this.overAllSize = data.total_records
+      this.loadingOverAllSize = false
+    },
+
     onSelect(type, condition, item) {
       condition[type] = item
       if (type === "attribute") {
