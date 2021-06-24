@@ -493,13 +493,13 @@ class DestinationValidatePostView(SwaggerView):
                     )
                 )
 
-                ext_list = connector.get_list_of_data_extensions()
+                ext_list = DestinationDataExtGetSchema().dump(
+                    connector.get_list_of_data_extensions(), many=True
+                )
 
                 return {
                     "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
-                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: jsonify(
-                        DestinationDataExtGetSchema().dump(ext_list, many=True)
-                    ),
+                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
                 }, HTTPStatus.OK
             else:
                 return {
