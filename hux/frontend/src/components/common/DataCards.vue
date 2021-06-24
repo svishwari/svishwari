@@ -114,6 +114,7 @@ export default {
     selected: {
       type: [Object, Array],
       required: false,
+      default: [],
     },
   },
 
