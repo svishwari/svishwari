@@ -172,9 +172,10 @@
                             : '$radioOff'
                         "
                       />
-                      <v-icon class="ico primary--text" size="16"
-                        >mdi-gesture-tap</v-icon
-                      >Manual
+                      <v-icon class="ico primary--text" size="16">
+                        mdi-gesture-tap
+                      </v-icon>
+                      Manual
                     </v-btn>
                     <v-btn
                       disabled
