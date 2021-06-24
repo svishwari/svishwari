@@ -294,7 +294,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         audiences (list): list of audiences
 
     Returns:
-        list: list of lists [audience_id, destination_id,..]
+        list: list of lists [[audience_id, destination_id],..]
     """
 
     if not audiences or not any(x for x in audiences if x):
