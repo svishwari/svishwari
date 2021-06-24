@@ -173,7 +173,8 @@ export default {
 
 <style lang="scss" scoped>
 .status-card {
-  width: 310px;
+  min-width: 310px;
+  max-width: 310px;
   background: var(--v-white-base);
 
   border: 1px solid var(--v-zircon-base);
