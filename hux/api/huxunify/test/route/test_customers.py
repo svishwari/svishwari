@@ -183,7 +183,7 @@ class TestCustomersOverview(unittest.TestCase):
 
         Args:
             request_mocker (Mocker): Request mocker object.
-            customer_id (str): string for testing get customer.
+            customer_id (str): customer id.
 
         Returns:
 
