@@ -50,8 +50,8 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
-client["audiences"].filterSize = () => {
-  return http.post("/audiences/rules/size")
+client["customers"].getSize = (data) => {
+  return http.post("/customers/overview", data)
 }
 
 export default client
