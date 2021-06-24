@@ -8,7 +8,6 @@ from http import HTTPStatus
 
 from healthcheck import HealthCheck
 from decouple import config
-from bson import ObjectId
 from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
@@ -252,7 +251,7 @@ def get_user_name() -> object:
             # override if flag set locally
             if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
                 # return a default user id
-                kwargs[constants.OKTA_USER_ID] = ObjectId()
+                kwargs[constants.USER_NAME] = "test user"
                 return in_function(*args, **kwargs)
 
             # get the auth token

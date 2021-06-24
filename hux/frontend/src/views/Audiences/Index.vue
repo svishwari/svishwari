@@ -79,14 +79,14 @@
             <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'updated_by' && item[header.value]">
-              <avatar :name="getName(item[header.value])" />
+            <div v-if="header.value == 'updated_by'">
+              <Avatar :name="item[header.value]" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'created_by' && item[header.value]">
-              <avatar :name="getName(item[header.value])" />
+            <div v-if="header.value == 'created_by'">
+              <Avatar :name="item[header.value]" />
             </div>
           </td>
         </template>
@@ -223,9 +223,6 @@ export default {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
     }),
-    getName(item) {
-      return item.first_name + " " + item.last_name
-    },
   },
   async mounted() {
     this.loading = true
