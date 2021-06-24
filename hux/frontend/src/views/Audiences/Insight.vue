@@ -42,36 +42,42 @@
         <template slot="extra-item">
           <div class="container pl-0">
             <ul>
-              <li>
-                <lifetimeValue />
-                Lifetime Value
-              </li>
-              <li>
-                <churn />
-                Churn
-              </li>
-              <li>
-                <plus />
-                Age, Email, Zipcode
+              <li v-for="filter in appliedFilters" :key="filter.id">
+                <churn v-if="filter.icon == 'churn'" />
+                <lifetimeValue v-if="filter.icon == 'lifetime'" />
+                <plus v-if="filter.icon == 'plus'" />
+                {{ filter.name | TitleCase }}
               </li>
             </ul>
           </div>
         </template>
       </MetricCard>
     </div>
-    <div class="px-15 my-1" v-if="audience && audience.insightInfo">
+    <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview">Audience overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard
-            v-for="(item, i) in audience.insightInfo"
+            v-for="(item, i) in insightInfoItems"
             class="mr-3"
             :key="i"
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
-            :subtitle="item.subtitle"
             :icon="item.icon"
-          ></MetricCard>
+          >
+            <template #subtitle-extended>
+              <tooltip>
+                <template #label-content>
+                  <span class="font-weight-semi-bold">
+                    {{ getFormattedValue(item) }}
+                  </span>
+                </template>
+                <template #hover-content>
+                  {{ item.subtitle | Empty }}
+                </template>
+              </tooltip>
+            </template>
+          </MetricCard>
         </div>
       </v-card>
     </div>
@@ -125,6 +131,17 @@ export default {
         },
       ],
       loading: false,
+      insightInfoItems: [
+        { title: "Target size", subtitle: "" },
+        { title: "Countries", subtitle: "", icon: "mdi-earth" },
+        { title: "US States", subtitle: "", icon: "mdi-map" },
+        { title: "Cities", subtitle: "", icon: "mdi-map-marker-radius" },
+        { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        { title: "Women", subtitle: "", icon: "mdi-gender-female" },
+        { title: "Men", subtitle: "", icon: "mdi-gender-male" },
+        { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
+      ],
+      modelInitial: [{ value: "propensity", icon: "churn" }],
     }
   },
   computed: {
@@ -133,6 +150,46 @@ export default {
     }),
     audience() {
       return this.getAudience(this.$route.params.id)
+    },
+    appliedFilters() {
+      let _filters = []
+      this.audience.filters.forEach((section) => {
+        section.section_filters.forEach((filter) => {
+          if (
+            _filters.findIndex((item) =>
+              item.name.toLowerCase().includes(filter.field)
+            ) !== -1
+          )
+            return
+
+          const filterObj = {
+            name: this.$options.filters.TitleCase(filter.field),
+          }
+          const model = this.modelInitial.filter((model) =>
+            filter.field.includes(model.value)
+          )
+          if (model.length > 0) {
+            filterObj["icon"] = model[0].icon
+            filterObj["sortOrder"] = 0
+            _filters.push(filterObj)
+          } else {
+            const _plusFilter = _filters.filter((item) => item.icon === "plus")
+            if (_plusFilter.length > 0) {
+              _plusFilter[0].name +=
+                "," + this.$options.filters.TitleCase(filter.field)
+              _plusFilter[0].name = _plusFilter[0].name
+                .split(",")
+                .sort()
+                .join(", ")
+            } else {
+              filterObj["icon"] = "plus"
+              filterObj["sortOrder"] = 1
+              _filters.push(filterObj)
+            }
+          }
+        })
+      })
+      return _filters.sort((a, b) => (a.sortOrder > b.sortOrder ? 1 : -1))
     },
   },
   methods: {
@@ -146,11 +203,62 @@ export default {
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
     },
+
+    /**
+     *
+     */
+    mapInsights() {
+      this.insightInfoItems[0].subtitle =
+        this.audience.audience_insights.total_customers
+      this.insightInfoItems[1].subtitle =
+        this.audience.audience_insights.total_countries
+      this.insightInfoItems[2].subtitle =
+        this.audience.audience_insights.total_us_states
+      this.insightInfoItems[3].subtitle =
+        this.audience.audience_insights.total_cities
+      this.insightInfoItems[4].subtitle =
+        this.audience.audience_insights.max_age
+      this.insightInfoItems[5].subtitle =
+        this.audience.audience_insights.gender_women
+      this.insightInfoItems[6].subtitle =
+        this.audience.audience_insights.gender_men
+      this.insightInfoItems[7].subtitle =
+        this.audience.audience_insights.gender_other
+    },
+
+    /**
+     *
+     */
+    getFormattedValue(item) {
+      switch (item.title) {
+        case "Target size":
+        case "Countries":
+        case "US States":
+        case "Cities":
+          return this.$options.filters.Numeric(
+            item.subtitle,
+            false,
+            false,
+            true
+          )
+        case "Women":
+        case "Men":
+        case "Other":
+          return this.$options.filters.percentageConvert(
+            item.subtitle,
+            true,
+            true
+          )
+        default:
+          return item.subtitle
+      }
+    },
   },
   async mounted() {
     this.loading = true
     await this.getAudienceById(this.$route.params.id)
     this.items[1].text = this.audience.name
+    this.mapInsights()
     this.loading = false
   },
 }
