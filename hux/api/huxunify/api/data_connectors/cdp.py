@@ -1,7 +1,7 @@
 """
 Purpose of this file is for holding methods to query and pull data from CDP.
 """
-from typing import Tuple
+from typing import Tuple, Optional
 
 import requests
 
@@ -21,6 +21,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
 
     # submit the post request to get documentation
     try:
+        # TODO HUS-363 - remove verified=False once CDM SSL is good.
         response = requests.get(
             f"{config.CDP_SERVICE}/docs",
             headers=config.CDP_HEADERS,
@@ -47,6 +48,7 @@ def get_customer_profiles() -> dict:
     # get config
     config = get_config()
 
+    # TODO HUS-363 - remove verified=False once CDM SSL is good.
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles",
         headers=config.CDP_HEADERS,
@@ -77,6 +79,7 @@ def get_customer_profile(hux_id: str) -> dict:
     # get config
     config = get_config()
 
+    # TODO HUS-363 - remove verified=False once CDM SSL is good.
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
         headers=config.CDP_HEADERS,
@@ -90,12 +93,13 @@ def get_customer_profile(hux_id: str) -> dict:
 
 
 def get_customers_overview(
-    filters: dict = None,
+    filters: Optional[dict] = None,
 ) -> dict:
     """Fetch customers overview data.
 
     Args:
-        filters (dict): filters to pass into customers_overview endpoint.
+        filters (Optional[dict]): filters to pass into
+            customers_overview endpoint.
 
     Returns:
         dict: dictionary of overview data
@@ -105,6 +109,7 @@ def get_customers_overview(
     # get config
     config = get_config()
 
+    # TODO HUS-363 - remove verified=False once CDM SSL is good.
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
