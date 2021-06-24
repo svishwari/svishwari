@@ -275,10 +275,13 @@ export default {
       condition.awaitingSize = true
       this.getOverallSize()
       let value = null
-      if (condition.range.length > 0) {
+      let type = null
+      if (condition.attribute.type === "range") {
         value = [...condition.range]
+        type = "range"
       } else {
         value = condition.text
+        type = condition.operator.key
       }
       let filterJSON = {
         filters: [
@@ -287,7 +290,7 @@ export default {
             section_filters: [
               {
                 field: condition.attribute.key,
-                type: condition.operator.key,
+                type: type,
                 value: value,
               },
             ],
