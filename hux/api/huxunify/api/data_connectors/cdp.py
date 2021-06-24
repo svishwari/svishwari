@@ -69,7 +69,7 @@ def get_customer_profile(hux_id: str) -> dict:
     """Retrieves a customer profile.
 
     Args:
-        hux_id (str): input hux id for a customer.
+        hux_id (str): hux id for a customer.
 
     Returns:
         dict: dictionary containing the customer profile information
