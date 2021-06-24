@@ -124,20 +124,29 @@
                   >
                     mdi-plus-circle
                   </v-icon>
-                  <tooltip>
+                  <tooltip
+                    v-for="destination in selectedDestinations"
+                    :key="destination.id"
+                  >
                     <template #label-content>
-                      <Logo
-                        class="added-logo ml-2"
-                        v-for="destination in selectedDestinations"
-                        :key="destination.id"
-                        :type="destination.type"
-                        :size="18"
-                        @mouseover.native="hoverItem = destination.name"
-                      />
+                      <div class="destination-logo-wrapper">
+                        <div class="logo-wrapper">
+                          <Logo
+                            class="added-logo ml-2 svg-icon"
+                            :type="destination.type"
+                            :size="18"
+                          />
+                          <Logo
+                            class="delete-icon"
+                            type="delete"
+                            @click.native="removeDestination(destination)"
+                          />
+                        </div>
+                      </div>
                     </template>
                     <template #hover-content>
                       <div class="d-flex align-center">
-                        Remove {{ hoverItem }}
+                        Remove {{ destination.name }}
                       </div>
                     </template>
                   </tooltip>
@@ -465,6 +474,13 @@ export default {
       await this.addAudienceToDB(payload)
       this.$router.push({ name: "Audiences" })
     },
+    removeDestination(destination) {
+      if (destination.type === "salesforce") {
+        this.deleteSalesforceExtension(destination)
+      }
+      let index = this.selectedDestinations.indexOf(destination)
+      this.selectedDestinations.splice(index, 1)
+    },
   },
   async mounted() {
     this.loading = true
@@ -565,13 +581,26 @@ export default {
         }
       }
     }
-    .added-logo {
-      margin-top: 6px;
-      &:hover {
-        width: 18px;
-        height: 18px;
-        background-image: url("../../assets/images/delete_outline.png");
-        background-size: 18px 18px;
+    .destination-logo-wrapper {
+      display: inline-flex;
+      .logo-wrapper {
+        position: relative;
+        .added-logo {
+          margin-top: 8px;
+        }
+        .delete-icon {
+          z-index: 1;
+          position: absolute;
+          left: 3px;
+          top: 5px;
+          background: var(--v-white-base);
+          display: none;
+        }
+        &:hover {
+          .delete-icon {
+            display: block;
+          }
+        }
       }
     }
   }
