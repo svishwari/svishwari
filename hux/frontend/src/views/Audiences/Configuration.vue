@@ -98,9 +98,9 @@
             <template #icon class="timeline-icon-section">
               <span>2</span>
             </template>
-            <v-row class="pt-1 pr-0">
+            <v-col class="pt-1 pa-0">
               <attribute-rules :rules="attributeRules"></attribute-rules>
-            </v-row>
+            </v-col>
           </v-timeline-item>
           <v-timeline-item
             color="blue"

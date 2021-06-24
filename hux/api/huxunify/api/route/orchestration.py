@@ -626,20 +626,6 @@ class AudienceRules(SwaggerView):
                         "max": 1.0,
                         "steps": 0.05,
                     },
-                    "actual_lifetime_value": {
-                        "name": "Actual lifetime value",
-                        "type": "range",
-                        "min": 0,
-                        "max": 50000,
-                        "steps": 1000,
-                    },
-                    "propensity_to_purchase": {
-                        "name": "Propensity to purchase",
-                        "type": "range",
-                        "min": 0.0,
-                        "max": 1.0,
-                        "steps": 0.05,
-                    },
                 },
                 "general": {
                     "age": {
