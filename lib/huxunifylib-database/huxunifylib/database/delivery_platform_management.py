@@ -1093,7 +1093,7 @@ def get_delivery_job_engagement_detail(
     engagement_id: ObjectId,
     audience_id: ObjectId,
     delivery_platform_id: ObjectId,
-) -> list:
+) -> Union[list, None]:
     """A function to get an delivery job using enagement/audience/delivery_platform id.
 
     Args:
@@ -1103,7 +1103,7 @@ def get_delivery_job_engagement_detail(
         delivery_platform_id (ObjectId): Delivery platform id.
 
     Returns:
-        Union[dict, None]: Delivery job configuration.
+        Union[list, None]: Delivery job configuration.
 
     """
 
@@ -1477,10 +1477,9 @@ def create_delivery_job_generic_campaigns(
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
 
-    update_doc = {}
-    update_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS] = generic_campaign
+    update_doc = {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign}
     try:
-        doc = collection.find_one_and_update(
+        return collection.find_one_and_update(
             {c.ID: delivery_job_id, c.DELETED: False},
             {"$set": update_doc},
             upsert=False,
@@ -1489,7 +1488,7 @@ def create_delivery_job_generic_campaigns(
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return doc
+    return None
 
 
 @retry(
@@ -1505,18 +1504,16 @@ def delete_delivery_job_generic_campaigns(
 
     Args:
         database (DatabaseClient): A database client.
-        delivery_job_id (ObjectId): MongoDB document ID of delivery job.
-        generic_campaign (list): generic campaign details to be added.
+        delivery_job_ids (list): List of delivery job ids
 
     Returns:
-        Union[dict, None]: Updated delivery job configuration.
+         int: count of deleted records.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
 
-    update_doc = {}
-    update_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS] = []
+    update_doc = {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: []}
     try:
         return collection.update_many(
             {c.ID: {"$in": delivery_job_ids}, c.DELETED: False},
@@ -1931,7 +1928,7 @@ def get_performance_metrics_by_engagement_detail(
     Args:
         database (DatabaseClient): database client.
         engagement_id (ObjectId): Engagement ID.
-        destination_ids (ObjectId): Destination IDs.
+        destination_ids (list): Destination IDs.
 
     Raises:
         de.InvalidID: Invalid ID for engagement.
@@ -1946,13 +1943,11 @@ def get_performance_metrics_by_engagement_detail(
     collection = platform_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        delivery_jobs = list(
-            collection.find(
-                {
-                    c.ENGAGEMENT_ID: engagement_id,
-                    c.DELIVERY_PLATFORM_ID: {"$in": destination_ids},
-                }
-            )
+        delivery_jobs = collection.find(
+            {
+                c.ENGAGEMENT_ID: engagement_id,
+                c.DELIVERY_PLATFORM_ID: {"$in": destination_ids},
+            }
         )
         # Get performance metrics for all delivery jobs
         collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
