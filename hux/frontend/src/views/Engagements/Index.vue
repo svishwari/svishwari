@@ -48,6 +48,7 @@
               'fixed-column': header.fixed,
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
+              'expanded-row' : isExpanded
             }"
             :style="{ width: header.width, left: 0 }"
           >
@@ -111,7 +112,9 @@
                 v-for="header in subHeaders"
                 :key="header.value"
                 :colspan="header.value == 'name' ? 3 : 0"
-                :style="header.value == 'name' ? 'padding-left:317px;border-right: none;' : null"
+                :class="{
+                  'child-row': header.value == 'name',
+                }"
               >
                 <div v-if="header.value == 'name'">
                   <tooltip>
@@ -259,7 +262,7 @@ export default {
           width: "200px",
         },
         { text: "Last updated", value: "update_time", width: "200px" },
-        { text: "Last updated by", value: "updated_by", width: "140px" },
+        { text: "Last updated by", value: "updated_by", width: "141px" },
         { text: "Created", value: "create_time", width: "200px" },
         { text: "Created by", value: "created_by", width: "140px" },
       ],
@@ -334,7 +337,6 @@ export default {
     }
   }
   .hux-data-table {
-    margin-top: 1px;
     ::v-deep table {
       tr {
         height: 64px;
@@ -371,7 +373,7 @@ export default {
         }
         border-radius: 12px 12px 0px 0px;
       }
-       tr {
+      tr {
         &:hover {
           background: var(--v-aliceBlue-base) !important;
         }
@@ -401,10 +403,23 @@ export default {
         }
       }
     }
+    .child {
+      ::v-deep .theme--light {
+        background: var(--v-background-base);
+        .v-data-table__wrapper {
+          box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base);
+          border-bottom: thin solid rgba(0, 0, 0, 0.12);
+        }
+      }
+    }
   }
   ::v-deep .hux-data-table.expanded-table {
     .v-data-table__wrapper {
       box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
+      .child-row {
+        padding-left:317px;
+        border-right: none;
+      }
     }
     td:nth-child(1) {
           background: none;
