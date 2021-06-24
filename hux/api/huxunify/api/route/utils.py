@@ -29,6 +29,7 @@ from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     get_user_info,
 )
+from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -141,7 +142,7 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_okta_connection)
     health.add_check(check_aws_ssm)
     health.add_check(check_aws_batch)
-
+    health.add_check(check_cdm_api_connection)
     return health
 
 
