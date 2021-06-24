@@ -84,18 +84,6 @@ export default {
     calculateChartValues() {
       const padAngle = 0.03
 
-      var mouseOver = () => {
-        return (g, i) => {
-          d3Select
-            .selectAll("g.ribbons path")
-            .filter(
-              (d) => d.source.index !== i.index && d.target.index !== i.index
-            )
-            .attr("fill-opacity", "0.1")
-            .style("fill", (d) => color(d.target.index))
-        }
-      }
-
       let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
