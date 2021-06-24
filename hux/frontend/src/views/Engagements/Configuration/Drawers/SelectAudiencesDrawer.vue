@@ -15,6 +15,7 @@
           :items="audiences"
           sort="asc"
           empty="No audiences have been created."
+          :selectedItems="value"
           :fields="[
             {
               key: 'name',
@@ -77,7 +78,11 @@
       </div>
     </template>
 
-    <template #footer-left> {{ audiences.length }} results </template>
+    <template #footer-left>
+      <span class="gray--text text-caption">
+        {{ audiences.length }} results
+      </span>
+    </template>
   </Drawer>
 </template>
 
@@ -115,7 +120,6 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      audiences: [],
     }
   },
 

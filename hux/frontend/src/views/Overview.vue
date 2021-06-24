@@ -165,6 +165,9 @@ export default {
         &.v-card--disabled {
           background: var(--v-background-base);
         }
+        &:hover {
+          @extend .box-shadow-3;
+        }
       }
     }
   }

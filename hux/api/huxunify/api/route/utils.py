@@ -8,7 +8,6 @@ from http import HTTPStatus
 
 from healthcheck import HealthCheck
 from decouple import config
-from bson import ObjectId
 from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
@@ -29,6 +28,7 @@ from huxunify.api.data_connectors.okta import (
     get_token_from_request,
     get_user_info,
 )
+from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
@@ -141,7 +141,7 @@ def get_health_check() -> HealthCheck:
     health.add_check(check_okta_connection)
     health.add_check(check_aws_ssm)
     health.add_check(check_aws_batch)
-
+    health.add_check(check_cdm_api_connection)
     return health
 
 
@@ -251,7 +251,7 @@ def get_user_name() -> object:
             # override if flag set locally
             if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
                 # return a default user id
-                kwargs[constants.OKTA_USER_ID] = ObjectId()
+                kwargs[constants.USER_NAME] = "test user"
                 return in_function(*args, **kwargs)
 
             # get the auth token

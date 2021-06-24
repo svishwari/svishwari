@@ -8,7 +8,7 @@
       </template>
       <template #footer-left>
         <div class="d-flex align-baseline">
-          <div class="font-weight-regular">
+          <div class="font-weight-regular gray--text text-caption">
             {{ dataSources.length }} results
           </div>
         </div>

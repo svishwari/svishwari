@@ -229,5 +229,7 @@ class DestinationDataExtGetSchema(Schema):
     Destination data extension get schema class
     """
 
-    name = fields.Field(attribute="Name")
-    data_extension_id = fields.String(attribute="CustomerKey")
+    name = fields.Field(attribute="Name", example="data_extension_name")
+    data_extension_id = fields.String(
+        attribute="CustomerKey", example="data_extension_id"
+    )
