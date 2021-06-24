@@ -84,6 +84,18 @@ export default {
     calculateChartValues() {
       const padAngle = 0.03
 
+      var mouseOver = () => {
+        return (g, i) => {
+          d3Select
+            .selectAll("g.ribbons path")
+            .filter(
+              (d) => d.source.index !== i.index && d.target.index !== i.index
+            )
+            .attr("fill-opacity", "0.1")
+            .style("fill", (d) => color(d.target.index))
+        }
+      }
+
       let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
@@ -129,6 +141,8 @@ export default {
         .append("path")
         .style("fill", (d) => color(d.index))
         .attr("d", arc)
+        .on("mouseover", arcMouseOver())
+        .on("mouseout", () => mouseOut())
 
       g.append("g")
         .attr("class", "ribbons")
@@ -138,15 +152,38 @@ export default {
         .append("path")
         .attr("d", ribbon)
         .attr("fill-opacity", "0.5")
-        .style("fill", () => "#d3d3d3")
-        .on("mouseover", (event) => {
-          const el = d3Select.select(event.srcElement)
-          el.attr("fill-opacity", "1").style("fill", () => "#888")
-        })
-        .on("mouseout", (event) => {
-          const el = d3Select.select(event.srcElement)
-          el.attr("fill-opacity", "0.5").style("fill", () => "#d3d3d3")
-        })
+        .style("fill", (d) => color(d.target.index))
+        .on("mouseover", (e) => ribbonMouseOver(e))
+        .on("mouseout", () => mouseOut())
+
+      function arcMouseOver() {
+        return (g, i) =>
+          d3Select
+            .selectAll("g.ribbons path")
+            .filter(
+              (d) => d.source.index !== i.index && d.target.index !== i.index
+            )
+            .attr("fill-opacity", "0.1")
+            .style("fill", (d) => color(d.target.index))
+      }
+
+      let ribbonMouseOver = (e) => {
+        d3Select
+          .selectAll("g.ribbons path")
+          .attr("fill-opacity", "0.1")
+          .style("fill", (d) => color(d.target.index))
+
+        d3Select
+          .select(e.srcElement)
+          .attr("fill-opacity", "1")
+          .style("fill", (d) => color(d.target.index))
+      }
+
+      let mouseOut = () =>
+        d3Select
+          .selectAll("g.ribbons path")
+          .attr("fill-opacity", "0.5")
+          .style("fill", (d) => color(d.target.index))
     },
   },
 
