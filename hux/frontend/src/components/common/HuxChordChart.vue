@@ -129,7 +129,7 @@ export default {
         .append("path")
         .style("fill", (d) => color(d.index))
         .attr("d", arc)
-        .on("mouseover", arcMouseOver())
+        .on("mouseover", (g, i) => arcMouseOver(g, i))
         .on("mouseout", () => mouseOut())
 
       g.append("g")
@@ -144,15 +144,14 @@ export default {
         .on("mouseover", (e) => ribbonMouseOver(e))
         .on("mouseout", () => mouseOut())
 
-      function arcMouseOver() {
-        return (g, i) =>
-          d3Select
-            .selectAll("g.ribbons path")
-            .filter(
-              (d) => d.source.index !== i.index && d.target.index !== i.index
-            )
-            .attr("fill-opacity", "0.1")
-            .style("fill", (d) => color(d.target.index))
+      let arcMouseOver = (g, i) => {
+        d3Select
+          .selectAll("g.ribbons path")
+          .filter(
+            (d) => d.source.index !== i.index && d.target.index !== i.index
+          )
+          .attr("fill-opacity", "0.1")
+          .style("fill", (d) => color(d.target.index))
       }
 
       let ribbonMouseOver = (e) => {
