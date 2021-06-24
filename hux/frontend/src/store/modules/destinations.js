@@ -8,6 +8,7 @@ const state = {
   items: {},
   constants: {},
   availableDestinations: {},
+  dataExtensions: [],
 }
 
 const getters = {
@@ -21,6 +22,8 @@ const getters = {
   constants: (state) => state.constants,
 
   availableDestinations: (state) => Object.values(state.availableDestinations),
+
+  dataExtensions: (state) => Object.values(state.dataExtensions),
 }
 
 const mutations = {
@@ -52,6 +55,11 @@ const mutations = {
       }
     })
   },
+  SET_DATAEXTENSIONS(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.dataExtensions, item.id, item)
+    })
+  },
 }
 
 const actions = {
@@ -80,6 +88,15 @@ const actions = {
       const body = {
         authentication_details: destination.authentication_details,
       }
+      if (
+        Object.prototype.hasOwnProperty.call(
+          destination,
+          "performance_metrics_data_extension"
+        )
+      ) {
+        body.performance_metrics_data_extension =
+          destination.performance_metrics_data_extension
+      }
       const response = await api.destinations.update(destination.id, body)
       commit("SET_ONE", response.data)
     } catch (error) {
@@ -94,7 +111,8 @@ const actions = {
         type: destination.type,
         authentication_details: destination.authentication_details,
       }
-      await api.destinations.validate(body)
+      const response = await api.destinations.validate(body)
+      return response.data
     } catch (error) {
       handleError(error)
       throw error
@@ -115,6 +133,16 @@ const actions = {
     try {
       const response = await api.destinations.all()
       commit("SET_AVAILABLE_DESTINATIONS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async dataExtensions({ commit }, id) {
+    try {
+      const response = await api.destinations.dataExtensions(id)
+      commit("SET_DATAEXTENSIONS", response.data)
     } catch (error) {
       handleError(error)
       throw error

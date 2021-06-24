@@ -252,8 +252,8 @@ class OrchestrationRouteTest(TestCase):
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     @requests_mock.Mocker()
     def test_deliver_audience_for_all_engagements_invalid_audience_id(

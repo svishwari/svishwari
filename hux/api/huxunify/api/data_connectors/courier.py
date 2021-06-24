@@ -55,6 +55,8 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
                 auth[api_const.FACEBOOK_APP_ID]
             ),
+            # use stub for facebook
+            api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
         }
         secret_dict = {
             FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
@@ -86,10 +88,11 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
                 auth[api_const.SFMC_REST_BASE_URI]
             ),
         }
+
         secret_dict = {
-            SFMCCredentials.SFMC_CLIENT_SECRET.name: parameter_store.get_store_value(
-                auth[api_const.SFMC_CLIENT_SECRET]
-            )
+            SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
+                api_const.SFMC_CLIENT_SECRET
+            ]
         }
     else:
         raise KeyError(
@@ -216,28 +219,36 @@ class DestinationBatchJob:
 
 def get_destination_config(
     database: MongoClient,
-    audience_id,
-    destination_id,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination: dict,
     audience_router_batch_size: int = 5000,
 ) -> DestinationBatchJob:
     """Get the configuration for the aws batch config of a destination.
 
     Args:
         database (MongoClient): The mongo database client.
+        engagement_id (ObjectId): The ID of the engagement.
         audience_id (ObjectId): The ID of the audience.
-        destination_id (ObjectId): The ID of the destination.
+        destination (dict): Destination object.
         audience_router_batch_size (int): Audience router AWS batch size.
 
     Returns:
         DestinationBatchJob: Destination batch job object.
     """
+
     audience_delivery_job = set_delivery_job(
-        database, audience_id, destination_id, []
+        database,
+        audience_id,
+        destination[db_const.OBJECT_ID],
+        [],
+        engagement_id,
+        destination.get(db_const.DELIVERY_PLATFORM_CONFIG),
     )
 
     delivery_platform = get_delivery_platform(
         database,
-        destination_id,
+        destination[db_const.OBJECT_ID],
     )
 
     # get the configuration values
@@ -258,7 +269,6 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
-        api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
         **ds_env_dict,
     }
 
@@ -284,7 +294,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         audiences (list): list of audiences
 
     Returns:
-        list: list of tuples [(audience_id, destination_id),..]
+        list: list of lists [[audience_id, destination_id],..]
     """
 
     if not audiences or not any(x for x in audiences if x):
@@ -295,7 +305,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         raise TypeError("must be a list of destinations.")
 
     return [
-        [aud[db_const.OBJECT_ID], dest[db_const.OBJECT_ID]]
+        [aud[db_const.OBJECT_ID], dest]
         for aud in audiences
         for dest in aud[db_const.DESTINATIONS]
     ]
