@@ -132,7 +132,7 @@
             <span class="primary--text pl-1">New section</span>
           </div>
         </v-col>
-        <v-col md="2" class="pr-0">
+        <v-col md="2" class="pr-0 pl-5">
           <div class="condition-summary">
             <span class="title text-caption">Result Size</span>
             <span class="value text-h6 pt-1 font-weight-semi-bold">35.6M</span>
