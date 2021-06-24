@@ -149,7 +149,7 @@ const actions = {
   },
   async fetchFilterSize(_, filter) {
     try {
-      const response = await api.customers.getSize(filter)
+      const response = await api.customers.getOverview(filter)
       return response.data
     } catch (error) {
       handleError(error)
