@@ -41,7 +41,7 @@
           :key="index"
           :class="{
             'bordered-card': bordered,
-            'data-card-selected': item[selectedKey],
+            'data-card-selected': isAdded(item),
           }"
           class="data-card mb-4"
         >
@@ -111,9 +111,10 @@ export default {
       required: false,
       default: false,
     },
-    selectedKey: {
-      type: String,
+    selectedItems: {
+      type: [Object, Array],
       required: false,
+      default: () => [],
     },
   },
 
@@ -138,6 +139,18 @@ export default {
       return Boolean(this.sortBy === key)
     },
 
+    isAdded(item) {
+      if (Array.isArray(this.selectedItems)) {
+        return Boolean(
+          this.selectedItems &&
+            this.selectedItems.filter(
+              (selectedItem) => selectedItem.id === item.id
+            ).length > 0
+        )
+      } else {
+        return Boolean(this.selectedItems && this.selectedItems[item.id])
+      }
+    },
   },
 
   mounted() {
