@@ -6,8 +6,8 @@
       justify-space-between
       align-center
       px-8
-      py-5
     "
+    :class="headerHightChanges"
     elevation="1"
     tile
     :color="bgColor"
@@ -65,6 +65,11 @@ export default {
       required: false,
       default: undefined,
     },
+    headerHightChanges: {
+      type: String,
+      required: false,
+      default: 'py-5',
+    }
   },
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="customer-dashboard-wrap">
-    <PageHeader class="background-border">
+    <PageHeader class="background-border" :headerHightChanges="'py-3'">
       <template #left>
         <Breadcrumb :items="items" />
       </template>
@@ -15,7 +15,7 @@
         >
           View all customers
         </hux-button>
-        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -314,5 +314,8 @@ export default {
   ::v-deep .mdi-chevron-right::before {
     content: none;
   }
+}
+.icon-border {
+    cursor: default !important;
 }
 </style>

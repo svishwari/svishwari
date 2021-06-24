@@ -202,4 +202,7 @@ export default {
     }
   }
 }
+.overview-wrap .quickAccessMenu .card-wrap .v-card {
+  box-shadow: 0px 0px 10px 2px rgb(117 123 123 / 30%)!important;
+}
 </style>

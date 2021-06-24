@@ -1,19 +1,11 @@
 <template>
   <div class="audiences-wrap grey lighten-5">
-    <PageHeader>
+    <PageHeader :headerHightChanges="'py-3'">
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template slot="right">
-        <v-btn
-          min-width="40"
-          height="40"
-          width="40"
-          color="primary"
-          :disabled="true"
-        >
-          <v-icon size="23" color="white">mdi-download</v-icon>
-        </v-btn>
+          <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">mdi-download</v-icon>
       </template>
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
@@ -260,12 +252,16 @@ export default {
       tr {
         td {
           font-size: 14px;
+          height: 60px;
         }
       }
     }
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
+  }
+  .icon-border {
+    cursor: default !important;
   }
 }
 </style>
