@@ -38,7 +38,11 @@
         </template>
       </MetricCard>
 
-      <MetricCard class="ma-4" :title="'Attributes'">
+      <MetricCard
+        class="ma-4"
+        :title="'Attributes'"
+        v-if="appliedFilters.length > 0"
+      >
         <template slot="extra-item">
           <div class="container pl-0">
             <ul>
@@ -153,42 +157,46 @@ export default {
     },
     appliedFilters() {
       let _filters = []
-      this.audience.filters.forEach((section) => {
-        section.section_filters.forEach((filter) => {
-          if (
-            _filters.findIndex((item) =>
-              item.name.toLowerCase().includes(filter.field)
-            ) !== -1
-          )
-            return
+      if (this.audience && this.audience.filters) {
+        this.audience.filters.forEach((section) => {
+          section.section_filters.forEach((filter) => {
+            if (
+              _filters.findIndex((item) =>
+                item.name.toLowerCase().includes(filter.field)
+              ) !== -1
+            )
+              return
 
-          const filterObj = {
-            name: this.$options.filters.TitleCase(filter.field),
-          }
-          const model = this.modelInitial.filter((model) =>
-            filter.field.includes(model.value)
-          )
-          if (model.length > 0) {
-            filterObj["icon"] = model[0].icon
-            filterObj["sortOrder"] = 0
-            _filters.push(filterObj)
-          } else {
-            const _plusFilter = _filters.filter((item) => item.icon === "plus")
-            if (_plusFilter.length > 0) {
-              _plusFilter[0].name +=
-                "," + this.$options.filters.TitleCase(filter.field)
-              _plusFilter[0].name = _plusFilter[0].name
-                .split(",")
-                .sort()
-                .join(", ")
-            } else {
-              filterObj["icon"] = "plus"
-              filterObj["sortOrder"] = 1
-              _filters.push(filterObj)
+            const filterObj = {
+              name: this.$options.filters.TitleCase(filter.field),
             }
-          }
+            const model = this.modelInitial.filter((model) =>
+              filter.field.includes(model.value)
+            )
+            if (model.length > 0) {
+              filterObj["icon"] = model[0].icon
+              filterObj["sortOrder"] = 0
+              _filters.push(filterObj)
+            } else {
+              const _plusFilter = _filters.filter(
+                (item) => item.icon === "plus"
+              )
+              if (_plusFilter.length > 0) {
+                _plusFilter[0].name +=
+                  "," + this.$options.filters.TitleCase(filter.field)
+                _plusFilter[0].name = _plusFilter[0].name
+                  .split(",")
+                  .sort()
+                  .join(", ")
+              } else {
+                filterObj["icon"] = "plus"
+                filterObj["sortOrder"] = 1
+                _filters.push(filterObj)
+              }
+            }
+          })
         })
-      })
+      }
       return _filters.sort((a, b) => (a.sortOrder > b.sortOrder ? 1 : -1))
     },
   },
