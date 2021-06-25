@@ -26,10 +26,12 @@ class DestinationGetSchema(Schema):
         validate=validate_object_id,
     )
     type = fields.String(
-        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="salesforce"
+        attribute=api_c.DELIVERY_PLATFORM_TYPE,
+        example=db_c.DELIVERY_PLATFORM_SFMC,
     )
     name = fields.String(
-        attribute=api_c.DESTINATION_NAME, example="Salesforce"
+        attribute=api_c.DESTINATION_NAME,
+        example=db_c.DELIVERY_PLATFORM_SFMC.title(),
     )
     status = fields.String(
         attribute=api_c.CONNECTION_STATUS,
@@ -152,7 +154,7 @@ class SFMCAuthConstants(Schema):
 
     class Meta:
         """
-        set the ordering of sfmc.py auth constants
+        set the ordering of sfmc auth constants
         """
 
         ordered = True
