@@ -1,7 +1,6 @@
 """Engagement Management Tests"""
 
 import unittest
-from datetime import datetime
 import mongomock
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
@@ -29,7 +28,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # setup the audience
         self.audience = om.create_audience(
-            self.database, "all", [], self.user_name
+            self.database, "all", [], [], self.user_name
         )
 
         self.audience[c.OBJECT_ID] = self.audience[c.ID]
@@ -38,7 +37,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             "Spring 2021",
             "spring of 2021",
-            [self.audience],
+            [{c.OBJECT_ID: self.audience[c.ID], c.DESTINATIONS: []}],
             self.user_name,
         )
 
@@ -48,14 +47,18 @@ class TestEngagementManagement(unittest.TestCase):
             c.DELIVERY_PLATFORM_FACEBOOK,
             c.DELIVERY_PLATFORM_AMAZON,
         ]:
-            self.destinations.append(
-                dpm.set_delivery_platform(
-                    self.database,
-                    destination,
-                    destination,
-                    user_name=self.user_name,
-                )
+            destination = dpm.set_delivery_platform(
+                self.database,
+                destination,
+                destination,
+                user_name=self.user_name,
             )
+            dpm.set_connection_status(
+                self.database,
+                destination[c.ID],
+                c.STATUS_SUCCEEDED,
+            )
+            self.destinations.append(destination)
 
         self.destination = dpm.set_delivery_platform(
             self.database,
@@ -514,10 +517,10 @@ class TestEngagementManagement(unittest.TestCase):
         delivery_platform_id = delivery_platform[c.ID]
 
         # create a source audience
-        self.source_audience = am.create_audience(
+        source_audience = am.create_audience(
             self.database, "Source Audience", [], ingestion_job_id
         )
-        source_audience_id = self.source_audience[c.ID]
+        source_audience_id = source_audience[c.ID]
 
         # create a lookalike audience
         lookalike_audience = dpm.create_delivery_platform_lookalike_audience(
@@ -683,19 +686,31 @@ class TestEngagementManagement(unittest.TestCase):
                 c.ENGAGEMENT_DESCRIPTION: f"high ltv for spring 202{i}",
                 c.AUDIENCES: [
                     {
-                        c.OBJECT_ID: ObjectId(),
+                        c.OBJECT_ID: audience[c.ID],
                         c.DESTINATIONS: [
                             {
-                                c.OBJECT_ID: ObjectId(),
+                                c.OBJECT_ID: self.destinations[0][c.ID],
                                 c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                                c.STATUS: c.STATUS_PENDING,
                             },
-                            {c.OBJECT_ID: audience[c.ID]},
-                            {c.OBJECT_ID: self.audience[c.ID]},
+                            {
+                                c.OBJECT_ID: self.destinations[1][c.ID],
+                                c.STATUS: c.AUDIENCE_STATUS_ERROR
+                                if i % 5 == 0
+                                else c.STATUS_SUCCEEDED,
+                            },
                         ],
                     },
                     {
-                        c.OBJECT_ID: ObjectId(),
-                        c.DESTINATIONS: [{c.OBJECT_ID: ObjectId()}],
+                        c.OBJECT_ID: self.audience[c.ID],
+                        c.DESTINATIONS: [
+                            {
+                                c.OBJECT_ID: self.destinations[1][c.ID],
+                                c.STATUS: c.STATUS_FAILED
+                                if i % 5 == 0
+                                else c.STATUS_SUCCEEDED,
+                            }
+                        ],
                     },
                 ],
             }
@@ -708,17 +723,39 @@ class TestEngagementManagement(unittest.TestCase):
                 self.user_name,
             )
 
-        # test for a list with data.
         engagement_docs = em.get_engagements_summary(database=self.database)
+        grouped_engagements = em.group_engagements(engagement_docs)
 
-        data = em.group_engagements(engagement_docs)
+        # get all engagements for validation
+        all_engagements = em.get_engagements(self.database)
+
         self.assertTrue(engagement_docs)
         self.assertFalse([e for e in engagement_docs if c.DELETED in e])
 
-        # ensure unique names that grouping passed
-        self.assertEqual(
-            len(engagement_docs), len(em.get_engagements(self.database))
-        )
+        # ensure length of grouped engagements is equal to length of all engagements.
+        # this checks to ensure the grouping was done correctly.
+        self.assertEqual(len(grouped_engagements), len(all_engagements))
+
+        # test the grouped engagements for existence of key fields
+        for engagement in grouped_engagements:
+            self.assertIn(c.ID, engagement)
+            self.assertIn(c.NAME, engagement)
+            self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
+            self.assertIn(c.CREATED_BY, engagement)
+            self.assertIn(c.UPDATED_BY, engagement)
+            self.assertIn(c.CREATE_TIME, engagement)
+            self.assertIn(c.UPDATE_TIME, engagement)
+            self.assertIn(c.AUDIENCES, engagement)
+
+            for audience in engagement[c.AUDIENCES]:
+                self.assertIn(c.NAME, audience)
+                self.assertIn(c.DESTINATIONS, audience)
+                self.assertIn(c.OBJECT_ID, audience)
+                if not audience[c.DESTINATIONS]:
+                    continue
+                for destination in audience[c.DESTINATIONS]:
+                    self.assertIn(c.NAME, destination)
+                    self.assertIn(c.OBJECT_ID, destination)
 
     def test_group_engagements(self) -> None:
         """Test group_engagements routine
@@ -728,30 +765,37 @@ class TestEngagementManagement(unittest.TestCase):
 
         """
 
-        simulated_engagements = [
+        test_grouping = [
             {
-                "name": "random 1",
-                "audiences": {
-                    "id": ObjectId("60d54f1585bff4c4a3f75f3c"),
-                    "destinations": {
-                        "id": ObjectId("60d54f1585bff4c4a3f75f3d"),
-                        "contact_list": "random_extension",
-                    },
+                c.NAME: "doug",
+                c.ID: 1,
+                c.AUDIENCES: {
+                    c.OBJECT_ID: 4,
+                    c.NAME: "daf",
+                    c.DESTINATIONS: {c.OBJECT_ID: 46, c.NAME: "kaya"},
                 },
-                "_id": ObjectId(),
             },
             {
-                "name": "random 1",
-                "audiences": {
-                    "id": ObjectId("60d54f1585bff4c4a3f75f3c"),
-                    "destinations": {
-                        "id": ObjectId("60d54f1585bff4c4a3f75f3e"),
-                    },
+                c.NAME: "doug",
+                c.ID: 1,
+                c.AUDIENCES: {
+                    c.OBJECT_ID: 4,
+                    c.NAME: "daf",
+                    c.DESTINATIONS: {c.OBJECT_ID: 86, c.NAME: "ollie"},
                 },
-                "_id": ObjectId(),
             },
         ]
 
         # create another audience
-        abc = em.group_engagements(simulated_engagements)
-        bad = 0
+        grouped_items = em.group_engagements(test_grouping)
+
+        # ensure list has a value
+        self.assertTrue(grouped_items)
+
+        # ensure list length is exactly one
+        self.assertEqual(len(grouped_items), 1)
+
+        # ensure destinations has two items
+        self.assertEqual(
+            len(grouped_items[0][c.AUDIENCES][0][c.DESTINATIONS]), 2
+        )

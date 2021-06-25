@@ -118,38 +118,42 @@ def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
         # unwind the audiences object so we can do the nested joins.
         {
             "$unwind": {
-                "path": "$audiences",
-                "preserveNullAndEmptyArrays": False,
+                "path": f"${db_c.AUDIENCES}",
+                "preserveNullAndEmptyArrays": True,
             }
         },
         # lookup audience objects to the audience collection to get name.
         {
             "$lookup": {
-                "from": "audiences",
+                "from": db_c.AUDIENCES,
                 "localField": "audiences.id",
-                "foreignField": "_id",
+                "foreignField": db_c.ID,
                 "as": "audience",
             }
         },
         # unwind the found audiences to an object.
         {"$unwind": {"path": "$audience", "preserveNullAndEmptyArrays": True}},
         # add the audience name field to the nested audience object
-        {"$addFields": {"audiences.name": "$audience.name"}},
+        {
+            "$addFields": {
+                f"{db_c.AUDIENCES}.{db_c.NAME}": f"$audience.{db_c.NAME}"
+            }
+        },
         # remove the unused audience object fields.
         {"$project": {"audience": 0}},
         # unwind the destinations
         {
             "$unwind": {
-                "path": "$audiences.destinations",
+                "path": f"${db_c.AUDIENCES}.{db_c.DESTINATIONS}",
                 "preserveNullAndEmptyArrays": True,
             }
         },
         # lookup the embedded destinations
         {
             "$lookup": {
-                "from": "delivery_platforms",
-                "localField": "audiences.destinations.id",
-                "foreignField": "_id",
+                "from": db_c.DELIVERY_PLATFORM_COLLECTION,
+                "localField": f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.OBJECT_ID}",
+                "foreignField": db_c.ID,
                 "as": "destination",
             }
         },
@@ -161,15 +165,19 @@ def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
             }
         },
         # add the destination name to the nested destinations.
-        {"$addFields": {"audiences.destinations.name": "$destination.name"}},
+        {
+            "$addFields": {
+                f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.NAME}": f"$destination.{db_c.NAME}"
+            }
+        },
         # remove the found destination from the pipeline.
         {"$project": {"destination": 0}},
         # lookup the latest delivery job
         {
             "$lookup": {
-                "from": "delivery_jobs",
-                "localField": "audiences.destinations.delivery_job_id",
-                "foreignField": "_id",
+                "from": db_c.DELIVERY_JOBS_COLLECTION,
+                "localField": f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.DELIVERY_JOB_ID}",
+                "foreignField": db_c.ID,
                 "as": "delivery_job",
             }
         },
@@ -183,7 +191,7 @@ def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
         # add the delivery object to the nested destination via latest_delivery
         {
             "$addFields": {
-                "audiences.destinations.latest_delivery": "$delivery_job"
+                f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.latest_delivery": "$delivery_job"
             }
         },
         # remove the found delivery job from the top level.
@@ -619,27 +627,53 @@ def add_delivery_job(
 
 
 def group_engagements(engagements: list) -> list:
-    # remove audiences from the first list
-    engagements_sans_audience = [
-        {key: val for key, val in x.items() if key != db_c.AUDIENCES}
-        for x in engagements
-    ]
+    """Group engagements by audience/destinations.
+    DocumentDB does not support graph lookup and/or $root.
+    easier to do this in python instead of Mongo.
+    We still leverage mongo to do the lookups,
+    but we handle the grouping and status rollup here
 
-    # clean duplicates from the engagement list
-    engagements_sans_audience = [
-        dict(t) for t in {tuple(d.items()) for d in engagements_sans_audience}
-    ]
+    Args:
+        engagements (list): list of engagement documents.
 
-    # now populate the list of audiences for each engagement
-    for parent_engagement in engagements_sans_audience:
-        # set if no audiences list yet
-        if db_c.AUDIENCES not in parent_engagement:
-            parent_engagement[db_c.AUDIENCES] = []
+    Returns:
+          list: list of engagement documents
 
-        parent_engagement[db_c.AUDIENCES] += [
-            x[db_c.AUDIENCES]
-            for x in engagements
-            if parent_engagement[db_c.ID] == x[db_c.ID]
-        ]
+    """
 
-    vad = 0
+    core_lk = {}
+    for item in engagements:
+        # check if we already have a record for the engagement ID
+        if item[db_c.ID] not in core_lk:
+            # shallow copy into the core lookup dict
+            core_lk[item[db_c.ID]] = item.copy()
+            # set the audience field to an empty list.
+            core_lk[item[db_c.ID]][db_c.AUDIENCES] = []
+
+        # if audience list has data proceed
+        if not core_lk[item[db_c.ID]][db_c.AUDIENCES]:
+            # if audience has nested destinations, proceed.
+            if db_c.DESTINATIONS in item[db_c.AUDIENCES]:
+                item[db_c.AUDIENCES][db_c.DESTINATIONS] = [
+                    item[db_c.AUDIENCES][db_c.DESTINATIONS]
+                ]
+            else:
+                item[db_c.AUDIENCES][db_c.DESTINATIONS] = []
+            core_lk[item[db_c.ID]][db_c.AUDIENCES] += [item[db_c.AUDIENCES]]
+
+            continue
+
+        # group the nested destinations into a singular list
+        # within the audience object.
+        for audience in core_lk[item[db_c.ID]][db_c.AUDIENCES]:
+            # add the audience
+            if (
+                audience[db_c.OBJECT_ID]
+                == item[db_c.AUDIENCES][db_c.OBJECT_ID]
+            ):
+                # add destination
+                audience[db_c.DESTINATIONS] += [
+                    item[db_c.AUDIENCES][db_c.DESTINATIONS]
+                ]
+
+    return list(core_lk.values())
