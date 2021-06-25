@@ -284,7 +284,7 @@ export default {
           authentication_details: this.authenticationDetails,
         })
         if (this.isSalesforceSelected) {
-          this.dataExtensions = response.performance_metrics_data_extensions
+          this.dataExtensions = response.perf_data_extensions
         }
         this.isValidated = true
       } catch (error) {
@@ -302,7 +302,7 @@ export default {
         }
 
         if (this.isSalesforceSelected) {
-          data.performance_metrics_data_extension = this.selectedDataExtension
+          data.perf_data_extension = this.selectedDataExtension
         }
         await this.addDestination(data)
         this.$router.push({ name: "Connections" })

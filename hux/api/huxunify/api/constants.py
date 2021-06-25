@@ -386,12 +386,14 @@ CUSTOMERS_DESCRIPTION = "Customers API"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
-    "filters": {
-        "section_aggregator": "ALL",
-        "section_filters": [
-            {"field": "country", "type": "equals", "value": "us"}
-        ],
-    }
+    "filters": [
+        {
+            "section_aggregator": "ALL",
+            "section_filters": [
+                {"field": "country", "type": "equals", "value": "us"}
+            ],
+        }
+    ]
 }
 
 # IDR Fields
