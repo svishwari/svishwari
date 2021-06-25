@@ -984,14 +984,14 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(metrics_list is not None)
         self.assertEqual(len(metrics_list), 1)
 
-        metrics_list = dpm.get_performance_metrics_by_engagement_detail(
+        metrics_list = dpm.get_performance_metrics_by_engagement_details(
             self.database, ObjectId(), delivery_platform_id
         )
 
         self.assertIsNotNone(metrics_list)
         self.assertEqual(len(metrics_list), 0)
 
-        metrics_list = dpm.get_performance_metrics_by_engagement_detail(
+        metrics_list = dpm.get_performance_metrics_by_engagement_details(
             self.database, engagement_id, [ObjectId()]
         )
 
@@ -1403,14 +1403,14 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
 
-        delivery_jobs = dpm.get_delivery_job_engagement_detail(
+        delivery_jobs = dpm.get_delivery_jobs_by_engagement_details(
             self.database,
             engagement_id,
             self.source_audience_doc[c.ID],
             self.delivery_platform_doc[c.ID],
         )
 
-        self.assertTrue(delivery_jobs is not None)
+        self.assertIsNotNone(delivery_jobs)
         self.assertEqual(1, len(delivery_jobs))
         self.assertIn(c.ENGAGEMENT_ID, delivery_jobs[0])
         self.assertEqual(engagement_id, delivery_jobs[0][c.ENGAGEMENT_ID])
@@ -1446,9 +1446,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             engagement_id=engagement_id,
         )
 
-        self.assertTrue(doc is not None)
-
-        self.assertTrue(doc is not None)
+        self.assertIsNotNone(doc)
         self.assertEqual(len(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1)
 
         count = dpm.delete_delivery_job_generic_campaigns(
@@ -1458,5 +1456,5 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         doc = dpm.get_delivery_job(self.database, doc[c.ID])
 
-        self.assertTrue(doc is not None)
+        self.assertIsNotNone(doc)
         self.assertEqual(len(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 0)

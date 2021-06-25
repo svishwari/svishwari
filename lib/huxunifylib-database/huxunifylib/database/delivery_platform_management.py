@@ -1112,7 +1112,7 @@ def get_delivery_jobs_by_engagement_details(
         or audience_id is None
         or delivery_platform_id is None
     ):
-        de.InvalidID()
+        raise de.InvalidID()
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
@@ -1480,7 +1480,11 @@ def create_delivery_job_generic_campaigns(
     try:
         return collection.find_one_and_update(
             {c.ID: delivery_job_id, c.DELETED: False},
-            {"$set": {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign}},
+            {
+                "$set": {
+                    c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign
+                }
+            },
             upsert=False,
             new=True,
         )
