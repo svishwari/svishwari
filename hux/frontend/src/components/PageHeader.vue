@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="page-header--wrap d-flex justify-space-between align-center py-5"
-    :class="paddingchanges ? paddingchanges : 'px-8'"
+    :class="headerPadding"
     elevation="1"
     tile
     :color="bgColor"
@@ -60,9 +60,10 @@ export default {
       default: undefined,
     },
 
-    paddingchanges: {
+    headerPadding: {
       type: String,
       required: false,
+      default: 'px-8'
     },
   },
 }
