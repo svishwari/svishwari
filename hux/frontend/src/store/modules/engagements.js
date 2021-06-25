@@ -19,6 +19,7 @@ const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
       item.audienceList = []
+      item.isCurrentRow = false
       Vue.set(state.items, item.id, item)
     })
   },
@@ -43,7 +44,12 @@ const mutations = {
     let engagement = state.items[payload.id]
     if (engagement.audienceList.length == 0) {
       engagement.audienceList = payload.data
+      engagement.isCurrentRow = false
     }
+  },
+
+  MARK_CURRENT_ROW(state, id) {
+    state.items[id].isCurrentRow = !state.items[id].isCurrentRow
   },
 }
 
@@ -135,6 +141,10 @@ const actions = {
 
   updateAudienceList({ commit }, payload) {
     commit("SET_AUDIENCE_LIST", payload)
+  },
+
+  markCurrentRow({ commit }, id) {
+    commit("MARK_CURRENT_ROW", id)
   },
 }
 

@@ -53,6 +53,7 @@
                 @click="
                   expand(!isExpanded)
                   getAudiencesForEngagement(item)
+                  markCurrentRow(item['id'])
                 "
               >
                 mdi-chevron-right
@@ -108,7 +109,7 @@
           class="pa-0 child"
           v-if="item.audiences.length > 0"
         >
-          <v-progress-linear :active="subLoading" :indeterminate="subLoading" />
+          <v-progress-linear :active="item.isCurrentRow" :indeterminate="item.isCurrentRow" />
           <hux-data-table
             :headers="headers"
             :dataItems="item.audienceList"
@@ -233,7 +234,6 @@ export default {
         },
       ],
       loading: true,
-      subLoading: true,
       rowData: [],
       manualDeliverySchedule: "Manual",
       audienceList: [],
@@ -273,13 +273,13 @@ export default {
       getAllEngagements: "engagements/getAll",
       getAudienceById: "audiences/getAudienceById",
       updateAudienceList: "engagements/updateAudienceList",
+      markCurrentRow: "engagements/markCurrentRow"
     }),
     getName(item) {
       return item.first_name + " " + item.last_name
     },
     // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
-      this.subLoading = true
       this.audienceList = []
       let audienceIds = item.audiences.map((key) => key.id)
       for (let id of audienceIds) {
@@ -287,7 +287,6 @@ export default {
         this.audienceList.push(this.audiencesData(id))
       }
       await this.updateAudienceList({ id: item.id, data: this.audienceList })
-      this.subLoading = false
     },
   },
   async mounted() {
