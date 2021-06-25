@@ -97,6 +97,114 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
+    """A function to get all engagements summary with all nested lookups
+
+    Args:
+        database (DatabaseClient): A database client.
+
+    Returns:
+        Union[list, None]: List of all engagement documents.
+
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    pipeline = [
+        # filter out the deleted engagements
+        {"$match": {db_c.DELETED: False}},
+        # unwind the audiences object so we can do the nested joins.
+        {
+            "$unwind": {
+                "path": "$audiences",
+                "preserveNullAndEmptyArrays": False,
+            }
+        },
+        # lookup audience objects to the audience collection to get name.
+        {
+            "$lookup": {
+                "from": "audiences",
+                "localField": "audiences.id",
+                "foreignField": "_id",
+                "as": "audience",
+            }
+        },
+        # unwind the found audiences to an object.
+        {"$unwind": {"path": "$audience", "preserveNullAndEmptyArrays": True}},
+        # add the audience name field to the nested audience object
+        {"$addFields": {"audiences.name": "$audience.name"}},
+        # remove the unused audience object fields.
+        {"$project": {"audience": 0}},
+        # unwind the destinations
+        {
+            "$unwind": {
+                "path": "$audiences.destinations",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # lookup the embedded destinations
+        {
+            "$lookup": {
+                "from": "delivery_platforms",
+                "localField": "audiences.destinations.id",
+                "foreignField": "_id",
+                "as": "destination",
+            }
+        },
+        # unwind the found destinations
+        {
+            "$unwind": {
+                "path": "$destination",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # add the destination name to the nested destinations.
+        {"$addFields": {"audiences.destinations.name": "$destination.name"}},
+        # remove the found destination from the pipeline.
+        {"$project": {"destination": 0}},
+        # lookup the latest delivery job
+        {
+            "$lookup": {
+                "from": "delivery_jobs",
+                "localField": "audiences.destinations.delivery_job_id",
+                "foreignField": "_id",
+                "as": "delivery_job",
+            }
+        },
+        # unwind the found delivery job into objects.
+        {
+            "$unwind": {
+                "path": "$delivery_job",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # add the delivery object to the nested destination via latest_delivery
+        {
+            "$addFields": {
+                "audiences.destinations.latest_delivery": "$delivery_job"
+            }
+        },
+        # remove the found delivery job from the top level.
+        {"$project": {"delivery_job": 0, db_c.DELETED: 0}},
+    ]
+
+    try:
+        dad = list(collection.aggregate(pipeline))
+
+        # document DB does not support $$ROOT syntax, so we will group dynamically here
+        return dad
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_engagements(database: DatabaseClient) -> Union[list, None]:
     """A function to get all engagements
 
@@ -508,3 +616,30 @@ def add_delivery_job(
         logging.error(exc)
 
     return None
+
+
+def group_engagements(engagements: list) -> list:
+    # remove audiences from the first list
+    engagements_sans_audience = [
+        {key: val for key, val in x.items() if key != db_c.AUDIENCES}
+        for x in engagements
+    ]
+
+    # clean duplicates from the engagement list
+    engagements_sans_audience = [
+        dict(t) for t in {tuple(d.items()) for d in engagements_sans_audience}
+    ]
+
+    # now populate the list of audiences for each engagement
+    for parent_engagement in engagements_sans_audience:
+        # set if no audiences list yet
+        if db_c.AUDIENCES not in parent_engagement:
+            parent_engagement[db_c.AUDIENCES] = []
+
+        parent_engagement[db_c.AUDIENCES] += [
+            x[db_c.AUDIENCES]
+            for x in engagements
+            if parent_engagement[db_c.ID] == x[db_c.ID]
+        ]
+
+    vad = 0

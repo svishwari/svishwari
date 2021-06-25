@@ -1,6 +1,7 @@
 """Engagement Management Tests"""
 
 import unittest
+from datetime import datetime
 import mongomock
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
@@ -513,10 +514,10 @@ class TestEngagementManagement(unittest.TestCase):
         delivery_platform_id = delivery_platform[c.ID]
 
         # create a source audience
-        source_audience = am.create_audience(
+        self.source_audience = am.create_audience(
             self.database, "Source Audience", [], ingestion_job_id
         )
-        source_audience_id = source_audience[c.ID]
+        source_audience_id = self.source_audience[c.ID]
 
         # create a lookalike audience
         lookalike_audience = dpm.create_delivery_platform_lookalike_audience(
@@ -661,3 +662,96 @@ class TestEngagementManagement(unittest.TestCase):
                 doc[c.AUDIENCES][0][c.DESTINATIONS][0][c.DELIVERY_JOB_ID],
                 audience_delivery_job[c.ID],
             )
+
+    def test_get_engagements_summary(self) -> None:
+        """Test get_engagements routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # create another audience
+        audience = om.create_audience(
+            self.database, "audience_group", [], self.user_name
+        )
+
+        for i in range(20):
+            # an audience with two destinations
+            new_engagement = {
+                c.ENGAGEMENT_NAME: f"Spring 2202{i}",
+                c.ENGAGEMENT_DESCRIPTION: f"high ltv for spring 202{i}",
+                c.AUDIENCES: [
+                    {
+                        c.OBJECT_ID: ObjectId(),
+                        c.DESTINATIONS: [
+                            {
+                                c.OBJECT_ID: ObjectId(),
+                                c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                            },
+                            {c.OBJECT_ID: audience[c.ID]},
+                            {c.OBJECT_ID: self.audience[c.ID]},
+                        ],
+                    },
+                    {
+                        c.OBJECT_ID: ObjectId(),
+                        c.DESTINATIONS: [{c.OBJECT_ID: ObjectId()}],
+                    },
+                ],
+            }
+
+            em.set_engagement(
+                self.database,
+                new_engagement[c.ENGAGEMENT_NAME],
+                new_engagement[c.ENGAGEMENT_DESCRIPTION],
+                new_engagement[c.AUDIENCES],
+                self.user_name,
+            )
+
+        # test for a list with data.
+        engagement_docs = em.get_engagements_summary(database=self.database)
+
+        data = em.group_engagements(engagement_docs)
+        self.assertTrue(engagement_docs)
+        self.assertFalse([e for e in engagement_docs if c.DELETED in e])
+
+        # ensure unique names that grouping passed
+        self.assertEqual(
+            len(engagement_docs), len(em.get_engagements(self.database))
+        )
+
+    def test_group_engagements(self) -> None:
+        """Test group_engagements routine
+
+        Returns:
+            Response: None
+
+        """
+
+        simulated_engagements = [
+            {
+                "name": "random 1",
+                "audiences": {
+                    "id": ObjectId("60d54f1585bff4c4a3f75f3c"),
+                    "destinations": {
+                        "id": ObjectId("60d54f1585bff4c4a3f75f3d"),
+                        "contact_list": "random_extension",
+                    },
+                },
+                "_id": ObjectId(),
+            },
+            {
+                "name": "random 1",
+                "audiences": {
+                    "id": ObjectId("60d54f1585bff4c4a3f75f3c"),
+                    "destinations": {
+                        "id": ObjectId("60d54f1585bff4c4a3f75f3e"),
+                    },
+                },
+                "_id": ObjectId(),
+            },
+        ]
+
+        # create another audience
+        abc = em.group_engagements(simulated_engagements)
+        bad = 0
