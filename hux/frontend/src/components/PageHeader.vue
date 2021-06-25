@@ -69,7 +69,7 @@ export default {
     headerHeightChanges: {
       type: String,
       required: false,
-      default: "py-5",
+      default: "py-5"
     },
   },
 }
