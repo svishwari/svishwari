@@ -1,8 +1,13 @@
+"""Test Module for Prepopulate Database Script"""
 from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as c
-from huxunifylib.database.cdp_data_source_management import get_all_data_sources
-from huxunifylib.database.delivery_platform_management import get_all_delivery_platforms
+from huxunifylib.database.cdp_data_source_management import (
+    get_all_data_sources,
+)
+from huxunifylib.database.delivery_platform_management import (
+    get_all_delivery_platforms,
+)
 import scripts.database.prepopulate_database as pd
 
 
@@ -44,11 +49,11 @@ class TestPrepopulateDatabase(TestCase):
         Unit Test for set Indexes
 
         Args:
-            Instance of TestCreateDBIndex
+            Instance of TestPopulateDatabase
         Returns:
             None
         """
-        DATA_SOURCES = [
+        data_sources = [
             {
                 c.DATA_SOURCE_NAME: "Bluecore",
                 c.DATA_SOURCE_TYPE: "bluecore",
@@ -65,14 +70,22 @@ class TestPrepopulateDatabase(TestCase):
             },
         ]
 
-        pd.insert_data_sources(self.database, DATA_SOURCES)
+        pd.insert_data_sources(self.database, data_sources)
         list_sources = get_all_data_sources(self.database)
 
         list_src_names = [x["name"] for x in list_sources]
-        [self.assertIn(x["name"], list_src_names) for x in DATA_SOURCES]
+        _ = [self.assertIn(x["name"], list_src_names) for x in data_sources]
 
     def test_insert_delivery_platforms(self):
-        DELIVERY_PLATFORMS = [
+        """
+        Unit Test for set Indexes
+
+        Args:
+            Instance of TestPopulateDatabase
+        Returns:
+            None
+        """
+        delivery_platforms = [
             {
                 c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
                 c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
@@ -89,12 +102,13 @@ class TestPrepopulateDatabase(TestCase):
             },
         ]
 
-        pd.insert_delivery_platforms(self.database, DELIVERY_PLATFORMS)
+        pd.insert_delivery_platforms(self.database, delivery_platforms)
 
         list_delivery_platforms = get_all_delivery_platforms(self.database)
-        list_delivery_platform_names = [x["name"] for x in list_delivery_platforms]
-        [
-            self.assertIn(x["name"], list_delivery_platform_names)
-            for x in DELIVERY_PLATFORMS
+        list_delivery_platform_names = [
+            x["name"] for x in list_delivery_platforms
         ]
-        self.assertTrue(1)
+        _ = [
+            self.assertIn(x["name"], list_delivery_platform_names)
+            for x in delivery_platforms
+        ]

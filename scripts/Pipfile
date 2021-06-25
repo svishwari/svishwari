@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pymongo = "*"
+pandas = "*"
+tenacity = "*"
+huxunifylib-database = {path = ".", editable = true}
+hypothesis = "*"
+
+[dev-packages]
+mongomock = "*"
+pytest = "*"
+pylint = "*"
+black = { version = "*", pre="true"}
+safety = "*"
+mypy = "*"
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
