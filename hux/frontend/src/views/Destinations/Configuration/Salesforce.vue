@@ -32,7 +32,7 @@ export default {
     dataExtensionNames() {
       return this.dataExtensions.map((each) => {
         return {
-          text: each.data_extension_name,
+          text: each.name,
           value: each.data_extension_id,
         }
       })

@@ -1,0 +1,124 @@
+<template>
+  <Drawer v-model="localToggle" :loading="loading">
+    <template #header-left>
+      <div class="d-flex align-baseline">
+        <h3 class="text-h3 font-weight-light pr-2">
+          Select a destination to add
+        </h3>
+      </div>
+    </template>
+
+    <template #default>
+      <div class="ma-3 font-weight-light">
+        <CardHorizontal
+          v-for="destination in destinationsList"
+          :key="destination.id"
+          :title="destination.name"
+          :icon="destination.type"
+          :isAdded="isAdded(destination)"
+          @click="add(destination)"
+          class="my-3"
+        />
+      </div>
+    </template>
+
+    <template #footer-left>
+      <div class="d-flex align-baseline">
+        {{ destinationsList.length }} results
+      </div>
+    </template>
+  </Drawer>
+</template>
+
+<script>
+import { mapGetters, mapActions } from "vuex"
+
+import Drawer from "@/components/common/Drawer"
+import CardHorizontal from "@/components/common/CardHorizontal"
+
+export default {
+  name: "SelectDestinationsDrawer",
+
+  components: {
+    Drawer,
+    CardHorizontal,
+  },
+
+  computed: {
+    ...mapGetters({
+      destinations: "destinations/list",
+    }),
+
+    destinationsList() {
+      return this.destinations.filter(
+        (each) => each.is_added && each.is_enabled
+      )
+    },
+  },
+
+  data() {
+    return {
+      loading: false,
+      localToggle: false,
+    }
+  },
+
+  methods: {
+    ...mapActions({
+      getDestinations: "destinations/getAll",
+    }),
+
+    isAdded(destination) {
+      return this.value.findIndex((each) => destination.id === each.id) !== -1
+        ? true
+        : false
+    },
+
+    add(destination) {
+      if (this.isAdded(destination)) {
+        this.undoAdd(destination)
+      } else {
+        if (destination.type === "salesforce") {
+          this.$emit("onSalesforceAdd", destination)
+        } else {
+          this.value.push(destination)
+        }
+      }
+    },
+
+    undoAdd(destination) {
+      const index = this.value.indexOf(destination)
+      this.value.splice(index, 1)
+    },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getDestinations()
+    this.loading = false
+  },
+
+  props: {
+    value: {
+      type: Array,
+      required: true,
+    },
+
+    toggle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
+    },
+  },
+}
+</script>
