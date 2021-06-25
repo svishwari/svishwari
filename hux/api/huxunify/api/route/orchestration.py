@@ -567,7 +567,9 @@ class AudienceDeliverView(SwaggerView):
             ):
                 if pair[0] != audience_id:
                     continue
-                batch_destination = get_destination_config(database, *pair)
+                batch_destination = get_destination_config(
+                    database, engagement[db_c.ID], *pair
+                )
                 batch_destination.register()
                 batch_destination.submit()
                 delivery_job_ids.append(
@@ -621,20 +623,6 @@ class AudienceRules(SwaggerView):
                 "model_scores": {
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
-                        "type": "range",
-                        "min": 0.0,
-                        "max": 1.0,
-                        "steps": 0.05,
-                    },
-                    "actual_lifetime_value": {
-                        "name": "Actual lifetime value",
-                        "type": "range",
-                        "min": 0,
-                        "max": 50000,
-                        "steps": 1000,
-                    },
-                    "propensity_to_purchase": {
-                        "name": "Propensity to purchase",
                         "type": "range",
                         "min": 0.0,
                         "max": 1.0,

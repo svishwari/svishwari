@@ -48,18 +48,18 @@ steps:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
 # Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
-# No releases present currently, to be uncommented once releases will be present.
-  # VersionTag:
-  #   stage: build_tag
-  #   description: Set docker tag based Git tag
-  #   type: freestyle
-  #   image: huxhub.repo.mgnt.in/alpine
-  #   commands:
-  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
-  #   when:
-  #     condition:
-  #       all:
-  #         masterBranch: '"${{CF_BRANCH}}" == "main"'
+
+  VersionTag:
+    stage: build_tag
+    description: Set docker tag based Git tag
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
+    when:
+      branch:
+        only:
+          - /^app.*/i
 
   set_env_var:
     stage: set_env
@@ -146,6 +146,7 @@ steps:
       branch:
         only:
           - main
+          - /^app.*/i
 
   deployment:
     stage: argo-deploy
@@ -164,3 +165,4 @@ steps:
       branch:
         only:
           - main
+          - /^app.*/i

@@ -10,7 +10,9 @@
           mdi-plus-circle-multiple-outline
         </v-icon>
         <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-pencil </v-icon>
-        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+          mdi-download
+        </v-icon>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -34,7 +36,7 @@
               </template>
             </Tooltip>
           </span>
-          <Avatar :name="getFullName(item.fullName)" />
+          <Avatar :name="item.fullName" />
         </template>
       </MetricCard>
 
@@ -142,9 +144,6 @@ export default {
     refresh() {},
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
-    },
-    getFullName(fullname) {
-      return fullname.first_name + " " + fullname.last_name
     },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"

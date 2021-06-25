@@ -39,8 +39,11 @@
         <v-card
           v-for="(item, index) in Object.values(props.items)"
           :key="index"
-          :class="{ 'bordered-card': bordered }"
-          class="data-card mb-2"
+          :class="{
+            'bordered-card': bordered,
+            'data-card-selected': isAdded(item),
+          }"
+          class="data-card mb-4"
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key" :cols="field.col">
@@ -108,6 +111,11 @@ export default {
       required: false,
       default: false,
     },
+    selectedItems: {
+      type: [Object, Array],
+      required: false,
+      default: () => [],
+    },
   },
 
   data() {
@@ -130,6 +138,19 @@ export default {
     isSortedBy(key) {
       return Boolean(this.sortBy === key)
     },
+
+    isAdded(item) {
+      if (Array.isArray(this.selectedItems)) {
+        return Boolean(
+          this.selectedItems &&
+            this.selectedItems.filter(
+              (selectedItem) => selectedItem.id === item.id
+            ).length > 0
+        )
+      } else {
+        return Boolean(this.selectedItems && this.selectedItems[item.id])
+      }
+    },
   },
 
   mounted() {
@@ -151,7 +172,13 @@ export default {
 .data-card {
   @extend .box-shadow-5;
 }
-
+.data-card-selected {
+  border: 1px solid var(--v-zircon-base) !important;
+  background-color: var(--v-background-base) !important;
+  &:hover {
+    @extend .box-shadow-25;
+  }
+}
 .empty-card {
   border: 1px solid var(--v-zircon-base) !important;
 }

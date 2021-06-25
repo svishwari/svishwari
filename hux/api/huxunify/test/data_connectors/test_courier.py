@@ -182,6 +182,7 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
+                api_c.AUDIENCE_ROUTER_STUB_TEST: "1",
             },
         )
         self.assertEqual(
@@ -294,7 +295,10 @@ class CourierTest(TestCase):
         self.assertTrue(delivery_route)
 
         expected_route = [
-            [self.audience_one[c.ID], self.audience_one[c.DESTINATIONS][0]]
+            [
+                self.audience_one[c.ID],
+                {c.OBJECT_ID: self.audience_one[c.DESTINATIONS][0]},
+            ]
         ]
 
         self.assertListEqual(expected_route, delivery_route)
@@ -319,7 +323,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, *pair
+                    self.database, self.engagement[c.ID], *pair
                 )
             self.assertIsNotNone(batch_destination.aws_envs)
             self.assertIsNotNone(batch_destination.aws_secrets)
@@ -353,7 +357,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, *pair
+                    self.database, self.engagement[c.ID], *pair
                 )
             batch_destination.aws_envs[
                 AudienceRouterConfig.BATCH_SIZE.name
@@ -395,7 +399,7 @@ class CourierTest(TestCase):
                 return_value="demo_store_value",
             ):
                 batch_destination = get_destination_config(
-                    self.database, *pair
+                    self.database, self.engagement[c.ID], *pair
                 )
 
             # Register job

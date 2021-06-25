@@ -1,37 +1,45 @@
 <template>
-  <v-menu bottom offset-y open-on-hover class="cursor-default">
-    <template #activator="{ on, attrs }">
+  <Tooltip>
+    <template #label-content>
       <span
         class="blue-grey d-flex align-center justify-center"
-        v-bind="attrs"
-        v-on="on"
-        :style="{ 'border-color': getColorCode(name) }"
+        :style="{ 'border-color': getColorCode(localName) }"
       >
-        {{ name | shortName }}
+        {{ localName | shortName }}
       </span>
     </template>
-    <v-list>
-      <v-list-item>
-        <v-list-item-title class="neroBlack--text">{{
-          name
-        }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+    <template #hover-content>
+      {{ localName }}
+    </template>
+  </Tooltip>
 </template>
 
 <script>
 import { generateColor } from "@/utils"
+import Tooltip from "@/components/common/Tooltip.vue"
+
+const DEFAULT_NAME = "Sarah Huxly"
 
 export default {
   name: "Avatar",
+
+  components: {
+    Tooltip,
+  },
+
   props: {
     name: {
       type: String,
-      default: "",
-      required: true,
+      required: false,
     },
   },
+
+  computed: {
+    localName() {
+      return this.name || DEFAULT_NAME
+    },
+  },
+
   methods: {
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"

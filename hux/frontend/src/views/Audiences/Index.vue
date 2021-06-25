@@ -1,19 +1,13 @@
 <template>
   <div class="audiences-wrap grey lighten-5">
-    <PageHeader>
+    <PageHeader :headerHeightChanges="'py-3'">
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template slot="right">
-        <v-btn
-          min-width="40"
-          height="40"
-          width="40"
-          color="primary"
-          :disabled="true"
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"
+          >mdi-download</v-icon
         >
-          <v-icon size="23" color="white">mdi-download</v-icon>
-        </v-btn>
       </template>
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
@@ -79,14 +73,14 @@
             <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'updated_by' && item[header.value]">
-              <avatar :name="getName(item[header.value])" />
+            <div v-if="header.value == 'updated_by'">
+              <Avatar :name="item[header.value]" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
             </div>
-            <div v-if="header.value == 'created_by' && item[header.value]">
-              <avatar :name="getName(item[header.value])" />
+            <div v-if="header.value == 'created_by'">
+              <Avatar :name="item[header.value]" />
             </div>
           </td>
         </template>
@@ -223,9 +217,6 @@ export default {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
     }),
-    getName(item) {
-      return item.first_name + " " + item.last_name
-    },
   },
   async mounted() {
     this.loading = true
@@ -260,12 +251,16 @@ export default {
       tr {
         td {
           font-size: 14px;
+          height: 60px;
         }
       }
     }
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
+  }
+  .icon-border {
+    cursor: default !important;
   }
 }
 </style>

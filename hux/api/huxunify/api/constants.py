@@ -209,7 +209,8 @@ DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
 INVALID_COMPONENT_NAME = "Invalid component name."
-DATA_EXTENSION = "data-extensions"
+DATA_EXTENSIONS = "data-extensions"
+DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
@@ -378,6 +379,16 @@ BATCH_SIZE = "batch_size"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
+
+# TODO HUS-363 remove once we can pass empty filters to CDP.
+CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
+    "filters": {
+        "section_aggregator": "ALL",
+        "section_filters": [
+            {"field": "country", "type": "equals", "value": "us"}
+        ],
+    }
+}
 
 # IDR Fields
 IDR_TAG = "idr"
