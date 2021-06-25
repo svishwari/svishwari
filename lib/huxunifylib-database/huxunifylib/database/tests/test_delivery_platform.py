@@ -989,7 +989,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         self.assertIsNotNone(metrics_list)
-        self.assertEqual(len(metrics_list), 0)
+        self.assertFalse(metrics_list)
 
         metrics_list = dpm.get_performance_metrics_by_engagement_details(
             self.database, engagement_id, [ObjectId()]
@@ -1457,4 +1457,4 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.get_delivery_job(self.database, doc[c.ID])
 
         self.assertIsNotNone(doc)
-        self.assertEqual(len(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 0)
+        self.assertFalse(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS])
