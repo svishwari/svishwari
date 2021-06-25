@@ -302,7 +302,7 @@ export default {
         }
 
         if (this.isSalesforceSelected) {
-          data.performance_metrics_data_extension = this.selectedDataExtension
+          data.performance_de = this.selectedDataExtension
         }
         await this.addDestination(data)
         this.$router.push({ name: "Connections" })
