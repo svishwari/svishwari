@@ -190,7 +190,7 @@
           :disabled="!isValid"
           @click="deliverNewEngagement()"
         >
-          Add &amp; deliver
+          Create &amp; deliver
         </v-btn>
 
         <v-btn
@@ -201,7 +201,7 @@
           :disabled="!isValid"
           @click="addNewEngagement()"
         >
-          Add
+          Create
         </v-btn>
       </template>
     </HuxFooter>
