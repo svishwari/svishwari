@@ -100,6 +100,8 @@ export const defineRoutes = (server) => {
   })
   server.get("/customers/overview", () => customersOverview)
 
+  server.post("/customers/overview", () => customersOverview)
+
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
