@@ -1359,16 +1359,19 @@ class TestDeliveryPlatform(unittest.TestCase):
         """Campaign Activity docs are set and retrieved."""
 
         delivery_job_id = self._set_delivery_job()
+        event_details = (
+            {
+                "event": "sent",
+                "event_date": "2021-06-17T12:21:27.970Z",
+            },
+        )
 
         doc = dpm.set_campaign_activity(
             database=self.database,
             delivery_platform_id=ObjectId(),
             delivery_platform_name="Salesforce",
             delivery_job_id=delivery_job_id,
-            event_dict={
-                "event": "sent",
-                "event_date": "2021-06-17T12:21:27.970Z",
-            },
+            event_details=event_details,
             generic_campaign_id=self.individual_generic_campaigns[0],
         )
 
@@ -1387,6 +1390,10 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
         self.assertIn(c.CREATE_TIME, doc)
         self.assertIn(c.EVENT_DETAILS, doc)
+        self.assertEqual(doc[c.EVENT_DETAILS]["event"], "sent")
+        self.assertEqual(
+            doc[c.EVENT_DETAILS]["event_date"], "2021-06-17T12:21:27.970Z"
+        )
         self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
 
         # Status is to be set to non-transferred automatically

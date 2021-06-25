@@ -2013,7 +2013,7 @@ def set_campaign_activity(
     delivery_platform_name: str,
     delivery_job_id: ObjectId,
     generic_campaign_id: dict,
-    event_dict: dict,
+    event_details: dict,
 ) -> Union[dict, None]:
     """Store campaign activity data.
 
@@ -2042,7 +2042,7 @@ def set_campaign_activity(
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: datetime.datetime.utcnow(),
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
-        c.EVENT_DETAILS: event_dict,
+        c.EVENT_DETAILS: event_details,
         # By default not transferred for feedback to CDM yet
         c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
     }
