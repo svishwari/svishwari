@@ -109,7 +109,10 @@
           class="pa-0 child"
           v-if="item.audiences.length > 0"
         >
-          <v-progress-linear :active="item.isCurrentRow" :indeterminate="item.isCurrentRow" />
+          <v-progress-linear
+            :active="item.isCurrentRow"
+            :indeterminate="item.isCurrentRow"
+          />
           <hux-data-table
             :headers="headers"
             :dataItems="item.audienceList"
@@ -273,7 +276,7 @@ export default {
       getAllEngagements: "engagements/getAll",
       getAudienceById: "audiences/getAudienceById",
       updateAudienceList: "engagements/updateAudienceList",
-      markCurrentRow: "engagements/markCurrentRow"
+      markCurrentRow: "engagements/markCurrentRow",
     }),
     getName(item) {
       return item.first_name + " " + item.last_name
