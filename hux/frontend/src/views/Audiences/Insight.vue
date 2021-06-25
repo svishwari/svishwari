@@ -34,7 +34,7 @@
               </template>
             </Tooltip>
           </span>
-          <Avatar :name="getFullName(item.fullName)" />
+          <Avatar :name="item.fullName" />
         </template>
       </MetricCard>
 
@@ -142,9 +142,6 @@ export default {
     refresh() {},
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
-    },
-    getFullName(fullname) {
-      return fullname.first_name + " " + fullname.last_name
     },
     getColorCode(name) {
       return generateColor(name, 30, 60) + " !important"
