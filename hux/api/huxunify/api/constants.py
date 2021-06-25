@@ -191,6 +191,9 @@ INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 DUPLICATE_NAME = "Name already exists."
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
+    "Performance metrics data extension not assigned."
+)
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"

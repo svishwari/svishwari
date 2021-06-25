@@ -291,9 +291,7 @@ class DestinationPutView(SwaggerView):
 
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
-        performance_de = body.get(
-            api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
-        )
+        performance_de = None
         authentication_parameters = None
         destination_id = ObjectId(destination_id)
 
@@ -306,6 +304,18 @@ class DestinationPutView(SwaggerView):
             )
             if not destination:
                 return {"message": "Not found"}, HTTPStatus.NOT_FOUND
+
+            delivery_platform_type = destination[db_c.DELIVERY_PLATFORM_TYPE]
+
+            if delivery_platform_type == db_c.DELIVERY_PLATFORM_SFMC:
+                performance_de = body.get(
+                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
+                )
+                if not performance_de:
+                    return (
+                        {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                        HTTPStatus.BAD_REQUEST,
+                    )
 
             if auth_details:
                 # store the secrets for the updated authentication details
