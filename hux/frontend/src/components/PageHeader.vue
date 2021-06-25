@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="page-header--wrap d-flex justify-space-between align-center"
-    v-bind:class="[headerPadding, headerHeightChanges]"
+    :class="[headerPadding, headerHeightChanges]"
     elevation="1"
     tile
     :color="bgColor"
