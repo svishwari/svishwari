@@ -37,7 +37,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
 
     if (requestData.type === "salesforce") {
-      body.performance_metrics_data_extensions = destinationsDataExtensions()
+      body.perf_data_extensions = destinationsDataExtensions()
     }
     return new Response(code, headers, body)
   })
