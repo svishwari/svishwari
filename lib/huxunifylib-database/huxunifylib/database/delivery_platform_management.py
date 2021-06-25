@@ -2073,7 +2073,8 @@ def get_campaign_activity(
         database (DatabaseClient): database client.
         delivery_job_id (ObjectId): delivery job ID.
         pending_transfer_for_feedback (bool): If True, retrieve only
-            those campaign activties that have not been transferred for feedback. Defaults to False.
+            those campaign activties that have not been transferred for feedback.
+            Defaults to False.
 
     Raises:
         de.InvalidID: Invalid ID for delivery job.
