@@ -199,10 +199,7 @@ def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
     ]
 
     try:
-        dad = list(collection.aggregate(pipeline))
-
-        # document DB does not support $$ROOT syntax, so we will group dynamically here
-        return dad
+        return list(collection.aggregate(pipeline))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
