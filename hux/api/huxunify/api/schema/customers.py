@@ -2,11 +2,11 @@
 """
 Schemas for the Customers API
 """
+
 from flask_marshmallow import Schema
 from marshmallow.fields import (
     Str,
     Float,
-    DateTime,
     Boolean,
     List,
     Nested,
@@ -52,14 +52,14 @@ class CustomerProfileSchema(Schema):
     first_name = Str(required=True)
     last_name = Str(required=True)
     match_confidence = Float(required=True)
-    since = DateTime(required=True)
+    since = Str(required=True)
     ltv_actual = Float(required=True)
     ltv_predicted = Float(required=True)
-    conversion_time = DateTime(required=True)
+    conversion_time = Str(required=True)
     churn_rate = Float(required=True)
-    last_click = DateTime(required=True)
-    last_purchase = DateTime(required=True)
-    last_email_open = DateTime(required=True)
+    last_click = Str(required=True)
+    last_purchase = Str(required=True)
+    last_email_open = Str(required=True)
     email = Str(required=True)
     phone = Str(required=True)
     # redacted age to a string.
@@ -88,7 +88,7 @@ class CustomerOverviewSchema(Schema):
     total_known_ids = Integer(required=True)
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
-    updated = DateTime(required=True)
+    updated = Str(required=True)
     total_customers = Integer(required=True)
     total_countries = Integer(required=True)
     total_us_states = Integer(required=True)
