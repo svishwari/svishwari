@@ -1278,7 +1278,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                     "message": "Invalid data, cannot attach campaign."
                 }, HTTPStatus.BAD_REQUEST
 
-            updated_campagins = [
+            updated_campaigns = [
                 {
                     k: v
                     for k, v in d.items()
@@ -1287,7 +1287,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 for d in value
             ]
             delivery_platform_management.create_delivery_job_generic_campaigns(
-                get_db_client(), ObjectId(delivery_job_id), updated_campagins
+                get_db_client(), ObjectId(delivery_job_id), updated_campaigns
             )
 
         return {"message": "Successfully attached campaigns."}, HTTPStatus.OK
@@ -1435,14 +1435,14 @@ class AudienceCampaignsGetView(SwaggerView):
         campaigns = []
         for delivery_job in delivery_jobs:
             if delivery_job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
-                campaigns = delivery_job[
+                delivery_campaigns = delivery_job[
                     db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
                 ]
-                for campaign in campaigns:
+                for campaign in delivery_campaigns:
                     campaign[api_c.ID] = campaign[api_c.CAMPAIGN_ID]
                     campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
                     campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
-                campaigns.extend(campaigns)
+                campaigns.extend(delivery_campaigns)
 
         return (
             jsonify(CampaignSchema().dump(campaigns, many=True)),
@@ -1589,12 +1589,12 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # Get existing campaigns from facebook
-        connector = FacebookConnector(
+        facebook_connector = FacebookConnector(
             auth_details=set_facebook_auth_from_parameter_store(
                 destination[api_c.AUTHENTICATION_DETAILS]
             )
         )
-        campaigns = connector.get_campaigns()
+        campaigns = facebook_connector.get_campaigns()
 
         if campaigns is None:
             return {
