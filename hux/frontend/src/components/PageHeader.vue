@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="page-header--wrap d-flex justify-space-between align-center px-8"
-    :class="headerHightChanges"
+    :class="headerHeightChanges"
     elevation="1"
     tile
     :color="bgColor"
@@ -59,7 +59,7 @@ export default {
       required: false,
       default: undefined,
     },
-    headerHightChanges: {
+    headerHeightChanges: {
       type: String,
       required: false,
       default: "py-5",

@@ -1,6 +1,6 @@
 <template>
   <div class="customer-dashboard-wrap">
-    <PageHeader class="background-border" :headerHightChanges="'py-3'">
+    <PageHeader class="background-border" :headerHeightChanges="'py-3'">
       <template #left>
         <Breadcrumb :items="items" />
       </template>
