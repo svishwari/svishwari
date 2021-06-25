@@ -26,9 +26,9 @@ class DestinationGetSchema(Schema):
         validate=validate_object_id,
     )
     type = fields.String(
-        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="facebook"
+        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="salesforce"
     )
-    name = fields.String(attribute=api_c.DESTINATION_NAME, example="Facebook")
+    name = fields.String(attribute=api_c.DESTINATION_NAME, example="Salesforce")
     status = fields.String(
         attribute=api_c.CONNECTION_STATUS,
         validate=[

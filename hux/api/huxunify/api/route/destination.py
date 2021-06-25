@@ -328,8 +328,8 @@ class DestinationPutView(SwaggerView):
                         name=destination[db_c.DELIVERY_PLATFORM_NAME],
                         authentication_details=authentication_parameters,
                         added=is_added,
-                        user_name=user_name,
                         performance_de=performance_de,
+                        user_name=user_name,
                     )
                 ),
                 HTTPStatus.OK,
