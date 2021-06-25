@@ -207,7 +207,7 @@
     />
 
     <!-- Salesforce extension workflow -->
-    <SalesforceExtensionDrawer
+    <DestinationDataExtensionDrawer
       v-model="selectedDestinations"
       :toggle="showSalesforceExtensionDrawer"
       :destination="salesforceDestination"
@@ -235,7 +235,7 @@ import TextField from "@/components/common/TextField"
 import AttributeRules from "./AttributeRules.vue"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
-import SalesforceExtensionDrawer from "@/views/Audiences/Configuration/Drawers/SalesforceExtension"
+import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
 import Logo from "@/components/common/Logo"
 import Tooltip from "@/components/common/Tooltip.vue"
 
@@ -252,7 +252,7 @@ export default {
     AttachEngagement,
     Tooltip,
     SelectDestinationsDrawer,
-    SalesforceExtensionDrawer,
+    DestinationDataExtensionDrawer,
   },
   data() {
     return {

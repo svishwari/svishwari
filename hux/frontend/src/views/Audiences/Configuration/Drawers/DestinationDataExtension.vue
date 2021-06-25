@@ -184,7 +184,7 @@ import TextField from "@/components/common/TextField"
 import extensionInactive1 from "@/assets/logos/extension-inactive-1.svg"
 import extensionInactive2 from "@/assets/logos/extension-inactive-2.svg"
 export default {
-  name: "SalesforceExtensionDrawer",
+  name: "DestinationDataExtensionDrawer",
 
   components: {
     Drawer,
@@ -212,7 +212,7 @@ export default {
   data() {
     return {
       isActive: true,
-      journeyType: "radio-1", // TODO - with API integration
+      journeyType: "radio-1", // TODO: HUS-546  with API integration
       extension: null,
       loading: false,
       localToggle: false,
