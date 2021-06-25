@@ -5,6 +5,8 @@ Paths for engagement API
 import logging
 from http import HTTPStatus
 from typing import Tuple
+from itertools import groupby
+from operator import itemgetter
 
 from bson import ObjectId
 from connexion.exceptions import ProblemException
@@ -12,6 +14,7 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
+from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.database import constants as db_c
 import huxunifylib.database.db_exceptions as de
 from huxunifylib.database.engagement_management import (
@@ -34,6 +37,9 @@ from huxunify.api.schema.engagement import (
     AudienceEngagementDeleteSchema,
     AudiencePerformanceDisplayAdsSchema,
     AudiencePerformanceEmailSchema,
+    CampaignSchema,
+    CampaignMappingSchema,
+    CampaignPutSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -42,6 +48,7 @@ from huxunify.api.route.utils import (
     secured,
     api_error_handler,
     get_user_name,
+    set_facebook_auth_from_parameter_store,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -1086,6 +1093,521 @@ class EngagementDeliverDestinationView(SwaggerView):
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
         }, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.CAMPAIGNS}",
+    "UpdateCampaignsForAudience",
+)
+class UpdateCampaignsForAudience(SwaggerView):
+    """
+    Update campaigns for audience class
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "8a8f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "77cf7262997acad4bac4373b",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input engagement body.",
+            "example": {
+                api_c.CAMPAIGNS: [
+                    {
+                        api_c.NAME: "Test Campaign",
+                        api_c.CAMPAIGN_ID: "campaign_id",
+                        api_c.DELIVERY_JOB_ID: "delivery_job_id",
+                    },
+                ]
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Result.",
+            "schema": {
+                "example": {"message": "Campaigns updated successfully."},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to update campaigns.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CAMPAIGNS]
+
+    # pylint: disable=no-self-use
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-locals
+    # pylint: disable=# pylint: disable=too-many-branches
+    @api_error_handler()
+    def put(
+        self, engagement_id: str, audience_id: str, destination_id: str
+    ) -> Tuple[dict, int]:
+        """Updates campaigns for an engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement ID.
+            audience_id (str): Audience ID.
+            destination_id (str): Destination ID.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        # validate object id
+        if not all(
+            ObjectId.is_valid(x)
+            for x in [audience_id, engagement_id, destination_id]
+        ):
+            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+
+        # convert to ObjectIds
+        engagement_id = ObjectId(engagement_id)
+        audience_id = ObjectId(audience_id)
+        destination_id = ObjectId(destination_id)
+
+        # check if engagement exists
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+        if not engagement:
+            return {
+                "message": "Engagement does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the engagement has audiences
+        if db_c.AUDIENCES not in engagement:
+            return {
+                "message": "Engagement has no audiences."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the audience is attached
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
+        if audience_id not in audience_ids:
+            return {
+                "message": "Audience is not attached to the engagement."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the destination ID is attached to the audience
+        valid_destination = False
+        for audience in engagement[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if destination_id == destination[db_c.OBJECT_ID]:
+                    valid_destination = True
+
+        if not valid_destination:
+            return {
+                "message": "Destination is not attached to the "
+                "engagement audience."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate destination exists
+        destination = delivery_platform_management.get_delivery_platform(
+            database, destination_id
+        )
+        if not destination:
+            return {
+                "message": "Destination does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        try:
+            body = CampaignPutSchema().load(request.get_json())
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
+
+        delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
+            database, engagement_id, audience_id, destination_id
+        )
+        if delivery_jobs is None:
+            return {
+                "message": "Could not attach campaigns."
+            }, HTTPStatus.BAD_REQUEST
+
+        # Delete all the existing campaigns from associated delivery jobs
+        delivery_platform_management.delete_delivery_job_generic_campaigns(
+            get_db_client(), [x[db_c.ID] for x in delivery_jobs]
+        )
+
+        # Group campaigns by Delivery job and update the list of campaigns for the delivery job
+        campaigns = sorted(
+            body[api_c.CAMPAIGNS], key=itemgetter(api_c.DELIVERY_JOB_ID)
+        )
+        for delivery_job_id, value in groupby(
+            campaigns, key=itemgetter(api_c.DELIVERY_JOB_ID)
+        ):
+            delivery_job = delivery_platform_management.get_delivery_job(
+                database, ObjectId(delivery_job_id)
+            )
+            if delivery_job is None and (
+                delivery_job[api_c.ENGAGEMENT_ID] != engagement_id
+            ):
+                return {
+                    "message": "Invalid data, cannot attach campaign."
+                }, HTTPStatus.BAD_REQUEST
+
+            updated_campagins = [
+                {
+                    k: v
+                    for k, v in d.items()
+                    if k in [api_c.NAME, api_c.CAMPAIGN_ID]
+                }
+                for d in value
+            ]
+            delivery_platform_management.create_delivery_job_generic_campaigns(
+                get_db_client(), ObjectId(delivery_job_id), updated_campagins
+            )
+
+        return {"message": "Successfully attached campaigns."}, HTTPStatus.OK
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.CAMPAIGNS}",
+    "AudienceCampaignsGetView",
+)
+class AudienceCampaignsGetView(SwaggerView):
+    """
+    Audience campaigns GET class
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "6f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "7f5f7262997acad4bac4373b",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieved campaign details.",
+            "schema": {"type": "array", "items": CampaignSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve campaigns.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CAMPAIGNS]
+
+    # pylint: disable=no-self-use
+    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-branches
+    @api_error_handler()
+    def get(
+        self, engagement_id: str, audience_id: str, destination_id: str
+    ) -> Tuple[dict, int]:
+        """Get the campaign mappings from mongo.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement ID.
+            audience_id (str): Audience ID.
+            destination_id (str): Destination ID.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        # validate object id
+        if not all(
+            ObjectId.is_valid(x)
+            for x in [audience_id, engagement_id, destination_id]
+        ):
+            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+
+        # convert to ObjectIds
+        engagement_id = ObjectId(engagement_id)
+        audience_id = ObjectId(audience_id)
+        destination_id = ObjectId(destination_id)
+
+        # check if engagement exists
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+        if not engagement:
+            return {
+                "message": "Engagement does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the engagement has audiences
+        if db_c.AUDIENCES not in engagement:
+            return {
+                "message": "Engagement has no audiences."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the audience is attached
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
+        if audience_id not in audience_ids:
+            return {
+                "message": "Audience is not attached to the engagement."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the destination ID is attached to the audience
+        valid_destination = False
+        for audience in engagement[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if destination_id == destination[db_c.OBJECT_ID]:
+                    valid_destination = True
+
+        if not valid_destination:
+            return {
+                "message": "Destination is not attached to the "
+                "engagement audience."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate destination exists
+        destination = delivery_platform_management.get_delivery_platform(
+            database, destination_id
+        )
+        if not destination:
+            return {
+                "message": "Destination does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
+            database, engagement_id, audience_id, destination_id
+        )
+        if delivery_jobs is None:
+            return {
+                "message": "Could not find any campaigns."
+            }, HTTPStatus.BAD_REQUEST
+
+        # Build response object
+        campaigns = []
+        for delivery_job in delivery_jobs:
+            if delivery_job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
+                campaigns = delivery_job[
+                    db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
+                ]
+                for campaign in campaigns:
+                    campaign[api_c.ID] = campaign[api_c.CAMPAIGN_ID]
+                    campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
+                    campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
+                campaigns.extend(campaigns)
+
+        return (
+            jsonify(CampaignSchema().dump(campaigns, many=True)),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/campaign-mappings",
+    "AudienceCampaignMappingsGetView",
+)
+class AudienceCampaignMappingsGetView(SwaggerView):
+    """
+    Audience campaign mappings class
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "6f5f7262997acad4bac4373b",
+        },
+        {
+            "name": api_c.DESTINATION_ID,
+            "description": "Destination ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "7f5f7262997acad4bac4373b",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Retrieved campaign mappings.",
+            "schema": {"type": "array", "items": CampaignMappingSchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve campaign mappings.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CAMPAIGNS]
+
+    # pylint: disable=no-self-use
+    # pylint: disable=too-many-return-statements
+    @api_error_handler()
+    def get(
+        self, engagement_id: str, audience_id: str, destination_id: str
+    ) -> Tuple[dict, int]:
+        """Get the list of possible campaign mappings to attach to audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement ID.
+            audience_id (str): Audience ID.
+            destination_id (str): Destination ID.
+
+        Returns:
+            Tuple[dict, int]: Message indicating connection
+                success/failure, HTTP Status.
+
+        """
+
+        # validate object id
+        if not all(
+            ObjectId.is_valid(x)
+            for x in [audience_id, engagement_id, destination_id]
+        ):
+            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+
+        # convert to ObjectIds
+        engagement_id = ObjectId(engagement_id)
+        audience_id = ObjectId(audience_id)
+        destination_id = ObjectId(destination_id)
+
+        # check if engagement exists
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+        if not engagement:
+            return {
+                "message": "Engagement does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the engagement has audiences
+        if db_c.AUDIENCES not in engagement:
+            return {
+                "message": "Engagement has no audiences."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the audience is attached
+        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
+        if audience_id not in audience_ids:
+            return {
+                "message": "Audience is not attached to the engagement."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate that the destination ID is attached to the audience
+        valid_destination = False
+        for audience in engagement[db_c.AUDIENCES]:
+            for destination in audience[db_c.DESTINATIONS]:
+                if destination_id == destination[db_c.OBJECT_ID]:
+                    valid_destination = True
+
+        if not valid_destination:
+            return {
+                "message": "Destination is not attached to the "
+                "engagement audience."
+            }, HTTPStatus.BAD_REQUEST
+
+        # validate destination exists
+        destination = delivery_platform_management.get_delivery_platform(
+            database, destination_id
+        )
+        if not destination:
+            return {
+                "message": "Destination does not exist."
+            }, HTTPStatus.BAD_REQUEST
+
+        # Get existing delivery jobs
+        delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
+            database, engagement_id, audience_id, destination_id
+        )
+        if delivery_jobs is None:
+            return {
+                "message": "Could not find any delivery jobs to map."
+            }, HTTPStatus.BAD_REQUEST
+
+        # Get existing campaigns from facebook
+        connector = FacebookConnector(
+            auth_details=set_facebook_auth_from_parameter_store(
+                destination[api_c.AUTHENTICATION_DETAILS]
+            )
+        )
+        campaigns = connector.get_campaigns()
+
+        if campaigns is None:
+            return {
+                "message": "Could not find any Campaigns to map."
+            }, HTTPStatus.BAD_REQUEST
+
+        # Build response object
+        campaign_schema = {
+            "campaigns": list(campaigns),
+            "delivery_jobs": delivery_jobs,
+        }
+
+        return CampaignMappingSchema().dump(campaign_schema), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
