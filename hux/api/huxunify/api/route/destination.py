@@ -291,7 +291,9 @@ class DestinationPutView(SwaggerView):
 
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
-        performance_de = body.get(api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION)
+        performance_de = body.get(
+            api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
+        )
         authentication_parameters = None
         destination_id = ObjectId(destination_id)
 
