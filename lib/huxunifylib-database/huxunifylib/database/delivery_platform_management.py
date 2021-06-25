@@ -1532,7 +1532,7 @@ def delete_delivery_job_generic_campaigns(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def update_delivery_platform_generic_campaigns(
+def append_delivery_platform_generic_campaigns(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
     generic_campaign: dict,
