@@ -525,11 +525,12 @@ class DestinationValidatePostView(SwaggerView):
                 exc,
             )
 
-            return {
-                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-            }, HTTPStatus.BAD_REQUEST
+            return (
+                {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
+                HTTPStatus.BAD_REQUEST,
+            )
 
-        return None
+        return {}
 
 
 @add_view_to_blueprint(
