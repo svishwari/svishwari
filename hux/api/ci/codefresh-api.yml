@@ -81,21 +81,21 @@ steps:
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
 
-#  py37_check:
-#    stage: "py37_check"
-#    title: "Tox - py37"
-#    image: "${{build_image}}"
-#    working_directory: '/app/hux-unified/api'
-#    description: "run tests using tox"
-#    commands:
-#      - pip install tox
-#      - tox -e ${TOXENV} -- --skip-model-generate
-#    scale:
-#      py37:
-#        title: 'py37'
-#        environment:
-#          - TOXENV=py37
-#    fail_fast: false
+  py37_check:
+    stage: "py37_check"
+    title: "Tox - py37"
+    image: "${{build_image}}"
+    working_directory: '/app/hux-unified/api'
+    description: "run tests using tox"
+    commands:
+      - pip install tox
+      - tox -e ${TOXENV} -- --skip-model-generate
+    scale:
+      py37:
+        title: 'py37'
+        environment:
+          - TOXENV=py37
+    fail_fast: false
 
   coverage_check:
     stage: "coverage_check"
