@@ -63,7 +63,7 @@ export default {
     headerPadding: {
       type: String,
       required: false,
-      default: 'px-8'
+      default: "px-8",
     },
   },
 }

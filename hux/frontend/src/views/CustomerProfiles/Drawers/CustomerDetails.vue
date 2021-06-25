@@ -1,5 +1,9 @@
 <template>
-  <Drawer v-model="localDrawer" :contentPadding="'pa-0'" :contentHeaderPadding="'px-3'">
+  <Drawer
+    v-model="localDrawer"
+    :contentPadding="'pa-0'"
+    :contentHeaderPadding="'px-3'"
+  >
     <template #header-left>
       <div class="d-flex align-center">
         <h3 class="text-h3 ml-2 neroBlack--text">Customers</h3>

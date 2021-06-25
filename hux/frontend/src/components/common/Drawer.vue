@@ -101,13 +101,13 @@ export default {
     contentPadding: {
       type: String,
       required: false,
-      default: 'pa-2'
+      default: "pa-2",
     },
 
     contentHeaderPadding: {
       type: String,
       required: false,
-      default: 'px-6'
+      default: "px-6",
     },
   },
 
