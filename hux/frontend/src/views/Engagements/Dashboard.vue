@@ -15,7 +15,7 @@
         <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
-        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
@@ -839,5 +839,8 @@ export default {
       }
     }
   }
+}
+.theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
+  background-color: white !important;
 }
 </style>

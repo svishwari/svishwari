@@ -489,11 +489,17 @@ def add_delivery_job(
             },
             {
                 "$set": {
-                    f"{db_c.AUDIENCES}.$.{db_c.DESTINATIONS}."
-                    f"$.{db_c.DELIVERY_JOB_ID}": delivery_job_id
+                    f"{db_c.AUDIENCES}.$[i].{db_c.DESTINATIONS}.$[j]."
+                    f"{db_c.DELIVERY_JOB_ID}": delivery_job_id
                 }
             },
             {db_c.DELETED: 0},
+            array_filters=[
+                {
+                    "i.id": audience_id,
+                },
+                {"j.id": destination_id},
+            ],
             upsert=False,
             new=True,
         )
