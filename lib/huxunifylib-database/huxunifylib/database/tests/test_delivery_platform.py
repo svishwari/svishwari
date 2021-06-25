@@ -235,6 +235,11 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertIsNotNone(doc)
 
+        doc = dpm.get_delivery_platform_by_type(
+            self.database, self.delivery_platform_doc[c.DELIVERY_PLATFORM_TYPE]
+        )
+        self.assertIsNotNone(doc)
+
         dpm.update_delivery_platform(
             database=self.database,
             delivery_platform_id=self.delivery_platform_doc[c.ID],
@@ -972,15 +977,22 @@ class TestDeliveryPlatform(unittest.TestCase):
             generic_campaign_id=[],
         )
 
-        metrics_list = dpm.get_performance_metrics_by_engagement_id(
-            self.database, engagement_id
+        metrics_list = dpm.get_performance_metrics_by_engagement_details(
+            self.database, engagement_id, [delivery_platform_id]
         )
 
         self.assertTrue(metrics_list is not None)
         self.assertEqual(len(metrics_list), 1)
 
-        metrics_list = dpm.get_performance_metrics_by_engagement_id(
-            self.database, ObjectId()
+        metrics_list = dpm.get_performance_metrics_by_engagement_details(
+            self.database, ObjectId(), delivery_platform_id
+        )
+
+        self.assertIsNotNone(metrics_list)
+        self.assertFalse(metrics_list)
+
+        metrics_list = dpm.get_performance_metrics_by_engagement_details(
+            self.database, engagement_id, [ObjectId()]
         )
 
         self.assertTrue(metrics_list is not None)
@@ -1187,6 +1199,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         delivery_config = {c.DELIVERY_PLATFORM_SFMC_DATA_EXT_NAME: "Test SFMC"}
 
         # set the delivery job
+        # pylint: disable=E1121
         doc = dpm.set_delivery_job(
             self.database,
             self.source_audience_doc[c.ID],
@@ -1338,3 +1351,110 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertEqual(delivery_job[c.JOB_STATUS], c.STATUS_PENDING)
             self.assertIn(c.ENGAGEMENT_ID, delivery_job)
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_create_delivery_job_generic_campaigns(self):
+        """Campaigns are set and retrieved."""
+
+        engagement_id = ObjectId()
+
+        dpm.set_connection_status(
+            self.database,
+            self.delivery_platform_doc[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+
+        doc = dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+            engagement_id=engagement_id,
+        )
+
+        updated_doc = dpm.create_delivery_job_generic_campaigns(
+            self.database, doc[c.ID], self.generic_campaigns
+        )
+
+        self.assertIsNotNone(updated_doc)
+        self.assertEqual(
+            len(updated_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1
+        )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_delivery_job_engagement_detail(self):
+        """Delivery job is set with engagement/audience id and retrieved."""
+
+        engagement_id = ObjectId()
+
+        dpm.set_connection_status(
+            self.database,
+            self.delivery_platform_doc[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+
+        doc = dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+            engagement_id=engagement_id,
+        )
+
+        self.assertIsNotNone(doc)
+
+        delivery_jobs = dpm.get_delivery_jobs_by_engagement_details(
+            self.database,
+            engagement_id,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+        )
+
+        self.assertIsNotNone(delivery_jobs)
+        self.assertEqual(1, len(delivery_jobs))
+        self.assertIn(c.ENGAGEMENT_ID, delivery_jobs[0])
+        self.assertEqual(engagement_id, delivery_jobs[0][c.ENGAGEMENT_ID])
+
+        self.assertIn(c.AUDIENCE_ID, delivery_jobs[0])
+        self.assertEqual(
+            self.source_audience_doc[c.ID], delivery_jobs[0][c.AUDIENCE_ID]
+        )
+
+        self.assertIn(c.DELIVERY_PLATFORM_ID, delivery_jobs[0])
+        self.assertEqual(
+            self.delivery_platform_doc[c.ID],
+            delivery_jobs[0][c.DELIVERY_PLATFORM_ID],
+        )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_delete_delivery_job_generic_campaigns(self):
+        """Generic campaigns are set and deleted."""
+
+        engagement_id = ObjectId()
+
+        dpm.set_connection_status(
+            self.database,
+            self.delivery_platform_doc[c.ID],
+            c.STATUS_SUCCEEDED,
+        )
+
+        doc = dpm.set_delivery_job(
+            self.database,
+            self.source_audience_doc[c.ID],
+            self.delivery_platform_doc[c.ID],
+            self.generic_campaigns,
+            engagement_id=engagement_id,
+        )
+
+        self.assertIsNotNone(doc)
+        self.assertEqual(len(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1)
+
+        count = dpm.delete_delivery_job_generic_campaigns(
+            self.database, [doc[c.ID]]
+        )
+        self.assertEqual(count, 1)
+
+        doc = dpm.get_delivery_job(self.database, doc[c.ID])
+
+        self.assertIsNotNone(doc)
+        self.assertFalse(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS])

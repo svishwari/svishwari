@@ -20,6 +20,7 @@
               sortable: false,
             },
           ]"
+          :selectedItems="selectedDestinations"
           empty="No destinations have been connected and added yet."
         >
           <template #field:name="{ item }">
@@ -64,7 +65,9 @@
     </template>
 
     <template #footer-left>
-      {{ connectedDestinations.length }} results
+      <span class="gray--text text-caption">
+        {{ connectedDestinations.length }} results
+      </span>
     </template>
   </Drawer>
 </template>

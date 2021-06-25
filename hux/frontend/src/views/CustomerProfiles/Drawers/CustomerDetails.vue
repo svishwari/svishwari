@@ -50,7 +50,7 @@
       </hux-data-table>
     </template>
     <template #footer-left>
-      <div class="d-flex align-baseline footer-font">
+      <div class="d-flex align-baseline footer-font gray--text text-caption">
         {{ customersList.length }} results
       </div>
     </template>
