@@ -39,10 +39,10 @@
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table
+      v-if="rowData.length > 0"
       :headers="columnDefs"
       :dataItems="rowData"
       nested
-      v-if="rowData.length > 0"
     >
       <template #item-row="{ item, expand, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
