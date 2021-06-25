@@ -5,7 +5,7 @@
         <Breadcrumb :items="items" />
       </template>
       <template slot="right">
-        <v-icon color="primary" size="22" class="icon-border pa-2">
+        <v-icon color="lightGrey" size="22" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>

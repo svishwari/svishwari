@@ -93,7 +93,7 @@
               <size :value="item[header.value]" />
             </div>
             <div v-if="header.value == 'delivery_schedule'">
-              {{ delivery_schedule }}
+              {{ manualDeliverySchedule }}
             </div>
             <div v-if="header.value == 'update_time'">
               <time-stamp :value="item[header.value]" />
@@ -116,6 +116,10 @@
           class="pa-0 child"
           v-if="item.audiences.length > 0"
         >
+          <v-progress-linear
+            :active="item.isCurrentRow"
+            :indeterminate="item.isCurrentRow"
+          />
           <hux-data-table
             :headers="headers"
             :dataItems="item.audienceList"
@@ -265,7 +269,7 @@ export default {
       ],
       loading: true,
       rowData: [],
-      delivery_schedule: "Manual",
+      manualDeliverySchedule: "Manual",
       audienceList: [],
       columnDefs: [
         { text: "Engagement name", value: "name", width: "300px" },
@@ -303,10 +307,12 @@ export default {
       getAllEngagements: "engagements/getAll",
       getAudienceById: "audiences/getAudienceById",
       updateAudienceList: "engagements/updateAudienceList",
+      markCurrentRow: "engagements/markCurrentRow",
     }),
     getName(item) {
       return item.first_name + " " + item.last_name
     },
+    // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
       this.audienceList = []
       let audienceIds = item.audiences.map((key) => key.id)
@@ -314,7 +320,7 @@ export default {
         await this.getAudienceById(id)
         this.audienceList.push(this.audiencesData(id))
       }
-      this.updateAudienceList({ id: item.id, data: this.audienceList })
+      await this.updateAudienceList({ id: item.id, data: this.audienceList })
     },
   },
   async mounted() {
