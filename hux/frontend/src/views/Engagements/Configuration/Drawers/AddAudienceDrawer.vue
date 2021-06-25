@@ -42,7 +42,10 @@
         </div>
         <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
-          <attribute-rules :rules="attributeRules"></attribute-rules>
+          <attribute-rules
+            :rules="attributeRules"
+            applyCaptionStyle
+          ></attribute-rules>
         </div>
       </div>
     </template>
@@ -178,13 +181,12 @@ export default {
             conditionIndex++
           ) {
             filter.section_filters.push({
-              field:
-                this.attributeRules[ruleIndex].conditions[conditionIndex]
-                  .attribute,
+              field: this.attributeRules[ruleIndex].conditions[conditionIndex]
+                .attribute,
               type: this.attributeRules[ruleIndex].conditions[conditionIndex]
                 .operator,
-              value:
-                this.attributeRules[ruleIndex].conditions[conditionIndex].text,
+              value: this.attributeRules[ruleIndex].conditions[conditionIndex]
+                .text,
             })
           }
           filtersArray.push(filter)

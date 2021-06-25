@@ -1,6 +1,10 @@
 import { Response } from "miragejs"
+import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
-import { destinationsConstants } from "./factories/destination"
+import {
+  destinationsConstants,
+  destinationsDataExtensions,
+} from "./factories/destination"
 import idrOverview from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 
@@ -24,11 +28,17 @@ export const defineRoutes = (server) => {
 
     return schema.destinations.find(id).update({ is_added: true })
   })
+  server.get("/destinations/:destinationId/data-extensions")
 
-  server.post("/destinations/validate", () => {
+  server.post("/destinations/validate", (_, request) => {
     const code = 200
     const headers = {}
     const body = { message: "Destination authentication details are valid" }
+    const requestData = JSON.parse(request.requestBody)
+
+    if (requestData.type === "salesforce") {
+      body.performance_metrics_data_extensions = destinationsDataExtensions()
+    }
     return new Response(code, headers, body)
   })
 
@@ -90,21 +100,37 @@ export const defineRoutes = (server) => {
   })
   server.get("/customers/overview", () => customersOverview)
 
+  server.post("/customers/overview", () => customersOverview)
+
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
-  // Audiences
+  // audiences
   server.get("/audiences")
-  server.get("/audiences/:id")
+
+  server.get("/audiences/:id", (schema, request) => {
+    const id = request.params.id
+    const audience = schema.audiences.find(id)
+    return {
+      ...audience.attrs,
+      audience_insights: audienceInsights,
+    }
+  })
+
   server.post("/audiences", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
-    requestData.engagements = requestData.engagements.map((id) => {
-      return schema.engagements.find(id)
-    })
-    requestData.destinations = requestData.destinations.map((id) => {
-      return schema.destinations.find(id)
-    })
+    if (requestData.engagements) {
+      requestData.engagements = requestData.engagements.map((id) => {
+        return schema.engagements.find(id)
+      })
+    }
+    if (requestData.destinations) {
+      requestData.destinations = requestData.destinations.map((id) => {
+        return schema.destinations.find(id)
+      })
+    }
     return schema.audiences.create(requestData)
   })
+
   server.get("/audiences/rules", () => attributeRules)
 }

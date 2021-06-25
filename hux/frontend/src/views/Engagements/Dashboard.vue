@@ -15,7 +15,7 @@
         <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
-        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
@@ -25,18 +25,19 @@
     <div class="inner-wrap px-15 py-8">
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-6">
-        <MetricCard
-          class="mr-3"
-          :title="summaryCards[0].title"
-          :subtitle="summaryCards[0].value"
-        >
+        <MetricCard class="mr-3" :title="summaryCards[0].title">
+          <template #subtitle-extended>
+            <span class="font-weight-semi-bold neroBlack--text">
+              {{ summaryCards[0].value }}
+            </span>
+          </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[1].title">
           <template #subtitle-extended v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
-                  <span class="font-weight-semi-bold">
+                  <span class="font-weight-semi-bold neroBlack--text">
                     {{ summaryCards[1].value }}
                   </span>
                 </template>
@@ -53,7 +54,7 @@
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
-                  <span class="font-weight-semi-bold">
+                  <span class="font-weight-semi-bold neroBlack--text">
                     {{ summaryCards[2].value }}
                   </span>
                 </template>
@@ -190,7 +191,7 @@ export default {
         schedule: "Manual",
         update_time: "2020-07-10T11:45:01.984Z",
         updated_by: "Rahul Goel",
-        created_time: "2020-07-10T11:45:01.984Z",
+        create_time: "2020-07-10T11:45:01.984Z",
         created_by: "Mohit Bansal",
         description:
           "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear. ",
@@ -383,9 +384,9 @@ export default {
           id: 3,
           title: "Created",
           value: this.getDateStamp(
-            this.fetchKey(this.engagement, "created_time")
+            this.fetchKey(this.engagement, "create_time")
           ),
-          hoverValue: this.fetchKey(this.engagement, "created_time"),
+          hoverValue: this.fetchKey(this.engagement, "create_time"),
           subLabel: this.fetchKey(this.engagement, "created_by"),
           width: "19%",
           minWidth: "164px",
@@ -838,5 +839,8 @@ export default {
       }
     }
   }
+}
+.theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
+  background-color: white !important;
 }
 </style>

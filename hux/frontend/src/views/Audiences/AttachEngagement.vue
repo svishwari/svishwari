@@ -77,7 +77,7 @@
                   :isAdded="isEngagementSelected(engagement)"
                   :enableBlueBackground="isEngagementSelected(engagement)"
                   @click="onEngagementClick(engagement)"
-                  class="my-3"
+                  class="my-3 mb-4 mt-1"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">
                     <template #activator="{ on }">
@@ -172,7 +172,10 @@
                             : '$radioOff'
                         "
                       />
-                      <v-icon class="ico">mdi-gesture-tap</v-icon>Manual
+                      <v-icon class="ico primary--text" size="16">
+                        mdi-gesture-tap
+                      </v-icon>
+                      Manual
                     </v-btn>
                     <v-btn
                       disabled
@@ -215,7 +218,7 @@
 
     <template #footer-left>
       <div
-        class="d-flex align-baseline"
+        class="d-flex align-baseline gray--text text-caption"
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
       >
         {{ engagements.length }} results
@@ -422,11 +425,11 @@ export default {
       &.v-btn--active {
         border: 1px solid var(--v-primary-base) !important;
         color: var(--v-primary-base) !important;
+        &::before {
+          opacity: 0;
+        }
         .v-icon {
           &.ico {
-            width: 13.44px;
-            height: 12.5px;
-            color: var(--v-secondary-base) !important;
             margin-right: 9px;
           }
         }

@@ -82,9 +82,7 @@ export default {
     }
     .v-label {
       position: absolute !important;
-      font-family: Open Sans SemiBold;
-      font-style: normal;
-      font-weight: normal;
+      font-weight: 600;
       font-size: 12px;
       line-height: 16px;
       top: 3px !important;

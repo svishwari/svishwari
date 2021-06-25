@@ -165,6 +165,9 @@ export default {
         &.v-card--disabled {
           background: var(--v-background-base);
         }
+        &:hover {
+          @extend .box-shadow-3;
+        }
       }
     }
   }
@@ -201,5 +204,8 @@ export default {
       }
     }
   }
+}
+.overview-wrap .quickAccessMenu .card-wrap .v-card {
+  box-shadow: 0px 0px 10px 2px rgb(117 123 123 / 30%) !important;
 }
 </style>
