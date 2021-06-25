@@ -48,7 +48,7 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    performance_de = fields.Dict(
+    perf_data_ext = fields.Dict(
         attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
         example={
             api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
@@ -71,8 +71,8 @@ class DestinationPutSchema(Schema):
     """
 
     authentication_details = fields.Field()
-    performance_de = fields.Dict(
-        attribute=api_c.PERFORMANCE_METRICS_DATA_EXTENSION,
+    perf_data_ext = fields.Dict(
+        attribute=api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION,
         example={
             api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
             api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",

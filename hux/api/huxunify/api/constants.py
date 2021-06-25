@@ -101,9 +101,8 @@ SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
 SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
-SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = (
-    "performance_metrics_data_extensions"
-)
+SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
+SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -216,7 +215,6 @@ DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
 DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
-PERFORMANCE_METRICS_DATA_EXTENSION = "performance_de"
 
 # Engagement fields
 ENGAGEMENT_ID = "engagement_id"
