@@ -107,7 +107,7 @@ steps:
       - pip install tox
       - tox -e ${TOXENV} -- --skip-model-generate
     scale:
-      py37:
+      checkCoverage:
         title: 'checkCoverage'
         environment:
           - TOXENV=checkCoverage
