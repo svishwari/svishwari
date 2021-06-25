@@ -96,7 +96,7 @@
             />
           </div>
 
-          <div class="mt-6" v-else>
+          <div class="mt-6 data-extension" v-else>
             <label
               class="
                 d-flex
@@ -109,18 +109,14 @@
               Existing data extension
             </label>
 
-            <HuxDropdown
-              class="extension-dropdown"
-              :label="selectedLabel"
-              :items="dropdownOptions"
-              @on-select="onSelect($event)"
-            />
-
-            <v-text-field
-              class="d-none"
+            <v-select
               v-model="extension"
-              :rules="newExtensionRules"
-              required
+              :items="dataExtensionNames"
+              placeholder="Select an existing data extension"
+              dense
+              outlined
+              background-color="white"
+              append-icon="mdi-chevron-down"
             />
 
             <v-card elevation="1">
@@ -177,7 +173,6 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer"
-import HuxDropdown from "@/components/common/HuxDropdown.vue"
 import HuxButton from "@/components/common/huxButton"
 import Logo from "@/components/common/Logo"
 import TextField from "@/components/common/TextField"
@@ -193,7 +188,6 @@ export default {
     TextField,
     extensionInactive1,
     extensionInactive2,
-    HuxDropdown,
   },
 
   computed: {
@@ -201,11 +195,13 @@ export default {
       dataExtensions: "destinations/dataExtensions",
     }),
 
-    dropdownOptions() {
-      return this.dataExtensions.map((each) => ({
-        key: each.data_extension_id,
-        name: each.name,
-      }))
+    dataExtensionNames() {
+      return this.dataExtensions.map((each) => {
+        return {
+          text: each.name,
+          value: each.data_extension_id,
+        }
+      })
     },
   },
 
@@ -225,7 +221,6 @@ export default {
           // eslint-disable-next-line no-useless-escape
           "You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / : ? | , _ &",
       ],
-      selectedLabel: "Select an existing data extension",
     }
   },
   methods: {
@@ -233,13 +228,7 @@ export default {
       getDataExtensions: "destinations/dataExtensions",
     }),
 
-    onSelect(item) {
-      this.selectedLabel = item.name
-      this.extension = item.name
-    },
-
     resetForm() {
-      this.selectedLabel = "Select an existing data extension"
       this.extension = null
       this.journeyType = "radio-1"
     },
@@ -255,14 +244,11 @@ export default {
       //TODO: this won't work incase there are two data extensions with same name.
       // 1. need to handle with id
       // 2. need to make an api call to create an data extension
-      this.value.push(this.destination)
-      let id = this.dropdownOptions.findIndex(
-        (each) => each.name === this.extension
+      let destinationWithDataExtension = JSON.parse(
+        JSON.stringify(this.destination)
       )
-      this.$emit("onAdd", {
-        name: this.extension,
-        data_extension_id: id,
-      })
+      destinationWithDataExtension.data_extension_id = this.extension
+      this.value.push(destinationWithDataExtension)
       this.onBack()
     },
 
@@ -332,11 +318,20 @@ export default {
     font-weight: 800;
     font-size: 16px;
   }
-  ::v-deep .extension-dropdown {
-    .main-button {
-      min-width: 500px;
-      margin: 0px !important;
-      margin-bottom: 32px !important;
+  .data-extension {
+    ::v-deep .v-input {
+      .v-input__control {
+        .v-input__slot {
+          min-height: 40px;
+          fieldset {
+            color: var(--v-lightGrey-base) !important;
+            border-width: 1px !important;
+          }
+        }
+        .v-text-field__details {
+          display: none;
+        }
+      }
     }
   }
 }

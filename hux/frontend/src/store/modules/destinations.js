@@ -78,13 +78,9 @@ const actions = {
         authentication_details: destination.authentication_details,
       }
       if (
-        Object.prototype.hasOwnProperty.call(
-          destination,
-          "performance_metrics_data_extension"
-        )
+        Object.prototype.hasOwnProperty.call(destination, "perf_data_extension")
       ) {
-        body.performance_metrics_data_extension =
-          destination.performance_metrics_data_extension
+        body.perf_data_extension = destination.perf_data_extension
       }
       const response = await api.destinations.update(destination.id, body)
       commit("SET_ONE", response.data)

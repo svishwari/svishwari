@@ -69,15 +69,14 @@ export default {
     }),
 
     isAdded(destination) {
-      return this.value.includes(destination)
+      return this.value.findIndex((each) => destination.id === each.id) !== -1
+        ? true
+        : false
     },
 
     add(destination) {
       if (this.isAdded(destination)) {
         this.undoAdd(destination)
-        if (destination.type === "salesforce") {
-          this.$emit("onSalesforceRemove", destination)
-        }
       } else {
         if (destination.type === "salesforce") {
           this.$emit("onSalesforceAdd", destination)

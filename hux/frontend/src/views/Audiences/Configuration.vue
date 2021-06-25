@@ -203,7 +203,6 @@
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
-      @onSalesforceRemove="deleteSalesforceExtension"
     />
 
     <!-- Salesforce extension workflow -->
@@ -212,7 +211,6 @@
       :toggle="showSalesforceExtensionDrawer"
       :destination="salesforceDestination"
       @onToggle="(val) => (showSalesforceExtensionDrawer = val)"
-      @onAdd="addDataExtension"
       @onBack="openSelectDestinationsDrawer"
     />
 
@@ -270,7 +268,6 @@ export default {
       showSelectDestinationsDrawer: false,
       showSalesforceExtensionDrawer: false,
       salesforceDestination: {},
-      salesforceDestinations: [],
 
       engagementDrawer: false,
       audience: {
@@ -328,17 +325,6 @@ export default {
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
     }),
-
-    addDataExtension(data) {
-      this.salesforceDestinations.push(data)
-    },
-
-    deleteSalesforceExtension(destination) {
-      let index = this.salesforceDestinations.findIndex((each) => {
-        each.id === destination.id
-      })
-      this.salesforceDestinations.splice(index, 1)
-    },
 
     closeAllDrawers() {
       this.engagementDrawer = false
@@ -416,10 +402,13 @@ export default {
           filteredDestinations.push({
             id: this.selectedDestinations[i].id,
           })
+        } else {
+          filteredDestinations.push({
+            id: this.selectedDestinations[i].id,
+            data_extension_id: this.selectedDestinations[i].data_extension_id,
+          })
         }
       }
-
-      filteredDestinations.push(...this.salesforceDestinations)
 
       const engagementIdArray = this.selectedEngagements.map(
         (engagement) => engagement.id
@@ -476,9 +465,6 @@ export default {
       this.$router.push({ name: "Audiences" })
     },
     removeDestination(destination) {
-      if (destination.type === "salesforce") {
-        this.deleteSalesforceExtension(destination)
-      }
       let index = this.selectedDestinations.indexOf(destination)
       this.selectedDestinations.splice(index, 1)
     },
