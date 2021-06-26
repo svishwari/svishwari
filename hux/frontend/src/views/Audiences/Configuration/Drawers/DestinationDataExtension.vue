@@ -259,9 +259,9 @@ export default {
     },
   },
 
-  async mounted() {
+   mounted() {
     this.loading = true
-    await this.getDataExtensions(this.destination.id)
+    // await this.getDataExtensions(this.destination.id)
     this.loading = false
   },
 
@@ -288,8 +288,11 @@ export default {
       this.localToggle = value
     },
 
-    localToggle(value) {
+    async localToggle(value) {
       this.$emit("onToggle", value)
+      if(value){
+        await this.getDataExtensions(this.destination.id)
+      }
     },
   },
 }
