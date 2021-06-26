@@ -1,10 +1,10 @@
 <template>
   <div class="audience-insight-wrap">
     <PageHeader class="background-border">
-      <template slot="left">
+      <template #left>
         <Breadcrumb :items="items" />
       </template>
-      <template slot="right">
+      <template #right>
         <v-icon large :disabled="true"> mdi-refresh </v-icon>
         <v-icon size="22" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
@@ -27,7 +27,9 @@
           <span class="mr-2">
             <Tooltip>
               <template #label-content>
-                {{ getFormattedTime(item.subtitle) }}
+                <span class="neroBlack--text font-weight-semi-bold">
+                  {{ getFormattedTime(item.subtitle) }}
+                </span>
               </template>
               <template #hover-content>
                 {{ item.subtitle | Date | Empty }}
@@ -41,16 +43,46 @@
       <MetricCard
         class="ma-4"
         :title="'Attributes'"
-        v-if="appliedFilters.length > 0"
+        v-if="Object.keys(appliedFilters).length > 0"
       >
-        <template slot="extra-item">
+        <template #extra-item>
           <div class="container pl-0">
-            <ul>
-              <li v-for="filter in appliedFilters" :key="filter.id">
-                <churn v-if="filter.icon == 'churn'" />
-                <lifetimeValue v-if="filter.icon == 'lifetime'" />
-                <plus v-if="filter.icon == 'plus'" />
-                {{ filter.name | TitleCase }}
+            <ul class="filter-list">
+              <li
+                v-for="filterKey in Object.keys(appliedFilters)"
+                :key="filterKey"
+                class="filter-item ma-0 mr-1 d-flex align-center"
+              >
+                <icon
+                  :type="filterKey == 'general' ? 'plus' : filterKey"
+                  :size="10"
+                  class="mr-1"
+                />
+                <!-- <span class="ml-1"></span> -->
+                <tooltip
+                  v-for="filter in Object.keys(appliedFilters[filterKey])"
+                  :key="filter"
+                >
+                  <template #label-content>
+                    <span
+                      class="
+                        neroBlack--text
+                        font-weight-semi-bold
+                        text-over-2
+                        filter-title
+                      "
+                      v-html="appliedFilters[filterKey][filter].name"
+                    />
+                  </template>
+                  <template #hover-content>
+                    <span class="text-caption neroBlack--text">
+                      <div class="mb-2">
+                        {{ appliedFilters[filterKey][filter].name }}
+                      </div>
+                      {{ appliedFilters[filterKey][filter].hover }}
+                    </span>
+                  </template>
+                </tooltip>
               </li>
             </ul>
           </div>
@@ -62,22 +94,22 @@
         <div class="overview">Audience overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
           <MetricCard
-            v-for="(item, i) in insightInfoItems"
+            v-for="(item, i) in Object.keys(insightInfoItems)"
             class="mr-3"
             :key="i"
             :grow="i === 0 ? 2 : 1"
-            :title="item.title"
-            :icon="item.icon"
+            :title="insightInfoItems[item].title"
+            :icon="insightInfoItems[item].icon"
           >
             <template #subtitle-extended>
               <tooltip>
                 <template #label-content>
                   <span class="font-weight-semi-bold">
-                    {{ getFormattedValue(item) }}
+                    {{ getFormattedValue(insightInfoItems[item]) }}
                   </span>
                 </template>
                 <template #hover-content>
-                  {{ item.subtitle | Empty }}
+                  {{ insightInfoItems[item].subtitle | Empty }}
                 </template>
               </tooltip>
             </template>
@@ -103,9 +135,11 @@ import Avatar from "@/components/common/Avatar"
 import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
-import lifetimeValue from "@/assets/images/lifetimeValue.svg"
-import churn from "@/assets/images/churn.svg"
-import plus from "@/assets/images/plus.svg"
+import Icon from "../../components/common/Icon.vue"
+const randomHex = (length) =>
+  (
+    "0".repeat(length) + Math.floor(Math.random() * 16 ** length).toString(16)
+  ).slice(-length)
 export default {
   name: "AudienceInsight",
   components: {
@@ -115,9 +149,7 @@ export default {
     Breadcrumb,
     Avatar,
     Tooltip,
-    lifetimeValue,
-    churn,
-    plus,
+    Icon,
   },
   data() {
     return {
@@ -135,17 +167,40 @@ export default {
         },
       ],
       loading: false,
-      insightInfoItems: [
-        { title: "Target size", subtitle: "" },
-        { title: "Countries", subtitle: "", icon: "mdi-earth" },
-        { title: "US States", subtitle: "", icon: "mdi-map" },
-        { title: "Cities", subtitle: "", icon: "mdi-map-marker-radius" },
-        { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
-        { title: "Women", subtitle: "", icon: "mdi-gender-female" },
-        { title: "Men", subtitle: "", icon: "mdi-gender-male" },
-        { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
+      insightInfoItems: {
+        total_customers: {
+          title: "Target size",
+          subtitle: "",
+        },
+        total_countries: {
+          title: "Countries",
+          subtitle: "",
+          icon: "mdi-earth",
+        },
+        total_us_states: { title: "US States", subtitle: "", icon: "mdi-map" },
+
+        total_cities: {
+          title: "Cities",
+          subtitle: "",
+          icon: "mdi-map-marker-radius",
+        },
+        max_age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        gender_women: {
+          title: "Women",
+          subtitle: "",
+          icon: "mdi-gender-female",
+        },
+        gender_men: { title: "Men", subtitle: "", icon: "mdi-gender-male" },
+        gender_other: {
+          title: "Other",
+          subtitle: "",
+          icon: "mdi-gender-male-female",
+        },
+      },
+      modelInitial: [
+        { value: "propensity", icon: "lifetime" },
+        { value: "lifetime", icon: "lifetime" },
       ],
-      modelInitial: [{ value: "propensity", icon: "churn" }],
     }
   },
   computed: {
@@ -155,56 +210,48 @@ export default {
     audience() {
       return this.getAudience(this.$route.params.id)
     },
+
+    /**
+     * This computed property is converting the audience filters conditions
+     * into groups of fiters and having custom keys which are needed
+     * on the UI transformation.
+     */
     appliedFilters() {
-      let _filters = []
+      let _filters = {}
       if (this.audience && this.audience.filters) {
         this.audience.filters.forEach((section) => {
           section.section_filters.forEach((filter) => {
-            if (
-              _filters.findIndex((item) =>
-                item.name.toLowerCase().includes(filter.field)
-              ) !== -1
-            )
-              return
-
-            const filterObj = {
-              name: this.$options.filters.TitleCase(filter.field),
-            }
             const model = this.modelInitial.filter((model) =>
               filter.field.includes(model.value)
             )
+            const filterObj = {
+              name: this.$options.filters.TitleCase(filter.field),
+              key: filter.field,
+            }
+
+            filterObj.name = filterObj.name.replace(/_/gi, " ")
             if (model.length > 0) {
-              filterObj["icon"] = model[0].icon
-              filterObj["sortOrder"] = 0
-              _filters.push(filterObj)
+              filterObj["hover"] = "Between " + filter.value.join("-")
+              if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
+              _filters[model[0].icon][randomHex(16)] = filterObj
             } else {
-              const _plusFilter = _filters.filter(
-                (item) => item.icon === "plus"
-              )
-              if (_plusFilter.length > 0) {
-                _plusFilter[0].name +=
-                  "," + this.$options.filters.TitleCase(filter.field)
-                _plusFilter[0].name = _plusFilter[0].name
-                  .split(",")
-                  .sort()
-                  .join(", ")
-              } else {
-                filterObj["icon"] = "plus"
-                filterObj["sortOrder"] = 1
-                _filters.push(filterObj)
-              }
+              if (!_filters["general"]) _filters["general"] = {}
+              filterObj["hover"] =
+                filter.type === "range"
+                  ? "Include " + filter.value.join("-")
+                  : filter.value
+              _filters["general"][randomHex(4)] = filterObj
             }
           })
         })
       }
-      return _filters.sort((a, b) => (a.sortOrder > b.sortOrder ? 1 : -1))
+      return _filters
     },
   },
   methods: {
     ...mapActions({
       getAudienceById: "audiences/getAudienceById",
     }),
-    refresh() {},
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
     },
@@ -213,29 +260,22 @@ export default {
     },
 
     /**
-     *
+     * This is to map the Insight Values from the getter.
      */
     mapInsights() {
-      this.insightInfoItems[0].subtitle =
-        this.audience.audience_insights.total_customers
-      this.insightInfoItems[1].subtitle =
-        this.audience.audience_insights.total_countries
-      this.insightInfoItems[2].subtitle =
-        this.audience.audience_insights.total_us_states
-      this.insightInfoItems[3].subtitle =
-        this.audience.audience_insights.total_cities
-      this.insightInfoItems[4].subtitle =
-        this.audience.audience_insights.max_age
-      this.insightInfoItems[5].subtitle =
-        this.audience.audience_insights.gender_women
-      this.insightInfoItems[6].subtitle =
-        this.audience.audience_insights.gender_men
-      this.insightInfoItems[7].subtitle =
-        this.audience.audience_insights.gender_other
+      this.insightInfoItems = Object.keys(this.insightInfoItems).map(
+        (insight) => {
+          return {
+            title: this.insightInfoItems[insight].title,
+            subtitle: this.audience.audience_insights[insight],
+            icon: this.insightInfoItems[insight].icon,
+          }
+        }
+      )
     },
 
     /**
-     *
+     * Formatting the values to the desired format using predebfined application filters.
      */
     getFormattedValue(item) {
       switch (item.title) {
@@ -281,12 +321,27 @@ export default {
     }
   }
   .container {
-    ul {
-      li {
+    .filter-list {
+      .filter-item {
         width: fit-content;
         height: auto;
         float: left;
         margin-left: 2%;
+        span {
+          .filter-title {
+            &::after {
+              content: ",\00a0";
+            }
+          }
+          &:last-child {
+            .filter-title {
+              &::after {
+                content: "";
+                margin-right: 8px;
+              }
+            }
+          }
+        }
       }
     }
   }
