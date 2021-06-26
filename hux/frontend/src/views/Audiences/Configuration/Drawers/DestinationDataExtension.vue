@@ -259,12 +259,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.loading = true
-    // await this.getDataExtensions(this.destination.id)
-    this.loading = false
-  },
-
   props: {
     value: {
       type: Array,
