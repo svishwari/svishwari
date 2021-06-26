@@ -259,7 +259,7 @@ export default {
     },
   },
 
-   mounted() {
+  mounted() {
     this.loading = true
     // await this.getDataExtensions(this.destination.id)
     this.loading = false
@@ -290,7 +290,7 @@ export default {
 
     async localToggle(value) {
       this.$emit("onToggle", value)
-      if(value){
+      if (value) {
         await this.getDataExtensions(this.destination.id)
       }
     },
