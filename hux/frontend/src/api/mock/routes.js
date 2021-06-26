@@ -29,6 +29,10 @@ export const defineRoutes = (server) => {
     return schema.destinations.find(id).update({ is_added: true })
   })
   server.get("/destinations/:destinationId/data-extensions")
+  server.post("/destinations/:destinationId/data-extensions", (schema, request) => {
+    const requestData = JSON.parse(request.requestBody)
+    return schema.dataExtensions.create(requestData)
+  })
 
   server.post("/destinations/validate", (_, request) => {
     const code = 200

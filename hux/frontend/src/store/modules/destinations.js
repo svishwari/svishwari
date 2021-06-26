@@ -49,6 +49,9 @@ const mutations = {
       Vue.set(state.dataExtensions, item.id, item)
     })
   },
+  SET_ONE_DATAEXTENSIONS(state, item) {
+    Vue.set(state.dataExtensions, item.id, item)
+  },
 }
 
 const actions = {
@@ -118,6 +121,19 @@ const actions = {
     try {
       const response = await api.destinations.dataExtensions(id)
       commit("SET_DATAEXTENSIONS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async createDataExtensions({ commit }, extension) {
+    try {
+      const payload = {
+        "data_extension": extension.data_extension_id
+      }
+      const response = await api.destinations.addDataExtensions(extension.id, payload)
+      commit("SET_ONE_DATAEXTENSIONS", response.data)
     } catch (error) {
       handleError(error)
       throw error

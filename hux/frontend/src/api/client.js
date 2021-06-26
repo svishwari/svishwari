@@ -34,8 +34,12 @@ client["destinations"].validate = (data) => {
 client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)
 }
+
 client["destinations"].dataExtensions = (resourceId) => {
   return http.get(`/destinations/${resourceId}/data-extensions`)
+}
+client["destinations"].addDataExtensions = (resourceId, data) => {
+  return http.post(`/destinations/${resourceId}/data-extensions`, data)
 }
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
