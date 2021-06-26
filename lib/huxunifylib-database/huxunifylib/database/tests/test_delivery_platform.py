@@ -1359,12 +1359,10 @@ class TestDeliveryPlatform(unittest.TestCase):
         """Campaign Activity docs are set and retrieved."""
 
         delivery_job_id = self._set_delivery_job()
-        event_details = (
-            {
-                "event": "sent",
-                "event_date": "2021-06-17T12:21:27.970Z",
-            },
-        )
+        event_details = {
+            "event": "sent",
+            "event_date": "2021-06-17T12:21:27.970Z",
+        }
 
         doc = dpm.set_campaign_activity(
             database=self.database,
