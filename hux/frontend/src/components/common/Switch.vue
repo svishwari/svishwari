@@ -17,7 +17,7 @@ export default {
     },
     switchLabels: {
       type: Array,
-      required: true,
+      required: false,
       default: () => [
         {
           condition: true,
