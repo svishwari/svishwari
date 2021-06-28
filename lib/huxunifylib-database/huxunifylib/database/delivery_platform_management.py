@@ -2080,7 +2080,7 @@ def get_campaign_activity(
         de.InvalidID: Invalid ID for delivery job.
 
     Returns:
-        Union[list, None]: list of events documents.
+        Union[list, None]: list of campaign activity documents.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -2103,3 +2103,121 @@ def get_campaign_activity(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_campaign_activities(
+    database: DatabaseClient,
+    campaign_activity_docs: list,
+) -> bool:
+    """Store many campaign activities data.
+
+    Args:
+        database (DatabaseClient): A database client.
+        campaign_activity_docs(list): A list containing campaign activity documents.
+
+    Returns:
+        bool: Success flag.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+    # Insert the batch into the Mongo db
+    try:
+        collection.insert_many(campaign_activity_docs, ordered=True)
+        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        return True
+    except pymongo.errors.BulkWriteError as exc:
+        for err in exc.details["writeErrors"]:
+            if err["code"] == c.DUPLICATE_ERR_CODE:
+                logging.warning(
+                    "Ignoring %s due to duplicate unique field!",
+                    str(err["op"]),
+                )
+                continue
+
+            logging.error(exc)
+            return False
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+        return False
+
+    return True
+
+
+def get_all_feedback_campaign_activities(
+    database: DatabaseClient,
+) -> Union[list, None]:
+    """Retrieve all campaign activities with feedback false.
+
+    Args:
+        database (DatabaseClient): database client.
+
+    Returns:
+        Union[list, None]: list of campaign activities docs.
+    """
+
+    campaign_activities_docs = None
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+    try:
+        campaign_activities_docs = list(
+            collection.find(
+                {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+            )
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return campaign_activities_docs
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def _set_campaign_activity_feedback_status(
+    database: DatabaseClient,
+    campaign_activity_id: ObjectId,
+    campaign_activity_feedback_status: str,
+) -> Union[dict, None]:
+    """Set campaign activity feedback status.
+
+    Args:
+        database (DatabaseClient): database client.
+        campaign_activity_id (ObjectId): campaign activity ID.
+        campaign_activity_feedback_status (str): campaign_activity feedback status.
+
+    Returns:
+        Union[dict, None]: campaign activitiy document.
+    """
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+
+    update_doc = {}
+    if campaign_activity_feedback_status == c.STATUS_TRANSFERRED_FOR_FEEDBACK:
+        update_doc.update({c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
+
+    if update_doc:
+        try:
+            doc = collection.find_one_and_update(
+                {c.ID: campaign_activity_id},
+                {"$set": update_doc},
+                upsert=False,
+                new=True,
+            )
+            return doc
+        except pymongo.errors.OperationFailure as exc:
+            logging.error(exc)
+
+    return None
+
+
+set_campaign_activity_transferred_for_feedback = partial(
+    _set_campaign_activity_feedback_status,
+    campaign_activity_feedback_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+)
