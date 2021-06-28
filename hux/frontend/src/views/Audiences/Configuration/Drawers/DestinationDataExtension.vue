@@ -245,9 +245,6 @@ export default {
     },
 
     async addDestination() {
-      //TODO: this won't work incase there are two data extensions with same name.
-      // 1. need to handle with id
-      // 2. need to make an api call to create an data extension
       let destinationWithDataExtension = JSON.parse(
         JSON.stringify(this.destination)
       )
@@ -269,11 +266,7 @@ export default {
     },
   },
 
-  mounted() {
-    this.loading = true
-    // await this.getDataExtensions(this.destination.id)
-    this.loading = false
-  },
+  mounted() {},
 
   props: {
     value: {
