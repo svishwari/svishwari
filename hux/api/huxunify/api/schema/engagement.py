@@ -93,6 +93,11 @@ class EngagementGetSchema(Schema):
             audience[api_c.ID] = str(audience[api_c.ID])
             for destination in audience[api_c.DESTINATIONS]:
                 destination[api_c.ID] = str(destination[api_c.ID])
+                if isinstance(destination, dict):
+                    # resolve all nested string object IDs.
+                    for key, value in destination.items():
+                        if isinstance(value, ObjectId):
+                            destination[key] = str(value)
         return data
 
 

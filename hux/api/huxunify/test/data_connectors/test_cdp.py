@@ -59,7 +59,7 @@ class CDPTest(TestCase):
         expected_response = {
             "code": 200,
             "body": {
-                "hux_id": customer_id,
+                api_c.HUX_ID: customer_id,
                 api_c.FIRST_NAME: "Bertie",
                 api_c.LAST_NAME: "Fox",
                 api_c.EMAIL: "fake@fake.com",
