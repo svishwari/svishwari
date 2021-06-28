@@ -229,7 +229,7 @@ export default {
   methods: {
     ...mapActions({
       getDataExtensions: "destinations/dataExtensions",
-      postDataExtensions: "destinations/createDataExtensions",
+      addDataExtension: "destinations/addDataExtension",
     }),
 
     resetForm() {
@@ -252,7 +252,7 @@ export default {
         id: destinationWithDataExtension.id,
         name: this.extension,
       }
-      let response = await this.postDataExtensions(requestBody)
+      let response = await this.addDataExtension(requestBody)
       destinationWithDataExtension.data_extension_id =
         response.data_extension_id
       this.value.push(destinationWithDataExtension)

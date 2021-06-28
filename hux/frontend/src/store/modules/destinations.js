@@ -49,9 +49,6 @@ const mutations = {
       Vue.set(state.dataExtensions, item.id, item)
     })
   },
-  SET_ONE_DATAEXTENSIONS(state, item) {
-    Vue.set(state.dataExtensions, item.id, item)
-  },
 }
 
 const actions = {
@@ -127,12 +124,12 @@ const actions = {
     }
   },
 
-  async createDataExtensions(_, extension) {
+  async addDataExtension(_, extension) {
     try {
       const payload = {
         data_extension: extension.name,
       }
-      const response = await api.destinations.addDataExtensions(
+      const response = await api.destinations.createDataExtension(
         extension.id,
         payload
       )

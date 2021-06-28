@@ -37,7 +37,7 @@ export const defineRoutes = (server) => {
         name: requestData.data_extension,
       }
       let response = schema.dataExtensions.create(requestPayload)
-      // update extionsion id of particular destination
+      // update data extension, assign the new `id` to its `data_extension_id`
       let updatedResponse = schema.dataExtensions
         .find(response.attrs.id)
         .update({ data_extension_id: response.attrs.id })
