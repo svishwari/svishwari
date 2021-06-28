@@ -44,9 +44,6 @@ export default {
     position: {
       type: Object,
       required: false,
-      validator(prop) {
-        return prop.hasOwnProperty("x") && prop.hasOwnProperty("y")
-      },
       default() {
         return {
           x: 0,

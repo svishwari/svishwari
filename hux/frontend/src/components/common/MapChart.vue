@@ -69,8 +69,6 @@ export default {
         currentOccurance: 0,
         totalOccurance: 0,
       },
-
-      chartData: identity_resolution,
       chartMatrix: [],
       groupNames: [],
     }

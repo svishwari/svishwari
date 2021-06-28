@@ -38,12 +38,10 @@ import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
 import * as d3Array from "d3-array"
 import Tooltip from "@/components/common/Tooltip"
-import ChartTooltip from "@/components/common/ChartTooltip"
 import Icon from "@/components/common/Icon"
-import identity_resolution from "@/components/common/chartData.json"
 export default {
   name: "chord-chart",
-  components: { Icon, Tooltip, ChartTooltip },
+  components: { Icon, Tooltip },
   props: {
     /**
      * Accepts an array of ranges in N*N matrix  format for creating chart arc & ribbon mapping
