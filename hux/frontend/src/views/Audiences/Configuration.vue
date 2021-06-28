@@ -99,7 +99,7 @@
               <span>2</span>
             </template>
             <v-col class="pt-1 pa-0">
-              <attribute-rules :rules="attributeRules"></attribute-rules>
+              <attribute-rules :rules="attributeRules" />
             </v-col>
           </v-timeline-item>
           <v-timeline-item
