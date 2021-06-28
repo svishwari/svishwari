@@ -99,11 +99,9 @@
               Nothing to show here yet. Add an audience, assign and deliver that
               audience to a destination.
             </div>
-            <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3" v-if="engagementList">
-              <!-- {{engagementList}} -->
+            <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3" v-if="audienceMergedData.length >= 0 ">
               <status-list
-                :audience="engagementList.audiences"
-                :audienceData="audianceDetails"
+                :audience="audienceMergedData"
               />
             </v-col>
           </v-card-text>
@@ -319,6 +317,7 @@ export default {
         ],
       },
       audianceDetails: [],
+      audienceMergedData:[],
       loading: false,
       loadingTab: false,
       tabOption: 0,
@@ -709,12 +708,28 @@ export default {
     async audienceList() {
       let engData = this.getEngagement(this.$route.params.id)
       let audienceIds = []
+      let mergedAudiArr = []
+      let audiancesDetailsData =[]
       engData.audiences.forEach(data =>
-      audienceIds.push(data.id))
-        for (let id of audienceIds) {
+        audienceIds.push(data.id)
+      )
+      for (let id of audienceIds) {
         await this.getAudienceById(id)
         this.audianceDetails.push(this.getAudience(id))
       }
+     this.audianceDetails.forEach(element =>
+      {
+        let audArr = []
+        let audEngArry = []
+        let filteredAudience = engData.audiences.filter(d => d.id == element.id)[0]
+        audEngArry.push(filteredAudience)
+        audArr.push(element)
+        let audEngobj = Object.assign(audEngArry[0]);
+        let audObj =  Object.assign(audArr[0]);
+        mergedAudiArr = Object.assign(audEngobj,audObj)
+        audiancesDetailsData.push(mergedAudiArr);
+      });
+        this.audienceMergedData = audiancesDetailsData;
     },
     
     getDateStamp(value) {

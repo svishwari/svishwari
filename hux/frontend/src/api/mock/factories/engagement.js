@@ -7,6 +7,14 @@ const destinationData = () => {
     id: faker.datatype.number({ min: 1, max: 10 }),
     data_extension_id: faker.datatype.number({ min: 1, max: 10 }),
     contact_list: "faker data",
+    status: "Delivered",
+    update_time: faker.date.past(),
+    updated_by: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    is_enabled: true,
+    create_time: faker.date.past(),
+    name: "Salesforce Marketing Cloud",
+    type: "facebook",
+    is_added: false
   }
 }
 

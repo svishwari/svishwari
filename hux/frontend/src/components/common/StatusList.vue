@@ -1,18 +1,17 @@
 <template>
-  <v-card class="rounded-sm status-card mr-2 box-shadow-none">
+<div >
+  <v-card class="rounded-sm status-card mr-2 box-shadow-none" v-for="data in audience" :key="data.id">
     <v-card-title class="d-flex justify-space-between">
       <span
-        >
-        <router-link
+        ><router-link
           :to="{
             name: 'AudienceInsight',
-            params: { id: audience.id },
+            params: { id: data.id },
           }"
           class="text-decoration-none"
           append
-          >{{ bindAudienceData[0].name }}</router-link
-        ></span
-      >
+          >{{ data.name }}</router-link
+        ></span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
           <v-icon v-bind="attrs" v-on="on" class="top-action"
@@ -32,9 +31,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0" v-if="audience.destinations.length > 0">
+    <v-list dense class="pa-0">
       <v-list-item
-        v-for="item in audience.destinations"
+        v-for="item in data.destinations"
         :key="item.id"
         @click="toggleFocus()"
       >
@@ -47,7 +46,7 @@
               <template slot="hover-content">
                 <div class="d-flex align-center">
                   <Logo :type="item.type" :size="18" />
-                  <span class="ml-2">{{ item.type | TitleCase }}</span>
+                  <span class="ml-2">{{ item.contact_list | TitleCase }}</span>
                 </div>
               </template>
             </tooltip>
@@ -83,26 +82,26 @@
         <v-list-item-content class="status-col py-1" v-if="item.status">
           <status :status="item.status" collapsed showLabel />
         </v-list-item-content>
-        <v-list-item-content class="size-col py-1" v-if="item.size">
+        <v-list-item-content class="size-col py-1" v-if="data.size">
           <tooltip>
             <template slot="label-content">
-              {{ getSize(item.size) }}
+              {{ getSize(data.size) }}
             </template>
             <template slot="hover-content">
-              {{ item.size | Numeric(true, false) }}
+              {{ data.size | Numeric(true, false) }}
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
-          v-if="item.lastDeliveredOn"
+          v-if="data.last_delivered"
         >
           <tooltip>
             <template slot="label-content">
-              {{ getTimeStamp(item.lastDeliveredOn) }}
+              {{ getTimeStamp(data.last_delivered) }}
             </template>
             <template slot="hover-content">
-              {{ item.lastDeliveredOn | Date | Empty }}
+              {{ data.last_delivered | Date | Empty }}
             </template>
           </tooltip>
         </v-list-item-content>
@@ -110,7 +109,7 @@
     </v-list>
     <div
       class="py-4 px-15 empty-destinations"
-      v-if="audience.destinations.length == 0"
+      v-if="data.destinations.length == 0"
     >
       <div class="no-destinations text--gray pb-5">
         There are no destinations assigned to this audience.
@@ -122,7 +121,10 @@
         </v-icon>
       </div>
     </div>
+    
   </v-card>
+  </div>
+
 </template>
 
 <script>
@@ -152,77 +154,17 @@ export default {
         { id: 4, title: "Pause all delivery", active: false },
         { id: 5, title: "Remove audience", active: false },
       ],
-      audianceData: []
+      audiancesDetails: []
     }
+    
   },
   props: {
     audience: {
-      type: Array,
-      required: true,
-    },
-    audienceData: {
-      type: Array,
+     title: Object,
       required: true,
     }
   },
-  computed: {
-    bindAudienceData() {
-       console.log('this.audience', this.audienceData, this.audience)
-       let mergedArr = []
-       let mergeCheck = []
-       this.audienceData.forEach(data =>  // console.log(data)
-      {
-        let tmpArr = []
-        let temp = []
-      //  console.log(data.id)
-     //  console.log(this.audienceData.map(d => d.id))
-       let aa = this.audience.filter(d => d.id == data.id)[0]
-      // console.log(aa)
 
-      temp.push(aa)
-      tmpArr.push(data)
-      console.log("+++++++++++++++++++++++++",temp);
-      console.log("+++++++++++++++++++++++++1111111111",tmpArr);
-      // tmpArr = Object.assign(aa, data)
-      let obj1 = Object.assign(temp);
-      let obj2 =  Object.assign(temp);
-      // mergeCheck = [...temp, ...tmpArr];
-      console.log("+++++++++++++++++++++++++",obj1,obj1);
-      // let mergeObj = Object.assign(mergeCheck[0], mergeCheck[1])
-      // console.log("+++++++++++++++++++++++++mergeObj",mergeObj);
-      // mergedArr.push(tmpArr)
-        
-      // console.log(data)
-        // console.log(tempArr)
-         
-          
-
-      }
-       )
-
-       console.log('mm')
-   console.log('mm+++++++++++++++++++++++++++++++++++++==', mergeCheck)
-       console.log(mergedArr)
-
-
-
-     
-      // this.audienceData.map(element => {
-      //       if(this.audience.indexOf(data.id) !== -1) {
-      //   this.audience.push(data)
-      // }
-
-      //   //  console.log('value', element.id)
-      //   if(this.audience.id ===  element.id) {
-      //    this.audianceData.push(this.audience,element);
-      //   //  this.audianceData.push(element)
-
-      //   }
-      // });
-              // console.log('this.audianceData',this.audianceData)
-      return this.mergedArr;
-    }
-  },
   methods: {
     getSize(value) {
       return getApproxSize(value)
