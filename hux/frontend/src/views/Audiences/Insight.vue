@@ -19,7 +19,7 @@
     <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
-        class="ma-4"
+        class="ma-4 audience-summary"
         :key="i"
         :grow="0"
         :title="item.title"
@@ -43,7 +43,7 @@
       </MetricCard>
 
       <MetricCard
-        class="ma-4"
+        class="ma-4 audience-summary"
         :title="'Attributes'"
         v-if="Object.keys(appliedFilters).length > 0"
       >
@@ -81,7 +81,7 @@
                       <div class="mb-2">
                         {{ appliedFilters[filterKey][filter].name }}
                       </div>
-                      {{ appliedFilters[filterKey][filter].hover }}
+                      <span v-html="appliedFilters[filterKey][filter].hover" />
                     </span>
                   </template>
                 </tooltip>
@@ -235,14 +235,20 @@ export default {
             if (model.length > 0) {
               filterObj["hover"] = "Between " + filter.value.join("-")
               if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
-              _filters[model[0].icon][randomHex(16)] = filterObj
+              if (!!_filters[model[0].icon][filter.field])
+                _filters[model[0].icon][filter.field]["hover"] +=
+                  "<br/> " + filterObj.hover
+              else _filters[model[0].icon][filter.field] = filterObj
             } else {
               if (!_filters["general"]) _filters["general"] = {}
               filterObj["hover"] =
                 filter.type === "range"
                   ? "Include " + filter.value.join("-")
                   : filter.value
-              _filters["general"][randomHex(4)] = filterObj
+              if (!!_filters["general"][filter.field])
+                _filters["general"][filter.field]["hover"] +=
+                  "<br/> " + filterObj.hover
+              else _filters["general"][filter.field] = filterObj
             }
           })
         })
@@ -321,6 +327,9 @@ export default {
       margin: 0;
       list-style-type: none;
     }
+  }
+  .audience-summary {
+    padding: 10px 15px;
   }
   .container {
     .filter-list {

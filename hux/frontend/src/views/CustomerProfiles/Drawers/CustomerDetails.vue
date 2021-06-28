@@ -39,6 +39,7 @@
             </div>
             <div v-if="header.value == 'match_confidence'">
               <hux-slider
+                class="match-confidence"
                 :isRangeSlider="false"
                 :value="item[header.value]"
               ></hux-slider>
@@ -155,6 +156,17 @@ export default {
       }
       th {
         background: var(--v-aliceBlue-base);
+      }
+    }
+    .match-confidence {
+      .slider-value-display {
+        margin-top: 16px;
+      }
+      .v-slider__track-container {
+        margin-top: 12px !important;
+      }
+      .v-slider__thumb-container {
+        margin-top: 12px !important;
       }
     }
   }
