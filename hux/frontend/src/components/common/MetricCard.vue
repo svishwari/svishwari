@@ -5,6 +5,7 @@
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
     @click="$emit('click')"
+    height="90"
     :disabled="!active"
     elevation="0"
     :ripple="interactable"
