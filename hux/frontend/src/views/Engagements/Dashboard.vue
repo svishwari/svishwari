@@ -28,7 +28,7 @@
         <MetricCard class="mr-3" :title="summaryCards[0].title">
           <template #subtitle-extended>
             <span class="font-weight-semi-bold neroBlack--text">
-              {{ summaryCards[0].value.end_date}}
+              Manual
             </span>
           </template>
         </MetricCard>
