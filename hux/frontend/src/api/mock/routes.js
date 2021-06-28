@@ -31,7 +31,13 @@ export const defineRoutes = (server) => {
   server.get("/destinations/:destinationId/data-extensions")
   server.post("/destinations/:destinationId/data-extensions", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
-    return schema.dataExtensions.create(requestData)
+    const requestPayload = {
+      name: requestData.data_extension
+    }
+    let response = schema.dataExtensions.create(requestPayload)
+    // update extionsion id of particular destination
+    let updatedResponse = schema.dataExtensions.find(response.attrs.id).update({data_extension_id: response.attrs.id})
+    return updatedResponse.attrs
   })
 
   server.post("/destinations/validate", (_, request) => {

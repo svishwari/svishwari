@@ -130,10 +130,10 @@ const actions = {
   async createDataExtensions({ commit }, extension) {
     try {
       const payload = {
-        "data_extension": extension.data_extension_id
+        "data_extension": extension.name
       }
       const response = await api.destinations.addDataExtensions(extension.id, payload)
-      commit("SET_ONE_DATAEXTENSIONS", response.data)
+      return response.data
     } catch (error) {
       handleError(error)
       throw error
