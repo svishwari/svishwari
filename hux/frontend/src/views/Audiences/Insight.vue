@@ -138,10 +138,7 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
-const randomHex = (length) =>
-  (
-    "0".repeat(length) + Math.floor(Math.random() * 16 ** length).toString(16)
-  ).slice(-length)
+
 export default {
   name: "AudienceInsight",
   components: {
@@ -235,7 +232,7 @@ export default {
             if (model.length > 0) {
               filterObj["hover"] = "Between " + filter.value.join("-")
               if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
-              if (!!_filters[model[0].icon][filter.field])
+              if (_filters[model[0].icon][filter.field])
                 _filters[model[0].icon][filter.field]["hover"] +=
                   "<br/> " + filterObj.hover
               else _filters[model[0].icon][filter.field] = filterObj
@@ -245,7 +242,7 @@ export default {
                 filter.type === "range"
                   ? "Include " + filter.value.join("-")
                   : filter.value
-              if (!!_filters["general"][filter.field])
+              if (_filters["general"][filter.field])
                 _filters["general"][filter.field]["hover"] +=
                   "<br/> " + filterObj.hover
               else _filters["general"][filter.field] = filterObj
