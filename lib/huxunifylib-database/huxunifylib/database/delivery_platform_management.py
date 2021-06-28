@@ -1090,9 +1090,9 @@ def get_delivery_job(
 )
 def get_delivery_jobs_by_engagement_details(
     database: DatabaseClient,
-    engagement_id: ObjectId,
-    audience_id: ObjectId,
-    delivery_platform_id: ObjectId,
+    engagement_id: ObjectId = None,
+    audience_id: ObjectId = None,
+    delivery_platform_id: ObjectId = None,
 ) -> Union[list, None]:
     """A function to get delivery jobs based on engagement details.
 
@@ -1107,24 +1107,18 @@ def get_delivery_jobs_by_engagement_details(
 
     """
 
-    if (
-        engagement_id is None
-        or audience_id is None
-        or delivery_platform_id is None
-    ):
-        raise de.InvalidID()
-
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        # set mongo_filter based on engagement/audience/delivery platform id
-        mongo_filter = {
-            c.ENGAGEMENT_ID: engagement_id,
-            c.AUDIENCE_ID: audience_id,
-            c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-            c.DELETED: False,
-        }
+
+        mongo_filter = {c.DELETED: False}
+        if audience_id:
+            mongo_filter[c.AUDIENCE_ID] = audience_id
+        if engagement_id:
+            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+        if delivery_platform_id:
+            mongo_filter[c.DELIVERY_PLATFORM_ID] = delivery_platform_id
 
         return list(collection.find(mongo_filter, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
