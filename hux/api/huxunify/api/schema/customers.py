@@ -2,11 +2,11 @@
 """
 Schemas for the Customers API
 """
+
 from flask_marshmallow import Schema
 from marshmallow.fields import (
     Str,
     Float,
-    DateTime,
     Boolean,
     List,
     Nested,
@@ -48,18 +48,18 @@ class IdentityResolution(Schema):
 class CustomerProfileSchema(Schema):
     """Customer Profile Schema"""
 
-    id = Str(required=True)
+    hux_id = Str(required=True, attribute=api_c.ID)
     first_name = Str(required=True)
     last_name = Str(required=True)
     match_confidence = Float(required=True)
-    since = DateTime(required=True)
+    since = Str(required=True)
     ltv_actual = Float(required=True)
     ltv_predicted = Float(required=True)
-    conversion_time = DateTime(required=True)
+    conversion_time = Str(required=True)
     churn_rate = Float(required=True)
-    last_click = DateTime(required=True)
-    last_purchase = DateTime(required=True)
-    last_email_open = DateTime(required=True)
+    last_click = Str(required=True)
+    last_purchase = Str(required=True)
+    last_email_open = Str(required=True)
     email = Str(required=True)
     phone = Str(required=True)
     # redacted age to a string.
@@ -88,7 +88,7 @@ class CustomerOverviewSchema(Schema):
     total_known_ids = Integer(required=True)
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
-    updated = DateTime(required=True)
+    updated = Str(required=True)
     total_customers = Integer(required=True)
     total_countries = Integer(required=True)
     total_us_states = Integer(required=True)
@@ -112,7 +112,7 @@ class CustomersSchema(Schema):
         Dict(),
         example=[
             {
-                api_c.ID: "1531-2039-22",
+                api_c.HUX_ID: "1531-2039-22",
                 api_c.FIRST_NAME: "Bertie",
                 api_c.LAST_NAME: "Fox",
                 api_c.MATCH_CONFIDENCE: 0.96666666661,

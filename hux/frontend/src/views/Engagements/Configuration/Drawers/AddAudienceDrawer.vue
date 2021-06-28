@@ -42,10 +42,7 @@
         </div>
         <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
-          <attribute-rules
-            :rules="attributeRules"
-            applyCaptionStyle
-          ></attribute-rules>
+          <attribute-rules :rules="attributeRules" applyCaptionStyle />
         </div>
       </div>
     </template>
@@ -181,18 +178,24 @@ export default {
             conditionIndex++
           ) {
             filter.section_filters.push({
-              field: this.attributeRules[ruleIndex].conditions[conditionIndex]
-                .attribute,
+              field:
+                this.attributeRules[ruleIndex].conditions[conditionIndex]
+                  .attribute.key,
               type: this.attributeRules[ruleIndex].conditions[conditionIndex]
-                .operator,
+                .operator
+                ? this.attributeRules[ruleIndex].conditions[conditionIndex]
+                    .operator.key
+                : "range",
               value: this.attributeRules[ruleIndex].conditions[conditionIndex]
-                .text,
+                .operator
+                ? this.attributeRules[ruleIndex].conditions[conditionIndex].text
+                : this.attributeRules[ruleIndex].conditions[conditionIndex]
+                    .range,
             })
           }
           filtersArray.push(filter)
         }
 
-        // TODO: HUS-246 need to integrate size and other data on rules addition
         const data = {
           name: this.newAudience.name,
           filters: filtersArray,
@@ -204,6 +207,7 @@ export default {
           id: newAudience.id,
           name: newAudience.name,
           size: newAudience.size,
+          destinations: [],
         })
 
         this.closeDrawer()

@@ -1403,7 +1403,7 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
 
-        delivery_jobs = dpm.get_delivery_jobs_by_engagement_details(
+        delivery_jobs = dpm.get_delivery_jobs_using_metadata(
             self.database,
             engagement_id,
             self.source_audience_doc[c.ID],

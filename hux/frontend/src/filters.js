@@ -41,7 +41,7 @@ export default {
     percentage = false,
     append = ""
   ) {
-    if (isNaN(value)) return ""
+    if (isNaN(value)) return "-"
 
     let abrv = ""
 

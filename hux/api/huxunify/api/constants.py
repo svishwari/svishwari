@@ -27,6 +27,7 @@ UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
 OVERVIEW = "overview"
+HUX_ID = "hux_id"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -379,6 +380,18 @@ BATCH_SIZE = "batch_size"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
+
+# TODO HUS-363 remove once we can pass empty filters to CDP.
+CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
+    "filters": [
+        {
+            "section_aggregator": "ALL",
+            "section_filters": [
+                {"field": "country", "type": "equals", "value": "us"}
+            ],
+        }
+    ]
+}
 
 # IDR Fields
 IDR_TAG = "idr"
