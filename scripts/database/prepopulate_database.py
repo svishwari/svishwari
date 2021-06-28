@@ -362,15 +362,19 @@ def insert_delivery_platforms(
     logging.info("Prepopulate destinations.")
 
     for delivery_platform in deliveryplatforms:
-        result_id = set_delivery_platform(
-            database,
-            **delivery_platform,
-        )[c.ID]
-        logging.info(
-            "Added %s, %s.",
-            delivery_platform[c.DELIVERY_PLATFORM_NAME],
-            result_id,
-        )
+        if (
+            delivery_platform[c.DELIVERY_PLATFORM_TYPE]
+            in c.SUPPORTED_DELIVERY_PLATFORMS
+        ):
+            result_id = set_delivery_platform(
+                database,
+                **delivery_platform,
+            )[c.ID]
+            logging.info(
+                "Added %s, %s.",
+                delivery_platform[c.DELIVERY_PLATFORM_NAME],
+                result_id,
+            )
     logging.info("Prepopulate destinations complete.")
 
 
