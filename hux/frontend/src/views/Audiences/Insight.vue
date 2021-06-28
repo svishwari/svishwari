@@ -19,7 +19,7 @@
     <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
-        class="ma-4"
+        class="ma-4 audience-summary"
         :key="i"
         :grow="0"
         :title="item.title"
@@ -43,7 +43,7 @@
       </MetricCard>
 
       <MetricCard
-        class="ma-4"
+        class="ma-4 audience-summary"
         :title="'Attributes'"
         v-if="Object.keys(appliedFilters).length > 0"
       >
@@ -57,7 +57,7 @@
               >
                 <icon
                   :type="filterKey == 'general' ? 'plus' : filterKey"
-                  :size="10"
+                  :size="filterKey == 'general' ? 10 : 21"
                   class="mr-1"
                 />
                 <!-- <span class="ml-1"></span> -->
@@ -81,7 +81,7 @@
                       <div class="mb-2">
                         {{ appliedFilters[filterKey][filter].name }}
                       </div>
-                      {{ appliedFilters[filterKey][filter].hover }}
+                      <span v-html="appliedFilters[filterKey][filter].hover" />
                     </span>
                   </template>
                 </tooltip>
@@ -138,10 +138,7 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
-const randomHex = (length) =>
-  (
-    "0".repeat(length) + Math.floor(Math.random() * 16 ** length).toString(16)
-  ).slice(-length)
+
 export default {
   name: "AudienceInsight",
   components: {
@@ -200,8 +197,9 @@ export default {
         },
       },
       modelInitial: [
-        { value: "propensity", icon: "churn" },
+        { value: "propensity", icon: "model" },
         { value: "lifetime", icon: "lifetime" },
+        { value: "churn", icon: "churn" },
       ],
     }
   },
@@ -219,35 +217,47 @@ export default {
      * on the UI transformation.
      */
     appliedFilters() {
-      let _filters = {}
-      if (this.audience && this.audience.filters) {
-        this.audience.filters.forEach((section) => {
-          section.section_filters.forEach((filter) => {
-            const model = this.modelInitial.filter((model) =>
-              filter.field.includes(model.value)
-            )
-            const filterObj = {
-              name: this.$options.filters.TitleCase(filter.field),
-              key: filter.field,
-            }
+      try {
+        let _filters = {}
+        if (this.audience && this.audience.filters) {
+          this.audience.filters.forEach((section) => {
+            section.section_filters.forEach((filter) => {
+              const model = this.modelInitial.filter(
+                (model) =>
+                  typeof filter.field === "string" &&
+                  filter.field.includes(model.value)
+              )
+              const filterObj = {
+                name: this.$options.filters.TitleCase(filter.field),
+                key: filter.field,
+              }
 
-            filterObj.name = filterObj.name.replace(/_/gi, " ")
-            if (model.length > 0) {
-              filterObj["hover"] = "Between " + filter.value.join("-")
-              if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
-              _filters[model[0].icon][randomHex(16)] = filterObj
-            } else {
-              if (!_filters["general"]) _filters["general"] = {}
-              filterObj["hover"] =
-                filter.type === "range"
-                  ? "Include " + filter.value.join("-")
-                  : filter.value
-              _filters["general"][randomHex(4)] = filterObj
-            }
+              filterObj.name = filterObj.name.replace(/_/gi, " ")
+              if (model.length > 0) {
+                filterObj["hover"] = "Between " + filter.value.join("-")
+                if (!_filters[model[0].icon]) _filters[model[0].icon] = {}
+                if (_filters[model[0].icon][filter.field])
+                  _filters[model[0].icon][filter.field]["hover"] +=
+                    "<br/> " + filterObj.hover
+                else _filters[model[0].icon][filter.field] = filterObj
+              } else {
+                if (!_filters["general"]) _filters["general"] = {}
+                filterObj["hover"] =
+                  filter.type === "range"
+                    ? "Include " + filter.value.join("-")
+                    : filter.value
+                if (_filters["general"][filter.field])
+                  _filters["general"][filter.field]["hover"] +=
+                    "<br/> " + filterObj.hover
+                else _filters["general"][filter.field] = filterObj
+              }
+            })
           })
-        })
+        }
+        return _filters
+      } catch (error) {
+        return []
       }
-      return _filters
     },
   },
   methods: {
@@ -321,6 +331,9 @@ export default {
       margin: 0;
       list-style-type: none;
     }
+  }
+  .audience-summary {
+    padding: 10px 15px;
   }
   .container {
     .filter-list {
