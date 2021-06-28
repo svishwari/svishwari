@@ -408,6 +408,9 @@
       :colorCodes="colorCodes"
       :chartLegendsData="chartLegendsData"
     />
+
+     <v-divider class="mt-10" />
+
     <v-container class="my-4">
       <v-row align="baseline">
         <v-col></v-col>
@@ -435,6 +438,12 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <v-divider class="mt-10" />
+
+
+    <v-subheader>Hux Chord Chart with Tooltip</v-subheader>
+    <map-chart></map-chart>
 
     <v-divider class="mt-10" />
 
@@ -492,6 +501,7 @@ import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import HuxChordChart from "@/components/common/HuxChordChart"
+import MapChart from "@/components/common/MapChart"
 import { generateColor } from "@/utils"
 
 export default {
@@ -520,6 +530,7 @@ export default {
     FormStep,
     HuxSlider,
     HuxChordChart,
+    MapChart
   },
   methods: {
     onupdatelabelText(newValue) {
