@@ -409,7 +409,7 @@
       :chartLegendsData="chartLegendsData"
     />
 
-     <v-divider class="mt-10" />
+    <v-divider class="mt-10" />
 
     <v-container class="my-4">
       <v-row align="baseline">
@@ -440,7 +440,6 @@
     </v-container>
 
     <v-divider class="mt-10" />
-
 
     <v-subheader>Hux Chord Chart with Tooltip</v-subheader>
     <map-chart></map-chart>
@@ -530,7 +529,7 @@ export default {
     FormStep,
     HuxSlider,
     HuxChordChart,
-    MapChart
+    MapChart,
   },
   methods: {
     onupdatelabelText(newValue) {

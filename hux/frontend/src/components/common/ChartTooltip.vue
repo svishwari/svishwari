@@ -77,9 +77,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- ::v-deep .v-card {
-border-radius: 0px !important;
- }
+::v-deep .v-card {
+  border-radius: 0px !important;
+}
 .global-heading {
   font-style: normal;
   font-weight: 600;

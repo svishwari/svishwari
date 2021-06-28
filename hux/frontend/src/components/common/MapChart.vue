@@ -93,24 +93,24 @@ export default {
     },
 
     generateToolTipData(groupIndex) {
-    if (groupIndex.length>0) {
-      let sourceData = this.chartData.identity_resolution
-      let group1 = this.groupNames[groupIndex[0]]
-      if (this.isArcHover) {
-        this.arcData.name = this.$options.filters.TitleCase(group1)
-        this.arcData.icon = group1
-        this.arcData.assetsData = this.mapIdentitySources(
-          sourceData[group1].data_sources
-        )
-      } else {
-        let group2 = this.groupNames[groupIndex[1]]
-        this.ribbonData.name1 = this.$options.filters.TitleCase(group1)
-        this.ribbonData.icon1 = group1
-        this.ribbonData.name2 = this.$options.filters.TitleCase(group2)
-        this.ribbonData.icon2 = group2
-        this.mapCoOccurances(sourceData[group1].cooccurrences, group2)
-      }
+      if (groupIndex.length > 0) {
+        let sourceData = this.chartData.identity_resolution
+        let group1 = this.groupNames[groupIndex[0]]
+        if (this.isArcHover) {
+          this.arcData.name = this.$options.filters.TitleCase(group1)
+          this.arcData.icon = group1
+          this.arcData.assetsData = this.mapIdentitySources(
+            sourceData[group1].data_sources
+          )
+        } else {
+          let group2 = this.groupNames[groupIndex[1]]
+          this.ribbonData.name1 = this.$options.filters.TitleCase(group1)
+          this.ribbonData.icon1 = group1
+          this.ribbonData.name2 = this.$options.filters.TitleCase(group2)
+          this.ribbonData.icon2 = group2
+          this.mapCoOccurances(sourceData[group1].cooccurrences, group2)
         }
+      }
     },
 
     mapIdentitySources(data_sources) {
@@ -118,26 +118,30 @@ export default {
       for (let item of data_sources) {
         let tempSourceData = {}
         tempSourceData.icon = "cookie"
-        tempSourceData.description = item.name,
-        tempSourceData.value = this.$options.filters.percentageConvert(
+        ;(tempSourceData.description = item.name),
+          (tempSourceData.value = this.$options.filters.percentageConvert(
             item.percentage,
             true,
             true
-          )
+          ))
         assetsData.push(tempSourceData)
       }
       return assetsData
     },
     mapCoOccurances(cooccurances, identifier) {
-        this.ribbonData.totalOccurance = cooccurances.reduce((a, b) => ({count: a.count + b.count})).count
-        this.ribbonData.currentOccurance = cooccurances.find(data => data.identifier === identifier).count
+      this.ribbonData.totalOccurance = cooccurances.reduce((a, b) => ({
+        count: a.count + b.count,
+      })).count
+      this.ribbonData.currentOccurance = cooccurances.find(
+        (data) => data.identifier === identifier
+      ).count
     },
 
     transformData() {
       let sourceData = this.chartData.identity_resolution
-        for(let key of this.groupNames) {
-             this.createGroupRelationMatrix(sourceData[key].cooccurrences)
-        }
+      for (let key of this.groupNames) {
+        this.createGroupRelationMatrix(sourceData[key].cooccurrences)
+      }
     },
 
     createGroupRelationMatrix(element) {
@@ -155,13 +159,12 @@ export default {
         countValue: 0,
       }
 
-      for (let i=0; i<this.groupNames.length; i++) {
-          if (this.groupNames[i] == value.identifier)
-          {
-              extractedValues.index = i
-              extractedValues.countValue = value.count
-              break
-          }
+      for (let i = 0; i < this.groupNames.length; i++) {
+        if (this.groupNames[i] == value.identifier) {
+          extractedValues.index = i
+          extractedValues.countValue = value.count
+          break
+        }
       }
       return extractedValues
     },
