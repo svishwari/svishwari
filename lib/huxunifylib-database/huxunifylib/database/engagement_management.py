@@ -97,6 +97,119 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
+    """A function to get all engagements summary with all nested lookups
+
+    Args:
+        database (DatabaseClient): A database client.
+
+    Returns:
+        Union[list, None]: List of all engagement documents.
+
+    """
+
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    pipeline = [
+        # filter out the deleted engagements
+        {"$match": {db_c.DELETED: False}},
+        # unwind the audiences object so we can do the nested joins.
+        {
+            "$unwind": {
+                "path": f"${db_c.AUDIENCES}",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # lookup audience objects to the audience collection to get name.
+        {
+            "$lookup": {
+                "from": db_c.AUDIENCES,
+                "localField": "audiences.id",
+                "foreignField": db_c.ID,
+                "as": "audience",
+            }
+        },
+        # unwind the found audiences to an object.
+        {"$unwind": {"path": "$audience", "preserveNullAndEmptyArrays": True}},
+        # add the audience name field to the nested audience object
+        {
+            "$addFields": {
+                f"{db_c.AUDIENCES}.{db_c.NAME}": f"$audience.{db_c.NAME}"
+            }
+        },
+        # remove the unused audience object fields.
+        {"$project": {"audience": 0}},
+        # unwind the destinations
+        {
+            "$unwind": {
+                "path": f"${db_c.AUDIENCES}.{db_c.DESTINATIONS}",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # lookup the embedded destinations
+        {
+            "$lookup": {
+                "from": db_c.DELIVERY_PLATFORM_COLLECTION,
+                "localField": f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.OBJECT_ID}",
+                "foreignField": db_c.ID,
+                "as": "destination",
+            }
+        },
+        # unwind the found destinations
+        {
+            "$unwind": {
+                "path": "$destination",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # add the destination name to the nested destinations.
+        {
+            "$addFields": {
+                f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.NAME}": f"$destination.{db_c.NAME}"
+            }
+        },
+        # remove the found destination from the pipeline.
+        {"$project": {"destination": 0}},
+        # lookup the latest delivery job
+        {
+            "$lookup": {
+                "from": db_c.DELIVERY_JOBS_COLLECTION,
+                "localField": f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.DELIVERY_JOB_ID}",
+                "foreignField": db_c.ID,
+                "as": "delivery_job",
+            }
+        },
+        # unwind the found delivery job into objects.
+        {
+            "$unwind": {
+                "path": "$delivery_job",
+                "preserveNullAndEmptyArrays": True,
+            }
+        },
+        # add the delivery object to the nested destination via latest_delivery
+        {
+            "$addFields": {
+                f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.latest_delivery": "$delivery_job"
+            }
+        },
+        # remove the found delivery job from the top level.
+        {"$project": {"delivery_job": 0, db_c.DELETED: 0}},
+    ]
+
+    try:
+        return list(collection.aggregate(pipeline))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_engagements(database: DatabaseClient) -> Union[list, None]:
     """A function to get all engagements
 
@@ -508,3 +621,58 @@ def add_delivery_job(
         logging.error(exc)
 
     return None
+
+
+def group_engagements(engagements: list) -> list:
+    """Group engagements by audience/destinations.
+    DocumentDB does not support graph lookup and/or $root.
+    easier to do this in python instead of Mongo.
+    We still leverage mongo to do the lookups,
+    but we handle the grouping and status rollup here
+
+    Args:
+        engagements (list): list of engagement documents.
+
+    Returns:
+          list: list of engagement documents
+
+    """
+
+    core_lk = {}
+    for item in engagements:
+        # check if we already have a record for the engagement ID
+        if item[db_c.ID] not in core_lk:
+            # shallow copy into the core lookup dict
+            core_lk[item[db_c.ID]] = item.copy()
+            # set the audience field to an empty list.
+            core_lk[item[db_c.ID]][db_c.AUDIENCES] = []
+
+        # if audience list for the engagement is empty, set it up.
+        if not core_lk[item[db_c.ID]][db_c.AUDIENCES]:
+            # if audience has nested destinations, add them.
+            if db_c.DESTINATIONS in item[db_c.AUDIENCES]:
+                item[db_c.AUDIENCES][db_c.DESTINATIONS] = [
+                    item[db_c.AUDIENCES][db_c.DESTINATIONS]
+                ]
+            else:
+                # init the nested destination list to empty.
+                item[db_c.AUDIENCES][db_c.DESTINATIONS] = []
+            # set the audiences for the engagement.
+            core_lk[item[db_c.ID]][db_c.AUDIENCES] += [item[db_c.AUDIENCES]]
+
+            continue
+
+        # group the nested destinations into a singular list
+        # within the audience object.
+        for audience in core_lk[item[db_c.ID]][db_c.AUDIENCES]:
+            # add the audience
+            if (
+                audience[db_c.OBJECT_ID]
+                == item[db_c.AUDIENCES][db_c.OBJECT_ID]
+            ):
+                # add destination
+                audience[db_c.DESTINATIONS] += [
+                    item[db_c.AUDIENCES][db_c.DESTINATIONS]
+                ]
+
+    return list(core_lk.values())

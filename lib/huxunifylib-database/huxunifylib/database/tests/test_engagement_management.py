@@ -28,7 +28,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # setup the audience
         self.audience = om.create_audience(
-            self.database, "all", [], self.user_name
+            self.database, "all", [], [], self.user_name
         )
 
         self.audience[c.OBJECT_ID] = self.audience[c.ID]
@@ -37,7 +37,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             "Spring 2021",
             "spring of 2021",
-            [self.audience],
+            [{c.OBJECT_ID: self.audience[c.ID], c.DESTINATIONS: []}],
             self.user_name,
         )
 
@@ -47,14 +47,18 @@ class TestEngagementManagement(unittest.TestCase):
             c.DELIVERY_PLATFORM_FACEBOOK,
             c.DELIVERY_PLATFORM_AMAZON,
         ]:
-            self.destinations.append(
-                dpm.set_delivery_platform(
-                    self.database,
-                    destination,
-                    destination,
-                    user_name=self.user_name,
-                )
+            destination = dpm.set_delivery_platform(
+                self.database,
+                destination,
+                destination,
+                user_name=self.user_name,
             )
+            dpm.set_connection_status(
+                self.database,
+                destination[c.ID],
+                c.STATUS_SUCCEEDED,
+            )
+            self.destinations.append(destination)
 
         self.destination = dpm.set_delivery_platform(
             self.database,
@@ -661,3 +665,137 @@ class TestEngagementManagement(unittest.TestCase):
                 doc[c.AUDIENCES][0][c.DESTINATIONS][0][c.DELIVERY_JOB_ID],
                 audience_delivery_job[c.ID],
             )
+
+    def test_get_engagements_summary(self) -> None:
+        """Test get_engagements routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # create another audience
+        audience = om.create_audience(
+            self.database, "audience_group", [], self.user_name
+        )
+
+        for i in range(20):
+            # an audience with two destinations
+            new_engagement = {
+                c.ENGAGEMENT_NAME: f"Spring 2202{i}",
+                c.ENGAGEMENT_DESCRIPTION: f"high ltv for spring 202{i}",
+                c.AUDIENCES: [
+                    {
+                        c.OBJECT_ID: audience[c.ID],
+                        c.DESTINATIONS: [
+                            {
+                                c.OBJECT_ID: self.destinations[0][c.ID],
+                                c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                                c.STATUS: c.STATUS_PENDING,
+                            },
+                            {
+                                c.OBJECT_ID: self.destinations[1][c.ID],
+                                c.STATUS: c.AUDIENCE_STATUS_ERROR
+                                if i % 5 == 0
+                                else c.STATUS_SUCCEEDED,
+                            },
+                        ],
+                    },
+                    {
+                        c.OBJECT_ID: self.audience[c.ID],
+                        c.DESTINATIONS: [
+                            {
+                                c.OBJECT_ID: self.destinations[1][c.ID],
+                                c.STATUS: c.STATUS_FAILED
+                                if i % 5 == 0
+                                else c.STATUS_SUCCEEDED,
+                            }
+                        ],
+                    },
+                ],
+            }
+
+            em.set_engagement(
+                self.database,
+                new_engagement[c.ENGAGEMENT_NAME],
+                new_engagement[c.ENGAGEMENT_DESCRIPTION],
+                new_engagement[c.AUDIENCES],
+                self.user_name,
+            )
+
+        engagement_docs = em.get_engagements_summary(database=self.database)
+        grouped_engagements = em.group_engagements(engagement_docs)
+
+        # get all engagements for validation
+        all_engagements = em.get_engagements(self.database)
+
+        self.assertTrue(engagement_docs)
+        self.assertFalse([e for e in engagement_docs if c.DELETED in e])
+
+        # ensure length of grouped engagements is equal to length of all engagements.
+        # this checks to ensure the grouping was done correctly.
+        self.assertEqual(len(grouped_engagements), len(all_engagements))
+
+        # test the grouped engagements for existence of key fields
+        for engagement in grouped_engagements:
+            self.assertIn(c.ID, engagement)
+            self.assertIn(c.NAME, engagement)
+            self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
+            self.assertIn(c.CREATED_BY, engagement)
+            self.assertIn(c.UPDATED_BY, engagement)
+            self.assertIn(c.CREATE_TIME, engagement)
+            self.assertIn(c.UPDATE_TIME, engagement)
+            self.assertIn(c.AUDIENCES, engagement)
+
+            for audience in engagement[c.AUDIENCES]:
+                self.assertIn(c.NAME, audience)
+                self.assertIn(c.DESTINATIONS, audience)
+                self.assertIn(c.OBJECT_ID, audience)
+                if not audience[c.DESTINATIONS]:
+                    continue
+                for destination in audience[c.DESTINATIONS]:
+                    self.assertIn(c.NAME, destination)
+                    self.assertIn(c.OBJECT_ID, destination)
+
+    def test_group_engagements(self) -> None:
+        """Test group_engagements routine
+
+        Returns:
+            Response: None
+
+        """
+
+        test_grouping = [
+            {
+                c.NAME: "doug",
+                c.ID: 1,
+                c.AUDIENCES: {
+                    c.OBJECT_ID: 4,
+                    c.NAME: "daf",
+                    c.DESTINATIONS: {c.OBJECT_ID: 46, c.NAME: "kaya"},
+                },
+            },
+            {
+                c.NAME: "doug",
+                c.ID: 1,
+                c.AUDIENCES: {
+                    c.OBJECT_ID: 4,
+                    c.NAME: "daf",
+                    c.DESTINATIONS: {c.OBJECT_ID: 86, c.NAME: "ollie"},
+                },
+            },
+        ]
+
+        # create another audience
+        grouped_items = em.group_engagements(test_grouping)
+
+        # ensure list has a value
+        self.assertTrue(grouped_items)
+
+        # ensure list length is exactly one
+        self.assertEqual(len(grouped_items), 1)
+
+        # ensure destinations has two items
+        self.assertEqual(
+            len(grouped_items[0][c.AUDIENCES][0][c.DESTINATIONS]), 2
+        )
