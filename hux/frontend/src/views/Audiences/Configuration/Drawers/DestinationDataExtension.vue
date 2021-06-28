@@ -57,13 +57,12 @@
                       size="small"
                       class="ml-2"
                       v-bind="attrs"
-                      v-on="on">
+                      v-on="on"
+                    >
                       mdi-alert-circle-outline
                     </v-icon>
                   </template>
-                  <template #hover-content>
-                    Type of journey
-                  </template>
+                  <template #hover-content> Type of journey </template>
                 </Tooltip>
               </label>
               <v-radio-group v-model="journeyType" row>
