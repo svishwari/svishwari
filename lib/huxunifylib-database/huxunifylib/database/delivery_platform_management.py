@@ -2117,7 +2117,7 @@ def set_campaign_activities(
 
     Args:
         database (DatabaseClient): A database client.
-        campaign_activity_docs(list): A list containing campaign activity documents.
+        campaign_activity_docs (list): A list containing campaign activity documents.
 
     Returns:
         bool: Success flag.
@@ -2138,15 +2138,12 @@ def set_campaign_activities(
                     str(err["op"]),
                 )
                 continue
-
+        else:
             logging.error(exc)
             return False
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
         return False
-
-    return True
-
 
 def get_all_feedback_campaign_activities(
     database: DatabaseClient,
