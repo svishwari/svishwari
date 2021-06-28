@@ -266,8 +266,6 @@ export default {
     },
   },
 
-  mounted() {},
-
   props: {
     value: {
       type: Array,
