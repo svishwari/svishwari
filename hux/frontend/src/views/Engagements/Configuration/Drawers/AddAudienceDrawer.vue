@@ -183,11 +183,17 @@ export default {
             filter.section_filters.push({
               field:
                 this.attributeRules[ruleIndex].conditions[conditionIndex]
-                  .attribute,
+                  .attribute.key,
               type: this.attributeRules[ruleIndex].conditions[conditionIndex]
-                .operator,
-              value:
-                this.attributeRules[ruleIndex].conditions[conditionIndex].text,
+                .operator
+                ? this.attributeRules[ruleIndex].conditions[conditionIndex]
+                    .operator.key
+                : "range",
+              value: this.attributeRules[ruleIndex].conditions[conditionIndex]
+                .operator
+                ? this.attributeRules[ruleIndex].conditions[conditionIndex].text
+                : this.attributeRules[ruleIndex].conditions[conditionIndex]
+                    .range,
             })
           }
           filtersArray.push(filter)
@@ -205,6 +211,7 @@ export default {
           id: newAudience.id,
           name: newAudience.name,
           size: newAudience.size,
+          destinations: [],
         })
 
         this.closeDrawer()
