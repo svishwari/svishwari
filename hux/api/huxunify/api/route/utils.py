@@ -17,11 +17,16 @@ from huxunifylib.database.cdp_data_source_management import (
 )
 from huxunifylib.database.user_management import get_user, set_user
 from huxunifylib.database.constants import USER_DISPLAY_NAME
+from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
 from huxunify.api.data_connectors.tecton import check_tecton_connection
-from huxunify.api.data_connectors.aws import check_aws_ssm, check_aws_batch
+from huxunify.api.data_connectors.aws import (
+    check_aws_ssm,
+    check_aws_batch,
+    parameter_store,
+)
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
     introspect_token,
@@ -343,3 +348,159 @@ def api_error_handler() -> object:
         return decorator
 
     return wrapper
+
+
+def set_facebook_auth_from_parameter_store(auth: dict) -> dict:
+    """Set facebook auth details from parameter store
+    ---
+
+        Args:
+            auth (dict): Destination Auth details.
+
+        Returns:
+            Auth Object (dict): SFMC auth object.
+
+    """
+
+    return {
+        FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
+            auth[constants.FACEBOOK_AD_ACCOUNT_ID]
+        ),
+        FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
+            auth[constants.FACEBOOK_APP_ID]
+        ),
+        FacebookCredentials.FACEBOOK_APP_SECRET.name: parameter_store.get_store_value(
+            auth[constants.FACEBOOK_APP_SECRET]
+        ),
+        FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: parameter_store.get_store_value(
+            auth[constants.FACEBOOK_ACCESS_TOKEN]
+        ),
+    }
+
+
+def set_sfmc_auth_from_parameter_store(auth: dict) -> dict:
+    """Set SFMC auth details from parameter store
+    ---
+
+        Args:
+            auth (dict): Destination Auth details.
+
+        Returns:
+            Auth Object (dict): SFMC auth object.
+
+    """
+
+    return {
+        SFMCCredentials.SFMC_ACCOUNT_ID.value: parameter_store.get_store_value(
+            auth[constants.SFMC_ACCOUNT_ID]
+        ),
+        SFMCCredentials.SFMC_AUTH_URL.value: parameter_store.get_store_value(
+            auth[constants.SFMC_AUTH_BASE_URI]
+        ),
+        SFMCCredentials.SFMC_CLIENT_ID.value: parameter_store.get_store_value(
+            auth[constants.SFMC_CLIENT_ID]
+        ),
+        SFMCCredentials.SFMC_CLIENT_SECRET.value: parameter_store.get_store_value(
+            auth[constants.SFMC_CLIENT_SECRET]
+        ),
+        SFMCCredentials.SFMC_SOAP_ENDPOINT.value: parameter_store.get_store_value(
+            auth[constants.SFMC_SOAP_BASE_URI]
+        ),
+        SFMCCredentials.SFMC_URL.value: parameter_store.get_store_value(
+            auth[constants.SFMC_REST_BASE_URI]
+        ),
+    }
+
+
+def group_perf_metric(perf_metrics: list) -> dict:
+    """Group performance metrics
+    ---
+
+        Args:
+            perf_metrics (list): List of performance metrics.
+
+        Returns:
+            perf_metric (dict): Grouped performance metric .
+
+    """
+    metric = {
+        constants.IMPRESSIONS: sum(
+            [
+                int(item[constants.IMPRESSIONS])
+                for item in perf_metrics
+                if constants.IMPRESSIONS in item.keys()
+            ]
+        ),
+        constants.SPEND: sum(
+            [
+                int(item[constants.SPEND])
+                for item in perf_metrics
+                if constants.SPEND in item.keys()
+            ]
+        ),
+        constants.REACH: sum(
+            [
+                int(item[constants.REACH])
+                for item in perf_metrics
+                if constants.REACH in item.keys()
+            ]
+        ),
+        constants.CONVERSIONS: sum(
+            [
+                int(item[constants.CONVERSIONS])
+                for item in perf_metrics
+                if constants.CONVERSIONS in item.keys()
+            ]
+        ),
+        constants.CLICKS: sum(
+            [
+                int(item[constants.CLICKS])
+                for item in perf_metrics
+                if constants.CLICKS in item.keys()
+            ]
+        ),
+        constants.FREQUENCY: sum(
+            [
+                int(item[constants.FREQUENCY])
+                for item in perf_metrics
+                if constants.FREQUENCY in item.keys()
+            ]
+        ),
+        constants.CPM: sum(
+            [
+                int(item[constants.CPM])
+                for item in perf_metrics
+                if constants.CPM in item.keys()
+            ]
+        ),
+        constants.CTR: sum(
+            [
+                int(item[constants.CTR])
+                for item in perf_metrics
+                if constants.CTR in item.keys()
+            ]
+        ),
+        constants.CPA: sum(
+            [
+                int(item[constants.CPA])
+                for item in perf_metrics
+                if constants.CPA in item.keys()
+            ]
+        ),
+        constants.CPC: sum(
+            [
+                int(item[constants.CPC])
+                for item in perf_metrics
+                if constants.CPC in item.keys()
+            ]
+        ),
+        constants.ENGAGEMENT_RATE: sum(
+            [
+                int(item[constants.ENGAGEMENT_RATE])
+                for item in perf_metrics
+                if constants.ENGAGEMENT_RATE in item.keys()
+            ]
+        ),
+    }
+
+    return metric
