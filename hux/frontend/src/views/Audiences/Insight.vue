@@ -198,7 +198,7 @@ export default {
         },
       },
       modelInitial: [
-        { value: "propensity", icon: "lifetime" },
+        { value: "propensity", icon: "churn" },
         { value: "lifetime", icon: "lifetime" },
       ],
     }
