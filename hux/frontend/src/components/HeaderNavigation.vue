@@ -7,14 +7,21 @@
         </v-btn>
       </span>
     </template>
-    <v-list class="dropdown">
+    <v-list>
       <v-list-item>
         <v-list-item-title class="add"> Add </v-list-item-title>
       </v-list-item>
       <v-list-item v-for="link in dropdownLinks" :key="link">
-        <v-list-item-title class="text-h6 neroBlack--text">{{
-          link
-        }}</v-list-item-title>
+        <v-list-item-title class="text-h6 neroBlack--text">
+          <router-link
+            :to="{
+              name: link.path,
+            }"
+            class="text-decoration-none"
+            append
+            >{{ link.name }}
+          </router-link>
+        </v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -25,65 +32,19 @@ export default {
   name: "HeaderNavigation",
   data() {
     return {
-      dropdownLinks: ["Data Source", "Destination", "Audience", "Engagement"],
+      dropdownLinks: [
+        { name: "Data Source", path: "DataSourceConfiguration" },
+        { name: "Destination", path: "DestinationConfiguration" },
+        { name: "Audience", path: "AudienceConfiguration" },
+        { name: "Engagement", path: "EngagementConfiguration" },
+      ],
     }
   },
 }
 </script>
 
 <style lang="scss">
-.v-list-item {
-  align-items: center;
-  display: flex;
-  flex: 1 1 100%;
-  letter-spacing: normal;
-  min-height: 32px;
-  outline: none;
-  padding: 0 16px;
-  position: relative;
-  text-decoration: none;
-  width: 170px;
-}
-.dropdown {
-  // background-color: red;
-  top: 64px;
-  left: 1312px;
-}
-
-.v-menu {
-  // v-list {
-  background-color: red;
-  // }
-}
-
-::v-deep
-  .v-menu__content
-  .theme--light
-  .v-menu__content--fixed
-  .menuable__content__active {
-  // background-color: red;
-  top: 64px;
-  left: 1312px;
-}
-
-::v-deep .theme--light.v-sheet {
-  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-}
-
-::v-deep .v-menu__content {
-  .v-list {
-    //background-color: red;
-    top: 64px;
-    left: 1312px;
-  }
-}
-
-.v-list {
-  background-color: red;
-}
-
 .add {
-  font-family: Open Sans;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
