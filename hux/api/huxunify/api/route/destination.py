@@ -305,9 +305,10 @@ class DestinationPutView(SwaggerView):
             if not destination:
                 return {"message": "Not found"}, HTTPStatus.NOT_FOUND
 
-            delivery_platform_type = destination[db_c.DELIVERY_PLATFORM_TYPE]
-
-            if delivery_platform_type == db_c.DELIVERY_PLATFORM_SFMC:
+            if (
+                destination[db_c.DELIVERY_PLATFORM_TYPE]
+                == db_c.DELIVERY_PLATFORM_SFMC
+            ):
                 performance_de = body.get(
                     api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
                 )
@@ -530,7 +531,10 @@ class DestinationValidatePostView(SwaggerView):
                 HTTPStatus.BAD_REQUEST,
             )
 
-        return {}
+        return (
+            {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
+            HTTPStatus.BAD_REQUEST,
+        )
 
 
 @add_view_to_blueprint(
