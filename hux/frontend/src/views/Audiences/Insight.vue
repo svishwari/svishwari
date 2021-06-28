@@ -342,10 +342,6 @@ export default {
         height: auto;
         float: left;
         margin-left: 2%;
-        svg {
-          width: 21px;
-          height: 21px;
-        }
         span {
           .filter-title {
             &::after {
