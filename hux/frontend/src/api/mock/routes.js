@@ -47,6 +47,12 @@ export const defineRoutes = (server) => {
   // engagements
   server.get("/engagements")
 
+  server.get("/engagements/:id", (schema, request) => {
+    const id=request.params.id
+    const engagement=schema.engagements.find(id)
+    return engagement
+  })
+
   server.post("/engagements", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 

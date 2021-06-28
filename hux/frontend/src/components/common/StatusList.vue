@@ -2,14 +2,15 @@
   <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title class="d-flex justify-space-between">
       <span
-        ><router-link
+        >
+        <router-link
           :to="{
             name: 'AudienceInsight',
-            params: { id: audience.audienceId },
+            params: { id: audience.id },
           }"
           class="text-decoration-none"
           append
-          >{{ audience.name }}</router-link
+          >{{ bindAudienceData[0].name }}</router-link
         ></span
       >
       <v-menu class="menu-wrapper" bottom offset-y>
@@ -151,13 +152,76 @@ export default {
         { id: 4, title: "Pause all delivery", active: false },
         { id: 5, title: "Remove audience", active: false },
       ],
+      audianceData: []
     }
   },
   props: {
     audience: {
-      title: Object,
+      type: Array,
       required: true,
     },
+    audienceData: {
+      type: Array,
+      required: true,
+    }
+  },
+  computed: {
+    bindAudienceData() {
+       console.log('this.audience', this.audienceData, this.audience)
+       let mergedArr = []
+       let mergeCheck = []
+       this.audienceData.forEach(data =>  // console.log(data)
+      {
+        let tmpArr = []
+        let temp = []
+      //  console.log(data.id)
+     //  console.log(this.audienceData.map(d => d.id))
+       let aa = this.audience.filter(d => d.id == data.id)[0]
+      // console.log(aa)
+
+      temp.push(aa)
+      tmpArr.push(data)
+      console.log("+++++++++++++++++++++++++",temp);
+      console.log("+++++++++++++++++++++++++1111111111",tmpArr);
+      // tmpArr = Object.assign(aa, data)
+      let obj1 = Object.assign(temp);
+      let obj2 =  Object.assign(temp);
+      // mergeCheck = [...temp, ...tmpArr];
+      console.log("+++++++++++++++++++++++++",obj1,obj1);
+      // let mergeObj = Object.assign(mergeCheck[0], mergeCheck[1])
+      // console.log("+++++++++++++++++++++++++mergeObj",mergeObj);
+      // mergedArr.push(tmpArr)
+        
+      // console.log(data)
+        // console.log(tempArr)
+         
+          
+
+      }
+       )
+
+       console.log('mm')
+   console.log('mm+++++++++++++++++++++++++++++++++++++==', mergeCheck)
+       console.log(mergedArr)
+
+
+
+     
+      // this.audienceData.map(element => {
+      //       if(this.audience.indexOf(data.id) !== -1) {
+      //   this.audience.push(data)
+      // }
+
+      //   //  console.log('value', element.id)
+      //   if(this.audience.id ===  element.id) {
+      //    this.audianceData.push(this.audience,element);
+      //   //  this.audianceData.push(element)
+
+      //   }
+      // });
+              // console.log('this.audianceData',this.audianceData)
+      return this.mergedArr;
+    }
   },
   methods: {
     getSize(value) {

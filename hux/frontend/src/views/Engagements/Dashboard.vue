@@ -5,8 +5,8 @@
       <template #left>
         <div class="d-flex align-center bread-crumb">
           <Breadcrumb :items="breadcrumbItems" />
-          <div class="ml-3">
-            <Status :status="engagement.status"></Status>
+          <div class="ml-3" v-if="engagementList && engagementList.status">
+            <Status :status="engagementList.status"></Status>
           </div>
         </div>
       </template>
@@ -28,7 +28,7 @@
         <MetricCard class="mr-3" :title="summaryCards[0].title">
           <template #subtitle-extended>
             <span class="font-weight-semi-bold neroBlack--text">
-              {{ summaryCards[0].value }}
+              {{ summaryCards[0].value.end_date}}
             </span>
           </template>
         </MetricCard>
@@ -50,7 +50,7 @@
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[2].title">
-          <template #subtitle-extended v-if="summaryCards[1].subLabel">
+          <template #subtitle-extended v-if="summaryCards[2].subLabel">
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
@@ -63,7 +63,7 @@
                 </template>
               </tooltip>
             </span>
-            <Avatar :name="summaryCards[1].subLabel" />
+            <Avatar :name="summaryCards[2].subLabel" />
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[3].title" :maxWidth="540">
@@ -99,11 +99,11 @@
               Nothing to show here yet. Add an audience, assign and deliver that
               audience to a destination.
             </div>
-            <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
+            <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3" v-if="engagementList">
+              <!-- {{engagementList}} -->
               <status-list
-                v-for="item in engagement.audiences"
-                :key="item.id"
-                :audience="item"
+                :audience="engagementList.audiences"
+                :audienceData="audianceDetails"
               />
             </v-col>
           </v-card-text>
@@ -318,6 +318,7 @@ export default {
           },
         ],
       },
+      audianceDetails: [],
       loading: false,
       loadingTab: false,
       tabOption: 0,
@@ -333,7 +334,18 @@ export default {
     ...mapGetters({
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
+      getEngagement: "engagements/engagement",
+      getAudience: "audiences/audience",
     }),
+
+    // engagementList() {
+    //   return this.getEngagement(this.$route.params.id);
+    // },
+    engagementList() {
+    //  console.log('this.getEngagement(this.$route.params.id)',this.getEngagement(this.$route.params.id));
+      return this.getEngagement(this.$route.params.id)
+    },
+
     breadcrumbItems() {
       const items = [
         {
@@ -366,17 +378,17 @@ export default {
         {
           id: 1,
           title: "Delivery schedule",
-          value: this.fetchKey(this.engagement, "schedule"),
+          value: this.fetchKey(this.engagementList, "delivery_schedule"),
           subLabel: null,
         },
         {
           id: 2,
           title: "Last updated",
           value: this.getDateStamp(
-            this.fetchKey(this.engagement, "update_time")
+            this.fetchKey(this.engagementList, "update_time")
           ),
-          hoverValue: this.fetchKey(this.engagement, "update_time"),
-          subLabel: this.fetchKey(this.engagement, "updated_by"),
+          hoverValue: this.fetchKey(this.engagementList, "update_time"),
+          subLabel: this.fetchKey(this.engagementList, "updated_by"),
           width: "19%",
           minWidth: "164px",
         },
@@ -384,17 +396,16 @@ export default {
           id: 3,
           title: "Created",
           value: this.getDateStamp(
-            this.fetchKey(this.engagement, "create_time")
+            this.fetchKey(this.engagementList, "create_time")
           ),
-          hoverValue: this.fetchKey(this.engagement, "create_time"),
-          subLabel: this.fetchKey(this.engagement, "created_by"),
+          hoverValue: this.fetchKey(this.engagementList, "create_time"),
+          subLabel: this.fetchKey(this.engagementList, "created_by"),
           width: "19%",
           minWidth: "164px",
         },
         {
           id: 4,
-          title:
-            "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear.",
+          title: this.fetchKey(this.engagementList, "description"), 
           value: null,
           subLabel: null,
         },
@@ -695,8 +706,57 @@ export default {
   methods: {
     ...mapActions({
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
+      getEngagementById: "engagements/get",
+      getAudienceById: "audiences/getAudienceById",
     }),
 
+    async audienceList() {
+      let engData = this.getEngagement(this.$route.params.id)
+      // let audiances = []
+      // this.audiencesData(id);
+    //  console.log('this.audiances',  engData)
+    //   console.log('this.audiances',  this.getEngagement)
+      //  this.getEngagement.forEach(element => {
+      //    audiances.push(this.getAudienceById(element.id));
+      //  });
+
+      let audienceIds = []
+      // let audienceList = []
+
+      engData.audiences.forEach(data =>
+      audienceIds.push(data.id))
+
+        for (let id of audienceIds) {
+        await this.getAudienceById(id)
+        this.audianceDetails.push(this.getAudience(id))
+      }
+
+
+// console.log('hi')
+//       console.log(this.audianceDetails)
+      
+    },
+
+     audienceGetById(id) {
+       console.log(' sudiance id', id)
+    //    this.audienceList = []
+    //   //  this.audienceIds = []
+    //  let audienceIds = this.engagementList.audiences.map((key) => key.id);
+    //   audienceIds.forEach(element => {
+                
+    //     this.getAudienceById(element)
+
+    //     // this.audienceList.push(this.audiencesData(id))
+    //   });
+      
+    //   //  for (let id of audienceIds) {
+         
+    //     //  this.getAudienceById(audienceIds)
+         
+    //     // this.audienceList.push(this.audiencesData(id))
+    //   // }
+    //   console.log('this.au',this.audienceList)
+    },
     getDateStamp(value) {
       return value ? moment(new Date(value)).fromNow() + " by" : "-"
     },
@@ -728,6 +788,8 @@ export default {
   async mounted() {
     this.loading = true
     this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
+    await this.getEngagementById(this.$route.params.id)
+    this.audienceList()
     this.loading = false
   },
 }
