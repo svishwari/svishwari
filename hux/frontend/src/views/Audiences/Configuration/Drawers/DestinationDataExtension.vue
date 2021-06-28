@@ -223,9 +223,7 @@ export default {
           // eslint-disable-next-line no-useless-escape
           "You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / : ? | , _ &",
       ],
-      existingExtensionRules: [
-        (v) => !!v || "Select any one Data extension",
-      ],
+      existingExtensionRules: [(v) => !!v || "Select any one Data extension"],
     }
   },
   methods: {
@@ -247,17 +245,19 @@ export default {
     },
 
     async addDestination() {
-      
       //TODO: this won't work incase there are two data extensions with same name.
       // 1. need to handle with id
       // 2. need to make an api call to create an data extension
-      let destinationWithDataExtension = JSON.parse(JSON.stringify(this.destination))
+      let destinationWithDataExtension = JSON.parse(
+        JSON.stringify(this.destination)
+      )
       const requestBody = {
-        id : destinationWithDataExtension.id,
-        name : this.extension
+        id: destinationWithDataExtension.id,
+        name: this.extension,
       }
       let response = await this.postDataExtensions(requestBody)
-      destinationWithDataExtension.data_extension_id = response.data_extension_id
+      destinationWithDataExtension.data_extension_id =
+        response.data_extension_id
       this.value.push(destinationWithDataExtension)
       this.onBack()
     },
