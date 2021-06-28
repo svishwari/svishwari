@@ -7,7 +7,6 @@ const namespaced = true
 const state = {
   items: {},
   constants: {},
-  availableDestinations: {},
   dataExtensions: [],
 }
 
@@ -20,8 +19,6 @@ const getters = {
     Object.values(state.items).filter((item) => item.is_enabled),
 
   constants: (state) => state.constants,
-
-  availableDestinations: (state) => Object.values(state.availableDestinations),
 
   dataExtensions: (state) => Object.values(state.dataExtensions),
 }
@@ -46,15 +43,7 @@ const mutations = {
   SET_CONSTANTS(state, data) {
     Vue.set(state, "constants", data)
   },
-  // TODO: Redesign this solution as this is a workaround for the destinations drawer on the audience setup page
-  SET_AVAILABLE_DESTINATIONS(state, items) {
-    items.forEach((item) => {
-      if (item.is_added) {
-        item.is_added = false
-        Vue.set(state.availableDestinations, item.id, item)
-      }
-    })
-  },
+
   SET_DATAEXTENSIONS(state, items) {
     items.forEach((item) => {
       Vue.set(state.dataExtensions, item.id, item)
@@ -89,13 +78,9 @@ const actions = {
         authentication_details: destination.authentication_details,
       }
       if (
-        Object.prototype.hasOwnProperty.call(
-          destination,
-          "performance_metrics_data_extension"
-        )
+        Object.prototype.hasOwnProperty.call(destination, "perf_data_extension")
       ) {
-        body.performance_metrics_data_extension =
-          destination.performance_metrics_data_extension
+        body.perf_data_extension = destination.perf_data_extension
       }
       const response = await api.destinations.update(destination.id, body)
       commit("SET_ONE", response.data)
@@ -123,16 +108,6 @@ const actions = {
     try {
       const response = await api.destinations.constants()
       commit("SET_CONSTANTS", response.data)
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
-  },
-
-  async getAvailableDestinations({ commit }) {
-    try {
-      const response = await api.destinations.all()
-      commit("SET_AVAILABLE_DESTINATIONS", response.data)
     } catch (error) {
       handleError(error)
       throw error

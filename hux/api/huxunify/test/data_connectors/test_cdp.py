@@ -56,7 +56,27 @@ class CDPTest(TestCase):
         if not customer_id:
             return
 
+        expected_response = {
+            "code": 200,
+            "body": {
+                "hux_id": customer_id,
+                api_c.FIRST_NAME: "Bertie",
+                api_c.LAST_NAME: "Fox",
+                api_c.EMAIL: "fake@fake.com",
+                api_c.GENDER: "test_gender",
+                api_c.CITY: "test_city",
+                api_c.ADDRESS: "test_address",
+                api_c.AGE: "test_age",
+            },
+            "message": "ok",
+        }
+
         request_mocker.post(self.introspect_call, json=sh.VALID_RESPONSE)
+        request_mocker.get(
+            f"{self.config.CDP_SERVICE}/customer-profiles/{customer_id}",
+            json=expected_response,
+        )
+
         response = self.test_client.get(
             f"{sh.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}",
             headers=sh.AUTH_HEADER,

@@ -646,36 +646,18 @@ class TestEngagementManagement(unittest.TestCase):
         )
         self.assertTrue(audience_delivery_job)
 
-        em.add_delivery_job(
-            self.database,
-            engagement_id,
-            self.audience[c.ID],
-            self.destination[c.ID],
-            audience_delivery_job[c.ID],
-        )
-
-        # validate the delivery job was set correctly
-        engagement_collection = self.database[c.DATA_MANAGEMENT_DATABASE][
-            c.ENGAGEMENTS_COLLECTION
-        ]
-        self.assertTrue(
-            engagement_collection.find_one(
-                {
-                    c.ID: engagement_id,
-                    c.DELETED: False,
-                    c.AUDIENCES: {
-                        "$elemMatch": {
-                            c.OBJECT_ID: self.audience[c.ID],
-                            c.DESTINATIONS: {
-                                "$elemMatch": {
-                                    c.OBJECT_ID: self.destination[c.ID],
-                                    c.DELIVERY_JOB_ID: audience_delivery_job[
-                                        c.ID
-                                    ],
-                                }
-                            },
-                        }
-                    },
-                }
+        # mongomock does not support array_filters but pymongo and documentDB do.
+        with self.assertRaises(TypeError):
+            doc = em.add_delivery_job(
+                self.database,
+                engagement_id,
+                self.audience[c.ID],
+                self.destination[c.ID],
+                audience_delivery_job[c.ID],
             )
-        )
+
+            # validate the delivery job was set correctly
+            self.assertEqual(
+                doc[c.AUDIENCES][0][c.DESTINATIONS][0][c.DELIVERY_JOB_ID],
+                audience_delivery_job[c.ID],
+            )

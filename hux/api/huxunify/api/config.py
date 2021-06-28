@@ -102,10 +102,9 @@ class Config:
         ),
     )
 
-    # TODO remove the verify=False once the SSL is valid for CDM
     CDP_SERVICE = config(
         "CDP_SERVICE",
-        default="https://customer-profile-master.main.use1.k8s.huxdev.in",
+        default="https://customer-profile-api.main.use1.hux-unified-dev1.in",
     )
     CDP_HEADERS = {
         "Authorization": "",

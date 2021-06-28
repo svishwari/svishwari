@@ -172,6 +172,7 @@ const NEW_CONDITION = {
   range: [],
   awaitingSize: false,
   outputSummary: "0",
+  size: "-",
 }
 
 export default {
