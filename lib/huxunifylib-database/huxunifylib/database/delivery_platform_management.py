@@ -2138,7 +2138,7 @@ def set_campaign_activities(
                     str(err["op"]),
                 )
                 continue
-        else:
+
             logging.error(exc)
             return False
     except pymongo.errors.OperationFailure as exc:
