@@ -274,8 +274,10 @@ export default {
         let updatedTime = this.$options.filters
           .Date(value, "calendar")
           .split(" at ")
-        return updatedTime.length > 1 ? [updatedTime[0], updatedTime[1].replaceAll(" ", "")] : [updatedTime[0], '']
-    }
+        return updatedTime.length > 1
+          ? [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
+          : [updatedTime[0], ""]
+      }
     },
     viewCustomerList() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
