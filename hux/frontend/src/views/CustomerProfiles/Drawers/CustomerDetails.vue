@@ -47,7 +47,6 @@
                 class="match-confidence"
                 :isRangeSlider="false"
                 :value="item[header.value]"
-                class="slider-margin"
               ></hux-slider>
             </div>
           </td>
@@ -186,7 +185,5 @@ export default {
   line-height: 16px;
   color: var(gray);
 }
-.slider-margin {
-  margin-bottom: -22px;
-}
+
 </style>
