@@ -338,11 +338,7 @@ export default {
       getAudience: "audiences/audience",
     }),
 
-    // engagementList() {
-    //   return this.getEngagement(this.$route.params.id);
-    // },
     engagementList() {
-    //  console.log('this.getEngagement(this.$route.params.id)',this.getEngagement(this.$route.params.id));
       return this.getEngagement(this.$route.params.id)
     },
 
@@ -712,51 +708,15 @@ export default {
 
     async audienceList() {
       let engData = this.getEngagement(this.$route.params.id)
-      // let audiances = []
-      // this.audiencesData(id);
-    //  console.log('this.audiances',  engData)
-    //   console.log('this.audiances',  this.getEngagement)
-      //  this.getEngagement.forEach(element => {
-      //    audiances.push(this.getAudienceById(element.id));
-      //  });
-
       let audienceIds = []
-      // let audienceList = []
-
       engData.audiences.forEach(data =>
       audienceIds.push(data.id))
-
         for (let id of audienceIds) {
         await this.getAudienceById(id)
         this.audianceDetails.push(this.getAudience(id))
       }
-
-
-// console.log('hi')
-//       console.log(this.audianceDetails)
-      
     },
-
-     audienceGetById(id) {
-       console.log(' sudiance id', id)
-    //    this.audienceList = []
-    //   //  this.audienceIds = []
-    //  let audienceIds = this.engagementList.audiences.map((key) => key.id);
-    //   audienceIds.forEach(element => {
-                
-    //     this.getAudienceById(element)
-
-    //     // this.audienceList.push(this.audiencesData(id))
-    //   });
-      
-    //   //  for (let id of audienceIds) {
-         
-    //     //  this.getAudienceById(audienceIds)
-         
-    //     // this.audienceList.push(this.audiencesData(id))
-    //   // }
-    //   console.log('this.au',this.audienceList)
-    },
+    
     getDateStamp(value) {
       return value ? moment(new Date(value)).fromNow() + " by" : "-"
     },
