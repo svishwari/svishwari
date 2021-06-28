@@ -1088,7 +1088,7 @@ def get_delivery_job(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivery_jobs_by_engagement_details(
+def get_delivery_jobs_using_metadata(
     database: DatabaseClient,
     engagement_id: ObjectId = None,
     audience_id: ObjectId = None,
@@ -1103,6 +1103,13 @@ def get_delivery_jobs_by_engagement_details(
     Returns:
         Union[list, None]: List of matching delivery jobs, if any.
     """
+
+    if (
+        engagement_id is None
+        and audience_id is None
+        and delivery_platform_id is None
+    ):
+        raise de.InvalidID()
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
