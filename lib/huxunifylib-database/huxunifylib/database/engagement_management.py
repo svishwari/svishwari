@@ -647,15 +647,17 @@ def group_engagements(engagements: list) -> list:
             # set the audience field to an empty list.
             core_lk[item[db_c.ID]][db_c.AUDIENCES] = []
 
-        # if audience list has data proceed
+        # if audience list for the engagement is empty, set it up.
         if not core_lk[item[db_c.ID]][db_c.AUDIENCES]:
-            # if audience has nested destinations, proceed.
+            # if audience has nested destinations, add them.
             if db_c.DESTINATIONS in item[db_c.AUDIENCES]:
                 item[db_c.AUDIENCES][db_c.DESTINATIONS] = [
                     item[db_c.AUDIENCES][db_c.DESTINATIONS]
                 ]
             else:
+                # init the nested destination list to empty.
                 item[db_c.AUDIENCES][db_c.DESTINATIONS] = []
+            # set the audiences for the engagement.
             core_lk[item[db_c.ID]][db_c.AUDIENCES] += [item[db_c.AUDIENCES]]
 
             continue
