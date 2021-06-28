@@ -42,10 +42,7 @@
         </div>
         <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
-          <attribute-rules
-            :rules="attributeRules"
-            applyCaptionStyle
-          ></attribute-rules>
+          <attribute-rules :rules="attributeRules" applyCaptionStyle />
         </div>
       </div>
     </template>
@@ -199,7 +196,6 @@ export default {
           filtersArray.push(filter)
         }
 
-        // TODO: HUS-246 need to integrate size and other data on rules addition
         const data = {
           name: this.newAudience.name,
           filters: filtersArray,
