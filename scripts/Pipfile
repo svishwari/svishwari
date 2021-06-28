@@ -3,20 +3,23 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[[source]]
+url = "$ARTIFACTORY_PYTHON_READ"
+verify_ssl = true
+name = "jfrog"
+
 [packages]
 pymongo = "*"
-pandas = "*"
-tenacity = "*"
-huxunifylib-database = {path = ".", editable = true}
+huxunifylib-database = {version="*", index="jfrog"}
 hypothesis = "*"
+mongomock="*"
 
 [dev-packages]
-mongomock = "*"
-pytest = "*"
-pylint = "*"
+pytest = {version="*", index="pypi"}
+pylint = {version="*", index="pypi"}
 black = { version = "*", pre="true"}
-safety = "*"
-mypy = "*"
+safety = {version="*", index="pypi"}
+hypothesis = {version="*", index="pypi"}
 
 [requires]
 python_version = "3.7"
