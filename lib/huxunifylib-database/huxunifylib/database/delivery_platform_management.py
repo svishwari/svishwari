@@ -2145,6 +2145,7 @@ def set_campaign_activities(
         logging.error(exc)
         return False
 
+
 def get_all_feedback_campaign_activities(
     database: DatabaseClient,
 ) -> Union[list, None]:
