@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Statuses.Active.includes(status)">
+  <div v-if="Statuses.Active.includes(status)" class="">
     <span v-if="!collapsed" class="d-flex align-center">
       <v-icon color="success" class="mr-2"> mdi-checkbox-blank-circle </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
