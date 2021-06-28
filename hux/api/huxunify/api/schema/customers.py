@@ -48,7 +48,7 @@ class IdentityResolution(Schema):
 class CustomerProfileSchema(Schema):
     """Customer Profile Schema"""
 
-    id = Str(required=True)
+    hux_id = Str(required=True, attribute=api_c.ID)
     first_name = Str(required=True)
     last_name = Str(required=True)
     match_confidence = Float(required=True)
@@ -112,7 +112,7 @@ class CustomersSchema(Schema):
         Dict(),
         example=[
             {
-                api_c.ID: "1531-2039-22",
+                api_c.HUX_ID: "1531-2039-22",
                 api_c.FIRST_NAME: "Bertie",
                 api_c.LAST_NAME: "Fox",
                 api_c.MATCH_CONFIDENCE: 0.96666666661,
