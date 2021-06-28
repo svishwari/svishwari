@@ -1031,16 +1031,19 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         """
 
+        # setup the database
+        database = get_db_client()
+
         # Get all destinations that are related to Display Ad metrics
         destination = (
             delivery_platform_management.get_delivery_platform_by_type(
-                get_db_client(), db_c.DELIVERY_PLATFORM_FACEBOOK
+                database, db_c.DELIVERY_PLATFORM_FACEBOOK
             )
         )
         # Get Performance metrics by engagement and destination
         # pylint: disable=line-too-long
         performance_metrics = delivery_platform_management.get_performance_metrics_by_engagement_details(
-            get_db_client(),
+            database,
             ObjectId(engagement_id),
             [destination.get(db_c.ID)],
         )
@@ -1048,7 +1051,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
         # Get all the delivery jobs for the given engagement and destination
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
-                get_db_client(), engagement_id=ObjectId(engagement_id)
+                database, engagement_id=ObjectId(engagement_id)
             )
         )
         delivery_jobs = [
@@ -1085,7 +1088,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 ),
                 api_c.ID: str(audience_id),
                 api_c.NAME: orchestration_management.get_audience(
-                    get_db_client(), audience_id
+                    database, audience_id
                 )[api_c.NAME],
             }
 
@@ -1109,19 +1112,19 @@ class EngagementMetricsDisplayAds(SwaggerView):
                         api_c.SUMMARY: group_perf_metric(aud_dest_metrics),
                         api_c.ID: str(destination_id),
                         api_c.NAME: delivery_platform_management.get_delivery_platform(
-                            get_db_client(), destination_id
+                            database, destination_id
                         )[
                             api_c.NAME
                         ],
                     }
                 )
 
-            ind_aud_metric["destinations"] = aud_dest_metric
+            ind_aud_metric[api_c.DESTINATIONS] = aud_dest_metric
             aud_metric.append(ind_aud_metric)
 
             # TODO : Group by campaigns
 
-        final_metric["audience_performance"] = aud_metric
+        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = aud_metric
 
         return (
             AudiencePerformanceDisplayAdsSchema().dump(final_metric),
@@ -1131,7 +1134,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
     f"{api_c.AUDIENCE_PERFORMANCE}/"
     f"{api_c.EMAIL}",
     "AudiencePerformanceEmailSchema",
