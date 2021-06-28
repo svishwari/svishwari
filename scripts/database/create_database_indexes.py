@@ -22,8 +22,6 @@ from scripts.database.share import get_mongo_client
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
-# Set up the database client
-db_client = get_mongo_client()
 
 # Set the list of indexes; each element is a tuple (database name,
 # collection name, and list of field/order pairs to be indexed)
@@ -74,9 +72,6 @@ index_list = [
         [(c.OKTA_ID, ASCENDING)],
     ),
 ]
-
-# Get database
-DM_DB = db_client[c.DATA_MANAGEMENT_DATABASE]
 
 
 def set_indexes(database: MongoClient, indexlist: List) -> None:
@@ -135,5 +130,11 @@ def add_unique_compound_index(database: MongoClient) -> None:
 
 
 if __name__ == "__main__":
+    # Set up the database client
+    db_client = get_mongo_client()
+
+    # Get database
+    DM_DB = db_client[c.DATA_MANAGEMENT_DATABASE]
+
     set_indexes(db_client, index_list)
     add_unique_compound_index(db_client)
