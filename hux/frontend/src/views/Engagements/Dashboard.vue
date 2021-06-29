@@ -101,7 +101,9 @@
             </div>
             <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3" v-if="audienceMergedData.length >= 0 ">
               <status-list
-                :audience="audienceMergedData"
+                v-for="item in audienceMergedData"
+                :key="item.id"
+                :audience="item"
               />
             </v-col>
           </v-card-text>
@@ -730,6 +732,7 @@ export default {
         audiancesDetailsData.push(mergedAudiArr);
       });
         this.audienceMergedData = audiancesDetailsData;
+        console.log('this.audienceMergedData', this.audienceMergedData)
     },
     
     getDateStamp(value) {
