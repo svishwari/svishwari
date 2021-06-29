@@ -252,7 +252,7 @@ def get_user_name() -> object:
             # override if flag set locally
             if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
                 # return a default user id
-                kwargs[constants.OKTA_USER_ID] = ObjectId()
+                kwargs[constants.USER_NAME] = "JIM M"
                 return in_function(*args, **kwargs)
 
             # get the auth token

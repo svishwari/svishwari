@@ -2,45 +2,32 @@
 Purpose of this file is to house all the delivery api tests
 """
 
-import json
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
-from flask_marshmallow import Schema
-from requests_mock import Mocker
 import mongomock
 from bson import ObjectId
-from marshmallow import ValidationError
 
-import huxunify.test.constants as t_c
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
-from huxunifylib.database.engagement_management import (
-    set_engagement,
-    get_engagements,
-    get_engagement,
-)
+from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
+from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
-from huxunify.api.config import get_config
 from huxunify.app import create_app
-from huxunify.api.schema.engagement import (
-    DisplayAdsSummary,
-    DispAdIndividualAudienceSummary,
-    EmailSummary,
-    EmailIndividualAudienceSummary,
-    EngagementGetSchema,
-)
 from huxunify.api.data_connectors.aws import parameter_store
 
-BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 
-
+# pylint: disable=too-many-instance-attributes
 class TestDeliveryRoutes(TestCase):
+    """Test Delivery Endpoints"""
+
+    # pylint: disable=unused-variable
     def setUp(self) -> None:
         """
         Setup resources before each test
@@ -49,13 +36,11 @@ class TestDeliveryRoutes(TestCase):
 
         Returns:
         """
-        self.config = get_config("TEST")
 
-        self.introspect_call = (
-            f"{self.config.OKTA_ISSUER}"
-            f"/oauth2/v1/introspect?client_id="
-            f"{self.config.OKTA_CLIENT_ID}"
-        )
+        # mock request for introspect call
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.start()
 
         self.app = create_app().test_client()
 
@@ -68,20 +53,47 @@ class TestDeliveryRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        get_db_client_mock = mock.patch(
+        # mock get db client from engagements
+        get_db_client_mock_engagements = mock.patch(
             "huxunify.api.route.engagement.get_db_client"
         ).start()
-        get_db_client_mock.return_value = self.database
+        get_db_client_mock_engagements.return_value = self.database
 
-        parameter_store_mock = mock.patch.object(parameter_store, "get_store_value").start()
-        aws_batch_connector_register_mock = mock.patch.object(AWSBatchConnector, "register_job").start()
-        aws_batch_connector_register_mock.return_value = BATCH_RESPONSE
-        aws_batch_connector_submit_mock = mock.patch.object(AWSBatchConnector, "submit_job").start()
-        aws_batch_connector_submit_mock.return_value = BATCH_RESPONSE
+        # mock get db client from orchestration
+        get_db_client_mock_orchestration = mock.patch(
+            "huxunify.api.route.orchestration.get_db_client"
+        ).start()
+        get_db_client_mock_orchestration.return_value = self.database
+
+        # mock parameter store
+        parameter_store_mock = mock.patch.object(
+            parameter_store, "get_store_value"
+        ).start()
+
+        # mock AWS batch connector register job function
+        aws_batch_connector_register_mock = mock.patch.object(
+            AWSBatchConnector, "register_job"
+        ).start()
+        aws_batch_connector_register_mock.return_value = t_c.BATCH_RESPONSE
+
+        # mock AWS batch connector submit job function
+        aws_batch_connector_submit_mock = mock.patch.object(
+            AWSBatchConnector, "submit_job"
+        ).start()
+        aws_batch_connector_submit_mock.return_value = t_c.BATCH_RESPONSE
 
         self.addCleanup(mock.patch.stopall)
 
         # setup test data
+        # write a user to the database
+        self.user_name = "felix hernandez"
+        set_user(
+            self.database,
+            "fake",
+            "felix_hernandez@fake.com",
+            display_name=self.user_name,
+        )
+
         destinations = [
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Facebook",
@@ -138,11 +150,9 @@ class TestDeliveryRoutes(TestCase):
             },
         ]
 
-        self.audiences = []
-        for audience in audiences:
-            self.audiences.append(create_audience(self.database, **audience))
-
-        user_id = ObjectId()
+        self.audiences = [
+            create_audience(self.database, **x) for x in audiences
+        ]
 
         engagements = [
             {
@@ -164,7 +174,7 @@ class TestDeliveryRoutes(TestCase):
                         ],
                     },
                 ],
-                db_c.USER_ID: user_id,
+                api_c.USER_NAME: self.user_name,
             },
             {
                 db_c.ENGAGEMENT_NAME: "Test Engagement No Destination",
@@ -175,39 +185,24 @@ class TestDeliveryRoutes(TestCase):
                         api_c.DESTINATIONS_TAG: [],
                     },
                 ],
-                db_c.USER_ID: user_id,
+                api_c.USER_NAME: self.user_name,
             },
         ]
 
-        self.engagement_ids = []
-        for engagement in engagements:
-            self.engagement_ids.append(
-                str(set_engagement(self.database, **engagement))
-            )
+        self.engagement_ids = [
+            str(set_engagement(self.database, **x)) for x in engagements
+        ]
 
-    @requests_mock.Mocker()
-    @mock.patch.object(parameter_store, "get_store_value")
-    @mock.patch.object(
-        AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE
-    )
-    @mock.patch.object(
-        AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
-    )
-    def test_deliver_audience_for_an_engagement_valid_ids(
-        self, request_mocker: Mocker, *_: None
-    ):
+    def test_deliver_audience_for_an_engagement_valid_ids(self):  # success 2
         """
         Test delivery of an audience for an engagement
         with valid ids
 
         Args:
-            request_mocker (Mocker): Request mocker object.
-            *_ (None): Omit all extra keyword args the mock patches send.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
 
@@ -221,21 +216,16 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    @requests_mock.Mocker()
-    def test_deliver_audience_for_an_engagement_invalid_audience_id(
-            self, request_mocker: Mocker
-    ):
+    def test_deliver_audience_for_an_engagement_invalid_audience_id(self):
         """
         Test delivery of an audience for an engagement
         with invalid audience id
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         audience_id = "XYZ123"
         engagement_id = self.engagement_ids[0]
 
@@ -252,21 +242,16 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    @requests_mock.Mocker()
-    def test_deliver_audience_for_an_engagement_invalid_engagement_id(
-        self, request_mocker: Mocker
-    ):
+    def test_deliver_audience_for_an_engagement_invalid_engagement_id(self):
         """
         Test delivery of an audience for an engagement
         with invalid engagement id
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = "XYZ123"
 
@@ -283,21 +268,16 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
-    @requests_mock.Mocker()
-    def test_deliver_audience_for_an_engagement_non_existent_engagement(
-        self, request_mocker: Mocker
-    ):
+    def test_deliver_audience_for_an_engagement_non_existent_engagement(self):
         """
         Test delivery of an audience for an engagement
         with non-existent engagement id
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = ObjectId()
 
@@ -314,29 +294,16 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    @requests_mock.Mocker()
-    @mock.patch.object(parameter_store, "get_store_value")
-    @mock.patch.object(
-        AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE
-    )
-    @mock.patch.object(
-        AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
-    )
-    def test_deliver_destination_for_engagement_audience_valid_ids(
-        self, request_mocker: Mocker, *_: None
-    ):
+    def test_deliver_destination_for_engagement_audience_valid_ids(self):
         """
         Test delivery of a destination for an audience in engagement
         with valid ids
 
         Args:
-            request_mocker (Mocker): Request mocker object.
-            *_ (None): Omit all extra keyword args the mock patches send.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         audience_id = self.audiences[0][db_c.ID]
         engagement_id = self.engagement_ids[0]
         destination_id = self.destinations[0][db_c.ID]
@@ -354,20 +321,15 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    @requests_mock.Mocker()
-    def test_deliver_destination_for_non_existent_engagement(
-            self, request_mocker: Mocker
-    ):
+    def test_deliver_destination_for_non_existent_engagement(self):
         """
         Test delivery of a destination for a non-existent engagement
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         engagement_id = str(ObjectId())
         audience_id = self.audiences[0][db_c.ID]
         destination_id = self.destinations[0][db_c.ID]
@@ -388,20 +350,15 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(response.json, valid_response)
 
-    @requests_mock.Mocker()
-    def test_deliver_destination_for_unattached_audience(
-            self, request_mocker: Mocker
-    ):
+    def test_deliver_destination_for_unattached_audience(self):
         """
         Test delivery of a destination for an unattached audience
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         engagement_id = self.engagement_ids[1]
 
         # Unattached audience id
@@ -416,7 +373,7 @@ class TestDeliveryRoutes(TestCase):
                 f"{api_c.DESTINATION}/{destination_id}/"
                 f"{api_c.DELIVER}"
             ),
-            headers=t_c.STANDARD_HEADERS
+            headers=t_c.STANDARD_HEADERS,
         )
 
         valid_response = {
@@ -426,20 +383,15 @@ class TestDeliveryRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    @requests_mock.Mocker()
-    def test_deliver_destination_for_unattached_destination(
-            self, request_mocker: Mocker
-    ):
+    def test_deliver_destination_for_unattached_destination(self):
         """
         Test delivery of a destination for an unattached destination
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-        request_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
         engagement_id = self.engagement_ids[1]
         audience_id = self.audiences[1][db_c.ID]
 
@@ -454,7 +406,7 @@ class TestDeliveryRoutes(TestCase):
                 f"{api_c.DESTINATION}/{destination_id}/"
                 f"{api_c.DELIVER}"
             ),
-            headers=t_c.STANDARD_HEADERS
+            headers=t_c.STANDARD_HEADERS,
         )
 
         valid_response = {
@@ -463,3 +415,92 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_deliver_audience_for_all_engagements_valid_audience_id(self):
+        """
+        Test delivery of audience for all engagements
+        with valid audience id
+
+        Args:
+
+        Returns:
+
+        """
+        audience_id = self.audiences[0][db_c.ID]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        print("response: " + str(response.json))
+
+        valid_response = {
+            "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
+        }
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_deliver_audience_for_all_engagements_invalid_audience_id(self):
+        """
+        Test delivery of audience for all engagements
+        with invalid audience id
+
+        Args:
+
+        Returns:
+
+        """
+        audience_id = "XYZ123"
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_deliver_audience_for_all_engagements_non_existent_audience(self):
+        """
+        Test delivery of audience for all engagements
+        with non-existent audience id
+
+        Args:
+
+        Returns:
+
+        """
+        audience_id = ObjectId()
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": "Audience does not exist."}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_deliver_audience_for_engagement_valid_engagement_id(self):
+        """
+        Test delivery of audience for a valid engagement id
+
+        Args:
+
+        Returns:
+
+        """
+
+        engagement_id = self.engagement_ids[0]
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/{api_c.DELIVER}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)

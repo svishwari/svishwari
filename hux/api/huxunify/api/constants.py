@@ -401,6 +401,9 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
     ZIP,
 ]
 
+# Error messages
+AUDIENCE_NOT_FOUND = "Audience not found."
+
 MOCK_CUSTOMER_PROFILE_RESPONSE = {
     "id": "1531-2039-22",
     "first_name": "Bertie",

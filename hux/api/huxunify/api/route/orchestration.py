@@ -180,6 +180,9 @@ class AudienceGetView(SwaggerView):
             get_db_client(), ObjectId(audience_id)
         )
 
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
             audience.get(api_c.DESTINATIONS_TAG)
         )

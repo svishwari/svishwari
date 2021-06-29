@@ -1,7 +1,11 @@
 """
 purpose of this file is housing shared components for tests
 """
+from http import HTTPStatus
+
 from marshmallow import Schema, ValidationError
+
+from huxunify.api.config import get_config
 
 BASE_ENDPOINT = "/api/v1"
 TEST_AUTH_TOKEN = "Bearer 12345678"
@@ -26,6 +30,11 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
+TEST_CONFIG = get_config("TEST")
+INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
+    TEST_CONFIG.OKTA_ISSUER, TEST_CONFIG.OKTA_CLIENT_ID
+)
 
 
 def validate_schema(
