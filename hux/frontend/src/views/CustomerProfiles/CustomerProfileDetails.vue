@@ -129,7 +129,7 @@
       </v-card>
     </v-col>
     <v-col cols="4">
-
+    <identity-chart></identity-chart>
     </v-col>
     </v-row>
     </div>
@@ -143,6 +143,7 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import HuxSlider from "@/components/common/HuxSlider"
+import IdentityChart from "@/components/common/IdentityChart"
 import moment from "moment"
 export default {
   name: "CustomerProfileDetails",
@@ -151,7 +152,8 @@ export default {
     Breadcrumb,
     Tooltip,
     Icon,
-    HuxSlider
+    HuxSlider,
+    IdentityChart
   },
   data() {
     return {

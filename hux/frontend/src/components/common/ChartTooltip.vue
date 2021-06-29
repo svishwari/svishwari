@@ -109,7 +109,7 @@ export default {
   max-width: 213px;
   height: auto;
   top: -220px;
-  left: -290px;
+  left: -55px;
   z-index: 1;
 
   .ribbon-hover {
