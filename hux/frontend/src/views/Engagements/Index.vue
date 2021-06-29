@@ -71,6 +71,7 @@
                     @click="
                       expand(!isExpanded)
                       getAudiencesForEngagement(item)
+                      markCurrentRow(item.id)
                     "
                   >
                     mdi-chevron-right
@@ -169,7 +170,7 @@
                 </div>
                 <div v-if="header.value == 'updated_by'">
                   <div class="ml-16 pl-7">
-                    <avatar :name="getName(item[header.value])" />
+                    <Avatar :name="item[header.value]" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
@@ -179,7 +180,7 @@
                 </div>
                 <div v-if="header.value == 'created_by'">
                   <div class="ml-13">
-                    <avatar :name="getName(item[header.value])" />
+                    <Avatar :name="item[header.value]" />
                   </div>
                 </div>
               </td>
@@ -309,9 +310,6 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       markCurrentRow: "engagements/markCurrentRow",
     }),
-    getName(item) {
-      return item.first_name + " " + item.last_name
-    },
     // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
       this.audienceList = []
@@ -336,10 +334,12 @@ export default {
 
 <style lang="scss" scoped>
 .engagements-wrap {
+  background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }
   .mdi-chevron-right {
+    margin-top: -4px;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
     &.normal-icon {
       transform: rotate(90deg);

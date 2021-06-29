@@ -71,6 +71,11 @@ INDEX_LIST = [
         c.USER_COLLECTION,
         [(c.OKTA_ID, ASCENDING)],
     ),
+    (
+        c.DATA_MANAGEMENT_DATABASE,
+        c.CAMPAIGN_ACTIVITY_COLLECTION,
+        [(c.DELIVERY_JOB_ID, ASCENDING)],
+    ),
 ]
 
 # Get database

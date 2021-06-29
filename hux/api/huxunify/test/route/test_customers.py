@@ -89,10 +89,10 @@ class TestCustomersOverview(unittest.TestCase):
             "code": 200,
             "body": [
                 {
-                    "hux_id": "1531-2039-22",
-                    "first_name": "Bertie",
-                    "last_name": "Fox",
-                    "match_confidence": 0.97,
+                    api_c.HUX_ID: "1531-2039-22",
+                    api_c.FIRST_NAME: "Bertie",
+                    api_c.LAST_NAME: "Fox",
+                    api_c.MATCH_CONFIDENCE: 0.97,
                 },
             ],
             "message": "ok",
@@ -195,7 +195,7 @@ class TestCustomersOverview(unittest.TestCase):
         expected_response = {
             "code": 200,
             "body": {
-                "hux_id": customer_id,
+                api_c.HUX_ID: customer_id,
                 api_c.FIRST_NAME: "Bertie",
                 api_c.LAST_NAME: "Fox",
                 api_c.EMAIL: "fake@fake.com",

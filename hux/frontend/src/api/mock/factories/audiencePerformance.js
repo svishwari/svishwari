@@ -35,17 +35,12 @@ const audiencePerformanceMock = {
           cost_per_click: faker.datatype.number({ min: 100, max: 999 }),
           engagement_rate: faker.finance.amount(50, 100, 3),
         }
-        fake["campaigns"] = (() => {
-          let campaignArray = []
+        fake["destinations"] = (() => {
+          let destinationArray = []
           let limit = faker.datatype.number({ min: 1, max: 1 })
           for (let i = 0; i < limit; i++) {
-            let fakeCampaign = {
-              name: faker.random.arrayElement([
-                "Facebook",
-                "Salesforce Marketing Cloud",
-                "Google-Ads",
-              ]),
-              is_mapped: true,
+            let fakeDestinationRollup = {
+              name: faker.random.arrayElement(["Facebook"]),
               spend: faker.datatype.number({ min: 100000, max: 99999 }),
               reach: faker.datatype.number({ min: 100000, max: 99999 }),
               impressions: faker.datatype.number({
@@ -70,9 +65,9 @@ const audiencePerformanceMock = {
               cost_per_click: faker.datatype.number({ min: 100, max: 999 }),
               engagement_rate: faker.finance.amount(50, 100, 3),
             }
-            campaignArray.push(fakeCampaign)
+            destinationArray.push(fakeDestinationRollup)
           }
-          return campaignArray
+          return destinationArray
         })()
         array.push(fake)
       }
@@ -121,17 +116,12 @@ const audiencePerformanceMock = {
           unsubscribe: faker.datatype.number({ min: 100000, max: 99999 }),
           unsubscribe_rate: faker.finance.amount(0, 1, 2),
         }
-        fake["campaigns"] = (() => {
-          let campaignArray = []
+        fake["destinations"] = (() => {
+          let destinationsArray = []
           let limit = faker.datatype.number({ min: 1, max: 1 })
           for (let i = 0; i < limit; i++) {
-            let fakeCampaign = {
-              name: faker.random.arrayElement([
-                "Facebook",
-                "Salesforce Marketing Cloud",
-                "Google-Ads",
-              ]),
-              is_mapped: true,
+            let fakeDestinationRollup = {
+              name: faker.random.arrayElement(["Salesforce Marketing Cloud"]),
               sent: faker.datatype.number({ min: 100000, max: 99999 }),
               hard_bounces: faker.datatype.number({ min: 100, max: 999 }),
               hard_bounces_rate: faker.finance.amount(0, 1, 2),
@@ -147,9 +137,9 @@ const audiencePerformanceMock = {
               unsubscribe: faker.datatype.number({ min: 100000, max: 99999 }),
               unsubscribe_rate: faker.finance.amount({ min: 0, max: 1 }),
             }
-            campaignArray.push(fakeCampaign)
+            destinationsArray.push(fakeDestinationRollup)
           }
-          return campaignArray
+          return destinationsArray
         })()
         array.push(fake)
       }

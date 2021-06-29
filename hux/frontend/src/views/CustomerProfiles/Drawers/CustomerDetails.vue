@@ -1,5 +1,9 @@
 <template>
-  <Drawer v-model="localDrawer">
+  <Drawer
+    v-model="localDrawer"
+    :contentPadding="'pa-0'"
+    :contentHeaderPadding="'px-3'"
+  >
     <template #header-left>
       <div class="d-flex align-center">
         <h3 class="text-h3 ml-2 neroBlack--text">Customers</h3>
@@ -8,7 +12,7 @@
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
-      <PageHeader class="top-bar" :headerHeight="40">
+      <PageHeader class="top-bar" :headerHeight="40" :headerPadding="'px-4'">
         <template slot="left">
           <v-icon size="18" color="lightGrey">mdi-magnify</v-icon>
         </template>
@@ -20,19 +24,20 @@
             :key="header.value"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'id'">
+            <div v-if="header.value == 'hux_id'" class="text-body-2">
               <router-link
                 :to="{
                   name: 'CustomerProfileDetails',
                   params: { id: item[header.value] },
                 }"
-                class="text-decoration-none"
+                class="text-decoration-none text-body-2"
                 append
                 >{{ item[header.value] }}
               </router-link>
             </div>
             <div
               v-if="header.value == 'first_name' || header.value == 'last_name'"
+              class="text-body-2"
             >
               <span v-if="item.last_name">{{ item.last_name }}, </span>
               <span v-if="item.first_name"> {{ item.first_name }}</span>
@@ -41,6 +46,7 @@
               <hux-slider
                 :isRangeSlider="false"
                 :value="item[header.value]"
+                class="match-confidence"
               ></hux-slider>
             </div>
           </td>
@@ -77,7 +83,7 @@ export default {
       columnDefs: [
         {
           text: "Hux ID",
-          value: "id",
+          value: "hux_id",
           width: "auto",
         },
         {
@@ -88,7 +94,7 @@ export default {
         {
           text: "Match confidence",
           value: "match_confidence",
-          width: "250px",
+          width: "200px",
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
         },
@@ -125,7 +131,8 @@ export default {
     }),
 
     customers() {
-      return this.customersList
+      let sortedCustomerList = this.customersList
+      return sortedCustomerList.sort((a, b) => a.id - b.id)
     },
   },
 
@@ -155,6 +162,17 @@ export default {
       }
       th {
         background: var(--v-aliceBlue-base);
+      }
+    }
+    .match-confidence {
+      .slider-value-display {
+        margin-top: 16px;
+      }
+      .v-slider__track-container {
+        margin-top: 12px !important;
+      }
+      .v-slider__thumb-container {
+        margin-top: 12px !important;
       }
     }
   }

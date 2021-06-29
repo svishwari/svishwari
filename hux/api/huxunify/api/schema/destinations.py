@@ -26,9 +26,13 @@ class DestinationGetSchema(Schema):
         validate=validate_object_id,
     )
     type = fields.String(
-        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="facebook"
+        attribute=api_c.DELIVERY_PLATFORM_TYPE,
+        example=db_c.DELIVERY_PLATFORM_SFMC,
     )
-    name = fields.String(attribute=api_c.DESTINATION_NAME, example="Facebook")
+    name = fields.String(
+        attribute=api_c.DESTINATION_NAME,
+        example=db_c.DELIVERY_PLATFORM_SFMC.title(),
+    )
     status = fields.String(
         attribute=api_c.CONNECTION_STATUS,
         validate=[
@@ -46,6 +50,15 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
+    perf_data_extension = fields.Dict(
+        attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
+        example={
+            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+        },
+        required=False,
+        allow_none=True,
+    )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
     create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
@@ -60,6 +73,15 @@ class DestinationPutSchema(Schema):
     """
 
     authentication_details = fields.Field()
+    perf_data_extension = fields.Dict(
+        attribute=api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION,
+        example={
+            api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
+            api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
+        },
+        required=False,
+        allow_none=True,
+    )
 
 
 class DestinationValidationSchema(Schema):
@@ -122,6 +144,29 @@ class FacebookAuthConstants(Schema):
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
+    )
+
+
+class FacebookAuthCredsSchema(Schema):
+    """
+    Facebook Auth Credentials schema class
+    """
+
+    facebook_ad_account_id = fields.String(
+        required=True,
+        example="MkU3Ojgwm",
+    )
+    facebook_app_id = fields.String(
+        required=True,
+        example="717bdOQqZO99",
+    )
+    facebook_app_secret = fields.String(
+        required=True,
+        example="2951925002021888",
+    )
+    facebook_access_token = fields.String(
+        required=True,
+        example="111333777",
     )
 
 
@@ -196,6 +241,37 @@ class SFMCAuthConstants(Schema):
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
+    )
+
+
+class SFMCAuthCredsSchema(Schema):
+    """
+    SFMC Auth Credentials schema class
+    """
+
+    sfmc_account_id = fields.String(
+        required=True,
+        example="7329755",
+    )
+    sfmc_auth_base_uri = fields.String(
+        required=True,
+        example="https://gsafkhljwhp6798.auth.marketingcloudapis.com/",
+    )
+    sfmc_client_id = fields.String(
+        required=True,
+        example="e488010196d046f5a8b1b80ba6100899",
+    )
+    sfmc_client_secret = fields.String(
+        required=True,
+        example="4d2c582ab302437c80721c0ec46a30f2",
+    )
+    sfmc_rest_base_uri = fields.String(
+        required=True,
+        example="https://535cf647a34-7950b5a4.rest.marketingcloudapis.com/",
+    )
+    sfmc_soap_base_uri = fields.String(
+        required=True,
+        example="https://55c5487a374-723ab5a6.soap.marketingcloudapis.com/",
     )
 
 
