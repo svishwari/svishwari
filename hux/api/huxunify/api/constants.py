@@ -102,6 +102,8 @@ SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
 SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
+SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
+SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -190,6 +192,10 @@ INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 DUPLICATE_NAME = "Name already exists."
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
+    "Performance metrics data extension not assigned."
+)
+INVALID_AUTH_DETAILS = "Invalid authentication details."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
