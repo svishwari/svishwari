@@ -344,25 +344,7 @@ class EngagementGetSchema(Schema):
     description = fields.String(attribute=api_c.DESCRIPTION)
 
     audiences = fields.Nested(
-        EngagedAudienceSchema,
-        many=True,
-        attribute=api_c.AUDIENCES,
-        example=[
-            {
-                api_c.ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DESTINATIONS: [
-                    {
-                        "id": "60ae035b6c5bf45da27f17d6",
-                        "data_extension_id": "data_extension_id",
-                        "contact_list": "sfmc_extension_name",
-                    },
-                ],
-                api_c.DELIVERIES: [
-                    "60ae035b6c5bf45da27f17e5",
-                    "60ae035b6c5bf45da27f17e6",
-                ],
-            }
-        ],
+        EngagedAudienceSchema, many=True, attribute=api_c.AUDIENCES
     )
     status = fields.String(
         attribute=api_c.STATUS,
