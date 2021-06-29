@@ -341,6 +341,7 @@ export default {
     display: none;
   }
   .mdi-chevron-right {
+    margin-top: -4px;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
     &.normal-icon {
       transform: rotate(90deg);
