@@ -136,7 +136,7 @@
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
                 :headers="headers"
-                :dataItems="getCampaigns(item.campaigns)"
+                :dataItems="getDestinationRollups(item.destinations)"
                 :showHeader="false"
                 v-if="item"
               >
@@ -527,8 +527,10 @@ export default {
     logoType(name) {
       return name.split(" ")[0].toLowerCase()
     },
-    getCampaigns(campaigns) {
-      return campaigns.map((camp) => this.formatData(camp))
+    getDestinationRollups(destinationRollups) {
+      return destinationRollups.map((destinationRollup) =>
+        this.formatData(destinationRollup)
+      )
     },
     formatData(item) {
       const obj = Object.assign({}, item)
