@@ -67,12 +67,7 @@
                 >
                   <template #label-content>
                     <span
-                      class="
-                        neroBlack--text
-                        font-weight-semi-bold
-                        text-over-2
-                        filter-title
-                      "
+                      class="neroBlack--text font-weight-semi-bold text-over-2 filter-title"
                       v-html="appliedFilters[filterKey][filter].name"
                     />
                   </template>

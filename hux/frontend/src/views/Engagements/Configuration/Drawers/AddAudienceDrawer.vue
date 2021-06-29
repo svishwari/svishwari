@@ -178,9 +178,8 @@ export default {
             conditionIndex++
           ) {
             filter.section_filters.push({
-              field:
-                this.attributeRules[ruleIndex].conditions[conditionIndex]
-                  .attribute.key,
+              field: this.attributeRules[ruleIndex].conditions[conditionIndex]
+                .attribute.key,
               type: this.attributeRules[ruleIndex].conditions[conditionIndex]
                 .operator
                 ? this.attributeRules[ruleIndex].conditions[conditionIndex]

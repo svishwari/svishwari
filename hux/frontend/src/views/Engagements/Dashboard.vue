@@ -27,9 +27,7 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <span class="font-weight-semi-bold neroBlack--text">
-              Manual
-            </span>
+            <span class="font-weight-semi-bold neroBlack--text"> Manual </span>
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[1].title">
@@ -99,7 +97,10 @@
               Nothing to show here yet. Add an audience, assign and deliver that
               audience to a destination.
             </div>
-            <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3" v-if="audienceMergedData.length >= 0 ">
+            <v-col
+              class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
+              v-if="audienceMergedData.length >= 0"
+            >
               <status-list
                 v-for="item in audienceMergedData"
                 :key="item.id"
@@ -318,8 +319,8 @@ export default {
           },
         ],
       },
-      destinationArr:[],
-      audienceMergedData:[],
+      destinationArr: [],
+      audienceMergedData: [],
       loading: false,
       loadingTab: false,
       tabOption: 0,
@@ -337,7 +338,7 @@ export default {
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
       getEngagement: "engagements/engagement",
       getAudience: "audiences/audience",
-      getDestinations: "destinations/single"
+      getDestinations: "destinations/single",
     }),
 
     engagementList() {
@@ -403,7 +404,7 @@ export default {
         },
         {
           id: 4,
-          title: this.fetchKey(this.engagementList, "description"), 
+          title: this.fetchKey(this.engagementList, "description"),
           value: null,
           subLabel: null,
         },
@@ -712,39 +713,40 @@ export default {
     async audienceList() {
       let engData = this.getEngagement(this.$route.params.id)
       let audienceIds = []
-      let audiancesDetailsData =[]
-      let audianceDetails= []
-      //audience id pushing in one array 
-      engData.audiences.forEach(data =>
-        audienceIds.push(data.id)
-      )
-       // getting audience by id
+      let audiancesDetailsData = []
+      let audianceDetails = []
+      //audience id pushing in one array
+      engData.audiences.forEach((data) => audienceIds.push(data.id))
+      // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
         audianceDetails.push(this.getAudience(id))
       }
       // extracting the audiance data and merging into object
-     audianceDetails.forEach(element =>
-      {
-        let filteredAudience = engData.audiences.filter(d => d.id == element.id)
-        let audEngobj = Object.assign(filteredAudience[0]);
+      audianceDetails.forEach((element) => {
+        let filteredAudience = engData.audiences.filter(
+          (d) => d.id == element.id
+        )
+        let audEngobj = Object.assign(filteredAudience[0])
         audEngobj.name = element.name
         audEngobj.size = element.size
         audEngobj.last_delivered = element.last_delivered
-        audiancesDetailsData.push(audEngobj);
-      });
+        audiancesDetailsData.push(audEngobj)
+      })
       //Extracting the destination data
-      for (let i = 0; i< audiancesDetailsData.length; i++) {
-        for(let j = 0; j < audiancesDetailsData[i].destinations.length; j++) {
-         await this.destinationById(audiancesDetailsData[i].destinations[j].id);
-           let response = this.getDestinations(audiancesDetailsData[i].destinations[j].id)
+      for (let i = 0; i < audiancesDetailsData.length; i++) {
+        for (let j = 0; j < audiancesDetailsData[i].destinations.length; j++) {
+          await this.destinationById(audiancesDetailsData[i].destinations[j].id)
+          let response = this.getDestinations(
+            audiancesDetailsData[i].destinations[j].id
+          )
           audiancesDetailsData[i].destinations[j] = response
         }
       }
       // pushing merged data into variable
-        this.audienceMergedData = audiancesDetailsData;
+      this.audienceMergedData = audiancesDetailsData
     },
-    
+
     getDateStamp(value) {
       return value ? moment(new Date(value)).fromNow() + " by" : "-"
     },

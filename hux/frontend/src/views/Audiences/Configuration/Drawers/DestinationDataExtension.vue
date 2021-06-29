@@ -98,13 +98,7 @@
 
           <div class="mt-6 data-extension" v-else>
             <label
-              class="
-                d-flex
-                align-items-center
-                mb-2
-                neroBlack--text
-                text-caption
-              "
+              class="d-flex align-items-center mb-2 neroBlack--text text-caption"
             >
               Existing data extension
             </label>

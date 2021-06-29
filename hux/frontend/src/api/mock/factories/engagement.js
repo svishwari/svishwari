@@ -7,14 +7,6 @@ const destinationData = () => {
     id: faker.datatype.number({ min: 1, max: 10 }),
     data_extension_id: faker.datatype.number({ min: 1, max: 10 }),
     contact_list: "faker data",
-    status: "Delivered",
-    update_time: faker.date.past(),
-    updated_by: `${faker.name.firstName()} ${faker.name.lastName()}`,
-    is_enabled: true,
-    create_time: faker.date.past(),
-    name: "Salesforce Marketing Cloud",
-    type: "facebook",
-    is_added: false
   }
 }
 
@@ -40,12 +32,10 @@ const createDeliveries = (numDeliveries = 3) => {
 
 const engagementMock = {
   name() {
-    return `${faker.address.state()}​​​​​​`
+    return `${faker.address.state()}`
   },
 
-
   description: `Engagement for ${faker.address.state()}`,
-
 
   delivery_schedule() {
     return {
@@ -53,7 +43,6 @@ const engagementMock = {
       end_date: faker.date.past(),
     }
   },
-
 
   status() {
     return "Active"
@@ -67,31 +56,17 @@ const engagementMock = {
     return createAudiences(1)
   },
 
-
-  size() {
-    return 64000
-  },
-
-
-  audiences() {
-    return createAudiences(2)
-  },
-
-
   create_time() {
     return faker.date.past()
   },
-
 
   created_by() {
     return `${faker.name.firstName()} ${faker.name.lastName()}`
   },
 
-
   update_time() {
     return faker.date.past()
   },
-
 
   updated_by() {
     return `${faker.name.firstName()} ${faker.name.lastName()}`

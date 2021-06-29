@@ -14,7 +14,7 @@ const getters = {
   audiencePerformanceByAds: (state) => state.audiencePerformance.ads,
   engagement: (state) => (id) => {
     return state.items[id]
-      },
+  },
   audiencePerformanceByEmail: (state) => state.audiencePerformance.email,
 }
 

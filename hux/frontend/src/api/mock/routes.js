@@ -63,8 +63,8 @@ export const defineRoutes = (server) => {
   server.get("/engagements")
 
   server.get("/engagements/:id", (schema, request) => {
-    const id=request.params.id
-    const engagement=schema.engagements.find(id)
+    const id = request.params.id
+    const engagement = schema.engagements.find(id)
     return engagement
   })
 
