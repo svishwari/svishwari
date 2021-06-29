@@ -27,9 +27,9 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <span class="font-weight-semi-bold neroBlack--text">
+            <div class="font-weight-semi-bold neroBlack--text mt-2">
               {{ summaryCards[0].value }}
-            </span>
+            </div>
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[1].title">

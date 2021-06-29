@@ -2,21 +2,18 @@
 """
 Paths for engagement API
 """
-import logging
 from http import HTTPStatus
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
 
 from bson import ObjectId
-from connexion.exceptions import ProblemException
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.database import constants as db_c
-import huxunifylib.database.db_exceptions as de
 from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements,
@@ -86,6 +83,7 @@ class EngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves all engagements.
 
@@ -100,29 +98,14 @@ class EngagementSearch(SwaggerView):
 
         """
 
-        try:
-            return (
-                jsonify(
-                    EngagementGetSchema().dump(
-                        get_engagements(get_db_client()), many=True
-                    )
-                ),
-                HTTPStatus.OK.value,
-            )
-
-        except Exception as exc:
-
-            logging.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail="Unable to get engagements.",
-            ) from exc
+        return (
+            jsonify(
+                EngagementGetSchema().dump(
+                    get_engagements(get_db_client()), many=True
+                )
+            ),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(
@@ -157,6 +140,7 @@ class IndividualEngagementSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
 
@@ -175,32 +159,17 @@ class IndividualEngagementSearch(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        try:
-            eng = get_engagement(
-                get_db_client(), engagement_id=ObjectId(engagement_id)
-            )
+        eng = get_engagement(
+            get_db_client(), engagement_id=ObjectId(engagement_id)
+        )
 
-            if not eng:
-                return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
+        if not eng:
+            return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
 
-            return (
-                EngagementGetSchema().dump(eng),
-                HTTPStatus.OK,
-            )
-
-        except Exception as exc:
-
-            logging.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail=f"Unable to get engagement with ID {engagement_id}.",
-            ) from exc
+        return (
+            EngagementGetSchema().dump(eng),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -251,6 +220,7 @@ class SetEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
         """Creates a new engagement.
@@ -274,49 +244,25 @@ class SetEngagement(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        try:
-            engagement_id = set_engagement(
-                database=get_db_client(),
-                name=body[db_c.ENGAGEMENT_NAME],
-                description=body[db_c.ENGAGEMENT_DESCRIPTION]
-                if db_c.ENGAGEMENT_DESCRIPTION in body
-                else None,
-                audiences=body[db_c.AUDIENCES]
-                if db_c.AUDIENCES in body
-                else None,
-                delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
-                if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
-                else None,
-                user_name=user_name,
-            )
+        engagement_id = set_engagement(
+            database=get_db_client(),
+            name=body[db_c.ENGAGEMENT_NAME],
+            description=body[db_c.ENGAGEMENT_DESCRIPTION]
+            if db_c.ENGAGEMENT_DESCRIPTION in body
+            else None,
+            audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
+            delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
+            if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
+            else None,
+            user_name=user_name,
+        )
 
-            return (
-                EngagementGetSchema().dump(
-                    get_engagement(
-                        get_db_client(), engagement_id=engagement_id
-                    )
-                ),
-                HTTPStatus.CREATED,
-            )
-
-        except de.DuplicateName:
-            return {
-                "message": api_c.DUPLICATE_NAME
-            }, HTTPStatus.BAD_REQUEST.value
-
-        except Exception as exc:
-
-            logging.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail="Unable to create a new engagement.",
-            ) from exc
+        return (
+            EngagementGetSchema().dump(
+                get_engagement(get_db_client(), engagement_id=engagement_id)
+            ),
+            HTTPStatus.CREATED,
+        )
 
 
 @add_view_to_blueprint(
@@ -376,6 +322,7 @@ class UpdateEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     @get_user_name()
     def put(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates an engagement.
@@ -401,46 +348,24 @@ class UpdateEngagement(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        try:
-            engagement = update_engagement(
-                database=get_db_client(),
-                engagement_id=ObjectId(engagement_id),
-                user_name=user_name,
-                name=body[db_c.ENGAGEMENT_NAME],
-                description=body[db_c.ENGAGEMENT_DESCRIPTION]
-                if db_c.ENGAGEMENT_DESCRIPTION in body
-                else None,
-                audiences=body[db_c.AUDIENCES]
-                if db_c.AUDIENCES in body
-                else None,
-                delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
-                if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
-                else None,
-            )
+        engagement = update_engagement(
+            database=get_db_client(),
+            engagement_id=ObjectId(engagement_id),
+            user_name=user_name,
+            name=body[db_c.ENGAGEMENT_NAME],
+            description=body[db_c.ENGAGEMENT_DESCRIPTION]
+            if db_c.ENGAGEMENT_DESCRIPTION in body
+            else None,
+            audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
+            delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
+            if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
+            else None,
+        )
 
-            return (
-                EngagementGetSchema().dump(engagement),
-                HTTPStatus.OK,
-            )
-
-        except de.DuplicateName:
-            return {
-                "message": api_c.DUPLICATE_NAME
-            }, HTTPStatus.BAD_REQUEST.value
-
-        except Exception as exc:
-
-            logging.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail="Unable to create a new engagement.",
-            ) from exc
+        return (
+            EngagementGetSchema().dump(engagement),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -475,6 +400,7 @@ class DeleteEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     def delete(self, engagement_id: str) -> Tuple[dict, int]:
         """Deletes an engagement.
 
@@ -493,31 +419,14 @@ class DeleteEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        try:
-            if delete_engagement(
-                get_db_client(), engagement_id=ObjectId(engagement_id)
-            ):
-                return {
-                    "message": api_c.OPERATION_SUCCESS
-                }, HTTPStatus.OK.value
+        if delete_engagement(
+            get_db_client(), engagement_id=ObjectId(engagement_id)
+        ):
+            return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
-            return {
-                "message": api_c.OPERATION_FAILED
-            }, HTTPStatus.INTERNAL_SERVER_ERROR.value
-
-        except Exception as exc:
-
-            logging.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail="Unable to delete a new engagement.",
-            ) from exc
+        return {
+            "message": api_c.OPERATION_FAILED
+        }, HTTPStatus.INTERNAL_SERVER_ERROR.value
 
 
 @add_view_to_blueprint(
@@ -575,6 +484,7 @@ class AddAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     @get_user_name()
     def post(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Adds audience to engagement.
@@ -602,27 +512,13 @@ class AddAudienceEngagement(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        try:
-            append_audiences_to_engagement(
-                get_db_client(),
-                ObjectId(engagement_id),
-                user_name,
-                body[api_c.AUDIENCES],
-            )
-            return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
-        except Exception as exc:
-
-            logging.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail="Unable to add audience to engagement.",
-            ) from exc
+        append_audiences_to_engagement(
+            get_db_client(),
+            ObjectId(engagement_id),
+            user_name,
+            body[api_c.AUDIENCES],
+        )
+        return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
 @add_view_to_blueprint(
@@ -669,6 +565,7 @@ class DeleteAudienceEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     @get_user_name()
     def delete(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes audience from engagement.
@@ -701,27 +598,13 @@ class DeleteAudienceEngagement(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        try:
-            remove_audiences_from_engagement(
-                get_db_client(),
-                ObjectId(engagement_id),
-                user_name,
-                audience_ids,
-            )
-            return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
-        except Exception as exc:
-
-            logging.error(
-                "%s: %s.",
-                exc.__class__,
-                exc,
-            )
-
-            raise ProblemException(
-                status=HTTPStatus.BAD_REQUEST.value,
-                title=HTTPStatus.BAD_REQUEST.description,
-                detail="Unable to delete audience from engagement.",
-            ) from exc
+        remove_audiences_from_engagement(
+            get_db_client(),
+            ObjectId(engagement_id),
+            user_name,
+            audience_ids,
+        )
+        return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
 @add_view_to_blueprint(
@@ -1649,6 +1532,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     # pylint: disable=unused-argument
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves display ad performance metrics.
@@ -1772,6 +1656,7 @@ class EngagementMetricsEmail(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @api_error_handler()
     # pylint: disable=unused-argument
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves email performance metrics.

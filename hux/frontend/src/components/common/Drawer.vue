@@ -10,7 +10,7 @@
     temporary
   >
     <v-toolbar width="100%" class="box-shadow-25">
-      <v-toolbar-title class="px-6">
+      <v-toolbar-title :class="contentHeaderPadding">
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
       </v-toolbar-title>
@@ -26,7 +26,7 @@
     </v-toolbar>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="drawer-content pa-2">
+    <div class="drawer-content" :class="contentPadding">
       <slot></slot>
     </div>
 
@@ -96,6 +96,18 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+
+    contentPadding: {
+      type: String,
+      required: false,
+      default: "pa-2",
+    },
+
+    contentHeaderPadding: {
+      type: String,
+      required: false,
+      default: "px-6",
     },
   },
 

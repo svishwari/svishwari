@@ -3,7 +3,9 @@
 Schemas for the Customers API
 """
 
+from datetime import datetime
 from flask_marshmallow import Schema
+from marshmallow import pre_dump
 from marshmallow.fields import (
     Str,
     Float,
@@ -12,6 +14,7 @@ from marshmallow.fields import (
     Nested,
     Integer,
     Dict,
+    DateTime,
 )
 from huxunify.api.schema.utils import (
     validate_object_id,
@@ -48,18 +51,18 @@ class IdentityResolution(Schema):
 class CustomerProfileSchema(Schema):
     """Customer Profile Schema"""
 
-    id = Str(required=True)
+    hux_id = Str(required=True, attribute=api_c.ID)
     first_name = Str(required=True)
     last_name = Str(required=True)
     match_confidence = Float(required=True)
-    since = Str(required=True)
+    since = DateTime(required=True)
     ltv_actual = Float(required=True)
     ltv_predicted = Float(required=True)
-    conversion_time = Str(required=True)
+    conversion_time = Float(required=True)
     churn_rate = Float(required=True)
-    last_click = Str(required=True)
-    last_purchase = Str(required=True)
-    last_email_open = Str(required=True)
+    last_click = DateTime(required=True)
+    last_purchase = DateTime(required=True)
+    last_email_open = DateTime(required=True)
     email = Str(required=True)
     phone = Str(required=True)
     # redacted age to a string.
@@ -77,6 +80,32 @@ class CustomerProfileSchema(Schema):
     propensity_to_unsubscribe = Float(required=True)
     propensity_to_purchase = Float(required=True)
 
+    @pre_dump
+    # pylint: disable=unused-argument
+    def pre_process_details(self, data, **kwarg):
+        """process the schema before serializing.
+
+        Args:
+            data (dict): The customer object
+            many (bool): If there are many to process
+
+        Returns:
+            Response: Returns a customer object
+
+        """
+
+        date_fields = [
+            "since",
+            "last_click",
+            "last_purchase",
+            "last_email_open",
+        ]
+        for date_field in date_fields:
+            if date_field in data:
+                # convert CDM string datetime to datetime.
+                data[date_field] = datetime.fromisoformat(data[date_field])
+        return data
+
 
 class CustomerOverviewSchema(Schema):
     """Customer Profile Overview Schema"""
@@ -88,7 +117,7 @@ class CustomerOverviewSchema(Schema):
     total_known_ids = Integer(required=True)
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
-    updated = Str(required=True)
+    updated = DateTime(required=True)
     total_customers = Integer(required=True)
     total_countries = Integer(required=True)
     total_us_states = Integer(required=True)
@@ -103,6 +132,24 @@ class CustomerOverviewSchema(Schema):
     min_ltv_actual = Float(required=True)
     max_ltv_actual = Float(required=True)
 
+    @pre_dump
+    # pylint: disable=unused-argument
+    def pre_process_details(self, data, **kwarg):
+        """process the schema before serializing.
+
+        Args:
+            data (dict): The customer overview object
+            many (bool): If there are many to process
+
+        Returns:
+            Response: Returns a customer overview object
+
+        """
+        if api_c.UPDATED in data:
+            # convert CDM string datetime to datetime.
+            data[api_c.UPDATED] = datetime.fromisoformat(data[api_c.UPDATED])
+        return data
+
 
 class CustomersSchema(Schema):
     """Customers Schema"""
@@ -112,7 +159,7 @@ class CustomersSchema(Schema):
         Dict(),
         example=[
             {
-                api_c.ID: "1531-2039-22",
+                api_c.HUX_ID: "1531-2039-22",
                 api_c.FIRST_NAME: "Bertie",
                 api_c.LAST_NAME: "Fox",
                 api_c.MATCH_CONFIDENCE: 0.96666666661,
