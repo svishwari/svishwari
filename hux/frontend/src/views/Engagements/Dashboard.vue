@@ -768,7 +768,7 @@ export default {
       this.loadingTab = true
       await this.getAudiencePerformanceById({
         type: type,
-        id: this.engagement.id,
+        id: this.engagementList.id,
       })
       this.loadingTab = false
     },
@@ -782,8 +782,11 @@ export default {
   },
   async mounted() {
     this.loading = true
-    this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
     await this.getEngagementById(this.$route.params.id)
+    await this.getAudiencePerformanceById({
+      type: "ads",
+      id: this.engagementList.id,
+    })
     this.audienceList()
     this.loading = false
   },
