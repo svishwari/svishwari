@@ -100,10 +100,12 @@ export const defineRoutes = (server) => {
       total_customers: 827438924,
     }
   })
+
   server.get("/customers/:id", (schema, request) => {
     const id = request.params.id
     return server.create("customerProfile", schema.customers.find(id).attrs)
   })
+
   server.get("/customers/overview", () => customersOverview)
 
   server.post("/customers/overview", () => customersOverview)

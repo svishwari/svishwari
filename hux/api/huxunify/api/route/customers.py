@@ -249,7 +249,7 @@ class Customersview(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"{api_c.CUSTOMERS_ENDPOINT}/<customer_id>",
+    f"{api_c.CUSTOMERS_ENDPOINT}/<{api_c.HUX_ID}>",
     "CustomerProfileSearch",
 )
 class CustomerProfileSearch(SwaggerView):
@@ -259,8 +259,8 @@ class CustomerProfileSearch(SwaggerView):
 
     parameters = [
         {
-            "name": api_c.CUSTOMER_ID,
-            "description": "Customer ID.",
+            "name": api_c.HUX_ID,
+            "description": f"{api_c.HUX_ID}.",
             "type": "string",
             "in": "path",
             "required": True,
@@ -283,7 +283,7 @@ class CustomerProfileSearch(SwaggerView):
     # pylint: disable=unused-argument
     @marshal_with(CustomerProfileSchema)
     @api_error_handler()
-    def get(self, customer_id: str) -> Tuple[dict, int]:
+    def get(self, hux_id: str) -> Tuple[dict, int]:
         """Retrieves a customer profile.
 
         ---
@@ -291,7 +291,7 @@ class CustomerProfileSearch(SwaggerView):
             - Bearer: ["Authorization"]
 
         Args:
-            customer_id (str): ID of the customer
+            hux_id (str): ID of the customer
 
         Returns:
             Tuple[dict, int]: dict of customer profile and http code
@@ -299,7 +299,7 @@ class CustomerProfileSearch(SwaggerView):
         """
         return (
             redact_fields(
-                get_customer_profile(customer_id),
+                get_customer_profile(hux_id),
                 api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
             ),
             HTTPStatus.OK.value,
