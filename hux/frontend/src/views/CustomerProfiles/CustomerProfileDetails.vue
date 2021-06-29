@@ -24,7 +24,7 @@
             </v-card-title>
             <v-card-text class="justify-center title-text pt-5 pb-5"> 
               <div>Hux ID</div>
-              {{singleCustomer.id}}
+              {{singleCustomer.hux_id}}
             </v-card-text>
           </v-card>
         </v-col>
@@ -46,14 +46,12 @@
                     </template>
                   </Tooltip>
                 </div>
-               
                 <span v-if="!data.slider">{{data.value}}</span>
                 <hux-slider 
                 v-if="data.slider"
                 :isRangeSlider="false"
                 :value="data.value"
               ></hux-slider>
- 
               </v-card-text>
             </v-card> 
          </v-col>
@@ -97,11 +95,29 @@
           <v-simple-table>
             <template v-slot:default>
               <tbody>
-                <tr v-for="data in customerInsightsData" :key="data.id">
-                  <td v-if="data.title == 'Email' || data.title == 'Phone' || data.title == 'Gender' || data.title == 'Age'" class="title-text">{{ data.title }}</td>
-                  <td v-if="data.title == 'Email' || data.title == 'Phone' || data.title == 'Gender' || data.title == 'Age'" class="table-text">{{ data.value }}</td>
-                  <td v-if="data.title != 'Email' || data.title != 'Phone' || data.title != 'Gender' || data.title != 'Age'" class="title-text">{{ data.title }}</td>
-                  <td v-if="data.title != 'Email' || data.title != 'Phone' || data.title != 'Gender' || data.title != 'Age'" class="table-text">{{ data.value }}</td>
+                <tr>
+                  <td class="title-text">Email</td>
+                  <td class="table-text blur-text">{{ singleCustomer.email }}</td>
+                  <td class="title-text">Address</td>
+                  <td class="table-text blur-text">{{ singleCustomer.address }}</td>
+                </tr>
+                <tr>
+                  <td class="title-text">Phone</td>
+                  <td class="table-text blur-text">{{ singleCustomer.phone }}</td>
+                  <td class="title-text">City</td>
+                  <td class="table-text blur-text">{{ singleCustomer.city }}</td>
+                  </tr>
+                <tr>
+                  <td class="title-text">Age</td>
+                  <td class="table-text blur-text">{{ singleCustomer.age }}</td>
+                  <td class="title-text">State</td>
+                  <td class="table-text blur-text">{{ singleCustomer.state }}</td>
+                </tr>
+                <tr>
+                  <td class="title-text">Gender</td>
+                  <td class="table-text blur-text">{{ singleCustomer.gender }}</td>
+                  <td class="title-text">Zip</td>
+                  <td class="table-text blur-text">{{ singleCustomer.zip }}</td>
                 </tr>
               </tbody>
             </template>
@@ -129,7 +145,6 @@
       </v-card>
     </v-col>
     <v-col cols="4">
-
     </v-col>
     </v-row>
     </div>
@@ -221,23 +236,23 @@ export default {
         },
          {
           id: 5,
-          title: "Address",
-          value: this.singleCustomer.address,
+          titleNex: "Address",
+          valueNex: this.singleCustomer.address,
         },
         {
           id: 6,
-          title: "City",
-          value: this.singleCustomer.city,
+          titleNex: "City",
+          valueNex: this.singleCustomer.city,
         },
         {
           id: 7,
-          title: "State",
-          value: this.singleCustomer.state,
+          titleNex: "State",
+          valueNex: this.singleCustomer.state,
         },
         {
           id: 8,
-          title: "Zip",
-          value: this.singleCustomer.zip,
+          titleNex: "Zip",
+          valueNex: this.singleCustomer.zip,
         },
       ]
       return insightsData.filter((item) => item.title !== null && item.titleNex !== null)
@@ -414,5 +429,9 @@ padding: 0px;
 .hux-score-slider {
   margin-bottom: -27px !important;
   margin-top: -8px;
+}
+.blur-text {
+  color: transparent;
+  text-shadow: 0 0 8px #000;
 }
 </style>
