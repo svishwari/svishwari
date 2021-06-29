@@ -84,8 +84,8 @@ export default {
   border-radius: 0px !important;
 }
 .global-heading {
+  @extend .font-weight-semi-bold;
   font-style: normal;
-  font-weight: $font-weight-bold;
   font-size: $font-size-root;
   line-height: 19px;
   padding-left: 10px;
