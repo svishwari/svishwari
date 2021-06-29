@@ -1,30 +1,29 @@
 <template>
   <v-card
     tile
-    elevation="19"
     v-if="showTooltip"
-    :style="{ transform: `translate(${position.x}px, ${position.y}px)` }"
+    :style="{ transform: `translate(${position.x}px, ${position.y}px)`, 'border-radius': '0px !important'}"
     class="mx-auto card-style"
   >
     <div class="arc-hover" v-if="isArcHover">
-      <Icon :type="sourceInput.icon" :size="12" />
+      <Icon v-if="sourceInput.icon" :type="sourceInput.icon" :size="12" />
       <span class="prop-name">{{ sourceInput.name }}</span>
       <div
-        class="sub-props"
+        class="sub-props pt-4"
         v-for="item in sourceInput.assetsData"
         :key="item.name"
       >
-        <Icon :type="item.icon" :size="12" />
+        <Logo v-if="item.icon" :type="item.icon" :size="14" />
         <span class="subprop-name">{{ item.description }}</span>
         <span class="value">{{ item.value }}</span>
       </div>
     </div>
     <div class="ribbon-hover" v-if="!isArcHover">
-      <Icon :type="sourceInput.icon1" :size="12" />
-      <span class="prop-name">{{ sourceInput.name1 }}</span>
+       <Icon v-if="sourceInput.sourceIcon" :type="sourceInput.sourceIcon" :size="12" />
+      <span class="prop-name">{{ sourceInput.sourceName }}</span>
       <span class="pipe"></span>
-      <Icon :type="sourceInput.icon2" :size="12" />
-      <span class="prop-name">{{ sourceInput.name2 }}</span>
+       <Icon v-if="sourceInput.targetIcon" :type="sourceInput.targetIcon" :size="12" />
+      <span class="prop-name">{{ sourceInput.targetName }}</span>
       <span class="text-line"
         >{{ sourceInput.currentOccurance }} Co-occurances</span
       >
@@ -37,9 +36,10 @@
 
 <script>
 import Icon from "@/components/common/Icon"
+import Logo from "@/components/common/Logo"
 export default {
   name: "ChartTooltip",
-  components: { Icon },
+  components: { Icon, Logo },
   props: {
     position: {
       type: Object,
@@ -60,11 +60,6 @@ export default {
       required: false,
       default: false,
     },
-    animate: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
     sourceInput: {
       type: Object,
       required: false,
@@ -79,8 +74,8 @@ export default {
 }
 .global-heading {
   font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-root;
   line-height: 19px;
   padding-left: 10px;
 }
@@ -98,16 +93,17 @@ export default {
 }
 
 .card-style {
+  @extend .box-shadow-3;
+  border-radius: 0px;
   max-width: 213px;
   height: auto;
-  top: -239px;
-  left: -310px;
+  top: -220px;
+  left: -290px;
   z-index: 1;
-  border-radius: 0px !important;
+
 
   .ribbon-hover {
     @extend .card-padding;
-
     .pipe {
       border-left: 1px solid var(--v-lightGrey-base) !important;
       height: 500px;
@@ -115,7 +111,6 @@ export default {
       margin-left: 10px;
       margin-right: 10px;
     }
-
     .prop-name {
       @extend .global-heading;
     }
@@ -126,7 +121,6 @@ export default {
     .text-line-italic {
       @extend .global-text-line;
       font-style: italic;
-      font-weight: normal;
     }
   }
 
@@ -136,19 +130,12 @@ export default {
       @extend .global-heading;
     }
     .sub-props {
-      padding-top: 16px;
-
       .subprop-name {
         @extend .global-text-line;
         padding-left: 5px;
-        font-size: 12px;
-        line-height: 16px;
       }
-
       .value {
         @extend .global-text-line;
-        font-size: 12px;
-        line-height: 16px;
         float: right;
       }
     }

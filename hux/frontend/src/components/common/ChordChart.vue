@@ -75,7 +75,7 @@ export default {
       height: 250,
       outerRadius: 0,
       innerRadius: 0,
-      tooltipText: "most recent co-occurence between identifiers",
+      tooltipText: "Most recent co-occurence between identifiers",
       legendsData: this.chartLegendsData,
       top: 50,
       left: 60,

@@ -442,7 +442,7 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Hux Chord Chart with Tooltip</v-subheader>
-    <map-chart></map-chart>
+    <identity-chart></identity-chart>
 
     <v-divider class="mt-10" />
 
@@ -500,7 +500,7 @@ import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import HuxChordChart from "@/components/common/HuxChordChart"
-import MapChart from "@/components/common/MapChart"
+import IdentityChart from "@/components/common/IdentityChart"
 import { generateColor } from "@/utils"
 
 export default {
@@ -529,7 +529,7 @@ export default {
     FormStep,
     HuxSlider,
     HuxChordChart,
-    MapChart,
+    IdentityChart,
   },
   methods: {
     onupdatelabelText(newValue) {

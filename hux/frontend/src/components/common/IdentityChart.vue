@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <chord-chart
       v-model="chartMatrix"
       :colorCodes="colorCodes"
@@ -25,11 +25,13 @@ import ChartTooltip from "@/components/common/ChartTooltip"
 import ChordChart from "@/components/common/ChordChart"
 import identity_resolution from "@/components/common/chartData.json"
 export default {
-  name: "map-chart",
+  name: "identity-chart",
   components: { ChordChart, ChartTooltip },
   data() {
     return {
+      // TODO provide actual color code as per Icon colors
       colorCodes: ["#005587", "#da291c", "#00a3e0", "#43b02a", "#efa34c"],
+      // TODO Extracting it from the actual IDR data
       chartLegendsData: [
         { prop: "Name", icon: "name", color: "#005587" },
         { prop: "Address", icon: "address", color: "#da291c" },
@@ -62,10 +64,10 @@ export default {
         ],
       },
       ribbonData: {
-        icon1: null,
-        name1: null,
-        icon2: null,
-        name2: null,
+        sourceIcon: null,
+        sourceName: null,
+        targetIcon: null,
+        targetName: null,
         currentOccurance: 0,
         totalOccurance: 0,
       },
@@ -102,26 +104,25 @@ export default {
           )
         } else {
           let group2 = this.groupNames[groupIndex[1]]
-          this.ribbonData.name1 = this.$options.filters.TitleCase(group1)
-          this.ribbonData.icon1 = group1
-          this.ribbonData.name2 = this.$options.filters.TitleCase(group2)
-          this.ribbonData.icon2 = group2
+          this.ribbonData.sourceName = this.$options.filters.TitleCase(group1)
+          this.ribbonData.sourceIcon = group1
+          this.ribbonData.targetName = this.$options.filters.TitleCase(group2)
+          this.ribbonData.targetIcon = group2
           this.mapCoOccurances(sourceData[group1].cooccurrences, group2)
         }
       }
     },
-
     mapIdentitySources(data_sources) {
       let assetsData = []
       for (let item of data_sources) {
         let tempSourceData = {}
-        tempSourceData.icon = "cookie"
-        ;(tempSourceData.description = item.name),
-          (tempSourceData.value = this.$options.filters.percentageConvert(
+        tempSourceData.icon = item.name.toLowerCase(),
+        tempSourceData.description = item.name,
+          tempSourceData.value = this.$options.filters.percentageConvert(
             item.percentage,
             true,
             true
-          ))
+          )
         assetsData.push(tempSourceData)
       }
       return assetsData
@@ -173,3 +174,9 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.container {
+  height: 280px;
+}
+</style>
