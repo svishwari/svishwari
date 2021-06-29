@@ -90,6 +90,7 @@ STATUS_STOPPED = "Stopped"
 
 # used for weighting the rollup status for engagement deliveries
 # 0 being the highest.
+WEIGHT = "weight"
 STATUS_WEIGHTS = {
     STATUS_ACTIVE: 11,
     STATUS_NOT_DELIVERED: 10,

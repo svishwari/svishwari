@@ -488,13 +488,13 @@ def weighted_engagement_status(engagements: list) -> list:
 
                 status_rank = {
                     api_c.STATUS: status,
-                    "weight": api_c.STATUS_WEIGHTS[status],
+                    api_c.WEIGHT: api_c.STATUS_WEIGHTS[status],
                 }
                 status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
 
             # sort delivery status list of dict by weight.
-            audience_status_rank.sort(key=lambda x: x["weight"])
+            audience_status_rank.sort(key=lambda x: x[api_c.WEIGHT])
 
             # take the first item in the sorted list, and grab the status
             audience[api_c.STATUS] = (
@@ -504,7 +504,7 @@ def weighted_engagement_status(engagements: list) -> list:
             )
 
         # sort delivery status list of dict by weight.
-        status_ranks.sort(key=lambda x: x["weight"])
+        status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
 
         # take the first item in the sorted list, and grab the status
         engagement[api_c.STATUS] = (
