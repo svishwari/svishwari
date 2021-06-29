@@ -390,7 +390,7 @@ class EngagementAudienceDestinationSchema(Schema):
     name = fields.String()
     id = fields.String()
     delivery_job_id = fields.String()
-    delivery_platform_config = fields.Nested(EngagedDataExtensionSchema)
+    delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
     latest_delivery = fields.Nested(LatestDeliverySchema)
 
 
@@ -402,7 +402,9 @@ class EngagementAudienceSchema(Schema):
     name = fields.String()
     id = fields.String()
     status = fields.String()
-    destinations = fields.Nested(EngagedAudienceDestinationSchema, many=True)
+    destinations = fields.Nested(
+        EngagementAudienceDestinationSchema, many=True
+    )
 
 
 class EngagementGetSchema(Schema):
@@ -420,7 +422,7 @@ class EngagementGetSchema(Schema):
     description = fields.String(attribute=api_c.DESCRIPTION)
 
     audiences = fields.Nested(
-        EngagedAudienceSchema, many=True, attribute=api_c.AUDIENCES
+        EngagementAudienceSchema, many=True, attribute=api_c.AUDIENCES
     )
     status = fields.String(
         attribute=api_c.STATUS,
@@ -448,8 +450,8 @@ class EngagementGetSchema(Schema):
 
 
 def weighted_engagement_status(engagements: list) -> list:
-    """Returns a weighted engagement status by rolling up the individual destination
-    status values
+    """Returns a weighted engagement status by rolling up the individual
+    destination status values.
 
     Args:
         engagements (list): input engagement list.
@@ -472,7 +474,7 @@ def weighted_engagement_status(engagements: list) -> list:
                 if api_c.LATEST_DELIVERY not in destination:
                     continue
 
-                # TODO - update ORCH so no status mapping needed.
+                # TODO after ORCH-285 so no status mapping needed.
                 status = destination[api_c.LATEST_DELIVERY][api_c.STATUS]
                 if status == db_c.STATUS_IN_PROGRESS:
                     # map pending to delivering status
@@ -484,20 +486,29 @@ def weighted_engagement_status(engagements: list) -> list:
 
                 destination[api_c.LATEST_DELIVERY][api_c.STATUS] = status
 
-                status_rank = (status, api_c.STATUS_WEIGHTING_DICT[status])
+                status_rank = {
+                    api_c.STATUS: status,
+                    "weight": api_c.STATUS_WEIGHTS[status],
+                }
                 status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
 
-            # set audience status
+            # sort delivery status list of dict by weight.
+            audience_status_rank.sort(key=lambda x: x["weight"])
+
+            # take the first item in the sorted list, and grab the status
             audience[api_c.STATUS] = (
-                sorted(audience_status_rank, key=lambda x: x[1])[0][0]
+                audience_status_rank[0][api_c.STATUS]
                 if audience_status_rank
                 else api_c.STATUS_NOT_DELIVERED
             )
 
-        # sort ascending, and assign rolled up status.
+        # sort delivery status list of dict by weight.
+        status_ranks.sort(key=lambda x: x["weight"])
+
+        # take the first item in the sorted list, and grab the status
         engagement[api_c.STATUS] = (
-            sorted(status_ranks, key=lambda x: x[1])[0][0]
+            status_ranks[0][api_c.STATUS]
             if status_ranks
             else api_c.STATUS_NOT_DELIVERED
         )
