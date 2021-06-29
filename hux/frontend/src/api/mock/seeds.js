@@ -403,7 +403,7 @@ export default function (server) {
   server.create("model", unsubscribeModel)
 
   // seed customers
-  server.createList("customer", 1000)
+  server.createList("customer", 100)
 
   // seed data-extensions
   server.createList("dataExtension", 5)
