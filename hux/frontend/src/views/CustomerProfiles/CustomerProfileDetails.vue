@@ -32,7 +32,7 @@
             </v-card-title>
             <v-card-text class="justify-center title-text pt-5 pb-5">
               <div>Hux ID</div>
-              {{ singleCustomer.id }}
+              {{ singleCustomer.hux_id }}
             </v-card-text>
           </v-card>
         </v-col>
@@ -54,14 +54,12 @@
                   </template>
                 </Tooltip>
               </div>
-              <div class="sample-card-text">
-                <span v-if="!data.slider">{{ data.value }}</span>
-                <hux-slider
-                  v-if="data.slider"
-                  :isRangeSlider="false"
-                  :value="data.value"
-                ></hux-slider>
-              </div>
+              <span v-if="!data.slider">{{ data.value }}</span>
+              <hux-slider
+                v-if="data.slider"
+                :isRangeSlider="false"
+                :value="data.value"
+              ></hux-slider>
             </v-card-text>
           </v-card>
         </v-col>
@@ -102,11 +100,45 @@
               <v-simple-table>
                 <template v-slot:default>
                   <tbody>
-                    <tr v-for="data in customerInsightsData" :key="data.id">
-                      <td class="title-text">{{ data.title }}</td>
-                      <td class="table-text">{{ data.value }}</td>
-                      <td class="title-text">{{ data.title }}</td>
-                      <td class="table-text">{{ data.value }}</td>
+                    <tr>
+                      <td class="title-text">Email</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.email }}
+                      </td>
+                      <td class="title-text">Address</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.address }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="title-text">Phone</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.phone }}
+                      </td>
+                      <td class="title-text">City</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.city }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="title-text">Age</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.age }}
+                      </td>
+                      <td class="title-text">State</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.state }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="title-text">Gender</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.gender }}
+                      </td>
+                      <td class="title-text">Zip</td>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.zip }}
+                      </td>
                     </tr>
                   </tbody>
                 </template>
@@ -424,5 +456,13 @@ export default {
 }
 .card-height {
   height: 155px !important;
+}
+.hux-score-slider {
+  margin-bottom: -27px !important;
+  margin-top: -8px;
+}
+.blur-text {
+  color: transparent;
+  text-shadow: 0 0 8px #000;
 }
 </style>

@@ -68,6 +68,20 @@ export function makeServer({ environment = "development" } = {}) {
       audience: AppSerializer.extend({
         include: ["destinations", "engagements"],
       }),
+      customer: AppSerializer.extend({
+        root: true,
+
+        keyForAttribute(attr) {
+          if (attr === "id") return "hux_id"
+          return attr
+        },
+      }),
+      customerProfile: AppSerializer.extend({
+        keyForAttribute(attr) {
+          if (attr === "id") return "hux_id"
+          return attr
+        },
+      }),
     },
   })
 

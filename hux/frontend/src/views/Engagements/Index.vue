@@ -169,7 +169,7 @@
                 </div>
                 <div v-if="header.value == 'updated_by'">
                   <div class="ml-16 pl-7">
-                    <avatar :name="getName(item[header.value])" />
+                    <Avatar :name="item[header.value]" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
@@ -179,7 +179,7 @@
                 </div>
                 <div v-if="header.value == 'created_by'">
                   <div class="ml-13">
-                    <avatar :name="getName(item[header.value])" />
+                    <Avatar :name="item[header.value]" />
                   </div>
                 </div>
               </td>
@@ -309,9 +309,6 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       markCurrentRow: "engagements/markCurrentRow",
     }),
-    getName(item) {
-      return item.first_name + " " + item.last_name
-    },
     // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
       this.audienceList = []
