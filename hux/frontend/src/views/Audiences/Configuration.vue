@@ -432,9 +432,9 @@ export default {
           conditionIndex++
         ) {
           filter.section_filters.push({
-            field: this.audience.attributeRules[ruleIndex].conditions[
-              conditionIndex
-            ].attribute.key,
+            field:
+              this.audience.attributeRules[ruleIndex].conditions[conditionIndex]
+                .attribute.key,
             type: this.audience.attributeRules[ruleIndex].conditions[
               conditionIndex
             ].operator

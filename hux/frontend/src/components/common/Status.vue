@@ -100,10 +100,10 @@ export default {
       Statuses: {
         Active: ["Active", "Success", "Delivered", "Succeeded"],
         Inactive: ["Caution", "Not Delivered"],
-        Activating: ["Activating"],
+        Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
         Disabled: ["Disabled"],
-        Error: ["Error"],
+        Error: ["Error", "Failed"],
         Pending: ["Pending", "Delivering"],
       },
     }
