@@ -185,5 +185,4 @@ export default {
   line-height: 16px;
   color: var(gray);
 }
-
 </style>
