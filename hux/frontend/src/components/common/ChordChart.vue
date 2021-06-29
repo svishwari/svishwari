@@ -218,23 +218,23 @@ export default {
   max-width: 424px;
   height: 252px;
 
-.legend-section {
-  span {
-    margin-left: 8px;
-    font-size: 12px;
-    line-height: 16px;
-    color: var(--v-gray-base) !important;
+  .legend-section {
+    span {
+      margin-left: 8px;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--v-gray-base) !important;
+    }
   }
-}
 
-.title-section {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
-}
+  .title-section {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 400;
+  }
 
-.chart-section {
-  margin-bottom: -20px;
-}
+  .chart-section {
+    margin-bottom: -20px;
+  }
 }
 </style>

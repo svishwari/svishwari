@@ -5,7 +5,11 @@
         <Breadcrumb :items="items" />
       </template>
       <template #right>
-        <v-icon size="22" color="lightGrey" class="icon-border icon-cursor pa-2 ma-1">
+        <v-icon
+          size="22"
+          color="lightGrey"
+          class="icon-border icon-cursor pa-2 ma-1"
+        >
           mdi-download
         </v-icon>
       </template>
@@ -13,125 +17,126 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading && singleCustomer" class="px-16 py-6">
       <v-row>
-        <v-col cols="3" >
+        <v-col cols="3">
           <v-card
-            class="text-center rounded-lg card-info-wrapper card-shadow-box card-height"
+            class="
+              text-center
+              rounded-lg
+              card-info-wrapper card-shadow-box card-height
+            "
           >
             <v-card-title
               class="justify-center font-weight-regular title-font-size"
             >
-              {{fullName}}
+              {{ fullName }}
             </v-card-title>
-            <v-card-text class="justify-center title-text pt-5 pb-5"> 
+            <v-card-text class="justify-center title-text pt-5 pb-5">
               <div>Hux ID</div>
-              {{singleCustomer.id}}
+              {{ singleCustomer.id }}
             </v-card-text>
           </v-card>
         </v-col>
-         <v-col :cols="data.colValue" v-for="data in customerDataDisplay"  :key="data.id">
-            <v-card class="rounded-lg card-info-wrapper card-shadow">
-              <v-card-text class="pl-4 pr-3 pb-3 pt-3">
-                <div class="title-text pb-2">
-                  {{data.title}}
-                  <Tooltip v-if="data.hoverTooltip" positionTop>
-                    <template #label-content>
-                      <Icon
-                        type="info"
-                        :size="12"
-                        v-if="data.hoverTooltip"
-                      />
-                    </template>
-                    <template #hover-content>
-                      {{ data.hoverTooltip }}
-                    </template>
-                  </Tooltip>
-                </div>
-                <div class="sample-card-text">
-                  <span v-if="!data.slider">{{data.value}}</span>
-                <hux-slider 
-                v-if="data.slider"
-                :isRangeSlider="false"
-                :value="data.value"
-              ></hux-slider>
-                </div>
-              </v-card-text>
-            </v-card> 
-         </v-col>
-      </v-row>
-         <v-row class="details-card">
-        <v-col cols="3">
+        <v-col
+          :cols="data.colValue"
+          v-for="data in customerDataDisplay"
+          :key="data.id"
+        >
+          <v-card class="rounded-lg card-info-wrapper card-shadow">
+            <v-card-text class="pl-4 pr-3 pb-3 pt-3">
+              <div class="title-text pb-2">
+                {{ data.title }}
+                <Tooltip v-if="data.hoverTooltip" positionTop>
+                  <template #label-content>
+                    <Icon type="info" :size="12" v-if="data.hoverTooltip" />
+                  </template>
+                  <template #hover-content>
+                    {{ data.hoverTooltip }}
+                  </template>
+                </Tooltip>
+              </div>
+              <div class="sample-card-text">
+                <span v-if="!data.slider">{{ data.value }}</span>
+                <hux-slider
+                  v-if="data.slider"
+                  :isRangeSlider="false"
+                  :value="data.value"
+                ></hux-slider>
+              </div>
+            </v-card-text>
+          </v-card>
         </v-col>
-         <v-col v-for="data in customerDetailsMore" :cols="data.colValue" :key="data.id">
-            <v-card class="rounded-lg card-info-wrapper card-shadow">
-              <v-card-text class="pl-4 pr-3 pb-3 pt-3">
-                <div class="title-text pb-2">
-                  {{data.title}}
-                  <Tooltip v-if="data.hoverTooltip" positionTop>
-                    <template #label-content>
-                      <Icon
-                        type="info"
-                        :size="12"
-                        v-if="data.hoverTooltip"
-                      />
-                    </template>
-                    <template #hover-content>
-                      {{ data.hoverTooltip }}
-                    </template>
-                  </Tooltip>
-                </div>
-                <div class="sample-card-text">{{data.value}}</div>
-              </v-card-text>
-            </v-card> 
-         </v-col>
+      </v-row>
+      <v-row class="details-card">
+        <v-col cols="3"> </v-col>
+        <v-col
+          v-for="data in customerDetailsMore"
+          :cols="data.colValue"
+          :key="data.id"
+        >
+          <v-card class="rounded-lg card-info-wrapper card-shadow">
+            <v-card-text class="pl-4 pr-3 pb-3 pt-3">
+              <div class="title-text pb-2">
+                {{ data.title }}
+                <Tooltip v-if="data.hoverTooltip" positionTop>
+                  <template #label-content>
+                    <Icon type="info" :size="12" v-if="data.hoverTooltip" />
+                  </template>
+                  <template #hover-content>
+                    {{ data.hoverTooltip }}
+                  </template>
+                </Tooltip>
+              </div>
+              <div class="sample-card-text">{{ data.value }}</div>
+            </v-card-text>
+          </v-card>
+        </v-col>
       </v-row>
 
-    <v-row >
-    <v-col cols="5">
-      <v-card class="rounded-lg card-info-wrapper card-shadow-box">
-        <v-card-title
-          class="py-5 card-heading"
-        >
-         {{cardTitles[0].title}}
-        </v-card-title>
-        <v-card-text class="justify-center title-text"> 
-          <v-simple-table>
-            <template v-slot:default>
-              <tbody>
-                <tr v-for="data in customerInsightsData" :key="data.id">
-                  <td class="title-text">{{ data.title }}</td>
-                  <td class="table-text">{{ data.value }}</td>
-                    <td class="title-text">{{ data.title }}</td>
-                  <td class="table-text">{{ data.value }}</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="3">
-      <v-card class="rounded-lg card-info-wrapper card-shadow-box">
-        <v-card-title class="card-heading py-5">
-         {{cardTitles[1].title}}
-        </v-card-title>
-        <v-card-text class="title-text"> 
-          <v-simple-table>
-          <template v-slot:default>
-            <tbody>
-              <tr v-for="data in contactPreferences" :key="data.id">
-                <td class="title-text">{{ data.title }}</td>
-                <td class="table-text cl">{{ data.value }}</td>
-              </tr>
-            </tbody>
-          </template>
-      </v-simple-table>
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="4">
-    <identity-chart></identity-chart>
-    </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="5">
+          <v-card class="rounded-lg card-info-wrapper card-shadow-box">
+            <v-card-title class="py-5 card-heading">
+              {{ cardTitles[0].title }}
+            </v-card-title>
+            <v-card-text class="justify-center title-text">
+              <v-simple-table>
+                <template v-slot:default>
+                  <tbody>
+                    <tr v-for="data in customerInsightsData" :key="data.id">
+                      <td class="title-text">{{ data.title }}</td>
+                      <td class="table-text">{{ data.value }}</td>
+                      <td class="title-text">{{ data.title }}</td>
+                      <td class="table-text">{{ data.value }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="3">
+          <v-card class="rounded-lg card-info-wrapper card-shadow-box">
+            <v-card-title class="card-heading py-5">
+              {{ cardTitles[1].title }}
+            </v-card-title>
+            <v-card-text class="title-text">
+              <v-simple-table>
+                <template v-slot:default>
+                  <tbody>
+                    <tr v-for="data in contactPreferences" :key="data.id">
+                      <td class="title-text">{{ data.title }}</td>
+                      <td class="table-text cl">{{ data.value }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="4">
+          <identity-chart></identity-chart>
+        </v-col>
+      </v-row>
     </div>
   </div>
 </template>
@@ -153,11 +158,11 @@ export default {
     Tooltip,
     Icon,
     HuxSlider,
-    IdentityChart
+    IdentityChart,
   },
   data() {
     return {
-       items: [
+      items: [
         {
           text: "Customer Profiles",
           disabled: true,
@@ -174,13 +179,13 @@ export default {
         {
           id: 1,
           title: "Customer insights",
-          icon: "customer-profiles"
+          icon: "customer-profiles",
         },
         {
           id: 2,
           title: "Contact preferences",
-          icon: "customer-profiles"
-        }
+          icon: "customer-profiles",
+        },
       ],
       loading: false,
     }
@@ -196,7 +201,8 @@ export default {
       return this.$route.params.id
     },
     fullName() {
-      let full_name = this.singleCustomer.first_name +' '+ this.singleCustomer.last_name;
+      let full_name =
+        this.singleCustomer.first_name + " " + this.singleCustomer.last_name
       return full_name
     },
     customerInsightsData() {
@@ -221,7 +227,7 @@ export default {
           title: "Gender",
           value: this.singleCustomer.gender,
         },
-         {
+        {
           id: 5,
           titleNex: "Address",
           valueNex: this.singleCustomer.address,
@@ -242,7 +248,9 @@ export default {
           valueNex: this.singleCustomer.zip,
         },
       ]
-      return insightsData.filter((item) => item.title !== null && item.titleNex !== null)
+      return insightsData.filter(
+        (item) => item.title !== null && item.titleNex !== null
+      )
     },
     contactPreferences() {
       const contactData = [
@@ -271,16 +279,16 @@ export default {
           title: "In-App",
           value: this.singleCustomer.preference_in_app,
           subLabel: null,
-        }
+        },
       ]
       return contactData.filter((item) => item.title !== null)
     },
-    customerDataDisplay(){
-       const cusomerDeatils = [
+    customerDataDisplay() {
+      const cusomerDeatils = [
         {
           id: 1,
           title: "Customer length",
-          value: '1',
+          value: "1",
           colValue: 2.5,
         },
         {
@@ -289,33 +297,37 @@ export default {
           value: this.singleCustomer.match_confidence,
           colValue: 2.5,
           slider: true,
-          hoverTooltip: 'A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.',
+          hoverTooltip:
+            "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
         },
         {
           id: 3,
           title: "Actual lifetime value",
           value: this.singleCustomer.ltv_actual,
-           colValue: 2.5,
-          hoverTooltip: "Assessment of the lifetime financial value of each customer.",
+          colValue: 2.5,
+          hoverTooltip:
+            "Assessment of the lifetime financial value of each customer.",
         },
         {
           id: 4,
           title: "Conversion time",
           value: this.singleCustomer.conversion_time,
-           colValue: 2,
-          hoverTooltip: "The average time customer takes to convert to a purchase.",
-        }
-       ]
-        return cusomerDeatils
+          colValue: 2,
+          hoverTooltip:
+            "The average time customer takes to convert to a purchase.",
+        },
+      ]
+      return cusomerDeatils
     },
     customerDetailsMore() {
       const details = [
-          {
+        {
           id: 5,
           title: "Churn score",
           value: this.singleCustomer.churn_rate,
           colValue: 2,
-          hoverTooltip: "You do not have access to see individual information. Contact your administrator for access.",
+          hoverTooltip:
+            "You do not have access to see individual information. Contact your administrator for access.",
         },
         {
           id: 6,
@@ -337,7 +349,7 @@ export default {
         },
       ]
       return details
-    }
+    },
   },
   methods: {
     ...mapActions({
@@ -365,7 +377,7 @@ export default {
   background: var(--v-aliceBlue-base);
 }
 ::v-deep .v-card__text {
-padding: 0px;
+  padding: 0px;
 }
 .hux-data-table {
   ::v-deep table {
