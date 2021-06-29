@@ -24,7 +24,7 @@
             :key="header.value"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'id'" class="text-body-2">
+            <div v-if="header.value == 'hux_id'" class="text-body-2">
               <router-link
                 :to="{
                   name: 'CustomerProfileDetails',
@@ -46,7 +46,7 @@
               <hux-slider
                 :isRangeSlider="false"
                 :value="item[header.value]"
-                class="slider-margin"
+                class="match-confidence"
               ></hux-slider>
             </div>
           </td>
@@ -83,7 +83,7 @@ export default {
       columnDefs: [
         {
           text: "Hux ID",
-          value: "id",
+          value: "hux_id",
           width: "auto",
         },
         {
@@ -164,6 +164,17 @@ export default {
         background: var(--v-aliceBlue-base);
       }
     }
+    .match-confidence {
+      .slider-value-display {
+        margin-top: 16px;
+      }
+      .v-slider__track-container {
+        margin-top: 12px !important;
+      }
+      .v-slider__thumb-container {
+        margin-top: 12px !important;
+      }
+    }
   }
 }
 .footer-font {
@@ -173,8 +184,5 @@ export default {
   font-size: 12px;
   line-height: 16px;
   color: var(gray);
-}
-.slider-margin {
-  margin-bottom: -22px;
 }
 </style>

@@ -32,7 +32,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.generic_campaigns = [
             {"campaign_id": "campaign_id_1", "ad_set_id": "ad_set_id_2"}
         ]
-
+        self.individual_generic_campaigns = [
+            {"engagement_id": "engage_id_1", "audience_id": "audience_id_1"}
+        ]
         # Set delivery platform
         self.auth_details_facebook = {
             "facebook_access_token": "path1",
@@ -1353,6 +1355,48 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_campaign_activity(self):
+        """Campaign Activity docs are set and retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        event_details = {
+            "event": "sent",
+            "event_date": "2021-06-17T12:21:27.970Z",
+        }
+
+        doc = dpm.set_campaign_activity(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Salesforce",
+            delivery_job_id=delivery_job_id,
+            event_details=event_details,
+            generic_campaign_id=self.individual_generic_campaigns[0],
+        )
+
+        self.assertIsNotNone(doc)
+
+        events_list = dpm.get_campaign_activity(self.database, delivery_job_id)
+
+        self.assertIsNotNone(events_list)
+        self.assertEqual(len(events_list), 1)
+
+        doc = events_list[0]
+
+        self.assertIsNotNone(doc)
+        self.assertIn(c.DELIVERY_JOB_ID, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
+        self.assertIn(c.CREATE_TIME, doc)
+        self.assertIn(c.EVENT_DETAILS, doc)
+        self.assertEqual(doc[c.EVENT_DETAILS]["event"], "sent")
+        self.assertEqual(
+            doc[c.EVENT_DETAILS]["event_date"], "2021-06-17T12:21:27.970Z"
+        )
+        self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
+
+        # Status is to be set to non-transferred automatically
+        self.assertFalse(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+
     def test_create_delivery_job_generic_campaigns(self):
         """Campaigns are set and retrieved."""
 
@@ -1400,7 +1444,6 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.generic_campaigns,
             engagement_id=engagement_id,
         )
-
         self.assertIsNotNone(doc)
 
         delivery_jobs = dpm.get_delivery_jobs_using_metadata(
@@ -1458,3 +1501,152 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
         self.assertFalse(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS])
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_campaign_activities(self):
+        """Campaign Activity batch docs are set and retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        campaign_activity_docs = [
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "click",
+                    "event_date": "6/27/2021 12:00:00 AM",
+                    "url": "https://google.com",
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+            },
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "sent",
+                    "event_date": "6/27/2021 12:00:00 AM",
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+            },
+        ]
+
+        status = dpm.set_campaign_activities(
+            database=self.database,
+            campaign_activity_docs=campaign_activity_docs,
+        )
+
+        self.assertTrue(status)
+
+        campaign_activity_doc_list = dpm.get_campaign_activity(
+            self.database, delivery_job_id
+        )
+
+        self.assertIsNotNone(campaign_activity_doc_list)
+        self.assertEqual(len(campaign_activity_doc_list), 2)
+
+        doc1 = campaign_activity_doc_list[0]
+        doc2 = campaign_activity_doc_list[1]
+
+        self.assertIsNotNone(doc1)
+        self.assertIsNotNone(doc2)
+
+        self.assertEqual(doc1[c.EVENT_DETAILS]["event_type"], "click")
+        self.assertEqual(doc1[c.EVENT_DETAILS]["subscriber_key"], "1001")
+        self.assertEqual(doc2[c.EVENT_DETAILS]["event_type"], "sent")
+        self.assertEqual(doc2[c.EVENT_DETAILS]["subscriber_key"], "1001")
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_all_feedback_campaign_activities(self):
+        """Campaign Activity docs are set and feedback false documents are retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        campaign_activity_docs = [
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "click",
+                    "event_date": "6/27/2021 12:00:00 AM",
+                    "url": "https://google.com",
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+                "transferred_for_feedback": True,
+            },
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "sent",
+                    "event_date": "6/27/2021 12:00:00 AM",
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+                "transferred_for_feedback": False,
+            },
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "open",
+                    "event_date": "6/27/2021 12:00:00 AM",
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+                "transferred_for_feedback": False,
+            },
+        ]
+
+        status = dpm.set_campaign_activities(
+            database=self.database,
+            campaign_activity_docs=campaign_activity_docs,
+        )
+
+        self.assertTrue(status)
+
+        campaign_activity_doc_list = dpm.get_all_feedback_campaign_activities(
+            self.database
+        )
+
+        self.assertIsNotNone(campaign_activity_doc_list)
+        self.assertEqual(len(campaign_activity_doc_list), 2)
+
+        doc1 = campaign_activity_doc_list[0]
+        doc2 = campaign_activity_doc_list[1]
+
+        self.assertIsNotNone(doc1)
+        self.assertIsNotNone(doc2)
+        self.assertIn(c.EVENT_DETAILS, doc1)
+        self.assertIn(c.EVENT_DETAILS, doc1)
+
+        self.assertFalse(doc1[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+        self.assertFalse(doc2[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_campaign_activity_status(self):
+        """Campaign Activity Feedback status is set properly."""
+
+        delivery_job_id = self._set_delivery_job()
+        event_details = {
+            "event": "sent",
+            "event_date": "2021-06-17T12:21:27.970Z",
+        }
+
+        doc = dpm.set_campaign_activity(
+            database=self.database,
+            delivery_platform_id=ObjectId(),
+            delivery_platform_name="Salesforce",
+            delivery_job_id=delivery_job_id,
+            event_details=event_details,
+            generic_campaign_id=self.individual_generic_campaigns[0],
+        )
+
+        doc = dpm.set_campaign_activity_transferred_for_feedback(
+            database=self.database,
+            campaign_activity_id=doc[c.ID],
+        )
+        self.assertTrue(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+
+        # Read activities separately of setting
+        campaign_activities_list = dpm.get_campaign_activity(
+            self.database, delivery_job_id
+        )
+        self.assertTrue(
+            campaign_activities_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK]
+        )

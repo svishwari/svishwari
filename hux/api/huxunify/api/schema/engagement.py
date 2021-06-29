@@ -296,9 +296,7 @@ class AudiencePerformanceDisplayAdsSchema(Schema):
         ordered = True
 
     summary = fields.Nested(DisplayAdsSummary)
-    audience_performance = fields.List(
-        fields.Nested(DispAdIndividualAudienceSummary)
-    )
+    audience_performance = fields.List(fields.Dict())
 
 
 class EmailSummary(Schema):

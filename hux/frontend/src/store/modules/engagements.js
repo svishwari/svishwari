@@ -12,6 +12,9 @@ const state = {
 const getters = {
   list: (state) => Object.values(state.items),
   audiencePerformanceByAds: (state) => state.audiencePerformance.ads,
+  engagement: (state) => (id) => {
+    return state.items[id]
+  },
   audiencePerformanceByEmail: (state) => state.audiencePerformance.email,
 }
 

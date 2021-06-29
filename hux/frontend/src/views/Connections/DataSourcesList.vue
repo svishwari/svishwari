@@ -23,7 +23,7 @@
         hideButton
         class="mb-3 pr-10 list"
       >
-        <Status :status="dataSource.status" />
+        <Status :status="dataSource.status" class="status" />
       </CardHorizontal>
     </template>
 
@@ -78,6 +78,14 @@ export default {
   .list {
     &:hover {
       cursor: auto;
+    }
+  }
+  .v-card {
+    .status {
+      min-width: 80px;
+      ::v-deep i {
+        font-size: 17px;
+      }
     }
   }
 }
