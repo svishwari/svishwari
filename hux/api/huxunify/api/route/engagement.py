@@ -1013,7 +1013,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    # pylint: disable=unused-argument, too-many-locals
+    # pylint: disable=too-many-locals
     @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves display ad performance metrics.
@@ -1031,6 +1031,9 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         """
 
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+
         # setup the database
         database = get_db_client()
 
@@ -1040,6 +1043,12 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 database, db_c.DELIVERY_PLATFORM_FACEBOOK
             )
         )
+
+        if destination is None:
+            return {
+                "message": "No performance metrics found for engagement."
+            }, HTTPStatus.OK
+
         # Get Performance metrics by engagement and destination
         # pylint: disable=line-too-long
         performance_metrics = delivery_platform_management.get_performance_metrics_by_engagement_details(
@@ -1048,19 +1057,30 @@ class EngagementMetricsDisplayAds(SwaggerView):
             [destination.get(db_c.ID)],
         )
 
+        if performance_metrics is None:
+            return {
+                "message": "No performance metrics found for engagement."
+            }, HTTPStatus.OK
+
         # Get all the delivery jobs for the given engagement and destination
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
                 database, engagement_id=ObjectId(engagement_id)
             )
         )
+
+        if delivery_jobs is None:
+            return {
+                "message": "No performance metrics found for engagement."
+            }, HTTPStatus.OK
+
         delivery_jobs = [
             x
             for x in delivery_jobs
             if x[db_c.DELIVERY_PLATFORM_ID] == destination.get(db_c.ID)
         ]
 
-        # Group all the performance metrics for the enagement
+        # Group all the performance metrics for the engagement
         final_metric = {
             api_c.SUMMARY: group_perf_metric(
                 [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics]
@@ -1079,18 +1099,20 @@ class EngagementMetricsDisplayAds(SwaggerView):
             audience_jobs = list(audience_group)
             delivery_jobs = [x[db_c.ID] for x in audience_jobs]
             ind_aud_metric = {
-                api_c.SUMMARY: group_perf_metric(
-                    [
-                        x[db_c.PERFORMANCE_METRICS]
-                        for x in performance_metrics
-                        if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                    ]
-                ),
                 api_c.ID: str(audience_id),
                 api_c.NAME: orchestration_management.get_audience(
                     database, audience_id
                 )[api_c.NAME],
             }
+            ind_aud_metric.update(
+                group_perf_metric(
+                    [
+                        x[db_c.PERFORMANCE_METRICS]
+                        for x in performance_metrics
+                        if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
+                    ]
+                )
+            )
 
             # Group all the performance metrics engagement.audience.destination.
             destination_group = sorted(
@@ -1102,22 +1124,24 @@ class EngagementMetricsDisplayAds(SwaggerView):
             ):
                 audience_dest_jobs = list(aud_dest_group)
                 delivery_jobs = [x[db_c.ID] for x in audience_dest_jobs]
-                aud_dest_metrics = [
-                    x
-                    for x in performance_metrics
-                    if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                ]
-                aud_dest_metric.append(
-                    {
-                        api_c.SUMMARY: group_perf_metric(aud_dest_metrics),
-                        api_c.ID: str(destination_id),
-                        api_c.NAME: delivery_platform_management.get_delivery_platform(
-                            database, destination_id
-                        )[
-                            api_c.NAME
-                        ],
-                    }
+                ind_aud_dest_metric = {
+                    api_c.ID: str(destination_id),
+                    api_c.NAME: delivery_platform_management.get_delivery_platform(
+                        database, destination_id
+                    )[
+                        api_c.NAME
+                    ],
+                }
+                ind_aud_dest_metric.update(
+                    group_perf_metric(
+                        [
+                            x
+                            for x in performance_metrics
+                            if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
+                        ]
+                    )
                 )
+                aud_dest_metric.append(ind_aud_dest_metric)
 
             ind_aud_metric[api_c.DESTINATIONS] = aud_dest_metric
             aud_metric.append(ind_aud_metric)
