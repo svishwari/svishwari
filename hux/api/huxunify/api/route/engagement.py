@@ -1165,11 +1165,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 }, HTTPStatus.BAD_REQUEST
 
             updated_campaigns = [
-                {
-                    k: v
-                    for k, v in d.items()
-                    if k in [api_c.NAME, api_c.CAMPAIGN_ID]
-                }
+                {k: v for k, v in d.items() if k in [api_c.NAME, api_c.ID]}
                 for d in value
             ]
             delivery_platform_management.create_delivery_job_generic_campaigns(
@@ -1327,7 +1323,7 @@ class AudienceCampaignsGetView(SwaggerView):
                     db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
                 ]
                 for campaign in delivery_campaigns:
-                    campaign[api_c.ID] = campaign[api_c.CAMPAIGN_ID]
+                    campaign[api_c.ID] = campaign[api_c.ID]
                     campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
                     campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
                 campaigns.extend(delivery_campaigns)
