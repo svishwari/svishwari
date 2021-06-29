@@ -309,9 +309,6 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       markCurrentRow: "engagements/markCurrentRow",
     }),
-    getName(item) {
-      return item.first_name + " " + item.last_name
-    },
     // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
       this.audienceList = []
