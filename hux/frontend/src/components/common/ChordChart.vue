@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="424" tile class="rounded-lg">
+  <v-card tile class="chart-container rounded-lg">
     <v-list-item three-line>
       <v-list-item-content>
         <div class="title-section">
@@ -71,7 +71,7 @@ export default {
   },
   data() {
     return {
-      width: 250,
+      width: 220,
       height: 250,
       outerRadius: 0,
       innerRadius: 0,
@@ -214,22 +214,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.legend-section {
-  span {
-    margin-left: 8px;
-    font-size: 12px;
-    line-height: 16px;
-    color: var(--v-gray-base) !important;
+.chart-container {
+  max-width: 424px;
+  height: 252px;
+
+  .legend-section {
+    span {
+      margin-left: 8px;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--v-gray-base) !important;
+    }
   }
-}
 
-.title-section {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
-}
+  .title-section {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 400;
+  }
 
-.chart-section {
-  margin-bottom: -20px;
+  .chart-section {
+    margin-bottom: -20px;
+  }
 }
 </style>

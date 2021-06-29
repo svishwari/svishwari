@@ -22,6 +22,7 @@ export const defineRoutes = (server) => {
 
   // destinations
   server.get("/destinations")
+  server.get("/destinations/:id")
 
   server.put("/destinations/:id", (schema, request) => {
     const id = request.params.id

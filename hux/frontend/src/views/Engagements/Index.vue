@@ -71,6 +71,7 @@
                     @click="
                       expand(!isExpanded)
                       getAudiencesForEngagement(item)
+                      markCurrentRow(item.id)
                     "
                   >
                     mdi-chevron-right

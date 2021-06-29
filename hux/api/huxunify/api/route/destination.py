@@ -33,6 +33,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
+    set_sfmc_auth_from_parameter_store,
     api_error_handler,
 )
 import huxunify.api.constants as api_c
@@ -79,40 +80,6 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
         ),
         SFMCCredentials.SFMC_URL.value: sfmc_auth.get(
             api_c.SFMC_REST_BASE_URI
-        ),
-    }
-
-
-def set_sfmc_auth_from_parameter_store(auth: dict) -> dict:
-    """Set SFMC auth details from parameter store
-    ---
-
-        Args:
-            auth (dict): Destination Auth details.
-
-        Returns:
-            Auth Object (dict): SFMC auth object.
-
-    """
-
-    return {
-        SFMCCredentials.SFMC_ACCOUNT_ID.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_ACCOUNT_ID]
-        ),
-        SFMCCredentials.SFMC_AUTH_URL.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_AUTH_BASE_URI]
-        ),
-        SFMCCredentials.SFMC_CLIENT_ID.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_CLIENT_ID]
-        ),
-        SFMCCredentials.SFMC_CLIENT_SECRET.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_CLIENT_SECRET]
-        ),
-        SFMCCredentials.SFMC_SOAP_ENDPOINT.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_SOAP_BASE_URI]
-        ),
-        SFMCCredentials.SFMC_URL.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_REST_BASE_URI]
         ),
     }
 

@@ -235,8 +235,10 @@ export default {
     }),
 
     resetForm() {
-      this.extension = null
-      this.journeyType = "radio-1"
+      this.$nextTick(() => {
+        this.extension = null
+        this.journeyType = "radio-1"
+      })
     },
 
     toggleClass: function (event) {

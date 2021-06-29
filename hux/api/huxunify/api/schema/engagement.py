@@ -287,6 +287,82 @@ class AudiencePerformanceEmailSchema(Schema):
     )
 
 
+class CampaignSchema(Schema):
+    """
+    Schema for Campaigns
+    """
+
+    class Meta:
+        """Set Order for the Campaign Response"""
+
+        ordered = True
+
+    id = fields.String(
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    name = fields.String()
+    delivery_job_id = fields.String(
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
+
+
+class CampaignPutSchema(Schema):
+    """
+    Schema for Campaigns PUT.
+    """
+
+    class Meta:
+        """Set Order for the Campaigns Response"""
+
+        ordered = True
+
+    campaigns = fields.List(
+        fields.Dict,
+        example=[
+            {
+                api_c.NAME: "Test Campaign",
+                api_c.ID: "campaign_id",
+                api_c.DELIVERY_JOB_ID: "delivery_job_id",
+            }
+        ],
+    )
+
+
+class DeliveryJobSchema(Schema):
+    """
+    Schema for Campaigns
+    """
+
+    class Meta:
+        """Set Order for the Campaign Response"""
+
+        ordered = True
+
+    _id = fields.String(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
+
+
+class CampaignMappingSchema(Schema):
+    """
+    Schema for Campaigns
+    """
+
+    class Meta:
+        """Set Order for the Campaign Response"""
+
+        ordered = True
+
+    campaigns = fields.List(fields.Nested(CampaignSchema))
+    delivery_jobs = fields.List(fields.Nested(DeliveryJobSchema))
+
+
 class EngagedDataExtensionSchema(Schema):
     """
     Engagement Audience Destination Data Extension Schema
