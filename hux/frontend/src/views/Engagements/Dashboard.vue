@@ -5,8 +5,8 @@
       <template #left>
         <div class="d-flex align-center bread-crumb">
           <Breadcrumb :items="breadcrumbItems" />
-          <div class="ml-3">
-            <Status :status="engagement.status"></Status>
+          <div class="ml-3" v-if="engagementList && engagementList.status">
+            <Status :status="engagementList.status"></Status>
           </div>
         </div>
       </template>
@@ -27,9 +27,7 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <div class="font-weight-semi-bold neroBlack--text mt-2">
-              {{ summaryCards[0].value }}
-            </div>
+            <span class="font-weight-semi-bold neroBlack--text"> Manual </span>
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[1].title">
@@ -50,7 +48,7 @@
           </template>
         </MetricCard>
         <MetricCard class="mr-3" :title="summaryCards[2].title">
-          <template #subtitle-extended v-if="summaryCards[1].subLabel">
+          <template #subtitle-extended v-if="summaryCards[2].subLabel">
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
@@ -63,10 +61,15 @@
                 </template>
               </tooltip>
             </span>
-            <Avatar :name="summaryCards[1].subLabel" />
+            <Avatar :name="summaryCards[2].subLabel" />
           </template>
         </MetricCard>
-        <MetricCard class="mr-3" :title="summaryCards[3].title" :maxWidth="540">
+        <MetricCard
+          v-if="engagementList && engagementList.description"
+          class="mr-3"
+          :title="summaryCards[3].title"
+          :maxWidth="540"
+        >
         </MetricCard>
       </div>
 
@@ -99,9 +102,12 @@
               Nothing to show here yet. Add an audience, assign and deliver that
               audience to a destination.
             </div>
-            <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
+            <v-col
+              class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
+              v-if="audienceMergedData.length >= 0"
+            >
               <status-list
-                v-for="item in engagement.audiences"
+                v-for="item in audienceMergedData"
                 :key="item.id"
                 :audience="item"
               />
@@ -318,6 +324,8 @@ export default {
           },
         ],
       },
+      destinationArr: [],
+      audienceMergedData: [],
       loading: false,
       loadingTab: false,
       tabOption: 0,
@@ -333,7 +341,15 @@ export default {
     ...mapGetters({
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
+      getEngagement: "engagements/engagement",
+      getAudience: "audiences/audience",
+      getDestinations: "destinations/single",
     }),
+
+    engagementList() {
+      return this.getEngagement(this.$route.params.id)
+    },
+
     breadcrumbItems() {
       const items = [
         {
@@ -343,9 +359,9 @@ export default {
           icon: "engagements",
         },
       ]
-      if (this.engagement) {
+      if (this.engagementList) {
         items.push({
-          text: this.engagement.name,
+          text: this.engagementList.name,
           disabled: false,
         })
       }
@@ -366,17 +382,17 @@ export default {
         {
           id: 1,
           title: "Delivery schedule",
-          value: this.fetchKey(this.engagement, "schedule"),
+          value: this.fetchKey(this.engagementList, "delivery_schedule"),
           subLabel: null,
         },
         {
           id: 2,
           title: "Last updated",
           value: this.getDateStamp(
-            this.fetchKey(this.engagement, "update_time")
+            this.fetchKey(this.engagementList, "update_time")
           ),
-          hoverValue: this.fetchKey(this.engagement, "update_time"),
-          subLabel: this.fetchKey(this.engagement, "updated_by"),
+          hoverValue: this.fetchKey(this.engagementList, "update_time"),
+          subLabel: this.fetchKey(this.engagementList, "updated_by"),
           width: "19%",
           minWidth: "164px",
         },
@@ -384,17 +400,16 @@ export default {
           id: 3,
           title: "Created",
           value: this.getDateStamp(
-            this.fetchKey(this.engagement, "create_time")
+            this.fetchKey(this.engagementList, "create_time")
           ),
-          hoverValue: this.fetchKey(this.engagement, "create_time"),
-          subLabel: this.fetchKey(this.engagement, "created_by"),
+          hoverValue: this.fetchKey(this.engagementList, "create_time"),
+          subLabel: this.fetchKey(this.engagementList, "created_by"),
           width: "19%",
           minWidth: "164px",
         },
         {
           id: 4,
-          title:
-            "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear.",
+          title: this.fetchKey(this.engagementList, "description"),
           value: null,
           subLabel: null,
         },
@@ -695,7 +710,47 @@ export default {
   methods: {
     ...mapActions({
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
+      getEngagementById: "engagements/get",
+      getAudienceById: "audiences/getAudienceById",
+      destinationById: "destinations/get",
     }),
+
+    async audienceList() {
+      let engData = this.getEngagement(this.$route.params.id)
+      let audienceIds = []
+      let audiancesDetailsData = []
+      let audianceDetails = []
+      //audience id pushing in one array
+      engData.audiences.forEach((data) => audienceIds.push(data.id))
+      // getting audience by id
+      for (let id of audienceIds) {
+        await this.getAudienceById(id)
+        audianceDetails.push(this.getAudience(id))
+      }
+      // extracting the audiance data and merging into object
+      audianceDetails.forEach((element) => {
+        let filteredAudience = engData.audiences.filter(
+          (d) => d.id == element.id
+        )
+        let audEngobj = Object.assign(filteredAudience[0])
+        audEngobj.name = element.name
+        audEngobj.size = element.size
+        audEngobj.last_delivered = element.last_delivered
+        audiancesDetailsData.push(audEngobj)
+      })
+      //Extracting the destination data
+      for (let i = 0; i < audiancesDetailsData.length; i++) {
+        for (let j = 0; j < audiancesDetailsData[i].destinations.length; j++) {
+          await this.destinationById(audiancesDetailsData[i].destinations[j].id)
+          let response = this.getDestinations(
+            audiancesDetailsData[i].destinations[j].id
+          )
+          audiancesDetailsData[i].destinations[j] = response
+        }
+      }
+      // pushing merged data into variable
+      this.audienceMergedData = audiancesDetailsData
+    },
 
     getDateStamp(value) {
       return value ? moment(new Date(value)).fromNow() + " by" : "-"
@@ -728,6 +783,8 @@ export default {
   async mounted() {
     this.loading = true
     this.getAudiencePerformanceById({ type: "ads", id: this.engagement.id })
+    await this.getEngagementById(this.$route.params.id)
+    this.audienceList()
     this.loading = false
   },
 }
