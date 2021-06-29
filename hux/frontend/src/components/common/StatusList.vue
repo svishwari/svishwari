@@ -1,17 +1,17 @@
 <template>
-<div >
-  <v-card class="rounded-sm status-card mr-2 box-shadow-none" v-for="data in audience" :key="data.id">
+  <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title class="d-flex justify-space-between">
       <span
         ><router-link
           :to="{
             name: 'AudienceInsight',
-            params: { id: data.id },
+            params: { id: audience.id },
           }"
           class="text-decoration-none"
           append
-          >{{ data.name }}</router-link
-        ></span>
+          >{{ audience.name }}</router-link
+        ></span
+      >
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
           <v-icon v-bind="attrs" v-on="on" class="top-action"
@@ -31,9 +31,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0">
+    <v-list dense class="pa-0" v-if="audience.destinations.length > 0">
       <v-list-item
-        v-for="item in data.destinations"
+        v-for="item in audience.destinations"
         :key="item.id"
         @click="toggleFocus()"
       >
@@ -46,7 +46,7 @@
               <template slot="hover-content">
                 <div class="d-flex align-center">
                   <Logo :type="item.type" :size="18" />
-                  <span class="ml-2">{{ item.contact_list | TitleCase }}</span>
+                  <span class="ml-2">{{ item.type | TitleCase }}</span>
                 </div>
               </template>
             </tooltip>
@@ -82,26 +82,26 @@
         <v-list-item-content class="status-col py-1" v-if="item.status">
           <status :status="item.status" collapsed showLabel />
         </v-list-item-content>
-        <v-list-item-content class="size-col py-1" v-if="data.size">
+        <v-list-item-content class="size-col py-1" v-if="item.size">
           <tooltip>
             <template slot="label-content">
-              {{ getSize(data.size) }}
+              {{ getSize(item.size) }}
             </template>
             <template slot="hover-content">
-              {{ data.size | Numeric(true, false) }}
+              {{ item.size | Numeric(true, false) }}
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
-          v-if="data.last_delivered"
+          v-if="item.lastDeliveredOn"
         >
           <tooltip>
             <template slot="label-content">
-              {{ getTimeStamp(data.last_delivered) }}
+              {{ getTimeStamp(item.lastDeliveredOn) }}
             </template>
             <template slot="hover-content">
-              {{ data.last_delivered | Date | Empty }}
+              {{ item.lastDeliveredOn | Date | Empty }}
             </template>
           </tooltip>
         </v-list-item-content>
@@ -109,7 +109,7 @@
     </v-list>
     <div
       class="py-4 px-15 empty-destinations"
-      v-if="data.destinations.length == 0"
+      v-if="audience.destinations.length == 0"
     >
       <div class="no-destinations text--gray pb-5">
         There are no destinations assigned to this audience.
@@ -121,10 +121,7 @@
         </v-icon>
       </div>
     </div>
-    
   </v-card>
-  </div>
-
 </template>
 
 <script>
@@ -133,7 +130,6 @@ import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import moment from "moment"
 import Tooltip from "./Tooltip.vue"
-
 export default {
   components: { Logo, Status, Tooltip },
   name: "StatusList",
@@ -154,17 +150,14 @@ export default {
         { id: 4, title: "Pause all delivery", active: false },
         { id: 5, title: "Remove audience", active: false },
       ],
-      audiancesDetails: []
     }
-    
   },
   props: {
     audience: {
-     title: Object,
+      title: Object,
       required: true,
-    }
+    },
   },
-
   methods: {
     getSize(value) {
       return getApproxSize(value)
@@ -182,7 +175,6 @@ export default {
   min-width: 310px;
   max-width: 310px;
   background: var(--v-white-base);
-
   border: 1px solid var(--v-zircon-base);
   box-sizing: border-box;
   border-radius: 12px !important;
