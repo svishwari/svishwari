@@ -14,11 +14,13 @@ export default {
   Date(value, format = "MM/D/YYYY [at] hh:ss A") {
     if (!value) return ""
 
-    if (format === "relative") return moment(value).fromNow()
+    let date = moment(value).utc(true)
 
-    if (format === "calendar") return moment(value).calendar()
+    if (format === "relative") return date.fromNow()
 
-    return moment(value).format(format)
+    if (format === "calendar") return date.calendar()
+
+    return date.format(format)
   },
 
   /**
