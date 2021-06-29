@@ -1132,8 +1132,10 @@ class UpdateCampaignsForAudience(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
-            database, engagement_id, audience_id, destination_id
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, engagement_id, audience_id, destination_id
+            )
         )
         if delivery_jobs is None:
             return {
@@ -1307,8 +1309,10 @@ class AudienceCampaignsGetView(SwaggerView):
                 "message": "Destination does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
-            database, engagement_id, audience_id, destination_id
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, engagement_id, audience_id, destination_id
+            )
         )
         if not delivery_jobs:
             return {
@@ -1464,8 +1468,10 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # Get existing delivery jobs
-        delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
-            database, engagement_id, audience_id, destination_id
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, engagement_id, audience_id, destination_id
+            )
         )
         if not delivery_jobs:
             return {

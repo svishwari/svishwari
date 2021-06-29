@@ -718,7 +718,12 @@ class TestEngagementRoutes(TestCase):
             },
         )
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        valid_response = {
+            "message": "Could not find any delivery jobs to map."
+        }
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, valid_response)
 
     @requests_mock.Mocker()
     @mock.patch.object(parameter_store, "get_store_value")
