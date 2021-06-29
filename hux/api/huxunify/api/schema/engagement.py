@@ -381,13 +381,11 @@ class CampaignSchema(Schema):
 
     id = fields.String(
         example="5f5f7262997acad4bac4373b",
-        required=True,
         validate=validate_object_id,
     )
     name = fields.String()
     delivery_job_id = fields.String(
         example="5f5f7262997acad4bac4373b",
-        required=True,
         validate=validate_object_id,
     )
     create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
@@ -428,7 +426,6 @@ class DeliveryJobSchema(Schema):
     _id = fields.String(
         data_key=api_c.ID,
         example="5f5f7262997acad4bac4373b",
-        required=True,
         validate=validate_object_id,
     )
     create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
