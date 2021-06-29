@@ -24,7 +24,7 @@
             :key="header.value"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'id'" class="text-body-2">
+            <div v-if="header.value == 'hux_id'" class="text-body-2">
               <router-link
                 :to="{
                   name: 'CustomerProfileDetails',
@@ -83,7 +83,7 @@ export default {
       columnDefs: [
         {
           text: "Hux ID",
-          value: "id",
+          value: "hux_id",
           width: "auto",
         },
         {
