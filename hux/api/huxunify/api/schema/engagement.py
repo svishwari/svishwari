@@ -405,7 +405,7 @@ class CampaignPutSchema(Schema):
         example=[
             {
                 api_c.NAME: "Test Campaign",
-                api_c.CAMPAIGN_ID: "campaign_id",
+                api_c.ID: "campaign_id",
                 api_c.DELIVERY_JOB_ID: "delivery_job_id",
             }
         ],

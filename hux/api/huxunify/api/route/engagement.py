@@ -1140,7 +1140,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 api_c.CAMPAIGNS: [
                     {
                         api_c.NAME: "Test Campaign",
-                        api_c.CAMPAIGN_ID: "campaign_id",
+                        api_c.ID: "campaign_id",
                         api_c.DELIVERY_JOB_ID: "delivery_job_id",
                     },
                 ]
@@ -1426,7 +1426,7 @@ class AudienceCampaignsGetView(SwaggerView):
         delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
             database, engagement_id, audience_id, destination_id
         )
-        if delivery_jobs is None:
+        if not delivery_jobs:
             return {
                 "message": "Could not find any campaigns."
             }, HTTPStatus.BAD_REQUEST
@@ -1583,7 +1583,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         delivery_jobs = delivery_platform_management.get_delivery_jobs_by_engagement_details(
             database, engagement_id, audience_id, destination_id
         )
-        if delivery_jobs is None:
+        if not delivery_jobs:
             return {
                 "message": "Could not find any delivery jobs to map."
             }, HTTPStatus.BAD_REQUEST
