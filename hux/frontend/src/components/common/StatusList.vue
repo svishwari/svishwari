@@ -1,22 +1,23 @@
 <template>
   <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title class="d-flex justify-space-between">
-      <span
-        ><router-link
+      <span>
+        <router-link
           :to="{
             name: 'AudienceInsight',
             params: { id: audience.id },
           }"
           class="text-decoration-none"
           append
-          >{{ audience.name }}</router-link
-        ></span
-      >
+        >
+          {{ audience.name }}
+        </router-link>
+      </span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on" class="top-action"
-            >mdi-dots-vertical</v-icon
-          >
+          <v-icon v-bind="attrs" v-on="on" class="top-action">
+            mdi-dots-vertical
+          </v-icon>
         </template>
         <v-list class="menu-list-wrapper">
           <v-list-item-group>
@@ -46,7 +47,7 @@
               <template slot="hover-content">
                 <div class="d-flex align-center">
                   <Logo :type="item.type" :size="18" />
-                  <span class="ml-2">{{ item.type | TitleCase }}</span>
+                  <span class="ml-2">{{ item.name }}</span>
                 </div>
               </template>
             </tooltip>
@@ -61,8 +62,9 @@
                     class="mr-2 more-action"
                     color="primary"
                     @click.prevent
-                    >mdi-dots-vertical</v-icon
                   >
+                    mdi-dots-vertical
+                  </v-icon>
                 </template>
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
@@ -79,37 +81,43 @@
             </span>
           </div>
         </v-list-item-content>
-        <v-list-item-content class="status-col py-1" v-if="item.status">
-          <status :status="item.status" collapsed showLabel />
+        <v-list-item-content
+          v-if="item.latest_delivery.status"
+          class="status-col py-1"
+        >
+          <status :status="item.latest_delivery.status" collapsed showLabel />
         </v-list-item-content>
-        <v-list-item-content class="size-col py-1" v-if="audience.size">
+        <v-list-item-content
+          v-if="item.latest_delivery.size"
+          class="size-col py-1"
+        >
           <tooltip>
             <template slot="label-content">
-              {{ getSize(audience.size) }}
+              {{ getSize(item.latest_delivery.size) }}
             </template>
             <template slot="hover-content">
-              {{ audience.size | Numeric(true, false) }}
+              {{ item.latest_delivery.size | Numeric(true, false) }}
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
+          v-if="item.latest_delivery.update_time"
           class="deliverdOn-col py-1"
-          v-if="audience.last_delivered"
         >
           <tooltip>
             <template slot="label-content">
-              {{ getTimeStamp(audience.last_delivered) }}
+              {{ getTimeStamp(item.latest_delivery.update_time) }}
             </template>
             <template slot="hover-content">
-              {{ audience.last_delivered | Date | Empty }}
+              {{ item.latest_delivery.update_time | Date | Empty }}
             </template>
           </tooltip>
         </v-list-item-content>
       </v-list-item>
     </v-list>
     <div
-      class="py-4 px-15 empty-destinations"
       v-if="audience.destinations.length == 0"
+      class="py-4 px-15 empty-destinations"
     >
       <div class="no-destinations text--gray pb-5">
         There are no destinations assigned to this audience.

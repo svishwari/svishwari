@@ -723,8 +723,10 @@ export default {
       let audienceIds = []
       let audiencesDetailsData = []
       let audienceDetails = []
-      //audience id pushing in one array
+
+      // audience id pushing in one array
       engData.audiences.forEach((data) => audienceIds.push(data.id))
+
       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
@@ -741,16 +743,31 @@ export default {
         audEngobj.last_delivered = element.last_delivered
         audiencesDetailsData.push(audEngobj)
       })
-      //Extracting the destination data
+
+      // extracting the destination data
       for (let i = 0; i < audiencesDetailsData.length; i++) {
         for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {
-          await this.destinationById(audiencesDetailsData[i].destinations[j].id)
-          let response = this.getDestinations(
-            audiencesDetailsData[i].destinations[j].id
-          )
-          audiencesDetailsData[i].destinations[j] = response
+          let destination = audiencesDetailsData[i].destinations[j]
+          await this.destinationById(destination.id)
+          let response = this.getDestinations(destination.id)
+
+          let destinationWithDelivery = {
+            id: response.id,
+            name: response.name,
+            type: response.type,
+            // TODO: remove the fallback to audience details once HUS-579 is tested
+            latest_delivery: destination.latest_delivery
+              ? destination.latest_delivery
+              : {
+                  size: audiencesDetailsData[i].size,
+                  status: audiencesDetailsData[i].status,
+                  update_time: audiencesDetailsData[i].last_delivered,
+                },
+          }
+          audiencesDetailsData[i].destinations[j] = destinationWithDelivery
         }
       }
+
       // pushing merged data into variable
       this.audienceMergedData = audiencesDetailsData
     },
