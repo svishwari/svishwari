@@ -12,7 +12,6 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
-
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -33,7 +32,6 @@ from huxunify.api.route.utils import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
@@ -388,7 +386,18 @@ class BatchUpdateDataSources(SwaggerView):
         try:
             # update the data sources.
             if update_data_sources(get_db_client(), data_source_ids, data):
-                return self.responses[HTTPStatus.OK.value], HTTPStatus.OK.value
+                updated_data_sources = [
+                    get_data_source(get_db_client(), data_source_id)
+                    for data_source_id in data_source_ids
+                ]
+                return (
+                    jsonify(
+                        CdpDataSourceSchema().dump(
+                            updated_data_sources, many=True
+                        )
+                    ),
+                    HTTPStatus.OK.value,
+                )
 
             return (
                 self.responses[HTTPStatus.BAD_REQUEST.value],
