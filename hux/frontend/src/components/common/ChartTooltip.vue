@@ -2,7 +2,10 @@
   <v-card
     tile
     v-if="showTooltip"
-    :style="{ transform: `translate(${position.x}px, ${position.y}px)`, 'border-radius': '0px !important'}"
+    :style="{
+      transform: `translate(${position.x}px, ${position.y}px)`,
+      'border-radius': '0px !important',
+    }"
     class="mx-auto card-style"
   >
     <div class="arc-hover" v-if="isArcHover">
@@ -19,10 +22,18 @@
       </div>
     </div>
     <div class="ribbon-hover" v-if="!isArcHover">
-       <Icon v-if="sourceInput.sourceIcon" :type="sourceInput.sourceIcon" :size="12" />
+      <Icon
+        v-if="sourceInput.sourceIcon"
+        :type="sourceInput.sourceIcon"
+        :size="12"
+      />
       <span class="prop-name">{{ sourceInput.sourceName }}</span>
       <span class="pipe"></span>
-       <Icon v-if="sourceInput.targetIcon" :type="sourceInput.targetIcon" :size="12" />
+      <Icon
+        v-if="sourceInput.targetIcon"
+        :type="sourceInput.targetIcon"
+        :size="12"
+      />
       <span class="prop-name">{{ sourceInput.targetName }}</span>
       <span class="text-line"
         >{{ sourceInput.currentOccurance }} Co-occurances</span
@@ -100,7 +111,6 @@ export default {
   top: -220px;
   left: -290px;
   z-index: 1;
-
 
   .ribbon-hover {
     @extend .card-padding;

@@ -116,13 +116,13 @@ export default {
       let assetsData = []
       for (let item of data_sources) {
         let tempSourceData = {}
-        tempSourceData.icon = item.name.toLowerCase(),
-        tempSourceData.description = item.name,
-          tempSourceData.value = this.$options.filters.percentageConvert(
+        ;(tempSourceData.icon = item.name.toLowerCase()),
+          (tempSourceData.description = item.name),
+          (tempSourceData.value = this.$options.filters.percentageConvert(
             item.percentage,
             true,
             true
-          )
+          ))
         assetsData.push(tempSourceData)
       }
       return assetsData
