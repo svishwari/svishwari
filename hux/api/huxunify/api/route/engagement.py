@@ -3,6 +3,8 @@
 Paths for engagement API
 """
 from http import HTTPStatus
+from itertools import groupby
+from operator import itemgetter
 from typing import Tuple
 
 from bson import ObjectId
@@ -39,6 +41,7 @@ from huxunify.api.route.utils import (
     secured,
     api_error_handler,
     get_user_name,
+    group_perf_metric,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -1010,8 +1013,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    # pylint: disable=too-many-locals
     @api_error_handler()
-    # pylint: disable=unused-argument
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves display ad performance metrics.
 
@@ -1028,78 +1031,134 @@ class EngagementMetricsDisplayAds(SwaggerView):
 
         """
 
-        display_ads = {
-            "summary": {
-                api_c.SPEND: 2000000,
-                api_c.REACH: 500000,
-                api_c.IMPRESSIONS: 456850,
-                api_c.CONVERSIONS: 521006,
-                api_c.CLICKS: 498587,
-                api_c.FREQUENCY: 500,
-                api_c.CPM: 850,
-                api_c.CTR: 0.5201,
-                api_c.CPA: 652,
-                api_c.CPC: 485,
-                api_c.ENGAGEMENT_RATE: 0.5601,
-            },
-            "audience_performance": [
-                {
-                    api_c.AUDIENCE_NAME: "audience_1",
-                    api_c.SPEND: 2000000,
-                    api_c.REACH: 500000,
-                    api_c.IMPRESSIONS: 456850,
-                    api_c.CONVERSIONS: 521006,
-                    api_c.CLICKS: 498587,
-                    api_c.FREQUENCY: 500,
-                    api_c.CPM: 850,
-                    api_c.CTR: 0.5201,
-                    api_c.CPA: 652,
-                    api_c.CPC: 485,
-                    api_c.ENGAGEMENT_RATE: 0.5601,
-                    "campaigns": [
-                        {
-                            api_c.DESTINATION_NAME: "Facebook",
-                            api_c.IS_MAPPED: True,
-                            api_c.SPEND: 2000000,
-                            api_c.REACH: 500000,
-                            api_c.IMPRESSIONS: 456850,
-                            api_c.CONVERSIONS: 521006,
-                            api_c.CLICKS: 498587,
-                            api_c.FREQUENCY: 500,
-                            api_c.CPM: 850,
-                            api_c.CTR: 0.5201,
-                            api_c.CPA: 652,
-                            api_c.CPC: 485,
-                            api_c.ENGAGEMENT_RATE: 0.5601,
-                        },
-                        {
-                            api_c.DESTINATION_NAME: "Salesforce Marketing Cloud",
-                            api_c.IS_MAPPED: True,
-                            api_c.SPEND: 2000000,
-                            api_c.REACH: 500000,
-                            api_c.IMPRESSIONS: 456850,
-                            api_c.CONVERSIONS: 521006,
-                            api_c.CLICKS: 498587,
-                            api_c.FREQUENCY: 500,
-                            api_c.CPM: 850,
-                            api_c.CTR: 0.5201,
-                            api_c.CPA: 652,
-                            api_c.CPC: 485,
-                            api_c.ENGAGEMENT_RATE: 0.5601,
-                        },
-                    ],
-                },
-            ],
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+
+        # setup the database
+        database = get_db_client()
+
+        # Get all destinations that are related to Display Ad metrics
+        destination = (
+            delivery_platform_management.get_delivery_platform_by_type(
+                database, db_c.DELIVERY_PLATFORM_FACEBOOK
+            )
+        )
+
+        if destination is None:
+            return {
+                "message": "No performance metrics found for engagement."
+            }, HTTPStatus.OK
+
+        # Get Performance metrics by engagement and destination
+        # pylint: disable=line-too-long
+        performance_metrics = delivery_platform_management.get_performance_metrics_by_engagement_details(
+            database,
+            ObjectId(engagement_id),
+            [destination.get(db_c.ID)],
+        )
+
+        if performance_metrics is None:
+            return {
+                "message": "No performance metrics found for engagement."
+            }, HTTPStatus.OK
+
+        # Get all the delivery jobs for the given engagement and destination
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, engagement_id=ObjectId(engagement_id)
+            )
+        )
+
+        if delivery_jobs is None:
+            return {
+                "message": "No performance metrics found for engagement."
+            }, HTTPStatus.OK
+
+        delivery_jobs = [
+            x
+            for x in delivery_jobs
+            if x[db_c.DELIVERY_PLATFORM_ID] == destination.get(db_c.ID)
+        ]
+
+        # Group all the performance metrics for the engagement
+        final_metric = {
+            api_c.SUMMARY: group_perf_metric(
+                [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics]
+            )
         }
+
+        # Group all the performance metrics engagement.audience. This is done by
+        #   1. Group all delivery jobs by audience id
+        #   2. Using delivery jobs of an audience, get all the performance metrics
+        #   3. Group performance metrics for the audience
+        aud_group = sorted(delivery_jobs, key=itemgetter(api_c.AUDIENCE_ID))
+        aud_metric = []
+        for audience_id, audience_group in groupby(
+            aud_group, key=itemgetter(api_c.AUDIENCE_ID)
+        ):
+            audience_jobs = list(audience_group)
+            delivery_jobs = [x[db_c.ID] for x in audience_jobs]
+            ind_aud_metric = {
+                api_c.ID: str(audience_id),
+                api_c.NAME: orchestration_management.get_audience(
+                    database, audience_id
+                )[api_c.NAME],
+            }
+            ind_aud_metric.update(
+                group_perf_metric(
+                    [
+                        x[db_c.PERFORMANCE_METRICS]
+                        for x in performance_metrics
+                        if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
+                    ]
+                )
+            )
+
+            # Group all the performance metrics engagement.audience.destination.
+            destination_group = sorted(
+                audience_jobs, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
+            )
+            aud_dest_metric = []
+            for destination_id, aud_dest_group in groupby(
+                destination_group, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
+            ):
+                audience_dest_jobs = list(aud_dest_group)
+                delivery_jobs = [x[db_c.ID] for x in audience_dest_jobs]
+                ind_aud_dest_metric = {
+                    api_c.ID: str(destination_id),
+                    api_c.NAME: delivery_platform_management.get_delivery_platform(
+                        database, destination_id
+                    )[
+                        api_c.NAME
+                    ],
+                }
+                ind_aud_dest_metric.update(
+                    group_perf_metric(
+                        [
+                            x
+                            for x in performance_metrics
+                            if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
+                        ]
+                    )
+                )
+                aud_dest_metric.append(ind_aud_dest_metric)
+
+            ind_aud_metric[api_c.DESTINATIONS] = aud_dest_metric
+            aud_metric.append(ind_aud_metric)
+
+            # TODO : Group by campaigns
+
+        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = aud_metric
+
         return (
-            AudiencePerformanceDisplayAdsSchema().dump(display_ads),
+            AudiencePerformanceDisplayAdsSchema().dump(final_metric),
             HTTPStatus.OK,
         )
 
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
     f"{api_c.AUDIENCE_PERFORMANCE}/"
     f"{api_c.EMAIL}",
     "AudiencePerformanceEmailSchema",

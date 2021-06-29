@@ -224,6 +224,7 @@ ENGAGEMENT_TAG = "engagements"
 DELIVERY_TAG = "delivery"
 DELIVER = "deliver"
 AUDIENCE_PERFORMANCE = "audience-performance"
+AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 
 SPEND = "spend"
