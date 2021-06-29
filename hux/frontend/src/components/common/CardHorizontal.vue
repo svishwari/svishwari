@@ -107,6 +107,7 @@ export default {
 .card-horizontal-disabled {
   border: 1px solid var(--v-zircon-base) !important;
   background-color: var(--v-background-base) !important;
+  @extend .box-shadow-none;
   .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
     background-color: var(--v-smoke-base) !important;
   }
