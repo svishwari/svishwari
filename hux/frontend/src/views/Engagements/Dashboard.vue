@@ -27,7 +27,7 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <div class="font-weight-semi-bold neroBlack--text my-2"> Manual </div>
+            <div class="font-weight-semi-bold neroBlack--text my-2">Manual</div>
           </template>
         </MetricCard>
         <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
