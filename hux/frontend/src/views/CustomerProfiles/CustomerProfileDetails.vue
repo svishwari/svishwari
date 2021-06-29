@@ -46,14 +46,14 @@
                     </template>
                   </Tooltip>
                 </div>
-                <div class="sample-card-text">
-                  <span v-if="!data.slider">{{data.value}}</span>
+               
+                <span v-if="!data.slider">{{data.value}}</span>
                 <hux-slider 
                 v-if="data.slider"
                 :isRangeSlider="false"
                 :value="data.value"
               ></hux-slider>
-                </div>
+ 
               </v-card-text>
             </v-card> 
          </v-col>
@@ -98,10 +98,10 @@
             <template v-slot:default>
               <tbody>
                 <tr v-for="data in customerInsightsData" :key="data.id">
-                  <td class="title-text">{{ data.title }}</td>
-                  <td class="table-text">{{ data.value }}</td>
-                    <td class="title-text">{{ data.title }}</td>
-                  <td class="table-text">{{ data.value }}</td>
+                  <td v-if="data.title == 'Email' || data.title == 'Phone' || data.title == 'Gender' || data.title == 'Age'" class="title-text">{{ data.title }}</td>
+                  <td v-if="data.title == 'Email' || data.title == 'Phone' || data.title == 'Gender' || data.title == 'Age'" class="table-text">{{ data.value }}</td>
+                  <td v-if="data.title != 'Email' || data.title != 'Phone' || data.title != 'Gender' || data.title != 'Age'" class="title-text">{{ data.title }}</td>
+                  <td v-if="data.title != 'Email' || data.title != 'Phone' || data.title != 'Gender' || data.title != 'Age'" class="table-text">{{ data.value }}</td>
                 </tr>
               </tbody>
             </template>
@@ -221,23 +221,23 @@ export default {
         },
          {
           id: 5,
-          titleNex: "Address",
-          valueNex: this.singleCustomer.address,
+          title: "Address",
+          value: this.singleCustomer.address,
         },
         {
           id: 6,
-          titleNex: "City",
-          valueNex: this.singleCustomer.city,
+          title: "City",
+          value: this.singleCustomer.city,
         },
         {
           id: 7,
-          titleNex: "State",
-          valueNex: this.singleCustomer.state,
+          title: "State",
+          value: this.singleCustomer.state,
         },
         {
           id: 8,
-          titleNex: "Zip",
-          valueNex: this.singleCustomer.zip,
+          title: "Zip",
+          value: this.singleCustomer.zip,
         },
       ]
       return insightsData.filter((item) => item.title !== null && item.titleNex !== null)
@@ -410,5 +410,9 @@ padding: 0px;
 }
 .card-height {
   height: 155px !important;
+}
+.hux-score-slider {
+  margin-bottom: -27px !important;
+  margin-top: -8px;
 }
 </style>
