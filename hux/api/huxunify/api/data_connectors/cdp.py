@@ -21,11 +21,9 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
 
     # submit the post request to get documentation
     try:
-        # TODO HUS-363 - remove verified=False once CDM SSL is good.
         response = requests.get(
             f"{config.CDP_SERVICE}/docs",
             headers=config.CDP_HEADERS,
-            verify=False,
             timeout=5,
         )
         return response.status_code, "CDM available."
@@ -48,11 +46,8 @@ def get_customer_profiles() -> dict:
     # get config
     config = get_config()
 
-    # TODO HUS-363 - remove verified=False once CDM SSL is good.
     response = requests.get(
-        f"{config.CDP_SERVICE}/customer-profiles",
-        headers=config.CDP_HEADERS,
-        verify=False,
+        f"{config.CDP_SERVICE}/customer-profiles", headers=config.CDP_HEADERS
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -79,11 +74,9 @@ def get_customer_profile(hux_id: str) -> dict:
     # get config
     config = get_config()
 
-    # TODO HUS-363 - remove verified=False once CDM SSL is good.
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
         headers=config.CDP_HEADERS,
-        verify=False,
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -109,12 +102,10 @@ def get_customers_overview(
     # get config
     config = get_config()
 
-    # TODO HUS-363 - remove verified=False once CDM SSL is good.
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         headers=config.CDP_HEADERS,
-        verify=False,
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():

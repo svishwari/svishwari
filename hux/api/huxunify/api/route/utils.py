@@ -12,6 +12,7 @@ from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.connectors.connector_exceptions import AuthenticationFailed
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -325,6 +326,19 @@ def api_error_handler() -> object:
             """
             try:
                 return in_function(*args, **kwargs)
+
+            except AuthenticationFailed as exc:
+                logging.error(
+                    "%s. Reason:[%s: %s].",
+                    constants.DESTINATION_AUTHENTICATION_FAILED,
+                    exc.__class__,
+                    exc,
+                )
+
+                return (
+                    {"message": constants.DESTINATION_AUTHENTICATION_FAILED},
+                    HTTPStatus.BAD_REQUEST,
+                )
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.

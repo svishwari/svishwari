@@ -2,6 +2,7 @@
 purpose of this file is to house all delivery related components.
  - delivery of an audience
 """
+import logging
 from http import HTTPStatus
 from bson import ObjectId
 from pymongo import MongoClient
@@ -11,6 +12,7 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_platform,
     set_delivery_job_status,
 )
+from huxunifylib.database.engagement_management import add_delivery_job
 
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 from huxunifylib.util.general.const import (
@@ -258,6 +260,21 @@ def get_destination_config(
     ds_env_dict, ds_secret_dict = map_destination_credentials_to_dict(
         delivery_platform
     )
+
+    # update the engagement latest delivery job
+    try:
+        add_delivery_job(
+            database,
+            engagement_id,
+            audience_id,
+            destination[db_const.OBJECT_ID],
+            audience_delivery_job[db_const.ID],
+        )
+    except TypeError as exc:
+        # mongomock does not support array_filters
+        # but pymongo 3.6, MongoDB, and DocumentDB do.
+        # log error, but keep process going.
+        logging.error(exc)
 
     # Setup AWS Batch env dict
     env_dict = {

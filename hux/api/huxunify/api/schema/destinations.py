@@ -26,10 +26,12 @@ class DestinationGetSchema(Schema):
         validate=validate_object_id,
     )
     type = fields.String(
-        attribute=api_c.DELIVERY_PLATFORM_TYPE, example="salesforce"
+        attribute=api_c.DELIVERY_PLATFORM_TYPE,
+        example=db_c.DELIVERY_PLATFORM_SFMC,
     )
     name = fields.String(
-        attribute=api_c.DESTINATION_NAME, example="Salesforce"
+        attribute=api_c.DESTINATION_NAME,
+        example=db_c.DELIVERY_PLATFORM_SFMC.title(),
     )
     status = fields.String(
         attribute=api_c.CONNECTION_STATUS,
@@ -48,7 +50,7 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    performance_de = fields.Dict(
+    perf_data_ext = fields.Dict(
         attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
         example={
             api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
@@ -71,8 +73,8 @@ class DestinationPutSchema(Schema):
     """
 
     authentication_details = fields.Field()
-    performance_de = fields.Dict(
-        attribute=api_c.PERFORMANCE_METRICS_DATA_EXTENSION,
+    perf_data_ext = fields.Dict(
+        attribute=api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION,
         example={
             api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
             api_c.DATA_EXTENSION_ID: "5f5f7262997acad4bac4373c",
@@ -152,7 +154,7 @@ class SFMCAuthConstants(Schema):
 
     class Meta:
         """
-        set the ordering of sfmc.py auth constants
+        set the ordering of sfmc auth constants
         """
 
         ordered = True

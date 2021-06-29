@@ -29,66 +29,70 @@
       </v-card>
     </v-col>
     <v-col col="12" v-if="rules.length > 0" class="pt-0 pr-0 pa-0">
-      <div v-for="(rule, index) in rules" :key="`rule-${index}`">
+      <div v-for="(rule, index) in rules" :key="rule.id">
         <div
           class="d-flex align-center col-12 pa-0 neroBlack--text text-caption"
         >
           <span class="mr-2">Match</span>
-          <huxSwitch v-model="rule.operand" :switchLabels="switchOptions" />
+          <HuxSwitch
+            v-model="rule.operand"
+            @input="triggerSizingForRule(rule)"
+          />
           of the following
         </div>
 
         <v-col
           col="12"
           v-for="(condition, ixcondition) in rule.conditions"
-          :key="`${index}-ruleCondition-${ixcondition}`"
+          :key="condition.id"
           class="rule-section pa-0 mb-2"
         >
           <v-col md="10" class="pa-0">
             <div class="condition-card">
               <div class="condition-container">
                 <div class="condition-items col-10 pa-0">
-                  <hux-dropdown
+                  <HuxDropdown
                     :selected="condition.attribute"
-                    :label="fetchDropdownLabel(condition, 'attribute')"
-                    @on-select="onSelect('attribute', condition, $event)"
                     :items="attributeOptions"
+                    label="Select attribute"
+                    @on-select="onSelect('attribute', condition, $event)"
                   />
-                  <hux-dropdown
-                    :label="fetchDropdownLabel(condition, 'operator')"
+                  <HuxDropdown
+                    v-if="isText(condition)"
+                    label="Select operator"
+                    :items="operatorOptions"
                     :selected="condition.operator"
                     @on-select="onSelect('operator', condition, $event)"
-                    :items="operatorOptions"
-                    v-if="isText(condition)"
                   />
                   <TextField
                     v-if="condition.operator && isText(condition)"
                     v-model="condition.text"
+                    class="item-text-field"
                     :placeholder="getPlaceHolderText(condition)"
                     required
-                    class="item-text-field"
                     @blur="triggerSizing(condition)"
                   />
-                  <hux-slider
-                    :isRangeSlider="true"
+                  <HuxSlider
+                    v-if="condition.attribute && !isText(condition)"
+                    v-model="condition.range"
                     :readOnly="false"
                     :min="condition.attribute.min"
                     :max="condition.attribute.max"
                     :step="condition.attribute.steps"
-                    v-model="condition.range"
+                    isRangeSlider
                     @onFinalValue="triggerSizing(condition)"
-                    v-if="condition.attribute && !isText(condition)"
                   />
                 </div>
                 <div class="condition-actions col-2 pa-0">
-                  <v-icon @click="addNewCondition(rule.id)" color="primary"
-                    >mdi-plus-circle</v-icon
-                  >
+                  <v-icon @click="addNewCondition(rule.id)" color="primary">
+                    mdi-plus-circle
+                  </v-icon>
                   <v-icon
                     @click="removeCondition(rule, ixcondition)"
                     color="primary"
-                    >mdi-delete-outline</v-icon
                   >
+                    mdi-delete-outline
+                  </v-icon>
                 </div>
               </div>
             </div>
@@ -98,9 +102,9 @@
               <span class="title text-caption">Size</span>
               <span class="value text-h6 pt-1 font-weight-semi-bold">
                 <v-progress-circular
+                  v-if="condition.awaitingSize"
                   :value="16"
                   indeterminate
-                  v-if="condition.awaitingSize"
                 />
                 <span v-if="!condition.awaitingSize">
                   {{ condition.size | Numeric(false, false, true) }}
@@ -156,7 +160,7 @@
 import { mapGetters, mapActions } from "vuex"
 import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import HuxSlider from "../../components/common/HuxSlider.vue"
-import huxSwitch from "../../components/common/Switch.vue"
+import HuxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
 
 const NEW_RULE_SECTION = {
@@ -172,13 +176,14 @@ const NEW_CONDITION = {
   range: [],
   awaitingSize: false,
   outputSummary: "0",
+  size: "-",
 }
 
 export default {
   name: "AttributeRules",
   components: {
     TextField,
-    huxSwitch,
+    HuxSwitch,
     HuxDropdown,
     HuxSlider,
   },
@@ -196,16 +201,6 @@ export default {
   },
   data() {
     return {
-      switchOptions: [
-        {
-          condition: true,
-          label: "ALL",
-        },
-        {
-          condition: false,
-          label: "ANY",
-        },
-      ],
       loadingOverAllSize: false,
       overAllSize: 0,
     }
@@ -277,15 +272,14 @@ export default {
       getRealtimeSize: "audiences/fetchFilterSize",
       getAudiencesRules: "audiences/fetchConstants",
     }),
-    operandLabel(rule) {
-      return rule.operand ? "AND" : "OR"
-    },
     isText(condition) {
       return condition.attribute ? condition.attribute.type === "text" : false
     },
-    async triggerSizing(condition) {
+    async triggerSizing(condition, triggerOverallSize = true) {
       condition.awaitingSize = true
-      this.getOverallSize()
+      if (triggerOverallSize) {
+        this.getOverallSize()
+      }
       let value = null
       let type = null
       if (condition.attribute.type === "range") {
@@ -312,6 +306,13 @@ export default {
       let data = await this.getRealtimeSize(filterJSON)
       condition.size = data.total_records
       condition.awaitingSize = false
+    },
+
+    async triggerSizingForRule(rule) {
+      for (let i = 0; i < rule.conditions.length; i++) {
+        let triggerOverallSize = rule.conditions.length - 1 === i ? true : false
+        this.triggerSizing(rule.conditions[i], triggerOverallSize)
+      }
     },
 
     async getOverallSize() {
@@ -397,10 +398,6 @@ export default {
       newSection.id = Math.floor(Math.random() * 1024).toString(16)
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
-    },
-    fetchDropdownLabel(condition, type) {
-      const prefix = "Select "
-      return prefix + type
     },
   },
   async mounted() {
