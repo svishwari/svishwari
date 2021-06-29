@@ -394,7 +394,7 @@ class EngagementAudienceDestinationSchema(Schema):
     latest_delivery = fields.Nested(LatestDeliverySchema)
 
 
-class EngagedAudienceSchema(Schema):
+class EngagementAudienceSchema(Schema):
     """
     Engagement Audience Schema
     """
