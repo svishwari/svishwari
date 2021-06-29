@@ -64,7 +64,12 @@
             <Avatar :name="summaryCards[2].subLabel" />
           </template>
         </MetricCard>
-        <MetricCard v-if="engagementList && engagementList.description" class="mr-3" :title="summaryCards[3].title" :maxWidth="540">
+        <MetricCard
+          v-if="engagementList && engagementList.description"
+          class="mr-3"
+          :title="summaryCards[3].title"
+          :maxWidth="540"
+        >
         </MetricCard>
       </div>
 
