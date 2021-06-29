@@ -35,10 +35,10 @@ from huxunify.api.schema.engagement import (
     AudienceEngagementDeleteSchema,
     AudiencePerformanceDisplayAdsSchema,
     AudiencePerformanceEmailSchema,
-    weighted_engagement_status,
     CampaignSchema,
     CampaignMappingSchema,
     CampaignPutSchema,
+    weighted_engagement_status,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
