@@ -25,12 +25,12 @@
     <div class="inner-wrap px-15 py-8">
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-6">
-        <MetricCard class="mr-3" :title="summaryCards[0].title">
+        <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
             <span class="font-weight-semi-bold neroBlack--text"> Manual </span>
           </template>
         </MetricCard>
-        <MetricCard class="mr-3" :title="summaryCards[1].title">
+        <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
           <template #subtitle-extended v-if="summaryCards[1].subLabel">
             <span class="mr-2">
               <tooltip>
@@ -47,7 +47,7 @@
             <Avatar :name="summaryCards[1].subLabel" />
           </template>
         </MetricCard>
-        <MetricCard class="mr-3" :title="summaryCards[2].title">
+        <MetricCard class="mr-3 shrink" :title="summaryCards[2].title">
           <template #subtitle-extended v-if="summaryCards[2].subLabel">
             <span class="mr-2">
               <tooltip>
