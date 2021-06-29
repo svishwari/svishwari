@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """
 Purpose of this file is to house all the engagement api tests
 """
@@ -22,6 +23,7 @@ from huxunifylib.database.engagement_management import (
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunify.api import constants as api_c
 from huxunify.api.config import get_config
 from huxunify.app import create_app
@@ -222,7 +224,7 @@ class TestEngagementMetricsEmail(TestCase):
         self.assertTrue(result)
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class TestEngagementRoutes(TestCase):
     """
     Tests for Engagement APIs
@@ -680,6 +682,627 @@ class TestEngagementRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    @mock.patch.object(parameter_store, "get_store_value")
+    @mock.patch.object(
+        FacebookConnector, "get_campaigns", return_value=BATCH_RESPONSE
+    )
+    def test_get_campaign_mappings_no_delivery_jobs(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test get all engagements API
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {
+            "message": "Could not find any delivery jobs to map."
+        }
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    @mock.patch.object(parameter_store, "get_store_value")
+    @mock.patch.object(
+        FacebookConnector, "get_campaigns", return_value=BATCH_RESPONSE
+    )
+    def test_get_campaigns_no_delivery_jobs(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test get all engagements API
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @requests_mock.Mocker()
+    @mock.patch.object(parameter_store, "get_store_value")
+    @mock.patch.object(
+        FacebookConnector, "get_campaigns", return_value=BATCH_RESPONSE
+    )
+    def test_get_campaigns_for_non_existent_engagement(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test delivery of a destination for a non-existent engagement
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = str(ObjectId())
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Engagement does not exist."}
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    def test_get_campaigns_for_invalid_engagement(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test delivery of a destination for a non-existent engagement
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = "random_id"
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    def test_get_campaign_mappings_for_invalid_engagement(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test delivery of a destination for a non-existent engagement
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = "random_id"
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    @mock.patch.object(parameter_store, "get_store_value")
+    @mock.patch.object(
+        FacebookConnector, "get_campaigns", return_value=BATCH_RESPONSE
+    )
+    def test_get_campaign_mappings_for_non_existent_engagement(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test delivery of a destination for a non-existent engagement
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = str(ObjectId())
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Engagement does not exist."}
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    @mock.patch.object(parameter_store, "get_store_value")
+    def test_put_campaign_mappings_for_non_existent_engagement(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test delivery of a destination for a non-existent engagement
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = str(ObjectId())
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Engagement does not exist."}
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.json, valid_response)
+
+    @requests_mock.Mocker()
+    def test_put_campaigns_invalid_audience_id(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test delivery of a destination for a non-existent engagement
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = "XYZ123"
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.put(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_get_campaigns_for_an_engagement_invalid_audience_id(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test delivery of an audience for an engagement
+        with invalid audience id
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = "XYZ123"
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_get_campaign_mappings_for_an_engagement_invalid_audience_id(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test delivery of an audience for an engagement
+        with invalid audience id
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = "XYZ123"
+        engagement_id = self.engagement_ids[0]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_get_campaigns_for_an_engagement_invalid_destination_id(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test delivery of an audience for an engagement
+        with invalid audience id
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = "XYZ123"
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_put_campaigns_invalid_destination_id(
+        self, request_mocker: Mocker, *_: None
+    ):
+        """
+        Test delivery of a destination for a non-existent engagement
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = "XYZ123"
+
+        response = self.app.put(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_get_campaign_mappings_for_an_engagement_invalid_destination_id(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test get campaigns for an engagement
+        with invalid audience id
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        audience_id = self.audiences[0][db_c.ID]
+        engagement_id = self.engagement_ids[0]
+        destination_id = "XYZ123"
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {"message": "Invalid Object ID"}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_get_campaign_for_unattached_audience(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test delivery of a destination for an unattached audience
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = self.engagement_ids[1]
+
+        # Unattached audience id
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {
+            "message": "Audience is not attached to the engagement."
+        }
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_get_campaign_mappings_for_unattached_audience(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test delivery of a destination for an unattached audience
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = self.engagement_ids[1]
+
+        # Unattached audience id
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        valid_response = {
+            "message": "Audience is not attached to the engagement."
+        }
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @requests_mock.Mocker()
+    def test_campaigns_for_unattached_destination(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test get campaigns for an unattached destination
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = self.engagement_ids[0]
+        # Unattached audience id
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaigns"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    @requests_mock.Mocker()
+    def test_campaign_mappings_for_unattached_destination(
+        self, request_mocker: Mocker
+    ):
+        """
+        Test get campaign mappings for an unattached destination
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        engagement_id = self.engagement_ids[0]
+        # Unattached audience id
+        audience_id = self.audiences[0][db_c.ID]
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            (
+                f"{BASE_URL}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+                f"{api_c.AUDIENCE}/{audience_id}/"
+                f"{api_c.DESTINATION}/{destination_id}/campaign-mappings"
+            ),
+            headers={
+                "Authorization": TEST_AUTH_TOKEN,
+                "Content-Type": "application/json",
+            },
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     @requests_mock.Mocker()
     def test_get_engagements_success(self, request_mocker: Mocker):

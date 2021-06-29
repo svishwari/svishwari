@@ -9,6 +9,9 @@ from huxunify.api.schema.engagement import (
     EngagementGetSchema,
     EngagementPostSchema,
     EngagementPutSchema,
+    CampaignSchema,
+    CampaignPutSchema,
+    CampaignMappingSchema,
 )
 from huxunify.api import constants as api_c
 
@@ -161,3 +164,103 @@ class EngagementSchemaTest(TestCase):
         }
 
         assert EngagementPostSchema().validate(doc) == {}
+
+    def test_successful_campaign_put_schema(self) -> None:
+        """Test Successful EngagementPutSchema Serialization
+
+        Returns:
+            Response: None
+
+        """
+        doc = {
+            api_c.CAMPAIGNS: [
+                {
+                    api_c.NAME: "Engagement 1",
+                    api_c.ID: "campaign_id",
+                    api_c.DELIVERY_JOB_ID: "delivery_job_id",
+                }
+            ]
+        }
+        assert CampaignPutSchema().validate(doc) == {}
+
+    def test_unsuccessful_campaign_put_schema(self) -> None:
+        """Test Successful EngagementPutSchema Serialization
+
+        Returns:
+            Response: None
+
+        """
+        doc = {
+            api_c.CAMPAIGNS: {
+                api_c.NAME: "Engagement 1",
+                api_c.ID: "campaign_id",
+                api_c.DELIVERY_JOB_ID: "delivery_job_id",
+            }
+        }
+        assert CampaignPutSchema().validate(doc) != {}
+
+    def test_successful_campaign_get_schema(self) -> None:
+        """Test Successful EngagementPutSchema Serialization
+
+        Returns:
+            Response: None
+
+        """
+        doc = {
+            api_c.NAME: "Engagement 1",
+            api_c.ID: "5f5f7262997acad4bac4373b",
+            api_c.DELIVERY_JOB_ID: "5f5f7262997acad4bac4373c",
+            db_c.CREATE_TIME: "2021-10-10",
+        }
+        assert CampaignSchema().validate(doc) == {}
+
+    def test_unsuccessful_campaign_get_schema_missing_field(self) -> None:
+        """Test Successful EngagementPutSchema Serialization
+
+        Returns:
+            Response: None
+
+        """
+        doc = {
+            api_c.NAME: "Engagement 1",
+            api_c.ID: "campaign_id",
+            db_c.CREATE_TIME: "2021-10-10",
+        }
+        assert CampaignSchema().validate(doc) != {}
+
+    def test_unsuccessful_campaign_get_schema_invalid_objectid(self) -> None:
+        """Test Successful EngagementPutSchema Serialization
+
+        Returns:
+            Response: None
+
+        """
+        doc = {
+            api_c.NAME: "Engagement 1",
+            api_c.ID: "campaign_id",
+            db_c.CREATE_TIME: "2021-10-10",
+        }
+        assert CampaignSchema().validate(doc) != {}
+
+    def test_successful_campaignmapping_get_schema(self) -> None:
+        """Test Successful EngagementPutSchema Serialization
+
+        Returns:
+            Response: None
+
+        """
+        doc = {
+            api_c.CAMPAIGNS: [
+                {
+                    api_c.NAME: "Engagement 1",
+                    api_c.ID: "5f5f7262997acad4bac4373b",
+                }
+            ],
+            "delivery_jobs": [
+                {
+                    api_c.ID: "5f5f7262997acad4bac4373c",
+                    db_c.CREATE_TIME: "2021-10-10",
+                }
+            ],
+        }
+        assert CampaignMappingSchema().validate(doc) == {}

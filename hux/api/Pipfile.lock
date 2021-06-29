@@ -319,11 +319,11 @@
         },
         "huxunifylib-connectors": {
             "hashes": [
-                "sha256:6a01f00ba5cc4f65c0058f9117c5dd1839ed085faabe290b07891b42e2d1accf",
-                "sha256:b39a86609834f568a3286b15e4af039274e3c7c9cde19bcbb9481fd0955ae035"
+                "sha256:a15046a6fcd5a2a0aa8fafe7fe81f66dfda5a9858111d7af93d29f30a07e80c5",
+                "sha256:bd64587f09d7f8e3d7b9bc35ce4492273dab6a67abc34c95fc377fba4103ee33"
             ],
             "index": "jfrog",
-            "version": "==0.1.15"
+            "version": "==0.1.16"
         },
         "huxunifylib-database": {
             "hashes": [
@@ -335,11 +335,11 @@
         },
         "huxunifylib-util": {
             "hashes": [
-                "sha256:8d064b983e11933601cb55f14de2d9095509bab2a41a88e09988f47bdfdc5c8c",
-                "sha256:93e8d03e47a04b32dd5d252ba8c5b2884a5a5e508ebd4e04a56c80c5a8e436e0"
+                "sha256:c04dd6b40393d7afcc3b3fe03063f723878156d1dfc7e2d1700528823ab0303b",
+                "sha256:c8d608353b7450b5c623ba66a72a1f5d744af94162d3cd01d29dac2bdd11523a"
             ],
             "index": "jfrog",
-            "version": "==0.1.15"
+            "version": "==0.1.16"
         },
         "identify": {
             "hashes": [
