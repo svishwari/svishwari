@@ -12,13 +12,11 @@ from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 from huxunifylib.connectors.util.client import db_client_factory
-from huxunifylib.connectors.connector_exceptions import AuthenticationFailed
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database.user_management import get_user, set_user
 from huxunifylib.database.constants import USER_DISPLAY_NAME
-import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
