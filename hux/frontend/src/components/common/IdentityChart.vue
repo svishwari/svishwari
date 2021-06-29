@@ -178,5 +178,6 @@ export default {
 <style lang="scss" scoped>
 .container {
   height: 280px;
+  padding: 0px !important;
 }
 </style>
