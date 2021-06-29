@@ -87,13 +87,7 @@ export const defineRoutes = (server) => {
   server.get("/models")
 
   // customers
-  server.get("/customers", (schema) => {
-    const maxPerRequest = 100
-    return {
-      customers: schema.customers.all().slice(0, maxPerRequest).models,
-      total_customers: 827438924,
-    }
-  })
+  server.get("/customers")
 
   server.get("/customers/:id", (schema, request) => {
     const id = request.params.id
