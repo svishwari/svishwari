@@ -721,17 +721,17 @@ export default {
     async audienceList() {
       let engData = this.getEngagement(this.$route.params.id)
       let audienceIds = []
-      let audiancesDetailsData = []
-      let audianceDetails = []
+      let audiencesDetailsData = []
+      let audienceDetails = []
       //audience id pushing in one array
       engData.audiences.forEach((data) => audienceIds.push(data.id))
       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
-        audianceDetails.push(this.getAudience(id))
+        audienceDetails.push(this.getAudience(id))
       }
-      // extracting the audiance data and merging into object
-      audianceDetails.forEach((element) => {
+      // extracting the audience data and merging into object
+      audienceDetails.forEach((element) => {
         let filteredAudience = engData.audiences.filter(
           (d) => d.id == element.id
         )
@@ -739,20 +739,20 @@ export default {
         audEngobj.name = element.name
         audEngobj.size = element.size
         audEngobj.last_delivered = element.last_delivered
-        audiancesDetailsData.push(audEngobj)
+        audiencesDetailsData.push(audEngobj)
       })
       //Extracting the destination data
-      for (let i = 0; i < audiancesDetailsData.length; i++) {
-        for (let j = 0; j < audiancesDetailsData[i].destinations.length; j++) {
-          await this.destinationById(audiancesDetailsData[i].destinations[j].id)
+      for (let i = 0; i < audiencesDetailsData.length; i++) {
+        for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {
+          await this.destinationById(audiencesDetailsData[i].destinations[j].id)
           let response = this.getDestinations(
-            audiancesDetailsData[i].destinations[j].id
+            audiencesDetailsData[i].destinations[j].id
           )
-          audiancesDetailsData[i].destinations[j] = response
+          audiencesDetailsData[i].destinations[j] = response
         }
       }
       // pushing merged data into variable
-      this.audienceMergedData = audiancesDetailsData
+      this.audienceMergedData = audiencesDetailsData
     },
 
     getDateStamp(value) {
