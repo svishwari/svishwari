@@ -448,7 +448,7 @@ class EngagementGetSchema(Schema):
 
 
 def weighted_engagement_status(engagements: list) -> list:
-    """weighted engagement status by rolling up the individual destination
+    """Returns a weighted engagement status by rolling up the individual destination
     status values
 
     Args:
