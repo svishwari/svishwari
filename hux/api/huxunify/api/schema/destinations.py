@@ -50,7 +50,7 @@ class DestinationGetSchema(Schema):
     campaigns = fields.Int(
         attribute=api_c.DESTINATION_CAMPAIGN_COUNT, example=5, read_only=True
     )
-    perf_data_ext = fields.Dict(
+    perf_data_extension = fields.Dict(
         attribute=db_c.PERFORMANCE_METRICS_DATA_EXTENSION,
         example={
             api_c.NAME: db_c.DELIVERY_PLATFORM_SFMC,
