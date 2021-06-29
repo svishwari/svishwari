@@ -123,6 +123,22 @@ const actions = {
       throw error
     }
   },
+
+  async addDataExtension(_, extension) {
+    try {
+      const payload = {
+        data_extension: extension.name,
+      }
+      const response = await api.destinations.createDataExtension(
+        extension.id,
+        payload
+      )
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 }
 
 export default {

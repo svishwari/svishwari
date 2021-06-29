@@ -17,6 +17,7 @@ from huxunifylib.database.cdp_data_source_management import (
 )
 from huxunifylib.database.user_management import get_user, set_user
 from huxunifylib.database.constants import USER_DISPLAY_NAME
+import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.config import get_config
 from huxunify.api import constants
@@ -325,6 +326,11 @@ def api_error_handler() -> object:
             """
             try:
                 return in_function(*args, **kwargs)
+
+            except de.DuplicateName:
+                return {
+                    "message": constants.DUPLICATE_NAME
+                }, HTTPStatus.BAD_REQUEST.value
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.

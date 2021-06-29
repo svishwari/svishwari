@@ -29,6 +29,21 @@ export const defineRoutes = (server) => {
     return schema.destinations.find(id).update({ is_added: true })
   })
   server.get("/destinations/:destinationId/data-extensions")
+  server.post(
+    "/destinations/:destinationId/data-extensions",
+    (schema, request) => {
+      const requestData = JSON.parse(request.requestBody)
+      const requestPayload = {
+        name: requestData.data_extension,
+      }
+      let response = schema.dataExtensions.create(requestPayload)
+      // update data extension, assign the new `id` to its `data_extension_id`
+      let updatedResponse = schema.dataExtensions
+        .find(response.attrs.id)
+        .update({ data_extension_id: response.attrs.id })
+      return updatedResponse.attrs
+    }
+  )
 
   server.post("/destinations/validate", (_, request) => {
     const code = 200
@@ -94,10 +109,12 @@ export const defineRoutes = (server) => {
       total_customers: 827438924,
     }
   })
+
   server.get("/customers/:id", (schema, request) => {
     const id = request.params.id
     return server.create("customerProfile", schema.customers.find(id).attrs)
   })
+
   server.get("/customers/overview", () => customersOverview)
 
   server.post("/customers/overview", () => customersOverview)
