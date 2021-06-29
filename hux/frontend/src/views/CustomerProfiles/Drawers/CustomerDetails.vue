@@ -44,10 +44,9 @@
             </div>
             <div v-if="header.value == 'match_confidence'">
               <hux-slider
-                class="match-confidence"
                 :isRangeSlider="false"
                 :value="item[header.value]"
-                class="slider-margin"
+                class="match-confidence slider-margin"
               ></hux-slider>
             </div>
           </td>
