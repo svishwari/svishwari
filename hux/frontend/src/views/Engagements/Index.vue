@@ -336,6 +336,7 @@ export default {
 
 <style lang="scss" scoped>
 .engagements-wrap {
+  background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="audiences-wrap grey lighten-5">
+  <div class="audiences-wrap">
     <PageHeader :headerHeightChanges="'py-3'">
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />

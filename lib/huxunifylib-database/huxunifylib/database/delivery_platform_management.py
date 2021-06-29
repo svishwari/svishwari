@@ -1088,29 +1088,26 @@ def get_delivery_job(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_delivery_jobs_by_engagement_details(
+def get_delivery_jobs_using_metadata(
     database: DatabaseClient,
-    engagement_id: ObjectId,
-    audience_id: ObjectId,
-    delivery_platform_id: ObjectId,
+    engagement_id: ObjectId = None,
+    audience_id: ObjectId = None,
+    delivery_platform_id: ObjectId = None,
 ) -> Union[list, None]:
     """A function to get delivery jobs based on engagement details.
-
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): Engagement id.
         audience_id (ObjectId): Audience id.
         delivery_platform_id (ObjectId): Delivery platform id.
-
     Returns:
         Union[list, None]: List of matching delivery jobs, if any.
-
     """
 
     if (
         engagement_id is None
-        or audience_id is None
-        or delivery_platform_id is None
+        and audience_id is None
+        and delivery_platform_id is None
     ):
         raise de.InvalidID()
 
@@ -1118,13 +1115,14 @@ def get_delivery_jobs_by_engagement_details(
     collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        # set mongo_filter based on engagement/audience/delivery platform id
-        mongo_filter = {
-            c.ENGAGEMENT_ID: engagement_id,
-            c.AUDIENCE_ID: audience_id,
-            c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-            c.DELETED: False,
-        }
+
+        mongo_filter = {c.DELETED: False}
+        if audience_id:
+            mongo_filter[c.AUDIENCE_ID] = audience_id
+        if engagement_id:
+            mongo_filter[c.ENGAGEMENT_ID] = engagement_id
+        if delivery_platform_id:
+            mongo_filter[c.DELIVERY_PLATFORM_ID] = delivery_platform_id
 
         return list(collection.find(mongo_filter, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
@@ -2001,3 +1999,223 @@ def get_all_performance_metrics(
         logging.error(exc)
 
     return metric_docs
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_campaign_activity(
+    database: DatabaseClient,
+    delivery_platform_id: ObjectId,
+    delivery_platform_name: str,
+    delivery_job_id: ObjectId,
+    generic_campaign_id: dict,
+    event_details: dict,
+) -> Union[dict, None]:
+    """Store campaign activity data.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_platform_id (ObjectId): delivery platform ID
+        delivery_platform_name (str): delivery platform name
+        delivery_job_id (ObjectId): The delivery job ID of audience.
+        generic_campaign_id: (dict): generic campaign ID
+        event_dict (dict): A dict containing campaign activity data.
+
+    Returns:
+        Union[dict, None]: Campaign Activity document.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+
+    # Check validity of delivery job ID
+    if not get_delivery_job(database, delivery_job_id):
+        raise de.InvalidID(delivery_job_id)
+
+    doc = {
+        c.METRICS_DELIVERY_PLATFORM_ID: delivery_platform_id,
+        c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
+        c.DELIVERY_JOB_ID: delivery_job_id,
+        c.CREATE_TIME: datetime.datetime.utcnow(),
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
+        c.EVENT_DETAILS: event_details,
+        # By default not transferred for feedback to CDM yet
+        c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
+    }
+
+    try:
+        event_doc_id = collection.insert_one(doc).inserted_id
+        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        if event_doc_id:
+            return collection.find_one({c.ID: event_doc_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_campaign_activity(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    pending_transfer_for_feedback: bool = False,
+) -> Union[list, None]:
+    """Retrieve campaign activity data.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+        pending_transfer_for_feedback (bool): If True, retrieve only
+            those campaign activties that have not been transferred for feedback.
+            Defaults to False.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
+
+    Returns:
+        Union[list, None]: list of campaign activity documents.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+
+    # Check validity of delivery job ID
+    if not get_delivery_job(database, delivery_job_id):
+        raise de.InvalidID(delivery_job_id)
+
+    event_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
+
+    if pending_transfer_for_feedback:
+        event_queries.append(
+            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+        )
+
+    try:
+        return list(collection.find({"$and": event_queries}))
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_campaign_activities(
+    database: DatabaseClient,
+    campaign_activity_docs: list,
+) -> bool:
+    """Store many campaign activities data.
+
+    Args:
+        database (DatabaseClient): A database client.
+        campaign_activity_docs (list): A list containing campaign activity documents.
+
+    Returns:
+        bool: Success flag.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+    # Insert the batch into the Mongo db
+    try:
+        collection.insert_many(campaign_activity_docs, ordered=True)
+        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        return True
+    except pymongo.errors.BulkWriteError as exc:
+        for err in exc.details["writeErrors"]:
+            if err["code"] == c.DUPLICATE_ERR_CODE:
+                logging.warning(
+                    "Ignoring %s due to duplicate unique field!",
+                    str(err["op"]),
+                )
+                continue
+
+            logging.error(exc)
+            return False
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+        return False
+
+    return True
+
+
+def get_all_feedback_campaign_activities(
+    database: DatabaseClient,
+) -> Union[list, None]:
+    """Retrieve all campaign activities with feedback false.
+
+    Args:
+        database (DatabaseClient): database client.
+
+    Returns:
+        Union[list, None]: list of campaign activities docs.
+    """
+
+    campaign_activities_docs = None
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+    try:
+        campaign_activities_docs = list(
+            collection.find(
+                {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+            )
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return campaign_activities_docs
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def _set_campaign_activity_feedback_status(
+    database: DatabaseClient,
+    campaign_activity_id: ObjectId,
+    campaign_activity_feedback_status: str,
+) -> Union[dict, None]:
+    """Set campaign activity feedback status.
+
+    Args:
+        database (DatabaseClient): database client.
+        campaign_activity_id (ObjectId): campaign activity ID.
+        campaign_activity_feedback_status (str): campaign_activity feedback status.
+
+    Returns:
+        Union[dict, None]: campaign activitiy document.
+    """
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+
+    update_doc = {}
+    if campaign_activity_feedback_status == c.STATUS_TRANSFERRED_FOR_FEEDBACK:
+        update_doc.update({c.STATUS_TRANSFERRED_FOR_FEEDBACK: True})
+
+    if update_doc:
+        try:
+            doc = collection.find_one_and_update(
+                {c.ID: campaign_activity_id},
+                {"$set": update_doc},
+                upsert=False,
+                new=True,
+            )
+            return doc
+        except pymongo.errors.OperationFailure as exc:
+            logging.error(exc)
+
+    return None
+
+
+set_campaign_activity_transferred_for_feedback = partial(
+    _set_campaign_activity_feedback_status,
+    campaign_activity_feedback_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
+)
