@@ -117,6 +117,8 @@
               outlined
               background-color="white"
               append-icon="mdi-chevron-down"
+              :rules="existingExtensionRules"
+              required
             />
 
             <v-card elevation="1">
@@ -223,11 +225,13 @@ export default {
           // eslint-disable-next-line no-useless-escape
           "You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / : ? | , _ &",
       ],
+      existingExtensionRules: [(v) => !!v || "Select any one Data extension"],
     }
   },
   methods: {
     ...mapActions({
       getDataExtensions: "destinations/dataExtensions",
+      addDataExtension: "destinations/addDataExtension",
     }),
 
     resetForm() {
@@ -242,14 +246,17 @@ export default {
       this.resetForm()
     },
 
-    addDestination() {
-      //TODO: this won't work incase there are two data extensions with same name.
-      // 1. need to handle with id
-      // 2. need to make an api call to create an data extension
+    async addDestination() {
       let destinationWithDataExtension = JSON.parse(
         JSON.stringify(this.destination)
       )
-      destinationWithDataExtension.data_extension_id = this.extension
+      const requestBody = {
+        id: destinationWithDataExtension.id,
+        name: this.extension,
+      }
+      let response = await this.addDataExtension(requestBody)
+      destinationWithDataExtension.data_extension_id =
+        response.data_extension_id
       this.value.push(destinationWithDataExtension)
       this.onBack()
     },
