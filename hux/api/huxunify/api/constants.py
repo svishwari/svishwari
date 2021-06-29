@@ -74,6 +74,7 @@ STATUS = "status"
 ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
+UNKNOWN = "unknown"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
@@ -86,6 +87,23 @@ STATUS_PENDING = "Pending"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
+
+# used for weighting the rollup status for engagement deliveries
+# 0 being the highest.
+STATUS_WEIGHTING_DICT = {
+    STATUS_ACTIVE: 11,
+    STATUS_NOT_DELIVERED: 10,
+    STATUS_DELIVERED: 9,
+    STATUS_DELIVERING: 8,
+    STATUS_DELIVERY_PAUSED: 7,
+    STATUS_ACTIVE: 6,
+    STATUS_INACTIVE: 5,
+    STATUS_DRAFT: 4,
+    STATUS_PENDING: 3,
+    STATUS_PAUSED: 2,
+    STATUS_STOPPED: 1,
+    STATUS_ERROR: 0,
+}
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -209,6 +227,7 @@ DESTINATION_TYPE = "type"
 DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 DESTINATION_NAME = "name"
 DESTINATION_CAMPAIGN_COUNT = "campaign_count"
+LATEST_DELIVERY = "latest_delivery"
 CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."

@@ -15,7 +15,8 @@ from marshmallow import ValidationError
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
-    get_engagements,
+    get_engagements_summary,
+    group_engagements,
     set_engagement,
     delete_engagement,
     update_engagement,
@@ -33,6 +34,7 @@ from huxunify.api.schema.engagement import (
     AudienceEngagementDeleteSchema,
     AudiencePerformanceDisplayAdsSchema,
     AudiencePerformanceEmailSchema,
+    weighted_engagement_status,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -94,12 +96,17 @@ class EngagementSearch(SwaggerView):
 
         """
 
+        # get the engagement summary
+        engagements = get_engagements_summary(get_db_client())
+
+        # group the nested destinations for engagements
+        engagements = group_engagements(engagements)
+
+        # weight the engagement status
+        engagements = weighted_engagement_status(engagements)
+
         return (
-            jsonify(
-                EngagementGetSchema().dump(
-                    get_engagements(get_db_client()), many=True
-                )
-            ),
+            jsonify(EngagementGetSchema().dump(engagements, many=True)),
             HTTPStatus.OK.value,
         )
 
