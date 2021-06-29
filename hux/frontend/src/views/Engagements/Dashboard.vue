@@ -27,7 +27,7 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <span class="font-weight-semi-bold neroBlack--text"> Manual </span>
+            <div class="font-weight-semi-bold neroBlack--text my-2"> Manual </div>
           </template>
         </MetricCard>
         <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
@@ -66,10 +66,13 @@
         </MetricCard>
         <MetricCard
           v-if="engagementList && engagementList.description"
-          class="mr-3"
-          :title="summaryCards[3].title"
-          :maxWidth="540"
+          class="mr-3 grow"
+          title=""
+          :maxWidth="800"
         >
+          <template #subtitle-extended>
+            {{ summaryCards[3].title }}
+          </template>
         </MetricCard>
       </div>
 
