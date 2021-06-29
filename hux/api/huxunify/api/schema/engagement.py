@@ -363,7 +363,7 @@ class CampaignMappingSchema(Schema):
     delivery_jobs = fields.List(fields.Nested(DeliveryJobSchema))
 
 
-class EngagedDataExtensionSchema(Schema):
+class EngagementDataExtensionSchema(Schema):
     """
     Engagement Audience Destination Data Extension Schema
     """
