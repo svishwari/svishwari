@@ -382,7 +382,7 @@ class LatestDeliverySchema(Schema):
     size = fields.Int(default=1000)
 
 
-class EngagedAudienceDestinationSchema(Schema):
+class EngagementAudienceDestinationSchema(Schema):
     """
     Engagement Audience Destination Schema
     """
