@@ -82,26 +82,26 @@
         <v-list-item-content class="status-col py-1" v-if="item.status">
           <status :status="item.status" collapsed showLabel />
         </v-list-item-content>
-        <v-list-item-content class="size-col py-1" v-if="item.size">
+        <v-list-item-content class="size-col py-1" v-if="audience.size">
           <tooltip>
             <template slot="label-content">
-              {{ getSize(item.size) }}
+              {{ getSize(audience.size) }}
             </template>
             <template slot="hover-content">
-              {{ item.size | Numeric(true, false) }}
+              {{ audience.size | Numeric(true, false) }}
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
-          v-if="item.lastDeliveredOn"
+          v-if="audience.last_delivered"
         >
           <tooltip>
             <template slot="label-content">
-              {{ getTimeStamp(item.lastDeliveredOn) }}
+              {{ getTimeStamp(audience.last_delivered) }}
             </template>
             <template slot="hover-content">
-              {{ item.lastDeliveredOn | Date | Empty }}
+              {{ audience.last_delivered | Date | Empty }}
             </template>
           </tooltip>
         </v-list-item-content>

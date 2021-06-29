@@ -98,7 +98,7 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["Active", "Success", "Delivered"],
+        Active: ["Active", "Success", "Delivered", "Succeeded"],
         Inactive: ["Caution", "Not Delivered"],
         Activating: ["Activating"],
         Draft: ["Draft"],

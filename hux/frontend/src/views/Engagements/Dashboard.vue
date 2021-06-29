@@ -318,7 +318,7 @@ export default {
           },
         ],
       },
-      audianceDetails: [],
+      destinationArr:[],
       audienceMergedData:[],
       loading: false,
       loadingTab: false,
@@ -337,6 +337,7 @@ export default {
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
       getEngagement: "engagements/engagement",
       getAudience: "audiences/audience",
+      getDestinations: "destinations/single"
     }),
 
     engagementList() {
@@ -352,9 +353,9 @@ export default {
           icon: "engagements",
         },
       ]
-      if (this.engagement) {
+      if (this.engagementList) {
         items.push({
-          text: this.engagement.name,
+          text: this.engagementList.name,
           disabled: false,
         })
       }
@@ -705,34 +706,43 @@ export default {
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
       getAudienceById: "audiences/getAudienceById",
+      destinationById: "destinations/get",
     }),
 
     async audienceList() {
       let engData = this.getEngagement(this.$route.params.id)
       let audienceIds = []
-      let mergedAudiArr = []
       let audiancesDetailsData =[]
+      let audianceDetails= []
+      //audience id pushing in one array 
       engData.audiences.forEach(data =>
         audienceIds.push(data.id)
       )
+       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
-        this.audianceDetails.push(this.getAudience(id))
+        audianceDetails.push(this.getAudience(id))
       }
-     this.audianceDetails.forEach(element =>
+      // extracting the audiance data and merging into object
+     audianceDetails.forEach(element =>
       {
-        let audArr = []
-        let audEngArry = []
-        let filteredAudience = engData.audiences.filter(d => d.id == element.id)[0]
-        audEngArry.push(filteredAudience)
-        audArr.push(element)
-        let audEngobj = Object.assign(audEngArry[0]);
-        let audObj =  Object.assign(audArr[0]);
-        mergedAudiArr = Object.assign(audEngobj,audObj)
-        audiancesDetailsData.push(mergedAudiArr);
+        let filteredAudience = engData.audiences.filter(d => d.id == element.id)
+        let audEngobj = Object.assign(filteredAudience[0]);
+        audEngobj.name = element.name
+        audEngobj.size = element.size
+        audEngobj.last_delivered = element.last_delivered
+        audiancesDetailsData.push(audEngobj);
       });
+      //Extracting the destination data
+      for (let i = 0; i< audiancesDetailsData.length; i++) {
+        for(let j = 0; j < audiancesDetailsData[i].destinations.length; j++) {
+         await this.destinationById(audiancesDetailsData[i].destinations[j].id);
+           let response = this.getDestinations(audiancesDetailsData[i].destinations[j].id)
+          audiancesDetailsData[i].destinations[j] = response
+        }
+      }
+      // pushing merged data into variable
         this.audienceMergedData = audiancesDetailsData;
-        console.log('this.audienceMergedData', this.audienceMergedData)
     },
     
     getDateStamp(value) {
