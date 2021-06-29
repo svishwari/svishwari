@@ -24,6 +24,8 @@ from huxunify.api.schema.destinations import (
     DestinationValidationSchema,
     DestinationDataExtPostSchema,
     DestinationDataExtGetSchema,
+    SFMCAuthCredsSchema,
+    FacebookAuthCredsSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import (
@@ -309,12 +311,30 @@ class DestinationPutView(SwaggerView):
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            performance_de = body.get(
-                api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
-            )
-            if not performance_de:
+            try:
+                SFMCAuthCredsSchema().load(auth_details)
+                performance_de = body.get(
+                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
+                )
+                if not performance_de:
+                    return (
+                        {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                        HTTPStatus.BAD_REQUEST,
+                    )
+            except ValidationError:
                 return (
-                    {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
+                    {"message": api_c.INVALID_AUTH_DETAILS},
+                    HTTPStatus.BAD_REQUEST,
+                )
+        elif (
+            destination[db_c.DELIVERY_PLATFORM_TYPE]
+            == db_c.DELIVERY_PLATFORM_FACEBOOK
+        ):
+            try:
+                FacebookAuthCredsSchema().load(auth_details)
+            except ValidationError:
+                return (
+                    {"message": api_c.INVALID_AUTH_DETAILS},
                     HTTPStatus.BAD_REQUEST,
                 )
 

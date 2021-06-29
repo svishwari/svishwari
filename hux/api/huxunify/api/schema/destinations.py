@@ -147,6 +147,29 @@ class FacebookAuthConstants(Schema):
     )
 
 
+class FacebookAuthCredsSchema(Schema):
+    """
+    Facebook Auth Credentials schema class
+    """
+
+    facebook_ad_account_id = fields.String(
+        required=True,
+        example="MkU3Ojgwm",
+    )
+    facebook_app_id = fields.String(
+        required=True,
+        example="717bdOQqZO99",
+    )
+    facebook_app_secret = fields.String(
+        required=True,
+        example="2951925002021888",
+    )
+    facebook_access_token = fields.String(
+        required=True,
+        example="111333777",
+    )
+
+
 class SFMCAuthConstants(Schema):
     """
     SFMC Auth constants schema class
@@ -218,6 +241,37 @@ class SFMCAuthConstants(Schema):
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
+    )
+
+
+class SFMCAuthCredsSchema(Schema):
+    """
+    SFMC Auth Credentials schema class
+    """
+
+    sfmc_account_id = fields.String(
+        required=True,
+        example="7329755",
+    )
+    sfmc_auth_base_uri = fields.String(
+        required=True,
+        example="https://gsafkhljwhp6798.auth.marketingcloudapis.com/",
+    )
+    sfmc_client_id = fields.String(
+        required=True,
+        example="e488010196d046f5a8b1b80ba6100899",
+    )
+    sfmc_client_secret = fields.String(
+        required=True,
+        example="4d2c582ab302437c80721c0ec46a30f2",
+    )
+    sfmc_rest_base_uri = fields.String(
+        required=True,
+        example="https://535cf647a34-7950b5a4.rest.marketingcloudapis.com/",
+    )
+    sfmc_soap_base_uri = fields.String(
+        required=True,
+        example="https://55c5487a374-723ab5a6.soap.marketingcloudapis.com/",
     )
 
 

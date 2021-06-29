@@ -195,6 +195,7 @@ DUPLICATE_NAME = "Name already exists."
 PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
     "Performance metrics data extension not assigned."
 )
+INVALID_AUTH_DETAILS = "Invalid authentication details."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
