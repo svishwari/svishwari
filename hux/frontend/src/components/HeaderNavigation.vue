@@ -6,8 +6,7 @@
           class="mx-2 box-shadow-25"
           color="white"
           fab
-          :max-height="30"
-          :max-width="30"
+          x-small
         >
           <v-icon color="secondary"> mdi-plus </v-icon>
         </v-btn>
@@ -54,7 +53,6 @@ export default {
 <style lang="scss" scoped>
 .v-menu__content {
   top: 64px !important;
-  left: 1279px !important;
   .v-list {
     .v-list-item {
       min-height: 40px !important;
