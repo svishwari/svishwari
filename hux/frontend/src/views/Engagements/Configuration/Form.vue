@@ -51,7 +51,11 @@
           </h5>
         </template>
 
-        <v-radio-group v-model="value.delivery_schedule" row class="ma-0 radio-div">
+        <v-radio-group
+          v-model="value.delivery_schedule"
+          row
+          class="ma-0 radio-div"
+        >
           <v-radio :value="0" selected class="btn-radio">
             <template #label>
               <v-icon small color="primary" class="mr-1">

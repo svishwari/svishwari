@@ -17,9 +17,7 @@
       </template>
 
       <template slot="right">
-        <v-icon medium color="lightGrey refresh"
-          >mdi-refresh</v-icon
-        >
+        <v-icon medium color="lightGrey refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
@@ -212,7 +210,9 @@ export default {
     }),
 
     audienceList() {
-      return this.rowData.sort((a, b) => a.name === b.name ? 0 : a.name < b.name ? -1 : 1)
+      return this.rowData.sort((a, b) =>
+        a.name === b.name ? 0 : a.name < b.name ? -1 : 1
+      )
     },
     isDataExists() {
       if (this.rowData) return this.rowData.length > 0
