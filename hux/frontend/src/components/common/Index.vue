@@ -445,6 +445,13 @@
     <identity-chart></identity-chart>
 
     <v-divider class="mt-10" />
+    
+
+    <v-subheader>Hux Map Chart with Tooltip</v-subheader>
+    <map-chart></map-chart>
+
+    <v-divider class="mt-10" />
+
 
     <v-subheader>Logos</v-subheader>
     <Logo type="bluecore"></Logo>
@@ -501,6 +508,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import HuxChordChart from "@/components/common/HuxChordChart"
 import IdentityChart from "@/components/common/IdentityChart"
+import MapChart from "@/components/common/MapChart/MapChart"
 import { generateColor } from "@/utils"
 
 export default {
@@ -530,6 +538,7 @@ export default {
     HuxSlider,
     HuxChordChart,
     IdentityChart,
+    MapChart
   },
   methods: {
     onupdatelabelText(newValue) {
