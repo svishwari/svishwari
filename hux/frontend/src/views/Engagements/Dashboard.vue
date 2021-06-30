@@ -780,7 +780,7 @@ export default {
       }
 
       // pushing merged data into variable
-      this.audienceMergedData = audiancesDetailsData
+      this.audienceMergedData = audiencesDetailsData
       this.loadingAudiences = false
     },
 
