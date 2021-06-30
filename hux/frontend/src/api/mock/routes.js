@@ -87,6 +87,18 @@ export const defineRoutes = (server) => {
     const body = { message: "Successfully created delivery jobs" }
     return new Response(code, headers, body)
   })
+
+  server.post("/engagements/:id/audience/:audienceId/deliver", () => {
+    return { message: "Successfully created delivery jobs" }
+  })
+
+  server.post(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
+    () => {
+      return { message: "Successfully created delivery jobs" }
+    }
+  )
+
   // Audience Performances
   server.get(
     "/engagements/:id/audience-performance/email",
@@ -148,6 +160,10 @@ export const defineRoutes = (server) => {
       })
     }
     return schema.audiences.create(requestData)
+  })
+
+  server.post("/audiences/:id/deliver", () => {
+    return { message: "Successfully created delivery jobs" }
   })
 
   server.get("/audiences/rules", () => attributeRules)
