@@ -60,9 +60,7 @@ class CustomerProfileSchema(Schema):
     churn_rate = Float(required=True)
     last_click = DateTime(required=True)
     last_purchase = DateTime(required=True)
-    last_email_open = DateTime(
-        required=True,
-    )
+    last_email_open = DateTime(required=True)
     email = Str(required=True)
     phone = Str(required=True)
     # redacted age to a string.
