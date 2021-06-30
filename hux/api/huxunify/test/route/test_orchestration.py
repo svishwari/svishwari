@@ -45,7 +45,7 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
-        self.user_info_call = f"{t_c.TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
+        # self.user_info_call = f"{t_c.TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
         self.audience_api_endpoint = "/api/v1{}".format(
             api_c.AUDIENCE_ENDPOINT
         )
@@ -53,7 +53,7 @@ class OrchestrationRouteTest(TestCase):
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=VALID_USER_RESPONSE)
         request_mocker.start()
 
         self.app = create_app().test_client()
@@ -67,10 +67,10 @@ class OrchestrationRouteTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        get_db_client_mock = mock.patch(
-            "huxunify.api.route.orchestration.get_db_client"
+        mock.patch(
+            "huxunify.api.route.orchestration.get_db_client",
+            return_value=self.database,
         ).start()
-        get_db_client_mock.return_value = self.database
         self.addCleanup(mock.patch.stopall)
 
         # mock get_db_client() for the userinfo utils.
@@ -209,8 +209,7 @@ class OrchestrationRouteTest(TestCase):
         )
 
         response = self.test_client.get(
-            f"{self.audience_api_endpoint}/rules",
-            headers=t_c.STANDARD_HEADERS
+            f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -248,7 +247,7 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers=t_c.STANDARD_HEADERS
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(
@@ -293,7 +292,7 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers=t_c.STANDARD_HEADERS
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(
@@ -346,7 +345,7 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers=t_c.STANDARD_HEADERS
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(
@@ -417,7 +416,7 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers=t_c.STANDARD_HEADERS
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
@@ -515,7 +514,7 @@ class OrchestrationRouteTest(TestCase):
                     }
                 ],
                 api_c.DESTINATIONS: [],
-            }
+            },
         )
         print("response: " + str(response.json))
 

@@ -145,6 +145,9 @@ class DestinationGetView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve the destination.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "Destination not found.",
+        },
     }
     responses.update(AUTH401_RESPONSE)
 
@@ -172,6 +175,12 @@ class DestinationGetView(SwaggerView):
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)
         )
+
+        if not destination:
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         return DestinationGetSchema().dump(destination), HTTPStatus.OK
 
 
@@ -264,6 +273,7 @@ class DestinationPutView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=unexpected-keyword-arg
     @marshal_with(DestinationPutSchema)
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
@@ -281,6 +291,9 @@ class DestinationPutView(SwaggerView):
             Tuple[dict, int]: Destination doc, HTTP status.
 
         """
+
+        if not ObjectId.is_valid(destination_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # load into the schema object
         try:
@@ -564,11 +577,17 @@ class DestinationDataExtView(SwaggerView):
         """
 
         if destination_id is None or not ObjectId.is_valid(destination_id):
-            return HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)
         )
+
+        if not destination:
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
@@ -665,6 +684,7 @@ class DestinationDataExtPostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=too-many-return-statements
     def post(self, destination_id: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
 
@@ -681,11 +701,17 @@ class DestinationDataExtPostView(SwaggerView):
         """
 
         if destination_id is None or not ObjectId.is_valid(destination_id):
-            return HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)
         )
+
+        if not destination:
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
@@ -711,6 +737,7 @@ class DestinationDataExtPostView(SwaggerView):
                         destination[api_c.AUTHENTICATION_DETAILS]
                     )
                 )
+
                 data_extension_id = api_c.DATA_EXTENSIONS
                 # TODO : Assign data extension id once sfmc method is updated
                 connector.create_data_extension(body.get(api_c.DATA_EXTENSION))

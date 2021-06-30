@@ -1,0 +1,456 @@
+"""
+Purpose of this file is to house all the destination api tests
+"""
+
+from unittest import TestCase, mock
+from unittest.mock import MagicMock
+from http import HTTPStatus
+
+import requests_mock
+import mongomock
+from bson import ObjectId
+
+from huxunify.api.data_connectors.aws import parameter_store
+from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.database import constants as db_c
+from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database import (
+    delivery_platform_management as destination_management,
+)
+import huxunify.test.constants as t_c
+from huxunify.api import constants as api_c
+from huxunify.app import create_app
+
+
+class TestDestinationRoutes(TestCase):
+    """Test Destination Routes"""
+
+    def setUp(self) -> None:
+        """
+        Setup resources before each test
+
+        Args:
+
+        Returns:
+        """
+
+        # mock request for introspect call
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        request_mocker.start()
+
+        self.app = create_app().test_client()
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock get db client from destinations
+        mock.patch(
+            "huxunify.api.route.destination.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock get_db_client() for the userinfo utils.
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock parameter store store secret
+        mock.patch.object(parameter_store, "store_secret").start()
+
+        # mock parameter store get store value
+        mock.patch.object(
+            parameter_store, "get_store_value", return_value="secret"
+        ).start()
+
+        destinations = [
+            {
+                api_c.DELIVERY_PLATFORM_TYPE: "google-ads",
+                api_c.NAME: "Google Ads",
+                api_c.AUTHENTICATION_DETAILS: {},
+            },
+            {
+                api_c.DELIVERY_PLATFORM_TYPE: "amazon-advertising",
+                api_c.NAME: "Amazon Advertising",
+                api_c.AUTHENTICATION_DETAILS: {},
+            },
+            {
+                api_c.DELIVERY_PLATFORM_TYPE: "salesforce",
+                api_c.NAME: "Salesforce Marketing Cloud",
+                api_c.AUTHENTICATION_DETAILS: {
+                    api_c.SFMC_ACCOUNT_ID: "id12345",
+                    api_c.SFMC_AUTH_BASE_URI: "base_uri",
+                    api_c.SFMC_CLIENT_ID: "id12345",
+                    api_c.SFMC_CLIENT_SECRET: "client_secret",
+                    api_c.SFMC_SOAP_BASE_URI: "soap_base_uri",
+                    api_c.SFMC_REST_BASE_URI: "rest_base_uri",
+                },
+            },
+        ]
+
+        for destination in destinations:
+            destination_management.set_delivery_platform(self.database, **destination)
+
+        self.destinations = destination_management.get_all_delivery_platforms(
+            self.database
+        )
+
+        self.addCleanup(mock.patch.stopall)
+
+    def test_get_all_destinations(self):
+        """
+        Test get all destinations
+
+        Returns:
+
+        """
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(len(self.destinations), len(response.json))
+
+    def test_get_destination_with_valid_id(self):
+        """
+        Test get destination with valid id
+
+        Returns:
+
+        """
+        destination_id = self.destinations[0][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            self.destinations[0][db_c.NAME], response.json[db_c.NAME]
+        )
+
+    def test_get_destination_where_destination_not_found(self):
+        """
+        Test get destination with a valid id that is not in the db
+
+        Returns:
+
+        """
+        destination_id = ObjectId()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_get_destination_invalid_object_id(self):
+        """
+        Test get destination with an invalid ObjectID
+
+        Returns:
+
+        """
+        destination_id = "asdfgh2345"
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_update_destination(self):
+        """
+        Test update destination
+
+        Returns:
+
+        """
+        destination_id = self.destinations[0][db_c.ID]
+
+        new_auth_details = {
+            "authentication_details": {
+                "access_token": "MkU3Ojgwm",
+                "app_secret": "717bdOQqZO99",
+                "app_id": "2951925002021888",
+                "ad_account_id": "111333777",
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIsNotNone(response.json["authentication_details"])
+
+    def test_update_destination_where_destination_not_found(self):
+        """
+        Test update destination where no destination is found
+
+        Returns:
+
+        """
+        destination_id = ObjectId()
+
+        new_auth_details = {
+            "authentication_details": {
+                "access_token": "MkU3Ojgwm",
+                "app_secret": "717bdOQqZO99",
+                "app_id": "2951925002021888",
+                "ad_account_id": "111333777",
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_update_destination_invalid_object_id(self):
+        """
+        Test update destination where invalid id given
+
+        Returns:
+
+        """
+        destination_id = "asdfg1234"
+
+        new_auth_details = {
+            "authentication_details": {
+                "access_token": "MkU3Ojgwm",
+                "app_secret": "717bdOQqZO99",
+                "app_id": "2951925002021888",
+                "ad_account_id": "111333777",
+            }
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}",
+            json=new_auth_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_retrieve_destinations_constants(self):
+        """
+        Test retrieve all destination constants
+
+        Returns:
+
+        """
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/constants",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn("facebook", response.json)
+        self.assertIn("salesforce", response.json)
+
+    def test_validate_facebook_credentials(self):
+        """
+        Test validation of facebook credentials
+
+        Returns:
+
+        """
+
+        mock_facebook_connector = mock.patch.object(
+            FacebookConnector, "check_connection", return_value=True
+        )
+        mock_facebook_connector.start()
+
+        validation_details = {
+            "type": "facebook",
+            "authentication_details": {
+                "facebook_access_token": "MkU3Ojgwm",
+                "facebook_app_secret": "717bdOQqZO99",
+                "facebook_app_id": "2951925002021888",
+                "facebook_ad_account_id": "111333777",
+            },
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/validate",
+            json=validation_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        mock_facebook_connector.stop()
+        validation_success = {
+            "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
+        }
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(validation_success, response.json)
+
+    @mock.patch("huxunify.api.route.destination.SFMCConnector")
+    def test_create_data_extension(self, mock_sfmc: MagicMock):
+        """
+        Test create data extension
+
+        Args:
+            mock_sfmc (MagicMock): magic mock of SFMCConnector
+
+        Returns:
+
+        """
+
+        mock_sfmc_instance = mock_sfmc.return_value
+        mock_sfmc_instance.create_data_extension.return_value = {}
+
+        destination_id = self.destinations[2][db_c.ID]
+
+        data_extension = {"data_extension": "salesforce_data_ext_name"}
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}/data-extensions",
+            json=data_extension,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_create_data_extension_invalid_id(self):
+        """
+        Test create data extension where id is invalid
+
+        Args:
+
+        Returns:
+
+        """
+
+        destination_id = "asdfg123456"
+
+        data_extension = {"data_extension": "salesforce_data_ext_name"}
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}/data-extensions",
+            json=data_extension,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.INVALID_ID}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_create_data_extension_destination_not_found(self):
+        """
+        Test create data extension where id is invalid
+
+        Args:
+
+        Returns:
+
+        """
+
+        destination_id = ObjectId()
+
+        data_extension = {"data_extension": "salesforce_data_ext_name"}
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}/data-extensions",
+            json=data_extension,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.DESTINATION_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    @mock.patch("huxunify.api.route.destination.SFMCConnector")
+    def test_retrieve_destination_data_extensions(self, mock_sfmc: MagicMock):
+        """
+        Test retrieve destination data extensions
+
+        Args:
+            mock_sfmc (MagicMock): magic mock of SFMCConnector
+
+        Returns:
+
+        """
+
+        return_value = {
+            api_c.NAME: "data_extension_name",
+            api_c.DATA_EXTENSION_ID: "id12345",
+        }
+        mock_sfmc_instance = mock_sfmc.return_value
+        mock_sfmc_instance.get_list_of_data_extensions.return_value = (
+            return_value
+        )
+
+        destination_id = self.destinations[2][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}/data-extensions",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_retrieve_destination_data_extensions_invalid_id(self):
+        """
+        Test create data extension where id is invalid
+
+        Args:
+
+        Returns:
+
+        """
+
+        destination_id = "asdfg123456"
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}/data-extensions",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.INVALID_ID}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_retrieve_destination_data_extensions_destination_not_found(self):
+        """
+        Test create data extension where id is invalid
+
+        Args:
+
+        Returns:
+
+        """
+
+        destination_id = ObjectId()
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}/data-extensions",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.DESTINATION_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)

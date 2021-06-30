@@ -54,33 +54,29 @@ class TestDeliveryRoutes(TestCase):
         ).connect()
 
         # mock get db client from engagements
-        get_db_client_mock_engagements = mock.patch(
-            "huxunify.api.route.engagement.get_db_client"
+        mock.patch(
+            "huxunify.api.route.engagement.get_db_client",
+            return_value=self.database,
         ).start()
-        get_db_client_mock_engagements.return_value = self.database
 
         # mock get db client from orchestration
-        get_db_client_mock_orchestration = mock.patch(
-            "huxunify.api.route.orchestration.get_db_client"
+        mock.patch(
+            "huxunify.api.route.orchestration.get_db_client",
+            return_value=self.database,
         ).start()
-        get_db_client_mock_orchestration.return_value = self.database
 
         # mock parameter store
-        parameter_store_mock = mock.patch.object(
-            parameter_store, "get_store_value"
-        ).start()
+        mock.patch.object(parameter_store, "get_store_value").start()
 
         # mock AWS batch connector register job function
-        aws_batch_connector_register_mock = mock.patch.object(
-            AWSBatchConnector, "register_job"
+        mock.patch.object(
+            AWSBatchConnector, "register_job", return_value=t_c.BATCH_RESPONSE
         ).start()
-        aws_batch_connector_register_mock.return_value = t_c.BATCH_RESPONSE
 
         # mock AWS batch connector submit job function
-        aws_batch_connector_submit_mock = mock.patch.object(
-            AWSBatchConnector, "submit_job"
+        mock.patch.object(
+            AWSBatchConnector, "submit_job", return_value=t_c.BATCH_RESPONSE
         ).start()
-        aws_batch_connector_submit_mock.return_value = t_c.BATCH_RESPONSE
 
         self.addCleanup(mock.patch.stopall)
 

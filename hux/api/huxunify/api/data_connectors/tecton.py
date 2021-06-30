@@ -93,11 +93,13 @@ def get_models() -> List[dict]:
     config = get_config()
 
     # submit the post request to get the models
+    print("GOT HERE")
     response = requests.post(
         config.TECTON_FEATURE_SERVICE,
         dumps(constants.MODEL_LIST_PAYLOAD),
         headers=config.TECTON_API_HEADERS,
     )
+    print(response.json())
     return map_model_response(response)
 
 

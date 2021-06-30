@@ -371,6 +371,11 @@ CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
 
+# Notifications
+NOTIFICATIONS_TAG = "notifications"
+NOTIFICATIONS_DESCRIPTION = "Notifications API"
+NOTIFICATIONS_ENDPOINT = "/notifications"
+
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
@@ -403,6 +408,7 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
 
 # Error messages
 AUDIENCE_NOT_FOUND = "Audience not found."
+DESTINATION_NOT_FOUND = "Destination not found."
 
 MOCK_CUSTOMER_PROFILE_RESPONSE = {
     "id": "1531-2039-22",

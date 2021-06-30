@@ -6,6 +6,7 @@ from http import HTTPStatus
 from marshmallow import Schema, ValidationError
 
 from huxunify.api.config import get_config
+import huxunify.api.constants as api_c
 
 BASE_ENDPOINT = "/api/v1"
 TEST_AUTH_TOKEN = "Bearer 12345678"
@@ -30,11 +31,17 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+VALID_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: "8548bfh8d",
+    api_c.EMAIL: "davesmith@fake.com",
+    api_c.NAME: "dave smith",
+}
 BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 TEST_CONFIG = get_config("TEST")
 INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
     TEST_CONFIG.OKTA_ISSUER, TEST_CONFIG.OKTA_CLIENT_ID
 )
+USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
 
 
 def validate_schema(
