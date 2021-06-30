@@ -47,10 +47,10 @@
         <v-list-item-content class="icon-col py-1">
           <div class="d-flex align-center">
             <tooltip>
-              <template slot="label-content">
+              <template #label-content>
                 <Logo :type="item.type" :size="18" />
               </template>
-              <template slot="hover-content">
+              <template #hover-content>
                 <div class="d-flex align-center">
                   <Logo :type="item.type" :size="18" />
                   <span class="ml-2">{{ item.name }}</span>
@@ -113,10 +113,10 @@
           class="size-col py-1"
         >
           <tooltip>
-            <template slot="label-content">
+            <template #label-content>
               {{ getSize(item.latest_delivery.size) }}
             </template>
-            <template slot="hover-content">
+            <template #hover-content>
               {{ item.latest_delivery.size | Numeric(true, false) }}
             </template>
           </tooltip>
@@ -126,10 +126,10 @@
           class="deliverdOn-col py-1"
         >
           <tooltip>
-            <template slot="label-content">
-              {{ getTimeStamp(item.latest_delivery.update_time) }}
+            <template #label-content>
+              {{ item.latest_delivery.update_time | Date("relative") | Empty) }}
             </template>
-            <template slot="hover-content">
+            <template #hover-content>
               {{ item.latest_delivery.update_time | Date | Empty }}
             </template>
           </tooltip>
@@ -165,7 +165,6 @@ import { mapActions } from "vuex"
 import Logo from "./Logo.vue"
 import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
-import moment from "moment"
 import Tooltip from "./Tooltip.vue"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 
@@ -215,10 +214,6 @@ export default {
 
     getSize(value) {
       return getApproxSize(value)
-    },
-
-    getTimeStamp(value) {
-      return moment(new Date(value)).fromNow()
     },
 
     toggleFocus() {},

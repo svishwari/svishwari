@@ -173,7 +173,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import moment from "moment"
+
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status"
@@ -266,13 +266,13 @@ export default {
           title: "Last updated",
           // TODO: need to remove mapping to created by
           value:
-            this.getDateStamp(
+            this.formattedDate(
               this.fetchKey(this.engagementList, "update_time")
             ) !== "-"
-              ? this.getDateStamp(
+              ? this.formattedDate(
                   this.fetchKey(this.engagementList, "update_time")
                 )
-              : this.getDateStamp(
+              : this.formattedDate(
                   this.fetchKey(this.engagementList, "create_time")
                 ),
           hoverValue:
@@ -289,7 +289,7 @@ export default {
         {
           id: 3,
           title: "Created",
-          value: this.getDateStamp(
+          value: this.formattedDate(
             this.fetchKey(this.engagementList, "create_time")
           ),
           hoverValue: this.fetchKey(this.engagementList, "create_time"),
@@ -661,8 +661,11 @@ export default {
       this.loadingAudiences = false
     },
 
-    getDateStamp(value) {
-      return value ? moment(new Date(value)).fromNow() + " by" : "-"
+    formattedDate(value) {
+      if (value) {
+        return this.$options.filters.Date(value, "relative") + " by"
+      }
+      return "-"
     },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
