@@ -127,10 +127,12 @@
         >
           <tooltip>
             <template #label-content>
-              {{ item.latest_delivery.update_time | Date("relative") | Empty) }}
+              {{
+                item.latest_delivery.update_time | Date("relative") | Empty("-")
+              }}
             </template>
             <template #hover-content>
-              {{ item.latest_delivery.update_time | Date | Empty }}
+              {{ item.latest_delivery.update_time | Date | Empty("-") }}
             </template>
           </tooltip>
         </v-list-item-content>
