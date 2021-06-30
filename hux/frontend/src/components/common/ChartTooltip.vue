@@ -18,7 +18,7 @@
       >
         <Logo v-if="item.icon" :type="item.icon" :size="14" />
         <span class="subprop-name">{{ item.description }}</span>
-        <span class="value">{{ item.value }}</span>
+        <span class="value ml-1">{{ item.value }}</span>
       </div>
     </div>
     <div class="ribbon-hover" v-if="!isArcHover">
@@ -140,13 +140,17 @@ export default {
       @extend .global-heading;
     }
     .sub-props {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 30px;
       .subprop-name {
         @extend .global-text-line;
+        flex: 1 0 50%;
         padding-left: 5px;
       }
       .value {
         @extend .global-text-line;
-        float: right;
       }
     }
   }
