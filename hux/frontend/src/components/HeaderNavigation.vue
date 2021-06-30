@@ -54,6 +54,7 @@ export default {
 <style lang="scss" scoped>
 .v-menu__content {
   top: 64px !important;
+  left: 1279px !important;
   .v-list {
     .v-list-item {
       min-height: 40px !important;
