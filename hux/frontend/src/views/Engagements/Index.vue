@@ -97,10 +97,12 @@
               {{ manualDeliverySchedule }}
             </div>
             <div v-if="header.value == 'update_time'">
-              <time-stamp :value="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <time-stamp :value="item['create_time']" />
             </div>
             <div v-if="header.value == 'updated_by'">
-              <avatar :name="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <avatar :name="item['created_by']" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
@@ -165,12 +167,12 @@
                 </div>
                 <div v-if="header.value == 'update_time'">
                   <div class="ml-16 pl-4" style="width: max-content">
-                    <time-stamp :value="item[header.value]" />
+                    <time-stamp :value="item['create_time']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'updated_by'">
                   <div class="ml-16 pl-7">
-                    <Avatar :name="item[header.value]" />
+                    <Avatar :name="item['created_by']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
