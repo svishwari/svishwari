@@ -167,15 +167,20 @@ class IndividualEngagementSearch(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        eng = get_engagement(
-            get_db_client(), engagement_id=ObjectId(engagement_id)
-        )
-
-        if not eng:
+        # get the engagement summary
+        engagements = get_engagements_summary(get_db_client())
+        if not engagements:
             return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
 
+        # group the nested destinations for engagements
+        # take the first and only one
+        engagement = group_engagements(engagements)[0]
+
+        # weight the engagement status
+        engagement = weighted_engagement_status(engagement)
+
         return (
-            EngagementGetSchema().dump(eng),
+            EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
         )
 
