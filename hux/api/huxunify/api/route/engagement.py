@@ -175,11 +175,10 @@ class IndividualEngagementSearch(SwaggerView):
             return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
 
         # group the nested destinations for engagements
-        # take the first and only one
-        engagement = group_engagements(engagements)[0]
+        engagements = group_engagements(engagements)
 
-        # weight the engagement status
-        engagement = weighted_engagement_status(engagement)
+        # weight the engagement status, take the first and only one
+        engagement = weighted_engagement_status(engagements)[0]
 
         return (
             EngagementGetSchema().dump(engagement),
