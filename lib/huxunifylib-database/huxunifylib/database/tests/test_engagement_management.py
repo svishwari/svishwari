@@ -12,7 +12,7 @@ from huxunifylib.database import data_management as dm
 from huxunifylib.database import delivery_platform_management as dpm
 
 
-# pylint: disable=R0902
+# pylint: disable=R0904
 class TestEngagementManagement(unittest.TestCase):
     """Test engagement management module."""
 
