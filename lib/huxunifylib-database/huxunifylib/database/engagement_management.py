@@ -97,11 +97,14 @@ def set_engagement(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
+def get_engagements_summary(
+    database: DatabaseClient, engagement_ids: list = None
+) -> Union[list, None]:
     """A function to get all engagements summary with all nested lookups
 
     Args:
         database (DatabaseClient): A database client.
+        engagement_ids (list): Optional engagement id filter list.
 
     Returns:
         Union[list, None]: List of all engagement documents.
@@ -112,9 +115,13 @@ def get_engagements_summary(database: DatabaseClient) -> Union[list, None]:
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
+    match_statement = {db_c.DELETED: False}
+    if engagement_ids:
+        match_statement[db_c.ID] = {"$in": engagement_ids}
+
     pipeline = [
         # filter out the deleted engagements
-        {"$match": {db_c.DELETED: False}},
+        {"$match": match_statement},
         # unwind the audiences object so we can do the nested joins.
         {
             "$unwind": {
