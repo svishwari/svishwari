@@ -119,7 +119,6 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -129,7 +128,6 @@ import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
-
 export default {
   name: "audiences",
   components: {
@@ -160,7 +158,6 @@ export default {
           icon: "audiences",
         },
       ],
-
       columnDefs: [
         {
           text: "Audience name",
@@ -208,7 +205,6 @@ export default {
     ...mapGetters({
       rowData: "audiences/list",
     }),
-
     audienceList() {
       let audienceValue = this.rowData
       return audienceValue.sort((a, b) =>
@@ -269,5 +265,8 @@ export default {
   .icon-border {
     cursor: default !important;
   }
+}
+.radio-div {
+  margin-top: -11px !important;
 }
 </style>

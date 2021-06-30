@@ -155,7 +155,7 @@ export default {
     .card-wrap {
       .v-card {
         margin-right: 15px;
-        box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05) !important;
+        @extend .box-shadow-5;
         &.v-card--disabled {
           background: var(--v-background-base);
         }
