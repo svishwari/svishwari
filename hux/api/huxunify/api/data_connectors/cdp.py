@@ -1,8 +1,8 @@
 """
 Purpose of this file is for holding methods to query and pull data from CDP.
 """
+import datetime
 from typing import Tuple, Optional
-from datetime import datetime
 
 import requests
 from dateutil.parser import parse, ParserError
@@ -12,7 +12,7 @@ from huxunify.api import constants as api_c
 
 
 # fields to convert to datetime from the responses
-DEFAULT_DATETIME = datetime(1, 1, 1, 1, 00)
+DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [
     "since",
     "last_click",
@@ -140,10 +140,10 @@ def clean_cdm_fields(body: dict) -> dict:
     for date_field in DATETIME_FIELDS:
         if date_field not in body:
             continue
-        if not body[date_field]:
+        if isinstance(body[date_field], datetime.datetime):
             continue
         try:
             body[date_field] = parse(body[date_field])
-        except ParserError:
+        except (ParserError, TypeError):
             body[date_field] = DEFAULT_DATETIME
     return body
