@@ -2,7 +2,13 @@
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
       <span v-on="on" class="d-flex cursor-pointer mr-6">
-        <v-btn class="mx-2 box-shadow-25" fab small color="white">
+        <v-btn
+          class="mx-2 box-shadow-25"
+          color="white"
+          fab
+          :max-height="30"
+          :max-width="30"
+        >
           <v-icon color="secondary"> mdi-plus </v-icon>
         </v-btn>
       </span>
