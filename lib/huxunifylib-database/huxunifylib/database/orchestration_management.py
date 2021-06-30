@@ -63,12 +63,16 @@ def create_audience(
         c.UPDATE_TIME: curr_time,
         c.CREATED_BY: user_name,
         c.UPDATED_BY: user_name,
+        c.FAVORITE: False,
+        c.DELETED: False,
     }
 
     try:
         audience_id = collection.insert_one(audience_doc).inserted_id
         if audience_id is not None:
-            return collection.find_one({c.ID: audience_id})
+            return collection.find_one(
+                {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
+            )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -103,12 +107,16 @@ def get_audience(
         if include_users:
             docs = list(
                 collection.aggregate(
-                    [{"$match": {c.ID: audience_id}}] + USER_LOOKUP_PIPELINE
+                    [{"$match": {c.ID: audience_id, c.DELETED: False}}]
+                    + [{c.DELETED: 0}]
+                    + USER_LOOKUP_PIPELINE
                 )
             )
             return docs[0] if docs else None
 
-        return collection.find_one({c.ID: audience_id})
+        return collection.find_one(
+            {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -143,9 +151,15 @@ def get_all_audiences(
     try:
         if include_users:
             # lookup to users
-            return list(collection.aggregate(USER_LOOKUP_PIPELINE))
+            return list(collection.aggregate(
+                [{"$match": {c.DELETED: False}}]
+                + [{c.DELETED: 0}]
+                + USER_LOOKUP_PIPELINE
+            ))
 
-        return list(collection.find())
+        return list(collection.find(
+            {c.DELETED: False}, {c.DELETED: 0}
+        ))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -182,11 +196,15 @@ def update_audience(
     collection = am_db[c.AUDIENCES_COLLECTION]
 
     try:
-        audience_doc = collection.find_one({c.ID: audience_id})
+        audience_doc = collection.find_one(
+            {c.ID: audience_id, c.DELETED: False}, {c.DELETED: 0}
+        )
         if not audience_doc:
             raise de.InvalidID()
         if name is not None:
-            duplicate_name_doc = collection.find_one({c.AUDIENCE_NAME: name})
+            duplicate_name_doc = collection.find_one(
+                {c.AUDIENCE_NAME: name, c.DELETED: False}, {c.DELETED: 0}
+            )
             if (
                 duplicate_name_doc is not None
                 and duplicate_name_doc[c.ID] != audience_id
