@@ -1,30 +1,29 @@
 <template>
-  <v-menu v-model="menu" offset-y close-on-click>
-    <template #activator="{ on }">
-      <span v-on="on" class="d-flex cursor-pointer mr-6">
-        <v-btn class="mx-2" fab small color="white">
-          <v-icon color="secondary"> mdi-plus </v-icon>
-        </v-btn>
-      </span>
-    </template>
-    <v-list>
-      <v-list-item>
-        <v-list-item-title class="add"> Add </v-list-item-title>
-      </v-list-item>
-      <v-list-item v-for="link in dropdownLinks" :key="link">
-        <v-list-item-title class="text-h6 neroBlack--text">
-          <router-link
-            :to="{
-              name: link.path,
-            }"
-            class="text-decoration-none"
-            append
-            >{{ link.name }}
-          </router-link>
-        </v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+  <span class="header-menu">
+    <v-menu :min-width="200" left offset-y close-on-click>
+      <template #activator="{ on }">
+        <span v-on="on" class="d-flex cursor-pointer mr-6">
+          <v-btn class="mx-2 box-shadow-25" fab small color="white">
+            <v-icon color="secondary"> mdi-plus </v-icon>
+          </v-btn>
+        </span>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-list-item-title class="font-weight-bold"> Add </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click="routerRedirection(link.path)"
+          v-for="link in dropdownLinks"
+          :key="link.name"
+        >
+          <v-list-item-title class="text-h6 neroBlack--text">
+            {{ link.name }}
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </span>
 </template>
 
 <script>
@@ -40,15 +39,25 @@ export default {
       ],
     }
   },
+  methods: {
+    routerRedirection(path) {
+      this.$router.push({ name: path, query: { select: true } })
+    },
+  },
 }
 </script>
 
 <style lang="scss">
-.add {
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 19px;
-  margin-bottom: 10px;
+.header-menu {
+  margin-right: -32px !important;
+  .v-menu__content {
+    top: 64px;
+  }
+}
+
+.v-list {
+  .v-list-item {
+    min-height: 40px !important;
+  }
 }
 </style>
