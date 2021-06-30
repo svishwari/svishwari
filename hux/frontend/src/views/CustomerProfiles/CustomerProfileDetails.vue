@@ -22,7 +22,9 @@
             class="
               text-center
               rounded-lg
-              card-info-wrapper box-shadow-5 card-height
+              card-info-wrapper
+              box-shadow-5
+              card-height
             "
           >
             <v-card-title
