@@ -51,7 +51,7 @@
           </h5>
         </template>
 
-        <v-radio-group v-model="value.delivery_schedule" row class="ma-0">
+        <v-radio-group v-model="value.delivery_schedule" row class="ma-0 radio-div">
           <v-radio :value="0" selected class="btn-radio">
             <template #label>
               <v-icon small color="primary" class="mr-1">
@@ -386,5 +386,8 @@ export default {
   &.v-radio--is-disabled {
     border-color: var(--v-lightGrey-base);
   }
+}
+.radio-div {
+  margin-top: -11px !important;
 }
 </style>

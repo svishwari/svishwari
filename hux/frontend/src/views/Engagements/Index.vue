@@ -5,7 +5,7 @@
         <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
@@ -452,5 +452,8 @@ export default {
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
+}
+.icon-border {
+  cursor: default !important;
 }
 </style>

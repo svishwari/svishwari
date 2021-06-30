@@ -12,12 +12,12 @@
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
       <template slot="left">
-        <v-icon medium :disabled="true">mdi-filter-variant</v-icon>
-        <v-icon medium :disabled="true" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
+        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template slot="right">
-        <v-icon medium :disabled="true" color="primary refresh"
+        <v-icon medium color="lightGrey refresh"
           >mdi-refresh</v-icon
         >
         <router-link
@@ -42,7 +42,7 @@
     <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
-        :dataItems="rowData"
+        :dataItems="audienceList"
         v-if="isDataExists"
       >
         <template #row-item="{ item }">
@@ -208,6 +208,10 @@ export default {
     ...mapGetters({
       rowData: "audiences/list",
     }),
+
+    audienceList() {
+      return this.rowData.sort((a, b) => a.name === b.name ? 0 : a.name < b.name ? -1 : 1)
+    },
     isDataExists() {
       if (this.rowData) return this.rowData.length > 0
       return false
@@ -251,7 +255,7 @@ export default {
       tr {
         td {
           font-size: 14px;
-          height: 60px;
+          height: 63px;
         }
       }
     }
