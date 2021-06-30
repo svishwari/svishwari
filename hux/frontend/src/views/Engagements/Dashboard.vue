@@ -22,7 +22,7 @@
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
-    <div class="inner-wrap px-15 py-8">
+    <div v-if="!loading" class="inner-wrap px-15 py-8">
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
@@ -93,14 +93,20 @@
                 href="#"
                 class="d-flex align-center primary--text text-decoration-none"
               >
-                <Icon type="audiences" :size="16" class="mr-1" />Add an audience
+                <Icon type="audiences" :size="16" class="mr-1" />
+                Add an audience
               </a>
             </div>
           </v-card-title>
-          <v-card-text class="pl-6 pr-6 pb-6">
+          <v-progress-linear
+            v-if="loadingAudiences"
+            :active="loadingAudiences"
+            :indeterminate="loadingAudiences"
+          />
+          <v-card-text v-else class="pl-6 pr-6 pb-6">
             <div
               class="empty-state pa-5 text--gray"
-              v-if="engagement.audiences.length == 0"
+              v-if="audienceMergedData.length == 0"
             >
               Nothing to show here yet. Add an audience, assign and deliver that
               audience to a destination.
@@ -193,145 +199,11 @@ export default {
   },
   data() {
     return {
-      // TODO Move all the mock data into Faker
-      engagement: {
-        id: Math.floor(Math.random() * 10) + 1,
-        name: "Engagement name",
-        status: "Active",
-        schedule: "Manual",
-        update_time: "2020-07-10T11:45:01.984Z",
-        updated_by: "Rahul Goel",
-        create_time: "2020-07-10T11:45:01.984Z",
-        created_by: "Mohit Bansal",
-        description:
-          "This is the filled out description for this particular engagement. If they didn’t add any then this box will not appear. ",
-        audiences: [
-          {
-            audienceId: 1,
-            name: "Audience with no destination",
-            destinations: [],
-          },
-          {
-            audienceId: 1,
-            name: "Audience - Main",
-            destinations: [
-              {
-                id: 1,
-                type: "mailchimp",
-                status: "Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-              {
-                id: 2,
-                type: "facebook",
-                status: "Not Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-              {
-                id: 3,
-                type: "insightIQ",
-                status: "Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-              {
-                id: 4,
-                type: "adobe-experience",
-                status: "Delivering",
-                size: null,
-                lastDeliveredOn: null,
-              },
-            ],
-          },
-          {
-            audienceId: 1,
-            name: "Audience 1",
-            destinations: [
-              {
-                id: 1,
-                type: "mailchimp",
-                status: "Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-
-              {
-                id: 2,
-                type: "facebook",
-                status: "Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-              {
-                id: 3,
-                type: "insightIQ",
-                status: "Delivering",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-            ],
-          },
-          {
-            audienceId: 1,
-            name: "Audience 2",
-            destinations: [
-              {
-                id: 1,
-                type: "mailchimp",
-                status: "Delivering",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-              {
-                id: 2,
-                type: "facebook",
-                status: "Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-            ],
-          },
-          {
-            audienceId: 1,
-            name: "Audience 3",
-            destinations: [
-              {
-                id: 1,
-                type: "mailchimp",
-                status: "Delivering",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-              {
-                id: 2,
-                type: "facebook",
-                status: "Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-            ],
-          },
-          {
-            audienceId: 1,
-            name: "Audience - test",
-            destinations: [
-              {
-                id: 2,
-                type: "facebook",
-                status: "Delivered",
-                size: 356046921,
-                lastDeliveredOn: "2021-01-13T22:04:33.187Z",
-              },
-            ],
-          },
-        ],
-      },
       destinationArr: [],
       audienceMergedData: [],
       loading: false,
       loadingTab: false,
+      loadingAudiences: false,
       tabOption: 0,
       Tooltips: [
         { acronym: "CPM", description: "Cost per Thousand Impressions" },
@@ -392,11 +264,25 @@ export default {
         {
           id: 2,
           title: "Last updated",
-          value: this.getDateStamp(
-            this.fetchKey(this.engagementList, "update_time")
-          ),
-          hoverValue: this.fetchKey(this.engagementList, "update_time"),
-          subLabel: this.fetchKey(this.engagementList, "updated_by"),
+          // TODO: need to remove mapping to created by
+          value:
+            this.getDateStamp(
+              this.fetchKey(this.engagementList, "update_time")
+            ) !== "-"
+              ? this.getDateStamp(
+                  this.fetchKey(this.engagementList, "update_time")
+                )
+              : this.getDateStamp(
+                  this.fetchKey(this.engagementList, "create_time")
+                ),
+          hoverValue:
+            this.fetchKey(this.engagementList, "update_time") !== "-"
+              ? this.fetchKey(this.engagementList, "update_time")
+              : this.fetchKey(this.engagementList, "create_time"),
+          subLabel:
+            this.fetchKey(this.engagementList, "updated_by") !== "-"
+              ? this.fetchKey(this.engagementList, "updated_by")
+              : this.fetchKey(this.engagementList, "created_by"),
           width: "19%",
           minWidth: "164px",
         },
@@ -720,6 +606,7 @@ export default {
     }),
 
     async audienceList() {
+      this.loadingAudiences = true
       let engData = this.getEngagement(this.$route.params.id)
       let audienceIds = []
       let audiencesDetailsData = []
@@ -771,6 +658,7 @@ export default {
 
       // pushing merged data into variable
       this.audienceMergedData = audiencesDetailsData
+      this.loadingAudiences = false
     },
 
     getDateStamp(value) {
