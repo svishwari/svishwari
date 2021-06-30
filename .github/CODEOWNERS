@@ -2,11 +2,11 @@
 hux/frontend/ @Abdullah-Azad @henrikr @mohitbans @rahgoel @sach9993 @svishwari
 
 # api processes
-hux/api/ @seahawks8 @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb
+hux/api/ @seahawks8 @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @henrikr @soumya-pb @risheek-deloitte
 
 # CI/CD processes
 *codefresh.yml @pfleetwood1 @JyotiSingh7 @seahawks8 @bernieblab @henrikr
 
 # huxunifylib-database
-scripts/ @jazzblue @seahawks8 @anoop0m @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour
-lib/ @jazzblue @seahawks8 @anoop0m @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour
+scripts/ @jazzblue @seahawks8 @anoop0m @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte
+lib/ @jazzblue @seahawks8 @anoop0m @bernieblab @jimcmahon @panch-mukesh @rajkcon1 @soumya-pb @MoazMansour @risheek-deloitte
