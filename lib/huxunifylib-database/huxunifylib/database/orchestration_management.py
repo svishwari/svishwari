@@ -151,15 +151,15 @@ def get_all_audiences(
     try:
         if include_users:
             # lookup to users
-            return list(collection.aggregate(
-                [{"$match": {c.DELETED: False}}]
-                + [{c.DELETED: 0}]
-                + USER_LOOKUP_PIPELINE
-            ))
+            return list(
+                collection.aggregate(
+                    [{"$match": {c.DELETED: False}}]
+                    + [{c.DELETED: 0}]
+                    + USER_LOOKUP_PIPELINE
+                )
+            )
 
-        return list(collection.find(
-            {c.DELETED: False}, {c.DELETED: 0}
-        ))
+        return list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
