@@ -3,9 +3,7 @@
 Schemas for the Customers API
 """
 
-from datetime import datetime
 from flask_marshmallow import Schema
-from marshmallow import pre_dump
 from marshmallow.fields import (
     Str,
     Float,
@@ -62,7 +60,9 @@ class CustomerProfileSchema(Schema):
     churn_rate = Float(required=True)
     last_click = DateTime(required=True)
     last_purchase = DateTime(required=True)
-    last_email_open = DateTime(required=True)
+    last_email_open = DateTime(
+        required=True,
+    )
     email = Str(required=True)
     phone = Str(required=True)
     # redacted age to a string.
@@ -79,32 +79,6 @@ class CustomerProfileSchema(Schema):
     identity_resolution = Nested(IdentityResolution, required=True)
     propensity_to_unsubscribe = Float(required=True)
     propensity_to_purchase = Float(required=True)
-
-    @pre_dump
-    # pylint: disable=unused-argument
-    def pre_process_details(self, data, **kwarg):
-        """process the schema before serializing.
-
-        Args:
-            data (dict): The customer object
-            many (bool): If there are many to process
-
-        Returns:
-            Response: Returns a customer object
-
-        """
-
-        date_fields = [
-            "since",
-            "last_click",
-            "last_purchase",
-            "last_email_open",
-        ]
-        for date_field in date_fields:
-            if date_field in data:
-                # convert CDM string datetime to datetime.
-                data[date_field] = datetime.fromisoformat(data[date_field])
-        return data
 
 
 class CustomerOverviewSchema(Schema):
@@ -131,24 +105,6 @@ class CustomerOverviewSchema(Schema):
     max_ltv_predicted = Float(required=True)
     min_ltv_actual = Float(required=True)
     max_ltv_actual = Float(required=True)
-
-    @pre_dump
-    # pylint: disable=unused-argument
-    def pre_process_details(self, data, **kwarg):
-        """process the schema before serializing.
-
-        Args:
-            data (dict): The customer overview object
-            many (bool): If there are many to process
-
-        Returns:
-            Response: Returns a customer overview object
-
-        """
-        if api_c.UPDATED in data:
-            # convert CDM string datetime to datetime.
-            data[api_c.UPDATED] = datetime.fromisoformat(data[api_c.UPDATED])
-        return data
 
 
 class CustomersSchema(Schema):
