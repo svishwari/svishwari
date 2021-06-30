@@ -490,6 +490,10 @@ def weighted_engagement_status(engagements: list) -> list:
                     # map succeeded to delivered status
                     status = api_c.STATUS_DELIVERED
 
+                elif status == db_c.STATUS_FAILED:
+                    # map failed to delivered status
+                    status = api_c.STATUS_ERROR
+
                 destination[api_c.LATEST_DELIVERY][api_c.STATUS] = status
 
                 status_rank = {
