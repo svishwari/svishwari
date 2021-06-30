@@ -109,6 +109,7 @@ export default {
       .join("")
   },
   Currency(value) {
+    if (isNaN(value)) return "-"
     return Number(value).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
@@ -123,6 +124,7 @@ export default {
    * @returns output value eg. "90%"
    */
   percentageConvert(value, round = false, percentage = false, append = "") {
+    if (isNaN(value)) return "-"
     if (!value) return ""
 
     if (percentage) {
