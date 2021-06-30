@@ -474,6 +474,12 @@ def weighted_engagement_status(engagements: list) -> list:
                 if api_c.LATEST_DELIVERY not in destination:
                     continue
 
+                # check if status is in the latest delivery.
+                if api_c.STATUS not in destination[api_c.LATEST_DELIVERY]:
+                    destination[api_c.LATEST_DELIVERY][
+                        api_c.STATUS
+                    ] = api_c.STATUS_NOT_DELIVERED
+
                 # TODO after ORCH-285 so no status mapping needed.
                 status = destination[api_c.LATEST_DELIVERY][api_c.STATUS]
                 if status == db_c.STATUS_IN_PROGRESS:
