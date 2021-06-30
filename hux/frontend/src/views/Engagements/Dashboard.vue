@@ -113,6 +113,7 @@
                 v-for="item in audienceMergedData"
                 :key="item.id"
                 :audience="item"
+                :engagementId="String(engagementList.id)"
               />
             </v-col>
           </v-card-text>
