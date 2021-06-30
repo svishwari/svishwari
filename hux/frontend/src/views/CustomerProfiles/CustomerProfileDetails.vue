@@ -22,7 +22,7 @@
             class="
               text-center
               rounded-lg
-              card-info-wrapper card-shadow-box card-height
+              card-info-wrapper box-shadow-5 card-height
             "
           >
             <v-card-title
@@ -92,7 +92,7 @@
 
       <v-row>
         <v-col cols="5">
-          <v-card class="rounded-lg card-info-wrapper card-shadow-box">
+          <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-5 card-heading">
               {{ cardTitles[0].title }}
             </v-card-title>
@@ -147,7 +147,7 @@
           </v-card>
         </v-col>
         <v-col cols="3">
-          <v-card class="rounded-lg card-info-wrapper card-shadow-box">
+          <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="card-heading py-5">
               {{ cardTitles[1].title }}
             </v-card-title>
@@ -439,9 +439,6 @@ export default {
   font-size: 15px !important;
   color: var(--v-neroBlack-base);
   font-weight: 400;
-}
-.card-shadow-box {
-  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05) !important;
 }
 .sample-card-text {
   font-size: 14px;
