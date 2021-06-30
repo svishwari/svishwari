@@ -1,6 +1,6 @@
 <template>
   <span class="header-menu">
-    <v-menu :min-width="200" left offset-y close-on-click>
+    <v-menu :min-width="200" offset-y close-on-click>
       <template #activator="{ on }">
         <span v-on="on" class="d-flex cursor-pointer mr-6">
           <v-btn class="mx-2 box-shadow-25" fab small color="white">
@@ -50,9 +50,11 @@ export default {
 <style lang="scss" scoped>
 .header-menu {
   margin-right: -32px !important;
-  .v-menu__content {
-    top: 64px;
-  }
+}
+
+.v-menu__content {
+    top: 64px !important;
+    left: 1280px !important;
 }
 
 .v-list {
