@@ -18,7 +18,7 @@
       >
         <Logo v-if="item.icon" :type="item.icon" :size="14" />
         <span class="subprop-name">{{ item.description }}</span>
-        <span class="value">{{ item.value }}</span>
+        <span class="value ml-1">{{ item.value }}</span>
       </div>
     </div>
     <div class="ribbon-hover" v-if="!isArcHover">
@@ -151,7 +151,6 @@ export default {
       }
       .value {
         @extend .global-text-line;
-        margin: 0 0 0 3px;
       }
     }
   }

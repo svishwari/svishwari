@@ -1,5 +1,4 @@
 <template>
-  <span class="header-menu">
     <v-menu :min-width="200" offset-y close-on-click>
       <template #activator="{ on }">
         <span v-on="on" class="d-flex cursor-pointer mr-6">
@@ -23,7 +22,6 @@
         </v-list-item>
       </v-list>
     </v-menu>
-  </span>
 </template>
 
 <script>
