@@ -242,6 +242,7 @@ EVENT_DETAILS = "event_details"
 PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
 DATA_EXTENSION_NAME = "data_extension_name"
 DATA_EXTENSION_ID = "data_extension_id"
+LATEST_DELIVERY = "latest_delivery"
 
 # Data source constants
 FIELD_SPECIAL_TYPE = "special_type"
