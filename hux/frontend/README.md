@@ -33,6 +33,18 @@ yarn test:unit -u
 yarn lint
 ```
 
+> **💡 PRO TIPS**
+> 1. If your branch's CI is failing but locally your lint and/or
+> unit tests are passing (or vice versa), try a fresh install locally:
+>    ```sh
+>    rm -rf node_modules
+>    yarn install # or yarn ci
+>    ```
+>    This should clear up most issues.
+>
+> 2. Use **`yarn <command>`** — <ins>do not</ins> use **`npm <command>`** and
+> remove `package-lock.json` if somehow you ended up with one locally.
+
 ### Run storybook
 
 ```sh
