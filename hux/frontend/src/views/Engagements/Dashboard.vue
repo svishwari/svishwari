@@ -22,7 +22,7 @@
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
-    <div class="inner-wrap px-15 py-8">
+    <div v-if="!loading" class="inner-wrap px-15 py-8">
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
@@ -89,15 +89,23 @@
               /><span class="text-h5">Audiences</span>
             </div>
             <div class="mt-2">
-              <a
-                href="#"
+              <router-link
+                :to="{
+                  name: 'AudienceConfiguration',
+                }"
                 class="d-flex align-center primary--text text-decoration-none"
               >
-                <Icon type="audiences" :size="16" class="mr-1" />Add an audience
-              </a>
+                <Icon type="audiences" :size="16" class="mr-1" />
+                Add an audience
+              </router-link>
             </div>
           </v-card-title>
-          <v-card-text class="pl-6 pr-6 pb-6">
+          <v-progress-linear
+            v-if="loadingAudiences"
+            :active="loadingAudiences"
+            :indeterminate="loadingAudiences"
+          />
+          <v-card-text v-else class="pl-6 pr-6 pb-6">
             <div
               class="empty-state pa-5 text--gray"
               v-if="engagement.audiences.length == 0"
@@ -331,6 +339,7 @@ export default {
       audienceMergedData: [],
       loading: false,
       loadingTab: false,
+      loadingAudiences: false,
       tabOption: 0,
       Tooltips: [
         { acronym: "CPM", description: "Cost per Thousand Impressions" },
@@ -719,6 +728,7 @@ export default {
     }),
 
     async audienceList() {
+      this.loadingAudiences = true
       let engData = this.getEngagement(this.$route.params.id)
       let audienceIds = []
       let audiancesDetailsData = []
@@ -753,6 +763,7 @@ export default {
       }
       // pushing merged data into variable
       this.audienceMergedData = audiancesDetailsData
+      this.loadingAudiences = false
     },
 
     getDateStamp(value) {
