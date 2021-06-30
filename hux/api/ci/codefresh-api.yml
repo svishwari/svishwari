@@ -9,6 +9,7 @@ stages:
   - set_env
   - docker
   - py37_check
+  - coverage_check
   - safety_style_check
   - artifactory
   - argo-deploy
@@ -22,7 +23,7 @@ steps:
     steps:
       GetTriggerName:
         stage: prepare
-        title: get trigger name using id from spec yaml      
+        title: get trigger name using id from spec yaml
         type: deloittehux/get-trigger-name
       BuildNumber:
         stage: prepare
@@ -47,18 +48,18 @@ steps:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
 # Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
-# No releases present currently, to be uncommented once releases will be present.
-  # VersionTag:
-  #   stage: build_tag
-  #   description: Set docker tag based Git tag
-  #   type: freestyle
-  #   image: huxhub.repo.mgnt.in/alpine
-  #   commands:
-  #     - cf_export DOCKER_TAG=${{CF_RELEASE_TAG}}
-  #   when:
-  #     condition:
-  #       all:
-  #         masterBranch: '"${{CF_BRANCH}}" == "main"'
+
+  VersionTag:
+    stage: build_tag
+    description: Set docker tag based Git tag
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
+    when:
+      branch:
+        only:
+          - /^app.*/i
 
   set_env_var:
     stage: set_env
@@ -66,7 +67,7 @@ steps:
     type: freestyle
     image: alpine
     working_directory: "${{CF_REPO_NAME}}"
-    commands: 
+    commands:
       - cat ./hux/api/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   build_image:
@@ -94,6 +95,22 @@ steps:
         title: 'py37'
         environment:
           - TOXENV=py37
+    fail_fast: false
+
+  coverage_check:
+    stage: "coverage_check"
+    title: "Tox - coverage"
+    image: "${{build_image}}"
+    working_directory: '/app/hux-unified/api'
+    description: "run coverage checks using tox"
+    commands:
+      - pip install tox
+      - tox -e ${TOXENV} -- --skip-model-generate
+    scale:
+      checkCoverage:
+        title: 'checkCoverage'
+        environment:
+          - TOXENV=checkCoverage
     fail_fast: false
 
   safety_style_check:
@@ -129,6 +146,7 @@ steps:
       branch:
         only:
           - main
+          - /^app.*/i
 
   deployment:
     stage: argo-deploy
@@ -147,3 +165,4 @@ steps:
       branch:
         only:
           - main
+          - /^app.*/i

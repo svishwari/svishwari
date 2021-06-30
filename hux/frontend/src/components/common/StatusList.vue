@@ -5,7 +5,7 @@
         ><router-link
           :to="{
             name: 'AudienceInsight',
-            params: { id: audience.audienceId },
+            params: { id: audience.id },
           }"
           class="text-decoration-none"
           append
@@ -82,26 +82,26 @@
         <v-list-item-content class="status-col py-1" v-if="item.status">
           <status :status="item.status" collapsed showLabel />
         </v-list-item-content>
-        <v-list-item-content class="size-col py-1" v-if="item.size">
+        <v-list-item-content class="size-col py-1" v-if="audience.size">
           <tooltip>
             <template slot="label-content">
-              {{ getSize(item.size) }}
+              {{ getSize(audience.size) }}
             </template>
             <template slot="hover-content">
-              {{ item.size | Numeric(true, false) }}
+              {{ audience.size | Numeric(true, false) }}
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
           class="deliverdOn-col py-1"
-          v-if="item.lastDeliveredOn"
+          v-if="audience.last_delivered"
         >
           <tooltip>
             <template slot="label-content">
-              {{ getTimeStamp(item.lastDeliveredOn) }}
+              {{ getTimeStamp(audience.last_delivered) }}
             </template>
             <template slot="hover-content">
-              {{ item.lastDeliveredOn | Date | Empty }}
+              {{ audience.last_delivered | Date | Empty }}
             </template>
           </tooltip>
         </v-list-item-content>
@@ -130,7 +130,6 @@ import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import moment from "moment"
 import Tooltip from "./Tooltip.vue"
-
 export default {
   components: { Logo, Status, Tooltip },
   name: "StatusList",
@@ -173,9 +172,9 @@ export default {
 
 <style lang="scss" scoped>
 .status-card {
-  width: 310px;
+  min-width: 310px;
+  max-width: 310px;
   background: var(--v-white-base);
-
   border: 1px solid var(--v-zircon-base);
   box-sizing: border-box;
   border-radius: 12px !important;

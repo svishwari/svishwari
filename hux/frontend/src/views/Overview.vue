@@ -110,13 +110,6 @@ export default {
           active: true,
         },
         {
-          title: "Build your models",
-          description:
-            "Build predictive models that intelligently characterize customer opportunities.",
-          route: { name: "Models" },
-          active: false,
-        },
-        {
           title: "Create an audience",
           description:
             "Create an audience based on customized orchestrated choices.",
@@ -164,6 +157,9 @@ export default {
         margin-right: 15px;
         &.v-card--disabled {
           background: var(--v-background-base);
+        }
+        &:hover {
+          @extend .box-shadow-3;
         }
       }
     }

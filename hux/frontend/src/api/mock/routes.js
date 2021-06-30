@@ -1,4 +1,5 @@
 import { Response } from "miragejs"
+import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
 import {
   destinationsConstants,
@@ -21,12 +22,29 @@ export const defineRoutes = (server) => {
 
   // destinations
   server.get("/destinations")
+  server.get("/destinations/:id")
 
   server.put("/destinations/:id", (schema, request) => {
     const id = request.params.id
 
     return schema.destinations.find(id).update({ is_added: true })
   })
+  server.get("/destinations/:destinationId/data-extensions")
+  server.post(
+    "/destinations/:destinationId/data-extensions",
+    (schema, request) => {
+      const requestData = JSON.parse(request.requestBody)
+      const requestPayload = {
+        name: requestData.data_extension,
+      }
+      let response = schema.dataExtensions.create(requestPayload)
+      // update data extension, assign the new `id` to its `data_extension_id`
+      let updatedResponse = schema.dataExtensions
+        .find(response.attrs.id)
+        .update({ data_extension_id: response.attrs.id })
+      return updatedResponse.attrs
+    }
+  )
 
   server.post("/destinations/validate", (_, request) => {
     const code = 200
@@ -35,7 +53,7 @@ export const defineRoutes = (server) => {
     const requestData = JSON.parse(request.requestBody)
 
     if (requestData.type === "salesforce") {
-      body.performance_metrics_data_extensions = destinationsDataExtensions()
+      body.perf_data_extensions = destinationsDataExtensions()
     }
     return new Response(code, headers, body)
   })
@@ -44,6 +62,12 @@ export const defineRoutes = (server) => {
 
   // engagements
   server.get("/engagements")
+
+  server.get("/engagements/:id", (schema, request) => {
+    const id = request.params.id
+    const engagement = schema.engagements.find(id)
+    return engagement
+  })
 
   server.post("/engagements", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
@@ -85,34 +109,46 @@ export const defineRoutes = (server) => {
   server.get("/models")
 
   // customers
-  server.get("/customers", (schema) => {
-    const maxPerRequest = 100
-    return {
-      customers: schema.customers.all().slice(0, maxPerRequest).models,
-      total_customers: 827438924,
-    }
-  })
+  server.get("/customers")
+
   server.get("/customers/:id", (schema, request) => {
     const id = request.params.id
     return server.create("customerProfile", schema.customers.find(id).attrs)
   })
+
   server.get("/customers/overview", () => customersOverview)
+
+  server.post("/customers/overview", () => customersOverview)
 
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
-  // Audiences
+  // audiences
   server.get("/audiences")
-  server.get("/audiences/:id")
+
+  server.get("/audiences/:id", (schema, request) => {
+    const id = request.params.id
+    const audience = schema.audiences.find(id)
+    return {
+      ...audience.attrs,
+      audience_insights: audienceInsights,
+    }
+  })
+
   server.post("/audiences", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
-    requestData.engagements = requestData.engagements.map((id) => {
-      return schema.engagements.find(id)
-    })
-    requestData.destinations = requestData.destinations.map((id) => {
-      return schema.destinations.find(id)
-    })
+    if (requestData.engagements) {
+      requestData.engagements = requestData.engagements.map((id) => {
+        return schema.engagements.find(id)
+      })
+    }
+    if (requestData.destinations) {
+      requestData.destinations = requestData.destinations.map((id) => {
+        return schema.destinations.find(id)
+      })
+    }
     return schema.audiences.create(requestData)
   })
+
   server.get("/audiences/rules", () => attributeRules)
 }

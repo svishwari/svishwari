@@ -4,7 +4,7 @@ Schemas for the Engagements API
 """
 from bson import ObjectId
 from flask_marshmallow import Schema
-from marshmallow import fields, validate, pre_load, pre_dump
+from marshmallow import fields, validate, pre_load
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
@@ -17,83 +17,6 @@ class DeliverySchedule(Schema):
 
     start_date = fields.DateTime(allow_none=True)
     end_date = fields.DateTime(allow_none=True)
-
-
-class EngagementGetSchema(Schema):
-    """
-    Engagement get schema class
-    """
-
-    _id = fields.String(
-        data_key=api_c.ID,
-        example="5f5f7262997acad4bac4373b",
-        required=True,
-        validate=validate_object_id,
-    )
-    name = fields.String(attribute=api_c.NAME, required=True)
-    description = fields.String(attribute=api_c.DESCRIPTION)
-
-    audiences = fields.List(
-        fields.Dict(),
-        attribute=api_c.AUDIENCES,
-        example=[
-            {
-                api_c.ID: "60ae035b6c5bf45da27f17d6",
-                api_c.DESTINATIONS: [
-                    {
-                        "id": "60ae035b6c5bf45da27f17d6",
-                        "data_extension_id": "data_extension_id",
-                        "contact_list": "sfmc_extension_name",
-                    },
-                ],
-                api_c.DELIVERIES: [
-                    "60ae035b6c5bf45da27f17e5",
-                    "60ae035b6c5bf45da27f17e6",
-                ],
-            }
-        ],
-    )
-    status = fields.String(
-        attribute=api_c.STATUS,
-        required=True,
-        validate=validate.OneOf(
-            choices=[
-                api_c.STATUS_ACTIVE,
-                api_c.STATUS_INACTIVE,
-                api_c.STATUS_DELIVERING,
-                api_c.STATUS_DRAFT,
-                api_c.STATUS_ERROR,
-            ]
-        ),
-        default=api_c.STATUS_DRAFT,
-    )
-    delivery_schedule = fields.Nested(
-        DeliverySchedule,
-        required=False,
-        attribute=api_c.DELIVERY_SCHEDULE,
-    )
-    create_time = fields.DateTime(attribute=db_c.CREATE_TIME)
-    created_by = fields.String(attribute=db_c.CREATED_BY)
-    update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
-    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
-
-    @pre_dump
-    # pylint: disable=unused-argument
-    def pre_process_details(self, data, **kwarg):
-        """process the schema before serializing.
-
-        Args:
-            data (dict): The Engagement data source object
-            many (bool): If there are many to process
-        Returns:
-            Response: Returns a Engagement data source object
-
-        """
-        for audience in data[api_c.AUDIENCES]:
-            audience[api_c.ID] = str(audience[api_c.ID])
-            for destination in audience[api_c.DESTINATIONS]:
-                destination[api_c.ID] = str(destination[api_c.ID])
-        return data
 
 
 class EngagementPostSchema(Schema):
@@ -291,9 +214,7 @@ class AudiencePerformanceDisplayAdsSchema(Schema):
         ordered = True
 
     summary = fields.Nested(DisplayAdsSummary)
-    audience_performance = fields.List(
-        fields.Nested(DispAdIndividualAudienceSummary)
-    )
+    audience_performance = fields.List(fields.Dict())
 
 
 class EmailSummary(Schema):
@@ -364,3 +285,232 @@ class AudiencePerformanceEmailSchema(Schema):
     audience_performance = fields.List(
         fields.Nested(EmailIndividualAudienceSummary)
     )
+
+
+class CampaignSchema(Schema):
+    """
+    Schema for Campaigns
+    """
+
+    class Meta:
+        """Set Order for the Campaign Response"""
+
+        ordered = True
+
+    id = fields.String(
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    name = fields.String()
+    delivery_job_id = fields.String(
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
+
+
+class CampaignPutSchema(Schema):
+    """
+    Schema for Campaigns PUT.
+    """
+
+    class Meta:
+        """Set Order for the Campaigns Response"""
+
+        ordered = True
+
+    campaigns = fields.List(
+        fields.Dict,
+        example=[
+            {
+                api_c.NAME: "Test Campaign",
+                api_c.ID: "campaign_id",
+                api_c.DELIVERY_JOB_ID: "delivery_job_id",
+            }
+        ],
+    )
+
+
+class DeliveryJobSchema(Schema):
+    """
+    Schema for Campaigns
+    """
+
+    class Meta:
+        """Set Order for the Campaign Response"""
+
+        ordered = True
+
+    _id = fields.String(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        validate=validate_object_id,
+    )
+    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
+
+
+class CampaignMappingSchema(Schema):
+    """
+    Schema for Campaigns
+    """
+
+    class Meta:
+        """Set Order for the Campaign Response"""
+
+        ordered = True
+
+    campaigns = fields.List(fields.Nested(CampaignSchema))
+    delivery_jobs = fields.List(fields.Nested(DeliveryJobSchema))
+
+
+class EngagementDataExtensionSchema(Schema):
+    """
+    Engagement Audience Destination Data Extension Schema
+    """
+
+    data_extension_name = fields.String()
+
+
+class LatestDeliverySchema(Schema):
+    """
+    Engagement Audience Destination Delivery Schema
+    """
+
+    id = fields.String()
+    status = fields.String()
+    update_time = fields.DateTime()
+    size = fields.Int(default=1000)
+
+
+class EngagementAudienceDestinationSchema(Schema):
+    """
+    Engagement Audience Destination Schema
+    """
+
+    name = fields.String()
+    id = fields.String()
+    delivery_job_id = fields.String()
+    delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
+    latest_delivery = fields.Nested(LatestDeliverySchema)
+
+
+class EngagementAudienceSchema(Schema):
+    """
+    Engagement Audience Schema
+    """
+
+    name = fields.String()
+    id = fields.String()
+    status = fields.String()
+    destinations = fields.Nested(
+        EngagementAudienceDestinationSchema, many=True
+    )
+
+
+class EngagementGetSchema(Schema):
+    """
+    Engagement get schema class
+    """
+
+    _id = fields.String(
+        data_key=api_c.ID,
+        example="5f5f7262997acad4bac4373b",
+        required=True,
+        validate=validate_object_id,
+    )
+    name = fields.String(attribute=api_c.NAME, required=True)
+    description = fields.String(attribute=api_c.DESCRIPTION)
+
+    audiences = fields.Nested(
+        EngagementAudienceSchema, many=True, attribute=api_c.AUDIENCES
+    )
+    status = fields.String(
+        attribute=api_c.STATUS,
+        required=True,
+        validate=validate.OneOf(
+            choices=[
+                api_c.STATUS_ACTIVE,
+                api_c.STATUS_INACTIVE,
+                api_c.STATUS_DELIVERING,
+                api_c.STATUS_DRAFT,
+                api_c.STATUS_ERROR,
+            ]
+        ),
+        default=api_c.STATUS_DRAFT,
+    )
+    delivery_schedule = fields.Nested(
+        DeliverySchedule,
+        required=False,
+        attribute=api_c.DELIVERY_SCHEDULE,
+    )
+    create_time = fields.DateTime(attribute=db_c.CREATE_TIME)
+    created_by = fields.String(attribute=db_c.CREATED_BY)
+    update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+
+
+def weighted_engagement_status(engagements: list) -> list:
+    """Returns a weighted engagement status by rolling up the individual
+    destination status values.
+
+    Args:
+        engagements (list): input engagement list.
+
+    Returns:
+        list: list of engagement documents.
+    """
+
+    # process each engagement and calculated the weights status value
+    for engagement in engagements:
+
+        status_ranks = []
+
+        # process each audience
+        for audience in engagement[api_c.AUDIENCES]:
+            audience_status_rank = []
+
+            # process each destination
+            for destination in audience[api_c.DESTINATIONS]:
+                if api_c.LATEST_DELIVERY not in destination:
+                    continue
+
+                # TODO after ORCH-285 so no status mapping needed.
+                status = destination[api_c.LATEST_DELIVERY][api_c.STATUS]
+                if status == db_c.STATUS_IN_PROGRESS:
+                    # map pending to delivering status
+                    status = api_c.STATUS_DELIVERING
+
+                elif status == db_c.STATUS_SUCCEEDED:
+                    # map succeeded to delivered status
+                    status = api_c.STATUS_DELIVERED
+
+                destination[api_c.LATEST_DELIVERY][api_c.STATUS] = status
+
+                status_rank = {
+                    api_c.STATUS: status,
+                    api_c.WEIGHT: api_c.STATUS_WEIGHTS[status],
+                }
+                status_ranks.append(status_rank)
+                audience_status_rank.append(status_rank)
+
+            # sort delivery status list of dict by weight.
+            audience_status_rank.sort(key=lambda x: x[api_c.WEIGHT])
+
+            # take the first item in the sorted list, and grab the status
+            audience[api_c.STATUS] = (
+                audience_status_rank[0][api_c.STATUS]
+                if audience_status_rank
+                else api_c.STATUS_NOT_DELIVERED
+            )
+
+        # sort delivery status list of dict by weight.
+        status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
+
+        # take the first item in the sorted list, and grab the status
+        engagement[api_c.STATUS] = (
+            status_ranks[0][api_c.STATUS]
+            if status_ranks
+            else api_c.STATUS_NOT_DELIVERED
+        )
+
+    return engagements

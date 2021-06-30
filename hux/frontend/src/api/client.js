@@ -35,6 +35,13 @@ client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)
 }
 
+client["destinations"].dataExtensions = (resourceId) => {
+  return http.get(`/destinations/${resourceId}/data-extensions`)
+}
+client["destinations"].createDataExtension = (resourceId, data) => {
+  return http.post(`/destinations/${resourceId}/data-extensions`, data)
+}
+
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
   return http.get(
     `/engagements/${resourceId}/audience-performance/${
@@ -50,8 +57,8 @@ client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
 }
 
-client["audiences"].filterSize = () => {
-  return http.post("/audiences/rules/size")
+client["customers"].getOverview = (data) => {
+  return http.post("/customers/overview", data)
 }
 
 export default client

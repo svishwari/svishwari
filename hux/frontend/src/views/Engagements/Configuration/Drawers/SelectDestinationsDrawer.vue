@@ -20,6 +20,7 @@
               sortable: false,
             },
           ]"
+          :selectedItems="selectedDestinations"
           empty="No destinations have been connected and added yet."
         >
           <template #field:name="{ item }">
@@ -43,6 +44,7 @@
                 height="40"
                 icon="mdi-check"
                 iconPosition="left"
+                :boxShadow="false"
                 @click="undoAdd(item)"
               >
                 Added
@@ -53,6 +55,7 @@
                 variant="primary"
                 width="100"
                 height="40"
+                :boxShadow="false"
                 @click="add(item)"
               >
                 Add
@@ -64,7 +67,9 @@
     </template>
 
     <template #footer-left>
-      {{ connectedDestinations.length }} results
+      <span class="gray--text text-caption">
+        {{ connectedDestinations.length }} results
+      </span>
     </template>
   </Drawer>
 </template>
@@ -141,9 +146,10 @@ export default {
 
   methods: {
     isAdded(id) {
-      return this.selectedDestinations.filter(
-        (destination) => destination.id === id
-      ).length
+      return Boolean(
+        this.selectedDestinations.filter((destination) => destination.id === id)
+          .length
+      )
     },
 
     add(destination) {

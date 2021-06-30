@@ -27,6 +27,7 @@ UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
 OVERVIEW = "overview"
+HUX_ID = "hux_id"
 
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
@@ -73,6 +74,7 @@ STATUS = "status"
 ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
+UNKNOWN = "unknown"
 
 STATUS_NOT_DELIVERED = "Not Delivered"
 STATUS_DELIVERED = "Delivered"
@@ -85,6 +87,24 @@ STATUS_PENDING = "Pending"
 STATUS_ERROR = "Error"
 STATUS_PAUSED = "Paused"
 STATUS_STOPPED = "Stopped"
+
+# used for weighting the rollup status for engagement deliveries
+# 0 being the highest.
+WEIGHT = "weight"
+STATUS_WEIGHTS = {
+    STATUS_ACTIVE: 11,
+    STATUS_NOT_DELIVERED: 10,
+    STATUS_DELIVERED: 9,
+    STATUS_DELIVERING: 8,
+    STATUS_DELIVERY_PAUSED: 7,
+    STATUS_ACTIVE: 6,
+    STATUS_INACTIVE: 5,
+    STATUS_DRAFT: 4,
+    STATUS_PENDING: 3,
+    STATUS_PAUSED: 2,
+    STATUS_STOPPED: 1,
+    STATUS_ERROR: 0,
+}
 
 # Facebook connector defines
 FACEBOOK_AD_ACCOUNT_ID = "facebook_ad_account_id"
@@ -101,6 +121,8 @@ SFMC_REST_BASE_URI = "sfmc_rest_base_uri"
 SFMC_SOAP_BASE_URI = "sfmc_soap_base_uri"
 SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
 SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
+SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
+SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -189,6 +211,10 @@ INVALID_OBJECT_ID = "Object ID is not valid."
 EMPTY_OBJECT_ERROR_MESSAGE = "Data not provided."
 INVALID_DELIVERY_SCHEDULE = "Delivery schedule is not valid."
 DUPLICATE_NAME = "Name already exists."
+PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
+    "Performance metrics data extension not assigned."
+)
+INVALID_AUTH_DETAILS = "Invalid authentication details."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -202,6 +228,7 @@ DESTINATION_TYPE = "type"
 DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 DESTINATION_NAME = "name"
 DESTINATION_CAMPAIGN_COUNT = "campaign_count"
+LATEST_DELIVERY = "latest_delivery"
 CONNECTION_STATUS = "connection_status"
 AUTHENTICATION_DETAILS = "authentication_details"
 DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
@@ -222,7 +249,12 @@ ENGAGEMENT_ENDPOINT = "/engagements"
 ENGAGEMENT_TAG = "engagements"
 DELIVERY_TAG = "delivery"
 DELIVER = "deliver"
+CAMPAIGNS = "campaigns"
+CAMPAIGN_ID = "campaign_id"
+DELIVERY_MOMENT = "delivery_moment"
+DELIVERY_JOB_ID = "delivery_job_id"
 AUDIENCE_PERFORMANCE = "audience-performance"
+AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 
 SPEND = "spend"
@@ -384,6 +416,18 @@ BATCH_SIZE = "batch_size"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
+
+# TODO HUS-363 remove once we can pass empty filters to CDP.
+CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
+    "filters": [
+        {
+            "section_aggregator": "ALL",
+            "section_filters": [
+                {"field": "country", "type": "equals", "value": "us"}
+            ],
+        }
+    ]
+}
 
 # IDR Fields
 IDR_TAG = "idr"

@@ -1,6 +1,6 @@
 <template>
   <div class="customer-dashboard-wrap">
-    <PageHeader class="background-border">
+    <PageHeader class="background-border" :headerHeightChanges="'py-3'">
       <template #left>
         <Breadcrumb :items="items" />
       </template>
@@ -15,7 +15,9 @@
         >
           View all customers
         </hux-button>
-        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-download </v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+          mdi-download
+        </v-icon>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -272,9 +274,10 @@ export default {
         let updatedTime = this.$options.filters
           .Date(value, "calendar")
           .split(" at ")
-
-        return [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
-      } else return ""
+        return updatedTime.length > 1
+          ? [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
+          : [updatedTime[0], ""]
+      }
     },
     viewCustomerList() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
@@ -314,5 +317,8 @@ export default {
   ::v-deep .mdi-chevron-right::before {
     content: none;
   }
+}
+.icon-border {
+  cursor: default !important;
 }
 </style>

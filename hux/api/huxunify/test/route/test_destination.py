@@ -196,7 +196,6 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIsNotNone(response.json["authentication_details"])
 
     def test_update_destination_where_destination_not_found(self):
         """
@@ -329,7 +328,7 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
     def test_create_data_extension_invalid_id(self):
         """

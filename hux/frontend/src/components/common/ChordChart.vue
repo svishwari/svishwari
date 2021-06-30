@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="424" tile class="rounded-lg">
+  <v-card tile class="chart-container rounded-lg">
     <v-list-item three-line>
       <v-list-item-content>
         <div class="title-section">
@@ -22,7 +22,11 @@
           <span>{{ item.prop }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
-      <div class="chart-section" ref="huxChart"></div>
+      <div
+        class="chart-section"
+        ref="huxChart"
+        @mouseover="getCordinates($event)"
+      ></div>
     </v-list-item>
   </v-card>
 </template>
@@ -36,7 +40,7 @@ import * as d3Array from "d3-array"
 import Tooltip from "@/components/common/Tooltip"
 import Icon from "@/components/common/Icon"
 export default {
-  name: "hux-chord-chart",
+  name: "chord-chart",
   components: { Icon, Tooltip },
   props: {
     /**
@@ -67,12 +71,19 @@ export default {
   },
   data() {
     return {
-      width: 250,
+      width: 220,
       height: 250,
       outerRadius: 0,
       innerRadius: 0,
-      tooltipText: "most recent co-occurence between identifiers",
+      tooltipText: "Most recent co-occurence between identifiers",
       legendsData: this.chartLegendsData,
+      top: 50,
+      left: 60,
+      show: false,
+      tooltip: {
+        x: 0,
+        y: 0,
+      },
     }
   },
   methods: {
@@ -141,10 +152,11 @@ export default {
         .attr("d", ribbon)
         .attr("fill-opacity", "0.5")
         .style("fill", (d) => color(d.target.index))
-        .on("mouseover", (e) => ribbonMouseOver(e))
+        .on("mouseover", (e, d) => ribbonMouseOver(e, d))
         .on("mouseout", () => mouseOut())
 
       let arcMouseOver = (g, i) => {
+        this.tooltipDisplay(true, true, [i.index])
         d3Select
           .selectAll("g.ribbons path")
           .filter(
@@ -154,7 +166,8 @@ export default {
           .style("fill", (d) => color(d.target.index))
       }
 
-      let ribbonMouseOver = (e) => {
+      let ribbonMouseOver = (e, d) => {
+        this.tooltipDisplay(true, false, [d.source.index, d.target.index])
         d3Select
           .selectAll("g.ribbons path")
           .attr("fill-opacity", "0.1")
@@ -166,11 +179,23 @@ export default {
           .style("fill", (d) => color(d.target.index))
       }
 
-      let mouseOut = () =>
+      let mouseOut = () => {
+        this.tooltipDisplay(false, false, [])
         d3Select
           .selectAll("g.ribbons path")
           .attr("fill-opacity", "0.5")
           .style("fill", (d) => color(d.target.index))
+      }
+    },
+
+    getCordinates(event) {
+      this.tooltip.x = event.offsetX
+      this.tooltip.y = event.offsetY
+      this.$emit("cordinates", this.tooltip)
+    },
+
+    tooltipDisplay(showTip, isArcHover, groupIndex) {
+      this.$emit("tooltipDisplay", showTip, isArcHover, groupIndex)
     },
   },
 
@@ -189,22 +214,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.legend-section {
-  span {
-    margin-left: 8px;
-    font-size: 12px;
-    line-height: 16px;
-    color: var(--v-gray-base) !important;
+.chart-container {
+  max-width: 424px;
+  height: 252px;
+
+  .legend-section {
+    span {
+      margin-left: 8px;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--v-gray-base) !important;
+    }
   }
-}
 
-.title-section {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
-}
+  .title-section {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 400;
+  }
 
-.chart-section {
-  margin-bottom: -20px;
+  .chart-section {
+    margin-bottom: -20px;
+  }
 }
 </style>
