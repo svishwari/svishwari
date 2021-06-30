@@ -35,9 +35,23 @@ client["engagements"].deliver = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/deliver`, data)
 }
 
+client["engagements"].deliverAudience = ({ resourceId, audienceId }, data) => {
+  const endpoint = `/engagements/${resourceId}/audience/${audienceId}/deliver`
+  return http.post(endpoint, data)
+}
+
+client["engagements"].deliverAudienceDestination = (
+  { resourceId, audienceId, destinationId },
+  data
+) => {
+  const endpoint = `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/deliver`
+  return http.post(endpoint, data)
+}
+
 client["destinations"].dataExtensions = (resourceId) => {
   return http.get(`/destinations/${resourceId}/data-extensions`)
 }
+
 client["destinations"].createDataExtension = (resourceId, data) => {
   return http.post(`/destinations/${resourceId}/data-extensions`, data)
 }
@@ -53,8 +67,13 @@ client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
 client["identity"].overview = () => {
   return http.get("/idr/overview")
 }
+
 client["audiences"].getRules = () => {
   return http.get("/audiences/rules")
+}
+
+client["audiences"].deliver = (resourceId, data) => {
+  return http.post(`/audiences/${resourceId}/deliver`, data)
 }
 
 client["customers"].getOverview = (data) => {

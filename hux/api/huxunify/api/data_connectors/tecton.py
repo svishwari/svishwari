@@ -4,7 +4,7 @@ Purpose of this file is for holding methods to query and pull data from Tecton.
 from json import dumps
 from typing import List, Tuple
 
-import dateutil.parser as parser
+from dateutil import parser
 import requests
 
 from huxunify.api.config import get_config

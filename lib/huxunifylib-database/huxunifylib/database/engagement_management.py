@@ -203,6 +203,71 @@ def get_engagements_summary(
         },
         # remove the found delivery job from the top level.
         {"$project": {"delivery_job": 0, db_c.DELETED: 0}},
+        {
+            # group by the nested array of destinations first.
+            "$group": {
+                db_c.ID: {
+                    db_c.ID: "$_id",
+                    db_c.NAME: "$name",
+                    db_c.ENGAGEMENT_DESCRIPTION: "$description",
+                    db_c.CREATE_TIME: "$create_time",
+                    db_c.CREATED_BY: "$created_by",
+                    db_c.UPDATED_BY: "$updated_by",
+                    db_c.UPDATE_TIME: "$update_time",
+                    # because the audience is a nested object, pull out the
+                    # audience fields we need for later grouping
+                    "audience_name": "$audiences.name",
+                    "audience_id": "$audiences.id",
+                },
+                # push the grouped destinations into an array
+                db_c.DESTINATIONS: {
+                    "$push": {
+                        db_c.OBJECT_ID: "$audiences.destinations.id",
+                        db_c.NAME: "$audiences.destinations.name",
+                        db_c.DELIVERY_JOB_ID: "$audiences.destinations.delivery_job_id",
+                        db_c.LATEST_DELIVERY: {
+                            db_c.UPDATE_TIME: "$audiences.destinations.latest_delivery.update_time",
+                            db_c.STATUS: "$audiences.destinations.latest_delivery.status",
+                        },
+                    }
+                },
+            }
+        },
+        {
+            # group by the audiences now
+            "$group": {
+                db_c.ID: {
+                    db_c.ID: "$_id._id",
+                    db_c.NAME: "$_id.name",
+                    db_c.ENGAGEMENT_DESCRIPTION: "$_id.description",
+                    db_c.CREATE_TIME: "$_id.create_time",
+                    db_c.CREATED_BY: "$_id.created_by",
+                    db_c.UPDATED_BY: "$_id.updated_by",
+                    db_c.UPDATE_TIME: "$_id.update_time",
+                },
+                # push all the audiences into an array
+                db_c.AUDIENCES: {
+                    "$push": {
+                        db_c.OBJECT_ID: "$_id.audience_id",
+                        db_c.NAME: "$_id.audience_name",
+                        db_c.DESTINATIONS: "$destinations",
+                    }
+                },
+            }
+        },
+        {
+            # project the fields we need.
+            "$project": {
+                db_c.ID: "$_id._id",
+                db_c.NAME: "$_id.name",
+                db_c.ENGAGEMENT_DESCRIPTION: "$_id.description",
+                db_c.CREATE_TIME: "$_id.create_time",
+                db_c.CREATED_BY: "$_id.created_by",
+                db_c.UPDATED_BY: "$_id.updated_by",
+                db_c.UPDATE_TIME: "$_id.update_time",
+                db_c.AUDIENCES: "$audiences",
+            }
+        },
     ]
 
     try:
@@ -628,58 +693,3 @@ def add_delivery_job(
         logging.error(exc)
 
     return None
-
-
-def group_engagements(engagements: list) -> list:
-    """Group engagements by audience/destinations.
-    DocumentDB does not support graph lookup and/or $root.
-    easier to do this in python instead of Mongo.
-    We still leverage mongo to do the lookups,
-    but we handle the grouping and status rollup here
-
-    Args:
-        engagements (list): list of engagement documents.
-
-    Returns:
-          list: list of engagement documents
-
-    """
-
-    core_lk = {}
-    for item in engagements:
-        # check if we already have a record for the engagement ID
-        if item[db_c.ID] not in core_lk:
-            # shallow copy into the core lookup dict
-            core_lk[item[db_c.ID]] = item.copy()
-            # set the audience field to an empty list.
-            core_lk[item[db_c.ID]][db_c.AUDIENCES] = []
-
-        # if audience list for the engagement is empty, set it up.
-        if not core_lk[item[db_c.ID]][db_c.AUDIENCES]:
-            # if audience has nested destinations, add them.
-            if db_c.DESTINATIONS in item[db_c.AUDIENCES]:
-                item[db_c.AUDIENCES][db_c.DESTINATIONS] = [
-                    item[db_c.AUDIENCES][db_c.DESTINATIONS]
-                ]
-            else:
-                # init the nested destination list to empty.
-                item[db_c.AUDIENCES][db_c.DESTINATIONS] = []
-            # set the audiences for the engagement.
-            core_lk[item[db_c.ID]][db_c.AUDIENCES] += [item[db_c.AUDIENCES]]
-
-            continue
-
-        # group the nested destinations into a singular list
-        # within the audience object.
-        for audience in core_lk[item[db_c.ID]][db_c.AUDIENCES]:
-            # add the audience
-            if (
-                audience[db_c.OBJECT_ID]
-                == item[db_c.AUDIENCES][db_c.OBJECT_ID]
-            ):
-                # add destination
-                audience[db_c.DESTINATIONS] += [
-                    item[db_c.AUDIENCES][db_c.DESTINATIONS]
-                ]
-
-    return list(core_lk.values())

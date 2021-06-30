@@ -71,10 +71,12 @@
               <time-stamp :value="item[header.value]" />
             </div>
             <div v-if="header.value == 'update_time'">
-              <time-stamp :value="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <time-stamp :value="item['create_time']" />
             </div>
             <div v-if="header.value == 'updated_by'">
-              <Avatar :name="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <Avatar :name="item['created_by']" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />

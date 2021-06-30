@@ -1,16 +1,18 @@
 <template>
   <div class="d-flex navbar-menu align-center">
-    <v-divider vertical color="lightGrey"></v-divider>
-    <UserAvatar></UserAvatar>
+    <HeaderNavigation />
+    <v-divider vertical color="lightGrey" />
+    <UserAvatar />
   </div>
 </template>
 
 <script>
 import UserAvatar from "@/components/UserAvatar"
+import HeaderNavigation from "@/components/HeaderNavigation"
 
 export default {
   name: "NavBarMenu",
-  components: { UserAvatar },
+  components: { UserAvatar, HeaderNavigation },
 }
 </script>
 

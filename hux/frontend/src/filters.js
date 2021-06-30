@@ -14,11 +14,13 @@ export default {
   Date(value, format = "MM/D/YYYY [at] hh:ss A") {
     if (!value) return ""
 
-    if (format === "relative") return moment(value).fromNow()
+    let date = moment(value).utc(true)
 
-    if (format === "calendar") return moment(value).calendar()
+    if (format === "relative") return date.fromNow()
 
-    return moment(value).format(format)
+    if (format === "calendar") return date.calendar()
+
+    return date.format(format)
   },
 
   /**
@@ -107,6 +109,7 @@ export default {
       .join("")
   },
   Currency(value) {
+    if (isNaN(value)) return "-"
     return Number(value).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
@@ -121,6 +124,7 @@ export default {
    * @returns output value eg. "90%"
    */
   percentageConvert(value, round = false, percentage = false, append = "") {
+    if (isNaN(value)) return "-"
     if (!value) return ""
 
     if (percentage) {
