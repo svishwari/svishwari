@@ -1,27 +1,27 @@
 <template>
-    <v-menu :min-width="200" offset-y close-on-click>
-      <template #activator="{ on }">
-        <span v-on="on" class="d-flex cursor-pointer mr-6">
-          <v-btn class="mx-2 box-shadow-25" fab small color="white">
-            <v-icon color="secondary"> mdi-plus </v-icon>
-          </v-btn>
-        </span>
-      </template>
-      <v-list>
-        <v-list-item>
-          <v-list-item-title class="font-weight-bold"> Add </v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          @click="routerRedirection(link.path)"
-          v-for="link in dropdownLinks"
-          :key="link.name"
-        >
-          <v-list-item-title class="text-h6 neroBlack--text">
-            {{ link.name }}
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+  <v-menu :min-width="200" offset-y close-on-click>
+    <template #activator="{ on }">
+      <span v-on="on" class="d-flex cursor-pointer mr-6">
+        <v-btn class="mx-2 box-shadow-25" fab small color="white">
+          <v-icon color="secondary"> mdi-plus </v-icon>
+        </v-btn>
+      </span>
+    </template>
+    <v-list>
+      <v-list-item>
+        <v-list-item-title class="font-weight-bold"> Add </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        @click="routerRedirection(link.path)"
+        v-for="link in dropdownLinks"
+        :key="link.name"
+      >
+        <v-list-item-title class="text-h6 neroBlack--text">
+          {{ link.name }}
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>
