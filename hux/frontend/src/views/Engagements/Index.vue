@@ -12,8 +12,8 @@
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
       <template #left>
-        <v-icon medium disabled>mdi-filter-variant</v-icon>
-        <v-icon medium disabled class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
+        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template #right>
@@ -448,5 +448,8 @@ export default {
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
+}
+.icon-border {
+  cursor: default !important;
 }
 </style>

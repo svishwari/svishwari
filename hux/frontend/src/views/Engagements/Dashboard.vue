@@ -11,8 +11,8 @@
         </div>
       </template>
       <template #right>
-        <v-icon size="22" :disabled="true" class="mr-2">mdi-refresh</v-icon>
-        <v-icon size="22" :disabled="true" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="lightGrey" class="mr-2">mdi-refresh</v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-pencil
         </v-icon>
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
