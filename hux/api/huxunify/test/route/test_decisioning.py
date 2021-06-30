@@ -5,7 +5,7 @@ Purpose of this file is to house all tests related to decisioning
 from http import HTTPStatus
 from unittest import TestCase, mock
 
-import dateutil.parser as parser
+from dateutil import parser
 import requests_mock
 
 from requests_mock import Mocker

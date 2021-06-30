@@ -184,14 +184,14 @@ const mailchimp = {
 }
 
 // engagements
-const defaultEngagement = {
-  name: "Default engagement",
-  description: "Default Description",
-  delivery_schedule: {
-    schedule_type: "recurring",
-    start_date: "01/05/2021",
-    end_date: "01/14/2021",
-  },
+const defaultEngagement = ({ audiences = [] }) => {
+  return {
+    name: "Default engagement",
+    description: null,
+    delivery_schedule: null,
+    status: "Delivering",
+    audiences: audiences,
+  }
 }
 
 // models
@@ -381,7 +381,7 @@ export default function (server) {
   const facebookSeed = server.create("destination", facebook)
 
   // seed audiences
-  server.create(
+  const defaultAudienceSeed = server.create(
     "audience",
     defaultAudience({
       destinations: [facebookSeed],
@@ -394,7 +394,38 @@ export default function (server) {
 
   // seed engagements
   server.createList("engagement", 5)
-  server.create("engagement", defaultEngagement)
+
+  // TODO: define relationships in model, for now use the attrs from HUS-579
+  server.create(
+    "engagement",
+    defaultEngagement({
+      audiences: [
+        {
+          id: defaultAudienceSeed.id,
+          name: defaultAudienceSeed.name,
+          size: defaultAudienceSeed.size,
+          create_time: defaultAudienceSeed.create_time,
+          created_by: defaultAudienceSeed.created_by,
+          update_time: defaultAudienceSeed.update_time,
+          updated_by: defaultAudienceSeed.updated_by,
+          status: "Delivering",
+          destinations: defaultAudienceSeed.destinations.models.map(
+            (destination) => {
+              return {
+                id: destination.id,
+                latest_delivery: {
+                  id: "60ae035b6c5bf45da27f17e5",
+                  status: "Delivered",
+                  update_time: "2021-06-14T18:07:18.415",
+                  size: 1000,
+                },
+              }
+            }
+          ),
+        },
+      ],
+    })
+  )
 
   // seed Engagement Audience Performance
   server.createList("audiencePerformance", 10)
