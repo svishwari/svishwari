@@ -725,7 +725,6 @@ class TestEngagementManagement(unittest.TestCase):
             )
 
         engagement_docs = em.get_engagements_summary(database=self.database)
-        grouped_engagements = em.group_engagements(engagement_docs)
 
         # get all engagements for validation
         all_engagements = em.get_engagements(self.database)
@@ -735,10 +734,10 @@ class TestEngagementManagement(unittest.TestCase):
 
         # ensure length of grouped engagements is equal to length of all engagements.
         # this checks to ensure the grouping was done correctly.
-        self.assertEqual(len(grouped_engagements), len(all_engagements))
+        self.assertEqual(len(engagement_docs), len(all_engagements))
 
         # test the grouped engagements for existence of key fields
-        for engagement in grouped_engagements:
+        for engagement in engagement_docs:
             self.assertIn(c.ID, engagement)
             self.assertIn(c.NAME, engagement)
             self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
@@ -813,11 +812,10 @@ class TestEngagementManagement(unittest.TestCase):
         engagement_docs = em.get_engagements_summary(
             self.database, [engagement_id]
         )
-        grouped_engagements = em.group_engagements(engagement_docs)
 
         # ensure length of grouped engagements is equal to one
-        self.assertEqual(len(grouped_engagements), 1)
-        engagement = grouped_engagements[0]
+        self.assertEqual(len(engagement_docs), 1)
+        engagement = engagement_docs[0]
 
         # test the grouped engagements for existence of key fields
         self.assertIn(c.ID, engagement)
@@ -838,46 +836,3 @@ class TestEngagementManagement(unittest.TestCase):
             for destination in audience[c.DESTINATIONS]:
                 self.assertIn(c.NAME, destination)
                 self.assertIn(c.OBJECT_ID, destination)
-
-    def test_group_engagements(self) -> None:
-        """Test group_engagements routine
-
-        Returns:
-            Response: None
-
-        """
-
-        test_grouping = [
-            {
-                c.NAME: "doug",
-                c.ID: 1,
-                c.AUDIENCES: {
-                    c.OBJECT_ID: 4,
-                    c.NAME: "daf",
-                    c.DESTINATIONS: {c.OBJECT_ID: 46, c.NAME: "kaya"},
-                },
-            },
-            {
-                c.NAME: "doug",
-                c.ID: 1,
-                c.AUDIENCES: {
-                    c.OBJECT_ID: 4,
-                    c.NAME: "daf",
-                    c.DESTINATIONS: {c.OBJECT_ID: 86, c.NAME: "ollie"},
-                },
-            },
-        ]
-
-        # create another audience
-        grouped_items = em.group_engagements(test_grouping)
-
-        # ensure list has a value
-        self.assertTrue(grouped_items)
-
-        # ensure list length is exactly one
-        self.assertEqual(len(grouped_items), 1)
-
-        # ensure destinations has two items
-        self.assertEqual(
-            len(grouped_items[0][c.AUDIENCES][0][c.DESTINATIONS]), 2
-        )
