@@ -140,13 +140,18 @@ export default {
       @extend .global-heading;
     }
     .sub-props {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 30px;
       .subprop-name {
         @extend .global-text-line;
+        flex: 1 0 50%;
         padding-left: 5px;
       }
       .value {
         @extend .global-text-line;
-        float: right;
+        margin: 0 0 0 3px;
       }
     }
   }

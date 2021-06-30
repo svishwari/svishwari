@@ -1,5 +1,5 @@
 <template>
-  <v-card tile class="chart-container rounded-lg">
+  <v-card tile class="chart-container rounded-lg card-shadow-box ">
     <v-list-item three-line>
       <v-list-item-content>
         <div class="title-section">
@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     initializeValues() {
-      this.outerRadius = Math.min(this.width, this.height) * 0.5 - 35
+      this.outerRadius = Math.min(this.width, this.height) * 0.5 - 10
       this.innerRadius = this.outerRadius - 7
     },
 
@@ -236,5 +236,8 @@ export default {
   .chart-section {
     margin-bottom: -20px;
   }
+}
+.card-shadow-box {
+  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05) !important;
 }
 </style>
