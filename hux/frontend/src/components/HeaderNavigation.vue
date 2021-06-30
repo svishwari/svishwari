@@ -47,7 +47,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .header-menu {
   margin-right: -32px !important;
   .v-menu__content {
