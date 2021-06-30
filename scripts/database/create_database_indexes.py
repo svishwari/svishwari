@@ -78,8 +78,8 @@ def set_indexes(database: MongoClient, indexlist: List) -> None:
     """
     Method to set indexes from list
     Args:
-        database(MongoClient): Database Mongo Client
-        indexlist(List): List of Indexes
+        database (MongoClient): MongoDB Client
+        indexlist (list): List of Indexes
 
     Returns:
         None
@@ -92,7 +92,7 @@ def set_indexes(database: MongoClient, indexlist: List) -> None:
         collection = database[database_name][collection_name]
 
         logging.info(
-            "Creating a index with settings <%s> in collection <%s>...",
+            "Creating an index with settings <%s> in collection <%s>...",
             index_name,
             collection.full_name,
         )
@@ -104,7 +104,7 @@ def add_unique_compound_index(database: MongoClient) -> None:
     """
     Method to add unique Compound index
     Args:
-        database(MongoClient): Database Mongo Client
+        database (MongoClient): MongoDB Client
 
     Returns:
         None

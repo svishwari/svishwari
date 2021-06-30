@@ -4,6 +4,8 @@ Purpose of this directory is for housing scripts for initializing the database r
 # Steps to run Scripts
 ```
 cd /scripts
+python -m pip install pip -U
+python -m pip install pipenv
 pipenv install
 pipenv shell
 

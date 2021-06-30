@@ -318,7 +318,7 @@ def drop_collections(database: MongoClient) -> None:
 
 def insert_data_sources(database: MongoClient, datasources: list) -> None:
     """
-     Inserting Data Sources into Data Sources Collection
+        Inserting Data Sources into Data Sources Collection
     Args:
         database(MongoClient): Database Client
         datasources(List):List of Data Sources Object
@@ -349,7 +349,7 @@ def insert_delivery_platforms(
     database: MongoClient, deliveryplatforms: list
 ) -> None:
     """
-    Insertion of Delivery Platforms Collection
+        Insertion of Delivery Platforms Collection
 
     Args:
         database(MongoClient): Database Client
