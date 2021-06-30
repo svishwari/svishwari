@@ -190,7 +190,7 @@
       </template>
     </hux-data-table>
 
-    <v-row class="pt-3 pb-7 pl-3" v-if="rowData.length == 0">
+    <v-row class="pt-3 pb-7 pl-3" v-if="rowData.length == 0 && !loading">
       <EmptyPage>
         <template #icon>mdi-alert-circle-outline</template>
         <template #title>Oops! There’s nothing here yet</template>
