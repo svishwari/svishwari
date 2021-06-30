@@ -106,7 +106,7 @@
           <v-card-text v-else class="pl-6 pr-6 pb-6">
             <div
               class="empty-state pa-5 text--gray"
-              v-if="engagement.audiences.length == 0"
+              v-if="audienceMergedData.length == 0"
             >
               Nothing to show here yet. Add an audience, assign and deliver that
               audience to a destination.
