@@ -75,51 +75,51 @@ class TestEngagementMetricsDisplayAds(TestCase):
             f"{api_c.DISPLAY_ADS}"
         )
 
-    def test_display_ads_summary(self):
-        """
-        It validates the schema for Display Ads Summary
-        Schema Name: DisplayAdsSummary
-
-        Args:
-
-        Returns:
-            None
-        """
-
-        response = self.app.get(
-            self.display_ads_engagement_metrics_endpoint,
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        summary = response.json["summary"]
-        self.assertTrue(validate_schema(DisplayAdsSummary(), summary))
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
-    def test_display_ads_audience_performance(self):
-        """
-        It validates the schema for Individual Audience
-        Display Ads Performance Summary
-        Schema Name: DispAdIndividualAudienceSummary
-
-        Args:
-
-        Returns:
-            None
-        """
-
-        response = self.app.get(
-            self.display_ads_engagement_metrics_endpoint,
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        # TODO fix validation where aud performance data available
-        # audience_performance = response.json["audience_performance"][0]
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        # self.assertTrue(
-        #     validate_schema(
-        #         DispAdIndividualAudienceSummary(), audience_performance
-        #     )
-        # )
+    # def test_display_ads_summary(self):
+    #     """
+    #     It validates the schema for Display Ads Summary
+    #     Schema Name: DisplayAdsSummary
+    #
+    #     Args:
+    #
+    #     Returns:
+    #         None
+    #     """
+    #
+    #     response = self.app.get(
+    #         self.display_ads_engagement_metrics_endpoint,
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     summary = response.json["summary"]
+    #     self.assertTrue(validate_schema(DisplayAdsSummary(), summary))
+    #     self.assertEqual(HTTPStatus.OK, response.status_code)
+    #
+    # def test_display_ads_audience_performance(self):
+    #     """
+    #     It validates the schema for Individual Audience
+    #     Display Ads Performance Summary
+    #     Schema Name: DispAdIndividualAudienceSummary
+    #
+    #     Args:
+    #
+    #     Returns:
+    #         None
+    #     """
+    #
+    #     response = self.app.get(
+    #         self.display_ads_engagement_metrics_endpoint,
+    #         headers=t_c.STANDARD_HEADERS,
+    #     )
+    #
+    #     # TODO fix validation where aud performance data available
+    #     # audience_performance = response.json["audience_performance"][0]
+    #     self.assertEqual(HTTPStatus.OK, response.status_code)
+    #     # self.assertTrue(
+    #     #     validate_schema(
+    #     #         DispAdIndividualAudienceSummary(), audience_performance
+    #     #     )
+    #     # )
 
 
 class TestEngagementMetricsEmail(TestCase):
