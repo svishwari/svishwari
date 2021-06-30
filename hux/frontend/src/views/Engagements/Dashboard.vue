@@ -89,15 +89,13 @@
               /><span class="text-h5">Audiences</span>
             </div>
             <div class="mt-2">
-              <router-link
-                :to="{
-                  name: 'AudienceConfiguration',
-                }"
+              <a
+                href="#"
                 class="d-flex align-center primary--text text-decoration-none"
               >
                 <Icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
-              </router-link>
+              </a>
             </div>
           </v-card-title>
           <v-progress-linear
