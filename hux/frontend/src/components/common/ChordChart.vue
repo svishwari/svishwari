@@ -1,5 +1,5 @@
 <template>
-  <v-card tile class="chart-container rounded-lg card-shadow-box ">
+  <v-card tile class="chart-container rounded-lg card-shadow-box">
     <v-list-item three-line>
       <v-list-item-content>
         <div class="title-section">

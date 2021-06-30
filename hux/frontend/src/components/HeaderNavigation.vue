@@ -53,8 +53,8 @@ export default {
 }
 
 .v-menu__content {
-    top: 64px !important;
-    left: 1280px !important;
+  top: 64px !important;
+  left: 1280px !important;
 }
 
 .v-list {
