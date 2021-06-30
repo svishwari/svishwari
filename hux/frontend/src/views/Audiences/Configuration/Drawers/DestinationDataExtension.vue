@@ -137,7 +137,9 @@
             <v-icon color="info" size="15" class="mr-2">
               mdi-message-alert
             </v-icon>
-            <div class="text-body-1 secondary--text font-weight-bold">FEEDBACK</div>
+            <div class="text-body-1 secondary--text font-weight-bold">
+              FEEDBACK
+            </div>
             <div class="mx-2 darkGrey--text text-caption">
               Modifying this data extension may impact any independent journey.
             </div>
