@@ -16,6 +16,7 @@ import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.connectors.connector_sfmc import SFMCConnector
+from huxunifylib.connectors.connector_exceptions import AudienceAlreadyExists
 from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
@@ -33,6 +34,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
+    set_sfmc_auth_from_parameter_store,
     api_error_handler,
 )
 import huxunify.api.constants as api_c
@@ -79,40 +81,6 @@ def set_sfmc_auth_details(sfmc_auth: dict) -> dict:
         ),
         SFMCCredentials.SFMC_URL.value: sfmc_auth.get(
             api_c.SFMC_REST_BASE_URI
-        ),
-    }
-
-
-def set_sfmc_auth_from_parameter_store(auth: dict) -> dict:
-    """Set SFMC auth details from parameter store
-    ---
-
-        Args:
-            auth (dict): Destination Auth details.
-
-        Returns:
-            Auth Object (dict): SFMC auth object.
-
-    """
-
-    return {
-        SFMCCredentials.SFMC_ACCOUNT_ID.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_ACCOUNT_ID]
-        ),
-        SFMCCredentials.SFMC_AUTH_URL.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_AUTH_BASE_URI]
-        ),
-        SFMCCredentials.SFMC_CLIENT_ID.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_CLIENT_ID]
-        ),
-        SFMCCredentials.SFMC_CLIENT_SECRET.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_CLIENT_SECRET]
-        ),
-        SFMCCredentials.SFMC_SOAP_ENDPOINT.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_SOAP_BASE_URI]
-        ),
-        SFMCCredentials.SFMC_URL.value: parameter_store.get_store_value(
-            auth[api_c.SFMC_REST_BASE_URI]
         ),
     }
 
@@ -637,13 +605,13 @@ class DestinationDataExtPostView(SwaggerView):
     ]
 
     responses = {
-        HTTPStatus.OK.value: {
+        HTTPStatus.CREATED.value: {
             "description": "Created destination data extension successfully.",
-            "schema": {
-                "example": {
-                    "message": "Destination data extension is created successfully"
-                },
-            },
+            "schema": DestinationDataExtGetSchema,
+        },
+        HTTPStatus.OK.value: {
+            "description": "Destination data extension already exists.",
+            "schema": DestinationDataExtGetSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create destination data extension.",
@@ -704,9 +672,20 @@ class DestinationDataExtPostView(SwaggerView):
                     destination[api_c.AUTHENTICATION_DETAILS]
                 )
             )
-            data_extension_id = api_c.DATA_EXTENSIONS
-            # TODO : Assign data extension id once sfmc method is updated
-            connector.create_data_extension(body.get(api_c.DATA_EXTENSION))
-            return {"data_extension_id": data_extension_id}, HTTPStatus.OK
+            status_code = HTTPStatus.CREATED
+
+            try:
+                extension = connector.create_data_extension(
+                    body.get(api_c.DATA_EXTENSION)
+                )
+            except AudienceAlreadyExists:
+                # TODO - this is a work around until ORCH-288 is done
+                status_code = HTTPStatus.OK
+                extension = {}
+                for ext in connector.get_list_of_data_extensions():
+                    if ext["CustomerKey"] == body.get(api_c.DATA_EXTENSION):
+                        extension = ext
+
+            return DestinationDataExtGetSchema().dump(extension), status_code
 
         return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

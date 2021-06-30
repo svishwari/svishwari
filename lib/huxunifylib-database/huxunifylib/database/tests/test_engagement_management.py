@@ -12,6 +12,7 @@ from huxunifylib.database import data_management as dm
 from huxunifylib.database import delivery_platform_management as dpm
 
 
+# pylint: disable=R0904
 class TestEngagementManagement(unittest.TestCase):
     """Test engagement management module."""
 
@@ -756,6 +757,87 @@ class TestEngagementManagement(unittest.TestCase):
                 for destination in audience[c.DESTINATIONS]:
                     self.assertIn(c.NAME, destination)
                     self.assertIn(c.OBJECT_ID, destination)
+
+    def test_get_engagement_summary(self) -> None:
+        """Test get_engagement_summary routine
+
+        Returns:
+            Response: None
+
+        """
+
+        # create another audience
+        audience = om.create_audience(
+            self.database, "audience_group", [], self.user_name
+        )
+
+        # an audience with two destinations
+        new_engagement = {
+            c.ENGAGEMENT_NAME: "Autumn 2024",
+            c.ENGAGEMENT_DESCRIPTION: "high ltv for Autumn 2024",
+            c.AUDIENCES: [
+                {
+                    c.OBJECT_ID: audience[c.ID],
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[0][c.ID],
+                            c.DELIVERY_PLATFORM_CONTACT_LIST: "random_extension",
+                            c.STATUS: c.STATUS_PENDING,
+                        },
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        },
+                    ],
+                },
+                {
+                    c.OBJECT_ID: self.audience[c.ID],
+                    c.DESTINATIONS: [
+                        {
+                            c.OBJECT_ID: self.destinations[1][c.ID],
+                            c.STATUS: c.STATUS_SUCCEEDED,
+                        }
+                    ],
+                },
+            ],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            new_engagement[c.ENGAGEMENT_NAME],
+            new_engagement[c.ENGAGEMENT_DESCRIPTION],
+            new_engagement[c.AUDIENCES],
+            self.user_name,
+        )
+
+        engagement_docs = em.get_engagements_summary(
+            self.database, [engagement_id]
+        )
+        grouped_engagements = em.group_engagements(engagement_docs)
+
+        # ensure length of grouped engagements is equal to one
+        self.assertEqual(len(grouped_engagements), 1)
+        engagement = grouped_engagements[0]
+
+        # test the grouped engagements for existence of key fields
+        self.assertIn(c.ID, engagement)
+        self.assertIn(c.NAME, engagement)
+        self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
+        self.assertIn(c.CREATED_BY, engagement)
+        self.assertIn(c.UPDATED_BY, engagement)
+        self.assertIn(c.CREATE_TIME, engagement)
+        self.assertIn(c.UPDATE_TIME, engagement)
+        self.assertIn(c.AUDIENCES, engagement)
+
+        for audience in engagement[c.AUDIENCES]:
+            self.assertIn(c.NAME, audience)
+            self.assertIn(c.DESTINATIONS, audience)
+            self.assertIn(c.OBJECT_ID, audience)
+            if not audience[c.DESTINATIONS]:
+                continue
+            for destination in audience[c.DESTINATIONS]:
+                self.assertIn(c.NAME, destination)
+                self.assertIn(c.OBJECT_ID, destination)
 
     def test_group_engagements(self) -> None:
         """Test group_engagements routine

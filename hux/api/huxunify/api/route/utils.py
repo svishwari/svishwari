@@ -12,8 +12,8 @@ from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 
-from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
