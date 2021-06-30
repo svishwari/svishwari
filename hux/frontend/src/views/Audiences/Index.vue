@@ -210,7 +210,8 @@ export default {
     }),
 
     audienceList() {
-      return this.rowData.sort((a, b) =>
+      let audienceValue = this.rowData
+      return audienceValue.sort((a, b) =>
         a.name === b.name ? 0 : a.name < b.name ? -1 : 1
       )
     },
