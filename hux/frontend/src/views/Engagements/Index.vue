@@ -1,13 +1,13 @@
 <template>
   <div class="engagements-wrap">
-    <PageHeader>
+    <PageHeader :headerHeightChanges="'py-3'">
       <template #left>
         <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1">
-          mdi-download
-        </v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"
+          >mdi-download</v-icon
+        >
       </template>
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
@@ -379,15 +379,6 @@ export default {
         background-color: var(--v-aliceBlue-base) !important;
       }
       .v-data-table-header {
-        th {
-          background: var(--v-aliceBlue-base);
-          &:first-child {
-            border-radius: 12px 0px 0px 0px;
-          }
-          &:last-child {
-            border-radius: 0px 12px 0px 0px;
-          }
-        }
         th:nth-child(1) {
           position: sticky;
           top: 0;
@@ -398,6 +389,9 @@ export default {
         border-radius: 12px 12px 0px 0px;
       }
       tr {
+        th {
+          border-top: thin solid rgba(0, 0, 0, 0.12);
+        }
         &:hover {
           background: var(--v-aliceBlue-base) !important;
         }

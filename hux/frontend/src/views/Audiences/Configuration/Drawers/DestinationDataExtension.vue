@@ -1,5 +1,9 @@
 <template>
-  <Drawer v-model="localToggle" :loading="loading">
+  <Drawer
+    class="data-extension-drawer"
+    v-model="localToggle"
+    :loading="loading"
+  >
     <template #header-left>
       <div class="d-flex align-baseline">
         <h3 class="text-h3 pr-2 d-flex align-center">
@@ -55,7 +59,7 @@
                     <v-icon
                       color="primary"
                       size="small"
-                      class="ml-2"
+                      class="ml-2 mb-2"
                       v-bind="attrs"
                       v-on="on"
                     >
@@ -98,13 +102,7 @@
 
           <div class="mt-6 data-extension" v-else>
             <label
-              class="
-                d-flex
-                align-items-center
-                mb-2
-                neroBlack--text
-                text-caption
-              "
+              class="d-flex align-items-center mb-2 neroBlack--text text-caption"
             >
               Existing data extension
             </label>
@@ -120,24 +118,27 @@
               :rules="existingExtensionRules"
               required
             />
-
-            <v-card elevation="1">
-              <v-card-text>
-                <v-row align="center" class="mx-0">
-                  <v-icon color="info" size="15" class="mr-2">
-                    mdi-message-alert
-                  </v-icon>
-                  <div class="feedback info--text">FEEDBACK</div>
-                  <div class="mx-2">
-                    Modifying this data extension may impact any independent
-                    journey.
-                  </div>
-                </v-row>
-              </v-card-text>
-            </v-card>
           </div>
         </div>
       </v-form>
+      <v-card
+        elevation="1"
+        height="56"
+        class="feedback-card shadow mt-5 rounded-0"
+        v-if="!isActive"
+      >
+        <v-card-text class="mt-4">
+          <v-row align="center" class="mx-0">
+            <v-icon color="info" size="15" class="mr-2">
+              mdi-message-alert
+            </v-icon>
+            <div class="feedback info--text">FEEDBACK</div>
+            <div class="mx-2 darkGrey--text">
+              Modifying this data extension may impact any independent journey.
+            </div>
+          </v-row>
+        </v-card-text>
+      </v-card>
     </template>
 
     <template #footer-right>
@@ -303,43 +304,53 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.add-destination-wrapper {
-  .extension-type {
-    height: 100px;
-    width: 196px;
-    left: 24px;
-    top: 126px;
-    border-radius: 4px;
-    background: var(--v-white-base);
-    border: 1px solid var(--v-lightGrey-base);
-    box-sizing: border-box;
-    &.active {
-      border: 1px solid var(--v-primary-base);
-    }
-    .child {
-      .label {
-        color: var(--v-darkBlue-base);
+.data-extension-drawer {
+  .add-destination-wrapper {
+    .extension-type {
+      height: 100px;
+      width: 196px;
+      left: 24px;
+      top: 126px;
+      border-radius: 4px;
+      background: var(--v-white-base);
+      border: 1px solid var(--v-lightGrey-base);
+      box-sizing: border-box;
+      &.active {
+        border: 1px solid var(--v-primary-base);
+      }
+      .child {
+        .label {
+          color: var(--v-darkBlue-base);
+        }
       }
     }
-  }
-  .feedback {
-    font-weight: 800;
-    font-size: 16px;
-  }
-  .data-extension {
-    ::v-deep .v-input {
-      .v-input__control {
-        .v-input__slot {
-          min-height: 40px;
-          fieldset {
-            color: var(--v-lightGrey-base) !important;
-            border-width: 1px !important;
+    .data-extension {
+      ::v-deep .v-input {
+        .v-input__control {
+          .v-input__slot {
+            min-height: 40px;
+            fieldset {
+              color: var(--v-lightGrey-base) !important;
+              border-width: 1px !important;
+            }
+            input::placeholder {
+              color: var(--v-lightGrey-base) !important;
+            }
+          }
+          .v-text-field__details {
+            display: none;
           }
         }
-        .v-text-field__details {
-          display: none;
-        }
       }
+    }
+  }
+  .feedback-card {
+    left: 0;
+    position: absolute;
+    width: 100%;
+    .feedback {
+      font-weight: 800;
+      font-size: 16px;
     }
   }
 }

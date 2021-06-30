@@ -134,7 +134,7 @@
                           <Logo
                             class="added-logo ml-2 svg-icon"
                             :type="destination.type"
-                            :size="18"
+                            :size="24"
                           />
                           <Logo
                             class="delete-icon"
@@ -581,8 +581,8 @@ export default {
         .delete-icon {
           z-index: 1;
           position: absolute;
-          left: 3px;
-          top: 5px;
+          left: 8px;
+          top: 8px;
           background: var(--v-white-base);
           display: none;
         }
