@@ -26,29 +26,9 @@ from huxunify.api import constants as api_c
 from huxunify.app import create_app
 from huxunify.api.schema.engagement import (
     EmailSummary,
-    EmailIndividualAudienceSummary, DisplayAdsSummary, DispAdIndividualAudienceSummary,
+    EmailIndividualAudienceSummary, DisplayAdsSummary
 )
 import huxunify.test.constants as t_c
-
-# VALID_RESPONSE = {
-#     "active": True,
-#     "scope": "openid email profile",
-#     "username": "davesmith",
-#     "exp": 1234,
-#     "iat": 12345,
-#     "sub": "davesmith@fake",
-#     "aud": "sample_aud",
-#     "iss": "sample_iss",
-#     "jti": "sample_jti",
-#     "token_type": "Bearer",
-#     "client_id": "1234",
-#     "uid": "1234567",
-# }
-# VALID_USER_RESPONSE = {
-#     api_c.OKTA_ID_SUB: "8548bfh8d",
-#     api_c.EMAIL: "davesmith@fake.com",
-#     api_c.NAME: "dave smith",
-# }
 
 
 def validate_schema(schema: Schema, response: dict) -> bool:
@@ -89,7 +69,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.app = create_app().test_client()
         self.engagement_id = ObjectId()
         self.display_ads_engagement_metrics_endpoint = (
-            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
             f"{self.engagement_id}/"
             f"{api_c.AUDIENCE_PERFORMANCE}/"
             f"{api_c.DISPLAY_ADS}"
