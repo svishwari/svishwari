@@ -168,7 +168,9 @@ class IndividualEngagementSearch(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # get the engagement summary
-        engagements = get_engagements_summary(get_db_client())
+        engagements = get_engagements_summary(
+            get_db_client(), [ObjectId(engagement_id)]
+        )
         if not engagements:
             return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
 
