@@ -4,7 +4,7 @@ Purpose of this file is for holding methods to query and pull data from CDP.
 from typing import Tuple, Optional
 
 import requests
-from dateutil.parser import parse
+from dateutil.parser import parse, ParserError
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
@@ -93,14 +93,7 @@ def get_customer_profile(hux_id: str) -> dict:
     if response.status_code != 200 or api_c.BODY not in response.json():
         return {}
 
-    response_body = response.json()[api_c.BODY]
-
-    for date_field in DATETIME_FIELDS:
-        if date_field not in response_body:
-            continue
-        response_body[date_field] = parse(response_body[date_field])
-
-    return response_body
+    return clean_cdm_fields(response.json()[api_c.BODY])
 
 
 def get_customers_overview(
@@ -129,11 +122,27 @@ def get_customers_overview(
     if response.status_code != 200 or api_c.BODY not in response.json():
         return {}
 
-    response_body = response.json()[api_c.BODY]
+    return clean_cdm_fields(response.json()[api_c.BODY])
 
+
+def clean_cdm_fields(body: dict) -> dict:
+    """Clean and map any CDM fields date types.
+
+    Args:
+        body (dict): cdm response body dict.
+
+    Returns:
+        dict: dictionary of cleaned cdm body.
+
+    """
     for date_field in DATETIME_FIELDS:
-        if date_field not in response_body:
+        if date_field not in body:
             continue
-        response_body[date_field] = parse(response_body[date_field])
+        if not body[date_field]:
+            continue
+        try:
+            body[date_field] = parse(body[date_field])
+        except ParserError:
+            body[date_field] = ""
 
-    return response_body
+    return body
