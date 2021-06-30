@@ -128,7 +128,6 @@
         </div>
       </v-form>
       <v-card
-        elevation="1"
         height="56"
         class="feedback-card shadow mt-5 rounded-0"
         v-if="!isActive"
@@ -138,7 +137,7 @@
             <v-icon color="info" size="15" class="mr-2">
               mdi-message-alert
             </v-icon>
-            <div class="feedback info--text">FEEDBACK</div>
+            <div class="banner info--text">FEEDBACK</div>
             <div class="mx-2 darkGrey--text">
               Modifying this data extension may impact any independent journey.
             </div>
@@ -354,10 +353,6 @@ export default {
     left: 0;
     position: absolute;
     width: 100%;
-    .feedback {
-      font-weight: 800;
-      font-size: 16px;
-    }
   }
 }
 </style>
