@@ -1,5 +1,5 @@
 <template>
-  <v-card tile class="chart-container rounded-lg card-shadow-box">
+  <v-card tile class="chart-container rounded-lg box-shadow-5">
     <v-list-item three-line>
       <v-list-item-content>
         <div class="title-section">
@@ -236,8 +236,5 @@ export default {
   .chart-section {
     margin-bottom: -20px;
   }
-}
-.card-shadow-box {
-  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05) !important;
 }
 </style>

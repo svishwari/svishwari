@@ -48,18 +48,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header-menu {
-  margin-right: -32px !important;
-}
-
 .v-menu__content {
   top: 64px !important;
   left: 1280px !important;
-}
-
-.v-list {
-  .v-list-item {
-    min-height: 40px !important;
+  .v-list {
+    .v-list-item {
+      min-height: 40px !important;
+    }
   }
 }
 </style>
