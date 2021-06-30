@@ -107,8 +107,10 @@ def get_audience(
         if include_users:
             docs = list(
                 collection.aggregate(
-                    [{"$match": {c.ID: audience_id, c.DELETED: False}}]
-                    + [{c.DELETED: 0}]
+                    [
+                        {"$match": {c.ID: audience_id, c.DELETED: False}},
+                        {c.DELETED: 0},
+                    ]
                     + USER_LOOKUP_PIPELINE
                 )
             )
@@ -153,8 +155,7 @@ def get_all_audiences(
             # lookup to users
             return list(
                 collection.aggregate(
-                    [{"$match": {c.DELETED: False}}]
-                    + [{c.DELETED: 0}]
+                    [{"$match": {c.DELETED: False}}, {c.DELETED: 0}]
                     + USER_LOOKUP_PIPELINE
                 )
             )
