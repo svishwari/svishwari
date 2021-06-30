@@ -142,6 +142,31 @@ const actions = {
     }
   },
 
+  async deliverAudience(_, { id, audienceId }) {
+    try {
+      await api.engagements.deliverAudience({
+        resourceId: id,
+        audienceId: audienceId,
+      })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async deliverAudienceDestination(_, { id, audienceId, destinationId }) {
+    try {
+      await api.engagements.deliverAudienceDestination({
+        resourceId: id,
+        audienceId: audienceId,
+        destinationId: destinationId,
+      })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   updateAudienceList({ commit }, payload) {
     commit("SET_AUDIENCE_LIST", payload)
   },

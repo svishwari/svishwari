@@ -26,7 +26,13 @@
               :key="item.id"
               :disabled="!item.active"
             >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title
+                v-if="item.title === 'Deliver now'"
+                @click="deliverEngagementAudience(engagementId, audience.id)"
+              >
+                {{ item.title }}
+              </v-list-item-title>
+              <v-list-item-title v-else>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -53,6 +59,7 @@
             </tooltip>
 
             <v-spacer></v-spacer>
+
             <span class="action-icon font-weight-light float-right d-none">
               <v-menu class="menu-wrapper" bottom offset-y>
                 <template #activator="{ on, attrs }">
@@ -69,11 +76,25 @@
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
                     <v-list-item
-                      v-for="item in items"
-                      :key="item.id"
-                      :disabled="!item.active"
+                      v-for="option in options"
+                      :key="option.id"
+                      :disabled="!option.active"
                     >
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      <v-list-item-title
+                        v-if="option.title === 'Deliver now'"
+                        @click="
+                          deliverEngagementAudienceDestination(
+                            engagementId,
+                            audience.id,
+                            item.id
+                          )
+                        "
+                      >
+                        {{ option.title }}
+                      </v-list-item-title>
+                      <v-list-item-title v-else>
+                        {{ option.title }}
+                      </v-list-item-title>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -129,21 +150,33 @@
         </v-icon>
       </div>
     </div>
+
+    <hux-alert
+      v-model="showDeliveryAlert"
+      type="success"
+      title="YAY!"
+      message="Successfully delivered your audience."
+    />
   </v-card>
 </template>
 
 <script>
+import { mapActions } from "vuex"
 import Logo from "./Logo.vue"
 import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import moment from "moment"
 import Tooltip from "./Tooltip.vue"
+import HuxAlert from "@/components/common/HuxAlert.vue"
+
 export default {
-  components: { Logo, Status, Tooltip },
+  components: { Logo, Status, Tooltip, HuxAlert },
+
   name: "StatusList",
+
   data() {
     return {
-      items: [
+      options: [
         { id: 1, title: "Deliver now", active: true },
         { id: 2, title: "Create lookalike", active: false },
         { id: 3, title: "Edit delivery schedule", active: false },
@@ -158,22 +191,66 @@ export default {
         { id: 4, title: "Pause all delivery", active: false },
         { id: 5, title: "Remove audience", active: false },
       ],
+      showDeliveryAlert: false,
     }
   },
+
   props: {
     audience: {
-      title: Object,
+      type: Object,
+      required: true,
+    },
+
+    engagementId: {
+      type: String,
       required: true,
     },
   },
+
   methods: {
+    ...mapActions({
+      deliverAudience: "engagements/deliverAudience",
+      deliverAudienceDestination: "engagements/deliverAudienceDestination",
+    }),
+
     getSize(value) {
       return getApproxSize(value)
     },
+
     getTimeStamp(value) {
       return moment(new Date(value)).fromNow()
     },
+
     toggleFocus() {},
+
+    async deliverEngagementAudience(engagementId, audienceId) {
+      try {
+        await this.deliverAudience({
+          id: engagementId,
+          audienceId: audienceId,
+        })
+        this.showDeliveryAlert = true
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async deliverEngagementAudienceDestination(
+      engagementId,
+      audienceId,
+      destinationId
+    ) {
+      try {
+        await this.deliverAudienceDestination({
+          id: engagementId,
+          audienceId: audienceId,
+          destinationId: destinationId,
+        })
+        this.showDeliveryAlert = true
+      } catch (error) {
+        console.error(error)
+      }
+    },
   },
 }
 </script>
