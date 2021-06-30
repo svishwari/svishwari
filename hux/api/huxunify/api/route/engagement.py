@@ -17,7 +17,6 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements_summary,
-    group_engagements,
     set_engagement,
     delete_engagement,
     update_engagement,
@@ -104,9 +103,6 @@ class EngagementSearch(SwaggerView):
         # get the engagement summary
         engagements = get_engagements_summary(get_db_client())
 
-        # group the nested destinations for engagements
-        engagements = group_engagements(engagements)
-
         # weight the engagement status
         engagements = weighted_engagement_status(engagements)
 
@@ -167,15 +163,19 @@ class IndividualEngagementSearch(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        eng = get_engagement(
-            get_db_client(), engagement_id=ObjectId(engagement_id)
+        # get the engagement summary
+        engagements = get_engagements_summary(
+            get_db_client(), [ObjectId(engagement_id)]
         )
 
-        if not eng:
+        if not engagements:
             return {"message": "Not found"}, HTTPStatus.NOT_FOUND.value
 
+        # weight the engagement status
+        engagements = weighted_engagement_status(engagements)[0]
+
         return (
-            EngagementGetSchema().dump(eng),
+            EngagementGetSchema().dump(engagements),
             HTTPStatus.OK,
         )
 
