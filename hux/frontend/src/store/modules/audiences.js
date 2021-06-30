@@ -113,7 +113,8 @@ const actions = {
           title: "Last updated",
           subtitle: response.data.update_time,
           shortName: response.data.updated_by,
-          fullName: response.data.updated_by,
+          //TODO: this is temporary fix to map created by to updated by
+          fullName: response.data.updated_by || response.data.created_by,
         },
         {
           title: "Created",
