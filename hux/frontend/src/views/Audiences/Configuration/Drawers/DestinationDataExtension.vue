@@ -276,8 +276,6 @@ export default {
           data_extension: this.extension,
         }
         let response = await this.addDataExtension(requestBody)
-        destinationWithDataExtension.delivery_job_id =
-          response.data_extension_id
         destinationWithDataExtension.delivery_platform_config = {
           data_extension_name: response.name,
         }
@@ -285,8 +283,6 @@ export default {
         destinationWithDataExtension.delivery_platform_config = {
           data_extension_name: this.extension.name,
         }
-        destinationWithDataExtension.delivery_job_id =
-          this.extension.data_extension_id
       }
 
       this.value.push(destinationWithDataExtension)
