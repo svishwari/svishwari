@@ -136,7 +136,9 @@
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
                 :headers="headers"
-                :dataItems="getDestinationRollups(item.destinations)"
+                :dataItems="
+                  getDestinationRollups(item.destinations || item.campaigns)
+                "
                 :showHeader="false"
                 v-if="item"
               >
