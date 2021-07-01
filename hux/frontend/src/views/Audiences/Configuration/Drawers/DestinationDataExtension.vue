@@ -211,7 +211,7 @@ export default {
       return this.dataExtensions.map((each) => {
         return {
           text: each.name,
-          value: each.data_extension_id,
+          value: each,
         }
       })
     },
@@ -232,6 +232,15 @@ export default {
           /^[^!@#$%^*()={}\/.<>":?|,_&]*$/.test(v) ||
           // eslint-disable-next-line no-useless-escape
           "You can’t include the following characters in the name and field name of a data extension: ! @ # $ % ^ * ( ) = { } [ ] \ . < > / : ? | , _ &",
+        (v) => {
+          // Checks if data extension name is unique
+          let trimmedValue = v.trim()
+          return (
+            this.dataExtensionNames.findIndex(
+              (each) => each.text === trimmedValue
+            ) === -1
+          )
+        },
       ],
       existingExtensionRules: [(v) => !!v || "Select any one Data extension"],
     }
@@ -260,13 +269,26 @@ export default {
       let destinationWithDataExtension = JSON.parse(
         JSON.stringify(this.destination)
       )
-      const requestBody = {
-        id: destinationWithDataExtension.id,
-        name: this.extension,
+
+      if (typeof this.extension !== "object") {
+        const requestBody = {
+          id: destinationWithDataExtension.id,
+          data_extension: this.extension,
+        }
+        let response = await this.addDataExtension(requestBody)
+        destinationWithDataExtension.delivery_job_id =
+          response.data_extension_id
+        destinationWithDataExtension.delivery_platform_config = {
+          data_extension_name: response.name,
+        }
+      } else {
+        destinationWithDataExtension.delivery_platform_config = {
+          data_extension_name: this.extension.name,
+        }
+        destinationWithDataExtension.delivery_job_id =
+          this.extension.data_extension_id
       }
-      let response = await this.addDataExtension(requestBody)
-      destinationWithDataExtension.data_extension_id =
-        response.data_extension_id
+
       this.value.push(destinationWithDataExtension)
       this.onBack()
     },
