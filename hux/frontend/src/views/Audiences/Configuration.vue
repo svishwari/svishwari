@@ -405,7 +405,8 @@ export default {
         } else {
           filteredDestinations.push({
             id: this.selectedDestinations[i].id,
-            data_extension_id: this.selectedDestinations[i].data_extension_id,
+            delivery_platform_config:
+              this.selectedDestinations[i].delivery_platform_config,
           })
         }
       }

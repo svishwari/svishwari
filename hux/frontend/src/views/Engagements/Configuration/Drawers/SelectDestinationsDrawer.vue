@@ -153,9 +153,13 @@ export default {
     },
 
     add(destination) {
-      this.selectedDestinations.push({
-        id: destination.id,
-      })
+      if (destination.type === "salesforce") {
+        this.$emit("onSalesforce", destination)
+      } else {
+        this.selectedDestinations.push({
+          id: destination.id,
+        })
+      }
     },
 
     undoAdd(destination) {

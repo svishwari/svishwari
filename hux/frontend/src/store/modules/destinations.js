@@ -127,7 +127,7 @@ const actions = {
   async addDataExtension(_, extension) {
     try {
       const payload = {
-        data_extension: extension.name,
+        data_extension: extension.data_extension,
       }
       const response = await api.destinations.createDataExtension(
         extension.id,
