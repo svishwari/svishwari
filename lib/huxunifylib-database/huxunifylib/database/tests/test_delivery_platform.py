@@ -1650,3 +1650,27 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(
             campaign_activities_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK]
         )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_audience_customers(self):
+        """Performance metrics are set and retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+
+        customer_list = [
+            "customer_id_1",
+            "customer_id_2",
+            "customer_id_3",
+            "customer_id_4",
+            "customer_id_5",
+        ]
+
+        doc = dpm.set_audience_customers(
+            database=self.database,
+            delivery_job_id=delivery_job_id,
+            customer_list=customer_list,
+        )
+
+        self.assertTrue(doc is not None)
+
+        self.assertTrue(doc[c.AUDIENCE_CUSTOMER_LIST], customer_list)
