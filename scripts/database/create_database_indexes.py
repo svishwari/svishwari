@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Set the list of indexes; each element is a tuple (database name,
 # collection name, and list of field/order pairs to be indexed)
-index_list = [
+index_constants = [
     (
         c.DATA_MANAGEMENT_DATABASE,
         c.CONSTANTS_COLLECTION,
@@ -74,17 +74,17 @@ index_list = [
 ]
 
 
-def set_indexes(database: MongoClient, indexlist: List) -> None:
+def set_indexes(database: MongoClient, index_list: List) -> None:
     """
     Method to set indexes from list
     Args:
         database (MongoClient): MongoDB Client
-        indexlist (list): List of Indexes
+        index_list (list): List of Indexes
 
     Returns:
         None
     """
-    for item in indexlist:
+    for item in index_list:
         database_name = item[0]
         collection_name = item[1]
         index_name = item[2]
@@ -136,5 +136,5 @@ if __name__ == "__main__":
     # Get database
     DM_DB = db_client[c.DATA_MANAGEMENT_DATABASE]
 
-    set_indexes(db_client, index_list)
+    set_indexes(db_client, index_constants)
     add_unique_compound_index(db_client)

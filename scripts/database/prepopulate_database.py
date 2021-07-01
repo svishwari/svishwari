@@ -17,7 +17,7 @@ from scripts.database.share import get_mongo_client
 logging.basicConfig(level=logging.INFO)
 
 # Data Sources List
-data_sources = [
+data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "Bluecore",
         c.DATA_SOURCE_TYPE: "bluecore",
@@ -203,7 +203,7 @@ data_sources = [
 ]
 
 # Delivery Platforms List
-delivery_platforms = [
+delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
@@ -316,12 +316,12 @@ def drop_collections(database: MongoClient) -> None:
         database[c.DATA_MANAGEMENT_DATABASE][collection].drop()
 
 
-def insert_data_sources(database: MongoClient, datasources: list) -> None:
+def insert_data_sources(database: MongoClient, data_sources: list) -> None:
     """
         Inserting Data Sources into Data Sources Collection
     Args:
-        database(MongoClient): Database Client
-        datasources(List):List of Data Sources Object
+        database (MongoClient): MongoDB Client
+        data_sources (List):List of Data Sources Object
 
     Returns:
         None
@@ -329,7 +329,7 @@ def insert_data_sources(database: MongoClient, datasources: list) -> None:
 
     logging.info("Prepopulate data sources.")
 
-    for data_source in datasources:
+    for data_source in data_sources:
         result_id = create_data_source(
             database,
             data_source[c.DATA_SOURCE_NAME],
@@ -346,14 +346,14 @@ def insert_data_sources(database: MongoClient, datasources: list) -> None:
 
 
 def insert_delivery_platforms(
-    database: MongoClient, deliveryplatforms: list
+    database: MongoClient, delivery_platforms: list
 ) -> None:
     """
         Insertion of Delivery Platforms Collection
 
     Args:
-        database(MongoClient): Database Client
-        deliveryplatforms(List): List of Delivery Platform Objects
+        database (MongoClient): MongoDB Client
+        delivery_platforms (List): List of Delivery Platform Objects
 
     Returns:
 
@@ -361,7 +361,7 @@ def insert_delivery_platforms(
 
     logging.info("Prepopulate destinations.")
 
-    for delivery_platform in deliveryplatforms:
+    for delivery_platform in delivery_platforms:
         if (
             delivery_platform[c.DELIVERY_PLATFORM_TYPE]
             in c.SUPPORTED_DELIVERY_PLATFORMS
@@ -383,6 +383,6 @@ if __name__ == "__main__":
     db_client = get_mongo_client()
 
     drop_collections(db_client)
-    insert_data_sources(db_client, data_sources)
-    insert_delivery_platforms(db_client, delivery_platforms)
+    insert_data_sources(db_client, data_sources_constants)
+    insert_delivery_platforms(db_client, delivery_platforms_constants)
     logging.info("Prepopulate complete.")
