@@ -120,9 +120,7 @@
                   :size="24"
                 />
               </div> -->
-              <Tooltip
-                v-for="destination in row.value"
-                :key="destination.id">
+              <Tooltip v-for="destination in row.value" :key="destination.id">
                 <template #label-content>
                   <div class="destination-logo-wrapper">
                     <div class="logo-wrapper">
@@ -134,7 +132,7 @@
                       <Logo
                         class="delete-icon"
                         type="delete"
-                        @click.native="removeDestination(row.value)"
+                        @click.native="removeDestination(row, destination.id)"
                       />
                     </div>
                   </div>
@@ -424,9 +422,11 @@ export default {
       }
     },
 
-    removeDestination(deleteItem) {
-      console.log(this.value)
-      // this.$delete(this.value.audiences, audience.id)
+    removeDestination(deleteAudience, id) {
+      const index = this.value.audiences[
+        deleteAudience.item.id
+      ].destinations.findIndex((destination) => destination.id === id)
+      this.value.audiences[deleteAudience.item.id].destinations.splice(index, 1)
     },
   },
 }
@@ -468,5 +468,4 @@ export default {
     }
   }
 }
-
 </style>
