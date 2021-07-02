@@ -110,24 +110,37 @@
           </template>
 
           <template #field:destinations="row">
-            <div class="d-flex align-center">
-              <div class="d-flex align-center">
-                <Logo
-                  class="mr-2"
-                  v-for="destination in row.value"
-                  :key="destination.id"
-                  :type="destinationType(destination.id)"
-                  :size="20"
-                />
-              </div>
+            <div class="destinations-wrap">
+              <Tooltip v-for="destination in row.value" :key="destination.id">
+                <template #label-content>
+                  <div class="destination-logo-wrapper">
+                    <div class="logo-wrapper">
+                      <Logo
+                        class="added-logo ml-2 svg-icon"
+                        :type="destinationType(destination.id)"
+                        :size="24"
+                      />
+                      <Logo
+                        class="delete-icon"
+                        type="delete"
+                        @click.native="removeDestination(row, destination.id)"
+                      />
+                    </div>
+                  </div>
+                </template>
+                <template #hover-content>
+                  <div class="d-flex align-center">
+                    Remove {{ destination.name }}
+                  </div>
+                </template>
+              </Tooltip>
 
               <Tooltip>
                 <template #label-content>
                   <v-btn
-                    width="20"
-                    height="20"
+                    x-small
                     fab
-                    class="primary"
+                    class="primary ml-2"
                     @click="openSelectDestinationsDrawer(row.item.id)"
                   >
                     <v-icon size="16">mdi-plus</v-icon>
@@ -398,6 +411,13 @@ export default {
         console.error(error)
       }
     },
+
+    removeDestination(deleteAudience, id) {
+      const index = this.value.audiences[
+        deleteAudience.item.id
+      ].destinations.findIndex((destination) => destination.id === id)
+      this.value.audiences[deleteAudience.item.id].destinations.splice(index, 1)
+    },
   },
 }
 </script>
@@ -414,5 +434,34 @@ export default {
 }
 .radio-div {
   margin-top: -11px !important;
+}
+.destinations-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+
+  .destination-logo-wrapper {
+    display: inline-flex;
+    .logo-wrapper {
+      position: relative;
+      .added-logo {
+        margin-top: 8px;
+      }
+      .delete-icon {
+        z-index: 1;
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        background: var(--v-white-base);
+        display: none;
+      }
+      &:hover {
+        .delete-icon {
+          display: block;
+        }
+      }
+    }
+  }
 }
 </style>
