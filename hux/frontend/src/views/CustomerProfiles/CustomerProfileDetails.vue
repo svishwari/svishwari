@@ -182,7 +182,7 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import HuxSlider from "@/components/common/HuxSlider"
-import IdentityChart from "@/components/common/IdentityChart"
+import IdentityChart from "@/components/common/identityChart/IdentityChart"
 
 export default {
   name: "CustomerProfileDetails",
