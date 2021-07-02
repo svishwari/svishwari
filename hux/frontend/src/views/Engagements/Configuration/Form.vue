@@ -110,7 +110,7 @@
           </template>
 
           <template #field:destinations="row">
-            <div class="d-flex align-center">
+            <div class="destinations-wrap">
               <!-- <div class="d-flex align-center">
                 <Logo
                   class="mr-2"
@@ -445,25 +445,31 @@ export default {
 .radio-div {
   margin-top: -11px !important;
 }
+.destinations-wrap{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
 
-.destination-logo-wrapper {
-  display: inline-flex;
-  .logo-wrapper {
-    position: relative;
-    .added-logo {
-      margin-top: 8px;
-    }
-    .delete-icon {
-      z-index: 1;
-      position: absolute;
-      left: 8px;
-      top: 8px;
-      background: var(--v-white-base);
-      display: none;
-    }
-    &:hover {
+  .destination-logo-wrapper {
+    display: inline-flex;
+    .logo-wrapper {
+      position: relative;
+      .added-logo {
+        margin-top: 8px;
+      }
       .delete-icon {
-        display: block;
+        z-index: 1;
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        background: var(--v-white-base);
+        display: none;
+      }
+      &:hover {
+        .delete-icon {
+          display: block;
+        }
       }
     }
   }
