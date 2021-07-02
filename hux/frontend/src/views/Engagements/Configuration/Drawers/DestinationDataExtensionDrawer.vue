@@ -56,13 +56,7 @@
                 <span class="neroBlack--text text-caption">Journey type</span>
                 <Tooltip positionTop>
                   <template #label-content>
-                    <v-icon
-                      color="primary"
-                      size="small"
-                      class="ml-2 mb-2"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
+                    <v-icon color="primary" size="small" class="ml-2 mb-2">
                       mdi-alert-circle-outline
                     </v-icon>
                   </template>
