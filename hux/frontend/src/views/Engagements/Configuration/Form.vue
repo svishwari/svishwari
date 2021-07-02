@@ -113,29 +113,32 @@
             <div class="destinations-wrap">
               <v-row class="align-center">
                 <div>
-                    <Tooltip v-for="destination in row.value" :key="destination.id">
-                      <template #label-content>
-                        <div class="destination-logo-wrapper">
-                          <div class="logo-wrapper">
-                            <Logo
-                              class="added-logo ml-2 svg-icon"
-                              :type="destinationType(destination.id)"
-                              :size="24"
-                            />
-                            <Logo
-                              class="delete-icon"
-                              type="delete"
-                              @click.native="removeDestination(row, destination.id)"
-                            />
-                          </div>
+                  <Tooltip
+                    v-for="destination in row.value"
+                    :key="destination.id"
+                  >
+                    <template #label-content>
+                      <div class="destination-logo-wrapper">
+                        <div class="logo-wrapper">
+                          <Logo
+                            class="added-logo ml-2 svg-icon"
+                            :type="destinationType(destination.id)"
+                            :size="24"
+                          />
+                          <Logo
+                            class="delete-icon"
+                            type="delete"
+                            @click.native="
+                              removeDestination(row, destination.id)
+                            "
+                          />
                         </div>
-                      </template>
-                      <template #hover-content>
-                        <div class="d-flex align-center">
-                          Remove
-                        </div>
-                      </template>
-                    </Tooltip>
+                      </div>
+                    </template>
+                    <template #hover-content>
+                      <div class="d-flex align-center">Remove</div>
+                    </template>
+                  </Tooltip>
                 </div>
                 <div>
                   <Tooltip>
