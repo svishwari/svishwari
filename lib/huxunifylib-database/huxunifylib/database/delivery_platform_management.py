@@ -2261,3 +2261,35 @@ def set_audience_customers(
         logging.error(exc)
 
     return ret_doc
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_audience_customers(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> Union[list, None]:
+    """A function to fetch all audience customers docs for a delivery job.
+
+    Args:
+        database (DatabaseClient): A database client. Defaults to None.
+        delivery_job_id (ObjectId): Delivery job ID.
+
+    Returns:
+        Union[list, None]: A list of all audience customers docs or None
+    """
+
+    audience_customers_docs = None
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCE_CUSTOMERS_COLLECTION]
+
+    try:
+        audience_customers_docs = list(
+            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return audience_customers_docs
