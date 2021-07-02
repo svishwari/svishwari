@@ -45,9 +45,7 @@ const mutations = {
   },
 
   SET_DATAEXTENSIONS(state, items) {
-    items.forEach((item) => {
-      Vue.set(state.dataExtensions, item.id, item)
-    })
+    state.dataExtensions = items
   },
 }
 
