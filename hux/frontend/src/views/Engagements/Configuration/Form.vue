@@ -111,43 +111,48 @@
 
           <template #field:destinations="row">
             <div class="destinations-wrap">
-              <Tooltip v-for="destination in row.value" :key="destination.id">
-                <template #label-content>
-                  <div class="destination-logo-wrapper">
-                    <div class="logo-wrapper">
-                      <Logo
-                        class="added-logo ml-2 svg-icon"
-                        :type="destinationType(destination.id)"
-                        :size="24"
-                      />
-                      <Logo
-                        class="delete-icon"
-                        type="delete"
-                        @click.native="removeDestination(row, destination.id)"
-                      />
-                    </div>
-                  </div>
-                </template>
-                <template #hover-content>
-                  <div class="d-flex align-center">
-                    Remove {{ destination.name }}
-                  </div>
-                </template>
-              </Tooltip>
-
-              <Tooltip>
-                <template #label-content>
-                  <v-btn
-                    x-small
-                    fab
-                    class="primary ml-2"
-                    @click="openSelectDestinationsDrawer(row.item.id)"
-                  >
-                    <v-icon size="16">mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-                <template #hover-content>Add destination(s)</template>
-              </Tooltip>
+              <v-row class="align-center">
+                <div>
+                    <Tooltip v-for="destination in row.value" :key="destination.id">
+                      <template #label-content>
+                        <div class="destination-logo-wrapper">
+                          <div class="logo-wrapper">
+                            <Logo
+                              class="added-logo ml-2 svg-icon"
+                              :type="destinationType(destination.id)"
+                              :size="24"
+                            />
+                            <Logo
+                              class="delete-icon"
+                              type="delete"
+                              @click.native="removeDestination(row, destination.id)"
+                            />
+                          </div>
+                        </div>
+                      </template>
+                      <template #hover-content>
+                        <div class="d-flex align-center">
+                          Remove
+                        </div>
+                      </template>
+                    </Tooltip>
+                </div>
+                <div>
+                  <Tooltip>
+                    <template #label-content>
+                      <v-btn
+                        x-small
+                        fab
+                        class="primary ml-2"
+                        @click="openSelectDestinationsDrawer(row.item.id)"
+                      >
+                        <v-icon size="16">mdi-plus</v-icon>
+                      </v-btn>
+                    </template>
+                    <template #hover-content>Add destination(s)</template>
+                  </Tooltip>
+                </div>
+              </v-row>
             </div>
           </template>
 
