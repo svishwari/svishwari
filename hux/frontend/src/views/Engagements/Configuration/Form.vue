@@ -111,15 +111,6 @@
 
           <template #field:destinations="row">
             <div class="destinations-wrap">
-              <!-- <div class="d-flex align-center">
-                <Logo
-                  class="mr-2"
-                  v-for="destination in row.value"
-                  :key="destination.id"
-                  :type="destinationType(destination.id)"
-                  :size="24"
-                />
-              </div> -->
               <Tooltip v-for="destination in row.value" :key="destination.id">
                 <template #label-content>
                   <div class="destination-logo-wrapper">
@@ -147,8 +138,7 @@
               <Tooltip>
                 <template #label-content>
                   <v-btn
-                    width="20"
-                    height="20"
+                    x-small
                     fab
                     class="primary ml-2"
                     @click="openSelectDestinationsDrawer(row.item.id)"

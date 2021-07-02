@@ -60,8 +60,6 @@
                       color="primary"
                       size="small"
                       class="ml-2 mb-2"
-                      v-bind="attrs"
-                      v-on="on"
                     >
                       mdi-alert-circle-outline
                     </v-icon>
