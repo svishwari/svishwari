@@ -43,7 +43,7 @@
             'bordered-card': bordered,
             'data-card-selected': isAdded(item),
           }"
-          class="data-card mb-4"
+          class="data-card my-3"
         >
           <v-row align="center" no-gutters>
             <v-col v-for="field in fields" :key="field.key" :cols="field.col">
