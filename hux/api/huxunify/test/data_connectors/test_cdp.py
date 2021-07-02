@@ -1,6 +1,7 @@
 """
 purpose of this file is to house all the cdp tests.
 """
+import datetime
 import string
 from unittest import TestCase
 from http import HTTPStatus
@@ -10,6 +11,11 @@ from hypothesis import given, strategies as st
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
+from huxunify.api.data_connectors.cdp import (
+    clean_cdm_fields,
+    DATETIME_FIELDS,
+    DEFAULT_DATETIME,
+)
 from huxunify.test import shared as sh
 from huxunify.app import create_app
 
@@ -91,3 +97,30 @@ class CDPTest(TestCase):
         self.assertEqual(data[api_c.CITY], api_c.REDACTED)
         self.assertEqual(data[api_c.ADDRESS], api_c.REDACTED)
         self.assertEqual(data[api_c.AGE], api_c.REDACTED)
+
+    @given(
+        date_text=st.one_of(
+            st.text(alphabet=string.ascii_letters), st.datetimes(), st.none()
+        )
+    )
+    def test_cdm_data_mapping(self, date_text: str):
+        """Test mapped customer data types.
+
+        Args:
+            date_text (str): string for testing cdm datetime mapping.
+
+        Returns:
+
+        """
+
+        # ensure no errors are raised, otherwise it will fail.
+        for value in clean_cdm_fields(
+            {DATETIME_FIELDS[0]: date_text}
+        ).values():
+            if isinstance(date_text, datetime.datetime):
+                # validate it is the same
+                self.assertEqual(date_text, value)
+                continue
+
+            # otherwise ensure the result was mapped to the default time
+            self.assertEqual(value, DEFAULT_DATETIME)

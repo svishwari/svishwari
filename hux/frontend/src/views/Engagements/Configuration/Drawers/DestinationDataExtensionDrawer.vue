@@ -14,7 +14,7 @@
     </template>
 
     <template #default>
-      <v-form ref="salesforceExtensionRef" v-model="isFormValid">
+      <v-form ref="extensionRef" v-model="isFormValid">
         <div class="add-destination-wrapper pa-2 font-weight-regular">
           <span class="neroBlack--text text-caption">Extension type</span>
           <div class="d-flex align-center mt-2">
@@ -261,7 +261,7 @@ export default {
 
     async addDestination() {
       let destinationWithDataExtension = JSON.parse(
-        JSON.stringify(this.destination)
+        JSON.stringify(this.selectedDestination)
       )
 
       if (typeof this.extension !== "object") {
@@ -278,21 +278,25 @@ export default {
           data_extension_name: this.extension.name,
         }
       }
-
-      this.value.push(destinationWithDataExtension)
+      this.value[this.selectedAudienceId].destinations.push({
+        id: destinationWithDataExtension.id,
+        contact_list:
+          destinationWithDataExtension.delivery_platform_config
+            .data_extension_name,
+      })
       this.onBack()
     },
 
     onBack() {
-      this.$refs.salesforceExtensionRef.reset()
+      this.$refs.extensionRef.reset()
       this.resetForm()
-      this.$emit("onBack")
+      this.$emit("onBack", this.selectedAudienceId)
     },
   },
 
   props: {
     value: {
-      type: Array,
+      type: Object,
       required: true,
     },
 
@@ -302,8 +306,11 @@ export default {
       default: false,
     },
 
-    destination: {
-      type: Object,
+    selectedDestination: {
+      required: true,
+    },
+
+    selectedAudienceId: {
       required: true,
     },
   },
@@ -316,7 +323,7 @@ export default {
     async localToggle(value) {
       this.$emit("onToggle", value)
       if (value) {
-        await this.getDataExtensions(this.destination.id)
+        await this.getDataExtensions(this.selectedDestination.id)
       }
     },
   },

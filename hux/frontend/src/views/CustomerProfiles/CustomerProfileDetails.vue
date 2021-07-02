@@ -183,7 +183,7 @@ import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import HuxSlider from "@/components/common/HuxSlider"
 import IdentityChart from "@/components/common/identityChart/IdentityChart"
-import moment from "moment"
+
 export default {
   name: "CustomerProfileDetails",
   components: {
@@ -367,19 +367,19 @@ export default {
           id: 6,
           title: "Last click",
           colValue: 2.5,
-          value: this.getDateStamp(this.singleCustomer.last_click),
+          value: this.formattedDate(this.singleCustomer.last_click),
         },
         {
           id: 7,
           title: "Last purchase date",
           colValue: 2.5,
-          value: this.getDateStamp(this.singleCustomer.last_purchase),
+          value: this.formattedDate(this.singleCustomer.last_purchase),
         },
         {
           id: 8,
           title: "Last open",
           colValue: 2.5,
-          value: this.getDateStamp(this.singleCustomer.last_email_open),
+          value: this.formattedDate(this.singleCustomer.last_email_open),
         },
       ]
       return details
@@ -389,8 +389,11 @@ export default {
     ...mapActions({
       getCustomer: "customers/get",
     }),
-    getDateStamp(value) {
-      return value ? moment(new Date(value)).fromNow() : "-"
+    formattedDate(value) {
+      if (value) {
+        return this.$options.filters.Date(value, "relative")
+      }
+      return "-"
     },
   },
   async mounted() {

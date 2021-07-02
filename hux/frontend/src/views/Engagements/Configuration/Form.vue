@@ -229,6 +229,16 @@
       :selected-audience-id="selectedAudienceId"
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+      @onSalesforce="openDataExtensionDrawer"
+    />
+
+    <DestinationDataExtensionDrawer
+      v-model="value.audiences"
+      :selected-destination="selectedDestination"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showDataExtensionDrawer"
+      @onToggle="(val) => (showDataExtensionDrawer = val)"
+      @onBack="openSelectDestinationsDrawer"
     />
   </v-form>
 </template>
@@ -245,6 +255,7 @@ import Tooltip from "@/components/common/Tooltip.vue"
 import AddAudienceDrawer from "./Drawers/AddAudienceDrawer.vue"
 import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
 import SelectDestinationsDrawer from "./Drawers/SelectDestinationsDrawer.vue"
+import DestinationDataExtensionDrawer from "./Drawers/DestinationDataExtensionDrawer.vue"
 
 export default {
   name: "EngagementsForm",
@@ -260,6 +271,7 @@ export default {
     AddAudienceDrawer,
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
+    DestinationDataExtensionDrawer,
   },
 
   props: {
@@ -274,7 +286,9 @@ export default {
       showSelectAudiencesDrawer: false,
       showAddAudiencesDrawer: false,
       showSelectDestinationsDrawer: false,
+      showDataExtensionDrawer: false,
       selectedAudienceId: null,
+      selectedDestination: null,
     }
   },
 
@@ -326,6 +340,7 @@ export default {
       this.showSelectAudiencesDrawer = false
       this.showAddAudiencesDrawer = false
       this.showSelectDestinationsDrawer = false
+      this.showDataExtensionDrawer = false
     },
 
     openSelectAudiencesDrawer() {
@@ -343,6 +358,12 @@ export default {
       this.selectedAudienceId = audienceId
       this.closeAllDrawers()
       this.showSelectDestinationsDrawer = true
+    },
+
+    openDataExtensionDrawer(destination) {
+      this.closeAllDrawers()
+      this.selectedDestination = destination
+      this.showDataExtensionDrawer = true
     },
 
     removeAudience(audience) {
