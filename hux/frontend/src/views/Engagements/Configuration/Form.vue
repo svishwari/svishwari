@@ -435,7 +435,7 @@ export default {
 .radio-div {
   margin-top: -11px !important;
 }
-.destinations-wrap{
+.destinations-wrap {
   display: flex;
   align-items: center;
   justify-content: flex-end;
