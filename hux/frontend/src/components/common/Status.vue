@@ -98,9 +98,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="red" class="mr-2">
-         mdi-information
-        </v-icon>
+        <v-icon v-on="on" color="red" class="mr-2"> mdi-information </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
         {{ status | TitleCase }}
@@ -108,7 +106,7 @@
     </v-menu>
   </div>
 
-   <div v-else-if="Statuses.Feedback.includes(status)">
+  <div v-else-if="Statuses.Feedback.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
       <v-icon color="blue" class="mr-2"> mdi-message-alert </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
@@ -116,9 +114,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="blue" class="mr-2">
-        mdi-message-alert
-        </v-icon>
+        <v-icon v-on="on" color="blue" class="mr-2"> mdi-message-alert </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
         {{ status | TitleCase }}
@@ -126,16 +122,18 @@
     </v-menu>
   </div>
 
-     <div v-else-if="Statuses.Draft.includes(status)">
+  <div v-else-if="Statuses.Draft.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="blue" class="mr-2"> mdi-checkbox-blank-circle-outline </v-icon>
+      <v-icon color="blue" class="mr-2">
+        mdi-checkbox-blank-circle-outline
+      </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
         <v-icon v-on="on" color="blue" class="mr-2">
-        mdi-checkbox-blank-circle-outline
+          mdi-checkbox-blank-circle-outline
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
@@ -153,7 +151,7 @@
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
         <v-icon v-on="on" color="green" class="mr-2">
-        mdi-checkbox-marked-circle
+          mdi-checkbox-marked-circle
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
@@ -164,14 +162,16 @@
 
   <div v-else-if="Statuses.DeliveryPaused.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="lightGrey" class="mr-2"> mdi-checkbox-blank-circle </v-icon>
+      <v-icon color="lightGrey" class="mr-2">
+        mdi-checkbox-blank-circle
+      </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
         <v-icon v-on="on" color="lightGrey" class="mr-2">
-       mdi-checkbox-blank-circle
+          mdi-checkbox-blank-circle
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
@@ -189,7 +189,7 @@
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
         <v-icon v-on="on" color="darkBlue" class="mr-2">
-       mdi-information
+          mdi-information
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
@@ -197,7 +197,6 @@
       </div>
     </v-menu>
   </div>
-
 </template>
 
 <script>
@@ -217,7 +216,7 @@ export default {
         Feedback: ["Feedback"],
         Success: ["Success"],
         DeliveryPaused: ["Delivery Paused", "Inactive"],
-        Informational: ["Informational"]
+        Informational: ["Informational"],
       },
     }
   },
