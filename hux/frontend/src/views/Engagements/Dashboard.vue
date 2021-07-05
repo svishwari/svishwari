@@ -6,7 +6,7 @@
         <div class="d-flex align-center bread-crumb">
           <Breadcrumb :items="breadcrumbItems" />
           <div class="ml-3" v-if="engagementList && engagementList.status">
-            <Status :status="engagementList.status"></Status>
+            <Status :status="engagementList.status" :iconSize="'17px'"></Status>
           </div>
         </div>
       </template>
@@ -120,6 +120,7 @@
                 :key="item.id"
                 :audience="item"
                 :engagementId="String(engagementList.id)"
+                :statusIcon="'18'"
               />
             </v-col>
           </v-card-text>
@@ -709,15 +710,6 @@ export default {
 .engagement-dash {
   .page-header--wrap {
     box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
-  }
-  ::v-deep .mdi-checkbox-blank-circle {
-    font-size: 18px;
-  }
-  ::v-deep .mdi-information {
-    font-size: 18px;
-  }
-  ::v-deep .mdi-checkbox-blank-circle-outline {
-    font-size: 18px;
   }
   .empty-state {
     background: var(--v-aliceBlue-base);

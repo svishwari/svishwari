@@ -25,7 +25,7 @@
           class="mr-10"
         >
           <template slot="top">
-            <Status :status="model.status || ''" collapsed class="d-flex" />
+            <Status :iconSize="'17px'" :status="model.status || ''" collapsed class="d-flex" />
           </template>
 
           <template slot="default">

@@ -88,6 +88,7 @@
                 :showLabel="true"
                 collapsed
                 class="d-flex"
+                :iconSize="'17px'"
               />
             </div>
             <div v-if="header.value == 'size'">
@@ -447,15 +448,6 @@ export default {
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
-  }
-  ::v-deep .mdi-checkbox-blank-circle {
-    font-size: 18px;
-  }
-  ::v-deep .mdi-information {
-    font-size: 18px;
-  }
-  ::v-deep .mdi-checkbox-blank-circle-outline {
-    font-size: 18px;
   }
 }
 .icon-border {
