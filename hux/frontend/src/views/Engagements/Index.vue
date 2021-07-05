@@ -448,6 +448,15 @@ export default {
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
+  ::v-deep .mdi-checkbox-blank-circle {
+    font-size: 18px;
+  }
+  ::v-deep .mdi-information {
+    font-size: 18px;
+  }
+  ::v-deep .mdi-checkbox-blank-circle-outline {
+    font-size: 18px;
+  }
 }
 .icon-border {
   cursor: default !important;

@@ -713,6 +713,12 @@ export default {
   ::v-deep .mdi-checkbox-blank-circle {
     font-size: 18px;
   }
+  ::v-deep .mdi-information {
+    font-size: 18px;
+  }
+  ::v-deep .mdi-checkbox-blank-circle-outline {
+    font-size: 18px;
+  }
   .empty-state {
     background: var(--v-aliceBlue-base);
     width: 100%;
