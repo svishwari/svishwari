@@ -463,7 +463,10 @@ export default {
         name: this.audience.audienceName,
       }
       const response = await this.addAudienceToDB(payload)
-      this.$router.push({name:'AudienceInsight', params:{id: response.id}})
+      this.$router.push({
+        name: "AudienceInsight",
+        params: { id: response.id },
+      })
     },
     removeDestination(destination) {
       let index = this.selectedDestinations.indexOf(destination)
