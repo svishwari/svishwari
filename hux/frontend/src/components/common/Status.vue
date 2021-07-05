@@ -89,6 +89,115 @@
       </div>
     </v-menu>
   </div>
+
+  <div v-else-if="Statuses.Error.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="red" class="mr-2"> mdi-information </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="red" class="mr-2">
+         mdi-information
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+   <div v-else-if="Statuses.Feedback.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="blue" class="mr-2"> mdi-message-alert </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="blue" class="mr-2">
+        mdi-message-alert
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+     <div v-else-if="Statuses.Draft.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="blue" class="mr-2"> mdi-checkbox-blank-circle-outline </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="blue" class="mr-2">
+        mdi-checkbox-blank-circle-outline
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+  <div v-else-if="Statuses.Success.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="green" class="mr-2"> mdi-checkbox-marked-circle </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="green" class="mr-2">
+        mdi-checkbox-marked-circle
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+  <div v-else-if="Statuses.DeliveryPaused.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="lightGrey" class="mr-2"> mdi-checkbox-blank-circle </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="lightGrey" class="mr-2">
+       mdi-checkbox-blank-circle
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+  <div v-else-if="Statuses.Informational.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="darkBlue" class="mr-2"> mdi-information </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="darkBlue" class="mr-2">
+       mdi-information
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
 </template>
 
 <script>
@@ -98,15 +207,17 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["Active", "Success", "Delivered", "Succeeded"],
+        Active: ["Active", "Delivered", "Succeeded"],
         Inactive: ["Caution", "Not Delivered"],
         Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
         Disabled: ["Disabled"],
-        Error: ["Error", "Failed"],
+        Error: ["Error", "Failed", "Critical"],
         Pending: ["Pending", "Delivering"],
         Feedback: ["Feedback"],
-        Critical: ["Critical"]
+        Success: ["Success"],
+        DeliveryPaused: ["Delivery Paused", "Inactive"],
+        Informational: ["Informational"]
       },
     }
   },

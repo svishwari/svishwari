@@ -33,19 +33,20 @@
     </PageHeader>
     <PageHeader class="top-bar backGround-header-dropdown" :headerHeight="71">
       <template #left>
+        <div class="d-flex flex-row">
+          <div>
         <HuxDropdown
             label="Alert type"
             :items="alertTypeItems"
         />
-        
-        <!-- <HuxDropdown
-            label="Category"
-            :items="alertTypeItems.title"
-            />
+          </div>
+          <div>
         <HuxDropdown
-            label="Date"
-            :items="alertTypeItems.title"
-        />           -->
+            label="Category"
+            :items="categoryItems"
+        />
+          </div>
+        </div>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -72,27 +73,15 @@
                <status
                 :status="item['type']"
                 :showLabel="true"
-                collapsed
-                class="d-flex"
-              /> {{ item['type']}}
-              <!-- <time-stamp :value="item['type']" /> -->
+                class="status-icon"
+              />
             </div>
             <div v-if="header.value == 'description'">
-              <!-- TODO replace with header value -->
               {{ item[header.value] }}
-              <!-- <time-stamp :value="item['description']" /> -->
             </div>
             <div v-if="header.value == 'category'">
-              <!-- TODO replace with header value -->
               {{ item[header.value] }}
-              <!-- <Avatar :name="item['category']" /> -->
             </div>
-            <!-- <div v-if="header.value == 'create_time'">
-              <time-stamp :value="item[header.value]" />
-            </div>
-            <div v-if="header.value == 'created_by'">
-              <Avatar :name="item[header.value]" />
-            </div> -->
           </td>
         </template>
       </hux-data-table>
@@ -101,13 +90,13 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+// import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
-import Avatar from "../../components/common/Avatar.vue"
+// import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
@@ -121,7 +110,7 @@ export default {
     huxButton,
     EmptyPage,
     HuxDataTable,
-    Avatar,
+    // Avatar,
     Size,
     TimeStamp,
     MenuCell,
@@ -130,27 +119,23 @@ export default {
   },
   data() {
     return {
-        alertTypeItems: [
-            {title: "Orchestration"},
-             {title: "Decisioning"},
-              {title: "Data management"}
-            ],
-
-
-      actionItems: [
-        { title: "Favorite" },
-        { title: "Export" },
-        { title: "Edit" },
-        { title: "Duplicate" },
-        { title: "Create a lookalike" },
-        { title: "Delete" },
-      ],
       breadcrumbItems: [
         {
           text: "Alerts & Notifications",
           disabled: true,
           icon: "audiences",
         },
+      ],
+      categoryItems: [
+        {name: "Orchestration"},
+        {name: "Decisioning"},
+        {name: "Data management"}
+      ],
+      alertTypeItems: [
+        { name: "Success", modelIcon:"Success" },
+        { name: "Critical", modelIcon:"Critical"},
+        { name: "Feedback", modelIcon:"Feedback"},
+        { name: "Informational", modelIcon:"Informational"}
       ],
       columnDefs: [
         {
@@ -197,31 +182,7 @@ export default {
       loading: false,
     }
   },
-  computed: {
-    ...mapGetters({
-      rowData: "audiences/list",
-    }),
-    audienceList() {
-      let audienceValue = this.rowData
-      return audienceValue.sort((a, b) =>
-        a.name.toLowerCase() === b.name.toLowerCase() ? 0 : a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
-      )
-    },
-    isDataExists() {
-      if (this.rowData) return this.rowData.length > 0
-      return false
-    },
-  },
-  methods: {
-    ...mapActions({
-      getAllAudiences: "audiences/getAll",
-    }),
-  },
-  async mounted() {
-    this.loading = true
-    await this.getAllAudiences()
-    this.loading = false
-  },
+
 }
 </script>
 <style lang="scss" scoped>
@@ -270,5 +231,15 @@ export default {
 }
 .backGround-header-dropdown {
     background-color: var(--v-aliceBlue-base) !important;
+}
+.status-icon {
+  ::v-deep i {
+    font-size: 17px !important;
+  }
+}
+::v-deep .hux-dropdown  {
+  .v-btn__content {
+    color: var(--v-darkBlue-base) !important;
+  }
 }
 </style>
