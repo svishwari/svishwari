@@ -371,6 +371,7 @@ class AudiencePostView(SwaggerView):
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
             }, HTTPStatus.BAD_REQUEST
 
+        audience_doc[api_c.SIZE] = randrange(10000000)
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
 
