@@ -46,7 +46,7 @@
         "icon": "customer-profiles", 
           "title": "Customer Profiles", 
           "link": {
-            "name": "CustomerProfiles"
+            "name": "AlertsAndNotifications"
           }
         },
         { 

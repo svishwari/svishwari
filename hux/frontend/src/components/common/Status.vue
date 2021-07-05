@@ -105,6 +105,8 @@ export default {
         Disabled: ["Disabled"],
         Error: ["Error", "Failed"],
         Pending: ["Pending", "Delivering"],
+        Feedback: ["Feedback"],
+        Critical: ["Critical"]
       },
     }
   },
