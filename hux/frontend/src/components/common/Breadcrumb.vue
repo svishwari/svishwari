@@ -2,7 +2,8 @@
   <v-breadcrumbs :items="items" class="pl-0 breadcrumb">
     <template #item="{ item }">
       <v-breadcrumbs-item
-        :href="item.href"
+        exact
+        :to="item.href"
         :disabled="item.disabled"
         class="font-weight-light"
       >
