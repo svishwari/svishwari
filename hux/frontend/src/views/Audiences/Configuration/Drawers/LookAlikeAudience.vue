@@ -41,6 +41,30 @@
             required
           />
 
+          <div class="text-caption darkGrey--text">
+            Attach this audience to an engagement - you must have at least one
+          </div>
+          <v-autocomplete
+            v-model="lookAlikeAudience.engagements"
+            :items="processedEngagements"
+            solo
+            chips
+            label="Select engagement(s)"
+            multiple
+          >
+            <template v-slot:selection="data">
+              <v-chip
+                v-bind="data.attrs"
+                :input-value="data.selected"
+                :close="isMinEngagementSelected"
+                @click="data.select"
+                @click:close="remove(data)"
+              >
+                {{ data.item.text }}
+              </v-chip>
+            </template>
+          </v-autocomplete>
+
           <div class="text-caption darkGrey--text pt-9 pb-1">
             The reach for this lookalike audience
           </div>
@@ -110,7 +134,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      enagements: "engagements/list",
+      engagements: "engagements/list",
       audiences: "audiences/list",
     }),
 
@@ -143,6 +167,18 @@ export default {
         }
       })
     },
+    processedEngagements() {
+      return this.engagements.map((each) => {
+        return {
+          text: each.name,
+          value: each,
+        }
+      })
+    },
+
+    isMinEngagementSelected() {
+      return this.lookAlikeAudience.engagements.length > 1
+    },
   },
 
   data() {
@@ -156,7 +192,7 @@ export default {
         engagements: [],
       },
       isFormValid: false,
-      lookAlikeNameRules: [(v) => !!v || "Look alike name is required"],
+      lookAlikeNameRules: [(v) => !!v || "Lookalike audience name is required"],
     }
   },
 
