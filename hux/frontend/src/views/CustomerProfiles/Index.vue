@@ -34,13 +34,11 @@
           <template #subtitle-extended>
             <Tooltip v-if="!item.toolTipText">
               <template #label-content>
-                <span class="font-weight-semi-bold">
-                  {{ item.date }} <span v-if="item.time">&bull;</span>
-                  {{ item.time }}
+                <span class="font-weight-semi-bold" v-html="updatedTimeStamp">
                 </span>
               </template>
               <template #hover-content>
-                {{ item.date }} <span v-if="item.time">at</span> {{ item.time }}
+                {{ item.subtitle }}
               </template>
             </Tooltip>
             <Tooltip v-if="item.toolTipText">
@@ -261,6 +259,9 @@ export default {
         },
       ],
       loading: false,
+      updatedTime: [],
+      date: "",
+      time: "353553",
     }
   },
 
@@ -268,6 +269,9 @@ export default {
     ...mapGetters({
       overview: "customers/overview",
     }),
+    updatedTimeStamp() {
+      return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
+    },
   },
 
   methods: {
@@ -315,18 +319,19 @@ export default {
     },
     dateTimeFormatter(value) {
       if (value) {
-        let updatedTime = []
+        let updatedValue = ""
         if (value.indexOf("Z") !== -1) {
-          updatedTime = this.$options.filters
-            .Date(value, "calendar")
-            .split(" at ")
+          updatedValue = this.$options.filters.Date(value, "calendar")
         } else {
-          updatedTime = this.$options.filters.Date(value).split(" at ")
+          updatedValue = this.$options.filters.Date(value)
         }
 
-        return updatedTime.length > 1
-          ? [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
-          : [updatedTime[0], null]
+        this.updatedTime = updatedValue.split(" at ")
+        this.primaryItems[7].subtitle = updatedValue
+
+        return this.updatedTime[1]
+          ? [this.updatedTime[0], this.updatedTime[1].replaceAll(" ", "")]
+          : [this.updatedTime[0], null]
       }
     },
     viewCustomerList() {
