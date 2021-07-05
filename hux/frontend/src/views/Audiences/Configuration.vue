@@ -462,8 +462,8 @@ export default {
         filters: filtersArray,
         name: this.audience.audienceName,
       }
-      await this.addAudienceToDB(payload)
-      this.$router.push({ name: "Audiences" })
+      const response = await this.addAudienceToDB(payload)
+      this.$router.push({name:'AudienceInsight', params:{id: response.id}})
     },
     removeDestination(destination) {
       let index = this.selectedDestinations.indexOf(destination)
