@@ -120,7 +120,7 @@
                 :key="item.id"
                 :audience="item"
                 :engagementId="String(engagementList.id)"
-                :statusIcon="'17'"
+                :statusIcon="'17px'"
               />
             </v-col>
           </v-card-text>
