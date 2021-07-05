@@ -678,11 +678,6 @@ class DestinationDataExtPostView(SwaggerView):
                 extension = connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
                 )
-
-                extension["name"] = extension["data_extension_name"]
-                del extension["data_extension_name"]
-                del extension["creation_status"]
-
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done
                 status_code = HTTPStatus.OK
