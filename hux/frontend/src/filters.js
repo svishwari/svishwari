@@ -29,10 +29,10 @@ export default {
    */
   DateRelative(value) {
     let dateTime = moment(value).utc(true)
-    const otherDates = dateTime.fromNow()
-    const week = dateTime.calendar()
-    const calback = () => "[" + otherDates + "]"
-    const weekcal = () => "[" + week + "]"
+    let otherDates = dateTime.fromNow()
+    let week = dateTime.calendar()
+    let calback = () => "[" + otherDates + "]"
+    let weekcal = () => "[" + week.split(" at ")[0] + "]"
     return dateTime.calendar(null, {
       sameDay: "[Today]",
       nextDay: weekcal,

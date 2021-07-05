@@ -314,9 +314,7 @@ export default {
       if (value) {
         let updatedValue = this.$options.filters.Date(value)
         this.updatedTime = updatedValue.split(" at ")
-        let dateOnly = this.$options.filters.DateRelative(value)
-        this.updatedTime[0] =
-          dateOnly.indexOf(" at ") !== -1 ? dateOnly.split(" at ")[0] : dateOnly
+        this.updatedTime[0] = this.$options.filters.DateRelative(value)
         return updatedValue
       }
     },
