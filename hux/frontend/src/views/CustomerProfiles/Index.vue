@@ -305,13 +305,17 @@ export default {
         this.primaryItems[5].value = "numeric"
         this.primaryItems[6].subtitle = this.overview.total_household_ids
         this.primaryItems[6].value = "numeric"
-        this.primaryItems[7].subtitle = this.getUpdatedDateTime(this.overview.updated)
+        this.primaryItems[7].subtitle = this.getUpdatedDateTime(
+          this.overview.updated
+        )
       }
     },
     getUpdatedDateTime(value) {
       if (value) {
-        let updatedValue = (value.indexOf("Z") !== -1) ? this.$options.filters.Date(value, "calendar") :
-        this.$options.filters.Date(value) 
+        let updatedValue =
+          value.indexOf("Z") !== -1
+            ? this.$options.filters.Date(value, "calendar")
+            : this.$options.filters.Date(value)
         this.updatedTime = updatedValue.split(" at ")
         return updatedValue
       }
