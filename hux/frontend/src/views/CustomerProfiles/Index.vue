@@ -305,10 +305,10 @@ export default {
       this.primaryItems[5].value = "numeric"
       this.primaryItems[6].subtitle = this.overview.total_household_ids
       this.primaryItems[6].value = "numeric"
-      let date = ""
-      let time = (""[(date, time)] = this.dateTimeFormatter(
+      let [ date, time ] = [ null, null ]
+      [date, time] = this.dateTimeFormatter(
         this.overview.updated
-      ))
+      )
       this.primaryItems[7].date = date
       this.primaryItems[7].time = time
     },
