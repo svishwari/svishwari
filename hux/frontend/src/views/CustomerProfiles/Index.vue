@@ -240,8 +240,6 @@ export default {
         {
           title: "Updated",
           subtitle: "",
-          date: "",
-          time: "",
           value: "",
         },
       ],
@@ -260,8 +258,6 @@ export default {
       ],
       loading: false,
       updatedTime: [],
-      date: "",
-      time: "353553",
     }
   },
 
@@ -309,29 +305,15 @@ export default {
         this.primaryItems[5].value = "numeric"
         this.primaryItems[6].subtitle = this.overview.total_household_ids
         this.primaryItems[6].value = "numeric"
-        this.primaryItems[7].date = this.dateTimeFormatter(
-          this.overview.updated
-        )[0]
-        this.primaryItems[7].time = this.dateTimeFormatter(
-          this.overview.updated
-        )[1]
+        this.primaryItems[7].subtitle = this.getUpdatedDateTime(this.overview.updated)
       }
     },
-    dateTimeFormatter(value) {
+    getUpdatedDateTime(value) {
       if (value) {
-        let updatedValue = ""
-        if (value.indexOf("Z") !== -1) {
-          updatedValue = this.$options.filters.Date(value, "calendar")
-        } else {
-          updatedValue = this.$options.filters.Date(value)
-        }
-
+        let updatedValue = (value.indexOf("Z") !== -1) ? this.$options.filters.Date(value, "calendar") :
+        this.$options.filters.Date(value) 
         this.updatedTime = updatedValue.split(" at ")
-        this.primaryItems[7].subtitle = updatedValue
-
-        return this.updatedTime[1]
-          ? [this.updatedTime[0], this.updatedTime[1].replaceAll(" ", "")]
-          : [this.updatedTime[0], null]
+        return updatedValue
       }
     },
     viewCustomerList() {
