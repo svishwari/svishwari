@@ -22,6 +22,26 @@ export default {
 
     return date.format(format)
   },
+  /**
+   * Formats a datetime field to calendar relative date.
+   * Converts date in calendar fromat like Yesterday, Today, Last Saturday for a week
+   * else convert it into relative date like a month ago, a year ago
+   */
+  DateRelative(value) {
+    let dateTime = moment(value).utc(true)
+    const otherDates = dateTime.fromNow()
+    const week = dateTime.calendar()
+    const calback = () => "[" + otherDates + "]"
+    const weekcal = () => "[" + week + "]"
+    return dateTime.calendar(null, {
+      sameDay: "[Today]",
+      nextDay: weekcal,
+      nextWeek: calback,
+      lastDay: weekcal,
+      lastWeek: weekcal,
+      sameElse: calback,
+    })
+  },
 
   /**
    * Formats any empty data field with a placeholder.
