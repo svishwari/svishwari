@@ -662,9 +662,7 @@ export default {
                   update_time: audiencesDetailsData[i].last_delivered,
                 }
               : {
-                  size: audiencesDetailsData[i].size,
                   status: audiencesDetailsData[i].status,
-                  update_time: audiencesDetailsData[i].last_delivered,
                 },
           }
           audiencesDetailsData[i].destinations[j] = destinationWithDelivery
