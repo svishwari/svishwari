@@ -104,7 +104,12 @@ export default {
         },
         {
           title: "Target size",
-          subtitle: this.$options.filters.Numeric(this.sumAudienceSizes),
+          subtitle: this.$options.filters.Numeric(
+            this.sumAudienceSizes,
+            true,
+            false,
+            true
+          ),
         },
         {
           title: "Delivery schedule",
