@@ -120,3 +120,15 @@ class CustomersSchema(Schema):
             }
         ],
     )
+
+
+class DataFeedsSchema(Schema):
+    """IDR Data Feeds Schema"""
+
+    data_feed = Str(required=True, example="Our Data Feed")
+    data_source = Str(required=True, example="salesforce")
+    records_processed = Integer(required=True, example=1234)
+    match_rate = Float(required=True, example=0.4601)
+    last_run = DateTime(
+        required=True, example="2021-05-24T14:35:12.001000+00:00"
+    )
