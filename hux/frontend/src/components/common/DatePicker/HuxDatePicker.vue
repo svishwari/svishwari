@@ -1,7 +1,6 @@
 <template>
   <div class="hux-date-picker">
     <v-menu
-      @input="onMenuToggle"
       ref="menu"
       :close-on-content-click="false"
       :return-value.sync="end"
@@ -9,7 +8,6 @@
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
-      close-on-click
       v-model="menu">
       <template #activator="{ on }">
         <huxButton
@@ -25,28 +23,46 @@
         </huxButton>
       </template>
       <v-list>
-        <v-list-item  v-if="endDate">
+        <v-list-item v-if="endDate">
           <v-list-item-title> No end date </v-list-item-title>
         </v-list-item>
-        <v-list-item  v-if="endDate" @click="showCalendar = true">
+        <v-list-item v-if="endDate" @click="showCalendar = true">
           <v-list-item-title> Select date </v-list-item-title>
         </v-list-item>
-        <v-date-picker v-model="start" no-title scrollable  v-if="!endDate">
+        <v-date-picker
+          class="start-date-picker"
+          v-model="start"
+          no-title
+          scrollable
+          v-if="!endDate">
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-          <v-btn text color="primary" @click="$refs.menu.save(start);pressOk(start)">
-            OK
-          </v-btn>
+          <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu = false">
+            Cancel
+          </huxButton>
+          <huxButton variant="tertiary" isTile class="btn-select mr-4"  @click="$refs.menu.save(start);selectDate(start)">
+            <span class="primary--text">
+              Select
+            </span>
+          </huxButton>
         </v-date-picker>
       </v-list>
     </v-menu>
-      <v-date-picker v-model="end" no-title scrollable v-if="showCalendar">
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-        <v-btn text color="primary" @click="$refs.menu.save(end);pressOk(start)">
-          OK
-        </v-btn>
-      </v-date-picker>
+    <v-date-picker
+      class="end-date-picker"
+      v-model="end"
+      no-title
+      scrollable
+      v-if="showCalendar">
+      <v-spacer></v-spacer>
+      <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu = false; showCalendar =false">
+        Cancel
+      </huxButton>
+      <huxButton variant="tertiary" isTile class="btn-select mr-4"  @click="$refs.menu.save(end);selectDate(end)">
+        <span class="primary--text">
+          Select
+        </span>
+      </huxButton>
+    </v-date-picker>
   </div>
 </template>
 <script>
@@ -82,14 +98,14 @@ export default {
   methods: {
     onSelect(item) {
       this.$emit("on-select", item)
-      this.menu = false
+      // this.menu = false
     },
-    onMenuToggle(opened){
-      if(!opened){
-        this.showCalendar = false
-      }
+    onMenuToggle(opened) {
+      // if (!opened) {
+      //   this.showCalendar = false
+      // }
     },
-    pressOk(data){
+    selectDate(data) {
       this.label = data
     },
   },
@@ -136,6 +152,25 @@ export default {
       .v-icon {
         color: var(--v-primary-base);
       }
+    }
+  }
+}
+.start-date-picker, .end-date-picker {
+  ::v-deep .v-picker__body {
+    border-bottom: 1px solid var(--v-lightGrey-base);
+    .v-date-picker-table{
+      table {
+        border-collapse: collapse;
+        thead {
+          border-bottom: 1px solid var(--v-lightGrey-base);
+        }
+      }
+    }
+  }
+  ::v-deep .v-card__actions {
+    display: flow-root !important;
+    .btn-select {
+      float: right;
     }
   }
 }
