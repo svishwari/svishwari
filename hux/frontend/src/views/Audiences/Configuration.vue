@@ -320,7 +320,7 @@ export default {
   methods: {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
-      addAudienceToDB: "audiences/add",
+      saveAudience: "audiences/add",
       getAudiencesRules: "audiences/fetchConstants",
       getAudienceById: "audiences/getAudienceById",
       getOverview: "customers/getOverview",
@@ -405,7 +405,8 @@ export default {
         } else {
           filteredDestinations.push({
             id: this.selectedDestinations[i].id,
-            data_extension_id: this.selectedDestinations[i].data_extension_id,
+            delivery_platform_config:
+              this.selectedDestinations[i].delivery_platform_config,
           })
         }
       }
@@ -461,8 +462,11 @@ export default {
         filters: filtersArray,
         name: this.audience.audienceName,
       }
-      await this.addAudienceToDB(payload)
-      this.$router.push({ name: "Audiences" })
+      const response = await this.saveAudience(payload)
+      this.$router.push({
+        name: "AudienceInsight",
+        params: { id: response.id },
+      })
     },
     removeDestination(destination) {
       let index = this.selectedDestinations.indexOf(destination)

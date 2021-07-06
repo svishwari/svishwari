@@ -37,7 +37,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
+    <v-row class="pt-3 pb-7 pl-3 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
         :dataItems="audienceList"
@@ -208,7 +208,11 @@ export default {
     audienceList() {
       let audienceValue = this.rowData
       return audienceValue.sort((a, b) =>
-        a.name === b.name ? 0 : a.name < b.name ? -1 : 1
+        a.name.toLowerCase() === b.name.toLowerCase()
+          ? 0
+          : a.name.toLowerCase() < b.name.toLowerCase()
+          ? -1
+          : 1
       )
     },
     isDataExists() {
