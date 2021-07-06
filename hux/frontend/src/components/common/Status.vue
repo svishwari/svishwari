@@ -1,13 +1,15 @@
 <template>
   <div v-if="Statuses.Active.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="success" class="mr-2"> mdi-checkbox-blank-circle </v-icon>
+      <v-icon color="success" class="mr-2" :size="iconSize">
+        mdi-checkbox-blank-circle
+      </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="success" class="mr-2">
+        <v-icon v-on="on" color="success" class="mr-2" :size="iconSize">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
@@ -19,7 +21,7 @@
 
   <div v-else-if="Statuses.Inactive.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="columbiaBlue" class="mr-2">
+      <v-icon color="columbiaBlue" class="mr-2" :size="iconSize">
         mdi-checkbox-blank-circle
       </v-icon>
       <span v-if="showLabel">{{ status }} </span>
@@ -27,7 +29,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="columbiaBlue" class="mr-2">
+        <v-icon v-on="on" color="columbiaBlue" class="mr-2" :size="iconSize">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
@@ -89,6 +91,66 @@
       </div>
     </v-menu>
   </div>
+
+  <div v-else-if="Statuses.Error.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="red" class="mr-2" :size="iconSize">
+        mdi-information
+      </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="red" class="mr-2" :size="iconSize">
+          mdi-information
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+  <div v-else-if="Statuses.Draft.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="blue" class="mr-2" :size="iconSize">
+        mdi-checkbox-blank-circle-outline
+      </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="blue" class="mr-2" :size="iconSize">
+          mdi-checkbox-blank-circle-outline
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+  <div v-else-if="Statuses.Disabled.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="lightGrey" class="mr-2" :size="iconSize">
+        mdi-checkbox-blank-circle
+      </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="lightGrey" class="mr-2" :size="iconSize">
+          mdi-checkbox-blank-circle
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
 </template>
 
 <script>
@@ -98,11 +160,11 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["Active", "Success", "Delivered", "Succeeded"],
+        Active: ["Active", "Delivered", "Succeeded", "Success"],
         Inactive: ["Caution", "Not Delivered"],
         Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
-        Disabled: ["Disabled"],
+        Disabled: ["Disabled", "Inactive"],
         Error: ["Error", "Failed"],
         Pending: ["Pending", "Delivering"],
       },
@@ -128,6 +190,11 @@ export default {
       type: Boolean,
       required: false,
       default: true,
+    },
+    iconSize: {
+      type: Number,
+      required: false,
+      default: 24,
     },
   },
 }

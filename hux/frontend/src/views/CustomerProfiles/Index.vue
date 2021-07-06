@@ -312,11 +312,9 @@ export default {
     },
     getUpdatedDateTime(value) {
       if (value) {
-        let updatedValue =
-          value.indexOf("Z") !== -1
-            ? this.$options.filters.Date(value, "calendar")
-            : this.$options.filters.Date(value)
+        let updatedValue = this.$options.filters.Date(value)
         this.updatedTime = updatedValue.split(" at ")
+        this.updatedTime[0] = this.$options.filters.DateRelative(value)
         return updatedValue
       }
     },
