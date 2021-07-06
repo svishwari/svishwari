@@ -51,8 +51,7 @@ class TestCreateDBIndexes(TestCase):
         const_collection = self.database[c.DATA_MANAGEMENT_DATABASE][
             c.CONSTANTS_COLLECTION
         ]
-        const_index = const_collection.index_information()
-        self.assertTrue(const_index)
+        self.assertTrue(const_collection.index_information())
 
     def test_add_unique_compound_index(self):
         """
@@ -69,6 +68,4 @@ class TestCreateDBIndexes(TestCase):
             c.INGESTED_DATA_COLLECTION
         ]
 
-        customer_index = list(ing_collection.list_indexes())
-
-        self.assertTrue(customer_index)
+        self.assertTrue(list(ing_collection.list_indexes()))

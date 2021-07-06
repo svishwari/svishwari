@@ -6,6 +6,7 @@ Purpose of this directory is for housing scripts for initializing the database r
 cd /scripts
 python -m pip install pip -U
 python -m pip install pipenv
+export $ARTIFACTORY_PYTHON_READ="<Artifactory Value from JFROG>"
 pipenv install
 pipenv shell
 

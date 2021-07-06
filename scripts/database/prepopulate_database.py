@@ -321,7 +321,7 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
         Inserting Data Sources into Data Sources Collection
     Args:
         database (MongoClient): MongoDB Client
-        data_sources (List):List of Data Sources Object
+        data_sources (List): List of Data Sources Object
 
     Returns:
         None
