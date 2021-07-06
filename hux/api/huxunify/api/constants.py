@@ -211,6 +211,12 @@ PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
     "Performance metrics data extension not assigned."
 )
 INVALID_AUTH_DETAILS = "Invalid authentication details."
+INVALID_AUTH_HEADER = "Authorization header is invalid."
+INVALID_AUTH = "You are not authorized to visit this page."
+
+AUDIENCE_NOT_FOUND = "Audience not found."
+DESTINATION_NOT_FOUND = "Destination not found."
+ENGAGEMENT_NOT_FOUND = "Engagement not found."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -423,10 +429,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
 
-# ERROR
-INVALID_AUTH_HEADER = "Authorization header is invalid."
-INVALID_AUTH = "You are not authorized to visit this page."
-
 # FILTERING
 REDACTED = "++REDACTED++"
 CUSTOMER_PROFILE_REDACTED_FIELDS = [
@@ -439,10 +441,6 @@ CUSTOMER_PROFILE_REDACTED_FIELDS = [
     STATE,
     ZIP,
 ]
-
-# Error messages
-AUDIENCE_NOT_FOUND = "Audience not found."
-DESTINATION_NOT_FOUND = "Destination not found."
 
 MOCK_CUSTOMER_PROFILE_RESPONSE = {
     "id": "1531-2039-22",

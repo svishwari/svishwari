@@ -14,6 +14,7 @@ from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
+    set_delivery_job,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
@@ -30,6 +31,82 @@ from huxunify.api.schema.engagement import (
     DisplayAdsSummary,
 )
 import huxunify.test.constants as t_c
+
+MOCK_ENGAGEMENT_METRICS = {
+    "summary": {
+        "sent": 125,
+        "hard_bounces": 125,
+        "hard_bounces_rate": 0.1,
+        "delivered": 125,
+        "delivered_rate": 0.1,
+        "open": 365200,
+        "open_rate": 0.1,
+        "clicks": 365200,
+        "click_through_rate": 0.7208,
+        "click_to_open_rate": 0.7208,
+        "unique_clicks": 365200,
+        "unique_opens": 225100,
+        "unsubscribe": 365200,
+        "unsubscribe_rate": 0.7208,
+    },
+    "audience_performance": [
+        {
+            "sent": 125,
+            "hard_bounces": 125,
+            "hard_bounces_rate": 0.1,
+            "delivered": 125,
+            "delivered_rate": 0.1,
+            "open": 365200,
+            "open_rate": 0.1,
+            "clicks": 365200,
+            "click_through_rate": 0.7208,
+            "click_to_open_rate": 0.7208,
+            "unique_clicks": 365200,
+            "unique_opens": 225100,
+            "unsubscribe": 365200,
+            "unsubscribe_rate": 0.7208,
+            "name": "audience_1",
+            "campaigns": [
+                {
+                    "sent": 125,
+                    "hard_bounces": 125,
+                    "hard_bounces_rate": 0.1,
+                    "delivered": 125,
+                    "delivered_rate": 0.1,
+                    "open": 365200,
+                    "open_rate": 0.1,
+                    "clicks": 365200,
+                    "click_through_rate": 0.7208,
+                    "click_to_open_rate": 0.7208,
+                    "unique_clicks": 365200,
+                    "unique_opens": 225100,
+                    "unsubscribe": 365200,
+                    "unsubscribe_rate": 0.7208,
+                    "name": "Facebook",
+                    "is_mapped": True,
+                },
+                {
+                    "sent": 125,
+                    "hard_bounces": 125,
+                    "hard_bounces_rate": 0.1,
+                    "delivered": 125,
+                    "delivered_rate": 0.1,
+                    "open": 365200,
+                    "open_rate": 0.1,
+                    "clicks": 365200,
+                    "click_through_rate": 0.7208,
+                    "click_to_open_rate": 0.7208,
+                    "unique_clicks": 365200,
+                    "unique_opens": 225100,
+                    "unsubscribe": 365200,
+                    "unsubscribe_rate": 0.7208,
+                    "name": "Salesforce Marketing Cloud",
+                    "is_mapped": True,
+                },
+            ],
+        }
+    ],
+}
 
 
 def validate_schema(schema: Schema, response: dict) -> bool:
@@ -62,18 +139,50 @@ class TestEngagementMetricsDisplayAds(TestCase):
         Returns:
         """
 
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.start()
-
         self.app = create_app().test_client()
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock request for introspect call
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
+
+        # mock get_db_client() for the engagement.
+        mock.patch(
+            "huxunify.api.route.engagement.get_db_client",
+            return_value=self.database,
+        ).start()
+
         self.engagement_id = ObjectId()
-        self.display_ads_engagement_metrics_endpoint = (
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
-            f"{self.engagement_id}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.DISPLAY_ADS}"
+        self.audience_id = ObjectId()
+
+        self.delivery_platform = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            "facebook_delivery_platform",
+            authentication_details={},
+            status=db_c.STATUS_SUCCEEDED,
+        )
+
+        set_delivery_job(
+            self.database,
+            "audienceID",
+            self.delivery_platform[db_c.ID],
+            [
+                {
+                    db_c.ENGAGEMENT_ID: self.engagement_id,
+                    db_c.AUDIENCE_ID: self.audience_id,
+                }
+            ],
+            self.engagement_id,
         )
 
         self.addCleanup(mock.patch.stopall)
@@ -89,13 +198,22 @@ class TestEngagementMetricsDisplayAds(TestCase):
             None
         """
 
+        engagement_id = ObjectId()
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.DISPLAY_ADS}"
+        )
+
         response = self.app.get(
-            self.display_ads_engagement_metrics_endpoint,
+            endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        summary = response.json["summary"]
-        self.assertTrue(validate_schema(DisplayAdsSummary(), summary))
+        self.assertTrue(
+            validate_schema(DisplayAdsSummary(), response.json["summary"])
+        )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
     def test_display_ads_audience_performance(self):
@@ -110,8 +228,16 @@ class TestEngagementMetricsDisplayAds(TestCase):
             None
         """
 
+        engagement_id = ObjectId()
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.DISPLAY_ADS}"
+        )
+
         response = self.app.get(
-            self.display_ads_engagement_metrics_endpoint,
+            endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
 
@@ -144,7 +270,8 @@ class TestEngagementMetricsEmail(TestCase):
 
         self.app = create_app().test_client()
 
-        self.engagement_id = "60b8d6d7d3cf80b4edcd890b"
+        self.engagement_id = ObjectId()
+
         self.email_engagement_metrics_endpoint = (
             f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
             f"{self.engagement_id}/"
@@ -167,12 +294,12 @@ class TestEngagementMetricsEmail(TestCase):
 
         response = self.app.get(
             self.email_engagement_metrics_endpoint,
-            headers={"Authorization": "Bearer 12345678"},
+            headers=t_c.STANDARD_HEADERS,
         )
-        jsonresponse = json.loads(response.data)
 
-        summary = jsonresponse["summary"]
-        self.assertTrue(validate_schema(EmailSummary(), summary))
+        self.assertTrue(
+            validate_schema(EmailSummary(), response.json["summary"])
+        )
 
     def test_email_audience_performance(self):
         """
@@ -187,14 +314,13 @@ class TestEngagementMetricsEmail(TestCase):
 
         response = self.app.get(
             self.email_engagement_metrics_endpoint,
-            headers={"Authorization": "Bearer 12345678"},
+            headers=t_c.STANDARD_HEADERS,
         )
-        jsonresponse = json.loads(response.data)
 
-        audience_performance = jsonresponse["audience_performance"][0]
         self.assertTrue(
             validate_schema(
-                EmailIndividualAudienceSummary(), audience_performance
+                EmailIndividualAudienceSummary(),
+                response.json["audience_performance"][0],
             )
         )
 
@@ -437,10 +563,10 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Engagement does not exist."}
+        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_get_campaigns_for_invalid_engagement(self):
         """
@@ -464,10 +590,10 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_mappings_for_invalid_engagement(self):
         """
@@ -491,10 +617,10 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_get_campaign_mappings_for_non_existent_engagement(self):
         """
@@ -518,10 +644,10 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Engagement does not exist."}
+        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_put_campaign_mappings_for_non_existent_engagement(self):
         """
@@ -545,10 +671,10 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Engagement does not exist."}
+        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_put_campaigns_invalid_audience_id(self):
         """
@@ -572,7 +698,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -600,7 +726,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -628,7 +754,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -656,7 +782,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -683,7 +809,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -713,7 +839,7 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)

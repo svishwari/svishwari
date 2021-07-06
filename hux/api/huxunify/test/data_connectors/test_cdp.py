@@ -2,7 +2,7 @@
 purpose of this file is to house all the cdp tests.
 """
 import string
-from unittest import TestCase
+from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
 from requests_mock import Mocker
@@ -35,6 +35,16 @@ class CDPTest(TestCase):
         self.request_mocker = requests_mock.Mocker()
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         self.request_mocker.start()
+
+        self.addCleanup(mock.patch.stopall)
+
+    def tearDown(self) -> None:
+        """Tear down tests
+
+        Returns:
+
+        """
+        self.request_mocker.stop()
 
     @given(customer_id=st.text(alphabet=string.ascii_letters))
     def test_get_customer(self, customer_id: str):

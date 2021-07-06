@@ -233,7 +233,7 @@ class TestDeliveryRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -259,7 +259,7 @@ class TestDeliveryRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -285,9 +285,9 @@ class TestDeliveryRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Engagement does not exist."}
+        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
 
-        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
 
     def test_deliver_destination_for_engagement_audience_valid_ids(self):
