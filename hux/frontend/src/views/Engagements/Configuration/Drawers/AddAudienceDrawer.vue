@@ -37,8 +37,20 @@
             :class="{ 'd-none': i > overviewListItems.length - 3 && !expanded }"
             :key="i"
             :title="item.title"
-            :subtitle="item.subtitle"
-          />
+          >
+            <template #subtitle-extended>
+              <Tooltip>
+                <template #label-content>
+                  <span class="font-weight-semi-bold">
+                    {{ getFormattedValue(item) }}
+                  </span>
+                </template>
+                <template #hover-content>
+                  {{ item.subtitle | Empty }}
+                </template>
+              </Tooltip>
+            </template>
+          </MetricCard>
         </div>
         <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
@@ -64,11 +76,12 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 import Drawer from "@/components/common/Drawer.vue"
 import TextField from "@/components/common/TextField"
 import MetricCard from "@/components/common/MetricCard"
 import AttributeRules from "@/views/Audiences/AttributeRules.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "AddAudienceDrawer",
@@ -76,8 +89,15 @@ export default {
   components: {
     Drawer,
     TextField,
+    Tooltip,
     MetricCard,
     AttributeRules,
+  },
+
+  computed: {
+    ...mapGetters({
+      overview: "customers/overview",
+    }),
   },
 
   props: {
@@ -108,14 +128,14 @@ export default {
         name: "",
       },
       overviewListItems: [
-        { title: "Target size", subtitle: "34.2M" },
-        { title: "Countries", subtitle: "2" },
-        { title: "US States", subtitle: "52" },
-        { title: "Cities", subtitle: "-" },
-        { title: "Age", subtitle: "-" },
-        { title: "Women", subtitle: "52%" },
-        { title: "Men", subtitle: "46%" },
-        { title: "Other", subtitle: "2%" },
+        { title: "Target size", subtitle: "" },
+        { title: "Countries", subtitle: "" },
+        { title: "US States", subtitle: "" },
+        { title: "Cities", subtitle: "" },
+        { title: "Age", subtitle: "" },
+        { title: "Women", subtitle: "" },
+        { title: "Men", subtitle: "" },
+        { title: "Other", subtitle: "" },
       ],
       attributeRules: [],
       expanded: false,
@@ -135,6 +155,7 @@ export default {
   methods: {
     ...mapActions({
       addAudience: "audiences/add",
+      getOverview: "customers/getOverview",
     }),
 
     closeDrawer() {
@@ -149,6 +170,43 @@ export default {
 
     changeOverviewListItems(expanded) {
       this.expanded = expanded
+    },
+
+    // Mapping Overview Data
+    mapCDMOverview() {
+      this.overviewListItems[0].subtitle = this.overview.total_customers
+      this.overviewListItems[1].subtitle = this.overview.total_countries
+      this.overviewListItems[2].subtitle = this.overview.total_us_states
+      this.overviewListItems[3].subtitle = this.overview.total_cities
+      this.overviewListItems[4].subtitle = this.overview.max_age
+      this.overviewListItems[5].subtitle = this.overview.gender_women
+      this.overviewListItems[6].subtitle = this.overview.gender_men
+      this.overviewListItems[7].subtitle = this.overview.gender_other
+    },
+
+    getFormattedValue(item) {
+      switch (item.title) {
+        case "Target size":
+        case "Countries":
+        case "US States":
+        case "Cities":
+          return this.$options.filters.Numeric(
+            item.subtitle,
+            false,
+            false,
+            true
+          )
+        case "Women":
+        case "Men":
+        case "Other":
+          return this.$options.filters.percentageConvert(
+            item.subtitle,
+            true,
+            true
+          )
+        default:
+          return item.subtitle
+      }
     },
 
     reset() {
@@ -217,6 +275,13 @@ export default {
         this.loading = false
       }
     },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getOverview()
+    this.mapCDMOverview()
+    this.loading = false
   },
 }
 </script>
