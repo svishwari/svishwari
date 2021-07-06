@@ -473,6 +473,9 @@ class AddAudienceEngagement(SwaggerView):
                             },
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e6",
+                                db_c.DELIVERY_PLATFORM_CONFIG: {
+                                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                                },
                             },
                         ],
                     }
