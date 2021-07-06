@@ -220,6 +220,15 @@
     />
 
     <v-divider class="mt-10" />
+    <v-subheader> Date Picker </v-subheader>
+    <hux-date-picker
+      :label="selectedMenuItem"
+      :selected="selectedMenuItem"
+      :items="menuItems"
+      :endDate="true"
+      @on-select="onSelectMenuItem"
+    />
+    <v-divider class="mt-10" />
 
     <v-subheader> Page Header </v-subheader>
     <PageHeader>
@@ -496,6 +505,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import ChordChart from "@/components/common/identityChart/ChordChart"
 import { generateColor } from "@/utils"
+import HuxDatePicker from "@/components/common/DatePicker/HuxDatePicker"
 
 export default {
   name: "Components",
@@ -523,6 +533,7 @@ export default {
     FormStep,
     HuxSlider,
     ChordChart,
+    HuxDatePicker,
   },
   methods: {
     onupdatelabelText(newValue) {
