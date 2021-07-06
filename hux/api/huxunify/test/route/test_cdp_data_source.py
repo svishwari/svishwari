@@ -16,26 +16,9 @@ from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
-from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.schema.cdp_data_source import CdpDataSourceSchema
 from huxunify.app import create_app
-
-
-VALID_RESPONSE = {
-    "active": True,
-    "scope": "openid email profile",
-    "username": "davesmith",
-    "exp": 1234,
-    "iat": 12345,
-    "sub": "davesmith@fake",
-    "aud": "sample_aud",
-    "iss": "sample_iss",
-    "jti": "sample_jti",
-    "token_type": "Bearer",
-    "client_id": "1234",
-    "uid": "1234567",
-}
 
 
 def validate_schema(
@@ -74,7 +57,7 @@ class CdpDataSourcesTest(TestCase):
         """
 
         self.data_sources_api_endpoint = (
-            f"{BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
+            f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
         )
 
         # init mongo patch initially
@@ -86,11 +69,18 @@ class CdpDataSourcesTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        # mock get_db_client()
-        get_db_client_mock = mock.patch(
-            "huxunify.api.route.cdp_data_source.get_db_client"
+        # mock get_db_client() in cdp_data_source
+        mock.patch(
+            "huxunify.api.route.cdp_data_source.get_db_client",
+            return_value=self.database,
         ).start()
-        get_db_client_mock.return_value = self.database
+
+        # mock request for introspect call
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.start()
+
+        # stop all mocks in cleanup
         self.addCleanup(mock.patch.stopall)
 
         # setup the flask test client
@@ -109,11 +99,6 @@ class CdpDataSourcesTest(TestCase):
                     create_data_source(self.database, ds_name, "")
                 )
             )
-
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.start()
 
     def test_get_data_source_by_id_valid_id(self):
         """

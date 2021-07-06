@@ -63,14 +63,10 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 
-NAME = "name"
-DESCRIPTION = "description"
-TYPE = "type"
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
 START_DATE = "start_date"
 END_DATE = "end_date"
-STATUS = "status"
 ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
@@ -271,7 +267,6 @@ ENGAGEMENT_RATE = "engagement_rate"
 SUMMARY = "summary"
 IS_MAPPED = "is_mapped"
 
-EMAIL = "email"
 SENT = "sent"
 HARD_BOUNCES = "hard_bounces"
 HARD_BOUNCES_RATE = "hard_bounces_rate"
@@ -402,6 +397,7 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -410,12 +406,6 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
-
-
-# Customers API Fields
-CUSTOMERS_TAG = "customers"
-CUSTOMERS_ENDPOINT = "/customers"
-CUSTOMERS_DESCRIPTION = "Customers API"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {

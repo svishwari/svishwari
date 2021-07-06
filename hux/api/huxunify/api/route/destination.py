@@ -115,7 +115,7 @@ class DestinationGetView(SwaggerView):
             "description": "Failed to retrieve the destination.",
         },
         HTTPStatus.NOT_FOUND.value: {
-            "description": "Destination not found.",
+            "description": api_c.DESTINATION_NOT_FOUND,
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -668,7 +668,9 @@ class DestinationDataExtPostView(SwaggerView):
         )
 
         if not destination:
-            return {"message": api_c.DESTINATION_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         if (
             api_c.AUTHENTICATION_DETAILS not in destination

@@ -25,12 +25,6 @@ import huxunify.test.constants as t_c
 from huxunify.app import create_app
 from huxunify.api import constants as api_c
 
-VALID_USER_RESPONSE = {
-    api_c.OKTA_ID_SUB: "8548bfh8d",
-    api_c.EMAIL: "davesmith@fake.com",
-    api_c.NAME: "dave smith",
-}
-
 
 class OrchestrationRouteTest(TestCase):
     """Orchestration Route tests"""
@@ -45,7 +39,6 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
-        # self.user_info_call = f"{t_c.TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
         self.audience_api_endpoint = "/api/v1{}".format(
             api_c.AUDIENCE_ENDPOINT
         )
@@ -53,7 +46,7 @@ class OrchestrationRouteTest(TestCase):
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=VALID_USER_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
         request_mocker.start()
 
         self.app = create_app().test_client()
@@ -67,6 +60,7 @@ class OrchestrationRouteTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
+        # mock get_db_client() for the orchestration.
         mock.patch(
             "huxunify.api.route.orchestration.get_db_client",
             return_value=self.database,
@@ -516,7 +510,6 @@ class OrchestrationRouteTest(TestCase):
                 api_c.DESTINATIONS: [],
             },
         )
-        print("response: " + str(response.json))
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(new_name, response.json[db_c.AUDIENCE_NAME])

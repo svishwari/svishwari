@@ -26,7 +26,8 @@ from huxunify.api import constants as api_c
 from huxunify.app import create_app
 from huxunify.api.schema.engagement import (
     EmailSummary,
-    EmailIndividualAudienceSummary, DisplayAdsSummary
+    EmailIndividualAudienceSummary,
+    DisplayAdsSummary,
 )
 import huxunify.test.constants as t_c
 
@@ -75,51 +76,53 @@ class TestEngagementMetricsDisplayAds(TestCase):
             f"{api_c.DISPLAY_ADS}"
         )
 
-    # def test_display_ads_summary(self):
-    #     """
-    #     It validates the schema for Display Ads Summary
-    #     Schema Name: DisplayAdsSummary
-    #
-    #     Args:
-    #
-    #     Returns:
-    #         None
-    #     """
-    #
-    #     response = self.app.get(
-    #         self.display_ads_engagement_metrics_endpoint,
-    #         headers=t_c.STANDARD_HEADERS,
-    #     )
-    #
-    #     summary = response.json["summary"]
-    #     self.assertTrue(validate_schema(DisplayAdsSummary(), summary))
-    #     self.assertEqual(HTTPStatus.OK, response.status_code)
-    #
-    # def test_display_ads_audience_performance(self):
-    #     """
-    #     It validates the schema for Individual Audience
-    #     Display Ads Performance Summary
-    #     Schema Name: DispAdIndividualAudienceSummary
-    #
-    #     Args:
-    #
-    #     Returns:
-    #         None
-    #     """
-    #
-    #     response = self.app.get(
-    #         self.display_ads_engagement_metrics_endpoint,
-    #         headers=t_c.STANDARD_HEADERS,
-    #     )
-    #
-    #     # TODO fix validation where aud performance data available
-    #     # audience_performance = response.json["audience_performance"][0]
-    #     self.assertEqual(HTTPStatus.OK, response.status_code)
-    #     # self.assertTrue(
-    #     #     validate_schema(
-    #     #         DispAdIndividualAudienceSummary(), audience_performance
-    #     #     )
-    #     # )
+        self.addCleanup(mock.patch.stopall)
+
+    def test_display_ads_summary(self):
+        """
+        It validates the schema for Display Ads Summary
+        Schema Name: DisplayAdsSummary
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.app.get(
+            self.display_ads_engagement_metrics_endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        summary = response.json["summary"]
+        self.assertTrue(validate_schema(DisplayAdsSummary(), summary))
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_display_ads_audience_performance(self):
+        """
+        It validates the schema for Individual Audience
+        Display Ads Performance Summary
+        Schema Name: DispAdIndividualAudienceSummary
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        response = self.app.get(
+            self.display_ads_engagement_metrics_endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        # TODO fix validation where aud performance data available
+        # audience_performance = response.json["audience_performance"][0]
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        # self.assertTrue(
+        #     validate_schema(
+        #         DispAdIndividualAudienceSummary(), audience_performance
+        #     )
+        # )
 
 
 class TestEngagementMetricsEmail(TestCase):
@@ -148,6 +151,8 @@ class TestEngagementMetricsEmail(TestCase):
             f"{api_c.AUDIENCE_PERFORMANCE}/"
             f"{api_c.EMAIL}"
         )
+
+        self.addCleanup(mock.patch.stopall)
 
     def test_email_summary(self):
         """
@@ -352,6 +357,8 @@ class TestEngagementRoutes(TestCase):
         self.engagement_ids = [
             str(set_engagement(self.database, **x)) for x in engagements
         ]
+
+        self.addCleanup(mock.patch.stopall)
 
     def test_get_campaign_mappings_no_delivery_jobs(self):
         """
@@ -681,7 +688,9 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
 
-    def test_get_campaign_mappings_for_an_engagement_invalid_destination_id(self):
+    def test_get_campaign_mappings_for_an_engagement_invalid_destination_id(
+        self,
+    ):
         """
         Test get campaigns for an engagement
         with invalid audience id

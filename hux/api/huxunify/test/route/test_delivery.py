@@ -261,8 +261,8 @@ class TestDeliveryRoutes(TestCase):
 
         valid_response = {"message": "Invalid Object ID"}
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
 
     def test_deliver_audience_for_an_engagement_non_existent_engagement(self):
         """
@@ -428,8 +428,6 @@ class TestDeliveryRoutes(TestCase):
             f"{t_c.BASE_ENDPOINT}/{api_c.AUDIENCES}/{audience_id}/deliver",
             headers=t_c.STANDARD_HEADERS,
         )
-
-        print("response: " + str(response.json))
 
         valid_response = {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
