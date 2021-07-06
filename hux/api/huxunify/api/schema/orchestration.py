@@ -83,8 +83,8 @@ class AudiencePutSchema(Schema):
     """
 
     name = fields.String()
-    destinations = fields.List(fields.String())
-    engagements = fields.List(fields.String())
+    destinations = fields.List(fields.Dict())
+    engagement_ids = fields.List(fields.String())
     filters = fields.List(fields.Dict())
 
 
