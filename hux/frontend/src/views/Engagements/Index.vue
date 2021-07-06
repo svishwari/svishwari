@@ -88,6 +88,7 @@
                 :showLabel="true"
                 collapsed
                 class="d-flex"
+                :iconSize="17"
               />
             </div>
             <div v-if="header.value == 'size'">
