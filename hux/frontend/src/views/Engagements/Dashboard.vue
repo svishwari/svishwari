@@ -627,10 +627,10 @@ export default {
           (d) => d.id == element.id
         )
         let audEngobj = Object.assign(filteredAudience[0])
-          audEngobj.name = element.name
-          audEngobj.size = element.size
-          audEngobj.last_delivered = element.last_delivered
-          audiencesDetailsData.push(audEngobj)
+        audEngobj.name = element.name
+        audEngobj.size = element.size
+        audEngobj.last_delivered = element.last_delivered
+        audiencesDetailsData.push(audEngobj)
       })
       // extracting the destination data
       for (let i = 0; i < audiencesDetailsData.length; i++) {
