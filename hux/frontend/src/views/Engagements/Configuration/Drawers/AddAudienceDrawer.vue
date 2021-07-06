@@ -209,7 +209,7 @@ export default {
           size: newAudience.size,
           destinations: [],
         })
-
+        this.$emit("onCreateAddAudience", newAudience)
         this.closeDrawer()
       } catch (error) {
         console.error(error)

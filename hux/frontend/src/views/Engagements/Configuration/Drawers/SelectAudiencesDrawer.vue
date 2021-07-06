@@ -145,6 +145,7 @@ export default {
     },
 
     add(audience) {
+      this.$emit("onAddAudience", audience)
       this.$set(this.value, audience.id, {
         id: audience.id,
         name: audience.name,
@@ -158,6 +159,7 @@ export default {
     },
 
     remove(audience) {
+      this.$emit("onRemoveAudience", audience)
       this.$delete(this.value, audience.id)
     },
   },

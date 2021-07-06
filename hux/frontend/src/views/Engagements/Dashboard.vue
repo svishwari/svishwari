@@ -89,13 +89,14 @@
               /><span class="text-h5">Audiences</span>
             </div>
             <div class="mt-2">
-              <a
-                href="#"
+              <v-btn
+                text
                 class="d-flex align-center primary--text text-decoration-none"
+                @click="triggerSelectAudience()"
               >
                 <Icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
-              </a>
+              </v-btn>
             </div>
           </v-card-title>
           <v-progress-linear
@@ -169,6 +170,21 @@
         </v-tabs-items>
       </div>
     </div>
+    <select-audiences-drawer
+      v-model="selectedAudiences"
+      :toggle="showSelectAudiencesDrawer"
+      @onToggle="(val) => (showSelectAudiencesDrawer = val)"
+      @onAdd="triggerCreateAudience()"
+      @onAddAudience="triggerAttachAudience($event)"
+      @onRemoveAudience="triggerDetachAudiences($event)"
+    />
+    <add-audience-drawer
+      v-model="selectedAudiences"
+      :toggle="showAddAudiencesDrawer"
+      @onToggle="(val) => (showAddAudiencesDrawer = val)"
+      @onCancelAndBack="openSelectAudiencesDrawer()"
+      @onCreateAddAudience="triggerAttachAudience($event)"
+    />
   </div>
 </template>
 
@@ -184,6 +200,8 @@ import Icon from "@/components/common/Icon"
 import StatusList from "../../components/common/StatusList.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import CampaignSummary from "../../components/CampaignSummary.vue"
+import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer.vue"
+import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
 
 export default {
   name: "engagementDashboard",
@@ -197,11 +215,14 @@ export default {
     StatusList,
     Tooltip,
     CampaignSummary,
+    AddAudienceDrawer,
+    SelectAudiencesDrawer,
   },
   data() {
     return {
       destinationArr: [],
       audienceMergedData: [],
+      engagementId: this.$route.params.id,
       loading: false,
       loadingTab: false,
       loadingAudiences: false,
@@ -212,6 +233,12 @@ export default {
         { acronym: "CPA", description: "Cost per Action" },
         { acronym: "CPC", description: "Cost per Click" },
       ],
+      // Drawer Data Props
+      selectedAudiences: {},
+      showSelectAudiencesDrawer: false,
+      showAddAudiencesDrawer: false,
+      showSelectDestinationsDrawer: false,
+      showDataExtensionDrawer: false,
     }
   },
   computed: {
@@ -600,11 +627,55 @@ export default {
   },
   methods: {
     ...mapActions({
+      attachAudience: "engagements/attachAudience",
+      detachAudience: "engagements/detachAudience",
+      destinationById: "destinations/get",
+      getAudienceById: "audiences/getAudienceById",
+      getAudiences: "audiences/getAll",
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
-      getAudienceById: "audiences/getAudienceById",
-      destinationById: "destinations/get",
     }),
+
+    // Drawer Section Starts
+    closeDrawers() {
+      this.showSelectAudiencesDrawer = false
+      this.showAddAudiencesDrawer = false
+    },
+
+    triggerSelectAudience() {
+      this.closeDrawers()
+      this.showSelectAudiencesDrawer = true
+    },
+
+    triggerCreateAudience() {
+      this.closeDrawers()
+      this.showAddAudiencesDrawer = true
+    },
+
+    async triggerAttachAudience(aud) {
+      this.loadingAudiences = true
+      const payload = { audiences: [] }
+      payload.audiences.push({
+        id: aud.id,
+        destinations: aud.destinations || [],
+      })
+      await this.attachAudience({
+        engagementId: this.engagementId,
+        data: payload,
+      })
+      await this.loadEngagement(this.engagementId)
+    },
+    async triggerDetachAudiences(aud) {
+      this.loadingAudiences = true
+      const payload = { audience_ids: [] }
+      payload.audience_ids.push(aud.id)
+      await this.detachAudience({
+        engagementId: this.engagementId,
+        data: payload,
+      })
+      await this.loadEngagement(this.engagementId)
+    },
+    // Drawer Section Ends
 
     async audienceList() {
       this.loadingAudiences = true
@@ -619,6 +690,7 @@ export default {
       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
+        this.selectedAudiences[id] = this.getAudience(id)
         audienceDetails.push(this.getAudience(id))
       }
       // extracting the audience data and merging into object
@@ -692,15 +764,19 @@ export default {
       if (acronymObject.length === 0) return null
       return acronymObject[0].description
     },
+    async loadEngagement(engagementId) {
+      await this.getEngagementById(engagementId)
+      await this.getAudiencePerformanceById({
+        type: "ads",
+        id: this.engagementList.id,
+      })
+      this.audienceList()
+    },
   },
   async mounted() {
     this.loading = true
-    await this.getEngagementById(this.$route.params.id)
-    await this.getAudiencePerformanceById({
-      type: "ads",
-      id: this.engagementList.id,
-    })
-    this.audienceList()
+    await this.getAudiences()
+    await this.loadEngagement(this.$route.params.id)
     this.loading = false
   },
 }
