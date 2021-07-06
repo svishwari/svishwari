@@ -212,9 +212,9 @@ export default {
       required: true,
     },
     statusIcon: {
-      type: String,
+      type: Number,
       required: false,
-      default: "24",
+      default: 24,
     },
   },
 

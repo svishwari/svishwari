@@ -26,7 +26,7 @@
         >
           <template slot="top">
             <Status
-              :iconSize="'17px'"
+              :iconSize="17"
               :status="model.status || ''"
               collapsed
               class="d-flex"

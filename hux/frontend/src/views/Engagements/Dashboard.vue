@@ -6,7 +6,7 @@
         <div class="d-flex align-center bread-crumb">
           <Breadcrumb :items="breadcrumbItems" />
           <div class="ml-3" v-if="engagementList && engagementList.status">
-            <Status :status="engagementList.status" :iconSize="'17px'"></Status>
+            <Status :status="engagementList.status" :iconSize="17"></Status>
           </div>
         </div>
       </template>
@@ -120,7 +120,7 @@
                 :key="item.id"
                 :audience="item"
                 :engagementId="String(engagementList.id)"
-                :statusIcon="'17px'"
+                :statusIcon="17"
               />
             </v-col>
           </v-card-text>

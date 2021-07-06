@@ -192,9 +192,9 @@ export default {
       default: true,
     },
     iconSize: {
-      type: String,
+      type: Number,
       required: false,
-      default: "24px",
+      default: 24,
     },
   },
 }
