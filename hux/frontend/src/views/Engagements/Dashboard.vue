@@ -627,26 +627,40 @@ export default {
           (d) => d.id == element.id
         )
         let audEngobj = Object.assign(filteredAudience[0])
-        audEngobj.name = element.name
-        audEngobj.size = element.size
-        audEngobj.last_delivered = element.last_delivered
+        if (audEngobj.status === "Delivered") {
+          audEngobj.name = element.name
+          audEngobj.size = element.size
+          audEngobj.last_delivered = element.last_delivered
+        } else {
+          audEngobj.name = element.name
+          audEngobj.size = ""
+          audEngobj.last_delivered = ""
+        }
         audiencesDetailsData.push(audEngobj)
       })
-
       // extracting the destination data
       for (let i = 0; i < audiencesDetailsData.length; i++) {
         for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {
           let destination = audiencesDetailsData[i].destinations[j]
           await this.destinationById(destination.id)
           let response = this.getDestinations(destination.id)
-
           let destinationWithDelivery = {
             id: response.id,
             name: response.name,
             type: response.type,
             // TODO: remove the fallback to audience details once HUS-579 is tested
             latest_delivery: destination.latest_delivery
-              ? destination.latest_delivery
+              ? destination.latest_delivery.status === "Delivered"
+                ? destination.latest_delivery
+                : {
+                    status: destination.latest_delivery.status,
+                  }
+              : audiencesDetailsData[i].status === "Delivered"
+              ? {
+                  size: audiencesDetailsData[i].size,
+                  status: audiencesDetailsData[i].status,
+                  update_time: audiencesDetailsData[i].last_delivered,
+                }
               : {
                   size: audiencesDetailsData[i].size,
                   status: audiencesDetailsData[i].status,
