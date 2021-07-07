@@ -5,11 +5,13 @@
         <Breadcrumb :items="items" />
       </template>
       <template #right>
-        <v-icon large :disabled="true"> mdi-refresh </v-icon>
-        <v-icon size="22" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="lightGrey"> mdi-refresh </v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
         </v-icon>
-        <v-icon size="22" class="icon-border pa-2 ma-1"> mdi-pencil </v-icon>
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
+          mdi-pencil
+        </v-icon>
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
@@ -372,5 +374,8 @@ export default {
     cursor: default !important;
     background: transparent !important;
   }
+}
+.icon-border {
+  cursor: default;
 }
 </style>

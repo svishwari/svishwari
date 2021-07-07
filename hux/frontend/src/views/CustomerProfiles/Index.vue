@@ -29,14 +29,36 @@
           :grow="item.toolTipText ? 1 : 0"
           :icon="item.icon"
           :key="item.title"
-          :subtitle="item.toolTipText ? item.subtitle : ''"
           :title="item.title"
         >
-          <template v-if="!item.toolTipText" #subtitle-extended>
-            <span class="font-weight-semi-bold">
-              {{ item.date }} &bull;
-              {{ item.time }}
-            </span>
+          <template #subtitle-extended>
+            <Tooltip v-if="!item.toolTipText">
+              <template #label-content>
+                <span class="font-weight-semi-bold" v-html="updatedTimeStamp">
+                </span>
+              </template>
+              <template #hover-content>
+                {{ item.subtitle }}
+              </template>
+            </Tooltip>
+            <Tooltip v-if="item.toolTipText">
+              <template #label-content>
+                <span class="font-weight-semi-bold">
+                  <span v-if="item.value == 'percentage'">{{
+                    item.subtitle | percentageConvert(true, true)
+                  }}</span>
+                  <span v-if="item.value == 'numeric'">{{
+                    item.subtitle | Numeric(true, false, true)
+                  }}</span>
+                </span>
+              </template>
+              <template #hover-content>
+                <span v-if="item.value == 'percentage'">{{
+                  item.subtitle | percentageConvert(true, true)
+                }}</span>
+                <span v-else>{{ item.subtitle }}</span>
+              </template>
+            </Tooltip>
           </template>
           <template v-if="item.toolTipText" #extra-item>
             <Tooltip positionTop>
@@ -60,11 +82,31 @@
               :key="item.title"
               :grow="item.toolTipText ? 2 : 1"
               :title="item.title"
-              :subtitle="item.subtitle"
               :icon="item.icon"
               :interactable="item.toolTipText ? true : false"
               @click="item.toolTipText ? viewCustomerList() : ''"
             >
+              <template #subtitle-extended>
+                <Tooltip>
+                  <template #label-content>
+                    <span class="font-weight-semi-bold">
+                      <span v-if="item.value == 'percentage'">{{
+                        item.subtitle | percentageConvert(true, true)
+                      }}</span>
+                      <span v-if="item.value == 'numeric'">{{
+                        item.subtitle | Numeric(true, false, true)
+                      }}</span>
+                      <span v-if="item.value == ''">{{ item.subtitle }}</span>
+                    </span>
+                  </template>
+                  <template #hover-content>
+                    <span v-if="item.value == 'percentage'">{{
+                      item.subtitle | percentageConvert(true, true)
+                    }}</span>
+                    <span v-else>{{ item.subtitle }}</span>
+                  </template>
+                </Tooltip>
+              </template>
               <template v-if="item.toolTipText" #extra-item>
                 <Tooltip positionTop>
                   <template #label-content>
@@ -126,62 +168,79 @@ export default {
           subtitle: "",
           toolTipText:
             "Total no. of unique hux ids generated to represent a customer.",
+          value: "",
         },
-        { title: "Countries", subtitle: "", icon: "mdi-earth" },
-        { title: "US States", subtitle: "", icon: "mdi-map" },
-        { title: "Cities", subtitle: "", icon: "mdi-map-marker-radius" },
-        { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
-        { title: "Women", subtitle: "", icon: "mdi-gender-female" },
-        { title: "Men", subtitle: "", icon: "mdi-gender-male" },
-        { title: "Other", subtitle: "", icon: "mdi-gender-male-female" },
+        { title: "Countries", subtitle: "", icon: "mdi-earth", value: "" },
+        { title: "US States", subtitle: "", icon: "mdi-map", value: "" },
+        {
+          title: "Cities",
+          subtitle: "",
+          icon: "mdi-map-marker-radius",
+          value: "",
+        },
+        { title: "Age", subtitle: "", icon: "mdi-cake-variant", value: "" },
+        { title: "Women", subtitle: "", icon: "mdi-gender-female", value: "" },
+        { title: "Men", subtitle: "", icon: "mdi-gender-male", value: "" },
+        {
+          title: "Other",
+          subtitle: "",
+          icon: "mdi-gender-male-female",
+          value: "",
+        },
       ],
       primaryItems: [
         {
           title: "Total no. of records",
           subtitle: "",
           toolTipText: "Total no. of input records across all data feeds.",
+          value: "",
         },
         {
           title: "Match rate",
           subtitle: "",
           toolTipText:
             "Percentage of input records that are consolidated into Hux Ids.",
+          value: "",
         },
         {
           title: "Unique Hux IDs",
           subtitle: "",
           toolTipText:
             "Total Hux Ids that represent an anonymous or known customer.",
+          value: "",
         },
         {
           title: "Anonymous IDs",
           subtitle: "",
           toolTipText:
             "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
+          value: "",
         },
         {
           title: "Known IDs",
           subtitle: "",
           toolTipText:
             "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number.",
+          value: "",
         },
         {
           title: "Individual IDs",
           subtitle: "",
           toolTipText:
             "Represents a First Name, Last Name and Address combination, used to identify a customer that lives at an address.",
+          value: "",
         },
         {
           title: "Household IDs",
           subtitle: "",
           toolTipText:
             "Represents a Last Name and Address combination, used to identify family members that live at the same address.",
+          value: "",
         },
         {
           title: "Updated",
           subtitle: "",
-          date: "",
-          time: "",
+          value: "",
         },
       ],
       items: [
@@ -198,6 +257,7 @@ export default {
         },
       ],
       loading: false,
+      updatedTime: [],
     }
   },
 
@@ -205,6 +265,9 @@ export default {
     ...mapGetters({
       overview: "customers/overview",
     }),
+    updatedTimeStamp() {
+      return this.updatedTime[0] + "<span> &bull; </span>" + this.updatedTime[1]
+    },
   },
 
   methods: {
@@ -213,70 +276,46 @@ export default {
     }),
     // TODO: refactor this and move this logic to a getter in the store
     mapOverviewData() {
-      this.overviewListItems[0].subtitle = this.applyNumericFilter(
-        this.overview.total_customers
-      )
-      this.overviewListItems[1].subtitle = this.overview.total_countries
-      this.overviewListItems[2].subtitle = this.overview.total_us_states
-      this.overviewListItems[3].subtitle = this.overview.total_cities
-      this.overviewListItems[4].subtitle =
-        this.overview.min_age + "-" + this.overview.max_age
+      if (this.overview) {
+        this.overviewListItems[0].subtitle = this.overview.total_customers
+        this.overviewListItems[0].value = "numeric"
+        this.overviewListItems[1].subtitle = this.overview.total_countries
+        this.overviewListItems[2].subtitle = this.overview.total_us_states
+        this.overviewListItems[3].subtitle = this.overview.total_cities
+        this.overviewListItems[4].subtitle =
+          this.overview.min_age + "-" + this.overview.max_age
+        this.overviewListItems[5].subtitle = this.overview.gender_men
+        this.overviewListItems[5].value = "percentage"
+        this.overviewListItems[6].subtitle = this.overview.gender_women
+        this.overviewListItems[6].value = "percentage"
+        this.overviewListItems[7].subtitle = this.overview.gender_other
+        this.overviewListItems[7].value = "percentage"
 
-      this.overviewListItems[5].subtitle = this.applyPercentageFilter(
-        this.overview.gender_men
-      )
-      this.overviewListItems[6].subtitle = this.applyPercentageFilter(
-        this.overview.gender_women
-      )
-      this.overviewListItems[7].subtitle = this.applyPercentageFilter(
-        this.overview.gender_other
-      )
-
-      this.primaryItems[0].subtitle = this.applyNumericFilter(
-        this.overview.total_records
-      )
-      this.primaryItems[1].subtitle = this.applyPercentageFilter(
-        this.overview.match_rate
-      )
-      this.primaryItems[2].subtitle = this.applyNumericFilter(
-        this.overview.total_unique_ids
-      )
-      this.primaryItems[3].subtitle = this.applyNumericFilter(
-        this.overview.total_unknown_ids
-      )
-      this.primaryItems[4].subtitle = this.applyNumericFilter(
-        this.overview.total_known_ids
-      )
-      this.primaryItems[5].subtitle = this.applyNumericFilter(
-        this.overview.total_individual_ids
-      )
-      this.primaryItems[6].subtitle = this.applyNumericFilter(
-        this.overview.total_household_ids
-      )
-      let date = ""
-      let time = ""
-      ;[date, time] = this.dateTimeFormatter(this.overview.updated)
-      this.primaryItems[7].date = date
-      this.primaryItems[7].time = time
+        this.primaryItems[0].subtitle = this.overview.total_records
+        this.primaryItems[0].value = "numeric"
+        this.primaryItems[1].subtitle = this.overview.match_rate
+        this.primaryItems[1].value = "percentage"
+        this.primaryItems[2].subtitle = this.overview.total_unique_ids
+        this.primaryItems[2].value = "numeric"
+        this.primaryItems[3].subtitle = this.overview.total_unknown_ids
+        this.primaryItems[3].value = "numeric"
+        this.primaryItems[4].subtitle = this.overview.total_known_ids
+        this.primaryItems[4].value = "numeric"
+        this.primaryItems[5].subtitle = this.overview.total_individual_ids
+        this.primaryItems[5].value = "numeric"
+        this.primaryItems[6].subtitle = this.overview.total_household_ids
+        this.primaryItems[6].value = "numeric"
+        this.primaryItems[7].subtitle = this.getUpdatedDateTime(
+          this.overview.updated
+        )
+      }
     },
-    applyNumericFilter(value) {
-      return value
-        ? this.$options.filters.Numeric(value, true, false, true)
-        : ""
-    },
-    applyPercentageFilter(value) {
-      return value
-        ? this.$options.filters.percentageConvert(value, true, true)
-        : ""
-    },
-    dateTimeFormatter(value) {
+    getUpdatedDateTime(value) {
       if (value) {
-        let updatedTime = this.$options.filters
-          .Date(value, "calendar")
-          .split(" at ")
-        return updatedTime.length > 1
-          ? [updatedTime[0], updatedTime[1].replaceAll(" ", "")]
-          : [updatedTime[0], ""]
+        let updatedValue = this.$options.filters.Date(value)
+        this.updatedTime = updatedValue.split(" at ")
+        this.updatedTime[0] = this.$options.filters.DateRelative(value)
+        return updatedValue
       }
     },
     viewCustomerList() {

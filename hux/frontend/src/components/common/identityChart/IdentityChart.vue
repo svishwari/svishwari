@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import ChartTooltip from "@/components/common/ChartTooltip"
-import ChordChart from "@/components/common/ChordChart"
-import identity_resolution from "@/components/common/chartData.json"
+import ChartTooltip from "@/components/common/identityChart/ChartTooltip"
+import ChordChart from "@/components/common/identityChart/ChordChart"
+import identity_resolution from "@/components/common/identityChart/chartData.json"
 export default {
   name: "identity-chart",
   components: { ChordChart, ChartTooltip },
