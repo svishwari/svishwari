@@ -1,7 +1,8 @@
 <template>
+<div class="d-flex">
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
-      <span v-on="on" class="d-flex cursor-pointer mr-6">
+      <span v-on="on" class="d-flex cursor-pointer">
         <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
           <v-icon color="secondary"> mdi-plus </v-icon>
         </v-btn>
@@ -22,6 +23,35 @@
       </v-list-item>
     </v-list>
   </v-menu>
+    <v-menu :min-width="200" left offset-y close-on-click>
+    <template #activator="{ on }">
+      <span v-on="on" class="d-flex cursor-pointer mr-1">
+        <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
+          <v-icon color="secondary"> mdi-bell-outline </v-icon>
+        </v-btn>
+      </span>
+    </template>
+    <v-list>
+      <v-list-item>
+        <v-list-item-title class="font-weight-bold"> Most recent alerts </v-list-item-title>
+      </v-list-item>
+      <!-- <v-list-item
+        @click="routerRedirection(link.path)"
+        v-for="link in dropdownLinks"
+        :key="link.name"
+      >
+        <v-list-item-title class="text-h6 neroBlack--text">
+          {{ link.name }}
+        </v-list-item-title>
+      </v-list-item> -->
+       <v-list-item>
+        <v-list-item-title class="text-h6 neroBlack--text">
+          <a @click="alertRouters()">View all alerts</a>
+        </v-list-item-title>
+       </v-list-item>
+    </v-list>
+  </v-menu>
+</div>
 </template>
 
 <script>
@@ -41,6 +71,9 @@ export default {
     routerRedirection(path) {
       this.$router.push({ name: path, query: { select: true } })
     },
+    alertRouters() {
+        this.$router.push({ name: "AlertsAndNotifications" })
+    }
   },
 }
 </script>
