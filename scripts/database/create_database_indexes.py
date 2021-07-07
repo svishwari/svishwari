@@ -12,20 +12,20 @@
 """
 
 import logging
-from pymongo import ASCENDING
+from typing import List
 
-from share import get_mongo_client
+from pymongo import ASCENDING, MongoClient
 import huxunifylib.database.constants as c
+from scripts.database.share import get_mongo_client
+
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
-# Set up the database client
-DB_CLIENT = get_mongo_client()
 
 # Set the list of indexes; each element is a tuple (database name,
 # collection name, and list of field/order pairs to be indexed)
-INDEX_LIST = [
+index_constants = [
     (
         c.DATA_MANAGEMENT_DATABASE,
         c.CONSTANTS_COLLECTION,
@@ -78,40 +78,68 @@ INDEX_LIST = [
     ),
 ]
 
-# Get database
-DM_DB = DB_CLIENT[c.DATA_MANAGEMENT_DATABASE]
 
-# Loop through the list and set the indexes
-for item in INDEX_LIST:
+def set_indexes(database: MongoClient, index_list: List) -> None:
+    """
+    Method to set indexes from list
+    Args:
+        database (MongoClient): MongoDB Client
+        index_list (list): List of Indexes
 
-    database_name = item[0]
-    collection_name = item[1]
-    index_list = item[2]
+    Returns:
+        None
+    """
+    for item in index_list:
+        database_name = item[0]
+        collection_name = item[1]
+        index_name = item[2]
 
-    collection = DB_CLIENT[database_name][collection_name]
+        collection = database[database_name][collection_name]
+
+        logging.info(
+            "Creating an index with settings <%s> in collection <%s>...",
+            index_name,
+            collection.full_name,
+        )
+
+        collection.create_index(index_name)
+
+
+def add_unique_compound_index(database: MongoClient) -> None:
+    """
+    Method to add unique Compound index
+    Args:
+        database (MongoClient): MongoDB Client
+
+    Returns:
+        None
+    """
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.INGESTED_DATA_COLLECTION
+    ]
+
+    field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
+    collection.create_index(
+        [(field_str, ASCENDING), (c.JOB_ID, ASCENDING)],
+        unique=True,
+    )
 
     logging.info(
-        "Creating an index with settings <%s> in collection <%s>...",
-        index_list,
+        "Creating a unique compound index <(%s, %s)> in collection <%s>...",
+        field_str,
+        c.JOB_ID,
         collection.full_name,
     )
 
-    collection.create_index(index_list)
+    logging.info("Done with creating indexes!")
 
-# Add a unique compound index for customer ID
-collection = DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][c.INGESTED_DATA_COLLECTION]
 
-field_str = "%s.%s" % (c.INGESTED_DATA, c.S_TYPE_CUSTOMER_ID)
-collection.create_index(
-    [(field_str, ASCENDING), (c.JOB_ID, ASCENDING)],
-    unique=True,
-)
+if __name__ == "__main__":
+    # Set up the database client
+    db_client = get_mongo_client()
 
-logging.info(
-    "Creating an unique compound index <(%s, %s)> in collection <%s>...",
-    field_str,
-    c.JOB_ID,
-    collection.full_name,
-)
+    # Get database
+    DM_DB = db_client[c.DATA_MANAGEMENT_DATABASE]
 
-logging.info("Done with creating indexes!")
+    set_indexes(db_client, index_constants)
+    add_unique_compound_index(db_client)

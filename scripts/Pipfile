@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+url = "$ARTIFACTORY_PYTHON_READ"
+verify_ssl = true
+name = "jfrog"
+
+[packages]
+pymongo = "*"
+huxunifylib-database = {version="*", index="jfrog"}
+hypothesis = "*"
+mongomock="*"
+
+[dev-packages]
+pytest = {version="*", index="pypi"}
+pylint = {version="*", index="pypi"}
+black = { version = "*", pre="true"}
+safety = {version="*", index="pypi"}
+hypothesis = {version="*", index="pypi"}
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
