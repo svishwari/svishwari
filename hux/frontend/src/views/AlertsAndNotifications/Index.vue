@@ -5,7 +5,7 @@
         <Breadcrumb :items="breadcrumbItems" />
       </template>
     </PageHeader>
-    <PageHeader class="top-bar backGround-header" :headerHeight="71">
+    <PageHeader class="top-bar backGround-header mb-3" :headerHeight="71">
       <template #left>
         <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
         <v-icon medium color="lightGrey" class="pl-4">mdi-magnify</v-icon>
@@ -25,13 +25,14 @@
             size="large"
             isTile
             class="ma-2 font-weight-regular no-shadow mr-0"
+            @click="goBack()"
           >
             Return to previous page
           </huxButton>
         </router-link>
       </template>
     </PageHeader>
-    <PageHeader class="top-bar backGround-header-dropdown" :headerHeight="71">
+    <!-- <PageHeader class="top-bar backGround-header-dropdown" :headerHeight="71">
       <template #left>
         <span class="d-flex flex-row">
           <div>
@@ -48,12 +49,13 @@
           </div>
         </span>
       </template>
-    </PageHeader>
+    </PageHeader> -->
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <v-row class="pt-3 pb-7 pl-6 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
         :dataItems="rowData"
+        :disableSort="true"
       >
         <template #row-item="{ item }">
           <td
@@ -64,6 +66,7 @@
               'v-data-table__divider': header.fixed,
               'primary--text': header.fixed,
             }"
+            class="col-overflow"
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'time'">
@@ -74,15 +77,18 @@
                 :status="item['type']"
                 :showLabel="true"
                 class="status-icon"
+                :iconSize="17"
               />
             </div>
-            <div v-if="header.value == 'description'">
-              {{ item[header.value] }}
-            </div>
-            <div v-if="header.value == 'category'">
-              {{ item[header.value] }}
-            </div>
-          </td>
+            <tooltip v-if="header.value == 'description'" positionTop>
+            <template #label-content>
+              <span >{{ item[header.value] }}</span>
+            </template >
+            <template #hover-content>
+                {{ item[header.value] }}
+            </template>
+            </tooltip>
+           </td>
         </template>
       </hux-data-table>
     </v-row>
@@ -90,32 +96,25 @@
 </template>
 
 <script>
-// import { mapGetters, mapActions } from "vuex"
 import PageHeader from "@/components/PageHeader"
-import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
-// import Avatar from "../../components/common/Avatar.vue"
-import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import Status from "../../components/common/Status.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 export default {
   name: "AlertsAndNotifications",
   components: {
     PageHeader,
     Breadcrumb,
     huxButton,
-    EmptyPage,
     HuxDataTable,
-    // Avatar,
-    Size,
     TimeStamp,
-    MenuCell,
     HuxDropdown,
-    Status
+    Status,
+    Tooltip
   },
   data() {
     return {
@@ -151,13 +150,13 @@ export default {
         {
           text: "Description",
           value: "description",
-          width: "auto",
+          width: "600px",
         },
-        {
-          text: "Category",
-          value: "category",
-          width: "auto",
-        }
+        // {
+        //   text: "Category",
+        //   value: "category",
+        //   width: "auto",
+        // }
       ],
       rowData: [
         {
@@ -172,17 +171,21 @@ export default {
           description: "Facebook delivery stopped.",
           category: "Decisioning"
         },
-                {
+        {
           time: "2021-07-04T09:41:22.237Z",
           type: "Critical",
           description: "Data Source CS004 lost connectivity. This is an example of a longer description that needs to be cut off.",
           category: "Data management"
-        }
+        },
       ],
       loading: false,
     }
   },
-
+  methods: {
+    goBack() {
+      window.history.back();
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -241,5 +244,10 @@ export default {
   .v-btn__content {
     color: var(--v-darkBlue-base) !important;
   }
+}
+.col-overflow {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 </style>
