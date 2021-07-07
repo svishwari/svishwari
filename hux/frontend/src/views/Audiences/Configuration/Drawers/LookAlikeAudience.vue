@@ -21,7 +21,7 @@
           </div>
           <TextField
             v-model="lookAlikeAudience.name"
-            class="pb-6"
+            class="pb-3"
             labelText="Lookalike audience name"
             placeholder="What is the name for this new lookalike audience?"
             :rules="lookAlikeNameRules"
@@ -36,6 +36,7 @@
             :items="fbDeliveredAudiences"
             dense
             outlined
+            class="delivered-audience-selection pb-10"
             background-color="white"
             append-icon="mdi-chevron-down"
             required
@@ -44,26 +45,40 @@
           <div class="text-caption darkGrey--text">
             Attach this audience to an engagement - you must have at least one
           </div>
-          <v-autocomplete
+
+          <HuxDropDownSearch
             v-model="lookAlikeAudience.engagements"
-            :items="processedEngagements"
-            solo
-            chips
-            label="Select engagement(s)"
-            multiple
+            :toggleDropDown="toggleDropDown"
+            @onToggle="(val) => (toggleDropDown = val)"
+            :items="engagements"
           >
-            <template v-slot:selection="data">
-              <v-chip
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                :close="isMinEngagementSelected"
-                @click="data.select"
-                @click:close="remove(data)"
-              >
-                {{ data.item.text }}
-              </v-chip>
+            <template #activator>
+              <div class="dropdown-select-activator">
+                <v-select
+                  dense
+                  readonly
+                  placeholder="Select engagement(s)"
+                  outlined
+                  background-color="white"
+                  append-icon="mdi-chevron-down"
+                />
+              </div>
             </template>
-          </v-autocomplete>
+          </HuxDropDownSearch>
+
+          <v-chip
+            v-for="(item, index) in lookAlikeAudience.engagements"
+            :close="selectedEngagementsLength > 1"
+            small
+            class="mr-2 my-2 font-weight-semi-bold"
+            text-color="primary"
+            color="pillBlue"
+            close-icon="mdi-close"
+            @click:close="detachEngagement(index)"
+            :key="item.id"
+          >
+            {{ item.name }}
+          </v-chip>
 
           <div class="text-caption darkGrey--text pt-9 pb-1">
             The reach for this lookalike audience
@@ -87,7 +102,7 @@
           isTile
           height="40"
           class="ma-2"
-          :isDisabled="!isFormValid"
+          :isDisabled="!(isFormValid && selectedEngagementsLength !== 0)"
           @click="creatLookAlike()"
         >
           Create &amp; deliver
@@ -120,6 +135,7 @@ import LookAlikeSlider from "@/components/common/LookAlikeSlider"
 import TextField from "@/components/common/TextField"
 import Icon from "@/components/common/Icon.vue"
 import HuxButton from "@/components/common/huxButton"
+import HuxDropDownSearch from "@/components/common/HuxDropDownSearch"
 
 export default {
   name: "LookAlikeAudienceDrawer",
@@ -130,6 +146,7 @@ export default {
     TextField,
     LookAlikeSlider,
     HuxButton,
+    HuxDropDownSearch,
   },
 
   computed: {
@@ -167,17 +184,9 @@ export default {
         }
       })
     },
-    processedEngagements() {
-      return this.engagements.map((each) => {
-        return {
-          text: each.name,
-          value: each,
-        }
-      })
-    },
 
-    isMinEngagementSelected() {
-      return this.lookAlikeAudience.engagements.length > 1
+    selectedEngagementsLength() {
+      return this.lookAlikeAudience.engagements.length
     },
   },
 
@@ -185,6 +194,7 @@ export default {
     return {
       loading: false,
       localToggle: false,
+      toggleDropDown: false,
       lookAlikeAudience: {
         name: null,
         value: 5,
@@ -205,7 +215,12 @@ export default {
     reset() {
       this.lookAlikeAudience.value = 5
       this.selectAudience = null
+      this.lookAlikeAudience.engagements = []
       this.$refs.lookAlikeForm.$children[0].$children[0].reset()
+    },
+
+    detachEngagement(index) {
+      this.lookAlikeAudience.engagements.splice(index, 1)
     },
 
     onBack() {
@@ -264,6 +279,19 @@ export default {
           input::placeholder {
             color: var(--v-lightGrey-base) !important;
           }
+        }
+      }
+    }
+    .dropdown-select-activator,
+    .delivered-audience-selection {
+      ::v-deep .v-input__control {
+        .v-input__slot {
+          input::placeholder {
+            color: var(--v-gray-base) !important;
+          }
+        }
+        .v-text-field__details {
+          display: none;
         }
       }
     }
