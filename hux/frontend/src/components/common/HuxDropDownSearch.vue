@@ -83,6 +83,9 @@ export default {
 
     localToggle(value) {
       this.$emit("onToggle", value)
+      if (!value) {
+        this.searchText = null
+      }
     },
   },
 
