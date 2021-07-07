@@ -291,15 +291,10 @@ class DestinationPutView(SwaggerView):
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-        print("got here!!!")
         if not destination:
-            print("returning not found!!!")
-            ret = {
+            return {
                 "message": api_c.DESTINATION_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
-            print(ret)
-            return ret
-        print("got here!!!")
         if (
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
