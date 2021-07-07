@@ -1,88 +1,91 @@
 <template>
   <div class="hux-date-picker">
     <v-menu
-      ref="menu"
       :close-on-content-click="false"
-      :return-value.sync="start"
       :offset-x="isOffsetX"
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
-      v-model="menu">
+      close-on-click
+      v-model="openMenu">
       <template #activator="{ on }">
+        <v-list-item
+          v-if="!isSubMenu"
+          class="d-flex justify-space-between pr-1"
+          v-on="on">
+          Select date
+          <div class="flex-grow-1"></div>
+          <v-icon color="primary">mdi-chevron-right</v-icon>
+        </v-list-item>
         <huxButton
+          v-else
           :v-on="on"
-          @click="menu = true"
+          @click="openMenu = true"
           text
           width="200"
           icon=" mdi-chevron-down"
           iconPosition="right"
           tile
           class="ma-2 main-button pr-1">
-          {{ optionSelected["name"] || label }}
+          {{ label }}
         </huxButton>
       </template>
-      <v-list v-if="endDate">
-        <v-list-item>
-          <v-list-item-title> No end date </v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="showCalendar = true">
-          <v-list-item-title> Select date </v-list-item-title>
-          <div class="flex-grow-1"></div>
-          <v-icon color="primary">mdi-chevron-right</v-icon>
-        </v-list-item>
-      </v-list>
-      <v-list v-if="!endDate">
-        <v-date-picker
-          class="start-date-picker"
-          v-model="start"
-          no-title
-          scrollable>
-          <div class="date-picker-header" style=""> 
-            <span class="header-label"> Date </span>
-            <span class="header-value"> {{ optionSelected["name"] || label }} </span>
+      <v-list>
+        <template>
+          <div class="dropdown-menuitems" v-if="isSubMenu">
+            <v-list-item @click="onSelect()">
+              <v-list-item-title class="d-flex align-center">
+                No end date
+              </v-list-item-title>
+            </v-list-item>
+            <hux-end-date
+              :is-offset-x="true"
+              :is-offset-y="false"
+              :isSubMenu="false"
+            />
           </div>
-          <v-spacer></v-spacer>
-          <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu = false">
-            Cancel
-          </huxButton>
-          <huxButton variant="tertiary" isTile class="btn-select mr-4"  @click="$refs.menu.save(start);selectDate(start)">
-            <span class="primary--text">
-              Select
-            </span>
-          </huxButton>
-        </v-date-picker>
+          <v-date-picker
+            class="end-date-picker"
+            v-model="end"
+            no-title
+            scrollable
+            @click:date="onSelectDate"
+            v-if="!isSubMenu">
+            <div class="date-picker-header" style="">
+              <span class="header-label"> Date </span>
+            </div>
+            <v-spacer></v-spacer>
+            <huxButton
+              variant="tertiary"
+              isTile
+              class="btn-cancel ml-4"
+              @click="
+                menu = false
+                showCalendar = false
+              ">
+              Cancel
+            </huxButton>
+            <huxButton
+              variant="tertiary"
+              isTile
+              class="btn-select mr-4"
+              @click="
+                $refs.menu.save(end)
+                selectDate(end)
+              ">
+              <span class="primary--text"> Select </span>
+            </huxButton>
+          </v-date-picker>
+        </template>
       </v-list>
     </v-menu>
-    <v-date-picker
-      class="end-date-picker"
-      elevation="15"
-      v-model="end"
-      no-title
-      scrollable
-      @click:date="onSelectDate"
-      v-if="showCalendar">
-      <div class="date-picker-header" style=""> 
-        <span class="header-label"> Date </span>
-        <span class="header-value"> {{ optionSelected["name"] || label }} </span>
-      </div>
-      <v-spacer></v-spacer>
-      <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu=false; showCalendar=false">
-        Cancel
-      </huxButton>
-      <huxButton variant="tertiary" isTile class="btn-select mr-4"  @click="$refs.menu.save(end);selectDate(end)">
-        <span class="primary--text">
-          Select
-        </span>
-      </huxButton>
-    </v-date-picker>
   </div>
 </template>
 <script>
 import huxButton from "@/components/common/huxButton"
 import Icon from "../Icon.vue"
 export default {
-  name: "hux-date-picker",
+  name: "hux-end-date",
   components: {
     huxButton,
     Icon,
@@ -99,30 +102,33 @@ export default {
     label: {
       type: String,
       required: false,
-      default: "Select Option",
+      default: "Select date",
     },
+    icon: String,
+    items: Array,
+    color: { type: String, default: "primary" },
     isOffsetX: { type: Boolean, default: false },
     isOffsetY: { type: Boolean, default: true },
     isOpenOnHover: { type: Boolean, default: false },
-    endDate: { type: Boolean, default: false },
+    isSubMenu: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
+    level: Number,
   },
   methods: {
+    onSelect() {
+      this.$emit("on-select")
+      this.openMenu = false
+    },
     selectDate(data) {
       this.$emit("on-date-select", data)
     },
-    onSelectDate(event){
+    onSelectDate(event) {
       this.endDate = true
     },
   },
   data: function () {
     return {
-      menu: this.value,
-      menu: false,
-      showCalendar: false,
-      start: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      openMenu: this.value,
       end: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
@@ -161,6 +167,23 @@ export default {
     }
   }
 }
+.dropdown-menuitems {
+  min-width: 230px;
+  font-size: 14px;
+  line-height: 22px !important;
+
+  color: var(--v-neroBlack-base);
+  .v-list-item {
+    min-height: 32px;
+    .v-list-item__title {
+      line-height: 22px !important;
+    }
+  }
+  .group_title {
+    text-transform: uppercase;
+    color: var(--v-gray-base);
+  }
+}
 .start-date-picker { 
   ::v-deep .v-picker__body {
     margin-top: 20px;
@@ -172,7 +195,7 @@ export default {
   }
 }
 .end-date-picker { 
-  margin-top: 75px;
+  // margin-top: 75px;
 }
 .start-date-picker, .end-date-picker {
   ::v-deep .v-picker__body {
@@ -211,3 +234,4 @@ export default {
   }
 }
 </style>
+
