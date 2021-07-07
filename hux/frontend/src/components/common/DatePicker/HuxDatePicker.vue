@@ -3,7 +3,7 @@
     <v-menu
       ref="menu"
       :close-on-content-click="false"
-      :return-value.sync="end"
+      :return-value.sync="start"
       :offset-x="isOffsetX"
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
@@ -22,19 +22,26 @@
           {{ optionSelected["name"] || label }}
         </huxButton>
       </template>
-      <v-list>
-        <v-list-item v-if="endDate">
+      <v-list v-if="endDate">
+        <v-list-item>
           <v-list-item-title> No end date </v-list-item-title>
         </v-list-item>
-        <v-list-item v-if="endDate" @click="showCalendar = true">
+        <v-list-item @click="showCalendar = true">
           <v-list-item-title> Select date </v-list-item-title>
+          <div class="flex-grow-1"></div>
+          <v-icon color="primary">mdi-chevron-right</v-icon>
         </v-list-item>
+      </v-list>
+      <v-list v-if="!endDate">
         <v-date-picker
           class="start-date-picker"
           v-model="start"
           no-title
-          scrollable
-          v-if="!endDate">
+          scrollable>
+          <div class="date-picker-header" style=""> 
+            <span class="header-label"> Date </span>
+            <span class="header-value"> {{ optionSelected["name"] || label }} </span>
+          </div>
           <v-spacer></v-spacer>
           <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu = false">
             Cancel
@@ -49,12 +56,18 @@
     </v-menu>
     <v-date-picker
       class="end-date-picker"
+      elevation="15"
       v-model="end"
       no-title
       scrollable
+      @click:date="onSelectDate"
       v-if="showCalendar">
+      <div class="date-picker-header" style=""> 
+        <span class="header-label"> Date </span>
+        <span class="header-value"> {{ optionSelected["name"] || label }} </span>
+      </div>
       <v-spacer></v-spacer>
-      <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu = false; showCalendar =false">
+      <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu=false; showCalendar=false">
         Cancel
       </huxButton>
       <huxButton variant="tertiary" isTile class="btn-select mr-4"  @click="$refs.menu.save(end);selectDate(end)">
@@ -88,7 +101,6 @@ export default {
       required: false,
       default: "Select Option",
     },
-    items: Array,
     isOffsetX: { type: Boolean, default: false },
     isOffsetY: { type: Boolean, default: true },
     isOpenOnHover: { type: Boolean, default: false },
@@ -96,17 +108,11 @@ export default {
     transition: { type: String, default: "scale-transition" },
   },
   methods: {
-    onSelect(item) {
-      this.$emit("on-select", item)
-      // this.menu = false
-    },
-    onMenuToggle(opened) {
-      // if (!opened) {
-      //   this.showCalendar = false
-      // }
-    },
     selectDate(data) {
-      this.label = data
+      this.$emit("on-date-select", data)
+    },
+    onSelectDate(event){
+      this.endDate = true
     },
   },
   data: function () {
@@ -155,6 +161,19 @@ export default {
     }
   }
 }
+.start-date-picker { 
+  ::v-deep .v-picker__body {
+    margin-top: 20px;
+  }
+}
+.end-date-picker { 
+  ::v-deep .v-picker__body {
+    margin-top: 30px;
+  }
+}
+.end-date-picker { 
+  margin-top: 75px;
+}
 .start-date-picker, .end-date-picker {
   ::v-deep .v-picker__body {
     border-bottom: 1px solid var(--v-lightGrey-base);
@@ -165,12 +184,29 @@ export default {
           border-bottom: 1px solid var(--v-lightGrey-base);
         }
       }
+      .v-btn--active {
+        background-color: rgba(0, 124, 176, 0.2) !important;
+        .v-btn__content {
+          color: var(--v-neroBlack-base) !important;
+        }
+      }
     }
   }
   ::v-deep .v-card__actions {
     display: flow-root !important;
     .btn-select {
       float: right;
+    }
+  }
+  ::v-deep .date-picker-header {
+    position: absolute;
+    margin-top: -315px;
+    padding: 4px 20px;
+    width:94%;
+    background-color: var(--v-aliceBlue-base) !important;
+    .header-value {
+      margin-left: 12px;
+      color: var(--v-primary-base) !important;
     }
   }
 }

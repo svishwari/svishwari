@@ -222,11 +222,10 @@
     <v-divider class="mt-10" />
     <v-subheader> Date Picker </v-subheader>
     <hux-date-picker
-      :label="selectedMenuItem"
-      :selected="selectedMenuItem"
-      :items="menuItems"
-      :endDate="true"
-      @on-select="onSelectMenuItem"
+      :label="selectedDate"
+      :selected="selectedDate"
+      :endDate="false"
+      @on-date-select="onDateSelect"
     />
     <v-divider class="mt-10" />
 
@@ -550,6 +549,9 @@ export default {
         item.action()
       }
     },
+    onDateSelect(val) {
+     this.selectedDate = val;
+    },
     toggleModal() {
       this.modal = !this.modal
     },
@@ -606,6 +608,7 @@ export default {
       },
 
       selectedMenuItem: "Select a value...",
+      selectedDate: "Select a value...",
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
