@@ -101,7 +101,7 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import HuxDropdown from "../../components/common/HuxDropdown.vue"
+// import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 export default {
@@ -112,7 +112,7 @@ export default {
     huxButton,
     HuxDataTable,
     TimeStamp,
-    HuxDropdown,
+    // HuxDropdown,
     Status,
     Tooltip,
   },
