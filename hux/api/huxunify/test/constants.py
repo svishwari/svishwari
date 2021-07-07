@@ -16,7 +16,7 @@ AUTH_HEADER = {
 }
 STANDARD_HEADERS = {
     "Authorization": TEST_AUTH_TOKEN,
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
 }
 VALID_RESPONSE = {
     "active": True,

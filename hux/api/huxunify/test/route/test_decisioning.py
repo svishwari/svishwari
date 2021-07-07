@@ -81,4 +81,6 @@ class DecisioningTests(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(ModelSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(ModelSchema(), response.json, True)
+        )

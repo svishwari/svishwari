@@ -241,7 +241,7 @@ class DestinationPutView(SwaggerView):
         },
         HTTPStatus.NOT_FOUND.value: {
             "description": api_c.DESTINATION_NOT_FOUND
-        }
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -291,13 +291,15 @@ class DestinationPutView(SwaggerView):
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-        print('got here!!!')
+        print("got here!!!")
         if not destination:
-            print('returning not found!!!')
-            ret = {"message": api_c.DESTINATION_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            print("returning not found!!!")
+            ret = {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
             print(ret)
             return ret
-        print('got here!!!')
+        print("got here!!!")
         if (
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
