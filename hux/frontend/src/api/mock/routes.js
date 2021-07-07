@@ -99,6 +99,24 @@ export const defineRoutes = (server) => {
     }
   )
 
+  server.get("/engagements/:id/deliveries", (schema, request) => {
+    const id = request.params.id
+    const engagement = schema.engagements.find(id)
+    return engagement.audiences.map((audience) => {
+      return {
+        id: audience.id,
+        name: audience.name,
+        size: audience.size,
+        destinations: audience.destinations.map((destination) => {
+          return {
+            id: destination.id,
+            deliveries: server.createList("delivery", 10),
+          }
+        }),
+      }
+    })
+  })
+
   // Audience Performances
   server.get(
     "/engagements/:id/audience-performance/email",
