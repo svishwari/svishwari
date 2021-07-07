@@ -212,6 +212,11 @@ export default {
       getAllAudiences: "audiences/getAll",
     }),
 
+    creatLookAlike() {
+      //TODO: make a API call here HUS-649
+      this.onBack()
+    },
+
     reset() {
       this.lookAlikeAudience.value = 5
       this.selectAudience = null
