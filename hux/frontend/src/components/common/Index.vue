@@ -220,12 +220,20 @@
     />
 
     <v-divider class="mt-10" />
-    <v-subheader> Date Picker </v-subheader>
+    <v-subheader> Start Date Picker </v-subheader>
     <hux-date-picker
-      :label="selectedDate"
-      :selected="selectedDate"
+      :label="selectedStartDate"
+      :selected="selectedStartDate"
       :endDate="false"
-      @on-date-select="onDateSelect"
+      @on-date-select="onStartDateSelect"
+    />
+    <v-divider class="mt-10" />
+    <v-subheader> End Date Picker </v-subheader>
+    <hux-date-picker
+      :label="selectedEndDate"
+      :selected="selectedEndDate"
+      :endDate="true"
+      @on-date-select="onEndDateSelect"
     />
     <v-divider class="mt-10" />
 
@@ -549,8 +557,11 @@ export default {
         item.action()
       }
     },
-    onDateSelect(val) {
-     this.selectedDate = val;
+    onStartDateSelect(val) {
+     this.selectedStartDate = val;
+    },
+    onEndDateSelect(val) {
+     this.selectedEndDate = val;
     },
     toggleModal() {
       this.modal = !this.modal
@@ -608,7 +619,8 @@ export default {
       },
 
       selectedMenuItem: "Select a value...",
-      selectedDate: "Select a value...",
+      selectedStartDate: "Select a value...",
+      selectedEndDate: "Select a value...",
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
