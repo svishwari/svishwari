@@ -3,7 +3,7 @@
     <Drawer v-model="localDrawer" @onClose="closeAddDataSource">
       <template #header-left>
         <div class="d-flex align-baseline">
-          <h5 class="text-h5 font-weight-light pr-2">Select a data source</h5>
+          <h3 class="text-h3 font-weight-light pr-2">Select a data source</h3>
         </div>
       </template>
       <template #footer-left>

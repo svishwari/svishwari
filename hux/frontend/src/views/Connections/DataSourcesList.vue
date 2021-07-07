@@ -23,7 +23,7 @@
         hideButton
         class="mb-3 pr-10 list"
       >
-        <Status :status="dataSource.status" class="status" />
+        <Status :status="dataSource.status" :iconSize="17" class="status" />
       </CardHorizontal>
     </template>
 

@@ -31,6 +31,7 @@ INGESTION_JOBS_COLLECTION = "ingestion_jobs"
 INGESTED_DATA_COLLECTION = "ingested_data"
 INGESTED_DATA_STATS_COLLECTION = "ingested_data_stats"
 AUDIENCES_COLLECTION = "audiences"
+AUDIENCE_CUSTOMERS_COLLECTION = "audience_customers"
 AUDIENCE_INSIGHTS_COLLECTION = "audience_insights"
 DELIVERY_JOBS_COLLECTION = "delivery_jobs"
 DELIVERY_PLATFORM_COLLECTION = "delivery_platforms"
@@ -149,6 +150,7 @@ MAX_AUDIENCE_SIZE_FOR_HASHED_FILE_DOWNLOAD = (
 )
 AUDIENCE_FILTER_AGGREGATOR_ANY = "any"
 AUDIENCE_FILTER_AGGREGATOR_ALL = "all"
+AUDIENCE_CUSTOMER_LIST = "customer_list"
 
 # Audience types
 CUSTOM_AUDIENCE = "custom_audience"
@@ -242,6 +244,7 @@ EVENT_DETAILS = "event_details"
 PERFORMANCE_METRICS_DATA_EXTENSION = "performance_metrics_data_extension"
 DATA_EXTENSION_NAME = "data_extension_name"
 DATA_EXTENSION_ID = "data_extension_id"
+LATEST_DELIVERY = "latest_delivery"
 
 # Data source constants
 FIELD_SPECIAL_TYPE = "special_type"

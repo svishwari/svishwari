@@ -12,14 +12,12 @@
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
       <template slot="left">
-        <v-icon medium :disabled="true">mdi-filter-variant</v-icon>
-        <v-icon medium :disabled="true" class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
+        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template slot="right">
-        <v-icon medium :disabled="true" color="primary refresh"
-          >mdi-refresh</v-icon
-        >
+        <v-icon medium color="lightGrey refresh">mdi-refresh</v-icon>
         <router-link
           :to="{ name: 'AudienceConfiguration' }"
           class="text-decoration-none"
@@ -39,10 +37,10 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7 pl-3" v-if="!loading">
+    <v-row class="pt-3 pb-7 pl-3 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
-        :dataItems="rowData"
+        :dataItems="audienceList"
         v-if="isDataExists"
       >
         <template #row-item="{ item }">
@@ -71,10 +69,12 @@
               <time-stamp :value="item[header.value]" />
             </div>
             <div v-if="header.value == 'update_time'">
-              <time-stamp :value="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <time-stamp :value="item['create_time']" />
             </div>
             <div v-if="header.value == 'updated_by'">
-              <Avatar :name="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <Avatar :name="item['created_by']" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
@@ -119,7 +119,6 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -129,7 +128,6 @@ import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
-
 export default {
   name: "audiences",
   components: {
@@ -160,7 +158,6 @@ export default {
           icon: "audiences",
         },
       ],
-
       columnDefs: [
         {
           text: "Audience name",
@@ -208,6 +205,16 @@ export default {
     ...mapGetters({
       rowData: "audiences/list",
     }),
+    audienceList() {
+      let audienceValue = this.rowData
+      return audienceValue.sort((a, b) =>
+        a.name.toLowerCase() === b.name.toLowerCase()
+          ? 0
+          : a.name.toLowerCase() < b.name.toLowerCase()
+          ? -1
+          : 1
+      )
+    },
     isDataExists() {
       if (this.rowData) return this.rowData.length > 0
       return false
@@ -251,7 +258,7 @@ export default {
       tr {
         td {
           font-size: 14px;
-          height: 60px;
+          height: 63px;
         }
       }
     }
@@ -262,5 +269,8 @@ export default {
   .icon-border {
     cursor: default !important;
   }
+}
+.radio-div {
+  margin-top: -11px !important;
 }
 </style>

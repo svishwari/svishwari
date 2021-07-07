@@ -14,11 +14,33 @@ export default {
   Date(value, format = "MM/D/YYYY [at] hh:ss A") {
     if (!value) return ""
 
-    if (format === "relative") return moment(value).fromNow()
+    let date = moment(value).utc(true)
 
-    if (format === "calendar") return moment(value).calendar()
+    if (format === "relative") return date.fromNow()
 
-    return moment(value).format(format)
+    if (format === "calendar") return date.calendar()
+
+    return date.format(format)
+  },
+  /**
+   * Formats a datetime field to calendar relative date.
+   * Converts date in calendar fromat like Yesterday, Today, Last Saturday for a week
+   * else convert it into relative date like a month ago, a year ago
+   */
+  DateRelative(value) {
+    let dateTime = moment(value).utc(true)
+    let otherDates = dateTime.fromNow()
+    let week = dateTime.calendar()
+    let calback = () => "[" + otherDates + "]"
+    let weekcal = () => "[" + week.split(" at ")[0] + "]"
+    return dateTime.calendar(null, {
+      sameDay: "[Today]",
+      nextDay: weekcal,
+      nextWeek: calback,
+      lastDay: weekcal,
+      lastWeek: weekcal,
+      sameElse: calback,
+    })
   },
 
   /**
@@ -107,6 +129,7 @@ export default {
       .join("")
   },
   Currency(value) {
+    if (isNaN(value)) return "-"
     return Number(value).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
@@ -121,6 +144,7 @@ export default {
    * @returns output value eg. "90%"
    */
   percentageConvert(value, round = false, percentage = false, append = "") {
+    if (isNaN(value)) return "-"
     if (!value) return ""
 
     if (percentage) {

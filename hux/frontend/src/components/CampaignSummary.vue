@@ -101,7 +101,10 @@
           <template #item-row="{ item, expand, isExpanded }">
             <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
               <td v-for="header in headers" :key="header.value">
-                <div v-if="header.value == 'name'" class="w-100">
+                <div
+                  v-if="header.value == 'name'"
+                  class="w-100 d-flex align-center"
+                >
                   <v-icon
                     :class="{ 'rotate-icon-90': isExpanded }"
                     size="18"
@@ -111,14 +114,21 @@
                   </v-icon>
                   <tooltip>
                     <template #label-content>
-                      <!-- TODO Route Link to Audience Insight Page -->
-                      <router-link
-                        to="#"
-                        class="text-decoration-none primary--text"
-                        append
-                      >
-                        {{ item.name }}
-                      </router-link>
+                      <span class="d-flex align-center">
+                        <!-- TODO Route Link to Audience Insight Page -->
+                        <router-link
+                          to="#"
+                          class="
+                            text-decoration-none
+                            primary--text
+                            ellipsis
+                            max-26
+                          "
+                          append
+                        >
+                          {{ item.name }}
+                        </router-link>
+                      </span>
                     </template>
                     <template #hover-content>
                       {{ item.name }}
@@ -136,7 +146,9 @@
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
                 :headers="headers"
-                :dataItems="getDestinationRollups(item.destinations)"
+                :dataItems="
+                  getDestinationRollups(item.destinations || item.campaigns)
+                "
                 :showHeader="false"
                 v-if="item"
               >
@@ -634,6 +646,10 @@ export default {
         display: inline-block;
         width: 21ch;
         white-space: nowrap;
+      }
+      .max-26 {
+        max-width: 26ch;
+        width: 26ch;
       }
       .v-data-table__expanded__row {
         background: var(--v-aliceBlue-base);

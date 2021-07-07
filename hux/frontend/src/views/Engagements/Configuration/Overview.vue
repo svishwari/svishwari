@@ -12,18 +12,41 @@
         class="mr-4"
       >
         <template #subtitle-extended>
-          <span v-if="item.subtitle" class="font-weight-semi-bold">
+          <span
+            v-if="item.title === 'Target size'"
+            class="font-weight-semi-bold"
+          >
+            <Tooltip>
+              <template #label-content>
+                <span class="font-weight-semi-bold">
+                  {{ item.subtitle | Numeric(false, false, true) }}
+                </span>
+              </template>
+              <template #hover-content>
+                {{ item.subtitle | Empty }}
+              </template>
+            </Tooltip>
+          </span>
+
+          <span
+            v-if="item.title === 'Delivery schedule'"
+            class="font-weight-semi-bold"
+          >
             {{ item.subtitle }}
           </span>
 
           <div v-if="item.destinations" class="d-flex align-center">
-            <Logo
-              class="mr-2"
+            <Tooltip
               v-for="destination in item.destinations"
               :key="destination.type"
-              :type="destination.type"
-              :size="20"
-            />
+            >
+              <template #label-content>
+                <Logo class="mr-2" :type="destination.type" :size="20" />
+              </template>
+              <template #hover-content>
+                <span>{{ destination.name }}</span>
+              </template>
+            </Tooltip>
             <span
               v-if="!item.destinations.length"
               class="font-weight-semi-bold"
@@ -41,6 +64,7 @@
 import { mapGetters } from "vuex"
 import Logo from "@/components/common/Logo.vue"
 import MetricCard from "@/components/common/MetricCard.vue"
+import Tooltip from "@/components/common/Tooltip"
 
 export default {
   name: "EngagementOverview",
@@ -48,6 +72,7 @@ export default {
   components: {
     Logo,
     MetricCard,
+    Tooltip,
   },
 
   props: {
@@ -104,7 +129,7 @@ export default {
         },
         {
           title: "Target size",
-          subtitle: this.$options.filters.Numeric(this.sumAudienceSizes),
+          subtitle: this.sumAudienceSizes,
         },
         {
           title: "Delivery schedule",

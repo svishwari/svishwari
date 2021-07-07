@@ -22,7 +22,9 @@
             class="
               text-center
               rounded-lg
-              card-info-wrapper card-shadow-box card-height
+              card-info-wrapper
+              box-shadow-5
+              card-height
             "
           >
             <v-card-title
@@ -92,7 +94,7 @@
 
       <v-row>
         <v-col cols="5">
-          <v-card class="rounded-lg card-info-wrapper card-shadow-box">
+          <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-5 card-heading">
               {{ cardTitles[0].title }}
             </v-card-title>
@@ -147,7 +149,7 @@
           </v-card>
         </v-col>
         <v-col cols="3">
-          <v-card class="rounded-lg card-info-wrapper card-shadow-box">
+          <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="card-heading py-5">
               {{ cardTitles[1].title }}
             </v-card-title>
@@ -180,8 +182,8 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import HuxSlider from "@/components/common/HuxSlider"
-import IdentityChart from "@/components/common/IdentityChart"
-import moment from "moment"
+import IdentityChart from "@/components/common/identityChart/IdentityChart"
+
 export default {
   name: "CustomerProfileDetails",
   components: {
@@ -197,8 +199,8 @@ export default {
       items: [
         {
           text: "Customer Profiles",
-          disabled: true,
-          href: "/customers",
+          disabled: false,
+          href: this.$router.resolve({ name: "CustomerProfiles" }).href,
           icon: "customer-profiles",
         },
         {
@@ -365,19 +367,19 @@ export default {
           id: 6,
           title: "Last click",
           colValue: 2.5,
-          value: this.getDateStamp(this.singleCustomer.last_click),
+          value: this.formattedDate(this.singleCustomer.last_click),
         },
         {
           id: 7,
           title: "Last purchase date",
           colValue: 2.5,
-          value: this.getDateStamp(this.singleCustomer.last_purchase),
+          value: this.formattedDate(this.singleCustomer.last_purchase),
         },
         {
           id: 8,
           title: "Last open",
           colValue: 2.5,
-          value: this.getDateStamp(this.singleCustomer.last_email_open),
+          value: this.formattedDate(this.singleCustomer.last_email_open),
         },
       ]
       return details
@@ -387,8 +389,11 @@ export default {
     ...mapActions({
       getCustomer: "customers/get",
     }),
-    getDateStamp(value) {
-      return value ? moment(new Date(value)).fromNow() : "-"
+    formattedDate(value) {
+      if (value) {
+        return this.$options.filters.Date(value, "relative")
+      }
+      return "-"
     },
   },
   async mounted() {
@@ -439,9 +444,6 @@ export default {
   font-size: 15px !important;
   color: var(--v-neroBlack-base);
   font-weight: 400;
-}
-.card-shadow-box {
-  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05) !important;
 }
 .sample-card-text {
   font-size: 14px;

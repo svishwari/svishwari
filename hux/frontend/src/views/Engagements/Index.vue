@@ -1,19 +1,19 @@
 <template>
   <div class="engagements-wrap">
-    <PageHeader>
+    <PageHeader :headerHeightChanges="'py-3'">
       <template #left>
         <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
-        <v-icon size="24" :disabled="true" class="icon-border pa-2 ma-1">
+        <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
     </PageHeader>
     <PageHeader class="top-bar" :headerHeight="71">
       <template #left>
-        <v-icon medium disabled>mdi-filter-variant</v-icon>
-        <v-icon medium disabled class="pl-6">mdi-magnify</v-icon>
+        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
+        <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
       </template>
 
       <template #right>
@@ -88,6 +88,7 @@
                 :showLabel="true"
                 collapsed
                 class="d-flex"
+                :iconSize="17"
               />
             </div>
             <div v-if="header.value == 'size'">
@@ -97,10 +98,12 @@
               {{ manualDeliverySchedule }}
             </div>
             <div v-if="header.value == 'update_time'">
-              <time-stamp :value="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <time-stamp :value="item['create_time']" />
             </div>
             <div v-if="header.value == 'updated_by'">
-              <avatar :name="item[header.value]" />
+              <!-- TODO replace with header value -->
+              <avatar :name="item['created_by']" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
@@ -165,12 +168,12 @@
                 </div>
                 <div v-if="header.value == 'update_time'">
                   <div class="ml-16 pl-4" style="width: max-content">
-                    <time-stamp :value="item[header.value]" />
+                    <time-stamp :value="item['create_time']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'updated_by'">
                   <div class="ml-16 pl-7">
-                    <Avatar :name="item[header.value]" />
+                    <Avatar :name="item['created_by']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
@@ -190,7 +193,7 @@
       </template>
     </hux-data-table>
 
-    <v-row class="pt-3 pb-7 pl-3" v-if="rowData.length == 0">
+    <v-row class="pt-3 pb-7 pl-3" v-if="rowData.length == 0 && !loading">
       <EmptyPage>
         <template #icon>mdi-alert-circle-outline</template>
         <template #title>Oops! There’s nothing here yet</template>
@@ -379,15 +382,6 @@ export default {
         background-color: var(--v-aliceBlue-base) !important;
       }
       .v-data-table-header {
-        th {
-          background: var(--v-aliceBlue-base);
-          &:first-child {
-            border-radius: 12px 0px 0px 0px;
-          }
-          &:last-child {
-            border-radius: 0px 12px 0px 0px;
-          }
-        }
         th:nth-child(1) {
           position: sticky;
           top: 0;
@@ -398,6 +392,9 @@ export default {
         border-radius: 12px 12px 0px 0px;
       }
       tr {
+        th {
+          border-top: thin solid rgba(0, 0, 0, 0.12);
+        }
         &:hover {
           background: var(--v-aliceBlue-base) !important;
         }
@@ -452,5 +449,8 @@ export default {
   ::v-deep .menu-cell-wrapper :hover .action-icon {
     display: initial;
   }
+}
+.icon-border {
+  cursor: default !important;
 }
 </style>
