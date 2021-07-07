@@ -6,7 +6,7 @@ from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
 from bson import ObjectId
-from flask import Blueprint, request, jsonify, logging
+from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
@@ -139,7 +139,7 @@ class DestinationGetView(SwaggerView):
         """
 
         if not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # grab the destination
         destination = destination_management.get_delivery_platform(
@@ -239,12 +239,16 @@ class DestinationPutView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to update the destination.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.DESTINATION_NOT_FOUND
+        }
     }
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
     # pylint: disable=unexpected-keyword-arg
+    # pylint: disable=too-many-return-statements
     @marshal_with(DestinationPutSchema)
     @api_error_handler()
     @get_user_name()
@@ -287,9 +291,13 @@ class DestinationPutView(SwaggerView):
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
+        print('got here!!!')
         if not destination:
-            return {"message": "Not found"}, HTTPStatus.NOT_FOUND
-
+            print('returning not found!!!')
+            ret = {"message": api_c.DESTINATION_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            print(ret)
+            return ret
+        print('got here!!!')
         if (
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
@@ -559,7 +567,7 @@ class DestinationDataExtView(SwaggerView):
         """
 
         if destination_id is None or not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)
@@ -661,7 +669,7 @@ class DestinationDataExtPostView(SwaggerView):
         """
 
         if destination_id is None or not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)

@@ -10,7 +10,6 @@ import requests_mock
 import mongomock
 from bson import ObjectId
 
-from huxunify.api.data_connectors.aws import parameter_store
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -18,6 +17,7 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
 import huxunify.test.constants as t_c
+from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
@@ -97,7 +97,9 @@ class TestDestinationRoutes(TestCase):
         ]
 
         for destination in destinations:
-            destination_management.set_delivery_platform(self.database, **destination)
+            destination_management.set_delivery_platform(
+                self.database, **destination
+            )
 
         self.destinations = destination_management.get_all_delivery_platforms(
             self.database
@@ -153,6 +155,9 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        valid_response = {"message": api_c.DESTINATION_NOT_FOUND}
+
+        self.assertEqual(valid_response, response.json)
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
 
     def test_get_destination_invalid_object_id(self):
@@ -169,6 +174,9 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+
+        self.assertEqual(valid_response, response.json)
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_update_destination(self):
@@ -350,7 +358,7 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_ID}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -427,7 +435,7 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": api_c.INVALID_ID}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)

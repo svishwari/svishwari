@@ -11,7 +11,6 @@ import requests_mock
 from flask_marshmallow import Schema
 from marshmallow import ValidationError
 
-from huxunify.test.constants import BASE_ENDPOINT
 from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c

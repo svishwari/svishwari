@@ -5,10 +5,8 @@ import string
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
-from requests_mock import Mocker
 from hypothesis import given, strategies as st
 
-from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 from huxunify.app import create_app

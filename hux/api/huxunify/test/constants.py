@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """
 purpose of this file is housing shared components for tests
 """
