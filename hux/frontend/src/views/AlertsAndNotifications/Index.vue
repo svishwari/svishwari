@@ -7,8 +7,8 @@
     </PageHeader>
     <PageHeader class="top-bar backGround-header" :headerHeight="71">
       <template #left>
-        <v-icon medium color="blue">mdi-filter-variant</v-icon>
-        <v-icon medium color="naroBlack" class="pl-4">mdi-magnify</v-icon>
+        <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
+        <v-icon medium color="lightGrey" class="pl-4">mdi-magnify</v-icon>
       </template>
 
       <template #right>
@@ -19,7 +19,7 @@
         >
           <huxButton
             ButtonText="Return to previous page"
-            icon="mdi-plus"
+            icon="mdi-keyboard-return"
             iconPosition="left"
             variant="primary"
             size="large"
@@ -33,7 +33,7 @@
     </PageHeader>
     <PageHeader class="top-bar backGround-header-dropdown" :headerHeight="71">
       <template #left>
-        <div class="d-flex flex-row">
+        <span class="d-flex flex-row">
           <div>
         <HuxDropdown
             label="Alert type"
@@ -46,11 +46,11 @@
             :items="categoryItems"
         />
           </div>
-        </div>
+        </span>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7 pl-3 white" v-if="!loading">
+    <v-row class="pt-3 pb-7 pl-6 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
         :dataItems="rowData"
@@ -123,7 +123,7 @@ export default {
         {
           text: "Alerts & Notifications",
           disabled: true,
-          icon: "audiences",
+          icon: "notifications",
         },
       ],
       categoryItems: [
