@@ -18,7 +18,7 @@ from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
 import huxunify.test.constants as t_c
-from huxunify.api import constants as api_c
+import huxunify.api.constants as api_c
 from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
 
