@@ -123,8 +123,8 @@ class CustomersSchema(Schema):
     )
 
 
-class DataFeedSchema(Schema):
-    """IDR Data Feed Schema"""
+class DataFeedPinning(Schema):
+    """IDR Data feed pinning schema"""
 
     input_records = Integer(required=True, example=2)
     output_records = Integer(required=True, example=2)
@@ -142,9 +142,21 @@ class DataFeedSchema(Schema):
     new_address_ids = Integer(required=True, example=1)
     process_time = Float(required=True, example=6.43)
     date_time = DateTime(required=True, example=datetime.now())
+
+
+class DataFeedStitched(Schema):
+    """IDR Data feed stitched schema"""
+
     digital_ids_added = Integer(required=True, example=3)
     digital_ids_merged = Integer(required=True, example=6)
     match_rate = Float(required=True, example=0.6606)
     merge_rate = Float(required=True, example=0.0)
     records_source = Str(required=True, example="Input Waterfall")
     time_stamp = DateTime(required=True, example=datetime.now())
+
+
+class DataFeedSchema(Schema):
+    """IDR Data feed schema"""
+
+    pinning = Nested(DataFeedPinning, required=True)
+    stitched = Nested(DataFeedStitched, required=True)

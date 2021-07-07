@@ -449,6 +449,8 @@ MATCH_RATE = "match_rate"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
 TIME_STAMP = "time_stamp"
+STITCHED = "stitched"
+PINNING = "pinning"
 
 # ERROR
 INVALID_AUTH_HEADER = "Authorization header is invalid."
