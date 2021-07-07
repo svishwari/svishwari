@@ -106,7 +106,12 @@
           v-if="item.latest_delivery.status"
           class="status-col py-1"
         >
-          <status :status="item.latest_delivery.status" collapsed showLabel />
+          <status
+            :status="item.latest_delivery.status"
+            :iconSize="statusIcon"
+            collapsed
+            showLabel
+          />
         </v-list-item-content>
         <v-list-item-content
           v-if="item.latest_delivery.size"
@@ -205,6 +210,11 @@ export default {
     engagementId: {
       type: String,
       required: true,
+    },
+    statusIcon: {
+      type: Number,
+      required: false,
+      default: 24,
     },
   },
 

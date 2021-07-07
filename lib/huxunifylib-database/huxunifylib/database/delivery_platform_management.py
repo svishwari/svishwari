@@ -2219,3 +2219,77 @@ set_campaign_activity_transferred_for_feedback = partial(
     _set_campaign_activity_feedback_status,
     campaign_activity_feedback_status=c.STATUS_TRANSFERRED_FOR_FEEDBACK,
 )
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_audience_customers(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+    customer_list: list,
+) -> Union[dict, None]:
+    """A function to set audience customer list for a delivery job.
+
+    Args:
+        database (DatabaseClient): A database client. Defaults to None.
+        delivery_job_id (ObjectId): Delivery job ID.
+        customer_list (list): List of customer ID processed during the delivery job.
+
+    Returns:
+        Union[dict, None]: MongoDB audience doc or None
+    """
+
+    ret_doc = None
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCE_CUSTOMERS_COLLECTION]
+
+    audience_customers_doc = {
+        c.DELIVERY_JOB_ID: delivery_job_id,
+        c.AUDIENCE_CUSTOMER_LIST: customer_list,
+    }
+
+    try:
+        audience_customers_doc_id = collection.insert_one(
+            audience_customers_doc
+        ).inserted_id
+        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        if audience_customers_doc_id is not None:
+            ret_doc = collection.find_one({c.ID: audience_customers_doc_id})
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return ret_doc
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_audience_customers(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> Union[list, None]:
+    """A function to fetch all audience customers docs for a delivery job.
+
+    Args:
+        database (DatabaseClient): A database client. Defaults to None.
+        delivery_job_id (ObjectId): Delivery job ID.
+
+    Returns:
+        Union[list, None]: A list of all audience customers docs or None
+    """
+
+    audience_customers_docs = None
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCE_CUSTOMERS_COLLECTION]
+
+    try:
+        audience_customers_docs = list(
+            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return audience_customers_docs

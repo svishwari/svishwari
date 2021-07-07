@@ -1650,3 +1650,76 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(
             campaign_activities_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK]
         )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_audience_customers(self):
+        """Audience customers are set properly."""
+
+        customer_list = [
+            "customer_id_1",
+            "customer_id_2",
+            "customer_id_3",
+            "customer_id_4",
+            "customer_id_5",
+        ]
+
+        doc = dpm.set_audience_customers(
+            database=self.database,
+            delivery_job_id=self.delivery_job_doc[c.ID],
+            customer_list=customer_list,
+        )
+
+        self.assertIsNotNone(doc)
+        self.assertEqual(doc[c.AUDIENCE_CUSTOMER_LIST], customer_list)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_all_audience_customers(self):
+        """All audience customers are fetched properly."""
+
+        customer_list_1 = [
+            "customer_id_1",
+            "customer_id_2",
+            "customer_id_3",
+            "customer_id_4",
+            "customer_id_5",
+        ]
+
+        customer_list_2 = [
+            "customer_id_10",
+            "customer_id_20",
+            "customer_id_30",
+            "customer_id_40",
+            "customer_id_50",
+        ]
+
+        # set 2 customer audience docs with `delivery_job_doc`
+        doc = dpm.set_audience_customers(
+            database=self.database,
+            delivery_job_id=self.delivery_job_doc[c.ID],
+            customer_list=customer_list_1,
+        )
+        self.assertIsNotNone(doc)
+
+        doc = dpm.set_audience_customers(
+            database=self.database,
+            delivery_job_id=self.delivery_job_doc[c.ID],
+            customer_list=customer_list_2,
+        )
+        self.assertIsNotNone(doc)
+
+        # set a customer audience doc with `delivery_job_2_doc`
+        doc = dpm.set_audience_customers(
+            database=self.database,
+            delivery_job_id=self.delivery_job_2_doc[c.ID],
+            customer_list=customer_list_2,
+        )
+        self.assertIsNotNone(doc)
+
+        # fetch customer audience doc for `delivery_job_doc`
+        all_docs = dpm.get_all_audience_customers(
+            database=self.database,
+            delivery_job_id=self.delivery_job_doc[c.ID],
+        )
+
+        self.assertIsNotNone(all_docs)
+        self.assertEqual(len(all_docs), 2)
