@@ -336,7 +336,6 @@ AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 
-
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,
     COUNTRIES: 2,
@@ -402,10 +401,11 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
+CUSTOMERS_INSIGHTS = "customers-insights"
+GEOGRAPHICAL = "geo"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
-
 
 # Customers API Fields
 CUSTOMERS_TAG = "customers"

@@ -120,3 +120,15 @@ class CustomersSchema(Schema):
             }
         ],
     )
+
+
+class CustomerGeoVisualSchema(Schema):
+    """Geographical Visuals of Customer Insights"""
+
+    name = Str(required=True, example="California")
+    population_percentage = Float(required=True, example=0.3031)
+    size = Integer(required=True, example=28248560)
+    women = Float(required=True, example=0.50)
+    men = Float(required=True, example=0.49)
+    other = Float(required=True, example=0.01)
+    ltv = Float(required=True, example=3848.50)

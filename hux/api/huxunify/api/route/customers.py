@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
+    CustomerGeoVisualSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -303,4 +304,44 @@ class CustomerProfileSearch(SwaggerView):
                 api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
             ),
             HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
+    "CustomerDashboardOverview",
+)
+class CustomerGeoVisualView(SwaggerView):
+    """
+    Customers Dashboard Overview class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": CustomerGeoVisualSchema},
+            "description": "Customer Identity Resolution Dashboard overview.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers identity dashboard overview."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves a customer data dashboard overview.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] dict of Customer data overview and http code
+        """
+
+        return (
+            CustomerOverviewSchema().dump(get_customers_overview()),
+            HTTPStatus.OK,
         )
