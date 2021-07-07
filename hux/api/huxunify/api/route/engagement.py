@@ -646,6 +646,9 @@ class EngagementDeliverView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to deliver engagement.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -671,7 +674,7 @@ class EngagementDeliverView(SwaggerView):
 
         # validate object id
         if not ObjectId.is_valid(engagement_id):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the engagement ID
         engagement_id = ObjectId(engagement_id)
@@ -681,8 +684,8 @@ class EngagementDeliverView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # submit jobs for all the audience/destination pairs
         delivery_job_ids = []
@@ -744,6 +747,9 @@ class EngagementDeliverAudienceView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to deliver engagement.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -770,7 +776,7 @@ class EngagementDeliverAudienceView(SwaggerView):
 
         # validate object id
         if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -781,8 +787,8 @@ class EngagementDeliverAudienceView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
@@ -1049,6 +1055,9 @@ class UpdateCampaignsForAudience(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to update campaigns.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -1084,7 +1093,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             ObjectId.is_valid(x)
             for x in [audience_id, engagement_id, destination_id]
         ):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1096,8 +1105,8 @@ class UpdateCampaignsForAudience(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
@@ -1228,6 +1237,9 @@ class AudienceCampaignsGetView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve campaigns.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -1262,7 +1274,7 @@ class AudienceCampaignsGetView(SwaggerView):
             ObjectId.is_valid(x)
             for x in [audience_id, engagement_id, destination_id]
         ):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1274,8 +1286,8 @@ class AudienceCampaignsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
@@ -1387,6 +1399,9 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve campaign mappings.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -1420,7 +1435,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             ObjectId.is_valid(x)
             for x in [audience_id, engagement_id, destination_id]
         ):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1432,8 +1447,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:

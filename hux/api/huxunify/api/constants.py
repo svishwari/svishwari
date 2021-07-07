@@ -55,7 +55,63 @@ MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
 LTV = "ltv"
 POPULATION_PERCENTAGE = "population_percentage"
-STATE_NAMES = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "California", "Colorado", "Connecticut", "District of Columbia", "Delaware", "Florida", "Georgia", "Guam", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming"]
+STATE_NAMES = [
+    "Alaska",
+    "Alabama",
+    "Arkansas",
+    "American Samoa",
+    "Arizona",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "District of Columbia",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Guam",
+    "Hawaii",
+    "Iowa",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Massachusetts",
+    "Maryland",
+    "Maine",
+    "Michigan",
+    "Minnesota",
+    "Missouri",
+    "Mississippi",
+    "Montana",
+    "North Carolina",
+    "North Dakota",
+    "Nebraska",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "Nevada",
+    "New York",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Puerto Rico",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Virginia",
+    "Virgin Islands",
+    "Vermont",
+    "Washington",
+    "Wisconsin",
+    "West Virginia",
+    "Wyoming",
+]
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -66,14 +122,10 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 
-NAME = "name"
-DESCRIPTION = "description"
-TYPE = "type"
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
 START_DATE = "start_date"
 END_DATE = "end_date"
-STATUS = "status"
 ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
@@ -218,6 +270,12 @@ PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
     "Performance metrics data extension not assigned."
 )
 INVALID_AUTH_DETAILS = "Invalid authentication details."
+INVALID_AUTH_HEADER = "Authorization header is invalid."
+INVALID_AUTH = "You are not authorized to visit this page."
+
+AUDIENCE_NOT_FOUND = "Audience not found."
+DESTINATION_NOT_FOUND = "Destination not found."
+ENGAGEMENT_NOT_FOUND = "Engagement not found."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -274,7 +332,6 @@ ENGAGEMENT_RATE = "engagement_rate"
 SUMMARY = "summary"
 IS_MAPPED = "is_mapped"
 
-EMAIL = "email"
 SENT = "sent"
 HARD_BOUNCES = "hard_bounces"
 HARD_BOUNCES_RATE = "hard_bounces_rate"
@@ -406,14 +463,15 @@ CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
+CUSTOMERS_DESCRIPTION = "Customers API"
+
+# Notifications
+NOTIFICATIONS_TAG = "notifications"
+NOTIFICATIONS_DESCRIPTION = "Notifications API"
+NOTIFICATIONS_ENDPOINT = "/notifications"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
-
-# Customers API Fields
-CUSTOMERS_TAG = "customers"
-CUSTOMERS_ENDPOINT = "/customers"
-CUSTOMERS_DESCRIPTION = "Customers API"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
@@ -430,10 +488,6 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
-
-# ERROR
-INVALID_AUTH_HEADER = "Authorization header is invalid."
-INVALID_AUTH = "You are not authorized to visit this page."
 
 # FILTERING
 REDACTED = "++REDACTED++"
