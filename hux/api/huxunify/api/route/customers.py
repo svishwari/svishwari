@@ -4,10 +4,11 @@ Paths for customer API
 """
 
 from http import HTTPStatus
+from random import choice
 from typing import Tuple
 from faker import Faker
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
@@ -310,7 +311,7 @@ class CustomerProfileSearch(SwaggerView):
 @add_view_to_blueprint(
     customers_bp,
     f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
-    "CustomerDashboardOverview",
+    "CustomerInsightsGeo",
 )
 class CustomerGeoVisualView(SwaggerView):
     """
@@ -330,7 +331,7 @@ class CustomerGeoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    def get(self) -> Tuple[dict, int]:
+    def get(self) -> Tuple[list, int]:
         """Retrieves a customer data dashboard overview.
 
         ---
@@ -338,10 +339,21 @@ class CustomerGeoVisualView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] dict of Customer data overview and http code
+            Tuple[dict, int] list of Customer insights on geo overview and http code
         """
-
+        geo_visuals = [
+            {
+                api_c.NAME: state,
+                api_c.POPULATION_PERCENTAGE: choice([0.3012, 0.1910, 0.2817]),
+                api_c.SIZE: choice([28248560, 39510225, 7615887]),
+                api_c.GENDER_WOMEN: 0.50,
+                api_c.GENDER_MEN: 0.49,
+                api_c.GENDER_OTHER: 0.01,
+                api_c.LTV: choice([3848.50, 3971.50, 3952])
+            }
+            for state in api_c.STATE_NAMES
+        ]
         return (
-            CustomerOverviewSchema().dump(get_customers_overview()),
+            jsonify(CustomerGeoVisualSchema().dump(geo_visuals, many=True)),
             HTTPStatus.OK,
         )
