@@ -53,30 +53,6 @@
           </huxButton>
         </v-date-picker>
       </v-list>
-      <v-list>
-        <v-date-picker
-      class="end-date-picker"
-      elevation="15"
-      v-model="end"
-      no-title
-      scrollable
-      @click:date="onSelectDate"
-      v-if="showCalendar">
-      <div class="date-picker-header" style=""> 
-        <span class="header-label"> Date </span>
-        <span class="header-value"> {{ optionSelected["name"] || label }} </span>
-      </div>
-      <v-spacer></v-spacer>
-      <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu=false; showCalendar=false">
-        Cancel
-      </huxButton>
-      <huxButton variant="tertiary" isTile class="btn-select mr-4"  @click="$refs.menu.save(end);selectDate(end)">
-        <span class="primary--text">
-          Select
-        </span>
-      </huxButton>
-    </v-date-picker>
-      </v-list>
     </v-menu>
   </div>
 </template>
@@ -119,7 +95,6 @@ export default {
   },
   data: function () {
     return {
-      menu: this.value,
       menu: false,
       showCalendar: false,
       start: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)

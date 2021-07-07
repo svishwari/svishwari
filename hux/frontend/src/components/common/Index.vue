@@ -230,7 +230,10 @@
     <v-divider class="mt-10" />
     <v-subheader> End Date Picker </v-subheader>
     <hux-end-date 
-    :isSubMenu="true"/>
+    :label="selectedEndDate"
+    :selected="selectedEndDate"
+    :isSubMenu="true"
+    @on-date-select="onEndDateSelect"/>
     <v-divider class="mt-10" />
 
     <v-subheader> Page Header </v-subheader>
@@ -618,7 +621,7 @@ export default {
 
       selectedMenuItem: "Select a value...",
       selectedStartDate: "Select date",
-      selectedEndDate: "Select a value...",
+      selectedEndDate: "Select date",
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",

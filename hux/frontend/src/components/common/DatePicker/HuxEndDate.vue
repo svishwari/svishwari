@@ -1,13 +1,14 @@
 <template>
   <div class="hux-date-picker">
     <v-menu
+      ref="endmenu"
       :close-on-content-click="false"
       :offset-x="isOffsetX"
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
       close-on-click
-      v-model="openMenu">
+      v-model="endmenu">
       <template #activator="{ on }">
         <v-list-item
           v-if="!isSubMenu"
@@ -20,14 +21,14 @@
         <huxButton
           v-else
           :v-on="on"
-          @click="openMenu = true"
+          @click="endmenu = true"
           text
           width="200"
           icon=" mdi-chevron-down"
           iconPosition="right"
           tile
           class="ma-2 main-button pr-1">
-          {{ label }}
+          {{ optionSelected["name"] || label }}
         </huxButton>
       </template>
       <v-list>
@@ -60,7 +61,7 @@
               isTile
               class="btn-cancel ml-4"
               @click="
-                menu = false
+                endmenu = false
                 showCalendar = false
               ">
               Cancel
@@ -70,7 +71,7 @@
               isTile
               class="btn-select mr-4"
               @click="
-                $refs.menu.save(end)
+                $refs.endmenu.save(end)
                 selectDate(end)
               ">
               <span class="primary--text"> Select </span>
@@ -117,7 +118,7 @@ export default {
   methods: {
     onSelect() {
       this.$emit("on-select")
-      this.openMenu = false
+      this.endmenu = false
     },
     selectDate(data) {
       this.$emit("on-date-select", data)
@@ -128,7 +129,7 @@ export default {
   },
   data: function () {
     return {
-      openMenu: this.value,
+      endmenu: this.value,
       end: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
