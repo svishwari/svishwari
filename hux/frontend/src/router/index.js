@@ -179,8 +179,7 @@ const routes = [
   {
     path: "/alerts-notification",
     name: "AlertsAndNotifications",
-    component: () =>
-      import("@/views/AlertsAndNotifications/Index"),
+    component: () => import("@/views/AlertsAndNotifications/Index"),
     meta: {
       layout: "app",
       title: "Customer Profile Details",

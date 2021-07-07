@@ -73,7 +73,7 @@
               <time-stamp :value="item['time']" />
             </div>
             <div v-if="header.value == 'type'">
-               <status
+              <status
                 :status="item['type']"
                 :showLabel="true"
                 class="status-icon"
@@ -81,14 +81,14 @@
               />
             </div>
             <tooltip v-if="header.value == 'description'" positionTop>
-            <template #label-content>
-              <span >{{ item[header.value] }}</span>
-            </template >
-            <template #hover-content>
+              <template #label-content>
+                <span>{{ item[header.value] }}</span>
+              </template>
+              <template #hover-content>
                 {{ item[header.value] }}
-            </template>
+              </template>
             </tooltip>
-           </td>
+          </td>
         </template>
       </hux-data-table>
     </v-row>
@@ -114,7 +114,7 @@ export default {
     TimeStamp,
     HuxDropdown,
     Status,
-    Tooltip
+    Tooltip,
   },
   data() {
     return {
@@ -126,15 +126,15 @@ export default {
         },
       ],
       categoryItems: [
-        {name: "Orchestration"},
-        {name: "Decisioning"},
-        {name: "Data management"}
+        { name: "Orchestration" },
+        { name: "Decisioning" },
+        { name: "Data management" },
       ],
       alertTypeItems: [
-        { name: "Success", modelIcon:"Success" },
-        { name: "Critical", modelIcon:"Critical"},
-        { name: "Feedback", modelIcon:"Feedback"},
-        { name: "Informational", modelIcon:"Informational"}
+        { name: "Success", modelIcon: "Success" },
+        { name: "Critical", modelIcon: "Critical" },
+        { name: "Feedback", modelIcon: "Feedback" },
+        { name: "Informational", modelIcon: "Informational" },
       ],
       columnDefs: [
         {
@@ -163,19 +163,20 @@ export default {
           time: "2021-07-04T09:41:22.237Z",
           type: "Success",
           description: "Data Source CS005 lost connection.",
-          category: "Orchestration"
+          category: "Orchestration",
         },
-                {
+        {
           time: "2021-07-04T09:41:22.237Z",
           type: "Feedback",
           description: "Facebook delivery stopped.",
-          category: "Decisioning"
+          category: "Decisioning",
         },
         {
           time: "2021-07-04T09:41:22.237Z",
           type: "Critical",
-          description: "Data Source CS004 lost connectivity. This is an example of a longer description that needs to be cut off.",
-          category: "Data management"
+          description:
+            "Data Source CS004 lost connectivity. This is an example of a longer description that needs to be cut off.",
+          category: "Data management",
         },
       ],
       loading: false,
@@ -183,9 +184,9 @@ export default {
   },
   methods: {
     goBack() {
-      window.history.back();
-    }
-  }
+      window.history.back()
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>
@@ -230,17 +231,17 @@ export default {
   margin-top: -11px !important;
 }
 .backGround-header {
-    background-color: var(--v-backgroundBlue-base) !important;
+  background-color: var(--v-backgroundBlue-base) !important;
 }
 .backGround-header-dropdown {
-    background-color: var(--v-aliceBlue-base) !important;
+  background-color: var(--v-aliceBlue-base) !important;
 }
 .status-icon {
   ::v-deep i {
     font-size: 17px !important;
   }
 }
-::v-deep .hux-dropdown  {
+::v-deep .hux-dropdown {
   .v-btn__content {
     color: var(--v-darkBlue-base) !important;
   }
