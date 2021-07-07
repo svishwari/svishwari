@@ -2,6 +2,7 @@
 """
 Schemas for the Customers API
 """
+from datetime import datetime
 
 from flask_marshmallow import Schema
 from marshmallow.fields import (
@@ -122,13 +123,28 @@ class CustomersSchema(Schema):
     )
 
 
-class DataFeedsSchema(Schema):
-    """IDR Data Feeds Schema"""
+class DataFeedSchema(Schema):
+    """IDR Data Feed Schema"""
 
-    data_feed = Str(required=True, example="Our Data Feed")
-    data_source = Str(required=True, example="salesforce")
-    records_processed = Integer(required=True, example=1234)
-    match_rate = Float(required=True, example=0.4601)
-    last_run = DateTime(
-        required=True, example="2021-05-24T14:35:12.001000+00:00"
-    )
+    input_records = Integer(required=True, example=2)
+    output_records = Integer(required=True, example=2)
+    empty_records = Integer(required=True, example=0)
+    individual_id_match = Integer(required=True, example=1)
+    household_id_match = Integer(required=True, example=1)
+    company_id_match = Integer(required=True, example=1)
+    address_id_match = Integer(required=True, example=1)
+    db_reads = Integer(required=True, example=1)
+    db_writes = Integer(required=True, example=1)
+    filename = Str(required=True, example="Input.csv")
+    new_individual_ids = Integer(required=True, example=1)
+    new_household_ids = Integer(required=True, example=1)
+    new_company_ids = Integer(required=True, example=1)
+    new_address_ids = Integer(required=True, example=1)
+    process_time = Float(required=True, example=6.43)
+    date_time = DateTime(required=True, example=datetime.now())
+    digital_ids_added = Integer(required=True, example=3)
+    digital_ids_merged = Integer(required=True, example=6)
+    match_rate = Float(required=True, example=0.6606)
+    merge_rate = Float(required=True, example=0.0)
+    records_source = Str(required=True, example="Input Waterfall")
+    time_stamp = DateTime(required=True, example=datetime.now())
