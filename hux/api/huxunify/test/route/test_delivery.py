@@ -8,7 +8,7 @@ import requests_mock
 import mongomock
 from bson import ObjectId
 
-from huxunifylib.database import constants as db_c
+import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
