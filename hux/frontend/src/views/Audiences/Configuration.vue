@@ -41,16 +41,11 @@
 
     <div class="timeline-wrapper">
       <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
-        <v-timeline align-top dense class="">
-          <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template #icon class="timeline-icon-section">
-              <span>1</span>
-            </template>
+        <!-- TODO: this can be moved Configuration folder -->
+        <FormSteps>
+          <FormStep :step="1" label="General information">
             <v-row class="pt-1">
               <v-col cols="4">
-                <strong class="text-h5 neroBlack--text"
-                  >General information</strong
-                >
                 <TextField
                   placeholderText="What is the name for this audience ?"
                   height="40"
@@ -63,7 +58,7 @@
                 />
               </v-col>
               <v-col cols="8">
-                <div class="mt-8 ml-15 text-caption neroBlack--text">
+                <div class="mt-3 ml-15 text-caption neroBlack--text">
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
                   <div class="mt-2 d-flex align-center">
@@ -93,28 +88,22 @@
                 </div>
               </v-col>
             </v-row>
-          </v-timeline-item>
-          <v-timeline-item color="blue" class="timeline-section mb-7">
-            <template #icon class="timeline-icon-section">
-              <span>2</span>
-            </template>
+          </FormStep>
+
+          <FormStep :step="2" label="Select attribute(s)" optional>
             <v-col class="pt-1 pa-0">
               <attribute-rules :rules="attributeRules" />
             </v-col>
-          </v-timeline-item>
-          <v-timeline-item
-            color="blue"
-            class="timeline-section disable-down-timeline mb-15"
+          </FormStep>
+
+          <FormStep
+            :step="3"
+            label="Select destination(s)"
+            optional
+            :border="!isLookAlikeCreateable ? 'inactive' : ''"
           >
-            <template #icon class="timeline-icon-section">
-              <span>3</span>
-            </template>
             <v-row class="pt-1">
               <v-col cols="12">
-                <strong class="text-h5 neroBlack--text">
-                  Select destination(s) -
-                  <i style="font-size: 12px">Optional</i>
-                </strong>
                 <div class="d-flex align-center">
                   <v-icon
                     size="30"
@@ -153,21 +142,64 @@
                 </div>
               </v-col>
             </v-row>
-          </v-timeline-item>
-          <v-timeline-item class="timeline-section disabled">
-            <template #icon class="timeline-icon-section">
-              <span>4</span>
-            </template>
-            <v-row class="pt-1">
-              <v-col cols="12">
-                <strong class="text-h5"
-                  >Create a lookalike audience -
-                  <i>This feature will be coming soon</i>
-                </strong>
+          </FormStep>
+
+          <FormStep
+            :step="4"
+            label="Create a lookalike audience"
+            :disabled="!isLookAlikeCreateable"
+          >
+            <div class="dark--text">
+              Would you like to create a lookalike audience from this audience?
+              This will create a one-off new audience in Facebook when this<br />
+              audience is first delivered.
+            </div>
+            <v-row>
+              <v-col col="12">
+                <v-radio-group
+                  v-model="isLookAlikeNeeeded"
+                  column
+                  mandatory
+                  :disabled="!isLookAlikeCreateable"
+                >
+                  <v-radio
+                    label="Nope! Not interested"
+                    :value="0"
+                    color="pantoneBlue"
+                  />
+                  <v-radio
+                    label="Auto-create a lookalike based on this audience"
+                    :value="1"
+                    color="pantoneBlue"
+                  />
+                </v-radio-group>
               </v-col>
             </v-row>
-          </v-timeline-item>
-        </v-timeline>
+            <v-row v-if="isLookAlikeCreateable && isLookAlikeNeeeded">
+              <v-col col="6">
+                <TextField
+                  placeholderText="What is the name for this new lookalike audience?"
+                  height="40"
+                  labelText="Lookalike audience name"
+                  backgroundColor="white"
+                  required
+                  v-model="lookAlikeAudience.name"
+                  class="text-caption neroBlack--text"
+                />
+              </v-col>
+              <v-col col="6">
+                <div class="neroBlack--text text-caption">Audience reach</div>
+                <LookAlikeSlider v-model="lookAlikeAudience.value" />
+                <div class="gray--text text-caption pt-4">
+                  Audience reach ranges from 1% to 10% of the combined
+                  population of your selected locations. A 1% lookalike consists
+                  of the people most similar to your lookalike source.
+                  Increasing the percentage creates a bigger, broader audience.
+                </div>
+              </v-col>
+            </v-row>
+          </FormStep>
+        </FormSteps>
       </v-form>
 
       <HuxFooter maxWidth="inherit">
@@ -230,6 +262,9 @@ import MetricCard from "@/components/common/MetricCard"
 import HuxFooter from "@/components/common/HuxFooter"
 import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField"
+import FormSteps from "@/components/common/FormSteps"
+import FormStep from "@/components/common/FormStep"
+import LookAlikeSlider from "@/components/common/LookAlikeSlider"
 import AttributeRules from "./AttributeRules.vue"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
@@ -245,6 +280,9 @@ export default {
     HuxFooter,
     huxButton,
     TextField,
+    FormSteps,
+    FormStep,
+    LookAlikeSlider,
     AttributeRules,
     Logo,
     AttachEngagement,
@@ -286,6 +324,12 @@ export default {
       hoverItem: "",
       loading: false,
       addDestinationFormValid: false,
+      // TODO: API integration HUS-649
+      isLookAlikeNeeeded: 0,
+      lookAlikeAudience: {
+        name: null,
+        value: 5,
+      },
     }
   },
 
@@ -303,6 +347,13 @@ export default {
 
     isMinEngagementSelected() {
       return this.selectedEngagements.length > 1
+    },
+
+    isLookAlikeCreateable() {
+      return (
+        this.selectedDestinations.filter((each) => each.type === "facebook")
+          .length > 0
+      )
     },
 
     isAudienceFormValid() {

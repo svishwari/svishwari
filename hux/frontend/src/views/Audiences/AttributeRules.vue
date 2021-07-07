@@ -2,12 +2,13 @@
   <v-col cols="12" class="attribute-rule pt-0 pl-0 pr-0">
     <v-col cols="12" class="pa-0">
       <strong
+        v-if="enableTitle"
         :class="{
           'text-h5 neroBlack--text': true,
           'text-caption': applyCaptionStyle,
         }"
       >
-        Select attribute(s) - <i style="font-size: 12px">Optional</i>
+        Select attribute(s) - <i class="text-caption gray--text">Optional</i>
       </strong>
       <v-card
         tile
@@ -194,6 +195,11 @@ export default {
       default: () => [],
     },
     applyCaptionStyle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    enableTitle: {
       type: Boolean,
       required: false,
       default: false,
