@@ -9,17 +9,15 @@ from huxunifylib.database.cdp_data_source_management import create_data_source
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
-from share import get_mongo_client
+from pymongo import MongoClient
+
+from scripts.database.share import get_mongo_client
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
 
-# Initiate Data Base client
-DB_CLIENT = get_mongo_client()
-
-
 # Data Sources List
-DATA_SOURCES = [
+data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "Bluecore",
         c.DATA_SOURCE_TYPE: "bluecore",
@@ -205,7 +203,7 @@ DATA_SOURCES = [
 ]
 
 # Delivery Platforms List
-DELIVERY_PLATFORMS = [
+delivery_platforms_constants = [
     {
         c.DELIVERY_PLATFORM_NAME: "Salesforce Marketing Cloud",
         c.DELIVERY_PLATFORM_TYPE: c.DELIVERY_PLATFORM_SFMC,
@@ -299,39 +297,92 @@ DELIVERY_PLATFORMS = [
     },
 ]
 
-# drop collections for writing.
-collections = [c.CDP_DATA_SOURCES_COLLECTION, c.DELIVERY_PLATFORM_COLLECTION]
-for collection in collections:
-    DB_CLIENT[c.DATA_MANAGEMENT_DATABASE][collection].drop()
 
-# Inserting Data Sources into Data Sources Collection
-logging.info("Prepopulate data sources.")
-inserted_ids = []
-for i, data_source in enumerate(DATA_SOURCES):
-    result_id = create_data_source(
-        DB_CLIENT,
-        data_source[c.DATA_SOURCE_NAME],
-        category="",
-        added=data_source[c.ADDED],
-        enabled=data_source[c.ENABLED],
-        source_type=data_source[c.DATA_SOURCE_TYPE],
-        status=data_source[c.STATUS],
-    )[c.ID]
-    logging.info("Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id)
-logging.info("Prepopulate data sources complete.")
+def drop_collections(database: MongoClient) -> None:
+    """
+    Drop collections for writing.
+    Args:
+        database(MongoClient):Database Client
+
+    Returns:
+        None
+    """
+
+    collections = [
+        c.CDP_DATA_SOURCES_COLLECTION,
+        c.DELIVERY_PLATFORM_COLLECTION,
+    ]
+    for collection in collections:
+        database[c.DATA_MANAGEMENT_DATABASE][collection].drop()
 
 
-# Insertion of Delivery Platforms Collection
-logging.info("Prepopulate destinations.")
-inserted_ids = []
-for i, delivery_platform in enumerate(DELIVERY_PLATFORMS):
-    result_id = set_delivery_platform(
-        DB_CLIENT,
-        **delivery_platform,
-    )[c.ID]
-    logging.info(
-        "Added %s, %s.", delivery_platform[c.DELIVERY_PLATFORM_NAME], result_id
-    )
-logging.info("Prepopulate destinations complete.")
+def insert_data_sources(database: MongoClient, data_sources: list) -> None:
+    """
+        Inserting Data Sources into Data Sources Collection
+    Args:
+        database (MongoClient): MongoDB Client
+        data_sources (List): List of Data Sources Object
 
-logging.info("Prepopulate complete.")
+    Returns:
+        None
+    """
+
+    logging.info("Prepopulate data sources.")
+
+    for data_source in data_sources:
+        result_id = create_data_source(
+            database,
+            data_source[c.DATA_SOURCE_NAME],
+            category="",
+            added=data_source[c.ADDED],
+            enabled=data_source[c.ENABLED],
+            source_type=data_source[c.DATA_SOURCE_TYPE],
+            status=data_source[c.STATUS],
+        )[c.ID]
+        logging.info(
+            "Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id
+        )
+    logging.info("Prepopulate data sources complete.")
+
+
+def insert_delivery_platforms(
+    database: MongoClient, delivery_platforms: list
+) -> None:
+    """
+        Insertion of Delivery Platforms Collection
+
+    Args:
+        database (MongoClient): MongoDB Client
+        delivery_platforms (List): List of Delivery Platform Objects
+
+    Returns:
+
+    """
+
+    logging.info("Prepopulate destinations.")
+
+    for delivery_platform in delivery_platforms:
+        if (
+            delivery_platform[c.DELIVERY_PLATFORM_TYPE]
+            in c.SUPPORTED_DELIVERY_PLATFORMS
+        ):
+            result_id = set_delivery_platform(
+                database,
+                **delivery_platform,
+            )[c.ID]
+            logging.info(
+                "Added %s, %s.",
+                delivery_platform[c.DELIVERY_PLATFORM_NAME],
+                result_id,
+            )
+    logging.info("Prepopulate destinations complete.")
+
+
+if __name__ == "__main__":
+    # Initiate Data Base client
+    db_client = get_mongo_client()
+
+    drop_collections(db_client)
+    insert_data_sources(db_client, data_sources_constants)
+    insert_delivery_platforms(db_client, delivery_platforms_constants)
+    logging.info("Prepopulate complete.")

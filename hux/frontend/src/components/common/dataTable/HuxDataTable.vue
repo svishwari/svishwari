@@ -7,6 +7,7 @@
         :hide-default-header="!showHeader"
         :height="height"
         :items="dataItems"
+        :sort-by.sync="sortColumn"
         item-key="name"
         :items-per-page="-1"
         fixed-header
