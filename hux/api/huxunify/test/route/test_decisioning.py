@@ -14,7 +14,7 @@ from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 from huxunify.api.schema.model import ModelSchema
 from huxunify.app import create_app
-from huxunify.test import shared as sh
+from huxunify.test import constants as t_c
 
 
 class DecisioningTests(TestCase):
@@ -51,7 +51,7 @@ class DecisioningTests(TestCase):
         Returns:
             None
         """
-        requests_mocker.post(self.introspect_call, json=sh.VALID_RESPONSE)
+        requests_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
 
         mocked_models = [
             {
@@ -76,12 +76,11 @@ class DecisioningTests(TestCase):
         get_models_mock.return_value = mocked_models
 
         response = self.test_client.get(
-            f"{sh.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
-            headers={
-                "Authorization": sh.TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(sh.validate_schema(ModelSchema(), response.json, True))
+        self.assertTrue(
+            t_c.validate_schema(ModelSchema(), response.json, True)
+        )
