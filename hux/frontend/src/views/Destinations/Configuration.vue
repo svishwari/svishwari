@@ -300,7 +300,6 @@ export default {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
         }
-
         if (this.isSalesforceSelected) {
           data.perf_data_extension = this.selectedDataExtension
         }
