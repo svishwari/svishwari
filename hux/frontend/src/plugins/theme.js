@@ -13,6 +13,7 @@ export default {
   aliceBlue: colors.aliceBlue,
   anchor: colors.lightBlue,
   background: colors.backgroundBlue,
+  pantoneBlue: colors.pantoneBlue,
   zircon: colors.zircon,
   neroBlack: colors.neroBlack,
   gray: colors.gray,
