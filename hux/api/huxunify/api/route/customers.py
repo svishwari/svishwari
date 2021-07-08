@@ -6,10 +6,9 @@ Paths for customer API
 from http import HTTPStatus
 from random import choice
 from typing import Tuple
-from faker import Faker
 from datetime import datetime
+from faker import Faker
 import pandas as pd
-from pandas import to_datetime
 
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
@@ -319,16 +318,16 @@ class CustomerProfileSearch(SwaggerView):
 )
 class CustomerGeoVisualView(SwaggerView):
     """
-    Customers Dashboard Overview class
+    Customer Profiles Geographical insights class
     """
 
     responses = {
         HTTPStatus.OK.value: {
             "schema": {"type": "array", "items": CustomerGeoVisualSchema},
-            "description": "Customer Identity Resolution Dashboard overview.",
+            "description": "Customer Profiles Geographical Insights .",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get customers identity dashboard overview."
+            "description": "Failed to get Customer Profiles Geographical Insights."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -336,7 +335,7 @@ class CustomerGeoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     def get(self) -> Tuple[list, int]:
-        """Retrieves a customer data dashboard overview.
+        """Retrieves a Customer profiles geographical insights.
 
         ---
         security:
@@ -370,19 +369,33 @@ class CustomerGeoVisualView(SwaggerView):
 )
 class CustomerDemoVisualView(SwaggerView):
     """
-    Customers Dashboard Overview class
+    Customers Profiles Demographic Insights class
     """
 
+    parameters = [
+        {
+            "name": "body",
+            "description": "Insights Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": {
+                    "start_date": "2020-11-30T00:00:00Z",
+                    "end_date": "2021-04-30T00:00:00Z",
+                }
+            },
+        }
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": {
-                "type": "array",
+                "type": "body",
                 "items": CustomerDemographicInsightsSchema,
             },
-            "description": "Customer Demographical Visual Insights overview.",
+            "description": "Customer Demographical Visual Insights.",
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to get customers Demographical Visual Insights overview."
+            "description": "Failed to get customers Demographical Visual Insights."
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -390,7 +403,7 @@ class CustomerDemoVisualView(SwaggerView):
 
     # pylint: disable=no-self-use
     def post(self) -> Tuple[dict, int]:
-        """Retrieves a customer data dashboard overview.
+        """Retrieves a Demographical customer insights.
 
         ---
         security:
