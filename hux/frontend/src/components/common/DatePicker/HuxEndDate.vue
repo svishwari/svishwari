@@ -196,9 +196,6 @@ export default {
     margin-top: 30px;
   }
 }
-.end-date-picker {
-  // margin-top: 75px;
-}
 .start-date-picker,
 .end-date-picker {
   ::v-deep .v-picker__body {
