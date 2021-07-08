@@ -632,25 +632,31 @@ export default {
         audEngobj.last_delivered = element.last_delivered
         audiencesDetailsData.push(audEngobj)
       })
-
       // extracting the destination data
       for (let i = 0; i < audiencesDetailsData.length; i++) {
         for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {
           let destination = audiencesDetailsData[i].destinations[j]
           await this.destinationById(destination.id)
           let response = this.getDestinations(destination.id)
-
           let destinationWithDelivery = {
             id: response.id,
             name: response.name,
             type: response.type,
             // TODO: remove the fallback to audience details once HUS-579 is tested
             latest_delivery: destination.latest_delivery
-              ? destination.latest_delivery
-              : {
+              ? destination.latest_delivery.status === "Delivered"
+                ? destination.latest_delivery
+                : {
+                    status: destination.latest_delivery.status,
+                  }
+              : audiencesDetailsData[i].status === "Delivered"
+              ? {
                   size: audiencesDetailsData[i].size,
                   status: audiencesDetailsData[i].status,
                   update_time: audiencesDetailsData[i].last_delivered,
+                }
+              : {
+                  status: audiencesDetailsData[i].status,
                 },
           }
           audiencesDetailsData[i].destinations[j] = destinationWithDelivery
