@@ -143,12 +143,14 @@ class CustomerGeoVisualSchema(Schema):
 
 class GenderMetrics(Schema):
     """Gender metrics schema"""
+
     population_percentage = Float(required=True, example=0.4601)
     size = Integer(required=True, example=123456)
 
 
 class CustomerGenderInsightsSchema(Schema):
     """Gender Insights"""
+
     gender_women = Nested(GenderMetrics, required=True)
     gender_men = Nested(GenderMetrics, required=True)
     gender_other = Nested(GenderMetrics, required=True)
@@ -156,18 +158,21 @@ class CustomerGenderInsightsSchema(Schema):
 
 class CustomerIncomeInsightsSchema(Schema):
     """City wise Customer Insights Schema"""
+
     name = Str(required=True, example="New York")
     ltv = Float(required=True, example=1235.31)
 
 
 class CustomerSpendSchema(Schema):
     """Customer Spend Schema"""
+
     date = DateTime(required=True)
     ltv = Float(required=True, example=1235.31)
 
 
 class CustomerSpendingInsightsSchema(Schema):
     """Customer Spending Insights Schema"""
+
     gender_women = List(Nested(CustomerSpendSchema))
     gender_men = List(Nested(CustomerSpendSchema))
     gender_other = List(Nested(CustomerSpendSchema))
