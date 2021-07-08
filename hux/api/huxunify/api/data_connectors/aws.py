@@ -63,6 +63,7 @@ class ParameterStore:
         authentication_details: dict,
         is_updated: bool,
         destination_id: str,
+        destination_type: str,
     ) -> dict:
         """Save authentication details in AWS Parameter Store.
 
@@ -70,16 +71,31 @@ class ParameterStore:
             authentication_details (dict): The key/secret pair to store away.
             is_updated (bool): Flag to update the secrets in the AWS Parameter Store.
             destination_id (str): destinations ID.
+            destination_type (str): destination type (i.e. facebook, sfmc)
 
         Returns:
             ssm_params (dict): The key to where the parameters are stored.
         """
         ssm_params = {}
 
+        if destination_type not in api_c.DESTINATION_SECRETS:
+            raise KeyError(
+                f"{destination_type} does not have a secret store mapping."
+            )
+
         for (
             parameter_name,
             secret,
         ) in authentication_details.items():
+
+            # only store secrets in ssm, otherwise store in object.
+            if (
+                parameter_name
+                not in api_c.DESTINATION_SECRETS[destination_type]
+            ):
+                ssm_params[parameter_name] = secret
+                continue
+
             param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
             ssm_params[parameter_name] = param_name
             try:

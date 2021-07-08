@@ -313,6 +313,7 @@ class DestinationPutView(SwaggerView):
                     authentication_details=auth_details,
                     is_updated=True,
                     destination_id=destination_id,
+                    destination_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
             is_added = True
