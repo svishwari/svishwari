@@ -202,7 +202,7 @@ class OktaTest(TestCase):
 
         """
         invalid_header = (constants.INVALID_AUTH, 400)
-        with Flask("invalid_test").test_request_context(
+        with Flask("invalid_token").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}
         ):
 
@@ -234,7 +234,7 @@ class OktaTest(TestCase):
             def demo_endpoint():
                 return True
 
-            # true means the endpoint and token call were succesfully passed.
+            # true means the endpoint and token call were successfully passed.
             self.assertTrue(demo_endpoint())
 
     def test_secured_decorator_exists(self):

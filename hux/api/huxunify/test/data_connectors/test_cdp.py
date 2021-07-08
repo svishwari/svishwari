@@ -3,20 +3,18 @@ purpose of this file is to house all the cdp tests.
 """
 import datetime
 import string
-from unittest import TestCase
+from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
-from requests_mock import Mocker
 from hypothesis import given, strategies as st
 
-from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
+from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
     DATETIME_FIELDS,
     DEFAULT_DATETIME,
 )
-from huxunify.test import shared as sh
 from huxunify.app import create_app
 
 
@@ -31,27 +29,32 @@ class CDPTest(TestCase):
         Returns:
 
         """
-        self.config = get_config("TEST")
         self.data_sources_api_endpoint = (
-            f"{sh.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
+            f"{t_c.BASE_ENDPOINT}{api_c.CDP_DATA_SOURCES_ENDPOINT}"
         )
 
         # setup the flask test client
         self.test_client = create_app().test_client()
 
-        self.introspect_call = (
-            f"{self.config.OKTA_ISSUER}"
-            f"/oauth2/v1/introspect?client_id="
-            f"{self.config.OKTA_CLIENT_ID}"
-        )
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
 
-    @requests_mock.Mocker()
+        self.addCleanup(mock.patch.stopall)
+
+    def tearDown(self) -> None:
+        """Tear down tests
+
+        Returns:
+
+        """
+        self.request_mocker.stop()
+
     @given(customer_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer(self, request_mocker: Mocker, customer_id: str):
+    def test_get_customer(self, customer_id: str):
         """Test get customer profiles
 
         Args:
-            request_mocker (Mocker): Request mock object.
             customer_id (str): string for testing get customer.
 
         Returns:
@@ -77,15 +80,16 @@ class CDPTest(TestCase):
             "message": "ok",
         }
 
-        request_mocker.post(self.introspect_call, json=sh.VALID_RESPONSE)
-        request_mocker.get(
-            f"{self.config.CDP_SERVICE}/customer-profiles/{customer_id}",
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}",
             json=expected_response,
         )
+        self.request_mocker.start()
 
         response = self.test_client.get(
-            f"{sh.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}",
-            headers=sh.AUTH_HEADER,
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}",
+            headers=t_c.AUTH_HEADER,
         )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)

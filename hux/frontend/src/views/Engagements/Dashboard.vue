@@ -88,7 +88,7 @@
                 class="mr-2"
               /><span class="text-h5">Audiences</span>
             </div>
-            <div class="mt-2">
+            <div class="d-flex align-center">
               <v-btn
                 text
                 class="d-flex align-center primary--text text-decoration-none"
@@ -96,6 +96,10 @@
               >
                 <Icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
+              </v-btn>
+              <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
+                <icon type="history" :size="16" class="mr-1" />
+                Delivery history
               </v-btn>
             </div>
           </v-card-title>
@@ -120,7 +124,7 @@
                 v-for="item in audienceMergedData"
                 :key="item.id"
                 :audience="item"
-                :engagementId="String(engagementList.id)"
+                :engagementId="engagementId"
                 :statusIcon="17"
                 @onAddDestination="triggerSelectDestination(item.id)"
               />
@@ -201,6 +205,11 @@
       :toggle="showDataExtensionDrawer"
       @onToggle="(val) => (showDataExtensionDrawer = val)"
     />
+    <DeliveryHistoryDrawer
+      :engagementId="engagementId"
+      :toggle="showDeliveryHistoryDrawer"
+      @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
+    />
   </div>
 </template>
 
@@ -220,6 +229,7 @@ import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer
 import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
 import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
+import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
 
 export default {
   name: "engagementDashboard",
@@ -237,12 +247,12 @@ export default {
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
+    DeliveryHistoryDrawer,
   },
   data() {
     return {
       destinationArr: [],
       audienceMergedData: [],
-      engagementId: this.$route.params.id,
       loading: false,
       loadingTab: false,
       loadingAudiences: false,
@@ -261,6 +271,7 @@ export default {
       showDataExtensionDrawer: false,
       selectedAudienceId: null,
       selectedDestination: [],
+      showDeliveryHistoryDrawer: false,
     }
   },
   computed: {
@@ -272,8 +283,12 @@ export default {
       getDestinations: "destinations/single",
     }),
 
+    engagementId() {
+      return this.$route.params.id
+    },
+
     engagementList() {
-      return this.getEngagement(this.$route.params.id)
+      return this.getEngagement(this.engagementId)
     },
 
     breadcrumbItems() {
@@ -743,25 +758,31 @@ export default {
         audEngobj.last_delivered = element.last_delivered
         audiencesDetailsData.push(audEngobj)
       })
-
       // extracting the destination data
       for (let i = 0; i < audiencesDetailsData.length; i++) {
         for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {
           let destination = audiencesDetailsData[i].destinations[j]
           await this.destinationById(destination.id)
           let response = this.getDestinations(destination.id)
-
           let destinationWithDelivery = {
             id: response.id,
             name: response.name,
             type: response.type,
             // TODO: remove the fallback to audience details once HUS-579 is tested
             latest_delivery: destination.latest_delivery
-              ? destination.latest_delivery
-              : {
+              ? destination.latest_delivery.status === "Delivered"
+                ? destination.latest_delivery
+                : {
+                    status: destination.latest_delivery.status,
+                  }
+              : audiencesDetailsData[i].status === "Delivered"
+              ? {
                   size: audiencesDetailsData[i].size,
                   status: audiencesDetailsData[i].status,
                   update_time: audiencesDetailsData[i].last_delivered,
+                }
+              : {
+                  status: audiencesDetailsData[i].status,
                 },
           }
           audiencesDetailsData[i].destinations[j] = destinationWithDelivery
@@ -809,6 +830,10 @@ export default {
         id: this.engagementList.id,
       })
       this.audienceList()
+    },
+
+    openDeliveryHistoryDrawer() {
+      this.showDeliveryHistoryDrawer = true
     },
   },
   async mounted() {

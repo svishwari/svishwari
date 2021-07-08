@@ -125,7 +125,37 @@
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
+          v-if="!item.latest_delivery.size"
+          class="deliverdOn-col py-1"
+        >
+          <tooltip>
+            <template #label-content>
+              {{ getSize(item.latest_delivery.size) | Empty("-") }}
+            </template>
+            <template #hover-content>
+              {{
+                item.latest_delivery.size | Numeric(true, false) | Empty("-")
+              }}
+            </template>
+          </tooltip>
+        </v-list-item-content>
+        <v-list-item-content
           v-if="item.latest_delivery.update_time"
+          class="deliverdOn-col py-1"
+        >
+          <tooltip>
+            <template #label-content>
+              {{
+                item.latest_delivery.update_time | Date("relative") | Empty("-")
+              }}
+            </template>
+            <template #hover-content>
+              {{ item.latest_delivery.update_time | Date | Empty("-") }}
+            </template>
+          </tooltip>
+        </v-list-item-content>
+        <v-list-item-content
+          v-if="!item.latest_delivery.update_time"
           class="deliverdOn-col py-1"
         >
           <tooltip>

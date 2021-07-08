@@ -1,8 +1,8 @@
 """MongoDB Access tests."""
 
 import logging
-from share import get_mongo_client
 import huxunifylib.database.constants as c
+from scripts.database.share import get_mongo_client
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
