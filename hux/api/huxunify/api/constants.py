@@ -56,7 +56,7 @@ MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
 LTV = "ltv"
 POPULATION_PERCENTAGE = "population_percentage"
-INCOME="income"
+INCOME = "income"
 STATE_NAMES = [
     "Alaska",
     "Alabama",
@@ -115,7 +115,7 @@ STATE_NAMES = [
     "Wyoming",
 ]
 DEMOGRAPHIC = "demo"
-DATE="date"
+DATE = "date"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
