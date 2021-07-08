@@ -21,7 +21,7 @@
         </v-btn>
       </template>
     </div>
-
+    <!-- {{selectedDestination}} {{destinationFields}} -->
     <v-form
       v-if="selectedDestination && destinationFields"
       v-model="isFormValid"
@@ -82,7 +82,7 @@
         v-if="isSalesforceSelected && isValidated"
         class="destination-auth-wrap background pa-4 rounded mt-10"
       >
-        <Salesforce :dataExtensions="dataExtensions" @select="setExtension" />
+        <SFMC :dataExtensions="dataExtensions" @select="setExtension" />
       </div>
     </v-form>
 
@@ -169,7 +169,7 @@ import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 
-import Salesforce from "./Configuration/Salesforce"
+import SFMC from "./Configuration/sfmc"
 
 export default {
   name: "ConfigureDestination",
@@ -182,7 +182,7 @@ export default {
     huxButton,
     TextField,
     Logo,
-    Salesforce,
+    SFMC,
   },
 
   data() {
@@ -215,11 +215,6 @@ export default {
         ? this.destination(this.selectedDestinationId)
         : null
     },
-
-    destinationFields() {
-      return this.destinationConstants[this.selectedDestination.type] || null
-    },
-
     enabledDestinations() {
       return this.destinations.filter((each) => each.is_enabled)
     },
@@ -229,9 +224,18 @@ export default {
     },
 
     isSalesforceSelected() {
+      console.log("isSalesforceSelected", this.selectedDestination)
       return this.selectedDestination !== null
-        ? this.selectedDestination.type === "salesforce"
+        ? this.selectedDestination.type === "sfmc"
         : false
+    },
+
+    destinationFields() {
+      console.log(
+        "this.selectedDestination.type",
+        this.selectedDestination.type
+      )
+      return this.destinationConstants[this.selectedDestination.type] || null
     },
 
     isFullyConfigured() {

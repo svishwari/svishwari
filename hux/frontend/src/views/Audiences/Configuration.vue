@@ -398,7 +398,7 @@ export default {
       let filteredDestinations = []
 
       for (let i = 0; i < this.selectedDestinations.length; i++) {
-        if (this.selectedDestinations[i].type !== "salesforce") {
+        if (this.selectedDestinations[i].type !== "sfmc") {
           filteredDestinations.push({
             id: this.selectedDestinations[i].id,
           })
