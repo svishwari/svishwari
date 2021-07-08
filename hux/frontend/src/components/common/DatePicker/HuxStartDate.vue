@@ -152,19 +152,6 @@ export default {
 .start-date-picker {
   ::v-deep .v-picker__body {
     margin-top: 20px;
-  }
-}
-.end-date-picker {
-  ::v-deep .v-picker__body {
-    margin-top: 30px;
-  }
-}
-.end-date-picker {
-  margin-top: 75px;
-}
-.start-date-picker,
-.end-date-picker {
-  ::v-deep .v-picker__body {
     border-bottom: 1px solid var(--v-lightGrey-base);
     .v-date-picker-table {
       table {

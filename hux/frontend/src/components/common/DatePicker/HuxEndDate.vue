@@ -169,7 +169,6 @@ export default {
   min-width: 230px;
   font-size: 14px;
   line-height: 22px !important;
-
   color: var(--v-neroBlack-base);
   .v-list-item {
     min-height: 32px;
@@ -182,19 +181,9 @@ export default {
     color: var(--v-gray-base);
   }
 }
-.start-date-picker {
-  ::v-deep .v-picker__body {
-    margin-top: 20px;
-  }
-}
 .end-date-picker {
   ::v-deep .v-picker__body {
     margin-top: 30px;
-  }
-}
-.start-date-picker,
-.end-date-picker {
-  ::v-deep .v-picker__body {
     border-bottom: 1px solid var(--v-lightGrey-base);
     .v-date-picker-table {
       table {
