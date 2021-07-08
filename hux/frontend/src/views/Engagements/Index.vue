@@ -141,12 +141,9 @@
                 :colspan="header.value == 'name' ? 3 : 0"
                 :class="{
                   'child-row': header.value == 'name',
-               
-              'expanded-row': isExpanded,
+                  'expanded-row': isExpanded,
                 }"
-              
               >
-              <!-- ------------------{{ item[header.value] }} -->
                 <div v-if="header.value == 'name'">
                   <tooltip>
                     <template #label-content>
@@ -154,7 +151,6 @@
                     :class="{ 'normal-icon': isExpanded }"
                     @click="
                       expand(!isExpanded)
-                      
                     "
                   >
                     mdi-chevron-right
@@ -173,26 +169,6 @@
                       {{ item[header.value] }}
                     </template>
                   </tooltip>
-
-                       <!-- <menu-cell
-                :value="item[header.value]"
-                :menuOptions="actionItems"
-                routeName="EngagementDashboard"
-                :routeParam="item['id']"
-              >
-                <template #expand-icon>
-                  <v-icon
-                    :class="{ 'normal-icon': isExpanded }"
-                    @click="
-                      expandAgain(!isExpanded)
-                      
-                    "
-                  >
-                    mdi-chevron-right
-                  </v-icon>
-                </template>
-              </menu-cell> -->
-
                 </div>
                 <div v-if="header.value == 'size'">
                   <div class="ml-16 pl-1">
@@ -243,10 +219,30 @@
             nested
           >
             <template #item-row="{ item }">
-              {{item}}
+              <tr>
+                <td>
+               
+                  <div class="ml-16 pl-1">
+                   {{item.title}}
+                  </div>
+                </td>
+                <td>
+                   <div class="ml-16 pl-1">
+                   {{item.subtitle}}
+                  </div>
+                </td>
+                <td>
+                    <div class="ml-16 pl-1">
+                   {{item.icon}}
+                  </div>
+                </td>
+               
+               
+              </tr>
             </template>
           </hux-data-table>
-        </td></template>
+        </td>
+        </template>
           </hux-data-table>
 
         </td>
