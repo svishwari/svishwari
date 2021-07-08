@@ -14,6 +14,8 @@ from marshmallow.fields import (
     Dict,
     DateTime,
 )
+from marshmallow.validate import OneOf
+
 from huxunify.api.schema.utils import (
     validate_object_id,
 )
@@ -124,8 +126,11 @@ class CustomersSchema(Schema):
 
 class CustomerGeoVisualSchema(Schema):
     """Geographical Visuals of Customer Insights"""
+
     class Meta:
-        ordered=True
+        """Meta class for Schema"""
+
+        ordered = True
 
     name = Str(required=True, example="California")
     population_percentage = Float(required=True, example=0.3031)
@@ -134,3 +139,17 @@ class CustomerGeoVisualSchema(Schema):
     gender_men = Float(required=True, example=0.49)
     gender_other = Float(required=True, example=0.01)
     ltv = Float(required=True, example=3848.50)
+
+
+class GenderMetrics(Schema):
+    """Gender metrics schema"""
+    population_percentage = Float(required=True, example=0.4601)
+    size = Integer(required=True, example=123456)
+
+
+class CustomerGenderInsightsSchema(Schema):
+    """Gender Insights"""
+    gender_women = Nested(GenderMetrics, required=True)
+    gender_men = Nested(GenderMetrics, required=True)
+    gender_other = Nested(GenderMetrics, required=True)
+

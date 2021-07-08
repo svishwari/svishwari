@@ -14,7 +14,7 @@ from flasgger import SwaggerView
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
-    CustomerGeoVisualSchema,
+    CustomerGeoVisualSchema, CustomerGenderInsightsSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -349,11 +349,66 @@ class CustomerGeoVisualView(SwaggerView):
                 api_c.GENDER_WOMEN: 0.50,
                 api_c.GENDER_MEN: 0.49,
                 api_c.GENDER_OTHER: 0.01,
-                api_c.LTV: choice([3848.50, 3971.50, 3952])
+                api_c.LTV: choice([3848.50, 3971.50, 3952]),
             }
             for state in api_c.STATE_NAMES
         ]
         return (
             jsonify(CustomerGeoVisualSchema().dump(geo_visuals, many=True)),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
+    "CustomerInsightsDemo",
+)
+class CustomerDemoVisualView(SwaggerView):
+    """
+    Customers Dashboard Overview class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": CustomerGenderInsightsSchema},
+            "description": "Customer Demographical Visual Insights overview.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers Demographical Visual Insights overview."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def get(self) -> Tuple[list, int]:
+        """Retrieves a customer data dashboard overview.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] list of Customer insights on geo overview and http code
+        """
+
+        gender = {
+            "gender_men": {
+                "population_percentage": "0.4601",
+                "size": 123456
+            },
+            "gender_women": {
+                "population_percentage": "0.4601",
+                "size": 123456
+            },
+            "gender_other": {
+                "population_percentage": "0.4601",
+                "size": 123456
+            }
+        }
+        response = CustomerGenderInsightsSchema().dump(gender)
+        return (
+            response,
             HTTPStatus.OK,
         )

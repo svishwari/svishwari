@@ -14,6 +14,7 @@ from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
+from huxunify.api.schema.customers import CustomerGeoVisualSchema
 from huxunify.app import create_app
 
 
@@ -237,3 +238,23 @@ class TestCustomersOverview(TestCase):
         data = response.json
         self.assertTrue(data[api_c.TOTAL_RECORDS])
         self.assertTrue(data[api_c.MATCH_RATE])
+
+    def test_get_customers_geo(self):
+        """
+        Test get customers geo insights
+
+        Args:
+
+        Returns:
+
+        """
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(CustomerGeoVisualSchema(), response.json, True)
+        )

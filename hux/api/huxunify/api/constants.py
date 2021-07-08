@@ -112,7 +112,7 @@ STATE_NAMES = [
     "West Virginia",
     "Wyoming",
 ]
-
+DEMOGRAPHIC="demo"
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
