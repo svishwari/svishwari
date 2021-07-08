@@ -83,5 +83,8 @@ client["audiences"].deliver = (resourceId, data) => {
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }
+client["notification"].getNotification = (data) => {
+  return http.get("/notification", data)
+}
 
 export default client

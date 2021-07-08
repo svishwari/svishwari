@@ -7,6 +7,7 @@ import {
 } from "./factories/destination"
 import idrOverview from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
+import { notification } from "./factories/notification"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -152,6 +153,15 @@ export const defineRoutes = (server) => {
 
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
+
+  // notification
+  server.get("/notification", () => notification)
+
+  // server.post("/notification", (schema, request) => {
+  //   const requestData = JSON.parse(request.requestBody)
+
+  //   return schema.notification.create(requestData)
+  // })
 
   // audiences
   server.get("/audiences")

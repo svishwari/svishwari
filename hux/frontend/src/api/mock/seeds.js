@@ -183,6 +183,13 @@ const mailchimp = {
   type: "mailchimp",
 }
 
+const notification = {
+  time:  "data",
+  description: "data demo",
+  type: 'Success',
+  category:'Orchestration'
+}
+
 // engagements
 const defaultEngagement = ({ audiences = [] }) => {
   return {
@@ -438,4 +445,7 @@ export default function (server) {
 
   // seed data-extensions
   server.createList("dataExtension", 5)
+  
+    // for alert and notification
+    server.create("notification", notification)
 }

@@ -96,6 +96,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
@@ -182,10 +183,23 @@ export default {
       loading: false,
     }
   },
+ computed: {
+    ...mapGetters({
+      notification: "notification/list",
+    }),
+ },
   methods: {
+     ...mapActions({
+      getNotification: "notification/getAll",
+    }),
     goBack() {
       window.history.back()
     },
+  },
+    async mounted() {
+    this.loading = true
+    await this.getNotification()
+    this.loading = false;
   },
 }
 </script>
