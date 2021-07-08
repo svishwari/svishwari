@@ -107,15 +107,11 @@ export default {
       required: false,
       default: "Select date",
     },
-    icon: String,
-    items: Array,
-    color: { type: String, default: "primary" },
     isOffsetX: { type: Boolean, default: false },
     isOffsetY: { type: Boolean, default: true },
     isOpenOnHover: { type: Boolean, default: false },
     isSubMenu: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
-    level: Number,
   },
   methods: {
     onCancel() {

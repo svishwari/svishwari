@@ -96,19 +96,16 @@ export default {
     isOffsetX: { type: Boolean, default: false },
     isOffsetY: { type: Boolean, default: true },
     isOpenOnHover: { type: Boolean, default: false },
-    endDate: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
   },
   methods: {
     selectDate(data) {
       this.$emit("on-date-select", data)
     },
-    // onSelectDate() {
-    //   this.endDate = true
-    // },
   },
   data: function () {
     return {
+      endDate: false,
       menu: false,
       showCalendar: false,
       start: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)

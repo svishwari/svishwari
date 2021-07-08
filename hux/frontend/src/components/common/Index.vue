@@ -224,7 +224,6 @@
     <hux-start-date
       :label="selectedStartDate"
       :selected="selectedStartDate"
-      :endDate="false"
       @on-date-select="onStartDateSelect"
     />
     <v-divider class="mt-10" />
