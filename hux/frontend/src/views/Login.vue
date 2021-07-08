@@ -95,7 +95,8 @@ export default {
       height: 95px;
     }
     h1 {
-      font-family: Open Sans Light !important;
+      font-family: "Open Sans" !important;
+      font-weight: 300 !important;
       font-size: 24px !important;
       margin-top: 30px;
       line-height: 43px;
@@ -113,6 +114,7 @@ export default {
     .login-form {
       #okta-signin-container {
         ::v-deep .auth-container {
+          font-family: "Open Sans", sans-serif !important;
           border: 0;
           margin: 0;
           background: transparent;
@@ -178,6 +180,7 @@ export default {
             .o-form-button-bar {
               width: 90px;
               input {
+                font-family: "Open Sans", sans-serif !important;
                 width: 90px;
                 height: 40px;
                 box-sizing: border-box;

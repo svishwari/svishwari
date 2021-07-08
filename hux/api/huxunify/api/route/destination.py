@@ -7,6 +7,7 @@ from typing import Tuple
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
+from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
 from huxunifylib.database import (
@@ -113,6 +114,9 @@ class DestinationGetView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve the destination.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.DESTINATION_NOT_FOUND,
+        },
     }
     responses.update(AUTH401_RESPONSE)
 
@@ -135,12 +139,18 @@ class DestinationGetView(SwaggerView):
         """
 
         if not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # grab the destination
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)
         )
+
+        if not destination:
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         return DestinationGetSchema().dump(destination), HTTPStatus.OK
 
 
@@ -229,11 +239,17 @@ class DestinationPutView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to update the destination.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.DESTINATION_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=unexpected-keyword-arg
+    # pylint: disable=too-many-return-statements
+    @marshal_with(DestinationPutSchema)
     @api_error_handler()
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
@@ -251,6 +267,9 @@ class DestinationPutView(SwaggerView):
             Tuple[dict, int]: Destination doc, HTTP status.
 
         """
+
+        if not ObjectId.is_valid(destination_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # load into the schema object
         try:
@@ -273,8 +292,9 @@ class DestinationPutView(SwaggerView):
             database, destination_id
         )
         if not destination:
-            return {"message": "Not found"}, HTTPStatus.NOT_FOUND
-
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
         if (
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
@@ -544,11 +564,17 @@ class DestinationDataExtView(SwaggerView):
         """
 
         if destination_id is None or not ObjectId.is_valid(destination_id):
-            return HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)
         )
+
+        if not destination:
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
@@ -626,28 +652,31 @@ class DestinationDataExtPostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=too-many-return-statements
     @api_error_handler()
     def post(self, destination_id: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             destination_id (str): Destination ID.
-
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP Status.
-
         """
 
         if destination_id is None or not ObjectId.is_valid(destination_id):
-            return HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         destination = destination_management.get_delivery_platform(
             get_db_client(), ObjectId(destination_id)
         )
+
+        if not destination:
+            return {
+                "message": api_c.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination

@@ -63,14 +63,10 @@ AWS_HEALTH_TESTS = {
     AWS_BATCH_NAME: ["cancel_job", {"jobId": "test", "reason": "test"}],
 }
 
-NAME = "name"
-DESCRIPTION = "description"
-TYPE = "type"
 REQUIRED = "required"
 DELIVERY_SCHEDULE = "delivery_schedule"
 START_DATE = "start_date"
 END_DATE = "end_date"
-STATUS = "status"
 ENABLED = "enabled"
 SIZE = "size"
 IS_ADDED = "is_added"
@@ -215,6 +211,12 @@ PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
     "Performance metrics data extension not assigned."
 )
 INVALID_AUTH_DETAILS = "Invalid authentication details."
+INVALID_AUTH_HEADER = "Authorization header is invalid."
+INVALID_AUTH = "You are not authorized to visit this page."
+
+AUDIENCE_NOT_FOUND = "Audience not found."
+DESTINATION_NOT_FOUND = "Destination not found."
+ENGAGEMENT_NOT_FOUND = "Engagement not found."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -271,7 +273,6 @@ ENGAGEMENT_RATE = "engagement_rate"
 SUMMARY = "summary"
 IS_MAPPED = "is_mapped"
 
-EMAIL = "email"
 SENT = "sent"
 HARD_BOUNCES = "hard_bounces"
 HARD_BOUNCES_RATE = "hard_bounces_rate"
@@ -401,6 +402,12 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
+
+# Notifications
+NOTIFICATIONS_TAG = "notifications"
+NOTIFICATIONS_DESCRIPTION = "Notifications API"
+NOTIFICATIONS_ENDPOINT = "/notifications"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
@@ -451,10 +458,6 @@ RECORDS_SOURCE = "records_source"
 TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
-
-# ERROR
-INVALID_AUTH_HEADER = "Authorization header is invalid."
-INVALID_AUTH = "You are not authorized to visit this page."
 
 # FILTERING
 REDACTED = "++REDACTED++"

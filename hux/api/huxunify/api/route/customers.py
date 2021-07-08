@@ -313,9 +313,7 @@ class CustomerProfileSearch(SwaggerView):
     "IDRDataFeeds",
 )
 class IDRDataFeeds(SwaggerView):
-    """
-    Customers Dashboard Overview class
-    """
+    """IDR Data Feeds Report"""
 
     parameters = [
         {
@@ -324,7 +322,7 @@ class IDRDataFeeds(SwaggerView):
             "type": "string",
             "in": "path",
             "required": True,
-            "example": "Data Feed 1",
+            "example": "Really_long_feed_Name_106",
         },
     ]
 
@@ -343,12 +341,15 @@ class IDRDataFeeds(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=unused-argument
     @api_error_handler()
-    def get(self, datafeed) -> Tuple[dict, int]:
+    def get(self, datafeed: str) -> Tuple[dict, int]:
         """Retrieves a IDR data feed waterfall report.
 
         ---
         security:
             - Bearer: ["Authorization"]
+
+        Args:
+            datafeed (str): Data feed name
 
         Returns:
             Tuple[dict, int] dict of IDR data feed waterfall

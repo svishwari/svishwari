@@ -48,6 +48,10 @@ client["engagements"].deliverAudienceDestination = (
   return http.post(endpoint, data)
 }
 
+client["engagements"].deliveries = (resourceId, data) => {
+  return http.get(`/engagements/${resourceId}/deliveries`, data)
+}
+
 client["destinations"].dataExtensions = (resourceId) => {
   return http.get(`/destinations/${resourceId}/data-extensions`)
 }
