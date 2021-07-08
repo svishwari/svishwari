@@ -14,6 +14,11 @@ from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
+from huxunify.api.schema.customers import (
+    DataFeedPinning,
+    DataFeedSchema,
+    DataFeedStitched,
+)
 from huxunify.app import create_app
 
 
@@ -237,3 +242,30 @@ class TestCustomersOverview(TestCase):
         data = response.json
         self.assertTrue(data[api_c.TOTAL_RECORDS])
         self.assertTrue(data[api_c.MATCH_RATE])
+
+    @given(datafeed=st.text(alphabet=string.ascii_letters))
+    def test_get_idr_datafeed(self, datafeed: str):
+        """
+        Test get idr datafeed idr overview
+
+        Args:
+            request_mocker (Mocker): Request mocker object.
+
+        Returns:
+
+        """
+        if not datafeed:
+            return
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/{datafeed}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(t_c.validate_schema(DataFeedSchema(), response.json))
+        self.assertTrue(
+            t_c.validate_schema(DataFeedPinning(), response.json["pinning"])
+        )
+        self.assertTrue(
+            t_c.validate_schema(DataFeedStitched(), response.json["stitched"])
+        )

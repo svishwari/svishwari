@@ -338,8 +338,7 @@ class IDRDataFeeds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CUSTOMERS_TAG]
 
-    # pylint: disable=no-self-use
-    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
     def get(self, datafeed: str) -> Tuple[dict, int]:
         """Retrieves a IDR data feed waterfall report.
