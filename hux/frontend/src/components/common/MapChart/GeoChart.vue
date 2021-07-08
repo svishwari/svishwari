@@ -103,7 +103,7 @@ export default {
         .attr("d", path)
         .style("stroke", "white")
         .style("stroke-width", "0.5")
-        .style("fill", (d) => colorScale(70))
+        .style("fill", () => colorScale(70))
         .on("mouseover", (d) => {
           d3Select
             .select(d.srcElement)
@@ -118,24 +118,6 @@ export default {
         )
         this.tooltipDisplay(true, currentStateDetails)
         return colorScale(20)
-      }
-
-      function loadStateColors(id) {
-        const name = usList.find((data) => data.id == id).name
-        let currentStateDetails = this.chartData.find(
-          (data) => data.name == name
-        )
-        return currentStateDetails
-          ? colorScale(
-              this.$options.filters
-                .percentageConvert(
-                  currentStateDetails.population_percentage,
-                  true,
-                  true
-                )
-                .slice(0, -1)
-            )
-          : colorScale(50)
       }
     },
 

@@ -31,11 +31,8 @@
 </template>
 
 <script>
-import Icon from "@/components/common/Icon"
-import Logo from "@/components/common/Logo"
 export default {
   name: "map-chart-tooltip",
-  components: { Icon, Logo },
   props: {
     position: {
       type: Object,
