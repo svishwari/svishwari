@@ -2,29 +2,29 @@
   <Drawer
     v-model="localToggle"
     :loading="loading"
-    class="look-alike-drawer"
+    class="lookalike-drawer"
     @onClose="onBack"
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <Icon type="look-alike" :size="32" color="secondary" class="mr-2" />
+        <Icon type="lookalike" :size="32" color="secondary" class="mr-2" />
         <h3 class="text-h3">Create a lookalike audience in Facebook</h3>
       </div>
     </template>
 
     <template #default>
-      <v-form v-model="isFormValid" ref="lookAlikeForm">
-        <div class="look-alike-form px-4 py-3">
+      <v-form v-model="isFormValid" ref="lookalikeForm">
+        <div class="lookalike-form px-4 py-3">
           <div class="text-h6 darkGrey--text pb-8">
             Creating a lookalike audience will create a one-off new audience in
             Facebook.
           </div>
           <TextField
-            v-model="lookAlikeAudience.name"
+            v-model="lookalikeAudience.name"
             class="pb-3"
             labelText="Lookalike audience name"
             placeholder="What is the name for this new lookalike audience?"
-            :rules="lookAlikeNameRules"
+            :rules="lookalikeNameRules"
             required
           />
 
@@ -47,7 +47,7 @@
           </div>
 
           <HuxDropDownSearch
-            v-model="lookAlikeAudience.engagements"
+            v-model="lookalikeAudience.engagements"
             :toggleDropDown="toggleDropDown"
             @onToggle="(val) => (toggleDropDown = val)"
             :items="engagements"
@@ -67,7 +67,7 @@
           </HuxDropDownSearch>
 
           <v-chip
-            v-for="(item, index) in lookAlikeAudience.engagements"
+            v-for="(item, index) in lookalikeAudience.engagements"
             :close="selectedEngagementsLength > 1"
             small
             class="mr-2 my-2 font-weight-semi-bold"
@@ -90,7 +90,7 @@
             a bigger, broader audience.
           </div>
 
-          <LookAlikeSlider v-model="lookAlikeAudience.value" />
+          <LookAlikeSlider v-model="lookalikeAudience.value" />
         </div>
       </v-form>
     </template>
@@ -161,7 +161,7 @@ export default {
         return this.selectedAudience
       },
       set(value) {
-        this.lookAlikeAudience.audience = value
+        this.lookalikeAudience.audience = value
       },
     },
     fbDeliveredAudiences() {
@@ -178,7 +178,7 @@ export default {
     },
 
     selectedEngagementsLength() {
-      return this.lookAlikeAudience.engagements.length
+      return this.lookalikeAudience.engagements.length
     },
   },
 
@@ -187,14 +187,14 @@ export default {
       loading: false,
       localToggle: false,
       toggleDropDown: false,
-      lookAlikeAudience: {
+      lookalikeAudience: {
         name: null,
         value: 5,
         audience: null,
         engagements: [],
       },
       isFormValid: false,
-      lookAlikeNameRules: [(v) => !!v || "Lookalike audience name is required"],
+      lookalikeNameRules: [(v) => !!v || "Lookalike audience name is required"],
     }
   },
 
@@ -210,14 +210,14 @@ export default {
     },
 
     reset() {
-      this.lookAlikeAudience.value = 5
+      this.lookalikeAudience.value = 5
       this.selectAudience = null
-      this.lookAlikeAudience.engagements = []
-      this.$refs.lookAlikeForm.$children[0].$children[0].reset()
+      this.lookalikeAudience.engagements = []
+      this.$refs.lookalikeForm.$children[0].$children[0].reset()
     },
 
     detachEngagement(index) {
-      this.lookAlikeAudience.engagements.splice(index, 1)
+      this.lookalikeAudience.engagements.splice(index, 1)
     },
 
     onBack() {
@@ -256,15 +256,15 @@ export default {
     },
 
     selectedAudience(value) {
-      this.lookAlikeAudience.audience = value
+      this.lookalikeAudience.audience = value
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.look-alike-drawer {
-  .look-alike-form {
+.lookalike-drawer {
+  .lookalike-form {
     ::v-deep .v-input {
       .v-input__control {
         .v-input__slot {

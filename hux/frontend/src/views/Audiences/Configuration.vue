@@ -183,13 +183,13 @@
                   labelText="Lookalike audience name"
                   backgroundColor="white"
                   required
-                  v-model="lookAlikeAudience.name"
+                  v-model="lookalikeAudience.name"
                   class="text-caption neroBlack--text"
                 />
               </v-col>
               <v-col col="6">
                 <div class="neroBlack--text text-caption">Audience reach</div>
-                <LookAlikeSlider v-model="lookAlikeAudience.value" />
+                <LookAlikeSlider v-model="lookalikeAudience.value" />
                 <div class="gray--text text-caption pt-4">
                   Audience reach ranges from 1% to 10% of the combined
                   population of your selected locations. A 1% lookalike consists
@@ -326,7 +326,7 @@ export default {
       addDestinationFormValid: false,
       // TODO: API integration HUS-649
       isLookAlikeNeeeded: 0,
-      lookAlikeAudience: {
+      lookalikeAudience: {
         name: null,
         value: 5,
       },
