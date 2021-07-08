@@ -48,7 +48,6 @@ from huxunify.api.route.utils import (
     secured,
     api_error_handler,
     get_user_name,
-    set_facebook_auth_from_parameter_store,
     group_perf_metric,
     get_friendly_delivered_time,
 )
@@ -58,6 +57,7 @@ from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
 )
+from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 
@@ -1607,8 +1607,9 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         # Get existing campaigns from facebook
         facebook_connector = FacebookConnector(
-            auth_details=set_facebook_auth_from_parameter_store(
-                destination[api_c.AUTHENTICATION_DETAILS]
+            auth_details=get_auth_from_parameter_store(
+                destination[api_c.AUTHENTICATION_DETAILS],
+                destination[api_c.DELIVERY_PLATFORM_TYPE],
             )
         )
         campaigns = facebook_connector.get_campaigns()

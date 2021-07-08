@@ -6,6 +6,8 @@ from http import HTTPStatus
 from connexion import ProblemException
 import boto3
 import botocore
+from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
+import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
 
@@ -176,3 +178,58 @@ def check_aws_batch() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(api_c.AWS_BATCH_NAME)
+
+
+def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
+    """Get auth details from parameter store
+
+    Args:
+        auth (dict): Destination Auth details.
+        destination_type (str): Destination type (i.e. facebook, sfmc).
+
+    Returns:
+        Auth Object (dict): SFMC auth object.
+
+    """
+
+    # only get the secrets from ssm, otherwise take from the auth details.
+    if destination_type not in api_c.DESTINATION_SECRETS:
+        raise KeyError(
+            f"{destination_type} does not have a secret store mapping."
+        )
+
+    # pull the secrets from ssm
+    for secret in api_c.DESTINATION_SECRETS[destination_type]:
+        auth[secret] = parameter_store.get_store_value(auth[secret])
+
+    if destination_type == db_c.DELIVERY_PLATFORM_SFMC:
+        return {
+            SFMCCredentials.SFMC_ACCOUNT_ID.value: auth[api_c.SFMC_ACCOUNT_ID],
+            SFMCCredentials.SFMC_AUTH_URL.value: auth[
+                api_c.SFMC_AUTH_BASE_URI
+            ],
+            SFMCCredentials.SFMC_CLIENT_ID.value: auth[api_c.SFMC_CLIENT_ID],
+            SFMCCredentials.SFMC_CLIENT_SECRET.value: auth[
+                api_c.SFMC_CLIENT_SECRET
+            ],
+            SFMCCredentials.SFMC_SOAP_ENDPOINT.value: auth[
+                api_c.SFMC_SOAP_BASE_URI
+            ],
+            SFMCCredentials.SFMC_URL.value: auth[api_c.SFMC_REST_BASE_URI],
+        }
+    if destination_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        return {
+            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
+                api_c.FACEBOOK_AD_ACCOUNT_ID
+            ],
+            FacebookCredentials.FACEBOOK_APP_ID.name: auth[
+                api_c.FACEBOOK_APP_ID
+            ],
+            FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
+                api_c.FACEBOOK_APP_SECRET
+            ],
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
+                api_c.FACEBOOK_ACCESS_TOKEN
+            ],
+        }
+    return auth
