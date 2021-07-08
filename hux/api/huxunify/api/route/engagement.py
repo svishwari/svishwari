@@ -51,6 +51,7 @@ from huxunify.api.route.utils import (
     get_user_name,
     set_facebook_auth_from_parameter_store,
     group_perf_metric,
+    get_friendly_delivered_time,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -699,19 +700,6 @@ class EngagementDeliverHistoryView(SwaggerView):
                 database, pair[1].get(api_c.DELIVERY_JOB_ID)
             )
             if delivery_job and delivery_job.get(db_c.JOB_END_TIME):
-                delivered = (
-                    datetime.utcnow() - delivery_job.get(db_c.JOB_END_TIME)
-                ).total_seconds()
-                if delivered / (60 * 60 * 24) >= 1:
-                    delivered = (
-                        str(int(delivered / (60 * 60 * 24))) + " days ago"
-                    )
-                elif delivered / (60 * 60) >= 1:
-                    delivered = str(int(delivered / (60 * 60))) + " hours ago"
-                elif delivered / 60 >= 1:
-                    delivered = str(int(delivered / 60)) + " minutes ago"
-                else:
-                    delivered = str(int(delivered)) + " seconds ago"
                 delivery_history.append(
                     {
                         api_c.AUDIENCE: audience.get(api_c.AUDIENCE_NAME),
@@ -720,7 +708,9 @@ class EngagementDeliverHistoryView(SwaggerView):
                         ),
                         api_c.SIZE: randrange(10000000),
                         # TODO : Get audience size from CDM
-                        api_c.DELIVERED: delivered,
+                        api_c.DELIVERED: get_friendly_delivered_time(
+                            delivery_job.get(db_c.JOB_END_TIME)
+                        ),
                     }
                 )
 
