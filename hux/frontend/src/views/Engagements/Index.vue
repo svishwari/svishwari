@@ -130,8 +130,10 @@
             :showHeader="false"
             class="expanded-table"
             v-if="item.audiences.length > 0"
+            nested
           >
-            <template #row-item="{ item, isExpanded }">
+            <template #item-row="{ item, expand, isExpanded }">
+              
               <tr :class="{ 'expanded-row': isExpanded }">
               <td
                 v-for="header in subHeaders"
@@ -144,10 +146,20 @@
                 }"
               
               >
+              <!-- ------------------{{ item[header.value] }} -->
                 <div v-if="header.value == 'name'">
                   <tooltip>
                     <template #label-content>
-                      <router-link
+                       <v-icon
+                    :class="{ 'normal-icon': isExpanded }"
+                    @click="
+                      expand(!isExpanded)
+                      
+                    "
+                  >
+                    mdi-chevron-right
+                  </v-icon>
+                     <router-link
                         :to="{
                           name: 'AudienceInsight',
                           params: { id: item['id'] },
@@ -162,7 +174,7 @@
                     </template>
                   </tooltip>
 
-                       <menu-cell
+                       <!-- <menu-cell
                 :value="item[header.value]"
                 :menuOptions="actionItems"
                 routeName="EngagementDashboard"
@@ -179,7 +191,7 @@
                     mdi-chevron-right
                   </v-icon>
                 </template>
-              </menu-cell>
+              </menu-cell> -->
 
                 </div>
                 <div v-if="header.value == 'size'">
@@ -213,14 +225,10 @@
               </td>
               </tr>
             </template>
-          </hux-data-table>
-        </td>
-      </template>
-      <!-- <template #expanded-row-child="{ headers, item }">
+             <template #expanded-row="{ headers, item }">
         <td
           :colspan="headers.length"
           class="pa-0 child"
-          v-if="item.audiences.length > 0"
         >
           <v-progress-linear
             :active="item.isCurrentRow"
@@ -228,16 +236,22 @@
           />
           <hux-data-table
             :headers="headers"
-            :dataItems="item.audienceList"
+            :dataItems="item.insightInfo"
             :showHeader="false"
             class="expanded-table"
-            v-if="item.audiences.length > 0"
+            v-if="item.insightInfo.length > 0"
+            nested
           >
-            <template #row-item="{ item }">
+            <template #item-row="{ item }">
               {{item}}
             </template>
           </hux-data-table>
-        </td></template> -->
+        </td></template>
+          </hux-data-table>
+
+        </td>
+      </template>
+     
     </hux-data-table>
 
     <v-row class="pt-3 pb-7 pl-3" v-if="rowData.length == 0 && !loading">
