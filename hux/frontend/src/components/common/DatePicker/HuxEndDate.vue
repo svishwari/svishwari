@@ -28,13 +28,13 @@
           iconPosition="right"
           tile
           class="ma-2 main-button pr-1">
-          {{ optionSelected["name"] || label }}
+          {{ selected }}
         </huxButton>
       </template>
       <v-list>
         <template>
-          <div class="dropdown-menuitems" v-if="isSubMenu">
-            <v-list-item @click="onSelect()">
+          <div class="dropdown-menuitems">
+            <v-list-item @click="onCancel()" v-if="isSubMenu">
               <v-list-item-title class="d-flex align-center">
                 No end date
               </v-list-item-title>
@@ -43,40 +43,39 @@
               :is-offset-x="true"
               :is-offset-y="false"
               :isSubMenu="false"
+              @on-date-select="((val) => $emit('on-date-select', val))"
+              v-if="isSubMenu"
             />
+             <v-list-item v-if="!isSubMenu">
+              <v-list-item-title class="d-flex align-center">
+                <v-date-picker
+                  class="end-date-picker"
+                  v-model="end"
+                  no-title
+                  scrollable>
+                  <div class="date-picker-header" style="">
+                    <span class="header-label"> Date </span>
+                    <span class="header-value"> {{ end }} </span>
+                  </div>
+                  <v-spacer></v-spacer>
+                  <huxButton
+                    variant="tertiary"
+                    isTile
+                    class="btn-cancel ml-4"
+                    @click="onCancel()">
+                    Cancel
+                  </huxButton>
+                  <huxButton
+                    variant="tertiary"
+                    isTile
+                    class="btn-select mr-4"
+                    @click="$refs.endmenu.save(end);selectDate(end)">
+                    <span class="primary--text"> Select </span>
+                  </huxButton>
+                </v-date-picker>
+              </v-list-item-title>
+            </v-list-item>
           </div>
-          <v-date-picker
-            class="end-date-picker"
-            v-model="end"
-            no-title
-            scrollable
-            @click:date="onSelectDate"
-            v-if="!isSubMenu">
-            <div class="date-picker-header" style="">
-              <span class="header-label"> Date </span>
-            </div>
-            <v-spacer></v-spacer>
-            <huxButton
-              variant="tertiary"
-              isTile
-              class="btn-cancel ml-4"
-              @click="
-                endmenu = false
-                showCalendar = false
-              ">
-              Cancel
-            </huxButton>
-            <huxButton
-              variant="tertiary"
-              isTile
-              class="btn-select mr-4"
-              @click="
-                $refs.endmenu.save(end)
-                selectDate(end)
-              ">
-              <span class="primary--text"> Select </span>
-            </huxButton>
-          </v-date-picker>
         </template>
       </v-list>
     </v-menu>
@@ -85,17 +84,14 @@
 <script>
 import huxButton from "@/components/common/huxButton"
 import Icon from "../Icon.vue"
+import { bus } from '../../../main'
 export default {
   name: "hux-end-date",
   components: {
     huxButton,
     Icon,
   },
-  computed: {
-    optionSelected() {
-      return this.selected || this.label
-    },
-  },
+  computed: {},
   props: {
     selected: {
       type: [Object, String],
@@ -116,15 +112,14 @@ export default {
     level: Number,
   },
   methods: {
-    onSelect() {
-      this.$emit("on-select")
+    onCancel() {
       this.endmenu = false
+      this.showCalendar = false
+      this.$refs.endmenu.$parent.$el.parentNode.children[0].click();
     },
     selectDate(data) {
       this.$emit("on-date-select", data)
-    },
-    onSelectDate(event) {
-      this.endDate = true
+      this.$refs.endmenu.$parent.$el.parentNode.children[0].click();
     },
   },
   data: function () {
