@@ -3,6 +3,7 @@
 Paths for engagement API
 """
 from http import HTTPStatus
+from random import randrange
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
@@ -37,6 +38,7 @@ from huxunify.api.schema.engagement import (
     CampaignSchema,
     CampaignMappingSchema,
     CampaignPutSchema,
+    DeliveryHistorySchema,
     weighted_engagement_status,
 )
 from huxunify.api.schema.errors import NotFoundError
@@ -48,6 +50,7 @@ from huxunify.api.route.utils import (
     get_user_name,
     set_facebook_auth_from_parameter_store,
     group_perf_metric,
+    get_friendly_delivered_time,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -203,7 +206,9 @@ class SetEngagement(SwaggerView):
                         api_c.DESTINATIONS: [
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e5",
-                                "contact_list": "sfmc_extension_name",
+                                db_c.DELIVERY_PLATFORM_CONFIG: {
+                                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                                },
                             },
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e6",
@@ -471,6 +476,9 @@ class AddAudienceEngagement(SwaggerView):
                             },
                             {
                                 api_c.ID: "60ae035b6c5bf45da27f17e6",
+                                db_c.DELIVERY_PLATFORM_CONFIG: {
+                                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                                },
                             },
                         ],
                     }
@@ -617,6 +625,107 @@ class DeleteAudienceEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.DELIVERY_HISTORY}",
+    "EngagementDeliverHistoryView",
+)
+class EngagementDeliverHistoryView(SwaggerView):
+    """
+    Engagement delivery history class
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60bfeaa3fa9ba04689906f7a",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Successfully fetched delivery history.",
+            "schema": {"type": "array", "items": DeliveryHistorySchema},
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to show deliver history.",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DELIVERY_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
+        """Delivery history of all audiences for an engagement.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement ID.
+
+        Returns:
+            Tuple[dict, int]: Delivery history, HTTP Status.
+
+        """
+
+        # validate object id
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+
+        # convert the engagement ID
+        engagement_id = ObjectId(engagement_id)
+
+        # check if engagement exists
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+        if not engagement:
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        delivery_history = []
+        for pair in get_audience_destination_pairs(
+            engagement[api_c.AUDIENCES]
+        ):
+            audience = orchestration_management.get_audience(database, pair[0])
+            destination = delivery_platform_management.get_delivery_platform(
+                database, pair[1].get(api_c.ID)
+            )
+            delivery_job = delivery_platform_management.get_delivery_job(
+                database, pair[1].get(api_c.DELIVERY_JOB_ID)
+            )
+            if delivery_job and delivery_job.get(db_c.JOB_END_TIME):
+                delivery_history.append(
+                    {
+                        api_c.AUDIENCE: audience.get(api_c.AUDIENCE_NAME),
+                        api_c.DESTINATION: destination.get(
+                            api_c.DESTINATION_NAME
+                        ),
+                        api_c.SIZE: randrange(10000000),
+                        # TODO : Get audience size from CDM
+                        api_c.DELIVERED: get_friendly_delivered_time(
+                            delivery_job.get(db_c.JOB_END_TIME)
+                        ),
+                    }
+                )
+
+        return (
+            jsonify(DeliveryHistorySchema().dump(delivery_history, many=True)),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
     f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.DELIVER}",
     "EngagementDeliverView",
 )
@@ -646,6 +755,9 @@ class EngagementDeliverView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to deliver engagement.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -671,7 +783,7 @@ class EngagementDeliverView(SwaggerView):
 
         # validate object id
         if not ObjectId.is_valid(engagement_id):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the engagement ID
         engagement_id = ObjectId(engagement_id)
@@ -681,8 +793,8 @@ class EngagementDeliverView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # submit jobs for all the audience/destination pairs
         delivery_job_ids = []
@@ -744,6 +856,9 @@ class EngagementDeliverAudienceView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to deliver engagement.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -770,7 +885,7 @@ class EngagementDeliverAudienceView(SwaggerView):
 
         # validate object id
         if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -781,8 +896,8 @@ class EngagementDeliverAudienceView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
@@ -1049,6 +1164,9 @@ class UpdateCampaignsForAudience(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to update campaigns.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -1084,7 +1202,7 @@ class UpdateCampaignsForAudience(SwaggerView):
             ObjectId.is_valid(x)
             for x in [audience_id, engagement_id, destination_id]
         ):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1096,8 +1214,8 @@ class UpdateCampaignsForAudience(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
@@ -1228,6 +1346,9 @@ class AudienceCampaignsGetView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve campaigns.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -1262,7 +1383,7 @@ class AudienceCampaignsGetView(SwaggerView):
             ObjectId.is_valid(x)
             for x in [audience_id, engagement_id, destination_id]
         ):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1274,8 +1395,8 @@ class AudienceCampaignsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
@@ -1387,6 +1508,9 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve campaign mappings.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
     }
 
     responses.update(AUTH401_RESPONSE)
@@ -1420,7 +1544,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             ObjectId.is_valid(x)
             for x in [audience_id, engagement_id, destination_id]
         ):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
@@ -1432,8 +1556,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:

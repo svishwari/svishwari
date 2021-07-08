@@ -180,6 +180,9 @@ class AudienceGetView(SwaggerView):
             get_db_client(), ObjectId(audience_id)
         )
 
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
             audience.get(api_c.DESTINATIONS_TAG)
         )
@@ -219,13 +222,14 @@ class AudiencePostView(SwaggerView):
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS: [
                     {
-                        "id": "60ae035b6c5bf45da27f17d6",
-                        "data_extension_id": "data_extension_id",
+                        api_c.ID: "60b9601a6021710aa146df2f",
+                        db_c.DELIVERY_PLATFORM_CONFIG: {
+                            db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                        },
                     }
                 ],
                 api_c.AUDIENCE_ENGAGEMENTS: [
-                    "71364317897acad4bac4373b",
-                    "67589317897acad4bac4373b",
+                    "60d0dc9bfa9ba04689906f7b",
                 ],
                 api_c.AUDIENCE_FILTERS: [
                     {
@@ -402,13 +406,14 @@ class AudiencePutView(SwaggerView):
                 api_c.AUDIENCE_NAME: "My Audience",
                 api_c.DESTINATIONS_TAG: [
                     {
-                        "id": "60ae035b6c5bf45da27f17d6",
-                        "data_extension_id": "data_extension_id",
+                        api_c.ID: "60b9601a6021710aa146df2f",
+                        db_c.DELIVERY_PLATFORM_CONFIG: {
+                            db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                        },
                     }
                 ],
                 api_c.ENGAGEMENT_IDS: [
-                    "76859317897acad4bac4373b",
-                    "46826317897acad4bac4373b",
+                    "60d0dc9bfa9ba04689906f7b",
                 ],
                 api_c.AUDIENCE_FILTERS: [
                     {

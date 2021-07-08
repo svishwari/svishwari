@@ -3,40 +3,21 @@ Purpose of this file is to house all the customers api tests
 """
 import string
 import json
-import unittest
+from unittest import TestCase
 from http import HTTPStatus
 
 import mongomock
 import requests_mock
-from requests_mock import Mocker
 from hypothesis import given, strategies as st
 
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
-from huxunify.test.shared import CUSTOMER_INSIGHT_RESPONSE
-from huxunify.api.config import get_config
+import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
-BASE_ENDPOINT = "/api/v1"
-TEST_AUTH_TOKEN = "Bearer 12345678"
-VALID_RESPONSE = {
-    "active": True,
-    "scope": "openid email profile",
-    "username": "davesmith",
-    "exp": 1234,
-    "iat": 12345,
-    "sub": "davesmith@fake",
-    "aud": "sample_aud",
-    "iss": "sample_iss",
-    "jti": "sample_jti",
-    "token_type": "Bearer",
-    "client_id": "1234",
-    "uid": "1234567",
-}
 
-
-class TestCustomersOverview(unittest.TestCase):
+class TestCustomersOverview(TestCase):
     """
     Purpose of this class is to test Customers overview
     """
@@ -47,13 +28,13 @@ class TestCustomersOverview(unittest.TestCase):
 
         Returns:
         """
-        self.config = get_config("TEST")
-        self.customers = f"{BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
-        self.idr = f"{BASE_ENDPOINT}{api_c.IDR_ENDPOINT}"
-        self.headers = {
-            "Authorization": TEST_AUTH_TOKEN,
-            "Content-Type": "application/json",
-        }
+        self.customers = f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}"
+        self.idr = f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}"
+
+        # mock request for introspect call
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
 
         # init mongo patch initially
         mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
@@ -67,19 +48,12 @@ class TestCustomersOverview(unittest.TestCase):
         # setup the flask test client
         self.test_client = create_app().test_client()
         self.database.drop_database(db_c.DATA_MANAGEMENT_DATABASE)
-        self.introspect_call = (
-            f"{self.config.OKTA_ISSUER}"
-            f"/oauth2/v1/introspect?client_id="
-            f"{self.config.OKTA_CLIENT_ID}"
-        )
 
-    @requests_mock.Mocker()
-    def test_get_customers(self, request_mocker: Mocker):
+    def test_get_customers(self):
         """
         Test get customers
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
@@ -97,16 +71,16 @@ class TestCustomersOverview(unittest.TestCase):
             ],
             "message": "ok",
         }
-
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(
-            f"{self.config.CDP_SERVICE}/customer-profiles",
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles",
             json=expected_response,
         )
+        self.request_mocker.start()
 
         response = self.test_client.get(
             self.customers,
-            headers=self.headers,
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
@@ -118,28 +92,26 @@ class TestCustomersOverview(unittest.TestCase):
         self.assertEqual(customer[api_c.LAST_NAME], "Fox")
         self.assertEqual(customer[api_c.MATCH_CONFIDENCE], 0.97)
 
-    @requests_mock.Mocker()
-    def test_get_customer_overview(self, request_mocker: Mocker):
+    def test_get_customer_overview(self):
         """
         Test get customers overview
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
 
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-
-        request_mocker.post(
-            f"{self.config.CDP_SERVICE}/customer-profiles/insights",
-            json=CUSTOMER_INSIGHT_RESPONSE,
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.start()
 
         response = self.test_client.get(
             f"{self.customers}/{api_c.OVERVIEW}",
-            headers=self.headers,
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
@@ -147,8 +119,7 @@ class TestCustomersOverview(unittest.TestCase):
         self.assertTrue(data[api_c.TOTAL_RECORDS])
         self.assertTrue(data[api_c.MATCH_RATE])
 
-    @requests_mock.Mocker()
-    def test_get_idr_overview(self, request_mocker: Mocker):
+    def test_get_idr_overview(self):
         """
         Test get customers idr overview
 
@@ -159,30 +130,28 @@ class TestCustomersOverview(unittest.TestCase):
 
         """
 
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.post(
-            f"{self.config.CDP_SERVICE}/customer-profiles/insights",
-            json=CUSTOMER_INSIGHT_RESPONSE,
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.start()
+
         response = self.test_client.get(
             f"{self.idr}/{api_c.OVERVIEW}",
-            headers=self.headers,
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
         self.assertTrue(data[api_c.TOTAL_RECORDS])
         self.assertTrue(data[api_c.MATCH_RATE])
 
-    @requests_mock.Mocker()
     @given(customer_id=st.text(alphabet=string.ascii_letters))
-    def test_get_customer_by_id(
-        self, request_mocker: Mocker, customer_id: str
-    ):
+    def test_get_customer_by_id(self, customer_id: str):
         """
         Test get customer by id
 
         Args:
-            request_mocker (Mocker): Request mocker object.
             customer_id (str): customer id.
 
         Returns:
@@ -207,15 +176,16 @@ class TestCustomersOverview(unittest.TestCase):
             "message": "ok",
         }
 
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(
-            f"{self.config.CDP_SERVICE}/customer-profiles/{customer_id}",
+        self.request_mocker.stop()
+        self.request_mocker.get(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/{customer_id}",
             json=expected_response,
         )
+        self.request_mocker.start()
 
         response = self.test_client.get(
             f"{self.customers}/{customer_id}",
-            headers=self.headers,
+            headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -230,21 +200,15 @@ class TestCustomersOverview(unittest.TestCase):
         self.assertEqual(data[api_c.ADDRESS], api_c.REDACTED)
         self.assertEqual(data[api_c.AGE], api_c.REDACTED)
 
-    @requests_mock.Mocker()
-    def test_post_customer_overview_by_attributes(
-        self, request_mocker: Mocker
-    ) -> None:
+    def test_post_customer_overview_by_attributes(self) -> None:
         """
         Test get customer over by attributes
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
             None
         """
-
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
 
         filter_attributes = {
             "filters": {
@@ -256,15 +220,17 @@ class TestCustomersOverview(unittest.TestCase):
             }
         }
 
-        request_mocker.post(
-            f"{self.config.CDP_SERVICE}/customer-profiles/insights",
-            json=CUSTOMER_INSIGHT_RESPONSE,
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.start()
 
         response = self.test_client.post(
             f"{self.customers}/{api_c.OVERVIEW}",
             data=json.dumps(filter_attributes),
-            headers=self.headers,
+            headers=t_c.STANDARD_HEADERS,
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)

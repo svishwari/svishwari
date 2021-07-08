@@ -20,14 +20,13 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
 )
+from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
-NOTIFICATIONS_TAG = "notifications"
-NOTIFICATIONS_DESCRIPTION = "Notifications API"
-NOTIFICATIONS_ENDPOINT = "notifications"
-
 # setup the notifications blueprint
-notifications_bp = Blueprint(NOTIFICATIONS_ENDPOINT, import_name=__name__)
+notifications_bp = Blueprint(
+    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
+)
 
 
 @notifications_bp.before_request
@@ -38,7 +37,7 @@ def before_request():
 
 
 @add_view_to_blueprint(
-    notifications_bp, f"/{NOTIFICATIONS_ENDPOINT}", "NotificationsSearch"
+    notifications_bp, f"/{api_c.NOTIFICATIONS_ENDPOINT}", "NotificationsSearch"
 )
 class NotificationsSearch(SwaggerView):
     """
@@ -78,7 +77,7 @@ class NotificationsSearch(SwaggerView):
         },
     }
     responses.update(AUTH401_RESPONSE)
-    tags = [NOTIFICATIONS_TAG]
+    tags = [api_c.NOTIFICATIONS_TAG]
 
     @marshal_with(NotificationSchema(many=True))
     def get(self) -> Tuple[dict, int]:
