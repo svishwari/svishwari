@@ -215,7 +215,7 @@ export default {
         ? this.destination(this.selectedDestinationId)
         : null
     },
-    
+
     destinationFields() {
       return this.destinationConstants[this.selectedDestination.type] || null
     },
