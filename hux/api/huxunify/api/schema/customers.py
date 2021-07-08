@@ -14,7 +14,6 @@ from marshmallow.fields import (
     Dict,
     DateTime,
 )
-from marshmallow.validate import OneOf
 
 from huxunify.api.schema.utils import (
     validate_object_id,
