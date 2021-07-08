@@ -21,7 +21,7 @@
         </v-btn>
       </template>
     </div>
-    <!-- {{selectedDestination}} {{destinationFields}} -->
+
     <v-form
       v-if="selectedDestination && destinationFields"
       v-model="isFormValid"
@@ -215,6 +215,11 @@ export default {
         ? this.destination(this.selectedDestinationId)
         : null
     },
+    
+    destinationFields() {
+      return this.destinationConstants[this.selectedDestination.type] || null
+    },
+
     enabledDestinations() {
       return this.destinations.filter((each) => each.is_enabled)
     },
@@ -224,18 +229,9 @@ export default {
     },
 
     isSalesforceSelected() {
-      console.log("isSalesforceSelected", this.selectedDestination)
       return this.selectedDestination !== null
         ? this.selectedDestination.type === "sfmc"
         : false
-    },
-
-    destinationFields() {
-      console.log(
-        "this.selectedDestination.type",
-        this.selectedDestination.type
-      )
-      return this.destinationConstants[this.selectedDestination.type] || null
     },
 
     isFullyConfigured() {
