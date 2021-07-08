@@ -125,6 +125,8 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import { filterAudiencesByDestinations } from "@/utils"
+
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -230,17 +232,13 @@ export default {
     }),
 
     getActionItems(audience) {
-      let isOneOfDestinationFacebook
-      if (audience.destinations) {
-        isOneOfDestinationFacebook =
-          audience.destinations.findIndex(
-            (each) => each.type === "Facebook"
-          ) !== -1
-            ? true
-            : false
-      } else {
-        isOneOfDestinationFacebook = false
-      }
+      let filteredAudience = filterAudiencesByDestinations(
+        [audience],
+        ["facebook"]
+      )
+
+      let isOneOfDestinationFacebook =
+        filteredAudience.length > 0 ? true : false
 
       let actionItems = [
         { title: "Favorite", isDisabled: true },

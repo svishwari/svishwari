@@ -129,6 +129,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import { filterAudiencesByDestinations } from "@/utils"
 
 import Drawer from "@/components/common/Drawer"
 import LookAlikeSlider from "@/components/common/LookAlikeSlider"
@@ -164,18 +165,9 @@ export default {
       },
     },
     fbDeliveredAudiences() {
-      let filteredAudience = this.audiences.filter((audience) => {
-        let isOneOfDestinationFacebook = false
-        if (audience.destinations) {
-          isOneOfDestinationFacebook =
-            audience.destinations.findIndex(
-              (each) => each.type === "Facebook"
-            ) !== -1
-              ? true
-              : false
-        }
-        return isOneOfDestinationFacebook
-      })
+      let filteredAudience = filterAudiencesByDestinations(this.audiences, [
+        "facebook",
+      ])
 
       return filteredAudience.map((each) => {
         return {

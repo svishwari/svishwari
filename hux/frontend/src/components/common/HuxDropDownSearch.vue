@@ -45,8 +45,9 @@ export default {
 
   computed: {
     filteredItems() {
+      let searchText = this.searchText ? this.searchText.toLowerCase() : ""
       return this.items.filter((each) =>
-        each.name.toLowerCase().includes(this.searchText || "")
+        each.name.toLowerCase().includes(searchText)
       )
     },
   },
