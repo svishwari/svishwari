@@ -6,15 +6,24 @@ const namespaced = true
 
 const state = {
   items: {},
+
   audiencePerformance: {},
+
+  deliveries: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.items),
-  audiencePerformanceByAds: (state) => state.audiencePerformance.ads,
-  engagement: (state) => (id) => {
-    return state.items[id]
+
+  engagement: (state) => (id) => state.items[id],
+
+  deliveries: (state) => (id) => {
+    const deliveries = state.deliveries[id]
+    return deliveries ? Object.values(state.deliveries[id]) : []
   },
+
+  audiencePerformanceByAds: (state) => state.audiencePerformance.ads,
+
   audiencePerformanceByEmail: (state) => state.audiencePerformance.email,
 }
 
@@ -30,6 +39,11 @@ const mutations = {
   SET_ONE(state, item) {
     Vue.set(state.items, item.id, item)
   },
+
+  SET_DELIVERIES(state, { engagementId, deliveries }) {
+    Vue.set(state.deliveries, engagementId, deliveries)
+  },
+
   SET_AUDIENCE_PERFORMANCE(state, { item, type }) {
     /**
      * TODO To be revised with actual API call once API is ready for integration.
@@ -43,6 +57,7 @@ const mutations = {
     }
     Vue.set(state.audiencePerformance, type, audiencePerformanceObject)
   },
+
   SET_AUDIENCE_LIST(state, payload) {
     let engagement = state.items[payload.id]
     if (engagement.audienceList.length == 0) {
@@ -71,6 +86,19 @@ const actions = {
     try {
       const response = await api.engagements.find(id)
       commit("SET_ONE", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDeliveries({ commit }, engagementId) {
+    try {
+      const response = await api.engagements.deliveries(engagementId)
+      commit("SET_DELIVERIES", {
+        engagementId: engagementId,
+        deliveries: response.data,
+      })
     } catch (error) {
       handleError(error)
       throw error
