@@ -88,7 +88,7 @@
                 class="mr-2"
               /><span class="text-h5">Audiences</span>
             </div>
-            <div class="mt-2">
+            <div class="d-flex align-center">
               <a
                 href="#"
                 class="d-flex align-center primary--text text-decoration-none"
@@ -96,6 +96,10 @@
                 <Icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
               </a>
+              <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
+                <icon type="history" :size="16" class="mr-1" />
+                Delivery history
+              </v-btn>
             </div>
           </v-card-title>
           <v-progress-linear
@@ -119,7 +123,7 @@
                 v-for="item in audienceMergedData"
                 :key="item.id"
                 :audience="item"
-                :engagementId="String(engagementList.id)"
+                :engagementId="engagementId"
                 :statusIcon="17"
               />
             </v-col>
@@ -169,6 +173,12 @@
         </v-tabs-items>
       </div>
     </div>
+
+    <DeliveryHistoryDrawer
+      :engagementId="engagementId"
+      :toggle="showDeliveryHistoryDrawer"
+      @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
+    />
   </div>
 </template>
 
@@ -184,6 +194,7 @@ import Icon from "@/components/common/Icon"
 import StatusList from "../../components/common/StatusList.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import CampaignSummary from "../../components/CampaignSummary.vue"
+import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
 
 export default {
   name: "engagementDashboard",
@@ -197,6 +208,7 @@ export default {
     StatusList,
     Tooltip,
     CampaignSummary,
+    DeliveryHistoryDrawer,
   },
   data() {
     return {
@@ -212,6 +224,7 @@ export default {
         { acronym: "CPA", description: "Cost per Action" },
         { acronym: "CPC", description: "Cost per Click" },
       ],
+      showDeliveryHistoryDrawer: false,
     }
   },
   computed: {
@@ -223,8 +236,12 @@ export default {
       getDestinations: "destinations/single",
     }),
 
+    engagementId() {
+      return this.$route.params.id
+    },
+
     engagementList() {
-      return this.getEngagement(this.$route.params.id)
+      return this.getEngagement(this.engagementId)
     },
 
     breadcrumbItems() {
@@ -697,6 +714,10 @@ export default {
       )
       if (acronymObject.length === 0) return null
       return acronymObject[0].description
+    },
+
+    openDeliveryHistoryDrawer() {
+      this.showDeliveryHistoryDrawer = true
     },
   },
   async mounted() {
