@@ -2,7 +2,6 @@
 """
 Paths for engagement API
 """
-from datetime import datetime
 from http import HTTPStatus
 from random import randrange
 from typing import Tuple
