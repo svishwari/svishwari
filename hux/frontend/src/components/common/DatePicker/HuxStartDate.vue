@@ -8,7 +8,8 @@
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
-      v-model="menu">
+      v-model="menu"
+    >
       <template #activator="{ on }">
         <huxButton
           :v-on="on"
@@ -18,7 +19,8 @@
           icon=" mdi-chevron-down"
           iconPosition="right"
           tile
-          class="ma-2 main-button pr-1">
+          class="ma-2 main-button pr-1"
+        >
           {{ optionSelected["name"] || label }}
         </huxButton>
       </template>
@@ -37,19 +39,33 @@
           class="start-date-picker"
           v-model="start"
           no-title
-          scrollable>
-          <div class="date-picker-header" style=""> 
+          scrollable
+        >
+          <div class="date-picker-header" style="">
             <span class="header-label"> Date </span>
-            <span class="header-value"> {{ optionSelected["name"] || label }} </span>
+            <span class="header-value">
+              {{ optionSelected["name"] || label }}
+            </span>
           </div>
           <v-spacer></v-spacer>
-          <huxButton variant="tertiary" isTile class="btn-cancel ml-4" @click="menu = false">
+          <huxButton
+            variant="tertiary"
+            isTile
+            class="btn-cancel ml-4"
+            @click="menu = false"
+          >
             Cancel
           </huxButton>
-          <huxButton variant="tertiary" isTile class="btn-select mr-4"  @click="$refs.menu.save(start);selectDate(start)">
-            <span class="primary--text">
-              Select
-            </span>
+          <huxButton
+            variant="tertiary"
+            isTile
+            class="btn-select mr-4"
+            @click="
+              $refs.menu.save(start)
+              selectDate(start)
+            "
+          >
+            <span class="primary--text"> Select </span>
           </huxButton>
         </v-date-picker>
       </v-list>
@@ -58,12 +74,10 @@
 </template>
 <script>
 import huxButton from "@/components/common/huxButton"
-import Icon from "../Icon.vue"
 export default {
   name: "hux-start-date",
   components: {
     huxButton,
-    Icon,
   },
   computed: {
     optionSelected() {
@@ -89,9 +103,9 @@ export default {
     selectDate(data) {
       this.$emit("on-date-select", data)
     },
-    onSelectDate(event){
-      this.endDate = true
-    },
+    // onSelectDate() {
+    //   this.endDate = true
+    // },
   },
   data: function () {
     return {
@@ -138,23 +152,24 @@ export default {
     }
   }
 }
-.start-date-picker { 
+.start-date-picker {
   ::v-deep .v-picker__body {
     margin-top: 20px;
   }
 }
-.end-date-picker { 
+.end-date-picker {
   ::v-deep .v-picker__body {
     margin-top: 30px;
   }
 }
-.end-date-picker { 
+.end-date-picker {
   margin-top: 75px;
 }
-.start-date-picker, .end-date-picker {
+.start-date-picker,
+.end-date-picker {
   ::v-deep .v-picker__body {
     border-bottom: 1px solid var(--v-lightGrey-base);
-    .v-date-picker-table{
+    .v-date-picker-table {
       table {
         border-collapse: collapse;
         thead {
@@ -179,7 +194,7 @@ export default {
     position: absolute;
     margin-top: -315px;
     padding: 4px 20px;
-    width:94%;
+    width: 94%;
     background-color: var(--v-aliceBlue-base) !important;
     .header-value {
       margin-left: 12px;

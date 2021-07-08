@@ -229,11 +229,12 @@
     />
     <v-divider class="mt-10" />
     <v-subheader> End Date Picker </v-subheader>
-    <hux-end-date 
-    :label="selectedEndDate"
-    :selected="selectedEndDate"
-    :isSubMenu="true"
-    @on-date-select="onEndDateSelect"/>
+    <hux-end-date
+      :label="selectedEndDate"
+      :selected="selectedEndDate"
+      :isSubMenu="true"
+      @on-date-select="onEndDateSelect"
+    />
     <v-divider class="mt-10" />
 
     <v-subheader> Page Header </v-subheader>
@@ -512,7 +513,7 @@ import HuxSlider from "@/components/common/HuxSlider"
 import ChordChart from "@/components/common/identityChart/ChordChart"
 import { generateColor } from "@/utils"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
-import HuxEndDate from '@/components/common/DatePicker/HuxEndDate'
+import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 export default {
   name: "Components",
@@ -559,10 +560,10 @@ export default {
       }
     },
     onStartDateSelect(val) {
-     this.selectedStartDate = val;
+      this.selectedStartDate = val
     },
     onEndDateSelect(val) {
-     this.selectedEndDate = val;
+      this.selectedEndDate = val
     },
     toggleModal() {
       this.modal = !this.modal

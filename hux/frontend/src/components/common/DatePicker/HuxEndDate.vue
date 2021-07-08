@@ -8,12 +8,14 @@
       :open-on-hover="isOpenOnHover"
       :transition="transition"
       close-on-click
-      v-model="endmenu">
+      v-model="endmenu"
+    >
       <template #activator="{ on }">
         <v-list-item
           v-if="!isSubMenu"
           class="d-flex justify-space-between pr-1"
-          v-on="on">
+          v-on="on"
+        >
           Select date
           <div class="flex-grow-1"></div>
           <v-icon color="primary">mdi-chevron-right</v-icon>
@@ -27,7 +29,8 @@
           icon=" mdi-chevron-down"
           iconPosition="right"
           tile
-          class="ma-2 main-button pr-1">
+          class="ma-2 main-button pr-1"
+        >
           {{ selected }}
         </huxButton>
       </template>
@@ -43,16 +46,17 @@
               :is-offset-x="true"
               :is-offset-y="false"
               :isSubMenu="false"
-              @on-date-select="((val) => $emit('on-date-select', val))"
+              @on-date-select="(val) => $emit('on-date-select', val)"
               v-if="isSubMenu"
             />
-             <v-list-item v-if="!isSubMenu">
+            <v-list-item v-if="!isSubMenu">
               <v-list-item-title class="d-flex align-center">
                 <v-date-picker
                   class="end-date-picker"
                   v-model="end"
                   no-title
-                  scrollable>
+                  scrollable
+                >
                   <div class="date-picker-header" style="">
                     <span class="header-label"> Date </span>
                     <span class="header-value"> {{ end }} </span>
@@ -62,14 +66,19 @@
                     variant="tertiary"
                     isTile
                     class="btn-cancel ml-4"
-                    @click="onCancel()">
+                    @click="onCancel()"
+                  >
                     Cancel
                   </huxButton>
                   <huxButton
                     variant="tertiary"
                     isTile
                     class="btn-select mr-4"
-                    @click="$refs.endmenu.save(end);selectDate(end)">
+                    @click="
+                      $refs.endmenu.save(end)
+                      selectDate(end)
+                    "
+                  >
                     <span class="primary--text"> Select </span>
                   </huxButton>
                 </v-date-picker>
@@ -83,13 +92,10 @@
 </template>
 <script>
 import huxButton from "@/components/common/huxButton"
-import Icon from "../Icon.vue"
-import { bus } from '../../../main'
 export default {
   name: "hux-end-date",
   components: {
     huxButton,
-    Icon,
   },
   computed: {},
   props: {
@@ -115,11 +121,11 @@ export default {
     onCancel() {
       this.endmenu = false
       this.showCalendar = false
-      this.$refs.endmenu.$parent.$el.parentNode.children[0].click();
+      this.$refs.endmenu.$parent.$el.parentNode.children[0].click()
     },
     selectDate(data) {
       this.$emit("on-date-select", data)
-      this.$refs.endmenu.$parent.$el.parentNode.children[0].click();
+      this.$refs.endmenu.$parent.$el.parentNode.children[0].click()
     },
   },
   data: function () {
@@ -180,23 +186,24 @@ export default {
     color: var(--v-gray-base);
   }
 }
-.start-date-picker { 
+.start-date-picker {
   ::v-deep .v-picker__body {
     margin-top: 20px;
   }
 }
-.end-date-picker { 
+.end-date-picker {
   ::v-deep .v-picker__body {
     margin-top: 30px;
   }
 }
-.end-date-picker { 
+.end-date-picker {
   // margin-top: 75px;
 }
-.start-date-picker, .end-date-picker {
+.start-date-picker,
+.end-date-picker {
   ::v-deep .v-picker__body {
     border-bottom: 1px solid var(--v-lightGrey-base);
-    .v-date-picker-table{
+    .v-date-picker-table {
       table {
         border-collapse: collapse;
         thead {
@@ -221,7 +228,7 @@ export default {
     position: absolute;
     margin-top: -315px;
     padding: 4px 20px;
-    width:94%;
+    width: 94%;
     background-color: var(--v-aliceBlue-base) !important;
     .header-value {
       margin-left: 12px;
@@ -230,4 +237,3 @@ export default {
   }
 }
 </style>
-
