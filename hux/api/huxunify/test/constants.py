@@ -1,12 +1,22 @@
+# pylint: disable=invalid-name
 """
 purpose of this file is housing shared components for tests
 """
+from http import HTTPStatus
+
 from marshmallow import Schema, ValidationError
+
+from huxunify.api.config import get_config
+import huxunify.api.constants as api_c
 
 BASE_ENDPOINT = "/api/v1"
 TEST_AUTH_TOKEN = "Bearer 12345678"
 AUTH_HEADER = {
     "Authorization": TEST_AUTH_TOKEN,
+}
+STANDARD_HEADERS = {
+    "Authorization": TEST_AUTH_TOKEN,
+    "Content-Type": "application/json",
 }
 VALID_RESPONSE = {
     "active": True,
@@ -22,6 +32,17 @@ VALID_RESPONSE = {
     "client_id": "1234",
     "uid": "1234567",
 }
+VALID_USER_RESPONSE = {
+    api_c.OKTA_ID_SUB: "8548bfh8d",
+    api_c.EMAIL: "davesmith@fake.com",
+    api_c.NAME: "dave smith",
+}
+BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
+TEST_CONFIG = get_config("TEST")
+INTROSPECT_CALL = "{}/oauth2/v1/introspect?client_id={}".format(
+    TEST_CONFIG.OKTA_ISSUER, TEST_CONFIG.OKTA_CLIENT_ID
+)
+USER_INFO_CALL = f"{TEST_CONFIG.OKTA_ISSUER}/oauth2/v1/userinfo"
 
 CUSTOMER_INSIGHT_RESPONSE = {
     "code": 200,
