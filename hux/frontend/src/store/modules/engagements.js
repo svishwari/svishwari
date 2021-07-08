@@ -176,7 +176,6 @@ const actions = {
   },
   async detachAudience(_, { engagementId, data }) {
     try {
-      debugger
       await api.engagements.detachAudience(engagementId, data)
     } catch (error) {
       handleError(error)

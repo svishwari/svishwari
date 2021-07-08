@@ -79,7 +79,7 @@
       <div class="audience-summary">
         <!-- Audience Destination Cards Wrapper -->
         <v-card class="rounded-lg card-style" minHeight="145px" flat>
-          <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+          <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
             <div class="d-flex align-center">
               <Icon
                 type="audiences"
@@ -104,7 +104,7 @@
             :active="loadingAudiences"
             :indeterminate="loadingAudiences"
           />
-          <v-card-text v-else class="pl-6 pr-6 pb-6">
+          <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
             <div
               class="empty-state pa-5 text--gray"
               v-if="audienceMergedData.length == 0"
@@ -122,6 +122,7 @@
                 :audience="item"
                 :engagementId="String(engagementList.id)"
                 :statusIcon="17"
+                @onAddDestination="triggerSelectDestination(item.id)"
               />
             </v-col>
           </v-card-text>
@@ -185,6 +186,21 @@
       @onCancelAndBack="openSelectAudiencesDrawer()"
       @onCreateAddAudience="triggerAttachAudience($event)"
     />
+    <select-destinations-drawer
+      v-model="selectedAudiences"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showSelectDestinationsDrawer"
+      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+      @onSalesforce="triggerDataExtensionDrawer"
+    />
+
+    <destination-data-extension-drawer
+      v-model="selectedAudiences"
+      :selected-destination="selectedDestination"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showDataExtensionDrawer"
+      @onToggle="(val) => (showDataExtensionDrawer = val)"
+    />
   </div>
 </template>
 
@@ -202,6 +218,8 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer.vue"
 import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
+import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
+import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
 
 export default {
   name: "engagementDashboard",
@@ -217,6 +235,8 @@ export default {
     CampaignSummary,
     AddAudienceDrawer,
     SelectAudiencesDrawer,
+    SelectDestinationsDrawer,
+    DestinationDataExtensionDrawer,
   },
   data() {
     return {
@@ -239,6 +259,8 @@ export default {
       showAddAudiencesDrawer: false,
       showSelectDestinationsDrawer: false,
       showDataExtensionDrawer: false,
+      selectedAudienceId: null,
+      selectedDestination: [],
     }
   },
   computed: {
@@ -640,6 +662,8 @@ export default {
     closeDrawers() {
       this.showSelectAudiencesDrawer = false
       this.showAddAudiencesDrawer = false
+      this.showSelectDestinationsDrawer = false
+      this.showDataExtensionDrawer = false
     },
 
     triggerSelectAudience() {
@@ -651,13 +675,26 @@ export default {
       this.closeDrawers()
       this.showAddAudiencesDrawer = true
     },
+    triggerSelectDestination(audienceId) {
+      this.selectedAudienceId = audienceId
+      this.closeDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
+    triggerDataExtensionDrawer(destination) {
+      this.closeDrawers()
+      this.selectedDestination = destination || []
+      this.showDataExtensionDrawer = true
+    },
 
     async triggerAttachAudience(aud) {
       this.loadingAudiences = true
       const payload = { audiences: [] }
       payload.audiences.push({
         id: aud.id,
-        destinations: aud.destinations || [],
+        destinations:
+          aud.destinations.map((dest) => ({
+            id: dest.id,
+          })) || [],
       })
       await this.attachAudience({
         engagementId: this.engagementId,
@@ -690,8 +727,10 @@ export default {
       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
-        this.selectedAudiences[id] = this.getAudience(id)
-        audienceDetails.push(this.getAudience(id))
+        const audience = this.getAudience(id)
+        audienceDetails.push(audience)
+        audience.destination = []
+        this.selectedAudiences[id] = audience
       }
       // extracting the audience data and merging into object
       audienceDetails.forEach((element) => {
@@ -728,7 +767,6 @@ export default {
           audiencesDetailsData[i].destinations[j] = destinationWithDelivery
         }
       }
-
       // pushing merged data into variable
       this.audienceMergedData = audiencesDetailsData
       this.loadingAudiences = false
