@@ -1,19 +1,45 @@
 <template>
-  <div class="container">
-    <geo-chart
-      v-model="chartMatrix"
-      :colorCodes="colorCodes"
-      :chartLegendsData="chartLegendsData"
-      v-on:cordinates="getCordinates"
-      v-on:tooltipDisplay="toolTipDisplay"
-    />
+  <div>
+    <div class="container d-flex justify-space-around">
+      <geo-chart
+        v-model="chartMatrix"
+        :colorCodes="colorCodes"
+        :chartLegendsData="chartLegendsData"
+        v-on:cordinates="getCordinates"
+        v-on:tooltipDisplay="toolTipDisplay"
+      />
+      <v-card class="rounded-lg card-style" minHeight="20px">
+        <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-5">
+          <div class="mt-2">
+            <a
+              href="#"
+              class="d-flex align-center primary--text text-decoration-none"
+            >
+              United States
+            </a>
+          </div>
+        </v-card-title>
+        <v-divider class="ml-6 mr-6 mt-1 mb-2" />
+        <v-card-text minHeight="100px" class="content-style pl-6 pr-6 pb-6">
+          <div
+            class="sub-props pt-4"
+            v-for="item in mapChartData"
+            :key="item.name"
+          >
+            <span class="subprop-name">{{ item.name }}</span>
+            <span class="value ml-2">{{
+              item.population_percentage | percentageConvert(true, true)
+            }}</span>
+          </div>
+        </v-card-text>
+      </v-card>
+    </div>
     <map-chart-tooltip
       :position="{
         x: tooltip.x,
         y: tooltip.y,
       }"
       :showTooltip="show"
-      :isArcHover="isArcHover"
       :sourceInput="currentData"
     >
     </map-chart-tooltip>
@@ -23,68 +49,28 @@
 <script>
 import MapChartTooltip from "@/components/common/MapChart/MapChartTooltip"
 import GeoChart from "@/components/common/MapChart/GeoChart"
-import identity_resolution from "@/components/common/chartData.json"
+import demographic_overview from "./mapData.json"
 export default {
   name: "map-chart",
   components: { GeoChart, MapChartTooltip },
   data() {
     return {
-      // TODO provide actual color code as per Icon colors
-      colorCodes: ["#005587", "#da291c", "#00a3e0", "#43b02a", "#efa34c"],
-      // TODO Extracting it from the actual IDR data
-      chartLegendsData: [
-        { prop: "Name", icon: "name", color: "#005587" },
-        { prop: "Address", icon: "address", color: "#da291c" },
-        { prop: "Email", icon: "email", color: "#00a3e0" },
-        { prop: "Phone", icon: "phone", color: "#43b02a" },
-        { prop: "Cookie", icon: "cookie", color: "#efa34c" },
-      ],
       show: false,
       isArcHover: false,
       tooltip: {
         x: 0,
         y: 0,
       },
-      chartData: identity_resolution,
+      mapChartData: demographic_overview.demographic_overview,
       currentData: {},
-      arcData: {
-        icon: null,
-        name: null,
-        assetsData: [
-          {
-            icon: null,
-            description: null,
-            value: null,
-          },
-          {
-            icon: null,
-            description: null,
-            value: null,
-          },
-        ],
-      },
-      ribbonData: {
-        sourceIcon: null,
-        sourceName: null,
-        targetIcon: null,
-        targetName: null,
-        currentOccurance: 0,
-        totalOccurance: 0,
-      },
-      chartMatrix: [],
-      groupNames: [],
     }
   },
   methods: {
-    generateChartGroups() {
-      this.groupNames = Object.keys(this.chartData.identity_resolution)
-    },
-
     toolTipDisplay(...arg) {
       this.show = arg[0]
-      this.isArcHover = arg[1]
-      this.generateToolTipData(arg[2])
-      this.currentData = this.isArcHover ? this.arcData : this.ribbonData
+      if (this.show) {
+        this.generateToolTipData(arg[1])
+      }
     },
 
     getCordinates(args) {
@@ -92,80 +78,8 @@ export default {
       this.tooltip.y = args.y
     },
 
-    generateToolTipData(groupIndex) {
-      if (groupIndex.length > 0) {
-        let sourceData = this.chartData.identity_resolution
-        let group1 = this.groupNames[groupIndex[0]]
-        if (this.isArcHover) {
-          this.arcData.name = this.$options.filters.TitleCase(group1)
-          this.arcData.icon = group1
-          this.arcData.assetsData = this.mapIdentitySources(
-            sourceData[group1].data_sources
-          )
-        } else {
-          let group2 = this.groupNames[groupIndex[1]]
-          this.ribbonData.sourceName = this.$options.filters.TitleCase(group1)
-          this.ribbonData.sourceIcon = group1
-          this.ribbonData.targetName = this.$options.filters.TitleCase(group2)
-          this.ribbonData.targetIcon = group2
-          this.mapCoOccurances(sourceData[group1].cooccurrences, group2)
-        }
-      }
-    },
-    mapIdentitySources(data_sources) {
-      let assetsData = []
-      for (let item of data_sources) {
-        let tempSourceData = {}
-        ;(tempSourceData.icon = item.name.toLowerCase()),
-          (tempSourceData.description = item.name),
-          (tempSourceData.value = this.$options.filters.percentageConvert(
-            item.percentage,
-            true,
-            true
-          ))
-        assetsData.push(tempSourceData)
-      }
-      return assetsData
-    },
-    mapCoOccurances(cooccurances, identifier) {
-      this.ribbonData.totalOccurance = cooccurances.reduce((a, b) => ({
-        count: a.count + b.count,
-      })).count
-      this.ribbonData.currentOccurance = cooccurances.find(
-        (data) => data.identifier === identifier
-      ).count
-    },
-
-    transformData() {
-      let sourceData = this.chartData.identity_resolution
-      for (let key of this.groupNames) {
-        this.createGroupRelationMatrix(sourceData[key].cooccurrences)
-      }
-    },
-
-    createGroupRelationMatrix(element) {
-      let groupRelation = new Array(5).fill(0)
-      element.forEach((el) => {
-        let extractedValues = this.extractCoOccurancesCount(el)
-        groupRelation[extractedValues.index] = extractedValues.countValue
-      })
-      this.chartMatrix.push(groupRelation)
-    },
-
-    extractCoOccurancesCount(value) {
-      let extractedValues = {
-        index: 0,
-        countValue: 0,
-      }
-
-      for (let i = 0; i < this.groupNames.length; i++) {
-        if (this.groupNames[i] == value.identifier) {
-          extractedValues.index = i
-          extractedValues.countValue = value.count
-          break
-        }
-      }
-      return extractedValues
+    generateToolTipData(currentStateinfo) {
+      this.currentData = currentStateinfo
     },
   },
   mounted() {
@@ -176,8 +90,56 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.global-text-line {
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 16px;
+}
 .container {
-  height: 280px;
+  height: 550px;
   padding: 0px !important;
+  .card-style {
+    .content-style {
+      max-height: 450px;
+      overflow-y: scroll;
+      .sub-props {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        .subprop-name {
+          @extend .global-text-line;
+          flex: 1 0 50%;
+          padding-left: 5px;
+        }
+        .value {
+          @extend .global-text-line;
+          font-weight: bold;
+        }
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px white;
+      border-radius: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #d0d0ce;
+      border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d0d0ce;
+    }
+  }
 }
 </style>

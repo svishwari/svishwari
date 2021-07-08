@@ -1,58 +1,52 @@
 <template>
-  <v-card tile class="chart-container rounded-lg box-shadow-5">
-    <v-list-item three-line>
-      <div
-        class="chart-section"
-        ref="huxChart"
-        @mouseover="getCordinates($event)"
-      ></div>
-    </v-list-item>
-  </v-card>
+  <div>
+    <v-card
+      class="rounded-lg card-style"
+      maxWidth="798px"
+      minHeight="100px"
+      flat
+    >
+      <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+        <div class="mt-2">
+          <a
+            href="#"
+            class="d-flex align-center primary--text text-decoration-none"
+          >
+            Demographic overview
+          </a>
+        </div>
+        <div
+          class="chart-section"
+          ref="huxChart"
+          @mouseover="getCordinates($event)"
+        ></div>
+      </v-card-title>
+      <v-card-text class="pl-6 pr-6 pb-6">
+        <div class="map-slider"><map-slider :value="0.45"></map-slider></div>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>
-import * as d3Chord from "d3-chord"
-import * as d3Shape from "d3-shape"
-import * as d3Scale from "d3-scale"
 import * as d3Select from "d3-selection"
-import * as d3Array from "d3-array"
-import * as d3Geo from "d3-geo"
+import * as d3 from "d3"
+import * as topojson from "topojson"
+import mapSlider from "@/components/common/MapChart/mapSlider"
+import * as data from "./usStates.json"
+import * as states from "./usdetails.json"
+import demographic_overview from "./mapData.json"
 
 export default {
   name: "geo-chart",
-  components: { Icon, Tooltip },
-  props: {
-    /**
-     * Accepts an array of ranges in N*N matrix  format for creating chart arc & ribbon mapping
-     * must be match with no. of color codes
-     * eg: [1951, 0, 2060, 6171, 3622] for 5 color code ranges,
-     */
-    value: {
-      type: Array,
-      required: true,
-    },
-    /**
-     * Accepts an Array of color codes for filling up chart arc.
-     * eg: ["#43b02a", "#efa34c"],
-     */
-    colorCodes: {
-      type: Array,
-      required: true,
-    },
-    /**
-     * Accepts an Array of Objects needs to map with legends.
-     * eg: {prop: '', icon: ''}
-     */
-    chartLegendsData: {
-      type: Array,
-      required: true,
-    },
+  components: {
+    mapSlider,
   },
   data() {
     return {
-      width: 900,
-      height: 900,
-      legendsData: this.chartLegendsData,
+      chartData: demographic_overview.demographic_overview,
+      width: 950,
+      height: 700,
       top: 50,
       left: 60,
       show: false,
@@ -63,113 +57,85 @@ export default {
     }
   },
   methods: {
-    initializeValues() {
-      this.outerRadius = Math.min(this.width, this.height) * 0.5 - 10
-      this.innerRadius = this.outerRadius - 7
-    },
+    initializeValues() {},
 
-    calculateChartValues() {
-      const padAngle = 0.03
+    async calculateChartValues() {
+      await this.chartData
+      var width = 700
+      var height = 500
 
-      let svg = d3Select
+      let svg = d3
         .select(this.$refs.huxChart)
         .append("svg")
-        .attr("width", this.width)
-        .attr("height", this.height)
+        .attr("width", width)
+        .attr("height", height)
+      let us = data.default
+      var list = us.objects.states.geometries
+      var usList = states.default
 
-      let chord = d3Chord
-        .chord()
-        .padAngle(padAngle)
-        .sortSubgroups(d3Array.descending)
+      for (let i = 0; i < list.length; i++) {
+        usList.forEach((data) => {
+          if (list[i].id === data.id) {
+            list[i].name = data.name
+          }
+        })
+      }
 
-    
-    let projection = d3Geo.albersUsa().translate([this.width/2, this.height/2]).scale([1000]);  
+      var featureCollection = topojson.feature(
+        us,
+        us.objects.states,
+        (a, b) => a !== b
+      )
 
-    let path = d3Geo.path().projection(projection); 
+      var projection = d3.geoIdentity().fitSize([600, 500], featureCollection)
+      var path = d3.geoPath().projection(projection)
 
-    let color = d3Scale.linear().range(["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)","rgb(217,91,67)"]);
+      let colorScale = d3
+        .scaleLinear()
+        .domain([0, 100])
+        .range(["#ffffff", "#396286"])
 
-    let legendText = ["Cities Lived", "States Lived", "States Visited", "Nada"];
-
-    
-     
-     let arc = d3Shape
-        .arc()
-        .innerRadius(this.innerRadius)
-        .outerRadius(this.outerRadius)
-
-      let ribbon = d3Chord.ribbon().radius(this.innerRadius).padAngle(padAngle)
-
-      let color = d3Scale
-        .scaleOrdinal()
-        .domain(d3Array.range(this.colorCodes.length))
-        .range(this.colorCodes)
-
-      let g = svg
-        .append("g")
-        .attr(
-          "transform",
-          "translate(" + this.width * 0.5 + "," + this.height * 0.5 + ")"
-        )
-        .datum(chord(this.value))
-
-      let group = g
-        .append("g")
-        .attr("class", "groups")
-        .selectAll("g")
-        .data((chords) => chords.groups)
-        .enter()
-        .append("g")
-
-      group
-        .append("path")
-        .style("fill", (d) => color(d.index))
-        .attr("d", arc)
-        .on("mouseover", (g, i) => arcMouseOver(g, i))
-        .on("mouseout", () => mouseOut())
-
-      g.append("g")
-        .attr("class", "ribbons")
+      svg
         .selectAll("path")
-        .data((chords) => chords)
+        .data(topojson.feature(us, us.objects.states).features)
         .enter()
         .append("path")
-        .attr("d", ribbon)
-        .attr("fill-opacity", "0.5")
-        .style("fill", (d) => color(d.target.index))
-        .on("mouseover", (e, d) => ribbonMouseOver(e, d))
-        .on("mouseout", () => mouseOut())
+        .attr("d", path)
+        .style("stroke", "white")
+        .style("stroke-width", "0.5")
+        .style("fill", (d) => colorScale(70))
+        .on("mouseover", (d) => {
+          d3Select
+            .select(d.srcElement)
+            .attr("fill-opacity", "1")
+            .style("fill", (d) => getCurrentStateData(d.id))
+        })
+        .on("mouseout", () => this.tooltipDisplay(false))
 
-      let arcMouseOver = (g, i) => {
-        this.tooltipDisplay(true, true, [i.index])
-        d3Select
-          .selectAll("g.ribbons path")
-          .filter(
-            (d) => d.source.index !== i.index && d.target.index !== i.index
-          )
-          .attr("fill-opacity", "0.1")
-          .style("fill", (d) => color(d.target.index))
+      let getCurrentStateData = (id) => {
+        let currentStateDetails = this.chartData.find(
+          (data) => data.name == usList.find((data) => data.id == id).name
+        )
+        this.tooltipDisplay(true, currentStateDetails)
+        return colorScale(20)
       }
 
-      let ribbonMouseOver = (e, d) => {
-        this.tooltipDisplay(true, false, [d.source.index, d.target.index])
-        d3Select
-          .selectAll("g.ribbons path")
-          .attr("fill-opacity", "0.1")
-          .style("fill", (d) => color(d.target.index))
-
-        d3Select
-          .select(e.srcElement)
-          .attr("fill-opacity", "1")
-          .style("fill", (d) => color(d.target.index))
-      }
-
-      let mouseOut = () => {
-        this.tooltipDisplay(false, false, [])
-        d3Select
-          .selectAll("g.ribbons path")
-          .attr("fill-opacity", "0.5")
-          .style("fill", (d) => color(d.target.index))
+      function loadStateColors(id) {
+        const name = usList.find((data) => data.id == id).name
+        let currentStateDetails = this.chartData.find(
+          (data) => data.name == name
+        )
+        return currentStateDetails
+          ? colorScale(
+              this.$options.filters
+                .percentageConvert(
+                  currentStateDetails.population_percentage,
+                  true,
+                  true
+                )
+                .slice(0, -1)
+            )
+          : colorScale(50)
       }
     },
 
@@ -179,8 +145,8 @@ export default {
       this.$emit("cordinates", this.tooltip)
     },
 
-    tooltipDisplay(showTip, isArcHover, groupIndex) {
-      this.$emit("tooltipDisplay", showTip, isArcHover, groupIndex)
+    tooltipDisplay(showTip, currentStateData) {
+      this.$emit("tooltipDisplay", showTip, currentStateData)
     },
   },
 
@@ -199,8 +165,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.card-style {
+  margin-bottom: 40px;
+  height: 550px;
+}
 .chart-container {
-  max-width: 100%;
+  max-width: 70%;
   height: 500px;
 
   .legend-section {
@@ -221,5 +191,27 @@ export default {
   .chart-section {
     margin-bottom: -20px;
   }
+}
+.chart-container2 {
+  max-width: 50%;
+  height: 500px;
+
+  .legend-section {
+    span {
+      margin-left: 8px;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--v-gray-base) !important;
+    }
+  }
+}
+
+.map-slider {
+  max-height: 30px;
+}
+
+.total {
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>

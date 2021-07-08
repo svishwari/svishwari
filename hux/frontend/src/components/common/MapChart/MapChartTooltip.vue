@@ -6,41 +6,26 @@
       transform: `translate(${position.x}px, ${position.y}px)`,
       'border-radius': '0px !important',
     }"
-    class="mx-auto card-style"
+    class="mx-auto tooltip-style"
   >
-    <div class="arc-hover" v-if="isArcHover">
-      <Icon v-if="sourceInput.icon" :type="sourceInput.icon" :size="12" />
+    <div class="arc-hover">
       <span class="prop-name">{{ sourceInput.name }}</span>
-      <div
-        class="sub-props pt-4"
-        v-for="item in sourceInput.assetsData"
-        :key="item.name"
-      >
-        <Logo v-if="item.icon" :type="item.icon" :size="14" />
-        <span class="subprop-name">{{ item.description }}</span>
-        <span class="value ml-1">{{ item.value }}</span>
+      <div class="sub-props pt-4">
+        <span class="subprop-name">Size</span>
+        <span class="value ml-1">{{ sourceInput.size }}</span>
       </div>
-    </div>
-    <div class="ribbon-hover" v-if="!isArcHover">
-      <Icon
-        v-if="sourceInput.sourceIcon"
-        :type="sourceInput.sourceIcon"
-        :size="12"
-      />
-      <span class="prop-name">{{ sourceInput.sourceName }}</span>
-      <span class="pipe"></span>
-      <Icon
-        v-if="sourceInput.targetIcon"
-        :type="sourceInput.targetIcon"
-        :size="12"
-      />
-      <span class="prop-name">{{ sourceInput.targetName }}</span>
-      <span class="text-line"
-        >{{ sourceInput.currentOccurance }} Co-occurances</span
-      >
-      <span class="text-line-italic"
-        >out of {{ sourceInput.totalOccurance }} total co-occurances</span
-      >
+      <div class="sub-props pt-4">
+        <span class="subprop-name">W/M/O</span>
+        <span class="value ml-1"
+          >{{ sourceInput.women | percentageConvert(true, true) }} |
+          {{ sourceInput.men | percentageConvert(true, true) }} |
+          {{ sourceInput.other | percentageConvert(true, true) }}</span
+        >
+      </div>
+      <div class="sub-props pt-4">
+        <span class="subprop-name">LTV</span>
+        <span class="value ml-1">${{ sourceInput.ltv }}</span>
+      </div>
     </div>
   </v-card>
 </template>
@@ -61,10 +46,6 @@ export default {
           y: 0,
         }
       },
-    },
-    isArcHover: {
-      type: Boolean,
-      required: false,
     },
     showTooltip: {
       type: Boolean,
@@ -88,7 +69,7 @@ export default {
   font-style: normal;
   font-size: $font-size-root;
   line-height: 19px;
-  padding-left: 10px;
+  padding-left: 2px;
 }
 
 .global-text-line {
@@ -103,14 +84,15 @@ export default {
   padding: 10px 20px 20px 20px;
 }
 
-.card-style {
+.tooltip-style {
   @extend .box-shadow-3;
   border-radius: 0px;
   max-width: 213px;
   height: auto;
-  top: -220px;
-  left: -55px;
+  top: -690px;
+  left: -660px;
   z-index: 1;
+  //   max-height: 150px;
 
   .ribbon-hover {
     @extend .card-padding;
@@ -146,7 +128,7 @@ export default {
       height: 30px;
       .subprop-name {
         @extend .global-text-line;
-        flex: 1 0 50%;
+        flex: 1 0 40%;
         padding-left: 5px;
       }
       .value {
