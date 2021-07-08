@@ -153,3 +153,29 @@ class CustomerGenderInsightsSchema(Schema):
     gender_men = Nested(GenderMetrics, required=True)
     gender_other = Nested(GenderMetrics, required=True)
 
+
+class CustomerIncomeInsightsSchema(Schema):
+    """City wise Customer Insights Schema"""
+    name = Str(required=True, example="New York")
+    ltv = Float(required=True, example=1235.31)
+
+
+class CustomerSpendSchema(Schema):
+    """Customer Spend Schema"""
+    date = DateTime(required=True)
+    ltv = Float(required=True, example=1235.31)
+
+
+class CustomerSpendingInsightsSchema(Schema):
+    """Customer Spending Insights Schema"""
+    gender_women = List(Nested(CustomerSpendSchema))
+    gender_men = List(Nested(CustomerSpendSchema))
+    gender_other = List(Nested(CustomerSpendSchema))
+
+
+class CustomerDemographicInsightsSchema(Schema):
+    """Customer Visuals Schema Demographic Aggregations"""
+
+    gender = Nested(CustomerGenderInsightsSchema)
+    income = List(Nested(CustomerIncomeInsightsSchema))
+    spend = Nested(CustomerSpendingInsightsSchema)

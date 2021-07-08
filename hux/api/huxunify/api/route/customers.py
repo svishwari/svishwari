@@ -7,6 +7,9 @@ from http import HTTPStatus
 from random import choice
 from typing import Tuple
 from faker import Faker
+from datetime import datetime
+import pandas as pd
+from pandas import to_datetime
 
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
@@ -14,7 +17,7 @@ from flasgger import SwaggerView
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
-    CustomerGeoVisualSchema, CustomerGenderInsightsSchema,
+    CustomerGeoVisualSchema, CustomerDemographicInsightsSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -371,7 +374,7 @@ class CustomerDemoVisualView(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": {"type": "array", "items": CustomerGenderInsightsSchema},
+            "schema": {"type": "array", "items": CustomerDemographicInsightsSchema},
             "description": "Customer Demographical Visual Insights overview.",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -382,7 +385,7 @@ class CustomerDemoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    def get(self) -> Tuple[list, int]:
+    def post(self) -> Tuple[dict, int]:
         """Retrieves a customer data dashboard overview.
 
         ---
@@ -390,24 +393,32 @@ class CustomerDemoVisualView(SwaggerView):
             - Bearer: ["Authorization"]
 
         Returns:
-            Tuple[dict, int] list of Customer insights on geo overview and http code
+            Tuple[dict, int] list of Customer insights on demo overview and http code
         """
 
-        gender = {
-            "gender_men": {
-                "population_percentage": "0.4601",
-                "size": 123456
-            },
-            "gender_women": {
-                "population_percentage": "0.4601",
-                "size": 123456
-            },
-            "gender_other": {
-                "population_percentage": "0.4601",
-                "size": 123456
+        start_date = datetime(2020, 11, 30)
+        dates = [(start_date + pd.DateOffset(months=x)).to_pydatetime() for x in range(0, 5)]
+        output = {
+            api_c.GENDER: {gender: {
+                api_c.POPULATION_PERCENTAGE: population_percent,
+                api_c.SIZE: size
+            } for gender, population_percent, size in
+                zip(api_c.GENDERS, [0.5201, 0.4601, 0.0211], [6955119, 5627732, 289655])},
+
+            api_c.INCOME: [{api_c.NAME: city, api_c.LTV: ltv} for city, ltv in
+                           zip(["Houston", "San Antonio", "Dallas", "Austin", "Fort Worth"],
+                               [4008, 3922, 4231, 4198, 4011])],
+            api_c.SPEND: {
+                api_c.GENDER_WOMEN: [{api_c.DATE: date, api_c.LTV: ltv} for date, ltv in
+                                     zip(dates, [3199, 4265, 4986, 4986, 6109])],
+                api_c.GENDER_MEN: [{api_c.DATE: date, api_c.LTV: ltv} for date, ltv in
+                                   zip(dates, [3088, 3842, 3999, 3999, 6109])],
+                api_c.GENDER_OTHER: [{api_c.DATE: date, api_c.LTV: ltv} for date, ltv in
+                                     zip(dates, [2144, 3144, 3211, 3211, 4866])],
             }
         }
-        response = CustomerGenderInsightsSchema().dump(gender)
+
+        response = CustomerDemographicInsightsSchema().dump(output)
         return (
             response,
             HTTPStatus.OK,
