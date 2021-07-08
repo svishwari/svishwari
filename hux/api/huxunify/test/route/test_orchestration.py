@@ -7,7 +7,6 @@ from unittest import TestCase, mock
 from bson import ObjectId
 import mongomock
 import requests_mock
-from requests_mock import Mocker
 
 from huxunifylib.database import constants as db_c, data_management
 from huxunifylib.database.delivery_platform_management import (
@@ -22,36 +21,9 @@ from huxunifylib.database.orchestration_management import (
     get_audience,
 )
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
-
+import huxunify.test.constants as t_c
 from huxunify.app import create_app
 from huxunify.api import constants as api_c
-from huxunify.api.config import get_config
-from huxunify.api.data_connectors.aws import parameter_store
-
-
-BASE_URL = "/api/v1"
-TEST_AUTH_TOKEN = "Bearer 12345678"
-VALID_RESPONSE = {
-    "active": True,
-    "scope": "openid email profile",
-    "username": "davesmith",
-    "exp": 1234,
-    "iat": 12345,
-    "sub": "davesmith@fake",
-    "aud": "sample_aud",
-    "iss": "sample_iss",
-    "jti": "sample_jti",
-    "token_type": "Bearer",
-    "client_id": "1234",
-    "uid": "1234567",
-}
-VALID_USER_RESPONSE = {
-    api_c.OKTA_ID_SUB: "8548bfh8d",
-    api_c.EMAIL: "davesmith@fake.com",
-    api_c.NAME: "dave smith",
-}
-BATCH_RESPONSE = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
 
 
 class OrchestrationRouteTest(TestCase):
@@ -66,17 +38,16 @@ class OrchestrationRouteTest(TestCase):
 
         Returns:
         """
-        self.config = get_config("TEST")
 
-        self.introspect_call = (
-            f"{self.config.OKTA_ISSUER}"
-            f"/oauth2/v1/introspect?client_id="
-            f"{self.config.OKTA_CLIENT_ID}"
-        )
-        self.user_info_call = f"{self.config.OKTA_ISSUER}/oauth2/v1/userinfo"
         self.audience_api_endpoint = "/api/v1{}".format(
             api_c.AUDIENCE_ENDPOINT
         )
+
+        # mock request for introspect call
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        request_mocker.start()
 
         self.app = create_app().test_client()
 
@@ -89,10 +60,11 @@ class OrchestrationRouteTest(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        get_db_client_mock = mock.patch(
-            "huxunify.api.route.orchestration.get_db_client"
+        # mock get_db_client() for the orchestration.
+        mock.patch(
+            "huxunify.api.route.orchestration.get_db_client",
+            return_value=self.database,
         ).start()
-        get_db_client_mock.return_value = self.database
         self.addCleanup(mock.patch.stopall)
 
         # mock get_db_client() for the userinfo utils.
@@ -211,118 +183,11 @@ class OrchestrationRouteTest(TestCase):
         # setup the flask test client
         self.test_client = create_app().test_client()
 
-        self.introspect_call = "{}/oauth2/v1/introspect?client_id={}".format(
-            self.config.OKTA_ISSUER, self.config.OKTA_CLIENT_ID
-        )
-
-    @requests_mock.Mocker()
-    @mock.patch.object(parameter_store, "get_store_value")
-    @mock.patch.object(
-        AWSBatchConnector, "register_job", return_value=BATCH_RESPONSE
-    )
-    @mock.patch.object(
-        AWSBatchConnector, "submit_job", return_value=BATCH_RESPONSE
-    )
-    def test_deliver_audience_for_all_engagements_valid_audience_id(
-        self, request_mocker: Mocker, *_: None
-    ):
-        """
-        Test delivery of audience for all engagements
-        with valid audience id
-
-        Args:
-            request_mocker (Mocker): Request mocker object.
-            *_ (None): Omit all extra keyword args the mock patches send.
-
-        Returns:
-
-        """
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        audience_id = self.audiences[0][db_c.ID]
-
-        response = self.app.post(
-            f"{BASE_URL}/{api_c.AUDIENCES}/{audience_id}/deliver",
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
-        )
-
-        valid_response = {
-            "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
-        }
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(valid_response, response.json)
-
-    @requests_mock.Mocker()
-    def test_deliver_audience_for_all_engagements_invalid_audience_id(
-        self, request_mocker: Mocker
-    ):
-        """
-        Test delivery of audience for all engagements
-        with invalid audience id
-
-        Args:
-            request_mocker (Mocker): Request mocker object.
-
-        Returns:
-
-        """
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        audience_id = "XYZ123"
-
-        response = self.app.post(
-            f"{BASE_URL}/{api_c.AUDIENCES}/{audience_id}/deliver",
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
-        )
-
-        valid_response = {"message": "Invalid Object ID"}
-
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
-
-    @requests_mock.Mocker()
-    def test_deliver_audience_for_all_engagements_non_existent_audience(
-        self, request_mocker: Mocker
-    ):
-        """
-        Test delivery of audience for all engagements
-        with non-existent audience id
-
-        Args:
-            request_mocker (Mocker): Request mocker object.
-
-        Returns:
-
-        """
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        audience_id = ObjectId()
-
-        response = self.app.post(
-            f"{BASE_URL}/{api_c.AUDIENCES}/{audience_id}/deliver",
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
-        )
-
-        valid_response = {"message": "Audience does not exist."}
-
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.json, valid_response)
-
-    @requests_mock.Mocker()
-    def test_get_audience_rules_success(self, request_mocker: Mocker):
+    def test_get_audience_rules_success(self):
         """Test the get audience rules route
         Args:
-            request_mocker (Mocker): Request mocker object.
-        """
 
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        """
 
         data_management.set_constant(
             self.database,
@@ -338,27 +203,21 @@ class OrchestrationRouteTest(TestCase):
         )
 
         response = self.test_client.get(
-            f"{self.audience_api_endpoint}/rules",
-            headers={"Authorization": TEST_AUTH_TOKEN},
+            f"{self.audience_api_endpoint}/rules", headers=t_c.STANDARD_HEADERS
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIn("rule_attributes", response.json)
         self.assertIn("text_operators", response.json)
 
-    @requests_mock.Mocker()
-    def test_create_audience_with_destination(self, request_mocker: Mocker):
+    def test_create_audience_with_destination(self):
         """Test create audience with destination.
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
@@ -382,10 +241,7 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(
@@ -402,21 +258,14 @@ class OrchestrationRouteTest(TestCase):
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
-    @requests_mock.Mocker()
-    def test_create_audience_with_no_destinations_no_engagements(
-        self, request_mocker: Mocker
-    ):
+    def test_create_audience_with_no_destinations_no_engagements(self):
         """Test create audience with no destinations or engagements
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
@@ -437,10 +286,7 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(
@@ -461,19 +307,14 @@ class OrchestrationRouteTest(TestCase):
             get_engagements_by_audience(self.database, audience_doc[db_c.ID])
         )
 
-    @requests_mock.Mocker()
-    def test_create_audience_with_engagements(self, request_mocker: Mocker):
+    def test_create_audience_with_engagements(self):
         """Test create audience with engagements.
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Engagements",
@@ -498,10 +339,7 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(
@@ -541,19 +379,14 @@ class OrchestrationRouteTest(TestCase):
 
             self.assertDictEqual(engagement_audience, expected_audience)
 
-    @requests_mock.Mocker()
-    def test_create_audience_with_no_engagement(self, request_mocker: Mocker):
+    def test_create_audience_with_no_engagement(self):
         """Test create audience without engagement ids.
 
         Args:
-            request_mocker (Mocker): Request mocker object.
 
         Returns:
 
         """
-
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
 
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
@@ -577,29 +410,20 @@ class OrchestrationRouteTest(TestCase):
         response = self.test_client.post(
             self.audience_api_endpoint,
             json=audience_post,
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-                "Content-Type": "application/json",
-            },
+            headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
 
-    @requests_mock.Mocker()
-    def test_get_audience(self, request_mocker: Mocker):
+    def test_get_audience(self):
         """Test get audience.
         Args:
-            request_mocker (Mocker): Request mocker object.
+
         Returns:
         """
 
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
-
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-            },
+            headers=t_c.STANDARD_HEADERS,
         )
         audience = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -608,22 +432,44 @@ class OrchestrationRouteTest(TestCase):
         )
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
 
-    @requests_mock.Mocker()
-    def test_get_audiences(self, request_mocker: Mocker):
+    def test_get_audience_does_not_exist(self):
+        """Test get audience that does not exist
+        Args:
+
+        Returns:
+        """
+        audience_id = ObjectId()
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+
+    def test_get_audience_invalid_id(self):
+        """Test get audience that does not exist
+        Args:
+
+        Returns:
+        """
+        audience_id = "asdfg13456"
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{audience_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_audiences(self):
         """Test get audiences.
         Args:
-            request_mocker (Mocker): Request mocker object.
+
         Returns:
         """
 
-        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
-        request_mocker.get(self.user_info_call, json=VALID_USER_RESPONSE)
-
         response = self.test_client.get(
             f"{self.audience_api_endpoint}",
-            headers={
-                "Authorization": TEST_AUTH_TOKEN,
-            },
+            headers=t_c.STANDARD_HEADERS,
         )
         audiences = response.json
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -635,3 +481,35 @@ class OrchestrationRouteTest(TestCase):
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+
+    def test_update_audience(self):
+        """Test update an audience.
+        Args:
+
+        Returns:
+        """
+        new_name = "New Test Audience"
+
+        response = self.test_client.put(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                db_c.AUDIENCE_NAME: new_name,
+                db_c.AUDIENCE_FILTERS: [
+                    {
+                        api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                        api_c.AUDIENCE_SECTION_FILTERS: [
+                            {
+                                api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                                api_c.AUDIENCE_FILTER_TYPE: "type",
+                                api_c.AUDIENCE_FILTER_VALUE: "value",
+                            }
+                        ],
+                    }
+                ],
+                api_c.DESTINATIONS: [],
+            },
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(new_name, response.json[db_c.AUDIENCE_NAME])
