@@ -6,12 +6,11 @@ from http import HTTPStatus
 from typing import Tuple
 
 import pymongo
-from flask import Blueprint, request
-from flask_apispec import marshal_with
+from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
 from huxunifylib.database import (
-    constants as db_constants,
+    constants as db_c,
     notification_management,
 )
 from huxunify.api.schema.notifications import NotificationSchema
@@ -46,28 +45,31 @@ class NotificationsSearch(SwaggerView):
 
     parameters = [
         {
-            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE,
+            "name": db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
             "type": "integer",
             "description": "Max number of notifications to be returned.",
             "example": "5",
-            "required": True,
+            "required": False,
+            "default": api_c.DEFAULT_ALERT_BATCH_SIZE,
         },
         {
-            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_SORT_ORDER,
+            "name": db_c.NOTIFICATION_QUERY_PARAMETER_SORT_ORDER,
             "in": "query",
             "type": "string",
             "description": "Sort order of the records to be returned.",
             "example": "ascending",
-            "required": True,
+            "required": False,
+            "default": db_c.PAGINATION_DESCENDING,
         },
         {
-            "name": db_constants.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER,
+            "name": db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER,
             "in": "query",
             "type": "string",
             "description": "Number of which batch of notifications should be returned.",
             "example": "10",
-            "required": True,
+            "required": False,
+            "default": api_c.DEFAULT_ALERT_BATCH_NUMBER,
         },
     ]
     responses = {
@@ -79,7 +81,7 @@ class NotificationsSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.NOTIFICATIONS_TAG]
 
-    @marshal_with(NotificationSchema(many=True))
+    # @marshal_with(NotificationSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves notifications.
 
@@ -91,16 +93,23 @@ class NotificationsSearch(SwaggerView):
             Tuple[dict, int] dict of notifications and http code
         """
 
-        batch_size = request.args.get("batch_size")
-        sort_order = request.args.get("sort_order")
-        batch_number = request.args.get("batch_number")
+        batch_size = (
+            request.args.get("batch_size") or api_c.DEFAULT_ALERT_BATCH_SIZE
+        )
+        sort_order = (
+            request.args.get("sort_order") or db_c.PAGINATION_DESCENDING
+        )
+        batch_number = (
+            request.args.get("batch_number")
+            or api_c.DEFAULT_ALERT_BATCH_NUMBER
+        )
 
         if (
             batch_size is None
             or batch_number is None
             or (
-                sort_order.lower() != db_constants.PAGINATION_ASCENDING
-                and sort_order.lower() != db_constants.PAGINATION_DESCENDING
+                sort_order.lower() != db_c.PAGINATION_ASCENDING
+                and sort_order.lower() != db_c.PAGINATION_DESCENDING
             )
         ):
             return {
@@ -109,15 +118,18 @@ class NotificationsSearch(SwaggerView):
 
         sort_order = (
             pymongo.ASCENDING
-            if sort_order.lower() == db_constants.PAGINATION_ASCENDING
+            if sort_order.lower() == db_c.PAGINATION_ASCENDING
             else pymongo.DESCENDING
         )
 
-        response = notification_management.get_notifications(
-            get_db_client(),
-            batch_size=int(batch_size),
-            sort_order=sort_order,
-            batch_number=int(batch_number),
+        response = NotificationSchema().dump(
+            notification_management.get_notifications(
+                get_db_client(),
+                batch_size=int(batch_size),
+                sort_order=sort_order,
+                batch_number=int(batch_number),
+            ),
+            many=True,
         )
 
-        return response, HTTPStatus.OK
+        return jsonify(response), HTTPStatus.OK

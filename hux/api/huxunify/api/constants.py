@@ -494,3 +494,16 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
     "propensity_to_unsubscribe": 1,
     "propensity_to_purchase": 0,
 }
+
+# Alerts Fields
+ALERT_SUCCESS = "Success"
+ALERT_INFORMATIONAL = "Informational"
+ALERT_CRITICAL = "Critical"
+
+CATEGORY_DECISIONING = "Decisioning"
+CATEGORY_DATA_MANAGEMENT = "Data management"
+CATEGORY_ORCHESTRATION = "Orchestration"
+
+DEFAULT_ALERT_BATCH_SIZE = 100
+DEFAULT_ALERT_SORT_ORDER = "descending"
+DEFAULT_ALERT_BATCH_NUMBER = "1"
