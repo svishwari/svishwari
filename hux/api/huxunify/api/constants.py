@@ -57,6 +57,7 @@ MAX_LTV_ACTUAL = "max_ltv_actual"
 LTV = "ltv"
 POPULATION_PERCENTAGE = "population_percentage"
 INCOME = "income"
+# TODO: Remove State Names once it connected with CDM
 STATE_NAMES = [
     "Alaska",
     "Alabama",

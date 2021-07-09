@@ -375,7 +375,7 @@ class CustomerDemoVisualView(SwaggerView):
     parameters = [
         {
             "name": "body",
-            "description": "Insights Filters",
+            "description": "Customer Insights Demographic Filters",
             "type": "object",
             "in": "body",
             "example": {
@@ -459,8 +459,7 @@ class CustomerDemoVisualView(SwaggerView):
             },
         }
 
-        response = CustomerDemographicInsightsSchema().dump(output)
         return (
-            response,
+            CustomerDemographicInsightsSchema().dump(output),
             HTTPStatus.OK,
         )
