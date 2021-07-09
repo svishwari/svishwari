@@ -124,7 +124,7 @@ class CustomersSchema(Schema):
 
 
 class CustomerGeoVisualSchema(Schema):
-    """Customer Geographic Insights Schema"""
+    """Customer Geographic Visual Schema"""
 
     class Meta:
         """Meta class for Schema"""
@@ -141,7 +141,7 @@ class CustomerGeoVisualSchema(Schema):
 
 
 class GenderMetrics(Schema):
-    """Customer Gender metrics schema"""
+    """Gender metrics schema"""
 
     population_percentage = Float(required=True, example=0.4601)
     size = Integer(required=True, example=123456)
@@ -178,7 +178,7 @@ class CustomerSpendingInsightsSchema(Schema):
 
 
 class CustomerDemographicInsightsSchema(Schema):
-    """Customer Visuals Schema Demographic Insights"""
+    """Customer Demographic Insights Schema"""
 
     gender = Nested(CustomerGenderInsightsSchema)
     income = List(Nested(CustomerIncomeInsightsSchema))
