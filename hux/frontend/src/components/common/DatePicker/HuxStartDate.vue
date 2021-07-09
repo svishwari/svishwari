@@ -122,21 +122,22 @@ export default {
 <style lang="scss" scoped>
 .hux-date-picker {
   .main-button {
-    height: 32px;
     min-width: 64px;
     padding: 0 16px;
     border-style: solid !important;
     border-width: 1px;
     border-color: var(--v-lightGrey-base) !important;
-    border-radius: 0;
     box-shadow: none !important;
     background-color: var(--v-white-base) !important;
     background: var(--v-white-base) !important;
     font-size: 14px;
     line-height: 22px;
-    width: auto !important;
-    min-width: 200px;
+    min-width: 215px;
     color: var(--v-neroBlack-base);
+    width: 215px !important;
+    height: 42px;
+    border: 1px solid #D0D0CE;
+    border-radius: 4px;
     ::v-deep .v-btn__content {
       .spacer {
         &:nth-child(2) {
