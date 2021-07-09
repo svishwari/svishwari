@@ -73,10 +73,11 @@
               </template>
             </v-radio>
           </v-radio-group>
-          
+
           <div>
             <span class="date-picker-label">Start date</span>
-            <hux-start-date class="mt-n4"
+            <hux-start-date
+              class="mt-n4"
               labelText="Engagement name"
               :label="selectedStartDate"
               :selected="selectedStartDate"
@@ -86,14 +87,14 @@
 
           <div>
             <span class="date-picker-label">End date</span>
-            <hux-end-date class="mt-n4"
+            <hux-end-date
+              class="mt-n4"
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :isSubMenu="true"
               @on-date-select="onEndDateSelect"
             />
           </div>
-
         </v-row>
       </FormStep>
 
@@ -461,7 +462,7 @@ export default {
     onStartDateSelect(val) {
       this.selectedStartDate = val
     },
-    
+
     onEndDateSelect(val) {
       this.selectedEndDate = val
     },

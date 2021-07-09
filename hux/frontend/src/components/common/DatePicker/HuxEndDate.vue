@@ -155,7 +155,7 @@ export default {
     color: var(--v-neroBlack-base);
     width: 215px !important;
     height: 42px;
-    border: 1px solid #D0D0CE;
+    border: 1px solid var(--v-lightGrey-base) !important;
     border-radius: 4px;
     ::v-deep .v-btn__content {
       .spacer {
