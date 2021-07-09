@@ -103,7 +103,7 @@
           height="40"
           class="ma-2"
           :isDisabled="!(isFormValid && selectedEngagementsLength !== 0)"
-          @click="creatLookAlike()"
+          @click="createLookAlike()"
         >
           Create &amp; deliver
         </HuxButton>
@@ -204,8 +204,15 @@ export default {
       getAllAudiences: "audiences/getAll",
     }),
 
-    creatLookAlike() {
+    createLookAlike() {
       //TODO: make a API call here HUS-649
+      // let engagementIds = this.lookalikeAudience.engagements.map(selectedEngagement => selectedEngagement.id)
+      // let payload = {
+      //   original_audience_id: this.lookalikeAudience.audience.id,
+      //   name: this.lookalikeAudience.name,
+      //   audience_size_percentage: this.lookalikeAudience.value,
+      //   engagement_ids: engagementIds,
+      // }
       this.onBack()
     },
 
