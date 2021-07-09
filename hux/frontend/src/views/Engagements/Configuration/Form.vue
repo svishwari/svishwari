@@ -51,7 +51,7 @@
           </h5>
         </template>
 
-        <v-row>
+        <v-row class="delivery-schedule">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
@@ -511,6 +511,9 @@ export default {
       }
     }
   }
+}
+.delivery-schedule {
+  margin-left: auto;
 }
 .date-picker-label {
   position: absolute;
