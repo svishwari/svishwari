@@ -322,7 +322,7 @@ class CampaignSchema(Schema):
         example="5f5f7262997acad4bac4373b",
         validate=validate_object_id,
     )
-    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
+    create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
 
 
 class CampaignPutSchema(Schema):
@@ -362,7 +362,7 @@ class DeliveryJobSchema(Schema):
         example="5f5f7262997acad4bac4373b",
         validate=validate_object_id,
     )
-    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
+    create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
 
 
 class CampaignMappingSchema(Schema):
