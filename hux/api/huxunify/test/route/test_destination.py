@@ -73,8 +73,8 @@ class TestDestinationRoutes(TestCase):
 
         destinations = [
             {
-                api_c.DELIVERY_PLATFORM_TYPE: "google-ads",
-                api_c.NAME: "Google Ads",
+                api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                api_c.NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 api_c.AUTHENTICATION_DETAILS: {},
             },
             {
@@ -190,10 +190,10 @@ class TestDestinationRoutes(TestCase):
 
         new_auth_details = {
             "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
+                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
+                api_c.FACEBOOK_APP_ID: "2951925002021888",
+                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
             }
         }
 
