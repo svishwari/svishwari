@@ -51,27 +51,30 @@
           </h5>
         </template>
 
-        <v-radio-group
-          v-model="value.delivery_schedule"
-          row
-          class="ma-0 radio-div"
-        >
-          <v-radio :value="0" selected class="btn-radio">
-            <template #label>
-              <v-icon small color="primary" class="mr-1">
-                mdi-gesture-tap
-              </v-icon>
-              <span class="primary--text">Manual</span>
-            </template>
-          </v-radio>
+        <v-row>
+          <v-radio-group
+            v-model="value.delivery_schedule"
+            row
+            class="ma-0 radio-div"
+          >
+            <v-radio :value="0" selected class="btn-radio">
+              <template #label>
+                <v-icon small color="primary" class="mr-1">
+                  mdi-gesture-tap
+                </v-icon>
+                <span class="primary--text">Manual</span>
+              </template>
+            </v-radio>
 
-          <v-radio :value="1" class="btn-radio" disabled>
-            <template #label>
-              <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
-              <span>Recurring</span>
-            </template>
-          </v-radio>
-        </v-radio-group>
+            <v-radio :value="1" class="btn-radio" disabled>
+              <template #label>
+                <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
+                <span>Recurring</span>
+              </template>
+            </v-radio>
+          </v-radio-group>
+          something
+        </v-row>
       </FormStep>
 
       <FormStep :step="3" label="Select audience(s) and destination(s)">
