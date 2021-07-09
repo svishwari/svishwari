@@ -93,7 +93,7 @@ class ParameterStore:
             # only store secrets in ssm, otherwise store in object.
             if (
                 parameter_name
-                not in api_c.DESTINATION_SECRETS[destination_type]
+                in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
             ):
                 ssm_params[parameter_name] = secret
                 continue
@@ -199,7 +199,9 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
         )
 
     # pull the secrets from ssm
-    for secret in api_c.DESTINATION_SECRETS[destination_type]:
+    for secret in api_c.DESTINATION_SECRETS[destination_type][
+        api_c.AWS_SSM_NAME
+    ]:
         auth[secret] = parameter_store.get_store_value(auth[secret])
 
     if destination_type == db_c.DELIVERY_PLATFORM_SFMC:
