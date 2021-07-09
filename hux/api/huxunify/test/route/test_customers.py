@@ -237,3 +237,16 @@ class TestCustomersOverview(TestCase):
         data = response.json
         self.assertTrue(data[api_c.TOTAL_RECORDS])
         self.assertTrue(data[api_c.MATCH_RATE])
+
+    def test_get_idr_data_feeds(self):
+        """
+        Test get IDR Datafeeds
+        """
+
+        # TODO: Update after integration of CDM APIs
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
