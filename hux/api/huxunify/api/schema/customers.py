@@ -14,6 +14,7 @@ from marshmallow.fields import (
     Dict,
     DateTime,
 )
+from huxunifylib.database import constants as db_c
 from huxunify.api.schema.utils import (
     validate_object_id,
 )
@@ -120,3 +121,17 @@ class CustomersSchema(Schema):
             }
         ],
     )
+
+
+class DatafeedSchema(Schema):
+    """
+    Customer Datafeed Schema
+    """
+
+    datafeed_id = Str(example="60e879d270815aade4d6c4fb")
+    datafeed_name = Str(example="Really_long_Feed_Name_106")
+    data_source_type = Str(example=db_c.DELIVERY_PLATFORM_SFMC)
+    new_ids_generated = Integer(example=21)
+    num_records_processed = Integer(example=2000000)
+    match_rate = Float(example=0.98)
+    last_run = DateTime()

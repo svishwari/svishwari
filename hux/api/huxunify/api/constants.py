@@ -405,6 +405,7 @@ CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
 CUSTOMERS_DESCRIPTION = "Customers API"
+DATAFEEDS = "datafeeds"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -429,6 +430,15 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+
+# IDR Data feeds
+DATAFEED_ID = "datafeed_id"
+DATAFEED_NAME = "datafeed_name"
+DATAFEED_DATA_SOURCE = "data_source_type"
+DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
+DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
+DATAFEED_MATCH_RATE = "match_rate"
+DATAFEED_LAST_RUN_DATE = "last_run"
 
 # FILTERING
 REDACTED = "++REDACTED++"
