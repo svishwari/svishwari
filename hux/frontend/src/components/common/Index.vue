@@ -220,6 +220,21 @@
     />
 
     <v-divider class="mt-10" />
+    <v-subheader> Start Date Picker </v-subheader>
+    <hux-start-date
+      :label="selectedStartDate"
+      :selected="selectedStartDate"
+      @on-date-select="onStartDateSelect"
+    />
+    <v-divider class="mt-10" />
+    <v-subheader> End Date Picker </v-subheader>
+    <hux-end-date
+      :label="selectedEndDate"
+      :selected="selectedEndDate"
+      :isSubMenu="true"
+      @on-date-select="onEndDateSelect"
+    />
+    <v-divider class="mt-10" />
 
     <v-subheader> Page Header </v-subheader>
     <PageHeader>
@@ -496,6 +511,8 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import ChordChart from "@/components/common/identityChart/ChordChart"
 import { generateColor } from "@/utils"
+import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
+import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 export default {
   name: "Components",
@@ -523,6 +540,8 @@ export default {
     FormStep,
     HuxSlider,
     ChordChart,
+    HuxStartDate,
+    HuxEndDate,
   },
   methods: {
     onupdatelabelText(newValue) {
@@ -538,6 +557,12 @@ export default {
       if (item.action) {
         item.action()
       }
+    },
+    onStartDateSelect(val) {
+      this.selectedStartDate = val
+    },
+    onEndDateSelect(val) {
+      this.selectedEndDate = val
     },
     toggleModal() {
       this.modal = !this.modal
@@ -595,6 +620,8 @@ export default {
       },
 
       selectedMenuItem: "Select a value...",
+      selectedStartDate: "Select date",
+      selectedEndDate: "Select date",
       TextFieldValue: null,
       DropdownValue: null,
       labelText: "Select",
