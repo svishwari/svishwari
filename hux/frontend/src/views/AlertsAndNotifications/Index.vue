@@ -57,6 +57,7 @@
         :dataItems="rowData"
         :disableSort="true"
       >
+      
         <template #row-item="{ item }">
           <td
             v-for="header in columnDefs"
@@ -183,11 +184,19 @@ export default {
       loading: false,
     }
   },
+   async updated() {
+    this.loading = true
+    await this.getNotification()
+    this.loading = false;
+    // console.log("")
+  },
+
  computed: {
     ...mapGetters({
       notification: "notification/list",
     }),
  },
+
   methods: {
      ...mapActions({
       getNotification: "notification/getAll",
@@ -195,11 +204,6 @@ export default {
     goBack() {
       window.history.back()
     },
-  },
-    async mounted() {
-    this.loading = true
-    await this.getNotification()
-    this.loading = false;
   },
 }
 </script>
