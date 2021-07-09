@@ -83,7 +83,7 @@ class TestDestinationRoutes(TestCase):
                 api_c.AUTHENTICATION_DETAILS: {},
             },
             {
-                api_c.DELIVERY_PLATFORM_TYPE: "salesforce",
+                api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
                 api_c.NAME: "Salesforce Marketing Cloud",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.SFMC_ACCOUNT_ID: "id12345",
@@ -271,8 +271,8 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIn("facebook", response.json)
-        self.assertIn("salesforce", response.json)
+        self.assertIn(db_c.DELIVERY_PLATFORM_FACEBOOK, response.json)
+        self.assertIn(db_c.DELIVERY_PLATFORM_SFMC, response.json)
 
     def test_validate_facebook_credentials(self):
         """
