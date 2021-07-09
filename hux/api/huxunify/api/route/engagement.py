@@ -8,6 +8,7 @@ from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
 
+import facebook_business.exceptions
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
@@ -1612,7 +1613,12 @@ class AudienceCampaignMappingsGetView(SwaggerView):
                 destination[api_c.DELIVERY_PLATFORM_TYPE],
             )
         )
-        campaigns = facebook_connector.get_campaigns()
+        try:
+            campaigns = facebook_connector.get_campaigns()
+        except facebook_business.exceptions.FacebookRequestError:
+            return {
+                "message": "Error connecting to Facebook"
+            }, HTTPStatus.BAD_REQUEST
 
         if campaigns is None:
             return {
