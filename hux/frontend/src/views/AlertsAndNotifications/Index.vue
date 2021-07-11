@@ -5,7 +5,7 @@
         <Breadcrumb :items="breadcrumbItems" />
       </template>
     </PageHeader>
-    <PageHeader class="top-bar backGround-header mb-3" :headerHeight="71">
+    <PageHeader class="top-bar mb-3" :headerHeight="71">
       <template #left>
         <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
         <v-icon medium color="lightGrey" class="pl-4">mdi-magnify</v-icon>
@@ -32,29 +32,11 @@
         </router-link>
       </template>
     </PageHeader>
-    <!-- <PageHeader class="top-bar backGround-header-dropdown" :headerHeight="71">
-      <template #left>
-        <span class="d-flex flex-row">
-          <div>
-        <HuxDropdown
-            label="Alert type"
-            :items="alertTypeItems"
-        />
-          </div>
-          <div>
-        <HuxDropdown
-            label="Category"
-            :items="categoryItems"
-        />
-          </div>
-        </span>
-      </template>
-    </PageHeader> -->
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <v-row class="pt-3 pb-7 pl-6 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
-        :dataItems="rowData"
+        :dataItems="getNotificationData"
         :disableSort="true"
       >
       
@@ -103,7 +85,6 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
 import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-// import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 export default {
@@ -114,7 +95,6 @@ export default {
     huxButton,
     HuxDataTable,
     TimeStamp,
-    // HuxDropdown,
     Status,
     Tooltip,
   },
@@ -154,11 +134,6 @@ export default {
           value: "description",
           width: "600px",
         },
-        // {
-        //   text: "Category",
-        //   value: "category",
-        //   width: "auto",
-        // }
       ],
       rowData: [
         {
@@ -184,19 +159,14 @@ export default {
       loading: false,
     }
   },
-   async updated() {
-    this.loading = true
-    await this.getNotification()
-    this.loading = false;
-    // console.log("")
-  },
-
  computed: {
     ...mapGetters({
       notification: "notification/list",
     }),
+    getNotificationData(){
+      return this.notification;
+    }
  },
-
   methods: {
      ...mapActions({
       getNotification: "notification/getAll",
@@ -204,6 +174,11 @@ export default {
     goBack() {
       window.history.back()
     },
+  },
+  async mounted() {
+    this.loading = true
+    await this.getNotification()
+    this.loading = false;
   },
 }
 </script>
@@ -248,9 +223,7 @@ export default {
 .radio-div {
   margin-top: -11px !important;
 }
-.backGround-header {
-  background-color: var(--v-backgroundBlue-base) !important;
-}
+
 .backGround-header-dropdown {
   background-color: var(--v-aliceBlue-base) !important;
 }

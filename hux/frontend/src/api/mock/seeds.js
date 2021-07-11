@@ -447,5 +447,5 @@ export default function (server) {
   server.createList("dataExtension", 5)
   
     // for alert and notification
-  server.createList("notification", 5)
+  server.createList("notification", 3)
 }

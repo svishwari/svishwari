@@ -16,9 +16,8 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
-    debugger;
     items.forEach((item) => {
-      Vue.set(state.items, item)
+      Vue.set(state.items, item.id, item)
     })
   },
 
@@ -31,7 +30,6 @@ const actions = {
   async getAll({ commit }) {
     try {
       const response = await api.notification.all()
-      debugger;
       commit("SET_ALL", response.data)
     } catch (error) {
       handleError(error)
