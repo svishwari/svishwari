@@ -3,7 +3,7 @@ Schemas for the Model Object
 """
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, Float, DateTime
+from marshmallow.fields import Str, Int, Float, DateTime, Nested, List
 
 
 class ModelSchema(Schema):
@@ -85,3 +85,14 @@ class PerformanceMetricSchema(Schema):
     auc = Float()
     precision = Float()
     recall = Float()
+
+
+class ModelDashboardSchema(Schema):
+    """Model Dashboard Schema"""
+
+    model_type = Str()
+    model_name = Str()
+    description = Str()
+    performance_metrics = Nested(PerformanceMetricSchema)
+    feature_importance = List(Nested(FeatureImportance))
+    lift_data = List(Nested(LiftSchema))

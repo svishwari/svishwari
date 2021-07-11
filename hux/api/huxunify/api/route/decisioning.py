@@ -1,8 +1,10 @@
 """
 purpose of this script is for housing the decision routes for the API.
 """
+from datetime import datetime
+from random import random, randint, uniform
 from http import HTTPStatus
-from typing import Tuple, List
+from typing import Tuple, List, Union, Dict
 
 from flask import Blueprint
 from flask_apispec import marshal_with
@@ -11,7 +13,7 @@ from flasgger import SwaggerView
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     handle_api_exception,
-    secured,
+    secured, api_error_handler,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
@@ -20,12 +22,11 @@ from huxunify.api.schema.model import (
     PerformanceMetricSchema,
     LiftSchema,
     DriftSchema,
-    FeatureImportance,
+    FeatureImportance, ModelDashboardSchema,
 )
 from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-
 
 # setup the models blueprint
 model_bp = Blueprint(api_c.MODELS_ENDPOINT, import_name=__name__)
@@ -67,7 +68,23 @@ class ModelsView(SwaggerView):
 
         """
         try:
-            return tecton.get_models(), HTTPStatus.OK.value
+            purchase_model = {
+                "type": "purchase",
+                "fulcrum_date": datetime(2021, 6, 26),
+                "past_version_count": 0,
+                "last_trained": datetime(2021, 6, 26),
+                "lookback_window": 365,
+                "name": "Propensity to Purchase",
+                "description": "Propensity of a customer making a purchase after receiving an email.",
+                "latest_version": " ",
+                "prediction_window": 365,
+                "id": 3,
+                "owner": "Susan Miller",
+                "status": "Active"
+            }
+            all_models = tecton.get_models()
+            all_models.append(purchase_model)
+            return all_models, HTTPStatus.OK.value
 
         except Exception as exc:
             raise handle_api_exception(exc, "Unable to get models.") from exc
@@ -119,26 +136,29 @@ class ModelVersionView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    model_bp, f"{api_c.MODELS_ENDPOINT}/<name>/features", "ModelFeatureView"
+    model_bp, f"{api_c.MODELS_ENDPOINT}/<model_type>/overview", "ModelOverview"
 )
 class ModelFeatureView(SwaggerView):
     """
-    Model Feature Class
+    Model Overview Class
     """
 
-    parameters = api_c.MODEL_NAME_PARAMS
+    parameters = api_c.MODEL_TYPE_PARAMS
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model features.",
-            "schema": {"type": "array", "items": FeatureSchema},
+            "schema": ModelDashboardSchema,
         },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve Model Overview"
+        }
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(FeatureSchema(many=True))
-    def get(self, name: str) -> Tuple[List[dict], int]:
+    @marshal_with(ModelDashboardSchema)
+    def get(self, model_type: str) -> Tuple[Dict, int]:
         """Retrieves model features.
 
         ---
@@ -146,19 +166,50 @@ class ModelFeatureView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            name (str): model name
+            model_type (str): model type
 
         Returns:
             Tuple[List[dict], int]: dict of model features and http code
 
         """
-        try:
-            return tecton.get_model_features(name), HTTPStatus.OK.value
+        if model_type not in api_c.SUPPORTED_MODELS:
+            return {"message": "Invalid Model Type"}, HTTPStatus.BAD_REQUEST
 
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model features."
-            ) from exc
+        output = {
+            api_c.MODEL_TYPE: model_type,
+            api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_type][api_c.NAME],
+            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_type][api_c.DESCRIPTION],
+            api_c.PERFORMANCE_METRIC: {
+                api_c.AUC: api_c.SUPPORTED_MODELS[model_type][api_c.DESCRIPTION],
+                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_type][api_c.PRECISION],
+                api_c.RECALL: api_c.SUPPORTED_MODELS[model_type][api_c.RECALL],
+                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_type][api_c.CURRENT_VERSION],
+                api_c.RMSE: api_c.SUPPORTED_MODELS[model_type][api_c.RMSE]
+            },
+            api_c.FEATURE_IMPORTANCE: [
+                {
+                    api_c.NAME: f"feature name {x}",
+                    api_c.DESCRIPTION: f"description of feature name {x}",
+                    api_c.SCORE: round(random(), 2)
+                }
+                for x in range(1, 21)
+            ],
+            api_c.LIFT_DATA: [
+                {
+                    api_c.BUCKET: x,
+                    api_c.PREDICTED_VALUE: round(uniform(100, 1000), 2),
+                    api_c.ACTUAL_VALUE: round(uniform(100, 1000), 2),
+                    api_c.PROFILE_COUNT: randint(1, 100),
+                    api_c.PREDICTED_RATE: round(random(), 2),
+                    api_c.ACTUAL_RATE: round(random(), 2),
+                    api_c.PREDICTED_LIFT: round(uniform(1, 2), 2),
+                    api_c.ACTUAL_LIFT: round(uniform(1, 2), 2),
+                    api_c.PROFILE_SIZE_PERCENT: round(uniform(1, 100), 2),
+                }
+                for x in range(10, 100, 10)
+            ]
+        }
+        return output, HTTPStatus.OK
 
 
 @add_view_to_blueprint(
