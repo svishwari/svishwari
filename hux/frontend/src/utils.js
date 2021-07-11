@@ -59,3 +59,26 @@ export function getApproxSize(value) {
     ? (Math.abs(Number(value)) / 1.0e3).toFixed(2) + "K"
     : Math.abs(Number(value))
 }
+
+/**
+ * Extracts audiences that have destinations passed in the params
+ *
+ * @param {Array} destinations - List of destination to match
+ * @return {string} List of filtered audiences
+ */
+export function filterAudiencesByDestinations(audiences, destinations = []) {
+  let filteredAudiences = audiences.filter((audience) => {
+    let isRequiredDestinationPresent = false
+    if (audience.destinations) {
+      isRequiredDestinationPresent =
+        audience.destinations.findIndex((destination) =>
+          destinations.includes(destination.type)
+        ) !== -1
+          ? true
+          : false
+    }
+    return isRequiredDestinationPresent
+  })
+
+  return filteredAudiences
+}
