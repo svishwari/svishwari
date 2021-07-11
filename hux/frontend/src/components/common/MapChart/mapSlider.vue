@@ -1,5 +1,5 @@
 <template>
-  <v-slider class="hux-score-slider" always-dirty readonly @end="onFinalValue">
+  <v-slider class="hux-score-slider" always-dirty readonly>
     <template #append>
       <span class="slider-value-display" v-text="minValue"></span>
     </template>
@@ -13,23 +13,17 @@
 export default {
   name: "map-slider",
   props: {
-    min: {
-      type: Number,
-      default: 0.2345,
-      required: false,
-    },
-    max: {
-      type: Number,
-      default: 0.90023,
-      required: false,
-    },
+    range: {
+      type: Array,
+      required: false,   
+    }
   },
    data() {
     return {
       minValue: this.$options.filters
-              .percentageConvert(this.min, true, true),
+              .percentageConvert(Math.min(this.range), true, true),
       maxValue: this.$options.filters
-              .percentageConvert(this.max, true, true)
+              .percentageConvert(Math.max(this.range), true, true)
     }
   },
 }
@@ -37,8 +31,12 @@ export default {
 
 <style lang="scss" scoped>
 .hux-range-slider {
+   background-color: red;
   ::v-deep .v-input__control {
+    
+   
     .v-input__slot {
+      min-width: 75px;
       .v-slider__track-container {
         height: 7px;
       }
@@ -63,13 +61,19 @@ export default {
   margin-right: 10px;
   transform: rotate(90deg);
   max-width: 140px;
-  margin-left: 600px;
-  margin-top: -140px;
+  margin-left: 655px;
+  margin-top: -115px;
+    ::v-deep .v-input__control {
+    .v-input__slot {
+      min-width: 75px;
+    }
+    }
 
   .slider-value-display {
-    width: 28px;
+    width: 30px;
     height: 16px;
-    color: black;
+    color: #1E1E1E;
+    font-weight: 600;
     transform: rotate(-90deg);
   }
 

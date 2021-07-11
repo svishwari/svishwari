@@ -20,9 +20,10 @@
           ref="huxChart"
           @mouseover="getCordinates($event)"
         ></div>
+         <div class="map-slider"><map-slider :range="total_range"></map-slider></div>
       </v-card-title>
       <v-card-text class="pl-6 pr-6 pb-6">
-        <div class="map-slider"><map-slider :value="0.45"></map-slider></div>
+       
       </v-card-text>
     </v-card>
   </div>
@@ -30,7 +31,8 @@
 
 <script>
 import * as d3Select from "d3-selection"
-import * as d3 from "d3"
+import * as d3Scale from "d3-scale"
+import * as d3Geo from "d3-geo"
 import * as topojson from "topojson"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import * as data from "./usStates.json"
@@ -55,6 +57,7 @@ export default {
       top: 50,
       left: 60,
       show: false,
+      total_range: [],
       tooltip: {
         x: 0,
         y: 0,
@@ -74,7 +77,7 @@ export default {
     async initiateMapChart() {
       await this.chartData
 
-      let svg = d3
+      let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
         .attr("width", this.width)
@@ -99,12 +102,12 @@ export default {
         state.properties = currentStateDetails
       })
       
-      let state_population = featureCollection.features.map(data => data.properties.population_percentage)
+      this.total_range = featureCollection.features.map(data => data.properties.population_percentage)
 
-      var projection = d3.geoIdentity().fitSize([600, 500], featureCollection)
-      var path = d3.geoPath().projection(projection)
+      var projection = d3Geo.geoIdentity().fitSize([600, 500], featureCollection)
+      var path = d3Geo.geoPath().projection(projection)
 
-      let colorScale = d3
+      let colorScale = d3Scale
         .scaleLinear()
         .domain([0, 100])
         .range(["#ffffff", "#396286"])
@@ -125,7 +128,7 @@ export default {
       let applyHoverChanges = (d) => {
           svg.selectAll("path")
           .style("stroke", "#4F4F4F")
-          .attr("fill-opacity", "0.5")
+          .attr("fill-opacity", "0.4")
           .style("stroke-width", "0.2")
           d3Select
             .select(d.srcElement)

@@ -86,10 +86,9 @@ export default {
   border-radius: 0px;
   max-width: 213px;
   height: auto;
-  top: -690px;
+  top: -500px;
   left: -660px;
   z-index: 1;
-  //   max-height: 150px;
 
   .ribbon-hover {
     @extend .card-padding;

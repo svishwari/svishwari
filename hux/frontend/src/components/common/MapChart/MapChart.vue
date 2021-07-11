@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="container d-flex justify-space-around">
+  <div class="container">
+    <div class="d-flex justify-space-around">
       <geo-chart
         v-model="mapChartData"
         v-on:cordinates="getCordinates"
@@ -100,6 +100,7 @@ export default {
   height: 550px;
   padding: 0px !important;
   .card-style {
+    max-height: 550px;
     .content-style {
       padding-top: 0px !important;
       max-height: 450px;
