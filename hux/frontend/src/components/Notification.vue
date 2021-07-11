@@ -1,43 +1,41 @@
-
 <template>
- <v-menu :min-width="200" left offset-y close-on-click>
-     <template #activator="{ on }">
-        <span v-on="on" class="d-flex cursor-pointer">
-          <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
-            <v-icon color="secondary"> mdi-bell-outline </v-icon>
-          </v-btn>
-        </span>
-      </template>
-        <v-list class="alert-menu-main">
-        <v-list-item>
-          <v-list-item-title class="font-weight-bold">
-            Most recent alerts
-          </v-list-item-title>
-        </v-list-item>
-        <v-list-item v-for="data in getNotificationData" :key="data.id">
-          <v-list-item-title class="text-h6 neroBlack--text list-main">
-            <div class="d-flex list-desc">
-              <status
-                :status="data.type"
-                :showLabel="false"
-                class="status-icon"
-                :iconSize="17"
-              />
-              <span> {{ data.description }} </span>
-            </div>
-            <div class="list-stamp">
-              <time-stamp :value="data.time" />
-            </div>
-          </v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title class="text-h6 neroBlack--text">
-            <a @click="alertRouters()">View all alerts</a>
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
+  <v-menu :min-width="200" left offset-y close-on-click>
+    <template #activator="{ on }">
+      <span v-on="on" class="d-flex cursor-pointer">
+        <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
+          <v-icon color="secondary"> mdi-bell-outline </v-icon>
+        </v-btn>
+      </span>
+    </template>
+    <v-list class="alert-menu-main">
+      <v-list-item>
+        <v-list-item-title class="font-weight-bold">
+          Most recent alerts
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item v-for="data in getNotificationData" :key="data.id">
+        <v-list-item-title class="text-h6 neroBlack--text list-main">
+          <div class="d-flex list-desc">
+            <status
+              :status="data.type"
+              :showLabel="false"
+              class="status-icon"
+              :iconSize="17"
+            />
+            <span> {{ data.description }} </span>
+          </div>
+          <div class="list-stamp">
+            <time-stamp :value="data.time" />
+          </div>
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-title class="text-h6 neroBlack--text">
+          <a @click="alertRouters()">View all alerts</a>
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
   </v-menu>
-  
 </template>
 
 <script>
@@ -46,11 +44,11 @@ import Status from "./common/Status.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
 export default {
   name: "Notification",
-    components: {
+  components: {
     Status,
-    TimeStamp
+    TimeStamp,
   },
-  data(){
+  data() {
     return {
       alertData: [
         {
@@ -78,16 +76,16 @@ export default {
       ],
     }
   },
-    computed: {
+  computed: {
     ...mapGetters({
       notification: "notification/list",
     }),
-    getNotificationData(){
-      return this.notification;
-    }
- },
+    getNotificationData() {
+      return this.notification
+    },
+  },
   methods: {
-     ...mapActions({
+    ...mapActions({
       getNotification: "notification/getAll",
     }),
     alertRouters() {

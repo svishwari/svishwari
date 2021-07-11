@@ -28,15 +28,11 @@
 </template>
 
 <script>
-import Status from "./common/Status.vue"
-import TimeStamp from "./common/huxTable/TimeStamp.vue"
 import Notification from "../components/Notification.vue"
 export default {
   name: "HeaderNavigation",
   components: {
-    Status,
-    TimeStamp,
-    Notification
+    Notification,
   },
   data() {
     return {

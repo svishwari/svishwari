@@ -38,7 +38,7 @@ export function makeServer({ environment = "development" } = {}) {
     audiencePerformance: Model,
     dataExtension: Model,
     deliveryFactory: Model,
-    notification: Model
+    notification: Model,
   }
 
   const factories = {
@@ -52,7 +52,7 @@ export function makeServer({ environment = "development" } = {}) {
     audiencePerformance: Factory.extend(audiencePerformanceFactory),
     dataExtension: Factory.extend(dataExtensionFactory),
     delivery: Factory.extend(deliveryFactory),
-    notification: Factory.extend(notificationFactory)
+    notification: Factory.extend(notificationFactory),
   }
 
   const server = createServer({

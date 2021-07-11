@@ -29,7 +29,7 @@ export default new Vuex.Store({
     identity,
     models,
     users,
-    notification
+    notification,
   },
 
   strict: debug,

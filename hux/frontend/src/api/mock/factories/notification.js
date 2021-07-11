@@ -5,8 +5,7 @@ import faker from "faker"
  */
 export const notification = {
   time: () => faker.date.recent(),
-  description: () => 'Data Source CS005 lost connection.',
-  type: () => 'Success',
-  category: () => 'Orchestration'
+  description: () => "Data Source CS005 lost connection.",
+  type: () => "Success",
+  category: () => "Orchestration",
 }
-

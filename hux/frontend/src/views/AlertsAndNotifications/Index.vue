@@ -39,7 +39,6 @@
         :dataItems="getNotificationData"
         :disableSort="true"
       >
-      
         <template #row-item="{ item }">
           <td
             v-for="header in columnDefs"
@@ -159,16 +158,16 @@ export default {
       loading: false,
     }
   },
- computed: {
+  computed: {
     ...mapGetters({
       notification: "notification/list",
     }),
-    getNotificationData(){
-      return this.notification;
-    }
- },
+    getNotificationData() {
+      return this.notification
+    },
+  },
   methods: {
-     ...mapActions({
+    ...mapActions({
       getNotification: "notification/getAll",
     }),
     goBack() {
@@ -178,7 +177,7 @@ export default {
   async mounted() {
     this.loading = true
     await this.getNotification()
-    this.loading = false;
+    this.loading = false
   },
 }
 </script>
