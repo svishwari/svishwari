@@ -10,7 +10,7 @@
         <div class="mt-2">
           <a
             href="#"
-            class="d-flex align-center primary--text text-decoration-none"
+            class="d-flex align-center black--text text-decoration-none"
           >
             Demographic overview
           </a>
@@ -35,18 +35,23 @@ import * as topojson from "topojson"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import * as data from "./usStates.json"
 import * as states from "./usdetails.json"
-import demographic_overview from "./mapData.json"
 
 export default {
   name: "geo-chart",
   components: {
     mapSlider,
   },
+  props: {
+    value: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      chartData: demographic_overview.demographic_overview,
-      width: 950,
-      height: 700,
+      chartData: this.value,
+      width: 700,
+      height: 500,
       top: 50,
       left: 60,
       show: false,
@@ -57,35 +62,44 @@ export default {
     }
   },
   methods: {
-    initializeValues() {},
+    calculateValues() {
+    //  setTimeout(() => {
 
-    async calculateChartValues() {
+  //    console.log(Math.min(null, state_population_percentage))
+  //    console.log(Math.max(state_population_percentage))
+  //    }, 1000);
+
+    },
+
+    async initiateMapChart() {
       await this.chartData
-      var width = 700
-      var height = 500
 
       let svg = d3
         .select(this.$refs.huxChart)
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-      let us = data.default
-      var list = us.objects.states.geometries
-      var usList = states.default
+        .attr("width", this.width)
+        .attr("height", this.height)
 
-      for (let i = 0; i < list.length; i++) {
-        usList.forEach((data) => {
-          if (list[i].id === data.id) {
-            list[i].name = data.name
-          }
-        })
-      }
+
+      let us = data.default
+      let usList = states.default
+
+
 
       var featureCollection = topojson.feature(
         us,
         us.objects.states,
         (a, b) => a !== b
       )
+
+      featureCollection.features.forEach(state => {
+        let currentStateDetails = this.chartData.find(
+        (data) => data.name == usList.find((us) => us.id == state.id).name
+        )
+        state.properties = currentStateDetails
+      })
+      
+      let state_population = featureCollection.features.map(data => data.properties.population_percentage)
 
       var projection = d3.geoIdentity().fitSize([600, 500], featureCollection)
       var path = d3.geoPath().projection(projection)
@@ -97,27 +111,41 @@ export default {
 
       svg
         .selectAll("path")
-        .data(topojson.feature(us, us.objects.states).features)
+        .data(featureCollection.features)
         .enter()
         .append("path")
         .attr("d", path)
-        .style("stroke", "white")
+        .style("stroke", "#1E1E1E")
         .style("stroke-width", "0.5")
-        .style("fill", () => colorScale(70))
-        .on("mouseover", (d) => {
+        .style("fill", (d) => colorScale(d.properties.population_percentage * 100))
+        .attr("fill-opacity", "1")
+        .on("mouseover", (d) => applyHoverChanges(d))
+        .on("mouseout", (d) => removeHoverChanges(d))
+
+      let applyHoverChanges = (d) => {
+          svg.selectAll("path")
+          .style("stroke", "#4F4F4F")
+          .attr("fill-opacity", "0.5")
+          .style("stroke-width", "0.2")
           d3Select
             .select(d.srcElement)
-            .attr("fill-opacity", "1")
-            .style("fill", (d) => getCurrentStateData(d.id))
-        })
-        .on("mouseout", () => this.tooltipDisplay(false))
+            .attr("fill-opacity", (d) => emitStateData(d))
+            .style("stroke", "#1E1E1E")
+            .style("stroke-width", "1")
+      }
 
-      let getCurrentStateData = (id) => {
-        let currentStateDetails = this.chartData.find(
-          (data) => data.name == usList.find((data) => data.id == id).name
-        )
-        this.tooltipDisplay(true, currentStateDetails)
-        return colorScale(20)
+      let emitStateData = (d) => {
+        this.tooltipDisplay(true, d.properties)
+        return "1"
+      }
+
+      let removeHoverChanges = (d) => {
+          svg.selectAll("path")
+          .style("stroke", "#1E1E1E")
+          .style("stroke-width", "0.5")
+          .style("fill", (d) => colorScale(d.properties.population_percentage * 100))
+          .attr("fill-opacity", "1")
+          this.tooltipDisplay(false)
       }
     },
 
@@ -135,13 +163,13 @@ export default {
   watch: {
     value: function () {
       d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.calculateChartValues()
+      this.initiateMapChart()
     },
   },
 
   mounted() {
-    this.initializeValues()
-    this.calculateChartValues()
+    this.calculateValues()
+    this.initiateMapChart()
   },
 }
 </script>

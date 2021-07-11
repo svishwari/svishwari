@@ -1,10 +1,10 @@
 <template>
   <v-slider class="hux-score-slider" always-dirty readonly @end="onFinalValue">
     <template #append>
-      <span class="slider-value-display" v-text="'10' + '%'"></span>
+      <span class="slider-value-display" v-text="minValue"></span>
     </template>
     <template #prepend>
-      <span class="slider-value-display" v-text="'50' + '%'"></span>
+      <span class="slider-value-display" v-text="maxValue"></span>
     </template>
   </v-slider>
 </template>
@@ -15,12 +15,22 @@ export default {
   props: {
     min: {
       type: Number,
+      default: 0.2345,
       required: false,
     },
     max: {
       type: Number,
+      default: 0.90023,
       required: false,
     },
+  },
+   data() {
+    return {
+      minValue: this.$options.filters
+              .percentageConvert(this.min, true, true),
+      maxValue: this.$options.filters
+              .percentageConvert(this.max, true, true)
+    }
   },
 }
 </script>

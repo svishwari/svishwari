@@ -2,25 +2,23 @@
   <div>
     <div class="container d-flex justify-space-around">
       <geo-chart
-        v-model="chartMatrix"
-        :colorCodes="colorCodes"
-        :chartLegendsData="chartLegendsData"
+        v-model="mapChartData"
         v-on:cordinates="getCordinates"
         v-on:tooltipDisplay="toolTipDisplay"
       />
       <v-card class="rounded-lg card-style" minHeight="20px">
-        <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-5">
+        <v-card-title class="d-flex justify-space-between pb-2 pl-8 pt-5">
           <div class="mt-2">
             <a
               href="#"
-              class="d-flex align-center primary--text text-decoration-none"
+              class="d-flex align-center black--text text-decoration-none"
             >
               United States
             </a>
           </div>
         </v-card-title>
-        <v-divider class="ml-6 mr-6 mt-1 mb-2" />
-        <v-card-text minHeight="100px" class="content-style pl-6 pr-6 pb-6">
+        <v-divider class="ml-8 mr-8 mt-0 mb-2" />
+        <v-card-text minHeight="100px" class="content-style pl-4 pr-4 pb-4">
           <div
             class="sub-props pt-4"
             v-for="item in mapChartData"
@@ -82,10 +80,10 @@ export default {
       this.currentData = currentStateinfo
     },
   },
-  mounted() {
-    this.generateChartGroups()
-    this.transformData()
-  },
+  // mounted() {
+  //   this.generateChartGroups()
+  //   this.transformData()
+  // },
 }
 </script>
 
@@ -94,14 +92,16 @@ export default {
   display: inline-block;
   font-weight: normal;
   font-style: normal;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 19px;
+
 }
 .container {
   height: 550px;
   padding: 0px !important;
   .card-style {
     .content-style {
+      padding-top: 0px !important;
       max-height: 450px;
       overflow-y: scroll;
       .sub-props {
@@ -110,12 +110,16 @@ export default {
         align-items: center;
         .subprop-name {
           @extend .global-text-line;
-          flex: 1 0 50%;
-          padding-left: 5px;
+          flex: 0 0 40%;
+          text-align: right;
+          margin-right: 30px;
         }
         .value {
           @extend .global-text-line;
           font-weight: bold;
+          color: #1E1E1E;
+          flex: 1;
+          text-align: left;
         }
       }
     }

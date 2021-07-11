@@ -12,19 +12,19 @@
       <span class="prop-name">{{ sourceInput.name }}</span>
       <div class="sub-props pt-4">
         <span class="subprop-name">Size</span>
-        <span class="value ml-1">{{ sourceInput.size }}</span>
+        <span class="value ml-1">{{ sourceInput.size | Empty}}</span>
       </div>
       <div class="sub-props pt-4">
         <span class="subprop-name">W/M/O</span>
         <span class="value ml-1"
-          >{{ sourceInput.women | percentageConvert(true, true) }} |
-          {{ sourceInput.men | percentageConvert(true, true) }} |
-          {{ sourceInput.other | percentageConvert(true, true) }}</span
+          >{{ sourceInput.women | percentageConvert(true, true) | Empty }} |
+          {{ sourceInput.men | percentageConvert(true, true) | Empty}} |
+          {{ sourceInput.other | percentageConvert(true, true) | Empty}}</span
         >
       </div>
       <div class="sub-props pt-4">
         <span class="subprop-name">LTV</span>
-        <span class="value ml-1">${{ sourceInput.ltv }}</span>
+        <span class="value ml-1">{{ sourceInput.ltv | Currency}}</span>
       </div>
     </div>
   </v-card>
@@ -102,6 +102,7 @@ export default {
     }
     .prop-name {
       @extend .global-heading;
+      font-weight: 600;
     }
     .text-line {
       @extend .global-text-line;
@@ -125,11 +126,13 @@ export default {
       height: 30px;
       .subprop-name {
         @extend .global-text-line;
-        flex: 1 0 40%;
+        flex: 0 0 40%;
         padding-left: 5px;
       }
       .value {
         @extend .global-text-line;
+        flex: 1; 
+        text-align: left; 
       }
     }
   }
