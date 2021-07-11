@@ -156,12 +156,6 @@ export const defineRoutes = (server) => {
   // notification
   server.get("/notification")
 
-  // server.post("/notification", (schema, request) => {
-  //   const requestData = JSON.parse(request.requestBody)
-
-  //   return schema.notification.create(requestData)
-  // })
-
   // audiences
   server.get("/audiences")
 
