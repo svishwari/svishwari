@@ -15,6 +15,7 @@ DELETED = "deleted"
 NAME = "name"
 TYPE = "type"
 OBJECT_ID = "id"
+CONFIGURATION = "configuration"
 
 # general fields
 AGE = "age"
