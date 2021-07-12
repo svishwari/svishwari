@@ -479,6 +479,11 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
+# Customers API Fields
+CUSTOMERS_TAG = "customers"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
+
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
@@ -494,6 +499,32 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+DATA_FEEDS = "datafeeds"
+DATA_FEED = "datafeed"
+INPUT_RECORDS = "input_records"
+OUTPUT_RECORDS = "output_records"
+EMPTY_RECORDS = "empty_records"
+INDIVIDUAL_ID_MATCH = "individual_id_match"
+HOUSEHOLD_ID_MATCH = "household_id_match"
+COMPANY_ID_MATCH = "company_id_match"
+ADDRESS_ID_MATCH = "address_id_match"
+DB_READS = "db_reads"
+DB_WRITES = "db_writes"
+FILENAME = "filename"
+NEW_INDIVIDUAL_IDS = "new_individual_ids"
+NEW_HOUSEHOLD_IDS = "new_household_ids"
+NEW_COMPANY_IDS = "new_company_ids"
+NEW_ADDRESS_IDS = "new_address_ids"
+PROCESS_TIME = "process_time"
+DATE_TIME = "date_time"
+DIGITAL_IDS_ADDED = "digital_ids_added"
+DIGITAL_IDS_MERGED = "digital_ids_merged"
+MATCH_RATE = "match_rate"
+MERGE_RATE = "merge_rate"
+RECORDS_SOURCE = "records_source"
+TIME_STAMP = "time_stamp"
+STITCHED = "stitched"
+PINNING = "pinning"
 
 # FILTERING
 REDACTED = "++REDACTED++"
