@@ -153,6 +153,7 @@ export default {
     },
 
     add(destination) {
+      debugger
       if (destination.type === "sfmc") {
         this.$emit("onSalesforce", destination)
       } else {

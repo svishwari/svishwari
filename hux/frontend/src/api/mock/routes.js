@@ -95,15 +95,18 @@ export const defineRoutes = (server) => {
     const id = request.params.id
     const requestData = JSON.parse(request.requestBody)
     const engagement = schema.engagements.find(id)
-    const audId = requestData.audiences[0].id
-    const audience = schema.audiences.find(audId)
-    const audienceObj = {
-      status: audience.status,
-      id: audience.id,
-      name: audience.name,
-      destinations: [],
-    }
-    engagement.audiences.push(audienceObj)
+    const addedAudiences = requestData.audiences.map((aud) => {
+      const audience = schema.audiences.find(aud.id)
+      const audienceObj = {
+        status: audience.status,
+        id: audience.id,
+        name: audience.name,
+        destinations: [],
+      }
+      return audienceObj
+    })
+
+    engagement.audiences.push(...addedAudiences)
     const body = { message: "SUCCESS" }
     return new Response(code, headers, body)
   })

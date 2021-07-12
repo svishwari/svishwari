@@ -176,18 +176,19 @@
       </div>
     </div>
     <select-audiences-drawer
+      ref="selectAudiences"
       v-model="selectedAudiences"
       :toggle="showSelectAudiencesDrawer"
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
       @onAdd="triggerCreateAudience()"
-      @onAddAudience="triggerAttachAudience($event)"
-      @onRemoveAudience="triggerDetachAudiences($event)"
+      enableMultiple
+      @triggerAddAudiences="triggerAttachAudiences($event)"
     />
     <add-audience-drawer
       v-model="selectedAudiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
-      @onCancelAndBack="openSelectAudiencesDrawer()"
+      @onCancelAndBack="triggerSelectAudience()"
       @onCreateAddAudience="triggerAttachAudience($event)"
     />
     <select-destinations-drawer
@@ -684,6 +685,9 @@ export default {
     triggerSelectAudience() {
       this.closeDrawers()
       this.showSelectAudiencesDrawer = true
+      this.$refs.selectAudiences.localSelectedAudiences = JSON.parse(
+        JSON.stringify(this.selectedAudiences)
+      )
     },
 
     triggerCreateAudience() {
@@ -700,7 +704,43 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
+    async triggerAttachAudiences(audiences) {
+      this.loadingAudiences = true
+      if (Object.keys(audiences.added).length > 0) {
+        const addPayload = {
+          audiences: Object.values(audiences.added).map((aud) => ({
+            id: aud.id,
+            destinations: [],
+          })),
+        }
+        await this.attachAudience({
+          engagementId: this.engagementId,
+          data: addPayload,
+        })
+      }
+      if (Object.keys(audiences.removed).length > 0) {
+        if (process.env.NODE_ENV === "development") {
+          for (const aud of Object.values(audiences.removed)) {
+            const removePayload = { audience_ids: [] }
+            removePayload.audience_ids.push(aud.id)
+            await this.detachAudience({
+              engagementId: this.engagementId,
+              data: removePayload,
+            })
+          }
+        } else {
+          const removePayload = {
+            audience_ids: Object.values(audiences.removed).map((aud) => aud.id),
+          }
 
+          await this.detachAudience({
+            engagementId: this.engagementId,
+            data: removePayload,
+          })
+        }
+      }
+      await this.loadEngagement(this.engagementId)
+    },
     async triggerAttachAudience(aud) {
       this.loadingAudiences = true
       const payload = { audiences: [] }
@@ -738,13 +778,13 @@ export default {
 
       // audience id pushing in one array
       engData.audiences.forEach((data) => audienceIds.push(data.id))
-
+      this.selectedAudiences = {}
       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
         const audience = this.getAudience(id)
         audienceDetails.push(audience)
-        audience.destination = []
+        audience.destinations = []
         this.selectedAudiences[id] = audience
       }
       // extracting the audience data and merging into object
