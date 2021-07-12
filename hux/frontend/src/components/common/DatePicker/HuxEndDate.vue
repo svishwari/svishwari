@@ -47,6 +47,7 @@
               :is-offset-y="false"
               :isSubMenu="false"
               @on-date-select="(val) => $emit('on-date-select', val)"
+              :minDate="minDate"
               v-if="isSubMenu"
             />
             <v-list-item v-if="!isSubMenu">
@@ -56,6 +57,8 @@
                   v-model="end"
                   no-title
                   scrollable
+                  :min="minDate"
+                  :max="maxDate"
                 >
                   <div class="date-picker-header" style="">
                     <span class="header-label"> Date </span>
@@ -112,6 +115,14 @@ export default {
     isOpenOnHover: { type: Boolean, default: false },
     isSubMenu: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
+    maxDate: {
+      type: String,
+      required: false,
+    },
+    minDate: {
+      type: String,
+      required: false,
+    }
   },
   methods: {
     onCancel() {

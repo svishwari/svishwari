@@ -214,6 +214,7 @@
                       :label="selectedEndDate"
                       :selected="selectedEndDate"
                       :isSubMenu="true"
+                      :minDate="selectedStartDate"
                       @on-date-select="onEndDateSelect"
                     />
                   </div>

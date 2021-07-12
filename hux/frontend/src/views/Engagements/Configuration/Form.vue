@@ -84,7 +84,9 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-
+          <v-icon class="icon icon-right" size="16">
+            mdi-arrow-right
+          </v-icon>
           <div>
             <span class="date-picker-label">End date</span>
             <hux-end-date
@@ -92,6 +94,7 @@
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :isSubMenu="true"
+              :minDate="selectedStartDate"
               @on-date-select="onEndDateSelect"
             />
           </div>
@@ -514,6 +517,13 @@ export default {
 }
 .delivery-schedule {
   margin-left: auto;
+  .icon-right {
+    transform: scale(1.5);
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-top: -30px;
+    color: var(--v-lightGrey-base) !important;
+  }
 }
 .date-picker-label {
   position: absolute;
