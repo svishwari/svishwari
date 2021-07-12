@@ -25,16 +25,16 @@
               v-if="header.value === 'audience'"
               :to="{
                 name: 'AudienceInsight',
-                params: { id: item.audience.id },
+                params: { id: item.audience_id },
               }"
               class="text-decoration-none"
             >
-              {{ item.audience.name }}
+              {{ item.audience }}
             </router-link>
             <logo
               v-if="header.value === 'destination' && item[header.value]"
-              :key="item[header.value].type"
-              :type="item[header.value].type"
+              :key="item.destination_type"
+              :type="item.destination_type"
               :size="18"
               class="mb-0"
             >
@@ -127,26 +127,7 @@ export default {
     }),
 
     items() {
-      const deliveries = this.engagementDeliveries(this.engagementId)
-      const items = deliveries.map((audience) => {
-        const destinations = audience.destinations.map((destination) => {
-          const fullDestination = this.getDestination(destination.id)
-          return destination.deliveries.map((delivery, index) => {
-            return {
-              id: `${audience.id}-${index}`,
-              audience: {
-                id: audience.id,
-                name: audience.name,
-              },
-              destination: fullDestination,
-              size: delivery.size,
-              delivered: delivery.update_time,
-            }
-          })
-        })
-        return destinations.flat()
-      })
-      return items.flat()
+      return this.engagementDeliveries(this.engagementId)
     },
   },
 

@@ -103,16 +103,14 @@ export const defineRoutes = (server) => {
     const id = request.params.id
     const engagement = schema.engagements.find(id)
     return engagement.audiences.map((audience) => {
+      // TODO: update with the API (missing id, type and datetime string)
       return {
-        id: audience.id,
-        name: audience.name,
+        audience_id: audience.id,
+        audience: audience.name,
+        destination: "Salesforce Marketing Cloud",
+        destination_type: "sfmc",
         size: audience.size,
-        destinations: audience.destinations.map((destination) => {
-          return {
-            id: destination.id,
-            deliveries: server.createList("delivery", 10),
-          }
-        }),
+        delivered: "2021-07-11T14:39:49.574Z",
       }
     })
   })
