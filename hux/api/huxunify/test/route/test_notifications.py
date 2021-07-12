@@ -55,7 +55,7 @@ class TestNotificationRoutes(TestCase):
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
                 "description": "description 1",
-                "category": api_c.CATEGORY_ORCHESTRATION,
+                "category": api_c.CATEGORY_DELIVERY,
             },
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_INFORMATIONAL,
@@ -65,7 +65,7 @@ class TestNotificationRoutes(TestCase):
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "description 3",
-                "category": api_c.CATEGORY_DESTINATIONS,
+                "category": api_c.CATEGORY_AUDIENCES,
             },
         ]
 
