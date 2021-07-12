@@ -51,27 +51,51 @@
           </h5>
         </template>
 
-        <v-radio-group
-          v-model="value.delivery_schedule"
-          row
-          class="ma-0 radio-div"
-        >
-          <v-radio :value="0" selected class="btn-radio">
-            <template #label>
-              <v-icon small color="primary" class="mr-1">
-                mdi-gesture-tap
-              </v-icon>
-              <span class="primary--text">Manual</span>
-            </template>
-          </v-radio>
+        <v-row class="delivery-schedule">
+          <v-radio-group
+            v-model="value.delivery_schedule"
+            row
+            class="ma-0 radio-div"
+          >
+            <v-radio :value="0" selected class="btn-radio">
+              <template #label>
+                <v-icon small color="primary" class="mr-1">
+                  mdi-gesture-tap
+                </v-icon>
+                <span class="primary--text">Manual</span>
+              </template>
+            </v-radio>
 
-          <v-radio :value="1" class="btn-radio" disabled>
-            <template #label>
-              <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
-              <span>Recurring</span>
-            </template>
-          </v-radio>
-        </v-radio-group>
+            <v-radio :value="1" class="btn-radio" disabled>
+              <template #label>
+                <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
+                <span>Recurring</span>
+              </template>
+            </v-radio>
+          </v-radio-group>
+
+          <div>
+            <span class="date-picker-label">Start date</span>
+            <hux-start-date
+              class="mt-n4"
+              labelText="Engagement name"
+              :label="selectedStartDate"
+              :selected="selectedStartDate"
+              @on-date-select="onStartDateSelect"
+            />
+          </div>
+
+          <div>
+            <span class="date-picker-label">End date</span>
+            <hux-end-date
+              class="mt-n4"
+              :label="selectedEndDate"
+              :selected="selectedEndDate"
+              :isSubMenu="true"
+              @on-date-select="onEndDateSelect"
+            />
+          </div>
+        </v-row>
       </FormStep>
 
       <FormStep :step="3" label="Select audience(s) and destination(s)">
@@ -277,6 +301,8 @@ import AddAudienceDrawer from "./Drawers/AddAudienceDrawer.vue"
 import SelectAudiencesDrawer from "./Drawers/SelectAudiencesDrawer.vue"
 import SelectDestinationsDrawer from "./Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "./Drawers/DestinationDataExtensionDrawer.vue"
+import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
+import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 export default {
   name: "EngagementsForm",
@@ -293,6 +319,8 @@ export default {
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
+    HuxStartDate,
+    HuxEndDate,
   },
 
   props: {
@@ -310,6 +338,8 @@ export default {
       showDataExtensionDrawer: false,
       selectedAudienceId: null,
       selectedDestination: null,
+      selectedStartDate: "Select date",
+      selectedEndDate: "Select date",
     }
   },
 
@@ -329,6 +359,8 @@ export default {
             destinations: audience.destinations,
           }
         }),
+        create_time: this.selectedStartDate,
+        update_time: this.selectedEndDate,
       }
     },
 
@@ -426,6 +458,14 @@ export default {
       ].destinations.findIndex((destination) => destination.id === id)
       this.value.audiences[deleteAudience.item.id].destinations.splice(index, 1)
     },
+
+    onStartDateSelect(val) {
+      this.selectedStartDate = val
+    },
+
+    onEndDateSelect(val) {
+      this.selectedEndDate = val
+    },
   },
 }
 </script>
@@ -471,5 +511,13 @@ export default {
       }
     }
   }
+}
+.delivery-schedule {
+  margin-left: auto;
+}
+.date-picker-label {
+  position: absolute;
+  margin-top: -30px;
+  margin-left: 8px;
 }
 </style>

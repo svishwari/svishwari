@@ -49,10 +49,74 @@ MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+GENDERS = [GENDER_WOMEN, GENDER_MEN, GENDER_OTHER]
 MIN_LTV_PREDICTED = "min_ltv_predicted"
 MAX_LTV_PREDICTED = "max_ltv_predicted"
 MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
+LTV = "ltv"
+POPULATION_PERCENTAGE = "population_percentage"
+INCOME = "income"
+# TODO: Remove State Names once it connected with CDM
+STATE_NAMES = [
+    "Alaska",
+    "Alabama",
+    "Arkansas",
+    "American Samoa",
+    "Arizona",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "District of Columbia",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Guam",
+    "Hawaii",
+    "Iowa",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Massachusetts",
+    "Maryland",
+    "Maine",
+    "Michigan",
+    "Minnesota",
+    "Missouri",
+    "Mississippi",
+    "Montana",
+    "North Carolina",
+    "North Dakota",
+    "Nebraska",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "Nevada",
+    "New York",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Puerto Rico",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Virginia",
+    "Virgin Islands",
+    "Vermont",
+    "Washington",
+    "Wisconsin",
+    "West Virginia",
+    "Wyoming",
+]
+DEMOGRAPHIC = "demo"
+DATE = "date"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -187,6 +251,28 @@ DESTINATION_CONSTANTS = {
             REQUIRED: True,
             DESCRIPTION: None,
         },
+    },
+}
+
+# DESTINATION Secret Mapping
+MONGO = "mongo"
+DESTINATION_SECRETS = {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: {
+        MONGO: [
+            FACEBOOK_AD_ACCOUNT_ID,
+            FACEBOOK_APP_ID,
+        ],
+        AWS_SSM_NAME: [FACEBOOK_ACCESS_TOKEN, FACEBOOK_APP_SECRET],
+    },
+    db_c.DELIVERY_PLATFORM_SFMC: {
+        MONGO: [
+            SFMC_CLIENT_ID,
+            SFMC_AUTH_BASE_URI,
+            SFMC_ACCOUNT_ID,
+            SFMC_SOAP_BASE_URI,
+            SFMC_REST_BASE_URI,
+        ],
+        AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
     },
 }
 
@@ -463,6 +549,8 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
+CUSTOMERS_INSIGHTS = "customers-insights"
+GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 
 # Notifications
@@ -472,6 +560,11 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
+
+# Customers API Fields
+CUSTOMERS_TAG = "customers"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
@@ -488,6 +581,32 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+DATA_FEEDS = "datafeeds"
+DATA_FEED = "datafeed"
+INPUT_RECORDS = "input_records"
+OUTPUT_RECORDS = "output_records"
+EMPTY_RECORDS = "empty_records"
+INDIVIDUAL_ID_MATCH = "individual_id_match"
+HOUSEHOLD_ID_MATCH = "household_id_match"
+COMPANY_ID_MATCH = "company_id_match"
+ADDRESS_ID_MATCH = "address_id_match"
+DB_READS = "db_reads"
+DB_WRITES = "db_writes"
+FILENAME = "filename"
+NEW_INDIVIDUAL_IDS = "new_individual_ids"
+NEW_HOUSEHOLD_IDS = "new_household_ids"
+NEW_COMPANY_IDS = "new_company_ids"
+NEW_ADDRESS_IDS = "new_address_ids"
+PROCESS_TIME = "process_time"
+DATE_TIME = "date_time"
+DIGITAL_IDS_ADDED = "digital_ids_added"
+DIGITAL_IDS_MERGED = "digital_ids_merged"
+MATCH_RATE = "match_rate"
+MERGE_RATE = "merge_rate"
+RECORDS_SOURCE = "records_source"
+TIME_STAMP = "time_stamp"
+STITCHED = "stitched"
+PINNING = "pinning"
 
 # FILTERING
 REDACTED = "++REDACTED++"

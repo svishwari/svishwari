@@ -48,7 +48,7 @@ data_sources_constants = [
     },
     {
         c.DATA_SOURCE_NAME: "Salesforce Marketing Cloud",
-        c.DATA_SOURCE_TYPE: "salesforce",
+        c.DATA_SOURCE_TYPE: c.DELIVERY_PLATFORM_SFMC,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
