@@ -25,7 +25,7 @@
             :key="item.name"
           >
             <span class="subprop-name">{{ item.name }}</span>
-            <span class="value ml-2">{{
+            <span class="value ml-2 font-weight-semi-bold">{{
               item.population_percentage | percentageConvert(true, true)
             }}</span>
           </div>
@@ -80,21 +80,15 @@ export default {
       this.currentData = currentStateinfo
     },
   },
-  // mounted() {
-  //   this.generateChartGroups()
-  //   this.transformData()
-  // },
 }
 </script>
 
 <style lang="scss" scoped>
 .global-text-line {
   display: inline-block;
-  font-weight: normal;
   font-style: normal;
-  font-size: 14px;
+  font-size: $font-size-root;
   line-height: 19px;
-
 }
 .container {
   height: 550px;
@@ -117,34 +111,28 @@ export default {
         }
         .value {
           @extend .global-text-line;
-          font-weight: bold;
-          color: #1E1E1E;
+          color: var(--v-neroBlack-base);
           flex: 1;
           text-align: left;
         }
       }
     }
-
     ::-webkit-scrollbar {
       width: 5px;
     }
-
-    /* Track */
     ::-webkit-scrollbar-track {
-      box-shadow: inset 0 0 5px white;
+      box-shadow: inset 0 0 5px var(--v-white-base);
       border-radius: 10px;
     }
-
-    /* Handle */
     ::-webkit-scrollbar-thumb {
-      background: #d0d0ce;
+      background: var(--v-lightGrey-base);
       border-radius: 5px;
     }
-
-    /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
-      background: #d0d0ce;
+      background: var(--v-lightGrey-base);
     }
   }
 }
 </style>
+
+
