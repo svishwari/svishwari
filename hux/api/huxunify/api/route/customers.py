@@ -4,16 +4,21 @@ Paths for customer API
 """
 from datetime import datetime
 from http import HTTPStatus
+from random import choice
 from typing import Tuple
+from datetime import datetime
 from faker import Faker
+import pandas as pd
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
+    CustomerGeoVisualSchema,
+    CustomerDemographicInsightsSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -385,5 +390,159 @@ class IDRDataFeeds(SwaggerView):
                     },
                 }
             ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.GEOGRAPHICAL}",
+    "CustomerInsightsGeo",
+)
+class CustomerGeoVisualView(SwaggerView):
+    """
+    Customer Profiles Geographical insights class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": CustomerGeoVisualSchema},
+            "description": "Customer Profiles Geographical Insights .",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Customer Profiles Geographical Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def get(self) -> Tuple[list, int]:
+        """Retrieves a Customer profiles geographical insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] list of Customer insights on geo overview and http code
+        """
+        geo_visuals = [
+            {
+                api_c.NAME: state,
+                api_c.POPULATION_PERCENTAGE: choice([0.3012, 0.1910, 0.2817]),
+                api_c.SIZE: choice([28248560, 39510225, 7615887]),
+                api_c.GENDER_WOMEN: 0.50,
+                api_c.GENDER_MEN: 0.49,
+                api_c.GENDER_OTHER: 0.01,
+                api_c.LTV: choice([3848.50, 3971.50, 3952]),
+            }
+            for state in api_c.STATE_NAMES
+        ]
+        return (
+            jsonify(CustomerGeoVisualSchema().dump(geo_visuals, many=True)),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
+    "CustomerInsightsDemo",
+)
+class CustomerDemoVisualView(SwaggerView):
+    """
+    Customers Profiles Demographic Insights class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "description": "Customer Insights Demographic Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": {
+                    "start_date": "2020-11-30T00:00:00Z",
+                    "end_date": "2021-04-30T00:00:00Z",
+                }
+            },
+        }
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "body",
+                "items": CustomerDemographicInsightsSchema,
+            },
+            "description": "Customer Demographical Visual Insights.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get customers Demographical Visual Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def post(self) -> Tuple[dict, int]:
+        """Retrieves a Demographical customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] list of Customer insights on demo overview and http code
+        """
+
+        start_date = datetime(2020, 11, 30)
+        dates = [
+            (start_date + pd.DateOffset(months=x)).to_pydatetime()
+            for x in range(0, 5)
+        ]
+        output = {
+            api_c.GENDER: {
+                gender: {
+                    api_c.POPULATION_PERCENTAGE: population_percent,
+                    api_c.SIZE: size,
+                }
+                for gender, population_percent, size in zip(
+                    api_c.GENDERS,
+                    [0.5201, 0.4601, 0.0211],
+                    [6955119, 5627732, 289655],
+                )
+            },
+            api_c.INCOME: [
+                {api_c.NAME: city, api_c.LTV: ltv}
+                for city, ltv in zip(
+                    [
+                        "Houston",
+                        "San Antonio",
+                        "Dallas",
+                        "Austin",
+                        "Fort Worth",
+                    ],
+                    [4008, 3922, 4231, 4198, 4011],
+                )
+            ],
+            api_c.SPEND: {
+                api_c.GENDER_WOMEN: [
+                    {api_c.DATE: date, api_c.LTV: ltv}
+                    for date, ltv in zip(dates, [3199, 4265, 4986, 4986, 6109])
+                ],
+                api_c.GENDER_MEN: [
+                    {api_c.DATE: date, api_c.LTV: ltv}
+                    for date, ltv in zip(dates, [3088, 3842, 3999, 3999, 6109])
+                ],
+                api_c.GENDER_OTHER: [
+                    {api_c.DATE: date, api_c.LTV: ltv}
+                    for date, ltv in zip(dates, [2144, 3144, 3211, 3211, 4866])
+                ],
+            },
+        }
+
+        return (
+            CustomerDemographicInsightsSchema().dump(output),
             HTTPStatus.OK,
         )
