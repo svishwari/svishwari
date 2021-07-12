@@ -213,7 +213,7 @@ class EngagementSchemaTest(TestCase):
             api_c.NAME: "Engagement 1",
             api_c.ID: "5f5f7262997acad4bac4373b",
             api_c.DELIVERY_JOB_ID: "5f5f7262997acad4bac4373c",
-            db_c.CREATE_TIME: "2021-10-10",
+            db_c.CREATE_TIME: "2021-07-06T13:21:11.181000",
         }
         assert CampaignSchema().validate(doc) == {}
 
@@ -262,7 +262,7 @@ class EngagementSchemaTest(TestCase):
             "delivery_jobs": [
                 {
                     api_c.ID: "5f5f7262997acad4bac4373c",
-                    db_c.CREATE_TIME: "2021-10-10",
+                    db_c.CREATE_TIME: "2021-07-06T13:21:11.181000",
                 }
             ],
         }

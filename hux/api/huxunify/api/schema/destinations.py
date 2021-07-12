@@ -62,9 +62,9 @@ class DestinationGetSchema(Schema):
     )
     is_added = fields.Bool(attribute="added")
     is_enabled = fields.Bool(attribute="enabled")
-    create_time = fields.String(attribute=db_c.CREATE_TIME, allow_none=True)
+    create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
-    update_time = fields.String(attribute=db_c.UPDATE_TIME, allow_none=True)
+    update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
     delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
 
