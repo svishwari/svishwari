@@ -12,18 +12,18 @@
       </template>
 
       <template #right>
-          <huxButton
-            ButtonText="Return to previous page"
-            icon="mdi-keyboard-return"
-            iconPosition="left"
-            variant="primary"
-            size="large"
-            isTile
-            class="ma-2 font-weight-regular no-shadow mr-0"
-            @click="goBack()"
-          >
-            Return to previous page
-          </huxButton>
+        <huxButton
+          ButtonText="Return to previous page"
+          icon="mdi-keyboard-return"
+          iconPosition="left"
+          variant="primary"
+          size="large"
+          isTile
+          class="ma-2 font-weight-regular no-shadow mr-0"
+          @click="goBack()"
+        >
+          Return to previous page
+        </huxButton>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
