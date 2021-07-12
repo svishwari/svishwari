@@ -14,6 +14,7 @@ from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.constants as db_c
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
+from huxunify.api.schema.customers import DatafeedSchema
 from huxunify.app import create_app
 
 
@@ -250,3 +251,6 @@ class TestCustomersOverview(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            {}, DatafeedSchema().validate(response.json, many=True)
+        )

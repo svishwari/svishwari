@@ -4,7 +4,7 @@ Paths for customer API
 """
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Tuple
+from typing import Tuple, List
 from faker import Faker
 
 from flask import Blueprint, request
@@ -331,15 +331,16 @@ class IDRDataFeeds(SwaggerView):
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
     @marshal_with(DatafeedSchema(many=True))
-    def get(self) -> list:
+    def get(self) -> Tuple[List[dict], int]:
         """Retrieves a IDR data feeds.
         ---
         security:
-            - Bearer: ["Authorization"]
+            - Bearer: ["Authorization"]\
+
         Args:
 
         Returns:
-            Tuple[dict, int] dict of IDR data feed waterfall
+            Tuple[List[dict], int] list of IDR data feeds object dicts
         """
 
         data_feeds = [
