@@ -84,8 +84,14 @@
             />
           </div>
 
-          <v-icon class="icon icon-right" size="16"  v-if="value.delivery_schedule == 1"> mdi-arrow-right </v-icon>
-          <div  v-if="value.delivery_schedule == 1">
+          <v-icon
+            class="icon icon-right"
+            size="16"
+            v-if="value.delivery_schedule == 1"
+          >
+            mdi-arrow-right
+          </v-icon>
+          <div v-if="value.delivery_schedule == 1">
             <span class="text-h5 date-picker-label">End date</span>
             <hux-end-date
               class="mt-n4"
