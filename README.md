@@ -3,7 +3,7 @@ Repository for hux unified
 
 Component|Build|Version|CD|Docker Image
 ---------|---|---|---|---|
-huxunifylib-database|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_library?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=606bf0961ca52d74786e76ef&pipeline=unified_solution_library&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0)| | | | | 
+huxunifylib-database|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_library?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=606bf0961ca52d74786e76ef&pipeline=unified_solution_library&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0)| | | | |
 huxunify-api|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_api_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605a45789f86ae45939bfec3&pipeline=unified_solution_api_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | | | | |
 huxunify-ui|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_ui_ci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=60658a58cefd71c868974159&pipeline=unified_solution_ui_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | | | | |
 huxunify-cd|[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/deloittehux/Hux_Unified_Solution%2Funified_solution_cd?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NWRjMzBjMmJiMGVmMzJiNzkxM2Y2MGJh.GkhczDGoVzfrLnhTAn2b9yqwMQkP_wXNMhwGDPRPStQ)]( https://g.codefresh.io/pipelines/edit/new/builds?id=605c55329f86ae31179c045c&pipeline=unified_solution_cd&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0) | | | | |
@@ -67,8 +67,7 @@ Steps
 
 
 # CI
-TODO - fill this out
-
+CI is defined in the ci subdirectory for each component, *e.g.* hux/api/ci/. The README.md file in those directories describes the method for setting up the pipelines and triggers.
 
 # CD
-TODO - fill this out
+The CD is provided by ArgoCD agents running in each target Kubernetes cluster. These agents monitor values files in the unified-deploy repository for the their cluster and make appropriate changes. Successful CI pipelines update these values files. 

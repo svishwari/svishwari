@@ -57,7 +57,7 @@
             <div v-if="header.value == 'name'" class="w-100">
               <menu-cell
                 :value="item[header.value]"
-                :menuOptions="actionItems"
+                :menuOptions="getActionItems(item)"
                 routeName="AudienceInsight"
                 :routeParam="item['id']"
               />
@@ -114,20 +114,31 @@
         </template>
       </EmptyPage>
     </v-row>
+
+    <LookAlikeAudience
+      :toggle="showLookAlikeDrawer"
+      :selected-audience="selectedAudience"
+      @onToggle="(val) => (showLookAlikeDrawer = val)"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import { filterAudiencesByDestinations } from "@/utils"
+
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
-import Avatar from "../../components/common/Avatar.vue"
-import Size from "../../components/common/huxTable/Size.vue"
-import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import MenuCell from "../../components/common/huxTable/MenuCell.vue"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import Avatar from "@/components/common/Avatar.vue"
+import Size from "@/components/common/huxTable/Size.vue"
+import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
+import MenuCell from "@/components/common/huxTable/MenuCell.vue"
+
+import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience"
+
 export default {
   name: "audiences",
   components: {
@@ -140,17 +151,10 @@ export default {
     Size,
     TimeStamp,
     MenuCell,
+    LookAlikeAudience,
   },
   data() {
     return {
-      actionItems: [
-        { title: "Favorite" },
-        { title: "Export" },
-        { title: "Edit" },
-        { title: "Duplicate" },
-        { title: "Create a lookalike" },
-        { title: "Delete" },
-      ],
       breadcrumbItems: [
         {
           text: "Audiences",
@@ -199,6 +203,8 @@ export default {
         },
       ],
       loading: false,
+      selectedAudience: null,
+      showLookAlikeDrawer: false,
     }
   },
   computed: {
@@ -224,6 +230,42 @@ export default {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
     }),
+
+    getActionItems(audience) {
+      let filteredAudience = filterAudiencesByDestinations(
+        [audience],
+        ["facebook"]
+      )
+
+      let isOneOfDestinationFacebook =
+        filteredAudience.length > 0 ? true : false
+
+      let actionItems = [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        { title: "Edit", isDisabled: true },
+        { title: "Duplicate", isDisabled: true },
+        {
+          title: "Create a lookalike",
+          isDisabled: !isOneOfDestinationFacebook,
+          menu: {
+            title: "Facebook",
+            onClick: () => {
+              this.openLookAlikeDrawer(audience)
+            },
+            icon: "facebook",
+          },
+        },
+        { title: "Delete", isDisabled: true },
+      ]
+
+      return actionItems
+    },
+
+    openLookAlikeDrawer(audience) {
+      this.selectedAudience = audience
+      this.showLookAlikeDrawer = true
+    },
   },
   async mounted() {
     this.loading = true

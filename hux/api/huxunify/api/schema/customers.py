@@ -14,6 +14,7 @@ from marshmallow.fields import (
     Dict,
     DateTime,
 )
+
 from huxunify.api.schema.utils import (
     validate_object_id,
 )
@@ -120,3 +121,65 @@ class CustomersSchema(Schema):
             }
         ],
     )
+
+
+class CustomerGeoVisualSchema(Schema):
+    """Customer Geographic Visual Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    name = Str(required=True, example="California")
+    population_percentage = Float(required=True, example=0.3031)
+    size = Integer(required=True, example=28248560)
+    gender_women = Float(required=True, example=0.50)
+    gender_men = Float(required=True, example=0.49)
+    gender_other = Float(required=True, example=0.01)
+    ltv = Float(required=True, example=3848.50)
+
+
+class GenderMetrics(Schema):
+    """Gender metrics schema"""
+
+    population_percentage = Float(required=True, example=0.4601)
+    size = Integer(required=True, example=123456)
+
+
+class CustomerGenderInsightsSchema(Schema):
+    """Customer Gender Insights Schema"""
+
+    gender_women = Nested(GenderMetrics, required=True)
+    gender_men = Nested(GenderMetrics, required=True)
+    gender_other = Nested(GenderMetrics, required=True)
+
+
+class CustomerIncomeInsightsSchema(Schema):
+    """Customer Income Insights Schema"""
+
+    name = Str(required=True, example="New York")
+    ltv = Float(required=True, example=1235.31)
+
+
+class CustomerSpendSchema(Schema):
+    """Customer Spend Schema"""
+
+    date = DateTime(required=True)
+    ltv = Float(required=True, example=1235.31)
+
+
+class CustomerSpendingInsightsSchema(Schema):
+    """Customer Spending Insights Schema"""
+
+    gender_women = List(Nested(CustomerSpendSchema))
+    gender_men = List(Nested(CustomerSpendSchema))
+    gender_other = List(Nested(CustomerSpendSchema))
+
+
+class CustomerDemographicInsightsSchema(Schema):
+    """Customer Demographic Insights Schema"""
+
+    gender = Nested(CustomerGenderInsightsSchema)
+    income = List(Nested(CustomerIncomeInsightsSchema))
+    spend = Nested(CustomerSpendingInsightsSchema)

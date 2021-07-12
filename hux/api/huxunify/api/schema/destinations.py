@@ -12,6 +12,7 @@ from huxunify.api.schema.utils import (
     must_not_be_blank,
     validate_object_id,
 )
+from huxunify.api.schema.engagement import EngagementDataExtensionSchema
 
 
 class DestinationGetSchema(Schema):
@@ -65,6 +66,7 @@ class DestinationGetSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY, allow_none=True)
     update_time = fields.String(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+    delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
 
 
 class DestinationPutSchema(Schema):
