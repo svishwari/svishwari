@@ -153,6 +153,10 @@ export default {
     width: auto !important;
     min-width: 200px;
     color: var(--v-neroBlack-base);
+    width: 215px !important;
+    height: 42px;
+    border: 1px solid var(--v-lightGrey-base) !important;
+    border-radius: 4px;
     ::v-deep .v-btn__content {
       .spacer {
         &:nth-child(2) {
