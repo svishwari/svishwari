@@ -335,7 +335,6 @@ class IDRDataFeeds(SwaggerView):
 
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
-    @marshal_with(DataFeedSchema(many=True))
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves a IDR data feeds.
         ---
@@ -390,7 +389,7 @@ class IDRDataFeeds(SwaggerView):
             },
         ]
         return (
-            data_feeds,
+            jsonify(DataFeedSchema().dump(data_feeds, many=True)),
             HTTPStatus.OK,
         )
 
