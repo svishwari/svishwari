@@ -194,7 +194,10 @@
                     </v-btn>
                   </v-btn-toggle>
                 </div>
-                <v-row class="delivery-schedule  ml-0 mt-6" v-if="newEngagement.delivery_schedule == 1">
+                <v-row
+                  class="delivery-schedule ml-0 mt-6"
+                  v-if="newEngagement.delivery_schedule == 1"
+                >
                   <div>
                     <span class="date-picker-label">Start date</span>
                     <hux-start-date
@@ -486,7 +489,7 @@ export default {
   }
   .delivery-schedule {
     .hux-date-picker {
-      ::v-deep .main-button{
+      ::v-deep .main-button {
         margin-left: 0px !important;
       }
     }

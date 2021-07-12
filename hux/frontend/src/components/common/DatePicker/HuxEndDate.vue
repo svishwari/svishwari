@@ -122,7 +122,7 @@ export default {
     minDate: {
       type: String,
       required: false,
-    }
+    },
   },
   methods: {
     onCancel() {
