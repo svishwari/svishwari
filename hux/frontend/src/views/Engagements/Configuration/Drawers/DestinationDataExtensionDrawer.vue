@@ -7,7 +7,7 @@
     <template #header-left>
       <div class="d-flex align-baseline">
         <h3 class="text-h3 pr-2 d-flex align-center">
-          <Logo type="salesforce" />
+          <Logo type="sfmc" />
           <div class="pl-2 font-weight-light">Salesforce Marketing Cloud</div>
         </h3>
       </div>
@@ -280,9 +280,11 @@ export default {
       }
       this.value[this.selectedAudienceId].destinations.push({
         id: destinationWithDataExtension.id,
-        contact_list:
-          destinationWithDataExtension.delivery_platform_config
-            .data_extension_name,
+        delivery_platform_cofig: {
+          data_extension_name:
+            destinationWithDataExtension.delivery_platform_config
+              .data_extension_name,
+        },
       })
       this.onBack()
     },
