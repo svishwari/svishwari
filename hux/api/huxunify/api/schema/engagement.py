@@ -203,22 +203,6 @@ class DispAdIndividualAudienceSummary(DisplayAdsSummary):
     campaigns = fields.List(fields.Nested(DispAdIndividualCampaignSummary))
 
 
-class DeliveryHistorySchema(Schema):
-    """
-    Schema for Engagement Delivery History
-    """
-
-    class Meta:
-        """Set Order for the Audience Response"""
-
-        ordered = True
-
-    audience = fields.String(required=True)
-    destination = fields.String(required=True)
-    size = fields.Integer()
-    delivered = fields.String(required=True)
-
-
 class AudiencePerformanceDisplayAdsSchema(Schema):
     """
     Schema for Performance Metrics of Display Ads
