@@ -70,6 +70,37 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
+def update_metric(
+    target_id: ObjectId, name: str, jobs: list, perf_metrics: list
+) -> dict:
+    """Update performance metric
+
+    Args:
+        target_id (ObjectId) : Group Id.
+        name (Str): Name of group object.
+        jobs (List): List of delivery jobs.
+        perf_metrics (List): List of performance metrics.
+
+    Returns:
+        metric (dict): Grouped performance metric .
+    """
+    delivery_jobs = [x[db_c.ID] for x in jobs]
+    metric = {
+        api_c.ID: str(target_id),
+        api_c.NAME: name,
+    }
+    metric.update(
+        group_perf_metric(
+            [
+                x[db_c.PERFORMANCE_METRICS]
+                for x in perf_metrics
+                if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
+            ]
+        )
+    )
+    return metric
+
+
 @add_view_to_blueprint(
     engagement_bp, f"{api_c.ENGAGEMENT_ENDPOINT}", "EngagementSearch"
 )
@@ -1750,21 +1781,14 @@ class EngagementMetricsDisplayAds(SwaggerView):
             aud_group, key=itemgetter(api_c.AUDIENCE_ID)
         ):
             audience_jobs = list(audience_group)
-            delivery_jobs = [x[db_c.ID] for x in audience_jobs]
-            ind_aud_metric = {
-                api_c.ID: str(audience_id),
-                api_c.NAME: orchestration_management.get_audience(
-                    database, audience_id
+            # Get metrics grouped by audience
+            ind_aud_metric = update_metric(
+                audience_id,
+                orchestration_management.get_audience(
+                    get_db_client(), audience_id
                 )[api_c.NAME],
-            }
-            ind_aud_metric.update(
-                group_perf_metric(
-                    [
-                        x[db_c.PERFORMANCE_METRICS]
-                        for x in performance_metrics
-                        if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                    ]
-                )
+                audience_jobs,
+                performance_metrics,
             )
 
             # Group all the performance metrics engagement.audience.destination.
@@ -1776,23 +1800,14 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 destination_group, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
             ):
                 audience_dest_jobs = list(aud_dest_group)
-                delivery_jobs = [x[db_c.ID] for x in audience_dest_jobs]
-                ind_aud_dest_metric = {
-                    api_c.ID: str(destination_id),
-                    api_c.NAME: delivery_platform_management.get_delivery_platform(
-                        database, destination_id
-                    )[
-                        api_c.NAME
-                    ],
-                }
-                ind_aud_dest_metric.update(
-                    group_perf_metric(
-                        [
-                            x
-                            for x in performance_metrics
-                            if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                        ]
-                    )
+                # Get metrics grouped by destination
+                ind_aud_dest_metric = update_metric(
+                    destination_id,
+                    delivery_platform_management.get_delivery_platform(
+                        get_db_client(), destination_id
+                    )[api_c.NAME],
+                    audience_dest_jobs,
+                    performance_metrics,
                 )
                 aud_dest_metric.append(ind_aud_dest_metric)
 
