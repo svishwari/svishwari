@@ -315,7 +315,7 @@ class CustomerProfileSearch(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
     "IDRDataFeeds",
 )
 class IDRDataFeeds(SwaggerView):
@@ -355,7 +355,7 @@ class IDRDataFeeds(SwaggerView):
                 api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
                 api_c.DATAFEED_NEW_IDS_COUNT: 21,
                 api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
-                api_c.DATAFEED_MATCH_RATE: 0.98,
+                api_c.MATCH_RATE: 0.98,
                 api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow(),
             },
             {
@@ -364,7 +364,7 @@ class IDRDataFeeds(SwaggerView):
                 api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 api_c.DATAFEED_NEW_IDS_COUNT: 54,
                 api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
-                api_c.DATAFEED_MATCH_RATE: 0.97,
+                api_c.MATCH_RATE: 0.97,
                 api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
                 - timedelta(days=1),
             },
@@ -374,7 +374,7 @@ class IDRDataFeeds(SwaggerView):
                 api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 api_c.DATAFEED_NEW_IDS_COUNT: 300,
                 api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
-                api_c.DATAFEED_MATCH_RATE: 0.98,
+                api_c.MATCH_RATE: 0.98,
                 api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
                 - timedelta(days=7),
             },
@@ -384,7 +384,7 @@ class IDRDataFeeds(SwaggerView):
                 api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
                 api_c.DATAFEED_NEW_IDS_COUNT: 612,
                 api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
-                api_c.DATAFEED_MATCH_RATE: 0.98,
+                api_c.MATCH_RATE: 0.98,
                 api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
                 - timedelta(days=30),
             },
@@ -398,7 +398,7 @@ class IDRDataFeeds(SwaggerView):
 @add_view_to_blueprint(
     customers_bp,
     f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
-    "IDRDataFeeds",
+    "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):
     """IDR Data Feeds Report"""

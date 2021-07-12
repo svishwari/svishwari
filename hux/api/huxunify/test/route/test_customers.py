@@ -258,7 +258,7 @@ class TestCustomersOverview(TestCase):
 
         # TODO: Update after integration of CDM APIs
         response = self.test_client.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATAFEEDS}",
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
             headers=t_c.STANDARD_HEADERS,
         )
 

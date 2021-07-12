@@ -470,7 +470,6 @@ CUSTOMERS_TAG = "customers"
 CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
-DATAFEEDS = "datafeeds"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
