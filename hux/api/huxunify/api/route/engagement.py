@@ -29,6 +29,7 @@ from huxunifylib.database import (
     orchestration_management,
     delivery_platform_management,
 )
+from huxunify.api.schema.orchestration import DeliveryHistorySchema
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
@@ -39,7 +40,6 @@ from huxunify.api.schema.engagement import (
     CampaignSchema,
     CampaignMappingSchema,
     CampaignPutSchema,
-    DeliveryHistorySchema,
     weighted_engagement_status,
 )
 from huxunify.api.schema.errors import NotFoundError
@@ -50,7 +50,6 @@ from huxunify.api.route.utils import (
     api_error_handler,
     get_user_name,
     group_perf_metric,
-    get_friendly_delivered_time,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -707,15 +706,11 @@ class EngagementDeliverHistoryView(SwaggerView):
             if delivery_job and delivery_job.get(db_c.JOB_END_TIME):
                 delivery_history.append(
                     {
-                        api_c.AUDIENCE: audience.get(api_c.AUDIENCE_NAME),
-                        api_c.DESTINATION: destination.get(
-                            api_c.DESTINATION_NAME
-                        ),
+                        api_c.AUDIENCE: audience,
+                        api_c.DESTINATION: destination,
                         api_c.SIZE: randrange(10000000),
                         # TODO : Get audience size from CDM
-                        api_c.DELIVERED: get_friendly_delivered_time(
-                            delivery_job.get(db_c.JOB_END_TIME)
-                        ),
+                        api_c.DELIVERED: delivery_job.get(db_c.JOB_END_TIME),
                     }
                 )
 
