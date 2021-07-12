@@ -52,7 +52,7 @@ export const defineRoutes = (server) => {
     const body = { message: "Destination authentication details are valid" }
     const requestData = JSON.parse(request.requestBody)
 
-    if (requestData.type === "salesforce") {
+    if (requestData.type === "sfmc") {
       body.perf_data_extensions = destinationsDataExtensions()
     }
     return new Response(code, headers, body)

@@ -49,7 +49,7 @@ export const destinationsConstants = {
     }),
   },
 
-  salesforce: {
+  sfmc: {
     sfmc_account_id: field({ name: "Account ID" }),
     sfmc_auth_base_uri: field({ name: "Auth Base URI" }),
     sfmc_client_id: field({ name: "Client ID" }),

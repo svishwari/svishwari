@@ -82,7 +82,7 @@
         v-if="isSalesforceSelected && isValidated"
         class="destination-auth-wrap background pa-4 rounded mt-10"
       >
-        <Salesforce :dataExtensions="dataExtensions" @select="setExtension" />
+        <SFMC :dataExtensions="dataExtensions" @select="setExtension" />
       </div>
     </v-form>
 
@@ -169,7 +169,7 @@ import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 
-import Salesforce from "./Configuration/Salesforce"
+import SFMC from "./Configuration/sfmc"
 
 export default {
   name: "ConfigureDestination",
@@ -182,7 +182,7 @@ export default {
     huxButton,
     TextField,
     Logo,
-    Salesforce,
+    SFMC,
   },
 
   data() {
@@ -230,7 +230,7 @@ export default {
 
     isSalesforceSelected() {
       return this.selectedDestination !== null
-        ? this.selectedDestination.type === "salesforce"
+        ? this.selectedDestination.type === "sfmc"
         : false
     },
 
@@ -300,7 +300,6 @@ export default {
           id: this.selectedDestination.id,
           authentication_details: this.authenticationDetails,
         }
-
         if (this.isSalesforceSelected) {
           data.perf_data_extension = this.selectedDataExtension
         }
