@@ -24,7 +24,7 @@ export default {
   skyBlue: "#80d1ef",
   offWhite: "#e5e5e5",
   dullBlue: "#b7cfd9",
-  tealBlue: '#396286',
+  tealBlue: "#396286",
   persianGreen: "#00abab",
   appBodyGrey: "#f8f9fa",
   smoke: "#ECECEC",

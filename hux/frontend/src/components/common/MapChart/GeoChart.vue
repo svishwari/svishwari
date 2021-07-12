@@ -21,7 +21,10 @@
           @mouseover="getCordinates($event)"
         ></div>
         <div class="map-slider">
-          <map-slider v-if="total_range.length > 0" :range="total_range"></map-slider>
+          <map-slider
+            v-if="total_range.length > 0"
+            :range="total_range"
+          ></map-slider>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text>
@@ -90,8 +93,8 @@ export default {
         state.properties = currentStateDetails
       })
 
-      this.total_range = featureCollection.features.map((data) =>
-        data.properties.population_percentage
+      this.total_range = featureCollection.features.map(
+        (data) => data.properties.population_percentage
       )
 
       let projection = d3Geo
@@ -117,7 +120,7 @@ export default {
         )
         .attr("fill-opacity", "1")
         .on("mouseover", (d) => applyHoverChanges(d))
-        .on("mouseout", (d) => removeHoverChanges(d))
+        .on("mouseout", () => removeHoverChanges())
 
       let applyHoverChanges = (d) => {
         svg
@@ -137,7 +140,7 @@ export default {
         return "1"
       }
 
-      let removeHoverChanges = (d) => {
+      let removeHoverChanges = () => {
         svg
           .selectAll("path")
           .style("stroke", "#1E1E1E")
