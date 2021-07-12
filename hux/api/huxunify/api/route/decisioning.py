@@ -6,7 +6,7 @@ from random import random, randint, uniform
 from http import HTTPStatus
 from typing import Tuple, List
 
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
@@ -53,7 +53,7 @@ class ModelsView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(ModelSchema(many=True))
+    @api_error_handler()
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves all models.
 
@@ -65,28 +65,28 @@ class ModelsView(SwaggerView):
             Tuple[List[dict], int] dict of models and http code
 
         """
-        try:
-            purchase_model = {
-                "type": "purchase",
-                "fulcrum_date": datetime(2021, 6, 26),
-                "past_version_count": 0,
-                "last_trained": datetime(2021, 6, 26),
-                "lookback_window": 365,
-                "name": "Propensity to Purchase",
-                "description": "Propensity of a customer making a purchase "
-                "after receiving an email.",
-                "latest_version": " ",
-                "prediction_window": 365,
-                "id": 3,
-                "owner": "Susan Miller",
-                "status": "Active",
-            }
-            all_models = tecton.get_models()
-            all_models.append(purchase_model)
-            return all_models, HTTPStatus.OK.value
 
-        except Exception as exc:
-            raise handle_api_exception(exc, "Unable to get models.") from exc
+        purchase_model = {
+            api_c.TYPE: "purchase",
+            api_c.FULCRUM_DATE: datetime(2021, 6, 26),
+            api_c.PAST_VERSION_COUNT: 0,
+            api_c.LAST_TRAINED: datetime(2021, 6, 26),
+            api_c.LOOKBACK_WINDOW: 365,
+            api_c.NAME: "Propensity to Purchase",
+            api_c.DESCRIPTION: "Propensity of a customer making a purchase "
+            "after receiving an email.",
+            api_c.LATEST_VERSION: " ",
+            api_c.PREDICTION_WINDOW: 365,
+            api_c.ID: 3,
+            api_c.OWNER: "Susan Miller",
+            api_c.STATUS: "Active",
+        }
+        all_models = tecton.get_models()
+        all_models.append(purchase_model)
+        return (
+            jsonify(ModelSchema(many=True).dump(all_models)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(
@@ -156,7 +156,6 @@ class ModelOverview(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(ModelDashboardSchema)
     @api_error_handler()
     def get(self, model_type: str) -> Tuple[dict, int]:
         """Retrieves model overview.
@@ -215,7 +214,7 @@ class ModelOverview(SwaggerView):
                 for x in range(10, 100, 10)
             ],
         }
-        return output, HTTPStatus.OK
+        return ModelDashboardSchema().dump(output), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
