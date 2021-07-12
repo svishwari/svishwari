@@ -102,13 +102,18 @@ export const defineRoutes = (server) => {
   server.get("/engagements/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const engagement = schema.engagements.find(id)
+    const destination = schema.destinations.find(7)
     return engagement.audiences.map((audience) => {
-      // TODO: update with the API (missing id, type and datetime string)
       return {
-        audience_id: audience.id,
-        audience: audience.name,
-        destination: "Salesforce Marketing Cloud",
-        destination_type: "sfmc",
+        audience: {
+          id: audience.id,
+          name: audience.name,
+        },
+        destination: {
+          id: destination.id,
+          name: destination.name,
+          type: destination.type,
+        },
         size: audience.size,
         delivered: "2021-07-11T14:39:49.574Z",
       }
