@@ -3,7 +3,7 @@ Schemas for the notifications API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import post_dump
+from marshmallow import pre_dump
 from marshmallow.fields import Str, DateTime
 from marshmallow.validate import OneOf
 
@@ -43,14 +43,14 @@ class NotificationSchema(Schema):
                 ]
             )
         ],
-        required=True,
+        required=False,
         example=api_c.CATEGORY_ORCHESTRATION,
     )
 
-    @post_dump
+    @pre_dump
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
-    def post_serialize(self, data: dict, many=False) -> dict:
+    def pre_serialize(self, data: dict, many=False) -> dict:
         """process the schema before serializing.
 
         Args:
@@ -60,11 +60,13 @@ class NotificationSchema(Schema):
             Response: Returns a notification object
 
         """
-        # change notification_type to title case
+        # change notification type and category to title case
         if data.get(db_c.NOTIFICATION_FIELD_CATEGORY):
             data[db_c.NOTIFICATION_FIELD_CATEGORY] = data[
                 db_c.NOTIFICATION_FIELD_CATEGORY
             ].title()
-        data["notification_type"] = data["notification_type"].title()
+        data[db_c.NOTIFICATION_FIELD_TYPE] = data[
+            db_c.NOTIFICATION_FIELD_TYPE
+        ].title()
 
         return data
