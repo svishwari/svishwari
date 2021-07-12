@@ -66,7 +66,7 @@
               </template>
             </v-radio>
 
-            <v-radio :value="1" class="btn-radio" disabled>
+            <v-radio :value="1" class="btn-radio">
               <template #label>
                 <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
                 <span>Recurring</span>
@@ -74,7 +74,7 @@
             </v-radio>
           </v-radio-group>
 
-          <div>
+          <div v-if="value.delivery_schedule == 1">
             <span class="text-h5 date-picker-label">Start date</span>
             <hux-start-date
               class="mt-n4"
@@ -84,8 +84,8 @@
             />
           </div>
 
-          <v-icon class="icon icon-right" size="16"> mdi-arrow-right </v-icon>
-          <div>
+          <v-icon class="icon icon-right" size="16"  v-if="value.delivery_schedule == 1"> mdi-arrow-right </v-icon>
+          <div  v-if="value.delivery_schedule == 1">
             <span class="text-h5 date-picker-label">End date</span>
             <hux-end-date
               class="mt-n4"
