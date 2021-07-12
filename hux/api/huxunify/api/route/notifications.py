@@ -81,7 +81,6 @@ class NotificationsSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.NOTIFICATIONS_TAG]
 
-    # @marshal_with(NotificationSchema(many=True))
     def get(self) -> Tuple[dict, int]:
         """Retrieves notifications.
 
