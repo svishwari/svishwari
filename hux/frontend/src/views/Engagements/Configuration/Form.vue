@@ -85,7 +85,6 @@
           </div>
 
           <v-icon class="icon icon-right" size="16"> mdi-arrow-right </v-icon>
-          
           <div>
             <span class="text-h5 date-picker-label">End date</span>
             <hux-end-date
