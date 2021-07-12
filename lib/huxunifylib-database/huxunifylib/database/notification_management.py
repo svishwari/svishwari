@@ -18,7 +18,10 @@ from huxunifylib.database.db_exceptions import InvalidNotificationType
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
 def create_notification(
-    database: DatabaseClient, notification_type: str, description: str
+    database: DatabaseClient,
+    notification_type: str,
+    description: str,
+    category: str = None,
 ) -> Union[dict, None]:
     """A function to create a new notification
 
@@ -26,6 +29,7 @@ def create_notification(
         database (DatabaseClient): A database client.
         notification_type (str): type of notification to create.
         description (str): description of notification.
+        category (str): category of notification.
 
     Returns:
         Union[dict, None]: MongoDB document for a notification.
@@ -49,6 +53,9 @@ def create_notification(
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
         c.NOTIFICATION_FIELD_CREATED: current_time,
     }
+
+    if category:
+        doc[c.NOTIFICATION_FIELD_CATEGORY] = category
 
     try:
         notification_id = collection.insert_one(doc).inserted_id
