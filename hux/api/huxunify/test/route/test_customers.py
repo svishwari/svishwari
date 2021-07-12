@@ -244,9 +244,9 @@ class TestCustomersOverview(TestCase):
         self.assertTrue(data[api_c.MATCH_RATE])
 
     @given(datafeed=st.text(alphabet=string.ascii_letters))
-    def test_get_idr_datafeed(self, datafeed: str):
+    def test_get_idr_datafeed_report(self, datafeed: str):
         """
-        Test get idr datafeed idr overview
+        Test get idr datafeed report
 
         Args:
             request_mocker (Mocker): Request mocker object.
