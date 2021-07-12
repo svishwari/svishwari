@@ -2,6 +2,7 @@
 purpose of this file is to house route utilities
 """
 import logging
+from datetime import datetime
 from functools import wraps
 from typing import Any, Tuple
 from http import HTTPStatus
@@ -511,3 +512,28 @@ def group_perf_metric(perf_metrics: list) -> dict:
     }
 
     return metric
+
+
+def get_friendly_delivered_time(delivered_time: datetime) -> str:
+    """Group performance metrics
+    ---
+
+        Args:
+            delivered_time (datetime): Delivery time.
+
+        Returns:
+            time_difference (str): Time difference as days / hours / mins.
+
+    """
+
+    delivered = (datetime.utcnow() - delivered_time).total_seconds()
+
+    # pylint: disable=no-else-return
+    if delivered / (60 * 60 * 24) >= 1:
+        return str(int(delivered / (60 * 60 * 24))) + " days ago"
+    elif delivered / (60 * 60) >= 1:
+        return str(int(delivered / (60 * 60))) + " hours ago"
+    elif delivered / 60 >= 1:
+        return str(int(delivered / 60)) + " minutes ago"
+    else:
+        return str(int(delivered)) + " seconds ago"

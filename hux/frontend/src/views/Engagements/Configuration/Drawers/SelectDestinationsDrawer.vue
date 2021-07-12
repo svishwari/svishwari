@@ -153,7 +153,7 @@ export default {
     },
 
     add(destination) {
-      if (destination.type === "salesforce") {
+      if (destination.type === "sfmc") {
         this.$emit("onSalesforce", destination)
       } else {
         this.selectedDestinations.push({
