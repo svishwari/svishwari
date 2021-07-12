@@ -15,17 +15,16 @@
       </v-list-item>
       <v-list-item v-for="data in getNotificationData" :key="data.id">
         <v-list-item-title class="text-h6 neroBlack--text list-main">
-          <div class="d-flex list-desc">
+          <div class="d-flex text-caption">
             <status
-              :status="data.type"
+              :status="data.notification_type"
               :showLabel="false"
-              class="status-icon"
               :iconSize="17"
             />
             <span> {{ data.description }} </span>
           </div>
           <div class="list-stamp">
-            <time-stamp :value="data.time" />
+            <time-stamp :value="data.created" />
           </div>
         </v-list-item-title>
       </v-list-item>
@@ -47,34 +46,6 @@ export default {
   components: {
     Status,
     TimeStamp,
-  },
-  data() {
-    return {
-      alertData: [
-        {
-          id: 1,
-          time: "2021-07-04T09:41:22.237Z",
-          type: "Success",
-          description: "Data Source CS005 lost connection.",
-          category: "Orchestration",
-        },
-        {
-          id: 2,
-          time: "2021-07-04T09:41:22.237Z",
-          type: "Feedback",
-          description: "Facebook delivery stopped.",
-          category: "Decisioning",
-        },
-        {
-          id: 3,
-          time: "2021-07-04T09:41:22.237Z",
-          type: "Critical",
-          description:
-            "Data Source CS004 lost connectivity. This is an example of a longer description that needs to be cut off.",
-          category: "Data management",
-        },
-      ],
-    }
   },
   computed: {
     ...mapGetters({
@@ -116,14 +87,11 @@ export default {
   margin-top: 5px;
   font-size: 11px;
 }
-.list-desc {
-  font-size: 12px;
-}
 .list-main {
   margin-bottom: 22px !important;
 }
 .v-menu__content {
-  top: 56px !important;
+  top: 64px !important;
   .alert-menu-main {
     width: 296px !important;
     height: 283px !important;

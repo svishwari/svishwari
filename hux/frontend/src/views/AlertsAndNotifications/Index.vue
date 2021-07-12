@@ -12,11 +12,6 @@
       </template>
 
       <template #right>
-        <router-link
-          :to="{ name: 'alerts-notification' }"
-          class="text-decoration-none"
-          append
-        >
           <huxButton
             ButtonText="Return to previous page"
             icon="mdi-keyboard-return"
@@ -29,7 +24,6 @@
           >
             Return to previous page
           </huxButton>
-        </router-link>
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -51,14 +45,13 @@
             class="col-overflow"
             :style="{ width: header.width, left: 0 }"
           >
-            <div v-if="header.value == 'time'">
-              <time-stamp :value="item['time']" />
+            <div v-if="header.value == 'created'">
+              <time-stamp :value="item['created']" />
             </div>
-            <div v-if="header.value == 'type'">
+            <div v-if="header.value == 'notification_type'">
               <status
-                :status="item['type']"
+                :status="item['notification_type']"
                 :showLabel="true"
-                class="status-icon"
                 :iconSize="17"
               />
             </div>
@@ -120,39 +113,18 @@ export default {
       columnDefs: [
         {
           text: "Time",
-          value: "time",
+          value: "created",
           width: "auto",
         },
         {
           text: "Type",
-          value: "type",
+          value: "notification_type",
           width: "auto",
         },
         {
           text: "Description",
           value: "description",
           width: "600px",
-        },
-      ],
-      rowData: [
-        {
-          time: "2021-07-04T09:41:22.237Z",
-          type: "Success",
-          description: "Data Source CS005 lost connection.",
-          category: "Orchestration",
-        },
-        {
-          time: "2021-07-04T09:41:22.237Z",
-          type: "Feedback",
-          description: "Facebook delivery stopped.",
-          category: "Decisioning",
-        },
-        {
-          time: "2021-07-04T09:41:22.237Z",
-          type: "Critical",
-          description:
-            "Data Source CS004 lost connectivity. This is an example of a longer description that needs to be cut off.",
-          category: "Data management",
         },
       ],
       loading: false,
@@ -171,7 +143,7 @@ export default {
       getNotification: "notification/getAll",
     }),
     goBack() {
-      window.history.back()
+      this.$router.go(-1)
     },
   },
   async mounted() {
@@ -225,11 +197,6 @@ export default {
 
 .backGround-header-dropdown {
   background-color: var(--v-aliceBlue-base) !important;
-}
-.status-icon {
-  ::v-deep i {
-    font-size: 17px !important;
-  }
 }
 ::v-deep .hux-dropdown {
   .v-btn__content {
