@@ -280,9 +280,11 @@ export default {
       }
       this.value[this.selectedAudienceId].destinations.push({
         id: destinationWithDataExtension.id,
-        contact_list:
-          destinationWithDataExtension.delivery_platform_config
-            .data_extension_name,
+        delivery_platform_cofig: {
+          data_extension_name:
+            destinationWithDataExtension.delivery_platform_config
+              .data_extension_name,
+        },
       })
       this.onBack()
     },
