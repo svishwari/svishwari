@@ -317,7 +317,7 @@ class CustomerProfileSearch(SwaggerView):
     f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
     "IDRDataFeeds",
 )
-class IDRDataFeeds(SwaggerView):
+class IDRDataFeedDetails(SwaggerView):
     """IDR Data Feeds Report"""
 
     parameters = [
