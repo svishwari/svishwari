@@ -199,12 +199,14 @@
                     <span class="date-picker-label">Start date</span>
                     <hux-start-date
                       class=""
-                      labelText="Engagement name"
                       :label="selectedStartDate"
                       :selected="selectedStartDate"
                       @on-date-select="onStartDateSelect"
                     />
                   </div>
+                  <v-icon class="icon icon-right" size="16">
+                    mdi-arrow-right
+                  </v-icon>
                   <div>
                     <span class="date-picker-label">End date</span>
                     <hux-end-date
@@ -486,6 +488,16 @@ export default {
       ::v-deep .main-button{
         margin-left: 0px !important;
       }
+    }
+    .icon-right {
+      transform: scale(1.5);
+      margin-left: 8px;
+      margin-right: 12px;
+      margin-top: 20px;
+      color: var(--v-lightGrey-base) !important;
+    }
+    ::v-deep.v-icon {
+      color: var(--v-lightGrey-base) !important;
     }
   }
 }
