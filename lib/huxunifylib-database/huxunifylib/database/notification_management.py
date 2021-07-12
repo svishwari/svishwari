@@ -31,7 +31,7 @@ def create_notification(
         description (str): description of notification.
         category (str): category of notification.
 
-    Returns
+    Returns:
         Union[dict, None]: MongoDB document for a notification.
 
     """
