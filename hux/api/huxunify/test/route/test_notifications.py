@@ -65,7 +65,7 @@ class TestNotificationRoutes(TestCase):
             {
                 "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "description 3",
-                "category": api_c.CATEGORY_DATA_MANAGEMENT,
+                "category": api_c.CATEGORY_DESTINATIONS,
             },
         ]
 

@@ -5,6 +5,7 @@ from bson import ObjectId
 
 from huxunifylib.database import constants as db_c
 
+from huxunify.api import constants as api_c
 from huxunify.api.schema.notifications import NotificationSchema
 
 
@@ -24,6 +25,7 @@ class TestNotificationSchema(TestCase):
             created=datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
+            category=api_c.CATEGORY_DELIVERY
         )
 
         res = NotificationSchema().load(doc)

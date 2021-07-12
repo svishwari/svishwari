@@ -3,13 +3,13 @@ Schemas for the notifications API
 """
 
 from flask_marshmallow import Schema
-from marshmallow import pre_dump
+from marshmallow import post_dump
 from marshmallow.fields import Str, DateTime
 from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
 
-from hux.api.huxunify.api import constants as api_c
+from huxunify.api import constants as api_c
 
 
 class NotificationSchema(Schema):
@@ -37,20 +37,22 @@ class NotificationSchema(Schema):
         validate=[
             OneOf(
                 choices=[
-                    api_c.CATEGORY_ORCHESTRATION,
-                    api_c.CATEGORY_DATA_MANAGEMENT,
+                    api_c.CATEGORY_DESTINATIONS,
                     api_c.CATEGORY_DECISIONING,
+                    api_c.CATEGORY_DELIVERY,
+                    api_c.CATEGORY_AUDIENCES,
+                    api_c.CATEGORY_CUSTOMERS,
                 ]
             )
         ],
         required=False,
-        example=api_c.CATEGORY_ORCHESTRATION,
+        example=api_c.CATEGORY_DELIVERY,
     )
 
-    @pre_dump
+    @post_dump
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
-    def pre_serialize(self, data: dict, many=False) -> dict:
+    def post_serialize(self, data: dict, many=False) -> dict:
         """process the schema before serializing.
 
         Args:
@@ -65,8 +67,8 @@ class NotificationSchema(Schema):
             data[db_c.NOTIFICATION_FIELD_CATEGORY] = data[
                 db_c.NOTIFICATION_FIELD_CATEGORY
             ].title()
-        data[db_c.NOTIFICATION_FIELD_TYPE] = data[
-            db_c.NOTIFICATION_FIELD_TYPE
+        data["notification_type"] = data[
+            "notification_type"
         ].title()
 
         return data
