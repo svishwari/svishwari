@@ -20,7 +20,7 @@ class NotificationSchema(Schema):
         attribute="type",
         validate=[OneOf(choices=db_c.NOTIFICATION_TYPES)],
         required=True,
-        example=db_c.NOTIFICATION_TYPE_SUCCESS,
+        example=db_c.NOTIFICATION_TYPE_CRITICAL.title(),
     )
     description = Str(
         attribute="description",
@@ -67,8 +67,6 @@ class NotificationSchema(Schema):
             data[db_c.NOTIFICATION_FIELD_CATEGORY] = data[
                 db_c.NOTIFICATION_FIELD_CATEGORY
             ].title()
-        data["notification_type"] = data[
-            "notification_type"
-        ].title()
+        data["notification_type"] = data["notification_type"].title()
 
         return data

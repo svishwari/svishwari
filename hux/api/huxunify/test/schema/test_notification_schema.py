@@ -25,7 +25,7 @@ class TestNotificationSchema(TestCase):
             created=datetime.strftime(
                 datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
             ),
-            category=api_c.CATEGORY_DELIVERY
+            category=api_c.CATEGORY_DELIVERY,
         )
 
         res = NotificationSchema().load(doc)
