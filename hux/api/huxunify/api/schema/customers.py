@@ -124,7 +124,7 @@ class CustomersSchema(Schema):
     )
 
 
-class DatafeedSchema(Schema):
+class DataFeedSchema(Schema):
     """
     Customer Datafeed Schema
     """
@@ -170,7 +170,7 @@ class DataFeedStitched(Schema):
     time_stamp = DateTime(required=True, example=datetime.now())
 
 
-class DataFeedSchema(Schema):
+class DataFeedDetailsSchema(Schema):
     """IDR Data feed schema"""
 
     pinning = Nested(DataFeedPinning, required=True)

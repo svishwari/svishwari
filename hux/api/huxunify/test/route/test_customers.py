@@ -16,8 +16,9 @@ import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.customers import (
     DataFeedPinning,
-    DataFeedSchema,
+    DataFeedDetailsSchema,
     DataFeedStitched,
+    DataFeedSchema,
 )
 from huxunify.api.schema.customers import (
     CustomerGeoVisualSchema,
@@ -26,7 +27,6 @@ from huxunify.api.schema.customers import (
     CustomerGenderInsightsSchema,
     CustomerIncomeInsightsSchema,
 )
-from huxunify.api.schema.customers import DatafeedSchema
 from huxunify.app import create_app
 
 
@@ -264,7 +264,7 @@ class TestCustomersOverview(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(
-            {}, DatafeedSchema().validate(response.json, many=True)
+            {}, DataFeedSchema().validate(response.json, many=True)
         )
 
     @given(datafeed=st.text(alphabet=string.ascii_letters))
@@ -286,7 +286,9 @@ class TestCustomersOverview(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertTrue(t_c.validate_schema(DataFeedSchema(), response.json))
+        self.assertTrue(
+            t_c.validate_schema(DataFeedDetailsSchema(), response.json)
+        )
         self.assertTrue(
             t_c.validate_schema(DataFeedPinning(), response.json["pinning"])
         )

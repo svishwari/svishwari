@@ -17,6 +17,7 @@ from huxunifylib.database import constants as db_c
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
+    DataFeedDetailsSchema,
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
 )
@@ -322,7 +323,7 @@ class IDRDataFeeds(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": DatafeedSchema,
+            "schema": DataFeedSchema,
             "description": "Identity Resolution Data Feeds",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -334,7 +335,7 @@ class IDRDataFeeds(SwaggerView):
 
     # pylint: disable=no-self-use,unused-argument
     @api_error_handler()
-    @marshal_with(DatafeedSchema(many=True))
+    @marshal_with(DataFeedSchema(many=True))
     def get(self) -> Tuple[List[dict], int]:
         """Retrieves a IDR data feeds.
         ---
@@ -415,7 +416,7 @@ class IDRDataFeedDetails(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": DataFeedSchema,
+            "schema": DataFeedDetailsSchema,
             "description": "Identity Resolution Data Feed Waterfall Report",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -442,7 +443,7 @@ class IDRDataFeedDetails(SwaggerView):
         """
 
         return (
-            DataFeedSchema().dump(
+            DataFeedDetailsSchema().dump(
                 {
                     api_c.PINNING: {
                         api_c.INPUT_RECORDS: 2,

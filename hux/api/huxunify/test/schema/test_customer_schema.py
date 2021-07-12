@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from huxunifylib.database import constants as db_c
 
-from huxunify.api.schema.customers import DatafeedSchema
+from huxunify.api.schema.customers import DataFeedSchema
 
 
 class TestIDRDatafeedSchema(TestCase):
@@ -28,7 +28,7 @@ class TestIDRDatafeedSchema(TestCase):
             ),
         )
 
-        datafeed = DatafeedSchema().load(doc)
+        datafeed = DataFeedSchema().load(doc)
 
         self.assertIsInstance(datafeed["last_run"], datetime)
-        assert DatafeedSchema().validate(doc) == {}
+        assert DataFeedSchema().validate(doc) == {}
