@@ -478,8 +478,8 @@
     <Logo type="netsuite"></Logo>
     <Logo type="netsuite" :size="48"></Logo>
 
-    <Logo type="salesforce"></Logo>
-    <Logo type="salesforce" :size="48"></Logo>
+    <Logo type="sfmc"></Logo>
+    <Logo type="sfmc" :size="48"></Logo>
 
     <Logo type="twilio"></Logo>
     <Logo type="twilio" :size="48"></Logo>

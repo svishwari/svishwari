@@ -7,7 +7,7 @@
     <template #header-left>
       <div class="d-flex align-baseline">
         <h3 class="text-h3 pr-2 d-flex align-center">
-          <Logo type="salesforce" />
+          <Logo type="sfmc" />
           <div class="pl-2 font-weight-light">Salesforce Marketing Cloud</div>
         </h3>
       </div>

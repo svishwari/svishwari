@@ -149,12 +149,12 @@ const facebook = {
   is_added: true,
 }
 
-const salesforce = {
+const sfmc = {
   name: "Salesforce Marketing Cloud",
   // TODO: update this once ORCH-233 is addressed
   type: "SFMC",
   is_enabled: true,
-  is_added: true,
+  is_added: false,
 }
 
 const adobe = {
@@ -375,7 +375,7 @@ export default function (server) {
   server.create("destination", twilio)
   server.create("destination", google)
   server.create("destination", tableau)
-  server.create("destination", salesforce)
+  server.create("destination", sfmc)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
   const facebookSeed = server.create("destination", facebook)
