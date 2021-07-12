@@ -78,7 +78,7 @@ export default {
       if (this.isAdded(destination)) {
         this.undoAdd(destination)
       } else {
-        if (destination.type === "salesforce") {
+        if (destination.type === "sfmc") {
           this.$emit("onSalesforceAdd", destination)
         } else {
           this.value.push(destination)
