@@ -2,7 +2,6 @@
 """
 Paths for customer API
 """
-
 from http import HTTPStatus
 from random import choice
 from typing import Tuple
@@ -16,6 +15,7 @@ from flasgger import SwaggerView
 
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
+    DataFeedSchema,
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
 )
@@ -308,6 +308,88 @@ class CustomerProfileSearch(SwaggerView):
                 api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
             ),
             HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
+    "IDRDataFeeds",
+)
+class IDRDataFeedDetails(SwaggerView):
+    """IDR Data Feeds Report"""
+
+    parameters = [
+        {
+            "name": api_c.DATA_FEED,
+            "description": "Data Feed Name",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "Really_long_feed_Name_106",
+        },
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": DataFeedSchema,
+            "description": "Identity Resolution Data Feed Waterfall Report",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get IDR Data Feed Waterfall Report."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use,unused-argument
+    @api_error_handler()
+    def get(self, datafeed: str) -> Tuple[dict, int]:
+        """Retrieves a IDR data feed waterfall report.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            datafeed (str): Data feed name
+
+        Returns:
+            Tuple[dict, int] dict of IDR data feed waterfall
+        """
+
+        return (
+            DataFeedSchema().dump(
+                {
+                    api_c.PINNING: {
+                        api_c.INPUT_RECORDS: 2,
+                        api_c.OUTPUT_RECORDS: 2,
+                        api_c.EMPTY_RECORDS: 0,
+                        api_c.INDIVIDUAL_ID_MATCH: 1,
+                        api_c.HOUSEHOLD_ID_MATCH: 1,
+                        api_c.COMPANY_ID_MATCH: 1,
+                        api_c.ADDRESS_ID_MATCH: 1,
+                        api_c.DB_READS: 1,
+                        api_c.DB_WRITES: 1,
+                        api_c.FILENAME: "Input.csv",
+                        api_c.NEW_INDIVIDUAL_IDS: 1,
+                        api_c.NEW_HOUSEHOLD_IDS: 1,
+                        api_c.NEW_COMPANY_IDS: 1,
+                        api_c.NEW_ADDRESS_IDS: 1,
+                        api_c.PROCESS_TIME: 6.43,
+                        api_c.DATE_TIME: datetime.now(),
+                    },
+                    api_c.STITCHED: {
+                        api_c.DIGITAL_IDS_ADDED: 3,
+                        api_c.DIGITAL_IDS_MERGED: 6,
+                        api_c.MATCH_RATE: 0.6606,
+                        api_c.MERGE_RATE: 0,
+                        api_c.RECORDS_SOURCE: "Input waterfall",
+                        api_c.TIME_STAMP: datetime.now(),
+                    },
+                }
+            ),
+            HTTPStatus.OK,
         )
 
 
