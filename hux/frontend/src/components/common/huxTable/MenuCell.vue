@@ -14,7 +14,7 @@
       </router-link>
       <v-spacer></v-spacer>
       <span class="action-icon font-weight-light float-right">
-        <v-menu class="menu-wrapper" bottom offset-y>
+        <v-menu v-model="openMenu" class="menu-wrapper" bottom offset-y>
           <template #activator="{ on, attrs }">
             <v-icon
               v-bind="attrs"
@@ -31,9 +31,39 @@
               <v-list-item
                 v-for="(item, index) in menuOptions"
                 :key="index"
-                disabled
+                :disabled="item.isDisabled"
               >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-if="!item.menu">
+                  {{ item.title }}
+                </v-list-item-title>
+
+                <v-menu
+                  v-model="isSubMenuOpen"
+                  v-else
+                  offset-x
+                  nudge-right="16"
+                  nudge-top="4"
+                >
+                  <template #activator="{ on, attrs }">
+                    <v-list-item-title v-bind="attrs" v-on="on">
+                      {{ item.title }}
+                      <v-icon> mdi-chevron-right </v-icon>
+                    </v-list-item-title>
+                  </template>
+                  <template #default>
+                    <div
+                      class="sub-menu-class white"
+                      @click="item.menu.onClick()"
+                    >
+                      <Logo
+                        v-if="item.menu.icon"
+                        :size="18"
+                        :type="item.menu.icon"
+                      />
+                      <span class="ml-1">{{ item.menu.title }}</span>
+                    </div>
+                  </template>
+                </v-menu>
               </v-list-item>
             </v-list-item-group>
           </v-list>
@@ -45,10 +75,20 @@
 <script>
 import Vue from "vue"
 import Tooltip from "../Tooltip.vue"
+import Logo from "@/components/common/Logo.vue"
+
 export default Vue.extend({
   name: "MenuCell",
   components: {
+    Logo,
     Tooltip,
+  },
+
+  data() {
+    return {
+      openMenu: null,
+      isSubMenuOpen: null,
+    }
   },
   props: {
     navigateTo: {
@@ -86,6 +126,12 @@ export default Vue.extend({
       evnt.preventDefault()
     },
   },
+
+  watch: {
+    isSubMenuOpen(newValue) {
+      this.openMenu = newValue
+    },
+  },
 })
 </script>
 <style lang="scss" scoped>
@@ -110,5 +156,12 @@ export default Vue.extend({
       display: block;
     }
   }
+}
+.sub-menu-class {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px;
+  min-height: 32px;
+  @extend .cursor-pointer;
 }
 </style>

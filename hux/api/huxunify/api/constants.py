@@ -49,10 +49,74 @@ MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+GENDERS = [GENDER_WOMEN, GENDER_MEN, GENDER_OTHER]
 MIN_LTV_PREDICTED = "min_ltv_predicted"
 MAX_LTV_PREDICTED = "max_ltv_predicted"
 MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
+LTV = "ltv"
+POPULATION_PERCENTAGE = "population_percentage"
+INCOME = "income"
+# TODO: Remove State Names once it connected with CDM
+STATE_NAMES = [
+    "Alaska",
+    "Alabama",
+    "Arkansas",
+    "American Samoa",
+    "Arizona",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "District of Columbia",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Guam",
+    "Hawaii",
+    "Iowa",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Massachusetts",
+    "Maryland",
+    "Maine",
+    "Michigan",
+    "Minnesota",
+    "Missouri",
+    "Mississippi",
+    "Montana",
+    "North Carolina",
+    "North Dakota",
+    "Nebraska",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "Nevada",
+    "New York",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Puerto Rico",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Virginia",
+    "Virgin Islands",
+    "Vermont",
+    "Washington",
+    "Wisconsin",
+    "West Virginia",
+    "Wyoming",
+]
+DEMOGRAPHIC = "demo"
+DATE = "date"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -338,7 +402,6 @@ AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 
-
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,
     COUNTRIES: 2,
@@ -404,6 +467,8 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
+CUSTOMERS_INSIGHTS = "customers-insights"
+GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 
 # Notifications
