@@ -130,32 +130,20 @@
             :showHeader="false"
             class="expanded-table"
             v-if="item.audiences.length > 0"
-            nested
           >
-            <template #item-row="{ item, expand, isExpanded }">
-              
-              <tr :class="{ 'expanded-row': isExpanded }">
+            <template #row-item="{ item }">
               <td
                 v-for="header in subHeaders"
                 :key="header.value"
                 :colspan="header.value == 'name' ? 3 : 0"
                 :class="{
                   'child-row': header.value == 'name',
-                  'expanded-row': isExpanded,
                 }"
               >
                 <div v-if="header.value == 'name'">
                   <tooltip>
                     <template #label-content>
-                       <v-icon
-                    :class="{ 'normal-icon': isExpanded }"
-                    @click="
-                      expand(!isExpanded)
-                    "
-                  >
-                    mdi-chevron-right
-                  </v-icon>
-                     <router-link
+                      <router-link
                         :to="{
                           name: 'AudienceInsight',
                           params: { id: item['id'] },
@@ -199,55 +187,10 @@
                   </div>
                 </div>
               </td>
-              </tr>
-            </template>
-             <template #expanded-row="{ headers, item }">
-        <td
-          :colspan="headers.length"
-          class="pa-0 child"
-        >
-          <v-progress-linear
-            :active="item.isCurrentRow"
-            :indeterminate="item.isCurrentRow"
-          />
-          <hux-data-table
-            :headers="headers"
-            :dataItems="item.insightInfo"
-            :showHeader="false"
-            class="expanded-table"
-            v-if="item.insightInfo.length > 0"
-            nested
-          >
-            <template #item-row="{ item }">
-              <tr>
-                <td>
-               
-                  <div class="ml-16 pl-1">
-                   {{item.title}}
-                  </div>
-                </td>
-                <td>
-                   <div class="ml-16 pl-1">
-                   {{item.subtitle}}
-                  </div>
-                </td>
-                <td>
-                    <div class="ml-16 pl-1">
-                   {{item.icon}}
-                  </div>
-                </td>
-               
-               
-              </tr>
             </template>
           </hux-data-table>
-        </td>
-        </template>
-          </hux-data-table>
-
         </td>
       </template>
-     
     </hux-data-table>
 
     <v-row class="pt-3 pb-7 pl-3" v-if="rowData.length == 0 && !loading">
