@@ -51,9 +51,11 @@ def create_notification(
     doc = {
         c.NOTIFICATION_FIELD_TYPE: notification_type,
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
-        c.NOTIFICATION_FIELD_CATEGORY: category,
         c.NOTIFICATION_FIELD_CREATED: current_time,
     }
+
+    if category:
+        doc[c.NOTIFICATION_FIELD_CATEGORY] = category
 
     try:
         notification_id = collection.insert_one(doc).inserted_id
