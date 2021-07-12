@@ -483,6 +483,141 @@
 
     <Logo type="twilio"></Logo>
     <Logo type="twilio" :size="48"></Logo>
+    <v-divider class="mt-10" />
+
+    <v-subheader>Nested Data Table</v-subheader>
+    <hux-data-table :headers="headerNest" :dataItems="dataItemsNest" nested>
+      <template #item-row="{ item, expand, isExpanded }">
+        <tr :class="{ 'expanded-row': isExpanded }">
+          <td
+            v-for="header in headerNest"
+            :key="header.value"
+            :class="{
+              'expanded-row': isExpanded,
+            }"
+            :style="{ width: header.width, left: 0 }"
+          >
+            <div v-if="header.value == 'name'" class="w-80">
+              <v-icon
+                :class="{ 'normal-icon': isExpanded }"
+                @click="expand(!isExpanded)"
+              >
+                mdi-chevron-right
+              </v-icon>
+              {{ item[header.value] }}
+            </div>
+            <div v-if="header.value == 'audiences'">
+              {{ item[header.value] }}
+            </div>
+            <div v-if="header.value == 'status'">
+              <status
+                :status="item[header.value]"
+                :showLabel="true"
+                collapsed
+                class="d-flex"
+                :iconSize="17"
+              />
+            </div>
+            <div v-if="header.value == 'size'">
+              <size :value="item[header.value]" />
+            </div>
+          </td>
+        </tr>
+      </template>
+      <template #expanded-row="{ headers, item }">
+        <td :colspan="headers.length" class="pa-0 child">
+          <hux-data-table
+            :headers="headers"
+            :dataItems="item.child"
+            :showHeader="false"
+            class="expanded-table"
+            nested
+          >
+            <template #item-row="{ item, expand, isExpanded }">
+              <tr :class="{ 'expanded-row': isExpanded }">
+                <td
+                  v-for="header in headerNest"
+                  :key="header.value"
+                  :colspan="header.value == 'name' ? 0 : 0"
+                  :class="{
+                    'expanded-row': isExpanded,
+                  }"
+                >
+                  <div v-if="header.value == 'name'">
+                    <v-icon
+                      :class="{ 'normal-icon': isExpanded }"
+                      @click="expand(!isExpanded)"
+                    >
+                      mdi-chevron-right
+                    </v-icon>
+                    {{ item[header.value] }}
+                  </div>
+                  <div v-if="header.value == 'audiences'">
+                    <div>
+                      <size :value="item[header.value]" />
+                    </div>
+                  </div>
+                  <div v-if="header.value == 'status'">
+                    <status
+                      :status="item[header.value]"
+                      :showLabel="true"
+                      collapsed
+                      class="d-flex"
+                      :iconSize="17"
+                    />
+                  </div>
+                  <div v-if="header.value == 'size'">
+                    <size :value="item[header.value]" />
+                  </div>
+                </td>
+              </tr>
+            </template>
+            <template #expanded-row="{ headers, item }">
+              <td :colspan="headers.length" class="pa-0 child">
+                <hux-data-table
+                  :headers="headers"
+                  :dataItems="item.childNest"
+                  :showHeader="false"
+                  class="expanded-table"
+                  nested
+                >
+                  <template #item-row="{ item }">
+                    <tr>
+                      <td
+                        v-for="header in headerNest"
+                        :key="header.value"
+                        :style="{ width: header.width, left: 0 }"
+                      >
+                        <div v-if="header.value == 'name'">
+                          {{ item[header.value] }}
+                        </div>
+                        <div v-if="header.value == 'audiences'">
+                          <div>
+                            <size :value="item[header.value]" />
+                          </div>
+                        </div>
+                        <div v-if="header.value == 'status'">
+                          <status
+                            :status="item[header.value]"
+                            :showLabel="true"
+                            collapsed
+                            class="d-flex"
+                            :iconSize="17"
+                          />
+                        </div>
+                        <div v-if="header.value == 'size'">
+                          <size :value="item[header.value]" />
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </hux-data-table>
+              </td>
+            </template>
+          </hux-data-table>
+        </td>
+      </template>
+    </hux-data-table>
   </v-container>
 </template>
 
@@ -511,6 +646,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import ChordChart from "@/components/common/identityChart/ChordChart"
 import { generateColor } from "@/utils"
+import Size from "@/components/common/huxTable/Size.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
@@ -540,6 +676,7 @@ export default {
     FormStep,
     HuxSlider,
     ChordChart,
+    Size,
     HuxStartDate,
     HuxEndDate,
   },
@@ -943,6 +1080,181 @@ export default {
         { text: "Created", value: "created" },
         { text: "Created By", value: "createdBy" },
       ],
+      headerNest: [
+        { text: "Engagement name", value: "name", width: "auto" },
+        { text: "Audiences", value: "audiences", width: "auto" },
+        { text: "Status", value: "status", width: "auto" },
+        { text: "Size", value: "size", width: "auto" },
+      ],
+
+      dataItemsNest: [
+        {
+          name: "Winter",
+          audiences: 159,
+          status: "Active",
+          size: 1000,
+          deliverySchedule: "Manual",
+          lastUpdated: "1 week ago",
+          lastUpdatedBy: "AZ",
+          created: "1 month ago",
+          createdBy: "JS",
+          child: [
+            {
+              name: "Frozen goods",
+              audiences: 209,
+              status: "Delivering",
+              size: 2000,
+              deliverySchedule: "-",
+              lastUpdated: "1 week ago",
+              lastUpdatedBy: "SA",
+              created: "1 month ago",
+              createdBy: "JS",
+              childNest: [
+                {
+                  name: "Goods Frozen",
+                  audiences: 259,
+                  status: "Delivered",
+                  size: "565k",
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+                {
+                  name: "Goods Frozen 1",
+                  audiences: 259,
+                  status: "Delivering",
+                  size: "565k",
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+              ],
+            },
+            {
+              name: "Texas",
+              audiences: 109,
+              status: "Delivering",
+              size: 3000,
+              deliverySchedule: "-",
+              lastUpdated: "1 week ago",
+              lastUpdatedBy: "PR",
+              created: "1 month ago",
+              createdBy: "JS",
+              childNest: [
+                {
+                  name: "Texas goods",
+                  audiences: 459,
+                  status: "Delivered",
+                  size: 0,
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+                {
+                  name: "Texas goods 1",
+                  audiences: 459,
+                  status: "Delivering",
+                  size: 0,
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: "Summer",
+          audiences: 100,
+          status: "Active",
+          size: 1000,
+          deliverySchedule: "Manual",
+          lastUpdated: "1 week ago",
+          lastUpdatedBy: "JS",
+          created: "1 month ago",
+          createdBy: "JS",
+          child: [
+            {
+              name: "Goods",
+              audiences: 209,
+              status: "Delivering",
+              size: 2000,
+              deliverySchedule: "-",
+              lastUpdated: "1 week ago",
+              lastUpdatedBy: "SA",
+              created: "1 month ago",
+              createdBy: "JS",
+              childNest: [
+                {
+                  name: "Summer goods",
+                  audiences: 159,
+                  status: "Delivered",
+                  size: 0,
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+                {
+                  name: "Summer goods 1",
+                  audiences: 159,
+                  status: "Delivering",
+                  size: 0,
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+              ],
+            },
+            {
+              name: "Texas Summer",
+              audiences: 109,
+              status: "Active",
+              size: 3000,
+              deliverySchedule: "-",
+              lastUpdated: "1 week ago",
+              lastUpdatedBy: "PR",
+              created: "1 month ago",
+              createdBy: "JS",
+              childNest: [
+                {
+                  name: "Goods Texas Summer",
+                  audiences: 359,
+                  status: "Delivered",
+                  size: 56,
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+                {
+                  name: "Goods Texas Summer 1",
+                  audiences: 139,
+                  status: "Delivering",
+                  size: 565,
+                  deliverySchedule: "-",
+                  lastUpdated: "1 week ago",
+                  lastUpdatedBy: "SA",
+                  created: "1 month ago",
+                  createdBy: "JS",
+                },
+              ],
+            },
+          ],
+        },
+      ],
       chartData: [
         [0, 30, 40, 10, 20],
         [30, 0, 15, 45, 10],
@@ -966,5 +1278,24 @@ export default {
 <style lang="scss" scoped>
 .main {
   margin: 10px;
+}
+::v-deep .hux-data-table.expanded-table {
+  .v-data-table__wrapper {
+    box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base) !important;
+    .child-row {
+      padding-left: 317px;
+      border-right: none;
+    }
+  }
+  td:nth-child(1) {
+    background: none;
+  }
+}
+.mdi-chevron-right {
+  margin-top: -4px;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+  &.normal-icon {
+    transform: rotate(90deg);
+  }
 }
 </style>

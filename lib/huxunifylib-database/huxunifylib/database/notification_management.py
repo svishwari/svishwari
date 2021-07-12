@@ -21,7 +21,7 @@ def create_notification(
     database: DatabaseClient,
     notification_type: str,
     description: str,
-    category: str,
+    category: str = None,
 ) -> Union[dict, None]:
     """A function to create a new notification
 
@@ -31,7 +31,7 @@ def create_notification(
         description (str): description of notification.
         category (str): category of notification.
 
-    Returns
+    Returns:
         Union[dict, None]: MongoDB document for a notification.
 
     """
@@ -51,9 +51,11 @@ def create_notification(
     doc = {
         c.NOTIFICATION_FIELD_TYPE: notification_type,
         c.NOTIFICATION_FIELD_DESCRIPTION: description,
-        c.NOTIFICATION_FIELD_CATEGORY: category,
         c.NOTIFICATION_FIELD_CREATED: current_time,
     }
+
+    if category:
+        doc[c.NOTIFICATION_FIELD_CATEGORY] = category
 
     try:
         notification_id = collection.insert_one(doc).inserted_id
