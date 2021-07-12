@@ -3,7 +3,7 @@
     <template #activator="{ on }">
       <span v-on="on" class="d-flex cursor-pointer">
         <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
-          <v-icon color="secondary"> mdi-bell-outline </v-icon>
+          <v-icon color="primary"> mdi-bell-outline </v-icon>
         </v-btn>
       </span>
     </template>
@@ -96,6 +96,7 @@ export default {
     width: 296px !important;
     height: 283px !important;
     overflow-wrap: break-word !important;
-  }
+  }  
 }
+
 </style>
