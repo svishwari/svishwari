@@ -143,7 +143,8 @@ def clean_cdm_fields(body: dict) -> dict:
         if isinstance(body[date_field], datetime.datetime):
             continue
         try:
-            body[date_field] = parse(body[date_field])
+            # ignoretz this to make it naive format for uniformity
+            body[date_field] = parse(body[date_field], ignoretz=True)
         except (ParserError, TypeError):
             body[date_field] = DEFAULT_DATETIME
     return body

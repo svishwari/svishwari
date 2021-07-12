@@ -254,6 +254,28 @@ DESTINATION_CONSTANTS = {
     },
 }
 
+# DESTINATION Secret Mapping
+MONGO = "mongo"
+DESTINATION_SECRETS = {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: {
+        MONGO: [
+            FACEBOOK_AD_ACCOUNT_ID,
+            FACEBOOK_APP_ID,
+        ],
+        AWS_SSM_NAME: [FACEBOOK_ACCESS_TOKEN, FACEBOOK_APP_SECRET],
+    },
+    db_c.DELIVERY_PLATFORM_SFMC: {
+        MONGO: [
+            SFMC_CLIENT_ID,
+            SFMC_AUTH_BASE_URI,
+            SFMC_ACCOUNT_ID,
+            SFMC_SOAP_BASE_URI,
+            SFMC_REST_BASE_URI,
+        ],
+        AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
+    },
+}
+
 # user preferences
 PREFERENCE_KEY = "preference_key"
 PREFERENCE_KEY_DESCRIPTION = "the preference key you want to store."

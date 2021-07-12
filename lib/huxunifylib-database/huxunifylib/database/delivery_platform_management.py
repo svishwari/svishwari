@@ -35,7 +35,7 @@ def set_delivery_platform(
     added: bool = False,
     deleted: bool = False,
     user_name: str = None,
-    performance_de: dict = None,
+    configuration: dict = None,
 ) -> Union[dict, None]:
     """A function to create a delivery platform.
 
@@ -93,13 +93,11 @@ def set_delivery_platform(
         c.UPDATE_TIME: curr_time,
         c.FAVORITE: False,
     }
-    if (
-        delivery_platform_type == c.DELIVERY_PLATFORM_SFMC
-        and performance_de is not None
-    ):
-        doc[c.PERFORMANCE_METRICS_DATA_EXTENSION] = performance_de
     if authentication_details is not None:
         doc[c.DELIVERY_PLATFORM_AUTH] = authentication_details
+
+    if configuration is not None:
+        doc[c.CONFIGURATION] = configuration
 
     # Add user name only if it is available
     if user_name:
