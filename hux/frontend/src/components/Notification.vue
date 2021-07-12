@@ -96,7 +96,6 @@ export default {
     width: 296px !important;
     height: 283px !important;
     overflow-wrap: break-word !important;
-  }  
+  }
 }
-
 </style>
