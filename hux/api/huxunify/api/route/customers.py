@@ -2,7 +2,6 @@
 """
 Paths for customer API
 """
-from datetime import datetime
 from http import HTTPStatus
 from random import choice
 from typing import Tuple
