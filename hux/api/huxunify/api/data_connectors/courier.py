@@ -21,7 +21,6 @@ from huxunifylib.util.general.const import (
     SFMCCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
-from huxunify.api.data_connectors.aws import parameter_store
 from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
 
@@ -51,12 +50,12 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         == db_const.DELIVERY_PLATFORM_FACEBOOK
     ):
         env_dict = {
-            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
-                auth[api_const.FACEBOOK_AD_ACCOUNT_ID]
-            ),
-            FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
-                auth[api_const.FACEBOOK_APP_ID]
-            ),
+            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
+                api_const.FACEBOOK_AD_ACCOUNT_ID
+            ],
+            FacebookCredentials.FACEBOOK_APP_ID.name: auth[
+                api_const.FACEBOOK_APP_ID
+            ],
             # use stub for facebook
             api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
         }
@@ -74,21 +73,19 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         == db_const.DELIVERY_PLATFORM_SFMC
     ):
         env_dict = {
-            SFMCCredentials.SFMC_CLIENT_ID.name: parameter_store.get_store_value(
-                auth[api_const.SFMC_CLIENT_ID]
-            ),
-            SFMCCredentials.SFMC_AUTH_URL.name: parameter_store.get_store_value(
-                auth[api_const.SFMC_AUTH_BASE_URI]
-            ),
-            SFMCCredentials.SFMC_ACCOUNT_ID.name: parameter_store.get_store_value(
-                auth[api_const.SFMC_ACCOUNT_ID]
-            ),
-            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: parameter_store.get_store_value(
-                auth[api_const.SFMC_SOAP_BASE_URI]
-            ),
-            SFMCCredentials.SFMC_URL.name: parameter_store.get_store_value(
-                auth[api_const.SFMC_REST_BASE_URI]
-            ),
+            SFMCCredentials.SFMC_CLIENT_ID.name: auth[
+                api_const.SFMC_CLIENT_ID
+            ],
+            SFMCCredentials.SFMC_AUTH_URL.name: auth[
+                api_const.SFMC_AUTH_BASE_URI
+            ],
+            SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
+                api_const.SFMC_ACCOUNT_ID
+            ],
+            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
+                api_const.SFMC_SOAP_BASE_URI
+            ],
+            SFMCCredentials.SFMC_URL.name: auth[api_const.SFMC_REST_BASE_URI],
         }
 
         secret_dict = {
