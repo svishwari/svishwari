@@ -99,7 +99,7 @@ export const defineRoutes = (server) => {
     }
   )
 
-  server.get("/engagements/:id/deliveries", (schema, request) => {
+  server.get("/engagements/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const engagement = schema.engagements.find(id)
     return engagement.audiences.map((audience) => {
