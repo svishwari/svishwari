@@ -1281,7 +1281,7 @@ export default {
 }
 ::v-deep .hux-data-table.expanded-table {
   .v-data-table__wrapper {
-    box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
+    box-shadow: inset 0px 10px 10px -4px var(--v-lightGrey-base) !important;
     .child-row {
       padding-left: 317px;
       border-right: none;
