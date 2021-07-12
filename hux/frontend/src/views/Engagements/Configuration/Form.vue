@@ -75,10 +75,9 @@
           </v-radio-group>
 
           <div>
-            <span class="date-picker-label">Start date</span>
+            <span class="text-h5 date-picker-label">Start date</span>
             <hux-start-date
               class="mt-n4"
-              labelText="Engagement name"
               :label="selectedStartDate"
               :selected="selectedStartDate"
               @on-date-select="onStartDateSelect"
@@ -88,7 +87,7 @@
             mdi-arrow-right
           </v-icon>
           <div>
-            <span class="date-picker-label">End date</span>
+            <span class="text-h5 date-picker-label">End date</span>
             <hux-end-date
               class="mt-n4"
               :label="selectedEndDate"
