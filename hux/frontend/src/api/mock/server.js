@@ -18,6 +18,7 @@ import modelFactory from "./factories/model"
 import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
 import deliveryFactory from "./factories/delivery"
+import campaignFactory from "./factories/campaigns"
 
 export function makeServer({ environment = "development" } = {}) {
   // models
@@ -37,6 +38,7 @@ export function makeServer({ environment = "development" } = {}) {
     audiencePerformance: Model,
     dataExtension: Model,
     deliveryFactory: Model,
+    campaign: Model,
   }
 
   const factories = {
@@ -50,6 +52,7 @@ export function makeServer({ environment = "development" } = {}) {
     audiencePerformance: Factory.extend(audiencePerformanceFactory),
     dataExtension: Factory.extend(dataExtensionFactory),
     delivery: Factory.extend(deliveryFactory),
+    campaign: Factory.extend(campaignFactory),
   }
 
   const server = createServer({

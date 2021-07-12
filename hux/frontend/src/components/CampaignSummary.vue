@@ -44,7 +44,7 @@
                       >
                         {{
                           item.value.split("|")[1]
-                            | Numeric(true, false, false, "%")
+                            | percentageConvert(true, true)
                         }}
                       </span>
                       <span
@@ -71,7 +71,7 @@
                         {{ item.value | Numeric(false, false, true) }}
                       </span>
                       <span v-else-if="percentileColumns.includes(item.field)">
-                        {{ item.value | Numeric(true, false, false, "%") }}
+                        {{ item.value | percentageConvert(true, true) }}
                       </span>
                       <span v-else-if="currencyColumns.includes(item.field)">
                         {{ item.value | Currency }}
@@ -112,28 +112,39 @@
                   >
                     mdi-chevron-right
                   </v-icon>
-                  <tooltip>
-                    <template #label-content>
-                      <span class="d-flex align-center">
-                        <!-- TODO Route Link to Audience Insight Page -->
-                        <router-link
-                          to="#"
-                          class="
-                            text-decoration-none
-                            primary--text
-                            ellipsis
-                            max-26
-                          "
-                          append
-                        >
-                          {{ item.name }}
-                        </router-link>
+
+                  <span class="d-flex align-center">
+                    <!-- TODO Route Link to Audience Insight Page -->
+                    <router-link to="#" class="text-decoration-none" append>
+                      <span class="audience-name d-flex align-center">
+                        <tooltip>
+                          <template #label-content>
+                            <div class="primary--text ellipsis max-26">
+                              {{ item.name }}
+                            </div>
+                          </template>
+                          <template #hover-content>
+                            {{ item.name }}
+                          </template>
+                        </tooltip>
+                        <tooltip>
+                          <template #label-content>
+                            <v-icon
+                              small
+                              color="error"
+                              class="ml-n4"
+                              v-if="needsCampaignMapping(item)"
+                            >
+                              mdi-information-outline
+                            </v-icon>
+                          </template>
+                          <template #hover-content>
+                            Mapping required to show related metrics.
+                          </template>
+                        </tooltip>
                       </span>
-                    </template>
-                    <template #hover-content>
-                      {{ item.name }}
-                    </template>
-                  </tooltip>
+                    </router-link>
+                  </span>
                 </div>
                 <div v-if="header.value != 'name'" class="w-100">
                   {{ item[header.value] }}
@@ -142,43 +153,105 @@
             </tr>
           </template>
 
-          <template #expanded-row="{ headers, item }">
+          <template #expanded-row="{ headers, parentItem }">
             <td :colspan="headers.length" class="pa-0 child">
               <hux-data-table
                 :headers="headers"
                 :dataItems="
-                  getDestinationRollups(item.destinations || item.campaigns)
+                  getDestinationRollups(
+                    parentItem.destinations || item.campaigns
+                  )
                 "
                 :showHeader="false"
-                v-if="item"
+                v-if="parentItem"
+                nested
               >
-                <template #row-item="{ item }">
-                  <td
-                    v-for="header in headers"
-                    :key="header.value"
-                    :style="{ width: header.width }"
-                  >
-                    <span v-if="header.value == 'name'">
-                      <tooltip>
-                        <template #label-content>
-                          <logo
-                            :type="logoType(item[header.value])"
-                            :size="18"
-                            class="mr-3"
-                          />
-                          <span class="text--neroblack ellipsis">
-                            {{ item[header.value] }}
+                <template #item-row="{ item, expand, isExpanded }">
+                  <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
+                    <td :style="{ width: headers[0].width }">
+                      <div class="w-100 d-flex align-center">
+                        <span
+                          v-if="item.campaigns && item.campaigns.length > 0"
+                        >
+                          <v-icon
+                            :class="{ 'rotate-icon-90': isExpanded }"
+                            size="18"
+                            @click="expand(!isExpanded)"
+                          >
+                            mdi-chevron-right
+                          </v-icon>
+
+                          <span class="d-flex align-center">
+                            <!-- TODO Route Link to Audience Insight Page -->
+                            <router-link
+                              to="#"
+                              class="text-decoration-none"
+                              append
+                            >
+                              <logo
+                                :type="logoType(item[headers[0].value])"
+                                :size="18"
+                                class="mr-3"
+                              />
+                              <span class="text--neroblack ellipsis">
+                                {{ item[headers[0].value] | Empty("-") }}
+                              </span>
+                            </router-link>
                           </span>
-                        </template>
-                        <template #hover-content>
-                          {{ item[header.value] }}
-                        </template>
-                      </tooltip>
-                    </span>
-                    <span v-if="header.value != 'name'">
+                        </span>
+                        <span v-else class="d-flex align-center">
+                          <!-- TODO Route Link to Audience Insight Page -->
+                          <router-link
+                            to="#"
+                            class="text-decoration-none"
+                            append
+                          >
+                            <logo
+                              :type="logoType(item[headers[0].value])"
+                              :size="18"
+                              class="mr-3"
+                            />
+                            <span class="text--neroblack ellipsis">
+                              {{ item[headers[0].value] | Empty("-") }}
+                            </span>
+                          </router-link>
+                        </span>
+                      </div>
+                    </td>
+                    <td
+                      v-if="!item.is_mapped"
+                      :colspan="getDestinationHeaders(headers).length"
+                      :style="{
+                        width: totalWidth(getDestinationHeaders(headers)),
+                      }"
+                    >
+                      <span class="error--text mr-6">
+                        <v-icon small color="error" class="mr-1">
+                          mdi-information-outline
+                        </v-icon>
+                        To view KPI you need to map to a Facebook campaign.
+                      </span>
+                      <v-btn
+                        tile
+                        class="error--text px-2 pl-2 pr-4"
+                        color="white"
+                        @click="triggerCampaignMap(parentItem, item)"
+                      >
+                        <v-icon size="15" small class="mr-1">
+                          mdi-mapbox
+                        </v-icon>
+                        Map now
+                      </v-btn>
+                    </td>
+                    <td
+                      v-for="header in getDestinationHeaders(headers)"
+                      :key="header.value"
+                      :style="{ width: header.width }"
+                      v-else
+                    >
                       {{ item[header.value] }}
-                    </span>
-                  </td>
+                    </td>
+                  </tr>
                 </template>
               </hux-data-table>
             </td>
@@ -186,6 +259,11 @@
         </hux-data-table>
       </v-card-text>
     </v-card>
+    <campaign-map-drawer
+      :toggle="showCampaignMapDrawer"
+      @onToggle="(toggle) => (showCampaignMapDrawer = toggle)"
+      ref="campaignMapDrawer"
+    />
   </div>
 </template>
 
@@ -195,6 +273,8 @@ import MetricCard from "@/components/common/MetricCard"
 import Tooltip from "./common/Tooltip.vue"
 import Icon from "./common/Icon.vue"
 import Logo from "./common/Logo.vue"
+import CampaignMapDrawer from "@/views/Engagements/Configuration/Drawers/CampaignMapDrawer.vue"
+
 export default {
   name: "CampaignSummary",
   components: {
@@ -203,9 +283,11 @@ export default {
     Tooltip,
     Icon,
     Logo,
+    CampaignMapDrawer,
   },
   data() {
     return {
+      showCampaffoignMapDrawer: false,
       expand: [],
       AdsHeaders: [
         { text: "Audiences", value: "name", width: "278px" },
@@ -497,6 +579,9 @@ export default {
           name: "Audience 3",
         },
       ],
+      audienceId: null,
+      destinationId: null,
+      showCampaignMapDrawer: false,
     }
   },
   computed: {
@@ -534,14 +619,27 @@ export default {
       required: true,
       default: "ads",
     },
+    engagementId: {
+      type: String,
+      required: true,
+    },
   },
   methods: {
     logoType(name) {
       return name.split(" ")[0].toLowerCase()
     },
     getDestinationRollups(destinationRollups) {
-      return destinationRollups.map((destinationRollup) =>
-        this.formatData(destinationRollup)
+      return destinationRollups.map((destinationRollup) => {
+        return this.formatData(destinationRollup)
+      })
+    },
+    needsCampaignMapping(item) {
+      return (
+        (item.destinations &&
+          item.destinations.some(
+            (dest) => !dest.is_mapped && dest.name === "Facebook"
+          )) ||
+        false
       )
     },
     formatData(item) {
@@ -550,12 +648,10 @@ export default {
         if (this.numericColumns.includes(key)) {
           obj[key] = this.$options.filters.Numeric(obj[key], true, false)
         } else if (this.percentileColumns.includes(key)) {
-          obj[key] = this.$options.filters.Numeric(
+          obj[key] = this.$options.filters.percentageConvert(
             obj[key],
             true,
-            false,
-            false,
-            "%"
+            true
           )
         } else if (this.currencyColumns.includes(key)) {
           obj[key] = this.$options.filters.Currency(obj[key])
@@ -564,6 +660,27 @@ export default {
         }
       })
       return obj
+    },
+    getDestinationHeaders(headers) {
+      return headers.filter((_, i) => i > 0)
+    },
+    totalWidth(headers) {
+      return (
+        headers.reduce(
+          (n, header) => n + parseFloat(header.width.replace("px", "")),
+          0
+        ) +
+        1 +
+        "px"
+      )
+    },
+    triggerCampaignMap(audience, destination) {
+      this.showCampaignMapDrawer = true
+      this.$refs.campaignMapDrawer.fetchMappings({
+        id: this.engagementId,
+        audienceId: audience.id,
+        destinationId: destination.id,
+      })
     },
   },
 }
@@ -630,6 +747,11 @@ export default {
           font-size: 14px !important;
           line-height: 22px;
           color: var(--v-neroBlack-base);
+          .audience-name {
+            span {
+              display: flex;
+            }
+          }
         }
         td:nth-child(1) {
           background: var(--v-white-base);

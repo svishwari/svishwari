@@ -438,4 +438,7 @@ export default function (server) {
 
   // seed data-extensions
   server.createList("dataExtension", 5)
+
+  // seed campaigns
+  server.createList("campaign", 1)
 }

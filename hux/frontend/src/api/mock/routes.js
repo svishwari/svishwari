@@ -98,6 +98,12 @@ export const defineRoutes = (server) => {
       return { message: "Successfully created delivery jobs" }
     }
   )
+  server.get(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
+    (schema) => {
+      return schema.campaigns.all()
+    }
+  )
 
   server.get("/engagements/:id/deliveries", (schema, request) => {
     const id = request.params.id

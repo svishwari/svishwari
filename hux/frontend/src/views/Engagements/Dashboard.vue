@@ -156,6 +156,7 @@
             <campaign-summary
               :summary="displayAdsSummary"
               :campaignData="audiencePerformanceAdsData"
+              :engagementId="engagementId"
               type="ads"
             />
           </v-tab-item>
