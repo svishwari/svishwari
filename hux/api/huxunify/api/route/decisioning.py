@@ -4,7 +4,7 @@ purpose of this script is for housing the decision routes for the API.
 from datetime import datetime
 from random import random, randint, uniform
 from http import HTTPStatus
-from typing import Tuple, List, Union, Dict
+from typing import Tuple, List
 
 from flask import Blueprint
 from flask_apispec import marshal_with
@@ -13,16 +13,14 @@ from flasgger import SwaggerView
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     handle_api_exception,
-    secured, api_error_handler,
+    secured,
+    api_error_handler,
 )
 from huxunify.api.schema.model import (
     ModelSchema,
     ModelVersionSchema,
-    FeatureSchema,
-    PerformanceMetricSchema,
-    LiftSchema,
     DriftSchema,
-    FeatureImportance, ModelDashboardSchema,
+    ModelDashboardSchema,
 )
 from huxunify.api.data_connectors import tecton
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -75,12 +73,13 @@ class ModelsView(SwaggerView):
                 "last_trained": datetime(2021, 6, 26),
                 "lookback_window": 365,
                 "name": "Propensity to Purchase",
-                "description": "Propensity of a customer making a purchase after receiving an email.",
+                "description": "Propensity of a customer making a purchase "
+                "after receiving an email.",
                 "latest_version": " ",
                 "prediction_window": 365,
                 "id": 3,
                 "owner": "Susan Miller",
-                "status": "Active"
+                "status": "Active",
             }
             all_models = tecton.get_models()
             all_models.append(purchase_model)
@@ -138,7 +137,7 @@ class ModelVersionView(SwaggerView):
 @add_view_to_blueprint(
     model_bp, f"{api_c.MODELS_ENDPOINT}/<model_type>/overview", "ModelOverview"
 )
-class ModelFeatureView(SwaggerView):
+class ModelOverview(SwaggerView):
     """
     Model Overview Class
     """
@@ -151,15 +150,16 @@ class ModelFeatureView(SwaggerView):
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve Model Overview"
-        }
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
     @marshal_with(ModelDashboardSchema)
-    def get(self, model_type: str) -> Tuple[Dict, int]:
-        """Retrieves model features.
+    @api_error_handler()
+    def get(self, model_type: str) -> Tuple[dict, int]:
+        """Retrieves model overview.
 
         ---
         security:
@@ -169,7 +169,7 @@ class ModelFeatureView(SwaggerView):
             model_type (str): model type
 
         Returns:
-            Tuple[List[dict], int]: dict of model features and http code
+            Tuple[dict, int]: dict of model features and http code
 
         """
         if model_type not in api_c.SUPPORTED_MODELS:
@@ -178,19 +178,25 @@ class ModelFeatureView(SwaggerView):
         output = {
             api_c.MODEL_TYPE: model_type,
             api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_type][api_c.NAME],
-            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_type][api_c.DESCRIPTION],
+            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_type][
+                api_c.DESCRIPTION
+            ],
             api_c.PERFORMANCE_METRIC: {
-                api_c.AUC: api_c.SUPPORTED_MODELS[model_type][api_c.DESCRIPTION],
-                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_type][api_c.PRECISION],
+                api_c.AUC: api_c.SUPPORTED_MODELS[model_type][api_c.AUC],
+                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_type][
+                    api_c.PRECISION
+                ],
                 api_c.RECALL: api_c.SUPPORTED_MODELS[model_type][api_c.RECALL],
-                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_type][api_c.CURRENT_VERSION],
-                api_c.RMSE: api_c.SUPPORTED_MODELS[model_type][api_c.RMSE]
+                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_type][
+                    api_c.CURRENT_VERSION
+                ],
+                api_c.RMSE: api_c.SUPPORTED_MODELS[model_type][api_c.RMSE],
             },
             api_c.FEATURE_IMPORTANCE: [
                 {
                     api_c.NAME: f"feature name {x}",
                     api_c.DESCRIPTION: f"description of feature name {x}",
-                    api_c.SCORE: round(random(), 2)
+                    api_c.SCORE: round(random(), 2),
                 }
                 for x in range(1, 21)
             ],
@@ -207,150 +213,9 @@ class ModelFeatureView(SwaggerView):
                     api_c.PROFILE_SIZE_PERCENT: round(uniform(1, 100), 2),
                 }
                 for x in range(10, 100, 10)
-            ]
+            ],
         }
         return output, HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<name>/performance-metrics",
-    "ModelMetricsView",
-)
-class ModelMetricsView(SwaggerView):
-    """
-    Model Performance Metrics Class
-    """
-
-    parameters = api_c.MODEL_NAME_PARAMS
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Model performance metrics.",
-            "schema": {"type": "array", "items": PerformanceMetricSchema},
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.MODELS_TAG]
-
-    # pylint: disable=no-self-use
-    @marshal_with(PerformanceMetricSchema(many=True))
-    def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieves model performance metrics.
-
-        ---
-        security:
-            - Bearer: [Authorization]
-
-        Args:
-            name (str): model name
-
-        Returns:
-            Tuple[List[dict], int]: dict of model performance metrics and http code
-
-        """
-        try:
-            return (
-                tecton.get_model_performance_metrics(name),
-                HTTPStatus.OK.value,
-            )
-
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model performance metrics."
-            ) from exc
-
-
-@add_view_to_blueprint(
-    model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<name>/feature-importance",
-    "ModelFeatureImportanceView",
-)
-class ModelFeatureImportanceView(SwaggerView):
-    """
-    Model Feature Importance Class
-    """
-
-    parameters = api_c.MODEL_NAME_PARAMS
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Model feature importance.",
-            "schema": {"type": "array", "items": FeatureImportance},
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.MODELS_TAG]
-
-    # pylint: disable=no-self-use
-    @marshal_with(FeatureImportance(many=True))
-    def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieves model feature importance details.
-
-        ---
-        security:
-            - Bearer: [Authorization]
-
-        Args:
-            name (str): model name
-
-        Returns:
-            Tuple[List[dict], int]: dict of model feature performance and http code
-
-        """
-        try:
-            return (
-                tecton.get_model_feature_importance(name),
-                HTTPStatus.OK.value,
-            )
-
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model feature performance."
-            ) from exc
-
-
-@add_view_to_blueprint(
-    model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<name>/lift",
-    "ModelLiftView",
-)
-class ModelLiftView(SwaggerView):
-    """
-    Model Lift Class
-    """
-
-    parameters = api_c.MODEL_NAME_PARAMS
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Model lift.",
-            "schema": {"type": "array", "items": LiftSchema},
-        },
-    }
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.MODELS_TAG]
-
-    # pylint: disable=no-self-use
-    @marshal_with(LiftSchema(many=True))
-    def get(self, name: str) -> Tuple[List[dict], int]:
-        """Retrieves model lift details.
-
-        ---
-        security:
-            - Bearer: [Authorization]
-
-        Args:
-            name (str): model name
-
-        Returns:
-            Tuple[List[dict], int]: dict of model lift and http code
-
-        """
-        try:
-            return tecton.get_model_lift(name), HTTPStatus.OK.value
-
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model lift."
-            ) from exc
 
 
 @add_view_to_blueprint(

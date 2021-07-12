@@ -385,7 +385,7 @@ MODEL_TYPE_PARAMS = [
         "type": "string",
         "in": "path",
         "required": True,
-        "example": "ltv"
+        "example": "ltv",
     }
 ]
 PURCHASE = "purchase"
@@ -406,9 +406,8 @@ SUPPORTED_MODELS = {
         RMSE: 350,
         AUC: -1,
         PRECISION: -1,
-        RECALL: -1
+        RECALL: -1,
     },
-
     UNSUBSCRIBE: {
         NAME: "Propensity to Unsubscribe",
         DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
@@ -416,16 +415,16 @@ SUPPORTED_MODELS = {
         RMSE: -1,
         AUC: 0.79,
         PRECISION: 0.82,
-        RECALL: 0.65
+        RECALL: 0.65,
     },
     PURCHASE: {
         NAME: "Propensity to Purchase",
         DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
         CURRENT_VERSION: "3.1.2",
         RMSE: -1,
-        AUC: -1,
-        PRECISION: -1,
-        RECALL: -1
+        AUC: 0.79,
+        PRECISION: 0.82,
+        RECALL: 0.65,
     },
 }
 MODEL_LIST_PAYLOAD = {
