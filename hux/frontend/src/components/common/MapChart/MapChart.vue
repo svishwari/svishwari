@@ -26,7 +26,7 @@
           >
             <span class="subprop-name">{{ item.name }}</span>
             <span class="value ml-2 font-weight-semi-bold">
-              {{item.population_percentage | percentageConvert(true, true)}}
+              {{ item.population_percentage | percentageConvert(true, true) }}
             </span>
           </div>
         </v-card-text>
@@ -65,7 +65,9 @@ export default {
   methods: {
     sortStateData() {
       if (this.mapChartData) {
-      this.mapChartData.sort((a,b)=> b.population_percentage - a.population_percentage)
+        this.mapChartData.sort(
+          (a, b) => b.population_percentage - a.population_percentage
+        )
       }
     },
     toolTipDisplay(...arg) {

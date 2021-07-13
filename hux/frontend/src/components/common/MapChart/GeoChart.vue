@@ -22,7 +22,7 @@
         ></div>
         <div class="map-slider">
           <map-slider
-            v-if=" minValue && maxValue"
+            v-if="minValue && maxValue"
             :min="minValue"
             :max="maxValue"
           ></map-slider>
@@ -97,8 +97,8 @@ export default {
         (data) => data.properties.population_percentage
       )
 
-      this.minValue =  Math.min(...total_range)
-      this.maxValue =  Math.max(...total_range)
+      this.minValue = Math.min(...total_range)
+      this.maxValue = Math.max(...total_range)
 
       let projection = d3Geo
         .geoIdentity()
@@ -107,7 +107,7 @@ export default {
 
       let colorScale = d3Scale
         .scaleLinear()
-        .domain([this.minValue*100, this.maxValue*100])
+        .domain([this.minValue * 100, this.maxValue * 100])
         .range(["#ffffff", "#396286"])
 
       svg

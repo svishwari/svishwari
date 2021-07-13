@@ -10,7 +10,7 @@
   >
     <div class="map-hover">
       <span class="prop-name font-weight-semi-bold">
-        {{sourceInput.name}}
+        {{ sourceInput.name }}
       </span>
       <div class="sub-props pt-4">
         <span class="subprop-name">Size</span>

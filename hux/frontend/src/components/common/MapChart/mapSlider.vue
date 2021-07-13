@@ -31,18 +31,10 @@ export default {
   data() {
     return {
       minValue: this.min
-        ? this.$options.filters.percentageConvert(
-            this.min,
-            true,
-            true
-          )
+        ? this.$options.filters.percentageConvert(this.min, true, true)
         : "-%",
       maxValue: this.max
-        ? this.$options.filters.percentageConvert(
-            this.max,
-            true,
-            true
-          )
+        ? this.$options.filters.percentageConvert(this.max, true, true)
         : "-%",
     }
   },
