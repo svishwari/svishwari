@@ -106,3 +106,28 @@ class AudiencePostSchema(AudiencePutSchema):
     )
     engagements = fields.List(fields.String(), required=True)
     filters = fields.List(fields.Dict())
+
+
+class DeliveryHistorySchema(Schema):
+    """
+    Schema for Engagement Delivery History
+    """
+
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
+    audience = fields.Nested(
+        AudienceGetSchema(
+            only=(
+                "name",
+                "_id",
+            )
+        )
+    )
+    destination = fields.Nested(
+        DestinationGetSchema(only=("name", "type", "_id"))
+    )
+    size = fields.Integer()
+    delivered = fields.DateTime(required=True, allow_none=True)
