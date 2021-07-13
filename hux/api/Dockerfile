@@ -20,7 +20,7 @@ RUN pip install pip --upgrade
 RUN pip install pipenv --upgrade
 
 # lock current deps to make it easier/faster for docker to build
-RUN pipenv install --ignore-pipfile --dev
+RUN pipenv install --system --deploy
 
 # set the working directory again
 WORKDIR /app/hux-unified/api
