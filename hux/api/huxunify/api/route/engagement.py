@@ -373,7 +373,7 @@ class UpdateEngagement(SwaggerView):
             audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
             delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
-            else None,
+            else {},
         )
 
         return (
