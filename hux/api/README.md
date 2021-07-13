@@ -55,6 +55,10 @@ pipenv install
 
 # activate the virtual environment
 pipenv shell
+
+# for updating packages without effecting other hashes use the command below
+# replace package name and version number as needed
+pipenv install --keep-outdated 'huxunifylib-database==0.2.39'
 ```
 
 ## Environment Variables
@@ -185,7 +189,7 @@ https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-
 
 #### Visual Studio Code
 https://black.readthedocs.io/en/stable/editor_integration.html#visual-studio-code
-  
+
  ### MYPY
 Mypy is an optional static type checker for Python. You can add type hints (PEP 484) to your Python programs,
 and use mypy to type check them statically. Find bugs in your programs without even running them!
@@ -205,7 +209,7 @@ Example of the docstring format we are following which contains the following
  - args
      - arg name (arg type): arg description.
  - returns
-     - return type: description of the return value. 
+     - return type: description of the return value.
 ```
 def generate_synthetic_marshmallow_data(schema_obj: Schema) -> dict:
     """This function generates synthetic data for marshmallow
@@ -288,8 +292,8 @@ Steps to pre-populate use local MongoDB
   export MONGO_DB_PASSWORD=''
   export MONGO_DB_USE_SSL=False
   ```
-  
-  
+
+
 * Follow the steps in [/scripts/database/README.md](https://github.com/DeloitteHux/hux-unified/blob/main/scripts/database/README.md) to populate the data in your local database
 
 To use local database for development, set the following in `../../hux/api/settings.ini`.
