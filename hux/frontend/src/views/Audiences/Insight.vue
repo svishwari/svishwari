@@ -6,7 +6,7 @@
       </template>
       <template #right>
         <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
-        
+
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-plus-circle-multiple-outline
         </v-icon>
