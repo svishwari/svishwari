@@ -14,22 +14,13 @@ COPY .pylintrc /app
 COPY .coveragerc /app
 
 # upgrade pip to the latest
-RUN pip install --upgrade pip
+RUN pip install pip --upgrade
 
 # install pipenv
-RUN pip install pipenv
+RUN pip install pipenv --upgrade
 
 # lock current deps to make it easier/faster for docker to build
-RUN pipenv lock --keep-outdated --requirements > requirements.txt
-
-# use pip for docker to generate the list of requirements.
-RUN pip install -r requirements.txt
-
-# TODO - encountered error here, will revist after.
-RUN pip uninstall bson -y
-RUN pip uninstall pymongo -y
-RUN pip install bson
-RUN pip install pymongo
+RUN pipenv install --ignore-pipfile --dev
 
 # set the working directory again
 WORKDIR /app/hux-unified/api

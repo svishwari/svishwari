@@ -32,7 +32,6 @@ huxunifylib-database = {version="*", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
 huxunifylib-util = {version="*", index="jfrog"}
 faker = {version="*", index="pypi"}
-jsonschema = {version="*", index="pypi"}
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
