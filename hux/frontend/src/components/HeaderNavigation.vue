@@ -1,32 +1,39 @@
 <template>
-  <v-menu :min-width="200" left offset-y close-on-click>
-    <template #activator="{ on }">
-      <span v-on="on" class="d-flex cursor-pointer mr-6">
-        <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
-          <v-icon color="secondary"> mdi-plus </v-icon>
-        </v-btn>
-      </span>
-    </template>
-    <v-list>
-      <v-list-item>
-        <v-list-item-title class="font-weight-bold"> Add </v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        @click="routerRedirection(link.path)"
-        v-for="link in dropdownLinks"
-        :key="link.name"
-      >
-        <v-list-item-title class="text-h6 neroBlack--text">
-          {{ link.name }}
-        </v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+  <div class="d-flex">
+    <v-menu :min-width="200" left offset-y close-on-click>
+      <template #activator="{ on }">
+        <span v-on="on" class="d-flex cursor-pointer">
+          <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
+            <v-icon color="secondary"> mdi-plus </v-icon>
+          </v-btn>
+        </span>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-list-item-title class="font-weight-bold"> Add </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click="routerRedirect(link.path)"
+          v-for="link in dropdownLinks"
+          :key="link.name"
+        >
+          <v-list-item-title class="text-h6 neroBlack--text">
+            {{ link.name }}
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <Notification />
+  </div>
 </template>
 
 <script>
+import Notification from "../components/Notification.vue"
 export default {
   name: "HeaderNavigation",
+  components: {
+    Notification,
+  },
   data() {
     return {
       dropdownLinks: [
@@ -38,7 +45,7 @@ export default {
     }
   },
   methods: {
-    routerRedirection(path) {
+    routerRedirect(path) {
       this.$router.push({ name: path, query: { select: true } })
     },
   },

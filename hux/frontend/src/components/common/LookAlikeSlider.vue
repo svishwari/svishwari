@@ -93,6 +93,7 @@ export default {
         border: 1px solid rgba(0, 171, 171, 0.55);
         box-sizing: border-box;
         border-color: rgba(0, 171, 171, 0.55) !important;
+        @extend .box-shadow-15;
       }
     }
   }

@@ -254,6 +254,28 @@ DESTINATION_CONSTANTS = {
     },
 }
 
+# DESTINATION Secret Mapping
+MONGO = "mongo"
+DESTINATION_SECRETS = {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: {
+        MONGO: [
+            FACEBOOK_AD_ACCOUNT_ID,
+            FACEBOOK_APP_ID,
+        ],
+        AWS_SSM_NAME: [FACEBOOK_ACCESS_TOKEN, FACEBOOK_APP_SECRET],
+    },
+    db_c.DELIVERY_PLATFORM_SFMC: {
+        MONGO: [
+            SFMC_CLIENT_ID,
+            SFMC_AUTH_BASE_URI,
+            SFMC_ACCOUNT_ID,
+            SFMC_SOAP_BASE_URI,
+            SFMC_REST_BASE_URI,
+        ],
+        AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
+    },
+}
+
 # user preferences
 PREFERENCE_KEY = "preference_key"
 PREFERENCE_KEY_DESCRIPTION = "the preference key you want to store."
@@ -427,10 +449,12 @@ USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 
 # Models
+# TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
 MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
 MODEL_NAME = "model_name"
+MODEL_TYPE = "model_type"
 MODEL_NAME_PARAMS = [
     {
         "name": MODEL_NAME,
@@ -441,6 +465,55 @@ MODEL_NAME_PARAMS = [
         "example": "churn",
     },
 ]
+MODEL_TYPE_PARAMS = [
+    {
+        "name": MODEL_TYPE,
+        "description": "Model type",
+        "type": "string",
+        "in": "path",
+        "required": True,
+        "example": "ltv",
+    }
+]
+PURCHASE = "purchase"
+LTV = "ltv"
+RMSE = "rmse"
+AUC = "auc"
+RECALL = "recall"
+CURRENT_VERSION = "current_version"
+PRECISION = "precision"
+PERFORMANCE_METRIC = "performance_metric"
+FEATURE_IMPORTANCE = "feature_importance"
+SCORE = "score"
+SUPPORTED_MODELS = {
+    LTV: {
+        NAME: "Lifetime value",
+        DESCRIPTION: "Predicts the lifetime value of a customer based on models",
+        CURRENT_VERSION: "3.1.2",
+        RMSE: 350,
+        AUC: -1,
+        PRECISION: -1,
+        RECALL: -1,
+    },
+    UNSUBSCRIBE: {
+        NAME: "Propensity to Unsubscribe",
+        DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
+        CURRENT_VERSION: "3.1.2",
+        RMSE: -1,
+        AUC: 0.79,
+        PRECISION: 0.82,
+        RECALL: 0.65,
+    },
+    PURCHASE: {
+        NAME: "Propensity to Purchase",
+        DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
+        CURRENT_VERSION: "3.1.2",
+        RMSE: -1,
+        AUC: 0.79,
+        PRECISION: 0.82,
+        RECALL: 0.65,
+    },
+}
 MODEL_LIST_PAYLOAD = {
     "params": {
         "feature_service_name": "ui_metadata_models_service",
@@ -456,6 +529,16 @@ LAST_TRAINED = "last_trained"
 LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
+LIFT_DATA = "lift_data"
+BUCKET = "bucket"
+PREDICTED_VALUE = "predicted_value"
+ACTUAL_VALUE = "actual_value"
+PROFILE_COUNT = "profile_count"
+PREDICTED_RATE = "predicted_rate"
+ACTUAL_RATE = "actual_rate"
+PREDICTED_LIFT = "predicted_lift"
+ACTUAL_LIFT = "actual_lift"
+PROFILE_SIZE_PERCENT = "profile_size_percent"
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -519,12 +602,19 @@ PROCESS_TIME = "process_time"
 DATE_TIME = "date_time"
 DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
-MATCH_RATE = "match_rate"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
 TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
+
+# IDR Data feeds
+DATAFEED_ID = "datafeed_id"
+DATAFEED_NAME = "datafeed_name"
+DATAFEED_DATA_SOURCE = "data_source_type"
+DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
+DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
+DATAFEED_LAST_RUN_DATE = "last_run"
 
 # FILTERING
 REDACTED = "++REDACTED++"

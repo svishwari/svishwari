@@ -100,44 +100,7 @@ class TestModelRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual(2, len(response.json))
-
-    def test_retrieve_performance_metrics_for_model(self):
-        """
-        Test get performance metrics for a model from Tecton
-
-        Args:
-
-        Returns:
-
-        """
-
-        model_name = "model1"
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_name}/performance-metrics",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual([], response.json)
-
-    def test_retrieve_feature_importance_for_model(self):
-        """
-        Test get performance metrics for a model from Tecton
-
-        Args:
-
-        Returns:
-
-        """
-        model_name = "model1"
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_name}/feature-importance",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual([], response.json)
+        self.assertEqual(3, len(response.json))
 
     def test_retrieve_version_history_for_model(self):
         """
@@ -157,24 +120,6 @@ class TestModelRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual([], response.json)
 
-    def test_retrieve_features_for_model(self):
-        """
-        Test get features for a model from Tecton
-
-        Args:
-
-        Returns:
-
-        """
-        model_name = "model1"
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_name}/features",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual([], response.json)
-
     def test_retrieve_drift_details_for_model(self):
         """
         Test get drift details for a model from Tecton
@@ -187,24 +132,6 @@ class TestModelRoutes(TestCase):
         model_name = "model1"
         response = self.app.get(
             f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_name}/drift",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertEqual([], response.json)
-
-    def test_retrieve_lift_details_for_model(self):
-        """
-        Test get lift details for a model from Tecton
-
-        Args:
-
-        Returns:
-
-        """
-        model_name = "model1"
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_name}/lift",
             headers=t_c.STANDARD_HEADERS,
         )
 
