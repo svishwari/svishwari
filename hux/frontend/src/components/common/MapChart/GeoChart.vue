@@ -22,8 +22,9 @@
         ></div>
         <div class="map-slider">
           <map-slider
-            v-if="total_range.length > 0"
-            :range="total_range"
+            v-if=" minValue && maxValue"
+            :min="minValue"
+            :max="maxValue"
           ></map-slider>
         </div>
       </v-card-title>
@@ -37,8 +38,8 @@ import * as d3Select from "d3-selection"
 import * as d3Scale from "d3-scale"
 import * as d3Geo from "d3-geo"
 import * as topojson from "topojson"
-import * as topoData from "@/components/common/MapChart/MapSource/usaTopology.json"
-import * as statesList from "@/components/common/MapChart/MapSource/usaStateList.json"
+import * as topoData from "../../../../public/usaTopology.json"
+import * as statesList from "../../../../public/usaStateList.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 
 export default {
@@ -57,10 +58,9 @@ export default {
       chartData: this.value,
       width: 700,
       height: 500,
-      top: 50,
-      left: 60,
       show: false,
-      total_range: [],
+      minValue: 0,
+      maxValue: 0,
       tooltip: {
         x: 0,
         y: 0,
@@ -93,9 +93,12 @@ export default {
         state.properties = currentStateDetails
       })
 
-      this.total_range = featureCollection.features.map(
+      let total_range = featureCollection.features.map(
         (data) => data.properties.population_percentage
       )
+
+      this.minValue =  Math.min(...total_range)
+      this.maxValue =  Math.max(...total_range)
 
       let projection = d3Geo
         .geoIdentity()
@@ -104,7 +107,7 @@ export default {
 
       let colorScale = d3Scale
         .scaleLinear()
-        .domain([0, 100])
+        .domain([this.minValue*100, this.maxValue*100])
         .range(["#ffffff", "#396286"])
 
       svg

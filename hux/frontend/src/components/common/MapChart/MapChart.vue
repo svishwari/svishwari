@@ -3,18 +3,18 @@
     <div class="d-flex justify-space-around">
       <geo-chart
         v-model="mapChartData"
-        v-on:cordinates="getCordinates"
-        v-on:tooltipDisplay="toolTipDisplay"
+        @cordinates="getCordinates"
+        @tooltipDisplay="toolTipDisplay"
       />
       <v-card class="rounded-lg card-style" minHeight="20px">
         <v-card-title class="d-flex justify-space-between pb-2 pl-8 pt-5">
           <div class="mt-2">
-            <a
+            <span
               href="#"
               class="d-flex align-center black--text text-decoration-none"
             >
               United States
-            </a>
+            </span>
           </div>
         </v-card-title>
         <v-divider class="ml-8 mr-8 mt-0 mb-2" />
@@ -25,9 +25,9 @@
             :key="item.name"
           >
             <span class="subprop-name">{{ item.name }}</span>
-            <span class="value ml-2 font-weight-semi-bold">{{
-              item.population_percentage | percentageConvert(true, true)
-            }}</span>
+            <span class="value ml-2 font-weight-semi-bold">
+              {{item.population_percentage | percentageConvert(true, true)}}
+            </span>
           </div>
         </v-card-text>
       </v-card>
@@ -47,23 +47,27 @@
 <script>
 import MapChartTooltip from "@/components/common/MapChart/MapChartTooltip"
 import GeoChart from "@/components/common/MapChart/GeoChart"
-import demographic_overview from "./mapData.json"
+import mapData from "./mapData.json"
 export default {
   name: "map-chart",
   components: { GeoChart, MapChartTooltip },
   data() {
     return {
       show: false,
-      isArcHover: false,
       tooltip: {
         x: 0,
         y: 0,
       },
-      mapChartData: demographic_overview.demographic_overview,
+      mapChartData: mapData.demographic_overview,
       currentData: {},
     }
   },
   methods: {
+    sortStateData() {
+      if (this.mapChartData) {
+      this.mapChartData.sort((a,b)=> b.population_percentage - a.population_percentage)
+      }
+    },
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
@@ -79,6 +83,9 @@ export default {
     generateToolTipData(currentStateinfo) {
       this.currentData = currentStateinfo
     },
+  },
+  mounted() {
+    this.sortStateData()
   },
 }
 </script>

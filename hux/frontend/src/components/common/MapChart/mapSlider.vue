@@ -19,27 +19,31 @@
 export default {
   name: "map-slider",
   props: {
-    range: {
-      type: Array,
+    min: {
+      type: Number,
+      required: false,
+    },
+    max: {
+      type: Number,
       required: false,
     },
   },
   data() {
     return {
-      minValue: this.range
+      minValue: this.min
         ? this.$options.filters.percentageConvert(
-            Math.min(...this.range),
+            this.min,
             true,
             true
           )
-        : "0%",
-      maxValue: this.range
+        : "-%",
+      maxValue: this.max
         ? this.$options.filters.percentageConvert(
-            Math.max(...this.range),
+            this.max,
             true,
             true
           )
-        : "99%",
+        : "-%",
     }
   },
 }
