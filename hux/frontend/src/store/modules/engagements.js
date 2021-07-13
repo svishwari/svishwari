@@ -127,8 +127,8 @@ const actions = {
           engagement.delivery_schedule === 0
             ? null
             : {
-                end_date: "",
-                start_date: "",
+                end_date: engagement.end_date,
+                start_date: engagement.start_date,
               },
 
         audiences: Object.values(engagement.audiences).map((audience) => {
@@ -137,8 +137,6 @@ const actions = {
             destinations: audience.destinations,
           }
         }),
-        create_time: engagement.create_time,
-        update_time: engagement.update_time,
       }
       const response = await api.engagements.create(payload)
       commit("SET_ONE", response.data)

@@ -602,12 +602,19 @@ PROCESS_TIME = "process_time"
 DATE_TIME = "date_time"
 DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
-MATCH_RATE = "match_rate"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
 TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
+
+# IDR Data feeds
+DATAFEED_ID = "datafeed_id"
+DATAFEED_NAME = "datafeed_name"
+DATAFEED_DATA_SOURCE = "data_source_type"
+DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
+DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
+DATAFEED_LAST_RUN_DATE = "last_run"
 
 # FILTERING
 REDACTED = "++REDACTED++"
