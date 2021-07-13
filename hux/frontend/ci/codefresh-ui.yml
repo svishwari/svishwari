@@ -76,7 +76,7 @@ steps:
     type: "build"
     image_name: "${{BUILD_NAME}}"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
-    tag: '${{CF_BUILD_NUMBER}}'
+    tag: '${{DOCKER_TAG}}'
     dockerfile: "Dockerfile"
     stage: "docker"
     build_arguments:
