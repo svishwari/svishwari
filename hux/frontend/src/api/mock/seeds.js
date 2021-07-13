@@ -435,4 +435,7 @@ export default function (server) {
 
   // seed data-extensions
   server.createList("dataExtension", 5)
+
+  // for alert and notifications
+  server.createList("notification", 3)
 }

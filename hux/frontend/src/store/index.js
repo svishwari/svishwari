@@ -10,6 +10,7 @@ import engagements from "@/store/modules/engagements"
 import identity from "@/store/modules/identity"
 import models from "@/store/modules/models"
 import users from "@/store/modules/users"
+import notifications from "@/store/modules/notifications"
 
 Vue.use(Vuex)
 
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     identity,
     models,
     users,
+    notifications,
   },
 
   strict: debug,
