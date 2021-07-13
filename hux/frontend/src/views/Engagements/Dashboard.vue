@@ -158,6 +158,7 @@
               :campaignData="audiencePerformanceAdsData"
               :engagementId="engagementId"
               type="ads"
+              @onUpdateCampaignMappings="fetchCampaignPerformanceDetails('ads')"
             />
           </v-tab-item>
           <v-tab-item key="email">

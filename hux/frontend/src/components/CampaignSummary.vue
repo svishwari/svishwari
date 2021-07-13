@@ -132,7 +132,7 @@
                             <v-icon
                               small
                               color="error"
-                              class="ml-n4"
+                              class="ml-2"
                               v-if="needsCampaignMapping(item)"
                             >
                               mdi-information-outline
@@ -263,6 +263,7 @@
       :toggle="showCampaignMapDrawer"
       @onToggle="(toggle) => (showCampaignMapDrawer = toggle)"
       ref="campaignMapDrawer"
+      @onCampaignMappings="updateCampaignMappings($event)"
     />
   </div>
 </template>
@@ -274,6 +275,7 @@ import Tooltip from "./common/Tooltip.vue"
 import Icon from "./common/Icon.vue"
 import Logo from "./common/Logo.vue"
 import CampaignMapDrawer from "@/views/Engagements/Configuration/Drawers/CampaignMapDrawer.vue"
+import { mapActions } from "vuex"
 
 export default {
   name: "CampaignSummary",
@@ -625,8 +627,23 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      saveCampaignMappings: "engagements/saveCampaignMappings",
+    }),
     logoType(name) {
       return name.split(" ")[0].toLowerCase()
+    },
+    async updateCampaignMappings(optedMappings) {
+      const campaignsPayload = {
+        campaigns: Object.values(optedMappings.mappings).map((mapping) => ({
+          name: mapping.campaign.name,
+          id: mapping.campaign.id,
+          delivery_job_id: mapping.delivery_job.id,
+        })),
+      }
+      const payload = { ...optedMappings.attrs, data: campaignsPayload }
+      await this.saveCampaignMappings(payload)
+      this.$emit("onUpdateCampaignMappings")
     },
     getDestinationRollups(destinationRollups) {
       return destinationRollups.map((destinationRollup) => {

@@ -33,10 +33,10 @@
             },
           ]"
           class="pt-13 campaigns-wrapper"
+          v-if="!loading"
         >
           <template #field:campaign="row">
             <hux-dropdown
-              :label="fetchLabel(row, 'campaign')"
               :selected="row.value"
               :items="campaignOptions"
               @on-select="onSelectedItem(row, $event, 'campaign')"
@@ -45,7 +45,6 @@
           </template>
           <template #field:delivery_job="row">
             <hux-dropdown
-              :label="fetchLabel(row, 'delivery_job')"
               :selected="row.value"
               :items="deliveryOptions"
               @on-select="onSelectedItem(row, $event, 'delivery_job')"
@@ -87,7 +86,7 @@
       <v-btn tile color="white" @click="closeDrawer()">
         <span class="primary--text">Cancel</span>
       </v-btn>
-      <v-btn tile color="primary"> Map selection </v-btn>
+      <v-btn tile color="primary" @click="mapSelections"> Map selection </v-btn>
     </template>
   </drawer>
 </template>
@@ -118,6 +117,7 @@ export default {
           delivery_job: null,
         },
       },
+      identityAttrs: {},
     }
   },
   watch: {
@@ -134,7 +134,10 @@ export default {
       campaignMappings: "engagements/destinationCampaignMappings",
     }),
     campaignOptions() {
-      return this.campaignMappings.campaigns
+      if (this.campaignMappings && this.campaignMappings.campaigns) {
+        return this.campaignMappings.campaigns
+      }
+      return []
     },
     deliveryOptions() {
       return this.campaignMappings.delivery_jobs
@@ -155,7 +158,6 @@ export default {
         campaign: null,
         delivery_job: null,
       })
-      console.log(Object.values(this.campaigns))
     },
     removeMapping(index) {
       this.$delete(this.campaigns, Object.keys(this.campaigns)[index])
@@ -169,21 +171,24 @@ export default {
     onSelectedItem(item, value, type) {
       item.item[type] = value
     },
-    fetchLabel(row, type) {
-      console.log(row, type)
+    mapSelections() {
+      this.localToggle = false
+      this.$emit("onCampaignMappings", {
+        mappings: this.campaigns,
+        attrs: this.identityAttrs,
+      })
     },
-
     onCancelAndBack() {
       this.$emit("onCancelAndBack")
       this.reset()
     },
     async fetchMappings(attrs) {
+      this.identityAttrs = attrs
       this.loading = true
       await this.getCampaignMappings(attrs)
       this.loading = false
     },
   },
-  async mounted() {},
 }
 </script>
 

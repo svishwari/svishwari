@@ -223,6 +223,21 @@ const actions = {
       throw error
     }
   },
+  async saveCampaignMappings(_, { id, audienceId, destinationId, data }) {
+    try {
+      await api.engagements.updateCampaignMapping(
+        {
+          resourceId: id,
+          audienceId: audienceId,
+          destinationId: destinationId,
+        },
+        data
+      )
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
 
   updateAudienceList({ commit }, payload) {
     commit("SET_AUDIENCE_LIST", payload)

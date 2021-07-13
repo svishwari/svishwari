@@ -96,15 +96,6 @@ client["engagements"].updateCampaignMapping = (
     data
   )
 }
-client["engagements"].updateCampaignMapping = (
-  { resourceId, audienceId, destinationId },
-  data
-) => {
-  return http.put(
-    `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}`,
-    data
-  )
-}
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
