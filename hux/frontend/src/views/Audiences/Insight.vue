@@ -1,6 +1,6 @@
 <template>
   <div class="audience-insight-wrap">
-    <PageHeader class="background-border">
+    <PageHeader class="background-border" :headerHeightChanges="'py-3'">
       <template #left>
         <Breadcrumb :items="items" />
       </template>
