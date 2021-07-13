@@ -278,7 +278,6 @@ export default {
           data_extension_name: this.extension.name,
         }
       }
-      debugger
       this.value[this.selectedAudienceId].destinations.push({
         id: destinationWithDataExtension.id,
         delivery_platform_cofig: {
