@@ -6,6 +6,8 @@ from http import HTTPStatus
 from connexion import ProblemException
 import boto3
 import botocore
+from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
+import huxunifylib.database.constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api import config
 
@@ -63,6 +65,7 @@ class ParameterStore:
         authentication_details: dict,
         is_updated: bool,
         destination_id: str,
+        destination_type: str,
     ) -> dict:
         """Save authentication details in AWS Parameter Store.
 
@@ -70,16 +73,31 @@ class ParameterStore:
             authentication_details (dict): The key/secret pair to store away.
             is_updated (bool): Flag to update the secrets in the AWS Parameter Store.
             destination_id (str): destinations ID.
+            destination_type (str): destination type (i.e. facebook, sfmc)
 
         Returns:
             ssm_params (dict): The key to where the parameters are stored.
         """
         ssm_params = {}
 
+        if destination_type not in api_c.DESTINATION_SECRETS:
+            raise KeyError(
+                f"{destination_type} does not have a secret store mapping."
+            )
+
         for (
             parameter_name,
             secret,
         ) in authentication_details.items():
+
+            # only store secrets in ssm, otherwise store in object.
+            if (
+                parameter_name
+                in api_c.DESTINATION_SECRETS[destination_type][api_c.MONGO]
+            ):
+                ssm_params[parameter_name] = secret
+                continue
+
             param_name = f"{api_c.PARAM_STORE_PREFIX}_{parameter_name}"
             ssm_params[parameter_name] = param_name
             try:
@@ -160,3 +178,60 @@ def check_aws_batch() -> Tuple[bool, str]:
             and the message.
     """
     return check_aws_connection(api_c.AWS_BATCH_NAME)
+
+
+def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
+    """Get auth details from parameter store
+
+    Args:
+        auth (dict): Destination Auth details.
+        destination_type (str): Destination type (i.e. facebook, sfmc).
+
+    Returns:
+        Auth Object (dict): SFMC auth object.
+
+    """
+
+    # only get the secrets from ssm, otherwise take from the auth details.
+    if destination_type not in api_c.DESTINATION_SECRETS:
+        raise KeyError(
+            f"{destination_type} does not have a secret store mapping."
+        )
+
+    # pull the secrets from ssm
+    for secret in api_c.DESTINATION_SECRETS[destination_type][
+        api_c.AWS_SSM_NAME
+    ]:
+        auth[secret] = parameter_store.get_store_value(auth[secret])
+
+    if destination_type == db_c.DELIVERY_PLATFORM_SFMC:
+        return {
+            SFMCCredentials.SFMC_ACCOUNT_ID.value: auth[api_c.SFMC_ACCOUNT_ID],
+            SFMCCredentials.SFMC_AUTH_URL.value: auth[
+                api_c.SFMC_AUTH_BASE_URI
+            ],
+            SFMCCredentials.SFMC_CLIENT_ID.value: auth[api_c.SFMC_CLIENT_ID],
+            SFMCCredentials.SFMC_CLIENT_SECRET.value: auth[
+                api_c.SFMC_CLIENT_SECRET
+            ],
+            SFMCCredentials.SFMC_SOAP_ENDPOINT.value: auth[
+                api_c.SFMC_SOAP_BASE_URI
+            ],
+            SFMCCredentials.SFMC_URL.value: auth[api_c.SFMC_REST_BASE_URI],
+        }
+    if destination_type == db_c.DELIVERY_PLATFORM_FACEBOOK:
+        return {
+            FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
+                api_c.FACEBOOK_AD_ACCOUNT_ID
+            ],
+            FacebookCredentials.FACEBOOK_APP_ID.name: auth[
+                api_c.FACEBOOK_APP_ID
+            ],
+            FacebookCredentials.FACEBOOK_APP_SECRET.name: auth[
+                api_c.FACEBOOK_APP_SECRET
+            ],
+            FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
+                api_c.FACEBOOK_ACCESS_TOKEN
+            ],
+        }
+    return auth
