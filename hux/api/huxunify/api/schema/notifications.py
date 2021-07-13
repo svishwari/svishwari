@@ -38,6 +38,7 @@ class NotificationSchema(Schema):
             OneOf(
                 choices=[
                     api_c.DESTINATIONS_TAG,
+                    api_c.MODELS_TAG,
                     api_c.ENGAGEMENT_TAG,
                     api_c.DELIVERY_TAG,
                     api_c.ORCHESTRATION_TAG,
