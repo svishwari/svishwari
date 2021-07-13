@@ -153,13 +153,14 @@ export default {
     },
 
     add(destination) {
-      debugger
       if (destination.type === "sfmc") {
         this.$emit("onSalesforce", destination)
       } else {
         this.selectedDestinations.push({
           id: destination.id,
         })
+        this.$emit("addedDestination", this.selectedDestinations)
+        this.localToggle = false
       }
     },
 

@@ -183,21 +183,19 @@ export default {
       } else if (Object.keys(this.removedAudiences).length > 0) {
         return true
       }
-      return false
+      return Object.keys(this.localSelectedAudiences).length
+      // return false
     },
 
     addAudiencesBtnText() {
-      const count = {
-        added: Object.keys(this.newAudiences).length,
+      const countSummary = {
+        added:
+          Object.keys(this.newAudiences).length +
+          Object.keys(this.value).length,
         removed: Object.keys(this.removedAudiences).length,
       }
-      if (count.added > 0 && count.removed > 0) {
-        return `Update ${count.added + count.removed} audiences`
-      } else if (count.removed > 0) {
-        return `Removed ${count.removed} audience${count > 1 ? "s" : ""}`
-      } else {
-        return `Add ${count.added} audience${count > 1 ? "s" : ""}`
-      }
+      const count = countSummary.added - countSummary.removed
+      return `Add ${count} audience${count > 1 ? "s" : ""}`
     },
     newAudiences() {
       const added = {}

@@ -97,16 +97,26 @@ export const defineRoutes = (server) => {
     const engagement = schema.engagements.find(id)
     const addedAudiences = requestData.audiences.map((aud) => {
       const audience = schema.audiences.find(aud.id)
+      const existsAudience = engagement.audiences.filter(
+        (engAud) => engAud.id === aud.id
+      )
+      if (existsAudience.length > 0) {
+        existsAudience[0].destinations = aud.destinations
+        return
+      }
       const audienceObj = {
         status: audience.status,
         id: audience.id,
         name: audience.name,
-        destinations: [],
+        destinations: aud.destinations.map((des) =>
+          schema.destinations.find(des.id)
+        ),
       }
       return audienceObj
     })
-
-    engagement.audiences.push(...addedAudiences)
+    if (!addedAudiences.includes(undefined)) {
+      engagement.audiences.push(...addedAudiences)
+    }
     const body = { message: "SUCCESS" }
     return new Response(code, headers, body)
   })

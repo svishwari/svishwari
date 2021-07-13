@@ -197,6 +197,7 @@
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforce="triggerDataExtensionDrawer"
+      @addedDestination="triggerAttachDestination($event)"
     />
 
     <destination-data-extension-drawer
@@ -205,6 +206,7 @@
       :selected-audience-id="selectedAudienceId"
       :toggle="showDataExtensionDrawer"
       @onToggle="(val) => (showDataExtensionDrawer = val)"
+      @updateDestination="triggerAttachDestination($event)"
     />
     <DeliveryHistoryDrawer
       :engagementId="engagementId"
@@ -704,6 +706,24 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
+    async triggerAttachDestination() {
+      this.loadingAudiences = true
+      console.log(this.selectedAudiences[this.selectedAudienceId])
+      const payload = {
+        audiences: [
+          {
+            id: this.selectedAudienceId,
+            destinations:
+              this.selectedAudiences[this.selectedAudienceId].destinations,
+          },
+        ],
+      }
+      await this.attachAudience({
+        engagementId: this.engagementId,
+        data: payload,
+      })
+      await this.loadEngagement(this.engagementId)
+    },
     async triggerAttachAudiences(audiences) {
       this.loadingAudiences = true
       if (Object.keys(audiences.added).length > 0) {
@@ -784,7 +804,9 @@ export default {
         await this.getAudienceById(id)
         const audience = this.getAudience(id)
         audienceDetails.push(audience)
-        audience.destinations = []
+        audience.destinations = audience.destinationIds.map((dest) => ({
+          id: dest,
+        }))
         this.selectedAudiences[id] = audience
       }
       // extracting the audience data and merging into object
