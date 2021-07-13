@@ -31,20 +31,38 @@
             >
               {{ item.audience.name }}
             </router-link>
-            <logo
+            <tooltip
               v-if="header.value === 'destination' && item[header.value]"
-              :key="item[header.value].type"
-              :type="item[header.value].type"
-              :size="18"
-              class="mb-0"
             >
-            </logo>
-            <div v-if="header.value === 'size'">
-              {{ item[header.value] | Numeric(true, true) }}
-            </div>
-            <div v-if="header.value === 'delivered'">
-              {{ item[header.value] | Date("relative") }}
-            </div>
+              <template #label-content>
+                <logo
+                  :key="item[header.value].type"
+                  :type="item[header.value].type"
+                  :size="18"
+                  class="mb-0"
+                >
+                </logo>
+              </template>
+              <template #hover-content>
+                {{ item[header.value].name }}
+              </template>
+            </tooltip>
+            <tooltip v-if="header.value === 'size'">
+              <template #label-content>
+                {{ item[header.value] | Numeric(true, true) }}
+              </template>
+              <template #hover-content>
+                {{ item[header.value] | Numeric(true) }}
+              </template>
+            </tooltip>
+            <tooltip v-if="header.value === 'delivered'">
+              <template #label-content>
+                {{ item[header.value] | Date("relative") }}
+              </template>
+              <template #hover-content>
+                {{ item[header.value] | Date }}
+              </template>
+            </tooltip>
           </td>
         </template>
       </hux-data-table>
@@ -62,6 +80,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import Icon from "@/components/common/Icon.vue"
 import Logo from "@/components/common/Logo.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
   name: "DestinationsDrawer",
@@ -71,6 +90,7 @@ export default {
     Drawer,
     Icon,
     Logo,
+    Tooltip,
   },
 
   props: {
@@ -127,26 +147,7 @@ export default {
     }),
 
     items() {
-      const deliveries = this.engagementDeliveries(this.engagementId)
-      const items = deliveries.map((audience) => {
-        const destinations = audience.destinations.map((destination) => {
-          const fullDestination = this.getDestination(destination.id)
-          return destination.deliveries.map((delivery, index) => {
-            return {
-              id: `${audience.id}-${index}`,
-              audience: {
-                id: audience.id,
-                name: audience.name,
-              },
-              destination: fullDestination,
-              size: delivery.size,
-              delivered: delivery.update_time,
-            }
-          })
-        })
-        return destinations.flat()
-      })
-      return items.flat()
+      return this.engagementDeliveries(this.engagementId)
     },
   },
 
