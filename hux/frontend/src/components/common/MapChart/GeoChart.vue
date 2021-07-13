@@ -173,10 +173,6 @@ export default {
       this.initiateMapChart()
     },
   },
-
-  mounted() {
-    this.initiateMapChart()
-  },
 }
 </script>
 
