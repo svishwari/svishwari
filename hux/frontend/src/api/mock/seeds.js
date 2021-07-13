@@ -143,18 +143,16 @@ const twilioDS = {
 // destinations
 const facebook = {
   name: "Facebook",
-  // TODO: update this once ORCH-233 is addressed
-  type: "Facebook",
+  type: "facebook",
   is_enabled: true,
   is_added: true,
 }
 
-const salesforce = {
+const sfmc = {
   name: "Salesforce Marketing Cloud",
-  // TODO: update this once ORCH-233 is addressed
-  type: "SFMC",
+  type: "sfmc",
   is_enabled: true,
-  is_added: true,
+  is_added: false,
 }
 
 const adobe = {
@@ -169,8 +167,7 @@ const google = {
 
 const twilio = {
   name: "Twilio",
-  // TODO: update this once ORCH-233 is addressed
-  type: "Twilio",
+  type: "twilio",
 }
 
 const tableau = {
@@ -375,7 +372,7 @@ export default function (server) {
   server.create("destination", twilio)
   server.create("destination", google)
   server.create("destination", tableau)
-  server.create("destination", salesforce)
+  server.create("destination", sfmc)
   server.create("destination", adobe)
   server.create("destination", mailchimp)
   const facebookSeed = server.create("destination", facebook)

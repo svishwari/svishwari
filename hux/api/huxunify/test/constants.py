@@ -68,6 +68,18 @@ CUSTOMER_INSIGHT_RESPONSE = {
     "message": "ok",
 }
 
+CUSTOMER_GEO_RESPONSE = [
+    {
+        "name": "Alabama",
+        "population_percentage": "0.046",
+        "size": "123456",
+        "women": "0.6057",
+        "men": "0.6057",
+        "others": "0.6057",
+        "ltv": "1234.5",
+    }
+]
+
 
 def validate_schema(
     schema: Schema, response_json: dict, is_multiple: bool = False

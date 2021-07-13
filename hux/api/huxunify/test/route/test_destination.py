@@ -73,8 +73,8 @@ class TestDestinationRoutes(TestCase):
 
         destinations = [
             {
-                api_c.DELIVERY_PLATFORM_TYPE: "google-ads",
-                api_c.NAME: "Google Ads",
+                api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                api_c.NAME: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 api_c.AUTHENTICATION_DETAILS: {},
             },
             {
@@ -83,7 +83,7 @@ class TestDestinationRoutes(TestCase):
                 api_c.AUTHENTICATION_DETAILS: {},
             },
             {
-                api_c.DELIVERY_PLATFORM_TYPE: "salesforce",
+                api_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
                 api_c.NAME: "Salesforce Marketing Cloud",
                 api_c.AUTHENTICATION_DETAILS: {
                     api_c.SFMC_ACCOUNT_ID: "id12345",
@@ -190,10 +190,10 @@ class TestDestinationRoutes(TestCase):
 
         new_auth_details = {
             "authentication_details": {
-                "access_token": "MkU3Ojgwm",
-                "app_secret": "717bdOQqZO99",
-                "app_id": "2951925002021888",
-                "ad_account_id": "111333777",
+                api_c.FACEBOOK_ACCESS_TOKEN: "MkU3Ojgwm",
+                api_c.FACEBOOK_APP_SECRET: "unified_fb_secret",
+                api_c.FACEBOOK_APP_ID: "2951925002021888",
+                api_c.FACEBOOK_AD_ACCOUNT_ID: "111333777",
             }
         }
 
@@ -271,8 +271,8 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
-        self.assertIn("facebook", response.json)
-        self.assertIn("salesforce", response.json)
+        self.assertIn(db_c.DELIVERY_PLATFORM_FACEBOOK, response.json)
+        self.assertIn(db_c.DELIVERY_PLATFORM_SFMC, response.json)
 
     def test_validate_facebook_credentials(self):
         """

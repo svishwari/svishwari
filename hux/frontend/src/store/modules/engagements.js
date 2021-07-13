@@ -151,6 +151,8 @@ const actions = {
             destinations: audience.destinations,
           }
         }),
+        create_time: engagement.create_time,
+        update_time: engagement.update_time,
       }
       const response = await api.engagements.create(payload)
       commit("SET_ONE", response.data)

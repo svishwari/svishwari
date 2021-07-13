@@ -67,7 +67,7 @@ client["engagements"].deliverAudienceDestination = (
 }
 
 client["engagements"].deliveries = (resourceId, data) => {
-  return http.get(`/engagements/${resourceId}/deliveries`, data)
+  return http.get(`/engagements/${resourceId}/delivery-history`, data)
 }
 
 client["engagements"].fetchAudiencePerformance = (resourceId, data) => {

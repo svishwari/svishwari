@@ -90,7 +90,7 @@
             </v-row>
           </FormStep>
 
-          <FormStep :step="2" label="Select attribute(s)" optional>
+          <FormStep :step="2" label="Select attribute(s)" optional="- Optional">
             <v-col class="pt-1 pa-0">
               <attribute-rules :rules="attributeRules" />
             </v-col>
@@ -99,7 +99,7 @@
           <FormStep
             :step="3"
             label="Select destination(s)"
-            optional
+            optional="- Optional"
             :border="!isLookAlikeCreateable ? 'inactive' : ''"
           >
             <v-row class="pt-1">
@@ -147,36 +147,46 @@
           <FormStep
             :step="4"
             label="Create a lookalike audience"
+            :optional="
+              !isLookAlikeCreateable
+                ? '- Enabled if Facebook is added as a destination'
+                : ''
+            "
             :disabled="!isLookAlikeCreateable"
           >
-            <div class="dark--text">
+            <div class="dark--text" v-if="isLookAlikeCreateable">
               Would you like to create a lookalike audience from this audience?
               This will create a one-off new audience in Facebook when this<br />
               audience is first delivered.
             </div>
-            <v-row>
+            <v-row v-if="isLookAlikeCreateable">
               <v-col col="12">
-                <v-radio-group
-                  v-model="isLookAlikeNeeeded"
-                  column
-                  mandatory
-                  :disabled="!isLookAlikeCreateable"
-                >
+                <v-radio-group v-model="isLookAlikeNeeeded" column mandatory>
                   <v-radio
-                    label="Nope! Not interested"
                     :value="0"
                     color="pantoneBlue"
-                  />
-                  <v-radio
-                    label="Auto-create a lookalike based on this audience"
-                    :value="1"
-                    color="pantoneBlue"
-                  />
+                    class="pb-3"
+                    :ripple="false"
+                  >
+                    <template #label>
+                      <span class="neroBlack--text">Nope! Not interested</span>
+                    </template>
+                  </v-radio>
+                  <v-radio :value="1" color="pantoneBlue" :ripple="false">
+                    <template #label>
+                      <span class="neroBlack--text">
+                        Auto-create a lookalike based on this audience
+                      </span>
+                    </template>
+                  </v-radio>
                 </v-radio-group>
               </v-col>
             </v-row>
-            <v-row v-if="isLookAlikeCreateable && isLookAlikeNeeeded">
-              <v-col col="6">
+            <v-row
+              v-if="isLookAlikeCreateable && isLookAlikeNeeeded"
+              class="mt-0"
+            >
+              <v-col col="6" class="pr-14">
                 <TextField
                   placeholderText="What is the name for this new lookalike audience?"
                   height="40"
@@ -187,7 +197,7 @@
                   class="text-caption neroBlack--text"
                 />
               </v-col>
-              <v-col col="6">
+              <v-col col="6" class="pr-14">
                 <div class="neroBlack--text text-caption">Audience reach</div>
                 <LookAlikeSlider v-model="lookalikeAudience.value" />
                 <div class="gray--text text-caption pt-4">
@@ -449,7 +459,7 @@ export default {
       let filteredDestinations = []
 
       for (let i = 0; i < this.selectedDestinations.length; i++) {
-        if (this.selectedDestinations[i].type !== "salesforce") {
+        if (this.selectedDestinations[i].type !== "sfmc") {
           filteredDestinations.push({
             id: this.selectedDestinations[i].id,
           })

@@ -49,10 +49,74 @@ MAX_AGE = "max_age"
 GENDER_WOMEN = "gender_women"
 GENDER_MEN = "gender_men"
 GENDER_OTHER = "gender_other"
+GENDERS = [GENDER_WOMEN, GENDER_MEN, GENDER_OTHER]
 MIN_LTV_PREDICTED = "min_ltv_predicted"
 MAX_LTV_PREDICTED = "max_ltv_predicted"
 MIN_LTV_ACTUAL = "min_ltv_actual"
 MAX_LTV_ACTUAL = "max_ltv_actual"
+LTV = "ltv"
+POPULATION_PERCENTAGE = "population_percentage"
+INCOME = "income"
+# TODO: Remove State Names once it connected with CDM
+STATE_NAMES = [
+    "Alaska",
+    "Alabama",
+    "Arkansas",
+    "American Samoa",
+    "Arizona",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "District of Columbia",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Guam",
+    "Hawaii",
+    "Iowa",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Massachusetts",
+    "Maryland",
+    "Maine",
+    "Michigan",
+    "Minnesota",
+    "Missouri",
+    "Mississippi",
+    "Montana",
+    "North Carolina",
+    "North Dakota",
+    "Nebraska",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "Nevada",
+    "New York",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Puerto Rico",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Virginia",
+    "Virgin Islands",
+    "Vermont",
+    "Washington",
+    "Wisconsin",
+    "West Virginia",
+    "Wyoming",
+]
+DEMOGRAPHIC = "demo"
+DATE = "date"
 
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
@@ -187,6 +251,28 @@ DESTINATION_CONSTANTS = {
             REQUIRED: True,
             DESCRIPTION: None,
         },
+    },
+}
+
+# DESTINATION Secret Mapping
+MONGO = "mongo"
+DESTINATION_SECRETS = {
+    db_c.DELIVERY_PLATFORM_FACEBOOK: {
+        MONGO: [
+            FACEBOOK_AD_ACCOUNT_ID,
+            FACEBOOK_APP_ID,
+        ],
+        AWS_SSM_NAME: [FACEBOOK_ACCESS_TOKEN, FACEBOOK_APP_SECRET],
+    },
+    db_c.DELIVERY_PLATFORM_SFMC: {
+        MONGO: [
+            SFMC_CLIENT_ID,
+            SFMC_AUTH_BASE_URI,
+            SFMC_ACCOUNT_ID,
+            SFMC_SOAP_BASE_URI,
+            SFMC_REST_BASE_URI,
+        ],
+        AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
     },
 }
 
@@ -338,7 +424,6 @@ AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 
-
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,
     COUNTRIES: 2,
@@ -364,10 +449,12 @@ USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 
 # Models
+# TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
 MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
 MODEL_NAME = "model_name"
+MODEL_TYPE = "model_type"
 MODEL_NAME_PARAMS = [
     {
         "name": MODEL_NAME,
@@ -378,6 +465,55 @@ MODEL_NAME_PARAMS = [
         "example": "churn",
     },
 ]
+MODEL_TYPE_PARAMS = [
+    {
+        "name": MODEL_TYPE,
+        "description": "Model type",
+        "type": "string",
+        "in": "path",
+        "required": True,
+        "example": "ltv",
+    }
+]
+PURCHASE = "purchase"
+LTV = "ltv"
+RMSE = "rmse"
+AUC = "auc"
+RECALL = "recall"
+CURRENT_VERSION = "current_version"
+PRECISION = "precision"
+PERFORMANCE_METRIC = "performance_metric"
+FEATURE_IMPORTANCE = "feature_importance"
+SCORE = "score"
+SUPPORTED_MODELS = {
+    LTV: {
+        NAME: "Lifetime value",
+        DESCRIPTION: "Predicts the lifetime value of a customer based on models",
+        CURRENT_VERSION: "3.1.2",
+        RMSE: 350,
+        AUC: -1,
+        PRECISION: -1,
+        RECALL: -1,
+    },
+    UNSUBSCRIBE: {
+        NAME: "Propensity to Unsubscribe",
+        DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
+        CURRENT_VERSION: "3.1.2",
+        RMSE: -1,
+        AUC: 0.79,
+        PRECISION: 0.82,
+        RECALL: 0.65,
+    },
+    PURCHASE: {
+        NAME: "Propensity to Purchase",
+        DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
+        CURRENT_VERSION: "3.1.2",
+        RMSE: -1,
+        AUC: 0.79,
+        PRECISION: 0.82,
+        RECALL: 0.65,
+    },
+}
 MODEL_LIST_PAYLOAD = {
     "params": {
         "feature_service_name": "ui_metadata_models_service",
@@ -393,6 +529,16 @@ LAST_TRAINED = "last_trained"
 LOOKBACK_WINDOW = "lookback_window"
 PREDICTION_WINDOW = "prediction_window"
 PAST_VERSION_COUNT = "past_version_count"
+LIFT_DATA = "lift_data"
+BUCKET = "bucket"
+PREDICTED_VALUE = "predicted_value"
+ACTUAL_VALUE = "actual_value"
+PROFILE_COUNT = "profile_count"
+PREDICTED_RATE = "predicted_rate"
+ACTUAL_RATE = "actual_rate"
+PREDICTED_LIFT = "predicted_lift"
+ACTUAL_LIFT = "actual_lift"
+PROFILE_SIZE_PERCENT = "profile_size_percent"
 
 # CDP DATA SOURCES
 CDP_DATA_SOURCES_TAG = "data sources"
@@ -404,6 +550,8 @@ CDP_DATA_SOURCE_IDS = "data_source_ids"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"
+CUSTOMERS_INSIGHTS = "customers-insights"
+GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 
 # Notifications
@@ -413,6 +561,11 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 
 # AWS BATCH
 BATCH_SIZE = "batch_size"
+
+# Customers API Fields
+CUSTOMERS_TAG = "customers"
+CUSTOMERS_ENDPOINT = "/customers"
+CUSTOMERS_DESCRIPTION = "Customers API"
 
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
@@ -429,6 +582,32 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
 # IDR Fields
 IDR_TAG = "idr"
 IDR_ENDPOINT = "/idr"
+DATA_FEEDS = "datafeeds"
+DATA_FEED = "datafeed"
+INPUT_RECORDS = "input_records"
+OUTPUT_RECORDS = "output_records"
+EMPTY_RECORDS = "empty_records"
+INDIVIDUAL_ID_MATCH = "individual_id_match"
+HOUSEHOLD_ID_MATCH = "household_id_match"
+COMPANY_ID_MATCH = "company_id_match"
+ADDRESS_ID_MATCH = "address_id_match"
+DB_READS = "db_reads"
+DB_WRITES = "db_writes"
+FILENAME = "filename"
+NEW_INDIVIDUAL_IDS = "new_individual_ids"
+NEW_HOUSEHOLD_IDS = "new_household_ids"
+NEW_COMPANY_IDS = "new_company_ids"
+NEW_ADDRESS_IDS = "new_address_ids"
+PROCESS_TIME = "process_time"
+DATE_TIME = "date_time"
+DIGITAL_IDS_ADDED = "digital_ids_added"
+DIGITAL_IDS_MERGED = "digital_ids_merged"
+MATCH_RATE = "match_rate"
+MERGE_RATE = "merge_rate"
+RECORDS_SOURCE = "records_source"
+TIME_STAMP = "time_stamp"
+STITCHED = "stitched"
+PINNING = "pinning"
 
 # FILTERING
 REDACTED = "++REDACTED++"

@@ -52,7 +52,7 @@ export const defineRoutes = (server) => {
     const body = { message: "Destination authentication details are valid" }
     const requestData = JSON.parse(request.requestBody)
 
-    if (requestData.type === "salesforce") {
+    if (requestData.type === "sfmc") {
       body.perf_data_extensions = destinationsDataExtensions()
     }
     return new Response(code, headers, body)
@@ -105,20 +105,23 @@ export const defineRoutes = (server) => {
     }
   )
 
-  server.get("/engagements/:id/deliveries", (schema, request) => {
+  server.get("/engagements/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const engagement = schema.engagements.find(id)
+    const destination = schema.destinations.find(7)
     return engagement.audiences.map((audience) => {
       return {
-        id: audience.id,
-        name: audience.name,
+        audience: {
+          id: audience.id,
+          name: audience.name,
+        },
+        destination: {
+          id: destination.id,
+          name: destination.name,
+          type: destination.type,
+        },
         size: audience.size,
-        destinations: audience.destinations.map((destination) => {
-          return {
-            id: destination.id,
-            deliveries: server.createList("delivery", 10),
-          }
-        }),
+        delivered: "2021-07-11T14:39:49.574Z",
       }
     })
   })
