@@ -107,8 +107,8 @@ class NotificationsSearch(SwaggerView):
             batch_size is None
             or batch_number is None
             or (
-                sort_order.lower() != db_c.PAGINATION_ASCENDING
-                and sort_order.lower() != db_c.PAGINATION_DESCENDING
+                sort_order.lower()
+                not in [db_c.PAGINATION_ASCENDING, db_c.PAGINATION_DESCENDING]
             )
         ):
             return {
@@ -121,14 +121,17 @@ class NotificationsSearch(SwaggerView):
             else pymongo.DESCENDING
         )
 
-        response = NotificationSchema().dump(
-            notification_management.get_notifications(
-                get_db_client(),
-                batch_size=int(batch_size),
-                sort_order=sort_order,
-                batch_number=int(batch_number),
+        return (
+            jsonify(
+                NotificationSchema().dump(
+                    notification_management.get_notifications(
+                        get_db_client(),
+                        batch_size=int(batch_size),
+                        sort_order=sort_order,
+                        batch_number=int(batch_number),
+                    ),
+                    many=True,
+                )
             ),
-            many=True,
+            HTTPStatus.OK,
         )
-
-        return jsonify(response), HTTPStatus.OK

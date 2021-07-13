@@ -562,11 +562,6 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
-# Customers API Fields
-CUSTOMERS_TAG = "customers"
-CUSTOMERS_ENDPOINT = "/customers"
-CUSTOMERS_DESCRIPTION = "Customers API"
-
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
@@ -682,16 +677,6 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
 }
 
 # Alerts Fields
-ALERT_SUCCESS = "Success"
-ALERT_INFORMATIONAL = "Informational"
-ALERT_CRITICAL = "Critical"
-
-CATEGORY_DECISIONING = "Decisioning"
-CATEGORY_DESTINATIONS = "Destinations"
-CATEGORY_DELIVERY = "Delivery"
-CATEGORY_AUDIENCES = "Audiences"
-CATEGORY_CUSTOMERS = "Customers"
-
 DEFAULT_ALERT_BATCH_SIZE = 5
 DEFAULT_ALERT_SORT_ORDER = "descending"
 DEFAULT_ALERT_BATCH_NUMBER = "1"

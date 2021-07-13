@@ -37,16 +37,16 @@ class NotificationSchema(Schema):
         validate=[
             OneOf(
                 choices=[
-                    api_c.CATEGORY_DESTINATIONS,
-                    api_c.CATEGORY_DECISIONING,
-                    api_c.CATEGORY_DELIVERY,
-                    api_c.CATEGORY_AUDIENCES,
-                    api_c.CATEGORY_CUSTOMERS,
+                    api_c.DESTINATIONS_TAG,
+                    api_c.MODELS_TAG,
+                    api_c.DELIVERY_TAG,
+                    api_c.ORCHESTRATION_TAG,
+                    api_c.CUSTOMERS_TAG,
                 ]
             )
         ],
         required=False,
-        example=api_c.CATEGORY_DELIVERY,
+        example=api_c.DELIVERY_TAG,
     )
 
     @post_dump
