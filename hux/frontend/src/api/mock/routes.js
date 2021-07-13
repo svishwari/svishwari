@@ -154,7 +154,7 @@ export const defineRoutes = (server) => {
   server.get("/idr/overview", () => idrOverview)
 
   // notification
-  server.get("/notification")
+  server.get("/notifications")
 
   // audiences
   server.get("/audiences")

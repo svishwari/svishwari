@@ -132,7 +132,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      notification: "notification/list",
+      notification: "notifications/list",
     }),
     getNotificationData() {
       return this.notification
@@ -140,7 +140,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getNotification: "notification/getAll",
+      getNotification: "notifications/getAll",
     }),
     goBack() {
       this.$router.go(-1)

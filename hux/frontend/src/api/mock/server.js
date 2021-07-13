@@ -18,7 +18,7 @@ import modelFactory from "./factories/model"
 import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
 import deliveryFactory from "./factories/delivery"
-import { notification as notificationFactory } from "./factories/notification"
+import { notification as notificationFactory } from "./factories/notifications"
 
 export function makeServer({ environment = "development" } = {}) {
   // models

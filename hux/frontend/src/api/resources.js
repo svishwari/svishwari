@@ -10,5 +10,5 @@ export default {
   engagements: "/engagements",
   identity: "/idr",
   models: "/models",
-  notification: "notification",
+  notifications: "/notifications",
 }

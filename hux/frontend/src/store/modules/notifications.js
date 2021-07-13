@@ -29,7 +29,7 @@ const mutations = {
 const actions = {
   async getAll({ commit }) {
     try {
-      const response = await api.notification.all()
+      const response = await api.notifications.all()
       commit("SET_ALL", response.data)
     } catch (error) {
       handleError(error)
@@ -39,7 +39,7 @@ const actions = {
 
   async get({ commit }, id) {
     try {
-      const response = await api.notification.find(id)
+      const response = await api.notifications.find(id)
       commit("SET_ONE", response.data)
     } catch (error) {
       handleError(error)

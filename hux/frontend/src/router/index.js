@@ -177,12 +177,12 @@ const routes = [
     },
   },
   {
-    path: "/alerts-notification",
+    path: "/notifications",
     name: "AlertsAndNotifications",
     component: () => import("@/views/AlertsAndNotifications/Index"),
     meta: {
       layout: "app",
-      title: "Customer Profile Details",
+      title: "Alerts and Notifications",
       requiresAuth: true,
     },
   },
