@@ -693,25 +693,29 @@ class EngagementDeliverHistoryView(SwaggerView):
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, engagement_id=engagement_id
+            )
+        )
         delivery_history = []
-        for pair in get_audience_destination_pairs(
-            engagement[api_c.AUDIENCES]
-        ):
-            audience = orchestration_management.get_audience(database, pair[0])
-            destination = delivery_platform_management.get_delivery_platform(
-                database, pair[1].get(api_c.ID)
-            )
-            delivery_job = delivery_platform_management.get_delivery_job(
-                database, pair[1].get(api_c.DELIVERY_JOB_ID)
-            )
-            if delivery_job and delivery_job.get(db_c.JOB_END_TIME):
+        for job in delivery_jobs:
+            if (
+                job.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED
+                and job.get(api_c.AUDIENCE_ID)
+                and job.get(db_c.DELIVERY_PLATFORM_ID)
+            ):
                 delivery_history.append(
                     {
-                        api_c.AUDIENCE: audience,
-                        api_c.DESTINATION: destination,
+                        api_c.AUDIENCE: orchestration_management.get_audience(
+                            database, job.get(api_c.AUDIENCE_ID)
+                        ),
+                        api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
+                            database, job.get(db_c.DELIVERY_PLATFORM_ID)
+                        ),
                         api_c.SIZE: randrange(10000000),
                         # TODO : Get audience size from CDM
-                        api_c.DELIVERED: delivery_job.get(db_c.JOB_END_TIME),
+                        api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
                     }
                 )
 
