@@ -9,9 +9,7 @@
       <v-card class="rounded-lg card-style" minHeight="20px">
         <v-card-title class="d-flex justify-space-between pb-2 pl-8 pt-5">
           <div class="mt-2">
-            <span
-              class="d-flex align-center black--text text-decoration-none"
-            >
+            <span class="d-flex align-center black--text text-decoration-none">
               United States
             </span>
           </div>
