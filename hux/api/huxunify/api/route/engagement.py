@@ -51,6 +51,7 @@ from huxunify.api.route.utils import (
     set_facebook_auth_from_parameter_store,
     group_perf_metric,
     get_friendly_delivered_time,
+    update_metrics,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -68,37 +69,6 @@ engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 def before_request():
     """Protect all of the engagement endpoints."""
     pass  # pylint: disable=unnecessary-pass
-
-
-def update_metric(
-    target_id: ObjectId, name: str, jobs: list, perf_metrics: list
-) -> dict:
-    """Update performance metric
-
-    Args:
-        target_id (ObjectId) : Group Id.
-        name (Str): Name of group object.
-        jobs (List): List of delivery jobs.
-        perf_metrics (List): List of performance metrics.
-
-    Returns:
-        metric (dict): Grouped performance metric .
-    """
-    delivery_jobs = [x[db_c.ID] for x in jobs]
-    metric = {
-        api_c.ID: str(target_id),
-        api_c.NAME: name,
-    }
-    metric.update(
-        group_perf_metric(
-            [
-                x[db_c.PERFORMANCE_METRICS]
-                for x in perf_metrics
-                if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-            ]
-        )
-    )
-    return metric
 
 
 @add_view_to_blueprint(
@@ -1776,13 +1746,13 @@ class EngagementMetricsDisplayAds(SwaggerView):
         #   2. Using delivery jobs of an audience, get all the performance metrics
         #   3. Group performance metrics for the audience
         aud_group = sorted(delivery_jobs, key=itemgetter(api_c.AUDIENCE_ID))
-        aud_metric = []
+        # Get metrics grouped by audience
+        audience_metrics_list = []
         for audience_id, audience_group in groupby(
             aud_group, key=itemgetter(api_c.AUDIENCE_ID)
         ):
             audience_jobs = list(audience_group)
-            # Get metrics grouped by audience
-            ind_aud_metric = update_metric(
+            audience_metrics = update_metrics(
                 audience_id,
                 orchestration_management.get_audience(
                     get_db_client(), audience_id
@@ -1795,13 +1765,13 @@ class EngagementMetricsDisplayAds(SwaggerView):
             destination_group = sorted(
                 audience_jobs, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
             )
-            aud_dest_metric = []
+            # Get metrics grouped by audience.destination
+            audience_destination_metrics_list = []
             for destination_id, aud_dest_group in groupby(
                 destination_group, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
             ):
                 audience_dest_jobs = list(aud_dest_group)
-                # Get metrics grouped by destination
-                ind_aud_dest_metric = update_metric(
+                destination_metrics = update_metrics(
                     destination_id,
                     delivery_platform_management.get_delivery_platform(
                         get_db_client(), destination_id
@@ -1809,14 +1779,16 @@ class EngagementMetricsDisplayAds(SwaggerView):
                     audience_dest_jobs,
                     performance_metrics,
                 )
-                aud_dest_metric.append(ind_aud_dest_metric)
+                audience_destination_metrics_list.append(destination_metrics)
 
-            ind_aud_metric[api_c.DESTINATIONS] = aud_dest_metric
-            aud_metric.append(ind_aud_metric)
+            audience_metrics[
+                api_c.DESTINATIONS
+            ] = audience_destination_metrics_list
+            audience_metrics_list.append(audience_metrics)
 
             # TODO : Group by campaigns
 
-        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = aud_metric
+        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
         return (
             AudiencePerformanceDisplayAdsSchema().dump(final_metric),
