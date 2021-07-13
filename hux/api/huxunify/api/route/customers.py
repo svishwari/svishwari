@@ -4,8 +4,8 @@ Paths for customer API
 """
 from http import HTTPStatus
 from random import choice
-from typing import Tuple
-from datetime import datetime
+from typing import Tuple, List
+from datetime import datetime, timedelta
 from faker import Faker
 import pandas as pd
 
@@ -13,9 +13,11 @@ from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
+from huxunifylib.database import constants as db_c
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
+    DataFeedDetailsSchema,
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
 )
@@ -313,8 +315,89 @@ class CustomerProfileSearch(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
     "IDRDataFeeds",
+)
+class IDRDataFeeds(SwaggerView):
+    """IDR Data Feeds Report"""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": DataFeedSchema,
+            "description": "Identity Resolution Data Feeds",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get IDR Data Feeds."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use,unused-argument
+    @api_error_handler()
+    def get(self) -> Tuple[List[dict], int]:
+        """Retrieves a IDR data feeds.
+        ---
+        security:
+            - Bearer: ["Authorization"]\
+
+        Args:
+
+        Returns:
+            Tuple[List[dict], int] list of IDR data feeds object dicts
+        """
+
+        data_feeds = [
+            {
+                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
+                api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
+                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
+                api_c.DATAFEED_NEW_IDS_COUNT: 21,
+                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
+                api_c.MATCH_RATE: 0.98,
+                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow(),
+            },
+            {
+                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
+                api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
+                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                api_c.DATAFEED_NEW_IDS_COUNT: 54,
+                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
+                api_c.MATCH_RATE: 0.97,
+                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
+                - timedelta(days=1),
+            },
+            {
+                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
+                api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
+                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                api_c.DATAFEED_NEW_IDS_COUNT: 300,
+                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
+                api_c.MATCH_RATE: 0.98,
+                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
+                - timedelta(days=7),
+            },
+            {
+                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
+                api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
+                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
+                api_c.DATAFEED_NEW_IDS_COUNT: 612,
+                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
+                api_c.MATCH_RATE: 0.98,
+                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
+                - timedelta(days=30),
+            },
+        ]
+        return (
+            jsonify(DataFeedSchema().dump(data_feeds, many=True)),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
+    "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):
     """IDR Data Feeds Report"""
@@ -332,7 +415,7 @@ class IDRDataFeedDetails(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": DataFeedSchema,
+            "schema": DataFeedDetailsSchema,
             "description": "Identity Resolution Data Feed Waterfall Report",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -359,7 +442,7 @@ class IDRDataFeedDetails(SwaggerView):
         """
 
         return (
-            DataFeedSchema().dump(
+            DataFeedDetailsSchema().dump(
                 {
                     api_c.PINNING: {
                         api_c.INPUT_RECORDS: 2,
