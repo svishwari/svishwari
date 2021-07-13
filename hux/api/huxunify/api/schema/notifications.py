@@ -58,6 +58,7 @@ class NotificationSchema(Schema):
         Args:
             data (dict): The notification object
             many (bool): If there are many to process
+
         Returns:
             Response: Returns a notification object
 
