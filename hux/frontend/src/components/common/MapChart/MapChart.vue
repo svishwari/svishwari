@@ -10,7 +10,6 @@
         <v-card-title class="d-flex justify-space-between pb-2 pl-8 pt-5">
           <div class="mt-2">
             <span
-              href="#"
               class="d-flex align-center black--text text-decoration-none"
             >
               United States

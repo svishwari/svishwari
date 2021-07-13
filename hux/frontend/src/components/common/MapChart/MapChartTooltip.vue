@@ -21,8 +21,8 @@
         <span class="value ml-1">
           {{ sourceInput.women | percentageConvert(true, true) | Empty }} |
           {{ sourceInput.men | percentageConvert(true, true) | Empty }} |
-          {{ sourceInput.other | percentageConvert(true, true) | Empty }}</span
-        >
+          {{ sourceInput.other | percentageConvert(true, true) | Empty }}
+          </span>
       </div>
       <div class="sub-props pt-4">
         <span class="subprop-name">LTV</span>
