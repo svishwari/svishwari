@@ -1,5 +1,5 @@
 <template>
-  <div class="audiences-wrap">
+  <div class="audiences-wrap white">
     <PageHeader :headerHeightChanges="'py-3'">
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />
@@ -301,6 +301,13 @@ export default {
         td {
           font-size: 14px;
           height: 63px;
+        }
+      }
+      tbody {
+        tr:last-child {
+          td {
+            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+          }
         }
       }
     }
