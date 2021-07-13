@@ -177,11 +177,11 @@ export default {
     }
   }
   .table-drawer {
-  font-family: Open Sans;
-font-style: normal;
-font-weight: normal;
-font-size: 14px !important;
-line-height: 22px;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px !important;
+    line-height: 22px;
   }
 }
 .footer-font {
