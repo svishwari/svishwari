@@ -24,6 +24,7 @@ from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
     AudiencePostSchema,
+    LookalikeAudiencePostSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
@@ -674,3 +675,64 @@ class AudienceRules(SwaggerView):
         rules_constants.update(rules_from_cdm)
 
         return rules_constants, HTTPStatus.OK.value
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+    "SetLookalikeAudience",
+)
+class SetLookalikeAudience(SwaggerView):
+    """
+    Set Lookalike Audience Class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Successfully created lookalike audience"
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create a lookalike audience"
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": api_c.ENGAGEMENT_NOT_FOUND
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    def post(self) -> Tuple[dict, int]:
+        """Sets lookalike audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int]: lookalike audience configuration, HTTP status.
+
+        """
+
+        try:
+            body = LookalikeAudiencePostSchema().load(
+                request.get_json(), partial=True
+            )
+        except ValidationError as validation_error:
+            return validation_error.messages, HTTPStatus.BAD_REQUEST
+
+        # does the post body need to include a country field from the UI??
+
+        facebook_delivery_platform = (
+            destination_management.get_delivery_platform_by_type(
+                get_db_client(), db_c.DELIVERY_PLATFORM_FACEBOOK
+            )
+        )
+
+        destination_management.create_delivery_platform_lookalike_audience(
+            get_db_client(),
+            facebook_delivery_platform[api_c.ID],
+            body[api_c.SOURCE_AUDIENCE_ID],
+            body[api_c.NAME],
+            body[api_c.AUDIENCE_SIZE_PERCENTAGE]
+        )

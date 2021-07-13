@@ -117,7 +117,7 @@ class EngagementSearch(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>",
     "IndividualEngagementSearch",
 )
 class IndividualEngagementSearch(SwaggerView):
@@ -280,7 +280,7 @@ class SetEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>",
     "UpdateEngagement",
 )
 class UpdateEngagement(SwaggerView):
@@ -383,7 +383,7 @@ class UpdateEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>",
     "DeleteEngagement",
 )
 class DeleteEngagement(SwaggerView):
@@ -444,7 +444,7 @@ class DeleteEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCES}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.AUDIENCES}",
     "AddAudienceEngagement",
 )
 class AddAudienceEngagement(SwaggerView):
@@ -539,7 +539,7 @@ class AddAudienceEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCES}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.AUDIENCES}",
     "DeleteAudienceEngagement",
 )
 class DeleteAudienceEngagement(SwaggerView):
@@ -625,7 +625,7 @@ class DeleteAudienceEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.DELIVERY_HISTORY}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.DELIVERY_HISTORY}",
     "EngagementDeliverHistoryView",
 )
 class EngagementDeliverHistoryView(SwaggerView):
@@ -722,7 +722,7 @@ class EngagementDeliverHistoryView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.DELIVER}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.DELIVER}",
     "EngagementDeliverView",
 )
 class EngagementDeliverView(SwaggerView):
@@ -815,7 +815,7 @@ class EngagementDeliverView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCE}/<audience_id>/{api_c.DELIVER}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.AUDIENCE}/<audience_id>/{api_c.DELIVER}",
     "EngagementDeliverAudienceView",
 )
 class EngagementDeliverAudienceView(SwaggerView):
@@ -938,7 +938,7 @@ class EngagementDeliverAudienceView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.DELIVER}",
     "EngagementDeliverDestinationView",
 )
@@ -1099,7 +1099,7 @@ class EngagementDeliverDestinationView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.CAMPAIGNS}",
     "UpdateCampaignsForAudience",
 )
@@ -1298,7 +1298,7 @@ class UpdateCampaignsForAudience(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.CAMPAIGNS}",
     "AudienceCampaignsGetView",
 )
@@ -1460,7 +1460,7 @@ class AudienceCampaignsGetView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/campaign-mappings",
     "AudienceCampaignMappingsGetView",
 )
@@ -1849,7 +1849,6 @@ class EngagementMetricsEmail(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    # pylint: disable=unused-argument
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves email performance metrics.
 
@@ -1865,6 +1864,9 @@ class EngagementMetricsEmail(SwaggerView):
                 HTTP Status Code
 
         """
+
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         email = {
             "summary": {
@@ -1949,3 +1951,69 @@ class EngagementMetricsEmail(SwaggerView):
             AudiencePerformanceEmailSchema().dump(email),
             HTTPStatus.OK,
         )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.LOOKALIKE_AUDIENCES}",
+    "GetLookAlikeAudiencesOfEngagement",
+)
+class GetLookAlikeAudiencesOfEngagement(SwaggerView):
+    """
+    Get lookalike audiences that an engagement has
+    """
+
+    parameters = [
+        {
+            "name": api_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60b8d6d7d3cf80b4edcd890b",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Lookalike audiences returned successfully",
+            "schema": {
+                "example": {"email_summary": "Audience Metrics Email"},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve lookalike audiences for an engagement",
+        },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "Engagement not found.",
+            "schema": NotFoundError,
+        }
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    @api_error_handler()
+    def get(self, engagement_id: str):
+        """ Retrieves the lookalike audiences of an engagement
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): ID of an engagement
+
+        Returns:
+            Tuple[dict, int]: Response of lookalike audiences,
+                HTTP Status Code
+
+        """
+
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+
+        # db function to return the lookalike audiences for an engagement
+        # probably not written yet.
+        # function will need to:
+        # grab an engagement
+        # iterate through the audiences in the audiences field and find dicts that contain the key "lookalike"

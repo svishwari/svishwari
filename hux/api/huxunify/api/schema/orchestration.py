@@ -131,3 +131,14 @@ class DeliveryHistorySchema(Schema):
     )
     size = fields.Integer()
     delivered = fields.DateTime(required=True, allow_none=True)
+
+
+class LookalikeAudiencePostSchema(Schema):
+    """
+    Schema for creating a lookalike audience
+    """
+
+    original_audience_id = fields.String(validate=must_not_be_blank, required=True)
+    name = fields.String(required=True)
+    audience_size_percentage = fields.Float(required=True)
+    engagement_ids = fields.List(fields.String(), required=True)
