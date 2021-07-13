@@ -290,7 +290,7 @@ class DestinationConstantsSchema(Schema):
         ordered = True
 
     facebook = fields.Nested(FacebookAuthConstants)
-    sfmc = fields.Nested(SFMCAuthConstants)
+    salesforce = fields.Nested(SFMCAuthConstants)
 
 
 class DestinationDataExtPostSchema(Schema):
