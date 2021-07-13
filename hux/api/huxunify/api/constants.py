@@ -449,6 +449,7 @@ USER_DESCRIPTION = "USER API"
 USER_ENDPOINT = "/users"
 
 # Models
+# TODO: Remove relevant constants from here once integrated with Tecton API
 MODELS_TAG = "model"
 MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"

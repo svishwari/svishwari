@@ -149,7 +149,7 @@ class ModelOverview(SwaggerView):
             "schema": ModelDashboardSchema,
         },
         HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to retrieve Model Overview"
+            "description": "Failed to retrieve model overview"
         },
     }
     responses.update(AUTH401_RESPONSE)
