@@ -305,9 +305,9 @@ export default {
       }
       tbody {
         tr:last-child {
-         td {
-           border-bottom: 1px solid var(--v-lightGrey-base) !important;
-         }
+          td {
+            border-bottom: 1px solid var(--v-lightGrey-base) !important;
+          }
         }
       }
     }
