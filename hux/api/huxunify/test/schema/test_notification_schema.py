@@ -18,16 +18,22 @@ class TestNotificationSchema(TestCase):
         """
         Test notification schema
         """
+        current_time = datetime.utcnow()
         doc = dict(
-            id=str(ObjectId()),
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            _id=str(ObjectId()),
+            type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Successfully delivered",
-            created=datetime.strftime(
-                datetime.utcnow(), "%Y-%m-%d %H:%M:%S.%f"
-            ),
+            created=current_time,
             category=api_c.CATEGORY_DELIVERY,
         )
 
-        res = NotificationSchema().load(doc)
-        self.assertEqual({}, NotificationSchema().validate(doc))
-        self.assertIsInstance(res["created"], datetime)
+        res = NotificationSchema().dump(doc)
+
+        self.assertEqual(
+            res["notification_type"], doc[db_c.NOTIFICATION_FIELD_TYPE].title()
+        )
+        self.assertEqual(
+            res[db_c.NOTIFICATION_FIELD_CATEGORY],
+            doc[db_c.NOTIFICATION_FIELD_CATEGORY].title(),
+        )
+        self.assertIsInstance(res[db_c.NOTIFICATION_FIELD_CREATED], str)
