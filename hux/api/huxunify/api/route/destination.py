@@ -18,7 +18,10 @@ from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.connectors.connector_sfmc import SFMCConnector
 from huxunifylib.connectors.connector_exceptions import AudienceAlreadyExists
-from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.data_connectors.aws import (
+    parameter_store,
+    get_auth_from_parameter_store,
+)
 from huxunify.api.schema.destinations import (
     DestinationGetSchema,
     DestinationPutSchema,
@@ -35,7 +38,6 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
-    set_sfmc_auth_from_parameter_store,
     api_error_handler,
 )
 import huxunify.api.constants as api_c
@@ -333,6 +335,7 @@ class DestinationPutView(SwaggerView):
                     authentication_details=auth_details,
                     is_updated=True,
                     destination_id=destination_id,
+                    destination_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
             is_added = True
@@ -590,8 +593,9 @@ class DestinationDataExtView(SwaggerView):
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
             connector = SFMCConnector(
-                auth_details=set_sfmc_auth_from_parameter_store(
-                    destination[api_c.AUTHENTICATION_DETAILS]
+                auth_details=get_auth_from_parameter_store(
+                    destination[api_c.AUTHENTICATION_DETAILS],
+                    destination[api_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
             ext_list = connector.get_list_of_data_extensions()
@@ -696,9 +700,11 @@ class DestinationDataExtPostView(SwaggerView):
             destination[api_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
+
             connector = SFMCConnector(
-                auth_details=set_sfmc_auth_from_parameter_store(
-                    destination[api_c.AUTHENTICATION_DETAILS]
+                auth_details=get_auth_from_parameter_store(
+                    destination[api_c.AUTHENTICATION_DETAILS],
+                    destination[api_c.DELIVERY_PLATFORM_TYPE],
                 )
             )
             status_code = HTTPStatus.CREATED

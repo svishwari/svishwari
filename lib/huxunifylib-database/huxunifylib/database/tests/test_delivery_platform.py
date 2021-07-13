@@ -190,17 +190,21 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     def test_set_delivery_platform_sfmc(self):
         """Test set_delivery_platform for sfmc."""
-
+        sfmc_configuration = {
+            c.PERFORMANCE_METRICS_DATA_EXTENSION: "data_extension"
+        }
         doc = dpm.set_delivery_platform(
             self.database,
             c.DELIVERY_PLATFORM_SFMC,
             "My delivery platform 2",
             self.auth_details_sfmc,
+            configuration=sfmc_configuration,
         )
 
         self.assertIsNotNone(doc)
         self.assertIsNotNone(doc[c.ID])
         self.assertFalse(c.DELETED in doc)
+        self.assertIsNotNone(doc[c.CONFIGURATION])
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_delivery_platform_facebook_with_user(self):

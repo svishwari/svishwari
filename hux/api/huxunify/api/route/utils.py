@@ -14,7 +14,6 @@ from connexion.exceptions import ProblemException
 from pymongo import MongoClient
 
 from huxunifylib.connectors.util.client import db_client_factory
-from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -28,7 +27,6 @@ from huxunify.api.data_connectors.tecton import check_tecton_connection
 from huxunify.api.data_connectors.aws import (
     check_aws_ssm,
     check_aws_batch,
-    parameter_store,
 )
 from huxunify.api.data_connectors.okta import (
     check_okta_connection,
@@ -356,68 +354,6 @@ def api_error_handler() -> object:
         return decorator
 
     return wrapper
-
-
-def set_facebook_auth_from_parameter_store(auth: dict) -> dict:
-    """Set facebook auth details from parameter store
-    ---
-
-        Args:
-            auth (dict): Destination Auth details.
-
-        Returns:
-            Auth Object (dict): SFMC auth object.
-
-    """
-
-    return {
-        FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: parameter_store.get_store_value(
-            auth[constants.FACEBOOK_AD_ACCOUNT_ID]
-        ),
-        FacebookCredentials.FACEBOOK_APP_ID.name: parameter_store.get_store_value(
-            auth[constants.FACEBOOK_APP_ID]
-        ),
-        FacebookCredentials.FACEBOOK_APP_SECRET.name: parameter_store.get_store_value(
-            auth[constants.FACEBOOK_APP_SECRET]
-        ),
-        FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: parameter_store.get_store_value(
-            auth[constants.FACEBOOK_ACCESS_TOKEN]
-        ),
-    }
-
-
-def set_sfmc_auth_from_parameter_store(auth: dict) -> dict:
-    """Set SFMC auth details from parameter store
-    ---
-
-        Args:
-            auth (dict): Destination Auth details.
-
-        Returns:
-            Auth Object (dict): SFMC auth object.
-
-    """
-
-    return {
-        SFMCCredentials.SFMC_ACCOUNT_ID.value: parameter_store.get_store_value(
-            auth[constants.SFMC_ACCOUNT_ID]
-        ),
-        SFMCCredentials.SFMC_AUTH_URL.value: parameter_store.get_store_value(
-            auth[constants.SFMC_AUTH_BASE_URI]
-        ),
-        SFMCCredentials.SFMC_CLIENT_ID.value: parameter_store.get_store_value(
-            auth[constants.SFMC_CLIENT_ID]
-        ),
-        SFMCCredentials.SFMC_CLIENT_SECRET.value: parameter_store.get_store_value(
-            auth[constants.SFMC_CLIENT_SECRET]
-        ),
-        SFMCCredentials.SFMC_SOAP_ENDPOINT.value: parameter_store.get_store_value(
-            auth[constants.SFMC_SOAP_BASE_URI]
-        ),
-        SFMCCredentials.SFMC_URL.value: parameter_store.get_store_value(
-            auth[constants.SFMC_REST_BASE_URI]
-        ),
-    }
 
 
 def group_perf_metric(perf_metrics: list) -> dict:
