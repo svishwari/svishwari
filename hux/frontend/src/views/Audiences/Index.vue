@@ -303,6 +303,13 @@ export default {
           height: 63px;
         }
       }
+      tbody {
+        tr:last-child {
+         td {
+           border-bottom: 1px solid var(--v-lightGrey-base) !important;
+         }
+        }
+      }
     }
   }
   ::v-deep .menu-cell-wrapper :hover .action-icon {
