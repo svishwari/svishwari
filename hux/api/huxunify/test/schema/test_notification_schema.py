@@ -24,7 +24,7 @@ class TestNotificationSchema(TestCase):
             type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description="Successfully delivered",
             created=current_time,
-            category=api_c.CATEGORY_DELIVERY,
+            category=api_c.DELIVERY_TAG,
         )
 
         res = NotificationSchema().dump(doc)
