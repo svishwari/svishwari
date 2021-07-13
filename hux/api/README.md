@@ -56,7 +56,7 @@ pipenv install
 # activate the virtual environment
 pipenv shell
 
-# for updating packages without effecting other hashes use the command below
+# for updating packages without affecting other hashes use the command below
 # replace package name and version number as needed
 pipenv install --keep-outdated 'huxunifylib-database==0.2.39'
 ```
