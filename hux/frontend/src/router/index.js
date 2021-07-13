@@ -108,7 +108,17 @@ const routes = [
   {
     path: "/models",
     name: "Models",
-    component: () => import("@/views/Models"),
+    component: () => import("@/views/Decisioning/Index"),
+    meta: {
+      layout: "app",
+      title: "Models",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/models/:type",
+    name: "ModelDashboard",
+    component: () => import("@/views/Decisioning/Dashboard"),
     meta: {
       layout: "app",
       title: "Models",
