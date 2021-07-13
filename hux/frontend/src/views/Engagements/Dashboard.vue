@@ -697,8 +697,8 @@ export default {
       this.showAddAudiencesDrawer = true
     },
     triggerSelectDestination(audienceId) {
-      this.selectedAudienceId = audienceId
       this.closeDrawers()
+      this.selectedAudienceId = audienceId
       this.showSelectDestinationsDrawer = true
     },
     triggerDataExtensionDrawer(destination) {
@@ -804,9 +804,9 @@ export default {
         await this.getAudienceById(id)
         const audience = this.getAudience(id)
         audienceDetails.push(audience)
-        audience.destinations = audience.destinationIds.map((dest) => ({
-          id: dest,
-        }))
+        audience.destinations = engData.audiences.filter(
+          (aud) => aud.id === id
+        )[0].destinations
         this.selectedAudiences[id] = audience
       }
       // extracting the audience data and merging into object
