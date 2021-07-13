@@ -12,6 +12,7 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     get_delivery_job_status,
+    get_delivery_platform,
     set_connection_status,
 )
 from huxunifylib.database.engagement_management import (
@@ -26,7 +27,10 @@ from huxunifylib.util.general.const import (
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.data_connectors.aws import (
+    parameter_store,
+    get_auth_from_parameter_store,
+)
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_destination_config,
@@ -458,3 +462,42 @@ class CourierTest(TestCase):
         """
         with self.assertRaises(TypeError):
             get_audience_destination_pairs(bad_list)
+
+    def test_get_auth_from_parameter_store(self):
+        """Test function get_auth_from_parameter_store
+
+        Args:
+
+        Returns:
+
+        """
+
+        # use audience once
+        for destination_id in self.audience_one[c.DESTINATIONS]:
+            # get destination
+            destination = get_delivery_platform(self.database, destination_id)
+
+            # setup mocks for each secret
+            simulated_secret = (
+                f"simulated_secret_{destination[c.DELIVERY_PLATFORM_TYPE]}"
+            )
+            for _ in api_c.DESTINATION_SECRETS[
+                destination[c.DELIVERY_PLATFORM_TYPE]
+            ]:
+                mock.patch.object(
+                    parameter_store,
+                    "get_store_value",
+                    return_value=simulated_secret,
+                ).start()
+
+            # run the function
+            auth = get_auth_from_parameter_store(
+                destination[c.DELIVERY_PLATFORM_AUTH],
+                destination[c.DELIVERY_PLATFORM_TYPE],
+            )
+
+            # test that the secrets were set to the simulated secret
+            for secret in api_c.DESTINATION_SECRETS[
+                destination[c.DELIVERY_PLATFORM_TYPE]
+            ][api_c.AWS_SSM_NAME]:
+                self.assertEqual(auth[secret.upper()], simulated_secret)

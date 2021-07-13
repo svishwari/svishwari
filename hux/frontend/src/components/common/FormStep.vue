@@ -13,12 +13,18 @@
       <div class="form-step__label d-flex align-center">
         <slot v-if="$slots.label" name="label"></slot>
         <span v-else class="text-h5">{{ label || `Step ${step}` }}</span>
-        <em v-if="optional" class="text-caption grey--text"> - Optional</em>
+        <span
+          v-if="optional"
+          class="text-caption pl-1"
+          :class="disabled ? 'lightGrey--text' : 'grey--text'"
+        >
+          <em>{{ optional }}</em>
+        </span>
       </div>
     </div>
 
     <div
-      class="form-step__content pa-4 pl-8 pb-12"
+      class="form-step__content pa-3 pl-8 pb-12"
       :class="{
         'form-step__content--inactive': border === 'inactive',
       }"
@@ -44,9 +50,8 @@ export default {
     },
 
     optional: {
-      type: Boolean,
+      type: String,
       required: false,
-      default: false,
     },
 
     disabled: {
