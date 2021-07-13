@@ -47,6 +47,7 @@
 <script>
 import MapChartTooltip from "@/components/common/MapChart/MapChartTooltip"
 import GeoChart from "@/components/common/MapChart/GeoChart"
+// TODO: this should be converted to a prop while doing API Integration
 import mapData from "./mapData.json"
 export default {
   name: "map-chart",
