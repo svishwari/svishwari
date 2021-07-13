@@ -366,8 +366,8 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        create_time: this.selectedStartDate,
-        update_time: this.selectedEndDate,
+        start_date: this.selectedStartDate,
+        end_date: this.selectedEndDate,
       }
     },
 

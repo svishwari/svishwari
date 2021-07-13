@@ -204,7 +204,7 @@
                       class=""
                       :label="selectedStartDate"
                       :selected="selectedStartDate"
-                      @on-date-select="onStartDateSelect"
+                      @on-date-select="(val) => (selectedStartDate = val)"
                     />
                   </div>
                   <v-icon class="icon icon-right" size="16">
@@ -218,7 +218,7 @@
                       :selected="selectedEndDate"
                       :isSubMenu="true"
                       :minDate="selectedStartDate"
-                      @on-date-select="onEndDateSelect"
+                      @on-date-select="(val) => (selectedEndDate = val)"
                     />
                   </div>
                 </v-row>
@@ -377,8 +377,8 @@ export default {
         delivery_schedule: this.newEngagement.delivery_schedule,
         description: this.newEngagement.description,
         audiences: [],
-        create_time: this.selectedStartDate,
-        update_time: this.selectedEndDate,
+        start_date: this.selectedStartDate,
+        end_date: this.selectedEndDate,
       }
       const newEngagement = await this.addEngagementToDB(payload)
       this.engagements.push(newEngagement)
@@ -413,12 +413,6 @@ export default {
     onSortIconClick: function () {
       this.toggleSort()
       this.sortEngagements()
-    },
-    onStartDateSelect(val) {
-      this.selectedStartDate = val
-    },
-    onEndDateSelect(val) {
-      this.selectedEndDate = val
     },
   },
   async mounted() {
