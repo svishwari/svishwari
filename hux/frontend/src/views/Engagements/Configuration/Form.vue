@@ -51,7 +51,7 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule">
+        <v-row class="delivery-schedule mt-3">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
@@ -310,6 +310,7 @@ import SelectDestinationsDrawer from "./Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "./Drawers/DestinationDataExtensionDrawer.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
+import moment from "moment"
 
 export default {
   name: "EngagementsForm",
@@ -468,10 +469,19 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
+      this.selectedEndDate = "Select date"
+      this.$set(this.value, 'recurring', {
+        start: moment(this.selectedStartDate).format('MMMM D'),
+        end: this.selectedEndDate == "Select date" ? null :  moment(this.selectedEndDate).format('MMMM D'),
+      })
     },
 
     onEndDateSelect(val) {
       this.selectedEndDate = val
+      this.$set(this.value, 'recurring', {
+        start: this.selectedStartDate == "Select date" ? null :  moment(this.selectedStartDate).format('MMMM D'),
+        end: moment(this.selectedEndDate).format('MMMM D'),
+      })
     },
   },
 }
