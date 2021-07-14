@@ -61,7 +61,7 @@
           </tbody>
         </template>
         <template #expanded-item="{ headers, item }">
-          <slot name="expanded-row" :headers="headers" :item="item" />
+          <slot name="expanded-row" :headers="headers" :parentItem="item" />
         </template>
       </v-data-table>
     </div>
