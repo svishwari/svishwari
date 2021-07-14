@@ -7,7 +7,9 @@ from unittest import TestCase, mock
 from bson import ObjectId
 import mongomock
 import requests_mock
+from huxunifylib.connectors.facebook_connector import FacebookConnector
 
+from huxunify.api.data_connectors.aws import parameter_store
 from huxunifylib.database import constants as db_c, data_management
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
@@ -65,7 +67,6 @@ class OrchestrationRouteTest(TestCase):
             "huxunify.api.route.orchestration.get_db_client",
             return_value=self.database,
         ).start()
-        self.addCleanup(mock.patch.stopall)
 
         # mock get_db_client() for the userinfo utils.
         mock.patch(
@@ -73,12 +74,16 @@ class OrchestrationRouteTest(TestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch.object(
+            parameter_store, "get_store_value", return_value="secret"
+        ).start()
+
         self.addCleanup(mock.patch.stopall)
 
         destinations = [
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Facebook",
-                db_c.DELIVERY_PLATFORM_TYPE: "facebook",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 db_c.STATUS: db_c.STATUS_SUCCEEDED,
                 db_c.ENABLED: True,
                 db_c.ADDED: True,
@@ -147,14 +152,14 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCES: [
                     {
                         db_c.OBJECT_ID: self.audiences[0][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [
+                        api_c.DESTINATIONS: [
                             {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [
+                        api_c.DESTINATIONS: [
                             {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
@@ -168,7 +173,7 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCES: [
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [],
+                        api_c.DESTINATIONS: [],
                     },
                 ],
                 api_c.USER_NAME: self.user_name,
@@ -513,3 +518,101 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(new_name, response.json[db_c.AUDIENCE_NAME])
+
+    def test_create_lookalike_audience(self):
+        """Test create lookalike audience
+        Args:
+
+        Returns:
+        """
+        mock_facebook_connector = mock.patch.object(
+            FacebookConnector, "get_new_lookalike_audience", return_value="LA_ID_12345"
+        )
+        mock_facebook_connector.start()
+
+        lookalike_audience_name = "NEW LA AUDIENCE"
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.SOURCE_AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: lookalike_audience_name,
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids
+            }
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
+
+        mock_facebook_connector.stop()
+
+    def test_create_lookalike_audience_invalid_engagement_ids(self):
+        """Test create lookalike audience with invalid engagement ids
+        Args:
+
+        Returns:
+        """
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.SOURCE_AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: "NEW LA AUDIENCE",
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: ["bad_id1", "bad_id2"]
+            }
+        )
+
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_create_lookalike_audience_invalid_source_audience_id(self):
+        """Test create lookalike audience with invalid engagement ids
+        Args:
+
+        Returns:
+        """
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.SOURCE_AUDIENCE_ID: "bad_id1",
+                api_c.NAME: "NEW LA AUDIENCE",
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids
+            }
+        )
+
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_create_lookalike_audience_source_audience_not_found(self):
+        """Test create lookalike audience with invalid engagement ids
+        Args:
+
+        Returns:
+        """
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
+                api_c.NAME: "NEW LA AUDIENCE",
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids
+            }
+        )
+
+        valid_response = {"message": api_c.AUDIENCE_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
