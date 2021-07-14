@@ -69,6 +69,6 @@ class NotificationSchema(Schema):
             data[db_c.NOTIFICATION_FIELD_CATEGORY] = data[
                 db_c.NOTIFICATION_FIELD_CATEGORY
             ].title()
-        data["notification_type"] = data["notification_type"].title()
+        data[api_c.NOTIFICATION_TYPE] = data[api_c.NOTIFICATION_TYPE].title()
 
         return data
