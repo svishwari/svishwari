@@ -461,6 +461,11 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader>Hux Feature Chart without Tooltip</v-subheader>
+    <feature-chart></feature-chart>
+
+    <v-divider class="mt-10" />
+
     <v-subheader>Logos</v-subheader>
     <Logo type="bluecore"></Logo>
     <Logo type="bluecore" :size="48"></Logo>
