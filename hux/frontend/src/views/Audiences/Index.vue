@@ -54,7 +54,9 @@
             }"
             :style="{ width: header.width, left: 0 }"
           >
-            <div v-if="header.value == 'name'" class="w-100">
+          
+            <div v-if="header.value == 'name'" class="w-100 d-flex">
+              <span v-if="item.lookalike_audience == true" class="mr-3"><Lookalike /></span>
               <menu-cell
                 :value="item[header.value]"
                 :menuOptions="getActionItems(item)"
@@ -138,6 +140,7 @@ import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import MenuCell from "@/components/common/huxTable/MenuCell.vue"
 
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience"
+import Lookalike from "@/assets/logos/lookalike.svg"
 
 export default {
   name: "audiences",
@@ -152,6 +155,7 @@ export default {
     TimeStamp,
     MenuCell,
     LookAlikeAudience,
+    Lookalike
   },
   data() {
     return {

@@ -1,7 +1,7 @@
 <template>
   <v-card class="rounded-sm status-card mr-2 box-shadow-none">
     <v-card-title class="d-flex justify-space-between">
-      <span>
+      <span class="d-flex">
         <router-link
           :to="{
             name: 'AudienceInsight',
@@ -12,7 +12,15 @@
         >
           {{ audience.name }}
         </router-link>
-      </span>
+          <status
+            v-if="audience.lookalike"
+            :status="audience.status"
+            :iconSize="statusIcon"
+           class="ml-2"
+            collapsed
+            showLabel
+          />
+        </span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
           <v-icon v-bind="attrs" v-on="on" class="top-action">
@@ -69,6 +77,7 @@
                     class="mr-2 more-action"
                     color="primary"
                     @click.prevent
+                    v-if="!audience.lookalike"
                   >
                     mdi-dots-vertical
                   </v-icon>
@@ -239,7 +248,7 @@ export default {
 
     engagementId: {
       type: String,
-      required: true,
+      required: false,
     },
     statusIcon: {
       type: Number,
