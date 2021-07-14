@@ -619,24 +619,37 @@ export default {
     },
     deliverySchedule() {
       if (this.engagementList && this.engagementList.delivery_schedule) {
-        if(!this.engagementList.delivery_schedule.start_date && !this.engagementList.delivery_schedule.end_date){
+        if (
+          !this.engagementList.delivery_schedule.start_date &&
+          !this.engagementList.delivery_schedule.end_date
+        ) {
           return "Now"
-        }else {
-          if(this.engagementList.delivery_schedule.start_date && this.engagementList.delivery_schedule.end_date){
+        } else {
+          if (
+            this.engagementList.delivery_schedule.start_date &&
+            this.engagementList.delivery_schedule.end_date
+          ) {
             return (
-              moment(this.engagementList.delivery_schedule.start_date).format("MMMM D")
-              + " - " +
-              moment(this.engagementList.delivery_schedule.end_date).format("MMMM D")
+              moment(this.engagementList.delivery_schedule.start_date).format(
+                "MMMM D"
+              ) +
+              " - " +
+              moment(this.engagementList.delivery_schedule.end_date).format(
+                "MMMM D"
+              )
             )
-          }else if(this.engagementList.delivery_schedule.start_date){
-            return moment(this.engagementList.delivery_schedule.start_date).format("MMMM D")
-          }else if (this.engagementList.delivery_schedule.end_date){
-            return moment(this.engagementList.delivery_schedule.end_date).format("MMMM D")
+          } else if (this.engagementList.delivery_schedule.start_date) {
+            return moment(
+              this.engagementList.delivery_schedule.start_date
+            ).format("MMMM D")
+          } else if (this.engagementList.delivery_schedule.end_date) {
+            return moment(
+              this.engagementList.delivery_schedule.end_date
+            ).format("MMMM D")
           }
         }
-      } else {
-        return "Manual"
       }
+      return "Manual"
     },
   },
   methods: {

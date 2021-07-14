@@ -369,8 +369,12 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        start_date: (this.selectedStartDate == "Select date" ? null : this.selectedStartDate) ,
-        end_date: (this.selectedEndDate == "Select date" ? null : this.selectedEndDate) ,
+        start_date:
+          this.selectedStartDate == "Select date"
+            ? null
+            : this.selectedStartDate,
+        end_date:
+          this.selectedEndDate == "Select date" ? null : this.selectedEndDate,
       }
     },
 
@@ -378,13 +382,13 @@ export default {
       return this.value.name.length
     },
     isDateValid() {
-      if(this.value.delivery_schedule == 1){
-        if(this.selectedStartDate == "Select date"){
+      if (this.value.delivery_schedule == 1) {
+        if (this.selectedStartDate == "Select date") {
           return false
-        }else {
+        } else {
           return true
         }
-      }else{
+      } else {
         return true
       }
     },
