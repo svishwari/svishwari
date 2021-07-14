@@ -208,4 +208,11 @@ export default {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
 }
+:v-deep .v-data-table {
+ .v-data-table__wrapper {
+  tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+    background: white !important;
+  }
+ }
+}
 </style>

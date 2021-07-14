@@ -174,16 +174,16 @@
 
   <div v-else-if="Statuses.Informational.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="darkBlue" class="mr-2" :size="iconSize">
-        mdi-information
+      <v-icon color="blue" class="mr-2" :size="iconSize">
+        mdi-message-alert
       </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="darkBlue" class="mr-2" :size="iconSize">
-          mdi-information
+        <v-icon v-on="on" color="blue"  class="mr-2" :size="iconSize">
+          mdi-message-alert
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
