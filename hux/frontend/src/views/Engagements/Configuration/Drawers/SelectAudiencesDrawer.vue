@@ -104,7 +104,7 @@
           :isDisabled="!isAudienceSelected"
           @click="addSelectedAudiences"
         >
-          {{ addAudiencesBtnText }}
+          {{ `Add ${audiencesCount} audience${audiencesCount > 1 ? "s" : ""}` }}
         </huxButton>
       </div>
     </template>
@@ -187,15 +187,14 @@ export default {
       // return false
     },
 
-    addAudiencesBtnText() {
+    audiencesCount() {
       const countSummary = {
         added:
           Object.keys(this.newAudiences).length +
           Object.keys(this.value).length,
         removed: Object.keys(this.removedAudiences).length,
       }
-      const count = countSummary.added - countSummary.removed
-      return `Add ${count} audience${count > 1 ? "s" : ""}`
+      return countSummary.added - countSummary.removed
     },
     newAudiences() {
       const added = {}
