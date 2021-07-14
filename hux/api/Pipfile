@@ -36,7 +36,6 @@ connexion = "==2.7.0"
 [dev-packages]
 pytest = {version="*", index="pypi"}
 pylint = {version="*", index="pypi"}
-#black = { version = "*", index="pypi"}
 safety = {version="*", index="pypi"}
 requests-mock= {version="*", index="pypi"}
 hypothesis = {version="*", index="pypi"}
