@@ -456,6 +456,11 @@
 
     <v-divider class="mt-10" />
 
+    <v-subheader>Hux Map Chart with Tooltip</v-subheader>
+    <map-chart></map-chart>
+
+    <v-divider class="mt-10" />
+
     <v-subheader>Logos</v-subheader>
     <Logo type="bluecore"></Logo>
     <Logo type="bluecore" :size="48"></Logo>
@@ -645,6 +650,7 @@ import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import ChordChart from "@/components/common/identityChart/ChordChart"
+import MapChart from "@/components/common/MapChart/MapChart"
 import { generateColor } from "@/utils"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
@@ -676,6 +682,7 @@ export default {
     FormStep,
     HuxSlider,
     ChordChart,
+    MapChart,
     Size,
     HuxStartDate,
     HuxEndDate,

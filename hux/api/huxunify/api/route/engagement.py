@@ -50,6 +50,7 @@ from huxunify.api.route.utils import (
     api_error_handler,
     get_user_name,
     group_perf_metric,
+    update_metrics,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -372,7 +373,7 @@ class UpdateEngagement(SwaggerView):
             audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
             delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
-            else None,
+            else {},
         )
 
         return (
@@ -692,25 +693,29 @@ class EngagementDeliverHistoryView(SwaggerView):
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
 
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, engagement_id=engagement_id
+            )
+        )
         delivery_history = []
-        for pair in get_audience_destination_pairs(
-            engagement[api_c.AUDIENCES]
-        ):
-            audience = orchestration_management.get_audience(database, pair[0])
-            destination = delivery_platform_management.get_delivery_platform(
-                database, pair[1].get(api_c.ID)
-            )
-            delivery_job = delivery_platform_management.get_delivery_job(
-                database, pair[1].get(api_c.DELIVERY_JOB_ID)
-            )
-            if delivery_job and delivery_job.get(db_c.JOB_END_TIME):
+        for job in delivery_jobs:
+            if (
+                job.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED
+                and job.get(api_c.AUDIENCE_ID)
+                and job.get(db_c.DELIVERY_PLATFORM_ID)
+            ):
                 delivery_history.append(
                     {
-                        api_c.AUDIENCE: audience,
-                        api_c.DESTINATION: destination,
+                        api_c.AUDIENCE: orchestration_management.get_audience(
+                            database, job.get(api_c.AUDIENCE_ID)
+                        ),
+                        api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
+                            database, job.get(db_c.DELIVERY_PLATFORM_ID)
+                        ),
                         api_c.SIZE: randrange(10000000),
                         # TODO : Get audience size from CDM
-                        api_c.DELIVERED: delivery_job.get(db_c.JOB_END_TIME),
+                        api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
                     }
                 )
 
@@ -1747,63 +1752,49 @@ class EngagementMetricsDisplayAds(SwaggerView):
         #   2. Using delivery jobs of an audience, get all the performance metrics
         #   3. Group performance metrics for the audience
         aud_group = sorted(delivery_jobs, key=itemgetter(api_c.AUDIENCE_ID))
-        aud_metric = []
+        # Get metrics grouped by audience
+        audience_metrics_list = []
         for audience_id, audience_group in groupby(
             aud_group, key=itemgetter(api_c.AUDIENCE_ID)
         ):
             audience_jobs = list(audience_group)
-            delivery_jobs = [x[db_c.ID] for x in audience_jobs]
-            ind_aud_metric = {
-                api_c.ID: str(audience_id),
-                api_c.NAME: orchestration_management.get_audience(
-                    database, audience_id
+            audience_metrics = update_metrics(
+                audience_id,
+                orchestration_management.get_audience(
+                    get_db_client(), audience_id
                 )[api_c.NAME],
-            }
-            ind_aud_metric.update(
-                group_perf_metric(
-                    [
-                        x[db_c.PERFORMANCE_METRICS]
-                        for x in performance_metrics
-                        if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                    ]
-                )
+                audience_jobs,
+                performance_metrics,
             )
 
             # Group all the performance metrics engagement.audience.destination.
             destination_group = sorted(
                 audience_jobs, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
             )
-            aud_dest_metric = []
+            # Get metrics grouped by audience.destination
+            audience_destination_metrics_list = []
             for destination_id, aud_dest_group in groupby(
                 destination_group, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
             ):
                 audience_dest_jobs = list(aud_dest_group)
-                delivery_jobs = [x[db_c.ID] for x in audience_dest_jobs]
-                ind_aud_dest_metric = {
-                    api_c.ID: str(destination_id),
-                    api_c.NAME: delivery_platform_management.get_delivery_platform(
-                        database, destination_id
-                    )[
-                        api_c.NAME
-                    ],
-                }
-                ind_aud_dest_metric.update(
-                    group_perf_metric(
-                        [
-                            x
-                            for x in performance_metrics
-                            if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                        ]
-                    )
+                destination_metrics = update_metrics(
+                    destination_id,
+                    delivery_platform_management.get_delivery_platform(
+                        get_db_client(), destination_id
+                    )[api_c.NAME],
+                    audience_dest_jobs,
+                    performance_metrics,
                 )
-                aud_dest_metric.append(ind_aud_dest_metric)
+                audience_destination_metrics_list.append(destination_metrics)
 
-            ind_aud_metric[api_c.DESTINATIONS] = aud_dest_metric
-            aud_metric.append(ind_aud_metric)
+            audience_metrics[
+                api_c.DESTINATIONS
+            ] = audience_destination_metrics_list
+            audience_metrics_list.append(audience_metrics)
 
             # TODO : Group by campaigns
 
-        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = aud_metric
+        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
         return (
             AudiencePerformanceDisplayAdsSchema().dump(final_metric),
