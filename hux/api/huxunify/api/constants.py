@@ -562,11 +562,6 @@ NOTIFICATIONS_ENDPOINT = "/notifications"
 # AWS BATCH
 BATCH_SIZE = "batch_size"
 
-# Customers API Fields
-CUSTOMERS_TAG = "customers"
-CUSTOMERS_ENDPOINT = "/customers"
-CUSTOMERS_DESCRIPTION = "Customers API"
-
 # TODO HUS-363 remove once we can pass empty filters to CDP.
 CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
     "filters": [
@@ -602,12 +597,19 @@ PROCESS_TIME = "process_time"
 DATE_TIME = "date_time"
 DIGITAL_IDS_ADDED = "digital_ids_added"
 DIGITAL_IDS_MERGED = "digital_ids_merged"
-MATCH_RATE = "match_rate"
 MERGE_RATE = "merge_rate"
 RECORDS_SOURCE = "records_source"
 TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
+
+# IDR Data feeds
+DATAFEED_ID = "datafeed_id"
+DATAFEED_NAME = "datafeed_name"
+DATAFEED_DATA_SOURCE = "data_source_type"
+DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
+DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
+DATAFEED_LAST_RUN_DATE = "last_run"
 
 # FILTERING
 REDACTED = "++REDACTED++"
@@ -673,3 +675,10 @@ MOCK_CUSTOMER_PROFILE_RESPONSE = {
     "propensity_to_unsubscribe": 1,
     "propensity_to_purchase": 0,
 }
+
+# Alerts Fields
+DEFAULT_ALERT_BATCH_SIZE = 5
+DEFAULT_ALERT_SORT_ORDER = "descending"
+DEFAULT_ALERT_BATCH_NUMBER = "1"
+
+NOTIFICATION_TYPE = "notification_type"

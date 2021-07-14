@@ -3,6 +3,7 @@
 Purpose of this file is to house all the engagement api tests
 """
 import json
+from datetime import datetime, timedelta
 from unittest import TestCase, mock
 from http import HTTPStatus
 import requests_mock
@@ -1398,3 +1399,116 @@ class TestEngagementRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         self.assertEqual(valid_response, response.json)
+
+    def test_set_engagement_flight_schedule(self):
+        """
+        Test setting an engagement flight schedule
+        Returns:
+        """
+
+        engagement_id = self.engagement_ids[0]
+
+        engagement_response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        update_doc = engagement_response.json
+        # remove props before sending full put.
+        for prop in [
+            db_c.CREATE_TIME,
+            db_c.STATUS,
+            db_c.UPDATE_TIME,
+            db_c.UPDATED_BY,
+            db_c.OBJECT_ID,
+            db_c.CREATED_BY,
+        ]:
+            del update_doc[prop]
+
+        update_doc[api_c.DELIVERY_SCHEDULE] = {
+            api_c.START_DATE: datetime.utcnow()
+            .replace(second=0, microsecond=0)
+            .isoformat(),
+            api_c.END_DATE: (datetime.utcnow() + timedelta(weeks=12))
+            .replace(second=0, microsecond=0)
+            .isoformat(),
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            json=update_doc,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        response_body = response.json
+        self.assertIn(api_c.DELIVERY_SCHEDULE, response_body)
+
+        for key in [api_c.START_DATE, api_c.END_DATE]:
+            self.assertIn(key, response_body[api_c.DELIVERY_SCHEDULE])
+            response_datetime = datetime.fromisoformat(
+                response_body[api_c.DELIVERY_SCHEDULE][key]
+            )
+            expected_datetime = datetime.fromisoformat(
+                update_doc[api_c.DELIVERY_SCHEDULE][key]
+            )
+
+            # for some reason document DB does not main microsecond precision.
+            self.assertEqual(response_datetime, expected_datetime)
+
+    def test_remove_engagement_flight_schedule(self):
+        """
+        Test removing an engagement flight schedule
+        Returns:
+        """
+
+        engagement_id = self.engagement_ids[0]
+        engagement_response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        update_doc = engagement_response.json
+        # remove props before sending full put.
+        for prop in [
+            db_c.CREATE_TIME,
+            db_c.STATUS,
+            db_c.UPDATE_TIME,
+            db_c.UPDATED_BY,
+            db_c.OBJECT_ID,
+            db_c.CREATED_BY,
+        ]:
+            del update_doc[prop]
+
+        # set the flight schedule first
+        update_doc[api_c.DELIVERY_SCHEDULE] = {
+            api_c.START_DATE: datetime.utcnow()
+            .replace(second=0, microsecond=0)
+            .isoformat(),
+            api_c.END_DATE: (datetime.utcnow() + timedelta(weeks=3))
+            .replace(second=0, microsecond=0)
+            .isoformat(),
+        }
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            json=update_doc,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        # test that it was added
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertIn(api_c.DELIVERY_SCHEDULE, response.json)
+
+        update_doc[api_c.DELIVERY_SCHEDULE] = {}
+
+        response = self.app.put(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            json=update_doc,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        # now test removal.
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertFalse(response.json[api_c.DELIVERY_SCHEDULE])

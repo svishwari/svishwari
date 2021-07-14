@@ -15,6 +15,7 @@
         must-sort
         sort-desc
         single-select
+        :disable-sort="disableSort"
       >
         <template #item="{ item, expand, isExpanded }" v-if="nested">
           <slot
@@ -60,7 +61,7 @@
           </tbody>
         </template>
         <template #expanded-item="{ headers, item }">
-          <slot name="expanded-row" :headers="headers" :item="item" />
+          <slot name="expanded-row" :headers="headers" :parentItem="item" />
         </template>
       </v-data-table>
     </div>
@@ -103,6 +104,11 @@ export default {
       type: String,
       required: false,
       default: "name",
+    },
+    disableSort: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {

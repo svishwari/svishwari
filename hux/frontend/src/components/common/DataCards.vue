@@ -9,7 +9,11 @@
     >
       <template #default="props">
         <!-- header -->
-        <v-row align="center" no-gutters :class="{ 'pl-2': bordered }">
+        <v-row
+          align="center"
+          no-gutters
+          :class="{ 'pl-2': bordered, 'data-card-headers': true }"
+        >
           <v-col v-for="field in fields" :key="field.label" :cols="field.col">
             <div class="px-4 py-2">
               <span class="text-caption">

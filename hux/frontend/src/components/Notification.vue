@@ -94,15 +94,21 @@ export default {
 }
 .v-menu__content {
   top: 64px !important;
+<<<<<<< HEAD
   overflow-y: hidden !important;
+=======
+>>>>>>> main
   .alert-menu-main {
     width: 296px !important;
     height: 283px !important;
     overflow-wrap: break-word !important;
   }
 }
+<<<<<<< HEAD
 .notification-div {
       overflow-y: auto !important;
     height: 170px !important;
 }
+=======
+>>>>>>> main
 </style>
