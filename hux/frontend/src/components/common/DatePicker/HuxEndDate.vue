@@ -30,6 +30,7 @@
           iconPosition="right"
           tile
           class="ma-2 main-button pr-1"
+          :isDisabled="isDisabled"
         >
           {{ selected }}
         </huxButton>
@@ -122,6 +123,10 @@ export default {
     minDate: {
       type: String,
       required: false,
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

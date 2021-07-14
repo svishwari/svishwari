@@ -100,6 +100,7 @@
               :isSubMenu="true"
               :minDate="selectedStartDate"
               @on-date-select="onEndDateSelect"
+              :isDisabled="disableEndDate"
             />
           </div>
         </v-row>
@@ -254,7 +255,7 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
+          :disabled="!isValid || !isDateValid"
           @click="addNewEngagement()"
         >
           Create
@@ -348,6 +349,7 @@ export default {
       selectedDestination: null,
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
+      disableEndDate: true,
     }
   },
 
@@ -367,13 +369,24 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        start_date: this.selectedStartDate,
-        end_date: this.selectedEndDate,
+        start_date: (this.selectedStartDate == "Select date" ? null : this.selectedStartDate) ,
+        end_date: (this.selectedEndDate == "Select date" ? null : this.selectedEndDate) ,
       }
     },
 
     isValid() {
       return this.value.name.length
+    },
+    isDateValid() {
+      if(this.value.delivery_schedule == 1){
+        if(this.selectedStartDate == "Select date"){
+          return false
+        }else {
+          return true
+        }
+      }else{
+        return true
+      }
     },
 
     hasDestinations() {
@@ -470,6 +483,7 @@ export default {
     onStartDateSelect(val) {
       this.selectedStartDate = val
       this.selectedEndDate = "Select date"
+      this.disableEndDate = false
       this.$set(this.value, "recurring", {
         start: moment(this.selectedStartDate).format("MMMM D"),
         end:
