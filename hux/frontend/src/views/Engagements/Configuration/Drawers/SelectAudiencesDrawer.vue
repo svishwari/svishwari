@@ -83,6 +83,31 @@
         {{ audiences.length }} results
       </span>
     </template>
+    <template #footer-right>
+      <div
+        v-if="isAudienceSelected && enableMultiple"
+        class="d-flex align-baseline"
+      >
+        <huxButton
+          variant="tertiary"
+          size="large"
+          :isTile="true"
+          class="mr-2"
+          @click="closeDrawer"
+        >
+          <span class="primary--text">Cancel</span>
+        </huxButton>
+        <huxButton
+          variant="primary"
+          size="large"
+          :isTile="true"
+          :isDisabled="!isAudienceSelected"
+          @click="addSelectedAudiences"
+        >
+          {{ `Add ${audiencesCount} audience${audiencesCount > 1 ? "s" : ""}` }}
+        </huxButton>
+      </div>
+    </template>
   </Drawer>
 </template>
 
@@ -114,12 +139,18 @@ export default {
       required: false,
       default: false,
     },
+    enableMultiple: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   data() {
     return {
       localToggle: false,
       loading: false,
+      selectedAudiences: {},
     }
   },
 
@@ -137,28 +168,100 @@ export default {
     ...mapGetters({
       audiences: "audiences/list",
     }),
+    localSelectedAudiences: {
+      get() {
+        return this.selectedAudiences
+      },
+      set(value) {
+        this.selectedAudiences = value
+      },
+    },
+
+    isAudienceSelected() {
+      if (Object.keys(this.newAudiences).length > 0) {
+        return true
+      } else if (Object.keys(this.removedAudiences).length > 0) {
+        return true
+      }
+      return Object.keys(this.localSelectedAudiences).length
+    },
+
+    audiencesCount() {
+      const countSummary = {
+        added:
+          Object.keys(this.newAudiences).length +
+          Object.keys(this.value).length,
+        removed: Object.keys(this.removedAudiences).length,
+      }
+      return countSummary.added - countSummary.removed
+    },
+    newAudiences() {
+      const added = {}
+      Object.keys(this.localSelectedAudiences).forEach((item) => {
+        if (!Object.keys(this.value).includes(item)) {
+          added[item] = this.localSelectedAudiences[item]
+        }
+      })
+      return added
+    },
+    removedAudiences() {
+      const removed = {}
+      if (
+        Object.keys(this.localSelectedAudiences) !== Object.keys(this.value)
+      ) {
+        Object.keys(this.value).forEach((item) => {
+          if (!Object.keys(this.localSelectedAudiences).includes(item)) {
+            removed[item] = this.value[item]
+          }
+        })
+      }
+      return removed
+    },
   },
 
   methods: {
     isAdded(audience) {
-      return Boolean(this.value[audience.id])
+      return Boolean(
+        this.enableMultiple
+          ? this.localSelectedAudiences[audience.id]
+          : this.value[audience.id]
+      )
     },
-
-    add(audience) {
-      this.$set(this.value, audience.id, {
-        id: audience.id,
-        name: audience.name,
-        size: audience.size,
-        destinations: audience.destinations.map((destination) => {
-          return {
-            id: destination.id,
-          }
-        }),
+    closeDrawer() {
+      this.localToggle = false
+      this.localSelectedAudiences = this.value
+    },
+    addSelectedAudiences() {
+      this.$emit("triggerAddAudiences", {
+        added: this.newAudiences,
+        removed: this.removedAudiences,
       })
+      this.closeDrawer()
+    },
+    add(audience) {
+      if (!this.enableMultiple) this.$emit("onAddAudience", audience)
+      this.$set(
+        this.enableMultiple ? this.localSelectedAudiences : this.value,
+        audience.id,
+        {
+          id: audience.id,
+          name: audience.name,
+          size: audience.size,
+          destinations: audience.destinations.map((destination) => {
+            return {
+              id: destination.id,
+            }
+          }),
+        }
+      )
     },
 
     remove(audience) {
-      this.$delete(this.value, audience.id)
+      if (!this.enableMultiple) this.$emit("onRemoveAudience", audience)
+      this.$delete(
+        this.enableMultiple ? this.localSelectedAudiences : this.value,
+        audience.id
+      )
     },
   },
 }
