@@ -1,4 +1,4 @@
-# 1. Build the API
+# Build the API test image
 
 FROM huxhub.repo.mgnt.in/python:3.7-slim-buster AS hux-unified
 
