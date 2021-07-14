@@ -34,7 +34,7 @@
             </v-card-title>
             <v-card-text class="justify-center title-text pt-5 pb-5">
               <div>Hux ID</div>
-              {{ singleCustomer.hux_id }}
+              <span class="id-size">{{ singleCustomer.hux_id }} </span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -305,7 +305,6 @@ export default {
       )
     },
     contactPreferences() {
-      console.log("this.customer",this.singleCustomer.preference_email,this.singleCustomer.preference_email ? this.singleCustomer.preference_email :"-")
       const contactData = [
         {
           id: 1,
@@ -337,7 +336,6 @@ export default {
       return contactData.filter((item) => item.title !== null)
     },
     customerDataDisplay() {
-      // debugger;
       const cusomerDeatils = [
         {
           id: 1,
@@ -512,5 +510,8 @@ color: var(--v-neroBlack-base) !important;
 }
 .matic-card-space {
   padding-right:5px !important
+}
+.id-size {
+  font-size: 14px;
 }
 </style>
