@@ -19,6 +19,7 @@ import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
 import deliveryFactory from "./factories/delivery"
 import campaignFactory from "./factories/campaigns"
+import { notification as notificationFactory } from "./factories/notifications"
 
 export function makeServer({ environment = "development" } = {}) {
   // models
@@ -39,6 +40,7 @@ export function makeServer({ environment = "development" } = {}) {
     dataExtension: Model,
     deliveryFactory: Model,
     campaign: Model,
+    notification: Model,
   }
 
   const factories = {
@@ -53,6 +55,7 @@ export function makeServer({ environment = "development" } = {}) {
     dataExtension: Factory.extend(dataExtensionFactory),
     delivery: Factory.extend(deliveryFactory),
     campaign: Factory.extend(campaignFactory),
+    notification: Factory.extend(notificationFactory),
   }
 
   const server = createServer({

@@ -114,4 +114,10 @@ client["audiences"].deliver = (resourceId, data) => {
 }
 //#endregion
 
+//#region Notifications
+client["notifications"].getNotification = (data) => {
+  return http.get("/notifications", data)
+}
+//#endregion
+
 export default client

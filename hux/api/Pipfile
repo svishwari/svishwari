@@ -20,7 +20,6 @@ apispec= {version="4.3.0", index="pypi"}
 apispec-webframeworks= {version="0.5.2", index="pypi"}
 boto3= {version="1.17.5", index="pypi"}
 pre-commit= {version="2.11.1", index="pypi"}
-connexion= {version="2.7.0", index="pypi"}
 bson= {version="4.2.0", index="pypi"}
 pymongo= {version="3.11.3", index="pypi"}
 mongomock= {version="3.22.1", index="pypi"}
@@ -32,17 +31,17 @@ huxunifylib-database = {version="*", index="jfrog"}
 huxunifylib-connectors = {version="*", index="jfrog"}
 huxunifylib-util = {version="*", index="jfrog"}
 faker = {version="*", index="pypi"}
+connexion = "==2.7.0"
 
 [dev-packages]
 pytest = {version="*", index="pypi"}
 pylint = {version="*", index="pypi"}
-black = { version = "*", pre="true"}
 safety = {version="*", index="pypi"}
-requests-mock= {version="1.9.2", index="pypi"}
+requests-mock= {version="*", index="pypi"}
 hypothesis = {version="*", index="pypi"}
 
 [requires]
 python_version = "3.7"
 
 [pipenv]
-allow_prereleases = true
+allow_prereleases = false

@@ -168,6 +168,9 @@ export const defineRoutes = (server) => {
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
+  // notification
+  server.get("/notifications")
+
   // audiences
   server.get("/audiences")
 

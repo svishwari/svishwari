@@ -6,7 +6,7 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3 ml-2 neroBlack--text">Customers</h3>
+        <h3 class="text-h3 ml-1 neroBlack--text">Customers</h3>
       </div>
     </template>
 
@@ -24,20 +24,20 @@
             :key="header.value"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'hux_id'" class="text-body-2">
+            <div v-if="header.value == 'hux_id'" class="table-drawer">
               <router-link
                 :to="{
                   name: 'CustomerProfileDetails',
                   params: { id: item[header.value] },
                 }"
-                class="text-decoration-none text-body-2"
+                class="text-decoration-none table-drawer"
                 append
                 >{{ item[header.value] }}
               </router-link>
             </div>
             <div
               v-if="header.value == 'first_name' || header.value == 'last_name'"
-              class="text-body-2"
+              class="table-drawer"
             >
               <span v-if="item.last_name">{{ item.last_name }}, </span>
               <span v-if="item.first_name"> {{ item.first_name }}</span>
@@ -175,6 +175,13 @@ export default {
         margin-top: 12px !important;
       }
     }
+  }
+  .table-drawer {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px !important;
+    line-height: 22px;
   }
 }
 .footer-font {
