@@ -15,7 +15,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div v-if="!loading && singleCustomer" class="px-16 py-6">
+    <div v-if="!loading && singleCustomer" class="pl-15 py-6 pr-9">
       <v-row>
         <v-col cols="3">
           <v-card
@@ -42,10 +42,11 @@
           :cols="data.colValue"
           v-for="data in customerDataDisplay"
           :key="data.id"
+          class="matic-card-space"
         >
-          <v-card class="rounded-lg card-info-wrapper card-shadow">
-            <v-card-text class="pl-4 pr-3 pb-3 pt-3">
-              <div class="title-text pb-2">
+          <v-card class="rounded-lg card-info-wrapper card-shadow no-background">
+            <v-card-text class="pl-3 pr-3 pb-3 pt-3 matric-card">
+              <div class="title-text pb-1">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
                   <template #label-content>
@@ -56,7 +57,7 @@
                   </template>
                 </Tooltip>
               </div>
-              <span v-if="!data.slider">{{ data.value }}</span>
+              <span v-if="!data.slider" class="sample-card-text">{{ data.value }}</span>
               <hux-slider
                 v-if="data.slider"
                 :isRangeSlider="false"
@@ -72,10 +73,11 @@
           v-for="data in customerDetailsMore"
           :cols="data.colValue"
           :key="data.id"
+          class="matic-card-space"
         >
-          <v-card class="rounded-lg card-info-wrapper card-shadow">
-            <v-card-text class="pl-4 pr-3 pb-3 pt-3">
-              <div class="title-text pb-2">
+          <v-card class="rounded-lg card-info-wrapper card-shadow no-background">
+            <v-card-text class="pl-3 pr-3 pb-3 pt-3 matric-card">
+              <div class="title-text pb-1">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
                   <template #label-content>
@@ -96,7 +98,14 @@
         <v-col cols="5">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-5 card-heading">
-              {{ cardTitles[0].title }}
+              {{ cardTitles[0].title }}      
+              <v-icon
+          size="17"
+          color="neroBlack"
+          class="ml-2"
+        >
+         mdi-lock-outline
+        </v-icon>
             </v-card-title>
             <v-card-text class="justify-center title-text">
               <v-simple-table>
@@ -104,42 +113,50 @@
                   <tbody>
                     <tr>
                       <td class="title-text">Email</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.email }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.email" class="blur-text">{{ singleCustomer.email }} </span>
+                        <span v-else>-</span>
                       </td>
                       <td class="title-text">Address</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.address }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.address" class="blur-text"> {{ singleCustomer.address }} </span>
+                        <span v-else>-</span>
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Phone</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.phone }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.phone" class="blur-text"> {{ singleCustomer.phone }} </span>
+                        <span v-else>-</span>
                       </td>
                       <td class="title-text">City</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.city }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.city" class="blur-text"> {{ singleCustomer.city }} </span>
+                        <span v-else>-</span>
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Age</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.age }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.age" class="blur-text"> {{ singleCustomer.age }} </span>
+                        <span v-else>-</span>
                       </td>
                       <td class="title-text">State</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.state }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.state" class="blur-text"> {{ singleCustomer.state }} </span>
+                        <span v-else>-</span>
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Gender</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.gender }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.gender" class="blur-text"> {{ singleCustomer.gender }} </span>
+                        <span v-else>-</span>
                       </td>
                       <td class="title-text">Zip</td>
-                      <td class="table-text blur-text">
-                        {{ singleCustomer.zip }}
+                      <td class="table-text">
+                        <span v-if="singleCustomer.zip" class="blur-text"> {{ singleCustomer.zip }} </span>
+                        <span v-else>-</span>
                       </td>
                     </tr>
                   </tbody>
@@ -231,6 +248,7 @@ export default {
     singleCustomer() {
       return this.customer(this.$route.params.id)
     },
+    
     id() {
       return this.$route.params.id
     },
@@ -244,42 +262,42 @@ export default {
         {
           id: 1,
           title: "Email",
-          value: this.singleCustomer.email,
+          value: this.singleCustomer.email ? this.singleCustomer.email : "-",
         },
         {
           id: 2,
           title: "Phone",
-          value: this.singleCustomer.phone,
+          value: this.singleCustomer.phone ? this.singleCustomer.phone : "-",
         },
         {
           id: 3,
           title: "Age",
-          value: this.singleCustomer.age,
+          value: this.singleCustomer.age ? this.singleCustomer.age : "-",
         },
         {
           id: 4,
           title: "Gender",
-          value: this.singleCustomer.gender,
+          value: this.singleCustomer.gender ? this.singleCustomer.gender : "-",
         },
         {
           id: 5,
           titleNex: "Address",
-          valueNex: this.singleCustomer.address,
+          valueNex: this.singleCustomer.address ? this.singleCustomer.address : "-",
         },
         {
           id: 6,
           titleNex: "City",
-          valueNex: this.singleCustomer.city,
+          valueNex: this.singleCustomer.city ? this.singleCustomer.city : "-",
         },
         {
           id: 7,
           titleNex: "State",
-          valueNex: this.singleCustomer.state,
+          valueNex: this.singleCustomer.state ? this.singleCustomer.state : "-",
         },
         {
           id: 8,
           titleNex: "Zip",
-          valueNex: this.singleCustomer.zip,
+          valueNex: this.singleCustomer.zip ? this.singleCustomer.zip : "-",
         },
       ]
       return insightsData.filter(
@@ -287,6 +305,7 @@ export default {
       )
     },
     contactPreferences() {
+      console.log("this.customer",this.singleCustomer.preference_email,this.singleCustomer.preference_email ? this.singleCustomer.preference_email :"-")
       const contactData = [
         {
           id: 1,
@@ -318,17 +337,18 @@ export default {
       return contactData.filter((item) => item.title !== null)
     },
     customerDataDisplay() {
+      // debugger;
       const cusomerDeatils = [
         {
           id: 1,
           title: "Customer length",
-          value: "1",
+          value: "1 Year",
           colValue: 2.5,
         },
         {
           id: 2,
           title: "Match confidence",
-          value: this.singleCustomer.match_confidence,
+          value: this.singleCustomer.match_confidence ? this.singleCustomer.match_confidence : "-",
           colValue: 2.5,
           slider: true,
           hoverTooltip:
@@ -336,17 +356,17 @@ export default {
         },
         {
           id: 3,
-          title: "Actual lifetime value",
-          value: this.singleCustomer.ltv_actual,
-          colValue: 2.5,
+          title: "Lifetime value",
+          value: this.singleCustomer.ltv_actual ? "$" + this.singleCustomer.ltv_actual : "-",
+          colValue: 2,
           hoverTooltip:
             "Assessment of the lifetime financial value of each customer.",
         },
         {
           id: 4,
           title: "Conversion time",
-          value: this.singleCustomer.conversion_time,
-          colValue: 2,
+          value: this.formattedDate(this.singleCustomer.conversion_time) ? this.formattedDate(this.singleCustomer.conversion_time) : "-",
+          colValue: 2.5,
           hoverTooltip:
             "The average time customer takes to convert to a purchase.",
         },
@@ -358,7 +378,7 @@ export default {
         {
           id: 5,
           title: "Churn score",
-          value: this.singleCustomer.churn_rate,
+          value: this.singleCustomer.churn_rate ? this.singleCustomer.churn_rate : "-",
           colValue: 2,
           hoverTooltip:
             "You do not have access to see individual information. Contact your administrator for access.",
@@ -367,7 +387,7 @@ export default {
           id: 6,
           title: "Last click",
           colValue: 2.5,
-          value: this.formattedDate(this.singleCustomer.last_click),
+          value: this.formattedDate(this.singleCustomer.last_click) ? this.formattedDate(this.singleCustomer.last_click) : "n/a",
         },
         {
           id: 7,
@@ -428,11 +448,24 @@ export default {
     }
   }
 }
+.v-data-table {
+ .v-data-table__wrapper {
+  tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+    background: white !important;
+  }
+ }
+}
 .title-font-size {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: 300 !important;
   font-size: 21px;
   color: var(--v-neroBlack-base);
 }
 .title-text {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
   color: var(--v-gray-base) !important;
   font-size: 12px !important;
 }
@@ -444,17 +477,21 @@ export default {
   font-size: 15px !important;
   color: var(--v-neroBlack-base);
   font-weight: 400;
+  height: 54px !important
 }
 .sample-card-text {
   font-size: 14px;
-  font-weight: 600;
+  font-family: Open Sans;
+font-style: normal;
+font-weight: 600;
+color: var(--v-neroBlack-base) !important;
 }
 .icon-cursor {
   cursor: default !important;
 }
 .details-card {
   position: relative;
-  margin-top: -90px;
+  margin-top: -93px;
 }
 .card-height {
   height: 155px !important;
@@ -466,5 +503,14 @@ export default {
 .blur-text {
   color: transparent;
   text-shadow: 0 0 8px #000;
+}
+.no-background {
+  background: none !important;
+}
+.matric-card {
+  height: 70px !important;
+}
+.matic-card-space {
+  padding-right:5px !important
 }
 </style>
