@@ -1359,47 +1359,6 @@ class TestEngagementRoutes(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, delete_audience_response.status_code)
 
-    def test_get_delivery_history_by_id_valid_id(self):
-        """
-        Test get delivery history API with valid id
-
-        Args:
-
-        Returns:
-
-        """
-
-        engagement_id = self.engagement_ids[0]
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
-            f"{api_c.DELIVERY_HISTORY}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-        self.assertEqual(HTTPStatus.OK, response.status_code)
-
-    def test_get_delivery_history_by_id_non_existent_id(self):
-        """
-        Test get delivery history API with non-existent id
-
-        Args:
-
-        Returns:
-
-        """
-
-        engagement_id = str(ObjectId())
-
-        valid_response = {"message": "Engagement not found."}
-
-        response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
-            f"{api_c.DELIVERY_HISTORY}",
-            headers=t_c.STANDARD_HEADERS,
-        )
-
-        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
-        self.assertEqual(valid_response, response.json)
-
     def test_set_engagement_flight_schedule(self):
         """
         Test setting an engagement flight schedule
