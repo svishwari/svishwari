@@ -7,7 +7,7 @@ pip install pip -U
 pip install tavern
 
 # run pytest
-pytest
+py.test -v
 ```
 
 Sample Output
