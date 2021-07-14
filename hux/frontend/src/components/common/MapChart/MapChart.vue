@@ -7,15 +7,15 @@
         @tooltipDisplay="toolTipDisplay"
       />
       <v-card class="rounded-lg card-style" minHeight="20px">
-        <v-card-title class="d-flex justify-space-between pb-2 pl-8 pt-5">
+        <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-5">
           <div class="mt-2">
             <span class="d-flex align-center black--text text-decoration-none">
               United States
             </span>
           </div>
         </v-card-title>
-        <v-divider class="ml-8 mr-8 mt-0 mb-2" />
-        <v-card-text minHeight="100px" class="content-style pl-4 pr-4 pb-4">
+        <v-divider class="ml-6 mr-8 mt-0 mb-2" />
+        <v-card-text minHeight="100px" class="content-style pl-6 pr-4 pb-4">
           <div
             class="sub-props pt-4"
             v-for="item in mapChartData"
@@ -112,7 +112,7 @@ export default {
         align-items: center;
         .subprop-name {
           @extend .global-text-line;
-          flex: 0 0 40%;
+          flex: 1 0 40%;
           text-align: right;
           margin-right: 30px;
         }
