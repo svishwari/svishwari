@@ -207,6 +207,7 @@
       :toggle="showDataExtensionDrawer"
       @onToggle="(val) => (showDataExtensionDrawer = val)"
       @updateDestination="triggerAttachDestination($event)"
+      @onBack="closeDrawers"
     />
     <DeliveryHistoryDrawer
       :engagementId="engagementId"
@@ -708,7 +709,6 @@ export default {
     },
     async triggerAttachDestination() {
       this.loadingAudiences = true
-      console.log(this.selectedAudiences[this.selectedAudienceId])
       const payload = {
         audiences: [
           {
@@ -798,7 +798,12 @@ export default {
 
       // audience id pushing in one array
       engData.audiences.forEach((data) => audienceIds.push(data.id))
-      this.selectedAudiences = {}
+      Object.keys(this.selectedAudiences).forEach((audId) => {
+        if (
+          engData.audiences.filter((engAud) => engAud.id === audId).length === 0
+        )
+          delete this.selectedAudiences[audId]
+      })
       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
