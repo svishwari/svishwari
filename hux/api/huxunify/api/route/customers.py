@@ -5,7 +5,7 @@ Paths for customer API
 from http import HTTPStatus
 from random import choice
 from typing import Tuple, List
-from datetime import datetime, timedelta
+from datetime import datetime
 from faker import Faker
 import pandas as pd
 
@@ -13,7 +13,6 @@ from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
-from huxunifylib.database import constants as db_c
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
