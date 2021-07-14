@@ -184,7 +184,6 @@ export default {
         return true
       }
       return Object.keys(this.localSelectedAudiences).length
-      // return false
     },
 
     addAudiencesBtnText() {
