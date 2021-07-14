@@ -470,17 +470,23 @@ export default {
     onStartDateSelect(val) {
       this.selectedStartDate = val
       this.selectedEndDate = "Select date"
-      this.$set(this.value, 'recurring', {
-        start: moment(this.selectedStartDate).format('MMMM D'),
-        end: this.selectedEndDate == "Select date" ? null :  moment(this.selectedEndDate).format('MMMM D'),
+      this.$set(this.value, "recurring", {
+        start: moment(this.selectedStartDate).format("MMMM D"),
+        end:
+          this.selectedEndDate == "Select date"
+            ? null
+            : moment(this.selectedEndDate).format("MMMM D"),
       })
     },
 
     onEndDateSelect(val) {
       this.selectedEndDate = val
-      this.$set(this.value, 'recurring', {
-        start: this.selectedStartDate == "Select date" ? null :  moment(this.selectedStartDate).format('MMMM D'),
-        end: moment(this.selectedEndDate).format('MMMM D'),
+      this.$set(this.value, "recurring", {
+        start:
+          this.selectedStartDate == "Select date"
+            ? null
+            : moment(this.selectedStartDate).format("MMMM D"),
+        end: moment(this.selectedEndDate).format("MMMM D"),
       })
     },
   },
