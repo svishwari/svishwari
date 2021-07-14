@@ -15,6 +15,7 @@
         must-sort
         sort-desc
         single-select
+        :disable-sort="disableSort"
       >
         <template #item="{ item, expand, isExpanded }" v-if="nested">
           <slot
@@ -103,6 +104,11 @@ export default {
       type: String,
       required: false,
       default: "name",
+    },
+    disableSort: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {

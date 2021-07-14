@@ -4,6 +4,7 @@ Purpose of this file is to house all tests related to decisioning
 
 from http import HTTPStatus
 from unittest import TestCase, mock
+from hypothesis import given, strategies as st
 
 from dateutil import parser
 import requests_mock
@@ -12,7 +13,7 @@ from requests_mock import Mocker
 
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
-from huxunify.api.schema.model import ModelSchema
+from huxunify.api.schema.model import ModelSchema, ModelDashboardSchema
 from huxunify.app import create_app
 from huxunify.test import constants as t_c
 
@@ -83,4 +84,30 @@ class DecisioningTests(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             t_c.validate_schema(ModelSchema(), response.json, True)
+        )
+
+    @requests_mock.Mocker()
+    @given(model_type=st.sampled_from(list(api_c.SUPPORTED_MODELS.keys())))
+    def test_get_model_overview(
+        self, requests_mocker: Mocker, model_type: str
+    ):
+        """
+        Test get model overview
+
+        Args:
+            requests_mocker (Mocker): request mocker object
+
+        Returns:
+            None
+        """
+        requests_mocker.post(self.introspect_call, json=t_c.VALID_RESPONSE)
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.MODELS_ENDPOINT}/{model_type}/{api_c.OVERVIEW}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertTrue(
+            t_c.validate_schema(ModelDashboardSchema(), response.json)
         )

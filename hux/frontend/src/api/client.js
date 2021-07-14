@@ -49,7 +49,7 @@ client["engagements"].deliverAudienceDestination = (
 }
 
 client["engagements"].deliveries = (resourceId, data) => {
-  return http.get(`/engagements/${resourceId}/deliveries`, data)
+  return http.get(`/engagements/${resourceId}/delivery-history`, data)
 }
 
 client["destinations"].dataExtensions = (resourceId) => {
@@ -82,6 +82,9 @@ client["audiences"].deliver = (resourceId, data) => {
 
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
+}
+client["notifications"].getNotification = (data) => {
+  return http.get("/notifications", data)
 }
 
 export default client

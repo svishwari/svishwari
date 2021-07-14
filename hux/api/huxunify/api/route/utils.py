@@ -6,6 +6,7 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Tuple
 from http import HTTPStatus
+from bson import ObjectId
 
 from healthcheck import HealthCheck
 from decouple import config
@@ -18,7 +19,7 @@ from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database.user_management import get_user, set_user
-from huxunifylib.database.constants import USER_DISPLAY_NAME
+from huxunifylib.database import constants as db_c
 import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.config import get_config
@@ -276,14 +277,14 @@ def get_user_name() -> object:
 
             # return found user, or create one and return it.
             kwargs[constants.USER_NAME] = (
-                user[USER_DISPLAY_NAME]
+                user[db_c.USER_DISPLAY_NAME]
                 if user
                 else set_user(
                     database,
                     user_info[constants.OKTA_ID_SUB],
                     user_info[constants.EMAIL],
                     display_name=user_info[constants.NAME],
-                )[USER_DISPLAY_NAME]
+                )[db_c.USER_DISPLAY_NAME]
             )
 
             return in_function(*args, **kwargs)
@@ -473,3 +474,34 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
         return str(int(delivered / 60)) + " minutes ago"
     else:
         return str(int(delivered)) + " seconds ago"
+
+
+def update_metrics(
+    target_id: ObjectId, name: str, jobs: list, perf_metrics: list
+) -> dict:
+    """Update performance metrics
+
+    Args:
+        target_id (ObjectId) : Group Id.
+        name (str): Name of group object.
+        jobs (list): List of delivery jobs.
+        perf_metrics (list): List of performance metrics.
+
+    Returns:
+        metric (dict): Grouped performance metrics .
+    """
+    delivery_jobs = [x[db_c.ID] for x in jobs]
+    metric = {
+        constants.ID: str(target_id),
+        constants.NAME: name,
+    }
+    metric.update(
+        group_perf_metric(
+            [
+                x[db_c.PERFORMANCE_METRICS]
+                for x in perf_metrics
+                if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
+            ]
+        )
+    )
+    return metric

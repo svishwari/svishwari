@@ -66,7 +66,7 @@
               </template>
             </v-radio>
 
-            <v-radio :value="1" class="btn-radio" disabled>
+            <v-radio :value="1" class="btn-radio">
               <template #label>
                 <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
                 <span>Recurring</span>
@@ -74,24 +74,31 @@
             </v-radio>
           </v-radio-group>
 
-          <div>
-            <span class="date-picker-label">Start date</span>
+          <div v-if="value.delivery_schedule == 1">
+            <span class="text-h5 date-picker-label">Start date</span>
             <hux-start-date
               class="mt-n4"
-              labelText="Engagement name"
               :label="selectedStartDate"
               :selected="selectedStartDate"
               @on-date-select="onStartDateSelect"
             />
           </div>
 
-          <div>
-            <span class="date-picker-label">End date</span>
+          <v-icon
+            class="icon icon-right"
+            size="16"
+            v-if="value.delivery_schedule == 1"
+          >
+            mdi-arrow-right
+          </v-icon>
+          <div v-if="value.delivery_schedule == 1">
+            <span class="text-h5 date-picker-label">End date</span>
             <hux-end-date
               class="mt-n4"
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :isSubMenu="true"
+              :minDate="selectedStartDate"
               @on-date-select="onEndDateSelect"
             />
           </div>
@@ -359,8 +366,8 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        create_time: this.selectedStartDate,
-        update_time: this.selectedEndDate,
+        start_date: this.selectedStartDate,
+        end_date: this.selectedEndDate,
       }
     },
 
@@ -514,6 +521,13 @@ export default {
 }
 .delivery-schedule {
   margin-left: auto;
+  .icon-right {
+    transform: scale(1.5);
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-top: -30px;
+    color: var(--v-lightGrey-base) !important;
+  }
 }
 .date-picker-label {
   position: absolute;
