@@ -72,6 +72,19 @@ export const defineRoutes = (server) => {
   server.post("/engagements", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 
+    let duplicateLength = schema.engagements.where({
+      name: requestData.name,
+    }).models.length
+
+    if (duplicateLength > 0) {
+      return new Response(
+        400,
+        {},
+        {
+          message: "Name already exists.",
+        }
+      )
+    }
     return schema.engagements.create(requestData)
   })
 
