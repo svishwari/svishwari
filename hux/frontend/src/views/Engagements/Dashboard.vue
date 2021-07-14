@@ -27,7 +27,7 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <div class="font-weight-semi-bold neroBlack--text my-2">Manual</div>
+            <div class="font-weight-semi-bold neroBlack--text my-2">{{deliverySchedule}}</div>
           </template>
         </MetricCard>
         <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
@@ -195,6 +195,7 @@ import StatusList from "../../components/common/StatusList.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
+import moment from "moment"
 
 export default {
   name: "engagementDashboard",
@@ -614,6 +615,11 @@ export default {
         },
       ]
     },
+    deliverySchedule() {
+      if (this.engagementList && this.engagementList.delivery_schedule) {
+        return moment(this.engagementList.delivery_schedule.start_date).format("MMMM D") + " - " + moment(this.engagementList.delivery_schedule.end_date).format("MMMM D")
+      }
+    }
   },
   methods: {
     ...mapActions({
