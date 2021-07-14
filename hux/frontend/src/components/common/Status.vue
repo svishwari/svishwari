@@ -163,7 +163,7 @@
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
         <v-icon v-on="on" color="green" class="mr-2" :size="iconSize">
-       mdi-checkbox-marked-circle
+          mdi-checkbox-marked-circle
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
@@ -182,7 +182,7 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="blue"  class="mr-2" :size="iconSize">
+        <v-icon v-on="on" color="blue" class="mr-2" :size="iconSize">
           mdi-message-alert
         </v-icon>
       </template>
