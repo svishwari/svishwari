@@ -628,7 +628,7 @@ export default {
             "MMMM D"
           )
         )
-      }else {
+      } else {
         return "Manual"
       }
     },
