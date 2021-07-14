@@ -46,13 +46,13 @@ export default {
         y: 0,
       },
       margin: { top: 20, right: 10, bottom: 70, left: 110 },
-      chartData: this.value
+      chartData: this.value,
     }
   },
   methods: {
     initiateMapChart() {
       this.width = this.width - this.margin.left - this.margin.right
-      this.height  = this.height - this.margin.top - this.margin.bottom
+      this.height = this.height - this.margin.top - this.margin.bottom
 
       let svg = d3Select
         .select(this.$refs.huxChart)
@@ -60,11 +60,15 @@ export default {
         .attr("width", this.width + this.margin.left + this.margin.right)
         .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
+        .attr(
+          "transform",
+          "translate(" + this.margin.left + "," + this.margin.top + ")"
+        )
 
       let x = d3Scale.scaleLinear().domain([0, 3]).range([0, this.width])
 
-      let appendElipsis = (text) => (text && text.length > 20) ? text.slice(0, 19) + "..." : text
+      let appendElipsis = (text) =>
+        text && text.length > 20 ? text.slice(0, 19) + "..." : text
 
       let y = d3Scale
         .scaleBand()
@@ -76,10 +80,7 @@ export default {
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3Axis.axisBottom(x).ticks(5).tickSize(0))
-        .call((g) => 
-        g.selectAll(".path")
-        .attr("stroke", "#d0d0ce")
-        )
+        .call((g) => g.selectAll(".path").attr("stroke", "#d0d0ce"))
         .attr("stroke-width", "0.2")
         .attr("stroke-opacity", "0.3")
 
@@ -119,7 +120,11 @@ export default {
         .append("text")
         .attr(
           "transform",
-          "translate(" + this.width / 2 + " ," + (this.height + this.margin.top + 20) + ")"
+          "translate(" +
+            this.width / 2 +
+            " ," +
+            (this.height + this.margin.top + 20) +
+            ")"
         )
         .style("text-anchor", "middle")
         .text("Score")
@@ -143,7 +148,7 @@ export default {
     },
 
     tooltipDisplay(showTip) {
-        this.$emit("tooltipDisplay", showTip)
+      this.$emit("tooltipDisplay", showTip)
     },
   },
 
