@@ -114,22 +114,22 @@
           </td>
         </tr>
       </template>
-      <template #expanded-row="{ headers, item }">
+      <template #expanded-row="{ headers, parentItem }">
         <td
           :colspan="headers.length"
           class="pa-0 child"
-          v-if="item.audiences.length > 0"
+          v-if="parentItem.audiences.length > 0"
         >
           <v-progress-linear
-            :active="item.isCurrentRow"
-            :indeterminate="item.isCurrentRow"
+            :active="parentItem.isCurrentRow"
+            :indeterminate="parentItem.isCurrentRow"
           />
           <hux-data-table
             :headers="headers"
-            :dataItems="item.audienceList"
+            :dataItems="parentItem.audienceList"
             :showHeader="false"
             class="expanded-table"
-            v-if="item.audiences.length > 0"
+            v-if="parentItem.audiences.length > 0"
           >
             <template #row-item="{ item }">
               <td

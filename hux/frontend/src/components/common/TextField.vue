@@ -39,6 +39,7 @@
       :background-color="backgroundColor"
       single-line
       outlined
+      v-bind="$attrs"
       autocomplete="off"
       @input="input($event)"
       @change="change($event)"
