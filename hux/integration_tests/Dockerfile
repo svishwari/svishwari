@@ -19,4 +19,4 @@ RUN pip install tavern
 WORKDIR /app/hux-unified/api
 
 # run the pytests application
-RUN pytest
+RUN py.test -v
