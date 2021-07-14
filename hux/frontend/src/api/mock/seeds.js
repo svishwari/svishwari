@@ -439,5 +439,5 @@ export default function (server) {
   // seed campaigns
   server.createList("campaign", 1)
   // for alert and notifications
-  server.createList("notification", 3)
+  server.createList("notification", 10)
 }
