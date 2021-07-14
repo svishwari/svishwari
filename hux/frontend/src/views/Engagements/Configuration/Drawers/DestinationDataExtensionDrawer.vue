@@ -286,6 +286,7 @@ export default {
               .data_extension_name,
         },
       })
+      this.$emit("updateDestination", this.value[this.selectedAudienceId])
       this.onBack()
     },
 

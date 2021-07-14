@@ -27,12 +27,10 @@
               :disabled="!item.active"
             >
               <v-list-item-title
-                v-if="item.title === 'Deliver now'"
-                @click="deliverEngagementAudience(engagementId, audience.id)"
+                @click="triggerAction(item.title, engagementId, audience.id)"
               >
                 {{ item.title }}
               </v-list-item-title>
-              <v-list-item-title v-else>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -182,7 +180,12 @@
         <br />
         Add one now.
         <br />
-        <v-icon size="30" class="add-icon cursor-pointer mt-3" color="primary">
+        <v-icon
+          size="30"
+          class="add-icon cursor-pointer mt-3"
+          color="primary"
+          @click="triggerAddDestination(engagementId, audience.id)"
+        >
           mdi-plus-circle
         </v-icon>
       </div>
@@ -258,8 +261,24 @@ export default {
       return getApproxSize(value)
     },
 
-    toggleFocus() {},
-
+    triggerAddDestination(engagementId, audienceId) {
+      this.$emit("onAddDestination", {
+        engagementId: engagementId,
+        audienceId: audienceId,
+      })
+    },
+    triggerAction(item, engagementId, audienceId) {
+      switch (item.toLowerCase()) {
+        case "deliver now":
+          this.deliverEngagementAudience(engagementId, audienceId)
+          break
+        case "add a destination":
+          this.triggerAddDestination(engagementId, audienceId)
+          break
+        default:
+          break
+      }
+    },
     async deliverEngagementAudience(engagementId, audienceId) {
       try {
         await this.deliverAudience({
