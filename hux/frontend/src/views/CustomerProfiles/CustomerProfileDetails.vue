@@ -44,7 +44,9 @@
           :key="data.id"
           class="matic-card-space"
         >
-          <v-card class="rounded-lg card-info-wrapper card-shadow no-background">
+          <v-card
+            class="rounded-lg card-info-wrapper card-shadow no-background"
+          >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matric-card">
               <div class="title-text pb-1">
                 {{ data.title }}
@@ -57,7 +59,9 @@
                   </template>
                 </Tooltip>
               </div>
-              <span v-if="!data.slider" class="sample-card-text">{{ data.value }}</span>
+              <span v-if="!data.slider" class="sample-card-text">{{
+                data.value
+              }}</span>
               <hux-slider
                 v-if="data.slider"
                 :isRangeSlider="false"
@@ -75,7 +79,9 @@
           :key="data.id"
           class="matic-card-space"
         >
-          <v-card class="rounded-lg card-info-wrapper card-shadow no-background">
+          <v-card
+            class="rounded-lg card-info-wrapper card-shadow no-background"
+          >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matric-card">
               <div class="title-text pb-1">
                 {{ data.title }}
@@ -98,14 +104,10 @@
         <v-col cols="5">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-5 card-heading">
-              {{ cardTitles[0].title }}      
-              <v-icon
-          size="17"
-          color="neroBlack"
-          class="ml-2"
-        >
-         mdi-lock-outline
-        </v-icon>
+              {{ cardTitles[0].title }}
+              <v-icon size="17" color="neroBlack" class="ml-2">
+                mdi-lock-outline
+              </v-icon>
             </v-card-title>
             <v-card-text class="justify-center title-text">
               <v-simple-table>
@@ -114,48 +116,64 @@
                     <tr>
                       <td class="title-text">Email</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.email" class="blur-text">{{ singleCustomer.email }} </span>
+                        <span v-if="singleCustomer.email" class="blur-text"
+                          >{{ singleCustomer.email }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                       <td class="title-text">Address</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.address" class="blur-text"> {{ singleCustomer.address }} </span>
+                        <span v-if="singleCustomer.address" class="blur-text">
+                          {{ singleCustomer.address }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Phone</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.phone" class="blur-text"> {{ singleCustomer.phone }} </span>
+                        <span v-if="singleCustomer.phone" class="blur-text">
+                          {{ singleCustomer.phone }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                       <td class="title-text">City</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.city" class="blur-text"> {{ singleCustomer.city }} </span>
+                        <span v-if="singleCustomer.city" class="blur-text">
+                          {{ singleCustomer.city }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Age</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.age" class="blur-text"> {{ singleCustomer.age }} </span>
+                        <span v-if="singleCustomer.age" class="blur-text">
+                          {{ singleCustomer.age }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                       <td class="title-text">State</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.state" class="blur-text"> {{ singleCustomer.state }} </span>
+                        <span v-if="singleCustomer.state" class="blur-text">
+                          {{ singleCustomer.state }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Gender</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.gender" class="blur-text"> {{ singleCustomer.gender }} </span>
+                        <span v-if="singleCustomer.gender" class="blur-text">
+                          {{ singleCustomer.gender }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                       <td class="title-text">Zip</td>
                       <td class="table-text">
-                        <span v-if="singleCustomer.zip" class="blur-text"> {{ singleCustomer.zip }} </span>
+                        <span v-if="singleCustomer.zip" class="blur-text">
+                          {{ singleCustomer.zip }}
+                        </span>
                         <span v-else>-</span>
                       </td>
                     </tr>
@@ -248,7 +266,7 @@ export default {
     singleCustomer() {
       return this.customer(this.$route.params.id)
     },
-    
+
     id() {
       return this.$route.params.id
     },
@@ -282,7 +300,9 @@ export default {
         {
           id: 5,
           titleNex: "Address",
-          valueNex: this.singleCustomer.address ? this.singleCustomer.address : "-",
+          valueNex: this.singleCustomer.address
+            ? this.singleCustomer.address
+            : "-",
         },
         {
           id: 6,
@@ -346,7 +366,9 @@ export default {
         {
           id: 2,
           title: "Match confidence",
-          value: this.singleCustomer.match_confidence ? this.singleCustomer.match_confidence : "-",
+          value: this.singleCustomer.match_confidence
+            ? this.singleCustomer.match_confidence
+            : "-",
           colValue: 2.5,
           slider: true,
           hoverTooltip:
@@ -355,7 +377,9 @@ export default {
         {
           id: 3,
           title: "Lifetime value",
-          value: this.singleCustomer.ltv_actual ? "$" + this.singleCustomer.ltv_actual : "-",
+          value: this.singleCustomer.ltv_actual
+            ? "$" + this.singleCustomer.ltv_actual
+            : "-",
           colValue: 2,
           hoverTooltip:
             "Assessment of the lifetime financial value of each customer.",
@@ -363,7 +387,9 @@ export default {
         {
           id: 4,
           title: "Conversion time",
-          value: this.formattedDate(this.singleCustomer.conversion_time) ? this.formattedDate(this.singleCustomer.conversion_time) : "-",
+          value: this.formattedDate(this.singleCustomer.conversion_time)
+            ? this.formattedDate(this.singleCustomer.conversion_time)
+            : "-",
           colValue: 2.5,
           hoverTooltip:
             "The average time customer takes to convert to a purchase.",
@@ -376,7 +402,9 @@ export default {
         {
           id: 5,
           title: "Churn score",
-          value: this.singleCustomer.churn_rate ? this.singleCustomer.churn_rate : "-",
+          value: this.singleCustomer.churn_rate
+            ? this.singleCustomer.churn_rate
+            : "-",
           colValue: 2,
           hoverTooltip:
             "You do not have access to see individual information. Contact your administrator for access.",
@@ -385,7 +413,9 @@ export default {
           id: 6,
           title: "Last click",
           colValue: 2.5,
-          value: this.formattedDate(this.singleCustomer.last_click) ? this.formattedDate(this.singleCustomer.last_click) : "n/a",
+          value: this.formattedDate(this.singleCustomer.last_click)
+            ? this.formattedDate(this.singleCustomer.last_click)
+            : "n/a",
         },
         {
           id: 7,
@@ -447,11 +477,11 @@ export default {
   }
 }
 .v-data-table {
- .v-data-table__wrapper {
-  tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
-    background: white !important;
+  .v-data-table__wrapper {
+    tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+      background: white !important;
+    }
   }
- }
 }
 .title-font-size {
   font-family: Open Sans;
@@ -475,14 +505,14 @@ export default {
   font-size: 15px !important;
   color: var(--v-neroBlack-base);
   font-weight: 400;
-  height: 54px !important
+  height: 54px !important;
 }
 .sample-card-text {
   font-size: 14px;
   font-family: Open Sans;
-font-style: normal;
-font-weight: 600;
-color: var(--v-neroBlack-base) !important;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--v-neroBlack-base) !important;
 }
 .icon-cursor {
   cursor: default !important;
@@ -509,7 +539,7 @@ color: var(--v-neroBlack-base) !important;
   height: 70px !important;
 }
 .matic-card-space {
-  padding-right:5px !important
+  padding-right: 5px !important;
 }
 .id-size {
   font-size: 14px;
