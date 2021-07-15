@@ -72,6 +72,19 @@ export const defineRoutes = (server) => {
   server.post("/engagements", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 
+    let duplicateLength = schema.engagements.where({
+      name: requestData.name,
+    }).models.length
+
+    if (duplicateLength > 0) {
+      return new Response(
+        400,
+        {},
+        {
+          message: "Name already exists.",
+        }
+      )
+    }
     return schema.engagements.create(requestData)
   })
 
@@ -88,6 +101,54 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
+  // Attaching an Audience to an Engagement
+  server.post("/engagements/:id/audiences", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const engagement = schema.engagements.find(id)
+    const addedAudiences = requestData.audiences.map((aud) => {
+      const audience = schema.audiences.find(aud.id)
+      const existsAudience = engagement.audiences.filter(
+        (engAud) => engAud.id === aud.id
+      )
+      if (existsAudience.length > 0) {
+        existsAudience[0].destinations = aud.destinations
+        return
+      }
+      const audienceObj = {
+        status: audience.status,
+        id: audience.id,
+        name: audience.name,
+        destinations: aud.destinations.map((des) =>
+          schema.destinations.find(des.id)
+        ),
+      }
+      return audienceObj
+    })
+    if (!addedAudiences.includes(undefined)) {
+      engagement.audiences.push(...addedAudiences)
+    }
+    const body = { message: "SUCCESS" }
+    return new Response(code, headers, body)
+  })
+
+  // Detaching an Audience to an Engagement
+  server.del("/engagements/:id/audiences/:audienceId", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const audienceId = request.params.audienceId
+    const engagement = schema.engagements.find(id)
+    engagement.audiences.splice(
+      engagement.audiences.findIndex((aud) => aud.id === audienceId),
+      1
+    )
+    const body = { message: "SUCCESS" }
+    return new Response(code, headers, body)
+  })
+
   server.post("/engagements/:id/audience/:audienceId/deliver", () => {
     return { message: "Successfully created delivery jobs" }
   })
@@ -96,6 +157,18 @@ export const defineRoutes = (server) => {
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
     () => {
       return { message: "Successfully created delivery jobs" }
+    }
+  )
+  server.get(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
+    (schema) => {
+      return schema.campaigns.all()
+    }
+  )
+  server.put(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
+    () => {
+      return { message: "Successfully created mappings" }
     }
   )
 

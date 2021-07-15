@@ -7,9 +7,12 @@ from http import HTTPStatus
 
 import requests_mock
 import mongomock
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database.notification_management import create_notification
 import huxunify.test.constants as t_c
 from huxunify.api import constants as api_c
+from huxunify.api.schema.notifications import NotificationSchema
 from huxunify.app import create_app
 
 
@@ -48,23 +51,35 @@ class TestNotificationRoutes(TestCase):
             return_value=self.database,
         ).start()
 
-        self.notifications = [
+        notifications = [
             {
-                "notification_type": "Alert",
+                "notification_type": db_c.NOTIFICATION_TYPE_SUCCESS,
                 "description": "description 1",
-                "created": 0,
+                "category": api_c.DELIVERY_TAG,
             },
             {
-                "notification_type": "Alert",
+                "notification_type": db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 "description": "description 2",
-                "created": 0,
+                "category": api_c.MODELS_TAG,
             },
             {
-                "notification_type": "Alert",
+                "notification_type": db_c.NOTIFICATION_TYPE_CRITICAL,
                 "description": "description 3",
-                "created": 0,
+                "category": api_c.ORCHESTRATION_TAG,
             },
         ]
+
+        self.notifications = sorted(
+            NotificationSchema().dump(
+                [
+                    create_notification(self.database, **notification)
+                    for notification in notifications
+                ],
+                many=True,
+            ),
+            key=lambda x: x["created"],
+            reverse=True,
+        )
 
         self.addCleanup(mock.patch.stopall)
 
@@ -76,17 +91,20 @@ class TestNotificationRoutes(TestCase):
 
         """
 
-        mock.patch(
-            "huxunify.api.route.notifications.notification_management.get_notifications",
-            return_value=self.notifications,
-        ).start()
+        params = {
+            db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_SIZE: api_c.DEFAULT_ALERT_BATCH_SIZE,
+            db_c.NOTIFICATION_QUERY_PARAMETER_SORT_ORDER: db_c.PAGINATION_DESCENDING,
+            db_c.NOTIFICATION_QUERY_PARAMETER_BATCH_NUMBER: api_c.DEFAULT_ALERT_BATCH_NUMBER,
+        }
 
         response = self.app.get(
-            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}"
-            f"?batch_size=5&sort_order=ascending&batch_number=2",
+            f"{t_c.BASE_ENDPOINT}{api_c.NOTIFICATIONS_ENDPOINT}",
+            data=params,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        mock.patch.stopall()
-
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertCountEqual(self.notifications, response.json)
+        self.assertIn(self.notifications[0], response.json)
+        self.assertIn(self.notifications[1], response.json)
+        self.assertIn(self.notifications[2], response.json)
