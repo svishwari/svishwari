@@ -223,7 +223,7 @@ export default {
     Avatar,
     Tooltip,
     Icon,
-    Modelicons,
+    StatusList,
     Size,
   },
   data() {
