@@ -2,6 +2,7 @@
 Paths for Orchestration API
 """
 import datetime
+import json
 import random
 from http import HTTPStatus
 from random import randrange
@@ -769,6 +770,7 @@ class SetLookalikeAudience(SwaggerView):
             )
 
         print("GOT AUTH DETAILS")
+        print(json.dumps(auth_details))
 
         fb_connector = None
 
