@@ -28,7 +28,7 @@ export default {
    * else convert it into relative date like a month ago, a year ago
    */
   DateRelative(value) {
-    let dateTime = moment(value).utc(true)
+    let dateTime = moment(value)
     let otherDates = dateTime.fromNow()
     let week = dateTime.calendar()
     let calback = () => "[" + otherDates + "]"
