@@ -21,7 +21,6 @@ from huxunify.api.route.utils import (
     get_db_client,
     api_error_handler,
     secured,
-    get_friendly_delivered_time,
 )
 from huxunify.api.schema.orchestration import DeliveryHistorySchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -557,9 +556,7 @@ class EngagementDeliverHistoryView(SwaggerView):
                         ),
                         api_c.SIZE: randrange(10000000),
                         # TODO : Get audience size from CDM
-                        api_c.DELIVERED: get_friendly_delivered_time(
-                            delivery_job.get(db_c.JOB_END_TIME)
-                        ),
+                        api_c.DELIVERED: delivery_job.get(db_c.JOB_END_TIME),
                     }
                 )
 
