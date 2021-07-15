@@ -467,7 +467,12 @@ def weighted_engagement_status(engagements: list) -> list:
         status_ranks = []
 
         # process each audience
-        for audience in engagement[api_c.AUDIENCES]:
+        audiences = []
+        for audience in enumerate(engagement[api_c.AUDIENCES]):
+            if db_c.ID not in audience:
+                # only add audience if it is valid and has an id.
+                continue
+
             audience_status_rank = []
 
             # process each destination
@@ -513,6 +518,9 @@ def weighted_engagement_status(engagements: list) -> list:
                 if audience_status_rank
                 else api_c.STATUS_NOT_DELIVERED
             )
+            audiences.append(audience)
+
+        engagement[api_c.AUDIENCES] = audiences
 
         # sort delivery status list of dict by weight.
         status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
