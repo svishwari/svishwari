@@ -7,14 +7,14 @@ export default {
   /**
    * Formats a datetime field to human friendly date.
    *
-   * @param {*} value Datetime eg. 2021-03-17T23:29:49.351Z
+   * @param {*} value Datetime eg. 2021-03-17T13:29:49.351Z
    * @param {*} format Format eg. "MM/D/YYYY [at] hh:ss A"
-   * @return {string} Formatted date time string eg. 17/3/2021 at 11:29pm
+   * @return {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
    */
-  Date(value, format = "MM/D/YYYY [at] hh:ss A") {
+  Date(value, format = "M/D/YYYY [at] h:mm A") {
     if (!value) return ""
 
-    let date = moment(value).utc(true)
+    let date = moment(value)
 
     if (format === "relative") return date.fromNow()
 
