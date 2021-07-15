@@ -13,4 +13,4 @@ class DateTimeWithZ(DateTime):
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return None
-        return value.isoformat("T")[:-3] + "Z"
+        return value.isoformat(sep="T", timespec="milliseconds") + "Z"
