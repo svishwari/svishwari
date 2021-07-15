@@ -15,7 +15,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    
+
     <div v-if="!loading && singleCustomer" class="pl-15 py-6 pr-9">
       <v-row>
         <v-col cols="3">
@@ -406,7 +406,7 @@ export default {
             : "-",
           colValue: 2,
           hoverTooltip:
-            "You do not have access to see individual information. Contact your administrator for access.",
+            "The measure of a customer’s likelihood to stop using a product.",
         },
         {
           id: 6,
