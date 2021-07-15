@@ -629,14 +629,26 @@ export default {
             this.engagementList.delivery_schedule.end_date
           ) {
             return (
-              this.$options.filters.Date(this.engagementList.delivery_schedule.start_date, "MMMM D")
-              + " - " +
-              this.$options.filters.Date(this.engagementList.delivery_schedule.end_date, "MMMM D")
+              this.$options.filters.Date(
+                this.engagementList.delivery_schedule.start_date,
+                "MMMM D"
+              ) +
+              " - " +
+              this.$options.filters.Date(
+                this.engagementList.delivery_schedule.end_date,
+                "MMMM D"
+              )
             )
           } else if (this.engagementList.delivery_schedule.start_date) {
-            return this.$options.filters.Date(this.engagementList.delivery_schedule.start_date, "MMMM D")
+            return this.$options.filters.Date(
+              this.engagementList.delivery_schedule.start_date,
+              "MMMM D"
+            )
           } else if (this.engagementList.delivery_schedule.end_date) {
-            return this.$options.filters.Date(this.engagementList.delivery_schedule.end_date, "MMMM D")
+            return this.$options.filters.Date(
+              this.engagementList.delivery_schedule.end_date,
+              "MMMM D"
+            )
           }
         }
       }

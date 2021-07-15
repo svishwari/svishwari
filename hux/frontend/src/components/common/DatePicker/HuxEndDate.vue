@@ -102,13 +102,13 @@ export default {
     huxButton,
   },
   computed: {
-    getLabel(){
-      if(this.selected){
+    getLabel() {
+      if (this.selected) {
         return this.selected
-      }else {
+      } else {
         return "Select date"
       }
-    }
+    },
   },
   props: {
     selected: {
