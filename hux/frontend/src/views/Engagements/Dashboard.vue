@@ -197,7 +197,6 @@ import StatusList from "../../components/common/StatusList.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
-import moment from "moment"
 
 export default {
   name: "engagementDashboard",
@@ -630,22 +629,14 @@ export default {
             this.engagementList.delivery_schedule.end_date
           ) {
             return (
-              moment(this.engagementList.delivery_schedule.start_date).format(
-                "MMMM D"
-              ) +
-              " - " +
-              moment(this.engagementList.delivery_schedule.end_date).format(
-                "MMMM D"
-              )
+              this.$options.filters.Date(this.engagementList.delivery_schedule.start_date, "MMMM D")
+              + " - " +
+              this.$options.filters.Date(this.engagementList.delivery_schedule.end_date, "MMMM D")
             )
           } else if (this.engagementList.delivery_schedule.start_date) {
-            return moment(
-              this.engagementList.delivery_schedule.start_date
-            ).format("MMMM D")
+            return this.$options.filters.Date(this.engagementList.delivery_schedule.start_date, "MMMM D")
           } else if (this.engagementList.delivery_schedule.end_date) {
-            return moment(
-              this.engagementList.delivery_schedule.end_date
-            ).format("MMMM D")
+            return this.$options.filters.Date(this.engagementList.delivery_schedule.end_date, "MMMM D")
           }
         }
       }

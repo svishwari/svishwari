@@ -311,7 +311,6 @@ import SelectDestinationsDrawer from "./Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "./Drawers/DestinationDataExtensionDrawer.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
-import moment from "moment"
 
 export default {
   name: "EngagementsForm",
@@ -369,12 +368,8 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        start_date:
-          this.selectedStartDate == "Select date"
-            ? null
-            : this.selectedStartDate,
-        end_date:
-          this.selectedEndDate == "Select date" ? null : this.selectedEndDate,
+        start_date: this.selectedStartDate,
+        end_date: this.selectedEndDate,
       }
     },
 
@@ -486,25 +481,19 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
-      this.selectedEndDate = "Select date"
+      this.selectedEndDate = null
       this.disableEndDate = false
       this.$set(this.value, "recurring", {
-        start: moment(this.selectedStartDate).format("MMMM D"),
-        end:
-          this.selectedEndDate == "Select date"
-            ? null
-            : moment(this.selectedEndDate).format("MMMM D"),
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: null,
       })
     },
 
     onEndDateSelect(val) {
       this.selectedEndDate = val
       this.$set(this.value, "recurring", {
-        start:
-          this.selectedStartDate == "Select date"
-            ? null
-            : moment(this.selectedStartDate).format("MMMM D"),
-        end: moment(this.selectedEndDate).format("MMMM D"),
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: this.$options.filters.Date(this.selectedEndDate, "MMMM D"),
       })
     },
   },

@@ -32,7 +32,7 @@
           class="ma-2 main-button pr-1"
           :isDisabled="isDisabled"
         >
-          {{ selected }}
+          {{ getLabel }}
         </huxButton>
       </template>
       <v-list>
@@ -101,10 +101,20 @@ export default {
   components: {
     huxButton,
   },
-  computed: {},
+  computed: {
+    getLabel(){
+      if(this.selected){
+        return this.selected
+      }else {
+        return "Select date"
+      }
+    }
+  },
   props: {
     selected: {
-      type: [Object, String],
+      type: String,
+      required: false,
+      default: "Select date",
     },
     label: {
       type: String,
