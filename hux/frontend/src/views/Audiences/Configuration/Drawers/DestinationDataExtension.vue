@@ -85,7 +85,7 @@
               labelText="Data extension name"
               icon="mdi-alert-circle-outline"
               placeholderText="What is the name for this new data extension?"
-              helpText="Extension name"
+              :helpText="tooltipText"
               height="40"
               backgroundColor="white"
               class="mt-1 text-caption neroBlack--text pt-2"
@@ -237,6 +237,7 @@ export default {
         },
       ],
       existingExtensionRules: [(v) => !!v || "Select any one Data extension"],
+      tooltipText: 'When creating a new journey in Salesforce Marketing Cloud, look for the name input here when searching Data Extension Entry Source in Salesforce Marketing Cloud.'
     }
   },
   methods: {
