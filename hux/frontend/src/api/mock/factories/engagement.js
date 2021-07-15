@@ -50,4 +50,5 @@ export const engagement = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   status: () => "Active",
+  campaignPerformance: {},
 }

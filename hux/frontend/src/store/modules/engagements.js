@@ -208,9 +208,22 @@ const actions = {
       throw error
     }
   },
-  async getCampaignMappings({ commit }, { id, audienceId, destinationId }) {
+  async fetchCampaignMappings({ commit }, { id, audienceId, destinationId }) {
     try {
-      const response = await api.engagements.getCampaignMappings({
+      const response = await api.engagements.getCampaignMappingOptions({
+        resourceId: id,
+        audienceId: audienceId,
+        destinationId: destinationId,
+      })
+      commit("SET_CAMPAIGN_MAPPINGS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getCampaigns({ commit }, { id, audienceId, destinationId }) {
+    try {
+      const response = await api.engagements.getCampaignMappingOptions({
         resourceId: id,
         audienceId: audienceId,
         destinationId: destinationId,

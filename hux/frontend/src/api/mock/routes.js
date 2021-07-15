@@ -162,16 +162,60 @@ export const defineRoutes = (server) => {
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
     (schema) => {
-      return schema.campaigns.all()
+      return schema.campaignOptions.all()
     }
   )
   server.put(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
-    () => {
+    (schema, request) => {
+      const engagementId = request.params.id
+      const audienceId = request.params.audienceId
+      const destinationId = request.params.destinationId
+      const engagement = schema.engagements.find(engagementId)
+      const requestData = JSON.parse(request.requestBody)
+      const audience = engagement.campaignPerformance[
+        "adsPerformance"
+      ].audience_performance.filter((aud) => aud.id === audienceId)
+      if (audience.length === 1) {
+        const destination = audience[0].destinations.filter(
+          (dest) => dest.id === destinationId
+        )
+        if (destination.length === 1) {
+          destination[0].campaigns = []
+          const exclude = new Set(["id", "name", "destinations"])
+          const countData = Object.fromEntries(
+            Object.entries(audience[0]).filter(
+              (entry) => !exclude.has(entry[0])
+            )
+          )
+          Object.entries(countData).forEach(
+            (entry) => (destination[0][entry[0]] = entry[1])
+          )
+          destination[0].is_mapped = true
+          destination
+          const campaigns = requestData.campaigns.map((camp) => {
+            const mockCamp = { ...countData }
+            mockCamp["id"] = camp.id
+            mockCamp["name"] = camp.name
+            return mockCamp
+          })
+          destination[0].campaigns.push(...campaigns)
+        }
+      }
+      console.log(
+        engagement.campaignPerformance["adsPerformance"],
+        audienceId,
+        destinationId
+      )
       return { message: "Successfully created mappings" }
     }
   )
-
+  server.get(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
+    (schema) => {
+      schema.campaigns.all()
+    }
+  )
   server.get("/engagements/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const engagement = schema.engagements.find(id)
@@ -198,16 +242,22 @@ export const defineRoutes = (server) => {
     "/engagements/:id/audience-performance/email",
     (schema, request) => {
       const id = request.params.id
-      const response = schema.audiencePerformances.find(id)
-      return response["email_audience_performance"]
+      const engagement = schema.engagements.find(id)
+      engagement.campaignPerformance["emailPerformance"] =
+        engagement.campaignPerformance["emailPerformance"] ||
+        schema.audiencePerformances.find(id)["email_audience_performance"]
+      return engagement.campaignPerformance["emailPerformance"]
     }
   )
   server.get(
     "/engagements/:id/audience-performance/display-ads",
     (schema, request) => {
       const id = request.params.id
-      const response = schema.audiencePerformances.find(id)
-      return response["displayads_audience_performance"]
+      const engagement = schema.engagements.find(id)
+      engagement.campaignPerformance["adsPerformance"] =
+        engagement.campaignPerformance["adsPerformance"] ||
+        schema.audiencePerformances.find(id)["displayads_audience_performance"]
+      return engagement.campaignPerformance["adsPerformance"]
     }
   )
 

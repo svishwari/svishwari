@@ -38,7 +38,7 @@
           <template #field:campaign="row">
             <hux-dropdown
               :selected="row.value"
-              :items="campaignOptions"
+              :items="avaialableCampaignsOptions()"
               @on-select="onSelectedItem(row, $event, 'campaign')"
             >
             </hux-dropdown>
@@ -62,6 +62,7 @@
                     height="21"
                     width="21"
                     @click="addNewMappingItem()"
+                    v-if="avaialableCampaignsOptions().length > 0"
                   >
                     <v-icon size="14">mdi-plus</v-icon>
                   </v-btn>
@@ -83,10 +84,12 @@
       </div>
     </template>
     <template #footer-left>
-      <v-btn tile color="white" @click="closeDrawer()">
+      <v-btn tile color="white" @click="closeDrawer">
         <span class="primary--text">Cancel</span>
       </v-btn>
-      <v-btn tile color="primary" @click="mapSelections"> Map selection </v-btn>
+      <v-btn tile color="primary" @click="mapSelections" :disabled="!canMapNow">
+        Map selection
+      </v-btn>
     </template>
   </drawer>
 </template>
@@ -139,18 +142,30 @@ export default {
       }
       return []
     },
+    canMapNow() {
+      return Object.keys(this.campaigns).every(
+        (key) =>
+          this.campaigns[key].campaign && this.campaigns[key].delivery_job
+      )
+    },
     deliveryOptions() {
       return this.campaignMappings.delivery_jobs
     },
   },
   methods: {
     ...mapActions({
-      getCampaignMappings: "engagements/getCampaignMappings",
+      getCampaignMappingsOptions: "engagements/fetchCampaignMappings",
+      getCampaigns: "engagements/getCampaigns",
     }),
 
     closeDrawer() {
       this.localToggle = false
-      this.reset()
+      this.campaigns = {
+        0: {
+          campaign: null,
+          delivery_job: null,
+        },
+      }
     },
     addNewMappingItem() {
       const key = new Date().getTime().toString()
@@ -178,14 +193,25 @@ export default {
         attrs: this.identityAttrs,
       })
     },
+    avaialableCampaignsOptions() {
+      const selectedCampaigns = Object.keys(this.campaigns).map(
+        (key) =>
+          (this.campaigns[key].campaign && this.campaigns[key].campaign.name) ||
+          ""
+      )
+      return this.campaignOptions.filter(
+        (option) => !selectedCampaigns.includes(option.name)
+      )
+    },
     onCancelAndBack() {
       this.$emit("onCancelAndBack")
       this.reset()
     },
-    async fetchMappings(attrs) {
+    async loadCampaignMappings(attrs) {
       this.identityAttrs = attrs
       this.loading = true
-      await this.getCampaignMappings(attrs)
+      await this.getCampaigns(attrs)
+      await this.getCampaignMappingsOptions(attrs)
       this.loading = false
     },
   },

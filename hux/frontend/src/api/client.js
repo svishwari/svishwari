@@ -93,7 +93,7 @@ client["engagements"].fetchAudiencePerformance = (resourceId, data) => {
   )
 }
 
-client["engagements"].getCampaignMappings = ({
+client["engagements"].getCampaignMappingOptions = ({
   resourceId,
   audienceId,
   destinationId,
@@ -109,6 +109,15 @@ client["engagements"].updateCampaignMapping = (
   return http.put(
     `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/campaigns`,
     data
+  )
+}
+client["engagements"].getCampaigns = ({
+  resourceId,
+  audienceId,
+  destinationId,
+}) => {
+  return http.get(
+    `/engagements/${resourceId}/audience/${audienceId}/destination/${destinationId}/campaigns`
   )
 }
 //#endregion Engagement custom endpoints

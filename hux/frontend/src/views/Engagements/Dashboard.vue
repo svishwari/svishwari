@@ -127,6 +127,7 @@
                 :engagementId="engagementId"
                 :statusIcon="17"
                 @onAddDestination="triggerSelectDestination(item.id)"
+                @removeAudience="triggerDetachAudiences($event)"
               />
             </v-col>
           </v-card-text>
@@ -879,6 +880,7 @@ export default {
     },
     async fetchCampaignPerformanceDetails(type) {
       this.loadingTab = true
+      console.info(this.engagementList)
       await this.getAudiencePerformanceById({
         type: type,
         id: this.engagementList.id,
