@@ -323,7 +323,7 @@ class IDRDataFeeds(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": DataFeedSchema,
+            "schema": {"type": "array", "items": DataFeedSchema},
             "description": "Identity Resolution Data Feeds",
         },
         HTTPStatus.BAD_REQUEST.value: {
