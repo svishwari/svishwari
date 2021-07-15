@@ -19,7 +19,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-  
+
     <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
@@ -45,7 +45,7 @@
           <Avatar :name="item.fullName" />
         </template>
       </MetricCard>
-                 <MetricCard
+      <MetricCard
         class="ma-2 audience-summary card-width original-audience"
         :grow="0"
         :title="'Original Audience'"
@@ -55,13 +55,13 @@
       >
         <template #subtitle-extended>
           <span class="mr-2">
-                <span class="original-audience-text">
-                  {{ audience.name }}
-                </span>           
+            <span class="original-audience-text">
+              {{ audience.name }}
+            </span>
           </span>
         </template>
       </MetricCard>
-       <MetricCard
+      <MetricCard
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original . Actual size'"
@@ -71,13 +71,13 @@
       >
         <template #subtitle-extended>
           <span class="mr-2">
-                <span class="neroBlack--text font-weight-semi-bold">
-                  <size :value="audience.size" />
-                   <v-icon size="8" color="neroBlack" class="mr-1 ml-1">
-              mdi-checkbox-blank-circle
-            </v-icon>
-            <size :value="audience.size" />
-                </span>           
+            <span class="neroBlack--text font-weight-semi-bold">
+              <size :value="audience.size" />
+              <v-icon size="8" color="neroBlack" class="mr-1 ml-1">
+                mdi-checkbox-blank-circle
+              </v-icon>
+              <size :value="audience.size" />
+            </span>
           </span>
         </template>
       </MetricCard>
@@ -212,9 +212,6 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
 import StatusList from "../../components/common/StatusList.vue"
-import Modelicons from "@/assets/logos/modelicons.svg"
-import Plus from "@/assets/logos/plus.svg"
-import Lifetime from "@/assets/logos/lifetime.svg"
 import Size from "../../components/common/huxTable/Size.vue"
 export default {
   name: "AudienceInsight",
@@ -226,9 +223,6 @@ export default {
     Avatar,
     Tooltip,
     Icon,
-    StatusList,
-    Lifetime,
-    Plus,
     Modelicons,
     Size,
   },
@@ -246,7 +240,7 @@ export default {
           disabled: true,
           href: this.$route.path,
           icon: "lookalike",
-          size: 12
+          size: 12,
         },
       ],
       loading: false,
@@ -487,10 +481,10 @@ export default {
 }
 .original-audience-text {
   font-family: Open Sans;
-font-style: normal;
-font-weight: 600;
-font-size: 14px;
-line-height: 19px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
   color: var(--v-primary-base) !important;
 }
 .card-width {
