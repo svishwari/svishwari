@@ -4,7 +4,7 @@ import logging
 from enum import Enum
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
-from scripts.database.share import get_mongo_client
+from database.share import get_mongo_client
 
 
 # Setup logging
