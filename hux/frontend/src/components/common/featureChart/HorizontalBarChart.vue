@@ -143,8 +143,7 @@ export default {
         .on("mouseout", () => removeHoverEffects())
 
       let applyHoverEffects = (d) => {
-        d3Select.selectAll('rect')
-        .style("fill-opacity", "0.5")
+        d3Select.selectAll("rect").style("fill-opacity", "0.5")
         d3Select
           .select(d.srcElement)
           .attr("fill-opacity", (d) => changeHoverCirclePosition(d))
@@ -152,8 +151,7 @@ export default {
       }
 
       let removeHoverEffects = () => {
-        d3Select.selectAll('rect')
-        .style("fill-opacity", "1")
+        d3Select.selectAll("rect").style("fill-opacity", "1")
         d3Select.select(this.$refs.huxChart).select("circle").remove()
         this.tooltipDisplay(false)
       }
