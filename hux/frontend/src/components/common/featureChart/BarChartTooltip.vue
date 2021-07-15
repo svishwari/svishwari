@@ -1,35 +1,37 @@
 <template>
-  <v-card
-    tile
-    v-if="showTooltip"
-    :style="{
-      transform: `translate(${position.x}px, ${position.y}px)`,
-      'border-radius': '0px !important',
-    }"
-    class="mx-auto tooltip-style"
-  >
-    <div class="bar-hover">
-      <span class="prop-name font-weight-semi-bold">
-        {{ sourceInput.name }}
-      </span>
-      <div class="sub-props pt-4">
-        <span class="subprop-name">Size</span>
-        <span class="value ml-1">{{ sourceInput.size | Empty }}</span>
+  <div>
+    <v-card
+      v-if="showTooltip"
+      tile
+      :style="{
+        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
+        'border-radius': '0px !important',
+      }"
+      class="mx-auto score-tooltip-style"
+    >
+      <div class="bar-hover">
+        {{ sourceInput.score }}
       </div>
-      <div class="sub-props pt-4">
-        <span class="subprop-name">W/M/O</span>
-        <span class="value ml-1">
-          {{ sourceInput.women | percentageConvert(true, true) | Empty }} |
-          {{ sourceInput.men | percentageConvert(true, true) | Empty }} |
-          {{ sourceInput.other | percentageConvert(true, true) | Empty }}
+    </v-card>
+    <v-card
+      tile
+      v-if="showTooltip"
+      :style="{
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        'border-radius': '0px !important',
+      }"
+      class="mx-auto description-tooltip-style"
+    >
+      <div class="bar-hover">
+        <span class="feature-name">
+          {{ sourceInput.name }}
+        </span>
+        <span class="feature-description">
+          {{ sourceInput.description }}
         </span>
       </div>
-      <div class="sub-props pt-4">
-        <span class="subprop-name">LTV</span>
-        <span class="value ml-1">{{ sourceInput.ltv | Currency | Empty }}</span>
-      </div>
-    </div>
-  </v-card>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -63,13 +65,6 @@ export default {
 ::v-deep .v-card {
   border-radius: 0px !important;
 }
-.global-heading {
-  @extend .font-weight-semi-bold;
-  font-style: normal;
-  font-size: $font-size-root;
-  line-height: 19px;
-  padding-left: 2px;
-}
 
 .global-text-line {
   display: inline-block;
@@ -77,41 +72,39 @@ export default {
   font-style: normal;
   font-size: 12px;
   line-height: 16px;
+  color: var(--v-darkGreyHeading-base) !important;
 }
 
 .card-padding {
   padding: 10px 20px 20px 20px;
 }
 
-.tooltip-style {
+.description-tooltip-style {
   @extend .box-shadow-3;
   border-radius: 0px;
-  max-width: 213px;
+  max-width: 230px;
   height: auto;
-  top: -500px;
-  left: -660px;
+  top: -692px;
+  left: -695px;
   z-index: 1;
   .bar-hover {
     @extend .card-padding;
-    .prop-name {
-      @extend .global-heading;
+    .feature-name {
+      @extend .global-text-line;
     }
-    .sub-props {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      height: 30px;
-      .subprop-name {
-        @extend .global-text-line;
-        flex: 0 0 40%;
-        padding-left: 5px;
-      }
-      .value {
-        @extend .global-text-line;
-        flex: 1;
-        text-align: left;
-      }
+    .feature-description {
+      @extend .global-text-line;
+      margin-top: 8px;
     }
   }
+}
+
+.score-tooltip-style {
+  @extend .description-tooltip-style;
+  max-width: 61px;
+  height: 34px;
+  top: -650px;
+  left: -410px;
+  z-index: 1;
 }
 </style>

@@ -139,6 +139,41 @@ export default {
         .attr("width", (d) => x(d.score))
         .attr("height", y.bandwidth())
         .attr("fill", "#93d8f2")
+        .on("mouseover", (d) => applyHoverEffects(d))
+        .on("mouseout", () => removeHoverEffects())
+
+      let applyHoverEffects = (d) => {
+        d3Select.selectAll('rect')
+        .style("fill-opacity", "0.5")
+        d3Select
+          .select(d.srcElement)
+          .attr("fill-opacity", (d) => changeHoverCirclePosition(d))
+          .style("fill-opacity", "1")
+      }
+
+      let removeHoverEffects = () => {
+        d3Select.selectAll('rect')
+        .style("fill-opacity", "1")
+        d3Select.select(this.$refs.huxChart).select("circle").remove()
+        this.tooltipDisplay(false)
+      }
+
+      let changeHoverCirclePosition = (data) => {
+        let featureData = data
+        featureData.xPosition = x(data.score)
+        featureData.yPosition = y(data.name) + 12
+        this.tooltipDisplay(true, featureData)
+        svg
+          .append("circle")
+          .classed("removeableCircle", true)
+          .attr("cx", featureData.xPosition)
+          .attr("cy", featureData.yPosition)
+          .attr("r", 4)
+          .style("stroke", "#00A3E0")
+          .style("stroke-opacity", "1")
+          .style("fill", "white")
+          .style("pointer-events", "none")
+      }
     },
 
     getCordinates(event) {
@@ -147,8 +182,8 @@ export default {
       this.$emit("cordinates", this.tooltip)
     },
 
-    tooltipDisplay(showTip) {
-      this.$emit("tooltipDisplay", showTip)
+    tooltipDisplay(showTip, featureData) {
+      this.$emit("tooltipDisplay", showTip, featureData)
     },
   },
 
