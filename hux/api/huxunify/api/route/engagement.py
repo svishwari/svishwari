@@ -524,7 +524,7 @@ class AddAudienceEngagement(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
-        # validate audiences exists
+        # validate audiences exist
         database = get_db_client()
         for audience in body[api_c.AUDIENCES]:
             if not get_audience(database, ObjectId(audience[api_c.ID])):
