@@ -1448,7 +1448,7 @@ class TestEngagementRoutes(TestCase):
         for key in [api_c.START_DATE, api_c.END_DATE]:
             self.assertIn(key, response_body[api_c.DELIVERY_SCHEDULE])
             response_datetime = datetime.fromisoformat(
-                response_body[api_c.DELIVERY_SCHEDULE][key]
+                response_body[api_c.DELIVERY_SCHEDULE][key].replace("Z", "")
             )
             expected_datetime = datetime.fromisoformat(
                 update_doc[api_c.DELIVERY_SCHEDULE][key]
