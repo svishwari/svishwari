@@ -520,6 +520,7 @@ class EngagementDeliverHistoryView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
+    @validate_delivery_params
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Delivery history of all audiences for an engagement.
         ---
