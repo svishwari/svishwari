@@ -738,6 +738,8 @@ class SetLookalikeAudience(SwaggerView):
 
         """
 
+        database = get_db_client()
+
         try:
             body = LookalikeAudiencePostSchema().load(
                 request.get_json(), partial=True
@@ -752,14 +754,14 @@ class SetLookalikeAudience(SwaggerView):
         if not ObjectId.is_valid(body[api_c.SOURCE_AUDIENCE_ID]):
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
-        source_audience = orchestration_management.get_audience(get_db_client(), ObjectId(body[api_c.SOURCE_AUDIENCE_ID]))
+        source_audience = orchestration_management.get_audience(database, ObjectId(body[api_c.SOURCE_AUDIENCE_ID]))
 
         if not source_audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         destination = (
             destination_management.get_delivery_platform_by_type(
-                get_db_client(), db_c.DELIVERY_PLATFORM_FACEBOOK
+                database, db_c.DELIVERY_PLATFORM_FACEBOOK
             )
         )
 
@@ -769,17 +771,12 @@ class SetLookalikeAudience(SwaggerView):
                 destination[api_c.DELIVERY_PLATFORM_TYPE],
             )
 
-        print("GOT AUTH DETAILS")
-        print(json.dumps(auth_details))
-
         fb_connector = None
 
         try:
             fb_connector = facebook_connector.FacebookConnector(auth_details=auth_details)
         except:
             return {"message": "Failed to connect to facebook"}, HTTPStatus.INTERNAL_SERVER_ERROR
-
-        print("Connected to FB")
 
         fb_audience_id = fb_connector.get_new_lookalike_audience(
             source_audience[db_c.NAME],
@@ -788,14 +785,12 @@ class SetLookalikeAudience(SwaggerView):
             "US"
         )
 
-        print("GOT fb id back")
-
         if not fb_audience_id:
             return {"message": "Failed to create lookalike audience."}, HTTPStatus.BAD_REQUEST
 
         lookalike_audience = (
             destination_management.create_delivery_platform_lookalike_audience(
-                get_db_client(),
+                database,
                 destination[db_c.ID],
                 ObjectId(body[api_c.SOURCE_AUDIENCE_ID]),
                 body[api_c.NAME],
@@ -812,13 +807,9 @@ class SetLookalikeAudience(SwaggerView):
                     api_c.ID: destination[db_c.ID]
                 },
             }
-             # todo make a list and pass in as one arg
-             # todo get db make one call
-            engagement_management.append_audiences_to_engagement(
-                get_db_client(), engagement_id, user_name, [engaged_audience]
-            )
 
-        print("GOT TO THE END????")
-        print(str(lookalike_audience))
+            engagement_management.append_audiences_to_engagement(
+                database, engagement_id, user_name, [engaged_audience]
+            )
 
         return LookalikeAudienceGetSchema().dump(lookalike_audience), HTTPStatus.CREATED
