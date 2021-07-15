@@ -348,7 +348,7 @@ export default {
         {
           id: 4,
           title: "In-App",
-          value: this.singleCustomer.preference_in_app ,
+          value: this.singleCustomer.preference_in_app,
           subLabel: null,
         },
       ]
@@ -365,7 +365,9 @@ export default {
         {
           id: 2,
           title: "Match confidence",
-          value: this.$options.filters.Empty(this.singleCustomer.match_confidence),
+          value: this.$options.filters.Empty(
+            this.singleCustomer.match_confidence
+          ),
           colValue: 2.5,
           slider: true,
           hoverTooltip:
@@ -384,7 +386,9 @@ export default {
         {
           id: 4,
           title: "Conversion time",
-          value: this.$options.filters.Empty(this.formattedDate(this.singleCustomer.conversion_time)),
+          value: this.$options.filters.Empty(
+            this.formattedDate(this.singleCustomer.conversion_time)
+          ),
           colValue: 2.5,
           hoverTooltip:
             "The average time customer takes to convert to a purchase.",
@@ -397,8 +401,7 @@ export default {
         {
           id: 5,
           title: "Churn score",
-          value: this.$options.filters.Empty(this.singleCustomer.churn_rate)
-            ,
+          value: this.$options.filters.Empty(this.singleCustomer.churn_rate),
           colValue: 2,
           hoverTooltip:
             "The measure of a customer’s likelihood to stop using a product.",
