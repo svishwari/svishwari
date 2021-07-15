@@ -32,6 +32,9 @@ steps:
       style:
         environment:
           - TOXENV=style
+      checkCoverage:
+        environment:
+          - TOXENV=checkCoverage
     fail_fast: false
 
   publish:
