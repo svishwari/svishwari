@@ -5,14 +5,19 @@
         {{ labelText }}
         <em v-if="!required"> - optional</em>
       </span>
-       <Tooltip positionTop  v-if="helpText">
-          <template #label-content>
-            <v-icon color="primary" size="small" class="ml-2 mb-2">
-              {{ icon }}
-            </v-icon>
-          </template>
-          <template #hover-content class="white neroBlack--text shadow pa-2 text-caption"> {{helpText}} </template>
-        </Tooltip>
+      <Tooltip positionTop v-if="helpText">
+        <template #label-content>
+          <v-icon color="primary" size="small" class="ml-2 mb-2">
+            {{ icon }}
+          </v-icon>
+        </template>
+        <template
+          #hover-content
+          class="white neroBlack--text shadow pa-2 text-caption"
+        >
+          {{ helpText }}
+        </template>
+      </Tooltip>
     </label>
     <v-text-field
       v-model="TextFieldValue"
@@ -41,7 +46,7 @@
 import Tooltip from "@/components/common/Tooltip"
 export default {
   name: "text-field",
-  components: {Tooltip },
+  components: { Tooltip },
   data: function () {
     return {
       TextFieldValue: null,
