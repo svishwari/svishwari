@@ -19,7 +19,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <!-- {{audience}} -->
+  
     <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
@@ -45,56 +45,45 @@
           <Avatar :name="item.fullName" />
         </template>
       </MetricCard>
-
-        <MetricCard
-        class="ma-2 audience-summary"
+                 <MetricCard
+        class="ma-2 audience-summary card-width original-audience"
+        :grow="0"
         :title="'Original Audience'"
+        v-if="
+          audience.lookalike_audience && audience.lookalike_audience == true
+        "
       >
         <template #subtitle-extended>
           <span class="mr-2">
-             <span class="neroBlack--text font-weight-semi-bold">
-                 {{ audience.name }}
-                </span>
+                <span class="original-audience-text">
+                  {{ audience.name }}
+                </span>           
           </span>
-
         </template>
       </MetricCard>
-         <MetricCard
+       <MetricCard
         class="ma-2 audience-summary"
-        :title="'Created'"
+        :grow="0"
+        :title="'Original . Actual size'"
+        v-if="
+          audience.lookalike_audience && audience.lookalike_audience == true
+        "
       >
         <template #subtitle-extended>
-             <Tooltip>
-              <template #label-content>
+          <span class="mr-2">
                 <span class="neroBlack--text font-weight-semi-bold">
-                  {{ getFormattedTime(audience.create_time) }}
-                </span>
-              </template>
-            </Tooltip>
-          <Avatar :name="audience.created_by" />
-        </template>
-      </MetricCard>
-         <MetricCard
-        class="ma-2 audience-summary"
-        :title="'Attributes'"
-      >
-        <template #subtitle-extended>
-          <span class="mr-2">
-             <span class="neroBlack--text font-weight-semi-bold">
-                <span><Lifetime />Lifetime value</span>
-                <span><Modelicons /> Churn</span>
-                <span>
-                  <span><Plus /> </span>
-                  Age, Email, Zipcode
-                  </span>
-                </span>
+                  <size :value="audience.size" />
+                   <v-icon size="8" color="neroBlack" class="mr-1 ml-1">
+              mdi-checkbox-blank-circle
+            </v-icon>
+            <size :value="audience.size" />
+                </span>           
           </span>
-
         </template>
       </MetricCard>
 
       <MetricCard
-        class="ma-4 audience-summary"
+        class="ma-2 audience-summary"
         :title="'Attributes'"
         v-if="Object.keys(appliedFilters).length > 0"
       >
@@ -141,43 +130,40 @@
           </div>
         </template>
       </MetricCard>
-      
     </div>
-            <div class="px-15 my-1 mb-4">
-        <v-card class="rounded-lg card-style" minHeight="145px" flat>
-               <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-            <div class="d-flex align-center">
+    <div class="px-15 my-1 mb-4">
+      <v-card class="rounded-lg card-style" minHeight="145px" flat>
+        <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+          <div class="d-flex align-center">
             <span class="text-h5">Engagement & delivery overview</span>
-            </div>
-            <div class="d-flex align-center">
-              <a
-                href="#"
-                class="d-flex align-center primary--text text-decoration-none"
-              >
-                <Icon type="engagements" :size="16" class="mr-1" />
-                Add an Engagement
-              </a>
-            </div>
-          </v-card-title>
-          <v-progress-linear
-            v-if="!engagements"
-            :active="!engagements"
-            :indeterminate="!engagements"
-          />
-          <v-card-text class="pl-6 pr-6 pb-6">
-            <v-col
-              class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
+          </div>
+          <div class="d-flex align-center">
+            <a
+              href="#"
+              class="d-flex align-center primary--text text-decoration-none"
             >
-              <status-list
-                v-for="item in engagements"
-                :key="item.id"
-                :audience="item"
-                :statusIcon="17"
-              />
-            </v-col>
-          </v-card-text>
-       </v-card>
-        </div>
+              <Icon type="engagements" :size="16" class="mr-1" />
+              Add an Engagement
+            </a>
+          </div>
+        </v-card-title>
+        <v-progress-linear
+          v-if="!engagements"
+          :active="!engagements"
+          :indeterminate="!engagements"
+        />
+        <v-card-text class="pl-6 pr-6 pb-6">
+          <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
+            <status-list
+              v-for="item in engagements"
+              :key="item.id"
+              :audience="item"
+              :statusIcon="17"
+            />
+          </v-col>
+        </v-card-text>
+      </v-card>
+    </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview">Audience overview</div>
@@ -229,6 +215,7 @@ import StatusList from "../../components/common/StatusList.vue"
 import Modelicons from "@/assets/logos/modelicons.svg"
 import Plus from "@/assets/logos/plus.svg"
 import Lifetime from "@/assets/logos/lifetime.svg"
+import Size from "../../components/common/huxTable/Size.vue"
 export default {
   name: "AudienceInsight",
   components: {
@@ -242,7 +229,8 @@ export default {
     StatusList,
     Lifetime,
     Plus,
-    Modelicons
+    Modelicons,
+    Size,
   },
   data() {
     return {
@@ -257,6 +245,8 @@ export default {
           text: "",
           disabled: true,
           href: this.$route.path,
+          icon: "lookalike",
+          size: 12
         },
       ],
       loading: false,
@@ -295,29 +285,28 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
-      engagements : [
+      engagements: [
         {
-           id: 1,
-           last_delivered: "2021-07-13T15:38:42.629Z",
-           lookalike: true,
-name: "My Engagement 1",
-size: 265234579,
-  status: "Active",
-destinations: [{
-  id: "4",
-  name: "Facebook",
-  type: "facebook",
-  latest_delivery:{
-    status: "Active",
-    size: 265234579,
-    update_time: "2021-07-13T15:38:42.629Z"
-  },
-
-}]
-           
-           
-        }
-      ]
+          id: 1,
+          last_delivered: "2021-07-13T15:38:42.629Z",
+          lookalike: true,
+          name: "My Engagement 1",
+          size: 265234579,
+          status: "Active",
+          destinations: [
+            {
+              id: "4",
+              name: "Facebook",
+              type: "facebook",
+              latest_delivery: {
+                status: "Active",
+                size: 265234579,
+                update_time: "2021-07-13T15:38:42.629Z",
+              },
+            },
+          ],
+        },
+      ],
     }
   },
   computed: {
@@ -492,5 +481,19 @@ destinations: [{
 }
 .icon-border {
   cursor: default;
+}
+.original-audience {
+  background: var(--v-white-base) !important;
+}
+.original-audience-text {
+  font-family: Open Sans;
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 19px;
+  color: var(--v-primary-base) !important;
+}
+.card-width {
+  width: 156px !important;
 }
 </style>

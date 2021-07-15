@@ -29,5 +29,5 @@ export const audience = {
   created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
-  lookalike_audience : () => true
+  lookalike_audience: () => true,
 }

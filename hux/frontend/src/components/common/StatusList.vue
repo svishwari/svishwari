@@ -12,15 +12,15 @@
         >
           {{ audience.name }}
         </router-link>
-          <status
-            v-if="audience.lookalike"
-            :status="audience.status"
-            :iconSize="statusIcon"
-           class="ml-2"
-            collapsed
-            showLabel
-          />
-        </span>
+        <status
+          v-if="audience.lookalike"
+          :status="audience.status"
+          :iconSize="statusIcon"
+          class="ml-2"
+          collapsed
+          showLabel
+        />
+      </span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
           <v-icon v-bind="attrs" v-on="on" class="top-action">
