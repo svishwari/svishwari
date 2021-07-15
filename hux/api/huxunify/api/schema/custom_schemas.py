@@ -18,7 +18,7 @@ class DateTimeWithZ(DateTime):
             return value.isoformat(sep="T", timespec="milliseconds") + "Z"
         except Exception as exc:  # pylint: disable=broad-except
             logging.warning(
-                "Failed to convert to isoformat  %s: %s.",
+                "Failed to convert to isoformat %s: %s.",
                 exc.__class__,
                 exc,
             )
