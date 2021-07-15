@@ -281,42 +281,42 @@ export default {
         {
           id: 1,
           title: "Email",
-          value: this.singleCustomer.email | Empty,
+          value: this.$options.filters.Empty(this.singleCustomer.email),
         },
         {
           id: 2,
           title: "Phone",
-          value: this.singleCustomer.phone | Empty,
+          value: this.$options.filters.Empty(this.singleCustomer.phone),
         },
         {
           id: 3,
           title: "Age",
-          value: this.singleCustomer.age | Empty,
+          value: this.$options.filters.Empty(this.singleCustomer.age),
         },
         {
           id: 4,
           title: "Gender",
-          value: this.singleCustomer.gender | Empty,
+          value: this.$options.filters.Empty(this.singleCustomer.gender),
         },
         {
           id: 5,
           titleNex: "Address",
-          valueNex: this.singleCustomer.address | Empty,
+          valueNex: this.$options.filters.Empty(this.singleCustomer.address),
         },
         {
           id: 6,
           titleNex: "City",
-          valueNex: this.singleCustomer.city | Empty,
+          valueNex: this.$options.filters.Empty(this.singleCustomer.city),
         },
         {
           id: 7,
           titleNex: "State",
-          valueNex: this.singleCustomer.state | Empty,
+          valueNex: this.$options.filters.Empty(this.singleCustomer.state),
         },
         {
           id: 8,
           titleNex: "Zip",
-          valueNex: this.singleCustomer.zip | Empty,
+          valueNex: this.$options.filters.Empty(this.singleCustomer.zip),
         },
       ]
       return insightsData.filter(
@@ -348,7 +348,7 @@ export default {
         {
           id: 4,
           title: "In-App",
-          value: this.singleCustomer.preference_in_app,
+          value: this.singleCustomer.preference_in_app ,
           subLabel: null,
         },
       ]
@@ -365,9 +365,7 @@ export default {
         {
           id: 2,
           title: "Match confidence",
-          value: this.singleCustomer.match_confidence
-            ? this.singleCustomer.match_confidence
-            : "-",
+          value: this.$options.filters.Empty(this.singleCustomer.match_confidence),
           colValue: 2.5,
           slider: true,
           hoverTooltip:
@@ -386,9 +384,7 @@ export default {
         {
           id: 4,
           title: "Conversion time",
-          value: this.formattedDate(this.singleCustomer.conversion_time)
-            ? this.formattedDate(this.singleCustomer.conversion_time)
-            : "-",
+          value: this.$options.filters.Empty(this.formattedDate(this.singleCustomer.conversion_time)),
           colValue: 2.5,
           hoverTooltip:
             "The average time customer takes to convert to a purchase.",
@@ -401,9 +397,8 @@ export default {
         {
           id: 5,
           title: "Churn score",
-          value: this.singleCustomer.churn_rate
-            ? this.singleCustomer.churn_rate
-            : "-",
+          value: this.$options.filters.Empty(this.singleCustomer.churn_rate)
+            ,
           colValue: 2,
           hoverTooltip:
             "The measure of a customer’s likelihood to stop using a product.",
