@@ -221,7 +221,10 @@ class EngagementDeliverDestinationView(SwaggerView):
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
-            if pair != [audience_id, destination_id]:
+            if [pair[0], pair[1][db_c.OBJECT_ID]] != [
+                audience_id,
+                destination_id,
+            ]:
                 continue
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
