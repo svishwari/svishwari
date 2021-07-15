@@ -8,6 +8,8 @@ from http import HTTPStatus
 import requests_mock
 from hypothesis import given, strategies as st
 
+from huxunifylib.database import constants as db_c
+
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
@@ -128,3 +130,41 @@ class CDPTest(TestCase):
 
             # otherwise ensure the result was mapped to the default time
             self.assertEqual(value, DEFAULT_DATETIME)
+
+    def test_get_idr_data_feeds(self):
+        """
+        Test fetch IDR data feeds
+
+        Args:
+
+        Returns:
+
+        """
+
+        # TODO: Add logic when CDM API is available
+        expected_response = {
+            "code": 200,
+            "body": [
+                {
+                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
+                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
+                    api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
+                    api_c.DATAFEED_NEW_IDS_COUNT: 21,
+                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
+                    api_c.MATCH_RATE: 0.98,
+                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow(),
+                },
+                {
+                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
+                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
+                    api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                    api_c.DATAFEED_NEW_IDS_COUNT: 54,
+                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
+                    api_c.MATCH_RATE: 0.97,
+                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
+                    - datetime.timedelta(days=1),
+                },
+            ],
+            "message": "ok",
+        }
+        self.assertEqual(HTTPStatus.OK, expected_response["code"])

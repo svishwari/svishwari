@@ -27,7 +27,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7 pl-6 white" v-if="!loading">
+    <v-row class="pt-3 pb-7 pl-3 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
         :dataItems="getNotificationData"
@@ -114,12 +114,12 @@ export default {
         {
           text: "Time",
           value: "created",
-          width: "auto",
+          width: "250px",
         },
         {
           text: "Type",
           value: "notification_type",
-          width: "auto",
+          width: "250px",
         },
         {
           text: "Description",
@@ -207,5 +207,12 @@ export default {
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+}
+:v-deep .v-data-table {
+  .v-data-table__wrapper {
+    tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+      background: white !important;
+    }
+  }
 }
 </style>

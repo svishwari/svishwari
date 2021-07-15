@@ -13,21 +13,23 @@
           Most recent alerts
         </v-list-item-title>
       </v-list-item>
-      <v-list-item v-for="data in getNotificationData" :key="data.id">
-        <v-list-item-title class="text-h6 neroBlack--text list-main">
-          <div class="d-flex text-caption">
-            <status
-              :status="data.notification_type"
-              :showLabel="false"
-              :iconSize="17"
-            />
-            <span> {{ data.description }} </span>
-          </div>
-          <div class="list-stamp">
-            <time-stamp :value="data.created" />
-          </div>
-        </v-list-item-title>
-      </v-list-item>
+      <div class="notification-div">
+        <v-list-item v-for="data in getNotificationData" :key="data.id">
+          <v-list-item-title class="text-h6 neroBlack--text list-main">
+            <div class="d-flex text-caption">
+              <status
+                :status="data.notification_type"
+                :showLabel="false"
+                :iconSize="17"
+              />
+              <span> {{ data.description }} </span>
+            </div>
+            <div class="list-stamp">
+              <time-stamp :value="data.created" />
+            </div>
+          </v-list-item-title>
+        </v-list-item>
+      </div>
       <v-list-item>
         <v-list-item-title class="text-h6 neroBlack--text">
           <a @click="alertRouters()">View all alerts</a>
@@ -92,10 +94,15 @@ export default {
 }
 .v-menu__content {
   top: 64px !important;
+  overflow-y: hidden !important;
   .alert-menu-main {
     width: 296px !important;
     height: 283px !important;
     overflow-wrap: break-word !important;
   }
+}
+.notification-div {
+  overflow-y: auto !important;
+  height: 170px !important;
 }
 </style>
