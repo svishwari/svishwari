@@ -1273,7 +1273,7 @@ class TestEngagementRoutes(TestCase):
         new_audience = {
             "audiences": [
                 {
-                    db_c.OBJECT_ID: str(ObjectId()),
+                    db_c.OBJECT_ID: str(self.audiences[0][db_c.ID]),
                     "destinations": [
                         {db_c.OBJECT_ID: str(ObjectId())},
                         {db_c.OBJECT_ID: str(ObjectId())},
@@ -1329,7 +1329,7 @@ class TestEngagementRoutes(TestCase):
         """
 
         engagement_id = self.engagement_ids[0]
-        new_audience_id = ObjectId()
+        new_audience_id = self.audiences[0][db_c.ID]
 
         new_audience = {
             "audiences": [
