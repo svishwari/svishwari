@@ -2,7 +2,7 @@
   <div class="container">
     <div class="d-flex justify-content-start">
       <horizontal-bar-chart
-        v-model="mapChartData"
+        v-model="features"
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
       />
@@ -34,7 +34,7 @@ export default {
         x: 0,
         y: 0,
       },
-      mapChartData: data.featureList,
+      features: data.featureList,
       currentData: {},
     }
   },

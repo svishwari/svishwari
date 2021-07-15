@@ -50,7 +50,7 @@ export default {
     }
   },
   methods: {
-    initiateMapChart() {
+    initiateHorizontalBarChart() {
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
 
@@ -73,7 +73,7 @@ export default {
       let y = d3Scale
         .scaleBand()
         .range([0, this.height])
-        .domain(this.chartData.map((d) => d.feature))
+        .domain(this.chartData.map((d) => d.name))
         .padding(0.1)
 
       svg
@@ -135,7 +135,7 @@ export default {
         .enter()
         .append("rect")
         .attr("x", x(0))
-        .attr("y", (d) => y(d.feature))
+        .attr("y", (d) => y(d.name))
         .attr("width", (d) => x(d.score))
         .attr("height", y.bandwidth())
         .attr("fill", "#93d8f2")
@@ -155,12 +155,12 @@ export default {
   watch: {
     value: function () {
       d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateMapChart()
+      this.initiateHorizontalBarChart()
     },
   },
 
   mounted() {
-    this.initiateMapChart()
+    this.initiateHorizontalBarChart()
   },
 }
 </script>

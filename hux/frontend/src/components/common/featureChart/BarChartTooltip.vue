@@ -8,21 +8,21 @@
     }"
     class="mx-auto tooltip-style"
   >
-    <div class="map-hover">
-      <span class="prop-name font-weight-semi-bold">{{
-        sourceInput.name
-      }}</span>
+    <div class="bar-hover">
+      <span class="prop-name font-weight-semi-bold">
+        {{sourceInput.name}}
+      </span>
       <div class="sub-props pt-4">
         <span class="subprop-name">Size</span>
         <span class="value ml-1">{{ sourceInput.size | Empty }}</span>
       </div>
       <div class="sub-props pt-4">
         <span class="subprop-name">W/M/O</span>
-        <span class="value ml-1"
-          >{{ sourceInput.women | percentageConvert(true, true) | Empty }} |
+        <span class="value ml-1">
+          {{ sourceInput.women | percentageConvert(true, true) | Empty }} |
           {{ sourceInput.men | percentageConvert(true, true) | Empty }} |
-          {{ sourceInput.other | percentageConvert(true, true) | Empty }}</span
-        >
+          {{ sourceInput.other | percentageConvert(true, true) | Empty }}
+        </span>
       </div>
       <div class="sub-props pt-4">
         <span class="subprop-name">LTV</span>
@@ -91,7 +91,7 @@ export default {
   top: -500px;
   left: -660px;
   z-index: 1;
-  .map-hover {
+  .bar-hover {
     @extend .card-padding;
     .prop-name {
       @extend .global-heading;
