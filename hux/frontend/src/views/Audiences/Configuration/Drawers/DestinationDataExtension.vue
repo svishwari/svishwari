@@ -54,14 +54,6 @@
             <div>
               <label class="d-flex align-items-center">
                 <span class="neroBlack--text text-caption">Journey type</span>
-                <Tooltip positionTop>
-                  <template #label-content>
-                    <v-icon color="primary" size="small" class="ml-2 mb-2">
-                      mdi-alert-circle-outline
-                    </v-icon>
-                  </template>
-                  <template #hover-content> Type of journey </template>
-                </Tooltip>
               </label>
               <v-radio-group v-model="journeyType" row>
                 <v-radio value="radio-1">
