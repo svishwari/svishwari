@@ -567,8 +567,8 @@ class EngagementDeliverHistoryView(SwaggerView):
                         api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
                             database, job.get(db_c.DELIVERY_PLATFORM_ID)
                         ),
-                        api_c.SIZE: randrange(10000000),
                         # TODO : Get audience size from CDM
+                        api_c.SIZE: randrange(10000000),
                         api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
                     }
                 )
