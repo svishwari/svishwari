@@ -9,6 +9,8 @@
               labelText="Engagement name"
               placeholder="Give this engagement a name"
               :rules="[(value) => !!value || 'Engagement name is required']"
+              :error-messages="errorMessages"
+              @blur="errorMessages = []"
               required
             />
           </v-col>
@@ -349,6 +351,7 @@ export default {
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
       disableEndDate: true,
+      errorMessages: [],
     }
   },
 
@@ -416,6 +419,14 @@ export default {
       this.showDataExtensionDrawer = false
     },
 
+    scrollToTop() {
+      window.scrollTo({
+        top: 100,
+        left: 100,
+        behavior: "auto",
+      })
+    },
+
     openSelectAudiencesDrawer() {
       this.closeAllDrawers()
       this.showSelectAudiencesDrawer = true
@@ -452,11 +463,16 @@ export default {
     },
 
     async addNewEngagement() {
-      const engagement = await this.addEngagement(this.payload)
-      this.$router.push({
-        name: "EngagementDashboard",
-        params: { id: engagement.id },
-      })
+      try {
+        const engagement = await this.addEngagement(this.payload)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: engagement.id },
+        })
+      } catch (error) {
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
+      }
     },
 
     async deliverNewEngagement() {
@@ -468,7 +484,8 @@ export default {
           params: { id: engagement.id },
         })
       } catch (error) {
-        console.error(error)
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
       }
     },
 

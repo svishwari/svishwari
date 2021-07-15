@@ -66,14 +66,13 @@ export default {
 .descriptive-card {
   @extend .box-shadow-5;
   color: var(--v-neroblack-base);
-  cursor: default;
   font-weight: normal;
   min-height: 255px;
   transition: box-shadow 0.2s;
   width: 255px;
 
   &:hover {
-    box-shadow: 0px 0px 10px 2px rgba(117, 123, 123, 0.3) !important;
+    @extend .box-shadow-3;
   }
 }
 </style>
