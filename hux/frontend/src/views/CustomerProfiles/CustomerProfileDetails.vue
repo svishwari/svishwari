@@ -15,6 +15,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
+    
     <div v-if="!loading && singleCustomer" class="pl-15 py-6 pr-9">
       <v-row>
         <v-col cols="3">
@@ -42,12 +43,12 @@
           :cols="data.colValue"
           v-for="data in customerDataDisplay"
           :key="data.id"
-          class="matic-card-space"
+          class="matix-card-space"
         >
           <v-card
             class="rounded-lg card-info-wrapper card-shadow no-background"
           >
-            <v-card-text class="pl-3 pr-3 pb-3 pt-3 matric-card">
+            <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
               <div class="title-text pb-1">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
@@ -77,12 +78,12 @@
           v-for="data in customerDetailsMore"
           :cols="data.colValue"
           :key="data.id"
-          class="matic-card-space"
+          class="matix-card-space"
         >
           <v-card
             class="rounded-lg card-info-wrapper card-shadow no-background"
           >
-            <v-card-text class="pl-3 pr-3 pb-3 pt-3 matric-card">
+            <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
               <div class="title-text pb-1">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
@@ -280,44 +281,42 @@ export default {
         {
           id: 1,
           title: "Email",
-          value: this.singleCustomer.email ? this.singleCustomer.email : "-",
+          value: this.singleCustomer.email | Empty,
         },
         {
           id: 2,
           title: "Phone",
-          value: this.singleCustomer.phone ? this.singleCustomer.phone : "-",
+          value: this.singleCustomer.phone | Empty,
         },
         {
           id: 3,
           title: "Age",
-          value: this.singleCustomer.age ? this.singleCustomer.age : "-",
+          value: this.singleCustomer.age | Empty,
         },
         {
           id: 4,
           title: "Gender",
-          value: this.singleCustomer.gender ? this.singleCustomer.gender : "-",
+          value: this.singleCustomer.gender | Empty,
         },
         {
           id: 5,
           titleNex: "Address",
-          valueNex: this.singleCustomer.address
-            ? this.singleCustomer.address
-            : "-",
+          valueNex: this.singleCustomer.address | Empty,
         },
         {
           id: 6,
           titleNex: "City",
-          valueNex: this.singleCustomer.city ? this.singleCustomer.city : "-",
+          valueNex: this.singleCustomer.city | Empty,
         },
         {
           id: 7,
           titleNex: "State",
-          valueNex: this.singleCustomer.state ? this.singleCustomer.state : "-",
+          valueNex: this.singleCustomer.state | Empty,
         },
         {
           id: 8,
           titleNex: "Zip",
-          valueNex: this.singleCustomer.zip ? this.singleCustomer.zip : "-",
+          valueNex: this.singleCustomer.zip | Empty,
         },
       ]
       return insightsData.filter(
@@ -360,7 +359,7 @@ export default {
         {
           id: 1,
           title: "Customer length",
-          value: "1 Year",
+          value: this.formattedDate(this.singleCustomer.since),
           colValue: 2.5,
         },
         {
@@ -535,10 +534,10 @@ export default {
 .no-background {
   background: none !important;
 }
-.matric-card {
+.matrix-card {
   height: 70px !important;
 }
-.matic-card-space {
+.matix-card-space {
   padding-right: 5px !important;
 }
 .id-size {
