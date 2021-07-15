@@ -235,7 +235,6 @@ export default {
           )
         },
       ],
-      existingExtensionRules: [(v) => !!v || "Select any one Data extension"],
     }
   },
   methods: {
