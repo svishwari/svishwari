@@ -115,7 +115,6 @@
               outlined
               background-color="white"
               append-icon="mdi-chevron-down"
-              :rules="existingExtensionRules"
               required
             />
           </div>
@@ -150,7 +149,7 @@
           width="80"
           height="40"
           class="ma-2"
-          :isDisabled="!isFormValid"
+          :isDisabled="isActive ? !isFormValid : !extension"
           @click="addDestination()"
         >
           Add
