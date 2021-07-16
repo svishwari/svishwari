@@ -6,7 +6,7 @@ const destinationSchema = () => {
   return {
     id: faker.datatype.number({ min: 1, max: 10 }),
     data_extension_id: faker.datatype.number({ min: 1, max: 10 }),
-    delivery_platform_cofig: {
+    delivery_platform_config: {
       data_extension_name: "faker data",
     },
   }
