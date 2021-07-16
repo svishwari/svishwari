@@ -5,7 +5,7 @@ Paths for customer API
 from http import HTTPStatus
 from random import choice
 from typing import Tuple, List
-from datetime import datetime, timedelta
+from datetime import datetime
 from faker import Faker
 import pandas as pd
 
@@ -13,7 +13,6 @@ from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from flasgger import SwaggerView
 
-from huxunifylib.database import constants as db_c
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
@@ -31,6 +30,7 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
     get_customers_overview,
+    get_idr_data_feeds,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -323,7 +323,7 @@ class IDRDataFeeds(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": DataFeedSchema,
+            "schema": {"type": "array", "items": DataFeedSchema},
             "description": "Identity Resolution Data Feeds",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -347,50 +347,9 @@ class IDRDataFeeds(SwaggerView):
             Tuple[List[dict], int] list of IDR data feeds object dicts
         """
 
-        data_feeds = [
-            {
-                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
-                api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
-                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
-                api_c.DATAFEED_NEW_IDS_COUNT: 21,
-                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
-                api_c.MATCH_RATE: 0.98,
-                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow(),
-            },
-            {
-                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
-                api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
-                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                api_c.DATAFEED_NEW_IDS_COUNT: 54,
-                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
-                api_c.MATCH_RATE: 0.97,
-                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-                - timedelta(days=1),
-            },
-            {
-                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
-                api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
-                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
-                api_c.DATAFEED_NEW_IDS_COUNT: 300,
-                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
-                api_c.MATCH_RATE: 0.98,
-                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-                - timedelta(days=7),
-            },
-            {
-                api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
-                api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
-                api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
-                api_c.DATAFEED_NEW_IDS_COUNT: 612,
-                api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
-                api_c.MATCH_RATE: 0.98,
-                api_c.DATAFEED_LAST_RUN_DATE: datetime.utcnow()
-                - timedelta(days=30),
-            },
-        ]
         return (
-            jsonify(DataFeedSchema().dump(data_feeds, many=True)),
-            HTTPStatus.OK,
+            jsonify(DataFeedSchema().dump(get_idr_data_feeds(), many=True)),
+            HTTPStatus.OK.value,
         )
 
 
