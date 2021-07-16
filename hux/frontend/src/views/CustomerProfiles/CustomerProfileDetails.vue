@@ -29,11 +29,15 @@
             "
           >
             <v-card-title class="title-font-size">
-              {{ this.singleCustomer.first_name }}
-              {{ this.singleCustomer.last_name }}
+              <span class="d-inline-block text-truncate mr-1">
+                {{ this.singleCustomer.first_name }}
+              </span>
+              <span class="d-inline-block text-truncate">
+                {{ this.singleCustomer.last_name }}
+              </span>
             </v-card-title>
-            <v-card-text class="justify-center title-text pt-5 pb-5">
-              <icon type="smile" :size="16" color="blue" class="mb-1" />
+            <v-card-text class="justify-center title-text py-4">
+              <icon type="smile" :size="16" color="blue" />
               <div>Hux ID</div>
               <span class="id-size">{{ singleCustomer.hux_id }} </span>
             </v-card-text>
@@ -180,7 +184,10 @@
                   <tbody>
                     <tr v-for="data in contactPreferences" :key="data.id">
                       <td class="title-text">{{ data.title }}</td>
-                      <td class="table-text cl">{{ data.value }}</td>
+                      <td class="table-text cl">
+                        <template v-if="data.value === true">True</template>
+                        <template v-if="data.value === false">False</template>
+                      </td>
                     </tr>
                   </tbody>
                 </template>
@@ -470,9 +477,9 @@ export default {
   font-style: normal;
   font-weight: 300 !important;
   font-size: 21px;
+  line-height: 25px;
   color: var(--v-neroBlack-base);
   justify-content: center;
-  word-break: break-word;
 }
 .title-text {
   font-family: Open Sans;
