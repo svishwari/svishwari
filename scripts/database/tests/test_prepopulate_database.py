@@ -8,7 +8,7 @@ from huxunifylib.database.cdp_data_source_management import (
 from huxunifylib.database.delivery_platform_management import (
     get_all_delivery_platforms,
 )
-import scripts.database.prepopulate_database as pd
+import database.prepopulate_database as pd
 
 
 class TestPrepopulateDatabase(TestCase):
