@@ -28,9 +28,7 @@
               card-height
             "
           >
-            <v-card-title
-              class="justify-center font-weight-regular title-font-size"
-            >
+            <v-card-title class="title-font-size">
               {{ fullName }}
             </v-card-title>
             <v-card-text class="justify-center title-text pt-5 pb-5">
@@ -486,6 +484,8 @@ export default {
   font-weight: 300 !important;
   font-size: 21px;
   color: var(--v-neroBlack-base);
+  justify-content: center;
+  word-break: break-word;
 }
 .title-text {
   font-family: Open Sans;
