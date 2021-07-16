@@ -9,7 +9,7 @@ from typing import Tuple
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
-from marshmallow import ValidationError, INCLUDE
+from marshmallow import INCLUDE
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -33,6 +33,7 @@ from huxunify.api.route.utils import (
     secured,
     get_user_name,
 )
+from huxunify.api.route.utils import api_error_handler
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -84,6 +85,7 @@ class AudienceView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    @api_error_handler()
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all audiences.
 
@@ -153,6 +155,7 @@ class AudienceGetView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def get(self, audience_id: str) -> Tuple[dict, int]:
         """Retrieves an audience.
 
@@ -258,6 +261,7 @@ class AudiencePostView(SwaggerView):
     # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-branches
     # pylint: disable=no-self-use
+    @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
         """Creates a new audience.
@@ -274,10 +278,7 @@ class AudiencePostView(SwaggerView):
 
         """
 
-        try:
-            body = AudiencePostSchema().load(request.get_json(), partial=True)
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = AudiencePostSchema().load(request.get_json(), partial=True)
 
         # validate destinations
         database = get_db_client()
@@ -440,6 +441,7 @@ class AudiencePutView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     @get_user_name()
     def put(self, audience_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates an audience.
@@ -458,10 +460,7 @@ class AudiencePutView(SwaggerView):
         """
 
         # load into the schema object
-        try:
-            body = AudiencePutSchema().load(request.get_json(), partial=True)
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = AudiencePutSchema().load(request.get_json(), partial=True)
 
         audience_doc = orchestration_management.update_audience(
             database=get_db_client(),
@@ -493,6 +492,7 @@ class AudienceRules(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
         """Retrieves all audience rules.
 

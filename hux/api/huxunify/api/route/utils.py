@@ -37,6 +37,9 @@ from huxunify.api.data_connectors.okta import (
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
 
+import facebook_business.exceptions
+from marshmallow import ValidationError
+
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
     """
@@ -294,7 +297,7 @@ def get_user_name() -> object:
     return wrapper
 
 
-def api_error_handler() -> object:
+def api_error_handler(custom_message: dict = None) -> object:
     """
     This decorator handles generic errors for API requests.
 
@@ -303,6 +306,9 @@ def api_error_handler() -> object:
     Example: @api_error_handler()
 
     Args:
+        custom_message (dict): Custom messages for particular exceptions
+                                Key -> Exception eg.
+                                Value -> Message to be returned to client
 
     Returns:
         Response: decorator
@@ -332,6 +338,20 @@ def api_error_handler() -> object:
             """
             try:
                 return in_function(*args, **kwargs)
+
+            except ValidationError as validation_error:
+                if custom_message:
+                    error_message = custom_message.get(
+                        ValidationError, validation_error.messages
+                    )
+                else:
+                    error_message = validation_error.messages
+                return error_message, HTTPStatus.BAD_REQUEST
+
+            except facebook_business.exceptions.FacebookRequestError:
+                return {
+                    "message": "Error connecting to Facebook"
+                }, HTTPStatus.BAD_REQUEST
 
             except de.DuplicateName:
                 return {

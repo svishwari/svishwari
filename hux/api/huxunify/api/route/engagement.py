@@ -7,11 +7,9 @@ from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
 
-import facebook_business.exceptions
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
-from marshmallow import ValidationError
 
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.database import constants as db_c
@@ -246,12 +244,9 @@ class SetEngagement(SwaggerView):
 
         """
 
-        try:
-            body = EngagementPostSchema().load(
-                request.get_json(), partial=("delivery_schedule",)
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = EngagementPostSchema().load(
+            request.get_json(), partial=("delivery_schedule",)
+        )
 
         engagement_id = set_engagement(
             database=get_db_client(),
@@ -352,10 +347,7 @@ class UpdateEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        try:
-            body = EngagementPostSchema().load(request.get_json())
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = EngagementPostSchema().load(request.get_json())
 
         engagement = update_engagement(
             database=get_db_client(),
@@ -517,12 +509,9 @@ class AddAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        try:
-            body = AudienceEngagementSchema().load(
-                request.get_json(), partial=True
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = AudienceEngagementSchema().load(
+            request.get_json(), partial=True
+        )
 
         # validate audiences exist
         database = get_db_client()
@@ -607,16 +596,13 @@ class DeleteAudienceEngagement(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         audience_ids = []
-        try:
-            body = AudienceEngagementDeleteSchema().load(
-                request.get_json(), partial=True
-            )
-            for audience_id in body[api_c.AUDIENCE_IDS]:
-                if not ObjectId.is_valid(audience_id):
-                    return HTTPStatus.BAD_REQUEST
-                audience_ids.append(ObjectId(audience_id))
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = AudienceEngagementDeleteSchema().load(
+            request.get_json(), partial=True
+        )
+        for audience_id in body[api_c.AUDIENCE_IDS]:
+            if not ObjectId.is_valid(audience_id):
+                return HTTPStatus.BAD_REQUEST
+            audience_ids.append(ObjectId(audience_id))
 
         remove_audiences_from_engagement(
             get_db_client(),
@@ -778,10 +764,7 @@ class UpdateCampaignsForAudience(SwaggerView):
                 "message": "Destination does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        try:
-            body = CampaignPutSchema().load(request.get_json())
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = CampaignPutSchema().load(request.get_json())
 
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
@@ -1138,12 +1121,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
                 destination[api_c.DELIVERY_PLATFORM_TYPE],
             )
         )
-        try:
-            campaigns = facebook_connector.get_campaigns()
-        except facebook_business.exceptions.FacebookRequestError:
-            return {
-                "message": "Error connecting to Facebook"
-            }, HTTPStatus.BAD_REQUEST
+
+        campaigns = facebook_connector.get_campaigns()
 
         if campaigns is None:
             return {

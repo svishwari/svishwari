@@ -111,6 +111,7 @@ class ModelVersionView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(ModelVersionSchema(many=True))
+    @api_error_handler()
     def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieves model version history.
 
@@ -239,6 +240,7 @@ class ModelDriftView(SwaggerView):
 
     # pylint: disable=no-self-use
     @marshal_with(DriftSchema(many=True))
+    @api_error_handler()
     def get(self, name: str) -> Tuple[List[dict], int]:
         """Retrieves model drift details.
 
