@@ -55,9 +55,14 @@
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'name'" class="w-100 d-flex">
-              <span v-if="item.lookalike_audience == true" class="mr-3"> 
-                <icon type="lookalike" :size="20" color="neroBlack" class="mr-2" />
-                </span>
+              <span v-if="item.lookalike_audience == true" class="mr-3">
+                <icon
+                  type="lookalike"
+                  :size="20"
+                  color="neroBlack"
+                  class="mr-2"
+                />
+              </span>
               <menu-cell
                 :value="item[header.value]"
                 :menuOptions="getActionItems(item)"
@@ -155,7 +160,7 @@ export default {
     TimeStamp,
     MenuCell,
     LookAlikeAudience,
-    Icon
+    Icon,
   },
   data() {
     return {

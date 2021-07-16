@@ -49,9 +49,7 @@
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
-        v-if="
-          audience.lookalike_audience
-        "
+        v-if="audience.lookalike_audience"
       >
         <template #subtitle-extended>
           <span class="mr-2">
@@ -65,9 +63,7 @@
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original • Actual size'"
-        v-if="
-          audience.lookalike_audience
-        "
+        v-if="audience.lookalike_audience"
       >
         <template #subtitle-extended>
           <span class="mr-2">
@@ -135,14 +131,14 @@
             <span class="text-h5">Engagement &amp; delivery overview</span>
           </div>
           <div class="d-flex align-center">
-               <v-btn
-                text
-                class="d-flex align-center primary--text text-decoration-none"
-                disabled
-              >
-                <Icon type="audiences" :size="16" class="mr-1" />
-                 Add an Engagement
-              </v-btn>
+            <v-btn
+              text
+              class="d-flex align-center primary--text text-decoration-none"
+              disabled
+            >
+              <Icon type="audiences" :size="16" class="mr-1" />
+              Add an Engagement
+            </v-btn>
           </div>
         </v-card-title>
         <v-progress-linear
@@ -311,7 +307,7 @@ export default {
       return this.getAudience(this.$route.params.id)
     },
 
-    breadcrumbItems() {
+    breadcrumbItems () {
       const items = [
         {
           text: "Audiences",
@@ -322,22 +318,21 @@ export default {
       ]
       if (this.audience) {
         if (this.audience.lookalike_audience == true) {
-        items.push({
-          text: this.audience.name,
-          disabled: true,
-          href: this.$route.path,
-          icon: "lookalike",
-          size: 12,
-        })
-      }
-      else {
-        items.push({
-         text: this.audience.name,
-          disabled: true,
-          href: this.$route.path,
-        })
-      }
-       return items
+          items.push({
+            text: this.audience.name,
+            disabled: true,
+            href: this.$route.path,
+            icon: "lookalike",
+            size: 12,
+          })
+        } else {
+          items.push({
+            text: this.audience.name,
+            disabled: true,
+            href: this.$route.path,
+          })
+        }
+        return items
       }
     },
     /**
@@ -519,5 +514,4 @@ export default {
 .card-width {
   width: 156px !important;
 }
-
 </style>
