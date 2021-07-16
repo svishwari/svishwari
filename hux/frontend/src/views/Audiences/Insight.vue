@@ -50,7 +50,7 @@
         :grow="0"
         :title="'Original Audience'"
         v-if="
-          audience.lookalike_audience && audience.lookalike_audience == true
+          audience.lookalike_audience
         "
       >
         <template #subtitle-extended>
@@ -66,7 +66,7 @@
         :grow="0"
         :title="'Original . Actual size'"
         v-if="
-          audience.lookalike_audience && audience.lookalike_audience == true
+          audience.lookalike_audience
         "
       >
         <template #subtitle-extended>
@@ -135,16 +135,13 @@
       <v-card class="rounded-lg card-style" minHeight="145px" flat>
         <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
           <div class="d-flex align-center">
-            <span class="text-h5">Engagement & delivery overview</span>
+            <span class="text-h5">Engagement &amp; delivery overview</span>
           </div>
           <div class="d-flex align-center">
-            <a
-              href="#"
-              class="d-flex align-center primary--text text-decoration-none"
-            >
-              <Icon type="engagements" :size="16" class="mr-1" />
+            <v-btn text color="primary">
+                <Icon type="engagements" :size="16" class="mr-1" />
               Add an Engagement
-            </a>
+              </v-btn>
           </div>
         </v-card-title>
         <v-progress-linear
@@ -279,6 +276,8 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
+
+      //TODO: Mock data for the Engagement
       engagements: [
         {
           id: 1,
