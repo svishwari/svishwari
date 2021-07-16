@@ -173,6 +173,11 @@ export const defineRoutes = (server) => {
       const destinationId = request.params.destinationId
       const engagement = schema.engagements.find(engagementId)
       const requestData = JSON.parse(request.requestBody)
+
+      engagement.campaignMappings.push(
+        // eslint-disable-next-line
+        ((obj = {}), (obj[destinationId] = requestData), obj)
+      )
       const audience = engagement.campaignPerformance[
         "adsPerformance"
       ].audience_performance.filter((aud) => aud.id === audienceId)
@@ -192,7 +197,7 @@ export const defineRoutes = (server) => {
             (entry) => (destination[0][entry[0]] = entry[1])
           )
           destination[0].is_mapped = true
-          destination
+          debugger
           const campaigns = requestData.campaigns.map((camp) => {
             const mockCamp = { ...countData }
             mockCamp["id"] = camp.id
@@ -212,8 +217,11 @@ export const defineRoutes = (server) => {
   )
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
-    (schema) => {
-      schema.campaigns.all()
+    (schema, request) => {
+      const engagementId = request.params.id
+      const destinationId = request.params.destinationId
+      const engagement = schema.engagements.find(engagementId)
+      return engagement.campaignMappings[destinationId] || []
     }
   )
   server.get("/engagements/:id/delivery-history", (schema, request) => {

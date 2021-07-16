@@ -15,7 +15,7 @@
         </span>
         <data-cards
           bordered
-          :items="Object.values(campaigns)"
+          :items="campaigns"
           :fields="[
             {
               key: 'campaign',
@@ -114,11 +114,10 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      campaigns: {
-        0: {
-          campaign: null,
-          delivery_job: null,
-        },
+      campaigns: [],
+      emptyCampaign: {
+        campaign: null,
+        delivery_job: null,
       },
       identityAttrs: {},
     }
@@ -134,13 +133,31 @@ export default {
   },
   computed: {
     ...mapGetters({
-      campaignMappings: "engagements/destinationCampaignMappings",
+      campaignMappingOptions: "engagements/campaignMappingOptions",
+      campaignMapping: "engagements/campaignMapping",
     }),
     campaignOptions() {
-      if (this.campaignMappings && this.campaignMappings.campaigns) {
-        return this.campaignMappings.campaigns
+      if (
+        this.campaignMappingOptions &&
+        this.campaignMappingOptions.campaigns
+      ) {
+        return this.campaignMappingOptions.campaigns
       }
       return []
+    },
+    mappings() {
+      if (Object.keys(this.campaigns || {})[0]) {
+        return {
+          0: {
+            campaign: null,
+            delivery_job: null,
+          },
+        }
+      } else {
+        // Object.value
+        // this.campaignOptions
+        return {}
+      }
     },
     canMapNow() {
       return Object.keys(this.campaigns).every(
@@ -149,7 +166,7 @@ export default {
       )
     },
     deliveryOptions() {
-      return this.campaignMappings.delivery_jobs
+      return this.campaignMappingOptions.delivery_jobs
     },
   },
   methods: {
@@ -157,15 +174,17 @@ export default {
       getCampaignMappingsOptions: "engagements/fetchCampaignMappings",
       getCampaigns: "engagements/getCampaigns",
     }),
-
-    closeDrawer() {
-      this.localToggle = false
-      this.campaigns = {
-        0: {
+    reset() {
+      this.campaigns = [
+        {
           campaign: null,
           delivery_job: null,
         },
-      }
+      ]
+    },
+    closeDrawer() {
+      this.localToggle = false
+      this.reset()
     },
     addNewMappingItem() {
       const key = new Date().getTime().toString()
@@ -203,15 +222,16 @@ export default {
         (option) => !selectedCampaigns.includes(option.name)
       )
     },
-    onCancelAndBack() {
-      this.$emit("onCancelAndBack")
-      this.reset()
-    },
     async loadCampaignMappings(attrs) {
+      this.reset()
       this.identityAttrs = attrs
       this.loading = true
       await this.getCampaigns(attrs)
       await this.getCampaignMappingsOptions(attrs)
+      const campaigns = await this.campaignMapping(attrs.destinationId)
+      // this.campaigns =
+      //   Object.keys(campaigns).length > 0 ? campaigns : this.emptyCampaign
+
       this.loading = false
     },
   },

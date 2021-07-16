@@ -51,4 +51,5 @@ export const engagement = {
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   status: () => "Active",
   campaignPerformance: {},
+  campaignMappings: {}, // This will enable us to maintain the mapping saved by user for the respective destination.
 }
