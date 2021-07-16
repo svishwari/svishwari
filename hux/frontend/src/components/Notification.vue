@@ -62,7 +62,10 @@ export default {
       getNotification: "notifications/getAll",
     }),
     alertRouters() {
-      this.$router.push({ name: "AlertsAndNotifications", query: { batch_size: 25 } })
+      this.$router.push({
+        name: "AlertsAndNotifications",
+        query: { batch_size: 25 },
+      })
     },
   },
   async mounted() {

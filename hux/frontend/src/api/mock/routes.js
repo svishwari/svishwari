@@ -231,11 +231,10 @@ export const defineRoutes = (server) => {
 
   // notification
   // server.get("/notifications")
- server.get("/notifications", (schema, request) => {
-   const value = request.queryParams.batch_size;
-   
+  server.get("/notifications", (schema, request) => {
+    const notifications = schema.notifications.all()
+    return notifications.slice(0, request.queryParams.batch_size)
   })
-  
 
   // audiences
   server.get("/audiences")

@@ -155,7 +155,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .notification-wrap {
-background: white;
+  background: white;
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }
