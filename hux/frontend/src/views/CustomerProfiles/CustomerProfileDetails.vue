@@ -120,66 +120,46 @@
                   <tbody>
                     <tr>
                       <td class="title-text">Email</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.email" class="blur-text"
-                          >{{ singleCustomer.email }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.email | Empty }}
                       </td>
                       <td class="title-text">Address</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.address" class="blur-text">
-                          {{ singleCustomer.address }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.address | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Phone</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.phone" class="blur-text">
-                          {{ singleCustomer.phone }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.phone | Empty }}
                       </td>
                       <td class="title-text">City</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.city" class="blur-text">
-                          {{ singleCustomer.city }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.city | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Age</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.age" class="blur-text">
-                          {{ singleCustomer.age }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.age | Empty }}
                       </td>
                       <td class="title-text">State</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.state" class="blur-text">
-                          {{ singleCustomer.state }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.state | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Gender</td>
                       <td class="table-text">
                         <span v-if="singleCustomer.gender" class="blur-text">
-                          {{ singleCustomer.gender }}
+                          {{ singleCustomer.gender | Empty }}
                         </span>
-                        <span v-else>-</span>
                       </td>
                       <td class="title-text">Zip</td>
                       <td class="table-text">
                         <span v-if="singleCustomer.zip" class="blur-text">
-                          {{ singleCustomer.zip }}
+                          {{ singleCustomer.zip | Empty }}
                         </span>
-                        <span v-else>-</span>
                       </td>
                     </tr>
                   </tbody>
