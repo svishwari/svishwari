@@ -29,7 +29,8 @@
             "
           >
             <v-card-title class="title-font-size">
-              {{ fullName }}
+              {{ this.singleCustomer.first_name }}
+              {{ this.singleCustomer.last_name }}
             </v-card-title>
             <v-card-text class="justify-center title-text pt-5 pb-5">
               <div>Hux ID</div>
@@ -58,14 +59,19 @@
                   </template>
                 </Tooltip>
               </div>
-              <span v-if="!data.slider" class="sample-card-text">{{
-                data.value
-              }}</span>
               <hux-slider
-                v-if="data.slider"
+                v-if="data.format === 'slider'"
                 :isRangeSlider="false"
                 :value="data.value"
               ></hux-slider>
+              <span v-else class="sample-card-text">
+                <template v-if="data.format === 'date-relative'">
+                  {{ data.value | Date("relative", true) | Empty }}
+                </template>
+                <template v-if="data.format === 'currency'">
+                  {{ data.value | Currency | Empty }}
+                </template>
+              </span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -210,6 +216,7 @@
 </template>
 
 <script>
+import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -262,6 +269,7 @@ export default {
     ...mapGetters({
       customer: "customers/single",
     }),
+
     singleCustomer() {
       return this.customer(this.$route.params.id)
     },
@@ -269,11 +277,7 @@ export default {
     id() {
       return this.$route.params.id
     },
-    fullName() {
-      let full_name =
-        this.singleCustomer.first_name + " " + this.singleCustomer.last_name
-      return full_name
-    },
+
     customerInsightsData() {
       const insightsData = [
         {
@@ -353,46 +357,48 @@ export default {
       return contactData.filter((item) => item.title !== null)
     },
     customerDataDisplay() {
-      const cusomerDeatils = [
+      return [
         {
           id: 1,
           title: "Customer length",
-          value: this.formattedDate(this.singleCustomer.since),
+          value: this.singleCustomer.since,
+          format: "date-relative",
           colValue: 2.5,
         },
         {
           id: 2,
           title: "Match confidence",
-          value: this.$options.filters.Empty(
-            this.singleCustomer.match_confidence
-          ),
+          value: this.singleCustomer.match_confidence,
+          format: "slider",
           colValue: 2.5,
-          slider: true,
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
         },
         {
           id: 3,
           title: "Lifetime value",
-          value: this.singleCustomer.ltv_actual
-            ? "$" + this.singleCustomer.ltv_actual
-            : "-",
+          value: this.singleCustomer.ltv_actual,
+          format: "currency",
           colValue: 2,
           hoverTooltip:
             "Assessment of the lifetime financial value of each customer.",
         },
         {
+          // this value from the API is a number of months (float).
+          // we first convert it to a date (eg. months ago)
+          // then display this date as relative time (x days, months, years, etc)
           id: 4,
           title: "Conversion time",
-          value: this.$options.filters.Empty(
-            this.formattedDate(this.singleCustomer.conversion_time)
+          value: moment().subtract(
+            this.singleCustomer.conversion_time,
+            "month"
           ),
+          format: "date-relative",
           colValue: 2.5,
           hoverTooltip:
             "The average time customer takes to convert to a purchase.",
         },
       ]
-      return cusomerDeatils
     },
     customerDetailsMore() {
       const details = [

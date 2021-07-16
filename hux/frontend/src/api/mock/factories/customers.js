@@ -101,9 +101,10 @@ export const customerProfile = {
 
   address: REDACTED,
   age: REDACTED,
-  churn_rate: () => someScore(),
+  churn_rate: () => faker.datatype.number(1, 10),
   city: REDACTED,
-  conversion_time: () => faker.datatype.number(365),
+  conversion_time: () =>
+    faker.datatype.float({ min: 1, max: 24, precision: 0.01 }),
   email: REDACTED,
   gender: REDACTED,
   identity_resolution: {
