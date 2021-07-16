@@ -230,7 +230,11 @@ export const defineRoutes = (server) => {
   server.get("/idr/overview", () => idrOverview)
 
   // notification
-  server.get("/notifications")
+  // server.get("/notifications")
+  server.get("/notifications", (schema, request) => {
+    const notifications = schema.notifications.all()
+    return notifications.slice(0, request.queryParams.batch_size)
+  })
 
   // audiences
   server.get("/audiences")

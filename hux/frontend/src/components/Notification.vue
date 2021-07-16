@@ -54,7 +54,7 @@ export default {
       notification: "notifications/list",
     }),
     getNotificationData() {
-      return this.notification
+      return this.notification.slice(0, 5)
     },
   },
   methods: {
@@ -62,11 +62,14 @@ export default {
       getNotification: "notifications/getAll",
     }),
     alertRouters() {
-      this.$router.push({ name: "AlertsAndNotifications" })
+      this.$router.push({
+        name: "AlertsAndNotifications",
+        query: { batch_size: 25 },
+      })
     },
   },
   async mounted() {
-    await this.getNotification()
+    await this.getNotification(5)
   },
 }
 </script>
