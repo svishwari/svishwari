@@ -21,7 +21,6 @@ from huxunify.api.route.utils import (
     get_db_client,
     api_error_handler,
     secured,
-    get_friendly_delivered_time,
 )
 from huxunify.api.schema.orchestration import DeliveryHistorySchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -221,7 +220,10 @@ class EngagementDeliverDestinationView(SwaggerView):
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
         ):
-            if pair != [audience_id, destination_id]:
+            if [pair[0], pair[1][db_c.OBJECT_ID]] != [
+                audience_id,
+                destination_id,
+            ]:
                 continue
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
@@ -530,33 +532,44 @@ class EngagementDeliverHistoryView(SwaggerView):
             Tuple[dict, int]: Delivery history, HTTP Status.
         """
 
+        # validate object id
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+
+        # convert the engagement ID
+        engagement_id = ObjectId(engagement_id)
+
+        # check if engagement exists
         database = get_db_client()
-
         engagement = get_engagement(database, engagement_id)
+        if not engagement:
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, engagement_id=engagement_id
+            )
+        )
         delivery_history = []
-        for pair in get_audience_destination_pairs(
-            engagement[api_c.AUDIENCES]
-        ):
-            audience = orchestration_management.get_audience(database, pair[0])
-            destination = delivery_platform_management.get_delivery_platform(
-                database, pair[1].get(api_c.ID)
-            )
-            delivery_job = delivery_platform_management.get_delivery_job(
-                database, pair[1].get(api_c.DELIVERY_JOB_ID)
-            )
-            if delivery_job and delivery_job.get(db_c.JOB_END_TIME):
+        for job in delivery_jobs:
+            if (
+                job.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED
+                and job.get(api_c.AUDIENCE_ID)
+                and job.get(db_c.DELIVERY_PLATFORM_ID)
+            ):
                 delivery_history.append(
                     {
-                        api_c.AUDIENCE: audience.get(api_c.AUDIENCE_NAME),
-                        api_c.DESTINATION: destination.get(
-                            api_c.DESTINATION_NAME
+                        api_c.AUDIENCE: orchestration_management.get_audience(
+                            database, job.get(api_c.AUDIENCE_ID)
                         ),
-                        api_c.SIZE: randrange(10000000),
+                        api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
+                            database, job.get(db_c.DELIVERY_PLATFORM_ID)
+                        ),
                         # TODO : Get audience size from CDM
-                        api_c.DELIVERED: get_friendly_delivered_time(
-                            delivery_job.get(db_c.JOB_END_TIME)
-                        ),
+                        api_c.SIZE: randrange(10000000),
+                        api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
                     }
                 )
 

@@ -1,0 +1,8 @@
+---
+name: integration test includes
+description: used for sharing anything common in the test scripts
+
+variables:
+  host: https://unified-api-dev.main.use1.hux-unified-dev1.in
+  version: api/v1
+  token: ""
