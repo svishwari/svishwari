@@ -139,9 +139,7 @@ import Avatar from "@/components/common/Avatar.vue"
 import Size from "@/components/common/huxTable/Size.vue"
 import TimeStamp from "@/components/common/huxTable/TimeStamp.vue"
 import MenuCell from "@/components/common/huxTable/MenuCell.vue"
-
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience"
-// import Lookalike from "@/assets/logos/lookalike.svg"
 import Icon from "@/components/common/Icon.vue"
 
 export default {

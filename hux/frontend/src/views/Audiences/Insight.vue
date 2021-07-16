@@ -2,7 +2,7 @@
   <div class="audience-insight-wrap">
     <PageHeader class="background-border" :headerHeightChanges="'py-3'">
       <template #left>
-        <Breadcrumb :items="items" />
+        <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
         <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
@@ -46,7 +46,7 @@
         </template>
       </MetricCard>
       <MetricCard
-        class="ma-2 audience-summary card-width original-audience"
+        class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
         v-if="
@@ -64,7 +64,7 @@
       <MetricCard
         class="ma-2 audience-summary"
         :grow="0"
-        :title="'Original . Actual size'"
+        :title="'Original • Actual size'"
         v-if="
           audience.lookalike_audience
         "
@@ -72,10 +72,7 @@
         <template #subtitle-extended>
           <span class="mr-2">
             <span class="neroBlack--text font-weight-semi-bold">
-              <size :value="audience.size" />
-              <v-icon size="8" color="neroBlack" class="mr-1 ml-1">
-                mdi-checkbox-blank-circle
-              </v-icon>
+              <size :value="audience.size" /> &bull;
               <size :value="audience.size" />
             </span>
           </span>
@@ -138,9 +135,13 @@
             <span class="text-h5">Engagement &amp; delivery overview</span>
           </div>
           <div class="d-flex align-center">
-            <v-btn text color="primary">
-                <Icon type="engagements" :size="16" class="mr-1" />
-              Add an Engagement
+               <v-btn
+                text
+                class="d-flex align-center primary--text text-decoration-none"
+                disabled
+              >
+                <Icon type="audiences" :size="16" class="mr-1" />
+                 Add an Engagement
               </v-btn>
           </div>
         </v-card-title>
@@ -310,6 +311,35 @@ export default {
       return this.getAudience(this.$route.params.id)
     },
 
+    breadcrumbItems() {
+      const items = [
+        {
+          text: "Audiences",
+          disabled: false,
+          href: "/audiences",
+          icon: "audiences",
+        },
+      ]
+      if (this.audience) {
+        if (this.audience.lookalike_audience == true) {
+        items.push({
+          text: this.audience.name,
+          disabled: true,
+          href: this.$route.path,
+          icon: "lookalike",
+          size: 12,
+        })
+      }
+      else {
+        items.push({
+         text: this.audience.name,
+          disabled: true,
+          href: this.$route.path,
+        })
+      }
+       return items
+      }
+    },
     /**
      * This computed property is converting the audience filters conditions
      * into groups of fiters and having custom keys which are needed
@@ -489,4 +519,5 @@ export default {
 .card-width {
   width: 156px !important;
 }
+
 </style>
