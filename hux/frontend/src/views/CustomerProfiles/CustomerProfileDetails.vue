@@ -33,6 +33,7 @@
               {{ this.singleCustomer.last_name }}
             </v-card-title>
             <v-card-text class="justify-center title-text pt-5 pb-5">
+              <icon type="smile" :size="16" color="blue" class="mb-1" />
               <div>Hux ID</div>
               <span class="id-size">{{ singleCustomer.hux_id }} </span>
             </v-card-text>
