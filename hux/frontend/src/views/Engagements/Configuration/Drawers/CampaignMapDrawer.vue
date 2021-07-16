@@ -15,7 +15,7 @@
         </span>
         <data-cards
           bordered
-          :items="campaigns"
+          :items="mappings"
           :fields="[
             {
               key: 'campaign',
@@ -146,24 +146,21 @@ export default {
       return []
     },
     mappings() {
-      if (Object.keys(this.campaigns || {})[0]) {
-        return {
-          0: {
-            campaign: null,
-            delivery_job: null,
-          },
-        }
-      } else {
-        // Object.value
-        // this.campaignOptions
-        return {}
-      }
+      return this.campaigns.map((camp) => {
+        return camp["id"]
+          ? {
+              campaign: this.campaignMappingOptions.campaigns.filter(
+                (camOpt) => camOpt.id === camp.id
+              )[0],
+              delivery_job: this.campaignMappingOptions.delivery_jobs.filter(
+                (camOpt) => camOpt.id === camp.delivery_job_id
+              )[0],
+            }
+          : camp
+      })
     },
     canMapNow() {
-      return Object.keys(this.campaigns).every(
-        (key) =>
-          this.campaigns[key].campaign && this.campaigns[key].delivery_job
-      )
+      return this.mappings.every((camp) => camp.campaign && camp.delivery_job)
     },
     deliveryOptions() {
       return this.campaignMappingOptions.delivery_jobs
@@ -187,20 +184,16 @@ export default {
       this.reset()
     },
     addNewMappingItem() {
-      const key = new Date().getTime().toString()
-      this.$set(this.campaigns, key, {
-        campaign: null,
-        delivery_job: null,
-      })
+      this.campaigns.push(JSON.parse(JSON.stringify(this.emptyCampaign)))
     },
     removeMapping(index) {
-      this.$delete(this.campaigns, Object.keys(this.campaigns)[index])
+      this.campaigns.splice(index, 1)
     },
     canAddNewMapping(index) {
-      return Object.values(this.campaigns).length - 1 === index
+      return this.campaigns.length - 1 === index
     },
     canDeleteMapping() {
-      return Object.values(this.campaigns).length > 1
+      return this.campaigns.length > 1
     },
     onSelectedItem(item, value, type) {
       item.item[type] = value
@@ -208,15 +201,13 @@ export default {
     mapSelections() {
       this.localToggle = false
       this.$emit("onCampaignMappings", {
-        mappings: this.campaigns,
+        mappings: this.mappings,
         attrs: this.identityAttrs,
       })
     },
     avaialableCampaignsOptions() {
-      const selectedCampaigns = Object.keys(this.campaigns).map(
-        (key) =>
-          (this.campaigns[key].campaign && this.campaigns[key].campaign.name) ||
-          ""
+      const selectedCampaigns = this.mappings.map(
+        (camp) => camp.campaign && camp.campaign.name
       )
       return this.campaignOptions.filter(
         (option) => !selectedCampaigns.includes(option.name)
@@ -229,9 +220,10 @@ export default {
       await this.getCampaigns(attrs)
       await this.getCampaignMappingsOptions(attrs)
       const campaigns = await this.campaignMapping(attrs.destinationId)
-      // this.campaigns =
-      //   Object.keys(campaigns).length > 0 ? campaigns : this.emptyCampaign
-
+      this.campaigns =
+        campaigns.length > 0
+          ? campaigns
+          : [JSON.parse(JSON.stringify(this.emptyCampaign))]
       this.loading = false
     },
   },

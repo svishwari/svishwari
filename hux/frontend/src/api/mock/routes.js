@@ -174,10 +174,7 @@ export const defineRoutes = (server) => {
       const engagement = schema.engagements.find(engagementId)
       const requestData = JSON.parse(request.requestBody)
 
-      engagement.campaignMappings.push(
-        // eslint-disable-next-line
-        ((obj = {}), (obj[destinationId] = requestData), obj)
-      )
+      engagement.campaignMappings[destinationId] = requestData.campaigns
       const audience = engagement.campaignPerformance[
         "adsPerformance"
       ].audience_performance.filter((aud) => aud.id === audienceId)
@@ -197,7 +194,6 @@ export const defineRoutes = (server) => {
             (entry) => (destination[0][entry[0]] = entry[1])
           )
           destination[0].is_mapped = true
-          debugger
           const campaigns = requestData.campaigns.map((camp) => {
             const mockCamp = { ...countData }
             mockCamp["id"] = camp.id
