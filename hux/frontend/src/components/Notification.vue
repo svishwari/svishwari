@@ -54,7 +54,7 @@ export default {
       notification: "notifications/list",
     }),
     getNotificationData() {
-      return this.notification
+      return this.notification.slice(0, 5)
     },
   },
   methods: {
