@@ -8,11 +8,13 @@ from typing import Any, Tuple
 from http import HTTPStatus
 from bson import ObjectId
 
+import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
 from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
+from marshmallow import ValidationError
 
 from huxunifylib.connectors.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
@@ -36,9 +38,6 @@ from huxunify.api.data_connectors.okta import (
     get_user_info,
 )
 from huxunify.api.data_connectors.cdp import check_cdm_api_connection
-
-import facebook_business.exceptions
-from marshmallow import ValidationError
 
 
 def add_view_to_blueprint(self, rule: str, endpoint: str, **options) -> object:
