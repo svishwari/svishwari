@@ -54,14 +54,6 @@
             <div>
               <label class="d-flex align-items-center">
                 <span class="neroBlack--text text-caption">Journey type</span>
-                <Tooltip positionTop>
-                  <template #label-content>
-                    <v-icon color="primary" size="small" class="ml-2 mb-2">
-                      mdi-alert-circle-outline
-                    </v-icon>
-                  </template>
-                  <template #hover-content> Type of journey </template>
-                </Tooltip>
               </label>
               <v-radio-group v-model="journeyType" row>
                 <v-radio value="radio-1">
@@ -180,7 +172,6 @@ import Drawer from "@/components/common/Drawer"
 import HuxButton from "@/components/common/huxButton"
 import Logo from "@/components/common/Logo"
 import TextField from "@/components/common/TextField"
-import Tooltip from "@/components/common/Tooltip"
 import extensionInactive1 from "@/assets/logos/extension-inactive-1.svg"
 import extensionInactive2 from "@/assets/logos/extension-inactive-2.svg"
 export default {
@@ -193,7 +184,6 @@ export default {
     TextField,
     extensionInactive1,
     extensionInactive2,
-    Tooltip,
   },
 
   computed: {
