@@ -14,9 +14,9 @@ The API is UI-driven.
       * [Setup](#setup)
       * [Connecting to the UNIFIED Environment.](#connecting-to-the-unified-environment)
       * [Generating AWS Credentials](#generating-aws-credentials)
-      * [saml2aws setup - Windows](#saml2aws-setup---Windows)
-         * [Chocolatey](#chocolatey)
-         * [saml2aws](#saml2aws)
+         * [saml2aws Setup - Windows](#saml2aws-Setup---Windows)
+            * [Chocolatey](#chocolatey)
+            * [saml2aws](#saml2aws)
       * [Software Dependencies](#software-dependencies)
          * [Flasgger](#flasgger)
          * [flask-marshmallow](#flask-marshmallow)
@@ -108,7 +108,7 @@ For connecting to AWS, a user must generate AWS credentials via OKTA.
 Instructions can be found here
  - [Accessing AWS Console](https://confluence.hux.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-AWSConsoleAccessapp)
 
-### saml2aws setup - Windows
+### saml2aws Setup - Windows
 Following are some useful tips to take into consideration for installing "chocolatey" and "saml2aws" on Windows
 
 #### Chocolatey
@@ -118,7 +118,44 @@ Following are some useful tips to take into consideration for installing "chocol
 4. If there are any errors/issues observed during "Administrative Installation", then fallback to "Non-Administrative Installation" as described in [Chocolatey Non-Administrative Installation](https://docs.chocolatey.org/en-us/choco/setup#non-administrative-install)
 
 #### saml2aws
-1. When configuring a saml2aws profile as mentioned in this [Confluence Page](https://confluence.hux.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-saml2aws), select **"PUSH"** option for **"MFA"** in order to receive push notification on the MFA method that is enabled. This will help in not having to enter the 6 digits authenticator code everytime.
+1. When configuring a saml2aws profile mentioned here in this [page](https://confluence.hux.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-saml2aws), select **"PUSH"** option for **"MFA"** in order to receive push notification on the MFA method that is enabled. This will help in not having to enter the 6 digits authenticator code everytime.
+2. Choosing **"PUSH"** for **"MFA"** while configuring the saml2aws profile will show the below snippet in cmd prompt.
+```
+Please choose a provider: Okta
+Please choose an MFA: PUSH
+AWS Profile: aws_profile
+URL: https://deloittedigital-ms.okta.com/home/amazon_aws/0oa8wpt9wly7Pf3gm2p7/272
+Username: <your_Okta_username>
+Password: <your_Okta_password>
+Confirm: <your_password>
+```
+3. This MFA method can also be modified at a later time too as needed in **C:\Users\<WINDOWS_USER>\.saml2aws** file. Notice the value for **"mfa"** to be set to **"PUSH"**.
+```
+[okta_provider]
+name                    = [okta_provider]
+app_id                  =
+url                     = https://deloittedigital-ms.okta.com/home/amazon_aws/0oa8wpt9wly7Pf3gm2p7/272
+username                = <your_Okta_username>
+provider                = Okta
+mfa                     = PUSH
+skip_verify             = false
+timeout                 = 0
+aws_urn                 = urn:amazon:webservices
+aws_session_duration    = 3600
+aws_profile             = aws_profile
+resource_id             =
+subdomain               =
+role_arn                =
+region                  =
+http_attempts_count     =
+http_retry_delay        = 
+credentials_file        = 
+saml_cache              = false
+saml_cache_file         = 
+target_url              = 
+disable_remember_device = false
+disable_sessions        = false
+```
 
 ### Software Dependencies
 
