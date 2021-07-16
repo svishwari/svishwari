@@ -1433,6 +1433,7 @@ class TestEngagementRoutes(TestCase):
             .replace(second=0, microsecond=0)
             .isoformat(),
         }
+        print(update_doc[api_c.DELIVERY_SCHEDULE])
 
         response = self.app.put(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
@@ -1448,10 +1449,10 @@ class TestEngagementRoutes(TestCase):
         for key in [api_c.START_DATE, api_c.END_DATE]:
             self.assertIn(key, response_body[api_c.DELIVERY_SCHEDULE])
             response_datetime = datetime.fromisoformat(
-                response_body[api_c.DELIVERY_SCHEDULE][key]
+                response_body[api_c.DELIVERY_SCHEDULE][key][:-1]
             )
             expected_datetime = datetime.fromisoformat(
-                update_doc[api_c.DELIVERY_SCHEDULE][key]
+                update_doc[api_c.DELIVERY_SCHEDULE][key][:-1]
             )
 
             # for some reason document DB does not main microsecond precision.
