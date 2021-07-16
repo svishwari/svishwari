@@ -61,7 +61,7 @@ class TestDeliveryRoutes(TestCase):
 
         # mock get db client from orchestration
         mock.patch(
-            "huxunify.api.route.orchestration.get_db_client",
+            "huxunify.api.route.delivery.get_db_client",
             return_value=self.database,
         ).start()
 
@@ -341,9 +341,9 @@ class TestDeliveryRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Engagement does not exist."}
+        valid_response = {"message": api_c.ENGAGEMENT_NOT_FOUND}
 
-        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         self.assertEqual(response.json, valid_response)
 
     def test_deliver_destination_for_unattached_audience(self):
@@ -453,7 +453,7 @@ class TestDeliveryRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        valid_response = {"message": "Invalid Object ID"}
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(valid_response, response.json)
@@ -498,3 +498,44 @@ class TestDeliveryRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_get_delivery_history_by_id_valid_id(self):
+        """
+        Test get delivery history API with valid id
+
+        Args:
+
+        Returns:
+
+        """
+
+        engagement_id = self.engagement_ids[0]
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_get_delivery_history_by_id_non_existent_id(self):
+        """
+        Test get delivery history API with non-existent id
+
+        Args:
+
+        Returns:
+
+        """
+
+        engagement_id = str(ObjectId())
+
+        valid_response = {"message": "Engagement not found."}
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)

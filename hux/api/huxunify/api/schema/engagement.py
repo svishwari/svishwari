@@ -8,6 +8,7 @@ from marshmallow import fields, validate, pre_load
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
+from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
 class DeliverySchedule(Schema):
@@ -15,8 +16,8 @@ class DeliverySchedule(Schema):
     Delivery Schedule schema
     """
 
-    start_date = fields.DateTime(allow_none=True)
-    end_date = fields.DateTime(allow_none=True)
+    start_date = DateTimeWithZ(allow_none=True)
+    end_date = DateTimeWithZ(allow_none=True)
 
 
 class EngagementPostSchema(Schema):
@@ -306,7 +307,7 @@ class CampaignSchema(Schema):
         example="5f5f7262997acad4bac4373b",
         validate=validate_object_id,
     )
-    create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
 
 
 class CampaignPutSchema(Schema):
@@ -346,7 +347,7 @@ class DeliveryJobSchema(Schema):
         example="5f5f7262997acad4bac4373b",
         validate=validate_object_id,
     )
-    create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
 
 
 class CampaignMappingSchema(Schema):
@@ -378,7 +379,7 @@ class LatestDeliverySchema(Schema):
 
     id = fields.String()
     status = fields.String()
-    update_time = fields.DateTime()
+    update_time = DateTimeWithZ()
     size = fields.Int(default=1000)
 
 
@@ -443,9 +444,9 @@ class EngagementGetSchema(Schema):
         required=False,
         attribute=api_c.DELIVERY_SCHEDULE,
     )
-    create_time = fields.DateTime(attribute=db_c.CREATE_TIME)
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME)
     created_by = fields.String(attribute=db_c.CREATED_BY)
-    update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
 
@@ -466,11 +467,21 @@ def weighted_engagement_status(engagements: list) -> list:
         status_ranks = []
 
         # process each audience
+        audiences = []
         for audience in engagement[api_c.AUDIENCES]:
+            if db_c.OBJECT_ID not in audience:
+                # only add audience if it is valid and has an id.
+                continue
+
             audience_status_rank = []
 
             # process each destination
+            destinations = []
             for destination in audience[api_c.DESTINATIONS]:
+                if db_c.OBJECT_ID not in destination:
+                    # only add destination if it is valid and has an id.
+                    continue
+
                 if api_c.LATEST_DELIVERY not in destination:
                     continue
 
@@ -502,6 +513,9 @@ def weighted_engagement_status(engagements: list) -> list:
                 }
                 status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
+                destinations.append(destination)
+
+            audience[api_c.DESTINATIONS] = destinations
 
             # sort delivery status list of dict by weight.
             audience_status_rank.sort(key=lambda x: x[api_c.WEIGHT])
@@ -512,6 +526,9 @@ def weighted_engagement_status(engagements: list) -> list:
                 if audience_status_rank
                 else api_c.STATUS_NOT_DELIVERED
             )
+            audiences.append(audience)
+
+        engagement[api_c.AUDIENCES] = audiences
 
         # sort delivery status list of dict by weight.
         status_ranks.sort(key=lambda x: x[api_c.WEIGHT])

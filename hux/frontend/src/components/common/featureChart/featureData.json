@@ -1,0 +1,104 @@
+{
+  "featureList": [
+    {
+      "name": "feature1upto20characters1",
+      "description": "Here is the description what feature does",
+      "score": 0.3
+    },
+    {
+      "name": "feature2upto20characters2",
+      "description": "Here is the description what feature does",
+      "score": 0.8
+    },
+    {
+      "name": "feature3upto20characters3",
+      "description": "Here is the description what feature does",
+      "score": 1.9
+    },
+    {
+      "name": "feature4upto20characters4",
+      "description": "Here is the description what feature does",
+      "score": 2.8
+    },
+    {
+      "name": "feature5upto20characters5",
+      "description": "Here is the description what feature does",
+      "score": 2.5
+    },
+    {
+      "name": "feature6upto20characters6",
+      "description": "Here is the description what feature does",
+      "score": 1.7
+    },
+    {
+      "name": "feature7upto20characters7",
+      "description": "Here is the description what feature does",
+      "score": 0.7
+    },
+    {
+      "name": "feature8upto20characters8",
+      "description": "Here is the description what feature does",
+      "score": 0.4
+    },
+    {
+      "name": "feature9upto20characters9",
+      "description": "Here is the description what feature does",
+      "score": 1.4
+    },
+    {
+      "name": "feature10upto20characters10",
+      "description": "Here is the description what feature does",
+      "score": 2.3
+    },
+    {
+      "name": "feature11upto20characters11",
+      "description": "Here is the description what feature does",
+      "score": 1.2
+    },
+    {
+      "name": "feature12upto20characters12",
+      "description": "Here is the description what feature does",
+      "score": 2.2
+    },
+    {
+      "name": "feature13upto20characters13",
+      "description": "Here is the description what feature does",
+      "score": 0.2
+    },
+    {
+      "name": "feature14upto20characters14",
+      "description": "Here is the description what feature does",
+      "score": 0.9
+    },
+    {
+      "name": "feature15upto20characters15",
+      "description": "Here is the description what feature does",
+      "score": 1.1
+    },
+    {
+      "name": "feature16upto20characters16",
+      "description": "Here is the description what feature does",
+      "score": 2.1
+    },
+    {
+      "name": "feature17upto20characters17",
+      "description": "Here is the description what feature does",
+      "score": 0.3
+    },
+    {
+      "name": "feature18upto20characters18",
+      "description": "Here is the description what feature does",
+      "score": 1.7
+    },
+    {
+      "name": "feature19upto20characters19",
+      "description": "Here is the description what feature does",
+      "score": 2.5
+    },
+    {
+      "name": "feature20upto20characters20",
+      "description": "Here is the description what feature does",
+      "score": 0.5
+    }
+  ]
+}
