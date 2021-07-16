@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: lift chart -->
   <hux-data-table :headers="headers" :dataItems="data" disableSort>
     <template #row-item="{ item }">
       <td
