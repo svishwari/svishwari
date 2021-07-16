@@ -9,10 +9,14 @@ The API is UI-driven.
 
 * [Hux Unified API](#hux-unified-api)
    * [Installation](#installation)
+      * [Load custom artifacts](#load-custom-artifacts)
    * [Environment Variables](#environment-variables)
       * [Setup](#setup)
       * [Connecting to the UNIFIED Environment.](#connecting-to-the-unified-environment)
       * [Generating AWS Credentials](#generating-aws-credentials)
+      * [saml2aws setup - Windows](#saml2aws-setup---Windows)
+         * [Chocolatey](#chocolatey)
+         * [saml2aws](#saml2aws)
       * [Software Dependencies](#software-dependencies)
          * [Flasgger](#flasgger)
          * [flask-marshmallow](#flask-marshmallow)
@@ -49,6 +53,18 @@ cd hux-unified/hux/api
 
 # install pipenv
 pip install pipenv
+```
+
+### Load custom artifacts
+Follow the below steps to get the custom artifactory set to session path
+1. Access JFrog via Okta Dashboard
+2. On JFrog page - click on "Edit Profile" by selecting account name on top right 
+3. Generate a new API Key under "Authentication Settings" and copy it
+4. Proceed with the following commands
+
+```
+# set custom artifactory
+set ARTIFACTORY_PYTHON_READ=https://<OKTA_USER_NAME>@deloitte.com:<GENERATED_JFROG_API_KEY>@repo.mgnt.in/artifactory/api/pypi/python/simple
 
 # run pipenv install
 pipenv install
@@ -65,7 +81,7 @@ https://github.com/henriquebastos/python-decouple
 Decouple always searches for Options in this order:
 1. Environment variables
 2. Repository: ini or .env file
-3. Default argument passed to config.
+3. Default argument passed to config
 
 ### Setup
 
@@ -85,18 +101,29 @@ cp template-settings.ini settings.ini
 ### Connecting to the UNIFIED Environment.
 A user must be connected to the AWS VPN for accessing the database and unified domains.
 Instructions for connection can be followed here
- - [AWS Client VPN](https://confluence.marketingservices.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-AWSClientVPNapp)
+ - [AWS Client VPN](https://confluence.hux.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-AWSClientVPNapp)
 
 ### Generating AWS Credentials
 For connecting to AWS, a user must generate AWS credentials via OKTA.
 Instructions can be found here
- - [Accessing AWS Console](https://confluence.marketingservices.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-AWSConsoleAccessapp)
+ - [Accessing AWS Console](https://confluence.hux.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-AWSConsoleAccessapp)
+
+### saml2aws setup - Windows
+Following are some useful tips to take into consideration for installing "chocolatey" and "saml2aws" on Windows
+
+#### Chocolatey
+1. Try the installation method mentioned as "Administrative Installation" as a first option as described at [Chocolatey Administrative Installation](https://chocolatey.org/install)
+2. Ensure to perform this on Powershell open with elevated administrative privileges
+3. It is important to open and close the Powershell window as needed after executing each command to avoid incorrect errors during validation of installation
+4. If there are any errors/issues observed during "Administrative Installation", then fallback to "Non-Administrative Installation" as described in [Chocolatey Non-Administrative Installation](https://docs.chocolatey.org/en-us/choco/setup#non-administrative-install)
+
+#### saml2aws
+1. When configuring a saml2aws profile as mentioned in this [Confluence Page](https://confluence.hux.deloitte.com/pages/viewpage.action?spaceKey=TO&title=How-To%3A+Authenticate+to+AWS+console%2C+API%2C+terragrunt%2C+VPN+using+Okta+for+End+Users#HowTo:AuthenticatetoAWSconsole,API,terragrunt,VPNusingOktaforEndUsers-saml2aws), select **"PUSH"** option for **"MFA"** in order to receive push notification on the MFA method that is enabled. This will help in not having to enter the 6 digits authenticator code everytime.
 
 ### Software Dependencies
 
 Python Version
 * Python 3.7
-
 
 #### Flasgger
 Flasgger is a Flask extension to **extract [OpenAPI-Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#operation-object)**
