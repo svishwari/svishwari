@@ -434,8 +434,8 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(doc is None)
 
     @mongomock.patch(servers=(("localhost", 27017),))
-    def test_delete_smoke_test_trails(self):
-        """Test deletion of smoke test trails"""
+    def test_delete_perfromance_metrics_by_delivery_job_id(self):
+        """Test delivery job deletion by id"""
         # set delivery platform connection status
         auth_details = {
             "facebook_access_token": "path1",
@@ -463,6 +463,7 @@ class TestUtils(unittest.TestCase):
             delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
         )
+
         # set synthetic perfromance metrics
         dpm.set_performance_metrics(
             database=self.database,
@@ -480,9 +481,18 @@ class TestUtils(unittest.TestCase):
             start_time="2021-07-05T00:00:00.000+00:00",
             end_time="2021-07-06T00:00:00.000+00:00",
         )
-        success_flag = delete_util.delete_smoke_test_trails(
+
+        success_flag = delete_util.delete_delivery_job_by_id(
             database=self.database,
             delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+        )
+        self.assertTrue(success_flag)
+
+        success_flag = (
+            delete_util.delete_performance_metrics_by_delivery_job_id(
+                database=self.database,
+                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            )
         )
         self.assertTrue(success_flag)
 

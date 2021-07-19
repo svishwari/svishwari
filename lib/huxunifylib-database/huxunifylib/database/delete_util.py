@@ -291,11 +291,11 @@ def delete_delivery_job(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def delete_smoke_test_trails(
+def delete_delivery_job_by_id(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
 ) -> bool:
-    """A function to hard delete a delivery job and its perfromance metrics if exists.
+    """A function to hard delete a delivery job by delivery_job_id.
 
     Args:
         database (DatabaseClient): A database client.
@@ -308,12 +308,41 @@ def delete_smoke_test_trails(
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     delivery_jobs_collecltion = am_db[c.DELIVERY_JOBS_COLLECTION]
+
+    try:
+        delivery_jobs_collecltion.delete_one({c.ID: delivery_job_id})
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_performance_metrics_by_delivery_job_id(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> bool:
+    """
+    A function to hard delete a perfromance metrics doc if exists
+    by a delivery_job_id.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_job_id (ObjectId): MongoDB document ID of delivery job.
+
+    Returns:
+        bool: A flag indicating successful deletion.
+
+    """
+
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
     perf_metrics_collection = am_db[c.PERFORMANCE_METRICS_COLLECTION]
 
     try:
-        # delete smoke test delivery job from delivery jobs collection
-        delivery_jobs_collecltion.delete_one({c.ID: delivery_job_id})
-        # delete smoke test perfromance metrics document if exists
         perf_metrics_collection.delete_one(
             {c.DELIVERY_JOB_ID: delivery_job_id}
         )
