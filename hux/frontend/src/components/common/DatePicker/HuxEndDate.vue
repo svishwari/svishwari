@@ -30,8 +30,9 @@
           iconPosition="right"
           tile
           class="ma-2 main-button pr-1"
+          :isDisabled="isDisabled"
         >
-          {{ selected }}
+          {{ selected || "Select date" }}
         </huxButton>
       </template>
       <v-list>
@@ -100,10 +101,11 @@ export default {
   components: {
     huxButton,
   },
-  computed: {},
   props: {
     selected: {
-      type: [Object, String],
+      type: String,
+      required: false,
+      default: "Select date",
     },
     label: {
       type: String,
@@ -122,6 +124,10 @@ export default {
     minDate: {
       type: String,
       required: false,
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
