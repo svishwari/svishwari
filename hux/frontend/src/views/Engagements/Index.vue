@@ -140,7 +140,7 @@
                   'child-row': header.value == 'name',
                 }"
               >
-                <div v-if="header.value == 'name'">
+                <div v-if="header.value == 'name'" class="ml-4">
                   <tooltip>
                     <template #label-content>
                       <router-link
@@ -167,17 +167,17 @@
                   {{ item[header.value] }}
                 </div>
                 <div v-if="header.value == 'update_time'">
-                  <div class="ml-16 pl-4" style="width: max-content">
+                  <div class="ml-16 pl-6" style="width: max-content">
                     <time-stamp :value="item['create_time']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'updated_by'">
-                  <div class="ml-16 pl-7">
+                  <div class="ml-16 pl-8">
                     <Avatar :name="item['created_by']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
-                  <div class="ml-10">
+                  <div class="ml-11">
                     <time-stamp :value="item[header.value]" />
                   </div>
                 </div>
@@ -420,6 +420,13 @@ export default {
                 width: auto !important;
               }
             }
+          }
+        }
+      }
+      tbody {
+        tr:last-child {
+          td {
+            border-bottom: 1px solid var(--v-lightGrey-base) !important;
           }
         }
       }
