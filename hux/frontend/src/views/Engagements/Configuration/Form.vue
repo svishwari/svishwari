@@ -59,19 +59,19 @@
             row
             class="ma-0 radio-div"
           >
-            <v-radio :value="0" selected class="btn-radio">
+            <v-radio :value="0" selected :class="value.delivery_schedule == 0 ? 'btn-radio-active' : 'btn-radio-inactive' ">
               <template #label>
-                <v-icon small :color="value.delivery_schedule == 0 ? 'primary' : ''" class="mr-1">
+                <v-icon small color="primary" class="mr-1">
                   mdi-gesture-tap
                 </v-icon>
-                <span :class="{ 'primary--text': value.delivery_schedule == 0 }">Manual</span>
+                <span class="primary--text">Manual</span>
               </template>
             </v-radio>
 
-            <v-radio :value="1" class="btn-radio">
+            <v-radio :value="1" :class="value.delivery_schedule == 1 ? 'btn-radio-active' : 'btn-radio-inactive' ">
               <template #label>
-                <v-icon small :color="value.delivery_schedule == 1 ? 'primary' : ''" class="mr-1">mdi-clock-check-outline</v-icon>
-                <span :class="{ 'primary--text': value.delivery_schedule == 1 }" >Recurring</span>
+                <v-icon small color="primary" class="mr-1">mdi-clock-check-outline</v-icon>
+                <span class="primary--text" >Recurring</span>
               </template>
             </v-radio>
           </v-radio-group>
@@ -496,13 +496,20 @@ export default {
 
 <style lang="scss" scoped>
 .btn-radio {
-  border: 1px solid var(--v-primary-base);
   padding: 8px 16px;
   border-radius: 4px;
 
   &.v-radio--is-disabled {
     border-color: var(--v-lightGrey-base);
   }
+}
+.btn-radio-inactive {
+  border: 1px solid var(--v-lightGrey-base);
+  @extend .btn-radio;
+}
+.btn-radio-active {
+  border: 1px solid var(--v-primary-base);
+   @extend .btn-radio;
 }
 .radio-div {
   margin-top: -11px !important;
