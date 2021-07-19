@@ -435,21 +435,56 @@ class TestUtils(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delete_smoke_test_trails(self):
         """Test deletion of smoke test trails"""
+        # set delivery platform connection status
+        auth_details = {
+            "facebook_access_token": "path1",
+            "facebook_app_secret": "path2",
+            "facebook_app_id": "path3",
+            "facebook_ad_account_id": "path4",
+        }
+
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform",
+            auth_details,
+        )
+        delivery_platform_id = delivery_platform_doc[c.ID]
+        self.assertTrue(delivery_platform_id is not None)
+        doc = dpm.set_connection_status(
+            self.database, delivery_platform_id, c.STATUS_SUCCEEDED
+        )
+
         # Create a delivery job
         delivery_job_doc = dpm.set_delivery_job(
             database=self.database,
             audience_id=ObjectId("5dff99c10345af022f219bbf"),
-            delivery_platform_id=self.delivery_platform_doc_1[c.ID],
+            delivery_platform_id=delivery_platform_id,
             delivery_platform_generic_campaigns=self.generic_campaigns,
         )
         # set synthetic perfromance metrics
         dpm.set_performance_metrics(
             database=self.database,
-            delivery_platform_id=self.delivery_platform_doc_1[c.ID],
-            delivery_job_id=delivery_job_doc[c.ID]
+            delivery_platform_id=delivery_platform_id,
+            delivery_job_id=delivery_job_doc[c.ID],
+            delivery_platform_name=c.DELIVERY_PLATFORM_FACEBOOK,
+            generic_campaign_id=self.generic_campaigns[0]['campaign_id'],
+            metrics_dict={
+                "impressions": 12,
+                "spend": 12,
+                "reach": 12,
+                "clicks": 12,
+                "frequency": 12,
+            },
+            start_time="2021-07-05T00:00:00.000+00:00",
+            end_time="2021-07-06T00:00:00.000+00:00",
         )
         success_flag = delete_util.delete_smoke_test_trails(
             database=self.database,
             delivery_job_id=ObjectId(delivery_job_doc[c.ID])
         )
         self.assertTrue(success_flag)
+
+
+if __name__ == "__main__":
+    unittest.main()
