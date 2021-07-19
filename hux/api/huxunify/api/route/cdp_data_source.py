@@ -10,7 +10,6 @@ from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
-from huxunifylib.database.notification_management import create_notification
 from marshmallow import ValidationError
 
 from huxunifylib.database import constants as db_c
