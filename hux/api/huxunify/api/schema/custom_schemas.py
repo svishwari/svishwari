@@ -23,7 +23,7 @@ class DateTimeWithZ(DateTime):
                     days=0, hours=0, minutes=0, seconds=0
                 ):
                     # no need to convert if already in utc
-                    print(value.astimezone(pytz.UTC))
+                    value = value.astimezone(pytz.UTC)
                 return value.isoformat(
                     sep="T", timespec="milliseconds"
                 ).replace("+00:00", "Z")
