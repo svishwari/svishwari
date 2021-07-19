@@ -305,9 +305,8 @@ def api_error_handler(custom_message: dict = None) -> object:
     Example: @api_error_handler()
 
     Args:
-        custom_message (dict): Custom messages for particular exceptions
-                                Key -> Exception eg.
-                                Value -> Message to be returned to client
+        custom_message: Optional; A dict containing Custom messages for
+            particular exceptions
 
     Returns:
         Response: decorator
