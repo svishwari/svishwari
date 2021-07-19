@@ -26,11 +26,6 @@ from huxunifylib.database.user_management import set_user
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
-from huxunify.api.schema.engagement import (
-    EmailSummary,
-    EmailIndividualAudienceSummary,
-    DisplayAdsSummary,
-)
 import huxunify.test.constants as t_c
 
 MOCK_ENGAGEMENT_METRICS = {
@@ -212,10 +207,32 @@ class TestEngagementMetricsDisplayAds(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertTrue(
-            validate_schema(DisplayAdsSummary(), response.json["summary"])
-        )
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_display_ads_invalid_engagement(self):
+        """
+        Tests response for invalid engagement id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagement_id = "random_id"
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.DISPLAY_ADS}"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_display_ads_audience_performance(self):
         """
@@ -298,9 +315,32 @@ class TestEngagementMetricsEmail(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertTrue(
-            validate_schema(EmailSummary(), response.json["summary"])
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+    def test_email_invalid_engagement(self):
+        """
+        Tests response for invalid engagement id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagement_id = "random_id"
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.EMAIL}"
         )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_email_audience_performance(self):
         """
@@ -318,12 +358,7 @@ class TestEngagementMetricsEmail(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertTrue(
-            validate_schema(
-                EmailIndividualAudienceSummary(),
-                response.json["audience_performance"][0],
-            )
-        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
