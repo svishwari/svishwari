@@ -62,11 +62,15 @@ class DecisioningTests(TestCase):
                 api_c.STATUS: api_c.OPERATION_SUCCESS.lower(),
                 api_c.LATEST_VERSION: "0.1.1",
                 api_c.PAST_VERSION_COUNT: 0,
-                api_c.LAST_TRAINED: parser.isoparse("2021-06-22T11:33:19.658"),
+                api_c.LAST_TRAINED: parser.isoparse(
+                    "2021-06-22T11:33:19.658Z"
+                ),
                 api_c.OWNER: "HUX Unified",
                 api_c.LOOKBACK_WINDOW: 365,
                 api_c.PREDICTION_WINDOW: 365,
-                api_c.FULCRUM_DATE: parser.isoparse("2021-06-22T11:33:19.658"),
+                api_c.FULCRUM_DATE: parser.isoparse(
+                    "2021-06-22T11:33:19.658Z"
+                ),
                 api_c.TYPE: "test",
             }
         ]
