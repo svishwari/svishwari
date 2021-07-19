@@ -13,7 +13,7 @@
         fixed-header
         hide-default-footer
         must-sort
-        sort-desc
+        sort-asc
         single-select
         :disable-sort="disableSort"
       >
