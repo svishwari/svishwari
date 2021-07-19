@@ -3,6 +3,7 @@
     v-model="localToggle"
     offset-y
     content-class="dropdown-search-wrapper"
+    max-height="320"
     :close-on-content-click="false"
   >
     <template #activator="{ on }">

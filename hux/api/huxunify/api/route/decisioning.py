@@ -75,7 +75,7 @@ class ModelsView(SwaggerView):
             api_c.NAME: "Propensity to Purchase",
             api_c.DESCRIPTION: "Propensity of a customer making a purchase "
             "after receiving an email.",
-            api_c.LATEST_VERSION: " ",
+            api_c.LATEST_VERSION: "",
             api_c.PREDICTION_WINDOW: 365,
             api_c.ID: 3,
             api_c.OWNER: "Susan Miller",
