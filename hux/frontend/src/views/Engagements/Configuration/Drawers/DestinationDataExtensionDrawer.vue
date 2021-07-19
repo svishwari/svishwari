@@ -355,7 +355,7 @@ export default {
               border-width: 1px !important;
             }
             input::placeholder {
-              color: #00000099 !important;
+              color: var(--v-lightGrey-base) !important;
             }
           }
           .v-text-field__details {

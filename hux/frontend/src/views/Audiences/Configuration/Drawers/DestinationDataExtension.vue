@@ -80,7 +80,7 @@
               :helpText="tooltipText"
               height="40"
               backgroundColor="white"
-              class="mt-1 text-caption neroBlack--text pt-2"
+              class="mt-1 text-caption neroBlack--text pt-2 input-placeholder"
               :rules="newExtensionRules"
               required
             />
@@ -343,11 +343,20 @@ export default {
               border-width: 1px !important;
             }
             input::placeholder {
-              color: #00000099 !important;
+              color: var(--v-lightGrey-base) !important;
             }
           }
           .v-text-field__details {
             display: none;
+          }
+        }
+      }
+    }
+    .input-placeholder {
+      ::v-deep .v-text-field {
+        .v-text-field__slot {
+          label{
+            color: var(--v-lightGrey-base) !important;
           }
         }
       }

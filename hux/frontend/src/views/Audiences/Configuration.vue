@@ -53,7 +53,7 @@
                   backgroundColor="white"
                   required
                   v-model="audience.audienceName"
-                  class="mt-1 text-caption neroBlack--text pt-2"
+                  class="mt-1 text-caption neroBlack--text pt-2 input-placeholder"
                   :rules="audienceNamesRules"
                 />
               </v-col>
@@ -654,6 +654,15 @@ export default {
         &:hover {
           .delete-icon {
             display: block;
+          }
+        }
+      }
+    }
+    .input-placeholder {
+      .v-text-field {
+        .v-text-field__slot {
+          label{
+            color: var(--v-lightGrey-base) !important;
           }
         }
       }
