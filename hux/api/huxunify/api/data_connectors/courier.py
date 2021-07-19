@@ -128,38 +128,38 @@ class DestinationBatchJob:
         self.audience_delivery_job_id = audience_delivery_job_id
         self.aws_secrets = aws_secrets
         self.aws_envs = aws_envs
-        self.connector_aws_batch = None
+        self.aws_batch_connector = None
         self.result = None
 
     def register(
         self,
         job_head_name: str = "audiencerouter",
         aws_batch_mem_limit: int = 2048,
-        connector_aws_batch: AWSBatchConnector = None,
+        aws_batch_connector: AWSBatchConnector = None,
     ) -> None:
         """Register a destination job
 
         Args:
             job_head_name (str): The aws batch job head name.
             aws_batch_mem_limit (int): AWS Batch RAM limit.
-            connector_aws_batch (AWSBatchConnector): AWS batch connector.
+            aws_batch_connector (AWSBatchConnector): AWS batch connector.
 
         Returns:
 
         """
         # Connect to AWS Batch
-        if connector_aws_batch is None:
-            connector_aws_batch = AWSBatchConnector(
+        if aws_batch_connector is None:
+            aws_batch_connector = AWSBatchConnector(
                 job_head_name,
                 self.audience_delivery_job_id,
             )
-        self.connector_aws_batch = connector_aws_batch
+        self.aws_batch_connector = aws_batch_connector
 
         # get the configuration values
         config = get_config()
 
         # Register AWS batch job
-        response_batch_register = self.connector_aws_batch.register_job(
+        response_batch_register = self.aws_batch_connector.register_job(
             job_role_arn=config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
             exec_role_arn=config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
             exec_image=config.AUDIENCE_ROUTER_IMAGE,
@@ -192,14 +192,14 @@ class DestinationBatchJob:
         """
         # Connect to AWS Batch
         if (
-            self.connector_aws_batch is None
-            and self.connector_aws_batch.job_def_name is not None
-            and not isinstance(self.connector_aws_batch, AWSBatchConnector)
+            self.aws_batch_connector is None
+            and self.aws_batch_connector.job_def_name is not None
+            and not isinstance(self.aws_batch_connector, AWSBatchConnector)
         ):
             raise Exception("Must register a job first.")
 
         # Submit the AWS batch job
-        response_batch_submit = self.connector_aws_batch.submit_job()
+        response_batch_submit = self.aws_batch_connector.submit_job()
 
         status = db_const.STATUS_IN_PROGRESS
         if (

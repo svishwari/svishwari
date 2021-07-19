@@ -282,10 +282,10 @@ class TestDestinationRoutes(TestCase):
 
         """
 
-        mock_connector_facebook = mock.patch.object(
+        mock_facebook_connector = mock.patch.object(
             FacebookConnector, "check_connection", return_value=True
         )
-        mock_connector_facebook.start()
+        mock_facebook_connector.start()
 
         validation_details = {
             "type": "facebook",
@@ -303,7 +303,7 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        mock_connector_facebook.stop()
+        mock_facebook_connector.stop()
         validation_success = {
             "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
         }

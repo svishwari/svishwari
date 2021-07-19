@@ -1132,14 +1132,14 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # Get existing campaigns from facebook
-        connector_facebook = FacebookConnector(
+        facebook_connector = FacebookConnector(
             auth_details=get_auth_from_parameter_store(
                 destination[api_c.AUTHENTICATION_DETAILS],
                 destination[api_c.DELIVERY_PLATFORM_TYPE],
             )
         )
         try:
-            campaigns = connector_facebook.get_campaigns()
+            campaigns = facebook_connector.get_campaigns()
         except facebook_business.exceptions.FacebookRequestError:
             return {
                 "message": "Error connecting to Facebook"
