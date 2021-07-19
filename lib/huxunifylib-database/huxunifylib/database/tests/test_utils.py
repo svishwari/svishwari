@@ -469,7 +469,7 @@ class TestUtils(unittest.TestCase):
             delivery_platform_id=delivery_platform_id,
             delivery_job_id=delivery_job_doc[c.ID],
             delivery_platform_name=c.DELIVERY_PLATFORM_FACEBOOK,
-            generic_campaign_id=self.generic_campaigns[0]['campaign_id'],
+            generic_campaign_id=self.generic_campaigns[0]["campaign_id"],
             metrics_dict={
                 "impressions": 12,
                 "spend": 12,
@@ -482,7 +482,7 @@ class TestUtils(unittest.TestCase):
         )
         success_flag = delete_util.delete_smoke_test_trails(
             database=self.database,
-            delivery_job_id=ObjectId(delivery_job_doc[c.ID])
+            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
         )
         self.assertTrue(success_flag)
 
