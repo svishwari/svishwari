@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localDrawer" @onClose="goToStep1()">
+  <Drawer v-model="localDrawer" @onClose="goToStep1()" :loading="loading">
     <template #header-left>
       <div class="d-flex align-center">
         <Icon
@@ -375,10 +375,12 @@ export default {
       const payload = {
         name: this.newEngagement.name,
         delivery_schedule: this.newEngagement.delivery_schedule,
-        description: this.newEngagement.description,
         audiences: [],
         start_date: this.selectedStartDate,
         end_date: this.selectedEndDate,
+      }
+      if (this.newEngagement.description) {
+        payload["description"] = this.newEngagement.description
       }
       const newEngagement = await this.addEngagementToDB(payload)
       this.engagements.push(newEngagement)
