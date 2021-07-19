@@ -30,5 +30,5 @@ export const audience = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   //TODO
-  lookalike_audience: () => true,
+  // lookalike_audience: () => true,
 }

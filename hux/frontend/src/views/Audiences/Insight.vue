@@ -307,7 +307,7 @@ export default {
       return this.getAudience(this.$route.params.id)
     },
 
-    breadcrumbItems () {
+    breadcrumbItems() {
       const items = [
         {
           text: "Audiences",
@@ -334,6 +334,7 @@ export default {
         }
         return items
       }
+      return items
     },
     /**
      * This computed property is converting the audience filters conditions
