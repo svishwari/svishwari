@@ -55,27 +55,27 @@ stages:
       strict: false
       status_code: 200
       json:
-        "total_unknown_ids": 4515
-        "min_ltv_predicted": 3.2688
-        "updated": "2021-05-24T14:35:12.001000"
-        "gender_men": 0.52
-        "total_cities": 2513
-        "total_known_ids": 13620
-        "max_ltv_predicted": 3.6777
-        "total_countries": 2
-        "min_age": 18
-        "total_us_states": 44
-        "gender_other": 0.06
-        "max_ltv_actual": 4.0066
-        "total_individual_ids": 313
-        "min_ltv_actual": 3.5974
-        "gender_women": 0.42
-        "total_customers": 3329
-        "total_unique_ids": 14238
-        "match_rate": 0.05
-        "total_records": 20238
-        "total_household_ids": 9927
-        "max_age": 76
+        "gender_other": !anyfloat
+        "total_customers": !anyint
+        "max_age": !anyint
+        "total_countries": !anyint
+        "max_ltv_actual": !anyfloat
+        "total_unique_ids": !anyint
+        "min_ltv_actual": !anyfloat
+        "total_records": !anyint
+        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "total_us_states": !anyint
+        "total_known_ids": !anyint
+        "min_age": !anyint
+        "min_ltv_predicted": !anyfloat
+        "max_ltv_predicted": !anyfloat
+        "match_rate": !anyfloat
+        "total_individual_ids": !anyint
+        "total_unknown_ids": !anyint
+        "gender_men": !anyfloat
+        "gender_women": !anyfloat
+        "total_cities": !anyint
+        "total_household_ids": !anyint
       headers:
         content-type: application/json
 
@@ -135,27 +135,27 @@ stages:
       strict: false
       status_code: 200
       json:
-        "total_unknown_ids": 4515
-        "min_ltv_predicted": 3.2688
-        "updated": "2021-05-24T14:35:12.001000"
-        "gender_men": 0.52
-        "total_cities": 2513
-        "total_known_ids": 13620
-        "max_ltv_predicted": 3.6777
-        "total_countries": 2
-        "min_age": 18
-        "total_us_states": 44
-        "gender_other": 0.06
-        "max_ltv_actual": 4.0066
-        "total_individual_ids": 313
-        "min_ltv_actual": 3.5974
-        "gender_women": 0.42
-        "total_customers": 3329
-        "total_unique_ids": 14238
-        "match_rate": 0.05
-        "total_records": 20238
-        "total_household_ids": 9927
-        "max_age": 76
+        "total_unknown_ids": !anyint
+        "min_ltv_predicted": !anyfloat
+        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "gender_men": !anyfloat
+        "total_cities": !anyint
+        "total_known_ids": !anyint
+        "max_ltv_predicted": !anyfloat
+        "total_countries": !anyint
+        "min_age": !anyint
+        "total_us_states": !anyint
+        "gender_other": !anyfloat
+        "max_ltv_actual": !anyfloat
+        "total_individual_ids": !anyint
+        "min_ltv_actual": !anyfloat
+        "gender_women": !anyfloat
+        "total_customers": !anyint
+        "total_unique_ids": !anyint
+        "match_rate": !anyfloat
+        "total_records": !anyint
+        "total_household_ids": !anyint
+        "max_age": !anyint
       headers:
         content-type: application/json
 
@@ -187,6 +187,69 @@ stages:
         - "first_name": !anystr
         - "last_name": !anystr
         - "match_confidence": !anyfloat
+      save:
+        json:
+          first_customer: customers[0]
+      headers:
+        content-type: application/json
+
+  - name: test customers get
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/{first_customer.hux_id}"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "hux_id": "{first_customer.hux_id}"
+        "ltv_predicted": !anyfloat
+        "churn_rate": !anyfloat
+        "last_email_open": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "propensity_to_unsubscribe": !anyfloat
+        "address": "++REDACTED++"
+        "gender": "++REDACTED++"
+        "ltv_actual": !anyfloat
+        "last_name": "{first_customer.last_name}"
+        "email": "++REDACTED++"
+        "zip": "++REDACTED++"
+        "state": "++REDACTED++"
+        "since": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "preference_push": !anybool
+        "last_click": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "preference_email": !anybool
+        "preference_in_app": !anybool
+        "match_confidence": !anyfloat
+        "conversion_time": !anyfloat
+        "age": "++REDACTED++"
+        "last_purchase": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "city": "++REDACTED++"
+        "propensity_to_purchase": !anyfloat
+        "phone": "++REDACTED++"
+        "first_name": "{first_customer.first_name}"
+        "preference_sms": !anybool
+        "identity_resolution":
+          "email":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "name":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "cookie":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "phone":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "address":
+            "percentage": !anyfloat
+            "data_sources": !anylist
       headers:
         content-type: application/json
 
@@ -216,95 +279,28 @@ stages:
       status_code: 200
       json:
         "stitched":
-          "digital_ids_added": 3
-          "digital_ids_merged": 6
+          "digital_ids_added": !anyint
+          "digital_ids_merged": !anyint
           "time_stamp": !anystr
-          "records_source": "Input waterfall"
-          "match_rate": 0.6606
-          "merge_rate": 0
+          "records_source": !anystr
+          "match_rate": !anyfloat
+          "merge_rate": !anyfloat
         "pinning":
-          "db_reads": 1
-          "household_id_match": 1
-          "filename": "Input.csv"
+          "db_reads": !anyint
+          "household_id_match": !anyint
+          "filename": !anystr
           "date_time": !anystr
-          "new_company_ids": 1
-          "db_writes": 1
-          "individual_id_match": 1
-          "address_id_match": 1
-          "new_individual_ids": 1
-          "new_household_ids": 1
-          "process_time": 6.43
-          "company_id_match": 1
-          "input_records": 2
-          "empty_records": 0
-          "output_records": 2
-          "new_address_ids": 1
-      headers:
-        content-type: application/json
-
----
-test_name: Test datafeeds get
-
-includes:
-  - !include common.yaml
-
-stages:
-  - name: test customers get
-
-    # Define the request to be made...
-    request:
-      url: "{host}/{version}/customers/1234"
-      method: GET
-      headers:
-        content-type: application/json
-        Authorization: "Bearer {token}"
-
-    # ...and the expected response code and body
-    response:
-      strict: false
-      status_code: 200
-      json:
-        "hux_id": "1531-2039-22"
-        "ltv_predicted": 59.55
-        "churn_rate": 5
-        "last_email_open": "2020-02-20T20:02:02.202000"
-        "propensity_to_unsubscribe": 1
-        "address": "++REDACTED++"
-        "gender": "++REDACTED++"
-        "ltv_actual": 60.22
-        "last_name": "Fox"
-        "email": "++REDACTED++"
-        "zip": "++REDACTED++"
-        "state": "++REDACTED++"
-        "since": "2020-02-20T20:02:02.202000"
-        "preference_push": false
-        "last_click": "2020-02-20T20:02:02.202000"
-        "preference_email": false
-        "preference_in_app": false
-        "match_confidence": 0.966666667
-        "conversion_time": 3.48
-        "age": "++REDACTED++"
-        "last_purchase": "2020-02-20T20:02:02.202000"
-        "city": "++REDACTED++"
-        "propensity_to_purchase": 0
-        "phone": "++REDACTED++"
-        "first_name": "Bertie"
-        "preference_sms": false
-        "identity_resolution":
-          "email":
-            "percentage": 0.34
-            "data_sources": !anylist
-          "name":
-            "percentage": 0.26
-            "data_sources": !anylist
-          "cookie":
-            "percentage": 0.1
-            "data_sources": !anylist
-          "phone":
-            "percentage": 0.1
-            "data_sources": !anylist
-          "address":
-            "percentage": 0.2
-            "data_sources": !anylist
+          "new_company_ids": !anyint
+          "db_writes": !anyint
+          "individual_id_match": !anyint
+          "address_id_match": !anyint
+          "new_individual_ids": !anyint
+          "new_household_ids": !anyint
+          "process_time": !anyfloat
+          "company_id_match": !anyint
+          "input_records": !anyint
+          "empty_records": !anyint
+          "output_records": !anyint
+          "new_address_ids": !anyint
       headers:
         content-type: application/json

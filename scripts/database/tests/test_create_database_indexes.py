@@ -4,7 +4,7 @@ from unittest import TestCase, mock
 import mongomock
 from huxunifylib.database import constants as c
 from pymongo import ASCENDING
-import scripts.database.create_database_indexes as cdi
+import database.create_database_indexes as cdi
 
 
 class TestCreateDBIndexes(TestCase):
