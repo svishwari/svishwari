@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localToggle" :loading="loading">
+  <Drawer v-model="localToggle" :loading="loading" class="rounded-0">
     <template #header-left>
       <div class="d-flex">
         <v-icon color="primary" size="27">mdi-clock-time-five-outline</v-icon>
@@ -19,18 +19,30 @@
           :icon="destination.type"
           hideButton
         />
+        <div class="d-flex justify-end pt-4 primary--text cursor-pointer">
+          Reset delivery to default
+        </div>
       </div>
     </template>
 
-    <template #footer-left> Left </template>
+    <template #footer-left>
+      <HuxButton variant="white" isTile height="40" @click="reset()">
+        Cancel
+      </HuxButton>
+    </template>
 
-    <template #footer-right> Right </template>
+    <template #footer-right>
+      <HuxButton variant="primary" isTile height="40" @click="onUpdate()">
+        Update
+      </HuxButton>
+    </template>
   </Drawer>
 </template>
 
 <script>
 import Drawer from "@/components/common/Drawer.vue"
 import CardHorizontal from "@/components/common/CardHorizontal.vue"
+import HuxButton from "@/components/common/huxButton.vue"
 
 export default {
   name: "EditDeliverySchedule",
@@ -38,6 +50,7 @@ export default {
   components: {
     Drawer,
     CardHorizontal,
+    HuxButton,
   },
 
   props: {
@@ -45,17 +58,38 @@ export default {
       type: Boolean,
       required: true,
     },
+
+    audienceId: {
+      type: String,
+      required: false,
+    },
+
+    destination: {
+      type: Object,
+      required: false,
+    },
+
+    engagementId: {
+      type: String,
+      required: false,
+    },
   },
 
   data() {
     return {
       loading: false,
       localToggle: false,
-      destination: {
-        name: "Facebook",
-        type: "facebook",
-      },
     }
+  },
+
+  methods: {
+    reset() {
+      this.localToggle = false
+    },
+
+    onUpdate() {
+      this.$emit("onUpdate")
+    },
   },
 
   watch: {

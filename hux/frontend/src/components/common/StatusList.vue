@@ -92,7 +92,7 @@
                       </v-list-item-title>
                       <v-list-item-title
                         v-else-if="option.title === 'Edit delivery schedule'"
-                        @click="showConfirmModal = true"
+                        @click="onEditDeliverySchedule(item)"
                       >
                         {{ option.title }}
                       </v-list-item-title>
@@ -213,7 +213,12 @@
       @onConfirm="openEditDeliveryScheduleDrawer()"
     />
 
-    <edit-delivery-schedule v-model="editDeliveryDrawer" />
+    <edit-delivery-schedule
+      v-model="editDeliveryDrawer"
+      :audience-id="audience.id"
+      :destination="selectedDestination"
+      :engagement-id="engagementId"
+    />
   </v-card>
 </template>
 
@@ -259,6 +264,11 @@ export default {
       showDeliveryAlert: false,
       showConfirmModal: false,
       editDeliveryDrawer: false,
+      selectedDestination: {
+        name: null,
+        type: null,
+        id: null,
+      },
     }
   },
 
@@ -291,6 +301,11 @@ export default {
 
     closeDrawer() {
       this.editDeliveryDrawer = false
+    },
+
+    onEditDeliverySchedule(destination) {
+      this.showConfirmModal = true
+      this.selectedDestination = destination
     },
 
     openEditDeliveryScheduleDrawer() {
