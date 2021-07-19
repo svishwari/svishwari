@@ -107,7 +107,6 @@
               outlined
               background-color="white"
               append-icon="mdi-chevron-down"
-              :rules="existingExtensionRules"
               required
             />
           </div>
@@ -142,7 +141,7 @@
           width="80"
           height="40"
           class="ma-2"
-          :isDisabled="!isFormValid"
+          :isDisabled="isActive ? !isFormValid : !extension"
           @click="addDestination()"
         >
           Add
@@ -226,7 +225,6 @@ export default {
           )
         },
       ],
-      existingExtensionRules: [(v) => !!v || "Select any one Data extension"],
       tooltipText:
         "When creating a new journey in Salesforce Marketing Cloud, look for the name input here when searching Data Extension Entry Source in Salesforce Marketing Cloud.",
     }

@@ -131,7 +131,7 @@ client["audiences"].deliver = (resourceId, data) => {
 
 //#region Notifications
 client["notifications"].getNotification = (data) => {
-  return http.get("/notifications", data)
+  return http.get(`/notifications?batch_size=${data}`)
 }
 //#endregion
 

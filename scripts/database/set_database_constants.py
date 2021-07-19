@@ -4,7 +4,7 @@ import logging
 from enum import Enum
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
-from scripts.database.share import get_mongo_client
+from database.share import get_mongo_client
 
 
 # Setup logging
@@ -430,23 +430,23 @@ CONSTANTS_LIST = [
 # Loop through the list and set constants
 for item in CONSTANTS_LIST:
 
-    constant_name = item[0]
-    constant_value = item[1]
+    CONSTANT_NAME = item[0]
+    CONSTANT_VALUE = item[1]
 
     logging.info(
         "Setting value <%s> for constant <%s>...",
-        str(constant_value),
-        constant_name,
+        str(CONSTANT_VALUE),
+        CONSTANT_NAME,
     )
 
-    db_id = dm.set_constant(DB_CLIENT, constant_name, constant_value)
+    db_id = dm.set_constant(DB_CLIENT, CONSTANT_NAME, CONSTANT_VALUE)
 
     assert db_id
 
-    doc = dm.get_constant(DB_CLIENT, constant_name)
+    doc = dm.get_constant(DB_CLIENT, CONSTANT_NAME)
 
-    assert doc[c.CONSTANT_NAME] == constant_name
-    assert doc[c.CONSTANT_VALUE] == constant_value
+    assert doc[c.CONSTANT_NAME] == CONSTANT_NAME
+    assert doc[c.CONSTANT_VALUE] == CONSTANT_VALUE
 
 
 logging.info("Done with setting the constants!")
