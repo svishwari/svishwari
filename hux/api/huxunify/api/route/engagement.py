@@ -1391,7 +1391,7 @@ class EngagementMetricsEmail(SwaggerView):
         # setup the database
         database = get_db_client()
 
-        # Get all destinations that are related to Display Ad metrics
+        # Get all destinations that are related to Email metrics
         email_destination = (
             delivery_platform_management.get_delivery_platform_by_type(
                 database, db_c.DELIVERY_PLATFORM_SFMC
