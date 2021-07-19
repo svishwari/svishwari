@@ -355,7 +355,7 @@ export default {
     .input-placeholder {
       ::v-deep .v-text-field {
         .v-text-field__slot {
-          label{
+          label {
             color: var(--v-lightGrey-base) !important;
           }
         }

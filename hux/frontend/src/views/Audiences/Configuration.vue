@@ -53,7 +53,13 @@
                   backgroundColor="white"
                   required
                   v-model="audience.audienceName"
-                  class="mt-1 text-caption neroBlack--text pt-2 input-placeholder"
+                  class="
+                    mt-1
+                    text-caption
+                    neroBlack--text
+                    pt-2
+                    input-placeholder
+                  "
                   :rules="audienceNamesRules"
                 />
               </v-col>
@@ -661,7 +667,7 @@ export default {
     .input-placeholder {
       .v-text-field {
         .v-text-field__slot {
-          label{
+          label {
             color: var(--v-lightGrey-base) !important;
           }
         }
