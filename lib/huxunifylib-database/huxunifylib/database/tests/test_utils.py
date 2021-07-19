@@ -452,7 +452,7 @@ class TestUtils(unittest.TestCase):
         )
         delivery_platform_id = delivery_platform_doc[c.ID]
         self.assertTrue(delivery_platform_id is not None)
-        doc = dpm.set_connection_status(
+        dpm.set_connection_status(
             self.database, delivery_platform_id, c.STATUS_SUCCEEDED
         )
 
