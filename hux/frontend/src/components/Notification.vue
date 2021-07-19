@@ -31,8 +31,8 @@
         </v-list-item>
       </div>
       <v-list-item>
-        <v-list-item-title class="text-h6 neroBlack--text">
-          <a @click="alertRouters()">View all alerts</a>
+        <v-list-item-title class="text-h6">
+          <a class="view-all" @click="alertRouters()">View all alerts</a>
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -107,5 +107,13 @@ export default {
 .notification-div {
   overflow-y: auto !important;
   height: 170px !important;
+}
+.view-all {
+  font-family: Open Sans;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 22px;
+color:  var(--v-primary-base) !important;
 }
 </style>
