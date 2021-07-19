@@ -151,7 +151,7 @@ export default {
   margin-right: 10px;
 
   .slider-value-display {
-    width: 37px;
+    width: 28px;
     height: 16px;
     margin-top: 4px;
   }

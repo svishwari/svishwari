@@ -518,6 +518,10 @@ export default {
 .hux-score-slider {
   margin-bottom: -27px !important;
   margin-top: -8px;
+
+  ::v-deep .slider-value-display {
+    width: 36px;
+  }
 }
 .blur-text {
   color: transparent;
