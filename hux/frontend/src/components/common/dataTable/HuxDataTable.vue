@@ -37,6 +37,7 @@
             </template>
           </tooltip>
           <template v-if="!h.tooltipValue">
+            <!-- TODO: find a better solution and remove v-html -->
             <span v-html="h.text" :key="h.value" />
           </template>
           <Tooltip :key="h.value" v-if="h.hoverTooltip" positionTop>

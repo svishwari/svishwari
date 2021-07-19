@@ -7,7 +7,7 @@
         :class="{ 'liftchart-bucket': header.value === 'bucket' }"
       >
         <div class="neroBlack--text text-h6">
-          {{ item[header.value] }}
+          {{ item[header.value].toLocaleString() }}
         </div>
       </td>
     </template>
@@ -16,7 +16,7 @@
 
 <script>
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import liftChart from "./liftChart.js"
+import liftChartData from "./liftChartData.json"
 
 export default {
   name: "LiftChart",
@@ -59,7 +59,7 @@ export default {
         },
       ],
       //TODO: API Integration
-      data: liftChart,
+      data: liftChartData.lift_data,
     }
   },
 }
