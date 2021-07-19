@@ -16,7 +16,7 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
-from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+from huxunifylib.connectors.connector_aws_batch import AWSBatchConnector
 import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
 from huxunify.app import create_app

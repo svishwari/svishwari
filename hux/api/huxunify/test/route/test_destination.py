@@ -10,7 +10,7 @@ import requests_mock
 import mongomock
 from bson import ObjectId
 
-from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.connectors.connector_facebook import FacebookConnector
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (
@@ -282,10 +282,10 @@ class TestDestinationRoutes(TestCase):
 
         """
 
-        mock_facebook_connector = mock.patch.object(
+        mock_connector_facebook = mock.patch.object(
             FacebookConnector, "check_connection", return_value=True
         )
-        mock_facebook_connector.start()
+        mock_connector_facebook.start()
 
         validation_details = {
             "type": "facebook",
@@ -303,7 +303,7 @@ class TestDestinationRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        mock_facebook_connector.stop()
+        mock_connector_facebook.stop()
         validation_success = {
             "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
         }

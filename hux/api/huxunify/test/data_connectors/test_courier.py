@@ -20,7 +20,7 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
 )
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+from huxunifylib.connectors.connector_aws_batch import AWSBatchConnector
 from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,

@@ -13,7 +13,7 @@ from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 from marshmallow import ValidationError
 
-from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.connectors.connector_facebook import FacebookConnector
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -1132,14 +1132,14 @@ class AudienceCampaignMappingsGetView(SwaggerView):
             }, HTTPStatus.BAD_REQUEST
 
         # Get existing campaigns from facebook
-        facebook_connector = FacebookConnector(
+        connector_facebook = FacebookConnector(
             auth_details=get_auth_from_parameter_store(
                 destination[api_c.AUTHENTICATION_DETAILS],
                 destination[api_c.DELIVERY_PLATFORM_TYPE],
             )
         )
         try:
-            campaigns = facebook_connector.get_campaigns()
+            campaigns = connector_facebook.get_campaigns()
         except facebook_business.exceptions.FacebookRequestError:
             return {
                 "message": "Error connecting to Facebook"

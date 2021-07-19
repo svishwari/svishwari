@@ -10,9 +10,10 @@ from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
+from huxunifylib.database.notification_management import create_notification
 from marshmallow import ValidationError
 
-from huxunifylib.database import constants as db_constants
+from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
     get_data_source,
@@ -100,7 +101,7 @@ class DataSourceSearch(SwaggerView):
 
 @add_view_to_blueprint(
     cdp_data_sources_bp,
-    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{db_constants.CDP_DATA_SOURCE_ID}>",
+    f"{api_c.CDP_DATA_SOURCES_ENDPOINT}/<{db_c.CDP_DATA_SOURCE_ID}>",
     "IndividualDataSourceSearch",
 )
 class IndividualDataSourceSearch(SwaggerView):
@@ -110,7 +111,7 @@ class IndividualDataSourceSearch(SwaggerView):
 
     parameters = [
         {
-            "name": db_constants.CDP_DATA_SOURCE_ID,
+            "name": db_c.CDP_DATA_SOURCE_ID,
             "description": "CDP data source ID.",
             "type": "string",
             "in": "path",
@@ -223,8 +224,9 @@ class CreateCdpDataSource(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
+        db_client = get_db_client()
         response = create_data_source(
-            get_db_client(),
+            db_client,
             name=body[api_c.CDP_DATA_SOURCE_NAME],
             category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
         )
@@ -244,7 +246,7 @@ class DeleteCdpDataSource(SwaggerView):
 
     parameters = [
         {
-            "name": db_constants.CDP_DATA_SOURCE_ID,
+            "name": db_c.CDP_DATA_SOURCE_ID,
             "description": "CDP Data Source ID.",
             "type": "string",
             "in": "path",
@@ -282,8 +284,8 @@ class DeleteCdpDataSource(SwaggerView):
             return {
                 "message": f"Invalid CDP data source ID received {data_source_id}."
             }, HTTPStatus.BAD_REQUEST
-
-        success_flag = delete_data_source(get_db_client(), data_source_id)
+        db_client = get_db_client()
+        success_flag = delete_data_source(db_client, data_source_id)
 
         if success_flag:
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
@@ -381,13 +383,14 @@ class BatchUpdateDataSources(SwaggerView):
             )
 
         # rename key from is_added to added for DB.
-        data[db_constants.ADDED] = data.pop(api_c.IS_ADDED)
+        data[db_c.ADDED] = data.pop(api_c.IS_ADDED)
 
         try:
+            db_client = get_db_client()
             # update the data sources.
-            if update_data_sources(get_db_client(), data_source_ids, data):
+            if update_data_sources(db_client, data_source_ids, data):
                 updated_data_sources = [
-                    get_data_source(get_db_client(), data_source_id)
+                    get_data_source(db_client, data_source_id)
                     for data_source_id in data_source_ids
                 ]
                 return (
