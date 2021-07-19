@@ -14,10 +14,6 @@
         fixed-header
         hide-default-footer
         must-sort
-<<<<<<< HEAD
-=======
-        sort-asc
->>>>>>> a291edc58c326714991290f2471c2929f9e6d076
         single-select
         :disable-sort="disableSort"
       >
