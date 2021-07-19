@@ -53,7 +53,7 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule">
+        <v-row class="delivery-schedule mt-4">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
@@ -61,17 +61,17 @@
           >
             <v-radio :value="0" selected class="btn-radio">
               <template #label>
-                <v-icon small color="primary" class="mr-1">
+                <v-icon small :color="value.delivery_schedule == 0 ? 'primary' : ''" class="mr-1">
                   mdi-gesture-tap
                 </v-icon>
-                <span class="primary--text">Manual</span>
+                <span :class="{ 'primary--text': value.delivery_schedule == 0 }">Manual</span>
               </template>
             </v-radio>
 
             <v-radio :value="1" class="btn-radio">
               <template #label>
-                <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
-                <span>Recurring</span>
+                <v-icon small :color="value.delivery_schedule == 1 ? 'primary' : ''" class="mr-1">mdi-clock-check-outline</v-icon>
+                <span :class="{ 'primary--text': value.delivery_schedule == 1 }" >Recurring</span>
               </template>
             </v-radio>
           </v-radio-group>
