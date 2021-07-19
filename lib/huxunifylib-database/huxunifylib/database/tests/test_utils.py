@@ -10,6 +10,7 @@ import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.delete_util as delete_util
 
 from huxunifylib.database.client import DatabaseClient
+from bson import ObjectId
 
 
 # pylint: disable=R0902,R0914,R0915
@@ -430,3 +431,25 @@ class TestUtils(unittest.TestCase):
             self.data_source_doc_2[c.ID],
         )
         self.assertTrue(doc is None)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_delete_smoke_test_trails(self):
+        """Test deletion of smoke test trails"""
+        # Create a delivery job
+        delivery_job_doc = dpm.set_delivery_job(
+            database=self.database,
+            audience_id=ObjectId("5dff99c10345af022f219bbf"),
+            delivery_platform_id=self.delivery_platform_doc_1[c.ID],
+            delivery_platform_generic_campaigns=self.generic_campaigns,
+        )
+        # set synthetic perfromance metrics
+        dpm.set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=self.delivery_platform_doc_1[c.ID],
+            delivery_job_id=delivery_job_doc[c.ID]
+        )
+        success_flag = delete_util.delete_smoke_test_trails(
+            database=self.database,
+            delivery_job_id=ObjectId(delivery_job_doc[c.ID])
+        )
+        self.assertTrue(success_flag)
