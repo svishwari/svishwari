@@ -29,6 +29,10 @@ from huxunifylib.database import (
     orchestration_management,
     delivery_platform_management,
 )
+from huxunifylib.database.delivery_platform_management import (
+    get_performance_metrics_by_engagement_details,
+    get_delivery_jobs_using_metadata,
+)
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
@@ -1194,6 +1198,9 @@ class EngagementMetricsDisplayAds(SwaggerView):
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to retrieve engagement metrics.",
         },
+        HTTPStatus.NOT_FOUND.value: {
+            "description": "Failed to find engagement or audience.",
+        },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
@@ -1235,8 +1242,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
             }, HTTPStatus.OK
 
         # Get Performance metrics by engagement and destination
-        # pylint: disable=line-too-long
-        performance_metrics = delivery_platform_management.get_performance_metrics_by_engagement_details(
+        performance_metrics = get_performance_metrics_by_engagement_details(
             database,
             ObjectId(engagement_id),
             [destination.get(db_c.ID)],
@@ -1248,10 +1254,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
             }, HTTPStatus.OK
 
         # Get all the delivery jobs for the given engagement and destination
-        delivery_jobs = (
-            delivery_platform_management.get_delivery_jobs_using_metadata(
-                database, engagement_id=ObjectId(engagement_id)
-            )
+        delivery_jobs = get_delivery_jobs_using_metadata(
+            database, engagement_id=ObjectId(engagement_id)
         )
 
         delivery_jobs = [
@@ -1283,12 +1287,17 @@ class EngagementMetricsDisplayAds(SwaggerView):
         for audience_id, audience_group in groupby(
             aud_group, key=itemgetter(api_c.AUDIENCE_ID)
         ):
+            audience = orchestration_management.get_audience(
+                get_db_client(), audience_id
+            )
+            if audience is None:
+                return {
+                    "message": "Engagement audience not found."
+                }, HTTPStatus.NOT_FOUND
             audience_jobs = list(audience_group)
             audience_metrics = update_metrics(
                 audience_id,
-                orchestration_management.get_audience(
-                    get_db_client(), audience_id
-                )[api_c.NAME],
+                audience[api_c.NAME],
                 audience_jobs,
                 performance_metrics,
                 api_c.DISPLAY_ADS,
@@ -1404,8 +1413,7 @@ class EngagementMetricsEmail(SwaggerView):
             }, HTTPStatus.OK
 
         # Get Performance metrics by engagement and destination
-        # pylint: disable=line-too-long
-        performance_metrics = delivery_platform_management.get_performance_metrics_by_engagement_details(
+        performance_metrics = get_performance_metrics_by_engagement_details(
             database,
             ObjectId(engagement_id),
             [email_destination.get(db_c.ID)],
@@ -1417,10 +1425,8 @@ class EngagementMetricsEmail(SwaggerView):
             }, HTTPStatus.OK
 
         # Get all the delivery jobs for the given engagement and destination
-        delivery_jobs = (
-            delivery_platform_management.get_delivery_jobs_using_metadata(
-                database, engagement_id=ObjectId(engagement_id)
-            )
+        delivery_jobs = get_delivery_jobs_using_metadata(
+            database, engagement_id=ObjectId(engagement_id)
         )
 
         delivery_jobs = [
@@ -1452,12 +1458,18 @@ class EngagementMetricsEmail(SwaggerView):
         for audience_id, audience_group in groupby(
             aud_group, key=itemgetter(api_c.AUDIENCE_ID)
         ):
+            audience = orchestration_management.get_audience(
+                get_db_client(), audience_id
+            )
+            if audience is None:
+                return {
+                    "message": "Engagement audience not found."
+                }, HTTPStatus.NOT_FOUND
+
             audience_jobs = list(audience_group)
             audience_metrics = update_metrics(
                 audience_id,
-                orchestration_management.get_audience(
-                    get_db_client(), audience_id
-                )[api_c.NAME],
+                audience[api_c.NAME],
                 audience_jobs,
                 performance_metrics,
                 api_c.EMAIL,

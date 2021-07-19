@@ -373,194 +373,23 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
     metric = {}
 
     if metric_type == constants.DISPLAY_ADS:
-        metric = {
-            constants.IMPRESSIONS: sum(
+        for name in constants.DISPLAY_ADS_METRICS:
+            metric[name] = sum(
                 [
-                    int(item[constants.IMPRESSIONS])
+                    int(item[name])
                     for item in perf_metrics
-                    if constants.IMPRESSIONS in item.keys()
+                    if name in item.keys()
                 ]
-            ),
-            constants.SPEND: sum(
-                [
-                    int(item[constants.SPEND])
-                    for item in perf_metrics
-                    if constants.SPEND in item.keys()
-                ]
-            ),
-            constants.REACH: sum(
-                [
-                    int(item[constants.REACH])
-                    for item in perf_metrics
-                    if constants.REACH in item.keys()
-                ]
-            ),
-            constants.CONVERSIONS: sum(
-                [
-                    int(item[constants.CONVERSIONS])
-                    for item in perf_metrics
-                    if constants.CONVERSIONS in item.keys()
-                ]
-            ),
-            constants.CLICKS: sum(
-                [
-                    int(item[constants.CLICKS])
-                    for item in perf_metrics
-                    if constants.CLICKS in item.keys()
-                ]
-            ),
-            constants.FREQUENCY: sum(
-                [
-                    int(item[constants.FREQUENCY])
-                    for item in perf_metrics
-                    if constants.FREQUENCY in item.keys()
-                ]
-            ),
-            constants.CPM: sum(
-                [
-                    int(item[constants.CPM])
-                    for item in perf_metrics
-                    if constants.CPM in item.keys()
-                ]
-            ),
-            constants.CTR: sum(
-                [
-                    int(item[constants.CTR])
-                    for item in perf_metrics
-                    if constants.CTR in item.keys()
-                ]
-            ),
-            constants.CPA: sum(
-                [
-                    int(item[constants.CPA])
-                    for item in perf_metrics
-                    if constants.CPA in item.keys()
-                ]
-            ),
-            constants.CPC: sum(
-                [
-                    int(item[constants.CPC])
-                    for item in perf_metrics
-                    if constants.CPC in item.keys()
-                ]
-            ),
-            constants.ENGAGEMENT_RATE: sum(
-                [
-                    int(item[constants.ENGAGEMENT_RATE])
-                    for item in perf_metrics
-                    if constants.ENGAGEMENT_RATE in item.keys()
-                ]
-            ),
-        }
-
+            )
     elif metric_type == constants.EMAIL:
-        metric = {
-            constants.EMAIL: sum(
+        for name in constants.EMAIL_METRICS:
+            metric[name] = sum(
                 [
-                    int(item[constants.EMAIL])
+                    int(item[name])
                     for item in perf_metrics
-                    if constants.EMAIL in item.keys()
+                    if name in item.keys()
                 ]
-            ),
-            constants.SENT: sum(
-                [
-                    int(item[constants.SENT])
-                    for item in perf_metrics
-                    if constants.SENT in item.keys()
-                ]
-            ),
-            constants.HARD_BOUNCES: sum(
-                [
-                    int(item[constants.HARD_BOUNCES])
-                    for item in perf_metrics
-                    if constants.HARD_BOUNCES in item.keys()
-                ]
-            ),
-            constants.HARD_BOUNCES_RATE: sum(
-                [
-                    int(item[constants.HARD_BOUNCES_RATE])
-                    for item in perf_metrics
-                    if constants.HARD_BOUNCES_RATE in item.keys()
-                ]
-            ),
-            constants.DELIVERED: sum(
-                [
-                    int(item[constants.DELIVERED])
-                    for item in perf_metrics
-                    if constants.DELIVERED in item.keys()
-                ]
-            ),
-            constants.DELIVERED_RATE: sum(
-                [
-                    int(item[constants.DELIVERED_RATE])
-                    for item in perf_metrics
-                    if constants.DELIVERED_RATE in item.keys()
-                ]
-            ),
-            constants.OPEN: sum(
-                [
-                    int(item[constants.OPEN])
-                    for item in perf_metrics
-                    if constants.OPEN in item.keys()
-                ]
-            ),
-            constants.OPEN_RATE: sum(
-                [
-                    int(item[constants.OPEN_RATE])
-                    for item in perf_metrics
-                    if constants.OPEN_RATE in item.keys()
-                ]
-            ),
-            constants.CLICKS: sum(
-                [
-                    int(item[constants.CLICKS])
-                    for item in perf_metrics
-                    if constants.CLICKS in item.keys()
-                ]
-            ),
-            constants.CTR: sum(
-                [
-                    int(item[constants.CTR])
-                    for item in perf_metrics
-                    if constants.CTR in item.keys()
-                ]
-            ),
-            constants.COTR: sum(
-                [
-                    int(item[constants.COTR])
-                    for item in perf_metrics
-                    if constants.COTR in item.keys()
-                ]
-            ),
-            constants.UNIQUE_CLICKS: sum(
-                [
-                    int(item[constants.UNIQUE_CLICKS])
-                    for item in perf_metrics
-                    if constants.UNIQUE_CLICKS in item.keys()
-                ]
-            ),
-            constants.UNIQUE_OPENS: sum(
-                [
-                    int(item[constants.UNIQUE_OPENS])
-                    for item in perf_metrics
-                    if constants.UNIQUE_OPENS in item.keys()
-                ]
-            ),
-            constants.UNSUBSCRIBE: sum(
-                [
-                    int(item[constants.UNSUBSCRIBE])
-                    for item in perf_metrics
-                    if constants.UNSUBSCRIBE in item.keys()
-                ]
-            ),
-            constants.UNSUBSCRIBE_RATE: sum(
-                [
-                    int(item[constants.UNSUBSCRIBE_RATE])
-                    for item in perf_metrics
-                    if constants.UNSUBSCRIBE_RATE in item.keys()
-                ]
-            ),
-        }
+            )
 
     return metric
 
