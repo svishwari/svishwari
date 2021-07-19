@@ -17,7 +17,6 @@ mongomock="*"
 [dev-packages]
 pytest = {version="*", index="pypi"}
 pylint = {version="*", index="pypi"}
-black = { version = "*", pre="true"}
 safety = {version="*", index="pypi"}
 hypothesis = {version="*", index="pypi"}
 
@@ -25,4 +24,4 @@ hypothesis = {version="*", index="pypi"}
 python_version = "3.7"
 
 [pipenv]
-allow_prereleases = true
+allow_prereleases = false

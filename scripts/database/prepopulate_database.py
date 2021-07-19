@@ -11,7 +11,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from pymongo import MongoClient
 
-from scripts.database.share import get_mongo_client
+from database.share import get_mongo_client
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
