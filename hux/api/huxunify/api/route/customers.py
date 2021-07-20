@@ -163,10 +163,17 @@ class CustomerPostOverview(SwaggerView):
             Tuple[dict, int] dict of Customer data overview and http code
         """
 
+        # TODO resolve to a single field POST demo
+        customers = get_customers_overview(request.json)
+
+        if (
+            api_c.TOTAL_RECORDS in customers
+            and api_c.TOTAL_CUSTOMERS in customers
+        ):
+            customers[api_c.TOTAL_CUSTOMERS] = customers[api_c.TOTAL_RECORDS]
+
         return (
-            CustomerOverviewSchema().dump(
-                get_customers_overview(request.json)
-            ),
+            CustomerOverviewSchema().dump(customers),
             HTTPStatus.OK,
         )
 
