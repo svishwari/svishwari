@@ -3,7 +3,6 @@
 Paths for engagement API
 """
 from http import HTTPStatus
-from random import randrange
 from typing import Tuple
 from itertools import groupby
 from operator import itemgetter
@@ -30,11 +29,6 @@ from huxunifylib.database import (
     orchestration_management,
     delivery_platform_management,
 )
-from huxunify.api.data_connectors.courier import (
-    get_audience_destination_pairs,
-    get_destination_config,
-)
-from huxunify.api.schema.orchestration import DeliveryHistorySchema
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementGetSchema,
@@ -93,16 +87,12 @@ class EngagementSearch(SwaggerView):
     @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves all engagements.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
-
         Returns:
             Tuple[dict, int]: dict of engagements and http code
-
         """
 
         # get the engagement summary
@@ -119,7 +109,7 @@ class EngagementSearch(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>",
     "IndividualEngagementSearch",
 )
 class IndividualEngagementSearch(SwaggerView):
@@ -152,17 +142,13 @@ class IndividualEngagementSearch(SwaggerView):
     @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves an engagement.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): id of the engagement
-
         Returns:
             Tuple[dict, int]: dict of the engagement and http code
-
         """
 
         if not ObjectId.is_valid(engagement_id):
@@ -239,17 +225,13 @@ class SetEngagement(SwaggerView):
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
         """Creates a new engagement.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             user_name (str): user_name extracted from Okta.
-
         Returns:
             Tuple[dict, int]: Engagement created, HTTP status.
-
         """
 
         try:
@@ -282,7 +264,7 @@ class SetEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>",
     "UpdateEngagement",
 )
 class UpdateEngagement(SwaggerView):
@@ -341,18 +323,14 @@ class UpdateEngagement(SwaggerView):
     @get_user_name()
     def put(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates an engagement.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): Engagement id
             user_name (str): user_name extracted from Okta.
-
         Returns:
             Tuple[dict, int]: Engagement updated, HTTP status.
-
         """
 
         if not ObjectId.is_valid(engagement_id):
@@ -385,7 +363,7 @@ class UpdateEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>",
     "DeleteEngagement",
 )
 class DeleteEngagement(SwaggerView):
@@ -418,17 +396,13 @@ class DeleteEngagement(SwaggerView):
     @api_error_handler()
     def delete(self, engagement_id: str) -> Tuple[dict, int]:
         """Deletes an engagement.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): Engagement id
-
         Returns:
             Tuple[dict, int]: message, HTTP status
-
         """
 
         if not ObjectId.is_valid(engagement_id):
@@ -446,7 +420,7 @@ class DeleteEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.AUDIENCES}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCES}",
     "AddAudienceEngagement",
 )
 class AddAudienceEngagement(SwaggerView):
@@ -506,18 +480,14 @@ class AddAudienceEngagement(SwaggerView):
     @get_user_name()
     def post(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Adds audience to engagement.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): Engagement id
             user_name (str): user_name extracted from Okta.
-
         Returns:
             Tuple[dict, int]: Audience Engagement added, HTTP status.
-
         """
 
         if not ObjectId.is_valid(engagement_id):
@@ -549,7 +519,7 @@ class AddAudienceEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.AUDIENCES}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCES}",
     "DeleteAudienceEngagement",
 )
 class DeleteAudienceEngagement(SwaggerView):
@@ -595,18 +565,14 @@ class DeleteAudienceEngagement(SwaggerView):
     @get_user_name()
     def delete(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes audience from engagement.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): Engagement id
             user_name (str): user_name extracted from Okta.
-
         Returns:
             Tuple[dict, int]: Audience deleted from engagement, HTTP status
-
         """
 
         if not ObjectId.is_valid(engagement_id):
@@ -635,481 +601,7 @@ class DeleteAudienceEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.DELIVERY_HISTORY}",
-    "EngagementDeliverHistoryView",
-)
-class EngagementDeliverHistoryView(SwaggerView):
-    """
-    Engagement delivery history class
-    """
-
-    parameters = [
-        {
-            "name": api_c.ENGAGEMENT_ID,
-            "description": "Engagement ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "60bfeaa3fa9ba04689906f7a",
-        }
-    ]
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Successfully fetched delivery history.",
-            "schema": {"type": "array", "items": DeliveryHistorySchema},
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to show deliver history.",
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "description": api_c.ENGAGEMENT_NOT_FOUND
-        },
-    }
-
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DELIVERY_TAG]
-
-    # pylint: disable=no-self-use
-    @api_error_handler()
-    def get(self, engagement_id: str) -> Tuple[dict, int]:
-        """Delivery history of all audiences for an engagement.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-            engagement_id (str): Engagement ID.
-
-        Returns:
-            Tuple[dict, int]: Delivery history, HTTP Status.
-
-        """
-
-        # validate object id
-        if not ObjectId.is_valid(engagement_id):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
-        # convert the engagement ID
-        engagement_id = ObjectId(engagement_id)
-
-        # check if engagement exists
-        database = get_db_client()
-        engagement = get_engagement(database, engagement_id)
-        if not engagement:
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
-
-        delivery_history = []
-        for pair in get_audience_destination_pairs(
-            engagement[api_c.AUDIENCES]
-        ):
-            audience = orchestration_management.get_audience(database, pair[0])
-            destination = delivery_platform_management.get_delivery_platform(
-                database, pair[1].get(api_c.ID)
-            )
-            delivery_job = delivery_platform_management.get_delivery_job(
-                database, pair[1].get(api_c.DELIVERY_JOB_ID)
-            )
-            if delivery_job and delivery_job.get(db_c.JOB_END_TIME):
-                delivery_history.append(
-                    {
-                        api_c.AUDIENCE: audience,
-                        api_c.DESTINATION: destination,
-                        api_c.SIZE: randrange(10000000),
-                        # TODO : Get audience size from CDM
-                        api_c.DELIVERED: delivery_job.get(db_c.JOB_END_TIME),
-                    }
-                )
-
-        return (
-            jsonify(DeliveryHistorySchema().dump(delivery_history, many=True)),
-            HTTPStatus.OK,
-        )
-
-
-@add_view_to_blueprint(
-    engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.DELIVER}",
-    "EngagementDeliverView",
-)
-class EngagementDeliverView(SwaggerView):
-    """
-    Engagement delivery class
-    """
-
-    parameters = [
-        {
-            "name": api_c.ENGAGEMENT_ID,
-            "description": "Engagement ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "60bfeaa3fa9ba04689906f7a",
-        }
-    ]
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Delivery job created.",
-            "schema": {
-                "example": {"message": "Delivery job created."},
-            },
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to deliver engagement.",
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "description": api_c.ENGAGEMENT_NOT_FOUND
-        },
-    }
-
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DELIVERY_TAG]
-
-    # pylint: disable=no-self-use
-    @api_error_handler()
-    def post(self, engagement_id: str) -> Tuple[dict, int]:
-        """Delivers all audiences for an engagement.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-            engagement_id (str): Engagement ID.
-
-        Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
-        """
-
-        # validate object id
-        if not ObjectId.is_valid(engagement_id):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
-        # convert the engagement ID
-        engagement_id = ObjectId(engagement_id)
-
-        # check if engagement exists
-        database = get_db_client()
-        engagement = get_engagement(database, engagement_id)
-        if not engagement:
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
-
-        # submit jobs for all the audience/destination pairs
-        delivery_job_ids = []
-
-        for pair in get_audience_destination_pairs(
-            engagement[api_c.AUDIENCES]
-        ):
-            batch_destination = get_destination_config(
-                database, engagement_id, *pair
-            )
-            batch_destination.register()
-            batch_destination.submit()
-            delivery_job_ids.append(
-                str(batch_destination.audience_delivery_job_id)
-            )
-
-        return {
-            "message": f"Successfully created delivery job(s) "
-            f"{','.join(delivery_job_ids)}"
-        }, HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/{api_c.AUDIENCE}/<audience_id>/{api_c.DELIVER}",
-    "EngagementDeliverAudienceView",
-)
-class EngagementDeliverAudienceView(SwaggerView):
-    """
-    Engagement audience delivery class
-    """
-
-    parameters = [
-        {
-            "name": api_c.ENGAGEMENT_ID,
-            "description": "Engagement ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "5f5f7262997acad4bac4373b",
-        },
-        {
-            "name": api_c.AUDIENCE_ID,
-            "description": "Audience ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "5f5f7262997acad4bac4373b",
-        },
-    ]
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Result.",
-            "schema": {
-                "example": {"message": "Delivery job created."},
-            },
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to deliver engagement.",
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "description": api_c.ENGAGEMENT_NOT_FOUND
-        },
-    }
-
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DELIVERY_TAG]
-
-    # pylint: disable=no-self-use
-    @api_error_handler()
-    def post(self, engagement_id: str, audience_id: str) -> Tuple[dict, int]:
-        """Delivers one audience for an engagement.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
-
-        Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
-        """
-
-        # validate object id
-        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
-        # convert to ObjectIds
-        engagement_id = ObjectId(engagement_id)
-        audience_id = ObjectId(audience_id)
-
-        # check if engagement exists
-        database = get_db_client()
-        engagement = get_engagement(database, engagement_id)
-        if not engagement:
-            return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
-
-        # validate that the engagement has audiences
-        if db_c.AUDIENCES not in engagement:
-            return {
-                "message": "Engagement has no audiences."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate that the audience is attached
-        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
-        if audience_id not in audience_ids:
-            return {
-                "message": "Audience is not attached to the engagement."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate the audience exists
-        if not orchestration_management.get_audience(database, audience_id):
-            return {
-                "message": "Audience does not exist."
-            }, HTTPStatus.BAD_REQUEST
-
-        # submit jobs for the audience/destination pairs
-        delivery_job_ids = []
-        for pair in get_audience_destination_pairs(
-            engagement[api_c.AUDIENCES]
-        ):
-            if pair[0] != audience_id:
-                continue
-            batch_destination = get_destination_config(
-                database, engagement_id, *pair
-            )
-            batch_destination.register()
-            batch_destination.submit()
-            delivery_job_ids.append(
-                str(batch_destination.audience_delivery_job_id)
-            )
-
-        return {
-            "message": f"Successfully created delivery job(s) "
-            f"{','.join(delivery_job_ids)}"
-        }, HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
-    f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.DELIVER}",
-    "EngagementDeliverDestinationView",
-)
-class EngagementDeliverDestinationView(SwaggerView):
-    """
-    Engagement audience destination delivery class
-    """
-
-    parameters = [
-        {
-            "name": api_c.ENGAGEMENT_ID,
-            "description": "Engagement ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "5f5f7262997acad4bac4373b",
-        },
-        {
-            "name": api_c.AUDIENCE_ID,
-            "description": "Audience ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "5f5f7262997acad4bac4373b",
-        },
-        {
-            "name": api_c.DESTINATION_ID,
-            "description": "Destination ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "5f5f7262997acad4bac4373b",
-        },
-    ]
-
-    responses = {
-        HTTPStatus.OK.value: {
-            "description": "Result.",
-            "schema": {
-                "example": {"message": "Delivery job created."},
-            },
-        },
-        HTTPStatus.BAD_REQUEST.value: {
-            "description": "Failed to deliver engagement.",
-        },
-    }
-
-    responses.update(AUTH401_RESPONSE)
-    tags = [api_c.DELIVERY_TAG]
-
-    # pylint: disable=no-self-use
-    # pylint: disable=too-many-return-statements
-    @api_error_handler()
-    def post(
-        self, engagement_id: str, audience_id: str, destination_id: str
-    ) -> Tuple[dict, int]:
-        """Delivers one destination for an engagement audience.
-
-        ---
-        security:
-            - Bearer: ["Authorization"]
-
-        Args:
-            engagement_id (str): Engagement ID.
-            audience_id (str): Audience ID.
-            destination_id (str): Destination ID.
-
-        Returns:
-            Tuple[dict, int]: Message indicating connection
-                success/failure, HTTP Status.
-
-        """
-
-        # validate object id
-        if not all(
-            ObjectId.is_valid(x)
-            for x in [audience_id, engagement_id, destination_id]
-        ):
-            return {"message": "Invalid Object ID"}, HTTPStatus.BAD_REQUEST
-
-        # convert to ObjectIds
-        engagement_id = ObjectId(engagement_id)
-        audience_id = ObjectId(audience_id)
-        destination_id = ObjectId(destination_id)
-
-        # check if engagement exists
-        database = get_db_client()
-        engagement = get_engagement(database, engagement_id)
-        if not engagement:
-            return {
-                "message": "Engagement does not exist."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate that the engagement has audiences
-        if db_c.AUDIENCES not in engagement:
-            return {
-                "message": "Engagement has no audiences."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate that the audience is attached
-        audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
-        if audience_id not in audience_ids:
-            return {
-                "message": "Audience is not attached to the engagement."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate that the destination ID is attached to the audience
-        valid_destination = False
-        for audience in engagement[db_c.AUDIENCES]:
-            for destination in audience[db_c.DESTINATIONS]:
-                if destination_id == destination[db_c.OBJECT_ID]:
-                    valid_destination = True
-
-        if not valid_destination:
-            return {
-                "message": "Destination is not attached to the "
-                "engagement audience."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate destination exists
-        destination = delivery_platform_management.get_delivery_platform(
-            database, destination_id
-        )
-        if not destination:
-            return {
-                "message": "Destination does not exist."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate the audience exists
-        audience = orchestration_management.get_audience(database, audience_id)
-        if not audience:
-            return {
-                "message": "Audience does not exist."
-            }, HTTPStatus.BAD_REQUEST
-
-        # submit jobs for the audience/destination pairs
-        delivery_job_ids = []
-        for pair in get_audience_destination_pairs(
-            engagement[api_c.AUDIENCES]
-        ):
-            if pair != [audience_id, destination_id]:
-                continue
-            batch_destination = get_destination_config(
-                database, engagement_id, *pair
-            )
-            batch_destination.register()
-            batch_destination.submit()
-            delivery_job_ids.append(
-                str(batch_destination.audience_delivery_job_id)
-            )
-
-        # validate delivery route
-        return {
-            "message": f"Successfully created delivery job(s) "
-            f"{','.join(delivery_job_ids)}"
-        }, HTTPStatus.OK
-
-
-@add_view_to_blueprint(
-    engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.CAMPAIGNS}",
     "UpdateCampaignsForAudience",
 )
@@ -1187,20 +679,16 @@ class UpdateCampaignsForAudience(SwaggerView):
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
         """Updates campaigns for an engagement audience.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): Engagement ID.
             audience_id (str): Audience ID.
             destination_id (str): Destination ID.
-
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
-
         """
 
         # validate object id
@@ -1308,7 +796,7 @@ class UpdateCampaignsForAudience(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.CAMPAIGNS}",
     "AudienceCampaignsGetView",
 )
@@ -1368,20 +856,16 @@ class AudienceCampaignsGetView(SwaggerView):
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
         """Get the campaign mappings from mongo.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): Engagement ID.
             audience_id (str): Audience ID.
             destination_id (str): Destination ID.
-
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
-
         """
 
         # validate object id
@@ -1470,7 +954,7 @@ class AudienceCampaignsGetView(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/campaign-mappings",
     "AudienceCampaignMappingsGetView",
 )
@@ -1529,20 +1013,16 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
         """Get the list of possible campaign mappings to attach to audience.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): Engagement ID.
             audience_id (str): Audience ID.
             destination_id (str): Destination ID.
-
         Returns:
             Tuple[dict, int]: Message indicating connection
                 success/failure, HTTP Status.
-
         """
 
         # validate object id
@@ -1682,18 +1162,14 @@ class EngagementMetricsDisplayAds(SwaggerView):
     @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves display ad performance metrics.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): ID of an engagement
-
         Returns:
             Tuple[dict, int]: Response of Display Ads Performance Metrics,
                 HTTP Status Code
-
         """
 
         if not ObjectId.is_valid(engagement_id):
@@ -1845,24 +1321,18 @@ class EngagementMetricsEmail(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
+    # pylint: disable=unused-argument
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves email performance metrics.
-
         ---
         security:
             - Bearer: ["Authorization"]
-
         Args:
             engagement_id (str): ID of an engagement
-
         Returns:
             Tuple[dict, int]: Response of Email Performance Metrics,
                 HTTP Status Code
-
         """
-
-        if not ObjectId.is_valid(engagement_id):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         email = {
             "summary": {
