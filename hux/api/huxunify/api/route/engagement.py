@@ -1316,7 +1316,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 destination_metrics = update_metrics(
                     destination_id,
                     delivery_platform_management.get_delivery_platform(
-                        get_db_client(), destination_id
+                        database, destination_id
                     )[api_c.NAME],
                     audience_dest_jobs,
                     performance_metrics,
@@ -1488,7 +1488,7 @@ class EngagementMetricsEmail(SwaggerView):
                 destination_metrics = update_metrics(
                     destination_id,
                     delivery_platform_management.get_delivery_platform(
-                        get_db_client(), destination_id
+                        database, destination_id
                     )[api_c.NAME],
                     audience_dest_jobs,
                     performance_metrics,
