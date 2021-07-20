@@ -1,0 +1,114 @@
+{
+  "lift_data": [
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 10,
+      "predicted_lift": 9.37,
+      "profile_count": 22,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 10000.69,
+      "actual_value": 9728.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 20,
+      "predicted_lift": 9.37,
+      "profile_count": 54,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 18000.69,
+      "actual_value": 17280.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 30,
+      "predicted_lift": 9.37,
+      "profile_count": 102,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 45000.69,
+      "actual_value": 47280.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 40,
+      "predicted_lift": 9.37,
+      "profile_count": 190,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 70000.69,
+      "actual_value": 67280.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 50,
+      "predicted_lift": 9.37,
+      "profile_count": 300,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 80000.69,
+      "actual_value": 77280.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 60,
+      "predicted_lift": 9.37,
+      "profile_count": 427,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 97123.69,
+      "actual_value": 87280.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 70,
+      "predicted_lift": 9.37,
+      "profile_count": 612,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 123456.69,
+      "actual_value": 97280.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 80,
+      "predicted_lift": 9.37,
+      "profile_count": 818,
+      "actual_rate": 714.65,
+      "actual_lift": 11.37,
+      "predicted_value": 152342.69,
+      "actual_value": 142800.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 1.06,
+      "bucket": 90,
+      "predicted_lift": 1.53,
+      "profile_count": 1226,
+      "actual_rate": 714.65,
+      "actual_lift": 1.52,
+      "predicted_value": 167000.69,
+      "actual_value": 152800.81,
+      "predicted_rate": 615.67
+    },
+    {
+      "profile_size_percent": 100.00,
+      "bucket": 100,
+      "predicted_lift": 1,
+      "profile_count": 2067,
+      "actual_rate": 714.65,
+      "actual_lift": 1,
+      "predicted_value": 200000.69,
+      "actual_value": 172800.81,
+      "predicted_rate": 615.67
+    }
+  ]
+}

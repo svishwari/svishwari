@@ -53,7 +53,7 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule">
+        <v-row class="delivery-schedule mt-3">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
@@ -102,6 +102,7 @@
               :isSubMenu="true"
               :minDate="selectedStartDate"
               @on-date-select="onEndDateSelect"
+              :isDisabled="disableEndDate"
             />
           </div>
         </v-row>
@@ -256,7 +257,7 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
+          :disabled="!isValid || !isDateValid"
           @click="addNewEngagement()"
         >
           Create
@@ -349,6 +350,7 @@ export default {
       selectedDestination: null,
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
+      disableEndDate: true,
       errorMessages: [],
     }
   },
@@ -376,6 +378,17 @@ export default {
 
     isValid() {
       return this.value.name.length
+    },
+    isDateValid() {
+      if (this.value.delivery_schedule == 1) {
+        if (this.selectedStartDate == "Select date") {
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return true
+      }
     },
 
     hasDestinations() {
@@ -485,10 +498,20 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
+      this.selectedEndDate = null
+      this.disableEndDate = false
+      this.$set(this.value, "recurring", {
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: null,
+      })
     },
 
     onEndDateSelect(val) {
       this.selectedEndDate = val
+      this.$set(this.value, "recurring", {
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: this.$options.filters.Date(this.selectedEndDate, "MMMM D"),
+      })
     },
   },
 }
