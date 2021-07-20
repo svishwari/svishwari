@@ -7,10 +7,14 @@ from unittest import TestCase, mock
 from bson import ObjectId
 import mongomock
 import requests_mock
-from huxunifylib.connectors.facebook_connector import FacebookConnector
 
 from huxunify.api.data_connectors.aws import parameter_store
-from huxunifylib.database import constants as db_c, data_management
+from huxunify.api import constants as api_c
+from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.database import (
+    data_management,
+    constants as db_c
+)
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
@@ -25,7 +29,6 @@ from huxunifylib.database.orchestration_management import (
 from huxunifylib.database.client import DatabaseClient
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
-from huxunify.api import constants as api_c
 
 
 class OrchestrationRouteTest(TestCase):
@@ -526,7 +529,9 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
         mock_facebook_connector = mock.patch.object(
-            FacebookConnector, "get_new_lookalike_audience", return_value="LA_ID_12345"
+            FacebookConnector,
+            "get_new_lookalike_audience",
+            return_value="LA_ID_12345",
         )
         mock_facebook_connector.start()
 
@@ -539,8 +544,8 @@ class OrchestrationRouteTest(TestCase):
                 api_c.SOURCE_AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
                 api_c.NAME: lookalike_audience_name,
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
-                api_c.ENGAGEMENT_IDS: self.engagement_ids
-            }
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
         )
 
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
@@ -562,8 +567,8 @@ class OrchestrationRouteTest(TestCase):
                 api_c.SOURCE_AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
                 api_c.NAME: "NEW LA AUDIENCE",
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
-                api_c.ENGAGEMENT_IDS: ["bad_id1", "bad_id2"]
-            }
+                api_c.ENGAGEMENT_IDS: ["bad_id1", "bad_id2"],
+            },
         )
 
         valid_response = {"message": api_c.INVALID_OBJECT_ID}
@@ -585,8 +590,8 @@ class OrchestrationRouteTest(TestCase):
                 api_c.SOURCE_AUDIENCE_ID: "bad_id1",
                 api_c.NAME: "NEW LA AUDIENCE",
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
-                api_c.ENGAGEMENT_IDS: self.engagement_ids
-            }
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
         )
 
         valid_response = {"message": api_c.INVALID_OBJECT_ID}
@@ -608,8 +613,8 @@ class OrchestrationRouteTest(TestCase):
                 api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
                 api_c.NAME: "NEW LA AUDIENCE",
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
-                api_c.ENGAGEMENT_IDS: self.engagement_ids
-            }
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
         )
 
         valid_response = {"message": api_c.AUDIENCE_NOT_FOUND}
