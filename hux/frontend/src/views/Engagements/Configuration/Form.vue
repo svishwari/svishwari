@@ -388,10 +388,10 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        start_date: !this.isManualSelected
+        start_date: !this.isManualDelivery
           ? new Date(this.selectedStartDate).toISOString()
           : null,
-        end_date: !this.isManualSelected
+        end_date: !this.isManualDelivery
           ? new Date(this.selectedEndDate).toISOString()
           : null,
       }
@@ -399,10 +399,6 @@ export default {
 
     isValid() {
       return this.value.name.length
-    },
-
-    isManualSelected() {
-      return Boolean(this.value.delivery_schedule === 0)
     },
 
     isDateValid() {
