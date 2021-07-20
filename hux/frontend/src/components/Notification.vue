@@ -22,17 +22,16 @@
                 :showLabel="false"
                 :iconSize="17"
               />
-                             <tooltip>
-              <template #label-content>
-                            <span class="wrap-word"> 
-            
-                {{ data.description }} 
-                </span>
-              </template>
-              <template #hover-content>
+              <tooltip>
+                <template #label-content>
+                  <span class="wrap-word">
+                    {{ data.description }}
+                  </span>
+                </template>
+                <template #hover-content>
                   <span> {{ data.description }} </span>
-              </template>
-            </tooltip>
+                </template>
+              </tooltip>
             </div>
             <div class="list-stamp">
               <time-stamp :value="data.created" />
@@ -59,7 +58,7 @@ export default {
   components: {
     Status,
     TimeStamp,
-    Tooltip
+    Tooltip,
   },
   computed: {
     ...mapGetters({
@@ -122,24 +121,24 @@ export default {
 }
 .view-all {
   font-family: Open Sans;
-font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 22px;
-color:  var(--v-primary-base) !important;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--v-primary-base) !important;
 }
-::v-deep .v-list-item__title, .v-list-item__subtitle {
-flex: 8 1 127%;
-    overflow: unset !important;
-    text-overflow: ellipsis;
-    white-space: revert !important;
-
+::v-deep .v-list-item__title,
+.v-list-item__subtitle {
+  flex: 8 1 127%;
+  overflow: unset !important;
+  text-overflow: ellipsis;
+  white-space: revert !important;
 }
 .wrap-word {
   width: 215px !important;
-    display: -webkit-box;
-    -webkit-box-orient: vertical !important;
-    -webkit-line-clamp: 3 !important;
-    overflow: hidden !important;
+  display: -webkit-box;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  overflow: hidden !important;
 }
 </style>

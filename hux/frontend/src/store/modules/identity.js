@@ -9,7 +9,8 @@ const METRICS = {
   },
   match_rate: {
     title: "Match rate",
-    description: "Percentage of input records that are consolidated into Hux IDs.",
+    description:
+      "Percentage of input records that are consolidated into Hux IDs.",
     format: "percentage",
   },
   total_unique_ids: {
