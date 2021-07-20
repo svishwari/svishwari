@@ -295,7 +295,7 @@ def delete_delivery_job_by_id(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
 ) -> bool:
-    """A function to hard delete a delivery job by delivery_job_id.
+    """A function to hard delete a delivery job.
 
     Args:
         database (DatabaseClient): A database client.
