@@ -79,7 +79,7 @@ class ModelsView(SwaggerView):
             api_c.PREDICTION_WINDOW: 365,
             api_c.ID: 3,
             api_c.OWNER: "Susan Miller",
-            api_c.STATUS: "Active",
+            api_c.STATUS: api_c.STATUS_PENDING,
         }
         all_models = tecton.get_models()
         all_models.append(purchase_model)
