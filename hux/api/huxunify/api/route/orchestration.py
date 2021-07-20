@@ -2,7 +2,6 @@
 Paths for Orchestration API
 """
 import datetime
-import json
 import random
 from http import HTTPStatus
 from random import randrange
@@ -12,17 +11,6 @@ from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError, INCLUDE
 
-from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
-from huxunifylib.database import (
-    delivery_platform_management as destination_management,
-    orchestration_management,
-    db_exceptions,
-    engagement_management,
-    data_management,
-)
-import huxunifylib.database.constants as db_c
-from huxunifylib.connectors import facebook_connector
-from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
@@ -38,6 +26,16 @@ from huxunify.api.route.utils import (
     secured,
     get_user_name,
 )
+from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
+from huxunifylib.database import (
+    delivery_platform_management as destination_management,
+    orchestration_management,
+    db_exceptions,
+    engagement_management,
+    data_management,
+)
+import huxunifylib.database.constants as db_c
+from huxunifylib.connectors import facebook_connector
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -617,6 +615,7 @@ class SetLookalikeAudience(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    # pylint: disable=no-self-use, bare-except
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
         """Sets lookalike audience
