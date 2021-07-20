@@ -56,7 +56,7 @@
         <div class="pt-1 pr-0">
           <attribute-rules
             :rules="attributeRules"
-            @updateOveriew="(data) => mapCDMOverview(data)"
+            @updateOverview="(data) => mapCDMOverview(data)"
             applyCaptionStyle
             enableTitle
           />
