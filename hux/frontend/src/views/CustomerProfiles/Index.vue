@@ -144,7 +144,7 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
-import CustomerDetails from "@/views/CustomerProfiles/Drawers/CustomerDetails"
+import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 
 export default {
   name: "CustomerProfiles",

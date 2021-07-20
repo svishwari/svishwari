@@ -81,9 +81,16 @@
       </hux-data-table>
     </template>
     <template #footer-left>
-      <div class="d-flex align-baseline footer-font gray--text text-caption">
-        {{ customersList.length }} results
-      </div>
+      <tooltip>
+        <div class="d-flex align-baseline footer-font gray--text text-caption">
+          {{ customerOverview.total_customers | Numeric(true, false, true) }}
+          results
+        </div>
+        <template #tooltip>
+          {{ customerOverview.total_customers | Numeric(true, false, false) }}
+          results
+        </template>
+      </tooltip>
     </template>
   </Drawer>
 </template>
@@ -157,6 +164,7 @@ export default {
   computed: {
     ...mapGetters({
       customersList: "customers/list",
+      customerOverview: "customers/overview",
     }),
 
     customers() {
