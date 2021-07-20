@@ -180,7 +180,6 @@ class CustomerPostOverview(SwaggerView):
         if (
             api_c.TOTAL_RECORDS in customers
             and api_c.TOTAL_CUSTOMERS in customers
-            and api_c.TOTAL_UNIQUE_IDS in customers
         ):
             customers[api_c.TOTAL_CUSTOMERS] = customers[api_c.TOTAL_RECORDS]
 
