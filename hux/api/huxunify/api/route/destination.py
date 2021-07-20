@@ -449,6 +449,7 @@ class DestinationValidatePostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=bare-except
     @api_error_handler()
     def post(self) -> Tuple[dict, int]:
         """Validates the credentials for a destination.
