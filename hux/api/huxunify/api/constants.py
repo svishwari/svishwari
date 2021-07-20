@@ -330,6 +330,7 @@ DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
 # Engagement fields
+ENGAGEMENT = "engagement"
 ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_IDS = "engagement_ids"
 ENGAGEMENT_NAME = "engagement_name"

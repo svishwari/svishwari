@@ -11,6 +11,7 @@ from huxunify.api.schema.utils import (
     validate_object_id,
 )
 from huxunify.api.schema.destinations import DestinationGetSchema
+from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
@@ -109,7 +110,7 @@ class AudiencePostSchema(AudiencePutSchema):
     filters = fields.List(fields.Dict())
 
 
-class DeliveryHistorySchema(Schema):
+class EngagementDeliveryHistorySchema(Schema):
     """
     Schema for Engagement Delivery History
     """
@@ -121,6 +122,31 @@ class DeliveryHistorySchema(Schema):
 
     audience = fields.Nested(
         AudienceGetSchema(
+            only=(
+                "name",
+                "_id",
+            )
+        )
+    )
+    destination = fields.Nested(
+        DestinationGetSchema(only=("name", "type", "_id"))
+    )
+    size = fields.Integer()
+    delivered = DateTimeWithZ(required=True, allow_none=True)
+
+
+class AudienceDeliveryHistorySchema(Schema):
+    """
+    Schema for Audience Delivery History
+    """
+
+    class Meta:
+        """Set Order for the Audience Response"""
+
+        ordered = True
+
+    engagement = fields.Nested(
+        EngagementGetSchema(
             only=(
                 "name",
                 "_id",
