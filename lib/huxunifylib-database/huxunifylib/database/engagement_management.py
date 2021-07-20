@@ -218,7 +218,9 @@ def get_engagements_summary(
                     # audience fields we need for later grouping
                     "audience_name": "$audiences.name",
                     "audience_id": "$audiences.id",
-                    "delivery_schedule": "$delivery_schedule",
+                    "delivery_schedule": {
+                        "$ifNull": ["$delivery_schedule", ""]
+                    },
                 },
                 # push the grouped destinations into an array
                 db_c.DESTINATIONS: {
