@@ -354,6 +354,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
         self.assertEqual(validation_failed, response.json)
 
+    # pylint: disable=unused-argument
     @patch(
         "huxunify.api.route.destination.SFMCConnector",
         **{"return_value.raiseError.side_effect": Exception()},
