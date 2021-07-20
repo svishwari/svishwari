@@ -389,7 +389,7 @@ export default {
           }
         }),
         start_date: new Date(this.selectedStartDate).toISOString(),
-        end_date:  new Date(this.selectedEndDate).toISOString(),
+        end_date: new Date(this.selectedEndDate).toISOString(),
       }
     },
 
