@@ -315,14 +315,14 @@ class TestDestinationRoutes(TestCase):
         "huxunify.api.route.destination.FacebookConnector",
         **{"return_value.raiseError.side_effect": Exception()},
     )
-    def test_validate_facebook_credentials_failure(
+    def test_validate_facebook_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
         """
         Test failure to authenticate with facebook
 
         Args:
-            sfmcMock (MagicMock): MagicMock of the Facebook Connector
+            mock_connector (MagicMock): MagicMock of the Facebook Connector
 
         Returns:
 
@@ -332,7 +332,7 @@ class TestDestinationRoutes(TestCase):
         mock_facebook_connector.check_connection.return_value = False
 
         validation_details = {
-            "type": "facebook",
+            "type": db_c.DELIVERY_PLATFORM_FACEBOOK,
             "authentication_details": {
                 "facebook_access_token": "MkU3Ojgwm",
                 "facebook_app_secret": "717bdOQqZO99",
@@ -360,7 +360,7 @@ class TestDestinationRoutes(TestCase):
     )
     def test_validate_sfmc_credentials(self, mock_connector: MagicMock):
         """
-        Test failure to authenticate with sfmc
+        Test successful authentication with sfmc
 
         Args:
             mock_connector (MagicMock): MagicMock of the SFMC Connector
@@ -369,10 +369,8 @@ class TestDestinationRoutes(TestCase):
 
         """
 
-        mock_sfmc_connector = mock_connector.return_value
-
         validation_details = {
-            "type": "sfmc",
+            "type": db_c.DELIVERY_PLATFORM_SFMC,
             "authentication_details": {
                 "accountId": "123456",
                 "sfmc_auth_base_uri": "some_url",
@@ -401,7 +399,7 @@ class TestDestinationRoutes(TestCase):
         "huxunify.api.route.destination.SFMCConnector",
         **{"return_value.raiseError.side_effect": Exception()},
     )
-    def test_validate_sfmc_credentials_failure(
+    def test_validate_sfmc_credentials_failure_bad_credentials(
         self, mock_connector: MagicMock
     ):
         """
@@ -418,7 +416,7 @@ class TestDestinationRoutes(TestCase):
         mock_connector.side_effect = Exception("Test Exception")
 
         validation_details = {
-            "type": "sfmc",
+            "type": db_c.DELIVERY_PLATFORM_SFMC,
             "authentication_details": {
                 "accountId": "123456",
                 "sfmc_auth_base_uri": "some_url",
@@ -443,18 +441,18 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(validation_failed, response.json)
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")
-    def test_create_data_extension(self, mock_sfmc: MagicMock):
+    def test_create_data_extension(self, mock_connector: MagicMock):
         """
         Test create data extension
 
         Args:
-            mock_sfmc (MagicMock): magic mock of SFMCConnector
+            mock_connector (MagicMock): magic mock of SFMCConnector
 
         Returns:
 
         """
 
-        mock_sfmc_instance = mock_sfmc.return_value
+        mock_sfmc_instance = mock_connector.return_value
         mock_sfmc_instance.create_data_extension.return_value = {}
 
         destination_id = self.destinations[2][db_c.ID]
