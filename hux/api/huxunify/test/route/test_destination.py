@@ -319,7 +319,7 @@ class TestDestinationRoutes(TestCase):
         self, mock_connector: MagicMock
     ):
         """
-        Test failure to authenticate with facebook
+        Test failure to authenticate with facebook due to bad credentials
 
         Args:
             mock_connector (MagicMock): MagicMock of the Facebook Connector
@@ -403,7 +403,7 @@ class TestDestinationRoutes(TestCase):
         self, mock_connector: MagicMock
     ):
         """
-        Test failure to authenticate with sfmc
+        Test failure to authenticate with sfmc due to bad credentials
 
         Args:
             mock_connector (MagicMock): MagicMock of the SFMC Connector
