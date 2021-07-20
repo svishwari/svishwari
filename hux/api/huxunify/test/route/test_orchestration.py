@@ -8,8 +8,6 @@ from bson import ObjectId
 import mongomock
 import requests_mock
 
-from huxunify.api.data_connectors.aws import parameter_store
-from huxunify.api import constants as api_c
 from huxunifylib.connectors.facebook_connector import FacebookConnector
 from huxunifylib.database import (
     data_management,
@@ -27,6 +25,8 @@ from huxunifylib.database.orchestration_management import (
     get_audience,
 )
 from huxunifylib.database.client import DatabaseClient
+from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
 
