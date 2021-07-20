@@ -22,7 +22,17 @@
                 :showLabel="false"
                 :iconSize="17"
               />
-              <span> {{ data.description }} </span>
+                             <tooltip>
+              <template #label-content>
+                            <span class="wrap-word"> 
+            
+                {{ data.description }} 
+                </span>
+              </template>
+              <template #hover-content>
+                  <span> {{ data.description }} </span>
+              </template>
+            </tooltip>
             </div>
             <div class="list-stamp">
               <time-stamp :value="data.created" />
@@ -42,12 +52,14 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 import Status from "./common/Status.vue"
+import Tooltip from "./common/Tooltip.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
 export default {
   name: "Notification",
   components: {
     Status,
     TimeStamp,
+    Tooltip
   },
   computed: {
     ...mapGetters({
@@ -115,5 +127,19 @@ font-weight: normal;
 font-size: 14px;
 line-height: 22px;
 color:  var(--v-primary-base) !important;
+}
+::v-deep .v-list-item__title, .v-list-item__subtitle {
+flex: 8 1 127%;
+    overflow: unset !important;
+    text-overflow: ellipsis;
+    white-space: revert !important;
+
+}
+.wrap-word {
+  width: 215px !important;
+    display: -webkit-box;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+    overflow: hidden !important;
 }
 </style>
