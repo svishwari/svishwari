@@ -52,8 +52,8 @@ def set_delivery_platform(
         deleted (bool): if the delivery platform is deleted (soft-delete).
         user_name (str): Name of the user creating the delivery platform.
             This is Optional.
-        performance_de (dict): A dictionary consisting of name and id of
-            the performance metrics data extension
+        configuration (dict): A dictionary consisting of any platform
+            specific configurations.
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
