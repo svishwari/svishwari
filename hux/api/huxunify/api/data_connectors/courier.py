@@ -256,21 +256,21 @@ def get_destination_config(
 
     # get audience size and update the delivery job
     audience = get_audience(database, audience_id)
-    # try:
-    audience_insights = get_customers_overview(
-        audience[db_const.AUDIENCE_FILTERS]
-    )
-    set_delivery_job_audience_size(
-        database,
-        audience_delivery_job[db_const.ID],
-        audience_insights.get(api_const.TOTAL_RECORDS, 0),
-    )
-    # except Exception as exc:  # pylint: disable=broad-except
-    #     logging.warning(
-    #         "Failed to set audience size %s: %s.",
-    #         exc.__class__,
-    #         exc,
-    #     )
+    try:
+        audience_insights = get_customers_overview(
+            audience[db_const.AUDIENCE_FILTERS]
+        )
+        set_delivery_job_audience_size(
+            database,
+            audience_delivery_job[db_const.ID],
+            audience_insights.get(api_const.TOTAL_RECORDS, 0),
+        )
+    except Exception as exc:  # pylint: disable=broad-except
+        logging.warning(
+            "Failed to set audience size %s: %s.",
+            exc.__class__,
+            exc,
+        )
 
     # get the configuration values
     config = get_config()
