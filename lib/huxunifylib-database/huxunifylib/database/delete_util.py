@@ -307,7 +307,7 @@ def delete_delivery_job_by_id(
     """
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
-    delivery_jobs_collecltion = am_db[c.DELIVERY_JOBS_COLLECTION]
+    delivery_jobs_collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
         delivery_jobs_collecltion.delete_one({c.ID: delivery_job_id})
