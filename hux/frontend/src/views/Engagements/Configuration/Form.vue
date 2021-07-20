@@ -386,8 +386,8 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        start_date: this.selectedStartDate,
-        end_date: this.selectedEndDate,
+        start_date: new Date(this.selectedStartDate).toISOString(),
+        end_date:  new Date(this.selectedEndDate).toISOString(),
       }
     },
 
