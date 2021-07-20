@@ -83,8 +83,7 @@
     <template #footer-left>
       <tooltip>
         <div class="d-flex align-baseline footer-font gray--text text-caption">
-          {{ customerOverview.total_customers | Numeric(true, false, true) }}
-          results
+          {{ customerOverview.total_customers | Numeric(true, true) }} results
         </div>
         <template #tooltip>
           {{ customerOverview.total_customers | Numeric(true, false, false) }}
