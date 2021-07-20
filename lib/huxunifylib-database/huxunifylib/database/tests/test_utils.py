@@ -464,7 +464,7 @@ class TestUtils(unittest.TestCase):
             delivery_platform_generic_campaigns=self.generic_campaigns,
         )
 
-        # set synthetic perfromance metrics
+        # set synthetic performance metrics
         dpm.set_performance_metrics(
             database=self.database,
             delivery_platform_id=delivery_platform_id,
