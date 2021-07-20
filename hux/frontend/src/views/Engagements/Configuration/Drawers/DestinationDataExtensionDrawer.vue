@@ -280,7 +280,7 @@ export default {
       }
       this.value[this.selectedAudienceId].destinations.push({
         id: destinationWithDataExtension.id,
-        delivery_platform_cofig: {
+        delivery_platform_config: {
           data_extension_name:
             destinationWithDataExtension.delivery_platform_config
               .data_extension_name,

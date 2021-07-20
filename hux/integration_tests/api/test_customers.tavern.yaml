@@ -1,0 +1,310 @@
+---
+test_name: Test customer insights geo
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test customer-insights/geo
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/geo"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        - name: !anystr
+        - population_percentage: !anyfloat
+        - size: !anyint
+        - gender_women: !anyfloat
+        - gender_men: !anyfloat
+        - gender_other: !anyfloat
+        - ltv: !anyfloat
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customer overview
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test customers/overview
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/overview"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "total_unknown_ids": 4515
+        "min_ltv_predicted": 3.2688
+        "updated": "2021-05-24T14:35:12.001000"
+        "gender_men": 0.52
+        "total_cities": 2513
+        "total_known_ids": 13620
+        "max_ltv_predicted": 3.6777
+        "total_countries": 2
+        "min_age": 18
+        "total_us_states": 44
+        "gender_other": 0.06
+        "max_ltv_actual": 4.0066
+        "total_individual_ids": 313
+        "min_ltv_actual": 3.5974
+        "gender_women": 0.42
+        "total_customers": 3329
+        "total_unique_ids": 14238
+        "match_rate": 0.05
+        "total_records": 20238
+        "total_household_ids": 9927
+        "max_age": 76
+      headers:
+        content-type: application/json
+
+---
+test_name: Test idr datafeeds
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test idr/datafeeds
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/datafeeds"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      status_code: 200
+      json:
+        - data_source_type: !anystr
+        - last_run: !anystr
+        - datafeed_name: !anystr
+        - match_rate: !anyfloat
+        - datafeed_id: !anystr
+        - new_ids_generated: !anyint
+        - num_records_processed: !anyint
+      headers:
+        content-type: application/json
+
+---
+test_name: Test idr overview
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test idr/overview
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/overview"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "total_unknown_ids": 4515
+        "min_ltv_predicted": 3.2688
+        "updated": "2021-05-24T14:35:12.001000"
+        "gender_men": 0.52
+        "total_cities": 2513
+        "total_known_ids": 13620
+        "max_ltv_predicted": 3.6777
+        "total_countries": 2
+        "min_age": 18
+        "total_us_states": 44
+        "gender_other": 0.06
+        "max_ltv_actual": 4.0066
+        "total_individual_ids": 313
+        "min_ltv_actual": 3.5974
+        "gender_women": 0.42
+        "total_customers": 3329
+        "total_unique_ids": 14238
+        "match_rate": 0.05
+        "total_records": 20238
+        "total_household_ids": 9927
+        "max_age": 76
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customers
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test customers
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "total_customers": !anyint
+        "customers": !anylist
+        - "hux_id": !anystr
+        - "first_name": !anystr
+        - "last_name": !anystr
+        - "match_confidence": !anyfloat
+      headers:
+        content-type: application/json
+
+---
+test_name: Test datafeeds get
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test datafeeds get
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/datafeeds/1234"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "stitched":
+          "digital_ids_added": 3
+          "digital_ids_merged": 6
+          "time_stamp": !anystr
+          "records_source": "Input waterfall"
+          "match_rate": 0.6606
+          "merge_rate": 0
+        "pinning":
+          "db_reads": 1
+          "household_id_match": 1
+          "filename": "Input.csv"
+          "date_time": !anystr
+          "new_company_ids": 1
+          "db_writes": 1
+          "individual_id_match": 1
+          "address_id_match": 1
+          "new_individual_ids": 1
+          "new_household_ids": 1
+          "process_time": 6.43
+          "company_id_match": 1
+          "input_records": 2
+          "empty_records": 0
+          "output_records": 2
+          "new_address_ids": 1
+      headers:
+        content-type: application/json
+
+---
+test_name: Test datafeeds get
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test customers get
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/1234"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "hux_id": "1531-2039-22"
+        "ltv_predicted": 59.55
+        "churn_rate": 5
+        "last_email_open": "2020-02-20T20:02:02.202000"
+        "propensity_to_unsubscribe": 1
+        "address": "++REDACTED++"
+        "gender": "++REDACTED++"
+        "ltv_actual": 60.22
+        "last_name": "Fox"
+        "email": "++REDACTED++"
+        "zip": "++REDACTED++"
+        "state": "++REDACTED++"
+        "since": "2020-02-20T20:02:02.202000"
+        "preference_push": false
+        "last_click": "2020-02-20T20:02:02.202000"
+        "preference_email": false
+        "preference_in_app": false
+        "match_confidence": 0.966666667
+        "conversion_time": 3.48
+        "age": "++REDACTED++"
+        "last_purchase": "2020-02-20T20:02:02.202000"
+        "city": "++REDACTED++"
+        "propensity_to_purchase": 0
+        "phone": "++REDACTED++"
+        "first_name": "Bertie"
+        "preference_sms": false
+        "identity_resolution":
+          "email":
+            "percentage": 0.34
+            "data_sources": !anylist
+          "name":
+            "percentage": 0.26
+            "data_sources": !anylist
+          "cookie":
+            "percentage": 0.1
+            "data_sources": !anylist
+          "phone":
+            "percentage": 0.1
+            "data_sources": !anylist
+          "address":
+            "percentage": 0.2
+            "data_sources": !anylist
+      headers:
+        content-type: application/json

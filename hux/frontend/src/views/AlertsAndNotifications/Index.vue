@@ -1,5 +1,5 @@
 <template>
-  <div class="audiences-wrap">
+  <div class="notification-wrap">
     <PageHeader :headerHeightChanges="'py-3'">
       <template slot="left">
         <Breadcrumb :items="breadcrumbItems" />
@@ -27,7 +27,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7 pl-6 white" v-if="!loading">
+    <v-row class="pb-7 pl-7 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
         :dataItems="getNotificationData"
@@ -114,17 +114,17 @@ export default {
         {
           text: "Time",
           value: "created",
-          width: "auto",
+          width: "180px",
         },
         {
           text: "Type",
           value: "notification_type",
-          width: "auto",
+          width: "180px",
         },
         {
           text: "Description",
           value: "description",
-          width: "600px",
+          width: "auto",
         },
       ],
       loading: false,
@@ -148,20 +148,21 @@ export default {
   },
   async mounted() {
     this.loading = true
-    await this.getNotification()
+    await this.getNotification(25)
     this.loading = false
   },
 }
 </script>
 <style lang="scss" scoped>
-.audiences-wrap {
+.notification-wrap {
+  background: white;
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
   }
   .page-header--wrap {
     box-shadow: 0px 1px 1px -1px var(--v-lightGrey-base),
-      0px 1px 1px 0px var(--v-lightGrey-base),
-      0px 1px 2px 0px var(--v-lightGrey-base) !important;
+      0px 0px 1px 0px var(--v-lightGrey-base),
+      0px 0px 2px 0px var(--v-lightGrey-base) !important;
   }
   .top-bar {
     margin-top: 1px;
