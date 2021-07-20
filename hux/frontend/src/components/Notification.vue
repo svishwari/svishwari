@@ -40,8 +40,8 @@
         </v-list-item>
       </div>
       <v-list-item>
-        <v-list-item-title class="text-h6">
-          <a class="view-all" @click="alertRouters()">View all alerts</a>
+        <v-list-item-title class="text-h6 view-all text-decoration-none">
+          <div @click="alertRouters()">View all alerts</div>
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -126,6 +126,7 @@ export default {
   font-size: 14px;
   line-height: 22px;
   color: var(--v-primary-base) !important;
+  cursor: pointer;
 }
 ::v-deep .v-list-item__title,
 .v-list-item__subtitle {
@@ -135,7 +136,7 @@ export default {
   white-space: revert !important;
 }
 .wrap-word {
-  width: 215px !important;
+  max-width: 215px !important;
   display: -webkit-box;
   -webkit-box-orient: vertical !important;
   -webkit-line-clamp: 3 !important;
