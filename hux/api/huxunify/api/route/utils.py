@@ -305,7 +305,7 @@ def api_error_handler(custom_message: dict = None) -> object:
     Example: @api_error_handler()
 
     Args:
-        custom_message: Optional; A dict containing Custom messages for
+        custom_message (dict): Optional; A dict containing Custom messages for
             particular exceptions
 
     Returns:
