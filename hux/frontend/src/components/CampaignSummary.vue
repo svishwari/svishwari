@@ -92,7 +92,7 @@
       <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
           <icon type="audiences" :size="24" color="neroBlack" class="mr-2" />
-          <span class="text-h5 text--neroblack"> Audience performance </span>
+          <span class="text-h5 neroBlack--text"> Audience performance </span>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
@@ -245,6 +245,8 @@
                         tile
                         class="error--text px-2 pl-2 pr-4"
                         color="white"
+                        height="29"
+                        width="99"
                         @click="triggerCampaignMap(parentItem, item)"
                       >
                         <v-icon size="15" small class="mr-1">

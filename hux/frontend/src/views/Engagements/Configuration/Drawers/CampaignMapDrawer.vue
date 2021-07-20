@@ -2,14 +2,14 @@
   <drawer v-model="localToggle" content-padding="pa-0 mapping-drawer">
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3">Map Facebook Campaign</h3>
+        <h3 class="text-h3 neroBlack--text">Map Facebook Campaign</h3>
       </div>
     </template>
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
       <div class="py-5 px-6">
-        <span class="text-caption">
+        <span class="text-caption neroBlack--text">
           To see KPI’s for Facebook, map to a Facebook campaign and select a
           delivery time.
         </span>
@@ -32,7 +32,7 @@
               col: 2,
             },
           ]"
-          class="pt-13 campaigns-wrapper"
+          class="pt-11 campaigns-wrapper"
           v-if="!loading"
         >
           <template #field:campaign="row">
@@ -74,6 +74,7 @@
                 icon
                 color="primary"
                 v-if="canDeleteMapping(row.index)"
+                height="21"
                 @click="removeMapping(row.index)"
               >
                 <v-icon>mdi-delete-outline</v-icon>
