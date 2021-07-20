@@ -120,6 +120,10 @@ class TestCustomersOverview(TestCase):
             f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
             json=t_c.CUSTOMER_INSIGHT_RESPONSE,
         )
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
         self.request_mocker.start()
 
         response = self.test_client.get(
