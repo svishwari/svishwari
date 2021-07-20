@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "79463368ca294d74f4c96731ab0e055272b475f793fbacd8ca1608510530ba17"
+            "sha256": "89d96c018ca800824044e22a2326c7b2f94e547388519b2d113857bce8e4b3b5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -125,7 +125,6 @@
                 "sha256:e74c2c49fd04b80225f5b9734f1dbd417d89f280abfedccced3ac21509e1659d",
                 "sha256:eb37b50ddfb6e558b29f6c8c03b0666514e55d6170bf4624e7261a3af93c6401"
             ],
-            "index": "pypi",
             "version": "==12.8.1"
         },
         "backports.entry-points-selectable": {
@@ -426,11 +425,11 @@
         },
         "huxunifylib-connectors": {
             "hashes": [
-                "sha256:c7d0e64728c90eaba4afa52d0356f332c585c06f88b989a37cf71fe4ddd0449e",
-                "sha256:d05aa9199f94f27846006a1145d1941b817a1e47aa0974f20f6794fde055112a"
+                "sha256:53e58376886fab36bc0521162eeb17c93b90b8d40ad9d64bb1b8e6a33ec12417",
+                "sha256:bce052a7bb29e774cd3b473b379bbbae53f52d9926c1d1a83ef591f956dbd292"
             ],
             "index": "jfrog",
-            "version": "==0.1.21"
+            "version": "==0.1.22"
         },
         "huxunifylib-database": {
             "hashes": [
@@ -442,11 +441,11 @@
         },
         "huxunifylib-util": {
             "hashes": [
-                "sha256:062129e6d6b925cdfb799e565690be158f2ee67e7d0bad59629b9e7ec9fe805c",
-                "sha256:c68547cb89682d0deae6f76bd74760e894eef64c6350341abdb67161bdb21734"
+                "sha256:4b30ad6851013a8fae549d2903b3262e371d53e82e417eb6d55b40dc896cf358",
+                "sha256:bfbe6c5c9fafbb26fd5727cb00cc89154a6684c0681f3bd8a45387b6dbfbb67e"
             ],
             "index": "jfrog",
-            "version": "==0.1.21"
+            "version": "==0.1.22"
         },
         "identify": {
             "hashes": [
@@ -1259,11 +1258,11 @@
     "develop": {
         "astroid": {
             "hashes": [
-                "sha256:11e598e49e31f288ae43d13e8d0eb28454e5e2aa745cbc16cc799f147bb7e8dd",
-                "sha256:958c2aa6ba47e0b69773ce2b30cd6c2c99d15a5cc611e323d231f4c44db36d54"
+                "sha256:6021561b2e87ed6b3c93c2682ac50079c65ab08f1e4e0277ba38f97e0e492185",
+                "sha256:a670dd7af3fe603f51aa7117462588b7c3bdcd58007edfaee752bf82eceecd28"
             ],
             "markers": "python_version ~= '3.6'",
-            "version": "==2.6.3"
+            "version": "==2.6.4"
         },
         "atomicwrites": {
             "hashes": [
