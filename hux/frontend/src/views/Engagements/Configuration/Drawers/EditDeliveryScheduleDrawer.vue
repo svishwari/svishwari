@@ -1,5 +1,9 @@
 <template>
-  <Drawer v-model="localToggle" :loading="loading" class="rounded-0">
+  <Drawer
+    v-model="localToggle"
+    :loading="loading"
+    class="edit-delivery-drawer-wrapper rounded-0"
+  >
     <template #header-left>
       <div class="d-flex">
         <v-icon color="primary" size="27">mdi-clock-time-five-outline</v-icon>
@@ -22,69 +26,7 @@
         <div class="d-flex justify-end py-4 primary--text cursor-pointer">
           Reset delivery to default
         </div>
-
-        <div class="edit-schedule-wrapper">
-          <span class="pr-2">
-            <span class="neroBlack--text text-caption">Repeat</span>
-            <v-select
-              v-model="schedule.periodicity"
-              :items="repeatItems"
-              dense
-              outlined
-              background-color="white"
-              class="select-common"
-              append-icon="mdi-chevron-down"
-            />
-          </span>
-          <span class="pr-2">
-            <span class="neroBlack--text text-caption">Every</span>
-            <v-select
-              v-model="schedule.every"
-              :items="everyItems"
-              dense
-              outlined
-              background-color="white"
-              class="select-common"
-              append-icon="mdi-chevron-down"
-            />
-          </span>
-          <span class="neroBlack--text text-h6 pt-3 pr-4">
-            {{ timeFrame }}(s) at
-          </span>
-          <span class="pr-2">
-            <v-select
-              v-model="schedule.hour"
-              :items="hourItems"
-              dense
-              outlined
-              background-color="white"
-              class="select-common"
-              append-icon="mdi-chevron-down"
-            />
-          </span>
-          <span class="pr-2">
-            <v-select
-              v-model="schedule.hour"
-              :items="minItems"
-              dense
-              outlined
-              background-color="white"
-              class="select-common"
-              append-icon="mdi-chevron-down"
-            />
-          </span>
-          <span>
-            <v-select
-              v-model="schedule.period"
-              :items="periodItems"
-              dense
-              outlined
-              background-color="white"
-              class="select-common"
-              append-icon="mdi-chevron-down"
-            />
-          </span>
-        </div>
+        <hux-schedule-picker v-model="schedule" />
       </div>
     </template>
 
@@ -106,6 +48,7 @@
 import Drawer from "@/components/common/Drawer.vue"
 import CardHorizontal from "@/components/common/CardHorizontal.vue"
 import HuxButton from "@/components/common/huxButton.vue"
+import HuxSchedulePicker from "@/components/common/DatePicker/HuxSchedulePicker.vue"
 
 export default {
   name: "EditDeliverySchedule",
@@ -114,6 +57,7 @@ export default {
     Drawer,
     CardHorizontal,
     HuxButton,
+    HuxSchedulePicker,
   },
 
   props: {
@@ -142,36 +86,8 @@ export default {
     return {
       loading: false,
       localToggle: false,
-      repeatItems: ["Daily", "Weekly", "Monthly"],
-      hourItems: Array.from({ length: 12 }, (_, i) => i + 1),
-      minItems: Array.from({ length: 4 }, (_, i) => i + 15),
-      periodItems: ["AM","PM"],
-      schedule: {
-        periodicity: "Daily",
-        every: 1,
-        hour: 12,
-        minute: 15,
-        period: "AM",
-      },
+      schedule: null,
     }
-  },
-
-  computed: {
-    everyItems() {
-      return this.schedule.periodicity === "Daily"
-        ? Array.from({ length: 7 }, (_, i) => i + 1)
-        : this.schedule.periodicity === "Weekly"
-        ? Array.from({ length: 4 }, (_, i) => i + 1)
-        : Array.from({ length: 12 }, (_, i) => i + 1)
-    },
-
-    timeFrame() {
-      return this.schedule.periodicity === "Daily"
-        ? "day"
-        : this.schedule.periodicity === "Weekly"
-        ? "week"
-        : "month"
-    },
   },
 
   methods: {
@@ -195,26 +111,3 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-.edit-schedule-wrapper {
-  display: flex;
-  align-items: center;
-  ::v-deep .select-common {
-    .v-input__control {
-      .v-input__slot {
-        min-height: 40px;
-        fieldset {
-          color: var(--v-lightGrey-base) !important;
-          border-width: 1px !important;
-        }
-        input::placeholder {
-          color: var(--v-lightGrey-base) !important;
-        }
-      }
-      .v-text-field__details {
-        display: none;
-      }
-    }
-  }
-}
-</style>
