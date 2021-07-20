@@ -174,25 +174,15 @@ class CustomerPostOverview(SwaggerView):
             Tuple[dict, int] dict of Customer data overview and http code
         """
 
-        # TODO resolve to a single field POST demo
+        # TODO - cdm to return single field
         customers = get_customers_overview(request.json)
 
         if (
             api_c.TOTAL_RECORDS in customers
             and api_c.TOTAL_CUSTOMERS in customers
+            and api_c.TOTAL_UNIQUE_IDS in customers
         ):
             customers[api_c.TOTAL_CUSTOMERS] = customers[api_c.TOTAL_RECORDS]
-
-        # TODO - resolve post demo, set unique IDs as total customers.
-        customers = get_customers_overview(request.json)
-
-        if (
-            api_c.TOTAL_UNIQUE_IDS in customers
-            and api_c.TOTAL_CUSTOMERS in customers
-        ):
-            customers[api_c.TOTAL_CUSTOMERS] = customers[
-                api_c.TOTAL_UNIQUE_IDS
-            ]
 
         return (
             CustomerOverviewSchema().dump(customers),
