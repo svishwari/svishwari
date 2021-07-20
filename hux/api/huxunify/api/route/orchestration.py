@@ -11,6 +11,14 @@ from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError, INCLUDE
 
+from huxunifylib.database import (
+    delivery_platform_management as destination_management,
+    orchestration_management,
+    db_exceptions,
+    engagement_management,
+    data_management,
+)
+import huxunifylib.database.constants as db_c
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
@@ -27,14 +35,6 @@ from huxunify.api.route.utils import (
     get_user_name,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
-from huxunifylib.database import (
-    delivery_platform_management as destination_management,
-    orchestration_management,
-    db_exceptions,
-    engagement_management,
-    data_management,
-)
-import huxunifylib.database.constants as db_c
 from huxunifylib.connectors import facebook_connector
 
 # setup the orchestration blueprint
@@ -588,14 +588,16 @@ class SetLookalikeAudience(SwaggerView):
             "example": {
                 api_c.NAME: "New Lookalike Audience",
                 api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
-                # api_c.SOURCE_AUDIENCE_ID: "60d1076efa9ba04689906f7c", keep here for easy testing when fb account fixed
+                # api_c.SOURCE_AUDIENCE_ID: "60d1076efa9ba04689906f7c",
+                # keep here for easy testing when fb account fixed
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 2.5,
                 api_c.ENGAGEMENT_IDS: [
                     str(ObjectId()),
                     str(ObjectId()),
                     str(ObjectId()),
                 ]
-                # api_c.ENGAGEMENT_IDS: ["60c2fd6555eb844f53cdc665"], keep here for easy testing when fb account fixed
+                # api_c.ENGAGEMENT_IDS: ["60c2fd6555eb844f53cdc665"],
+                # keep here for easy testing when fb account fixed
             },
         }
     ]
