@@ -89,7 +89,7 @@ class CustomerOverview(SwaggerView):
         """
 
         # TODO - resolve post demo, set unique IDs as total customers.
-        customers = get_customers_overview(request.json)
+        customers = get_customers_overview()
 
         if (
             api_c.TOTAL_UNIQUE_IDS in customers
