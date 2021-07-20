@@ -24,7 +24,7 @@
             "
             height="662"
           >
-            <EmptyStateChart />
+                <feature-chart ></feature-chart>
           </v-card>
         </v-col>
         <v-col col="6">
@@ -99,6 +99,7 @@
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
+import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
@@ -107,6 +108,7 @@ export default {
   components: {
     Breadcrumb,
     EmptyStateChart,
+    FeatureChart,
     LiftChart,
     Page,
     PageHeader,
