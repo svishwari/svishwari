@@ -218,6 +218,9 @@ def get_engagements_summary(
                     # audience fields we need for later grouping
                     "audience_name": "$audiences.name",
                     "audience_id": "$audiences.id",
+                    "delivery_schedule": {
+                        "$ifNull": ["$delivery_schedule", ""]
+                    },
                 },
                 # push the grouped destinations into an array
                 db_c.DESTINATIONS: {
@@ -244,6 +247,7 @@ def get_engagements_summary(
                     db_c.CREATED_BY: "$_id.created_by",
                     db_c.UPDATED_BY: "$_id.updated_by",
                     db_c.UPDATE_TIME: "$_id.update_time",
+                    db_c.ENGAGEMENT_DELIVERY_SCHEDULE: "$_id.delivery_schedule",
                 },
                 # push all the audiences into an array
                 db_c.AUDIENCES: {
@@ -266,6 +270,7 @@ def get_engagements_summary(
                 db_c.UPDATED_BY: "$_id.updated_by",
                 db_c.UPDATE_TIME: "$_id.update_time",
                 db_c.AUDIENCES: "$audiences",
+                db_c.ENGAGEMENT_DELIVERY_SCHEDULE: "$_id.delivery_schedule",
             }
         },
     ]
