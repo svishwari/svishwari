@@ -100,7 +100,7 @@
             <v-col class="pt-1 pa-0">
               <attribute-rules
                 :rules="attributeRules"
-                @updateOveriew="(data) => mapCDMOverview(data)"
+                @updateOverview="(data) => mapCDMOverview(data)"
               />
             </v-col>
           </FormStep>
