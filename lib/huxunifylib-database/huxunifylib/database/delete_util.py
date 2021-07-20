@@ -310,7 +310,7 @@ def delete_delivery_job_by_id(
     delivery_jobs_collection = am_db[c.DELIVERY_JOBS_COLLECTION]
 
     try:
-        delivery_jobs_collecltion.delete_one({c.ID: delivery_job_id})
+        delivery_jobs_collection.delete_one({c.ID: delivery_job_id})
         return True
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
