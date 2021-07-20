@@ -100,7 +100,7 @@
 import Breadcrumb from "@/components/common/Breadcrumb"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import FeatureChart from "@/components/common/featureChart/FeatureChart"
-import LiftChart from "@/components/common/LiftChart"
+import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
 export default {

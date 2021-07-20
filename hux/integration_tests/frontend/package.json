@@ -1,0 +1,15 @@
+{
+  "name": "end-to-end-tests",
+  "version": "1.0.0",
+  "description": "End-to-end tests with Cypress",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run --headless",
+    "test:dev": "cypress open"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^6.9.1"
+  }
+}

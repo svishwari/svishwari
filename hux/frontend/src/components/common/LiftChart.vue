@@ -1,16 +1,91 @@
 <template>
-  <!-- TODO: lift chart -->
-  <EmptyStateChart />
+  <hux-data-table :headers="headers" :dataItems="data" disableSort>
+    <template #row-item="{ item }">
+      <td
+        v-for="header in headers"
+        :key="header.value"
+        :class="{ 'liftchart-bucket': header.value === 'bucket' }"
+      >
+        <div class="neroBlack--text text-h6">
+          {{ item[header.value].toLocaleString() }}
+        </div>
+      </td>
+    </template>
+  </hux-data-table>
 </template>
 
 <script>
-import EmptyStateChart from "@/components/common/EmptyStateChart"
+import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
+import liftChartData from "./liftChartData.json"
 
 export default {
   name: "LiftChart",
 
   components: {
-    EmptyStateChart,
+    HuxDataTable,
+  },
+
+  data() {
+    return {
+      headers: [
+        { text: "Bucket", value: "bucket", width: "94px" },
+        { text: "Predicted $", value: "predicted_value", width: "117px" },
+        { text: "Actual $", value: "actual_value", width: "117px" },
+        { text: "Profiles", value: "profile_count", width: "117px" },
+        {
+          text: "Rate $<div class='pt-2'>(predicted)</div>",
+          value: "predicted_rate",
+          width: "117px",
+        },
+        {
+          text: "Rate $<div class='pt-2'>(actual)</div>",
+          value: "actual_rate",
+          width: "117px",
+        },
+        {
+          text: "Lift <div class='pt-2'>(predicted)</div>",
+          value: "predicted_lift",
+          width: "117px",
+        },
+        {
+          text: "Lift <div class='pt-2'>(actual)</div>",
+          value: "actual_lift",
+          width: "117px",
+        },
+        {
+          text: "Size %<div class='pt-2'>(profiles)</div>",
+          value: "profile_size_percent",
+          width: "117px",
+        },
+      ],
+      //TODO: API Integration
+      data: liftChartData.lift_data,
+    }
   },
 }
 </script>
+<style lang="scss" scoped>
+.hux-data-table {
+  @extend .box-shadow-5;
+  ::v-deep table {
+    .v-data-table-header {
+      tr {
+        th {
+          background: var(--v-aliceBlue-base);
+          height: 40px !important;
+        }
+      }
+    }
+    .liftchart-bucket {
+      background: var(--v-aliceBlue-base);
+    }
+    tbody {
+      tr {
+        td {
+          height: 40px !important;
+        }
+      }
+    }
+  }
+}
+</style>
