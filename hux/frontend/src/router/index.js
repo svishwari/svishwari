@@ -108,7 +108,17 @@ const routes = [
   {
     path: "/models",
     name: "Models",
-    component: () => import("@/views/Models"),
+    component: () => import("@/views/Decisioning/Index"),
+    meta: {
+      layout: "app",
+      title: "Models",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/models/:type",
+    name: "ModelDashboard",
+    component: () => import("@/views/Decisioning/Dashboard"),
     meta: {
       layout: "app",
       title: "Models",
@@ -173,6 +183,16 @@ const routes = [
     meta: {
       layout: "app",
       title: "Customer Profile Details",
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/notifications",
+    name: "AlertsAndNotifications",
+    component: () => import("@/views/AlertsAndNotifications/Index"),
+    meta: {
+      layout: "app",
+      title: "Alerts and Notifications",
       requiresAuth: true,
     },
   },

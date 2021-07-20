@@ -13,12 +13,12 @@ from marshmallow.fields import (
     Nested,
     Integer,
     Dict,
-    DateTime,
 )
-
+from huxunifylib.database import constants as db_c
 from huxunify.api.schema.utils import (
     validate_object_id,
 )
+from huxunify.api.schema.custom_schemas import DateTimeWithZ
 import huxunify.api.constants as api_c
 
 
@@ -55,14 +55,14 @@ class CustomerProfileSchema(Schema):
     first_name = Str(required=True)
     last_name = Str(required=True)
     match_confidence = Float(required=True)
-    since = DateTime(required=True)
+    since = DateTimeWithZ(required=True)
     ltv_actual = Float(required=True)
     ltv_predicted = Float(required=True)
     conversion_time = Float(required=True)
     churn_rate = Float(required=True)
-    last_click = DateTime(required=True)
-    last_purchase = DateTime(required=True)
-    last_email_open = DateTime(required=True)
+    last_click = DateTimeWithZ(required=True)
+    last_purchase = DateTimeWithZ(required=True)
+    last_email_open = DateTimeWithZ(required=True)
     email = Str(required=True)
     phone = Str(required=True)
     # redacted age to a string.
@@ -91,7 +91,7 @@ class CustomerOverviewSchema(Schema):
     total_known_ids = Integer(required=True)
     total_individual_ids = Integer(required=True)
     total_household_ids = Integer(required=True)
-    updated = DateTime(required=True)
+    updated = DateTimeWithZ(required=True)
     total_customers = Integer(required=True)
     total_countries = Integer(required=True)
     total_us_states = Integer(required=True)
@@ -124,6 +124,20 @@ class CustomersSchema(Schema):
     )
 
 
+class DataFeedSchema(Schema):
+    """
+    Customer Datafeed Schema
+    """
+
+    datafeed_id = Str(example="60e879d270815aade4d6c4fb")
+    datafeed_name = Str(example="Really_long_Feed_Name_106")
+    data_source_type = Str(example=db_c.DELIVERY_PLATFORM_SFMC)
+    new_ids_generated = Integer(example=21)
+    num_records_processed = Integer(example=2000000)
+    match_rate = Float(example=0.98)
+    last_run = DateTimeWithZ()
+
+
 class DataFeedPinning(Schema):
     """IDR Data feed pinning schema"""
 
@@ -142,7 +156,7 @@ class DataFeedPinning(Schema):
     new_company_ids = Integer(required=True, example=1)
     new_address_ids = Integer(required=True, example=1)
     process_time = Float(required=True, example=6.43)
-    date_time = DateTime(required=True, example=datetime.now())
+    date_time = DateTimeWithZ(required=True, example=datetime.now())
 
 
 class DataFeedStitched(Schema):
@@ -153,10 +167,10 @@ class DataFeedStitched(Schema):
     match_rate = Float(required=True, example=0.6606)
     merge_rate = Float(required=True, example=0.0)
     records_source = Str(required=True, example="Input Waterfall")
-    time_stamp = DateTime(required=True, example=datetime.now())
+    time_stamp = DateTimeWithZ(required=True, example=datetime.now())
 
 
-class DataFeedSchema(Schema):
+class DataFeedDetailsSchema(Schema):
     """IDR Data feed schema"""
 
     pinning = Nested(DataFeedPinning, required=True)
@@ -205,7 +219,7 @@ class CustomerIncomeInsightsSchema(Schema):
 class CustomerSpendSchema(Schema):
     """Customer Spend Schema"""
 
-    date = DateTime(required=True)
+    date = DateTimeWithZ(required=True)
     ltv = Float(required=True, example=1235.31)
 
 

@@ -1,6 +1,7 @@
 import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
+import moment from "moment"
 
 const namespaced = true
 
@@ -10,6 +11,7 @@ const state = {
   audiencePerformance: {},
 
   deliveries: {},
+  campaignMappings: {},
 }
 
 const getters = {
@@ -25,6 +27,8 @@ const getters = {
   audiencePerformanceByAds: (state) => state.audiencePerformance.ads,
 
   audiencePerformanceByEmail: (state) => state.audiencePerformance.email,
+
+  destinationCampaignMappings: (state) => state.campaignMappings,
 }
 
 const mutations = {
@@ -68,6 +72,16 @@ const mutations = {
 
   MARK_CURRENT_ROW(state, id) {
     state.items[id].isCurrentRow = !state.items[id].isCurrentRow
+  },
+
+  SET_CAMPAIGN_MAPPINGS(state, payload) {
+    state.campaignMappings = {
+      campaigns: payload[0].campaigns,
+      delivery_jobs: payload[0].delivery_jobs.map((job) => ({
+        ...job,
+        name: moment(job.created_time).format("MM/D/YYYY hh:ssA"),
+      })),
+    }
   },
 }
 
@@ -127,8 +141,8 @@ const actions = {
           engagement.delivery_schedule === 0
             ? null
             : {
-                end_date: "",
-                start_date: "",
+                end_date: engagement.end_date,
+                start_date: engagement.start_date,
               },
 
         audiences: Object.values(engagement.audiences).map((audience) => {
@@ -137,8 +151,6 @@ const actions = {
             destinations: audience.destinations,
           }
         }),
-        create_time: engagement.create_time,
-        update_time: engagement.update_time,
       }
       const response = await api.engagements.create(payload)
       commit("SET_ONE", response.data)
@@ -191,6 +203,50 @@ const actions = {
         audienceId: audienceId,
         destinationId: destinationId,
       })
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getCampaignMappings({ commit }, { id, audienceId, destinationId }) {
+    try {
+      const response = await api.engagements.getCampaignMappings({
+        resourceId: id,
+        audienceId: audienceId,
+        destinationId: destinationId,
+      })
+      commit("SET_CAMPAIGN_MAPPINGS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async attachAudience(_, { engagementId, data }) {
+    try {
+      await api.engagements.attachAudience(engagementId, data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async detachAudience(_, { engagementId, data }) {
+    try {
+      await api.engagements.detachAudience(engagementId, data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async saveCampaignMappings(_, { id, audienceId, destinationId, data }) {
+    try {
+      await api.engagements.updateCampaignMapping(
+        {
+          resourceId: id,
+          audienceId: audienceId,
+          destinationId: destinationId,
+        },
+        data
+      )
     } catch (error) {
       handleError(error)
       throw error

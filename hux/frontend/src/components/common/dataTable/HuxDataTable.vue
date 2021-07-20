@@ -8,13 +8,14 @@
         :height="height"
         :items="dataItems"
         :sort-by.sync="sortColumn"
+        :sort-desc.sync="sortDesc"
         item-key="name"
         :items-per-page="-1"
         fixed-header
         hide-default-footer
         must-sort
-        sort-desc
         single-select
+        :disable-sort="disableSort"
       >
         <template #item="{ item, expand, isExpanded }" v-if="nested">
           <slot
@@ -36,7 +37,8 @@
             </template>
           </tooltip>
           <template v-if="!h.tooltipValue">
-            {{ h.text }}
+            <!-- TODO: find a better solution and remove v-html -->
+            <span v-html="h.text" :key="h.value" />
           </template>
           <Tooltip :key="h.value" v-if="h.hoverTooltip" positionTop>
             <template #label-content>
@@ -60,7 +62,7 @@
           </tbody>
         </template>
         <template #expanded-item="{ headers, item }">
-          <slot name="expanded-row" :headers="headers" :item="item" />
+          <slot name="expanded-row" :headers="headers" :parentItem="item" />
         </template>
       </v-data-table>
     </div>
@@ -103,6 +105,16 @@ export default {
       type: String,
       required: false,
       default: "name",
+    },
+    sortDesc: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    disableSort: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {

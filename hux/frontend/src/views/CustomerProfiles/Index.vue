@@ -192,35 +192,35 @@ export default {
         {
           title: "Total no. of records",
           subtitle: "",
-          toolTipText: "Total no. of input records across all data feeds.",
+          toolTipText: "Total number of input records across all data feeds.",
           value: "",
         },
         {
           title: "Match rate",
           subtitle: "",
           toolTipText:
-            "Percentage of input records that are consolidated into Hux Ids.",
+            "Percentage of input records that are consolidated into Hux IDs.",
           value: "",
         },
         {
           title: "Unique Hux IDs",
           subtitle: "",
           toolTipText:
-            "Total Hux Ids that represent an anonymous or known customer.",
+            "Total Hux IDs that represent an anonymous or known customer.",
           value: "",
         },
         {
           title: "Anonymous IDs",
           subtitle: "",
           toolTipText:
-            "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
+            "IDs related to online visitors that have not logged in, typically identified by a browser cookie or device ID.",
           value: "",
         },
         {
           title: "Known IDs",
           subtitle: "",
           toolTipText:
-            "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number.",
+            "IDs related to profiles that contain PII from online or offline engagement: name, postal address, email address, and phone number.",
           value: "",
         },
         {

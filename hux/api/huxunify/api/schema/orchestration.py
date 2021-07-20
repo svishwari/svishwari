@@ -11,6 +11,7 @@ from huxunify.api.schema.utils import (
     validate_object_id,
 )
 from huxunify.api.schema.destinations import DestinationGetSchema
+from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
 class AudienceGetSchema(Schema):
@@ -69,10 +70,10 @@ class AudienceGetSchema(Schema):
     )
 
     size = fields.Int(example=6173223)
-    last_delivered = fields.DateTime(attribute=api_c.AUDIENCE_LAST_DELIVERED)
+    last_delivered = DateTimeWithZ(attribute=api_c.AUDIENCE_LAST_DELIVERED)
 
-    create_time = fields.DateTime(attribute=db_c.CREATE_TIME, allow_none=True)
-    update_time = fields.DateTime(attribute=db_c.UPDATE_TIME, allow_none=True)
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
+    update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     created_by = fields.String()
     updated_by = fields.String()
 
@@ -131,6 +132,7 @@ class DeliveryHistorySchema(Schema):
     )
     size = fields.Integer()
     delivered = fields.DateTime(required=True, allow_none=True)
+    delivered = DateTimeWithZ(required=True, allow_none=True)
 
 
 class LookalikeAudiencePostSchema(Schema):

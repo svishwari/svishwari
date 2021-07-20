@@ -112,6 +112,26 @@
     </v-menu>
   </div>
 
+  <div v-else-if="Statuses.Feedback.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="blue" class="mr-2" :size="iconSize">
+        mdi-message-alert
+      </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="blue" class="mr-2" :size="iconSize">
+          mdi-message-alert
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
   <div v-else-if="Statuses.Draft.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
       <v-icon color="blue" class="mr-2" :size="iconSize">
@@ -132,18 +152,38 @@
     </v-menu>
   </div>
 
-  <div v-else-if="Statuses.Disabled.includes(status)">
+  <div v-else-if="Statuses.Success.includes(status)">
     <span v-if="!collapsed" class="d-flex align-center">
-      <v-icon color="lightGrey" class="mr-2" :size="iconSize">
-        mdi-checkbox-blank-circle
+      <v-icon color="green" class="mr-2" :size="iconSize">
+        mdi-checkbox-marked-circle
       </v-icon>
       <span v-if="showLabel">{{ status | TitleCase }} </span>
     </span>
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="lightGrey" class="mr-2" :size="iconSize">
-          mdi-checkbox-blank-circle
+        <v-icon v-on="on" color="green" class="mr-2" :size="iconSize">
+          mdi-checkbox-marked-circle
+        </v-icon>
+      </template>
+      <div class="px-4 py-2 white" v-if="showLabel">
+        {{ status | TitleCase }}
+      </div>
+    </v-menu>
+  </div>
+
+  <div v-else-if="Statuses.Informational.includes(status)">
+    <span v-if="!collapsed" class="d-flex align-center">
+      <v-icon color="blue" class="mr-2" :size="iconSize">
+        mdi-message-alert
+      </v-icon>
+      <span v-if="showLabel">{{ status | TitleCase }} </span>
+    </span>
+
+    <v-menu v-else bottom offset-y open-on-hover>
+      <template #activator="{ on }">
+        <v-icon v-on="on" color="blue" class="mr-2" :size="iconSize">
+          mdi-message-alert
         </v-icon>
       </template>
       <div class="px-4 py-2 white" v-if="showLabel">
@@ -160,13 +200,16 @@ export default {
   data() {
     return {
       Statuses: {
-        Active: ["Active", "Delivered", "Succeeded", "Success"],
+        Active: ["Active", "Delivered", "Succeeded"],
         Inactive: ["Caution", "Not Delivered"],
         Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
-        Disabled: ["Disabled", "Inactive"],
-        Error: ["Error", "Failed"],
+        Disabled: ["Disabled", "Delivery Paused", "Inactive"],
+        Error: ["Error", "Failed", "Critical"],
         Pending: ["Pending", "Delivering"],
+        Feedback: ["Feedback"],
+        Success: ["Success"],
+        Informational: ["Informational"],
       },
     }
   },

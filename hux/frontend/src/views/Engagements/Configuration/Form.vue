@@ -9,6 +9,8 @@
               labelText="Engagement name"
               placeholder="Give this engagement a name"
               :rules="[(value) => !!value || 'Engagement name is required']"
+              :error-messages="errorMessages"
+              @blur="errorMessages = []"
               required
             />
           </v-col>
@@ -51,13 +53,21 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule">
+        <v-row class="delivery-schedule mt-4">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
             class="ma-0 radio-div"
           >
-            <v-radio :value="0" selected class="btn-radio">
+            <v-radio
+              :value="0"
+              selected
+              :class="
+                value.delivery_schedule == 0
+                  ? 'btn-radio-active'
+                  : 'btn-radio-inactive'
+              "
+            >
               <template #label>
                 <v-icon small color="primary" class="mr-1">
                   mdi-gesture-tap
@@ -66,33 +76,50 @@
               </template>
             </v-radio>
 
-            <v-radio :value="1" class="btn-radio" disabled>
+            <v-radio
+              :value="1"
+              :class="
+                value.delivery_schedule == 1
+                  ? 'btn-radio-active'
+                  : 'btn-radio-inactive'
+              "
+            >
               <template #label>
-                <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
-                <span>Recurring</span>
+                <v-icon small color="primary" class="mr-1"
+                  >mdi-clock-check-outline</v-icon
+                >
+                <span class="primary--text">Recurring</span>
               </template>
             </v-radio>
           </v-radio-group>
 
-          <div>
-            <span class="date-picker-label">Start date</span>
+          <div v-if="value.delivery_schedule == 1">
+            <span class="text-h5 date-picker-label">Start date</span>
             <hux-start-date
               class="mt-n4"
-              labelText="Engagement name"
               :label="selectedStartDate"
               :selected="selectedStartDate"
               @on-date-select="onStartDateSelect"
             />
           </div>
 
-          <div>
-            <span class="date-picker-label">End date</span>
+          <v-icon
+            class="icon icon-right"
+            size="16"
+            v-if="value.delivery_schedule == 1"
+          >
+            mdi-arrow-right
+          </v-icon>
+          <div v-if="value.delivery_schedule == 1">
+            <span class="text-h5 date-picker-label">End date</span>
             <hux-end-date
               class="mt-n4"
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :isSubMenu="true"
+              :minDate="selectedStartDate"
               @on-date-select="onEndDateSelect"
+              :isDisabled="disableEndDate"
             />
           </div>
         </v-row>
@@ -247,7 +274,7 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
+          :disabled="!isValid || !isDateValid"
           @click="addNewEngagement()"
         >
           Create
@@ -340,6 +367,8 @@ export default {
       selectedDestination: null,
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
+      disableEndDate: true,
+      errorMessages: [],
     }
   },
 
@@ -359,13 +388,29 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        create_time: this.selectedStartDate,
-        update_time: this.selectedEndDate,
+        start_date: !this.isManualDelivery
+          ? new Date(this.selectedStartDate).toISOString()
+          : null,
+        end_date: !this.isManualDelivery
+          ? new Date(this.selectedEndDate).toISOString()
+          : null,
       }
     },
 
     isValid() {
       return this.value.name.length
+    },
+
+    isDateValid() {
+      if (this.value.delivery_schedule == 1) {
+        if (this.selectedStartDate == "Select date") {
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return true
+      }
     },
 
     hasDestinations() {
@@ -394,6 +439,14 @@ export default {
       this.showAddAudiencesDrawer = false
       this.showSelectDestinationsDrawer = false
       this.showDataExtensionDrawer = false
+    },
+
+    scrollToTop() {
+      window.scrollTo({
+        top: 100,
+        left: 100,
+        behavior: "auto",
+      })
     },
 
     openSelectAudiencesDrawer() {
@@ -432,11 +485,16 @@ export default {
     },
 
     async addNewEngagement() {
-      const engagement = await this.addEngagement(this.payload)
-      this.$router.push({
-        name: "EngagementDashboard",
-        params: { id: engagement.id },
-      })
+      try {
+        const engagement = await this.addEngagement(this.payload)
+        this.$router.push({
+          name: "EngagementDashboard",
+          params: { id: engagement.id },
+        })
+      } catch (error) {
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
+      }
     },
 
     async deliverNewEngagement() {
@@ -448,7 +506,8 @@ export default {
           params: { id: engagement.id },
         })
       } catch (error) {
-        console.error(error)
+        this.errorMessages.push(error.response.data.message)
+        this.scrollToTop()
       }
     },
 
@@ -461,10 +520,20 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
+      this.selectedEndDate = null
+      this.disableEndDate = false
+      this.$set(this.value, "recurring", {
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: null,
+      })
     },
 
     onEndDateSelect(val) {
       this.selectedEndDate = val
+      this.$set(this.value, "recurring", {
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: this.$options.filters.Date(this.selectedEndDate, "MMMM D"),
+      })
     },
   },
 }
@@ -472,13 +541,20 @@ export default {
 
 <style lang="scss" scoped>
 .btn-radio {
-  border: 1px solid var(--v-primary-base);
   padding: 8px 16px;
   border-radius: 4px;
 
   &.v-radio--is-disabled {
     border-color: var(--v-lightGrey-base);
   }
+}
+.btn-radio-inactive {
+  border: 1px solid var(--v-lightGrey-base);
+  @extend .btn-radio;
+}
+.btn-radio-active {
+  border: 1px solid var(--v-primary-base);
+  @extend .btn-radio;
 }
 .radio-div {
   margin-top: -11px !important;
@@ -514,6 +590,13 @@ export default {
 }
 .delivery-schedule {
   margin-left: auto;
+  .icon-right {
+    transform: scale(1.5);
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-top: -30px;
+    color: var(--v-lightGrey-base) !important;
+  }
 }
 .date-picker-label {
   position: absolute;

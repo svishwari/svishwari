@@ -1,3 +1,5 @@
+import moment from "moment"
+
 // data sources
 
 const bluecore = {
@@ -143,16 +145,14 @@ const twilioDS = {
 // destinations
 const facebook = {
   name: "Facebook",
-  // TODO: update this once ORCH-233 is addressed
-  type: "Facebook",
+  type: "facebook",
   is_enabled: true,
   is_added: true,
 }
 
 const sfmc = {
   name: "Salesforce Marketing Cloud",
-  // TODO: update this once ORCH-233 is addressed
-  type: "SFMC",
+  type: "sfmc",
   is_enabled: true,
   is_added: false,
 }
@@ -169,8 +169,7 @@ const google = {
 
 const twilio = {
   name: "Twilio",
-  // TODO: update this once ORCH-233 is addressed
-  type: "Twilio",
+  type: "twilio",
 }
 
 const tableau = {
@@ -191,6 +190,8 @@ const defaultEngagement = ({ audiences = [] }) => {
     delivery_schedule: null,
     status: "Delivering",
     audiences: audiences,
+    create_time: () => moment().toJSON(),
+    update_time: () => moment().toJSON(),
   }
 }
 
@@ -438,4 +439,9 @@ export default function (server) {
 
   // seed data-extensions
   server.createList("dataExtension", 5)
+
+  // seed campaigns
+  server.createList("campaign", 1)
+  // for alert and notifications
+  server.createList("notification", 50)
 }

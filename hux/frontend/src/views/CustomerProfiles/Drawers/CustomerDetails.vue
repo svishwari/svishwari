@@ -6,7 +6,7 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3 ml-2 neroBlack--text">Customers</h3>
+        <h3 class="text-h3 ml-1 neroBlack--text">Customers</h3>
       </div>
     </template>
 
@@ -17,27 +17,54 @@
           <v-icon size="18" color="lightGrey">mdi-magnify</v-icon>
         </template>
       </PageHeader>
-      <hux-data-table :headers="columnDefs" :dataItems="customers">
+      <hux-data-table
+        :headers="columnDefs"
+        :sort-column="'hux_id'"
+        :dataItems="customers"
+      >
         <template #row-item="{ item }">
           <td
             v-for="header in columnDefs"
             :key="header.value"
             :style="{ width: header.width }"
           >
-            <div v-if="header.value == 'hux_id'" class="text-body-2">
+            <tooltip v-if="header.value == 'hux_id'">
               <router-link
                 :to="{
                   name: 'CustomerProfileDetails',
                   params: { id: item[header.value] },
                 }"
-                class="text-decoration-none text-body-2"
+                class="cell"
                 append
-                >{{ item[header.value] }}
+              >
+                {{ item[header.value] }}
               </router-link>
-            </div>
+              <template #tooltip>
+                <div class="my-2 gray--text">
+                  Hux ID:
+                  <span class="font-weight-semi-bold neroBlack--text">
+                    {{ item[header.value] }}
+                  </span>
+                </div>
+                <div class="my-2 gray--text">
+                  Full name:
+                  <span class="font-weight-semi-bold neroBlack--text">
+                    {{ item.last_name }}, {{ item.first_name }}
+                  </span>
+                </div>
+                <div class="my-2 gray--text">
+                  Match confidence:
+                  <span class="font-weight-semi-bold neroBlack--text">
+                    {{
+                      item.match_confidence | Numeric(true, false, false, true)
+                    }}
+                  </span>
+                </div>
+              </template>
+            </tooltip>
             <div
               v-if="header.value == 'first_name' || header.value == 'last_name'"
-              class="text-body-2"
+              class="cell"
             >
               <span v-if="item.last_name">{{ item.last_name }}, </span>
               <span v-if="item.first_name"> {{ item.first_name }}</span>
@@ -66,6 +93,7 @@ import { mapActions, mapGetters } from "vuex"
 import Drawer from "@/components/common/Drawer"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxSlider from "@/components/common/HuxSlider"
+import Tooltip from "@/components/common/Tooltip"
 import PageHeader from "@/components/PageHeader"
 
 export default {
@@ -74,6 +102,7 @@ export default {
     Drawer,
     HuxDataTable,
     HuxSlider,
+    Tooltip,
     PageHeader,
   },
   data() {
@@ -175,6 +204,18 @@ export default {
         margin-top: 12px !important;
       }
     }
+  }
+  .cell {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px !important;
+    line-height: 22px;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-decoration: none;
+    text-overflow: ellipsis;
   }
 }
 .footer-font {

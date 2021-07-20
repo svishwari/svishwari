@@ -114,22 +114,22 @@
           </td>
         </tr>
       </template>
-      <template #expanded-row="{ headers, item }">
+      <template #expanded-row="{ headers, parentItem }">
         <td
           :colspan="headers.length"
           class="pa-0 child"
-          v-if="item.audiences.length > 0"
+          v-if="parentItem.audiences.length > 0"
         >
           <v-progress-linear
-            :active="item.isCurrentRow"
-            :indeterminate="item.isCurrentRow"
+            :active="parentItem.isCurrentRow"
+            :indeterminate="parentItem.isCurrentRow"
           />
           <hux-data-table
             :headers="headers"
-            :dataItems="item.audienceList"
+            :dataItems="parentItem.audienceList"
             :showHeader="false"
             class="expanded-table"
-            v-if="item.audiences.length > 0"
+            v-if="parentItem.audiences.length > 0"
           >
             <template #row-item="{ item }">
               <td
@@ -140,7 +140,7 @@
                   'child-row': header.value == 'name',
                 }"
               >
-                <div v-if="header.value == 'name'">
+                <div v-if="header.value == 'name'" class="ml-4">
                   <tooltip>
                     <template #label-content>
                       <router-link
@@ -167,17 +167,17 @@
                   {{ item[header.value] }}
                 </div>
                 <div v-if="header.value == 'update_time'">
-                  <div class="ml-16 pl-4" style="width: max-content">
+                  <div class="ml-16 pl-6" style="width: max-content">
                     <time-stamp :value="item['create_time']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'updated_by'">
-                  <div class="ml-16 pl-7">
+                  <div class="ml-16 pl-8">
                     <Avatar :name="item['created_by']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
-                  <div class="ml-10">
+                  <div class="ml-11">
                     <time-stamp :value="item[header.value]" />
                   </div>
                 </div>
@@ -420,6 +420,13 @@ export default {
                 width: auto !important;
               }
             }
+          }
+        }
+      }
+      tbody {
+        tr:last-child {
+          td {
+            border-bottom: 1px solid var(--v-lightGrey-base) !important;
           }
         }
       }

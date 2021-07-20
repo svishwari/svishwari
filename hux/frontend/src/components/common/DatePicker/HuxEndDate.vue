@@ -30,8 +30,9 @@
           iconPosition="right"
           tile
           class="ma-2 main-button pr-1"
+          :isDisabled="isDisabled"
         >
-          {{ selected }}
+          {{ selected || "Select date" }}
         </huxButton>
       </template>
       <v-list>
@@ -47,6 +48,7 @@
               :is-offset-y="false"
               :isSubMenu="false"
               @on-date-select="(val) => $emit('on-date-select', val)"
+              :minDate="minDate"
               v-if="isSubMenu"
             />
             <v-list-item v-if="!isSubMenu">
@@ -56,6 +58,8 @@
                   v-model="end"
                   no-title
                   scrollable
+                  :min="minDate"
+                  :max="maxDate"
                 >
                   <div class="date-picker-header" style="">
                     <span class="header-label"> Date </span>
@@ -97,10 +101,11 @@ export default {
   components: {
     huxButton,
   },
-  computed: {},
   props: {
     selected: {
-      type: [Object, String],
+      type: String,
+      required: false,
+      default: "Select date",
     },
     label: {
       type: String,
@@ -112,6 +117,18 @@ export default {
     isOpenOnHover: { type: Boolean, default: false },
     isSubMenu: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
+    maxDate: {
+      type: String,
+      required: false,
+    },
+    minDate: {
+      type: String,
+      required: false,
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     onCancel() {

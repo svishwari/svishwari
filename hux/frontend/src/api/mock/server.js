@@ -18,6 +18,8 @@ import modelFactory from "./factories/model"
 import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
 import deliveryFactory from "./factories/delivery"
+import campaignFactory from "./factories/campaigns"
+import { notification as notificationFactory } from "./factories/notifications"
 
 export function makeServer({ environment = "development" } = {}) {
   // models
@@ -37,6 +39,8 @@ export function makeServer({ environment = "development" } = {}) {
     audiencePerformance: Model,
     dataExtension: Model,
     deliveryFactory: Model,
+    campaign: Model,
+    notification: Model,
   }
 
   const factories = {
@@ -50,6 +54,8 @@ export function makeServer({ environment = "development" } = {}) {
     audiencePerformance: Factory.extend(audiencePerformanceFactory),
     dataExtension: Factory.extend(dataExtensionFactory),
     delivery: Factory.extend(deliveryFactory),
+    campaign: Factory.extend(campaignFactory),
+    notification: Factory.extend(notificationFactory),
   }
 
   const server = createServer({
@@ -73,17 +79,6 @@ export function makeServer({ environment = "development" } = {}) {
       }),
       customer: AppSerializer.extend({
         root: true,
-
-        keyForAttribute(attr) {
-          if (attr === "id") return "hux_id"
-          return attr
-        },
-      }),
-      customerProfile: AppSerializer.extend({
-        keyForAttribute(attr) {
-          if (attr === "id") return "hux_id"
-          return attr
-        },
       }),
     },
   })

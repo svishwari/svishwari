@@ -25,9 +25,14 @@ from huxunifylib.database.engagement_management import (
     remove_audiences_from_engagement,
     append_audiences_to_engagement,
 )
+from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.database import (
     orchestration_management,
     delivery_platform_management,
+)
+from huxunify.api.data_connectors.courier import (
+    get_audience_destination_pairs,
+    get_destination_config,
 )
 from huxunify.api.schema.orchestration import DeliveryHistorySchema
 from huxunify.api.schema.engagement import (
@@ -50,13 +55,10 @@ from huxunify.api.route.utils import (
     api_error_handler,
     get_user_name,
     group_perf_metric,
+    update_metrics,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
-from huxunify.api.data_connectors.courier import (
-    get_destination_config,
-    get_audience_destination_pairs,
-)
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 
 engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
@@ -372,7 +374,7 @@ class UpdateEngagement(SwaggerView):
             audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
             delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
-            else None,
+            else {},
         )
 
         return (
@@ -528,8 +530,16 @@ class AddAudienceEngagement(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
+        # validate audiences exist
+        database = get_db_client()
+        for audience in body[api_c.AUDIENCES]:
+            if not get_audience(database, ObjectId(audience[api_c.ID])):
+                return {
+                    "message": f"Audience does not exist: {audience[api_c.ID]}"
+                }, HTTPStatus.BAD_REQUEST
+
         append_audiences_to_engagement(
-            get_db_client(),
+            database,
             ObjectId(engagement_id),
             user_name,
             body[api_c.AUDIENCES],
@@ -1747,63 +1757,49 @@ class EngagementMetricsDisplayAds(SwaggerView):
         #   2. Using delivery jobs of an audience, get all the performance metrics
         #   3. Group performance metrics for the audience
         aud_group = sorted(delivery_jobs, key=itemgetter(api_c.AUDIENCE_ID))
-        aud_metric = []
+        # Get metrics grouped by audience
+        audience_metrics_list = []
         for audience_id, audience_group in groupby(
             aud_group, key=itemgetter(api_c.AUDIENCE_ID)
         ):
             audience_jobs = list(audience_group)
-            delivery_jobs = [x[db_c.ID] for x in audience_jobs]
-            ind_aud_metric = {
-                api_c.ID: str(audience_id),
-                api_c.NAME: orchestration_management.get_audience(
-                    database, audience_id
+            audience_metrics = update_metrics(
+                audience_id,
+                orchestration_management.get_audience(
+                    get_db_client(), audience_id
                 )[api_c.NAME],
-            }
-            ind_aud_metric.update(
-                group_perf_metric(
-                    [
-                        x[db_c.PERFORMANCE_METRICS]
-                        for x in performance_metrics
-                        if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                    ]
-                )
+                audience_jobs,
+                performance_metrics,
             )
 
             # Group all the performance metrics engagement.audience.destination.
             destination_group = sorted(
                 audience_jobs, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
             )
-            aud_dest_metric = []
+            # Get metrics grouped by audience.destination
+            audience_destination_metrics_list = []
             for destination_id, aud_dest_group in groupby(
                 destination_group, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
             ):
                 audience_dest_jobs = list(aud_dest_group)
-                delivery_jobs = [x[db_c.ID] for x in audience_dest_jobs]
-                ind_aud_dest_metric = {
-                    api_c.ID: str(destination_id),
-                    api_c.NAME: delivery_platform_management.get_delivery_platform(
-                        database, destination_id
-                    )[
-                        api_c.NAME
-                    ],
-                }
-                ind_aud_dest_metric.update(
-                    group_perf_metric(
-                        [
-                            x
-                            for x in performance_metrics
-                            if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-                        ]
-                    )
+                destination_metrics = update_metrics(
+                    destination_id,
+                    delivery_platform_management.get_delivery_platform(
+                        get_db_client(), destination_id
+                    )[api_c.NAME],
+                    audience_dest_jobs,
+                    performance_metrics,
                 )
-                aud_dest_metric.append(ind_aud_dest_metric)
+                audience_destination_metrics_list.append(destination_metrics)
 
-            ind_aud_metric[api_c.DESTINATIONS] = aud_dest_metric
-            aud_metric.append(ind_aud_metric)
+            audience_metrics[
+                api_c.DESTINATIONS
+            ] = audience_destination_metrics_list
+            audience_metrics_list.append(audience_metrics)
 
             # TODO : Group by campaigns
 
-        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = aud_metric
+        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
         return (
             AudiencePerformanceDisplayAdsSchema().dump(final_metric),

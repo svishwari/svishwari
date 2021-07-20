@@ -3,6 +3,7 @@
     v-model="localToggle"
     offset-y
     content-class="dropdown-search-wrapper"
+    max-height="320"
     :close-on-content-click="false"
   >
     <template #activator="{ on }">
@@ -32,7 +33,7 @@
           >
             mdi-check
           </v-icon>
-          <span class="text-h6">{{ item.name }}</span>
+          <span class="text-h5">{{ item.name }}</span>
         </div>
       </div>
     </template>

@@ -90,7 +90,7 @@
             a bigger, broader audience.
           </div>
 
-          <LookAlikeSlider v-model="lookalikeAudience.value" />
+          <LookAlikeSlider v-model="lookalikeAudience.value" class="mr-6" />
         </div>
       </v-form>
     </template>
@@ -111,18 +111,7 @@
     </template>
 
     <template #footer-left>
-      <div class="d-flex align-baseline">
-        <HuxButton
-          variant="white"
-          isTile
-          width="80"
-          height="40"
-          class="ma-2 drawer-back"
-          @click="onBack()"
-        >
-          Back
-        </HuxButton>
-      </div>
+      <div />
     </template>
   </Drawer>
 </template>

@@ -178,7 +178,6 @@
                       Manual
                     </v-btn>
                     <v-btn
-                      disabled
                       class="disabled-white-background"
                       height="40"
                       width="175"
@@ -195,6 +194,34 @@
                     </v-btn>
                   </v-btn-toggle>
                 </div>
+                <v-row
+                  class="delivery-schedule ml-0 mt-6"
+                  v-if="newEngagement.delivery_schedule == 1"
+                >
+                  <div>
+                    <span class="date-picker-label">Start date</span>
+                    <hux-start-date
+                      class=""
+                      :label="selectedStartDate"
+                      :selected="selectedStartDate"
+                      @on-date-select="(val) => (selectedStartDate = val)"
+                    />
+                  </div>
+                  <v-icon class="icon icon-right" size="16">
+                    mdi-arrow-right
+                  </v-icon>
+                  <div>
+                    <span class="date-picker-label">End date</span>
+                    <hux-end-date
+                      class=""
+                      :label="selectedEndDate"
+                      :selected="selectedEndDate"
+                      :isSubMenu="true"
+                      :minDate="selectedStartDate"
+                      @on-date-select="(val) => (selectedEndDate = val)"
+                    />
+                  </div>
+                </v-row>
               </v-form>
             </div>
           </v-stepper-content>
@@ -249,6 +276,8 @@ import CardHorizontal from "@/components/common/CardHorizontal"
 import Icon from "@/components/common/Icon"
 
 import sortBy from "lodash/sortBy"
+import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
+import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 export default {
   name: "attach-engagement",
@@ -260,6 +289,8 @@ export default {
     CardHorizontal,
     EmptyPage,
     Icon,
+    HuxStartDate,
+    HuxEndDate,
   },
 
   computed: {
@@ -284,6 +315,8 @@ export default {
       newEngagementValid: false,
       newEngagementRules: [(v) => !!v || "Engagement name is required"],
       sortBy: sortBy,
+      selectedStartDate: "Select date",
+      selectedEndDate: "Select date",
     }
   },
 
@@ -344,6 +377,8 @@ export default {
         delivery_schedule: this.newEngagement.delivery_schedule,
         description: this.newEngagement.description,
         audiences: [],
+        start_date: this.selectedStartDate,
+        end_date: this.selectedEndDate,
       }
       const newEngagement = await this.addEngagementToDB(payload)
       this.engagements.push(newEngagement)
@@ -397,6 +432,7 @@ export default {
   box-shadow: none !important;
 }
 .new-engament-wrap {
+  height: 600px;
   .delivery-options {
     ::v-deep button {
       background: var(--v-white-base);
@@ -443,6 +479,23 @@ export default {
     }
     .disabled-white-background {
       background: white !important;
+    }
+  }
+  .delivery-schedule {
+    .hux-date-picker {
+      ::v-deep .main-button {
+        margin-left: 0px !important;
+      }
+    }
+    .icon-right {
+      transform: scale(1.5);
+      margin-left: 8px;
+      margin-right: 12px;
+      margin-top: 20px;
+      color: var(--v-lightGrey-base) !important;
+    }
+    ::v-deep.v-icon {
+      color: var(--v-lightGrey-base) !important;
     }
   }
 }

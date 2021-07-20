@@ -4,7 +4,7 @@ Paths for customer API
 """
 from http import HTTPStatus
 from random import choice
-from typing import Tuple
+from typing import Tuple, List
 from datetime import datetime
 from faker import Faker
 import pandas as pd
@@ -16,6 +16,7 @@ from flasgger import SwaggerView
 from huxunify.api.schema.customers import (
     CustomerProfileSchema,
     DataFeedSchema,
+    DataFeedDetailsSchema,
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
 )
@@ -29,6 +30,7 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
     get_customer_profile,
     get_customers_overview,
+    get_idr_data_feeds,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -313,8 +315,48 @@ class CustomerProfileSearch(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}",
     "IDRDataFeeds",
+)
+class IDRDataFeeds(SwaggerView):
+    """IDR Data Feeds Report"""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": DataFeedSchema},
+            "description": "Identity Resolution Data Feeds",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get IDR Data Feeds."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use,unused-argument
+    @api_error_handler()
+    def get(self) -> Tuple[List[dict], int]:
+        """Retrieves a IDR data feeds.
+        ---
+        security:
+            - Bearer: ["Authorization"]\
+
+        Args:
+
+        Returns:
+            Tuple[List[dict], int] list of IDR data feeds object dicts
+        """
+
+        return (
+            jsonify(DataFeedSchema().dump(get_idr_data_feeds(), many=True)),
+            HTTPStatus.OK.value,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.IDR_ENDPOINT}/{api_c.DATA_FEEDS}/<datafeed>",
+    "IDRDataFeedDetails",
 )
 class IDRDataFeedDetails(SwaggerView):
     """IDR Data Feeds Report"""
@@ -332,7 +374,7 @@ class IDRDataFeedDetails(SwaggerView):
 
     responses = {
         HTTPStatus.OK.value: {
-            "schema": DataFeedSchema,
+            "schema": DataFeedDetailsSchema,
             "description": "Identity Resolution Data Feed Waterfall Report",
         },
         HTTPStatus.BAD_REQUEST.value: {
@@ -359,7 +401,7 @@ class IDRDataFeedDetails(SwaggerView):
         """
 
         return (
-            DataFeedSchema().dump(
+            DataFeedDetailsSchema().dump(
                 {
                     api_c.PINNING: {
                         api_c.INPUT_RECORDS: 2,

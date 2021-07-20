@@ -56,6 +56,7 @@
         <div class="pt-1 pr-0">
           <attribute-rules
             :rules="attributeRules"
+            @updateOverview="(data) => mapCDMOverview(data)"
             applyCaptionStyle
             enableTitle
           />
@@ -177,15 +178,15 @@ export default {
     },
 
     // Mapping Overview Data
-    mapCDMOverview() {
-      this.overviewListItems[0].subtitle = this.overview.total_customers
-      this.overviewListItems[1].subtitle = this.overview.total_countries
-      this.overviewListItems[2].subtitle = this.overview.total_us_states
-      this.overviewListItems[3].subtitle = this.overview.total_cities
-      this.overviewListItems[4].subtitle = this.overview.max_age
-      this.overviewListItems[5].subtitle = this.overview.gender_women
-      this.overviewListItems[6].subtitle = this.overview.gender_men
-      this.overviewListItems[7].subtitle = this.overview.gender_other
+    mapCDMOverview(data) {
+      this.overviewListItems[0].subtitle = data.total_customers
+      this.overviewListItems[1].subtitle = data.total_countries
+      this.overviewListItems[2].subtitle = data.total_us_states
+      this.overviewListItems[3].subtitle = data.total_cities
+      this.overviewListItems[4].subtitle = data.max_age
+      this.overviewListItems[5].subtitle = data.gender_women
+      this.overviewListItems[6].subtitle = data.gender_men
+      this.overviewListItems[7].subtitle = data.gender_other
     },
 
     getFormattedValue(item) {
@@ -271,7 +272,7 @@ export default {
           size: newAudience.size,
           destinations: [],
         })
-
+        this.$emit("onCreateAddAudience", newAudience)
         this.closeDrawer()
       } catch (error) {
         console.error(error)
@@ -284,7 +285,7 @@ export default {
   async mounted() {
     this.loading = true
     await this.getOverview()
-    this.mapCDMOverview()
+    this.mapCDMOverview(this.overview)
     this.loading = false
   },
 }

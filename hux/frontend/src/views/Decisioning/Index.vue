@@ -22,7 +22,8 @@
           :icon="`model-${model.type || 'unsubscribe'}`"
           :title="model.name"
           :description="model.description"
-          class="mr-10"
+          class="mr-10 cursor-pointer"
+          @click.native="goToDashboard(model.type)"
         >
           <template slot="top">
             <Status
@@ -127,6 +128,13 @@ export default {
     ...mapActions({
       getModels: "models/getAll",
     }),
+
+    goToDashboard(type) {
+      this.$router.push({
+        name: "ModelDashboard",
+        params: { type: type },
+      })
+    },
   },
 
   async mounted() {

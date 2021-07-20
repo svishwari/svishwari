@@ -27,7 +27,9 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <div class="font-weight-semi-bold neroBlack--text my-2">Manual</div>
+            <div class="font-weight-semi-bold neroBlack--text my-2">
+              {{ deliverySchedule }}
+            </div>
           </template>
         </MetricCard>
         <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
@@ -79,7 +81,7 @@
       <div class="audience-summary">
         <!-- Audience Destination Cards Wrapper -->
         <v-card class="rounded-lg card-style" minHeight="145px" flat>
-          <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+          <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
             <div class="d-flex align-center">
               <Icon
                 type="audiences"
@@ -89,13 +91,14 @@
               /><span class="text-h5">Audiences</span>
             </div>
             <div class="d-flex align-center">
-              <a
-                href="#"
+              <v-btn
+                text
                 class="d-flex align-center primary--text text-decoration-none"
+                @click="triggerSelectAudience()"
               >
                 <Icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
-              </a>
+              </v-btn>
               <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
                 <icon type="history" :size="16" class="mr-1" />
                 Delivery history
@@ -107,7 +110,7 @@
             :active="loadingAudiences"
             :indeterminate="loadingAudiences"
           />
-          <v-card-text v-else class="pl-6 pr-6 pb-6">
+          <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
             <div
               class="empty-state pa-5 text--gray"
               v-if="audienceMergedData.length == 0"
@@ -125,6 +128,7 @@
                 :audience="item"
                 :engagementId="engagementId"
                 :statusIcon="17"
+                @onAddDestination="triggerSelectDestination(item.id)"
               />
             </v-col>
           </v-card-text>
@@ -156,7 +160,9 @@
             <campaign-summary
               :summary="displayAdsSummary"
               :campaignData="audiencePerformanceAdsData"
+              :engagementId="engagementId"
               type="ads"
+              @onUpdateCampaignMappings="fetchCampaignPerformanceDetails('ads')"
             />
           </v-tab-item>
           <v-tab-item key="email">
@@ -173,7 +179,40 @@
         </v-tabs-items>
       </div>
     </div>
+    <select-audiences-drawer
+      ref="selectAudiences"
+      v-model="selectedAudiences"
+      :toggle="showSelectAudiencesDrawer"
+      @onToggle="(val) => (showSelectAudiencesDrawer = val)"
+      @onAdd="triggerCreateAudience()"
+      enableMultiple
+      @triggerAddAudiences="triggerAttachAudiences($event)"
+    />
+    <add-audience-drawer
+      v-model="selectedAudiences"
+      :toggle="showAddAudiencesDrawer"
+      @onToggle="(val) => (showAddAudiencesDrawer = val)"
+      @onCancelAndBack="triggerSelectAudience()"
+      @onCreateAddAudience="triggerAttachAudience($event)"
+    />
+    <select-destinations-drawer
+      v-model="selectedAudiences"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showSelectDestinationsDrawer"
+      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+      @onSalesforce="triggerDataExtensionDrawer"
+      @addedDestination="triggerAttachDestination($event)"
+    />
 
+    <destination-data-extension-drawer
+      v-model="selectedAudiences"
+      :selected-destination="selectedDestination"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showDataExtensionDrawer"
+      @onToggle="(val) => (showDataExtensionDrawer = val)"
+      @updateDestination="triggerAttachDestination($event)"
+      @onBack="closeDrawers"
+    />
     <DeliveryHistoryDrawer
       :engagementId="engagementId"
       :toggle="showDeliveryHistoryDrawer"
@@ -194,6 +233,10 @@ import Icon from "@/components/common/Icon"
 import StatusList from "../../components/common/StatusList.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import CampaignSummary from "../../components/CampaignSummary.vue"
+import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer.vue"
+import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
+import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
+import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
 import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
 
 export default {
@@ -208,6 +251,10 @@ export default {
     StatusList,
     Tooltip,
     CampaignSummary,
+    AddAudienceDrawer,
+    SelectAudiencesDrawer,
+    SelectDestinationsDrawer,
+    DestinationDataExtensionDrawer,
     DeliveryHistoryDrawer,
   },
   data() {
@@ -224,6 +271,14 @@ export default {
         { acronym: "CPA", description: "Cost per Action" },
         { acronym: "CPC", description: "Cost per Click" },
       ],
+      // Drawer Data Props
+      selectedAudiences: {},
+      showSelectAudiencesDrawer: false,
+      showAddAudiencesDrawer: false,
+      showSelectDestinationsDrawer: false,
+      showDataExtensionDrawer: false,
+      selectedAudienceId: null,
+      selectedDestination: [],
       showDeliveryHistoryDrawer: false,
     }
   },
@@ -614,14 +669,167 @@ export default {
         },
       ]
     },
+    deliverySchedule() {
+      if (this.engagementList && this.engagementList.delivery_schedule) {
+        if (
+          !this.engagementList.delivery_schedule.start_date &&
+          !this.engagementList.delivery_schedule.end_date
+        ) {
+          return "Now"
+        } else {
+          if (
+            this.engagementList.delivery_schedule.start_date &&
+            this.engagementList.delivery_schedule.end_date
+          ) {
+            return (
+              this.$options.filters.Date(
+                this.engagementList.delivery_schedule.start_date,
+                "MMMM D"
+              ) +
+              " - " +
+              this.$options.filters.Date(
+                this.engagementList.delivery_schedule.end_date,
+                "MMMM D"
+              )
+            )
+          } else if (this.engagementList.delivery_schedule.start_date) {
+            return this.$options.filters.Date(
+              this.engagementList.delivery_schedule.start_date,
+              "MMMM D"
+            )
+          } else if (this.engagementList.delivery_schedule.end_date) {
+            return this.$options.filters.Date(
+              this.engagementList.delivery_schedule.end_date,
+              "MMMM D"
+            )
+          }
+        }
+      }
+      return "Manual"
+    },
   },
   methods: {
     ...mapActions({
+      attachAudience: "engagements/attachAudience",
+      detachAudience: "engagements/detachAudience",
+      destinationById: "destinations/get",
+      getAudienceById: "audiences/getAudienceById",
+      getAudiences: "audiences/getAll",
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
-      getAudienceById: "audiences/getAudienceById",
-      destinationById: "destinations/get",
     }),
+
+    // Drawer Section Starts
+    closeDrawers() {
+      this.showSelectAudiencesDrawer = false
+      this.showAddAudiencesDrawer = false
+      this.showSelectDestinationsDrawer = false
+      this.showDataExtensionDrawer = false
+    },
+
+    triggerSelectAudience() {
+      this.closeDrawers()
+      this.showSelectAudiencesDrawer = true
+      this.$refs.selectAudiences.localSelectedAudiences = JSON.parse(
+        JSON.stringify(this.selectedAudiences)
+      )
+    },
+
+    triggerCreateAudience() {
+      this.closeDrawers()
+      this.showAddAudiencesDrawer = true
+    },
+    triggerSelectDestination(audienceId) {
+      this.closeDrawers()
+      this.selectedAudienceId = audienceId
+      this.showSelectDestinationsDrawer = true
+    },
+    triggerDataExtensionDrawer(destination) {
+      this.closeDrawers()
+      this.selectedDestination = destination || []
+      this.showDataExtensionDrawer = true
+    },
+    async triggerAttachDestination() {
+      this.loadingAudiences = true
+      const payload = {
+        audiences: [
+          {
+            id: this.selectedAudienceId,
+            destinations:
+              this.selectedAudiences[this.selectedAudienceId].destinations,
+          },
+        ],
+      }
+      await this.attachAudience({
+        engagementId: this.engagementId,
+        data: payload,
+      })
+      await this.loadEngagement(this.engagementId)
+    },
+    async triggerAttachAudiences(audiences) {
+      this.loadingAudiences = true
+      if (Object.keys(audiences.added).length > 0) {
+        const addPayload = {
+          audiences: Object.values(audiences.added).map((aud) => ({
+            id: aud.id,
+            destinations: [],
+          })),
+        }
+        await this.attachAudience({
+          engagementId: this.engagementId,
+          data: addPayload,
+        })
+      }
+      if (Object.keys(audiences.removed).length > 0) {
+        if (process.env.NODE_ENV === "development") {
+          for (const aud of Object.values(audiences.removed)) {
+            const removePayload = { audience_ids: [] }
+            removePayload.audience_ids.push(aud.id)
+            await this.detachAudience({
+              engagementId: this.engagementId,
+              data: removePayload,
+            })
+          }
+        } else {
+          const removePayload = {
+            audience_ids: Object.values(audiences.removed).map((aud) => aud.id),
+          }
+
+          await this.detachAudience({
+            engagementId: this.engagementId,
+            data: removePayload,
+          })
+        }
+      }
+      await this.loadEngagement(this.engagementId)
+    },
+    async triggerAttachAudience(aud) {
+      this.loadingAudiences = true
+      const payload = { audiences: [] }
+      payload.audiences.push({
+        id: aud.id,
+        destinations:
+          aud.destinations.map((dest) => ({
+            id: dest.id,
+          })) || [],
+      })
+      await this.attachAudience({
+        engagementId: this.engagementId,
+        data: payload,
+      })
+      await this.loadEngagement(this.engagementId)
+    },
+    async triggerDetachAudiences(aud) {
+      this.loadingAudiences = true
+      const payload = { audience_ids: [] }
+      payload.audience_ids.push(aud.id)
+      await this.detachAudience({
+        engagementId: this.engagementId,
+        data: payload,
+      })
+      await this.loadEngagement(this.engagementId)
+    },
+    // Drawer Section Ends
 
     async audienceList() {
       this.loadingAudiences = true
@@ -632,11 +840,21 @@ export default {
 
       // audience id pushing in one array
       engData.audiences.forEach((data) => audienceIds.push(data.id))
-
+      Object.keys(this.selectedAudiences).forEach((audId) => {
+        if (
+          engData.audiences.filter((engAud) => engAud.id === audId).length === 0
+        )
+          delete this.selectedAudiences[audId]
+      })
       // getting audience by id
       for (let id of audienceIds) {
         await this.getAudienceById(id)
-        audienceDetails.push(this.getAudience(id))
+        const audience = this.getAudience(id)
+        audienceDetails.push(audience)
+        audience.destinations = engData.audiences.filter(
+          (aud) => aud.id === id
+        )[0].destinations
+        this.selectedAudiences[id] = audience
       }
       // extracting the audience data and merging into object
       audienceDetails.forEach((element) => {
@@ -679,7 +897,6 @@ export default {
           audiencesDetailsData[i].destinations[j] = destinationWithDelivery
         }
       }
-
       // pushing merged data into variable
       this.audienceMergedData = audiencesDetailsData
       this.loadingAudiences = false
@@ -715,6 +932,14 @@ export default {
       if (acronymObject.length === 0) return null
       return acronymObject[0].description
     },
+    async loadEngagement(engagementId) {
+      await this.getEngagementById(engagementId)
+      await this.getAudiencePerformanceById({
+        type: "ads",
+        id: this.engagementList.id,
+      })
+      this.audienceList()
+    },
 
     openDeliveryHistoryDrawer() {
       this.showDeliveryHistoryDrawer = true
@@ -722,12 +947,8 @@ export default {
   },
   async mounted() {
     this.loading = true
-    await this.getEngagementById(this.$route.params.id)
-    await this.getAudiencePerformanceById({
-      type: "ads",
-      id: this.engagementList.id,
-    })
-    this.audienceList()
+    await this.getAudiences()
+    await this.loadEngagement(this.$route.params.id)
     this.loading = false
   },
 }

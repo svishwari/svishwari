@@ -1,9 +1,20 @@
 import faker from "faker"
+import { startCase } from "lodash"
 
 const REDACTED = "++REDACTED++"
 
+const someLastName = () => {
+  const howLong = Math.floor(Math.random() * 4) + 1
+
+  const lastName = Array(howLong)
+    .fill()
+    .reduce((prev) => prev + faker.name.lastName().toLowerCase(), "")
+
+  return startCase(lastName)
+}
+
 const somePercentage = () => {
-  return faker.datatype.float({ min: 0.51, max: 0.99, precision: 0.000000001 })
+  return faker.datatype.float({ min: 0, max: 1, precision: 0.000000001 })
 }
 
 const someScore = () => {
@@ -74,8 +85,9 @@ const idrBreakdown = (identifier, percentage) => {
  * Customer schema
  */
 export const customer = {
+  hux_id: (index) => `HUX:${index + 1000000000000001}`,
   first_name: () => faker.name.firstName(),
-  last_name: () => faker.name.lastName(),
+  last_name: () => someLastName(),
   match_confidence: () => somePercentage(),
 }
 
@@ -89,9 +101,10 @@ export const customerProfile = {
 
   address: REDACTED,
   age: REDACTED,
-  churn_rate: () => someScore(),
+  churn_rate: () => faker.datatype.number(1, 10),
   city: REDACTED,
-  conversion_time: () => faker.datatype.number(365),
+  conversion_time: () =>
+    faker.datatype.float({ min: 1, max: 24, precision: 0.01 }),
   email: REDACTED,
   gender: REDACTED,
   identity_resolution: {

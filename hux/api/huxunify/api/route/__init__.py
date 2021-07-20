@@ -9,6 +9,7 @@ from huxunify.api.route.cdp_data_source import cdp_data_sources_bp
 from huxunify.api.route.notifications import notifications_bp
 from huxunify.api.route.customers import customers_bp
 from huxunify.api.route.engagement import engagement_bp
+from huxunify.api.route.delivery import delivery_bp
 
 ROUTES = [
     dest_bp,
@@ -19,4 +20,5 @@ ROUTES = [
     notifications_bp,
     customers_bp,
     engagement_bp,
+    delivery_bp,
 ]

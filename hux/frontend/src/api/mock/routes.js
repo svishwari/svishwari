@@ -72,6 +72,19 @@ export const defineRoutes = (server) => {
   server.post("/engagements", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 
+    let duplicateLength = schema.engagements.where({
+      name: requestData.name,
+    }).models.length
+
+    if (duplicateLength > 0) {
+      return new Response(
+        400,
+        {},
+        {
+          message: "Name already exists.",
+        }
+      )
+    }
     return schema.engagements.create(requestData)
   })
 
@@ -88,6 +101,54 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
+  // Attaching an Audience to an Engagement
+  server.post("/engagements/:id/audiences", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const requestData = JSON.parse(request.requestBody)
+    const engagement = schema.engagements.find(id)
+    const addedAudiences = requestData.audiences.map((aud) => {
+      const audience = schema.audiences.find(aud.id)
+      const existsAudience = engagement.audiences.filter(
+        (engAud) => engAud.id === aud.id
+      )
+      if (existsAudience.length > 0) {
+        existsAudience[0].destinations = aud.destinations
+        return
+      }
+      const audienceObj = {
+        status: audience.status,
+        id: audience.id,
+        name: audience.name,
+        destinations: aud.destinations.map((des) =>
+          schema.destinations.find(des.id)
+        ),
+      }
+      return audienceObj
+    })
+    if (!addedAudiences.includes(undefined)) {
+      engagement.audiences.push(...addedAudiences)
+    }
+    const body = { message: "SUCCESS" }
+    return new Response(code, headers, body)
+  })
+
+  // Detaching an Audience to an Engagement
+  server.del("/engagements/:id/audiences/:audienceId", (schema, request) => {
+    const code = 200
+    const headers = {}
+    const id = request.params.id
+    const audienceId = request.params.audienceId
+    const engagement = schema.engagements.find(id)
+    engagement.audiences.splice(
+      engagement.audiences.findIndex((aud) => aud.id === audienceId),
+      1
+    )
+    const body = { message: "SUCCESS" }
+    return new Response(code, headers, body)
+  })
+
   server.post("/engagements/:id/audience/:audienceId/deliver", () => {
     return { message: "Successfully created delivery jobs" }
   })
@@ -98,21 +159,36 @@ export const defineRoutes = (server) => {
       return { message: "Successfully created delivery jobs" }
     }
   )
+  server.get(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
+    (schema) => {
+      return schema.campaigns.all()
+    }
+  )
+  server.put(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
+    () => {
+      return { message: "Successfully created mappings" }
+    }
+  )
 
-  server.get("/engagements/:id/deliveries", (schema, request) => {
+  server.get("/engagements/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const engagement = schema.engagements.find(id)
+    const destination = schema.destinations.find(7)
     return engagement.audiences.map((audience) => {
       return {
-        id: audience.id,
-        name: audience.name,
+        audience: {
+          id: audience.id,
+          name: audience.name,
+        },
+        destination: {
+          id: destination.id,
+          name: destination.name,
+          type: destination.type,
+        },
         size: audience.size,
-        destinations: audience.destinations.map((destination) => {
-          return {
-            id: destination.id,
-            deliveries: server.createList("delivery", 10),
-          }
-        }),
+        delivered: "2021-07-11T14:39:49.574Z",
       }
     })
   })
@@ -141,9 +217,12 @@ export const defineRoutes = (server) => {
   // customers
   server.get("/customers")
 
-  server.get("/customers/:id", (schema, request) => {
-    const id = request.params.id
-    return server.create("customerProfile", schema.customers.find(id).attrs)
+  server.get("/customers/:hux_id", (schema, request) => {
+    const huxId = request.params.hux_id
+    return server.create(
+      "customerProfile",
+      schema.customers.findBy({ hux_id: huxId }).attrs
+    )
   })
 
   server.get("/customers/overview", () => customersOverview)
@@ -152,6 +231,13 @@ export const defineRoutes = (server) => {
 
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
+
+  // notification
+  // server.get("/notifications")
+  server.get("/notifications", (schema, request) => {
+    const notifications = schema.notifications.all()
+    return notifications.slice(0, request.queryParams.batch_size)
+  })
 
   // audiences
   server.get("/audiences")

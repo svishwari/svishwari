@@ -122,18 +122,18 @@ export default {
       }
       .theme--light {
         .v-slider__track-fill {
-          background-color: var(--v-persianGreen-base) !important;
+          background-color: rgba(0, 171, 171, 0.55) !important;
         }
       }
       .v-slider__thumb {
         width: 16px;
         height: 16px;
         background-color: var(--v-white-base) !important;
-        border: 1px solid var(--v-persianGreen-base);
+        border: 1px solid rgba(0, 171, 171, 0.55);
         box-sizing: border-box;
         box-shadow: 0px 1px 5px rgb(0 0 0 / 15%);
         border-radius: 100px;
-        border-color: var(--v-persianGreen-base) !important;
+        border-color: rgba(0, 171, 171, 0.55) !important;
       }
       .v-slider__thumb-label {
         transform: translateY(35px) translateX(-50%) rotate(45deg) !important;
@@ -159,7 +159,7 @@ export default {
   ::v-deep .v-slider__thumb {
     height: 16px;
     width: 16px;
-    box-shadow: 0px 1px 5px rgb(0 0 0 / 25%);
+    @extend .box-shadow-15;
     -webkit-appearance: none;
     appearance: none;
 
