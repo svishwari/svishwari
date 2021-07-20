@@ -434,7 +434,7 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(doc is None)
 
     @mongomock.patch(servers=(("localhost", 27017),))
-    def test_delete_perfromance_metrics_by_delivery_job_id(self):
+    def test_delete_performance_metrics_by_delivery_job_id(self):
         """Test delivery job deletion by id"""
         # set delivery platform connection status
         auth_details = {
