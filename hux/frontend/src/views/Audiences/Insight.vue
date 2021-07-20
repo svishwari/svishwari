@@ -45,6 +45,26 @@
         </template>
       </MetricCard>
 
+
+          <v-card class="rounded-lg card-info-wrapper box-shadow-5">
+            <v-card-title class="card-heading py-5">
+              Lookalikes
+            </v-card-title>
+            <v-card-text class="title-text pl-0 pr-0">
+              <v-simple-table>
+                <template v-slot:default>
+                  <tbody>
+                    <tr v-for="data in lookalikesData" :key="data.name">
+                      <td class="title-text">{{ data.name }}</td>
+                      <td class="table-text cl">{{ data.size }}</td>
+                      <td class="table-text cl">{{ data.updated }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+
       <MetricCard
         class="ma-4 audience-summary"
         :title="'Attributes'"
@@ -155,6 +175,28 @@ export default {
   },
   data() {
     return {
+      lookalikesData: [
+        {
+          name: "Sachin",
+          size: "45k",
+          updated: "2 months ago"
+        },
+                {
+          name: "Sachin",
+          size: "45k",
+          updated: "2 months ago"
+        },
+                {
+          name: "Sachin",
+          size: "45k",
+          updated: "2 months ago"
+        },
+                {
+          name: "Sachin",
+          size: "45k",
+          updated: "2 months ago"
+        }
+      ],
       items: [
         {
           text: "Audiences",
@@ -378,5 +420,19 @@ export default {
 }
 .icon-border {
   cursor: default;
+}
+.card-heading {
+  font-size: 15px !important;
+  background-color: rgba(236, 244, 249, 1);
+  font-weight: 400;
+  height: 54px !important;
+  padding: 0px !important;
+}
+.title-text {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
+  color: var(--v-gray-base) !important;
+  font-size: 12px !important;
 }
 </style>
