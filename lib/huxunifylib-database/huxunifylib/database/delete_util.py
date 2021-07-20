@@ -327,8 +327,8 @@ def delete_performance_metrics_by_delivery_job_id(
     delivery_job_id: ObjectId,
 ) -> bool:
     """
-    A function to hard delete a perfromance metrics doc if exists
-    by a delivery_job_id.
+    A function to hard delete performance metrics associated
+    with the given delivery_job_id.
 
     Args:
         database (DatabaseClient): A database client.
