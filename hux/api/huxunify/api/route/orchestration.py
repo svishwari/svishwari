@@ -589,11 +589,15 @@ class SetLookalikeAudience(SwaggerView):
             "description": "Input Lookalike Audience Parameters.",
             "example": {
                 api_c.NAME: "New Lookalike Audience",
-                # api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
-                api_c.SOURCE_AUDIENCE_ID: "60d1076efa9ba04689906f7c",
+                api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
+                # api_c.SOURCE_AUDIENCE_ID: "60d1076efa9ba04689906f7c", keep here for easy testing when fb account fixed
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 2.5,
-                # api_c.ENGAGEMENT_IDS: [str(ObjectId()), str(ObjectId()), str(ObjectId())]
-                api_c.ENGAGEMENT_IDS: ["60c2fd6555eb844f53cdc665"],
+                api_c.ENGAGEMENT_IDS: [
+                    str(ObjectId()),
+                    str(ObjectId()),
+                    str(ObjectId()),
+                ]
+                # api_c.ENGAGEMENT_IDS: ["60c2fd6555eb844f53cdc665"], keep here for easy testing when fb account fixed
             },
         }
     ]
