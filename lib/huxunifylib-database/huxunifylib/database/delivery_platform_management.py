@@ -1455,7 +1455,6 @@ def create_delivery_job_generic_campaigns(
     delivery_job_id: ObjectId,
     generic_campaign: list,
 ) -> Union[dict, None]:
-
     """A function to create/update delivery platform generic campaigns.
 
     Args:
@@ -1498,7 +1497,6 @@ def delete_delivery_job_generic_campaigns(
     database: DatabaseClient,
     delivery_job_ids: list,
 ) -> int:
-
     """A function to update delivery platform generic campaigns.
 
     Args:
@@ -2291,3 +2289,86 @@ def get_all_audience_customers(
         logging.error(exc)
 
     return audience_customers_docs
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_many_performance_metrics(
+    database: DatabaseClient,
+    performance_metric_docs: list,
+) -> bool:
+    """Store many performance metrics data.
+
+    Args:
+        database (DatabaseClient): A database client.
+        performance_metric_docs (list): A list containing performance metrics documents.
+
+    Returns:
+        bool: Success flag.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+    try:
+        collection.insert_many(performance_metric_docs, ordered=True)
+        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+        return True
+    except pymongo.errors.BulkWriteError as exc:
+        for err in exc.details["writeErrors"]:
+            if err["code"] == c.DUPLICATE_ERR_CODE:
+                logging.warning(
+                    "Ignoring %s due to duplicate unique field!",
+                    str(err["op"]),
+                )
+                continue
+
+            logging.error(exc)
+            return False
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+        return False
+
+    return True
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_recent_performance_metric_by_delivery_job(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> Union[list, None]:
+    """Retrieve campaign performance metrics.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
+
+    Returns:
+        Union[list, None]: list containing recent metric.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    # Check validity of delivery job ID
+    doc = get_delivery_job(database, delivery_job_id)
+    if not doc:
+        raise de.InvalidID(delivery_job_id)
+
+    try:
+        return list(
+            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+            .sort([(c.JOB_END_TIME, -1)])
+            .limit(1)
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
