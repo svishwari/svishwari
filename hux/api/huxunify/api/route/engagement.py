@@ -24,6 +24,7 @@ from huxunifylib.database.engagement_management import (
     remove_audiences_from_engagement,
     append_audiences_to_engagement,
 )
+from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.database import (
     orchestration_management,
     delivery_platform_management,
@@ -523,8 +524,16 @@ class AddAudienceEngagement(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
+        # validate audiences exist
+        database = get_db_client()
+        for audience in body[api_c.AUDIENCES]:
+            if not get_audience(database, ObjectId(audience[api_c.ID])):
+                return {
+                    "message": f"Audience does not exist: {audience[api_c.ID]}"
+                }, HTTPStatus.BAD_REQUEST
+
         append_audiences_to_engagement(
-            get_db_client(),
+            database,
             ObjectId(engagement_id),
             user_name,
             body[api_c.AUDIENCES],

@@ -1,0 +1,306 @@
+---
+test_name: Test customer insights geo
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test customer-insights/geo
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers-insights/geo"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        - name: !anystr
+        - population_percentage: !anyfloat
+        - size: !anyint
+        - gender_women: !anyfloat
+        - gender_men: !anyfloat
+        - gender_other: !anyfloat
+        - ltv: !anyfloat
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customer overview
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test customers/overview
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/overview"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "gender_other": !anyfloat
+        "total_customers": !anyint
+        "max_age": !anyint
+        "total_countries": !anyint
+        "max_ltv_actual": !anyfloat
+        "total_unique_ids": !anyint
+        "min_ltv_actual": !anyfloat
+        "total_records": !anyint
+        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "total_us_states": !anyint
+        "total_known_ids": !anyint
+        "min_age": !anyint
+        "min_ltv_predicted": !anyfloat
+        "max_ltv_predicted": !anyfloat
+        "match_rate": !anyfloat
+        "total_individual_ids": !anyint
+        "total_unknown_ids": !anyint
+        "gender_men": !anyfloat
+        "gender_women": !anyfloat
+        "total_cities": !anyint
+        "total_household_ids": !anyint
+      headers:
+        content-type: application/json
+
+---
+test_name: Test idr datafeeds
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test idr/datafeeds
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/datafeeds"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      status_code: 200
+      json:
+        - data_source_type: !anystr
+        - last_run: !anystr
+        - datafeed_name: !anystr
+        - match_rate: !anyfloat
+        - datafeed_id: !anystr
+        - new_ids_generated: !anyint
+        - num_records_processed: !anyint
+      headers:
+        content-type: application/json
+
+---
+test_name: Test idr overview
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test idr/overview
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/overview"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "total_unknown_ids": !anyint
+        "min_ltv_predicted": !anyfloat
+        "updated": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "gender_men": !anyfloat
+        "total_cities": !anyint
+        "total_known_ids": !anyint
+        "max_ltv_predicted": !anyfloat
+        "total_countries": !anyint
+        "min_age": !anyint
+        "total_us_states": !anyint
+        "gender_other": !anyfloat
+        "max_ltv_actual": !anyfloat
+        "total_individual_ids": !anyint
+        "min_ltv_actual": !anyfloat
+        "gender_women": !anyfloat
+        "total_customers": !anyint
+        "total_unique_ids": !anyint
+        "match_rate": !anyfloat
+        "total_records": !anyint
+        "total_household_ids": !anyint
+        "max_age": !anyint
+      headers:
+        content-type: application/json
+
+---
+test_name: Test customers
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test customers
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "total_customers": !anyint
+        "customers": !anylist
+        - "hux_id": !anystr
+        - "first_name": !anystr
+        - "last_name": !anystr
+        - "match_confidence": !anyfloat
+      save:
+        json:
+          first_customer: customers[0]
+      headers:
+        content-type: application/json
+
+  - name: test customers get
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/customers/{first_customer.hux_id}"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "hux_id": "{first_customer.hux_id}"
+        "ltv_predicted": !anyfloat
+        "churn_rate": !anyfloat
+        "last_email_open": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "propensity_to_unsubscribe": !anyfloat
+        "address": "++REDACTED++"
+        "gender": "++REDACTED++"
+        "ltv_actual": !anyfloat
+        "last_name": "{first_customer.last_name}"
+        "email": "++REDACTED++"
+        "zip": "++REDACTED++"
+        "state": "++REDACTED++"
+        "since": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "preference_push": !anybool
+        "last_click": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "preference_email": !anybool
+        "preference_in_app": !anybool
+        "match_confidence": !anyfloat
+        "conversion_time": !anyfloat
+        "age": "++REDACTED++"
+        "last_purchase": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        "city": "++REDACTED++"
+        "propensity_to_purchase": !anyfloat
+        "phone": "++REDACTED++"
+        "first_name": "{first_customer.first_name}"
+        "preference_sms": !anybool
+        "identity_resolution":
+          "email":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "name":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "cookie":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "phone":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+          "address":
+            "percentage": !anyfloat
+            "data_sources": !anylist
+      headers:
+        content-type: application/json
+
+---
+test_name: Test datafeeds get
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test datafeeds get
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/idr/datafeeds/1234"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        "stitched":
+          "digital_ids_added": !anyint
+          "digital_ids_merged": !anyint
+          "time_stamp": !anystr
+          "records_source": !anystr
+          "match_rate": !anyfloat
+          "merge_rate": !anyfloat
+        "pinning":
+          "db_reads": !anyint
+          "household_id_match": !anyint
+          "filename": !anystr
+          "date_time": !anystr
+          "new_company_ids": !anyint
+          "db_writes": !anyint
+          "individual_id_match": !anyint
+          "address_id_match": !anyint
+          "new_individual_ids": !anyint
+          "new_household_ids": !anyint
+          "process_time": !anyfloat
+          "company_id_match": !anyint
+          "input_records": !anyint
+          "empty_records": !anyint
+          "output_records": !anyint
+          "new_address_ids": !anyint
+      headers:
+        content-type: application/json

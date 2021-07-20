@@ -271,9 +271,12 @@ export const defineRoutes = (server) => {
   // customers
   server.get("/customers")
 
-  server.get("/customers/:id", (schema, request) => {
-    const id = request.params.id
-    return server.create("customerProfile", schema.customers.find(id).attrs)
+  server.get("/customers/:hux_id", (schema, request) => {
+    const huxId = request.params.hux_id
+    return server.create(
+      "customerProfile",
+      schema.customers.findBy({ hux_id: huxId }).attrs
+    )
   })
 
   server.get("/customers/overview", () => customersOverview)
@@ -284,7 +287,11 @@ export const defineRoutes = (server) => {
   server.get("/idr/overview", () => idrOverview)
 
   // notification
-  server.get("/notifications")
+  // server.get("/notifications")
+  server.get("/notifications", (schema, request) => {
+    const notifications = schema.notifications.all()
+    return notifications.slice(0, request.queryParams.batch_size)
+  })
 
   // audiences
   server.get("/audiences")

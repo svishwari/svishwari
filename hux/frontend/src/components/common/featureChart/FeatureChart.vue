@@ -41,6 +41,9 @@ export default {
   methods: {
     toolTipDisplay(...arg) {
       this.show = arg[0]
+      if (this.show) {
+        this.currentData = arg[1]
+      }
     },
 
     getCordinates(args) {

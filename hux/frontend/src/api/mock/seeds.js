@@ -1,3 +1,5 @@
+import moment from "moment"
+
 // data sources
 
 const bluecore = {
@@ -188,6 +190,8 @@ const defaultEngagement = ({ audiences = [] }) => {
     delivery_schedule: null,
     status: "Delivering",
     audiences: audiences,
+    create_time: () => moment().toJSON(),
+    update_time: () => moment().toJSON(),
   }
 }
 
@@ -465,5 +469,5 @@ export default function (server) {
   server.createList("campaignOption", 1)
 
   // for alert and notifications
-  server.createList("notification", 10)
+  server.createList("notification", 50)
 }

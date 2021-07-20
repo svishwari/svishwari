@@ -16,7 +16,7 @@ from typing import List
 
 from pymongo import ASCENDING, MongoClient
 import huxunifylib.database.constants as c
-from scripts.database.share import get_mongo_client
+from database.share import get_mongo_client
 
 
 # Setup logging

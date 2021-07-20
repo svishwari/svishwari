@@ -1,0 +1,54 @@
+---
+test_name: Test Health Check and Core Functions
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: Health-Check
+
+    # Define the request to be made...
+    request:
+      url: "{host}/health-check"
+      method: GET
+
+    # ...and the expected response code and body
+    response:
+      strict: False
+      status_code: 200
+      json:
+        status: "success"
+        "results": [
+          {
+            "checker": "check_mongo_connection",
+            "output": "Mongo available.",
+            "passed": true
+          },
+          {
+            "checker": "check_tecton_connection",
+            "output": "Tecton available.",
+            "passed": 200
+          },
+          {
+            "checker": "check_okta_connection",
+            "output": "OKTA available.",
+            "passed": 200
+          },
+          {
+            "checker": "check_aws_ssm",
+            "output": "ssm available.",
+            "passed": true
+          },
+          {
+            "checker": "check_aws_batch",
+            "output": "batch available.",
+            "passed": true
+          },
+          {
+            "checker": "check_cdm_api_connection",
+            "output": "CDM available.",
+            "passed": 200
+          }
+        ]
+      headers:
+        content-type: application/json

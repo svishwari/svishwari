@@ -84,17 +84,6 @@ export function makeServer({ environment = "development" } = {}) {
       }),
       customer: AppSerializer.extend({
         root: true,
-
-        keyForAttribute(attr) {
-          if (attr === "id") return "hux_id"
-          return attr
-        },
-      }),
-      customerProfile: AppSerializer.extend({
-        keyForAttribute(attr) {
-          if (attr === "id") return "hux_id"
-          return attr
-        },
       }),
     },
   })
