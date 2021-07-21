@@ -252,12 +252,14 @@ def delete_audience_delivery_jobs(
 def delete_delivery_job(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
+    hard_delete: bool = False,
 ) -> bool:
     """A function to soft delete a delivery job.
 
     Args:
         database (DatabaseClient): A database client.
         delivery_job_id (ObjectId): MongoDB document ID of delivery job.
+        hard_delete (bool) - optional: hard deletes delivery_job if True.
 
     Returns:
         bool: A flag indicating successful deletion.
@@ -274,6 +276,9 @@ def delete_delivery_job(
         update_doc = {c.DELETED: True}
 
         try:
+            if hard_delete:
+                collection.delete_one({c.ID: delivery_job_id})
+                return True
             if collection.find_one_and_update(
                 {c.ID: delivery_job_id},
                 {"$set": update_doc},
@@ -283,6 +288,41 @@ def delete_delivery_job(
                 return True
         except pymongo.errors.OperationFailure as exc:
             logging.error(exc)
+
+    return False
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def delete_performance_metrics_by_delivery_job_id(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> bool:
+    """
+    A function to hard delete performance metrics associated
+    with the given delivery_job_id.
+
+    Args:
+        database (DatabaseClient): A database client.
+        delivery_job_id (ObjectId): MongoDB document ID of delivery job.
+
+    Returns:
+        bool: A flag indicating successful deletion.
+
+    """
+
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    perf_metrics_collection = am_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    try:
+        perf_metrics_collection.delete_one(
+            {c.DELIVERY_JOB_ID: delivery_job_id}
+        )
+        return True
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
 
     return False
 
