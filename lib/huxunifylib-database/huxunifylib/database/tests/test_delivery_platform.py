@@ -1729,8 +1729,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(len(all_docs), 2)
 
     @mongomock.patch(servers=(("localhost", 27017),))
-    def test_set_many_performance_metrics(self):
-        """Performance Metrics docs are set and retrieved."""
+    def test_set_get_performance_metrics_bulk(self):
+        """Bulk Performance Metrics docs are set and most
+        recent metric is retrieved."""
 
         delivery_job_id = self._set_delivery_job()
         performance_metrics_docs = [
@@ -1798,12 +1799,11 @@ class TestDeliveryPlatform(unittest.TestCase):
             },
         ]
 
-        status = dpm.set_many_performance_metrics(
+        status = dpm.set_performance_metrics_bulk(
             database=self.database,
             performance_metric_docs=performance_metrics_docs,
         )
-
-        self.assertTrue(status)
+        self.assertTrue(status["insert_status"])
 
         performance_metrics_docs_list = dpm.get_performance_metrics(
             self.database, delivery_job_id
@@ -1818,15 +1818,13 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc2)
 
         recent_performance_metrics_doc = (
-            dpm.get_recent_performance_metric_by_delivery_job(
+            dpm.get_most_recent_performance_metric_by_delivery_job(
                 self.database, delivery_job_id
             )
         )
-
         self.assertIsNotNone(recent_performance_metrics_doc)
-        self.assertEqual(len(recent_performance_metrics_doc), 1)
 
         self.assertEqual(
-            recent_performance_metrics_doc[0][c.JOB_END_TIME],
+            recent_performance_metrics_doc[c.JOB_END_TIME],
             datetime.datetime(2021, 6, 26, 0, 0),
         )

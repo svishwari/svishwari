@@ -2295,26 +2295,35 @@ def get_all_audience_customers(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def set_many_performance_metrics(
+def set_performance_metrics_bulk(
     database: DatabaseClient,
     performance_metric_docs: list,
-) -> bool:
-    """Store many performance metrics data.
+) -> dict:
+    """Store bulk performance metrics data.
 
     Args:
         database (DatabaseClient): A database client.
         performance_metric_docs (list): A list containing performance metrics documents.
 
     Returns:
-        bool: Success flag.
+        dict: dict containing insert_status & list of inserted ids.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    insert_result = {"insert_status": False}
+
     try:
-        collection.insert_many(performance_metric_docs, ordered=True)
+        result = collection.insert_many(performance_metric_docs, ordered=True)
+
+        if result.acknowledged:
+            insert_result["insert_status"] = True
+            insert_result["inserted_ids"] = result.inserted_ids
+
         collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
-        return True
+
+        return insert_result
     except pymongo.errors.BulkWriteError as exc:
         for err in exc.details["writeErrors"]:
             if err["code"] == c.DUPLICATE_ERR_CODE:
@@ -2323,25 +2332,25 @@ def set_many_performance_metrics(
                     str(err["op"]),
                 )
                 continue
-
             logging.error(exc)
             return False
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
         return False
 
-    return True
+    return insert_result
 
 
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_recent_performance_metric_by_delivery_job(
+def get_most_recent_performance_metric_by_delivery_job(
     database: DatabaseClient,
     delivery_job_id: ObjectId,
-) -> Union[list, None]:
-    """Retrieve campaign performance metrics.
+) -> Union[dict, None]:
+    """Retrieve the most recent campaign performance
+    metrics associated with a given delivery job ID.
 
     Args:
         database (DatabaseClient): database client.
@@ -2351,7 +2360,7 @@ def get_recent_performance_metric_by_delivery_job(
         de.InvalidID: Invalid ID for delivery job.
 
     Returns:
-        Union[list, None]: list containing recent metric.
+        Union[dict, None]: most recent performance metric.
     """
 
     platform_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -2363,11 +2372,13 @@ def get_recent_performance_metric_by_delivery_job(
         raise de.InvalidID(delivery_job_id)
 
     try:
-        return list(
+        cursor = (
             collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
             .sort([(c.JOB_END_TIME, -1)])
             .limit(1)
         )
+        return cursor[0]
+
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
