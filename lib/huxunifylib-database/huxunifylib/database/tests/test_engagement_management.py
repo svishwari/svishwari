@@ -29,7 +29,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # setup the audience
         self.audience = om.create_audience(
-            self.database, "all", [], [], self.user_name
+            self.database, "all", [], [], self.user_name, 184
         )
 
         self.audience[c.OBJECT_ID] = self.audience[c.ID]
@@ -677,7 +677,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # create another audience
         audience = om.create_audience(
-            self.database, "audience_group", [], self.user_name
+            self.database, "audience_group", [], [], self.user_name, 1560
         )
 
         for i in range(20):
@@ -746,11 +746,13 @@ class TestEngagementManagement(unittest.TestCase):
             self.assertIn(c.CREATE_TIME, engagement)
             self.assertIn(c.UPDATE_TIME, engagement)
             self.assertIn(c.AUDIENCES, engagement)
+            self.assertIn(c.SIZE, engagement)
 
             for audience in engagement[c.AUDIENCES]:
                 self.assertIn(c.NAME, audience)
                 self.assertIn(c.DESTINATIONS, audience)
                 self.assertIn(c.OBJECT_ID, audience)
+                self.assertIn(c.SIZE, audience)
                 if not audience[c.DESTINATIONS]:
                     continue
                 for destination in audience[c.DESTINATIONS]:
@@ -767,7 +769,12 @@ class TestEngagementManagement(unittest.TestCase):
 
         # create another audience
         audience = om.create_audience(
-            self.database, "audience_group", [], self.user_name
+            self.database,
+            "audience_group",
+            [],
+            [],
+            user_name=self.user_name,
+            size=1609,
         )
 
         # an audience with two destinations
@@ -777,6 +784,7 @@ class TestEngagementManagement(unittest.TestCase):
             c.AUDIENCES: [
                 {
                     c.OBJECT_ID: audience[c.ID],
+                    c.SIZE: audience[c.SIZE],
                     c.DESTINATIONS: [
                         {
                             c.OBJECT_ID: self.destinations[0][c.ID],
@@ -791,6 +799,7 @@ class TestEngagementManagement(unittest.TestCase):
                 },
                 {
                     c.OBJECT_ID: self.audience[c.ID],
+                    c.SIZE: audience[c.SIZE],
                     c.DESTINATIONS: [
                         {
                             c.OBJECT_ID: self.destinations[1][c.ID],
@@ -826,11 +835,15 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertIn(c.CREATE_TIME, engagement)
         self.assertIn(c.UPDATE_TIME, engagement)
         self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(
+            engagement[c.SIZE], audience[c.SIZE] + self.audience[c.SIZE]
+        )
 
         for audience in engagement[c.AUDIENCES]:
             self.assertIn(c.NAME, audience)
             self.assertIn(c.DESTINATIONS, audience)
             self.assertIn(c.OBJECT_ID, audience)
+            self.assertIn(c.SIZE, audience)
             if not audience[c.DESTINATIONS]:
                 continue
             for destination in audience[c.DESTINATIONS]:
