@@ -193,14 +193,19 @@ class OktaTest(TestCase):
 
             self.assertEqual(invalid_header, demo_endpoint())
 
-    def test_secured_decorator_bad_token(self):
+    @requests_mock.Mocker()
+    def test_secured_decorator_bad_token(self, request_mocker: Mocker):
         """Test secured decorator with a bad token
 
         Args:
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
         """
+
+        request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
+
         invalid_header = (constants.INVALID_AUTH, 400)
         with Flask("invalid_token").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}

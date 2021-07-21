@@ -28,12 +28,16 @@
               card-height
             "
           >
-            <v-card-title
-              class="justify-center font-weight-regular title-font-size"
-            >
-              {{ fullName }}
+            <v-card-title class="title-font-size">
+              <span class="d-inline-block text-truncate mr-1">
+                {{ this.singleCustomer.first_name }}
+              </span>
+              <span class="d-inline-block text-truncate">
+                {{ this.singleCustomer.last_name }}
+              </span>
             </v-card-title>
-            <v-card-text class="justify-center title-text pt-5 pb-5">
+            <v-card-text class="justify-center title-text py-4">
+              <icon type="smile" :size="16" color="blue" />
               <div>Hux ID</div>
               <span class="id-size">{{ singleCustomer.hux_id }} </span>
             </v-card-text>
@@ -60,14 +64,19 @@
                   </template>
                 </Tooltip>
               </div>
-              <span v-if="!data.slider" class="sample-card-text">{{
-                data.value
-              }}</span>
               <hux-slider
-                v-if="data.slider"
+                v-if="data.format === 'slider'"
                 :isRangeSlider="false"
                 :value="data.value"
               ></hux-slider>
+              <span v-else class="sample-card-text">
+                <template v-if="data.format === 'date-relative'">
+                  {{ data.value | Date("relative", true) | Empty }}
+                </template>
+                <template v-if="data.format === 'currency'">
+                  {{ data.value | Currency | Empty }}
+                </template>
+              </span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -116,66 +125,46 @@
                   <tbody>
                     <tr>
                       <td class="title-text">Email</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.email" class="blur-text"
-                          >{{ singleCustomer.email }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.email | Empty }}
                       </td>
                       <td class="title-text">Address</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.address" class="blur-text">
-                          {{ singleCustomer.address }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.address | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Phone</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.phone" class="blur-text">
-                          {{ singleCustomer.phone }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.phone | Empty }}
                       </td>
                       <td class="title-text">City</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.city" class="blur-text">
-                          {{ singleCustomer.city }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.city | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Age</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.age" class="blur-text">
-                          {{ singleCustomer.age }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.age | Empty }}
                       </td>
                       <td class="title-text">State</td>
-                      <td class="table-text">
-                        <span v-if="singleCustomer.state" class="blur-text">
-                          {{ singleCustomer.state }}
-                        </span>
-                        <span v-else>-</span>
+                      <td class="table-text blur-text">
+                        {{ singleCustomer.state | Empty }}
                       </td>
                     </tr>
                     <tr>
                       <td class="title-text">Gender</td>
                       <td class="table-text">
                         <span v-if="singleCustomer.gender" class="blur-text">
-                          {{ singleCustomer.gender }}
+                          {{ singleCustomer.gender | Empty }}
                         </span>
-                        <span v-else>-</span>
                       </td>
                       <td class="title-text">Zip</td>
                       <td class="table-text">
                         <span v-if="singleCustomer.zip" class="blur-text">
-                          {{ singleCustomer.zip }}
+                          {{ singleCustomer.zip | Empty }}
                         </span>
-                        <span v-else>-</span>
                       </td>
                     </tr>
                   </tbody>
@@ -195,7 +184,10 @@
                   <tbody>
                     <tr v-for="data in contactPreferences" :key="data.id">
                       <td class="title-text">{{ data.title }}</td>
-                      <td class="table-text cl">{{ data.value }}</td>
+                      <td class="table-text cl">
+                        <template v-if="data.value === true">True</template>
+                        <template v-if="data.value === false">False</template>
+                      </td>
                     </tr>
                   </tbody>
                 </template>
@@ -212,6 +204,7 @@
 </template>
 
 <script>
+import moment from "moment"
 import { mapActions, mapGetters } from "vuex"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -264,6 +257,7 @@ export default {
     ...mapGetters({
       customer: "customers/single",
     }),
+
     singleCustomer() {
       return this.customer(this.$route.params.id)
     },
@@ -271,11 +265,7 @@ export default {
     id() {
       return this.$route.params.id
     },
-    fullName() {
-      let full_name =
-        this.singleCustomer.first_name + " " + this.singleCustomer.last_name
-      return full_name
-    },
+
     customerInsightsData() {
       const insightsData = [
         {
@@ -355,46 +345,48 @@ export default {
       return contactData.filter((item) => item.title !== null)
     },
     customerDataDisplay() {
-      const cusomerDeatils = [
+      return [
         {
           id: 1,
           title: "Customer length",
-          value: this.formattedDate(this.singleCustomer.since),
+          value: this.singleCustomer.since,
+          format: "date-relative",
           colValue: 2.5,
         },
         {
           id: 2,
           title: "Match confidence",
-          value: this.$options.filters.Empty(
-            this.singleCustomer.match_confidence
-          ),
+          value: this.singleCustomer.match_confidence,
+          format: "slider",
           colValue: 2.5,
-          slider: true,
           hoverTooltip:
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
         },
         {
           id: 3,
           title: "Lifetime value",
-          value: this.singleCustomer.ltv_actual
-            ? "$" + this.singleCustomer.ltv_actual
-            : "-",
+          value: this.singleCustomer.ltv_actual,
+          format: "currency",
           colValue: 2,
           hoverTooltip:
             "Assessment of the lifetime financial value of each customer.",
         },
         {
+          // this value from the API is a number of months (float).
+          // we first convert it to a date (eg. months ago)
+          // then display this date as relative time (x days, months, years, etc)
           id: 4,
           title: "Conversion time",
-          value: this.$options.filters.Empty(
-            this.formattedDate(this.singleCustomer.conversion_time)
+          value: moment().subtract(
+            this.singleCustomer.conversion_time,
+            "month"
           ),
+          format: "date-relative",
           colValue: 2.5,
           hoverTooltip:
             "The average time customer takes to convert to a purchase.",
         },
       ]
-      return cusomerDeatils
     },
     customerDetailsMore() {
       const details = [
@@ -485,7 +477,9 @@ export default {
   font-style: normal;
   font-weight: 300 !important;
   font-size: 21px;
+  line-height: 25px;
   color: var(--v-neroBlack-base);
+  justify-content: center;
 }
 .title-text {
   font-family: Open Sans;
@@ -524,6 +518,10 @@ export default {
 .hux-score-slider {
   margin-bottom: -27px !important;
   margin-top: -8px;
+
+  ::v-deep .slider-value-display {
+    width: 36px;
+  }
 }
 .blur-text {
   color: transparent;
