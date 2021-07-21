@@ -124,39 +124,34 @@
         </template>
       </MetricCard>
     </div>
-    <div class="px-15 my-1 mb-4">
-      <v-card class="rounded-lg card-style" minHeight="145px" flat>
-        <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-          <div class="d-flex align-center">
+    <div class="px-15 my-1 mb-4 pt-6">
+      <v-col md="8" class="pa-0">
+        <delivery-overview>
+          <template #title-left>
             <span class="text-h5">Engagement &amp; delivery overview</span>
-          </div>
-          <div class="d-flex align-center">
-            <v-btn
-              text
-              class="d-flex align-center primary--text text-decoration-none"
-              disabled
-            >
-              <Icon type="audiences" :size="16" class="mr-1" />
-              Add an Engagement
-            </v-btn>
-          </div>
-        </v-card-title>
-        <v-progress-linear
-          v-if="!engagements"
-          :active="!engagements"
-          :indeterminate="!engagements"
-        />
-        <v-card-text class="pl-6 pr-6 pb-6">
-          <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
-            <status-list
-              v-for="item in engagements"
-              :key="item.id"
-              :audience="item"
-              :statusIcon="17"
-            />
-          </v-col>
-        </v-card-text>
-      </v-card>
+          </template>
+          <template #title-right>
+            <div class="d-flex align-center">
+              <v-btn
+                text
+                class="
+                  d-flex
+                  align-center
+                  primary--text
+                  text-decoration-none
+                  pr-0
+                "
+              >
+                Add to an engagement
+              </v-btn>
+              <v-btn text color="primary">
+                <icon type="history" :size="16" class="mr-1" />
+                Delivery history
+              </v-btn>
+            </div>
+          </template>
+        </delivery-overview>
+      </v-col>
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
@@ -205,8 +200,8 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
-import StatusList from "../../components/common/StatusList.vue"
 import Size from "../../components/common/huxTable/Size.vue"
+import DeliveryOverview from "../../components/DeliveryOverview.vue"
 export default {
   name: "AudienceInsight",
   components: {
@@ -217,8 +212,8 @@ export default {
     Avatar,
     Tooltip,
     Icon,
-    StatusList,
     Size,
+    DeliveryOverview,
   },
   data() {
     return {
