@@ -560,7 +560,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         delivery_history = []
         for job in delivery_jobs:
             if (
-                job.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED
+                job.get(db_c.STATUS) == db_c.AUDIENCE_LAST_DELIVERED
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
@@ -595,7 +595,7 @@ class EngagementDeliverHistoryView(SwaggerView):
 )
 class AudienceDeliverHistoryView(SwaggerView):
     """
-    Engagement delivery history class
+    Audience delivery history class
     """
 
     parameters = [
@@ -629,14 +629,18 @@ class AudienceDeliverHistoryView(SwaggerView):
     # pylint: disable=no-self-use
     @api_error_handler()
     def get(self, audience_id: str) -> Tuple[dict, int]:
-        """Delivery history of an audience.
+        """Retrieves delivery history of an audience.
+
         ---
         security:
             - Bearer: ["Authorization"]
+
         Args:
             audience_id (str): Audience ID.
+
         Returns:
             Tuple[dict, int]: Delivery history, HTTP Status.
+
         """
 
         # validate object id
@@ -660,7 +664,7 @@ class AudienceDeliverHistoryView(SwaggerView):
         delivery_history = []
         for job in delivery_jobs:
             if (
-                job.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED
+                job.get(db_c.STATUS) == db_c.AUDIENCE_LAST_DELIVERED
                 and job.get(api_c.ENGAGEMENT_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
@@ -672,7 +676,7 @@ class AudienceDeliverHistoryView(SwaggerView):
                         api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
                             database, job.get(db_c.DELIVERY_PLATFORM_ID)
                         ),
-                        # TODO : Get audience size from CDM
+                        # TODO : Get audience size from delivery job
                         api_c.SIZE: randrange(10000000),
                         api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
                     }

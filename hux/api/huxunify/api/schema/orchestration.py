@@ -123,13 +123,13 @@ class EngagementDeliveryHistorySchema(Schema):
     audience = fields.Nested(
         AudienceGetSchema(
             only=(
-                "name",
-                "_id",
+                api_c.NAME,
+                db_c.ID,
             )
         )
     )
     destination = fields.Nested(
-        DestinationGetSchema(only=("name", "type", "_id"))
+        DestinationGetSchema(only=(api_c.NAME, api_c.TYPE, db_c.ID))
     )
     size = fields.Integer()
     delivered = DateTimeWithZ(required=True, allow_none=True)
@@ -148,13 +148,13 @@ class AudienceDeliveryHistorySchema(Schema):
     engagement = fields.Nested(
         EngagementGetSchema(
             only=(
-                "name",
-                "_id",
+                api_c.NAME,
+                db_c.ID,
             )
         )
     )
     destination = fields.Nested(
-        DestinationGetSchema(only=("name", "type", "_id"))
+        DestinationGetSchema(only=(api_c.NAME, api_c.TYPE, db_c.ID))
     )
     size = fields.Integer()
     delivered = DateTimeWithZ(required=True, allow_none=True)
