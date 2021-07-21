@@ -560,7 +560,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         delivery_history = []
         for job in delivery_jobs:
             if (
-                job.get(db_c.STATUS) == db_c.AUDIENCE_LAST_DELIVERED
+                job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
@@ -664,7 +664,7 @@ class AudienceDeliverHistoryView(SwaggerView):
         delivery_history = []
         for job in delivery_jobs:
             if (
-                job.get(db_c.STATUS) == db_c.AUDIENCE_LAST_DELIVERED
+                job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
                 and job.get(api_c.ENGAGEMENT_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
