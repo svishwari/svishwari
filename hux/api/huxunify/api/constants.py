@@ -347,32 +347,40 @@ AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 
-SPEND = "spend"
-REACH = "reach"
-IMPRESSIONS = "impressions"
-CONVERSIONS = "conversions"
-CLICKS = "clicks"
-FREQUENCY = "frequency"
-CPM = "cost_per_thousand_impressions"
-CTR = "click_through_rate"
-CPA = "cost_per_action"
-CPC = "cost_per_click"
-ENGAGEMENT_RATE = "engagement_rate"
+DISPLAY_ADS_METRICS = [
+    "spend",
+    "reach",
+    "impressions",
+    "conversions",
+    "clicks",
+    "frequency",
+    "cost_per_thousand_impressions",
+    "click_through_rate",
+    "cost_per_action",
+    "cost_per_click",
+    "engagement_rate",
+]
+EMAIL_METRICS = [
+    "sent",
+    "hard_bounces",
+    "hard_bounces_rate",
+    "delivered",
+    "delivered_rate",
+    "open",
+    "open_rate",
+    "click",
+    "click_to_open_rate",
+    "unique_clicks",
+    "unique_opens",
+    "unsubscribe",
+    "unsubscribe_rate",
+]
 SUMMARY = "summary"
 IS_MAPPED = "is_mapped"
-
-SENT = "sent"
-HARD_BOUNCES = "hard_bounces"
-HARD_BOUNCES_RATE = "hard_bounces_rate"
 DELIVERED = "delivered"
-DELIVERED_RATE = "delivered_rate"
-OPEN = "open"
-OPEN_RATE = "open_rate"
-COTR = "click_to_open_rate"
-UNIQUE_CLICKS = "unique_clicks"
-UNIQUE_OPENS = "unique_opens"
 UNSUBSCRIBE = "unsubscribe"
-UNSUBSCRIBE_RATE = "unsubscribe_rate"
+SPEND = "spend"
+
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
