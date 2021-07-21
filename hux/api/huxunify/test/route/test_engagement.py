@@ -25,7 +25,7 @@ from huxunifylib.database.engagement_management import (
 )
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
-from huxunifylib.connectors.connector_facebook import FacebookConnector
+from huxunifylib.connectors import FacebookConnector
 from huxunify.api.schema.engagement import DisplayAdsSummary, EmailSummary
 from huxunify.api import constants as api_c
 from huxunify.app import create_app

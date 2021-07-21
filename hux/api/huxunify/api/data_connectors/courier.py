@@ -15,7 +15,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import add_delivery_job
 from huxunifylib.database.orchestration_management import get_audience
-from huxunifylib.connectors.connector_aws_batch import AWSBatchConnector
+from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
