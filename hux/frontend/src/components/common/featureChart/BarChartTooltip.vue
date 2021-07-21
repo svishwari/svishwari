@@ -2,7 +2,7 @@
   <div>
     <v-card
       tile
-       v-if="showTooltip"
+      v-if="showTooltip"
       :style="{
         transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
         'border-radius': '0px !important',

@@ -13,16 +13,8 @@
           <div class="model-dashboard__card px-6 py-5">
             {{ model.description }}
           </div>
-          <div
-            class="
-              d-flex
-              justify-center
-              align-center
-              mt-6
-              rounded-lg
-            "
-          >
-          <feature-chart :featureData="featureChartData" ></feature-chart>
+          <div class="d-flex justify-center align-center mt-6 rounded-lg">
+            <feature-chart :featureData="featureChartData"></feature-chart>
           </div>
         </v-col>
         <v-col col="6">
