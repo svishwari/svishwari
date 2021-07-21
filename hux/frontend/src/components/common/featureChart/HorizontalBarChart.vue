@@ -38,7 +38,7 @@ export default {
   },
   data() {
     return {
-      width: 520,
+      width: 560,
       height: 620,
       show: false,
       tooltip: {
