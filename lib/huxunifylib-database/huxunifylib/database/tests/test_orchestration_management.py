@@ -68,6 +68,7 @@ class TestAudienceManagement(unittest.TestCase):
             "My Audience",
             self.audience_filters,
             user_name=self.user_name,
+            size=1450,
         )
         return audience_doc
 
@@ -77,7 +78,9 @@ class TestAudienceManagement(unittest.TestCase):
         audience_doc = self._setup_audience()
 
         self.assertIsNotNone(audience_doc)
-        self.assertTrue(c.ID in audience_doc)
+        self.assertIn(c.ID, audience_doc)
+        self.assertIn(c.SIZE, audience_doc)
+        self.assertEqual(audience_doc[c.SIZE], 1450)
 
     def test_get_audience(self):
         """Test get audience."""

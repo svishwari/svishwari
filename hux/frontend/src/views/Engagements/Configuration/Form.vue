@@ -388,14 +388,19 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        start_date: new Date(this.selectedStartDate).toISOString(),
-        end_date: new Date(this.selectedEndDate).toISOString(),
+        start_date: !this.isManualDelivery
+          ? new Date(this.selectedStartDate).toISOString()
+          : null,
+        end_date: !this.isManualDelivery
+          ? new Date(this.selectedEndDate).toISOString()
+          : null,
       }
     },
 
     isValid() {
       return this.value.name.length
     },
+
     isDateValid() {
       if (this.value.delivery_schedule == 1) {
         if (this.selectedStartDate == "Select date") {
