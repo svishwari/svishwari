@@ -9,9 +9,10 @@ from typing import Tuple
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
-from huxunifylib.database.notification_management import create_notification
 from marshmallow import ValidationError, INCLUDE
 
+from huxunifylib.database.engagement_management import get_engagement
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
@@ -366,6 +367,7 @@ class AudiencePostView(SwaggerView):
 
             # attach the audience to each of the engagements
             for engagement_id in engagement_ids:
+                engagement = get_engagement(database, engagement_id)
                 engagement_management.append_audiences_to_engagement(
                     database,
                     engagement_id,
@@ -377,6 +379,17 @@ class AudiencePostView(SwaggerView):
                         }
                     ],
                 )
+                # add audience attached notification
+                create_notification(
+                    database=database,
+                    notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+                    description=(
+                        f"Audience {body[api_c.AUDIENCE_NAME]} "
+                        f"attached to {engagement[db_c.NAME]} successfully."
+                    ),
+                    category=api_c.ORCHESTRATION_TAG,
+                )
+
         except db_exceptions.DuplicateName:
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"

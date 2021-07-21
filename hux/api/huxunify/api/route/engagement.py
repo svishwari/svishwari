@@ -11,11 +11,11 @@ import facebook_business.exceptions
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
-from huxunifylib.database.notification_management import create_notification
 from marshmallow import ValidationError
 
 from huxunifylib.connectors.connector_facebook import FacebookConnector
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements_summary,
@@ -275,9 +275,7 @@ class SetEngagement(SwaggerView):
             category=api_c.ENGAGEMENT_TAG,
         )
         return (
-            EngagementGetSchema().dump(
-
-            ),
+            EngagementGetSchema().dump(engagement),
             HTTPStatus.CREATED,
         )
 
@@ -384,7 +382,7 @@ class UpdateEngagement(SwaggerView):
         create_notification(
             database=database,
             notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"Engagement {engagement[db_c.NAME]} updated.",
+            description=f"Engagement {engagement[db_c.NAME]} updated successfully.",
             category=api_c.ENGAGEMENT_TAG,
         )
         return (
@@ -452,7 +450,7 @@ class DeleteEngagement(SwaggerView):
                 database=database,
                 notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 description=f"Engagement {engagement[db_c.NAME]} deleted.",
-                category=api_c.ENGAGEMENT_TAG
+                category=api_c.ENGAGEMENT_TAG,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
@@ -565,7 +563,7 @@ class AddAudienceEngagement(SwaggerView):
         create_notification(
             database=database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=f"Audiences added to engagement {engagement[db_c.NAME]}.",
+            description=f"Audiences attached to {engagement[db_c.NAME]} successfully.",
             category=api_c.ENGAGEMENT_TAG,
         )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
@@ -658,8 +656,9 @@ class DeleteAudienceEngagement(SwaggerView):
         engagement = get_engagement(database, ObjectId(engagement_id))
         create_notification(
             database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_CRITICAL,
-            description=f"Audiences removed from engagement {engagement[db_c.NAME]}."
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"Audiences removed from {engagement[db_c.NAME]}.",
+            category=api_c.ENGAGEMENT_TAG,
         )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 

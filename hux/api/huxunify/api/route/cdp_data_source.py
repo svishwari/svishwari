@@ -234,7 +234,10 @@ class CreateCdpDataSource(SwaggerView):
         create_notification(
             database=database,
             notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=f"Data source {body[api_c.CDP_DATA_SOURCE_NAME]} created.",
+            description=(
+                f"Data source {body[api_c.CDP_DATA_SOURCE_NAME]} "
+                f"created successfully."
+            ),
             category=api_c.CDP_DATA_SOURCES_TAG,
         )
         return CdpDataSourceSchema().dump(response), HTTPStatus.OK
@@ -291,14 +294,14 @@ class DeleteCdpDataSource(SwaggerView):
                 "message": f"Invalid CDP data source ID received {data_source_id}."
             }, HTTPStatus.BAD_REQUEST
         database = get_db_client()
-        ds = get_data_source(database, data_source_id)
+        data_source = get_data_source(database, data_source_id)
         success_flag = delete_data_source(database, data_source_id)
 
         if success_flag:
             create_notification(
                 database=database,
                 notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                description=f"Data source {ds[db_c.NAME]} deleted.",
+                description=f"Data source {data_source[db_c.NAME]} deleted.",
                 category=api_c.CDP_DATA_SOURCES_TAG,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
