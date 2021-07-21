@@ -131,7 +131,6 @@ class DeliveryHistorySchema(Schema):
         DestinationGetSchema(only=("name", "type", "_id"))
     )
     size = fields.Integer()
-    delivered = fields.DateTime(required=True, allow_none=True)
     delivered = DateTimeWithZ(required=True, allow_none=True)
 
 
