@@ -461,11 +461,6 @@
 
     <v-divider class="mt-10" />
 
-    <v-subheader>Hux Feature Chart with Tooltip</v-subheader>
-    <feature-chart></feature-chart>
-
-    <v-divider class="mt-10" />
-
     <v-subheader>Logos</v-subheader>
     <Logo type="bluecore"></Logo>
     <Logo type="bluecore" :size="48"></Logo>
@@ -655,7 +650,6 @@ import DataCards from "@/components/common/DataCards"
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable"
 import HuxSlider from "@/components/common/HuxSlider"
 import ChordChart from "@/components/common/identityChart/ChordChart"
-import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import { generateColor } from "@/utils"
 import Size from "@/components/common/huxTable/Size.vue"
@@ -692,7 +686,6 @@ export default {
     Size,
     HuxStartDate,
     HuxEndDate,
-    FeatureChart,
   },
   methods: {
     onupdatelabelText(newValue) {
