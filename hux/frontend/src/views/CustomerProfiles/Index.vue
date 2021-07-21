@@ -44,19 +44,21 @@
             <Tooltip v-if="item.toolTipText">
               <template #label-content>
                 <span class="font-weight-semi-bold">
-                  <span v-if="item.value == 'percentage'">{{
-                    item.subtitle | percentageConvert(true, true)
-                  }}</span>
-                  <span v-if="item.value == 'numeric'">{{
-                    item.subtitle | Numeric(true, false, true)
-                  }}</span>
+                  <span v-if="item.value == 'percentage'">
+                    {{ item.subtitle | percentageConvert(true, true) }}
+                  </span>
+                  <span v-if="item.value == 'numeric'">
+                    {{ item.subtitle | Numeric(true, true) }}
+                  </span>
                 </span>
               </template>
               <template #hover-content>
-                <span v-if="item.value == 'percentage'">{{
-                  item.subtitle | percentageConvert(true, true)
-                }}</span>
-                <span v-else>{{ item.subtitle }}</span>
+                <span v-if="item.value == 'percentage'">
+                  {{ item.subtitle | percentageConvert(true, true) }}
+                </span>
+                <span v-else>
+                  {{ item.subtitle | Numeric(true, false, false) }}
+                </span>
               </template>
             </Tooltip>
           </template>
@@ -90,20 +92,24 @@
                 <Tooltip>
                   <template #label-content>
                     <span class="font-weight-semi-bold">
-                      <span v-if="item.value == 'percentage'">{{
-                        item.subtitle | percentageConvert(true, true)
-                      }}</span>
-                      <span v-if="item.value == 'numeric'">{{
-                        item.subtitle | Numeric(true, false, true)
-                      }}</span>
-                      <span v-if="item.value == ''">{{ item.subtitle }}</span>
+                      <span v-if="item.value == 'percentage'">
+                        {{ item.subtitle | percentageConvert(true, true) }}
+                      </span>
+                      <span v-if="item.value == 'numeric'">
+                        {{ item.subtitle | Numeric(true, true) }}
+                      </span>
+                      <span v-if="item.value == ''">
+                        {{ item.subtitle }}
+                      </span>
                     </span>
                   </template>
                   <template #hover-content>
-                    <span v-if="item.value == 'percentage'">{{
-                      item.subtitle | percentageConvert(true, true)
-                    }}</span>
-                    <span v-else>{{ item.subtitle }}</span>
+                    <span v-if="item.value == 'percentage'">
+                      {{ item.subtitle | percentageConvert(true, true) }}
+                    </span>
+                    <span v-else>
+                      {{ item.subtitle | Numeric(true, false, false) }}
+                    </span>
                   </template>
                 </Tooltip>
               </template>
@@ -144,7 +150,7 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
-import CustomerDetails from "@/views/CustomerProfiles/Drawers/CustomerDetails"
+import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 
 export default {
   name: "CustomerProfiles",
