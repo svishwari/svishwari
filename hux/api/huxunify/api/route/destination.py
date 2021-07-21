@@ -8,9 +8,9 @@ from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
-from huxunifylib.database.notification_management import create_notification
 from marshmallow import ValidationError
 
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
@@ -343,22 +343,20 @@ class DestinationPutView(SwaggerView):
 
         # update the destination
         destination = destination_management.update_delivery_platform(
-                    database=database,
-                    delivery_platform_id=destination_id,
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
-                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    authentication_details=authentication_parameters,
-                    added=is_added,
-                    performance_de=performance_de,
-                    user_name=user_name,
-                )
+            database=database,
+            delivery_platform_id=destination_id,
+            delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+            name=destination[db_c.DELIVERY_PLATFORM_NAME],
+            authentication_details=authentication_parameters,
+            added=is_added,
+            performance_de=performance_de,
+            user_name=user_name,
+        )
 
         # add notification
         create_notification(
             database=database,
-            type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
             description=f"Destination {destination[db_c.NAME]} updated successfully.",
             category=api_c.DESTINATIONS_TAG,
         )
@@ -726,7 +724,10 @@ class DestinationDataExtPostView(SwaggerView):
                 create_notification(
                     database=database,
                     notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-                    description=f"New data extension {body.get(api_c.DATA_EXTENSION)} created for {destination[db_c.NAME]}",
+                    description=(
+                        f"New data extension {body.get(api_c.DATA_EXTENSION)} "
+                        f"created for {destination[db_c.NAME]}"
+                    ),
                     category=api_c.DESTINATIONS_TAG.title(),
                 )
             except AudienceAlreadyExists:

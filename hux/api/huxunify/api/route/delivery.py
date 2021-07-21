@@ -195,7 +195,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         """
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
-        audience = get_audience(database, audience_id)
+        target_audience = get_audience(database, audience_id)
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -219,7 +219,6 @@ class EngagementDeliverDestinationView(SwaggerView):
                 "message": "Destination does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        database = get_db_client()
         delivery_job_ids = []
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
@@ -245,7 +244,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             description=(
                 f"Successfully created delivery job(s) for "
                 f"{engagement[db_c.NAME]} to deliver to "
-                f"{audience[db_c.NAME]} on {destination[db_c.NAME]}."
+                f"{target_audience[db_c.NAME]} on {destination[db_c.NAME]}."
             ),
             category=api_c.DELIVERY_TAG,
         )
