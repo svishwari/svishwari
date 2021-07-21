@@ -9,10 +9,7 @@ import mongomock
 import requests_mock
 
 from huxunifylib.connectors.facebook_connector import FacebookConnector
-from huxunifylib.database import (
-    data_management,
-    constants as db_c
-)
+from huxunifylib.database import data_management, constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )

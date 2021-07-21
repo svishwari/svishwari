@@ -140,7 +140,9 @@ class LookalikeAudiencePostSchema(Schema):
     Schema for creating a lookalike audience
     """
 
-    source_audience_id = fields.String(validate=must_not_be_blank, required=True)
+    source_audience_id = fields.String(
+        validate=must_not_be_blank, required=True
+    )
     name = fields.String(required=True)
     audience_size_percentage = fields.Float(required=True)
     engagement_ids = fields.List(fields.String(), required=True)
@@ -157,12 +159,10 @@ class LookalikeAudienceGetSchema(Schema):
         validate=validate_object_id,
     )
     delivery_platform_id = fields.String(
-        required=True,
-        validate=validate_object_id
+        required=True, validate=validate_object_id
     )
     source_audience_id = fields.String(
-        required=True,
-        validate=validate_object_id
+        required=True, validate=validate_object_id
     )
     name = fields.String(required=True)
     country = fields.String()
