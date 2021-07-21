@@ -591,7 +591,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         doc = dpm.set_delivery_job_status(
             self.database,
             self.delivery_job_doc[c.ID],
-            c.STATUS_SUCCEEDED,
+            c.AUDIENCE_STATUS_DELIVERED,
         )
 
         self.assertTrue(doc is not None)
@@ -599,13 +599,13 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.CREATE_TIME in doc)
         self.assertTrue(c.JOB_END_TIME in doc)
         self.assertTrue(c.JOB_STATUS in doc)
-        self.assertEqual(doc[c.JOB_STATUS], c.STATUS_SUCCEEDED)
+        self.assertEqual(doc[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERED)
 
         status = dpm.get_delivery_job_status(
             self.database, self.delivery_job_doc[c.ID]
         )
 
-        self.assertEqual(status, c.STATUS_SUCCEEDED)
+        self.assertEqual(status, c.AUDIENCE_STATUS_DELIVERED)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_audience_size(self):
