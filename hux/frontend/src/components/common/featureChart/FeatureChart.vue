@@ -39,7 +39,7 @@ export default {
         x: 0,
         y: 0,
       },
-      features: this.featureData.featureList,
+      features: this.featureData,
       currentData: {},
     }
   },

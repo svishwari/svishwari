@@ -93,6 +93,7 @@ import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
+//TODO: remove it after API Integration
 import data from "@/components/common/featureChart/featureData.json"
 
 export default {
@@ -108,7 +109,7 @@ export default {
   data() {
     return {
       //TODO: API integration
-      featureChartData: data,
+      featureChartData: data.featureList,
       model: {
         model_name: "Propensity to Unsubscribe",
         description:
