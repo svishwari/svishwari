@@ -26,6 +26,7 @@ def create_audience(
     audience_filters: list,
     destination_ids: list = None,
     user_name: str = None,
+    size: int = 0,
 ) -> Union[dict, None]:
     """A function to create an audience.
 
@@ -37,6 +38,7 @@ def create_audience(
         destination_ids (list): List of destination
             / delivery platform ids attached to the audience
         user_name (str): Name of the user creating / updating the audience
+        size (int): audience size.
 
     Returns:
         Union[list, None]: MongoDB audience doc.
@@ -65,6 +67,7 @@ def create_audience(
         c.UPDATED_BY: user_name,
         c.FAVORITE: False,
         c.DELETED: False,
+        c.SIZE: size,
     }
 
     try:

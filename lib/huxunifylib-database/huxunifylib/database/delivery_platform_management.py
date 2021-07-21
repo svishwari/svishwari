@@ -52,8 +52,8 @@ def set_delivery_platform(
         deleted (bool): if the delivery platform is deleted (soft-delete).
         user_name (str): Name of the user creating the delivery platform.
             This is Optional.
-        performance_de (dict): A dictionary consisting of name and id of
-            the performance metrics data extension
+        configuration (dict): A dictionary consisting of any platform
+            specific configurations.
 
     Returns:
         Union[dict, None]: MongoDB audience doc.
@@ -1157,7 +1157,7 @@ def set_delivery_job_status(
     update_doc[c.JOB_STATUS] = job_status
     update_doc[c.UPDATE_TIME] = curr_time
 
-    if job_status in (c.STATUS_SUCCEEDED, c.STATUS_FAILED):
+    if job_status in (c.AUDIENCE_STATUS_DELIVERED, c.STATUS_FAILED):
         update_doc[c.JOB_END_TIME] = curr_time
     elif job_status == c.STATUS_IN_PROGRESS:
         update_doc[c.JOB_START_TIME] = curr_time
