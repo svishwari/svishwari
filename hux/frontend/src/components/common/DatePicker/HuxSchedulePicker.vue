@@ -155,6 +155,16 @@
         [{{ schedule.hour }}:{{ schedule.minute }}{{ schedule.period }}]
       </span>
     </div>
+
+    <div
+      class="gray--text pt-1"
+      v-if="
+        schedule.periodicity === 'Monthly' && schedule.monthlyDayDate === 31
+      "
+    >
+      Some months are fewer than 31 days, for these months the delivery will
+      take place on the last day of the month.
+    </div>
   </div>
 </template>
 <script>
