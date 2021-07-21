@@ -2333,10 +2333,10 @@ def set_performance_metrics_bulk(
                 )
                 continue
             logging.error(exc)
-            return False
+            return insert_result
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
-        return False
+        return insert_result
 
     return insert_result
 
