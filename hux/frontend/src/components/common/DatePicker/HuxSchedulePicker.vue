@@ -270,6 +270,10 @@ export default {
       return string
     },
   },
+
+  mounted() {
+    this.$emit("input", this.schedule)
+  },
 }
 </script>
 <style lang="scss" scoped>
