@@ -279,7 +279,7 @@ def delete_delivery_job(
             if hard_delete:
                 collection.delete_one({c.ID: delivery_job_id})
                 return True
-            elif collection.find_one_and_update(
+            if collection.find_one_and_update(
                 {c.ID: delivery_job_id},
                 {"$set": update_doc},
                 upsert=False,
