@@ -13,19 +13,17 @@
           <div class="model-dashboard__card px-6 py-5">
             {{ model.description }}
           </div>
-          <v-card
+          <div
             class="
               d-flex
               justify-center
               align-center
               mt-6
               rounded-lg
-              box-shadow-5
             "
-            height="662"
           >
-                <feature-chart ></feature-chart>
-          </v-card>
+          <feature-chart :featureData="featureChartData" ></feature-chart>
+          </div>
         </v-col>
         <v-col col="6">
           <div class="d-flex">
@@ -103,6 +101,8 @@ import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
+import data from "@/components/common/featureChart/featureData.json"
+
 export default {
   name: "ModelsDashboard",
   components: {
@@ -116,6 +116,7 @@ export default {
   data() {
     return {
       //TODO: API integration
+      featureChartData: data,
       model: {
         model_name: "Propensity to Unsubscribe",
         description:

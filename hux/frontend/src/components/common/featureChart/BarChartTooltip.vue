@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-card
-      v-if="showTooltip"
       tile
+       v-if="showTooltip"
       :style="{
         transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
         'border-radius': '0px !important',
@@ -76,7 +76,7 @@ export default {
 }
 
 .card-padding {
-  padding: 10px 20px 20px 20px;
+  padding: 7px 20px 20px 20px;
 }
 
 .description-tooltip-style {
@@ -84,8 +84,8 @@ export default {
   border-radius: 0px;
   max-width: 230px;
   height: auto;
-  top: -692px;
-  left: -695px;
+  top: -650px;
+  left: -350px;
   z-index: 1;
   .bar-hover {
     @extend .card-padding;
@@ -104,7 +104,7 @@ export default {
   max-width: 61px;
   height: 34px;
   top: -650px;
-  left: -410px;
+  left: -134px;
   z-index: 1;
 }
 </style>
