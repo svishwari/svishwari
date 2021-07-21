@@ -284,8 +284,7 @@ export const defineRoutes = (server) => {
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
-  // notification
-  // server.get("/notifications")
+  // notifications
   server.get("/notifications", (schema, request) => {
     const notifications = schema.notifications.all()
     return notifications.slice(0, request.queryParams.batch_size)
@@ -315,7 +314,18 @@ export const defineRoutes = (server) => {
         return schema.destinations.find(id)
       })
     }
-    return schema.audiences.create(requestData)
+
+    const now = moment().toJSON()
+
+    const attrs = {
+      ...requestData,
+      create_time: () => now,
+      created_by: me.full_name(),
+      update_time: () => now,
+      updated_by: me.full_name(),
+    }
+
+    return server.create("audience", attrs)
   })
 
   server.post("/audiences/:id/deliver", () => {
