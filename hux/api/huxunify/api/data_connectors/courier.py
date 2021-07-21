@@ -11,6 +11,7 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     get_delivery_platform,
     set_delivery_job_status,
+    set_delivery_job_audience_size,
 )
 from huxunifylib.database.engagement_management import add_delivery_job
 from huxunifylib.database.orchestration_management import get_audience
