@@ -119,9 +119,6 @@ def get_engagements_summary(
     if engagement_ids:
         match_statement[db_c.ID] = {"$in": engagement_ids}
 
-    # TODO - add audience SIZE
-    # TODO - add audience SUM to engagement.
-
     pipeline = [
         # filter out the deleted engagements
         {"$match": match_statement},
