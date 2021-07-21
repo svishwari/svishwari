@@ -44,10 +44,12 @@ class OrchestrationRouteTest(TestCase):
         )
 
         # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.start()
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
 
         self.app = create_app().test_client()
 
@@ -420,6 +422,13 @@ class OrchestrationRouteTest(TestCase):
 
         Returns:
         """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",

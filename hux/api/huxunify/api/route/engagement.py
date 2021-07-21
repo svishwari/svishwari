@@ -1393,7 +1393,6 @@ class EngagementMetricsEmail(SwaggerView):
                 HTTP Status Code
 
         """
-
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 

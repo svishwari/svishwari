@@ -8,12 +8,12 @@
         :height="height"
         :items="dataItems"
         :sort-by.sync="sortColumn"
+        :sort-desc.sync="sortDesc"
         item-key="name"
         :items-per-page="-1"
         fixed-header
         hide-default-footer
         must-sort
-        sort-asc
         single-select
         :disable-sort="disableSort"
       >
@@ -37,7 +37,8 @@
             </template>
           </tooltip>
           <template v-if="!h.tooltipValue">
-            {{ h.text }}
+            <!-- TODO: find a better solution and remove v-html -->
+            <span v-html="h.text" :key="h.value" />
           </template>
           <Tooltip :key="h.value" v-if="h.hoverTooltip" positionTop>
             <template #label-content>
@@ -104,6 +105,11 @@ export default {
       type: String,
       required: false,
       default: "name",
+    },
+    sortDesc: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     disableSort: {
       type: Boolean,

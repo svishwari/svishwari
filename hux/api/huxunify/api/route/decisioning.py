@@ -75,11 +75,11 @@ class ModelsView(SwaggerView):
             api_c.NAME: "Propensity to Purchase",
             api_c.DESCRIPTION: "Propensity of a customer making a purchase "
             "after receiving an email.",
-            api_c.LATEST_VERSION: " ",
+            api_c.LATEST_VERSION: "",
             api_c.PREDICTION_WINDOW: 365,
             api_c.ID: 3,
             api_c.OWNER: "Susan Miller",
-            api_c.STATUS: "Active",
+            api_c.STATUS: api_c.STATUS_PENDING,
         }
         all_models = tecton.get_models()
         all_models.append(purchase_model)
@@ -191,14 +191,18 @@ class ModelOverview(SwaggerView):
                 ],
                 api_c.RMSE: api_c.SUPPORTED_MODELS[model_type][api_c.RMSE],
             },
-            api_c.FEATURE_IMPORTANCE: [
-                {
-                    api_c.NAME: f"feature name {x}",
-                    api_c.DESCRIPTION: f"description of feature name {x}",
-                    api_c.SCORE: round(random(), 2),
-                }
-                for x in range(1, 21)
-            ],
+            api_c.FEATURE_IMPORTANCE: sorted(
+                [
+                    {
+                        api_c.NAME: f"feature name {x}",
+                        api_c.DESCRIPTION: f"description of feature name {x}",
+                        api_c.SCORE: round(random(), 2),
+                    }
+                    for x in range(1, 21)
+                ],
+                key=lambda x: x[api_c.SCORE],
+                reverse=True,
+            ),
             api_c.LIFT_DATA: [
                 {
                     api_c.BUCKET: x,
@@ -211,7 +215,7 @@ class ModelOverview(SwaggerView):
                     api_c.ACTUAL_LIFT: round(uniform(1, 2), 2),
                     api_c.PROFILE_SIZE_PERCENT: round(uniform(1, 100), 2),
                 }
-                for x in range(10, 100, 10)
+                for x in range(10, 110, 10)
             ],
         }
         return ModelDashboardSchema().dump(output), HTTPStatus.OK
