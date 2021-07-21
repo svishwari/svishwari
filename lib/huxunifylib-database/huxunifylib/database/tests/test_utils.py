@@ -485,8 +485,7 @@ class TestUtils(unittest.TestCase):
 
         success_flag = delete_util.delete_delivery_job(
             database=self.database,
-            delivery_job_id=ObjectId(
-                delivery_job_doc[c.ID]),
+            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
             hard_delete=True,
         )
         self.assertTrue(success_flag)
