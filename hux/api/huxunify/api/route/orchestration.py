@@ -9,6 +9,7 @@ from typing import Tuple
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
+from huxunifylib.database.notification_management import create_notification
 from marshmallow import ValidationError, INCLUDE
 
 from huxunifylib.database import (
@@ -355,6 +356,14 @@ class AudiencePostView(SwaggerView):
                 user_name=user_name,
             )
 
+            # add notification
+            create_notification(
+                database=database,
+                notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+                description=f"Audience {body[api_c.AUDIENCE_NAME]} added successfully.",
+                category=api_c.ORCHESTRATION_TAG,
+            )
+
             # attach the audience to each of the engagements
             for engagement_id in engagement_ids:
                 engagement_management.append_audiences_to_engagement(
@@ -466,8 +475,9 @@ class AudiencePutView(SwaggerView):
         except ValidationError as validation_error:
             return validation_error.messages, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
         audience_doc = orchestration_management.update_audience(
-            database=get_db_client(),
+            database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
@@ -475,6 +485,12 @@ class AudiencePutView(SwaggerView):
             user_name=user_name,
         )
 
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"Audience {audience_doc[db_c.NAME]} updated.",
+            category=api_c.ORCHESTRATION_TAG,
+        )
         # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
