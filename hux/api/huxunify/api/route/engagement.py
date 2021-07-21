@@ -1402,7 +1402,7 @@ class EngagementMetricsEmail(SwaggerView):
             },
             "audience_performance": [
                 {
-                    api_c.AUDIENCE_NAME: "audience_1",
+                    api_c.AUDIENCE_NAME: "Unlikely to unsubscribe from LA and NYC",
                     api_c.EMAIL: 1200000,
                     api_c.SENT: 125,
                     api_c.HARD_BOUNCES: 125,

@@ -352,6 +352,7 @@ export default {
         filterJSON.filters.push(sectionObject)
       }
       let data = await this.getRealtimeSize(filterJSON)
+      this.$emit("updateOverview", data)
       this.overAllSize = data.total_records
       this.loadingOverAllSize = false
     },

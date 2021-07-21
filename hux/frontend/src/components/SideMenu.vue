@@ -129,7 +129,7 @@ export default {
   },
 
   data: () => ({
-    clientName: "Pendleton",
+    clientName: "Demo Client",
     items: menuConfig.menu,
   }),
 }
