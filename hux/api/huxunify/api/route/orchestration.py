@@ -25,6 +25,7 @@ from huxunify.api.schema.orchestration import (
     AudiencePutSchema,
     AudiencePostSchema,
 )
+from huxunify.api.data_connectors.cdp import get_customers_overview
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
 from huxunify.api.route.utils import (
@@ -182,10 +183,12 @@ class AudienceGetView(SwaggerView):
             audience.get(api_c.DESTINATIONS_TAG)
         )
 
-        # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
+        # get live audience size
+        customers = get_customers_overview(audience[api_c.AUDIENCE_FILTERS])
+
         # Add stub insights, size, last_delivered_on for test purposes.
         audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
-        audience[api_c.SIZE] = randrange(10000000)
+        audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
         audience[
             api_c.AUDIENCE_LAST_DELIVERED
         ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(

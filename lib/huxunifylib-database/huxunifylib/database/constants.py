@@ -16,6 +16,7 @@ NAME = "name"
 TYPE = "type"
 OBJECT_ID = "id"
 CONFIGURATION = "configuration"
+SIZE = "size"
 
 # general fields
 AGE = "age"

@@ -98,7 +98,10 @@
 
           <FormStep :step="2" label="Select attribute(s)" optional="- Optional">
             <v-col class="pt-1 pa-0">
-              <attribute-rules :rules="attributeRules" />
+              <attribute-rules
+                :rules="attributeRules"
+                @updateOverview="(data) => mapCDMOverview(data)"
+              />
             </v-col>
           </FormStep>
 
@@ -436,15 +439,15 @@ export default {
     },
 
     // Mapping Overview Data
-    mapCDMOverview() {
-      this.overviewListItems[0].subtitle = this.overview.total_customers
-      this.overviewListItems[1].subtitle = this.overview.total_countries
-      this.overviewListItems[2].subtitle = this.overview.total_us_states
-      this.overviewListItems[3].subtitle = this.overview.total_cities
-      this.overviewListItems[4].subtitle = this.overview.max_age
-      this.overviewListItems[5].subtitle = this.overview.gender_women
-      this.overviewListItems[6].subtitle = this.overview.gender_men
-      this.overviewListItems[7].subtitle = this.overview.gender_other
+    mapCDMOverview(data) {
+      this.overviewListItems[0].subtitle = data.total_customers
+      this.overviewListItems[1].subtitle = data.total_countries
+      this.overviewListItems[2].subtitle = data.total_us_states
+      this.overviewListItems[3].subtitle = data.total_cities
+      this.overviewListItems[4].subtitle = data.max_age
+      this.overviewListItems[5].subtitle = data.gender_women
+      this.overviewListItems[6].subtitle = data.gender_men
+      this.overviewListItems[7].subtitle = data.gender_other
     },
 
     // Engagements
@@ -548,7 +551,7 @@ export default {
     await this.getOverview()
     if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
     await this.getAudiencesRules()
-    this.mapCDMOverview()
+    this.mapCDMOverview(this.overview)
     this.loading = false
   },
 }
