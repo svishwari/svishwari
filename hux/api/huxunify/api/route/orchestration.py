@@ -19,6 +19,7 @@ from huxunifylib.database import (
     data_management,
 )
 import huxunifylib.database.constants as db_c
+from huxunifylib.connectors import facebook_connector
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
@@ -35,7 +36,6 @@ from huxunify.api.route.utils import (
     get_user_name,
 )
 from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
-from huxunifylib.connectors import facebook_connector
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
