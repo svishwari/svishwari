@@ -49,11 +49,13 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(destinations) -> list:
+def add_destinations(database, destinations) -> list:
     """Add destinations data using destination ids.
     ---
         Args:
+            database (): Mongo database client.
             destinations (list): Destinations list.
+
         Returns:
             destinations (list): Destination objects.
     """
@@ -61,7 +63,7 @@ def add_destinations(destinations) -> list:
     if destinations is not None:
         object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
         return destination_management.get_delivery_platforms_by_id(
-            get_db_client(), object_ids
+            database, object_ids
         )
     return None
 
@@ -99,10 +101,11 @@ class AudienceView(SwaggerView):
 
         """
 
-        audiences = orchestration_management.get_all_audiences(get_db_client())
+        database = get_db_client()
+        audiences = orchestration_management.get_all_audiences(database)
         for audience in audiences:
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
-                audience.get(api_c.DESTINATIONS_TAG)
+                database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
             # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
@@ -175,28 +178,123 @@ class AudienceGetView(SwaggerView):
         if not ObjectId.is_valid(audience_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        audience = orchestration_management.get_audience(
-            get_db_client(), ObjectId(audience_id)
-        )
+        database = get_db_client()
+
+        # get the audience
+        audience_id = ObjectId(audience_id)
+        audience = orchestration_management.get_audience(database, audience_id)
 
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
+        collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+            db_c.ENGAGEMENTS_COLLECTION
+        ]
+
+        engagement_deliveries = collection.aggregate(
+            [
+                {"$match": {"audiences.id": audience_id}},
+                {
+                    "$unwind": {
+                        "path": "$audiences",
+                        "preserveNullAndEmptyArrays": True,
+                    }
+                },
+                {
+                    "$unwind": {
+                        "path": "$audiences.destinations",
+                        "preserveNullAndEmptyArrays": True,
+                    }
+                },
+                {"$match": {"audiences.id": audience_id}},
+                {
+                    "$lookup": {
+                        "from": "delivery_jobs",
+                        "localField": "audiences.destinations.delivery_job_id",
+                        "foreignField": "_id",
+                        "as": "deliveries",
+                    }
+                },
+                {
+                    "$unwind": {
+                        "path": "$deliveries",
+                        "preserveNullAndEmptyArrays": True,
+                    }
+                },
+                {"$project": {"audiences": 0}},
+                {
+                    "$lookup": {
+                        "from": "delivery_platforms",
+                        "localField": "deliveries.delivery_platform_id",
+                        "foreignField": "_id",
+                        "as": "destinations",
+                    }
+                },
+                {
+                    "$unwind": {
+                        "path": "$destinations",
+                        "preserveNullAndEmptyArrays": True,
+                    }
+                },
+                {
+                    "$addFields": {
+                        "deliveries.delivery_platform_type": "$destinations.delivery_platform_type",
+                        "deliveries.name": "$destinations.name",
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": "$_id",
+                        "deliveries": {"$push": "$deliveries"},
+                        "last_delivered": {"$last": "$deliveries.update_time"},
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "engagements",
+                        "localField": "_id",
+                        "foreignField": "_id",
+                        "as": "engagement",
+                    }
+                },
+                {
+                    "$project": {
+                        "engagement.audiences": 0,
+                        "engagement.deleted": 0,
+                        "deliveries.deleted": 0,
+                    }
+                },
+                {
+                    "$unwind": {
+                        "path": "$engagement",
+                        "preserveNullAndEmptyArrays": True,
+                    }
+                },
+            ]
+        )
+
+        # workaround because DocumentDB does not allow $replaceRoot
+        engagements = []
+        for engagement in engagement_deliveries:
+            engagement.update(engagement[api_c.ENGAGEMENT])
+            del engagement[api_c.ENGAGEMENT]
+            engagements.append(engagement)
+
+        # set the list of engagements for an audience
+        audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
+
+        # set the destinations
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
-            audience.get(api_c.DESTINATIONS_TAG)
+            database, audience.get(api_c.DESTINATIONS_TAG)
         )
 
         # get live audience size
         customers = get_customers_overview(audience[api_c.AUDIENCE_FILTERS])
 
-        # Add stub insights, size, last_delivered_on for test purposes.
-        audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
+        # Add insights, size
+        audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
-        audience[
-            api_c.AUDIENCE_LAST_DELIVERED
-        ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
-            days=1000
-        )
+
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,

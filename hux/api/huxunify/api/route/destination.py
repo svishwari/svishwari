@@ -15,7 +15,7 @@ from huxunifylib.database import (
 )
 import huxunifylib.database.constants as db_c
 from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
-from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.connectors import FacebookConnector
 from huxunifylib.connectors.connector_sfmc import SFMCConnector
 from huxunifylib.connectors.connector_exceptions import AudienceAlreadyExists
 from huxunify.api.data_connectors.aws import (
