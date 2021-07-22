@@ -19,7 +19,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
+    <div class="row px-15 my-1">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
         class="ma-4 audience-summary"
@@ -44,14 +44,61 @@
           <Avatar :name="item.fullName" />
         </template>
       </MetricCard>
+      <div class="audience-summary">
+        <!-- Audience Destination Cards Wrapper -->
+        <v-card class="rounded-lg card-style" minHeight="145px" flat>
+          <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
+            <div class="d-flex align-center">
+              <Icon
+                type="audiences"
+                :size="24"
+                color="neroBlack"
+                class="mr-2"
+              /><span class="text-h5">Engagement Delivery overview</span>
+            </div>
+            <div class="d-flex align-center">
+              <v-btn
+                text
+                class="d-flex align-center primary--text text-decoration-none"
+                @click="triggerSelectAudience()"
+              >
+                <Icon type="audiences" :size="16" class="mr-1" />
+                Add an engagement
+              </v-btn>
+              <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
+                <icon type="history" :size="16" class="mr-1" />
+                Delivery history
+              </v-btn>
+            </div>
+          </v-card-title>
+          <v-card-text class="pl-6 pr-6 pb-4 pt-0">
+            <div
+              class="empty-state pa-5 text--gray"
+              v-if="true"
+            >
+              Nothing to show here yet. Add an audience, assign and deliver that
+              audience to a destination.
+            </div>
+            <v-col
+              class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
+              v-if="true"
+            >
+            </v-col>
+          </v-card-text>
+        </v-card>
+      </div>
 
 
-          <v-card class="rounded-lg card-info-wrapper box-shadow-5">
-            <v-card-title class="card-heading py-5">
+          <v-card class="rounded-lg card-info-wrapper lookalike-card box-shadow-5">
+            <v-card-title class="card-heading d-flex justify-space-between py-5 pl-4">
               Lookalikes
+              <v-btn text color="primary" @click="showLookalikeDrawer=true">
+                <icon type="lookalike" :size="16" class="mr-1" />
+                Create lookalike
+              </v-btn>
             </v-card-title>
             <v-card-text class="title-text pl-0 pr-0">
-              <v-simple-table>
+              <!-- <v-simple-table>
                 <template v-slot:default>
                   <tbody>
                     <tr v-for="data in lookalikesData" :key="data.name">
@@ -61,7 +108,55 @@
                     </tr>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-simple-table> -->
+      <!-- <v-menu class="menu-wrapper">
+        <v-list class="menu-list-wrapper">
+          ssss
+          <v-list-item-group>
+            <v-list-item
+              v-for="data in lookalikesData"
+              :key="data.name"
+            >
+              <v-list-item-title>
+                aaaa
+                      {{ data.name }}
+                      {{ data.size }}
+                      {{ data.updated }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu> -->
+            <v-list-item-group  v-if="lookalikesData"
+        color="primary"
+      >
+        <v-list-item class="lookalike-audience-section pl-4 pr-4"
+              v-for="data in lookalikesData"
+              :key="data.name"
+        >
+          <v-list-item-content>
+          <router-link
+          :to="{
+            name: 'AudienceInsight',
+            params: { id: audience.id },
+          }"
+          class="text-decoration-none"
+          append
+        >
+          {{ data.name }}
+        </router-link>
+          </v-list-item-content>
+          <v-list-item-content>
+            <v-list-item-title class="title-text cl" v-text="data.size"></v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-content>
+            <v-list-item-title class="title-text cl" v-text="data.updated"></v-list-item-title>
+          </v-list-item-content>
+                       </v-list-item>
+      </v-list-item-group>
+      <v-list-item-group v-else class="lookalike-audience-section pl-4 pr-4"
+        > This audience has no lookalike yet.
+        Create one by clicking the "Create lookalike" above.</v-list-item-group>
             </v-card-text>
           </v-card>
 
@@ -148,6 +243,8 @@
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
+    <look-alike-audience :toggle="showLookalikeDrawer" />
+    <!-- <CustomerDetails v-model="showLookalikeDrawer" /> -->
   </div>
 </template>
 
@@ -160,7 +257,10 @@ import Avatar from "@/components/common/Avatar"
 import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
+// import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience"
 import Icon from "../../components/common/Icon.vue"
+import CustomerDetails from "@/views/CustomerProfiles/Drawers/CustomerDetails"
+import LookAlikeAudience from './Configuration/Drawers/LookAlikeAudience.vue'
 
 export default {
   name: "AudienceInsight",
@@ -172,9 +272,13 @@ export default {
     Avatar,
     Tooltip,
     Icon,
+    LookAlikeAudience,
+    CustomerDetails,
+    LookAlikeAudience
   },
   data() {
     return {
+      showLookalikeDrawer: false,
       lookalikesData: [
         {
           name: "Sachin",
@@ -182,17 +286,17 @@ export default {
           updated: "2 months ago"
         },
                 {
-          name: "Sachin",
+          name: "Mangesh",
           size: "45k",
           updated: "2 months ago"
         },
                 {
-          name: "Sachin",
+          name: "Jogn",
           size: "45k",
           updated: "2 months ago"
         },
                 {
-          name: "Sachin",
+          name: "Sampo",
           size: "45k",
           updated: "2 months ago"
         }
@@ -421,18 +525,40 @@ export default {
 .icon-border {
   cursor: default;
 }
+
+.lookalike-card {
+  max-width: 282px;
+
+  // v-btn {
+  //   margin-left: 10px !important;
+  // }
 .card-heading {
   font-size: 15px !important;
   background-color: rgba(236, 244, 249, 1);
   font-weight: 400;
   height: 54px !important;
-  padding: 0px !important;
+ // padding: 0px 0px 0px 10px !important;
 }
+
 .title-text {
   font-family: Open Sans;
   font-style: normal;
   font-weight: normal;
   color: var(--v-gray-base) !important;
   font-size: 12px !important;
+
+  padding: 0px !important;
+
+  .lookalike-audience-section {
+  //  padding: 0px 10px 0px 10px !important;
+      border-bottom: 1px solid rgba(226, 234, 236, 1);
+  }
+
+  ::v-deep .v-list-item {
+ // padding: 0px 0px 10px 0px !important;
 }
+}
+}
+
+
 </style>
