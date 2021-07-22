@@ -1,1 +1,43 @@
-# leaving for devops team to add
+version: "1.0"
+stages:
+  - "prepare"
+  - "docker"
+  - "artifactory"
+
+steps:
+
+  PrepareBuildDetails:
+    stage: "prepare"
+    title: "Prepare Build Details"
+    image: alpine
+    commands:
+      - cf_export BUILD_NAME=unified-ui-test
+      - cf_export SUB_REPO=hux/integration_tests
+      - cf_export JFROG_REGISTRY=unified-docker-dev-local
+      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+  
+  CloneRepository:
+    stage: "prepare"
+    title: Cloning ${{CF_REPO_NAME}} repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}'
+
+  BuildImage:
+    stage: "docker"
+    title: "Building Docker Image"
+    type: "build"
+    image_name: '${{BUILD_NAME}}'
+    working_directory: 'hux-unified/${{SUB_REPO}}/frontend'
+    dockerfile: 'Dockerfile'
+    tag: '${{DOCKER_TAG}}'
+
+  PublishToArtifactory:
+    stage: artifactory
+    title: Publish artifact and codefresh build info to Artifactory
+    type: deloittehux/jfrog-docker-publish
+    arguments:
+      BUILD_NAME: '${{BUILD_NAME}}'
+      BUILD_NUMBER: '${{DOCKER_TAG}}'
+      JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
+      BUILD_TAG: '${{DOCKER_TAG}}'
