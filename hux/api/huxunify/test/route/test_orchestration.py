@@ -1,7 +1,6 @@
 """
 Purpose of this file is to house all tests related to orchestration
 """
-
 from http import HTTPStatus
 from unittest import TestCase, mock
 from bson import ObjectId
@@ -15,6 +14,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
+    get_engagement,
     get_engagements_by_audience,
 )
 from huxunifylib.database.orchestration_management import (
@@ -538,15 +538,27 @@ class OrchestrationRouteTest(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
-                api_c.SOURCE_AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
                 api_c.NAME: lookalike_audience_name,
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
                 api_c.ENGAGEMENT_IDS: self.engagement_ids,
             },
         )
 
+        new_engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
+
+        engaged_lookalike_audience = None
+
+        for audience in new_engagement[api_c.AUDIENCES]:
+            if audience[api_c.ID] == ObjectId(response.json[api_c.ID]):
+                engaged_lookalike_audience = audience
+
+        self.assertIsNotNone(engaged_lookalike_audience)
 
         mock_facebook_connector.stop()
 
@@ -561,7 +573,7 @@ class OrchestrationRouteTest(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
-                api_c.SOURCE_AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
                 api_c.NAME: "NEW LA AUDIENCE",
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
                 api_c.ENGAGEMENT_IDS: ["bad_id1", "bad_id2"],
@@ -584,7 +596,7 @@ class OrchestrationRouteTest(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
-                api_c.SOURCE_AUDIENCE_ID: "bad_id1",
+                api_c.AUDIENCE_ID: "bad_id1",
                 api_c.NAME: "NEW LA AUDIENCE",
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
                 api_c.ENGAGEMENT_IDS: self.engagement_ids,
@@ -607,7 +619,7 @@ class OrchestrationRouteTest(TestCase):
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
             headers=t_c.STANDARD_HEADERS,
             json={
-                api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
+                api_c.AUDIENCE_ID: str(ObjectId()),
                 api_c.NAME: "NEW LA AUDIENCE",
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
                 api_c.ENGAGEMENT_IDS: self.engagement_ids,

@@ -19,7 +19,6 @@ from huxunifylib.database import (
     data_management,
 )
 import huxunifylib.database.constants as db_c
-from huxunifylib.connectors import facebook_connector
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
@@ -34,8 +33,8 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
+    api_error_handler,
 )
-from huxunify.api.data_connectors.aws import get_auth_from_parameter_store
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -588,16 +587,13 @@ class SetLookalikeAudience(SwaggerView):
             "example": {
                 api_c.NAME: "New Lookalike Audience",
                 api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
-                # api_c.SOURCE_AUDIENCE_ID: "60d1076efa9ba04689906f7c",
                 # keep here for easy testing when fb account fixed
                 api_c.AUDIENCE_SIZE_PERCENTAGE: 2.5,
                 api_c.ENGAGEMENT_IDS: [
                     str(ObjectId()),
                     str(ObjectId()),
                     str(ObjectId()),
-                ]
-                # api_c.ENGAGEMENT_IDS: ["60c2fd6555eb844f53cdc665"],
-                # keep here for easy testing when fb account fixed
+                ],
             },
         }
     ]
@@ -617,7 +613,8 @@ class SetLookalikeAudience(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    # pylint: disable=no-self-use, bare-except
+    # pylint: disable=no-self-use
+    @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
         """Sets lookalike audience
@@ -649,11 +646,11 @@ class SetLookalikeAudience(SwaggerView):
                     "message": api_c.INVALID_OBJECT_ID
                 }, HTTPStatus.BAD_REQUEST
 
-        if not ObjectId.is_valid(body[api_c.SOURCE_AUDIENCE_ID]):
+        if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         source_audience = orchestration_management.get_audience(
-            database, ObjectId(body[api_c.SOURCE_AUDIENCE_ID])
+            database, ObjectId(body[api_c.AUDIENCE_ID])
         )
 
         if not source_audience:
@@ -663,46 +660,30 @@ class SetLookalikeAudience(SwaggerView):
             database, db_c.DELIVERY_PLATFORM_FACEBOOK
         )
 
-        # TODO ORCH-310 test if audience is available to create lookalike
-        auth_details = get_auth_from_parameter_store(
-            destination[api_c.AUTHENTICATION_DETAILS],
-            destination[api_c.DELIVERY_PLATFORM_TYPE],
-        )
-
-        fb_connector = None
-
-        try:
-            fb_connector = facebook_connector.FacebookConnector(
-                auth_details=auth_details
-            )
-        except:
-            return {
-                "message": "Failed to connect to facebook"
-            }, HTTPStatus.INTERNAL_SERVER_ERROR
-
-        try:
-            fb_audience_id = fb_connector.get_new_lookalike_audience(
-                source_audience[db_c.NAME],
-                body[api_c.NAME],
-                body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-                "US",
-            )
-
-            if not fb_audience_id:
-                pass
-                # TODO uncomment this when FB account issue is resolved
-                # return {"message": "Failed to create lookalike audience."}, HTTPStatus.BAD_REQUEST
-
-        except:
-            # TODO uncomment this when FB account issue is resolved
-            # return {"message": "Failed to create lookalike audience."}, HTTPStatus.BAD_REQUEST
-            pass
+        # TODO: HUS-778 enable once facebook account is active again
+        # destination_connector = facebook_connector.FacebookConnector(
+        #     auth_details=get_auth_from_parameter_store(
+        #     destination[api_c.AUTHENTICATION_DETAILS],
+        #     destination[api_c.DELIVERY_PLATFORM_TYPE],
+        # ))
+        #
+        # if not destination_connector.check_connection():
+        #     return {
+        #                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        #            }, HTTPStatus.BAD_REQUEST
+        #
+        # destination_connector.get_new_lookalike_audience(
+        #     source_audience[db_c.NAME],
+        #     body[api_c.NAME],
+        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+        #     "US",
+        # )
 
         lookalike_audience = (
             destination_management.create_delivery_platform_lookalike_audience(
                 database,
                 destination[db_c.ID],
-                ObjectId(body[api_c.SOURCE_AUDIENCE_ID]),
+                ObjectId(body[api_c.AUDIENCE_ID]),
                 body[api_c.NAME],
                 body[api_c.AUDIENCE_SIZE_PERCENTAGE],
                 "US",
@@ -717,7 +698,10 @@ class SetLookalikeAudience(SwaggerView):
             }
 
             engagement_management.append_audiences_to_engagement(
-                database, engagement_id, user_name, [engaged_audience]
+                database,
+                ObjectId(engagement_id),
+                user_name,
+                [engaged_audience],
             )
 
         return (
