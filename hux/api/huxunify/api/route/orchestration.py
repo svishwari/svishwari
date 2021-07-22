@@ -5,11 +5,12 @@ import datetime
 import random
 from http import HTTPStatus
 from random import randrange
-from typing import Tuple
+from typing import Tuple, Optional
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from marshmallow import INCLUDE
+from pymongo import MongoClient
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -49,11 +50,15 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(destinations) -> list:
+def add_destinations(
+    database: MongoClient, destinations: list
+) -> Optional[list, None]:
     """Add destinations data using destination ids.
     ---
         Args:
+            database (MongoClient): Mongo database.
             destinations (list): Destinations list.
+
         Returns:
             destinations (list): Destination objects.
     """
@@ -61,7 +66,7 @@ def add_destinations(destinations) -> list:
     if destinations is not None:
         object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
         return destination_management.get_delivery_platforms_by_id(
-            get_db_client(), object_ids
+            database, object_ids
         )
     return None
 
@@ -99,10 +104,11 @@ class AudienceView(SwaggerView):
 
         """
 
-        audiences = orchestration_management.get_all_audiences(get_db_client())
+        database = get_db_client()
+        audiences = orchestration_management.get_all_audiences(database)
         for audience in audiences:
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
-                audience.get(api_c.DESTINATIONS_TAG)
+                database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
             # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
@@ -175,22 +181,23 @@ class AudienceGetView(SwaggerView):
         if not ObjectId.is_valid(audience_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
         audience = orchestration_management.get_audience(
-            get_db_client(), ObjectId(audience_id)
+            database, ObjectId(audience_id)
         )
 
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
-            audience.get(api_c.DESTINATIONS_TAG)
+            database, audience.get(api_c.DESTINATIONS_TAG)
         )
 
         # get live audience size
         customers = get_customers_overview(audience[api_c.AUDIENCE_FILTERS])
 
-        # Add stub insights, size, last_delivered_on for test purposes.
-        audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
+        # Add insights, size.
+        audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
         audience[
             api_c.AUDIENCE_LAST_DELIVERED
