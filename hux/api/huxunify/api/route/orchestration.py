@@ -60,7 +60,7 @@ def add_destinations(
             destinations (list): Destinations list.
 
         Returns:
-            destinations (list): Destination objects.
+            destinations (Optional[list, None]): Destination objects.
     """
 
     if destinations is not None:
