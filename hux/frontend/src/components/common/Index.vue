@@ -464,6 +464,9 @@
     <v-subheader>Hux Feature Chart without Tooltip</v-subheader>
     <feature-chart></feature-chart>
 
+<v-subheader>Hux Income Chart</v-subheader>
+    <income-chart></income-chart>
+
     <v-divider class="mt-10" />
 
     <v-subheader>Logos</v-subheader>
@@ -661,6 +664,7 @@ import { generateColor } from "@/utils"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
+import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 
 export default {
   name: "Components",
@@ -693,6 +697,7 @@ export default {
     HuxStartDate,
     HuxEndDate,
     FeatureChart,
+    IncomeChart
   },
   methods: {
     onupdatelabelText(newValue) {
