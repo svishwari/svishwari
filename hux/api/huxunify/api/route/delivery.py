@@ -4,7 +4,6 @@ Paths for delivery API
 """
 from functools import wraps
 from http import HTTPStatus
-from random import randrange
 from typing import Tuple
 from bson import ObjectId
 from flask import Blueprint, jsonify
@@ -557,6 +556,28 @@ class EngagementDeliverHistoryView(SwaggerView):
                 database, engagement_id=engagement_id
             )
         )
+
+        # extract delivery platform ids from the engaged audiences
+        destination_ids = [
+            z.get(api_c.ID)
+            for x in engagement[api_c.AUDIENCES]
+            for z in x[api_c.DESTINATIONS]
+        ]
+
+        # get destinations at once to lookup name for each delivery job
+        destination_dict = {
+            x[db_c.ID]: x
+            for x in delivery_platform_management.get_delivery_platforms_by_id(
+                database, destination_ids
+            )
+        }
+
+        # get audiences at once to lookup name for each delivery job
+        audience_dict = {
+            x[db_c.ID]: x
+            for x in orchestration_management.get_all_audiences(database)
+        }
+
         delivery_history = []
         for job in delivery_jobs:
             if (
@@ -564,17 +585,19 @@ class EngagementDeliverHistoryView(SwaggerView):
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
+                # append the necessary schema to the response list.
                 delivery_history.append(
                     {
-                        api_c.AUDIENCE: orchestration_management.get_audience(
-                            database, job.get(api_c.AUDIENCE_ID)
+                        api_c.AUDIENCE: audience_dict.get(
+                            job.get(db_c.AUDIENCE_ID)
                         ),
-                        api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
-                            database, job.get(db_c.DELIVERY_PLATFORM_ID)
+                        api_c.DESTINATION: destination_dict.get(
+                            job.get(db_c.DELIVERY_PLATFORM_ID)
                         ),
-                        # TODO : Get audience size from CDM
-                        api_c.SIZE: randrange(10000000),
-                        api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
+                        api_c.SIZE: job.get(
+                            db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
+                        ),
+                        api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
                 )
 
@@ -661,6 +684,23 @@ class AudienceDeliverHistoryView(SwaggerView):
                 database, audience_id=audience_id
             )
         )
+
+        # get destinations at once to lookup name for each delivery job
+        destination_dict = {
+            x[db_c.ID]: x
+            for x in delivery_platform_management.get_all_delivery_platforms(
+                database
+            )
+        }
+
+        # get engagements ahead of time by the audience
+        engagement_dict = {
+            x[db_c.ID]: x
+            for x in engagement_management.get_engagements_by_audience(
+                database, audience_id
+            )
+        }
+
         delivery_history = []
         for job in delivery_jobs:
             if (
@@ -668,17 +708,19 @@ class AudienceDeliverHistoryView(SwaggerView):
                 and job.get(api_c.ENGAGEMENT_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
+
                 delivery_history.append(
                     {
-                        api_c.ENGAGEMENT: get_engagement(
-                            database, job.get(api_c.ENGAGEMENT_ID)
+                        api_c.ENGAGEMENT: engagement_dict.get(
+                            job.get(db_c.ENGAGEMENT_ID)
                         ),
-                        api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
-                            database, job.get(db_c.DELIVERY_PLATFORM_ID)
+                        api_c.DESTINATION: destination_dict.get(
+                            job.get(db_c.DELIVERY_PLATFORM_ID)
                         ),
-                        # TODO : Get audience size from delivery job
-                        api_c.SIZE: randrange(10000000),
-                        api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
+                        api_c.SIZE: job.get(
+                            db_c.DELIVERY_PLATFORM_AUD_SIZE, 0
+                        ),
+                        api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
                 )
 
