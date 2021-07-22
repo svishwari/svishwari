@@ -557,11 +557,18 @@ class EngagementDeliverHistoryView(SwaggerView):
             )
         )
 
+        # extract delivery platform ids from the engaged audiences
+        destination_ids = [
+            z.get(api_c.ID)
+            for x in engagement[api_c.AUDIENCES]
+            for z in x[api_c.DESTINATIONS]
+        ]
+
         # get destinations at once to lookup name for each delivery job
         destination_dict = {
             x[db_c.ID]: x
-            for x in delivery_platform_management.get_all_delivery_platforms(
-                database
+            for x in delivery_platform_management.get_delivery_platforms_by_id(
+                database, destination_ids
             )
         }
 
