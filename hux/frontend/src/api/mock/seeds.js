@@ -1,5 +1,3 @@
-import moment from "moment"
-
 // data sources
 
 const bluecore = {
@@ -188,10 +186,8 @@ const defaultEngagement = ({ audiences = [] }) => {
     name: "Default engagement",
     description: null,
     delivery_schedule: null,
-    status: "Delivering",
+    status: "Delivered",
     audiences: audiences,
-    create_time: () => moment().toJSON(),
-    update_time: () => moment().toJSON(),
   }
 }
 
@@ -409,7 +405,7 @@ export default function (server) {
           created_by: defaultAudienceSeed.created_by,
           update_time: defaultAudienceSeed.update_time,
           updated_by: defaultAudienceSeed.updated_by,
-          status: "Delivering",
+          status: "Delivered",
           destinations: defaultAudienceSeed.destinations.models.map(
             (destination) => {
               return {
