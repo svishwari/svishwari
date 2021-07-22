@@ -10,6 +10,7 @@ from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
@@ -330,21 +331,27 @@ class DestinationPutView(SwaggerView):
             is_added = True
 
         # update the destination
+        destination = destination_management.update_delivery_platform(
+            database=database,
+            delivery_platform_id=destination_id,
+            delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+            name=destination[db_c.DELIVERY_PLATFORM_NAME],
+            authentication_details=authentication_parameters,
+            added=is_added,
+            performance_de=performance_de,
+            user_name=user_name,
+        )
+
+        # add notification
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=f"Destination {destination[db_c.NAME]} updated successfully.",
+            category=api_c.DESTINATIONS_TAG,
+        )
+
         return (
-            DestinationGetSchema().dump(
-                destination_management.update_delivery_platform(
-                    database=database,
-                    delivery_platform_id=destination_id,
-                    delivery_platform_type=destination[
-                        db_c.DELIVERY_PLATFORM_TYPE
-                    ],
-                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
-                    authentication_details=authentication_parameters,
-                    added=is_added,
-                    performance_de=performance_de,
-                    user_name=user_name,
-                )
-            ),
+            DestinationGetSchema().dump(destination),
             HTTPStatus.OK,
         )
 
@@ -658,8 +665,9 @@ class DestinationDataExtPostView(SwaggerView):
         if destination_id is None or not ObjectId.is_valid(destination_id):
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
         destination = destination_management.get_delivery_platform(
-            get_db_client(), ObjectId(destination_id)
+            database, ObjectId(destination_id)
         )
 
         if not destination:
@@ -695,6 +703,15 @@ class DestinationDataExtPostView(SwaggerView):
             try:
                 extension = connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
+                )
+                create_notification(
+                    database=database,
+                    notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+                    description=(
+                        f"New data extension {body.get(api_c.DATA_EXTENSION)} "
+                        f"created for {destination[db_c.NAME]}"
+                    ),
+                    category=api_c.DESTINATIONS_TAG.title(),
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done

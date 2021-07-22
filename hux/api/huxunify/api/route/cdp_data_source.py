@@ -19,6 +19,7 @@ from huxunifylib.database.cdp_data_source_management import (
     delete_data_source,
     update_data_sources,
 )
+from huxunifylib.database.notification_management import create_notification
 from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceSchema,
     CdpDataSourcePostSchema,
@@ -222,13 +223,22 @@ class CreateCdpDataSource(SwaggerView):
 
         """
         body = CdpDataSourcePostSchema().load(request.get_json())
-        db_client = get_db_client()
+        database = get_db_client()
         response = create_data_source(
-            db_client,
+            database=database,
             name=body[api_c.CDP_DATA_SOURCE_NAME],
             category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
         )
 
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
+                f"Data source {body[api_c.CDP_DATA_SOURCE_NAME]} "
+                f"created successfully."
+            ),
+            category=api_c.CDP_DATA_SOURCES_TAG,
+        )
         return CdpDataSourceSchema().dump(response), HTTPStatus.OK
 
 
@@ -283,10 +293,17 @@ class DeleteCdpDataSource(SwaggerView):
             return {
                 "message": f"Invalid CDP data source ID received {data_source_id}."
             }, HTTPStatus.BAD_REQUEST
-        db_client = get_db_client()
-        success_flag = delete_data_source(db_client, data_source_id)
+        database = get_db_client()
+        data_source = get_data_source(database, data_source_id)
+        success_flag = delete_data_source(database, data_source_id)
 
         if success_flag:
+            create_notification(
+                database=database,
+                notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                description=f"Data source {data_source[db_c.NAME]} deleted.",
+                category=api_c.CDP_DATA_SOURCES_TAG,
+            )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
         return {

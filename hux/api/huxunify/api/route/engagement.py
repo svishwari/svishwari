@@ -13,6 +13,7 @@ from flasgger import SwaggerView
 
 from huxunifylib.connectors import FacebookConnector
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements_summary,
@@ -252,8 +253,9 @@ class SetEngagement(SwaggerView):
             request.get_json(), partial=("delivery_schedule",)
         )
 
+        database = get_db_client()
         engagement_id = set_engagement(
-            database=get_db_client(),
+            database=database,
             name=body[db_c.ENGAGEMENT_NAME],
             description=body[db_c.ENGAGEMENT_DESCRIPTION]
             if db_c.ENGAGEMENT_DESCRIPTION in body
@@ -264,11 +266,15 @@ class SetEngagement(SwaggerView):
             else None,
             user_name=user_name,
         )
-
+        engagement = get_engagement(database, engagement_id=engagement_id)
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=f"Engagement {engagement[db_c.NAME]} created successfully.",
+            category=api_c.ENGAGEMENT_TAG,
+        )
         return (
-            EngagementGetSchema().dump(
-                get_engagement(get_db_client(), engagement_id=engagement_id)
-            ),
+            EngagementGetSchema().dump(engagement),
             HTTPStatus.CREATED,
         )
 
@@ -353,8 +359,10 @@ class UpdateEngagement(SwaggerView):
 
         body = EngagementPostSchema().load(request.get_json())
 
+        database = get_db_client()
+
         engagement = update_engagement(
-            database=get_db_client(),
+            database=database,
             engagement_id=ObjectId(engagement_id),
             user_name=user_name,
             name=body[db_c.ENGAGEMENT_NAME],
@@ -367,6 +375,12 @@ class UpdateEngagement(SwaggerView):
             else {},
         )
 
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"Engagement {engagement[db_c.NAME]} updated successfully.",
+            category=api_c.ENGAGEMENT_TAG,
+        )
         return (
             EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
@@ -424,9 +438,16 @@ class DeleteEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        if delete_engagement(
-            get_db_client(), engagement_id=ObjectId(engagement_id)
-        ):
+        engagement_id = ObjectId(engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+        if delete_engagement(database, engagement_id):
+            create_notification(
+                database=database,
+                notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                description=f"Engagement {engagement[db_c.NAME]} deleted.",
+                category=api_c.ENGAGEMENT_TAG,
+            )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
         return {
@@ -531,6 +552,13 @@ class AddAudienceEngagement(SwaggerView):
             user_name,
             body[api_c.AUDIENCES],
         )
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=f"Audiences attached to {engagement[db_c.NAME]} successfully.",
+            category=api_c.ENGAGEMENT_TAG,
+        )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
@@ -599,6 +627,7 @@ class DeleteAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
         audience_ids = []
         body = AudienceEngagementDeleteSchema().load(
             request.get_json(), partial=True
@@ -609,10 +638,17 @@ class DeleteAudienceEngagement(SwaggerView):
             audience_ids.append(ObjectId(audience_id))
 
         remove_audiences_from_engagement(
-            get_db_client(),
+            database,
             ObjectId(engagement_id),
             user_name,
             audience_ids,
+        )
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            description=f"Audiences removed from {engagement[db_c.NAME]}.",
+            category=api_c.ENGAGEMENT_TAG,
         )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 

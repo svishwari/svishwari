@@ -16,6 +16,9 @@ from huxunifylib.database import (
     db_exceptions,
 )
 from huxunifylib.database.engagement_management import get_engagement
+from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database.orchestration_management import get_audience
+
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
@@ -195,6 +198,7 @@ class EngagementDeliverDestinationView(SwaggerView):
         """
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
+        target_audience = get_audience(database, audience_id)
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -218,7 +222,6 @@ class EngagementDeliverDestinationView(SwaggerView):
                 "message": "Destination does not exist."
             }, HTTPStatus.BAD_REQUEST
 
-        database = get_db_client()
         delivery_job_ids = []
         for pair in get_audience_destination_pairs(
             engagement[api_c.AUDIENCES]
@@ -236,6 +239,19 @@ class EngagementDeliverDestinationView(SwaggerView):
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
             )
+
+        # create notification
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
+                f"Successfully created delivery job(s) for "
+                f"{engagement[db_c.NAME]} to deliver to "
+                f"{target_audience[db_c.NAME]} on {destination[db_c.NAME]}."
+            ),
+            category=api_c.DELIVERY_TAG,
+        )
+
         return {
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
@@ -306,6 +322,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         """
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
+        audience = get_audience(database, audience_id)
 
         # submit jobs for the audience/destination pairs
         delivery_job_ids = []
@@ -323,6 +340,17 @@ class EngagementDeliverAudienceView(SwaggerView):
                 str(batch_destination.audience_delivery_job_id)
             )
 
+        # create notification
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
+                f"Successfully created delivery job(s) for "
+                f"{engagement[db_c.NAME]} to deliver to "
+                f"{audience[db_c.NAME]} across platforms."
+            ),
+            category=api_c.DELIVERY_TAG,
+        )
         return {
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
@@ -400,6 +428,17 @@ class EngagementDeliverView(SwaggerView):
                 str(batch_destination.audience_delivery_job_id)
             )
 
+        # create notification
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
+                f"Successfully created delivery job(s) for "
+                f"{engagement[db_c.NAME]} to deliver to all "
+                f"audiences across platforms."
+            ),
+            category=api_c.DELIVERY_TAG,
+        )
         return {
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
@@ -458,6 +497,8 @@ class AudienceDeliverView(SwaggerView):
         """
 
         database = get_db_client()
+        # get audience
+        audience = get_audience(database, audience_id)
         # get engagements
         engagements = engagement_management.get_engagements_by_audience(
             database, audience_id
@@ -478,6 +519,16 @@ class AudienceDeliverView(SwaggerView):
                 delivery_job_ids.append(
                     str(batch_destination.audience_delivery_job_id)
                 )
+        # create notification
+        create_notification(
+            database=database,
+            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
+            description=(
+                f"Successfully created delivery job(s) for "
+                f"all engagements to deliver to {audience[db_c.NAME]}."
+            ),
+            category=api_c.DELIVERY_TAG,
+        )
 
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
