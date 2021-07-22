@@ -608,6 +608,72 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(len(engagements), 3)
         self.assertFalse([e for e in engagements if c.DELETED in e])
 
+    def test_get_engaged_audience_insights(self) -> None:
+        """Test getting engaged audience insights
+
+        Returns:
+            Response: None
+
+        """
+
+        engagements = []
+        for item in range(2):
+            # create audience normally
+            engagement_id = em.set_engagement(
+                self.database,
+                f"Engagement Aud {item}",
+                f"Engagement {item} Description",
+                [self.audience],
+                self.user_name,
+            )
+
+            engagement = em.get_engagement(self.database, engagement_id)
+
+            # check engagement
+            self.assertIn(c.AUDIENCES, engagement)
+            self.assertEqual(len(engagement[c.AUDIENCES]), 1)
+            self.assertEqual(
+                engagement[c.AUDIENCES][0][c.OBJECT_ID],
+                self.audience[c.ID],
+            )
+            self.assertIsInstance(engagement_id, ObjectId)
+
+            engagements.append(engagement)
+
+        # find all three.
+        audience_insights = om.get_audience_insights(
+            self.database, self.audience[c.ID]
+        )
+
+        # test list
+        self.assertTrue(audience_insights, dict)
+        self.assertEqual(len(audience_insights), 3)
+
+        for engagement in audience_insights:
+            self.assertIn(c.DELIVERIES, engagement)
+            self.assertIn(c.AUDIENCE_LAST_DELIVERED, engagement)
+            self.assertIn(c.ID, engagement)
+            self.assertIn(c.ENGAGEMENT, engagement)
+
+            matched_engagements = [
+                x
+                for x in engagements
+                if x[c.ID] == engagement[c.ENGAGEMENT][c.ID]
+            ]
+            if not matched_engagements:
+                continue
+
+            self.assertTrue(matched_engagements)
+            self.assertEqual(len(matched_engagements), 1)
+
+            # now test the engagement to ensure lookup done properly
+            for matched_engagement in matched_engagements:
+                for key, value in matched_engagement.items():
+                    # test all the engagement params to the looked up ones.
+                    if key == c.AUDIENCES:
+                        continue
+                    self.assertEqual(engagement[c.ENGAGEMENT][key], value)
+
     def test_add_delivery_jobs_to_engaged_audience_destination(self) -> None:
         """Test adding a delivery job to the engaged_audience_destination
 

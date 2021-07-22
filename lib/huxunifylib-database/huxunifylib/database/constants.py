@@ -295,6 +295,7 @@ FIRST_NAME_FILTER = "first_name_filter"
 
 # Engagement constants
 ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT = "engagement"
 ENGAGEMENT_NAME = "name"
 ENGAGEMENT_DESCRIPTION = "description"
 ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
