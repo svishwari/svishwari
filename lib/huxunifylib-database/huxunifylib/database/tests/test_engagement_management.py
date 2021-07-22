@@ -618,7 +618,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         engagements = []
         for item in range(2):
-            # create audience normally
+            # create engagement normally
             engagement_id = em.set_engagement(
                 self.database,
                 f"Engagement Aud {item}",
