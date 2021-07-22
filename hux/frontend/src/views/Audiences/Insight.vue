@@ -126,7 +126,12 @@
     </div>
     <div class="px-15 my-1 mb-4 pt-6">
       <v-col md="9" class="pa-0">
-        <delivery-overview :sections="engagements">
+        <delivery-overview
+          :sections="engagements"
+          sectionType="engagement"
+          @onOverviewSectionAction="triggerOverviewAction($event)"
+          @onOverviewDestinationAction="triggerDestinationAction($event)"
+        >
           <template #title-left>
             <span class="text-h5">Engagement &amp; delivery overview</span>
           </template>
@@ -190,6 +195,25 @@
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
+    <!-- Drawer Tight coupling -->
+    <select-destinations-drawer
+      v-model="selectedAudience"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showSelectDestinationsDrawer"
+      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+      @onSalesforce="triggerDataExtensionDrawer"
+      @addedDestination="triggerAttachDestination($event)"
+    />
+
+    <destination-data-extension-drawer
+      v-model="selectedAudience"
+      :selected-destination="selectedDestination"
+      :selected-audience-id="selectedAudienceId"
+      :toggle="showDataExtensionDrawer"
+      @onToggle="(val) => (showDataExtensionDrawer = val)"
+      @updateDestination="triggerAttachDestination($event)"
+      @onBack="closeDrawers"
+    />
   </div>
 </template>
 
@@ -205,6 +229,9 @@ import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import DeliveryOverview from "../../components/DeliveryOverview.vue"
+import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinations.vue"
+import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
+
 export default {
   name: "AudienceInsight",
   components: {
@@ -217,6 +244,8 @@ export default {
     Icon,
     Size,
     DeliveryOverview,
+    SelectDestinationsDrawer,
+    DestinationDataExtensionDrawer,
   },
   data() {
     return {
@@ -271,7 +300,6 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
-
       //TODO: Mock data for the Engagement
       engagements: [
         {
@@ -320,6 +348,11 @@ export default {
           destinations: [],
         },
       ],
+      selectedAudience: [],
+      showSelectDestinationsDrawer: false,
+      showDataExtensionDrawer: false,
+      selectedAudienceId: null,
+      selectedDestination: [],
     }
   },
   computed: {
@@ -329,7 +362,6 @@ export default {
     audience() {
       return this.getAudience(this.$route.params.id)
     },
-
     breadcrumbItems() {
       const items = [
         {
@@ -460,6 +492,27 @@ export default {
         default:
           return item.subtitle
       }
+    },
+    triggerOverviewAction(data) {
+      console.log("Section", data)
+    },
+    triggerDestinationAction(data) {
+      console.log("Destination", data)
+    },
+
+    // Drawer Section Starts
+    closeDrawers() {
+      this.showSelectDestinationsDrawer = false
+      this.showDataExtensionDrawer = false
+    },
+    triggerSelectDestination() {
+      this.closeDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
+    triggerDataExtensionDrawer(destination) {
+      this.closeDrawers()
+      this.selectedDestination = destination || []
+      this.showDataExtensionDrawer = true
     },
   },
   async mounted() {

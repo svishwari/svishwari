@@ -45,12 +45,14 @@
         <v-list class="menu-list-wrapper">
           <v-list-item-group>
             <v-list-item
-              v-for="item in topNavItems"
+              v-for="item in menuItems"
               :key="item.id"
               :disabled="!item.active"
             >
               <v-list-item-title
-                @click="triggerAction(item.title, engagementId, section.id)"
+                @click="
+                  $emit('onSectionAction', { target: item, item: section })
+                "
               >
                 {{ item.title }}
               </v-list-item-title>
@@ -72,9 +74,13 @@
                 <Logo :type="item.type" :size="18" />
               </template>
               <template #hover-content>
-                <div class="d-flex align-center">
-                  <Logo :type="item.type" :size="18" />
-                  <span class="ml-2">{{ item.name }}</span>
+                <div class="d-flex flex-column">
+                  <div class="d-flex align-center">
+                    <Logo :type="item.type" :size="18" />
+                    <span class="ml-2">{{ item.name }}</span>
+                  </div>
+                  <span class="mb-1 mt-2">Last delivered:</span>
+                  <span>{{ item.update_time | Date | Empty("-") }}</span>
                 </div>
               </template>
             </tooltip>
@@ -98,18 +104,17 @@
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
                     <v-list-item
-                      v-for="option in options"
+                      v-for="option in destinationMenuItems"
                       :key="option.id"
                       :disabled="!option.active"
                     >
                       <v-list-item-title
                         v-if="option.title === 'Deliver now'"
                         @click="
-                          deliverEngagementAudienceDestination(
-                            engagementId,
-                            section.id,
-                            item.id
-                          )
+                          $emit('onDestinationAction', {
+                            target: option,
+                            item: item,
+                          })
                         "
                       >
                         {{ option.title }}
@@ -177,7 +182,7 @@
     </v-list>
     <div
       v-if="section.destinations.length == 0"
-      class="pa-4 pb-13 empty-destinations"
+      class="py-2 px-4 empty-destinations"
     >
       <slot name="empty-destinations"></slot>
     </div>
@@ -206,21 +211,6 @@ export default {
 
   data() {
     return {
-      options: [
-        { id: 1, title: "Deliver now", active: true },
-        { id: 2, title: "Create lookalike", active: false },
-        { id: 3, title: "Edit delivery schedule", active: false },
-        { id: 4, title: "Pause delivery", active: false },
-        { id: 5, title: "Open destination", active: false },
-        { id: 6, title: "Remove destination", active: false },
-      ],
-      topNavItems: [
-        { id: 1, title: "Deliver now", active: true },
-        { id: 2, title: "Add a destination", active: true },
-        { id: 3, title: "Create lookalike", active: false },
-        { id: 4, title: "Pause all delivery", active: false },
-        { id: 5, title: "Remove audience", active: false },
-      ],
       showDeliveryAlert: false,
     }
   },
@@ -239,6 +229,14 @@ export default {
       type: Number,
       required: false,
       default: 24,
+    },
+    menuItems: {
+      type: Array,
+      required: false,
+    },
+    destinationMenuItems: {
+      type: Array,
+      required: false,
     },
   },
 
