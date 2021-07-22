@@ -1,0 +1,34 @@
+---
+test_name: Test get all models
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test get all models
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      json:
+        - name: !anystr
+        - population_percentage: !anyfloat
+        - size: !anyint
+        - gender_women: !anyfloat
+        - gender_men: !anyfloat
+        - gender_other: !anyfloat
+        - ltv: !anyfloat
+      headers:
+        content-type: application/json
