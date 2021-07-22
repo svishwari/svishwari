@@ -22,7 +22,10 @@ from huxunify.api.route.utils import (
     api_error_handler,
     secured,
 )
-from huxunify.api.schema.orchestration import DeliveryHistorySchema
+from huxunify.api.schema.orchestration import (
+    EngagementDeliveryHistorySchema,
+    AudienceDeliveryHistorySchema,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.courier import (
@@ -505,7 +508,10 @@ class EngagementDeliverHistoryView(SwaggerView):
     responses = {
         HTTPStatus.OK.value: {
             "description": "Successfully fetched delivery history.",
-            "schema": {"type": "array", "items": DeliveryHistorySchema},
+            "schema": {
+                "type": "array",
+                "items": EngagementDeliveryHistorySchema,
+            },
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to show deliver history.",
@@ -520,7 +526,6 @@ class EngagementDeliverHistoryView(SwaggerView):
 
     # pylint: disable=no-self-use
     @api_error_handler()
-    @validate_delivery_params
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Delivery history of all audiences for an engagement.
         ---
@@ -555,7 +560,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         delivery_history = []
         for job in delivery_jobs:
             if (
-                job.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED
+                job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
@@ -574,6 +579,114 @@ class EngagementDeliverHistoryView(SwaggerView):
                 )
 
         return (
-            jsonify(DeliveryHistorySchema().dump(delivery_history, many=True)),
+            jsonify(
+                EngagementDeliveryHistorySchema().dump(
+                    delivery_history, many=True
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    delivery_bp,
+    f"{api_c.AUDIENCE_ENDPOINT}/<audience_id>/{api_c.DELIVERY_HISTORY}",
+    "AudienceDeliverHistoryView",
+)
+class AudienceDeliverHistoryView(SwaggerView):
+    """
+    Audience delivery history class
+    """
+
+    parameters = [
+        {
+            "name": api_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60bfeaa3fa9ba04689906f7a",
+        }
+    ]
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Successfully fetched delivery history.",
+            "schema": {
+                "type": "array",
+                "items": AudienceDeliveryHistorySchema,
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to show deliver history.",
+        },
+        HTTPStatus.NOT_FOUND.value: {"description": api_c.AUDIENCE_NOT_FOUND},
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.DELIVERY_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self, audience_id: str) -> Tuple[dict, int]:
+        """Retrieves delivery history of an audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            audience_id (str): Audience ID.
+
+        Returns:
+            Tuple[dict, int]: Delivery history, HTTP Status.
+
+        """
+
+        # validate object id
+        if not ObjectId.is_valid(audience_id):
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+
+        # convert the audience ID
+        audience_id = ObjectId(audience_id)
+
+        # check if audience exists
+        database = get_db_client()
+        audience = orchestration_management.get_audience(database, audience_id)
+        if not audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        delivery_jobs = (
+            delivery_platform_management.get_delivery_jobs_using_metadata(
+                database, audience_id=audience_id
+            )
+        )
+        delivery_history = []
+        for job in delivery_jobs:
+            if (
+                job.get(db_c.STATUS) == db_c.AUDIENCE_STATUS_DELIVERED
+                and job.get(api_c.ENGAGEMENT_ID)
+                and job.get(db_c.DELIVERY_PLATFORM_ID)
+            ):
+                delivery_history.append(
+                    {
+                        api_c.ENGAGEMENT: get_engagement(
+                            database, job.get(api_c.ENGAGEMENT_ID)
+                        ),
+                        api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
+                            database, job.get(db_c.DELIVERY_PLATFORM_ID)
+                        ),
+                        # TODO : Get audience size from delivery job
+                        api_c.SIZE: randrange(10000000),
+                        api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
+                    }
+                )
+
+        return (
+            jsonify(
+                AudienceDeliveryHistorySchema().dump(
+                    delivery_history, many=True
+                )
+            ),
             HTTPStatus.OK,
         )

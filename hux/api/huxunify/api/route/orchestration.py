@@ -5,11 +5,12 @@ import datetime
 import random
 from http import HTTPStatus
 from random import randrange
-from typing import Tuple
+from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from marshmallow import INCLUDE
+from pymongo import MongoClient
 
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -49,15 +50,17 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(database, destinations) -> list:
+def add_destinations(
+    database: MongoClient, destinations: list
+) -> Union[list, None]:
     """Add destinations data using destination ids.
     ---
         Args:
-            database (): Mongo database client.
+            database (MongoClient): Mongo database.
             destinations (list): Destinations list.
 
         Returns:
-            destinations (list): Destination objects.
+            destinations (Union[list, None]): Destination objects.
     """
 
     if destinations is not None:
@@ -179,6 +182,10 @@ class AudienceGetView(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
+        audience = orchestration_management.get_audience(
+            database, ObjectId(audience_id)
+        )
+        database = get_db_client()
 
         # get the audience
         audience_id = ObjectId(audience_id)
@@ -291,7 +298,7 @@ class AudienceGetView(SwaggerView):
         # get live audience size
         customers = get_customers_overview(audience[api_c.AUDIENCE_FILTERS])
 
-        # Add insights, size
+        # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
 

@@ -1727,3 +1727,104 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(all_docs)
         self.assertEqual(len(all_docs), 2)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_set_get_performance_metrics_bulk(self):
+        """Bulk Performance Metrics docs are set and most
+        recent metric is retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        performance_metrics_docs = [
+            {
+                "delivery_platform_name": "sfmc",
+                "delivery_job_id": delivery_job_id,
+                "create_time": datetime.datetime(
+                    2021, 6, 26, 14, 4, 15, 369000
+                ),
+                "start_time": datetime.datetime(2021, 6, 25, 0, 0),
+                "end_time": datetime.datetime(2021, 6, 26, 0, 0),
+                "delivery_platform_generic_campaign_id": {
+                    "engagement_id": "Pro18",
+                    "audience_id": "Aud2",
+                    "data_extension_id": "D2988EE7-3AEB-40F5-82A4-DC49A473AAA4",
+                },
+                "performance_metrics": {
+                    "journey_id": "6A1D3452-4DF9-40C3-B02A-65876C413115",
+                    "journey_name": "Journey Demo I",
+                    "journey_creation_date": "2021-05-20 05:23:00",
+                    "hux_engagement_id": "Pro18",
+                    "hux_audience_id": "Aud2",
+                    "delivered": "0",
+                    "opens": "9",
+                    "unique_opens": "3",
+                    "clicks": "7",
+                    "unique_clicks": "7",
+                    "unsubscribes": "0",
+                    "hard_bounces": "0",
+                    "bounces": "0",
+                    "sent": "0",
+                },
+                "transferred_for_feedback": False,
+            },
+            {
+                "delivery_platform_name": "sfmc",
+                "delivery_job_id": delivery_job_id,
+                "create_time": datetime.datetime(
+                    2021, 6, 25, 14, 4, 15, 369000
+                ),
+                "start_time": datetime.datetime(2021, 6, 24, 0, 0),
+                "end_time": datetime.datetime(2021, 6, 25, 0, 0),
+                "delivery_platform_generic_campaign_id": {
+                    "engagement_id": "Pro18",
+                    "audience_id": "Aud2",
+                    "data_extension_id": "D2988EE7-3AEB-40F5-82A4-DC49A473AAA4",
+                },
+                "performance_metrics": {
+                    "journey_id": "6A1D3452-4DF9-40C3-B02A-65876C413115",
+                    "journey_name": "Journey Demo I",
+                    "journey_creation_date": "2021-05-20 05:23:00",
+                    "hux_engagement_id": "Pro18",
+                    "hux_audience_id": "Aud2",
+                    "delivered": "50",
+                    "opens": "10",
+                    "unique_opens": "1",
+                    "clicks": "0",
+                    "unique_clicks": "0",
+                    "unsubscribes": "0",
+                    "hard_bounces": "5",
+                    "bounces": "10",
+                    "sent": "60",
+                },
+                "transferred_for_feedback": True,
+            },
+        ]
+
+        status = dpm.set_performance_metrics_bulk(
+            database=self.database,
+            performance_metric_docs=performance_metrics_docs,
+        )
+        self.assertTrue(status["insert_status"])
+
+        performance_metrics_docs_list = dpm.get_performance_metrics(
+            self.database, delivery_job_id
+        )
+        self.assertIsNotNone(performance_metrics_docs_list)
+        self.assertEqual(len(performance_metrics_docs_list), 2)
+
+        doc1 = performance_metrics_docs_list[0]
+        doc2 = performance_metrics_docs_list[1]
+
+        self.assertIsNotNone(doc1)
+        self.assertIsNotNone(doc2)
+
+        recent_performance_metrics_doc = (
+            dpm.get_most_recent_performance_metric_by_delivery_job(
+                self.database, delivery_job_id
+            )
+        )
+        self.assertIsNotNone(recent_performance_metrics_doc)
+
+        self.assertEqual(
+            recent_performance_metrics_doc[c.JOB_END_TIME],
+            datetime.datetime(2021, 6, 26, 0, 0),
+        )

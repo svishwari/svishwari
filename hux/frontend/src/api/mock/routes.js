@@ -3,6 +3,7 @@ import moment from "moment"
 
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
+import { me } from "./factories/me"
 import {
   destinationsConstants,
   destinationsDataExtensions,
@@ -100,16 +101,14 @@ export const defineRoutes = (server) => {
       return new Response(errorCode, errorHeaders, errorResponse)
     }
 
-    const user = JSON.parse(window.localStorage.vuex).users.userProfile
-    const fullName = `${user.firstName} ${user.lastName}`
     const now = moment().toJSON()
 
     const attrs = {
       ...requestData,
       create_time: () => now,
-      created_by: fullName,
+      created_by: me.full_name(),
       update_time: () => now,
-      updated_by: fullName,
+      updated_by: me.full_name(),
     }
 
     return server.create("engagement", attrs)
@@ -285,8 +284,7 @@ export const defineRoutes = (server) => {
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
-  // notification
-  // server.get("/notifications")
+  // notifications
   server.get("/notifications", (schema, request) => {
     const notifications = schema.notifications.all()
     return notifications.slice(0, request.queryParams.batch_size)
@@ -316,7 +314,18 @@ export const defineRoutes = (server) => {
         return schema.destinations.find(id)
       })
     }
-    return schema.audiences.create(requestData)
+
+    const now = moment().toJSON()
+
+    const attrs = {
+      ...requestData,
+      create_time: () => now,
+      created_by: me.full_name(),
+      update_time: () => now,
+      updated_by: me.full_name(),
+    }
+
+    return server.create("audience", attrs)
   })
 
   server.post("/audiences/:id/deliver", () => {
