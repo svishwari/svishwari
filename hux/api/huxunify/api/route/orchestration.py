@@ -26,6 +26,11 @@ from huxunify.api.schema.orchestration import (
     AudiencePutSchema,
     AudiencePostSchema,
 )
+
+# weight status
+from huxunify.api.schema.engagement import (
+    weight_delivery_status,
+)
 from huxunify.api.data_connectors.cdp import get_customers_overview
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
@@ -285,10 +290,15 @@ class AudienceGetView(SwaggerView):
         for engagement in engagement_deliveries:
             engagement.update(engagement[api_c.ENGAGEMENT])
             del engagement[api_c.ENGAGEMENT]
+
+            engagement[api_c.STATUS] = weight_delivery_status(engagement)
             engagements.append(engagement)
 
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
+        audience[api_c.AUDIENCE_LAST_DELIVERED] = max(
+            [x[api_c.AUDIENCE_LAST_DELIVERED] for x in engagements]
+        )
 
         # set the destinations
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
@@ -301,6 +311,9 @@ class AudienceGetView(SwaggerView):
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
+
+        # TODO - HUS-436
+        audience[db_c.LOOKALIKE_AUDIENCE_COLLECTION] = []
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),

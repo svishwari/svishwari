@@ -543,3 +543,34 @@ def weighted_engagement_status(engagements: list) -> list:
         )
 
     return engagements
+
+
+def weight_delivery_status(engagements: list) -> list:
+    """Returns a weighted delivery status by rolling up the individual
+    delivery status values.
+
+    Args:
+        deliveries (list): input delivery list.
+
+    Returns:
+        list: list of engagement documents.
+    """
+
+    status_ranks = [
+        {
+            api_c.STATUS: x[api_c.STATUS],
+            api_c.WEIGHT: api_c.STATUS_WEIGHTS[x[api_c.STATUS]],
+        }
+        for x in engagements[api_c.DELIVERIES]
+        if api_c.STATUS in x
+    ]
+
+    # sort delivery status list of dict by weight.
+    status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
+
+    # take the first item in the sorted list, and grab the status
+    return (
+        status_ranks[0][api_c.STATUS]
+        if status_ranks
+        else api_c.STATUS_NOT_DELIVERED
+    )
