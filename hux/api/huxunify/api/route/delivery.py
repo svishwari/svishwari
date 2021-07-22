@@ -557,6 +557,15 @@ class EngagementDeliverHistoryView(SwaggerView):
                 database, engagement_id=engagement_id
             )
         )
+
+        # get destinations at once to lookup name for each delivery job
+        destination_dict = {
+            x[db_c.ID]: x
+            for x in delivery_platform_management.get_all_delivery_platforms(
+                database
+            )
+        }
+
         delivery_history = []
         for job in delivery_jobs:
             if (
@@ -564,17 +573,20 @@ class EngagementDeliverHistoryView(SwaggerView):
                 and job.get(api_c.AUDIENCE_ID)
                 and job.get(db_c.DELIVERY_PLATFORM_ID)
             ):
+                # grab the destination obj
+                destination = destination_dict.get(
+                    job.get(db_c.DELIVERY_PLATFORM_ID)
+                )
+
+                # append the necessary schema to the response list.
                 delivery_history.append(
                     {
                         api_c.AUDIENCE: orchestration_management.get_audience(
                             database, job.get(api_c.AUDIENCE_ID)
                         ),
-                        api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
-                            database, job.get(db_c.DELIVERY_PLATFORM_ID)
-                        ),
-                        # TODO : Get audience size from CDM
-                        api_c.SIZE: randrange(10000000),
-                        api_c.DELIVERED: job.get(db_c.JOB_END_TIME),
+                        api_c.DESTINATION: destination,
+                        api_c.SIZE: job.get(db_c.DELIVERY_PLATFORM_AUD_SIZE),
+                        api_c.DELIVERED: job.get(db_c.UPDATE_TIME),
                     }
                 )
 
@@ -661,6 +673,7 @@ class AudienceDeliverHistoryView(SwaggerView):
                 database, audience_id=audience_id
             )
         )
+
         delivery_history = []
         for job in delivery_jobs:
             if (
