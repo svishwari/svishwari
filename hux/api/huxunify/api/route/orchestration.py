@@ -386,7 +386,7 @@ class AudiencePostView(SwaggerView):
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
                         f"Audience {body[api_c.AUDIENCE_NAME]} "
-                        f"attached to {engagement[db_c.NAME]} successfully."
+                        f"added to {engagement[db_c.NAME]} successfully."
                     ),
                     api_c.ORCHESTRATION_TAG,
                 )
