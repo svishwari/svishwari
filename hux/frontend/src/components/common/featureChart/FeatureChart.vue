@@ -22,10 +22,15 @@
 <script>
 import BarChartTooltip from "@/components/common/featureChart/BarChartTooltip"
 import HorizontalBarChart from "@/components/common/featureChart/HorizontalBarChart"
-import data from "./featureData.json"
 export default {
   name: "feature-chart",
   components: { HorizontalBarChart, BarChartTooltip },
+  props: {
+    featureData: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       show: false,
@@ -34,7 +39,7 @@ export default {
         x: 0,
         y: 0,
       },
-      features: data.featureList,
+      features: this.featureData,
       currentData: {},
     }
   },

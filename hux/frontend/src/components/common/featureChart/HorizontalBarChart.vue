@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-card
-      class="rounded-lg card-style"
-      maxWidth="570px"
-      minHeight="660px"
+      class="rounded-lg card-style box-shadow-5"
+      maxWidth="608px"
+      minHeight="662px"
       flat
     >
       <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
@@ -38,7 +38,7 @@ export default {
   },
   data() {
     return {
-      width: 520,
+      width: 560,
       height: 620,
       show: false,
       tooltip: {
