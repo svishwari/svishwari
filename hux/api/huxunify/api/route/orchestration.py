@@ -187,10 +187,6 @@ class AudienceGetView(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
-        audience = orchestration_management.get_audience(
-            database, ObjectId(audience_id)
-        )
-        database = get_db_client()
 
         # get the audience
         audience_id = ObjectId(audience_id)
@@ -199,103 +195,34 @@ class AudienceGetView(SwaggerView):
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
-        collection = database[db_c.DATA_MANAGEMENT_DATABASE][
-            db_c.ENGAGEMENTS_COLLECTION
-        ]
-
-        engagement_deliveries = collection.aggregate(
-            [
-                {"$match": {"audiences.id": audience_id}},
-                {
-                    "$unwind": {
-                        "path": "$audiences",
-                        "preserveNullAndEmptyArrays": True,
-                    }
-                },
-                {
-                    "$unwind": {
-                        "path": "$audiences.destinations",
-                        "preserveNullAndEmptyArrays": True,
-                    }
-                },
-                {"$match": {"audiences.id": audience_id}},
-                {
-                    "$lookup": {
-                        "from": "delivery_jobs",
-                        "localField": "audiences.destinations.delivery_job_id",
-                        "foreignField": "_id",
-                        "as": "deliveries",
-                    }
-                },
-                {
-                    "$unwind": {
-                        "path": "$deliveries",
-                        "preserveNullAndEmptyArrays": True,
-                    }
-                },
-                {"$project": {"audiences": 0}},
-                {
-                    "$lookup": {
-                        "from": "delivery_platforms",
-                        "localField": "deliveries.delivery_platform_id",
-                        "foreignField": "_id",
-                        "as": "destinations",
-                    }
-                },
-                {
-                    "$unwind": {
-                        "path": "$destinations",
-                        "preserveNullAndEmptyArrays": True,
-                    }
-                },
-                {
-                    "$addFields": {
-                        "deliveries.delivery_platform_type": "$destinations.delivery_platform_type",
-                        "deliveries.name": "$destinations.name",
-                    }
-                },
-                {
-                    "$group": {
-                        "_id": "$_id",
-                        "deliveries": {"$push": "$deliveries"},
-                        "last_delivered": {"$last": "$deliveries.update_time"},
-                    }
-                },
-                {
-                    "$lookup": {
-                        "from": "engagements",
-                        "localField": "_id",
-                        "foreignField": "_id",
-                        "as": "engagement",
-                    }
-                },
-                {
-                    "$project": {
-                        "engagement.audiences": 0,
-                        "engagement.deleted": 0,
-                        "deliveries.deleted": 0,
-                    }
-                },
-                {
-                    "$unwind": {
-                        "path": "$engagement",
-                        "preserveNullAndEmptyArrays": True,
-                    }
-                },
-            ]
+        # get the audience insights
+        engagement_deliveries = orchestration_management.get_audience_insights(
+            database, audience_id
         )
 
-        # workaround because DocumentDB does not allow $replaceRoot
+        # process each engagement
         engagements = []
         for engagement in engagement_deliveries:
+            # workaround because DocumentDB does not allow $replaceRoot
+            # do replace root by bringing the nested engagement up a level.
             engagement.update(engagement[api_c.ENGAGEMENT])
+
+            # remove the nested engagement
             del engagement[api_c.ENGAGEMENT]
 
+            # remove any empty delivery objects from DocumentDB Pipeline
+            engagement[api_c.DELIVERIES] = [
+                x for x in engagement[api_c.DELIVERIES] if x
+            ]
+
+            # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
             engagements.append(engagement)
 
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
+
+        # get the max last delivered date for all destinations in an audience
         audience[api_c.AUDIENCE_LAST_DELIVERED] = max(
             [x[api_c.AUDIENCE_LAST_DELIVERED] for x in engagements]
         )
