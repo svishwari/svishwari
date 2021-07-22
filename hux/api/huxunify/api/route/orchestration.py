@@ -5,7 +5,7 @@ import datetime
 import random
 from http import HTTPStatus
 from random import randrange
-from typing import Tuple, Optional
+from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
@@ -52,7 +52,7 @@ def before_request():
 
 def add_destinations(
     database: MongoClient, destinations: list
-) -> Optional[list, None]:
+) -> Union[list, None]:
     """Add destinations data using destination ids.
     ---
         Args:
@@ -60,7 +60,7 @@ def add_destinations(
             destinations (list): Destinations list.
 
         Returns:
-            destinations (Optional[list, None]): Destination objects.
+            destinations (Union[list, None]): Destination objects.
     """
 
     if destinations is not None:
