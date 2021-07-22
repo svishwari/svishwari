@@ -410,7 +410,7 @@ class BatchUpdateDataSources(SwaggerView):
                     get_data_source(database, data_source_id)
                     for data_source_id in data_source_ids
                 ]
-                updated_data_sources_name = [
+                updated_data_sources_names = [
                     data_source[db_c.NAME]
                     for data_source in updated_data_sources
                 ]
@@ -419,7 +419,7 @@ class BatchUpdateDataSources(SwaggerView):
                     notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                     description=(
                         f"Data sources "
-                        f"{', '.join(updated_data_sources_name)}"
+                        f"{', '.join(updated_data_sources_names)}"
                         f"updated."
                     ),
                     category=api_c.CDP_DATA_SOURCES_TAG,
