@@ -5,20 +5,35 @@
         <router-link
           :to="{
             name: 'AudienceInsight',
-            params: { id: audience.id },
+            params: { id: section.id },
           }"
           class="text-decoration-none"
           append
         >
-          {{ audience.name }}
+          <tooltip>
+            <template #label-content>
+              {{ section.name }}
+            </template>
+            <template #hover-content>
+              <div class="py-2 white d-flex flex-column">
+                <span>
+                  {{ section.name }}
+                </span>
+                <span class="mt-3" v-if="section.description">
+                  {{ section.description }}
+                </span>
+              </div>
+            </template>
+          </tooltip>
         </router-link>
         <status
-          v-if="audience.lookalike"
-          :status="audience.status"
+          v-if="section.status"
+          :status="section.status"
           :iconSize="statusIcon"
           class="ml-2"
           collapsed
           showLabel
+          tooltipTitle="Engagement status"
         />
       </span>
       <v-menu class="menu-wrapper" bottom offset-y>
@@ -35,7 +50,7 @@
               :disabled="!item.active"
             >
               <v-list-item-title
-                @click="triggerAction(item.title, engagementId, audience.id)"
+                @click="triggerAction(item.title, engagementId, section.id)"
               >
                 {{ item.title }}
               </v-list-item-title>
@@ -44,9 +59,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0" v-if="audience.destinations.length > 0">
+    <v-list dense class="pa-0" v-if="section.destinations.length > 0">
       <v-list-item
-        v-for="item in audience.destinations"
+        v-for="item in section.destinations"
         :key="item.id"
         @click="toggleFocus()"
       >
@@ -75,7 +90,7 @@
                     class="mr-2 more-action"
                     color="primary"
                     @click.prevent
-                    v-if="!audience.lookalike"
+                    v-if="!section.lookalike"
                   >
                     mdi-dots-vertical
                   </v-icon>
@@ -92,7 +107,7 @@
                         @click="
                           deliverEngagementAudienceDestination(
                             engagementId,
-                            audience.id,
+                            section.id,
                             item.id
                           )
                         "
@@ -109,95 +124,62 @@
             </span>
           </div>
         </v-list-item-content>
-        <v-list-item-content
-          v-if="item.latest_delivery.status"
-          class="status-col py-1"
-        >
+        <v-list-item-content v-if="item.status" class="status-col py-1">
           <status
-            :status="item.latest_delivery.status"
+            :status="item.status"
             :iconSize="statusIcon"
             collapsed
             showLabel
+            tooltipTitle="Destination status"
           />
         </v-list-item-content>
-        <v-list-item-content
-          v-if="item.latest_delivery.size"
-          class="size-col py-1"
-        >
+        <v-list-item-content v-if="item.size" class="size-col py-1">
           <tooltip>
             <template #label-content>
-              {{ getSize(item.latest_delivery.size) }}
+              {{ getSize(item.size) }}
             </template>
             <template #hover-content>
-              {{ item.latest_delivery.size | Numeric(true, false) }}
+              {{ item.size | Numeric(true, false) }}
+            </template>
+          </tooltip>
+        </v-list-item-content>
+        <v-list-item-content v-if="!item.size" class="deliverdOn-col py-1">
+          <tooltip>
+            <template #label-content>
+              {{ getSize(item.size) | Empty("-") }}
+            </template>
+            <template #hover-content>
+              {{ item.size | Numeric(true, false) | Empty("-") }}
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
-          v-if="!item.latest_delivery.size"
+          v-if="item.update_time"
           class="deliverdOn-col py-1"
         >
           <tooltip>
             <template #label-content>
-              {{ getSize(item.latest_delivery.size) | Empty("-") }}
+              {{ item.update_time | Date("relative") | Empty("-") }}
             </template>
             <template #hover-content>
-              {{
-                item.latest_delivery.size | Numeric(true, false) | Empty("-")
-              }}
-            </template>
-          </tooltip>
-        </v-list-item-content>
-        <v-list-item-content
-          v-if="item.latest_delivery.update_time"
-          class="deliverdOn-col py-1"
-        >
-          <tooltip>
-            <template #label-content>
-              {{
-                item.latest_delivery.update_time | Date("relative") | Empty("-")
-              }}
-            </template>
-            <template #hover-content>
-              {{ item.latest_delivery.update_time | Date | Empty("-") }}
-            </template>
-          </tooltip>
-        </v-list-item-content>
-        <v-list-item-content
-          v-if="!item.latest_delivery.update_time"
-          class="deliverdOn-col py-1"
-        >
-          <tooltip>
-            <template #label-content>
-              {{
-                item.latest_delivery.update_time | Date("relative") | Empty("-")
-              }}
-            </template>
-            <template #hover-content>
-              {{ item.latest_delivery.update_time | Date | Empty("-") }}
+              <div class="py-2 white d-flex flex-column">
+                <span class="mb-1">Last delivered:</span>
+                <span>{{ item.update_time | Date | Empty("-") }}</span>
+                <span class="mt-2 mb-1">Next delivery:</span>
+                <span>{{ item.next_delivery | Date | Empty("-") }}</span>
+                <span class="mt-2 mb-1">Delivery schedule:</span>
+                <span>{{ item.delivery_schedule_type | Empty("-") }}</span>
+              </div>
             </template>
           </tooltip>
         </v-list-item-content>
       </v-list-item>
     </v-list>
     <div
-      v-if="audience.destinations.length == 0"
-      class="py-4 px-15 empty-destinations"
+      v-if="section.destinations.length == 0"
+      class="pa-4 pb-13 empty-destinations"
     >
-      <div class="no-destinations text--gray pb-5">
-        There are no destinations assigned to this audience.
-        <br />
-        Add one now.
-        <br />
-        <v-icon
-          size="30"
-          class="add-icon cursor-pointer mt-3"
-          color="primary"
-          @click="triggerAddDestination(engagementId, audience.id)"
-        >
-          mdi-plus-circle
-        </v-icon>
-      </div>
+      <slot name="empty-destinations"></slot>
     </div>
 
     <hux-alert
@@ -244,14 +226,14 @@ export default {
   },
 
   props: {
-    audience: {
+    section: {
       type: Object,
-      required: true,
+      required: false,
     },
 
     engagementId: {
       type: String,
-      required: true,
+      required: false,
     },
     statusIcon: {
       type: Number,
@@ -345,7 +327,6 @@ export default {
     .no-destinations {
       font-size: 12px;
       line-height: 16px;
-      text-align: center;
     }
   }
   .v-list {

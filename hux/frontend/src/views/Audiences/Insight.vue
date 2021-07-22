@@ -125,8 +125,8 @@
       </MetricCard>
     </div>
     <div class="px-15 my-1 mb-4 pt-6">
-      <v-col md="8" class="pa-0">
-        <delivery-overview>
+      <v-col md="9" class="pa-0">
+        <delivery-overview :sections="engagements">
           <template #title-left>
             <span class="text-h5">Engagement &amp; delivery overview</span>
           </template>
@@ -149,6 +149,9 @@
                 Delivery history
               </v-btn>
             </div>
+          </template>
+          <template #empty-deliveries>
+            Nothing to show here yet. Add an engagement.
           </template>
         </delivery-overview>
       </v-col>
@@ -273,23 +276,48 @@ export default {
       engagements: [
         {
           id: 1,
-          last_delivered: "2021-07-13T15:38:42.629Z",
-          lookalike: true,
-          name: "My Engagement 1",
-          size: 265234579,
-          status: "Active",
+          name: "Engagement 1",
+          status: "Delivering",
+          description: "This is a description of the engagement",
           destinations: [
             {
               id: "4",
               name: "Facebook",
               type: "facebook",
-              latest_delivery: {
-                status: "Active",
-                size: 265234579,
-                update_time: "2021-07-13T15:38:42.629Z",
-              },
+              size: 20901,
+              update_time: "2021-07-13T15:38:42.629Z",
+              status: "Delivered",
+              next_delivery: "2021-07-28T15:38:42.629Z",
+              delivery_schedule_type: "Daily",
+            },
+            {
+              id: "7878",
+              name: "Mailchimp",
+              type: "mailchimp",
+              size: 50101,
+              update_time: "2021-07-17T15:38:42.629Z",
+              status: "Not Delivered",
+              next_delivery: "2021-08-01T15:38:42.629Z",
+              delivery_schedule_type: "Daily",
+            },
+            {
+              id: "7879",
+              name: "Facebook",
+              type: "facebook",
+              size: 50101,
+              update_time: "2021-07-17T15:38:42.629Z",
+              status: "Not Delivered",
+              next_delivery: "2021-08-01T15:38:42.629Z",
+              delivery_schedule_type: "Daily",
             },
           ],
+        },
+        {
+          id: 2,
+          name: "Empty Engagement",
+          status: "Draft",
+          description: "",
+          destinations: [],
         },
       ],
     }

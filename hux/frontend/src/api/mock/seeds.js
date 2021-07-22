@@ -390,6 +390,7 @@ export default function (server) {
     })
   )
   server.create("audience", multipleSectionFilters())
+  // look alike audiences
   server.create("audience", likelyCustomer())
   server.createList("audience", 10)
   server.create("audience", { created_by: null, updated_by: null })
