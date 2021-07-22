@@ -403,13 +403,27 @@ class BatchUpdateDataSources(SwaggerView):
         data[db_c.ADDED] = data.pop(api_c.IS_ADDED)
 
         try:
-            db_client = get_db_client()
+            database = get_db_client()
             # update the data sources.
-            if update_data_sources(db_client, data_source_ids, data):
+            if update_data_sources(database, data_source_ids, data):
                 updated_data_sources = [
-                    get_data_source(db_client, data_source_id)
+                    get_data_source(database, data_source_id)
                     for data_source_id in data_source_ids
                 ]
+                updated_data_sources_name = [
+                    data_source[db_c.NAME]
+                    for data_source in updated_data_sources
+                ]
+                create_notification(
+                    database=database,
+                    notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                    description=(
+                        f"Data sources "
+                        f"{', '.join(updated_data_sources_name)}"
+                        f"updated."
+                    ),
+                    category=api_c.CDP_DATA_SOURCES_TAG,
+                )
                 return (
                     jsonify(
                         CdpDataSourceSchema().dump(
