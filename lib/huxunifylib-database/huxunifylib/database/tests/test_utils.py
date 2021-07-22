@@ -3,6 +3,8 @@
 import os
 import unittest
 import mongomock
+from bson import ObjectId
+
 import huxunifylib.database.constants as c
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.audience_management as am
@@ -10,6 +12,7 @@ import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.delete_util as delete_util
 
 from huxunifylib.database.client import DatabaseClient
+from huxunifylib.database import db_exceptions
 
 
 # pylint: disable=R0902,R0914,R0915
@@ -430,3 +433,87 @@ class TestUtils(unittest.TestCase):
             self.data_source_doc_2[c.ID],
         )
         self.assertTrue(doc is None)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_delete_performance_metrics_by_delivery_job_id(self):
+        """Test hard deletion of performance metrics and it's delivery job"""
+        # set delivery platform connection status
+        auth_details = {
+            "facebook_access_token": "path1",
+            "facebook_app_secret": "path2",
+            "facebook_app_id": "path3",
+            "facebook_ad_account_id": "path4",
+        }
+
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            "My delivery platform",
+            auth_details,
+        )
+        delivery_platform_id = delivery_platform_doc[c.ID]
+        self.assertIsNotNone(delivery_platform_id)
+        dpm.set_connection_status(
+            self.database, delivery_platform_id, c.STATUS_SUCCEEDED
+        )
+
+        # Create a delivery job
+        delivery_job_doc = dpm.set_delivery_job(
+            database=self.database,
+            audience_id=ObjectId("5dff99c10345af022f219bbf"),
+            delivery_platform_id=delivery_platform_id,
+            delivery_platform_generic_campaigns=self.generic_campaigns,
+        )
+
+        # set synthetic performance metrics
+        dpm.set_performance_metrics(
+            database=self.database,
+            delivery_platform_id=delivery_platform_id,
+            delivery_job_id=delivery_job_doc[c.ID],
+            delivery_platform_name=c.DELIVERY_PLATFORM_FACEBOOK,
+            generic_campaign_id=self.generic_campaigns[0]["campaign_id"],
+            metrics_dict={
+                "impressions": 12,
+                "spend": 12,
+                "reach": 12,
+                "clicks": 12,
+                "frequency": 12,
+            },
+            start_time="2021-07-05T00:00:00.000+00:00",
+            end_time="2021-07-06T00:00:00.000+00:00",
+        )
+
+        success_flag = delete_util.delete_delivery_job(
+            database=self.database,
+            delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            hard_delete=True,
+        )
+        self.assertTrue(success_flag)
+        try:
+            check_doc = dpm.get_delivery_job(
+                database=self.database,
+                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            )
+        except db_exceptions.InvalidID:
+            check_doc = None
+        self.assertIsNone(check_doc)
+
+        success_flag = (
+            delete_util.delete_performance_metrics_by_delivery_job_id(
+                database=self.database,
+                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            )
+        )
+        self.assertTrue(success_flag)
+        try:
+            check_doc = dpm.get_performance_metrics(
+                database=self.database,
+                delivery_job_id=ObjectId(delivery_job_doc[c.ID]),
+            )
+        except db_exceptions.InvalidID:
+            check_doc = None
+        self.assertIsNone(check_doc)
+
+
+if __name__ == "__main__":
+    unittest.main()
