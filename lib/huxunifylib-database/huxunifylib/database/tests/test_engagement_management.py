@@ -1,10 +1,11 @@
 """Engagement Management Tests"""
-
+import json
 import unittest
 import mongomock
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
+from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import orchestration_management as om
 from huxunifylib.database import audience_management as am
@@ -849,3 +850,40 @@ class TestEngagementManagement(unittest.TestCase):
             for destination in audience[c.DESTINATIONS]:
                 self.assertIn(c.NAME, destination)
                 self.assertIn(c.OBJECT_ID, destination)
+
+    def test_append_destination_to_engaged_audience(self):
+        """
+        Test appending a destination to an engaged audience
+
+        Returns: None
+
+        """
+
+        # create two audiences
+        # create an engagement with those two audiences
+        # add a destination to audience 1
+
+        audience_one = om.create_audience(self.database, "Audience1", [], [], self.user_name, 201)
+        audience_two = om.create_audience(self.database, "Audience2", [], [], self.user_name, 202)
+
+        audience_one_dict = {
+            c.OBJECT_ID: audience_one[c.ID],
+            c.DESTINATIONS: []
+        }
+        audience_two_dict = {
+            c.OBJECT_ID: audience_two[c.ID],
+            c.DESTINATIONS: []
+        }
+
+        engagement_id = em.set_engagement(self.database, "Engagement1", "Engagement1", [audience_one_dict, audience_two_dict], self.user_name)
+        e = em.get_engagement(self.database, engagement_id=engagement_id)
+        e2 = EngagementGetSchema().dump(e)
+        print(json.dumps(e2))
+
+        updated_engagement = em.append_destination_to_engaged_audience(self.database, engagement_id, audience_one[c.ID], self.user_name, c.DELIVERY_PLATFORM_FACEBOOK)
+
+        print(json.dumps(updated_engagement))
+
+        e = em.get_engagement(self.database, engagement_id=engagement_id)
+        new_engagement = json.dumps(EngagementGetSchema().dump(e))
+        print("New engagement: " + str(new_engagement))

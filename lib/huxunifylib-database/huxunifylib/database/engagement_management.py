@@ -10,6 +10,7 @@ from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
+from huxunifylib.database import delivery_platform_management
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -703,3 +704,114 @@ def add_delivery_job(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def append_destination_to_engaged_audience(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    user_name: str,
+    destination_type: str,
+) -> dict:
+    """A function to update audience status
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): MongoDB ID of the engagement.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        user_name (str): Name of the user removing the destination to the audience.
+        destination_type (str): type of destination to be added.
+
+    Returns:
+        dict: updated audience object
+
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    delivery_platform = (
+        delivery_platform_management.get_delivery_platform_by_type(
+            database, destination_type
+        )
+    )
+
+    destination = {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
+
+    find_q = {db_c.ID: engagement_id, "audiences.id": audience_id, "audiences.0.destinations": {}}
+    do_q = {
+            "$set": {
+                db_c.UPDATE_TIME: "BLAH",
+                db_c.UPDATED_BY: "JIMMY MCMAHON",
+            },
+            "$push": {"audiences.$.destinations": destination},
+        }
+
+    eng = collection.find_one({db_c.ID: engagement_id})
+    print("The engagement: " + str(eng))
+    print(audience_id)
+
+    collection.update(
+        find_q,
+        do_q
+    )
+
+    # collection.find_one_and_update(
+    #     find_q,
+    #     do_q,
+    #     return_document=pymongo.ReturnDocument.AFTER,
+    # )
+
+    return {}
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_destination_from_audience(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+    user_name: str,
+    destination_type: str,
+) -> dict:
+    """A function to update audience status
+
+    Args
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        user_name (str): Name of the user removing the destination to the audience.
+        destination_type (str): type of destination to be removed
+
+    Returns:
+        dict: updated audience object
+
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+
+    delivery_platform = (
+        delivery_platform_management.get_delivery_platform_by_type(
+            database, destination_type
+        )
+    )
+
+    return collection.find_one_and_update(
+        {db_c.ID: audience_id, "audiences.id": audience_id},
+        {
+            "$set": {
+                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                db_c.UPDATED_BY: user_name,
+            },
+            "$pull": {
+                db_c.DESTINATIONS: {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
+            },
+        },
+        upsert=False,
+        return_document=pymongo.ReturnDocument.AFTER,
+    )
