@@ -373,7 +373,8 @@ def get_all_audiences_and_deliveries(
         database (DatabaseClient): A database client.
 
     Returns:
-        Union[list, None]:  A list of engagements with delivery information for an audience
+        Union[list, None]:  A list of engagements with delivery
+            information for an audience
     """
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.AUDIENCES_COLLECTION]
