@@ -53,7 +53,7 @@
             class="rounded-lg card-info-wrapper card-shadow no-background"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="text-caption gray--text pb-2 pt-1">
+              <div class="text-caption gray--text pb-2">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
                   <template #label-content>
@@ -93,7 +93,7 @@
             class="rounded-lg card-info-wrapper card-shadow no-background"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="title-text pb-2 pt-1">
+              <div class="title-text pb-2">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
                   <template #label-content>
@@ -510,7 +510,7 @@ export default {
 }
 .details-card {
   position: relative;
-  margin-top: -70px;
+  margin-top: -93px;
 }
 .card-height {
   height: 155px !important;
@@ -531,7 +531,7 @@ export default {
   background: none !important;
 }
 .matrix-card {
-  height: 88px !important;
+  height: 70px !important;
 }
 .matix-card-space {
   padding-right: 5px !important;
