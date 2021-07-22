@@ -360,10 +360,10 @@ class AudiencePostView(SwaggerView):
 
             # add notification
             create_notification(
-                database=database,
-                notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-                description=f"Audience {body[api_c.AUDIENCE_NAME]} added successfully.",
-                category=api_c.ORCHESTRATION_TAG,
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                f"Audience {body[api_c.AUDIENCE_NAME]} added successfully.",
+                api_c.ORCHESTRATION_TAG,
             )
 
             # attach the audience to each of the engagements
@@ -382,13 +382,13 @@ class AudiencePostView(SwaggerView):
                 )
                 # add audience attached notification
                 create_notification(
-                    database=database,
-                    notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-                    description=(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
                         f"Audience {body[api_c.AUDIENCE_NAME]} "
                         f"attached to {engagement[db_c.NAME]} successfully."
                     ),
-                    category=api_c.ORCHESTRATION_TAG,
+                    api_c.ORCHESTRATION_TAG,
                 )
 
         except db_exceptions.DuplicateName:
@@ -498,10 +498,10 @@ class AudiencePutView(SwaggerView):
         )
 
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"Audience {audience_doc[db_c.NAME]} updated.",
-            category=api_c.ORCHESTRATION_TAG,
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f"Audience {audience_doc[db_c.NAME]} updated.",
+            api_c.ORCHESTRATION_TAG,
         )
         # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK

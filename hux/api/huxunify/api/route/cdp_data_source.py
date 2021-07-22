@@ -231,13 +231,13 @@ class CreateCdpDataSource(SwaggerView):
         )
 
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
                 f"Data source {body[api_c.CDP_DATA_SOURCE_NAME]} "
                 f"created successfully."
             ),
-            category=api_c.CDP_DATA_SOURCES_TAG,
+            api_c.CDP_DATA_SOURCES_TAG,
         )
         return CdpDataSourceSchema().dump(response), HTTPStatus.OK
 
@@ -299,10 +299,10 @@ class DeleteCdpDataSource(SwaggerView):
 
         if success_flag:
             create_notification(
-                database=database,
-                notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                description=f"Data source {data_source[db_c.NAME]} deleted.",
-                category=api_c.CDP_DATA_SOURCES_TAG,
+                database,
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                f"Data source {data_source[db_c.NAME]} deleted.",
+                api_c.CDP_DATA_SOURCES_TAG,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
@@ -415,14 +415,14 @@ class BatchUpdateDataSources(SwaggerView):
                     for data_source in updated_data_sources
                 ]
                 create_notification(
-                    database=database,
-                    notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                    description=(
+                    database,
+                    db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                    (
                         f"Data sources "
                         f"{', '.join(updated_data_sources_names)}"
                         f"updated."
                     ),
-                    category=api_c.CDP_DATA_SOURCES_TAG,
+                    api_c.CDP_DATA_SOURCES_TAG,
                 )
                 return (
                     jsonify(

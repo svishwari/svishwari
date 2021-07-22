@@ -242,14 +242,14 @@ class EngagementDeliverDestinationView(SwaggerView):
 
         # create notification
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
                 f"Successfully created delivery job(s) for "
                 f"{engagement[db_c.NAME]} to deliver to "
                 f"{target_audience[db_c.NAME]} on {destination[db_c.NAME]}."
             ),
-            category=api_c.DELIVERY_TAG,
+            api_c.DELIVERY_TAG,
         )
 
         return {
@@ -342,14 +342,14 @@ class EngagementDeliverAudienceView(SwaggerView):
 
         # create notification
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
                 f"Successfully created delivery job(s) for "
                 f"{engagement[db_c.NAME]} to deliver to "
                 f"{audience[db_c.NAME]} across platforms."
             ),
-            category=api_c.DELIVERY_TAG,
+            api_c.DELIVERY_TAG,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -430,14 +430,14 @@ class EngagementDeliverView(SwaggerView):
 
         # create notification
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
                 f"Successfully created delivery job(s) for "
                 f"{engagement[db_c.NAME]} to deliver to all "
                 f"audiences across platforms."
             ),
-            category=api_c.DELIVERY_TAG,
+            api_c.DELIVERY_TAG,
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -521,13 +521,13 @@ class AudienceDeliverView(SwaggerView):
                 )
         # create notification
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
                 f"Successfully created delivery job(s) for "
                 f"all engagements to deliver to {audience[db_c.NAME]}."
             ),
-            category=api_c.DELIVERY_TAG,
+            api_c.DELIVERY_TAG,
         )
 
         return {

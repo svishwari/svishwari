@@ -344,10 +344,10 @@ class DestinationPutView(SwaggerView):
 
         # add notification
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=f"Destination {destination[db_c.NAME]} updated successfully.",
-            category=api_c.DESTINATIONS_TAG,
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            f"Destination {destination[db_c.NAME]} updated successfully.",
+            api_c.DESTINATIONS_TAG,
         )
 
         return (
@@ -705,13 +705,13 @@ class DestinationDataExtPostView(SwaggerView):
                     body.get(api_c.DATA_EXTENSION)
                 )
                 create_notification(
-                    database=database,
-                    notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-                    description=(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
                         f"New data extension {body.get(api_c.DATA_EXTENSION)} "
                         f"created for {destination[db_c.NAME]}"
                     ),
-                    category=api_c.DESTINATIONS_TAG.title(),
+                    api_c.DESTINATIONS_TAG,
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done

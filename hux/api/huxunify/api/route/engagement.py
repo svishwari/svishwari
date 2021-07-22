@@ -268,10 +268,10 @@ class SetEngagement(SwaggerView):
         )
         engagement = get_engagement(database, engagement_id=engagement_id)
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=f"Engagement {engagement[db_c.NAME]} created successfully.",
-            category=api_c.ENGAGEMENT_TAG,
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            f"Engagement {engagement[db_c.NAME]} created successfully.",
+            api_c.ENGAGEMENT_TAG,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -376,10 +376,10 @@ class UpdateEngagement(SwaggerView):
         )
 
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"Engagement {engagement[db_c.NAME]} updated successfully.",
-            category=api_c.ENGAGEMENT_TAG,
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f"Engagement {engagement[db_c.NAME]} updated successfully.",
+            api_c.ENGAGEMENT_TAG,
         )
         return (
             EngagementGetSchema().dump(engagement),
@@ -443,10 +443,10 @@ class DeleteEngagement(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if delete_engagement(database, engagement_id):
             create_notification(
-                database=database,
-                notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                description=f"Engagement {engagement[db_c.NAME]} deleted.",
-                category=api_c.ENGAGEMENT_TAG,
+                database,
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                f"Engagement {engagement[db_c.NAME]} deleted.",
+                api_c.ENGAGEMENT_TAG,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
@@ -554,10 +554,10 @@ class AddAudienceEngagement(SwaggerView):
         )
         engagement = get_engagement(database, ObjectId(engagement_id))
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_SUCCESS,
-            description=f"Audiences attached to {engagement[db_c.NAME]} successfully.",
-            category=api_c.ENGAGEMENT_TAG,
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            f"Audiences attached to {engagement[db_c.NAME]} successfully.",
+            api_c.ENGAGEMENT_TAG,
         )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
@@ -645,10 +645,10 @@ class DeleteAudienceEngagement(SwaggerView):
         )
         engagement = get_engagement(database, ObjectId(engagement_id))
         create_notification(
-            database=database,
-            notification_type=db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            description=f"Audiences removed from {engagement[db_c.NAME]}.",
-            category=api_c.ENGAGEMENT_TAG,
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f"Audiences removed from {engagement[db_c.NAME]}.",
+            api_c.ENGAGEMENT_TAG,
         )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
