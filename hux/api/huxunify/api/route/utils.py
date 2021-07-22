@@ -567,7 +567,7 @@ def validate_delivery_params(func) -> object:
 
 def validate_destination_id(
     destination_id: str, check_if_destination_in_db: bool = True
-):
+) -> object:
     """Checks on destination_id
 
     Check if destination id is valid converts it to object_id.
@@ -578,7 +578,8 @@ def validate_destination_id(
         check_if_destination_in_db (bool): Optional; flag to check if destination in db
 
     Returns:
-        A dict of Message to be returned in response in case of failing checks,
+        response(dict): Message and HTTP status to be returned in response in
+            case of failing checks,
         destination_id (ObjectId): Destination id as object id if
             all checks are successful.
     """
@@ -597,7 +598,9 @@ def validate_destination_id(
     return destination_id
 
 
-def validate_destination_wrapper(check_if_destination_in_db=True) -> object:
+def validate_destination_wrapper(
+    check_if_destination_in_db: bool = True,
+) -> object:
     """
     This decorator handles validation of destination objects.
     Example: @validate_destination_wrapper()
