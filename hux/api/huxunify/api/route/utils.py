@@ -577,9 +577,8 @@ def validate_destination_id(
             get_db_client(), destination_id
         ):
             return {
-                "message": f"Destination with ID "
-                f"{destination_id} does not exist."
-            }
+                "message": constants.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
 
     return destination_id
 

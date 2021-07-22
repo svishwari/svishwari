@@ -5,7 +5,6 @@ Paths for destinations api
 from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
-from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
@@ -41,6 +40,7 @@ from huxunify.api.route.utils import (
     secured,
     get_user_name,
     api_error_handler,
+    validate_destination_wrapper,
 )
 import huxunify.api.constants as api_c
 
@@ -127,6 +127,7 @@ class DestinationGetView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
+    @validate_destination_wrapper()
     def get(self, destination_id: str) -> Tuple[dict, int]:
         """Retrieves a destination.
 
@@ -141,19 +142,9 @@ class DestinationGetView(SwaggerView):
             Tuple[dict, int]: Destination dict, HTTP status.
 
         """
-
-        if not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
-        # grab the destination
         destination = destination_management.get_delivery_platform(
-            get_db_client(), ObjectId(destination_id)
+            get_db_client(), destination_id
         )
-
-        if not destination:
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
 
         return DestinationGetSchema().dump(destination), HTTPStatus.OK
 
@@ -259,6 +250,7 @@ class DestinationPutView(SwaggerView):
             ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
         }
     )
+    @validate_destination_wrapper()
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates a destination.
@@ -275,10 +267,6 @@ class DestinationPutView(SwaggerView):
             Tuple[dict, int]: Destination doc, HTTP status.
 
         """
-
-        if not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         # load into the schema object
         body = DestinationPutSchema().load(request.get_json(), partial=True)
 
@@ -286,18 +274,12 @@ class DestinationPutView(SwaggerView):
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
         performance_de = None
         authentication_parameters = None
-        destination_id = ObjectId(destination_id)
-
         database = get_db_client()
 
         # check if destination exists
         destination = destination_management.get_delivery_platform(
             database, destination_id
         )
-        if not destination:
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
         if (
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
@@ -537,6 +519,7 @@ class DestinationDataExtView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
+    @validate_destination_wrapper()
     def get(self, destination_id: str) -> Tuple[list, int]:
         """Retrieves destination data extensions.
 
@@ -552,17 +535,9 @@ class DestinationDataExtView(SwaggerView):
 
         """
 
-        if destination_id is None or not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
         destination = destination_management.get_delivery_platform(
-            get_db_client(), ObjectId(destination_id)
+            get_db_client(), destination_id
         )
-
-        if not destination:
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
 
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
@@ -644,6 +619,7 @@ class DestinationDataExtPostView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
+    @validate_destination_wrapper()
     def post(self, destination_id: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
         ---
@@ -655,17 +631,9 @@ class DestinationDataExtPostView(SwaggerView):
             Tuple[dict, int]: Data Extension ID, HTTP Status.
         """
 
-        if destination_id is None or not ObjectId.is_valid(destination_id):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
-
         destination = destination_management.get_delivery_platform(
-            get_db_client(), ObjectId(destination_id)
+            get_db_client(), destination_id
         )
-
-        if not destination:
-            return {
-                "message": api_c.DESTINATION_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
 
         if (
             api_c.AUTHENTICATION_DETAILS not in destination
