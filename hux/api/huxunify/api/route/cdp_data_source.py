@@ -10,7 +10,6 @@ from bson import ObjectId
 from connexion.exceptions import ProblemException
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
-from marshmallow import ValidationError
 
 from huxunifylib.database import constants as db_constants
 from huxunifylib.database.cdp_data_source_management import (
@@ -32,6 +31,7 @@ from huxunify.api.route.utils import (
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
+from huxunify.api.route.utils import api_error_handler
 
 # setup CDP data sources endpoint
 cdp_data_sources_bp = Blueprint(
@@ -64,6 +64,7 @@ class DataSourceSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
+    @api_error_handler()
     def get(self) -> Tuple[list, int]:
         """Retrieves all CDP data sources.
 
@@ -128,6 +129,7 @@ class IndividualDataSourceSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
+    @api_error_handler()
     def get(self, data_source_id: str):
         """Retrieves a CDP data source.
 
@@ -207,6 +209,7 @@ class CreateCdpDataSource(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
+    @api_error_handler()
     def post(self) -> Tuple[str, int]:
         """Creates a new CDP data source.
 
@@ -218,11 +221,7 @@ class CreateCdpDataSource(SwaggerView):
             Tuple[str, int]: ID of CDP Data source, http code
 
         """
-        try:
-            body = CdpDataSourcePostSchema().load(request.get_json())
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
-
+        body = CdpDataSourcePostSchema().load(request.get_json())
         response = create_data_source(
             get_db_client(),
             name=body[api_c.CDP_DATA_SOURCE_NAME],
@@ -262,6 +261,7 @@ class DeleteCdpDataSource(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
+    @api_error_handler()
     def delete(self, data_source_id: str) -> Tuple[dict, int]:
         """Deletes a CDP data source.
 
@@ -331,6 +331,7 @@ class BatchUpdateDataSources(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.CDP_DATA_SOURCES_TAG]
 
+    @api_error_handler()
     def patch(self) -> Tuple[dict, int]:
         """Updates a list of data sources.
 
