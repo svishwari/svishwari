@@ -245,9 +245,10 @@ class EngagementDeliverDestinationView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"Successfully created delivery job(s) for "
-                f"{engagement[db_c.NAME]} to deliver to "
-                f"{target_audience[db_c.NAME]} on {destination[db_c.NAME]}."
+                f"Successfully scheduled a delivery of audience "
+                f'"{target_audience[db_c.NAME]}" from engagement '
+                f'"{engagement[db_c.NAME]}" to destination '
+                f'"{destination[db_c.NAME]}".'
             ),
             api_c.DELIVERY_TAG,
         )
@@ -345,9 +346,9 @@ class EngagementDeliverAudienceView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"Successfully created delivery job(s) for "
-                f"{engagement[db_c.NAME]} to deliver to "
-                f"{audience[db_c.NAME]} across platforms."
+                f"Successfully scheduled a delivery of "
+                f'audience "{audience[db_c.NAME]}" from engagement '
+                f'"{engagement[db_c.NAME]}" across platforms.'
             ),
             api_c.DELIVERY_TAG,
         )
@@ -433,9 +434,8 @@ class EngagementDeliverView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"Successfully created delivery job(s) for "
-                f"{engagement[db_c.NAME]} to deliver to all "
-                f"audiences across platforms."
+                f"Successfully scheduled a delivery of all audiences "
+                f'from engagement "{engagement[db_c.NAME]}".'
             ),
             api_c.DELIVERY_TAG,
         )
@@ -524,8 +524,8 @@ class AudienceDeliverView(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"Successfully created delivery job(s) for "
-                f"all engagements to deliver to {audience[db_c.NAME]}."
+                f"Successfully scheduled a delivery of audience "
+                f'"{audience[db_c.NAME]}".'
             ),
             api_c.DELIVERY_TAG,
         )

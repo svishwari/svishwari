@@ -224,22 +224,17 @@ class CreateCdpDataSource(SwaggerView):
         """
         body = CdpDataSourcePostSchema().load(request.get_json())
         database = get_db_client()
-        response = create_data_source(
-            database=database,
-            name=body[api_c.CDP_DATA_SOURCE_NAME],
-            category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
-        )
 
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            (
-                f"Data source {body[api_c.CDP_DATA_SOURCE_NAME]} "
-                f"created successfully."
+        return (
+            CdpDataSourceSchema().dump(
+                create_data_source(
+                    database=database,
+                    name=body[api_c.CDP_DATA_SOURCE_NAME],
+                    category=body[api_c.CDP_DATA_SOURCE_CATEGORY],
+                )
             ),
-            api_c.CDP_DATA_SOURCES_TAG,
+            HTTPStatus.OK,
         )
-        return CdpDataSourceSchema().dump(response), HTTPStatus.OK
 
 
 @add_view_to_blueprint(
@@ -298,12 +293,6 @@ class DeleteCdpDataSource(SwaggerView):
         success_flag = delete_data_source(database, data_source_id)
 
         if success_flag:
-            create_notification(
-                database,
-                db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                f"Data source {data_source[db_c.NAME]} deleted.",
-                api_c.CDP_DATA_SOURCES_TAG,
-            )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
         return {
@@ -414,16 +403,6 @@ class BatchUpdateDataSources(SwaggerView):
                     data_source[db_c.NAME]
                     for data_source in updated_data_sources
                 ]
-                create_notification(
-                    database,
-                    db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                    (
-                        f"Data sources "
-                        f"{', '.join(updated_data_sources_names)}"
-                        f"updated."
-                    ),
-                    api_c.CDP_DATA_SOURCES_TAG,
-                )
                 return (
                     jsonify(
                         CdpDataSourceSchema().dump(

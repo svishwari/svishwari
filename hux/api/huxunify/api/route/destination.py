@@ -342,14 +342,6 @@ class DestinationPutView(SwaggerView):
             user_name=user_name,
         )
 
-        # add notification
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            f"Destination {destination[db_c.NAME]} updated successfully.",
-            api_c.DESTINATIONS_TAG,
-        )
-
         return (
             DestinationGetSchema().dump(destination),
             HTTPStatus.OK,

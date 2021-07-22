@@ -11,7 +11,6 @@ from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from marshmallow import INCLUDE
 
-from huxunifylib.database.engagement_management import get_engagement
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -362,31 +361,38 @@ class AudiencePostView(SwaggerView):
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
-                f"Audience {body[api_c.AUDIENCE_NAME]} added successfully.",
+                (
+                    f"{audience_doc[db_c.CREATED_BY]} added an audience "
+                    f'named "{audience_doc[db_c.NAME]}".'
+                ),
                 api_c.ORCHESTRATION_TAG,
             )
 
             # attach the audience to each of the engagements
             for engagement_id in engagement_ids:
-                engagement = get_engagement(database, engagement_id)
-                engagement_management.append_audiences_to_engagement(
-                    database,
-                    engagement_id,
-                    user_name,
-                    [
-                        {
-                            db_c.OBJECT_ID: audience_doc[db_c.ID],
-                            db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
-                        }
-                    ],
+                engagement = (
+                    engagement_management.append_audiences_to_engagement(
+                        database,
+                        engagement_id,
+                        user_name,
+                        [
+                            {
+                                db_c.OBJECT_ID: audience_doc[db_c.ID],
+                                db_c.DESTINATIONS: body.get(
+                                    api_c.DESTINATIONS
+                                ),
+                            }
+                        ],
+                    )
                 )
                 # add audience attached notification
                 create_notification(
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
-                        f"Audience {body[api_c.AUDIENCE_NAME]} "
-                        f"added to {engagement[db_c.NAME]} successfully."
+                        f"{engagement[db_c.UPDATED_BY]} attached audience "
+                        f'"{audience_doc[db_c.NAME]}" to engagement '
+                        f'"{engagement[db_c.NAME]}".'
                     ),
                     api_c.ORCHESTRATION_TAG,
                 )
@@ -500,7 +506,10 @@ class AudiencePutView(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f"Audience {audience_doc[db_c.NAME]} updated.",
+            (
+                f"{audience_doc[db_c.UPDATED_BY]} updated audience "
+                f'"{audience_doc[db_c.NAME]}".'
+            ),
             api_c.ORCHESTRATION_TAG,
         )
         # TODO : attach the audience to each of the engagements

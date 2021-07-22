@@ -270,7 +270,10 @@ class SetEngagement(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
-            f"Engagement {engagement[db_c.NAME]} created successfully.",
+            (
+                f"{engagement[db_c.CREATED_BY]} created a new engagement "
+                f'named "{engagement[db_c.NAME]}".'
+            ),
             api_c.ENGAGEMENT_TAG,
         )
         return (
@@ -378,7 +381,10 @@ class UpdateEngagement(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f"Engagement {engagement[db_c.NAME]} updated successfully.",
+            (
+                f"{engagement[db_c.UPDATED_BY]} updated engagement "
+                f'"{engagement[db_c.NAME]}".'
+            ),
             api_c.ENGAGEMENT_TAG,
         )
         return (
@@ -445,7 +451,10 @@ class DeleteEngagement(SwaggerView):
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                f"Engagement {engagement[db_c.NAME]} deleted.",
+                (
+                    f"{engagement[db_c.UPDATED_BY]} deleted engagement "
+                    f'"{engagement[db_c.NAME]}".'
+                ),
                 api_c.ENGAGEMENT_TAG,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
@@ -540,12 +549,16 @@ class AddAudienceEngagement(SwaggerView):
 
         # validate audiences exist
         database = get_db_client()
+        audience_names = []
         for audience in body[api_c.AUDIENCES]:
-            if not get_audience(database, ObjectId(audience[api_c.ID])):
+            audience_to_attach = get_audience(
+                database, ObjectId(audience[api_c.ID])
+            )
+            if not audience_to_attach:
                 return {
                     "message": f"Audience does not exist: {audience[api_c.ID]}"
                 }, HTTPStatus.BAD_REQUEST
-
+            audience_names.append(audience_to_attach[db_c.NAME])
         append_audiences_to_engagement(
             database,
             ObjectId(engagement_id),
@@ -553,12 +566,17 @@ class AddAudienceEngagement(SwaggerView):
             body[api_c.AUDIENCES],
         )
         engagement = get_engagement(database, ObjectId(engagement_id))
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_SUCCESS,
-            f"Audiences attached to {engagement[db_c.NAME]} successfully.",
-            api_c.ENGAGEMENT_TAG,
-        )
+        for audience_name in audience_names:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{engagement[db_c.UPDATED_BY]} added audience "
+                    f'"{audience_name}" to engagement '
+                    f'"{engagement[db_c.NAME]}".'
+                ),
+                api_c.ENGAGEMENT_TAG,
+            )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
@@ -632,10 +650,14 @@ class DeleteAudienceEngagement(SwaggerView):
         body = AudienceEngagementDeleteSchema().load(
             request.get_json(), partial=True
         )
+        audience_names = []
         for audience_id in body[api_c.AUDIENCE_IDS]:
             if not ObjectId.is_valid(audience_id):
                 return HTTPStatus.BAD_REQUEST
             audience_ids.append(ObjectId(audience_id))
+            audience_names.append(
+                get_audience(database, audience_id)[db_c.NAME]
+            )
 
         remove_audiences_from_engagement(
             database,
@@ -644,12 +666,17 @@ class DeleteAudienceEngagement(SwaggerView):
             audience_ids,
         )
         engagement = get_engagement(database, ObjectId(engagement_id))
-        create_notification(
-            database,
-            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f"Audiences removed from {engagement[db_c.NAME]}.",
-            api_c.ENGAGEMENT_TAG,
-        )
+        for audience_name in audience_names:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                (
+                    f"{engagement[db_c.UPDATED_BY]} removed audience "
+                    f'"{audience_name}" from engagement '
+                    f'"{engagement[db_c.NAME]}".'
+                ),
+                api_c.ENGAGEMENT_TAG,
+            )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
