@@ -5,7 +5,7 @@ import unittest
 import mongomock
 from bson import ObjectId
 
-import database.delivery_platform_management as dpm
+import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.audience_management as am
 import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
