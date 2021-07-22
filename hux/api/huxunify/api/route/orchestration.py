@@ -33,6 +33,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
+    validate_destination_id,
 )
 from huxunify.api.route.utils import api_error_handler
 
@@ -302,25 +303,11 @@ class AudiencePostView(SwaggerView):
                     }, HTTPStatus.BAD_REQUEST
 
                 # validate object id
-                if not ObjectId.is_valid(destination[db_c.OBJECT_ID]):
-                    return {
-                        "message": f"{destination} has an invalid "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
-
                 # map to an object ID field
-                destination[db_c.OBJECT_ID] = ObjectId(
+                # validate the destination object exists.
+                destination[db_c.OBJECT_ID] = validate_destination_id(
                     destination[db_c.OBJECT_ID]
                 )
-
-                # validate the destination object exists.
-                if not destination_management.get_delivery_platform(
-                    database, destination[db_c.OBJECT_ID]
-                ):
-                    return {
-                        "message": f"Destination with ID "
-                        f"{destination[db_c.OBJECT_ID]} does not exist."
-                    }
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:

@@ -109,6 +109,11 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
         self.request_mocker.start()
 
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
         # mock get_db_client() for the engagement.
         mock.patch(
             "huxunify.api.route.engagement.get_db_client",
