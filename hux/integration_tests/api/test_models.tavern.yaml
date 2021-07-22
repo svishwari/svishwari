@@ -22,13 +22,80 @@ stages:
     response:
       strict: false
       status_code: 200
-      json:
-        - name: !anystr
-        - population_percentage: !anyfloat
-        - size: !anyint
-        - gender_women: !anyfloat
-        - gender_men: !anyfloat
-        - gender_other: !anyfloat
-        - ltv: !anyfloat
       headers:
         content-type: application/json
+      json:
+        !anylist
+        - "id": !anyint
+        - "name": !anystr
+        - "description": !anystr
+        - "status": !anystr
+        - "latest_version": !anystr
+        - "past_version_count": !anyint
+        - "last_trained": !anydate
+        - "owner":  !anystr
+        - "lookback_window": !anyint
+        - "prediction_window": !anyint
+        - "fulcrum_date": !anydate
+        - "type":  !anystr
+
+---
+test_name: Test get model overview
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+marks:
+  - parametrize:
+      key: model-type
+      vals:
+        - "ltv"
+        - "purchase"
+        - "unsubscribe"
+
+stages:
+  - name: test get model overview
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/models/{model-type}/overview"
+      method: GET
+      json:
+        value: "model-type"
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+         "model_type": !anystr
+         "model_name": !anystr
+         "description": !anystr
+         "performance_metric": !anydict
+            - "rmse": !anyfloat
+            - "auc": !anyfloat
+            - "precision": !anyfloat
+            - "recall":  !anyfloat
+            - "current_version": !anystr
+         "feature_importance": !anylist
+            - "name": !anystr
+            - "description": !anystr
+            - "score": !anyfloat
+         "lift_data": !anylist
+            - "bucket": !anyint
+            - "predicted_value ": !anyfloat
+            - "actual_value ": !anyfloat
+            - "profile_count ": !anyint
+            - "predicted_rate ": !anyfloat
+            - "actual_rate ": !anyfloat
+            - "predicted_lift ": !anyfloat
+            - "actual_lift ": !anyfloat
+            - "profile_size_percent ": !anyfloat
