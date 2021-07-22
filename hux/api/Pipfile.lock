@@ -137,19 +137,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:13e60f88d13161df951d6e52bd483cdbe1a36a31f818746289d8ba0879465710",
-                "sha256:3be2f259b279d69495433e3288db3670817fdb1813cfde92abf867bba3ad8148"
+                "sha256:649ed1ca205f5ee0b0328d54580780aebc1a7a05681a24f6ee05253007ca48d8",
+                "sha256:7079b40bd6621c54a0385a8fc11240cff4318a4d487292653e393e18254f5d94"
             ],
             "index": "pypi",
-            "version": "==1.18.3"
+            "version": "==1.18.4"
         },
         "botocore": {
             "hashes": [
-                "sha256:0b6f378c9efbc72eee61aba1e16cab90bde53a37bd2d861f6435552fd7030adf",
-                "sha256:285ab9459cdd49d4a9322692c6e13772b97af723a03c0eed519b589446491a5b"
+                "sha256:317d441c8f3f03591761e3478de6ab34b22b333038d819bc24f2e74b64f22201",
+                "sha256:dca7f283d4e7a1c9f456f5a23e55725ffc1b7d34abd089eb2c7651359aebd977"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.21.3"
+            "version": "==1.21.4"
         },
         "bson": {
             "hashes": [
@@ -433,11 +433,11 @@
         },
         "huxunifylib-database": {
             "hashes": [
-                "sha256:5ceb45d3d76b506b32405144dc5ac3d3417074baac44efcc8ac687fd6b0fbbce",
-                "sha256:f58b8b66edab96ed34d6e4316eebfdf7c08f8dd51574a8d51f7b84f2c2c5fb19"
+                "sha256:20b78df0e6d2b47580fa30e805f8a11b95c77251128e228fd3fefba56aef5a24",
+                "sha256:98b5e5bed6dbb84e277651c3991651d05c3d8a852980f83f24555a7c50445d5b"
             ],
             "index": "jfrog",
-            "version": "==0.2.41"
+            "version": "==0.2.43"
         },
         "huxunifylib-util": {
             "hashes": [
@@ -611,11 +611,11 @@
         },
         "marshmallow": {
             "hashes": [
-                "sha256:77368dfedad93c3a041cbbdbce0b33fac1d8608c9e2e2288408a43ce3493d2ff",
-                "sha256:d4090ca9a36cd129126ad8b10c3982c47d4644a6e3ccb20534b512badce95f35"
+                "sha256:c67929438fd73a2be92128caa0325b1b5ed8b626d91a094d2f7f2771bf1f1c0e",
+                "sha256:dd4724335d3c2b870b641ffe4a2f8728a1380cd2e7e2312756715ffeaa82b842"
             ],
             "index": "pypi",
-            "version": "==3.12.2"
+            "version": "==3.13.0"
         },
         "mistune": {
             "hashes": [
@@ -776,10 +776,10 @@
         },
         "phonenumbers": {
             "hashes": [
-                "sha256:64ecba30985d580d03086598d977dba812ac499514f2e1f8a2795af2f0de1aa6",
-                "sha256:856f6bebf19eafe5ab1d50b2f4972f8d7474a7e1b8c0f9cf3263a26602ac81f3"
+                "sha256:42ea4f946d5cce0056cbce257842ea6b281e69828ad2e7f27b29d3908e5b06bd",
+                "sha256:f8ce05f82955d2faeefe2303350b2ccb7369dd39b6e45231a09475d67eb7e83b"
             ],
-            "version": "==8.12.27"
+            "version": "==8.12.28"
         },
         "platformdirs": {
             "hashes": [
