@@ -741,6 +741,9 @@ def append_destination_to_engaged_audience(
     )
 
     destination = {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
+    eng = get_engagement(database, engagement_id)
+
+    print("Does the engagement exist: " + str(eng[db_c.ID] == engagement_id))
 
     find_q = {db_c.ID: engagement_id, "audiences.id": audience_id, "audiences.0.destinations": {}}
     do_q = {
@@ -748,25 +751,30 @@ def append_destination_to_engaged_audience(
                 db_c.UPDATE_TIME: "BLAH",
                 db_c.UPDATED_BY: "JIMMY MCMAHON",
             },
-            "$push": {"audiences.$.destinations": destination},
+            # "$push": {"audiences.$.destinations": {db_c.OBJECT_ID: delivery_platform[db_c.ID]}},
+            "$push": {"audiences.$.destinations": {"test_field": 543}}
         }
 
-    eng = collection.find_one({db_c.ID: engagement_id})
-    print("The engagement: " + str(eng))
-    print(audience_id)
+    find_q = {db_c.ID: engagement_id, "audiences.id": audience_id}
 
-    collection.update(
-        find_q,
-        do_q
-    )
+    new_eng = collection.find_one_and_update(
+        {
+            "_id": engagement_id,
+            "audiences.id": audience_id
+        },
+        {
+            "$set": {
+                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                db_c.UPDATED_BY: "JIMMY MCMAHON",
+            },
+            "$push": {
+                "audiences.$.destinations": {
+                    "test_field": 543
+                }
+            }
+        })
 
-    # collection.find_one_and_update(
-    #     find_q,
-    #     do_q,
-    #     return_document=pymongo.ReturnDocument.AFTER,
-    # )
-
-    return {}
+    print("new ENG:" + str(new_eng))
 
 
 @retry(
