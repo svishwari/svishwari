@@ -201,7 +201,7 @@ class DispAdIndividualAudienceSummary(DisplayAdsSummary):
         ordered = True
 
     name = fields.String()
-    campaigns = fields.List(fields.Nested(DispAdIndividualCampaignSummary))
+    destinations = fields.List(fields.Nested(DispAdIndividualCampaignSummary))
 
 
 class AudiencePerformanceDisplayAdsSchema(Schema):
@@ -215,7 +215,9 @@ class AudiencePerformanceDisplayAdsSchema(Schema):
         ordered = True
 
     summary = fields.Nested(DisplayAdsSummary)
-    audience_performance = fields.List(fields.Dict())
+    audience_performance = fields.List(
+        fields.Nested(DispAdIndividualAudienceSummary)
+    )
 
 
 class EmailSummary(Schema):
@@ -269,7 +271,7 @@ class EmailIndividualAudienceSummary(EmailSummary):
         ordered = True
 
     name = fields.String()
-    campaigns = fields.List(fields.Nested(EmailIndividualCampaignSummary))
+    destinations = fields.List(fields.Nested(EmailIndividualCampaignSummary))
 
 
 class AudiencePerformanceEmailSchema(Schema):

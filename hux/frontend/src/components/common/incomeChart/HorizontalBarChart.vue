@@ -7,9 +7,9 @@
       flat
     >
       <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-        <div class="mt-2">
-          <span class="d-flex align-center black--text text-decoration-none">
-            Top locations &amp; spending
+        <div class="mt-2 ml-2">
+          <span class="d-flex align-center income-card-title black--text text-decoration-none">
+            Top locations &amp; income
           </span>
         </div>
         <div
@@ -45,7 +45,7 @@ export default {
         x: 0,
         y: 0,
       },
-      margin: { top: 20, right: 20, bottom: 20, left: 10 },
+      margin: { top: 20, right: 40, bottom: 20, left: 5 },
       chartData: this.value,
     }
   },
@@ -67,8 +67,7 @@ export default {
 
  var x = d3Scale.scaleLinear()
     .domain([0, 4000])
-    .range([ 1, this.width]);
-
+    .range([ 1, this.width])
 
       let y = d3Scale
         .scaleBand()
@@ -78,20 +77,20 @@ export default {
 
 
    let appendCurrencySign = (text) =>
-        "$" + text
+        "$" + text.toLocaleString() 
         
       svg
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3Axis.axisBottom(x).ticks(3).tickSize(0).tickFormat(appendCurrencySign))
+        .call(d3Axis.axisBottom(x).ticks(3).tickSize(4).tickFormat(appendCurrencySign))
         .call((g) => g.selectAll(".path").attr("stroke", "none"))
         .attr("stroke-width", "0")
         .attr("stroke-opacity", "0.3")
-
-
+        .style("font-size", 12)
+        
+ 
       svg
         .append("g")
-        // .call(d3Axis.axisLeft(y).tickSize(0).tickFormat(appendElipsis))
         .call((g) => {
           g.select("path").attr("opacity", 0.1).attr("stroke", "none")
         })
@@ -121,11 +120,11 @@ export default {
             .attr("stroke-opacity", "0.3")
         )
 
-    //   svg
-    //     .append("text")
-    //     .attr("y", (d) => y(d.ltv))
-    //     .attr('text-anchor', 'middle')
-    //     .text((a) => `${d.name}%`)
+var ticks = d3Select.selectAll(".tick text");
+
+ticks.each(function(_, i) {
+  if (i % 2 != 0) d3Select.select(this).remove();
+});
 
       svg
         .selectAll("myRect")
@@ -137,6 +136,7 @@ export default {
         .attr("width", (d) => x(d.ltv))
         .attr("height", y.bandwidth())
         .attr("fill", "#40BAE8")
+        .attr('rx', 2)
         .on("mouseover", (d) => applyHoverEffects(d))
         .on("mouseout", () => removeHoverEffects())
 
@@ -149,13 +149,9 @@ export default {
         .attr('text-anchor', 'start')
          .attr(
           "transform",
-          "translate(" +
-            20 +
-            " ," +
-            22 +
-            ")"
-        )
+          "translate(" + 10 + " ," + 22 +")")
         .style("fill","white")
+        .style("font-size", 12)
         .text((d) => `${d.name}`)
         
 
@@ -182,9 +178,6 @@ export default {
         svg
           .append("circle")
           .classed("removeableCircle", false)
-        //   .attr("cx", featureData.xPosition)
-        //   .attr("cy", featureData.yPosition)
-        //   .attr("r", 4)
           .style("stroke", "#00A3E0")
           .style("stroke-opacity", "1")
           .style("fill", "white")
@@ -222,6 +215,13 @@ export default {
   height: 325px;
   .chart-section {
     margin-bottom: -20px;
+  }
+  .income-card-title {
+      font-family: Open Sans;
+font-style: normal;
+font-weight: normal;
+font-size: 15px;
+line-height: 20px;
   }
 }
 </style>

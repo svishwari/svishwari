@@ -13,24 +13,6 @@
         {{ sourceInput.ltv | Currency}}
       </div>
     </v-card>
-    <!-- <v-card
-      tile
-      v-if="showTooltip"
-      :style="{
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        'border-radius': '0px !important',
-      }"
-      class="mx-auto description-tooltip-style"
-    >
-      <div class="bar-hover">
-        <span class="feature-name">
-          {{ sourceInput.name }}
-        </span>
-        <span class="feature-description">
-          {{ sourceInput.description }}
-        </span>
-      </div>
-    </v-card> -->
   </div>
 </template>
 
@@ -76,7 +58,7 @@ export default {
 }
 
 .card-padding {
-  padding: 10px 20px 20px 20px;
+  padding: 10px 20px 20px 10px;
 }
 
 .description-tooltip-style {
@@ -84,7 +66,6 @@ export default {
   border-radius: 0px;
   max-width: 230px;
   height: auto;
- 
   z-index: 1;
   color: #0C9DDB;
   .bar-hover {
@@ -103,8 +84,8 @@ export default {
   @extend .description-tooltip-style;
   max-width: 100px;
   height: 40px;
-  top: -380px;
-  left: -500px;
+  top: -350px;
+  left: -60px;
   z-index: 1;
 }
 </style>
