@@ -244,7 +244,7 @@ export default {
 
   watch: {
     toggle(value) {
-      this.localToggle = !this.localToggle
+      this.localToggle = value
     },
 
     localToggle(value) {
