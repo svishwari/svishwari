@@ -252,7 +252,11 @@ class DestinationPutView(SwaggerView):
     # pylint: disable=unexpected-keyword-arg
     # pylint: disable=too-many-return-statements
     @marshal_with(DestinationPutSchema)
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={
+            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
+        }
+    )
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates a destination.
@@ -274,12 +278,7 @@ class DestinationPutView(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # load into the schema object
-        try:
-            body = DestinationPutSchema().load(
-                request.get_json(), partial=True
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = DestinationPutSchema().load(request.get_json(), partial=True)
 
         # grab the auth details
         auth_details = body.get(api_c.AUTHENTICATION_DETAILS)
@@ -301,32 +300,20 @@ class DestinationPutView(SwaggerView):
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_SFMC
         ):
-            try:
-                SFMCAuthCredsSchema().load(auth_details)
-                performance_de = body.get(
-                    api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
-                )
-                if not performance_de:
-                    return (
-                        {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
-                        HTTPStatus.BAD_REQUEST,
-                    )
-            except ValidationError:
+            SFMCAuthCredsSchema().load(auth_details)
+            performance_de = body.get(
+                api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
+            )
+            if not performance_de:
                 return (
-                    {"message": api_c.INVALID_AUTH_DETAILS},
+                    {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
                     HTTPStatus.BAD_REQUEST,
                 )
         elif (
             destination[db_c.DELIVERY_PLATFORM_TYPE]
             == db_c.DELIVERY_PLATFORM_FACEBOOK
         ):
-            try:
-                FacebookAuthCredsSchema().load(auth_details)
-            except ValidationError:
-                return (
-                    {"message": api_c.INVALID_AUTH_DETAILS},
-                    HTTPStatus.BAD_REQUEST,
-                )
+            FacebookAuthCredsSchema().load(auth_details)
 
         if auth_details:
             # store the secrets for the updated authentication details
@@ -463,10 +450,7 @@ class DestinationValidatePostView(SwaggerView):
 
         """
 
-        try:
-            body = DestinationValidationSchema().load(request.get_json())
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = DestinationValidationSchema().load(request.get_json())
 
         # test the destination connection and update connection status
         if body.get(db_c.TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
@@ -689,12 +673,9 @@ class DestinationDataExtPostView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
 
-        try:
-            body = DestinationDataExtPostSchema().load(
-                request.get_json(), partial=True
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = DestinationDataExtPostSchema().load(
+            request.get_json(), partial=True
+        )
 
         if (
             destination[api_c.DELIVERY_PLATFORM_TYPE]

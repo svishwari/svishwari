@@ -21,6 +21,7 @@ from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
     secured,
+    api_error_handler,
 )
 from huxunify.api.schema.user import UserSchema
 from huxunify.api.schema.utils import AUTH401_RESPONSE
@@ -58,6 +59,7 @@ class UserProfile(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a user profile.
 
@@ -130,6 +132,7 @@ class AddUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
+    @api_error_handler()
     def post(self, component_name: str, component_id: str) -> Tuple[dict, int]:
         """Creates a user favorite.
 
@@ -202,6 +205,7 @@ class DeleteUserFavorite(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.USER_TAG]
 
+    @api_error_handler()
     def delete(
         self, component_name: str, component_id: str
     ) -> Tuple[dict, int]:
