@@ -259,13 +259,13 @@ def get_audience_insights(
         audience_id (ObjectId): The Mongo DB ID of the audience.
 
     Returns:
-        Union[list, None]:  An audience doc with engagement/delivery information.
+        Union[list, None]:  A list of engagements with delivery information for an audience
 
     """
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
     collection = am_db[c.ENGAGEMENTS_COLLECTION]
 
-    # Read the audience document which contains filtering rules
+    # use the audience pipeline to aggregate and join all the insight data
     try:
         return list(
             collection.aggregate(
