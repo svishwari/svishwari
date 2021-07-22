@@ -22,12 +22,16 @@
           :key="item.id"
           :section="item"
           :statusIcon="17"
+          :menuItems="sectionActions"
+          :destinationMenuItems="destinationActions"
+          @onSectionAction="$emit('onOverviewSectionAction', $event)"
+          @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
         >
           <template #empty-destinations>
-            <span
-              >This engagement has no destinations yet. Add destinations in the
+            <div class="text--caption mb-13">
+              This engagement has no destinations yet. Add destinations in the
               submenu located in the right corner above.
-            </span>
+            </div>
           </template>
         </status-list>
       </v-col>
@@ -43,13 +47,42 @@ export default {
   data() {
     return {
       loadingRelationships: false,
+      engagementMenuOptions: [
+        { id: 1, title: "View delivery history", active: true },
+        { id: 2, title: "Deliver all", active: true },
+        { id: 3, title: "Add a destination", active: true },
+        { id: 5, title: "Remove engagement", active: false },
+      ],
+      destinationMenuOptions: [
+        { id: 2, title: "Create lookalike", active: false },
+        { id: 1, title: "Deliver now", active: true },
+        { id: 3, title: "Edit delivery schedule", active: true },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: false },
+      ],
     }
+  },
+  computed: {
+    sectionActions() {
+      return this.sectionType === "engagement" ? this.engagementMenuOptions : []
+    },
+    destinationActions() {
+      return this.sectionType === "engagement"
+        ? this.destinationMenuOptions
+        : []
+    },
   },
   props: {
     sections: {
       type: Array,
       required: false,
       default: () => [],
+    },
+    sectionType: {
+      type: String,
+      required: true,
+      default: "engagement",
     },
   },
 }
