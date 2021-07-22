@@ -2,7 +2,7 @@
   <div class="audience-insight-wrap">
     <PageHeader class="background-border" :headerHeightChanges="'py-3'">
       <template #left>
-        <Breadcrumb :items="items" />
+        <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
         <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
@@ -19,10 +19,11 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <div class="row px-15 my-1">
+
+    <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
-        class="ma-4 audience-summary"
+        class="ma-2 audience-summary"
         :key="i"
         :grow="0"
         :title="item.title"
@@ -44,124 +45,38 @@
           <Avatar :name="item.fullName" />
         </template>
       </MetricCard>
-      <div class="audience-summary">
-        <!-- Audience Destination Cards Wrapper -->
-        <v-card class="rounded-lg card-style" minHeight="145px" flat>
-          <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
-            <div class="d-flex align-center">
-              <Icon
-                type="audiences"
-                :size="24"
-                color="neroBlack"
-                class="mr-2"
-              /><span class="text-h5">Engagement Delivery overview</span>
-            </div>
-            <div class="d-flex align-center">
-              <v-btn
-                text
-                class="d-flex align-center primary--text text-decoration-none"
-                @click="triggerSelectAudience()"
-              >
-                <Icon type="audiences" :size="16" class="mr-1" />
-                Add an engagement
-              </v-btn>
-              <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
-                <icon type="history" :size="16" class="mr-1" />
-                Delivery history
-              </v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text class="pl-6 pr-6 pb-4 pt-0">
-            <div
-              class="empty-state pa-5 text--gray"
-              v-if="true"
-            >
-              Nothing to show here yet. Add an audience, assign and deliver that
-              audience to a destination.
-            </div>
-            <v-col
-              class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
-              v-if="true"
-            >
-            </v-col>
-          </v-card-text>
-        </v-card>
-      </div>
-
-
-          <v-card class="rounded-lg card-info-wrapper lookalike-card box-shadow-5">
-            <v-card-title class="card-heading d-flex justify-space-between py-5 pl-4">
-              Lookalikes
-              <v-btn text color="primary" @click="showLookalikeDrawer=true">
-                <icon type="lookalike" :size="16" class="mr-1" />
-                Create lookalike
-              </v-btn>
-            </v-card-title>
-            <v-card-text class="title-text pl-0 pr-0">
-              <!-- <v-simple-table>
-                <template v-slot:default>
-                  <tbody>
-                    <tr v-for="data in lookalikesData" :key="data.name">
-                      <td class="title-text">{{ data.name }}</td>
-                      <td class="table-text cl">{{ data.size }}</td>
-                      <td class="table-text cl">{{ data.updated }}</td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table> -->
-      <!-- <v-menu class="menu-wrapper">
-        <v-list class="menu-list-wrapper">
-          ssss
-          <v-list-item-group>
-            <v-list-item
-              v-for="data in lookalikesData"
-              :key="data.name"
-            >
-              <v-list-item-title>
-                aaaa
-                      {{ data.name }}
-                      {{ data.size }}
-                      {{ data.updated }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-menu> -->
-            <v-list-item-group  v-if="lookalikesData"
-        color="primary"
+      <MetricCard
+        class="ma-2 audience-summary original-audience"
+        :grow="0"
+        :title="'Original Audience'"
+        v-if="audience.lookalike_audience"
       >
-        <v-list-item class="lookalike-audience-section pl-4 pr-4"
-              v-for="data in lookalikesData"
-              :key="data.name"
-        >
-          <v-list-item-content>
-          <router-link
-          :to="{
-            name: 'AudienceInsight',
-            params: { id: audience.id },
-          }"
-          class="text-decoration-none"
-          append
-        >
-          {{ data.name }}
-        </router-link>
-          </v-list-item-content>
-          <v-list-item-content>
-            <v-list-item-title class="title-text cl" v-text="data.size"></v-list-item-title>
-          </v-list-item-content>
-          <v-list-item-content>
-            <v-list-item-title class="title-text cl" v-text="data.updated"></v-list-item-title>
-          </v-list-item-content>
-                       </v-list-item>
-      </v-list-item-group>
-      <v-list-item-group v-else class="lookalike-audience-section pl-4 pr-4"
-        > This audience has no lookalike yet.
-        Create one by clicking the "Create lookalike" above.</v-list-item-group>
-            </v-card-text>
-          </v-card>
+        <template #subtitle-extended>
+          <span class="mr-2">
+            <span class="original-audience-text">
+              {{ audience.name }}
+            </span>
+          </span>
+        </template>
+      </MetricCard>
+      <MetricCard
+        class="ma-2 audience-summary"
+        :grow="0"
+        :title="'Original • Actual size'"
+        v-if="audience.lookalike_audience"
+      >
+        <template #subtitle-extended>
+          <span class="mr-2">
+            <span class="neroBlack--text font-weight-semi-bold">
+              <size :value="audience.size" /> &bull;
+              <size :value="audience.size" />
+            </span>
+          </span>
+        </template>
+      </MetricCard>
 
       <MetricCard
-        class="ma-4 audience-summary"
+        class="ma-2 audience-summary"
         :title="'Attributes'"
         v-if="Object.keys(appliedFilters).length > 0"
       >
@@ -208,6 +123,40 @@
           </div>
         </template>
       </MetricCard>
+    </div>
+    <div class="px-15 my-1 mb-4">
+      <v-card class="rounded-lg card-style" minHeight="145px" flat>
+        <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+          <div class="d-flex align-center">
+            <span class="text-h5">Engagement &amp; delivery overview</span>
+          </div>
+          <div class="d-flex align-center">
+            <v-btn
+              text
+              class="d-flex align-center primary--text text-decoration-none"
+              disabled
+            >
+              <Icon type="audiences" :size="16" class="mr-1" />
+              Add an Engagement
+            </v-btn>
+          </div>
+        </v-card-title>
+        <v-progress-linear
+          v-if="!engagements"
+          :active="!engagements"
+          :indeterminate="!engagements"
+        />
+        <v-card-text class="pl-6 pr-6 pb-6">
+          <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
+            <status-list
+              v-for="item in engagements"
+              :key="item.id"
+              :audience="item"
+              :statusIcon="17"
+            />
+          </v-col>
+        </v-card-text>
+      </v-card>
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
@@ -259,9 +208,8 @@ import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 // import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience"
 import Icon from "../../components/common/Icon.vue"
-import CustomerDetails from "@/views/CustomerProfiles/Drawers/CustomerDetails"
-import LookAlikeAudience from './Configuration/Drawers/LookAlikeAudience.vue'
-
+import StatusList from "../../components/common/StatusList.vue"
+import Size from "../../components/common/huxTable/Size.vue"
 export default {
   name: "AudienceInsight",
   components: {
@@ -272,9 +220,8 @@ export default {
     Avatar,
     Tooltip,
     Icon,
-    LookAlikeAudience,
-    CustomerDetails,
-    LookAlikeAudience
+    StatusList,
+    Size,
   },
   data() {
     return {
@@ -312,6 +259,8 @@ export default {
           text: "",
           disabled: true,
           href: this.$route.path,
+          icon: "lookalike",
+          size: 12,
         },
       ],
       loading: false,
@@ -350,6 +299,30 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
+
+      //TODO: Mock data for the Engagement
+      engagements: [
+        {
+          id: 1,
+          last_delivered: "2021-07-13T15:38:42.629Z",
+          lookalike: true,
+          name: "My Engagement 1",
+          size: 265234579,
+          status: "Active",
+          destinations: [
+            {
+              id: "4",
+              name: "Facebook",
+              type: "facebook",
+              latest_delivery: {
+                status: "Active",
+                size: 265234579,
+                update_time: "2021-07-13T15:38:42.629Z",
+              },
+            },
+          ],
+        },
+      ],
     }
   },
   computed: {
@@ -360,6 +333,35 @@ export default {
       return this.getAudience(this.$route.params.id)
     },
 
+    breadcrumbItems() {
+      const items = [
+        {
+          text: "Audiences",
+          disabled: false,
+          href: "/audiences",
+          icon: "audiences",
+        },
+      ]
+      if (this.audience) {
+        if (this.audience.lookalike_audience == true) {
+          items.push({
+            text: this.audience.name,
+            disabled: true,
+            href: this.$route.path,
+            icon: "lookalike",
+            size: 12,
+          })
+        } else {
+          items.push({
+            text: this.audience.name,
+            disabled: true,
+            href: this.$route.path,
+          })
+        }
+        return items
+      }
+      return items
+    },
     /**
      * This computed property is converting the audience filters conditions
      * into groups of fiters and having custom keys which are needed
@@ -525,40 +527,18 @@ export default {
 .icon-border {
   cursor: default;
 }
-
-.lookalike-card {
-  max-width: 282px;
-
-  // v-btn {
-  //   margin-left: 10px !important;
-  // }
-.card-heading {
-  font-size: 15px !important;
-  background-color: rgba(236, 244, 249, 1);
-  font-weight: 400;
-  height: 54px !important;
- // padding: 0px 0px 0px 10px !important;
+.original-audience {
+  background: var(--v-white-base) !important;
 }
-
-.title-text {
+.original-audience-text {
   font-family: Open Sans;
   font-style: normal;
-  font-weight: normal;
-  color: var(--v-gray-base) !important;
-  font-size: 12px !important;
-
-  padding: 0px !important;
-
-  .lookalike-audience-section {
-  //  padding: 0px 10px 0px 10px !important;
-      border-bottom: 1px solid rgba(226, 234, 236, 1);
-  }
-
-  ::v-deep .v-list-item {
- // padding: 0px 0px 10px 0px !important;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--v-primary-base) !important;
 }
+.card-width {
+  width: 156px !important;
 }
-}
-
-
 </style>

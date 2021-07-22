@@ -217,9 +217,12 @@ export const defineRoutes = (server) => {
   // customers
   server.get("/customers")
 
-  server.get("/customers/:id", (schema, request) => {
-    const id = request.params.id
-    return server.create("customerProfile", schema.customers.find(id).attrs)
+  server.get("/customers/:hux_id", (schema, request) => {
+    const huxId = request.params.hux_id
+    return server.create(
+      "customerProfile",
+      schema.customers.findBy({ hux_id: huxId }).attrs
+    )
   })
 
   server.get("/customers/overview", () => customersOverview)

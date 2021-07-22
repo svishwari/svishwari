@@ -8,12 +8,12 @@
         :height="height"
         :items="dataItems"
         :sort-by.sync="sortColumn"
+        :sort-desc.sync="sortDesc"
         item-key="name"
         :items-per-page="-1"
         fixed-header
         hide-default-footer
         must-sort
-        sort-desc
         single-select
         :disable-sort="disableSort"
       >
@@ -104,6 +104,11 @@ export default {
       type: String,
       required: false,
       default: "name",
+    },
+    sortDesc: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     disableSort: {
       type: Boolean,

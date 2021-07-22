@@ -11,12 +11,12 @@ export default {
    * @param {*} format Format eg. "MM/D/YYYY [at] hh:ss A"
    * @return {string} Formatted date time string eg. 3/17/2021 at 1:29 PM
    */
-  Date(value, format = "M/D/YYYY [at] h:mm A") {
+  Date(value, format = "M/D/YYYY [at] h:mm A", noSuffix = false) {
     if (!value) return ""
 
     let date = moment(value)
 
-    if (format === "relative") return date.fromNow()
+    if (format === "relative") return date.fromNow(noSuffix)
 
     if (format === "calendar") return date.calendar()
 
