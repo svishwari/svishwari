@@ -8,11 +8,13 @@ from typing import Any, Tuple
 from http import HTTPStatus
 from bson import ObjectId
 
+import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
 from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
+from marshmallow import ValidationError
 
 from huxunifylib.connectors.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
@@ -294,7 +296,7 @@ def get_user_name() -> object:
     return wrapper
 
 
-def api_error_handler() -> object:
+def api_error_handler(custom_message: dict = None) -> object:
     """
     This decorator handles generic errors for API requests.
 
@@ -303,6 +305,8 @@ def api_error_handler() -> object:
     Example: @api_error_handler()
 
     Args:
+        custom_message (dict): Optional; A dict containing custom messages for
+            particular exceptions
 
     Returns:
         Response: decorator
@@ -332,6 +336,20 @@ def api_error_handler() -> object:
             """
             try:
                 return in_function(*args, **kwargs)
+
+            except ValidationError as validation_error:
+                if custom_message:
+                    error_message = custom_message.get(
+                        ValidationError, validation_error.messages
+                    )
+                else:
+                    error_message = validation_error.messages
+                return error_message, HTTPStatus.BAD_REQUEST
+
+            except facebook_business.exceptions.FacebookRequestError:
+                return {
+                    "message": "Error connecting to Facebook"
+                }, HTTPStatus.BAD_REQUEST
 
             except de.DuplicateName:
                 return {
