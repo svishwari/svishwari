@@ -127,11 +127,11 @@
           </div>
         </v-card>
       </div>
-            <v-row class="px-15 mt-2">
+      <v-row class="px-15 mt-2">
         <v-col cols="3">
           <income-chart></income-chart>
         </v-col>
-            </v-row>
+      </v-row>
       <v-divider class="my-8"></v-divider>
       <EmptyStateChart>
         <template #chart-image>
@@ -169,7 +169,7 @@ export default {
     huxButton,
     Icon,
     CustomerDetails,
-    IncomeChart
+    IncomeChart,
   },
 
   data() {

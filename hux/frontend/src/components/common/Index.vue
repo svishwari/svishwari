@@ -464,7 +464,7 @@
     <v-subheader>Hux Feature Chart without Tooltip</v-subheader>
     <feature-chart></feature-chart>
 
-<v-subheader>Hux Income Chart</v-subheader>
+    <v-subheader>Hux Income Chart</v-subheader>
     <income-chart></income-chart>
 
     <v-divider class="mt-10" />
@@ -695,8 +695,7 @@ export default {
     Size,
     HuxStartDate,
     HuxEndDate,
-    FeatureChart,
-    IncomeChart
+    IncomeChart,
   },
   methods: {
     onupdatelabelText(newValue) {

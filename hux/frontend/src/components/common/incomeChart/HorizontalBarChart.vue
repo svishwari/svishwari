@@ -8,7 +8,15 @@
     >
       <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
         <div class="mt-2 ml-2">
-          <span class="d-flex align-center income-card-title black--text text-decoration-none">
+          <span
+            class="
+              d-flex
+              align-center
+              income-card-title
+              black--text
+              text-decoration-none
+            "
+          >
             Top locations &amp; income
           </span>
         </div>
@@ -65,9 +73,7 @@ export default {
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
 
- var x = d3Scale.scaleLinear()
-    .domain([0, 4000])
-    .range([ 1, this.width])
+      var x = d3Scale.scaleLinear().domain([0, 4000]).range([1, this.width])
 
       let y = d3Scale
         .scaleBand()
@@ -75,20 +81,23 @@ export default {
         .domain(this.chartData.map((d) => d.name))
         .padding(0.1)
 
+      let appendCurrencySign = (text) => "$" + text.toLocaleString()
 
-   let appendCurrencySign = (text) =>
-        "$" + text.toLocaleString() 
-        
       svg
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3Axis.axisBottom(x).ticks(3).tickSize(4).tickFormat(appendCurrencySign))
+        .call(
+          d3Axis
+            .axisBottom(x)
+            .ticks(3)
+            .tickSize(4)
+            .tickFormat(appendCurrencySign)
+        )
         .call((g) => g.selectAll(".path").attr("stroke", "none"))
         .attr("stroke-width", "0")
         .attr("stroke-opacity", "0.3")
         .style("font-size", 12)
-        
- 
+
       svg
         .append("g")
         .call((g) => {
@@ -120,11 +129,11 @@ export default {
             .attr("stroke-opacity", "0.3")
         )
 
-var ticks = d3Select.selectAll(".tick text");
+      var ticks = d3Select.selectAll(".tick text")
 
-ticks.each(function(_, i) {
-  if (i % 2 != 0) d3Select.select(this).remove();
-});
+      ticks.each(function (_, i) {
+        if (i % 2 != 0) d3Select.select(this).remove()
+      })
 
       svg
         .selectAll("myRect")
@@ -136,25 +145,21 @@ ticks.each(function(_, i) {
         .attr("width", (d) => x(d.ltv))
         .attr("height", y.bandwidth())
         .attr("fill", "#40BAE8")
-        .attr('rx', 2)
+        .attr("rx", 2)
         .on("mouseover", (d) => applyHoverEffects(d))
         .on("mouseout", () => removeHoverEffects())
 
-         svg
+      svg
         .selectAll("myRect")
         .data(this.chartData)
         .enter()
         .append("text")
         .attr("y", (d) => y(d.name))
-        .attr('text-anchor', 'start')
-         .attr(
-          "transform",
-          "translate(" + 10 + " ," + 22 +")")
-        .style("fill","white")
+        .attr("text-anchor", "start")
+        .attr("transform", "translate(" + 10 + " ," + 22 + ")")
+        .style("fill", "white")
         .style("font-size", 12)
         .text((d) => `${d.name}`)
-        
-
 
       let applyHoverEffects = (d) => {
         d3Select.selectAll("rect").style("fill-opacity", "0.5")
@@ -217,11 +222,11 @@ ticks.each(function(_, i) {
     margin-bottom: -20px;
   }
   .income-card-title {
-      font-family: Open Sans;
-font-style: normal;
-font-weight: normal;
-font-size: 15px;
-line-height: 20px;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 20px;
   }
 }
 </style>

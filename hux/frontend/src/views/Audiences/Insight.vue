@@ -122,11 +122,11 @@
         </div>
       </v-card>
     </div>
-               <v-row class="px-15 mt-2">
-        <v-col cols="3">
-          <income-chart></income-chart>
-        </v-col>
-            </v-row>
+    <v-row class="px-15 mt-2">
+      <v-col cols="3">
+        <income-chart></income-chart>
+      </v-col>
+    </v-row>
 
     <v-divider class="my-8"></v-divider>
     <EmptyStateChart>
@@ -159,7 +159,7 @@ export default {
     Avatar,
     Tooltip,
     Icon,
-    IncomeChart
+    IncomeChart,
   },
   data() {
     return {

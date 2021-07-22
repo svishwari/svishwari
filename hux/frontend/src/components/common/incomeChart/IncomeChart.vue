@@ -47,10 +47,9 @@ export default {
     },
 
     getCordinates(args) {
-      
       this.tooltip.x = args.x
       this.tooltip.y = args.y
-        console.log("args",this.tooltip.x, this.tooltip.y)
+      console.log("args", this.tooltip.x, this.tooltip.y)
     },
   },
 }

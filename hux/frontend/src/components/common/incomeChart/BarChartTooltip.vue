@@ -10,7 +10,7 @@
       class="mx-auto score-tooltip-style"
     >
       <div class="bar-hover">
-        {{ sourceInput.ltv | Currency}}
+        {{ sourceInput.ltv | Currency }}
       </div>
     </v-card>
   </div>
@@ -67,7 +67,7 @@ export default {
   max-width: 230px;
   height: auto;
   z-index: 1;
-  color: #0C9DDB;
+  color: #0c9ddb;
   .bar-hover {
     @extend .card-padding;
     .feature-name {
