@@ -43,7 +43,9 @@ class TestRouteUtils(TestCase):
         """
 
         target_id = ObjectId()
-        perf_metric = update_metrics(target_id, "test_name", [], [])
+        perf_metric = update_metrics(
+            target_id, "test_name", [], [], constants.DISPLAY_ADS
+        )
 
         self.assertEqual(str(target_id), perf_metric.get(constants.ID))
         self.assertEqual("test_name", perf_metric.get(constants.NAME))
