@@ -174,8 +174,8 @@ export const defineRoutes = (server) => {
       const engagement = schema.engagements.find(engagementId)
       const requestData = JSON.parse(request.requestBody)
 
-      engagement.campaignMappings[destinationId] = requestData.campaigns
-      const audience = engagement.campaignPerformance[
+      engagement.campaign_mappings[destinationId] = requestData.campaigns
+      const audience = engagement.campaign_performance[
         "adsPerformance"
       ].audience_performance.filter((aud) => aud.id === audienceId)
       if (audience.length === 1) {
@@ -203,11 +203,6 @@ export const defineRoutes = (server) => {
           destination[0].campaigns.push(...campaigns)
         }
       }
-      console.log(
-        engagement.campaignPerformance["adsPerformance"],
-        audienceId,
-        destinationId
-      )
       return { message: "Successfully created mappings" }
     }
   )
@@ -217,7 +212,7 @@ export const defineRoutes = (server) => {
       const engagementId = request.params.id
       const destinationId = request.params.destinationId
       const engagement = schema.engagements.find(engagementId)
-      return engagement.campaignMappings[destinationId] || []
+      return engagement.campaign_mappings[destinationId] || []
     }
   )
   server.get("/engagements/:id/delivery-history", (schema, request) => {
@@ -247,10 +242,10 @@ export const defineRoutes = (server) => {
     (schema, request) => {
       const id = request.params.id
       const engagement = schema.engagements.find(id)
-      engagement.campaignPerformance["emailPerformance"] =
-        engagement.campaignPerformance["emailPerformance"] ||
+      engagement.campaign_performance["emailPerformance"] =
+        engagement.campaign_performance["emailPerformance"] ||
         schema.audiencePerformances.find(id)["email_audience_performance"]
-      return engagement.campaignPerformance["emailPerformance"]
+      return engagement.campaign_performance["emailPerformance"]
     }
   )
   server.get(
@@ -258,10 +253,10 @@ export const defineRoutes = (server) => {
     (schema, request) => {
       const id = request.params.id
       const engagement = schema.engagements.find(id)
-      engagement.campaignPerformance["adsPerformance"] =
-        engagement.campaignPerformance["adsPerformance"] ||
+      engagement.campaign_performance["adsPerformance"] =
+        engagement.campaign_performance["adsPerformance"] ||
         schema.audiencePerformances.find(id)["displayads_audience_performance"]
-      return engagement.campaignPerformance["adsPerformance"]
+      return engagement.campaign_performance["adsPerformance"]
     }
   )
 

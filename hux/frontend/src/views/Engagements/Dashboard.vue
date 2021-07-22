@@ -927,7 +927,6 @@ export default {
     },
     async fetchCampaignPerformanceDetails(type) {
       this.loadingTab = true
-      console.info(this.engagementList)
       await this.getAudiencePerformanceById({
         type: type,
         id: this.engagementList.id,

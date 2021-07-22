@@ -38,7 +38,7 @@
           <template #field:campaign="row">
             <hux-dropdown
               :selected="row.value"
-              :items="avaialableCampaignsOptions()"
+              :items="availableCampaignsOptions()"
               @on-select="onSelectedItem(row, $event, 'campaign')"
             >
             </hux-dropdown>
@@ -62,7 +62,7 @@
                     height="21"
                     width="21"
                     @click="addNewMappingItem()"
-                    v-if="avaialableCampaignsOptions().length > 0"
+                    v-if="availableCampaignsOptions().length > 0"
                   >
                     <v-icon size="14">mdi-plus</v-icon>
                   </v-btn>
@@ -206,7 +206,7 @@ export default {
         attrs: this.identityAttrs,
       })
     },
-    avaialableCampaignsOptions() {
+    availableCampaignsOptions() {
       const selectedCampaigns = this.mappings.map(
         (camp) => camp.campaign && camp.campaign.name
       )
