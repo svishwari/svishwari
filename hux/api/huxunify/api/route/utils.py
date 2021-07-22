@@ -480,19 +480,32 @@ def update_metrics(
 
 
 def validate_delivery_params(func) -> object:
-    """
-    a decorator for delivery.py to
+    """A decorator for common validations in delivery.py
 
-    check if object ids are valid
-    convert all ids to ObjectId
-    check if engagement id exists
-    validates if engagements have audiences
-    check if audience id exists
-    validate that the audience is attached
+    Performs checks to determine if object ids are valid,
+    engagement id exists, engagements have audiences,
+    audience id exists,audience is attached. Also converts
+    all string ids to ObjectId.
+
+    Example: @validate_delivery_params
+
+    Args:
+        func(object): function object
+    Returns:
+        object: returns a wrapped decorated function object.
     """
 
     @wraps(func)
     def wrapper(*args, **kwargs) -> object:
+        """Decorator for validation and converting to ObjectId.
+        Args:
+            *args (object): function arguments.
+            **kwargs (dict): function keyword arguments.
+
+        Returns:
+           object: returns a decorated function object.
+        """
+
         # check for valid object id and convert to object id
         for key, val in kwargs.items():
             if ObjectId.is_valid(val):
@@ -565,8 +578,9 @@ def validate_destination_id(
         check_if_destination_in_db (bool): Optional; flag to check if destination in db
 
     Returns:
-        A dict of Message to be returned in response in case of failing checks
-        destination_id (ObjectId): Destination id as object id if all the checks are successful.
+        A dict of Message to be returned in response in case of failing checks,
+        destination_id (ObjectId): Destination id as object id if
+            all checks are successful.
     """
     if not ObjectId.is_valid(destination_id):
         return {"message": constants.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
@@ -589,8 +603,8 @@ def validate_destination_wrapper(check_if_destination_in_db=True) -> object:
     Example: @validate_destination_wrapper()
 
     Args:
-        check_if_destination_in_db (bool): Optional; If check_destination_exists a check is
-            performed to verify if destination exists in the db.
+        check_if_destination_in_db (bool): Optional; If check_destination_exists
+            a check is performed to verify if destination exists in the db.
 
     Returns:
         Response: decorator
