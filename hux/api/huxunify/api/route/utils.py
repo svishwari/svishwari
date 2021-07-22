@@ -4,7 +4,7 @@ purpose of this file is to house route utilities
 import logging
 from datetime import datetime
 from functools import wraps
-from typing import Any, Tuple
+from typing import Any, Tuple, Union, Dict
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -567,7 +567,7 @@ def validate_delivery_params(func) -> object:
 
 def validate_destination_id(
     destination_id: str, check_if_destination_in_db: bool = True
-) -> object:
+) -> Union[ObjectId, Tuple[Dict[str, str], int]]:
     """Checks on destination_id
 
     Check if destination id is valid converts it to object_id.
