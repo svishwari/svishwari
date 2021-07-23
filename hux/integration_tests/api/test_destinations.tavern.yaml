@@ -315,7 +315,7 @@ stages:
       status_code: 200
       headers:
         content-type: application/json
-      # TODO: This will have to be revisited in the future once the response body has the json populated
+      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
       json: {}
 
 ---
@@ -350,5 +350,5 @@ stages:
       status_code: 400
       headers:
         content-type: application/json
-      # TODO: This will have to be revisited in the future once the response body has the json populated
+      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
       json: {}
