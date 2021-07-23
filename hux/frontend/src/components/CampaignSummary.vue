@@ -92,7 +92,7 @@
       <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
           <icon type="audiences" :size="24" color="neroBlack" class="mr-2" />
-          <span class="text-h5 text--neroblack"> Audience performance </span>
+          <span class="text-h5 neroBlack--text"> Audience performance </span>
         </div>
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
@@ -158,9 +158,7 @@
               <hux-data-table
                 :headers="headers"
                 :dataItems="
-                  getDestinationRollups(
-                    parentItem.destinations || item.campaigns
-                  )
+                  getFormattedItems(parentItem.destinations || item.campaigns)
                 "
                 :showHeader="false"
                 v-if="parentItem"
@@ -169,12 +167,22 @@
                 <template #item-row="{ item, expand, isExpanded }">
                   <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
                     <td :style="{ width: headers[0].width }">
-                      <div class="w-100 d-flex align-center">
+                      <div
+                        class="w-100 d-flex align-center"
+                        :class="{
+                          'pl-11': !item.is_mapped,
+                          'pl-3': item.campaigns && item.campaigns.length > 0,
+                        }"
+                      >
                         <span
                           v-if="item.campaigns && item.campaigns.length > 0"
+                          class="d-flex align-center"
                         >
                           <v-icon
-                            :class="{ 'rotate-icon-90': isExpanded }"
+                            :class="{
+                              'rotate-icon-90': isExpanded,
+                              'mr-2': true,
+                            }"
                             size="18"
                             @click="expand(!isExpanded)"
                           >
@@ -182,21 +190,23 @@
                           </v-icon>
 
                           <span class="d-flex align-center">
-                            <!-- TODO Route Link to Audience Insight Page -->
-                            <router-link
-                              to="#"
-                              class="text-decoration-none"
-                              append
+                            <logo
+                              :type="logoType(item[headers[0].value])"
+                              :size="18"
+                              class="mr-3"
+                            />
+                            <span class="text--neroblack ellipsis">
+                              {{ item[headers[0].value] | Empty("-") }}
+                            </span>
+                            <v-btn
+                              icon
+                              small
+                              class="ml-3"
+                              v-if="item.is_mapped"
+                              @click="triggerCampaignMap(parentItem, item)"
                             >
-                              <logo
-                                :type="logoType(item[headers[0].value])"
-                                :size="18"
-                                class="mr-3"
-                              />
-                              <span class="text--neroblack ellipsis">
-                                {{ item[headers[0].value] | Empty("-") }}
-                              </span>
-                            </router-link>
+                              <Icon type="mapping" :size="28" />
+                            </v-btn>
                           </span>
                         </span>
                         <span v-else class="d-flex align-center">
@@ -235,6 +245,8 @@
                         tile
                         class="error--text px-2 pl-2 pr-4"
                         color="white"
+                        height="29"
+                        width="99"
                         @click="triggerCampaignMap(parentItem, item)"
                       >
                         <v-icon size="15" small class="mr-1">
@@ -252,6 +264,40 @@
                       {{ item[header.value] }}
                     </td>
                   </tr>
+                </template>
+                <template #expanded-row="{ headers, parentItem }">
+                  <td :colspan="headers.length" class="pa-0 child">
+                    <hux-data-table
+                      :headers="headers"
+                      :dataItems="getFormattedItems(parentItem.campaigns)"
+                      :showHeader="false"
+                      v-if="parentItem"
+                    >
+                      <template #row-item="{ item }">
+                        <td
+                          v-for="header in headers"
+                          :key="header.value"
+                          :style="{ width: header.width }"
+                        >
+                          <span v-if="header.value == 'name'">
+                            <tooltip>
+                              <template #label-content>
+                                <span class="text--neroblack ellipsis">
+                                  {{ item[header.value] }}
+                                </span>
+                              </template>
+                              <template #hover-content>
+                                {{ item[header.value] }}
+                              </template>
+                            </tooltip>
+                          </span>
+                          <span v-if="header.value != 'name'">
+                            {{ item[header.value] }}
+                          </span>
+                        </td>
+                      </template>
+                    </hux-data-table>
+                  </td>
                 </template>
               </hux-data-table>
             </td>
@@ -623,7 +669,7 @@ export default {
     },
     engagementId: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   methods: {
@@ -645,7 +691,7 @@ export default {
       await this.saveCampaignMappings(payload)
       this.$emit("onUpdateCampaignMappings")
     },
-    getDestinationRollups(destinationRollups) {
+    getFormattedItems(destinationRollups) {
       return destinationRollups.map((destinationRollup) => {
         return this.formatData(destinationRollup)
       })
@@ -693,7 +739,7 @@ export default {
     },
     triggerCampaignMap(audience, destination) {
       this.showCampaignMapDrawer = true
-      this.$refs.campaignMapDrawer.fetchMappings({
+      this.$refs.campaignMapDrawer.loadCampaignMappings({
         id: this.engagementId,
         audienceId: audience.id,
         destinationId: destination.id,
@@ -783,7 +829,6 @@ export default {
         text-overflow: ellipsis;
         max-width: 21ch;
         display: inline-block;
-        width: 21ch;
         white-space: nowrap;
       }
       .max-26 {
@@ -812,8 +857,22 @@ export default {
         tbody {
           td {
             &:first-child {
-              padding-left: 45px;
               background: inherit;
+            }
+          }
+        }
+        .v-data-table__expanded__row {
+          background: inherit !important;
+        }
+      }
+      ::v-deep .child {
+        .v-data-table__wrapper {
+          box-shadow: none;
+        }
+        tbody {
+          td {
+            &:first-child {
+              padding-left: 80px;
             }
           }
         }
