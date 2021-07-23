@@ -362,7 +362,7 @@ class AudiencePostView(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f"{audience_doc[db_c.CREATED_BY]} added an audience "
+                    f"{audience_doc[db_c.CREATED_BY]} added a new audience "
                     f'named "{audience_doc[db_c.NAME]}".'
                 ),
                 api_c.ORCHESTRATION_TAG,
@@ -390,7 +390,7 @@ class AudiencePostView(SwaggerView):
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
-                        f"{engagement[db_c.UPDATED_BY]} attached audience "
+                        f"{engagement[db_c.UPDATED_BY]} added audience "
                         f'"{audience_doc[db_c.NAME]}" to engagement '
                         f'"{engagement[db_c.NAME]}".'
                     ),

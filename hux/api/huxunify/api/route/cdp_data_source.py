@@ -19,7 +19,6 @@ from huxunifylib.database.cdp_data_source_management import (
     delete_data_source,
     update_data_sources,
 )
-from huxunifylib.database.notification_management import create_notification
 from huxunify.api.schema.cdp_data_source import (
     CdpDataSourceSchema,
     CdpDataSourcePostSchema,

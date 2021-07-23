@@ -9,13 +9,15 @@ from typing import Tuple
 from bson import ObjectId
 from flask import Blueprint, jsonify
 from flasgger import SwaggerView
-from huxunifylib.database import constants as db_c, engagement_management
 from huxunifylib.database import (
-    orchestration_management,
+    constants as db_c,
     delivery_platform_management,
     db_exceptions,
 )
-from huxunifylib.database.engagement_management import get_engagement
+from huxunifylib.database.engagement_management import (
+    get_engagement,
+    get_engagements_by_audience,
+)
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.orchestration_management import get_audience
 
@@ -93,9 +95,7 @@ def validate_delivery_params(func) -> object:
             # check if audience id exists
             audience = None
             try:
-                audience = orchestration_management.get_audience(
-                    database, audience_id
-                )
+                audience = get_audience(database, audience_id)
             except db_exceptions.InvalidID:
                 # get audience returns invalid if the audience does not exist.
                 # pass and catch in the next step.
@@ -500,9 +500,7 @@ class AudienceDeliverView(SwaggerView):
         # get audience
         audience = get_audience(database, audience_id)
         # get engagements
-        engagements = engagement_management.get_engagements_by_audience(
-            database, audience_id
-        )
+        engagements = get_engagements_by_audience(database, audience_id)
         # submit jobs for the audience/destination pairs
         delivery_job_ids = []
         for engagement in engagements:
@@ -617,7 +615,7 @@ class EngagementDeliverHistoryView(SwaggerView):
             ):
                 delivery_history.append(
                     {
-                        api_c.AUDIENCE: orchestration_management.get_audience(
+                        api_c.AUDIENCE: get_audience(
                             database, job.get(api_c.AUDIENCE_ID)
                         ),
                         api_c.DESTINATION: delivery_platform_management.get_delivery_platform(
@@ -703,7 +701,7 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         # check if audience exists
         database = get_db_client()
-        audience = orchestration_management.get_audience(database, audience_id)
+        audience = get_audience(database, audience_id)
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
