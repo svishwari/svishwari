@@ -1,5 +1,5 @@
 ---
-test_name: Test notifications default success
+test_name: Test notifications API success
 
 strict:
   - json:list_any_order
@@ -8,7 +8,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test notifications default success
+  - name: test notifications api success
 
     # Define the request to be made...
     request:
@@ -26,12 +26,12 @@ stages:
         content-type: application/json
       json:
         - id: !anystr
-        - notification_type: !anystr
+        - notification_type: !re_fullmatch "(Success|Critical|Informational)"
         - description: !anystr
         - created: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
 
 ---
-test_name: Test notifications custom success
+test_name: Test notifications API custom query params success
 
 strict:
   - json:list_any_order
@@ -40,7 +40,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test notifications custom success
+  - name: test notifications api custom query params success
 
     # Define the request to be made...
     request:
@@ -63,7 +63,7 @@ stages:
         - created: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
 
 ---
-test_name: Test notifications failure
+test_name: Test notifications API failure
 
 strict:
   - json:list_any_order
@@ -72,7 +72,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test notifications failure
+  - name: test notifications api failure
 
     # Define the request to be made...
     request:
