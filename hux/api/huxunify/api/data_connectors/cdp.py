@@ -176,7 +176,7 @@ def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
     # log execution time summary
     total_ticks = time.perf_counter() - timer
     logging.info(
-        "Executed %s requests to the customer API in %0.4f. ~%0.4f requests per second.",
+        "Executed %s requests to the customer API in %0.4f seconds. ~%0.4f requests per second.",
         len(audiences),
         total_ticks,
         len(audiences) / total_ticks,
