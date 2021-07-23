@@ -61,5 +61,6 @@ To review/debug test runs, mount volumes for test logs and outputs.
 ```sh
 export CYPRESS_LOGS="$(pwd)"/logs:/root/.npm/_logs
 export CYPRESS_VIDEOS="$(pwd)"/cypress/videos:/app/cypress/videos
-docker run -it -v $CYPRESS_LOGS -v $CYPRESS_VIDEOS ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL
+export CYPRESS_SCREENSHOTS="$(pwd)"/cypress/screenshots:/app/cypress/screenshots
+docker run -it -v $CYPRESS_LOGS -v $CYPRESS_VIDEOS -v $CYPRESS_SCREENSHOTS ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL
 ```
