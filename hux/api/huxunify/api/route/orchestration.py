@@ -35,7 +35,7 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
-    api_error_handler
+    api_error_handler,
 )
 
 # setup the orchestration blueprint
