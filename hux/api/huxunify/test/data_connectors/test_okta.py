@@ -410,7 +410,7 @@ class OktaTest(TestCase):
         request_mocker.get(self.user_info_call, json=INVALID_USER_RESPONSE)
         response = get_user_info("access_token")
         # check if all valid keys exists
-        self.assertFalse(response.keys() == VALID_USER_RESPONSE.keys())
+        self.assertNotEqual(response.keys(), VALID_USER_RESPONSE.keys())
 
     @requests_mock.Mocker()
     def test_get_user_info_empty_response(self, request_mocker: Mocker):
