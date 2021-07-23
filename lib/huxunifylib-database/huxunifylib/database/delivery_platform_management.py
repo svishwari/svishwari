@@ -1159,7 +1159,7 @@ def set_delivery_job_status(
 
     if job_status in (c.AUDIENCE_STATUS_DELIVERED, c.STATUS_FAILED):
         update_doc[c.JOB_END_TIME] = curr_time
-    elif job_status == c.STATUS_IN_PROGRESS:
+    elif job_status == c.AUDIENCE_STATUS_DELIVERING:
         update_doc[c.JOB_START_TIME] = curr_time
 
     try:
