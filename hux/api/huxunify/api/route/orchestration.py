@@ -130,6 +130,11 @@ class AudienceView(SwaggerView):
             # do replace root by bringing the nested engagement up a level.
             audience.update(audience_dict[audience[db_c.ID]])
 
+            # remove any empty deliveries
+            audience[api_c.DELIVERIES] = [
+                x for x in audience[api_c.DELIVERIES] if x
+            ]
+
             # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 database, audience.get(api_c.DESTINATIONS_TAG)
