@@ -35,13 +35,23 @@ Run the integration tests in browser with the Cypress app.
 ```sh
 npm run test:dev
 ```
+
 ## Running with Docker
+
+### Pre-requisites
+
+Have the UI running locally over `https` using the following.
+
+```sh
+cd ../../frontend
+yarn server --https
+```
 
 ### Build
 
 ```sh
 docker build -f Dockerfile -t ui-integration-tests .
-````
+```
 
 ### Run
 
