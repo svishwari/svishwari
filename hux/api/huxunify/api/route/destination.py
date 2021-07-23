@@ -335,7 +335,9 @@ class DestinationPutView(SwaggerView):
                 destination_management.update_delivery_platform(
                     database=database,
                     delivery_platform_id=destination_id,
-                    delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                    delivery_platform_type=destination[
+                        db_c.DELIVERY_PLATFORM_TYPE
+                    ],
                     name=destination[db_c.DELIVERY_PLATFORM_NAME],
                     authentication_details=authentication_parameters,
                     added=is_added,
