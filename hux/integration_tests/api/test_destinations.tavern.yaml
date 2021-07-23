@@ -1,5 +1,5 @@
 ---
-test_name: Test destinations constants
+test_name: Test destinations constants API
 
 strict:
   - json:list_any_order
@@ -8,7 +8,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test destinations/constants
+  - name: test destinations/constants API
 
     # Define the request to be made...
     request:
@@ -79,7 +79,7 @@ stages:
               description: !anything
 
 ---
-test_name: Test destinations get
+test_name: Test destinations API
 
 strict:
   - json:list_any_order
@@ -88,7 +88,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test destinations/get
+  - name: test destinations API
 
     # Define the request to be made...
     request:
@@ -297,7 +297,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/destinations/60b9601a6021710aa146df30"
+      url: "{host}/{version}/destinations/{facebook_destination_id}"
       method: PUT
       headers:
         content-type: application/json
