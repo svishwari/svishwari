@@ -10,6 +10,8 @@ import {
 } from "./factories/destination"
 import idrOverview from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
+import featureData from "./factories/featureData.json"
+import liftData from "./factories/liftChartData.json"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -314,6 +316,27 @@ export const defineRoutes = (server) => {
 
   // models
   server.get("/models")
+
+  server.get("/models/:type/overview", (schema, request) => {
+    const type = request.params.type
+
+    const data = {
+      model_type: type,
+      model_name: `Propensity to ${type}`,
+      description: `Propensity to ${type}`,
+      feature_importance: featureData.featureList,
+      lift_data: liftData.lift_data,
+      performance_metric: {
+        recall: 0.65,
+        current_version: "3.1.2",
+        rmse: -1,
+        auc: 0.79,
+        precision: 0.82,
+      },
+    }
+
+    return data
+  })
 
   // customers
   server.get("/customers")

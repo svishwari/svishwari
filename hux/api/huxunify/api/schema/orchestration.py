@@ -15,6 +15,36 @@ from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
+class DeliveriesSchema(Schema):
+    """
+    Delivery schema class
+    """
+
+    _id = fields.String()
+    create_time = DateTimeWithZ()
+    update_time = DateTimeWithZ()
+    created_by = fields.String()
+    updated_by = fields.String()
+    name = fields.String()
+    status = fields.String()
+    size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE)
+    delivery_platform_type = fields.String()
+
+
+class EngagementDeliverySchema(EngagementGetSchema):
+    """
+    Engagement Delivery schema class
+    """
+
+    deliveries = fields.Nested(DeliveriesSchema, many=True)
+    last_delivered = DateTimeWithZ()
+    status = fields.String()
+
+    # TOOO - HUS-740
+    next_delivery = fields.String()
+    delivery_schedule = fields.String(default="Daily")
+
+
 class AudienceGetSchema(Schema):
     """
     Audience schema class
@@ -45,16 +75,7 @@ class AudienceGetSchema(Schema):
     )
 
     destinations = fields.List(fields.Nested(DestinationGetSchema))
-    engagements = fields.List(
-        fields.Dict(),
-        attribute=api_c.AUDIENCE_ENGAGEMENTS,
-        example=[
-            {
-                api_c.ENGAGEMENT_ID: "Engagement id",
-                api_c.ENGAGEMENT_NAME: "Engagement name",
-            }
-        ],
-    )
+    engagements = fields.List(fields.Nested(EngagementDeliverySchema))
     audience_insights = fields.Dict(
         attribute=api_c.AUDIENCE_INSIGHTS,
         example={
@@ -70,13 +91,16 @@ class AudienceGetSchema(Schema):
         },
     )
 
-    size = fields.Int(example=6173223)
+    size = fields.Int()
     last_delivered = DateTimeWithZ(attribute=api_c.AUDIENCE_LAST_DELIVERED)
 
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     created_by = fields.String()
     updated_by = fields.String()
+
+    # TODO - HUS-436
+    lookalikes = fields.List(fields.String())
 
 
 class AudiencePutSchema(Schema):
