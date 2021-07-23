@@ -222,12 +222,13 @@ class AudienceGetView(SwaggerView):
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
 
         # get the max last delivered date for all destinations in an audience
-        audience[api_c.AUDIENCE_LAST_DELIVERED] = max(
-            [
-                x[api_c.AUDIENCE_LAST_DELIVERED]
-                for x in engagements
-                if x.get(api_c.AUDIENCE_LAST_DELIVERED)
-            ]
+        delivery_times = [
+            x[api_c.AUDIENCE_LAST_DELIVERED]
+            for x in engagements
+            if x.get(api_c.AUDIENCE_LAST_DELIVERED)
+        ]
+        audience[api_c.AUDIENCE_LAST_DELIVERED] = (
+            max(delivery_times) if delivery_times else None
         )
 
         # set the destinations
