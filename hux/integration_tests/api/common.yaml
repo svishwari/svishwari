@@ -6,6 +6,8 @@ variables:
   host: https://unified-api-dev.main.use1.hux-unified-dev1.in
   version: api/v1
   token: ""
+  invalid_id: "60b9601a6021710aa146df2g"
   engagement_id: "60c2fd6555eb844f53cdc665"
   audience_id: "60ef24920f82449e44af16cf"
   destination_id: "60b9601a6021710aa146df2f"
+  facebook_destination_id: "60b9601a6021710aa146df30"
