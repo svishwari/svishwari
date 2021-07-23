@@ -240,7 +240,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_display_ads_audience_performance(self):
+    def test_display_ads_audience_performance_invalid_engagementid(self):
         """
         It validates the schema for Individual Audience
         Display Ads Performance Summary
@@ -265,14 +265,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        # TODO fix validation where aud performance data available
-        # audience_performance = response.json["audience_performance"][0]
         self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
-        # self.assertTrue(
-        #     validate_schema(
-        #         DispAdIndividualAudienceSummary(), audience_performance
-        #     )
-        # )
 
 
 # pylint: disable=too-many-instance-attributes
