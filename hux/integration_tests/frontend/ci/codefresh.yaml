@@ -7,14 +7,18 @@ stages:
 steps:
 
   PrepareBuildDetails:
-    stage: "prepare"
-    title: "Prepare Build Details"
-    image: alpine
-    commands:
-      - cf_export BUILD_NAME=unified-ui-test
-      - cf_export SUB_REPO=hux/integration_tests
-      - cf_export JFROG_REGISTRY=unified-docker-dev-local
-      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+    stage: prepare
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      GetTriggerName:
+        stage: prepare
+        title: get trigger name using id from spec yaml
+        type: deloittehux/get-trigger-name
+      BuildNumber:
+        stage: prepare
+        title: Bump default BUILD_NUMBER annotation
+        type: bump-build-number
   
   CloneRepository:
     stage: "prepare"
@@ -22,6 +26,22 @@ steps:
     type: git-clone
     repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
     revision: '${{CF_BRANCH}}'
+
+  NumberTag:
+    stage: prepare
+    description: Set docker tag from build number
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+
+  VersionTag:
+    stage: prepare
+    description: Set docker tag based Git tag
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
 
   BuildImage:
     stage: "docker"
