@@ -13,19 +13,9 @@
           <div class="model-dashboard__card px-6 py-5">
             {{ model.description }}
           </div>
-          <v-card
-            class="
-              d-flex
-              justify-center
-              align-center
-              mt-6
-              rounded-lg
-              box-shadow-5
-            "
-            height="662"
-          >
-            <EmptyStateChart />
-          </v-card>
+          <div class="d-flex justify-center align-center mt-6 rounded-lg">
+            <feature-chart :featureData="featureChartData"></feature-chart>
+          </div>
         </v-col>
         <v-col col="6">
           <div class="d-flex">
@@ -99,14 +89,19 @@
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
+import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
+//TODO: remove it after API Integration
+import data from "@/components/common/featureChart/featureData.json"
+
 export default {
   name: "ModelsDashboard",
   components: {
     Breadcrumb,
     EmptyStateChart,
+    FeatureChart,
     LiftChart,
     Page,
     PageHeader,
@@ -114,6 +109,7 @@ export default {
   data() {
     return {
       //TODO: API integration
+      featureChartData: data.featureList,
       model: {
         model_name: "Propensity to Unsubscribe",
         description:

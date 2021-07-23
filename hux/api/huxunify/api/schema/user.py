@@ -3,10 +3,11 @@ Schemas for the User API
 """
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, validate, List, DateTime, Nested, Dict
+from marshmallow.fields import Str, Int, validate, List, Nested, Dict
 
 from huxunifylib.database.constants import USER_ROLES
 from huxunify.api.schema.utils import validate_object_id
+from huxunify.api.schema.custom_schemas import DateTimeWithZ
 from huxunify.api import constants as api_c
 
 
@@ -37,4 +38,4 @@ class UserSchema(Schema):
     favorites = Nested(Favorites, required=True)
     profile_photo = Str()
     login_count = Int()
-    modified = DateTime(required=True)
+    modified = DateTimeWithZ(required=True)

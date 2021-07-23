@@ -10,7 +10,7 @@ import requests_mock
 import mongomock
 from bson import ObjectId
 
-from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.connectors import FacebookConnector
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import (

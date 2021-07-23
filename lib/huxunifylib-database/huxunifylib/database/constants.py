@@ -16,6 +16,7 @@ NAME = "name"
 TYPE = "type"
 OBJECT_ID = "id"
 CONFIGURATION = "configuration"
+SIZE = "size"
 
 # general fields
 AGE = "age"
@@ -202,6 +203,7 @@ SUPPORTED_DELIVERY_PLATFORMS = [
     DELIVERY_PLATFORM_GOOGLE,
     DELIVERY_PLATFORM_AMAZON,
     DELIVERY_PLATFORM_TWILIO,
+    DELIVERY_PLATFORM_QUALTRICS,
 ]
 
 LOOKALIKE = "lookalike"
@@ -293,6 +295,7 @@ FIRST_NAME_FILTER = "first_name_filter"
 
 # Engagement constants
 ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT = "engagement"
 ENGAGEMENT_NAME = "name"
 ENGAGEMENT_DESCRIPTION = "description"
 ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"

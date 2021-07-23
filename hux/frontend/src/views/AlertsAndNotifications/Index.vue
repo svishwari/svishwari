@@ -27,7 +27,7 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pb-7 pl-7 white" v-if="!loading">
+    <v-row class="pb-7 pl-3 white" v-if="!loading">
       <hux-data-table
         :headers="columnDefs"
         :dataItems="getNotificationData"
@@ -67,6 +67,7 @@
         </template>
       </hux-data-table>
     </v-row>
+    <v-divider class="hr-devider"></v-divider>
   </div>
 </template>
 
@@ -209,11 +210,45 @@ export default {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
 }
-:v-deep .v-data-table {
-  .v-data-table__wrapper {
-    tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
-      background: white !important;
-    }
-  }
+
+::v-deep
+  .theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+  background: white !important;
+}
+::v-deep
+  .theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > thead
+  > tr:last-child
+  > th {
+  padding-left: 32px !important;
+}
+::v-deep
+  .theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr:not(:last-child)
+  > td:not(.v-data-table__mobile-row),
+.theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr:not(:last-child)
+  > th:not(.v-data-table__mobile-row) {
+  padding-left: 32px !important;
+}
+::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
+.v-data-table > .v-data-table__wrapper > table > thead > tr > td,
+.v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
+  padding-left: 32px !important;
+}
+.hr-devider {
+  margin-top: -27px !important;
 }
 </style>
