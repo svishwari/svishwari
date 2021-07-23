@@ -2,6 +2,7 @@
 """
 Paths for engagement API
 """
+import logging
 from http import HTTPStatus
 from typing import Tuple
 from itertools import groupby
@@ -69,50 +70,48 @@ def before_request():
 
 
 # pylint: disable=too-many-locals
-def group_eng_metrics(
-    engagement,
-    delivery_jobs,
-    performance_metrics,
-    target_destinations,
-    metrics_type,
+def group_engagement_performance_metrics(
+    engagement: object,
+    delivery_jobs: list,
+    performance_metrics: list,
+    target_destinations: list,
+    metrics_type: str,
 ) -> dict:
     """Group performance metrics for engagement
 
     Args:
-        engagement (Object) : Engagement object.
+        engagement (object) : Engagement object.
         delivery_jobs (list): List of delivery jobs.
         performance_metrics (list): List of performance metrics.
         target_destinations (list): List of target destinations.
         metrics_type (str): Type of performance metrics.
 
     Returns:
-        dict: Grouped performance metrics .
+        dict: Grouped performance metrics.
     """
-
-    # For each audience in engagement.audience
-    #   1. Group all delivery jobs by audience id
-    #   2. Using delivery jobs from (1), get corresponding performance metrics
-    #   3. Group performance metrics for the audience
-    # Get metrics grouped by audience
 
     database = get_db_client()
     audience_metrics_list = []
+    # For each audience in engagement.audience
     for eng_audience in engagement.get(api_c.AUDIENCES):
         audience = orchestration_management.get_audience(
             database, eng_audience.get(api_c.ID)
         )
         if audience is None:
+            logging.warning("Audience can not found, ignoring metrics for it.")
             continue
 
-        audience_jobs = [
+        # Group all delivery jobs by audience id
+        audience_delivery_jobs = [
             x
             for x in delivery_jobs
             if x[db_c.AUDIENCE_ID] == audience.get(db_c.ID)
         ]
+        #  Group performance metrics for the audience
         audience_metrics = update_metrics(
             audience.get(db_c.ID),
             audience[api_c.NAME],
-            audience_jobs,
+            audience_delivery_jobs,
             performance_metrics,
             metrics_type,
         )
@@ -125,23 +124,28 @@ def group_eng_metrics(
                 destination_id is None
                 or destination_id not in target_destinations
             ):
+                logging.warning(
+                    "Destination can not found or is not a match, ignoring metrics for it."
+                )
                 continue
-            audience_dest_jobs = [
+            # Group all delivery jobs by audience.destination
+            audience_destination_jobs = [
                 x
-                for x in audience_jobs
+                for x in audience_delivery_jobs
                 if x[db_c.DELIVERY_PLATFORM_ID] == destination_id
             ]
+            #  Group performance metrics for the destination
             destination_metrics = update_metrics(
                 destination_id,
                 delivery_platform_management.get_delivery_platform(
                     database, destination_id
                 )[api_c.NAME],
-                audience_dest_jobs,
+                audience_destination_jobs,
                 performance_metrics,
                 metrics_type,
             )
             audience_destination_metrics_list.append(destination_metrics)
-            # TODO : Group by campaigns
+            # TODO : HUS-796 - Group performance metrics by campaigns
         audience_metrics[
             api_c.DESTINATIONS
         ] = audience_destination_metrics_list
@@ -1340,7 +1344,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 api_c.DISPLAY_ADS,
             )
         }
-        audience_metrics_list = group_eng_metrics(
+        audience_metrics_list = group_engagement_performance_metrics(
             engagement,
             delivery_jobs,
             performance_metrics,
@@ -1466,7 +1470,7 @@ class EngagementMetricsEmail(SwaggerView):
                 api_c.EMAIL,
             )
         }
-        audience_metrics_list = group_eng_metrics(
+        audience_metrics_list = group_engagement_performance_metrics(
             engagement,
             delivery_jobs,
             performance_metrics,
