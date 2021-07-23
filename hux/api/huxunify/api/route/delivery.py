@@ -4,7 +4,6 @@ Paths for delivery API
 """
 from functools import wraps
 from http import HTTPStatus
-from random import randrange
 from typing import Tuple
 from bson import ObjectId
 from flask import Blueprint, jsonify
@@ -19,7 +18,10 @@ from huxunifylib.database.engagement_management import (
     get_engagements_by_audience,
 )
 from huxunifylib.database.notification_management import create_notification
-from huxunifylib.database.orchestration_management import get_audience
+from huxunifylib.database.orchestration_management import (
+    get_audience,
+    get_all_audiences,
+)
 
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
@@ -619,10 +621,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         }
 
         # get audiences at once to lookup name for each delivery job
-        audience_dict = {
-            x[db_c.ID]: x
-            for x in orchestration_management.get_all_audiences(database)
-        }
+        audience_dict = {x[db_c.ID]: x for x in get_all_audiences(database)}
 
         delivery_history = []
         for job in delivery_jobs:
@@ -742,9 +741,7 @@ class AudienceDeliverHistoryView(SwaggerView):
         # get engagements ahead of time by the audience
         engagement_dict = {
             x[db_c.ID]: x
-            for x in engagement_management.get_engagements_by_audience(
-                database, audience_id
-            )
+            for x in get_engagements_by_audience(database, audience_id)
         }
 
         delivery_history = []
