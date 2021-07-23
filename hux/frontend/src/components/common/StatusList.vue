@@ -90,6 +90,12 @@
                       >
                         {{ option.title }}
                       </v-list-item-title>
+                      <v-list-item-title
+                        v-else-if="option.title === 'Edit delivery schedule'"
+                        @click="onEditDeliverySchedule(item)"
+                      >
+                        {{ option.title }}
+                      </v-list-item-title>
                       <v-list-item-title v-else>
                         {{ option.title }}
                       </v-list-item-title>
@@ -197,6 +203,22 @@
       title="YAY!"
       message="Successfully delivered your audience."
     />
+
+    <confirm-modal
+      v-model="showConfirmModal"
+      title="You are about to edit delivery schedule."
+      rightBtnText="Yes, edit delivery schedule"
+      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+      @onCancel="closeModal()"
+      @onConfirm="openEditDeliveryScheduleDrawer()"
+    />
+
+    <edit-delivery-schedule
+      v-model="editDeliveryDrawer"
+      :audience-id="audience.id"
+      :destination="selectedDestination"
+      :engagement-id="engagementId"
+    />
   </v-card>
 </template>
 
@@ -207,9 +229,18 @@ import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import Tooltip from "./Tooltip.vue"
 import HuxAlert from "@/components/common/HuxAlert.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 
 export default {
-  components: { Logo, Status, Tooltip, HuxAlert },
+  components: {
+    Logo,
+    Status,
+    Tooltip,
+    HuxAlert,
+    ConfirmModal,
+    EditDeliverySchedule,
+  },
 
   name: "StatusList",
 
@@ -218,19 +249,30 @@ export default {
       options: [
         { id: 1, title: "Deliver now", active: true },
         { id: 2, title: "Create lookalike", active: false },
-        { id: 3, title: "Edit delivery schedule", active: false },
+        { id: 3, title: "Edit delivery schedule", active: true },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
         { id: 6, title: "Remove destination", active: false },
       ],
       topNavItems: [
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: this.audience && this.audience.destinations.length > 0,
+        },
         { id: 2, title: "Add a destination", active: true },
         { id: 3, title: "Create lookalike", active: false },
         { id: 4, title: "Pause all delivery", active: false },
-        { id: 5, title: "Remove audience", active: false },
+        { id: 5, title: "Remove audience", active: true },
       ],
       showDeliveryAlert: false,
+      showConfirmModal: false,
+      editDeliveryDrawer: false,
+      selectedDestination: {
+        name: null,
+        type: null,
+        id: null,
+      },
     }
   },
 
@@ -257,6 +299,24 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
     }),
 
+    closeModal() {
+      this.showConfirmModal = false
+    },
+
+    closeDrawer() {
+      this.editDeliveryDrawer = false
+    },
+
+    onEditDeliverySchedule(destination) {
+      this.showConfirmModal = true
+      this.selectedDestination = destination
+    },
+
+    openEditDeliveryScheduleDrawer() {
+      this.closeModal()
+      this.editDeliveryDrawer = true
+    },
+
     getSize(value) {
       return getApproxSize(value)
     },
@@ -274,6 +334,9 @@ export default {
           break
         case "add a destination":
           this.triggerAddDestination(engagementId, audienceId)
+          break
+        case "remove audience":
+          this.$emit("removeAudience", this.audience)
           break
         default:
           break

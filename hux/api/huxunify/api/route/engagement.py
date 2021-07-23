@@ -11,7 +11,7 @@ from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
-from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.connectors import FacebookConnector
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.engagement_management import (
     get_engagement,
