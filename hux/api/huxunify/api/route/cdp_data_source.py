@@ -288,7 +288,6 @@ class DeleteCdpDataSource(SwaggerView):
                 "message": f"Invalid CDP data source ID received {data_source_id}."
             }, HTTPStatus.BAD_REQUEST
         database = get_db_client()
-        data_source = get_data_source(database, data_source_id)
         success_flag = delete_data_source(database, data_source_id)
 
         if success_flag:
@@ -397,10 +396,6 @@ class BatchUpdateDataSources(SwaggerView):
                 updated_data_sources = [
                     get_data_source(database, data_source_id)
                     for data_source_id in data_source_ids
-                ]
-                updated_data_sources_names = [
-                    data_source[db_c.NAME]
-                    for data_source in updated_data_sources
                 ]
                 return (
                     jsonify(
