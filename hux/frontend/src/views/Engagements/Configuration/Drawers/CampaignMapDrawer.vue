@@ -2,20 +2,20 @@
   <drawer v-model="localToggle" content-padding="pa-0 mapping-drawer">
     <template #header-left>
       <div class="d-flex align-center">
-        <h3 class="text-h3">Map Facebook Campaign</h3>
+        <h3 class="text-h3 neroBlack--text">Map Facebook Campaign</h3>
       </div>
     </template>
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
       <div class="py-5 px-6">
-        <span class="text-caption">
+        <span class="text-caption neroBlack--text">
           To see KPI’s for Facebook, map to a Facebook campaign and select a
           delivery time.
         </span>
         <data-cards
           bordered
-          :items="Object.values(campaigns)"
+          :items="mappings"
           :fields="[
             {
               key: 'campaign',
@@ -32,13 +32,13 @@
               col: 2,
             },
           ]"
-          class="pt-13 campaigns-wrapper"
+          class="pt-11 campaigns-wrapper"
           v-if="!loading"
         >
           <template #field:campaign="row">
             <hux-dropdown
               :selected="row.value"
-              :items="campaignOptions"
+              :items="availableCampaignsOptions()"
               @on-select="onSelectedItem(row, $event, 'campaign')"
             >
             </hux-dropdown>
@@ -62,6 +62,7 @@
                     height="21"
                     width="21"
                     @click="addNewMappingItem()"
+                    v-if="availableCampaignsOptions().length > 0"
                   >
                     <v-icon size="14">mdi-plus</v-icon>
                   </v-btn>
@@ -73,6 +74,7 @@
                 icon
                 color="primary"
                 v-if="canDeleteMapping(row.index)"
+                height="21"
                 @click="removeMapping(row.index)"
               >
                 <v-icon>mdi-delete-outline</v-icon>
@@ -83,10 +85,12 @@
       </div>
     </template>
     <template #footer-left>
-      <v-btn tile color="white" @click="closeDrawer()">
+      <v-btn tile color="white" @click="closeDrawer">
         <span class="primary--text">Cancel</span>
       </v-btn>
-      <v-btn tile color="primary" @click="mapSelections"> Map selection </v-btn>
+      <v-btn tile color="primary" @click="mapSelections" :disabled="!canMapNow">
+        Map selection
+      </v-btn>
     </template>
   </drawer>
 </template>
@@ -111,11 +115,10 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      campaigns: {
-        0: {
-          campaign: null,
-          delivery_job: null,
-        },
+      campaigns: [],
+      emptyCampaign: {
+        campaign: null,
+        delivery_job: null,
       },
       identityAttrs: {},
     }
@@ -131,42 +134,67 @@ export default {
   },
   computed: {
     ...mapGetters({
-      campaignMappings: "engagements/destinationCampaignMappings",
+      campaignMappingOptions: "engagements/campaignMappingOptions",
+      campaignMapping: "engagements/campaignMapping",
     }),
     campaignOptions() {
-      if (this.campaignMappings && this.campaignMappings.campaigns) {
-        return this.campaignMappings.campaigns
+      if (
+        this.campaignMappingOptions &&
+        this.campaignMappingOptions.campaigns
+      ) {
+        return this.campaignMappingOptions.campaigns
       }
       return []
     },
+    mappings() {
+      return this.campaigns.map((camp) => {
+        return camp["id"]
+          ? {
+              campaign: this.campaignMappingOptions.campaigns.filter(
+                (camOpt) => camOpt.id === camp.id
+              )[0],
+              delivery_job: this.campaignMappingOptions.delivery_jobs.filter(
+                (camOpt) => camOpt.id === camp.delivery_job_id
+              )[0],
+            }
+          : camp
+      })
+    },
+    canMapNow() {
+      return this.mappings.every((camp) => camp.campaign && camp.delivery_job)
+    },
     deliveryOptions() {
-      return this.campaignMappings.delivery_jobs
+      return this.campaignMappingOptions.delivery_jobs
     },
   },
   methods: {
     ...mapActions({
-      getCampaignMappings: "engagements/getCampaignMappings",
+      getCampaignMappingsOptions: "engagements/fetchCampaignMappings",
+      getCampaigns: "engagements/getCampaigns",
     }),
-
+    reset() {
+      this.campaigns = [
+        {
+          campaign: null,
+          delivery_job: null,
+        },
+      ]
+    },
     closeDrawer() {
       this.localToggle = false
       this.reset()
     },
     addNewMappingItem() {
-      const key = new Date().getTime().toString()
-      this.$set(this.campaigns, key, {
-        campaign: null,
-        delivery_job: null,
-      })
+      this.campaigns.push(JSON.parse(JSON.stringify(this.emptyCampaign)))
     },
     removeMapping(index) {
-      this.$delete(this.campaigns, Object.keys(this.campaigns)[index])
+      this.campaigns.splice(index, 1)
     },
     canAddNewMapping(index) {
-      return Object.values(this.campaigns).length - 1 === index
+      return this.campaigns.length - 1 === index
     },
     canDeleteMapping() {
-      return Object.values(this.campaigns).length > 1
+      return this.campaigns.length > 1
     },
     onSelectedItem(item, value, type) {
       item.item[type] = value
@@ -174,18 +202,29 @@ export default {
     mapSelections() {
       this.localToggle = false
       this.$emit("onCampaignMappings", {
-        mappings: this.campaigns,
+        mappings: this.mappings,
         attrs: this.identityAttrs,
       })
     },
-    onCancelAndBack() {
-      this.$emit("onCancelAndBack")
-      this.reset()
+    availableCampaignsOptions() {
+      const selectedCampaigns = this.mappings.map(
+        (camp) => camp.campaign && camp.campaign.name
+      )
+      return this.campaignOptions.filter(
+        (option) => !selectedCampaigns.includes(option.name)
+      )
     },
-    async fetchMappings(attrs) {
+    async loadCampaignMappings(attrs) {
+      this.reset()
       this.identityAttrs = attrs
       this.loading = true
-      await this.getCampaignMappings(attrs)
+      await this.getCampaigns(attrs)
+      await this.getCampaignMappingsOptions(attrs)
+      const campaigns = await this.campaignMapping(attrs.destinationId)
+      this.campaigns =
+        campaigns.length > 0
+          ? campaigns
+          : [JSON.parse(JSON.stringify(this.emptyCampaign))]
       this.loading = false
     },
   },
