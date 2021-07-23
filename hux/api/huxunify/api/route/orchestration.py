@@ -104,20 +104,32 @@ class AudienceView(SwaggerView):
 
         """
 
+        # get all audiences and deliveries
         database = get_db_client()
-        audiences = orchestration_management.get_all_audiences(database)
+        audiences = orchestration_management.get_all_audiences_and_deliveries(
+            database
+        )
+
+        # get all audiences because document DB does not allow for replaceRoot
+        audience_dict = {
+            x[db_c.ID]: x
+            for x in orchestration_management.get_all_audiences(database)
+        }
+
+        # process each audience object
         for audience in audiences:
+            # workaround because DocumentDB does not allow $replaceRoot
+            # do replace root by bringing the nested engagement up a level.
+            audience.update(audience_dict[audience[db_c.ID]])
+
+            # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
-
-            # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-            # Add stub size, last_delivered_on for test purposes.
-            audience[api_c.SIZE] = randrange(10000000)
-            audience[
-                api_c.AUDIENCE_LAST_DELIVERED
-            ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
-                days=1000
+            audience[api_c.SIZE] = (
+                audience[db_c.DELIVERIES][0].get(db_c.SIZE, 0)
+                if audience[db_c.DELIVERIES]
+                else 0
             )
 
         return (
