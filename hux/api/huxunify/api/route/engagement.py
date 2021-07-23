@@ -2,6 +2,7 @@
 """
 Paths for engagement API
 """
+import logging
 from http import HTTPStatus
 from typing import Tuple
 from itertools import groupby
@@ -67,6 +68,100 @@ engagement_bp = Blueprint(api_c.ENGAGEMENT_ENDPOINT, import_name=__name__)
 def before_request():
     """Protect all of the engagement endpoints."""
     pass  # pylint: disable=unnecessary-pass
+
+
+# pylint: disable=too-many-locals
+def group_engagement_performance_metrics(
+    engagement: object,
+    delivery_jobs: list,
+    performance_metrics: list,
+    target_destinations: list,
+    metrics_type: str,
+) -> dict:
+    """Group performance metrics for engagement
+
+    Args:
+        engagement (object) : Engagement object.
+        delivery_jobs (list): List of delivery jobs.
+        performance_metrics (list): List of performance metrics.
+        target_destinations (list): List of target destinations.
+        metrics_type (str): Type of performance metrics.
+
+    Returns:
+        dict: Grouped performance metrics.
+    """
+
+    database = get_db_client()
+    audience_metrics_list = []
+    # For each audience in engagement.audience
+    for eng_audience in engagement.get(api_c.AUDIENCES):
+        audience = orchestration_management.get_audience(
+            database, eng_audience.get(api_c.ID)
+        )
+        if audience is None:
+            logging.warning(
+                "Audience not found, ignoring performance metrics for it. "
+                "audience_id=%s, engagement_id=%s",
+                eng_audience.get(api_c.ID),
+                engagement.get(db_c.ID),
+            )
+            continue
+
+        # Group all delivery jobs by audience id
+        audience_delivery_jobs = [
+            x
+            for x in delivery_jobs
+            if x[db_c.AUDIENCE_ID] == audience.get(db_c.ID)
+        ]
+        #  Group performance metrics for the audience
+        audience_metrics = update_metrics(
+            audience.get(db_c.ID),
+            audience[api_c.NAME],
+            audience_delivery_jobs,
+            performance_metrics,
+            metrics_type,
+        )
+
+        # Get metrics grouped by audience.destination
+        audience_destination_metrics_list = []
+        for audience_destination in eng_audience.get(api_c.DESTINATIONS):
+            destination_id = audience_destination.get(api_c.ID)
+            if (
+                destination_id is None
+                or destination_id not in target_destinations
+            ):
+                logging.warning(
+                    "Invalid destination encountered, ignoring performance metrics for it. "
+                    "destination_id=%s, audience_id=%s, engagement_id=%s",
+                    destination_id,
+                    eng_audience.get(api_c.ID),
+                    engagement.get(db_c.ID),
+                )
+                continue
+            # Group all delivery jobs by audience.destination
+            audience_destination_jobs = [
+                x
+                for x in audience_delivery_jobs
+                if x[db_c.DELIVERY_PLATFORM_ID] == destination_id
+            ]
+            #  Group performance metrics for the destination
+            destination_metrics = update_metrics(
+                destination_id,
+                delivery_platform_management.get_delivery_platform(
+                    database, destination_id
+                )[api_c.NAME],
+                audience_destination_jobs,
+                performance_metrics,
+                metrics_type,
+            )
+            audience_destination_metrics_list.append(destination_metrics)
+            # TODO : HUS-796 - Group performance metrics by campaigns
+        audience_metrics[
+            api_c.DESTINATIONS
+        ] = audience_destination_metrics_list
+        audience_metrics_list.append(audience_metrics)
+
+    return audience_metrics_list
 
 
 @add_view_to_blueprint(
@@ -1152,7 +1247,6 @@ class EngagementMetricsDisplayAds(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    # pylint: disable=too-many-locals
     @api_error_handler()
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves display ad performance metrics.
@@ -1176,14 +1270,18 @@ class EngagementMetricsDisplayAds(SwaggerView):
         # setup the database
         database = get_db_client()
 
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        if not engagement:
+            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
+
         # Get all destinations that are related to Display Ad metrics
-        destination = (
+        ads_destination = (
             delivery_platform_management.get_delivery_platform_by_type(
                 database, db_c.DELIVERY_PLATFORM_FACEBOOK
             )
         )
 
-        if not destination:
+        if not ads_destination:
             return {
                 "message": "No performance metrics found for engagement."
             }, HTTPStatus.OK
@@ -1192,7 +1290,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
         performance_metrics = get_performance_metrics_by_engagement_details(
             database,
             ObjectId(engagement_id),
-            [destination.get(db_c.ID)],
+            [ads_destination.get(db_c.ID)],
         )
 
         if not performance_metrics:
@@ -1208,7 +1306,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
         delivery_jobs = [
             x
             for x in delivery_jobs
-            if x[db_c.DELIVERY_PLATFORM_ID] == destination.get(db_c.ID)
+            if x[db_c.DELIVERY_PLATFORM_ID] == ads_destination.get(db_c.ID)
         ]
 
         if not delivery_jobs:
@@ -1223,61 +1321,13 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 api_c.DISPLAY_ADS,
             )
         }
-
-        # Group all the performance metrics engagement.audience. This is done by
-        #   1. Group all delivery jobs by audience id
-        #   2. Using delivery jobs of an audience, get all the performance metrics
-        #   3. Group performance metrics for the audience
-        aud_group = sorted(delivery_jobs, key=itemgetter(api_c.AUDIENCE_ID))
-        # Get metrics grouped by audience
-        audience_metrics_list = []
-        for audience_id, audience_group in groupby(
-            aud_group, key=itemgetter(api_c.AUDIENCE_ID)
-        ):
-            audience = orchestration_management.get_audience(
-                get_db_client(), audience_id
-            )
-            if audience is None:
-                return {
-                    "message": "Engagement audience not found."
-                }, HTTPStatus.NOT_FOUND
-            audience_jobs = list(audience_group)
-            audience_metrics = update_metrics(
-                audience_id,
-                audience[api_c.NAME],
-                audience_jobs,
-                performance_metrics,
-                api_c.DISPLAY_ADS,
-            )
-
-            # Group all the performance metrics engagement.audience.destination.
-            destination_group = sorted(
-                audience_jobs, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
-            )
-            # Get metrics grouped by audience.destination
-            audience_destination_metrics_list = []
-            for destination_id, aud_dest_group in groupby(
-                destination_group, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
-            ):
-                audience_dest_jobs = list(aud_dest_group)
-                destination_metrics = update_metrics(
-                    destination_id,
-                    delivery_platform_management.get_delivery_platform(
-                        database, destination_id
-                    )[api_c.NAME],
-                    audience_dest_jobs,
-                    performance_metrics,
-                    api_c.DISPLAY_ADS,
-                )
-                audience_destination_metrics_list.append(destination_metrics)
-
-            audience_metrics[
-                api_c.DESTINATIONS
-            ] = audience_destination_metrics_list
-            audience_metrics_list.append(audience_metrics)
-
-            # TODO : Group by campaigns
-
+        audience_metrics_list = group_engagement_performance_metrics(
+            engagement,
+            delivery_jobs,
+            performance_metrics,
+            [ads_destination.get(db_c.ID)],
+            api_c.DISPLAY_ADS,
+        )
         final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
 
         return (
@@ -1324,7 +1374,6 @@ class EngagementMetricsEmail(SwaggerView):
     tags = [api_c.ENGAGEMENT_TAG]
 
     @api_error_handler()
-    # pylint: disable=too-many-locals
     def get(self, engagement_id: str) -> Tuple[dict, int]:
         """Retrieves email performance metrics.
 
@@ -1340,11 +1389,16 @@ class EngagementMetricsEmail(SwaggerView):
                 HTTP Status Code
 
         """
+
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # setup the database
         database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        if not engagement:
+            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
         # Get all destinations that are related to Email metrics
         email_destination = (
@@ -1393,64 +1447,14 @@ class EngagementMetricsEmail(SwaggerView):
                 api_c.EMAIL,
             )
         }
-
-        # Group all the performance metrics engagement.audience. This is done by
-        #   1. Group all delivery jobs by audience id
-        #   2. Using delivery jobs of an audience, get all the performance metrics
-        #   3. Group performance metrics for the audience
-        aud_group = sorted(delivery_jobs, key=itemgetter(api_c.AUDIENCE_ID))
-        # Get metrics grouped by audience
-        audience_metrics_list = []
-        for audience_id, audience_group in groupby(
-            aud_group, key=itemgetter(api_c.AUDIENCE_ID)
-        ):
-            audience = orchestration_management.get_audience(
-                get_db_client(), audience_id
-            )
-            if audience is None:
-                return {
-                    "message": "Engagement audience not found."
-                }, HTTPStatus.NOT_FOUND
-
-            audience_jobs = list(audience_group)
-            audience_metrics = update_metrics(
-                audience_id,
-                audience[api_c.NAME],
-                audience_jobs,
-                performance_metrics,
-                api_c.EMAIL,
-            )
-
-            # Group all the performance metrics engagement.audience.destination.
-            destination_group = sorted(
-                audience_jobs, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
-            )
-            # Get metrics grouped by audience.destination
-            audience_destination_metrics_list = []
-            for destination_id, aud_dest_group in groupby(
-                destination_group, key=itemgetter(db_c.DELIVERY_PLATFORM_ID)
-            ):
-                audience_dest_jobs = list(aud_dest_group)
-                destination_metrics = update_metrics(
-                    destination_id,
-                    delivery_platform_management.get_delivery_platform(
-                        database, destination_id
-                    )[api_c.NAME],
-                    audience_dest_jobs,
-                    performance_metrics,
-                    api_c.EMAIL,
-                )
-                audience_destination_metrics_list.append(destination_metrics)
-
-            audience_metrics[
-                api_c.DESTINATIONS
-            ] = audience_destination_metrics_list
-            audience_metrics_list.append(audience_metrics)
-
-            # TODO : Group by campaigns
-
+        audience_metrics_list = group_engagement_performance_metrics(
+            engagement,
+            delivery_jobs,
+            performance_metrics,
+            [email_destination.get(db_c.ID)],
+            api_c.EMAIL,
+        )
         final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
-
         return (
             AudiencePerformanceEmailSchema().dump(final_metric),
             HTTPStatus.OK,
