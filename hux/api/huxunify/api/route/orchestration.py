@@ -9,7 +9,7 @@ from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
-from marshmallow import INCLUDE
+from marshmallow import INCLUDE, ValidationError
 from pymongo import MongoClient
 
 from huxunifylib.database import (
@@ -35,9 +35,8 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
-    api_error_handler,
+    api_error_handler
 )
-from huxunify.api.route.utils import api_error_handler
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
