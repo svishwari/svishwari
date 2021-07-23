@@ -81,6 +81,7 @@ def validate_schema(schema: Schema, response: dict) -> bool:
         return False
 
 
+# pylint: disable=too-many-instance-attributes
 class TestEngagementMetricsDisplayAds(TestCase):
     """
     Purpose of this class is to test Engagement Metrics of Display Ads
@@ -118,10 +119,6 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.audience_id = create_audience(self.database, "Test Audience", [])[
             db_c.ID
         ]
-        self.engagement_id = set_engagement(
-            self.database, "Test engagement", None, [], None, None, None
-        )
-
         self.delivery_platform = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -129,7 +126,25 @@ class TestEngagementMetricsDisplayAds(TestCase):
             authentication_details={},
             status=db_c.STATUS_SUCCEEDED,
         )
-
+        self.audiences = [
+            {
+                api_c.ID: self.audience_id,
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: self.delivery_platform[db_c.ID],
+                    },
+                ],
+            }
+        ]
+        self.engagement_id = set_engagement(
+            self.database,
+            "Test engagement",
+            None,
+            self.audiences,
+            None,
+            None,
+            False,
+        )
         self.delivery_job = set_delivery_job(
             self.database,
             self.audience_id,
@@ -252,7 +267,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
 
         # TODO fix validation where aud performance data available
         # audience_performance = response.json["audience_performance"][0]
-        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
         # self.assertTrue(
         #     validate_schema(
         #         DispAdIndividualAudienceSummary(), audience_performance
@@ -260,6 +275,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         # )
 
 
+# pylint: disable=too-many-instance-attributes
 class TestEngagementMetricsEmail(TestCase):
     """
     Purpose of this class is to test Engagement Metrics of Email
@@ -297,9 +313,6 @@ class TestEngagementMetricsEmail(TestCase):
         self.audience_id = create_audience(self.database, "Test Audience", [])[
             db_c.ID
         ]
-        self.engagement_id_sfmc = set_engagement(
-            self.database, "Test engagement sfmc", None, [], None, None, None
-        )
 
         self.delivery_platform_sfmc = set_delivery_platform(
             self.database,
@@ -307,6 +320,25 @@ class TestEngagementMetricsEmail(TestCase):
             "sfmc_delivery_platform",
             authentication_details={},
             status=db_c.STATUS_SUCCEEDED,
+        )
+        self.audiences = [
+            {
+                api_c.ID: self.audience_id,
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: self.delivery_platform_sfmc[db_c.ID],
+                    },
+                ],
+            }
+        ]
+        self.engagement_id_sfmc = set_engagement(
+            self.database,
+            "Test engagement sfmc",
+            None,
+            self.audiences,
+            None,
+            None,
+            False,
         )
 
         self.delivery_job_sfmc = set_delivery_job(
