@@ -126,11 +126,6 @@ class AudienceView(SwaggerView):
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
-            audience[api_c.SIZE] = (
-                audience[db_c.DELIVERIES][0].get(db_c.SIZE, 0)
-                if audience[db_c.DELIVERIES]
-                else 0
-            )
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),

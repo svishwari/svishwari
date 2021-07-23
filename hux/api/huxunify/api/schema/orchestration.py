@@ -80,7 +80,7 @@ class AudienceGetSchema(Schema):
         },
     )
 
-    size = fields.Int(example=6173223)
+    size = fields.Int(default=0)
     last_delivered = DateTimeWithZ(attribute=api_c.AUDIENCE_LAST_DELIVERED)
 
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
