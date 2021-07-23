@@ -20,22 +20,15 @@ class DeliveriesSchema(Schema):
     Delivery schema class
     """
 
-    _id = fields.String(
-        data_key=api_c.ID,
-        example="5f5f7262997acad4bac4373b",
-        required=True,
-        validate=validate_object_id,
-    )
-    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
-    update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
+    _id = fields.String()
+    create_time = DateTimeWithZ()
+    update_time = DateTimeWithZ()
     created_by = fields.String()
     updated_by = fields.String()
     name = fields.String()
     status = fields.String()
     size = fields.Integer(attribute=db_c.DELIVERY_PLATFORM_AUD_SIZE)
-    delivery_platform_type = fields.String(
-        attribute=api_c.DELIVERY_PLATFORM_TYPE
-    )
+    delivery_platform_type = fields.String()
 
 
 class EngagementDeliverySchema(EngagementGetSchema):

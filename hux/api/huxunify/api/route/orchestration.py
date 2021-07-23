@@ -26,8 +26,6 @@ from huxunify.api.schema.orchestration import (
     AudiencePutSchema,
     AudiencePostSchema,
 )
-
-# weight status
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
