@@ -1,6 +1,6 @@
 import faker from "faker"
 
-export default {
+const CampaignMappingOptionsFactory = {
   campaigns: (() => {
     let campaigns = []
     let limit = faker.datatype.number({ min: 3, max: 3 })
@@ -28,3 +28,6 @@ export default {
     return jobs
   })(),
 }
+const CampaignFactory = {}
+
+export { CampaignMappingOptionsFactory, CampaignFactory }
