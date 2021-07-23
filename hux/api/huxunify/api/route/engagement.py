@@ -98,7 +98,12 @@ def group_engagement_performance_metrics(
             database, eng_audience.get(api_c.ID)
         )
         if audience is None:
-            logging.warning("Audience can not found, ignoring metrics for it.")
+            logging.warning(
+                "Audience not found, ignoring performance metrics for it. "
+                "audience_id=%s, engagement_id=%s",
+                eng_audience.get(api_c.ID),
+                engagement.get(db_c.ID),
+            )
             continue
 
         # Group all delivery jobs by audience id
@@ -125,7 +130,11 @@ def group_engagement_performance_metrics(
                 or destination_id not in target_destinations
             ):
                 logging.warning(
-                    "Destination can not found or is not a match, ignoring metrics for it."
+                    "Invalid destination encountered, ignoring performance metrics for it. "
+                    "destination_id=%s, audience_id=%s, engagement_id=%s",
+                    destination_id,
+                    eng_audience.get(api_c.ID),
+                    engagement.get(db_c.ID),
                 )
                 continue
             # Group all delivery jobs by audience.destination

@@ -240,7 +240,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
 
         self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
-    def test_display_ads_audience_performance_invalid_engagementid(self):
+    def test_display_ads_audience_performance_invalid_engagement_id(self):
         """
         It validates the schema for Individual Audience
         Display Ads Performance Summary
