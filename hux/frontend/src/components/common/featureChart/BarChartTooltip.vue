@@ -4,19 +4,6 @@
       tile
       v-if="showTooltip"
       :style="{
-        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
-        'border-radius': '0px !important',
-      }"
-      class="mx-auto score-tooltip-style"
-    >
-      <div class="bar-hover">
-        {{ sourceInput.score }}
-      </div>
-    </v-card>
-    <v-card
-      tile
-      v-if="showTooltip"
-      :style="{
         transform: `translate(${position.x}px, ${position.y}px)`,
         'border-radius': '0px !important',
       }"
@@ -84,8 +71,8 @@ export default {
   border-radius: 0px;
   max-width: 230px;
   height: auto;
-  top: -650px;
-  left: -350px;
+  top: -620px;
+  left: -230px;
   z-index: 1;
   .bar-hover {
     @extend .card-padding;
@@ -97,14 +84,5 @@ export default {
       margin-top: 8px;
     }
   }
-}
-
-.score-tooltip-style {
-  @extend .description-tooltip-style;
-  max-width: 61px;
-  height: 34px;
-  top: -650px;
-  left: -134px;
-  z-index: 1;
 }
 </style>

@@ -17,6 +17,19 @@
           ref="huxChart"
           @mouseover="getCordinates($event)"
         ></div>
+        <v-card
+          tile
+          v-if="showScoreTip"
+          :style="{
+            transform: `translate(${scoreTip.xPosition}px, ${scoreTip.yPosition}px)`,
+            'border-radius': '0px !important',
+          }"
+          class="mx-auto score-tooltip-style"
+        >
+          <div class="bar-hover">
+            {{ scoreTip.score }}
+          </div>
+        </v-card>
       </v-card-title>
       <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text>
     </v-card>
@@ -41,11 +54,17 @@ export default {
       width: 560,
       height: 620,
       show: false,
+      showScoreTip: false,
+      scoreTip: {
+        score: 0,
+        xPosition: 0,
+        yPosition: 0,
+      },
       tooltip: {
         x: 0,
         y: 0,
       },
-      margin: { top: 20, right: 10, bottom: 70, left: 110 },
+      margin: { top: 20, right: 10, bottom: 70, left: 130 },
       chartData: this.value,
     }
   },
@@ -67,14 +86,18 @@ export default {
 
       let x = d3Scale.scaleLinear().domain([0, 3]).range([0, this.width])
 
-      let appendElipsis = (text) =>
-        text && text.length > 20 ? text.slice(0, 19) + "..." : text
-
       let y = d3Scale
         .scaleBand()
         .range([0, this.height])
         .domain(this.chartData.map((d) => d.name))
         .padding(0.1)
+
+      let appendElipsis = (text) =>
+        text && text.length > 20 ? text.slice(0, 19) + "..." : text
+
+      let featureLabelHover = (data) => {
+        this.tooltipDisplay(true, this.extractFeatureName(data))
+      }
 
       svg
         .append("g")
@@ -83,6 +106,9 @@ export default {
         .call((g) => g.selectAll(".path").attr("stroke", "#d0d0ce"))
         .attr("stroke-width", "0.2")
         .attr("stroke-opacity", "0.3")
+        .selectAll("text")
+        .attr("fill", "#4f4f4f")
+        .style("font-size", "12px")
 
       svg
         .append("g")
@@ -91,7 +117,11 @@ export default {
           g.select("path").attr("opacity", 0.1).attr("stroke", "none")
         })
         .selectAll("text")
+        .attr("fill", "#4f4f4f")
+        .style("font-size", "12px")
         .style("text-anchor", "end")
+        .on("mouseover", (d) => featureLabelHover(d.srcElement))
+        .on("mouseout", () => this.tooltipDisplay(false))
 
       svg
         .append("g")
@@ -127,6 +157,7 @@ export default {
             ")"
         )
         .style("text-anchor", "middle")
+        .attr("fill", "#4f4f4f")
         .text("Score")
 
       svg
@@ -152,25 +183,29 @@ export default {
 
       let removeHoverEffects = () => {
         d3Select.selectAll("rect").style("fill-opacity", "1")
+        this.showTip = false
         d3Select.select(this.$refs.huxChart).select("circle").remove()
+        this.showScoreTip = false
         this.tooltipDisplay(false)
       }
 
       let changeHoverCirclePosition = (data) => {
         let featureData = data
-        featureData.xPosition = x(data.score)
-        featureData.yPosition = y(data.name) + 12
+        this.scoreTip.xPosition = x(data.score)
+        this.scoreTip.yPosition = y(data.name) + 12
+        this.scoreTip.score = data.score
         this.tooltipDisplay(true, featureData)
         svg
           .append("circle")
           .classed("removeableCircle", true)
-          .attr("cx", featureData.xPosition)
-          .attr("cy", featureData.yPosition)
+          .attr("cx", this.scoreTip.xPosition)
+          .attr("cy", this.scoreTip.yPosition)
           .attr("r", 4)
           .style("stroke", "#00A3E0")
           .style("stroke-opacity", "1")
           .style("fill", "white")
           .style("pointer-events", "none")
+        this.showScoreTip = true
       }
     },
 
@@ -182,6 +217,15 @@ export default {
 
     tooltipDisplay(showTip, featureData) {
       this.$emit("tooltipDisplay", showTip, featureData)
+    },
+
+    extractFeatureName(text) {
+      let svgString = new XMLSerializer().serializeToString(text).toString()
+      let splitter = svgString.split("</text>")[0].split(">")[1]
+      if (splitter.indexOf("...")) {
+        splitter = splitter.slice(0, -3)
+      }
+      return this.chartData.find((data) => data.name.indexOf(splitter) !== -1)
     },
   },
 
@@ -204,6 +248,16 @@ export default {
   height: 550px;
   .chart-section {
     margin-bottom: -20px;
+  }
+  .score-tooltip-style {
+    @extend .box-shadow-3;
+    border-radius: 0px;
+    padding: 7px 20px 20px 20px;
+    max-width: 61px;
+    height: 34px;
+    top: -603px;
+    left: -118px;
+    z-index: 1;
   }
 }
 </style>
