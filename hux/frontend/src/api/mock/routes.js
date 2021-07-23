@@ -10,8 +10,8 @@ import {
 } from "./factories/destination"
 import idrOverview from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
-import featureData from "../../components/common/featureChart/featureData.json"
-import liftData from "../../components/common/liftChartData.json"
+import featureData from "./factories/featureData.json"
+import liftData from "./factories/liftChartData.json"
 
 export const defineRoutes = (server) => {
   // data sources
