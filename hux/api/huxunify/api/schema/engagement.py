@@ -550,7 +550,7 @@ def weight_delivery_status(engagements: list) -> str:
     delivery status values.
 
     Args:
-        deliveries (list): input delivery list.
+        engagements (list): input engagement delivery list.
 
     Returns:
         str: a string denoting engagement status.
