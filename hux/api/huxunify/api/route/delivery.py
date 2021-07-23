@@ -2,7 +2,6 @@
 """
 Paths for delivery API
 """
-from functools import wraps
 from http import HTTPStatus
 from typing import Tuple
 from bson import ObjectId
@@ -11,7 +10,6 @@ from flasgger import SwaggerView
 from huxunifylib.database import (
     constants as db_c,
     delivery_platform_management,
-    db_exceptions,
 )
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -28,6 +26,8 @@ from huxunify.api.route.utils import (
     get_db_client,
     api_error_handler,
     secured,
+    validate_delivery_params,
+    validate_destination,
 )
 from huxunify.api.schema.orchestration import (
     EngagementDeliveryHistorySchema,
@@ -49,77 +49,6 @@ delivery_bp = Blueprint("/", import_name=__name__)
 def before_request():
     """Protect all of the engagement endpoints."""
     pass  # pylint: disable=unnecessary-pass
-
-
-def validate_delivery_params(func) -> object:
-    """
-    a decorator for delivery.py to
-
-    check if object ids are valid
-    convert all ids to ObjectId
-    check if engagement id exists
-    validates if engagements have audiences
-    check if audience id exists
-    validate that the audience is attached
-    """
-
-    @wraps(func)
-    def wrapper(*args, **kwargs) -> object:
-        # check for valid object id and convert to object id
-        for key, val in kwargs.items():
-            if ObjectId.is_valid(val):
-                kwargs[key] = ObjectId(val)
-            else:
-                return {
-                    "message": api_c.INVALID_OBJECT_ID
-                }, HTTPStatus.BAD_REQUEST
-
-        database = get_db_client()
-
-        # check if engagement id exists
-        engagement_id = kwargs.get("engagement_id", None)
-        if engagement_id:
-            engagement = get_engagement(database, engagement_id)
-            if engagement:
-                if db_c.AUDIENCES not in engagement:
-                    return {
-                        "message": "Engagement has no audiences."
-                    }, HTTPStatus.BAD_REQUEST
-            else:
-                # validate that the engagement has audiences
-                return {
-                    "message": api_c.ENGAGEMENT_NOT_FOUND
-                }, HTTPStatus.NOT_FOUND
-
-        # check if audience id exists
-        audience_id = kwargs.get("audience_id", None)
-        if audience_id:
-            # check if audience id exists
-            audience = None
-            try:
-                audience = get_audience(database, audience_id)
-            except db_exceptions.InvalidID:
-                # get audience returns invalid if the audience does not exist.
-                # pass and catch in the next step.
-                pass
-            if not audience:
-                return {
-                    "message": "Audience does not exist."
-                }, HTTPStatus.BAD_REQUEST
-
-            if audience_id and engagement_id:
-                # validate that the audience is attached
-                audience_ids = [
-                    x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
-                ]
-                if audience_id not in audience_ids:
-                    return {
-                        "message": "Audience is not attached to the engagement."
-                    }, HTTPStatus.BAD_REQUEST
-
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 @add_view_to_blueprint(
@@ -178,6 +107,7 @@ class EngagementDeliverDestinationView(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
     @api_error_handler()
+    @validate_destination()
     @validate_delivery_params
     def post(
         self, engagement_id: str, audience_id: str, destination_id: str
@@ -213,15 +143,6 @@ class EngagementDeliverDestinationView(SwaggerView):
             return {
                 "message": "Destination is not attached to the "
                 "engagement audience."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate destination exists
-        destination = delivery_platform_management.get_delivery_platform(
-            database, destination_id
-        )
-        if not destination:
-            return {
-                "message": "Destination does not exist."
             }, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()

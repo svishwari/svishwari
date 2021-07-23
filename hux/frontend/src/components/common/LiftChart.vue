@@ -16,13 +16,19 @@
 
 <script>
 import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
-import liftChartData from "./liftChartData.json"
 
 export default {
   name: "LiftChart",
 
   components: {
     HuxDataTable,
+  },
+
+  props: {
+    data: {
+      type: Array,
+      required: false,
+    },
   },
 
   data() {
@@ -58,8 +64,6 @@ export default {
           width: "117px",
         },
       ],
-      //TODO: API Integration
-      data: liftChartData.lift_data,
     }
   },
 }

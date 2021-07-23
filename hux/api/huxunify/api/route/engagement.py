@@ -53,6 +53,7 @@ from huxunify.api.route.utils import (
     get_user_name,
     group_perf_metric,
     update_metrics,
+    validate_destination,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -748,6 +749,7 @@ class UpdateCampaignsForAudience(SwaggerView):
     # pylint: disable=too-many-locals
     # pylint: disable=# pylint: disable=too-many-branches
     @api_error_handler()
+    @validate_destination()
     def put(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
@@ -769,16 +771,12 @@ class UpdateCampaignsForAudience(SwaggerView):
         """
 
         # validate object id
-        if not all(
-            ObjectId.is_valid(x)
-            for x in [audience_id, engagement_id, destination_id]
-        ):
+        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
-        destination_id = ObjectId(destination_id)
 
         # check if engagement exists
         database = get_db_client()
@@ -812,15 +810,6 @@ class UpdateCampaignsForAudience(SwaggerView):
             return {
                 "message": "Destination is not attached to the "
                 "engagement audience."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate destination exists
-        destination = delivery_platform_management.get_delivery_platform(
-            database, destination_id
-        )
-        if not destination:
-            return {
-                "message": "Destination does not exist."
             }, HTTPStatus.BAD_REQUEST
 
         body = CampaignPutSchema().load(request.get_json())
@@ -926,6 +915,7 @@ class AudienceCampaignsGetView(SwaggerView):
     # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-branches
     @api_error_handler()
+    @validate_destination()
     def get(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
@@ -947,16 +937,12 @@ class AudienceCampaignsGetView(SwaggerView):
         """
 
         # validate object id
-        if not all(
-            ObjectId.is_valid(x)
-            for x in [audience_id, engagement_id, destination_id]
-        ):
+        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
-        destination_id = ObjectId(destination_id)
 
         # check if engagement exists
         database = get_db_client()
@@ -990,15 +976,6 @@ class AudienceCampaignsGetView(SwaggerView):
             return {
                 "message": "Destination is not attached to the "
                 "engagement audience."
-            }, HTTPStatus.BAD_REQUEST
-
-        # validate destination exists
-        destination = delivery_platform_management.get_delivery_platform(
-            database, destination_id
-        )
-        if not destination:
-            return {
-                "message": "Destination does not exist."
             }, HTTPStatus.BAD_REQUEST
 
         delivery_jobs = (
@@ -1087,6 +1064,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
     @api_error_handler()
+    @validate_destination()
     def get(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
@@ -1106,18 +1084,13 @@ class AudienceCampaignMappingsGetView(SwaggerView):
                 success/failure, HTTP Status.
 
         """
-
         # validate object id
-        if not all(
-            ObjectId.is_valid(x)
-            for x in [audience_id, engagement_id, destination_id]
-        ):
+        if not all(ObjectId.is_valid(x) for x in [audience_id, engagement_id]):
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert to ObjectIds
         engagement_id = ObjectId(engagement_id)
         audience_id = ObjectId(audience_id)
-        destination_id = ObjectId(destination_id)
 
         # check if engagement exists
         database = get_db_client()
@@ -1153,14 +1126,9 @@ class AudienceCampaignMappingsGetView(SwaggerView):
                 "engagement audience."
             }, HTTPStatus.BAD_REQUEST
 
-        # validate destination exists
         destination = delivery_platform_management.get_delivery_platform(
             database, destination_id
         )
-        if not destination:
-            return {
-                "message": "Destination does not exist."
-            }, HTTPStatus.BAD_REQUEST
 
         # Get existing delivery jobs
         delivery_jobs = (
