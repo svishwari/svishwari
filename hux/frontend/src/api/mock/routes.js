@@ -1,6 +1,9 @@
 import { Response } from "miragejs"
+import moment from "moment"
+
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
+import { me } from "./factories/me"
 import {
   destinationsConstants,
   destinationsDataExtensions,
@@ -72,20 +75,43 @@ export const defineRoutes = (server) => {
   server.post("/engagements", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 
+    let errorResponse
+
+    // validations: duplicate name
     let duplicateLength = schema.engagements.where({
       name: requestData.name,
     }).models.length
 
     if (duplicateLength > 0) {
-      return new Response(
-        400,
-        {},
-        {
-          message: "Name already exists.",
-        }
-      )
+      errorResponse = {
+        message: "Name already exists.",
+      }
     }
-    return schema.engagements.create(requestData)
+
+    // validations: null as description
+    if (requestData.description === null) {
+      errorResponse = {
+        description: ["Field may not be null."],
+      }
+    }
+
+    if (errorResponse) {
+      const errorCode = 400
+      const errorHeaders = {}
+      return new Response(errorCode, errorHeaders, errorResponse)
+    }
+
+    const now = moment().toJSON()
+
+    const attrs = {
+      ...requestData,
+      create_time: () => now,
+      created_by: me.full_name(),
+      update_time: () => now,
+      updated_by: me.full_name(),
+    }
+
+    return server.create("engagement", attrs)
   })
 
   server.post("/engagements/:id", (schema) => {
@@ -149,9 +175,35 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
-  server.post("/engagements/:id/audience/:audienceId/deliver", () => {
-    return { message: "Successfully created delivery jobs" }
-  })
+  server.post(
+    "/engagements/:id/audience/:audienceId/deliver",
+    (schema, request) => {
+      const engagementId = request.params.id
+      const audienceId = request.params.audienceId
+
+      const engagement = schema.engagements.find(engagementId)
+
+      const attrs = {
+        status: "Delivering",
+        audiences: engagement.audiences.map((audience) => {
+          if (audience.id === audienceId) {
+            audience.destinations = audience.destinations.map((destination) => {
+              destination.latest_delivery = {
+                update_time: moment().toJSON(),
+                status: "Delivering",
+              }
+              return destination
+            })
+          }
+          return audience
+        }),
+      }
+
+      engagement.update(attrs)
+
+      return { message: "Successfully created delivery jobs" }
+    }
+  )
 
   server.post(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
@@ -281,8 +333,7 @@ export const defineRoutes = (server) => {
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
-  // notification
-  // server.get("/notifications")
+  // notifications
   server.get("/notifications", (schema, request) => {
     const notifications = schema.notifications.all()
     return notifications.slice(0, request.queryParams.batch_size)
@@ -312,7 +363,18 @@ export const defineRoutes = (server) => {
         return schema.destinations.find(id)
       })
     }
-    return schema.audiences.create(requestData)
+
+    const now = moment().toJSON()
+
+    const attrs = {
+      ...requestData,
+      create_time: () => now,
+      created_by: me.full_name(),
+      update_time: () => now,
+      updated_by: me.full_name(),
+    }
+
+    return server.create("audience", attrs)
   })
 
   server.post("/audiences/:id/deliver", () => {

@@ -11,11 +11,13 @@ from flask_marshmallow import Schema
 import mongomock
 from bson import ObjectId
 from marshmallow import ValidationError
+
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
     set_delivery_job,
+    set_performance_metrics,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
@@ -23,90 +25,41 @@ from huxunifylib.database.engagement_management import (
 )
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
-from huxunifylib.connectors.facebook_connector import FacebookConnector
+from huxunifylib.connectors import FacebookConnector
+from huxunify.api.schema.engagement import DisplayAdsSummary, EmailSummary
 from huxunify.api import constants as api_c
 from huxunify.app import create_app
-from huxunify.api.schema.engagement import (
-    EmailSummary,
-    EmailIndividualAudienceSummary,
-    DisplayAdsSummary,
-)
 import huxunify.test.constants as t_c
 
-MOCK_ENGAGEMENT_METRICS = {
-    "summary": {
-        "sent": 125,
-        "hard_bounces": 125,
-        "hard_bounces_rate": 0.1,
-        "delivered": 125,
-        "delivered_rate": 0.1,
-        "open": 365200,
-        "open_rate": 0.1,
-        "clicks": 365200,
-        "click_through_rate": 0.7208,
-        "click_to_open_rate": 0.7208,
-        "unique_clicks": 365200,
-        "unique_opens": 225100,
-        "unsubscribe": 365200,
-        "unsubscribe_rate": 0.7208,
-    },
-    "audience_performance": [
-        {
-            "sent": 125,
-            "hard_bounces": 125,
-            "hard_bounces_rate": 0.1,
-            "delivered": 125,
-            "delivered_rate": 0.1,
-            "open": 365200,
-            "open_rate": 0.1,
-            "clicks": 365200,
-            "click_through_rate": 0.7208,
-            "click_to_open_rate": 0.7208,
-            "unique_clicks": 365200,
-            "unique_opens": 225100,
-            "unsubscribe": 365200,
-            "unsubscribe_rate": 0.7208,
-            "name": "audience_1",
-            "campaigns": [
-                {
-                    "sent": 125,
-                    "hard_bounces": 125,
-                    "hard_bounces_rate": 0.1,
-                    "delivered": 125,
-                    "delivered_rate": 0.1,
-                    "open": 365200,
-                    "open_rate": 0.1,
-                    "clicks": 365200,
-                    "click_through_rate": 0.7208,
-                    "click_to_open_rate": 0.7208,
-                    "unique_clicks": 365200,
-                    "unique_opens": 225100,
-                    "unsubscribe": 365200,
-                    "unsubscribe_rate": 0.7208,
-                    "name": "Facebook",
-                    "is_mapped": True,
-                },
-                {
-                    "sent": 125,
-                    "hard_bounces": 125,
-                    "hard_bounces_rate": 0.1,
-                    "delivered": 125,
-                    "delivered_rate": 0.1,
-                    "open": 365200,
-                    "open_rate": 0.1,
-                    "clicks": 365200,
-                    "click_through_rate": 0.7208,
-                    "click_to_open_rate": 0.7208,
-                    "unique_clicks": 365200,
-                    "unique_opens": 225100,
-                    "unsubscribe": 365200,
-                    "unsubscribe_rate": 0.7208,
-                    "name": "Salesforce Marketing Cloud",
-                    "is_mapped": True,
-                },
-            ],
-        }
-    ],
+EMAIL_METRICS = {
+    "sent": 125,
+    "hard_bounces": 125,
+    "hard_bounces_rate": 0.1,
+    "delivered": 125,
+    "delivered_rate": 0.1,
+    "open": 365200,
+    "open_rate": 0.1,
+    "clicks": 365200,
+    "click_through_rate": 0.7208,
+    "click_to_open_rate": 0.7208,
+    "unique_clicks": 365200,
+    "unique_opens": 225100,
+    "unsubscribe": 365200,
+    "unsubscribe_rate": 0.7208,
+}
+
+DISPLAY_ADS_METRICS = {
+    "impressions": 70487,
+    "spend": 14507,
+    "reach": 8848,
+    "conversions": 16,
+    "clicks": 516,
+    "frequency": 9,
+    "cost_per_thousand_impressions": 0,
+    "click_through_rate": 0,
+    "cost_per_action": 0,
+    "cost_per_click": 0,
+    "engagement_rate": 0,
 }
 
 
@@ -162,8 +115,12 @@ class TestEngagementMetricsDisplayAds(TestCase):
             return_value=self.database,
         ).start()
 
-        self.engagement_id = ObjectId()
-        self.audience_id = ObjectId()
+        self.audience_id = create_audience(self.database, "Test Audience", [])[
+            db_c.ID
+        ]
+        self.engagement_id = set_engagement(
+            self.database, "Test engagement", None, [], None, None, None
+        )
 
         self.delivery_platform = set_delivery_platform(
             self.database,
@@ -173,9 +130,9 @@ class TestEngagementMetricsDisplayAds(TestCase):
             status=db_c.STATUS_SUCCEEDED,
         )
 
-        set_delivery_job(
+        self.delivery_job = set_delivery_job(
             self.database,
-            "audienceID",
+            self.audience_id,
             self.delivery_platform[db_c.ID],
             [
                 {
@@ -184,6 +141,17 @@ class TestEngagementMetricsDisplayAds(TestCase):
                 }
             ],
             self.engagement_id,
+        )
+
+        set_performance_metrics(
+            self.database,
+            self.delivery_platform[db_c.ID],
+            "facebook",
+            self.delivery_job[db_c.ID],
+            None,
+            DISPLAY_ADS_METRICS,
+            None,
+            None,
         )
 
         self.addCleanup(mock.patch.stopall)
@@ -199,7 +167,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
             None
         """
 
-        engagement_id = ObjectId()
+        engagement_id = self.engagement_id
         endpoint = (
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
             f"{engagement_id}/"
@@ -212,10 +180,50 @@ class TestEngagementMetricsDisplayAds(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             validate_schema(DisplayAdsSummary(), response.json["summary"])
         )
-        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(response.json["summary"]["impressions"], 70487)
+        self.assertEqual(response.json["summary"]["spend"], 14507)
+        self.assertTrue(response.json["audience_performance"])
+        self.assertTrue(
+            response.json["audience_performance"][0]["impressions"], 70487
+        )
+        self.assertTrue(
+            response.json["audience_performance"][0]["destinations"]
+        )
+        self.assertTrue(
+            response.json["audience_performance"][0]["destinations"][0][
+                "impressions"
+            ],
+            70487,
+        )
+
+    def test_display_ads_invalid_engagement(self):
+        """
+        Tests response for invalid engagement id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagement_id = "random_id"
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.DISPLAY_ADS}"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_display_ads_audience_performance(self):
         """
@@ -264,20 +272,65 @@ class TestEngagementMetricsEmail(TestCase):
         Returns:
         """
 
-        # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.start()
-
         self.app = create_app().test_client()
 
-        self.engagement_id = ObjectId()
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
 
-        self.email_engagement_metrics_endpoint = (
-            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
-            f"{self.engagement_id}/"
-            f"{api_c.AUDIENCE_PERFORMANCE}/"
-            f"{api_c.EMAIL}"
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        # mock request for introspect call
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.start()
+
+        # mock get_db_client() for the engagement.
+        mock.patch(
+            "huxunify.api.route.engagement.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        self.audience_id = create_audience(self.database, "Test Audience", [])[
+            db_c.ID
+        ]
+        self.engagement_id_sfmc = set_engagement(
+            self.database, "Test engagement sfmc", None, [], None, None, None
+        )
+
+        self.delivery_platform_sfmc = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_SFMC,
+            "sfmc_delivery_platform",
+            authentication_details={},
+            status=db_c.STATUS_SUCCEEDED,
+        )
+
+        self.delivery_job_sfmc = set_delivery_job(
+            self.database,
+            self.audience_id,
+            self.delivery_platform_sfmc[db_c.ID],
+            [
+                {
+                    db_c.ENGAGEMENT_ID: self.engagement_id_sfmc,
+                    db_c.AUDIENCE_ID: self.audience_id,
+                }
+            ],
+            self.engagement_id_sfmc,
+        )
+
+        set_performance_metrics(
+            self.database,
+            self.delivery_platform_sfmc[db_c.ID],
+            "salesforce",
+            self.delivery_job_sfmc[db_c.ID],
+            None,
+            EMAIL_METRICS,
+            None,
+            None,
         )
 
         self.addCleanup(mock.patch.stopall)
@@ -293,14 +346,68 @@ class TestEngagementMetricsEmail(TestCase):
             None
         """
 
+        endpoint = (
+            f"/api/v1/{api_c.ENGAGEMENT_TAG}/"
+            f"{self.engagement_id_sfmc}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.EMAIL}"
+        )
         response = self.app.get(
-            self.email_engagement_metrics_endpoint,
+            endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
 
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertTrue(
             validate_schema(EmailSummary(), response.json["summary"])
         )
+        self.assertEqual(response.json["summary"]["hard_bounces"], 125)
+        self.assertEqual(response.json["summary"]["sent"], 125)
+        self.assertTrue(response.json["audience_performance"])
+        self.assertEqual(
+            response.json["audience_performance"][0]["hard_bounces"], 125
+        )
+        self.assertEqual(response.json["audience_performance"][0]["sent"], 125)
+        self.assertTrue(
+            response.json["audience_performance"][0]["destinations"]
+        )
+        self.assertEqual(
+            response.json["audience_performance"][0]["destinations"][0][
+                "hard_bounces"
+            ],
+            125,
+        )
+        self.assertEqual(
+            response.json["audience_performance"][0]["destinations"][0][
+                "sent"
+            ],
+            125,
+        )
+
+    def test_email_invalid_engagement(self):
+        """
+        Tests response for invalid engagement id
+
+        Args:
+
+        Returns:
+            None
+        """
+
+        engagement_id = "invalid_object_id"
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{engagement_id}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.EMAIL}"
+        )
+
+        response = self.app.get(
+            endpoint,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_email_audience_performance(self):
         """
@@ -313,17 +420,18 @@ class TestEngagementMetricsEmail(TestCase):
             None
         """
 
+        endpoint = (
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/"
+            f"{self.engagement_id_sfmc}/"
+            f"{api_c.AUDIENCE_PERFORMANCE}/"
+            f"{api_c.EMAIL}"
+        )
         response = self.app.get(
-            self.email_engagement_metrics_endpoint,
+            endpoint,
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertTrue(
-            validate_schema(
-                EmailIndividualAudienceSummary(),
-                response.json["audience_performance"][0],
-            )
-        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods

@@ -3,6 +3,7 @@
 import unittest
 import mongomock
 import huxunifylib.database.orchestration_management as am
+import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
 import huxunifylib.database.db_exceptions as de
@@ -326,3 +327,70 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertTrue(
             all(x[c.CREATED_BY] == self.user_name for x in audiences)
         )
+
+    def test_get_all_audiences_with_deliveries(self):
+        """Test get_all_audiences with deliveries."""
+
+        # Set delivery platform
+        delivery_platform_doc = dpm.set_delivery_platform(
+            self.database,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+            c.DELIVERY_PLATFORM_FACEBOOK.lower(),
+            {
+                "facebook_access_token": "path1",
+                "facebook_app_secret": "path2",
+                "facebook_app_id": "path3",
+                "facebook_ad_account_id": "path4",
+            },
+        )
+
+        # set connection status
+        dpm.set_connection_status(
+            self.database, delivery_platform_doc[c.ID], c.STATUS_SUCCEEDED
+        )
+
+        audiences = []
+        for i in range(11):
+            audience_doc = am.create_audience(
+                self.database,
+                f"My Audience-{i}",
+                self.audience_filters,
+                user_name=self.user_name,
+                size=i * 1000,
+            )
+            # create delivery job
+            dpm.set_delivery_job(
+                self.database,
+                audience_doc[c.ID],
+                delivery_platform_doc[c.ID],
+                [],
+            )
+
+            # store the audience obj
+            audiences.append(audience_doc)
+
+        # get all audiences and deliveries
+        audiences = am.get_all_audiences_and_deliveries(self.database)
+        self.assertTrue(audiences)
+        self.assertGreater(len(audiences), 10)
+
+        for audience in audiences:
+            # test each audience
+            self.assertIn(c.DELIVERIES, audience)
+            self.assertIn(c.AUDIENCE_LAST_DELIVERED, audience)
+            self.assertIn(c.ID, audience)
+
+            # test there are deliveries
+            self.assertTrue(audience[c.DELIVERIES])
+
+            for delivery in audience[c.DELIVERIES]:
+                self.assertEqual(
+                    delivery[c.DELIVERY_PLATFORM_TYPE],
+                    c.DELIVERY_PLATFORM_FACEBOOK,
+                )
+                self.assertEqual(
+                    delivery[c.METRICS_DELIVERY_PLATFORM_NAME],
+                    delivery_platform_doc[c.DELIVERY_PLATFORM_TYPE],
+                )
+                self.assertIn(c.UPDATE_TIME, delivery)
+                self.assertEqual(delivery[c.STATUS], c.STATUS_PENDING)

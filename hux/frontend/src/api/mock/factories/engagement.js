@@ -38,7 +38,7 @@ const mockDeliveries = (numDeliveries = 3) => {
  */
 export const engagement = {
   name: () => faker.address.state(),
-  description: () => `Engagement for ${faker.address.state()}`,
+  description: () => "",
   delivery_schedule: () => ({
     start_date: faker.date.recent(),
     end_date: faker.date.soon(),

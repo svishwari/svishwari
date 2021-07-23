@@ -143,7 +143,6 @@ const actions = {
         name: engagement.name,
 
         description: engagement.description,
-
         delivery_schedule:
           engagement.delivery_schedule === 0
             ? null
