@@ -52,7 +52,7 @@ from huxunify.api.route.utils import (
     get_user_name,
     group_perf_metric,
     update_metrics,
-    validate_destination_wrapper,
+    validate_destination,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -694,7 +694,7 @@ class UpdateCampaignsForAudience(SwaggerView):
     # pylint: disable=too-many-locals
     # pylint: disable=# pylint: disable=too-many-branches
     @api_error_handler()
-    @validate_destination_wrapper()
+    @validate_destination()
     def put(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
@@ -860,7 +860,7 @@ class AudienceCampaignsGetView(SwaggerView):
     # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-branches
     @api_error_handler()
-    @validate_destination_wrapper()
+    @validate_destination()
     def get(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
@@ -1009,7 +1009,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
     @api_error_handler()
-    @validate_destination_wrapper()
+    @validate_destination()
     def get(
         self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:

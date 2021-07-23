@@ -20,7 +20,7 @@ from huxunify.api.route.utils import (
     api_error_handler,
     secured,
     validate_delivery_params,
-    validate_destination_wrapper,
+    validate_destination,
 )
 from huxunify.api.schema.orchestration import (
     EngagementDeliveryHistorySchema,
@@ -100,7 +100,7 @@ class EngagementDeliverDestinationView(SwaggerView):
     # pylint: disable=no-self-use
     # pylint: disable=too-many-return-statements
     @api_error_handler()
-    @validate_destination_wrapper()
+    @validate_destination()
     @validate_delivery_params
     def post(
         self, engagement_id: str, audience_id: str, destination_id: str

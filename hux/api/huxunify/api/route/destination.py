@@ -40,7 +40,7 @@ from huxunify.api.route.utils import (
     secured,
     get_user_name,
     api_error_handler,
-    validate_destination_wrapper,
+    validate_destination,
 )
 import huxunify.api.constants as api_c
 
@@ -127,7 +127,7 @@ class DestinationGetView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
-    @validate_destination_wrapper()
+    @validate_destination()
     def get(self, destination_id: str) -> Tuple[dict, int]:
         """Retrieves a destination.
 
@@ -250,7 +250,7 @@ class DestinationPutView(SwaggerView):
             ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
         }
     )
-    @validate_destination_wrapper()
+    @validate_destination()
     @get_user_name()
     def put(self, destination_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates a destination.
@@ -519,7 +519,7 @@ class DestinationDataExtView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     @api_error_handler()
-    @validate_destination_wrapper()
+    @validate_destination()
     def get(self, destination_id: str) -> Tuple[list, int]:
         """Retrieves destination data extensions.
 
@@ -619,7 +619,7 @@ class DestinationDataExtPostView(SwaggerView):
 
     # pylint: disable=too-many-return-statements
     @api_error_handler()
-    @validate_destination_wrapper()
+    @validate_destination()
     def post(self, destination_id: str) -> Tuple[dict, int]:
         """Creates a destination data extension.
         ---

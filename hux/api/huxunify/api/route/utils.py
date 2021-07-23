@@ -598,7 +598,7 @@ def validate_destination_id(
     return destination_id
 
 
-def validate_destination_wrapper(
+def validate_destination(
     check_if_destination_in_db: bool = True,
 ) -> object:
     """
