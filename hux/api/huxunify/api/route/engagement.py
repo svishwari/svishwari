@@ -655,9 +655,8 @@ class DeleteAudienceEngagement(SwaggerView):
             if not ObjectId.is_valid(audience_id):
                 return HTTPStatus.BAD_REQUEST
             audience_ids.append(ObjectId(audience_id))
-            audience_names.append(
-                get_audience(database, audience_id)[db_c.NAME]
-            )
+            audience = get_audience(database, ObjectId(audience_id))
+            audience_names.append(audience[db_c.NAME])
 
         remove_audiences_from_engagement(
             database,
