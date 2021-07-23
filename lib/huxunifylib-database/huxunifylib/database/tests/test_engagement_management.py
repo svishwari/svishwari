@@ -863,27 +863,86 @@ class TestEngagementManagement(unittest.TestCase):
         # create an engagement with those two audiences
         # add a destination to audience 1
 
-        audience_one = om.create_audience(self.database, "Audience1", [], [], self.user_name, 201)
-        audience_two = om.create_audience(self.database, "Audience2", [], [], self.user_name, 202)
+        audience_one = om.create_audience(
+            self.database, "Audience1", [], [], self.user_name, 201
+        )
+        audience_two = om.create_audience(
+            self.database, "Audience2", [], [], self.user_name, 202
+        )
 
         audience_one_dict = {
             c.OBJECT_ID: audience_one[c.ID],
-            c.DESTINATIONS: []
+            c.DESTINATIONS: [],
         }
         audience_two_dict = {
             c.OBJECT_ID: audience_two[c.ID],
-            c.DESTINATIONS: []
+            c.DESTINATIONS: [],
         }
 
-        engagement_id = em.set_engagement(self.database, "Engagement1", "Engagement1", [audience_one_dict, audience_two_dict], self.user_name)
-        e = em.get_engagement(self.database, engagement_id=engagement_id)
-        e2 = EngagementGetSchema().dump(e)
-        print(json.dumps(e2))
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement1",
+            "Engagement1",
+            [audience_one_dict, audience_two_dict],
+            self.user_name,
+        )
 
-        updated_engagement = em.append_destination_to_engaged_audience(self.database, engagement_id, audience_one[c.ID], self.user_name, c.DELIVERY_PLATFORM_FACEBOOK)
+        # due to mocking issues, the query in this test case does not execute properly
+        # but has been show to work on a real database
+        updated_engagement = em.append_destination_to_engaged_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            self.user_name,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+        )
 
-        print(json.dumps(updated_engagement))
+    def test_remove_destination_from_engaged_audience(self):
+        """
+        Test removing a destination to an engaged audience
 
-        e = em.get_engagement(self.database, engagement_id=engagement_id)
-        new_engagement = json.dumps(EngagementGetSchema().dump(e))
-        print("New engagement: " + str(new_engagement))
+        Returns: None
+
+        """
+        audience_one = om.create_audience(
+            self.database, "Audience1", [], [], self.user_name, 201
+        )
+        audience_two = om.create_audience(
+            self.database, "Audience2", [], [], self.user_name, 202
+        )
+
+        audience_one_dict = {
+            c.OBJECT_ID: audience_one[c.ID],
+            c.DESTINATIONS: [],
+        }
+        audience_two_dict = {
+            c.OBJECT_ID: audience_two[c.ID],
+            c.DESTINATIONS: [],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement1",
+            "Engagement1",
+            [audience_one_dict, audience_two_dict],
+            self.user_name,
+        )
+
+        # TODO UT's fail if we run these functions even though they apparently run fine on real db. Do we ditch the UT???
+        # due to mocking issues, the query in this test case does not execute properly
+        # but has been show to work on a real database
+        updated_engagement = em.append_destination_to_engaged_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            self.user_name,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+        )
+
+        updated_engagement = em.remove_destination_from_engaged_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            self.user_name,
+            c.DELIVERY_PLATFORM_FACEBOOK,
+        )

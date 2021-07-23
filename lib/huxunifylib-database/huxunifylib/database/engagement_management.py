@@ -741,23 +741,8 @@ def append_destination_to_engaged_audience(
     )
 
     destination = {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
-    eng = get_engagement(database, engagement_id)
 
-    print("Does the engagement exist: " + str(eng[db_c.ID] == engagement_id))
-
-    find_q = {db_c.ID: engagement_id, "audiences.id": audience_id, "audiences.0.destinations": {}}
-    do_q = {
-            "$set": {
-                db_c.UPDATE_TIME: "BLAH",
-                db_c.UPDATED_BY: "JIMMY MCMAHON",
-            },
-            # "$push": {"audiences.$.destinations": {db_c.OBJECT_ID: delivery_platform[db_c.ID]}},
-            "$push": {"audiences.$.destinations": {"test_field": 543}}
-        }
-
-    find_q = {db_c.ID: engagement_id, "audiences.id": audience_id}
-
-    new_eng = collection.find_one_and_update(
+    return collection.find_one_and_update(
         {
             "_id": engagement_id,
             "audiences.id": audience_id
@@ -765,24 +750,21 @@ def append_destination_to_engaged_audience(
         {
             "$set": {
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
-                db_c.UPDATED_BY: "JIMMY MCMAHON",
+                db_c.UPDATED_BY: user_name,
             },
             "$push": {
-                "audiences.$.destinations": {
-                    "test_field": 543
-                }
+                "audiences.$.destinations": destination
             }
         })
-
-    print("new ENG:" + str(new_eng))
 
 
 @retry(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def remove_destination_from_audience(
+def remove_destination_from_engaged_audience(
     database: DatabaseClient,
+    engagement_id: ObjectId,
     audience_id: ObjectId,
     user_name: str,
     destination_type: str,
@@ -791,6 +773,7 @@ def remove_destination_from_audience(
 
     Args
         database (DatabaseClient): A database client.
+        engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
         user_name (str): Name of the user removing the destination to the audience.
         destination_type (str): type of destination to be removed
@@ -810,7 +793,7 @@ def remove_destination_from_audience(
     )
 
     return collection.find_one_and_update(
-        {db_c.ID: audience_id, "audiences.id": audience_id},
+        {db_c.ID: engagement_id, "audiences.id": audience_id},
         {
             "$set": {
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
@@ -819,7 +802,5 @@ def remove_destination_from_audience(
             "$pull": {
                 db_c.DESTINATIONS: {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
             },
-        },
-        upsert=False,
-        return_document=pymongo.ReturnDocument.AFTER,
+        }
     )
