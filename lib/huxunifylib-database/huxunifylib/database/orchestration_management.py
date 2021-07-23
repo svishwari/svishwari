@@ -242,3 +242,200 @@ def update_audience(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_audience_insights(
+    database: DatabaseClient,
+    audience_id: ObjectId,
+) -> Union[list, None]:
+    """A function to get audience insights.
+
+    Args:
+        database (DatabaseClient): A database client.
+        audience_id (ObjectId): The Mongo DB ID of the audience.
+
+    Returns:
+        Union[list, None]:  A list of engagements with delivery information for an audience
+
+    """
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.ENGAGEMENTS_COLLECTION]
+
+    # use the audience pipeline to aggregate and join all the insight data
+    try:
+        return list(
+            collection.aggregate(
+                [
+                    {"$match": {"audiences.id": audience_id}},
+                    {
+                        "$unwind": {
+                            "path": "$audiences",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                    {
+                        "$unwind": {
+                            "path": "$audiences.destinations",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                    {"$match": {"audiences.id": audience_id}},
+                    {
+                        "$lookup": {
+                            "from": "delivery_jobs",
+                            "localField": "audiences.destinations.delivery_job_id",
+                            "foreignField": "_id",
+                            "as": "deliveries",
+                        }
+                    },
+                    {
+                        "$unwind": {
+                            "path": "$deliveries",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                    {"$project": {"audiences": 0}},
+                    {
+                        "$lookup": {
+                            "from": "delivery_platforms",
+                            "localField": "deliveries.delivery_platform_id",
+                            "foreignField": "_id",
+                            "as": "destinations",
+                        }
+                    },
+                    {
+                        "$unwind": {
+                            "path": "$destinations",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "deliveries.delivery_platform_type"
+                            "": "$destinations.delivery_platform_type",
+                            "deliveries.name": "$destinations.name",
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": "$_id",
+                            "deliveries": {"$push": "$deliveries"},
+                            "last_delivered": {
+                                "$last": "$deliveries.update_time"
+                            },
+                        }
+                    },
+                    {
+                        "$lookup": {
+                            "from": "engagements",
+                            "localField": "_id",
+                            "foreignField": "_id",
+                            "as": "engagement",
+                        }
+                    },
+                    {
+                        "$project": {
+                            "engagement.audiences": 0,
+                            "engagement.deleted": 0,
+                            "deliveries.deleted": 0,
+                        }
+                    },
+                    {
+                        "$unwind": {
+                            "path": "$engagement",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                ]
+            )
+        )
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_all_audiences_and_deliveries(
+    database: DatabaseClient,
+) -> Union[list, None]:
+    """A function to get all audiences and their latest deliveries.
+
+    Args:
+        database (DatabaseClient): A database client.
+
+    Returns:
+        Union[list, None]:  A list of engagements with delivery
+            information for an audience
+    """
+    am_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = am_db[c.AUDIENCES_COLLECTION]
+
+    # use the audience pipeline to aggregate and join all the delivery data
+    try:
+        return list(
+            collection.aggregate(
+                [
+                    {
+                        "$lookup": {
+                            "from": "delivery_jobs",
+                            "localField": "_id",
+                            "foreignField": "audience_id",
+                            "as": "delivery_jobs",
+                        }
+                    },
+                    {
+                        "$unwind": {
+                            "path": "$delivery_jobs",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                    {
+                        "$lookup": {
+                            "from": "delivery_platforms",
+                            "localField": "delivery_jobs.delivery_platform_id",
+                            "foreignField": "_id",
+                            "as": "delivery",
+                        }
+                    },
+                    {
+                        "$unwind": {
+                            "path": "$delivery",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "delivery_jobs.delivery_platform_name"
+                            "": "$delivery.name",
+                            "delivery_jobs.delivery_platform_type"
+                            "": "$delivery.delivery_platform_type",
+                        }
+                    },
+                    {"$sort": {"_id": 1, "delivery_job.update_time": -1}},
+                    {
+                        "$group": {
+                            "_id": "$_id",
+                            "deliveries": {"$push": "$delivery_jobs"},
+                            "last_delivered": {
+                                "$last": "$delivery_jobs.update_time"
+                            },
+                        }
+                    },
+                    {"$project": {"deliveries.deleted": 0}},
+                ]
+            )
+        )
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
