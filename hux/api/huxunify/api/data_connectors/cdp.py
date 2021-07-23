@@ -2,6 +2,8 @@
 Purpose of this file is for holding methods to query and pull data from CDP.
 """
 import datetime
+import logging
+import time
 import asyncio
 from typing import Tuple, Optional
 
@@ -163,9 +165,21 @@ def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
     # set the event loop
     asyncio.set_event_loop(asyncio.SelectorEventLoop())
 
+    # start timer
+    timer = time.perf_counter()
+
     # send all responses at once and wait until they are all done.
     responses = asyncio.get_event_loop().run_until_complete(
         asyncio.gather(*(get_async_customers(*x) for x in task_args))
+    )
+
+    # log execution time summary
+    total_ticks = time.perf_counter() - timer
+    logging.info(
+        "Executed %s requests to the customer API in %0.4f. ~%0.4f requests per second.",
+        len(audiences),
+        total_ticks,
+        len(audiences) / total_ticks,
     )
 
     # create a dict for audience_id to get size
