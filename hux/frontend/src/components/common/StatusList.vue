@@ -255,11 +255,15 @@ export default {
         { id: 6, title: "Remove destination", active: false },
       ],
       topNavItems: [
-        { id: 1, title: "Deliver now", active: true },
+        {
+          id: 1,
+          title: "Deliver now",
+          active: this.audience && this.audience.destinations.length > 0,
+        },
         { id: 2, title: "Add a destination", active: true },
         { id: 3, title: "Create lookalike", active: false },
         { id: 4, title: "Pause all delivery", active: false },
-        { id: 5, title: "Remove audience", active: false },
+        { id: 5, title: "Remove audience", active: true },
       ],
       showDeliveryAlert: false,
       showConfirmModal: false,
@@ -330,6 +334,9 @@ export default {
           break
         case "add a destination":
           this.triggerAddDestination(engagementId, audienceId)
+          break
+        case "remove audience":
+          this.$emit("removeAudience", this.audience)
           break
         default:
           break

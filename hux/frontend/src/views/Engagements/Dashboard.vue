@@ -129,6 +129,7 @@
                 :engagementId="engagementId"
                 :statusIcon="17"
                 @onAddDestination="triggerSelectDestination(item.id)"
+                @removeAudience="triggerDetachAudiences($event)"
               />
             </v-col>
           </v-card-text>
@@ -839,6 +840,9 @@ export default {
       let audienceDetails = []
 
       // audience id pushing in one array
+      if (engData.audiences.filter((aud) => !aud.id).length > 0) {
+        engData.audiences = []
+      }
       engData.audiences.forEach((data) => audienceIds.push(data.id))
       Object.keys(this.selectedAudiences).forEach((audId) => {
         if (
@@ -865,8 +869,12 @@ export default {
         audEngobj.name = element.name
         audEngobj.size = element.size
         audEngobj.last_delivered = element.last_delivered
+        if (audEngobj.destinations.filter((dest) => !dest.id).length > 0) {
+          audEngobj.destinations = []
+        }
         audiencesDetailsData.push(audEngobj)
       })
+
       // extracting the destination data
       for (let i = 0; i < audiencesDetailsData.length; i++) {
         for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {
