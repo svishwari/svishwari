@@ -330,20 +330,19 @@ class DestinationPutView(SwaggerView):
             )
             is_added = True
 
-        # update the destination
-        destination = destination_management.update_delivery_platform(
-            database=database,
-            delivery_platform_id=destination_id,
-            delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
-            name=destination[db_c.DELIVERY_PLATFORM_NAME],
-            authentication_details=authentication_parameters,
-            added=is_added,
-            performance_de=performance_de,
-            user_name=user_name,
-        )
-
         return (
-            DestinationGetSchema().dump(destination),
+            DestinationGetSchema().dump(
+                destination_management.update_delivery_platform(
+                    database=database,
+                    delivery_platform_id=destination_id,
+                    delivery_platform_type=destination[db_c.DELIVERY_PLATFORM_TYPE],
+                    name=destination[db_c.DELIVERY_PLATFORM_NAME],
+                    authentication_details=authentication_parameters,
+                    added=is_added,
+                    performance_de=performance_de,
+                    user_name=user_name,
+                )
+            ),
             HTTPStatus.OK,
         )
 
