@@ -27,6 +27,9 @@ from huxunify.api.schema.orchestration import (
     AudiencePutSchema,
     AudiencePostSchema,
 )
+from huxunify.api.schema.engagement import (
+    weight_delivery_status,
+)
 from huxunify.api.data_connectors.cdp import get_customers_overview
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
@@ -183,13 +186,47 @@ class AudienceGetView(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
-        audience = orchestration_management.get_audience(
-            database, ObjectId(audience_id)
-        )
+
+        # get the audience
+        audience_id = ObjectId(audience_id)
+        audience = orchestration_management.get_audience(database, audience_id)
 
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
+        # get the audience insights
+        engagement_deliveries = orchestration_management.get_audience_insights(
+            database, audience_id
+        )
+
+        # process each engagement
+        engagements = []
+        for engagement in engagement_deliveries:
+            # workaround because DocumentDB does not allow $replaceRoot
+            # do replace root by bringing the nested engagement up a level.
+            engagement.update(engagement[api_c.ENGAGEMENT])
+
+            # remove the nested engagement
+            del engagement[api_c.ENGAGEMENT]
+
+            # remove any empty delivery objects from DocumentDB Pipeline
+            engagement[api_c.DELIVERIES] = [
+                x for x in engagement[api_c.DELIVERIES] if x
+            ]
+
+            # set the weighted status for the engagement based on deliveries
+            engagement[api_c.STATUS] = weight_delivery_status(engagement)
+            engagements.append(engagement)
+
+        # set the list of engagements for an audience
+        audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
+
+        # get the max last delivered date for all destinations in an audience
+        audience[api_c.AUDIENCE_LAST_DELIVERED] = max(
+            [x[api_c.AUDIENCE_LAST_DELIVERED] for x in engagements]
+        )
+
+        # set the destinations
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
             database, audience.get(api_c.DESTINATIONS_TAG)
         )
@@ -200,11 +237,10 @@ class AudienceGetView(SwaggerView):
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
-        audience[
-            api_c.AUDIENCE_LAST_DELIVERED
-        ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
-            days=1000
-        )
+
+        # TODO - HUS-436
+        audience[db_c.LOOKALIKE_AUDIENCE_COLLECTION] = []
+
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
