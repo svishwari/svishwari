@@ -3,18 +3,19 @@
     <template #header>
       <PageHeader>
         <template #left>
-          <Breadcrumb :items="items" />
+          <Breadcrumb :items="breadcrumbItems" />
         </template>
       </PageHeader>
+      <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
-    <template #default>
+    <template #default v-if="!loading">
       <v-row>
         <v-col col="6">
           <div class="model-dashboard__card px-6 py-5">
             {{ model.description }}
           </div>
           <div class="d-flex justify-center align-center mt-6 rounded-lg">
-            <feature-chart :featureData="featureChartData"></feature-chart>
+            <feature-chart :featureData="model.feature_importance || []" />
           </div>
         </v-col>
         <v-col col="6">
@@ -79,7 +80,7 @@
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
             <div class="neroBlack--text text-h5 pb-4">Lift chart</div>
-            <LiftChart />
+            <LiftChart :data="model.lift_data || []" />
           </v-card>
         </v-col>
       </v-row>
@@ -93,8 +94,7 @@ import FeatureChart from "@/components/common/featureChart/FeatureChart"
 import LiftChart from "@/components/common/LiftChart.vue"
 import Page from "@/components/Page"
 import PageHeader from "@/components/PageHeader"
-//TODO: remove it after API Integration
-import data from "@/components/common/featureChart/featureData.json"
+import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "ModelsDashboard",
@@ -108,35 +108,45 @@ export default {
   },
   data() {
     return {
-      //TODO: API integration
-      featureChartData: data.featureList,
-      model: {
-        model_name: "Propensity to Unsubscribe",
-        description:
-          "A propensity to unsubscribe model predicts how likely it is that a customer will unsubscribe from your email list at any given point in time",
-        performance_metric: {
-          rmse: -1,
-          auc: 0.79,
-          precision: 0.82,
-          recall: 0.65,
-          current_version: "3.1.2",
-        },
-        model_type: "ltv",
-      },
-      items: [
+      loading: false,
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      model: "models/overview",
+    }),
+
+    breadcrumbItems() {
+      const items = [
         {
           text: "Models",
           disabled: false,
-          href: "/models",
+          href: this.$router.resolve({ name: "Models" }).href,
           icon: "models",
         },
-        {
-          text: "Propensity to Unsubscribe",
+      ]
+      if (this.model.model_name) {
+        items.push({
+          text: this.model.model_name,
           disabled: true,
-          icon: "model-unsubscribe",
-        },
-      ],
-    }
+          icon: `model-${this.model.model_type}`,
+        })
+      }
+      return items
+    },
+  },
+
+  methods: {
+    ...mapActions({
+      getOverview: "models/getOverview",
+    }),
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getOverview(this.$route.params.type)
+    this.loading = false
   },
 }
 </script>
