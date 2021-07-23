@@ -1,5 +1,5 @@
 ---
-test_name: Test user API success
+test_name: Test users API success
 
 strict:
   - json:list_any_order
@@ -8,7 +8,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test user api success
+  - name: test users api success
 
     # Define the request to be made...
     request:
