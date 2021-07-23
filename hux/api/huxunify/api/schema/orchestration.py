@@ -15,6 +15,16 @@ from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
+class AudienceDeliverySchema(Schema):
+    """
+    Audience delivery schema class
+    """
+
+    delivery_platform_name = fields.String()
+    delivery_platform_type = fields.String()
+    last_delivered = DateTimeWithZ(attribute=db_c.UPDATE_TIME)
+
+
 class AudienceGetSchema(Schema):
     """
     Audience schema class
@@ -77,6 +87,7 @@ class AudienceGetSchema(Schema):
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     created_by = fields.String()
     updated_by = fields.String()
+    deliveries = fields.Nested(AudienceDeliverySchema, many=True)
 
 
 class AudiencePutSchema(Schema):
