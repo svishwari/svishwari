@@ -2,9 +2,13 @@
 Purpose of this file is for holding methods to query and pull data from CDP.
 """
 import datetime
+import asyncio
 from typing import Tuple, Optional
 
 import requests
+import aiohttp
+import async_timeout
+from bson import ObjectId
 from dateutil.parser import parse, ParserError
 
 from huxunifylib.database import constants as db_c
@@ -127,6 +131,87 @@ def get_customers_overview(
         return {}
 
     return clean_cdm_fields(response.json()[api_c.BODY])
+
+
+def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
+    """Retrieves audience size asynchronously
+
+    Args:
+        audiences (list): list of audience docs.
+        default_size (int): default size if the audience post fails. default is zero.
+
+    Returns:
+        dict: Audience ObjectId to Size mapping dict.
+
+    """
+
+    # get the audience count URL.
+    url = f"{get_config().CDP_SERVICE}/customer-profiles/audience/count"
+
+    # generate arg list for the async query
+    task_args = [
+        (
+            x[db_c.ID],
+            x[api_c.AUDIENCE_FILTERS]
+            if x.get(api_c.AUDIENCE_FILTERS)
+            else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
+            url,
+        )
+        for x in audiences
+    ]
+
+    # set the event loop
+    asyncio.set_event_loop(asyncio.SelectorEventLoop())
+
+    # send all responses at once and wait until they are all done.
+    responses = asyncio.get_event_loop().run_until_complete(
+        asyncio.gather(*(get_async_customers(*x) for x in task_args))
+    )
+
+    # create a dict for audience_id to get size
+    audience_size_dict = {}
+
+    # iterate each response.
+    for response in responses:
+
+        # get audience id from the response
+        audience_id = ObjectId(response[1])
+
+        # get the response dict
+        response = response[0]
+
+        # validate response code
+        if response["code"] != 200 or api_c.BODY not in response:
+            # invalid response set default
+            audience_size_dict[audience_id] = default_size
+            continue
+
+        # set the total count, otherwise set the default size if not found
+        audience_size_dict[audience_id] = response[api_c.BODY].get(
+            api_c.TOTAL_COUNT, default_size
+        )
+
+    return audience_size_dict
+
+
+async def get_async_customers(audience_id, audience_filters, url) -> dict:
+    """asynchronously process getting audience size
+
+    Args:
+        audience_id (ObjectId): audience id.
+        audience_filters (dict): audience filters
+        url (str): url of the service to call.
+
+    Returns:
+       dict: audience id to size mapping dict.
+    """
+
+    # setup the aiohttp session so we can process the calls asynchronously
+    async with aiohttp.ClientSession() as session, async_timeout.timeout(10):
+        # run the async post request
+        async with session.post(url, json=audience_filters) as response:
+            # await the responses, and return them as they come in.
+            return await response.json(), str(audience_id)
 
 
 def get_idr_data_feeds() -> list:

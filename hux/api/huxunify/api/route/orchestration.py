@@ -1,8 +1,6 @@
 """
 Paths for Orchestration API
 """
-import datetime
-import random
 from http import HTTPStatus
 from random import randrange
 from typing import Tuple, Union
@@ -29,7 +27,10 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
-from huxunify.api.data_connectors.cdp import get_customers_overview
+from huxunify.api.data_connectors.cdp import (
+    get_customers_overview,
+    get_customers_count_async,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
 from huxunify.api.route.utils import (
@@ -120,6 +121,9 @@ class AudienceView(SwaggerView):
             for x in orchestration_management.get_all_audiences(database)
         }
 
+        # get customer sizes
+        customer_size_dict = get_customers_count_async(audiences)
+
         # process each audience object
         for audience in audiences:
             # workaround because DocumentDB does not allow $replaceRoot
@@ -130,6 +134,8 @@ class AudienceView(SwaggerView):
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
+
+            audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
