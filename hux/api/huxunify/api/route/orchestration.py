@@ -369,8 +369,8 @@ class AudiencePostView(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f"{audience_doc[db_c.CREATED_BY]} added a new audience "
-                    f'named "{audience_doc[db_c.NAME]}".'
+                    f"{user_name} added a new audience named "
+                    f'"{audience_doc[db_c.NAME]}".'
                 ),
                 api_c.ORCHESTRATION_TAG,
             )
@@ -397,7 +397,7 @@ class AudiencePostView(SwaggerView):
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
-                        f"{engagement[db_c.UPDATED_BY]} added audience "
+                        f"{user_name} added audience "
                         f'"{audience_doc[db_c.NAME]}" to engagement '
                         f'"{engagement[db_c.NAME]}".'
                     ),
@@ -513,10 +513,7 @@ class AudiencePutView(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            (
-                f"{audience_doc[db_c.UPDATED_BY]} updated audience "
-                f'"{audience_doc[db_c.NAME]}".'
-            ),
+            f'{user_name} updated audience "{audience_doc[db_c.NAME]}".',
             api_c.ORCHESTRATION_TAG,
         )
         # TODO : attach the audience to each of the engagements

@@ -271,8 +271,8 @@ class SetEngagement(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"{engagement[db_c.CREATED_BY]} created a new engagement "
-                f'named "{engagement[db_c.NAME]}".'
+                f"{user_name} created a new engagement named "
+                f'"{engagement[db_c.NAME]}".'
             ),
             api_c.ENGAGEMENT_TAG,
         )
@@ -381,10 +381,7 @@ class UpdateEngagement(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            (
-                f"{engagement[db_c.UPDATED_BY]} updated engagement "
-                f'"{engagement[db_c.NAME]}".'
-            ),
+            f'{user_name} updated engagement "{engagement[db_c.NAME]}".',
             api_c.ENGAGEMENT_TAG,
         )
         return (
@@ -425,8 +422,9 @@ class DeleteEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @get_user_name()
     @api_error_handler()
-    def delete(self, engagement_id: str) -> Tuple[dict, int]:
+    def delete(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes an engagement.
 
         ---
@@ -451,10 +449,7 @@ class DeleteEngagement(SwaggerView):
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                (
-                    f"{engagement[db_c.UPDATED_BY]} deleted engagement "
-                    f'"{engagement[db_c.NAME]}".'
-                ),
+                f'{user_name} deleted engagement "{engagement[db_c.NAME]}".',
                 api_c.ENGAGEMENT_TAG,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
@@ -571,9 +566,8 @@ class AddAudienceEngagement(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f"{engagement[db_c.UPDATED_BY]} added audience "
-                    f'"{audience_name}" to engagement '
-                    f'"{engagement[db_c.NAME]}".'
+                    f'{user_name} added audience "{audience_name}" '
+                    f'to engagement "{engagement[db_c.NAME]}".'
                 ),
                 api_c.ENGAGEMENT_TAG,
             )
@@ -670,9 +664,8 @@ class DeleteAudienceEngagement(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 (
-                    f"{engagement[db_c.UPDATED_BY]} removed audience "
-                    f'"{audience_name}" from engagement '
-                    f'"{engagement[db_c.NAME]}".'
+                    f'{user_name} removed audience "{audience_name}" '
+                    f'from engagement "{engagement[db_c.NAME]}".'
                 ),
                 api_c.ENGAGEMENT_TAG,
             )
