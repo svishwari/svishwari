@@ -42,6 +42,7 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 COUNTRIES = "total_countries"
+TOTAL_COUNT = "total_count"
 STATES = "total_us_states"
 CITIES = "total_cities"
 MIN_AGE = "min_age"
@@ -161,6 +162,7 @@ STATUS_WEIGHTS = {
     STATUS_INACTIVE: 5,
     STATUS_DRAFT: 4,
     STATUS_PENDING: 3,
+    db_c.STATUS_IN_PROGRESS: 3,
     STATUS_PAUSED: 2,
     STATUS_STOPPED: 1,
     STATUS_ERROR: 0,

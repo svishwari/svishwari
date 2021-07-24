@@ -1,8 +1,6 @@
 """
 Paths for Orchestration API
 """
-import datetime
-import random
 from http import HTTPStatus
 from random import randrange
 from typing import Tuple, Union
@@ -30,7 +28,10 @@ from huxunify.api.schema.orchestration import (
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
-from huxunify.api.data_connectors.cdp import get_customers_overview
+from huxunify.api.data_connectors.cdp import (
+    get_customers_overview,
+    get_customers_count_async,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
 from huxunify.api.route.utils import (
@@ -109,21 +110,38 @@ class AudienceView(SwaggerView):
 
         """
 
+        # get all audiences and deliveries
         database = get_db_client()
-        audiences = orchestration_management.get_all_audiences(database)
+        audiences = orchestration_management.get_all_audiences_and_deliveries(
+            database
+        )
+
+        # get all audiences because document DB does not allow for replaceRoot
+        audience_dict = {
+            x[db_c.ID]: x
+            for x in orchestration_management.get_all_audiences(database)
+        }
+
+        # get customer sizes
+        customer_size_dict = get_customers_count_async(audiences)
+
+        # process each audience object
         for audience in audiences:
+            # workaround because DocumentDB does not allow $replaceRoot
+            # do replace root by bringing the nested engagement up a level.
+            audience.update(audience_dict[audience[db_c.ID]])
+
+            # remove any empty deliveries
+            audience[api_c.DELIVERIES] = [
+                x for x in audience[api_c.DELIVERIES] if x
+            ]
+
+            # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
-            # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-            # Add stub size, last_delivered_on for test purposes.
-            audience[api_c.SIZE] = randrange(10000000)
-            audience[
-                api_c.AUDIENCE_LAST_DELIVERED
-            ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
-                days=1000
-            )
+            audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
@@ -223,8 +241,13 @@ class AudienceGetView(SwaggerView):
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
 
         # get the max last delivered date for all destinations in an audience
-        audience[api_c.AUDIENCE_LAST_DELIVERED] = max(
-            [x[api_c.AUDIENCE_LAST_DELIVERED] for x in engagements]
+        delivery_times = [
+            x[api_c.AUDIENCE_LAST_DELIVERED]
+            for x in engagements
+            if x.get(api_c.AUDIENCE_LAST_DELIVERED)
+        ]
+        audience[api_c.AUDIENCE_LAST_DELIVERED] = (
+            max(delivery_times) if delivery_times else None
         )
 
         # set the destinations
