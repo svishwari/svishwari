@@ -12,6 +12,7 @@ from huxunify.api.schema.utils import (
 )
 from huxunify.api.schema.destinations import DestinationGetSchema
 from huxunify.api.schema.engagement import EngagementGetSchema
+from huxunify.api.schema.customers import CustomerOverviewSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
@@ -76,20 +77,7 @@ class AudienceGetSchema(Schema):
 
     destinations = fields.List(fields.Nested(DestinationGetSchema))
     engagements = fields.List(fields.Nested(EngagementDeliverySchema))
-    audience_insights = fields.Dict(
-        attribute=api_c.AUDIENCE_INSIGHTS,
-        example={
-            api_c.TOTAL_CUSTOMERS: 121321321,
-            api_c.COUNTRIES: 2,
-            api_c.STATES: 28,
-            api_c.CITIES: 246,
-            api_c.MIN_AGE: 34,
-            api_c.MAX_AGE: 100,
-            api_c.GENDER_WOMEN: 0.4651031,
-            api_c.GENDER_MEN: 0.481924,
-            api_c.GENDER_OTHER: 0.25219,
-        },
-    )
+    audience_insights = fields.Nested(CustomerOverviewSchema)
 
     size = fields.Int()
     last_delivered = DateTimeWithZ(attribute=api_c.AUDIENCE_LAST_DELIVERED)
