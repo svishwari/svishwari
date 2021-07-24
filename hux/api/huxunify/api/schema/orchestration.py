@@ -16,6 +16,16 @@ from huxunify.api.schema.customers import CustomerOverviewSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
+class AudienceDeliverySchema(Schema):
+    """
+    Audience delivery schema class
+    """
+
+    delivery_platform_name = fields.String()
+    delivery_platform_type = fields.String()
+    last_delivered = DateTimeWithZ(attribute=db_c.UPDATE_TIME)
+
+
 class DeliveriesSchema(Schema):
     """
     Delivery schema class
@@ -79,13 +89,14 @@ class AudienceGetSchema(Schema):
     engagements = fields.List(fields.Nested(EngagementDeliverySchema))
     audience_insights = fields.Nested(CustomerOverviewSchema)
 
-    size = fields.Int()
+    size = fields.Int(default=0)
     last_delivered = DateTimeWithZ(attribute=api_c.AUDIENCE_LAST_DELIVERED)
 
     create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME, allow_none=True)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     created_by = fields.String()
     updated_by = fields.String()
+    deliveries = fields.Nested(AudienceDeliverySchema, many=True)
 
     # TODO - HUS-436
     lookalikes = fields.List(fields.String())
