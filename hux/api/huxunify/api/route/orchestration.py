@@ -7,7 +7,7 @@ from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
-from marshmallow import INCLUDE, ValidationError
+from marshmallow import INCLUDE
 from pymongo import MongoClient
 
 from huxunifylib.database import (
@@ -641,9 +641,8 @@ class SetLookalikeAudience(SwaggerView):
             "description": "Input Lookalike Audience Parameters.",
             "example": {
                 api_c.NAME: "New Lookalike Audience",
-                api_c.SOURCE_AUDIENCE_ID: str(ObjectId()),
-                # keep here for easy testing when fb account fixed
-                api_c.AUDIENCE_SIZE_PERCENTAGE: 2.5,
+                api_c.AUDIENCE_ID: str(ObjectId()),
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 85,
                 api_c.ENGAGEMENT_IDS: [
                     str(ObjectId()),
                     str(ObjectId()),
@@ -655,13 +654,11 @@ class SetLookalikeAudience(SwaggerView):
 
     responses = {
         HTTPStatus.CREATED.value: {
-            "description": "Successfully created lookalike audience"
+            "schema": LookalikeAudienceGetSchema,
+            "description": "Successfully created lookalike audience.",
         },
         HTTPStatus.BAD_REQUEST.value: {
             "description": "Failed to create a lookalike audience"
-        },
-        HTTPStatus.NOT_FOUND.value: {
-            "description": api_c.ENGAGEMENT_NOT_FOUND
         },
     }
 
@@ -686,14 +683,9 @@ class SetLookalikeAudience(SwaggerView):
 
         """
 
-        database = get_db_client()
-
-        try:
-            body = LookalikeAudiencePostSchema().load(
-                request.get_json(), partial=True
-            )
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = LookalikeAudiencePostSchema().load(
+            request.get_json(), partial=True
+        )
 
         for engagement_id in body[api_c.ENGAGEMENT_IDS]:
             if not ObjectId.is_valid(engagement_id):
@@ -704,6 +696,7 @@ class SetLookalikeAudience(SwaggerView):
         if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
         source_audience = orchestration_management.get_audience(
             database, ObjectId(body[api_c.AUDIENCE_ID])
         )
