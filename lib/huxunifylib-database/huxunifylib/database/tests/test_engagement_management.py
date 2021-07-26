@@ -1,4 +1,5 @@
 """Engagement Management Tests"""
+# pylint: disable=too-many-lines
 import unittest
 import mongomock
 import pymongo
@@ -953,7 +954,8 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        # due to mocking issues certain queries do not work but have been verified on a real database
+        # due to mocking issues certain queries do not work
+        # but have been verified on a real database
         with self.assertRaises(pymongo.errors.WriteError):
             em.append_destination_to_engaged_audience(
                 self.database,
@@ -1002,5 +1004,6 @@ class TestEngagementManagement(unittest.TestCase):
             c.DELIVERY_PLATFORM_FACEBOOK,
         )
 
-        # due to mocking issues certain queries do not work but have been verified on a real database
+        # due to mocking issues certain queries do not work
+        # but have been verified on a real database
         self.assertIsNone(updated_engagement)
