@@ -6,7 +6,9 @@ module.exports = {
   },
 
   lintOnSave: process.env.NODE_ENV !== "production",
+
   filenameHashing: true,
+
   productionSourceMap: false,
 
   configureWebpack: {

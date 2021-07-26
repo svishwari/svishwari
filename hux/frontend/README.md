@@ -71,3 +71,41 @@ Preview.
 ```sh
 open http://localhost:8080
 ```
+
+## Okta
+
+For local development, we used a shared Okta dev account, configured as below:
+
+```
+VUE_APP_OKTA_CLIENT_ID=0oa2wbure49NQsL7a4x7
+VUE_APP_OKTA_ISSUER=https://dev-631073.okta.com
+```
+
+To set up your own Okta dev account for local development, use the following
+official guide from Okta:
+
+- https://developer.okta.com/docs/guides/sign-into-spa/vue/before-you-begin
+
+From the guide, you will need to
+
+1. Signup for a [new dev account](https://developer.okta.com/signup).
+
+2. Create an [Okta app](https://developer.okta.com/docs/guides/sign-into-spa/vue/create-okta-application).
+
+3. Configure the Okta app for our frontend app:
+
+    |Sign-in redirect URIs|Sign-out redirect URIs|Initiate login URI|
+    |-|-|-|
+    |https://localhost:8080/login/callback|https://localhost:8080/login|https://localhost:8080/login|
+    |https://host.docker.internal:8080/login/callback|https://host.docker.internal:8080/login|-|
+
+4. Configure the Trusted Origins (`Security > API > Trusted Origins tab`) with the base URI of our frontend app:
+
+    |Origin URL|Type|
+    |-|-|
+    |https://localhost:8080|CORS|
+    |https://host.docker.internal:8080|CORS|
+
+  > NOTE: We have included redirect URIs and base URIs specifically to run end-to-end integration tests with Docker locally using the special DNS name `host.docker.internal`
+
+5. Use the Okta app's Client ID and dev URL in the env configuration for the frontend app.
