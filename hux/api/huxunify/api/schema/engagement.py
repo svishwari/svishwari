@@ -511,7 +511,7 @@ def weighted_engagement_status(engagements: list) -> list:
 
                 status_rank = {
                     api_c.STATUS: status,
-                    api_c.WEIGHT: api_c.STATUS_WEIGHTS[status],
+                    api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(status, 0),
                 }
                 status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
