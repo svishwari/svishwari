@@ -43,7 +43,7 @@
       <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
         <!-- TODO: this can be moved Configuration folder -->
         <FormSteps>
-          <FormStep :step="1" label="General information">
+          <FormStep :step="1" label="General information" class="neroBlack--text step-1">
             <v-row class="pt-1">
               <v-col cols="4">
                 <TextField
@@ -96,7 +96,7 @@
             </v-row>
           </FormStep>
 
-          <FormStep :step="2" label="Select attribute(s)" optional="- Optional">
+          <FormStep :step="2" label="Select attribute(s)" optional="- Optional" class="neroBlack--text step-2">
             <v-col class="pt-1 pa-0">
               <attribute-rules
                 :rules="attributeRules"
@@ -110,6 +110,7 @@
             label="Select destination(s)"
             optional="- Optional"
             :border="!isLookAlikeCreateable ? 'inactive' : ''"
+            class="neroBlack--text step-3"
           >
             <v-row class="pt-1">
               <v-col cols="12">
@@ -162,6 +163,7 @@
                 : ''
             "
             :disabled="!isLookAlikeCreateable"
+            class="neroBlack--text"
           >
             <div class="dark--text" v-if="isLookAlikeCreateable">
               Would you like to create a lookalike audience from this audience?
@@ -671,8 +673,31 @@ export default {
       .v-text-field {
         .v-text-field__slot {
           label {
-            color: var(--v-lightGrey-base) !important;
+            color: var(--v-gray-base) !important;
           }
+        }
+      }
+      .mb-2 {
+        margin-bottom: 2px !important;
+      }
+    }
+    .form-steps {
+      .step-1 {
+        .form-step__content {
+          padding-bottom: 25px !important;
+        }
+      }
+      .step-2 {
+        .form-step__content {
+            padding-top: 0px !important;
+            margin-top: -8px;
+            padding-bottom: 30px !important;
+        }
+      }
+      .step-3 {
+        .form-step__content {
+            padding-top: 0px !important;
+            margin-top: -8px;
         }
       }
     }

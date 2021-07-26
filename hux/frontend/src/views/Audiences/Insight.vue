@@ -303,7 +303,7 @@ export default {
             false,
             false,
             true
-          )
+          ) || '-'
         case "Women":
         case "Men":
         case "Other":
@@ -311,9 +311,9 @@ export default {
             item.subtitle,
             true,
             true
-          )
+          ) || '-'
         default:
-          return item.subtitle
+          return item.subtitle || '-'
       }
     },
   },
