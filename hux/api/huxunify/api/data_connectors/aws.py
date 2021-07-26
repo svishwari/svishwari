@@ -297,7 +297,7 @@ def set_cloud_watch_rule(
 
 def put_rule_targets_aws_batch(
     rule_name: str, batch_params: dict, arn: str, role_arn: str
-):
+) -> str:
     """Adds the specified targets to the specified rule or updates
     the targets if they are already associated with the rule.
 
