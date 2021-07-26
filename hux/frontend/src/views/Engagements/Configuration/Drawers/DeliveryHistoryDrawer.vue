@@ -22,16 +22,21 @@
             :style="{ width: header.width }"
             class="text-body-1"
           >
-            <router-link
-              v-if="header.value === 'audience'"
-              :to="{
-                name: 'AudienceInsight',
-                params: { id: item.audience.id },
-              }"
-              class="text-decoration-none"
-            >
-              {{ item.audience.name }}
-            </router-link>
+            <tooltip>
+              <router-link
+                v-if="header.value === 'audience'"
+                :to="{
+                  name: 'AudienceInsight',
+                  params: { id: item.audience.id },
+                }"
+                class="d-inline-block mw-100 text-truncate text-decoration-none"
+              >
+                {{ item.audience.name }}
+              </router-link>
+              <template #tooltip>
+                {{ item.audience.name }}
+              </template>
+            </tooltip>
             <tooltip
               v-if="header.value === 'destination' && item[header.value]"
             >
