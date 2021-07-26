@@ -972,7 +972,7 @@ class TestEngagementManagement(unittest.TestCase):
 
     def test_remove_destination_from_engaged_audience(self):
         """
-        Test removing a destination to an engaged audience
+        Test removing a destination from an engagement audience
 
         Returns: None
 
