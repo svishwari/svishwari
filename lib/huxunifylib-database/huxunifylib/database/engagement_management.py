@@ -724,7 +724,7 @@ def append_destination_to_engagement_audience(
         engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
         destination_id (ObjectId): MongoDB ID of the destination.
-        user_name (str): Name of the user removing the destination to the audience.
+        user_name (str): Name of the user appending the destination to the audience.
 
     Returns:
         dict: updated engagement object
