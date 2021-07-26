@@ -47,8 +47,6 @@ steps:
     working_directory: '${{CF_REPO_NAME}}/${{API_INTEGRATION_TEST_PATH}}'
     dockerfile: 'Dockerfile'
     tag: '${{DOCKER_TAG}}'
-    build_arguments:
-      - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
 
   PublishToArtifactory:
     stage: artifactory
