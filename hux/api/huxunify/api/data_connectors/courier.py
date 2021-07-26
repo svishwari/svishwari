@@ -146,7 +146,7 @@ class DestinationBatchJob:
 
     def register(
         self,
-        engagement_doc,
+        engagement_doc: dict,
         job_head_name: str = "audiencerouter",
         aws_batch_mem_limit: int = 2048,
         aws_batch_connector: AWSBatchConnector = None,
