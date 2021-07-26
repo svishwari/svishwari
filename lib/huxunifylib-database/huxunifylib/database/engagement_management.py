@@ -759,7 +759,7 @@ def remove_destination_from_engagement_audience(
     destination_id: ObjectId,
     user_name: str,
 ) -> dict:
-    """A function to remove destination from engaged audience
+    """A function to remove destination from engagement audience
 
     Args
         database (DatabaseClient): A database client.
