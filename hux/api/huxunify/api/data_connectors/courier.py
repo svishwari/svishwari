@@ -215,7 +215,7 @@ class DestinationBatchJob:
             config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
         ):
             logging.error(
-                "Error creating cloud watch rule for %s",
+                "Error creating cloud watch rule for engagement with ID %s",
                 engagement_doc[db_const.ID],
             )
             return
