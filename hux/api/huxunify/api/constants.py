@@ -166,6 +166,7 @@ STATUS_WEIGHTS = {
     STATUS_PAUSED: 2,
     STATUS_STOPPED: 1,
     STATUS_ERROR: 0,
+    db_c.STATUS_FAILED: 0,
 }
 
 # Facebook connector defines
