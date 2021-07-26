@@ -2,11 +2,13 @@
   <div>
     <v-card
       class="rounded-lg card-style box-shadow-5"
-      maxWidth="608px"
+      maxWidth="chartWidth"
       minHeight="662px"
       flat
     >
-      <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+      <v-card-title
+        class="d-flex chart-style justify-space-between pb-6 pl-6 pt-5"
+      >
         <div class="mt-2">
           <span class="d-flex align-center black--text text-decoration-none">
             Top 20 feature importance
@@ -22,7 +24,6 @@
           v-if="showScoreTip"
           :style="{
             transform: `translate(${scoreTip.xPosition}px, ${scoreTip.yPosition}px)`,
-            'border-radius': '0px !important',
           }"
           class="mx-auto score-tooltip-style"
         >
@@ -48,9 +49,20 @@ export default {
       type: Array,
       required: true,
     },
+    chartDimensions: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
+    },
   },
   data() {
     return {
+      chartWidth: "",
       width: 560,
       height: 620,
       show: false,
@@ -69,7 +81,10 @@ export default {
     }
   },
   methods: {
-    initiateHorizontalBarChart() {
+    async initiateHorizontalBarChart() {
+      await this.chartDimensions
+      this.width =
+        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
 
@@ -95,8 +110,11 @@ export default {
       let appendElipsis = (text) =>
         text && text.length > 20 ? text.slice(0, 19) + "..." : text
 
-      let featureLabelHover = (data) => {
-        this.tooltipDisplay(true, this.extractFeatureName(data))
+      let featureLabelHover = (srcData) => {
+        let currentFeature = this.chartData.find(
+          (data) => data.name == srcData.getAttribute("data")
+        )
+        this.tooltipDisplay(true, currentFeature)
       }
 
       svg
@@ -115,6 +133,7 @@ export default {
         .call(d3Axis.axisLeft(y).tickSize(0).tickFormat(appendElipsis))
         .call((g) => {
           g.select("path").attr("opacity", 0.1).attr("stroke", "none")
+          g.selectAll("text").attr("data", (d) => d)
         })
         .selectAll("text")
         .attr("fill", "#4f4f4f")
@@ -218,15 +237,6 @@ export default {
     tooltipDisplay(showTip, featureData) {
       this.$emit("tooltipDisplay", showTip, featureData)
     },
-
-    extractFeatureName(text) {
-      let svgString = new XMLSerializer().serializeToString(text).toString()
-      let splitter = svgString.split("</text>")[0].split(">")[1]
-      if (splitter.indexOf("...")) {
-        splitter = splitter.slice(0, -3)
-      }
-      return this.chartData.find((data) => data.name.indexOf(splitter) !== -1)
-    },
   },
 
   watch: {
@@ -234,9 +244,15 @@ export default {
       d3Select.select(this.$refs.huxChart).select("svg").remove()
       this.initiateHorizontalBarChart()
     },
+    chartDimensions: function () {
+      this.chartWidth = this.chartDimensions.width + "px"
+      this.width =
+        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
+    },
   },
 
   mounted() {
+    this.chartWidth = this.chartDimensions.width + "px"
     this.initiateHorizontalBarChart()
   },
 }
@@ -246,18 +262,23 @@ export default {
 .card-style {
   margin-bottom: 40px;
   height: 550px;
-  .chart-section {
-    margin-bottom: -20px;
-  }
-  .score-tooltip-style {
-    @extend .box-shadow-3;
-    border-radius: 0px;
-    padding: 7px 20px 20px 20px;
-    max-width: 61px;
-    height: 34px;
-    top: -603px;
-    left: -118px;
-    z-index: 1;
+  .chart-style {
+    position: relative;
+    .chart-section {
+      margin-bottom: -20px;
+    }
+    .score-tooltip-style {
+      @extend .box-shadow-3;
+      border-radius: 0px;
+      padding: 7px 20px 20px 20px;
+      max-width: 61px;
+      height: 34px;
+      z-index: 1;
+      border-radius: 0px !important;
+      position: absolute;
+      left: 159px;
+      top: 52px;
+    }
   }
 }
 </style>
