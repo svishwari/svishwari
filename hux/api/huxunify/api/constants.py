@@ -186,6 +186,7 @@ SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
+SFMC_CUSTOMER_KEY = "CustomerKey"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -560,7 +561,6 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 
 # Customers
-CUSTOMER_KEY = "CustomerKey"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"

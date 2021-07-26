@@ -405,11 +405,11 @@ class TestDestinationRoutes(TestCase):
         return_value = [
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "extension_name",
-                api_c.CUSTOMER_KEY: "id12345",
+                api_c.SFMC_CUSTOMER_KEY: "id12345",
             },
             {
                 api_c.SFMC_DATA_EXTENSION_NAME: "data_extension_name",
-                api_c.CUSTOMER_KEY: "id12345678",
+                api_c.SFMC_CUSTOMER_KEY: "id12345678",
             },
         ]
         mock_sfmc_instance = mock_sfmc.return_value
