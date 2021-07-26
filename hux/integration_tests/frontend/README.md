@@ -44,13 +44,13 @@ Have the UI running locally over `https` using the following.
 
 ```sh
 cd ../../frontend
-yarn server --https
+yarn serve --https
 ```
 
 ### Build
 
 ```sh
-docker build -f Dockerfile -t ui-integration-tests .
+docker build --no-cache -f Dockerfile -t ui-integration-tests .
 ```
 
 ### Run
