@@ -717,7 +717,7 @@ def append_destination_to_engagement_audience(
     destination_id: ObjectId,
     user_name: str,
 ) -> dict:
-    """A function to add destination to engaged audience
+    """A function to append destination to engagement audience
 
     Args:
         database (DatabaseClient): A database client.
