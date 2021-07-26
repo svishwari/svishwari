@@ -1,6 +1,21 @@
 export default {
-  index: "/",
+  // Auth
+  oktaSignInRedirectURI: "/login/callback",
+  oktaSignOutRedirectURI: "/login",
+
+  // App
+  home: "/",
   overview: "/overview",
-  audiences: "/audiences",
+
+  // Orchestration
   engagements: "/engagements",
+  audiences: "/audiences",
+
+  // Decisioning
+  models: "/models",
+
+  // Data Management
+  customerProfiles: "/customers",
+  identityResolution: "/identity-resolution",
+  connections: "/connections",
 };
