@@ -9,6 +9,7 @@ from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
@@ -311,7 +312,6 @@ class DestinationPutView(SwaggerView):
             )
             is_added = True
 
-        # update the destination
         return (
             DestinationGetSchema().dump(
                 destination_management.update_delivery_platform(
@@ -630,9 +630,9 @@ class DestinationDataExtPostView(SwaggerView):
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP Status.
         """
-
+        database = get_db_client()
         destination = destination_management.get_delivery_platform(
-            get_db_client(), destination_id
+            database, destination_id
         )
 
         if (
@@ -663,6 +663,16 @@ class DestinationDataExtPostView(SwaggerView):
             try:
                 extension = connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
+                )
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
+                        f"{get_user_name()} created new data extension "
+                        f'"{body.get(api_c.DATA_EXTENSION)}" '
+                        f'in "{destination[db_c.NAME]}".'
+                    ),
+                    api_c.DESTINATIONS_TAG,
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done

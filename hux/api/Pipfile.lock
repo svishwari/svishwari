@@ -425,11 +425,11 @@
         },
         "huxunifylib-database": {
             "hashes": [
-                "sha256:5470b61bfe3716e346b72db1dd47740dfa28ac4be546e95baaec6057933bbbeb",
-                "sha256:fc0c3a9d8f496d922c0468f0a2d12ec827e5404e6ea0c1ec49982d0a0b69b8d5"
+                "sha256:1d69b40d78fda5a42a603549fcf6809462ddadd51297431528ea2444484f81de",
+                "sha256:6409fb83a5dd714a64595275e7027012ce12945b99d49fc01d9479f488690987"
             ],
             "index": "jfrog",
-            "version": "==0.2.44"
+            "version": "==0.2.46"
         },
         "huxunifylib-util": {
             "hashes": [

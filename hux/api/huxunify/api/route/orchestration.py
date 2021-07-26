@@ -10,6 +10,7 @@ from flask import Blueprint, request, jsonify
 from marshmallow import INCLUDE
 from pymongo import MongoClient
 
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
@@ -409,19 +410,46 @@ class AudiencePostView(SwaggerView):
                 user_name=user_name,
             )
 
+            # add notification
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} added a new audience named "
+                    f'"{audience_doc[db_c.NAME]}".'
+                ),
+                api_c.ORCHESTRATION_TAG,
+            )
+
             # attach the audience to each of the engagements
             for engagement_id in engagement_ids:
-                engagement_management.append_audiences_to_engagement(
-                    database,
-                    engagement_id,
-                    user_name,
-                    [
-                        {
-                            db_c.OBJECT_ID: audience_doc[db_c.ID],
-                            db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
-                        }
-                    ],
+                engagement = (
+                    engagement_management.append_audiences_to_engagement(
+                        database,
+                        engagement_id,
+                        user_name,
+                        [
+                            {
+                                db_c.OBJECT_ID: audience_doc[db_c.ID],
+                                db_c.DESTINATIONS: body.get(
+                                    api_c.DESTINATIONS
+                                ),
+                            }
+                        ],
+                    )
                 )
+                # add audience attached notification
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
+                        f"{user_name} added audience "
+                        f'"{audience_doc[db_c.NAME]}" to engagement '
+                        f'"{engagement[db_c.NAME]}".'
+                    ),
+                    api_c.ORCHESTRATION_TAG,
+                )
+
         except db_exceptions.DuplicateName:
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
@@ -518,8 +546,9 @@ class AudiencePutView(SwaggerView):
         # load into the schema object
         body = AudiencePutSchema().load(request.get_json(), partial=True)
 
+        database = get_db_client()
         audience_doc = orchestration_management.update_audience(
-            database=get_db_client(),
+            database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
@@ -527,6 +556,12 @@ class AudiencePutView(SwaggerView):
             user_name=user_name,
         )
 
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f'{user_name} updated audience "{audience_doc[db_c.NAME]}".',
+            api_c.ORCHESTRATION_TAG,
+        )
         # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
