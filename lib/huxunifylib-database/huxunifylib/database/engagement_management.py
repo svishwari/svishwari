@@ -727,7 +727,7 @@ def append_destination_to_engaged_audience(
         user_name (str): Name of the user removing the destination to the audience.
 
     Returns:
-        dict: updated audience object
+        dict: updated engagement object
 
     """
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
