@@ -260,6 +260,92 @@ class OrchestrationRouteTest(TestCase):
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
 
+    def test_create_audience_empty_user_info(self):
+        """Test create audience with destination given empty user info.
+
+        The introspect call returns a valid response but user info call
+        returns an empty response.
+
+        Args:
+
+        Returns:
+
+        """
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+        # simulating userinfo endpoint to give invalid user response
+        self.request_mocker.get(t_c.USER_INFO_CALL, json={})
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+
+    def test_create_audience_invalid_user_info(self):
+        """Test create audience with destination given invalid user info.
+
+        The introspect call returns a valid response but user info call
+        returns an invalid response, i.e., missing some fields.
+
+        Args:
+
+        Returns:
+
+        """
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+        # simulating userinfo endpoint to give invalid user response
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.INVALID_USER_RESPONSE
+        )
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+
     def test_create_audience_with_no_destinations_no_engagements(self):
         """Test create audience with no destinations or engagements
 
