@@ -5,14 +5,9 @@ version: "1.0"
 stages:
   - prepare
   - git
-  - build_tag
   - set_env
   - docker
-  - py37_check
-  - coverage_check
-  - safety_style_check
   - artifactory
-  - argo-deploy
 
 steps:
 
@@ -25,10 +20,7 @@ steps:
         stage: prepare
         title: get trigger name using id from spec yaml
         type: deloittehux/get-trigger-name
-      BuildNumber:
-        stage: prepare
-        title: Bump default BUILD_NUMBER annotation
-        type: bump-build-number
+
 
   CloneRepository:
     stage: git
@@ -37,29 +29,6 @@ steps:
     repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
     revision: '${{CF_BRANCH}}' # Git branch triggering the pipeline
 
-# Below steps "NumberTag" and "VersionTag" can be used to conditionally tag build image based on the Git Branch.
-
-  NumberTag:
-    stage: build_tag
-    description: Set docker tag from build number
-    type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
-    commands:
-      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
-
-# Below step can be used for tagging image with Git_Release_Tag and will only execute for "main" branch
-
-  VersionTag:
-    stage: build_tag
-    description: Set docker tag based Git tag
-    type: freestyle
-    image: huxhub.repo.mgnt.in/alpine
-    commands:
-      - cf_export DOCKER_TAG=${{CF_BRANCH}}
-    when:
-      branch:
-        only:
-          - /^app/hux-unified/hux/integration_tests/api/.*/i
 
   set_env_var:
     stage: set_env
@@ -75,8 +44,8 @@ steps:
     title: "Building Docker Image for Unified API"
     type: "build"
     image_name: '${{BUILD_NAME}}'
-    working_directory: '${{CF_REPO_NAME}}'
-    dockerfile: 'hux/api/Dockerfile'
+    working_directory: '${{CF_REPO_NAME}}/${{API_INTEGRATION_TEST_PATH}}'
+    dockerfile: 'Dockerfile'
     tag: '${{DOCKER_TAG}}'
     build_arguments:
       - ARTIFACTORY_PYTHON_READ=${{ARTIFACTORY_PYTHON_READ}}
