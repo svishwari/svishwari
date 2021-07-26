@@ -298,8 +298,13 @@ class OrchestrationRouteTest(TestCase):
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
         )
+
+        valid_response = {"message": api_c.AUTH401_ERROR_MESSAGE}
         self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+            valid_response, response.json
+        )
+        self.assertEqual(
+            HTTPStatus.UNAUTHORIZED, response.status_code
         )
 
     def test_create_audience_invalid_user_info(self):
@@ -342,8 +347,13 @@ class OrchestrationRouteTest(TestCase):
             json=audience_post,
             headers=t_c.STANDARD_HEADERS,
         )
+
+        valid_response = {"message": api_c.AUTH401_ERROR_MESSAGE}
         self.assertEqual(
-            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+            valid_response, response.json
+        )
+        self.assertEqual(
+            HTTPStatus.UNAUTHORIZED, response.status_code
         )
 
     def test_create_audience_with_no_destinations_no_engagements(self):

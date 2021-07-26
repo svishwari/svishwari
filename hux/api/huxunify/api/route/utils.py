@@ -273,21 +273,26 @@ def get_user_name() -> object:
             # get the user information
             user_info = get_user_info(token_response[0])
 
-            # check if the user is in the database
             database = get_db_client()
-            user = get_user(database, user_info[constants.OKTA_ID_SUB])
 
-            # return found user, or create one and return it.
-            kwargs[constants.USER_NAME] = (
-                user[db_c.USER_DISPLAY_NAME]
-                if user
-                else set_user(
-                    database,
-                    user_info[constants.OKTA_ID_SUB],
-                    user_info[constants.EMAIL],
-                    display_name=user_info[constants.NAME],
-                )[db_c.USER_DISPLAY_NAME]
-            )
+            try:
+                # check if the user is in the database
+                user = get_user(database, user_info[constants.OKTA_ID_SUB])
+
+                # return found user, or create one and return it.
+                kwargs[constants.USER_NAME] = (
+                    user[db_c.USER_DISPLAY_NAME]
+                    if user
+                    else set_user(
+                        database,
+                        user_info[constants.OKTA_ID_SUB],
+                        user_info[constants.EMAIL],
+                        display_name=user_info[constants.NAME],
+                    )[db_c.USER_DISPLAY_NAME]
+                )
+            except KeyError as exc:
+                return {"message": constants.AUTH401_ERROR_MESSAGE
+                        }, HTTPStatus.UNAUTHORIZED
 
             return in_function(*args, **kwargs)
 
