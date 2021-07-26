@@ -195,13 +195,13 @@ def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
         response = response[0]
 
         # validate response code
-        if response.status != 200 or api_c.BODY not in response.json():
+        if response["code"] != 200 or api_c.BODY not in response:
             # invalid response set default
             audience_size_dict[audience_id] = default_size
             continue
 
         # set the total count, otherwise set the default size if not found
-        audience_size_dict[audience_id] = response.json()[api_c.BODY].get(
+        audience_size_dict[audience_id] = response[api_c.BODY].get(
             api_c.TOTAL_COUNT, default_size
         )
 
@@ -225,8 +225,7 @@ async def get_async_customers(audience_id, audience_filters, url) -> dict:
         # run the async post request
         async with session.post(url, json=audience_filters) as response:
             # await the responses, and return them as they come in.
-            await response.text()
-            return response, str(audience_id)
+            return await response.json(), str(audience_id)
 
 
 def get_idr_data_feeds() -> list:
