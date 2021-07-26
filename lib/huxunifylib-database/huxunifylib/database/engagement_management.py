@@ -766,7 +766,7 @@ def remove_destination_from_engagement_audience(
         engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
         destination_id (ObjectId): MongoDB ID of the destination to be removed
-        user_name (str): Name of the user removing the destination to the audience.
+        user_name (str): Name of the user removing the destination from the audience.
 
     Returns:
         dict: updated engagement object
