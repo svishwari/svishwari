@@ -300,12 +300,8 @@ class OrchestrationRouteTest(TestCase):
         )
 
         valid_response = {"message": api_c.AUTH401_ERROR_MESSAGE}
-        self.assertEqual(
-            valid_response, response.json
-        )
-        self.assertEqual(
-            HTTPStatus.UNAUTHORIZED, response.status_code
-        )
+        self.assertEqual(valid_response, response.json)
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
 
     def test_create_audience_invalid_user_info(self):
         """Test create audience with destination given invalid user info.
@@ -349,12 +345,8 @@ class OrchestrationRouteTest(TestCase):
         )
 
         valid_response = {"message": api_c.AUTH401_ERROR_MESSAGE}
-        self.assertEqual(
-            valid_response, response.json
-        )
-        self.assertEqual(
-            HTTPStatus.UNAUTHORIZED, response.status_code
-        )
+        self.assertEqual(valid_response, response.json)
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
 
     def test_create_audience_with_no_destinations_no_engagements(self):
         """Test create audience with no destinations or engagements

@@ -290,9 +290,10 @@ def get_user_name() -> object:
                         display_name=user_info[constants.NAME],
                     )[db_c.USER_DISPLAY_NAME]
                 )
-            except KeyError as exc:
-                return {"message": constants.AUTH401_ERROR_MESSAGE
-                        }, HTTPStatus.UNAUTHORIZED
+            except KeyError:
+                return {
+                    "message": constants.AUTH401_ERROR_MESSAGE
+                }, HTTPStatus.UNAUTHORIZED
 
             return in_function(*args, **kwargs)
 
