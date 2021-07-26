@@ -1,5 +1,5 @@
 ---
-test_name: Test notifications API success
+test_name: Test notifications API default success
 
 strict:
   - json:list_any_order
@@ -8,7 +8,7 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: test notifications api success
+  - name: test notifications api default success
 
     # Define the request to be made...
     request:
@@ -44,7 +44,7 @@ stages:
 
     # Define the request to be made...
     request:
-      url: "{host}/{version}/notifications?batch_size=4&sort_order=ascending&batch_number=1"
+      url: "{host}/{version}/notifications?batch_size=4&sort_order=ascending&batch_number=2"
       method: GET
       headers:
         content-type: application/json
