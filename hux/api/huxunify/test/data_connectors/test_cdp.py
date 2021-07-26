@@ -8,6 +8,7 @@ from http import HTTPStatus
 import requests_mock
 from hypothesis import given, strategies as st
 
+from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
@@ -146,7 +147,7 @@ class CDPTest(TestCase):
                 {
                     api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
                     api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
-                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
+                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
                     api_c.DATAFEED_NEW_IDS_COUNT: 21,
                     api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
                     api_c.MATCH_RATE: 0.98,
@@ -155,7 +156,7 @@ class CDPTest(TestCase):
                 {
                     api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
                     api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
-                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
+                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
                     api_c.DATAFEED_NEW_IDS_COUNT: 54,
                     api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
                     api_c.MATCH_RATE: 0.97,
@@ -165,7 +166,7 @@ class CDPTest(TestCase):
                 {
                     api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
                     api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
-                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
+                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
                     api_c.DATAFEED_NEW_IDS_COUNT: 300,
                     api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
                     api_c.MATCH_RATE: 0.98,
@@ -175,7 +176,7 @@ class CDPTest(TestCase):
                 {
                     api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
                     api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
-                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
+                    api_c.DATAFEED_DATA_SOURCE: db_c.CDP_DATA_SOURCE_BLUECORE,
                     api_c.DATAFEED_NEW_IDS_COUNT: 612,
                     api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
                     api_c.MATCH_RATE: 0.98,
