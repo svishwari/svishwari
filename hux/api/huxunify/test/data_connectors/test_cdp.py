@@ -16,6 +16,7 @@ from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
     DATETIME_FIELDS,
     DEFAULT_DATETIME,
+    get_idr_data_feeds,
 )
 from huxunify.app import create_app
 
@@ -148,7 +149,7 @@ class CDPTest(TestCase):
                 {
                     api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fc",
                     api_c.DATAFEED_NAME: "Really_long_Feed_Name_106",
-                    api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_SFMC,
+                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
                     api_c.DATAFEED_NEW_IDS_COUNT: 21,
                     api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2023532,
                     api_c.MATCH_RATE: 0.98,
@@ -157,14 +158,38 @@ class CDPTest(TestCase):
                 {
                     api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fd",
                     api_c.DATAFEED_NAME: "Really_long_Feed_Name_105",
-                    api_c.DATAFEED_DATA_SOURCE: db_c.DELIVERY_PLATFORM_FACEBOOK,
+                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
                     api_c.DATAFEED_NEW_IDS_COUNT: 54,
                     api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
                     api_c.MATCH_RATE: 0.97,
                     api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
                     - datetime.timedelta(days=1),
                 },
+                {
+                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
+                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_102",
+                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
+                    api_c.DATAFEED_NEW_IDS_COUNT: 300,
+                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
+                    api_c.MATCH_RATE: 0.98,
+                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
+                    - datetime.timedelta(days=7),
+                },
+                {
+                    api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
+                    api_c.DATAFEED_NAME: "Really_long_Feed_Name_100",
+                    api_c.DATAFEED_DATA_SOURCE: "Bluecore",
+                    api_c.DATAFEED_NEW_IDS_COUNT: 612,
+                    api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
+                    api_c.MATCH_RATE: 0.98,
+                    api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
+                    - datetime.timedelta(days=30),
+                },
             ],
             "message": "ok",
         }
+
+        response = get_idr_data_feeds()
+
         self.assertEqual(HTTPStatus.OK, expected_response["code"])
+        self.assertEqual(response, expected_response["body"])
