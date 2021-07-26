@@ -43,7 +43,11 @@
       <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
         <!-- TODO: this can be moved Configuration folder -->
         <FormSteps>
-          <FormStep :step="1" label="General information" class="neroBlack--text step-1">
+          <FormStep
+            :step="1"
+            label="General information"
+            class="neroBlack--text step-1"
+          >
             <v-row class="pt-1">
               <v-col cols="4">
                 <TextField
@@ -96,7 +100,12 @@
             </v-row>
           </FormStep>
 
-          <FormStep :step="2" label="Select attribute(s)" optional="- Optional" class="neroBlack--text step-2">
+          <FormStep
+            :step="2"
+            label="Select attribute(s)"
+            optional="- Optional"
+            class="neroBlack--text step-2"
+          >
             <v-col class="pt-1 pa-0">
               <attribute-rules
                 :rules="attributeRules"
@@ -421,22 +430,22 @@ export default {
         case "Countries":
         case "US States":
         case "Cities":
-          return this.$options.filters.Numeric(
-            item.subtitle,
-            false,
-            false,
-            true
-          ) || '-'
+          return (
+            this.$options.filters.Numeric(item.subtitle, false, false, true) ||
+            "-"
+          )
         case "Women":
         case "Men":
         case "Other":
-          return this.$options.filters.percentageConvert(
-            item.subtitle,
-            true,
-            true
-          ) || '-'
+          return (
+            this.$options.filters.percentageConvert(
+              item.subtitle,
+              true,
+              true
+            ) || "-"
+          )
         default:
-          return item.subtitle || '-'
+          return item.subtitle || "-"
       }
     },
 
@@ -689,15 +698,15 @@ export default {
       }
       .step-2 {
         .form-step__content {
-            padding-top: 0px !important;
-            margin-top: -8px;
-            padding-bottom: 30px !important;
+          padding-top: 0px !important;
+          margin-top: -8px;
+          padding-bottom: 30px !important;
         }
       }
       .step-3 {
         .form-step__content {
-            padding-top: 0px !important;
-            margin-top: -8px;
+          padding-top: 0px !important;
+          margin-top: -8px;
         }
       }
     }
