@@ -7,6 +7,7 @@ PRODUCTION_MODE = "production"
 # general defines
 ID = "id"
 NAME = "name"
+EXTENSION_NAME = "Name"
 OWNER = "owner"
 STATUS = "status"
 BODY = "body"
@@ -559,6 +560,7 @@ CDP_DATA_SOURCES_ENDPOINT = "/data-sources"
 CDP_DATA_SOURCE_IDS = "data_source_ids"
 
 # Customers
+CUSTOMER_KEY = "CustomerKey"
 CUSTOMER_ID = "customer_id"
 CUSTOMERS_ENDPOINT = "/customers"
 CUSTOMERS_TAG = "customers"

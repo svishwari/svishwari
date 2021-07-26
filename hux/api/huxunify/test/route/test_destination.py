@@ -389,7 +389,9 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(valid_response, response.json)
 
     @mock.patch("huxunify.api.route.destination.SFMCConnector")
-    def test_retrieve_destination_data_extensions(self, mock_sfmc: MagicMock):
+    def test_retrieve_ordered_destination_data_extensions(
+        self, mock_sfmc: MagicMock
+    ):
         """
         Test retrieve destination data extensions
 
@@ -400,10 +402,16 @@ class TestDestinationRoutes(TestCase):
 
         """
 
-        return_value = {
-            api_c.NAME: "data_extension_name",
-            api_c.DATA_EXTENSION_ID: "id12345",
-        }
+        return_value = [
+            {
+                api_c.EXTENSION_NAME: "extension_name",
+                api_c.CUSTOMER_KEY: "id12345",
+            },
+            {
+                api_c.EXTENSION_NAME: "data_extension_name",
+                api_c.CUSTOMER_KEY: "id12345678",
+            },
+        ]
         mock_sfmc_instance = mock_sfmc.return_value
         mock_sfmc_instance.get_list_of_data_extensions.return_value = (
             return_value
@@ -417,6 +425,40 @@ class TestDestinationRoutes(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(response.json[0][api_c.NAME], "data_extension_name")
+        self.assertEqual(
+            response.json[0][api_c.DATA_EXTENSION_ID], "id12345678"
+        )
+
+    @mock.patch("huxunify.api.route.destination.SFMCConnector")
+    def test_retrieve_empty_destination_data_extensions(
+        self, mock_sfmc: MagicMock
+    ):
+        """
+        Test retrieve destination data extensions
+
+        Args:
+            mock_sfmc (MagicMock): magic mock of SFMCConnector
+
+        Returns:
+
+        """
+
+        return_value = []
+        mock_sfmc_instance = mock_sfmc.return_value
+        mock_sfmc_instance.get_list_of_data_extensions.return_value = (
+            return_value
+        )
+
+        destination_id = self.destinations[2][db_c.ID]
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/{destination_id}/data-extensions",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(response.json, [])
 
     def test_retrieve_destination_data_extensions_invalid_id(self):
         """
