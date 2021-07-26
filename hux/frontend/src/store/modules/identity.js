@@ -4,30 +4,30 @@ import { handleError } from "@/utils"
 const METRICS = {
   total_records: {
     title: "Total no. of records",
-    description: "Total no. of input records across all data feeds.",
+    description: "Total number of input records across all data feeds.",
     format: "numeric",
   },
   match_rate: {
     title: "Match rate",
     description:
-      "Percentage of input records that are consolidated into Hux Ids.",
+      "Percentage of input records that are consolidated into Hux IDs.",
     format: "percentage",
   },
   total_unique_ids: {
     title: "Unique Hux IDs",
-    description: "Total Hux Ids that represent an anonymous or known customer.",
+    description: "Total Hux IDs that represent an anonymous or known customer.",
     format: "numeric",
   },
   total_unknown_ids: {
     title: "Anonymous IDs",
     description:
-      "IDs related to online vistors that have not logged in, typically identified by a browser cookie or device id.",
+      "IDs related to online visitors that have not logged in, typically identified by a browser cookie or device ID.",
     format: "numeric",
   },
   total_known_ids: {
     title: "Known IDs",
     description:
-      "Ids related to profiles that contain PII from online or offline enagagement: name, postal address, email address or phone number.",
+      "IDs related to profiles that contain PII from online or offline engagement: name, postal address, email address, and phone number.",
     format: "numeric",
   },
   total_individual_ids: {

@@ -1,16 +1,16 @@
 """
 Paths for Orchestration API
 """
-import datetime
-import random
 from http import HTTPStatus
 from random import randrange
-from typing import Tuple
+from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
-from marshmallow import ValidationError, INCLUDE
+from marshmallow import INCLUDE
+from pymongo import MongoClient
 
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
@@ -25,7 +25,13 @@ from huxunify.api.schema.orchestration import (
     AudiencePutSchema,
     AudiencePostSchema,
 )
-from huxunify.api.data_connectors.cdp import get_customers_overview
+from huxunify.api.schema.engagement import (
+    weight_delivery_status,
+)
+from huxunify.api.data_connectors.cdp import (
+    get_customers_overview,
+    get_customers_count_async,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
 from huxunify.api.route.utils import (
@@ -33,7 +39,9 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
+    validate_destination_id,
 )
+from huxunify.api.route.utils import api_error_handler
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -48,19 +56,23 @@ def before_request():
     pass  # pylint: disable=unnecessary-pass
 
 
-def add_destinations(destinations) -> list:
+def add_destinations(
+    database: MongoClient, destinations: list
+) -> Union[list, None]:
     """Add destinations data using destination ids.
     ---
         Args:
+            database (MongoClient): Mongo database.
             destinations (list): Destinations list.
+
         Returns:
-            destinations (list): Destination objects.
+            destinations (Union[list, None]): Destination objects.
     """
 
     if destinations is not None:
         object_ids = [ObjectId(x.get(api_c.ID)) for x in destinations]
         return destination_management.get_delivery_platforms_by_id(
-            get_db_client(), object_ids
+            database, object_ids
         )
     return None
 
@@ -85,6 +97,7 @@ class AudienceView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    @api_error_handler()
     def get(self) -> Tuple[list, int]:  # pylint: disable=no-self-use
         """Retrieves all audiences.
 
@@ -97,20 +110,38 @@ class AudienceView(SwaggerView):
 
         """
 
-        audiences = orchestration_management.get_all_audiences(get_db_client())
+        # get all audiences and deliveries
+        database = get_db_client()
+        audiences = orchestration_management.get_all_audiences_and_deliveries(
+            database
+        )
+
+        # get all audiences because document DB does not allow for replaceRoot
+        audience_dict = {
+            x[db_c.ID]: x
+            for x in orchestration_management.get_all_audiences(database)
+        }
+
+        # get customer sizes
+        customer_size_dict = get_customers_count_async(audiences)
+
+        # process each audience object
         for audience in audiences:
+            # workaround because DocumentDB does not allow $replaceRoot
+            # do replace root by bringing the nested engagement up a level.
+            audience.update(audience_dict[audience[db_c.ID]])
+
+            # remove any empty deliveries
+            audience[api_c.DELIVERIES] = [
+                x for x in audience[api_c.DELIVERIES] if x
+            ]
+
+            # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
-                audience.get(api_c.DESTINATIONS_TAG)
+                database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
-            # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-            # Add stub size, last_delivered_on for test purposes.
-            audience[api_c.SIZE] = randrange(10000000)
-            audience[
-                api_c.AUDIENCE_LAST_DELIVERED
-            ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
-                days=1000
-            )
+            audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
@@ -154,6 +185,7 @@ class AudienceGetView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def get(self, audience_id: str) -> Tuple[dict, int]:
         """Retrieves an audience.
 
@@ -172,28 +204,67 @@ class AudienceGetView(SwaggerView):
         if not ObjectId.is_valid(audience_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        audience = orchestration_management.get_audience(
-            get_db_client(), ObjectId(audience_id)
-        )
+        database = get_db_client()
+
+        # get the audience
+        audience_id = ObjectId(audience_id)
+        audience = orchestration_management.get_audience(database, audience_id)
 
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
+        # get the audience insights
+        engagement_deliveries = orchestration_management.get_audience_insights(
+            database, audience_id
+        )
+
+        # process each engagement
+        engagements = []
+        for engagement in engagement_deliveries:
+            # workaround because DocumentDB does not allow $replaceRoot
+            # do replace root by bringing the nested engagement up a level.
+            engagement.update(engagement[api_c.ENGAGEMENT])
+
+            # remove the nested engagement
+            del engagement[api_c.ENGAGEMENT]
+
+            # remove any empty delivery objects from DocumentDB Pipeline
+            engagement[api_c.DELIVERIES] = [
+                x for x in engagement[api_c.DELIVERIES] if x
+            ]
+
+            # set the weighted status for the engagement based on deliveries
+            engagement[api_c.STATUS] = weight_delivery_status(engagement)
+            engagements.append(engagement)
+
+        # set the list of engagements for an audience
+        audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
+
+        # get the max last delivered date for all destinations in an audience
+        delivery_times = [
+            x[api_c.AUDIENCE_LAST_DELIVERED]
+            for x in engagements
+            if x.get(api_c.AUDIENCE_LAST_DELIVERED)
+        ]
+        audience[api_c.AUDIENCE_LAST_DELIVERED] = (
+            max(delivery_times) if delivery_times else None
+        )
+
+        # set the destinations
         audience[api_c.DESTINATIONS_TAG] = add_destinations(
-            audience.get(api_c.DESTINATIONS_TAG)
+            database, audience.get(api_c.DESTINATIONS_TAG)
         )
 
         # get live audience size
         customers = get_customers_overview(audience[api_c.AUDIENCE_FILTERS])
 
-        # Add stub insights, size, last_delivered_on for test purposes.
-        audience[api_c.AUDIENCE_INSIGHTS] = api_c.STUB_INSIGHTS_RESPONSE
+        # Add insights, size.
+        audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
-        audience[
-            api_c.AUDIENCE_LAST_DELIVERED
-        ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
-            days=1000
-        )
+
+        # TODO - HUS-436
+        audience[db_c.LOOKALIKE_AUDIENCE_COLLECTION] = []
+
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
             HTTPStatus.OK,
@@ -261,6 +332,7 @@ class AudiencePostView(SwaggerView):
     # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-branches
     # pylint: disable=no-self-use
+    @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
         """Creates a new audience.
@@ -277,10 +349,7 @@ class AudiencePostView(SwaggerView):
 
         """
 
-        try:
-            body = AudiencePostSchema().load(request.get_json(), partial=True)
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = AudiencePostSchema().load(request.get_json(), partial=True)
 
         # validate destinations
         database = get_db_client()
@@ -301,25 +370,11 @@ class AudiencePostView(SwaggerView):
                     }, HTTPStatus.BAD_REQUEST
 
                 # validate object id
-                if not ObjectId.is_valid(destination[db_c.OBJECT_ID]):
-                    return {
-                        "message": f"{destination} has an invalid "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
-
                 # map to an object ID field
-                destination[db_c.OBJECT_ID] = ObjectId(
+                # validate the destination object exists.
+                destination[db_c.OBJECT_ID] = validate_destination_id(
                     destination[db_c.OBJECT_ID]
                 )
-
-                # validate the destination object exists.
-                if not destination_management.get_delivery_platform(
-                    database, destination[db_c.OBJECT_ID]
-                ):
-                    return {
-                        "message": f"Destination with ID "
-                        f"{destination[db_c.OBJECT_ID]} does not exist."
-                    }
 
         engagement_ids = []
         if api_c.AUDIENCE_ENGAGEMENTS in body:
@@ -355,19 +410,46 @@ class AudiencePostView(SwaggerView):
                 user_name=user_name,
             )
 
+            # add notification
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} added a new audience named "
+                    f'"{audience_doc[db_c.NAME]}".'
+                ),
+                api_c.ORCHESTRATION_TAG,
+            )
+
             # attach the audience to each of the engagements
             for engagement_id in engagement_ids:
-                engagement_management.append_audiences_to_engagement(
-                    database,
-                    engagement_id,
-                    user_name,
-                    [
-                        {
-                            db_c.OBJECT_ID: audience_doc[db_c.ID],
-                            db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
-                        }
-                    ],
+                engagement = (
+                    engagement_management.append_audiences_to_engagement(
+                        database,
+                        engagement_id,
+                        user_name,
+                        [
+                            {
+                                db_c.OBJECT_ID: audience_doc[db_c.ID],
+                                db_c.DESTINATIONS: body.get(
+                                    api_c.DESTINATIONS
+                                ),
+                            }
+                        ],
+                    )
                 )
+                # add audience attached notification
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
+                        f"{user_name} added audience "
+                        f'"{audience_doc[db_c.NAME]}" to engagement '
+                        f'"{engagement[db_c.NAME]}".'
+                    ),
+                    api_c.ORCHESTRATION_TAG,
+                )
+
         except db_exceptions.DuplicateName:
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
@@ -443,6 +525,7 @@ class AudiencePutView(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     @get_user_name()
     def put(self, audience_id: str, user_name: str) -> Tuple[dict, int]:
         """Updates an audience.
@@ -461,13 +544,11 @@ class AudiencePutView(SwaggerView):
         """
 
         # load into the schema object
-        try:
-            body = AudiencePutSchema().load(request.get_json(), partial=True)
-        except ValidationError as validation_error:
-            return validation_error.messages, HTTPStatus.BAD_REQUEST
+        body = AudiencePutSchema().load(request.get_json(), partial=True)
 
+        database = get_db_client()
         audience_doc = orchestration_management.update_audience(
-            database=get_db_client(),
+            database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
@@ -475,6 +556,12 @@ class AudiencePutView(SwaggerView):
             user_name=user_name,
         )
 
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f'{user_name} updated audience "{audience_doc[db_c.NAME]}".',
+            api_c.ORCHESTRATION_TAG,
+        )
         # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
@@ -496,6 +583,7 @@ class AudienceRules(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:  # pylint: disable=no-self-use
         """Retrieves all audience rules.
 

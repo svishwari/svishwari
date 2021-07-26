@@ -4,22 +4,29 @@ purpose of this file is to house route utilities
 import logging
 from datetime import datetime
 from functools import wraps
-from typing import Any, Tuple
+from typing import Any, Tuple, Union, Dict
 from http import HTTPStatus
 from bson import ObjectId
 
+import facebook_business.exceptions
 from healthcheck import HealthCheck
 from decouple import config
 from flask import request
 from connexion.exceptions import ProblemException
 from pymongo import MongoClient
+from marshmallow import ValidationError
 
 from huxunifylib.connectors.util.client import db_client_factory
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database.user_management import get_user, set_user
-from huxunifylib.database import constants as db_c
+from huxunifylib.database.engagement_management import get_engagement
+from huxunifylib.database import (
+    orchestration_management,
+    delivery_platform_management as destination_management,
+    constants as db_c,
+)
 import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.config import get_config
@@ -294,7 +301,7 @@ def get_user_name() -> object:
     return wrapper
 
 
-def api_error_handler() -> object:
+def api_error_handler(custom_message: dict = None) -> object:
     """
     This decorator handles generic errors for API requests.
 
@@ -303,6 +310,8 @@ def api_error_handler() -> object:
     Example: @api_error_handler()
 
     Args:
+        custom_message (dict): Optional; A dict containing custom messages for
+            particular exceptions
 
     Returns:
         Response: decorator
@@ -333,6 +342,20 @@ def api_error_handler() -> object:
             try:
                 return in_function(*args, **kwargs)
 
+            except ValidationError as validation_error:
+                if custom_message:
+                    error_message = custom_message.get(
+                        ValidationError, validation_error.messages
+                    )
+                else:
+                    error_message = validation_error.messages
+                return error_message, HTTPStatus.BAD_REQUEST
+
+            except facebook_business.exceptions.FacebookRequestError:
+                return {
+                    "message": "Error connecting to Facebook"
+                }, HTTPStatus.BAD_REQUEST
+
             except de.DuplicateName:
                 return {
                     "message": constants.DUPLICATE_NAME
@@ -357,96 +380,39 @@ def api_error_handler() -> object:
     return wrapper
 
 
-def group_perf_metric(perf_metrics: list) -> dict:
+def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
     """Group performance metrics
     ---
 
         Args:
             perf_metrics (list): List of performance metrics.
+            metric_type (list): Type of performance metrics.
 
         Returns:
             perf_metric (dict): Grouped performance metric .
 
     """
-    metric = {
-        constants.IMPRESSIONS: sum(
-            [
-                int(item[constants.IMPRESSIONS])
-                for item in perf_metrics
-                if constants.IMPRESSIONS in item.keys()
-            ]
-        ),
-        constants.SPEND: sum(
-            [
-                int(item[constants.SPEND])
-                for item in perf_metrics
-                if constants.SPEND in item.keys()
-            ]
-        ),
-        constants.REACH: sum(
-            [
-                int(item[constants.REACH])
-                for item in perf_metrics
-                if constants.REACH in item.keys()
-            ]
-        ),
-        constants.CONVERSIONS: sum(
-            [
-                int(item[constants.CONVERSIONS])
-                for item in perf_metrics
-                if constants.CONVERSIONS in item.keys()
-            ]
-        ),
-        constants.CLICKS: sum(
-            [
-                int(item[constants.CLICKS])
-                for item in perf_metrics
-                if constants.CLICKS in item.keys()
-            ]
-        ),
-        constants.FREQUENCY: sum(
-            [
-                int(item[constants.FREQUENCY])
-                for item in perf_metrics
-                if constants.FREQUENCY in item.keys()
-            ]
-        ),
-        constants.CPM: sum(
-            [
-                int(item[constants.CPM])
-                for item in perf_metrics
-                if constants.CPM in item.keys()
-            ]
-        ),
-        constants.CTR: sum(
-            [
-                int(item[constants.CTR])
-                for item in perf_metrics
-                if constants.CTR in item.keys()
-            ]
-        ),
-        constants.CPA: sum(
-            [
-                int(item[constants.CPA])
-                for item in perf_metrics
-                if constants.CPA in item.keys()
-            ]
-        ),
-        constants.CPC: sum(
-            [
-                int(item[constants.CPC])
-                for item in perf_metrics
-                if constants.CPC in item.keys()
-            ]
-        ),
-        constants.ENGAGEMENT_RATE: sum(
-            [
-                int(item[constants.ENGAGEMENT_RATE])
-                for item in perf_metrics
-                if constants.ENGAGEMENT_RATE in item.keys()
-            ]
-        ),
-    }
+
+    metric = {}
+
+    if metric_type == constants.DISPLAY_ADS:
+        for name in constants.DISPLAY_ADS_METRICS:
+            metric[name] = sum(
+                [
+                    int(item[name])
+                    for item in perf_metrics
+                    if name in item.keys()
+                ]
+            )
+    elif metric_type == constants.EMAIL:
+        for name in constants.EMAIL_METRICS:
+            metric[name] = sum(
+                [
+                    int(item[name])
+                    for item in perf_metrics
+                    if name in item.keys()
+                ]
+            )
 
     return metric
 
@@ -477,7 +443,11 @@ def get_friendly_delivered_time(delivered_time: datetime) -> str:
 
 
 def update_metrics(
-    target_id: ObjectId, name: str, jobs: list, perf_metrics: list
+    target_id: ObjectId,
+    name: str,
+    jobs: list,
+    perf_metrics: list,
+    metric_type: str,
 ) -> dict:
     """Update performance metrics
 
@@ -486,6 +456,7 @@ def update_metrics(
         name (str): Name of group object.
         jobs (list): List of delivery jobs.
         perf_metrics (list): List of performance metrics.
+        metric_type (str): Type of performance metrics.
 
     Returns:
         metric (dict): Grouped performance metrics .
@@ -501,7 +472,181 @@ def update_metrics(
                 x[db_c.PERFORMANCE_METRICS]
                 for x in perf_metrics
                 if x[db_c.DELIVERY_JOB_ID] in delivery_jobs
-            ]
+            ],
+            metric_type,
         )
     )
     return metric
+
+
+def validate_delivery_params(func) -> object:
+    """A decorator for common validations in delivery.py
+
+    Performs checks to determine if object ids are valid,
+    engagement id exists, engagements have audiences,
+    audience id exists,audience is attached. Also converts
+    all string ids to ObjectId.
+
+    Example: @validate_delivery_params
+
+    Args:
+        func(object): function object
+    Returns:
+        object: returns a wrapped decorated function object.
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> object:
+        """Decorator for validation and converting to ObjectId.
+        Args:
+            *args (object): function arguments.
+            **kwargs (dict): function keyword arguments.
+
+        Returns:
+           object: returns a decorated function object.
+        """
+
+        # check for valid object id and convert to object id
+        for key, val in kwargs.items():
+            if ObjectId.is_valid(val):
+                kwargs[key] = ObjectId(val)
+            else:
+                return {
+                    "message": constants.INVALID_OBJECT_ID
+                }, HTTPStatus.BAD_REQUEST
+
+        database = get_db_client()
+
+        # check if engagement id exists
+        engagement_id = kwargs.get("engagement_id", None)
+        if engagement_id:
+            engagement = get_engagement(database, engagement_id)
+            if engagement:
+                if db_c.AUDIENCES not in engagement:
+                    return {
+                        "message": "Engagement has no audiences."
+                    }, HTTPStatus.BAD_REQUEST
+            else:
+                # validate that the engagement has audiences
+                return {
+                    "message": constants.ENGAGEMENT_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
+
+        # check if audience id exists
+        audience_id = kwargs.get("audience_id", None)
+        if audience_id:
+            # check if audience id exists
+            audience = None
+            try:
+                audience = orchestration_management.get_audience(
+                    database, audience_id
+                )
+            except de.InvalidID:
+                # get audience returns invalid if the audience does not exist.
+                # pass and catch in the next step.
+                pass
+            if not audience:
+                return {
+                    "message": "Audience does not exist."
+                }, HTTPStatus.BAD_REQUEST
+
+            if audience_id and engagement_id:
+                # validate that the audience is attached
+                audience_ids = [
+                    x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+                ]
+                if audience_id not in audience_ids:
+                    return {
+                        "message": "Audience is not attached to the engagement."
+                    }, HTTPStatus.BAD_REQUEST
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def validate_destination_id(
+    destination_id: str, check_if_destination_in_db: bool = True
+) -> Union[ObjectId, Tuple[Dict[str, str], int]]:
+    """Checks on destination_id
+
+    Check if destination id is valid converts it to object_id.
+    Also can check if destination_id is in db
+
+    Args:
+        destination_id (str) : Destination id.
+        check_if_destination_in_db (bool): Optional; flag to check if destination in db
+
+    Returns:
+        response(dict): Message and HTTP status to be returned in response in
+            case of failing checks,
+        destination_id (ObjectId): Destination id as object id if
+            all checks are successful.
+    """
+    if not ObjectId.is_valid(destination_id):
+        return {"message": constants.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+    destination_id = ObjectId(destination_id)
+
+    if check_if_destination_in_db:
+        if not destination_management.get_delivery_platform(
+            get_db_client(), destination_id
+        ):
+            return {
+                "message": constants.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+    return destination_id
+
+
+def validate_destination(
+    check_if_destination_in_db: bool = True,
+) -> object:
+    """
+    This decorator handles validation of destination objects.
+    Example: @validate_destination_wrapper()
+
+    Args:
+        check_if_destination_in_db (bool): Optional; If check_destination_exists
+            a check is performed to verify if destination exists in the db.
+
+    Returns:
+        Response: decorator
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           object: returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling destination validation.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               object: returns a decorated function object.
+            """
+            destination_id = kwargs.get("destination_id", None)
+            return_val = validate_destination_id(
+                destination_id, check_if_destination_in_db
+            )
+            # check if destination_id is returned
+            if isinstance(return_val, ObjectId):
+                kwargs["destination_id"] = ObjectId(destination_id)
+            else:
+                # return response message
+                return return_val
+            return in_function(*args, **kwargs)
+
+        decorator.__wrapped__ = in_function
+        return decorator
+
+    return wrapper

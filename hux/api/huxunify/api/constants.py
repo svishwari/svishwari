@@ -42,6 +42,7 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 COUNTRIES = "total_countries"
+TOTAL_COUNT = "total_count"
 STATES = "total_us_states"
 CITIES = "total_cities"
 MIN_AGE = "min_age"
@@ -161,6 +162,7 @@ STATUS_WEIGHTS = {
     STATUS_INACTIVE: 5,
     STATUS_DRAFT: 4,
     STATUS_PENDING: 3,
+    db_c.STATUS_IN_PROGRESS: 3,
     STATUS_PAUSED: 2,
     STATUS_STOPPED: 1,
     STATUS_ERROR: 0,
@@ -330,6 +332,7 @@ DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
 # Engagement fields
+ENGAGEMENT = "engagement"
 ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_IDS = "engagement_ids"
 ENGAGEMENT_NAME = "engagement_name"
@@ -346,32 +349,40 @@ AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 
-SPEND = "spend"
-REACH = "reach"
-IMPRESSIONS = "impressions"
-CONVERSIONS = "conversions"
-CLICKS = "clicks"
-FREQUENCY = "frequency"
-CPM = "cost_per_thousand_impressions"
-CTR = "click_through_rate"
-CPA = "cost_per_action"
-CPC = "cost_per_click"
-ENGAGEMENT_RATE = "engagement_rate"
+DISPLAY_ADS_METRICS = [
+    "spend",
+    "reach",
+    "impressions",
+    "conversions",
+    "clicks",
+    "frequency",
+    "cost_per_thousand_impressions",
+    "click_through_rate",
+    "cost_per_action",
+    "cost_per_click",
+    "engagement_rate",
+]
+EMAIL_METRICS = [
+    "sent",
+    "hard_bounces",
+    "hard_bounces_rate",
+    "delivered",
+    "delivered_rate",
+    "open",
+    "open_rate",
+    "click",
+    "click_to_open_rate",
+    "unique_clicks",
+    "unique_opens",
+    "unsubscribe",
+    "unsubscribe_rate",
+]
 SUMMARY = "summary"
 IS_MAPPED = "is_mapped"
-
-SENT = "sent"
-HARD_BOUNCES = "hard_bounces"
-HARD_BOUNCES_RATE = "hard_bounces_rate"
 DELIVERED = "delivered"
-DELIVERED_RATE = "delivered_rate"
-OPEN = "open"
-OPEN_RATE = "open_rate"
-COTR = "click_to_open_rate"
-UNIQUE_CLICKS = "unique_clicks"
-UNIQUE_OPENS = "unique_opens"
 UNSUBSCRIBE = "unsubscribe"
-UNSUBSCRIBE_RATE = "unsubscribe_rate"
+SPEND = "spend"
+
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
@@ -412,6 +423,7 @@ AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
 AUDIENCE_SECTION_FILTERS = "section_filters"
 AUDIENCE_INSIGHTS = "audience_insights"
+INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
