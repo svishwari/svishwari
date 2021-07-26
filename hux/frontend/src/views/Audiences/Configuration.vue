@@ -430,11 +430,20 @@ export default {
         case "Countries":
         case "US States":
         case "Cities":
-          return this.$options.filters.Numeric(item.subtitle, false, false, true)
+          return this.$options.filters.Numeric(
+            item.subtitle,
+            false,
+            false,
+            true
+          )
         case "Women":
         case "Men":
         case "Other":
-          return this.$options.filters.percentageConvert(item.subtitle, true, true)
+          return this.$options.filters.percentageConvert(
+            item.subtitle,
+            true,
+            true
+          )
         default:
           return item.subtitle
       }
