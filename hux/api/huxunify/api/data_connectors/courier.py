@@ -201,7 +201,7 @@ class DestinationBatchJob:
         if not (
             engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)
         ):
-            logging.info(
+            logging.warning(
                 "Delivery schedule is not set for %s",
                 engagement_doc[db_const.ID],
             )
@@ -209,6 +209,8 @@ class DestinationBatchJob:
 
         # create the rule name
         cw_name = f"{engagement_doc[db_const.ID]}-{self.destination_type}"
+
+        # TODO hookup converted cron job expression HUS-794
         if not set_cloud_watch_rule(
             cw_name,
             "cron(15 0 * * ? *)",
