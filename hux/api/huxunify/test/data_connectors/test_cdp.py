@@ -14,7 +14,6 @@ from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
     DATETIME_FIELDS,
     DEFAULT_DATETIME,
-    get_idr_data_feeds,
 )
 from huxunify.app import create_app
 
