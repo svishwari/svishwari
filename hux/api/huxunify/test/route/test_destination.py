@@ -404,11 +404,11 @@ class TestDestinationRoutes(TestCase):
 
         return_value = [
             {
-                api_c.EXTENSION_NAME: "extension_name",
+                api_c.SFMC_DATA_EXTENSION_NAME: "extension_name",
                 api_c.CUSTOMER_KEY: "id12345",
             },
             {
-                api_c.EXTENSION_NAME: "data_extension_name",
+                api_c.SFMC_DATA_EXTENSION_NAME: "data_extension_name",
                 api_c.CUSTOMER_KEY: "id12345678",
             },
         ]
