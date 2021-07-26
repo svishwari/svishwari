@@ -42,6 +42,7 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 COUNTRIES = "total_countries"
+TOTAL_COUNT = "total_count"
 STATES = "total_us_states"
 CITIES = "total_cities"
 MIN_AGE = "min_age"
@@ -161,6 +162,7 @@ STATUS_WEIGHTS = {
     STATUS_INACTIVE: 5,
     STATUS_DRAFT: 4,
     STATUS_PENDING: 3,
+    db_c.STATUS_IN_PROGRESS: 3,
     STATUS_PAUSED: 2,
     STATUS_STOPPED: 1,
     STATUS_ERROR: 0,
@@ -183,6 +185,8 @@ SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
 SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
+SFMC_DATA_EXTENSION_NAME = "Name"
+SFMC_CUSTOMER_KEY = "CustomerKey"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -303,6 +307,7 @@ INVALID_AUTH = "You are not authorized to visit this page."
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
+DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -330,6 +335,7 @@ DATA_EXTENSION_ID = "data_extension_id"
 DATA_EXTENSION_FAILED = "Unable to retrieve destination data extension."
 
 # Engagement fields
+ENGAGEMENT = "engagement"
 ENGAGEMENT_ID = "engagement_id"
 ENGAGEMENT_IDS = "engagement_ids"
 ENGAGEMENT_NAME = "engagement_name"
@@ -346,32 +352,40 @@ AUDIENCE_PERFORMANCE = "audience-performance"
 AUDIENCE_PERFORMANCE_LABEL = "audience_performance"
 DISPLAY_ADS = "display-ads"
 
-SPEND = "spend"
-REACH = "reach"
-IMPRESSIONS = "impressions"
-CONVERSIONS = "conversions"
-CLICKS = "clicks"
-FREQUENCY = "frequency"
-CPM = "cost_per_thousand_impressions"
-CTR = "click_through_rate"
-CPA = "cost_per_action"
-CPC = "cost_per_click"
-ENGAGEMENT_RATE = "engagement_rate"
+DISPLAY_ADS_METRICS = [
+    "spend",
+    "reach",
+    "impressions",
+    "conversions",
+    "clicks",
+    "frequency",
+    "cost_per_thousand_impressions",
+    "click_through_rate",
+    "cost_per_action",
+    "cost_per_click",
+    "engagement_rate",
+]
+EMAIL_METRICS = [
+    "sent",
+    "hard_bounces",
+    "hard_bounces_rate",
+    "delivered",
+    "delivered_rate",
+    "open",
+    "open_rate",
+    "click",
+    "click_to_open_rate",
+    "unique_clicks",
+    "unique_opens",
+    "unsubscribe",
+    "unsubscribe_rate",
+]
 SUMMARY = "summary"
 IS_MAPPED = "is_mapped"
-
-SENT = "sent"
-HARD_BOUNCES = "hard_bounces"
-HARD_BOUNCES_RATE = "hard_bounces_rate"
 DELIVERED = "delivered"
-DELIVERED_RATE = "delivered_rate"
-OPEN = "open"
-OPEN_RATE = "open_rate"
-COTR = "click_to_open_rate"
-UNIQUE_CLICKS = "unique_clicks"
-UNIQUE_OPENS = "unique_opens"
 UNSUBSCRIBE = "unsubscribe"
-UNSUBSCRIBE_RATE = "unsubscribe_rate"
+SPEND = "spend"
+
 
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
@@ -407,22 +421,27 @@ ORCHESTRATION_TAG = "orchestration"
 AUDIENCE = "audience"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_IDS = "audience_ids"
+SOURCE_AUDIENCE_ID = "source_audience_id"
 AUDIENCE_NAME = "name"
 AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
 AUDIENCE_SECTION_FILTERS = "section_filters"
 AUDIENCE_INSIGHTS = "audience_insights"
+INSIGHTS = "insights"
 AUDIENCE_FILTER_FIELD = "field"
 AUDIENCE_FILTER_TYPE = "type"
 AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE = "audience_size"
+AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
 AUDIENCE_STATUS = "audience_status"
 AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
 AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
+LOOKALIKE_AUDIENCES = "lookalike-audiences"
+LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,

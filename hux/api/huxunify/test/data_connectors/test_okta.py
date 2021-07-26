@@ -41,6 +41,12 @@ VALID_USER_RESPONSE = {
     constants.EMAIL: "davesmith@fake.com",
     constants.NAME: "dave smith",
 }
+
+# response missing some fields
+INVALID_USER_RESPONSE = {
+    constants.EMAIL: "davesmith@fake.com",
+}
+
 INVALID_RESPONSE = {"active": False}
 
 
@@ -193,14 +199,19 @@ class OktaTest(TestCase):
 
             self.assertEqual(invalid_header, demo_endpoint())
 
-    def test_secured_decorator_bad_token(self):
+    @requests_mock.Mocker()
+    def test_secured_decorator_bad_token(self, request_mocker: Mocker):
         """Test secured decorator with a bad token
 
         Args:
+            request_mocker (Mocker): Request mock object.
 
         Returns:
 
         """
+
+        request_mocker.post(self.introspect_call, json=INVALID_RESPONSE)
+
         invalid_header = (constants.INVALID_AUTH, 400)
         with Flask("invalid_token").test_request_context(
             "/", headers={"Authorization": "Bearer 123456789"}
@@ -375,3 +386,53 @@ class OktaTest(TestCase):
         # should always return a 401
         response = get_token_from_request(random_data)
         self.assertEqual(401, response[1])
+
+    @requests_mock.Mocker()
+    def test_get_user_info_invalid_response(self, request_mocker: Mocker):
+        """Test get_user_info with an invalid response.
+
+        The token allows introspection but gives an invalid response when
+        used with get_user_info
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        # valid response after introspection with token
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        response = okta.introspect_token("access_token")
+        expected_response = {"user_id": "1234567", "user_name": "davesmith"}
+        self.assertDictEqual(response, expected_response)
+
+        # user info call returning
+        request_mocker.get(self.user_info_call, json=INVALID_USER_RESPONSE)
+        response = get_user_info("access_token")
+        # check if all valid keys exists
+        self.assertNotEqual(response.keys(), VALID_USER_RESPONSE.keys())
+
+    @requests_mock.Mocker()
+    def test_get_user_info_empty_response(self, request_mocker: Mocker):
+        """Test get_user_info with an empty response.
+
+        The token allows introspection but gives an empty response when
+        used with get_user_info
+
+        Args:
+            request_mocker (Mocker): Request mock object.
+
+        Returns:
+
+        """
+        # valid response after introspection with token
+        request_mocker.post(self.introspect_call, json=VALID_RESPONSE)
+        response = okta.introspect_token("access_token")
+        expected_response = {"user_id": "1234567", "user_name": "davesmith"}
+        self.assertDictEqual(response, expected_response)
+
+        # simulating user response is empty
+        request_mocker.get(self.user_info_call, json={})
+        response = get_user_info("access_token")
+        # check if all valid keys exists
+        self.assertNotEqual(response.keys(), VALID_USER_RESPONSE.keys())

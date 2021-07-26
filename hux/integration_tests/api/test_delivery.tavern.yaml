@@ -1,0 +1,139 @@
+---
+test_name: Test delivery history with engagement id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test engagements/{engagement_id}/delivery-history
+
+    request:
+      url: "{host}/{version}/engagements/{engagement_id}/delivery-history"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        !anylist
+        - "audience": !anydict
+          - "id": !anystr
+          - "name": !anystr
+        - "destination": !anydict
+          - "id": !anystr
+          - "name": !anystr
+          - "type": !anystr
+        - "size": !anyint
+        - "delivered": !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+---
+
+test_name: Test Delivering one destination for an engagement audience.
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test engagements/{engagement_id}/audience/{audience_id}/destination/{destination_id}/deliver
+    request:
+      url: "{host}/{version}/engagements/{engagement_id}/audience/{audience_id}/destination/{destination_id}/deliver"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        "message": !re_match "Successfully created delivery job.*"
+---
+
+test_name: Test Delivering all audiences for an engagement
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test engagements/{engagement_id}/deliver
+    request:
+      url: "{host}/{version}/engagements/{engagement_id}/deliver"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        "message": !re_match "Successfully created delivery job.*"
+---
+
+test_name: Test Delivering an audience for all of the engagements it is apart of
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test audiences/{audience_id}/deliver
+    request:
+      url: "{host}/{version}/audiences/{audience_id}/deliver"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        "message": !re_match "Successfully created delivery job.*"
+---
+
+test_name: Test Delivering one audience for an engagement.
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test engagements/{engagement_id}/audience/{audience_id}/deliver
+    request:
+      url: "{host}/{version}/engagements/{engagement_id}/audience/{audience_id}/deliver"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        "message": !re_match "Successfully created delivery job.*"

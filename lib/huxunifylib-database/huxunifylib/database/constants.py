@@ -16,6 +16,7 @@ NAME = "name"
 TYPE = "type"
 OBJECT_ID = "id"
 CONFIGURATION = "configuration"
+SIZE = "size"
 
 # general fields
 AGE = "age"
@@ -202,6 +203,7 @@ SUPPORTED_DELIVERY_PLATFORMS = [
     DELIVERY_PLATFORM_GOOGLE,
     DELIVERY_PLATFORM_AMAZON,
     DELIVERY_PLATFORM_TWILIO,
+    DELIVERY_PLATFORM_QUALTRICS,
 ]
 
 LOOKALIKE = "lookalike"
@@ -264,6 +266,8 @@ CDP_DATA_SOURCE_FIELD_STATUS = "status"
 CDP_DATA_SOURCE_STATUS_ACTIVE = "Active"
 CDP_DATA_SOURCE_STATUS_PENDING = "Pending"
 
+CDP_DATA_SOURCE_BLUECORE = "bluecore"
+
 DATA_ROUTER_BATCH_SIZE = "data_router_batch_size"
 AUDIENCE_ROUTER_BATCH_SIZE = "audience_router_batch_size"
 AWS_BATCH_MEM_LIMIT = "aws_batch_mem_limit"
@@ -293,6 +297,7 @@ FIRST_NAME_FILTER = "first_name_filter"
 
 # Engagement constants
 ENGAGEMENT_ID = "engagement_id"
+ENGAGEMENT = "engagement"
 ENGAGEMENT_NAME = "name"
 ENGAGEMENT_DESCRIPTION = "description"
 ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"

@@ -53,13 +53,21 @@
           </h5>
         </template>
 
-        <v-row class="delivery-schedule">
+        <v-row class="delivery-schedule mt-4">
           <v-radio-group
             v-model="value.delivery_schedule"
             row
             class="ma-0 radio-div"
           >
-            <v-radio :value="0" selected class="btn-radio">
+            <v-radio
+              :value="0"
+              selected
+              :class="
+                value.delivery_schedule == 0
+                  ? 'btn-radio-active'
+                  : 'btn-radio-inactive'
+              "
+            >
               <template #label>
                 <v-icon small color="primary" class="mr-1">
                   mdi-gesture-tap
@@ -68,10 +76,19 @@
               </template>
             </v-radio>
 
-            <v-radio :value="1" class="btn-radio">
+            <v-radio
+              :value="1"
+              :class="
+                value.delivery_schedule == 1
+                  ? 'btn-radio-active'
+                  : 'btn-radio-inactive'
+              "
+            >
               <template #label>
-                <v-icon small class="mr-1">mdi-clock-check-outline</v-icon>
-                <span>Recurring</span>
+                <v-icon small color="primary" class="mr-1"
+                  >mdi-clock-check-outline</v-icon
+                >
+                <span class="primary--text">Recurring</span>
               </template>
             </v-radio>
           </v-radio-group>
@@ -102,12 +119,18 @@
               :isSubMenu="true"
               :minDate="selectedStartDate"
               @on-date-select="onEndDateSelect"
+              :isDisabled="disableEndDate"
             />
           </div>
         </v-row>
       </FormStep>
 
       <FormStep :step="3" label="Select audience(s) and destination(s)">
+        <p v-if="hasAudiences" class="text-caption">
+          First add and deliver an audience to Facebook in order to create a
+          lookalike audience from this engagement’s dashboard.
+        </p>
+
         <DataCards
           bordered
           :items="Object.values(value.audiences)"
@@ -256,7 +279,7 @@
           tile
           color="primary"
           height="44"
-          :disabled="!isValid"
+          :disabled="!isValid || !isDateValid"
           @click="addNewEngagement()"
         >
           Create
@@ -349,6 +372,7 @@ export default {
       selectedDestination: null,
       selectedStartDate: "Select date",
       selectedEndDate: "Select date",
+      disableEndDate: true,
       errorMessages: [],
     }
   },
@@ -369,13 +393,33 @@ export default {
             destinations: audience.destinations,
           }
         }),
-        start_date: this.selectedStartDate,
-        end_date: this.selectedEndDate,
+        start_date: !this.isManualDelivery
+          ? new Date(this.selectedStartDate).toISOString()
+          : null,
+        end_date: !this.isManualDelivery
+          ? new Date(this.selectedEndDate).toISOString()
+          : null,
       }
     },
 
     isValid() {
       return this.value.name.length
+    },
+
+    isDateValid() {
+      if (this.value.delivery_schedule == 1) {
+        if (this.selectedStartDate == "Select date") {
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return true
+      }
+    },
+
+    hasAudiences() {
+      return Boolean(this.totalSelectedAudiences > 0)
     },
 
     hasDestinations() {
@@ -485,10 +529,20 @@ export default {
 
     onStartDateSelect(val) {
       this.selectedStartDate = val
+      this.selectedEndDate = null
+      this.disableEndDate = false
+      this.$set(this.value, "recurring", {
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: null,
+      })
     },
 
     onEndDateSelect(val) {
       this.selectedEndDate = val
+      this.$set(this.value, "recurring", {
+        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        end: this.$options.filters.Date(this.selectedEndDate, "MMMM D"),
+      })
     },
   },
 }
@@ -496,13 +550,20 @@ export default {
 
 <style lang="scss" scoped>
 .btn-radio {
-  border: 1px solid var(--v-primary-base);
   padding: 8px 16px;
   border-radius: 4px;
 
   &.v-radio--is-disabled {
     border-color: var(--v-lightGrey-base);
   }
+}
+.btn-radio-inactive {
+  border: 1px solid var(--v-lightGrey-base);
+  @extend .btn-radio;
+}
+.btn-radio-active {
+  border: 1px solid var(--v-primary-base);
+  @extend .btn-radio;
 }
 .radio-div {
   margin-top: -11px !important;

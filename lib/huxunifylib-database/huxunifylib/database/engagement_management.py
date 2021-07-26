@@ -143,7 +143,8 @@ def get_engagements_summary(
         # add the audience name field to the nested audience object
         {
             "$addFields": {
-                f"{db_c.AUDIENCES}.{db_c.NAME}": f"$audience.{db_c.NAME}"
+                f"{db_c.AUDIENCES}.{db_c.NAME}": f"$audience.{db_c.NAME}",
+                "audiences.size": "$audience.size",
             }
         },
         # remove the unused audience object fields.
@@ -218,6 +219,10 @@ def get_engagements_summary(
                     # audience fields we need for later grouping
                     "audience_name": "$audiences.name",
                     "audience_id": "$audiences.id",
+                    "audience_size": "$audiences.size",
+                    "delivery_schedule": {
+                        "$ifNull": ["$delivery_schedule", ""]
+                    },
                 },
                 # push the grouped destinations into an array
                 db_c.DESTINATIONS: {
@@ -244,15 +249,18 @@ def get_engagements_summary(
                     db_c.CREATED_BY: "$_id.created_by",
                     db_c.UPDATED_BY: "$_id.updated_by",
                     db_c.UPDATE_TIME: "$_id.update_time",
+                    db_c.ENGAGEMENT_DELIVERY_SCHEDULE: "$_id.delivery_schedule",
                 },
                 # push all the audiences into an array
                 db_c.AUDIENCES: {
                     "$push": {
                         db_c.OBJECT_ID: "$_id.audience_id",
                         db_c.NAME: "$_id.audience_name",
+                        db_c.SIZE: "$_id.audience_size",
                         db_c.DESTINATIONS: "$destinations",
                     }
                 },
+                db_c.SIZE: {"$sum": "$_id.audience_size"},
             }
         },
         {
@@ -266,6 +274,8 @@ def get_engagements_summary(
                 db_c.UPDATED_BY: "$_id.updated_by",
                 db_c.UPDATE_TIME: "$_id.update_time",
                 db_c.AUDIENCES: "$audiences",
+                db_c.ENGAGEMENT_DELIVERY_SCHEDULE: "$_id.delivery_schedule",
+                db_c.SIZE: "$size",
             }
         },
     ]

@@ -6,6 +6,7 @@ from unittest import TestCase, mock
 import mongomock
 from bson import ObjectId
 from hypothesis import given, strategies as st
+import requests_mock
 
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
@@ -20,7 +21,7 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
 )
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
@@ -36,6 +37,7 @@ from huxunify.api.data_connectors.courier import (
     get_destination_config,
     get_audience_destination_pairs,
 )
+from huxunify.test import constants as t_c
 
 
 class CourierTest(TestCase):
@@ -319,6 +321,13 @@ class CourierTest(TestCase):
             self.engagement[c.AUDIENCES]
         )
         self.assertTrue(delivery_route)
+
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        request_mocker.start()
 
         for pair in delivery_route:
             with mock.patch.object(

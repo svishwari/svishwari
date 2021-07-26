@@ -16,11 +16,12 @@ from huxunifylib.database.delivery_platform_management import (
 from huxunifylib.database.engagement_management import set_engagement
 from huxunifylib.database.orchestration_management import create_audience
 from huxunifylib.database.user_management import set_user
-from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+from huxunifylib.connectors import AWSBatchConnector
 import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
 from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api.config import get_config
 
 
 # pylint: disable=too-many-instance-attributes
@@ -40,6 +41,13 @@ class TestDeliveryRoutes(TestCase):
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+
+        # set the customer insights stub
+        insights_response = {api_c.TOTAL_RECORDS: 54612}
+        request_mocker.post(
+            f"{get_config().CDP_SERVICE}/customer-profiles/insights",
+            json=insights_response,
+        )
         request_mocker.start()
 
         self.app = create_app().test_client()
@@ -53,13 +61,13 @@ class TestDeliveryRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        # mock get db client from engagements
+        # mock get db client from utils
         mock.patch(
-            "huxunify.api.route.engagement.get_db_client",
+            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
-        # mock get db client from orchestration
+        # mock get db client from delivery
         mock.patch(
             "huxunify.api.route.delivery.get_db_client",
             return_value=self.database,
@@ -499,7 +507,7 @@ class TestDeliveryRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    def test_get_delivery_history_by_id_valid_id(self):
+    def test_get_engagement_delivery_history_by_id_valid_id(self):
         """
         Test get delivery history API with valid id
 
@@ -517,7 +525,48 @@ class TestDeliveryRoutes(TestCase):
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
 
-    def test_get_delivery_history_by_id_non_existent_id(self):
+    def test_get_engagement_delivery_history_by_id_non_existent_id(self):
+        """
+        Test get delivery history API with non-existent id
+
+        Args:
+
+        Returns:
+
+        """
+
+        engagement_id = str(ObjectId())
+
+        valid_response = {"message": "Engagement not found."}
+
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_get_audience_delivery_history_by_id_valid_id(self):
+        """
+        Test get delivery history API with valid id
+
+        Args:
+
+        Returns:
+
+        """
+
+        audience_id = "random_id"
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.AUDIENCE_ENDPOINT}/{audience_id}/"
+            f"{api_c.DELIVERY_HISTORY}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+
+    def test_get_audience_delivery_history_by_id_non_existent_id(self):
         """
         Test get delivery history API with non-existent id
 
