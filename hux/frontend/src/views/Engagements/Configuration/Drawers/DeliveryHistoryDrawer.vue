@@ -19,6 +19,7 @@
           <td
             v-for="(header, index) in headers"
             :key="index"
+            :style="{ width: header.width }"
             class="text-body-1"
           >
             <router-link
@@ -113,18 +114,22 @@ export default {
         {
           value: "audience",
           text: "Audience name",
+          width: "250px",
         },
         {
           value: "destination",
           text: "Destination",
+          width: "auto",
         },
         {
           value: "size",
-          text: "Targét size",
+          text: "Target size",
+          width: "auto",
         },
         {
           value: "delivered",
           text: "Delivered",
+          width: "auto",
         },
       ],
     }
