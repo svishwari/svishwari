@@ -55,15 +55,28 @@ docker build -f Dockerfile -t ui-integration-tests .
 
 ### Run
 
-Set the base URL for the tests.
+Run the tests, using your defined configuration and environment variables.
+
+```sh
+docker run ui-integration-tests npm run test -- --config baseUrl=https://host.docker.internal:8080 --env FOO=foo,BAR=bar
+```
+
+To avoid environment variables being packaged with the build, we ignore any
+environment variables configured in `cypress.env.**.json` and instead define
+the environment variables at run time.
+
+Here is an example run with custom configuration and environment variables,
+where we have exported both our configuration (eg. baseUrl) and environment
+variables (eg. USER_EMAIL and USER_PASSWORD) and passed them in at runtime.
 
 ```sh
 export CYPRESS_BASE_URL=https://host.docker.internal:8080
+export CYPRESS_USER_EMAIL=<e2e_test_user_email>
+export CYPRESS_USER_EMAIL=<e2e_test_user_password>
 ```
 
-Run the tests, using the provided configuration and environment variables.
 ```sh
-docker run ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL --env FOO=$CYPRESS_FOO,BAR=$CYPRESS_BAR
+docker run ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL,video=true --env USER_EMAIL=$CYPRESS_USER_EMAIL,USER_PASSWORD=$CYPRESS_USER_PASSWORD
 ```
 
 To review/debug test runs, mount volumes for test logs and outputs.
@@ -74,3 +87,6 @@ export CYPRESS_VIDEOS="$(pwd)"/cypress/videos:/app/cypress/videos
 export CYPRESS_SCREENSHOTS="$(pwd)"/cypress/screenshots:/app/cypress/screenshots
 docker run -it -v $CYPRESS_LOGS -v $CYPRESS_VIDEOS -v $CYPRESS_SCREENSHOTS ui-integration-tests npm run test -- --config baseUrl=$CYPRESS_BASE_URL
 ```
+
+These are useful for debugging runs locally, where you can view the tests'
+output logs, screenshots and videos directly.
