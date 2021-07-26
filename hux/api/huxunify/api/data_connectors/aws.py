@@ -281,7 +281,7 @@ def set_cloud_watch_rule(
             response["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
-            error_msg = "Failed to create event %s: client error.", rule_name
+            error_msg = "Failed to create event %s: client error." % (rule_name)
             logging.error(error_msg)
             return None
 
