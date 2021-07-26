@@ -1,6 +1,7 @@
 """
 purpose of this file is for interacting with aws
 """
+import logging
 from typing import Tuple
 from http import HTTPStatus
 from connexion import ProblemException
@@ -235,3 +236,109 @@ def get_auth_from_parameter_store(auth: dict, destination_type: str) -> dict:
             ],
         }
     return auth
+
+
+def set_cloud_watch_rule(
+    rule_name: str,
+    schedule_expression: str,
+    role_arn: str,
+    description: str = "",
+    state: str = api_c.ENABLED,
+) -> str:
+    """Create or Update a cloud watch rule
+    Args:
+        rule_name (str): name of the rule you are creating or updating.
+        schedule_expression (str): The scheduling expression.
+            For example "cron(0 20 * * ? *)" or "rate(5 minutes)".
+        role_arn (str): The Amazon resource name (ARN) of the IAM role
+            associated with the rule.
+        description (str): A description of the rule.
+        state (str): Indicates whether the rule is enabled or disabled.
+    Returns:
+        rule_arn (str): The Amazon resource name (ARN) of the rule.
+    """
+
+    if state.upper() not in [api_c.ENABLED.upper(), api_c.DISABLED.upper()]:
+        raise ValueError(f"Invalid state provided {state}")
+
+    if " " in rule_name:
+        raise ValueError(f"Unsupported spaces in rule name {rule_name}")
+
+    try:
+        aws_events = get_aws_client(api_c.AWS_EVENTS_NAME)
+        response = aws_events.put_rule(
+            Name=rule_name,
+            ScheduleExpression=schedule_expression,
+            State=state.upper(),
+            Description=description,
+            RoleArn=role_arn,
+        )
+
+        # validate successful creation
+        if (
+            response["ResponseMetadata"]["HTTPStatusCode"]
+            != HTTPStatus.OK.value
+        ):
+            error_msg = "Failed to create event %s: client error.", rule_name
+            logging.error(error_msg)
+            return None
+
+        # return the request id
+        return response["RuleArn"]
+
+    # pylint: disable=broad-except
+    except Exception as exception:
+        error_msg = "Failed to create event %s: %s", rule_name, exception
+        logging.error(error_msg)
+        return None
+
+
+def put_rule_targets_aws_batch(
+    rule_name: str, batch_params: dict, arn: str, role_arn: str
+):
+    """Adds the specified targets to the specified rule or updates
+    the targets if they are already associated with the rule.
+    Args:
+        rule_name (str): name of the rule you are creating or updating.
+        batch_params (dict): Batch parameter dict for all batch job params.
+        arn (str): The Amazon resource name (arn) of the target.
+        role_arn (str): The Amazon resource name of the IAM role to be used
+            for this target and when the rule is triggered.
+    Returns:
+        event request id (str): The Amazon resource name (ARN) of the rule.
+    """
+
+    try:
+        # get the aws client
+        aws_events = get_aws_client(api_c.AWS_EVENTS_NAME)
+
+        # put the batch job targets
+        response = aws_events.put_targets(
+            Rule=rule_name,
+            Targets=[
+                {
+                    "Id": rule_name,
+                    "Arn": arn,
+                    "RoleArn": role_arn,
+                    "BatchParameters": batch_params,
+                }
+            ],
+        )
+
+        # validate successful creation
+        if (
+            response["ResponseMetadata"]["HTTPStatusCode"]
+            == HTTPStatus.OK.value
+        ):
+            # return the request id
+            return response["FailedEntryCount"]
+
+        error_msg = "Failed to put target for %s: client error.", rule_name
+        logging.error(error_msg)
+        return None
+
+    # pylint: disable=broad-except
+    except Exception as exception:
+        error_msg = "Failed to put target for %s: %s", rule_name, exception
+        logging.error(error_msg)
+        return None
