@@ -970,7 +970,7 @@ class TestEngagementManagement(unittest.TestCase):
                 self.user_name,
             )
 
-    def test_remove_destination_from_engaged_audience(self):
+    def test_remove_destination_from_engagement_audience(self):
         """
         Test removing a destination from an engagement audience
 
