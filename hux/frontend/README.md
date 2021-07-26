@@ -108,4 +108,6 @@ From the guide, you will need to
 
   > NOTE: We have included redirect URIs and base URIs specifically to run end-to-end integration tests with Docker locally using the special DNS name `host.docker.internal`
 
-5. Use the Okta app's Client ID and dev URL in the env configuration for the frontend app.
+5. Assign your user(s) to the app.
+
+6. Use the Okta app's Client ID and dev URL in the `.env.local` configuration for the frontend app.
