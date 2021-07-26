@@ -391,10 +391,8 @@ export default {
         start_date: !this.isManualDelivery
           ? new Date(this.selectedStartDate).toISOString()
           : null,
-        end_date: !this.isManualDelivery
-          ? !this.selectedEndDate
-            ? null
-            : new Date(this.selectedEndDate).toISOString()
+        end_date: !this.isManualDelivery && this.selectedEndDate
+          ? new Date(this.selectedEndDate).toISOString()
           : null,
       }
     },
