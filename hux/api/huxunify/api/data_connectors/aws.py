@@ -291,8 +291,7 @@ def set_cloud_watch_rule(
 
     # pylint: disable=broad-except
     except Exception as exception:
-        error_msg = "Failed to create event %s: %s" % rule_name, exception
-        logging.error(error_msg)
+        logging.error("Failed to create event %s: %s", rule_name, exception)
         return None
 
 
@@ -344,6 +343,5 @@ def put_rule_targets_aws_batch(
 
     # pylint: disable=broad-except
     except Exception as exception:
-        error_msg = "Failed to put target for %s: %s" % rule_name, exception
-        logging.error(error_msg)
+        logging.error("Failed to put target for %s: %s", rule_name, exception)
         return None
