@@ -109,6 +109,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     return env_dict, secret_dict
 
 
+# pylint: disable=too-many-instance-attributes
 class DestinationBatchJob:
     """
     Class for housing the Destination batch config.
@@ -141,6 +142,7 @@ class DestinationBatchJob:
         self.destination_type = destination_type
         self.aws_batch_connector = None
         self.result = None
+        self.scheduled = False
 
     def register(
         self,
@@ -231,6 +233,8 @@ class DestinationBatchJob:
             config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
         )
 
+        self.scheduled = True
+
     def submit(self) -> None:
         """Submit a destination job
 
@@ -239,6 +243,11 @@ class DestinationBatchJob:
         Returns:
 
         """
+
+        # don't process if schedule set.
+        if self.scheduled:
+            return
+
         # Connect to AWS Batch
         if (
             self.aws_batch_connector is None
