@@ -919,7 +919,7 @@ class TestEngagementManagement(unittest.TestCase):
                 self.assertIn(c.NAME, destination)
                 self.assertIn(c.OBJECT_ID, destination)
 
-    def test_append_destination_to_engaged_audience(self):
+    def test_append_destination_to_engagement_audience(self):
         """
         Test appending a destination to an engaged audience
 
