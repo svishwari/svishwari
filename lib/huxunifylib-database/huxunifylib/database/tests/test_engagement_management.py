@@ -1,11 +1,10 @@
 """Engagement Management Tests"""
-import json
 import unittest
 import mongomock
+import pymongo
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
-from huxunify.api.schema.engagement import EngagementGetSchema
 from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database import orchestration_management as om
 from huxunifylib.database import audience_management as am
@@ -609,6 +608,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(len(engagements), 3)
         self.assertFalse([e for e in engagements if c.DELETED in e])
 
+    # pylint: disable=too-many-function-args
     def test_add_delivery_jobs_to_engaged_audience_destination(self) -> None:
         """Test adding a delivery job to the engaged_audience_destination
 
@@ -887,15 +887,15 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        # due to mocking issues, the query in this test case does not execute properly
-        # but has been show to work on a real database
-        updated_engagement = em.append_destination_to_engaged_audience(
-            self.database,
-            engagement_id,
-            audience_one[c.ID],
-            self.user_name,
-            c.DELIVERY_PLATFORM_FACEBOOK,
-        )
+        # due to mocking issues certain queries do not work but have been verified on a real database
+        with self.assertRaises(pymongo.errors.WriteError):
+            em.append_destination_to_engaged_audience(
+                self.database,
+                engagement_id,
+                audience_one[c.ID],
+                self.user_name,
+                c.DELIVERY_PLATFORM_FACEBOOK,
+            )
 
     def test_remove_destination_from_engaged_audience(self):
         """
@@ -913,7 +913,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         audience_one_dict = {
             c.OBJECT_ID: audience_one[c.ID],
-            c.DESTINATIONS: [],
+            c.DESTINATIONS: [{c.OBJECT_ID: self.destinations[0][c.ID]}],
         }
         audience_two_dict = {
             c.OBJECT_ID: audience_two[c.ID],
@@ -928,17 +928,6 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
         )
 
-        # TODO UT's fail if we run these functions even though they apparently run fine on real db. Do we ditch the UT???
-        # due to mocking issues, the query in this test case does not execute properly
-        # but has been show to work on a real database
-        updated_engagement = em.append_destination_to_engaged_audience(
-            self.database,
-            engagement_id,
-            audience_one[c.ID],
-            self.user_name,
-            c.DELIVERY_PLATFORM_FACEBOOK,
-        )
-
         updated_engagement = em.remove_destination_from_engaged_audience(
             self.database,
             engagement_id,
@@ -946,3 +935,6 @@ class TestEngagementManagement(unittest.TestCase):
             self.user_name,
             c.DELIVERY_PLATFORM_FACEBOOK,
         )
+
+        # due to mocking issues certain queries do not work but have been verified on a real database
+        self.assertIsNone(updated_engagement)

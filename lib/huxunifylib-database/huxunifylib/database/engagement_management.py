@@ -17,6 +17,7 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
 
 
+# pylint: disable=too-many-arguments
 @retry(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
@@ -743,19 +744,15 @@ def append_destination_to_engaged_audience(
     destination = {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
 
     return collection.find_one_and_update(
-        {
-            "_id": engagement_id,
-            "audiences.id": audience_id
-        },
+        {"_id": engagement_id, "audiences.id": audience_id},
         {
             "$set": {
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
             },
-            "$push": {
-                "audiences.$.destinations": destination
-            }
-        })
+            "$push": {"audiences.$.destinations": destination},
+        },
+    )
 
 
 @retry(
@@ -802,5 +799,5 @@ def remove_destination_from_engaged_audience(
             "$pull": {
                 db_c.DESTINATIONS: {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
             },
-        }
+        },
     )
