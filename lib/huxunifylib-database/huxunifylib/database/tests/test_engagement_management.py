@@ -921,7 +921,7 @@ class TestEngagementManagement(unittest.TestCase):
 
     def test_append_destination_to_engagement_audience(self):
         """
-        Test appending a destination to an engaged audience
+        Test appending a destination to an engagement audience
 
         Returns: None
 
