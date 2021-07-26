@@ -19,4 +19,4 @@ RUN pip install tavern
 #WORKDIR /app/hux-unified/api
 
 # run the pytests application
-RUN py.test test_core.tavern.yaml -v
+CMD ["py.test", "test_core.tavern.yaml", "-v"]
