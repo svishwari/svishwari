@@ -187,6 +187,4 @@ class CDPTest(TestCase):
             "message": "ok",
         }
 
-        response = get_idr_data_feeds()
-
         self.assertEqual(HTTPStatus.OK, expected_response["code"])
