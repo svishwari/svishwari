@@ -7,11 +7,12 @@ from bson import ObjectId
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database import orchestration_management as om
-from huxunifylib.database import audience_management as am
-from huxunifylib.database import data_management as dm
-from huxunifylib.database import delivery_platform_management as dpm
-
+from huxunifylib.database import (
+    audience_management as am,
+    data_management as dm,
+    delivery_platform_management as dpm,
+    orchestration_management as om,
+)
 
 # pylint: disable=R0904
 class TestEngagementManagement(unittest.TestCase):
@@ -930,6 +931,10 @@ class TestEngagementManagement(unittest.TestCase):
         # create an engagement with those two audiences
         # add a destination to audience 1
 
+        destination = dpm.get_delivery_platform_by_type(
+            self.database, c.DELIVERY_PLATFORM_FACEBOOK
+        )
+
         audience_one = om.create_audience(
             self.database, "Audience1", [], [], self.user_name, 201
         )
@@ -961,8 +966,8 @@ class TestEngagementManagement(unittest.TestCase):
                 self.database,
                 engagement_id,
                 audience_one[c.ID],
+                destination[c.ID],
                 self.user_name,
-                c.DELIVERY_PLATFORM_FACEBOOK,
             )
 
     def test_remove_destination_from_engaged_audience(self):
@@ -1000,10 +1005,8 @@ class TestEngagementManagement(unittest.TestCase):
             self.database,
             engagement_id,
             audience_one[c.ID],
+            self.destinations[0][c.ID],
             self.user_name,
-            c.DELIVERY_PLATFORM_FACEBOOK,
         )
 
-        # due to mocking issues certain queries do not work
-        # but have been verified on a real database
         self.assertIsNone(updated_engagement)

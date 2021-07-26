@@ -10,7 +10,6 @@ from bson import ObjectId
 import pymongo
 from tenacity import retry, wait_fixed, retry_if_exception_type
 
-from huxunifylib.database import delivery_platform_management
 import huxunifylib.database.db_exceptions as de
 import huxunifylib.database.constants as db_c
 from huxunifylib.database.client import DatabaseClient
@@ -715,17 +714,17 @@ def append_destination_to_engaged_audience(
     database: DatabaseClient,
     engagement_id: ObjectId,
     audience_id: ObjectId,
+    destination_id: ObjectId,
     user_name: str,
-    destination_type: str,
 ) -> dict:
-    """A function to update audience status
+    """A function to add destination to engaged audience
 
     Args:
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
+        destination_id (ObjectId): MongoDB ID of the destination.
         user_name (str): Name of the user removing the destination to the audience.
-        destination_type (str): type of destination to be added.
 
     Returns:
         dict: updated audience object
@@ -735,14 +734,6 @@ def append_destination_to_engaged_audience(
         db_c.ENGAGEMENTS_COLLECTION
     ]
 
-    delivery_platform = (
-        delivery_platform_management.get_delivery_platform_by_type(
-            database, destination_type
-        )
-    )
-
-    destination = {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
-
     return collection.find_one_and_update(
         {"_id": engagement_id, "audiences.id": audience_id},
         {
@@ -750,7 +741,9 @@ def append_destination_to_engaged_audience(
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
             },
-            "$push": {"audiences.$.destinations": destination},
+            "$push": {
+                "audiences.$.destinations": {db_c.OBJECT_ID: destination_id}
+            },
         },
     )
 
@@ -763,31 +756,25 @@ def remove_destination_from_engaged_audience(
     database: DatabaseClient,
     engagement_id: ObjectId,
     audience_id: ObjectId,
+    destination_id: ObjectId,
     user_name: str,
-    destination_type: str,
 ) -> dict:
-    """A function to update audience status
+    """A function to remove destination from engaged audience
 
     Args
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
+        destination_id (ObjectId): MongoDB ID of the destination to be removed
         user_name (str): Name of the user removing the destination to the audience.
-        destination_type (str): type of destination to be removed
 
     Returns:
-        dict: updated audience object
+        dict: updated engagement object
 
     """
     collection = database[db_c.DATA_MANAGEMENT_DATABASE][
         db_c.AUDIENCES_COLLECTION
     ]
-
-    delivery_platform = (
-        delivery_platform_management.get_delivery_platform_by_type(
-            database, destination_type
-        )
-    )
 
     return collection.find_one_and_update(
         {db_c.ID: engagement_id, "audiences.id": audience_id},
@@ -796,8 +783,6 @@ def remove_destination_from_engaged_audience(
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
             },
-            "$pull": {
-                db_c.DESTINATIONS: {db_c.OBJECT_ID: delivery_platform[db_c.ID]}
-            },
+            "$pull": {db_c.DESTINATIONS: {db_c.OBJECT_ID: destination_id}},
         },
     )
