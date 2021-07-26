@@ -246,6 +246,7 @@ def set_cloud_watch_rule(
     state: str = api_c.ENABLED,
 ) -> str:
     """Create or Update a cloud watch rule
+
     Args:
         rule_name (str): name of the rule you are creating or updating.
         schedule_expression (str): The scheduling expression.
@@ -254,6 +255,7 @@ def set_cloud_watch_rule(
             associated with the rule.
         description (str): A description of the rule.
         state (str): Indicates whether the rule is enabled or disabled.
+
     Returns:
         rule_arn (str): The Amazon resource name (ARN) of the rule.
     """
@@ -298,12 +300,14 @@ def put_rule_targets_aws_batch(
 ):
     """Adds the specified targets to the specified rule or updates
     the targets if they are already associated with the rule.
+
     Args:
         rule_name (str): name of the rule you are creating or updating.
         batch_params (dict): Batch parameter dict for all batch job params.
         arn (str): The Amazon resource name (arn) of the target.
         role_arn (str): The Amazon resource name of the IAM role to be used
             for this target and when the rule is triggered.
+
     Returns:
         event request id (str): The Amazon resource name (ARN) of the rule.
     """
