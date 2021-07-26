@@ -190,4 +190,3 @@ class CDPTest(TestCase):
         response = get_idr_data_feeds()
 
         self.assertEqual(HTTPStatus.OK, expected_response["code"])
-        self.assertEqual(response, expected_response["body"])
