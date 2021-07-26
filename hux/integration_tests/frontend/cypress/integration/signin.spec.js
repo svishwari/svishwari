@@ -11,13 +11,12 @@ describe("Tests user sign in", () => {
       .then((pathname) => {
         // redirects to sign-on (Okta)
         if (pathname !== "/auth") {
-          cy.get("input[id=okta-signin-username]").type(
-            Cypress.env("USER_EMAIL")
-          );
+          cy.get("input[id=okta-signin-username]")
+            .type(Cypress.env("USER_EMAIL"), { log: true });
 
-          cy.get("input[id=okta-signin-password]").type(
-            Cypress.env("USER_PASSWORD")
-          );
+          cy.get("input[id=okta-signin-password]")
+            .type(Cypress.env("USER_PASSWORD"), { log: true });
+
           cy.get("input[id=okta-signin-submit]").click();
 
           //TODO: MFA related authentication
