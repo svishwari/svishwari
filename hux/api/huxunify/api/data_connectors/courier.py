@@ -202,7 +202,7 @@ class DestinationBatchJob:
             engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)
         ):
             logging.info(
-                "delivery schedule is not set for %s",
+                "Delivery schedule is not set for %s",
                 engagement_doc[db_const.ID],
             )
             return
