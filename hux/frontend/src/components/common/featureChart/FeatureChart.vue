@@ -27,7 +27,7 @@ export default {
   components: { HorizontalBarChart, BarChartTooltip },
   props: {
     featureData: {
-      type: Object,
+      type: Array,
       required: true,
     },
   },
