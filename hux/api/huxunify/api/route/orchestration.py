@@ -19,11 +19,12 @@ from huxunifylib.database import (
     data_management,
 )
 import huxunifylib.database.constants as db_c
-
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
     AudiencePostSchema,
+    LookalikeAudiencePostSchema,
+    LookalikeAudienceGetSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -39,9 +40,9 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
+    api_error_handler,
     validate_destination_id,
 )
-from huxunify.api.route.utils import api_error_handler
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -655,3 +656,138 @@ class AudienceRules(SwaggerView):
         rules_constants.update(rules_from_cdm)
 
         return rules_constants, HTTPStatus.OK.value
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+    "SetLookalikeAudience",
+)
+class SetLookalikeAudience(SwaggerView):
+    """
+    Set Lookalike Audience Class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Lookalike Audience Parameters.",
+            "example": {
+                api_c.NAME: "New Lookalike Audience",
+                api_c.AUDIENCE_ID: str(ObjectId()),
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 85,
+                api_c.ENGAGEMENT_IDS: [
+                    str(ObjectId()),
+                    str(ObjectId()),
+                    str(ObjectId()),
+                ],
+            },
+        }
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": LookalikeAudienceGetSchema,
+            "description": "Successfully created lookalike audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create a lookalike audience"
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
+        """Sets lookalike audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta
+
+        Returns:
+            Tuple[dict, int]: lookalike audience configuration, HTTP status.
+
+        """
+
+        body = LookalikeAudiencePostSchema().load(
+            request.get_json(), partial=True
+        )
+
+        for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+            if not ObjectId.is_valid(engagement_id):
+                return {
+                    "message": api_c.INVALID_OBJECT_ID
+                }, HTTPStatus.BAD_REQUEST
+
+        if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+
+        database = get_db_client()
+        source_audience = orchestration_management.get_audience(
+            database, ObjectId(body[api_c.AUDIENCE_ID])
+        )
+
+        if not source_audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        destination = destination_management.get_delivery_platform_by_type(
+            database, db_c.DELIVERY_PLATFORM_FACEBOOK
+        )
+
+        # TODO: HUS-778 enable once facebook account is active again
+        # destination_connector = facebook_connector.FacebookConnector(
+        #     auth_details=get_auth_from_parameter_store(
+        #     destination[api_c.AUTHENTICATION_DETAILS],
+        #     destination[api_c.DELIVERY_PLATFORM_TYPE],
+        # ))
+        #
+        # if not destination_connector.check_connection():
+        #     return {
+        #                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        #            }, HTTPStatus.BAD_REQUEST
+        #
+        # destination_connector.get_new_lookalike_audience(
+        #     source_audience[db_c.NAME],
+        #     body[api_c.NAME],
+        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+        #     "US",
+        # )
+
+        lookalike_audience = (
+            destination_management.create_delivery_platform_lookalike_audience(
+                database,
+                destination[db_c.ID],
+                ObjectId(body[api_c.AUDIENCE_ID]),
+                body[api_c.NAME],
+                body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+                "US",
+            )
+        )
+
+        for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+            engaged_audience = {
+                api_c.ID: lookalike_audience[db_c.ID],
+                db_c.LOOKALIKE: True,
+                api_c.DESTINATIONS: {api_c.ID: destination[db_c.ID]},
+            }
+
+            engagement_management.append_audiences_to_engagement(
+                database,
+                ObjectId(engagement_id),
+                user_name,
+                [engaged_audience],
+            )
+
+        return (
+            LookalikeAudienceGetSchema().dump(lookalike_audience),
+            HTTPStatus.CREATED,
+        )
