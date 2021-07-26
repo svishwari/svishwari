@@ -68,7 +68,7 @@
     </v-card-text>
   </v-card>
 </template>
-  
+
 <script>
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
@@ -96,7 +96,6 @@ export default {
   },
 }
 </script>
-
 
 <style lang="scss" scoped>
 .lookalike-card {
