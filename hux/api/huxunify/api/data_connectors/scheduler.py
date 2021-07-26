@@ -1,5 +1,6 @@
 # Purpose of this module is to park schedule modules for delivery schedule
 """
+Sample object
 schedule = {
     "periodicity": "Weekly",
     "every": 2,
@@ -11,6 +12,8 @@ schedule = {
     "day_of_week": ['Weekend']
 }
 """
+
+# TODO Modify this module as Class Based in upcoming implementation.
 
 cron_exp = {
     "minute": "*",
