@@ -798,6 +798,49 @@ def get_all_delivery_platform_lookalike_audiences(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_lookalike_audiences(
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
+) -> Union[list, None]:
+    """A function to get all delivery platform lookalike audience configurations.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filter_dict (dict): filter dictionary for adding custom filters.
+        projection (dict): Dict that specifies which fields to return or not return.
+
+    Returns:
+        Union[list, None]: List of all lookalike audience configurations.
+
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.LOOKALIKE_AUDIENCE_COLLECTION
+    ]
+
+    try:
+        # if deleted is not included in the filters, add it.
+        # otherwise leave as it.
+        if c.DELETED not in filter_dict:
+            filter_dict[c.DELETED] = False
+
+        # run the query
+        return list(
+            collection.find(
+                filter_dict, projection if projection else {c.DELETED: 0}
+            )
+        )
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def update_lookalike_audience_name(
     database: DatabaseClient,
     lookalike_audience_id: ObjectId,
