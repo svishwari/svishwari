@@ -752,7 +752,7 @@ def append_destination_to_engagement_audience(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def remove_destination_from_engaged_audience(
+def remove_destination_from_engagement_audience(
     database: DatabaseClient,
     engagement_id: ObjectId,
     audience_id: ObjectId,
