@@ -710,7 +710,7 @@ def add_delivery_job(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def append_destination_to_engaged_audience(
+def append_destination_to_engagement_audience(
     database: DatabaseClient,
     engagement_id: ObjectId,
     audience_id: ObjectId,
