@@ -8,8 +8,6 @@ from http import HTTPStatus
 import requests_mock
 from hypothesis import given, strategies as st
 
-from huxunifylib.database import constants as db_c
-
 from huxunify.api import constants as api_c
 from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
