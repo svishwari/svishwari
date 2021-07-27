@@ -76,8 +76,8 @@
     </v-card-text>
     <v-card-text v-if="status == 'Disabled'" class="pl-4 pr-4 pt-4">
       <span>
-        This audience is currently getting prepared in Facebook. This could
-        take a couple hours so check back later.
+        This audience is currently getting prepared in Facebook. This could take
+        a couple hours so check back later.
       </span>
     </v-card-text>
   </v-card>
