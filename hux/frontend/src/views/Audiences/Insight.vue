@@ -126,7 +126,7 @@
     </div>
     <div class="px-15 my-1 mb-4">
       <v-row>
-        <v-col :cols="showLookalikeCard ? 9 : 12">
+        <v-col :cols="lookalikable != 'Inactive' ? 9 : 12">
           <v-card class="rounded-lg card-style" minHeight="145px" flat>
             <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
               <div class="d-flex align-center">
@@ -160,9 +160,10 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col v-if="showLookalikeCard" cols="3">
+        <v-col v-if="lookalikable != 'Inactive'" cols="3">
           <look-alike-card
             v-model="lookalikesData"
+            :status="lookalikable"
             @createLookalike="showLookalikeDrawer = true"
           />
         </v-col>
@@ -237,13 +238,13 @@ export default {
   },
   data() {
     return {
+      lookalikable: 'ACtive',
       showLookalikeDrawer: false,
-      showLookalikeCard: false,
       // TO DO replace with API call
       lookalikesData: [
         {
           id: "1",
-          elivery_platform_id: "facebook",
+          delivery_platform_id: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
@@ -251,11 +252,10 @@ export default {
           favorite: true,
           name: "Audience1",
           size: "45000",
-          updated: "2 months ago",
         },
         {
           id: "2",
-          elivery_platform_id: "facebook",
+          delivery_platform_id: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
@@ -263,11 +263,10 @@ export default {
           favorite: true,
           name: "Audience2",
           size: "45000",
-          updated: "2 months ago",
         },
         {
           id: "3",
-          elivery_platform_id: "facebook",
+          delivery_platform_id: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
@@ -275,11 +274,10 @@ export default {
           favorite: true,
           name: "Audience3",
           size: "45000",
-          updated: "2 months ago",
         },
         {
           id: "4",
-          elivery_platform_id: "facebook",
+          delivery_platform_id: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
@@ -287,7 +285,6 @@ export default {
           favorite: true,
           name: "Audience4",
           size: "45000",
-          updated: "2 months ago",
         },
       ],
       items: [

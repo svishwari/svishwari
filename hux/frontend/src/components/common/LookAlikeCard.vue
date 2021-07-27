@@ -4,12 +4,17 @@
       class="card-heading d-flex justify-space-between py-3 pl-4 pr-0"
     >
       <span>Lookalikes</span>
-      <v-btn text color="primary" @click="onCreateLookalike">
+      <v-btn
+        :disabled="status == 'Disabled'"
+        text
+        color="primary"
+        @click="onCreateLookalike"
+      >
         <icon type="lookalike-card" :size="16" class="mr-1" />
         Create lookalike
       </v-btn>
     </v-card-title>
-    <v-card-text v-if="lookalikesData" class="pl-0 pr-0">
+    <v-card-text v-if="lookalikesData && status == 'Active'" class="pl-0 pr-0">
       <v-simple-table fixed-header height="200px">
         <template v-slot:default>
           <tbody>
@@ -49,22 +54,31 @@
                     <template #label-content>
                       {{ data.update_time | Date("relative") | Empty("-") }}
                     </template>
-                    <template #hover-content>{{
-                      data.update_time | Date | Empty("-")
-                    }}</template>
-                  </Tooltip></template
-                >
+                    <template #hover-content>
+                      {{ data.update_time | Date | Empty("-") }}
+                    </template>
+                  </Tooltip>
+                </template>
               </td>
             </tr>
           </tbody>
         </template>
       </v-simple-table>
     </v-card-text>
-    <v-card-text v-else class="pl-4 pr-4 pt-4">
-      <v-list-item-subtitle
-        >This audience has no lookalike yet.</v-list-item-subtitle
-      >
+    <v-card-text
+      v-if="!lookalikesData && status == 'Active'"
+      class="pl-4 pr-4 pt-4"
+    >
+      <v-list-item-subtitle>
+        This audience has no lookalike yet.
+      </v-list-item-subtitle>
       <span>Create one by clicking the "Create lookalike" above.</span>
+    </v-card-text>
+    <v-card-text v-if="status == 'Disabled'" class="pl-4 pr-4 pt-4">
+      <span
+        >This audience is currently getting prepared in Facebook. This could
+        take a couple hours so check back later.
+      </span>
     </v-card-text>
   </v-card>
 </template>
@@ -86,6 +100,10 @@ export default {
   props: {
     value: {
       type: Array,
+      required: true,
+    },
+    status: {
+      type: String,
       required: true,
     },
   },
