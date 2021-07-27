@@ -122,6 +122,7 @@ DATE = "date"
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
+AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
 AWS_HEALTH_TESTS = {
     AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
@@ -133,6 +134,7 @@ DELIVERY_SCHEDULE = "delivery_schedule"
 START_DATE = "start_date"
 END_DATE = "end_date"
 ENABLED = "enabled"
+DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 UNKNOWN = "unknown"
@@ -166,6 +168,7 @@ STATUS_WEIGHTS = {
     STATUS_PAUSED: 2,
     STATUS_STOPPED: 1,
     STATUS_ERROR: 0,
+    db_c.STATUS_FAILED: 0,
 }
 
 # Facebook connector defines
