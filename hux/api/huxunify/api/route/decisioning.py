@@ -175,7 +175,7 @@ class ModelOverview(SwaggerView):
         """
         model_id = int(model_id)
         output = {
-            api_c.MODEL_TYPE: model_id,
+            api_c.MODEL_ID: model_id,
             api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
             api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_id][
                 api_c.DESCRIPTION
