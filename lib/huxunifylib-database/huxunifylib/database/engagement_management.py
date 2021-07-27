@@ -781,6 +781,8 @@ def remove_destination_from_engagement_audience(
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
             },
-            "$pull": {db_c.DESTINATIONS: {db_c.OBJECT_ID: destination_id}},
+            "$pull": {
+                "audiences.$.destinations": {db_c.OBJECT_ID: destination_id}
+            },
         },
     )
