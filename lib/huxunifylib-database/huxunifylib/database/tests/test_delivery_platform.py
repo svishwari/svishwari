@@ -654,14 +654,16 @@ class TestDeliveryPlatform(unittest.TestCase):
         """Test get lookalike audiences functions."""
 
         # Set delivery job lookalike audiences
-        lookalike_audiences = dpm.get_lookalike_audiences(self.database, {})
+        lookalike_audiences = (
+            dpm.get_all_delivery_platform_lookalike_audiences(self.database)
+        )
 
         # test that data was returned.
         self.assertTrue(lookalike_audiences)
 
         # get the country of the audience and filter by it
         lookalike_audience = lookalike_audiences[0]
-        country_audiences = dpm.get_lookalike_audiences(
+        country_audiences = dpm.get_all_delivery_platform_lookalike_audiences(
             self.database,
             {
                 c.LOOKALIKE_AUD_COUNTRY: lookalike_audience[
