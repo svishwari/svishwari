@@ -1,16 +1,18 @@
 """Engagement Management Tests"""
-
+# pylint: disable=too-many-lines
 import unittest
 import mongomock
+import pymongo
 from bson import ObjectId
 import huxunifylib.database.engagement_management as em
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
-from huxunifylib.database import orchestration_management as om
-from huxunifylib.database import audience_management as am
-from huxunifylib.database import data_management as dm
-from huxunifylib.database import delivery_platform_management as dpm
-
+from huxunifylib.database import (
+    audience_management as am,
+    data_management as dm,
+    delivery_platform_management as dpm,
+    orchestration_management as om,
+)
 
 # pylint: disable=R0904
 class TestEngagementManagement(unittest.TestCase):
@@ -608,6 +610,7 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertEqual(len(engagements), 3)
         self.assertFalse([e for e in engagements if c.DELETED in e])
 
+    # pylint: disable=too-many-function-args
     def test_get_engaged_audience_insights(self) -> None:
         """Test getting engaged audience insights
 
@@ -915,3 +918,96 @@ class TestEngagementManagement(unittest.TestCase):
             for destination in audience[c.DESTINATIONS]:
                 self.assertIn(c.NAME, destination)
                 self.assertIn(c.OBJECT_ID, destination)
+
+    def test_append_destination_to_engagement_audience(self):
+        """
+        Test appending a destination to an engagement audience
+
+        Returns: None
+
+        """
+
+        # create two audiences
+        # create an engagement with those two audiences
+        # add a destination to audience 1
+
+        destination = dpm.get_delivery_platform_by_type(
+            self.database, c.DELIVERY_PLATFORM_FACEBOOK
+        )
+
+        audience_one = om.create_audience(
+            self.database, "Audience1", [], [], self.user_name, 201
+        )
+        audience_two = om.create_audience(
+            self.database, "Audience2", [], [], self.user_name, 202
+        )
+
+        audience_one_dict = {
+            c.OBJECT_ID: audience_one[c.ID],
+            c.DESTINATIONS: [],
+        }
+        audience_two_dict = {
+            c.OBJECT_ID: audience_two[c.ID],
+            c.DESTINATIONS: [],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement1",
+            "Engagement1",
+            [audience_one_dict, audience_two_dict],
+            self.user_name,
+        )
+
+        # due to mocking issues certain queries do not work
+        # but have been verified on a real database
+        with self.assertRaises(pymongo.errors.WriteError):
+            em.append_destination_to_engaged_audience(
+                self.database,
+                engagement_id,
+                audience_one[c.ID],
+                destination[c.ID],
+                self.user_name,
+            )
+
+    def test_remove_destination_from_engagement_audience(self):
+        """
+        Test removing a destination from an engagement audience
+
+        Returns: None
+
+        """
+        audience_one = om.create_audience(
+            self.database, "Audience1", [], [], self.user_name, 201
+        )
+        audience_two = om.create_audience(
+            self.database, "Audience2", [], [], self.user_name, 202
+        )
+
+        audience_one_dict = {
+            c.OBJECT_ID: audience_one[c.ID],
+            c.DESTINATIONS: [{c.OBJECT_ID: self.destinations[0][c.ID]}],
+        }
+        audience_two_dict = {
+            c.OBJECT_ID: audience_two[c.ID],
+            c.DESTINATIONS: [],
+        }
+
+        engagement_id = em.set_engagement(
+            self.database,
+            "Engagement1",
+            "Engagement1",
+            [audience_one_dict, audience_two_dict],
+            self.user_name,
+        )
+
+        # due to mocking issues certain queries do not work
+        # but have been verified on a real database
+        with self.assertRaises(pymongo.errors.WriteError):
+            em.append_destination_to_engaged_audience(
+                self.database,
+                engagement_id,
+                audience_one[c.ID],
+                self.destinations[0][c.ID],
+                self.user_name,
+            )
