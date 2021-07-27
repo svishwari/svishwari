@@ -238,7 +238,8 @@ export default {
   },
   data() {
     return {
-      lookalikable: 'ACtive',
+      // 3 states can be Active, Inactive & Disabled
+      lookalikable: "Active",
       showLookalikeDrawer: false,
       // TO DO replace with API call
       lookalikesData: [
