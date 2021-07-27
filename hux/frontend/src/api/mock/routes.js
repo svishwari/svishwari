@@ -317,23 +317,18 @@ export const defineRoutes = (server) => {
   // models
   server.get("/models")
 
-  server.get("/models/:type/overview", (schema, request) => {
-    const type = request.params.type
-
-    const data = {
-      model_type: type,
-      model_name: `Propensity to ${type}`,
-      description: `Propensity to ${type}`,
-      feature_importance: featureData.featureList,
-      lift_data: liftData.lift_data,
-      performance_metric: {
-        recall: 0.65,
-        current_version: "3.1.2",
-        rmse: -1,
-        auc: 0.79,
-        precision: 0.82,
-      },
+  server.get("/models/:id/overview", (schema, request) => {
+    const id = request.params.id
+    const data = schema.models.find(id)
+    data.attrs.performance_metric = {
+      recall: 0.65,
+      current_version: "3.1.2",
+      rmse: -1,
+      auc: 0.79,
+      precision: 0.82,
     }
+    data.attrs.feature_importance = featureData.featureList
+    data.attrs.lift_data = liftData.lift_data
 
     return data
   })

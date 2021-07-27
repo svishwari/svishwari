@@ -144,8 +144,8 @@ client["notifications"].getNotification = (data) => {
 }
 //#endregion
 
-client["models"].overview = (type) => {
-  return http.get(`/models/${type}/overview`)
+client["models"].overview = (id) => {
+  return http.get(`/models/${id}/overview`)
 }
 
 export default client
