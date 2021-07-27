@@ -87,6 +87,17 @@ class AudienceView(SwaggerView):
     Audience view class
     """
 
+    parameters = [
+        {
+            "name": api_c.LOOKALIKEABLE,
+            "description": "Only return audiences that are lookalikeable",
+            "in": "query",
+            "type": "string",
+            "required": False,
+            "default": False,
+        },
+    ]
+
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of all Audiences.",
@@ -145,6 +156,15 @@ class AudienceView(SwaggerView):
 
             audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
+        # if lookalikeable flag was passed, filter out the audiences
+        # that are not lookalikeable.
+        if request.args.get(api_c.LOOKALIKEABLE, False):
+            audiences = [
+                x
+                for x in audiences
+                if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
+            ]
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),

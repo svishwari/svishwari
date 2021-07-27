@@ -24,6 +24,7 @@ class AudienceDeliverySchema(Schema):
     delivery_platform_name = fields.String()
     delivery_platform_type = fields.String()
     last_delivered = DateTimeWithZ(attribute=db_c.UPDATE_TIME)
+    status = fields.String()
 
 
 class DeliveriesSchema(Schema):
@@ -228,19 +229,29 @@ def is_audience_lookalikeable(audience: dict) -> str:
       - disabled = N/A (i.e. no facebook destinations)
 
     Args:
-        audience:
+        audience (dict): audience document object.
 
     Returns:
         str: string denoting the lookalikeable status of the audience.
     """
 
+    deliveries = []
+
     # if no deliveries, return disabled
-    if api_c.DELIVERIES not in audience:
+    if api_c.AUDIENCE_ENGAGEMENTS in audience:
+        for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+            if api_c.DELIVERIES in engagement:
+                deliveries += engagement[api_c.DELIVERIES]
+
+    if api_c.DELIVERIES in audience:
+        deliveries += audience[api_c.DELIVERIES]
+
+    if not deliveries:
         return api_c.DISABLED
 
     # check if any of the deliveries were sent to facebook
     status = api_c.DISABLED
-    for delivery in audience[api_c.DELIVERIES]:
+    for delivery in deliveries:
         # check if delivered to facebook.
         if (
             delivery.get(db_c.DELIVERY_PLATFORM_TYPE)
