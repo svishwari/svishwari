@@ -735,7 +735,7 @@ def append_destination_to_engagement_audience(
     ]
 
     return collection.find_one_and_update(
-        {"_id": engagement_id, "audiences.id": audience_id},
+        {db_c.ID: engagement_id, "audiences.id": audience_id},
         {
             "$set": {
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
