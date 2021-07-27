@@ -520,7 +520,6 @@ export default {
     this.items[1].text = this.audience.name
     this.mapInsights()
     this.loading = false
-    console.log(this.getAudience)
   },
 }
 </script>
