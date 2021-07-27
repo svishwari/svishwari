@@ -127,6 +127,11 @@
           </div>
         </v-card>
       </div>
+      <v-row class="px-15 mt-2">
+        <v-col cols="3">
+          <income-chart></income-chart>
+        </v-col>
+      </v-row>
       <v-divider class="my-8"></v-divider>
       <EmptyStateChart>
         <template #chart-image>
@@ -151,6 +156,7 @@ import EmptyStateChart from "@/components/common/EmptyStateChart"
 import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
+import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 
 export default {
   name: "CustomerProfiles",
@@ -163,6 +169,7 @@ export default {
     huxButton,
     Icon,
     CustomerDetails,
+    IncomeChart,
   },
 
   data() {

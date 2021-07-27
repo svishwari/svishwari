@@ -53,7 +53,7 @@
             class="rounded-lg card-info-wrapper card-shadow no-background"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="title-text pb-1">
+              <div class="text-caption gray--text pb-1">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
                   <template #label-content>
