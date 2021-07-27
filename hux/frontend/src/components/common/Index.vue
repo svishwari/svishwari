@@ -425,6 +425,10 @@
     />
 
     <v-divider class="mt-10" />
+    <v-subheader>Donut Chart</v-subheader>
+    <donut-chart></donut-chart>
+
+    <v-divider class="mt-10" />
 
     <v-container class="my-4">
       <v-row align="baseline">
@@ -655,6 +659,7 @@ import { generateColor } from "@/utils"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
+import DonutChart from "@/components/common/DonutChart/DonutChart"
 
 export default {
   name: "Components",
@@ -686,6 +691,7 @@ export default {
     Size,
     HuxStartDate,
     HuxEndDate,
+    DonutChart,
   },
   methods: {
     onupdatelabelText(newValue) {
