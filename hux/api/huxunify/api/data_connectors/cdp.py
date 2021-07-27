@@ -57,6 +57,7 @@ def get_customer_profiles(token: str) -> dict:
     """Retrieves customer profiles.
 
     Args:
+        token (str): OKTA JWT Token.
 
     Returns:
         dict: dictionary containing the customer profile information
@@ -87,6 +88,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     """Retrieves a customer profile.
 
     Args:
+        token (str): OKTA JWT Token.
         hux_id (str): hux id for a customer.
 
     Returns:
@@ -117,6 +119,7 @@ def get_customers_overview(
     """Fetch customers overview data.
 
     Args:
+        token (str): OKTA JWT Token.
         filters (Optional[dict]): filters to pass into
             customers_overview endpoint.
 
@@ -148,6 +151,7 @@ def get_customers_count_async(
     """Retrieves audience size asynchronously
 
     Args:
+        token (str): OKTA JWT Token.
         audiences (list): list of audience docs.
         default_size (int): default size if the audience post fails. default is zero.
 
@@ -162,9 +166,9 @@ def get_customers_count_async(
     # generate arg list for the async query
     task_args = [
         (
+            token,
             x[db_c.ID],
-            x[api_c.AUDIENCE_FILTERS],
-            token
+            x[api_c.AUDIENCE_FILTERS]
             if x.get(api_c.AUDIENCE_FILTERS)
             else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
             url,
@@ -224,6 +228,7 @@ async def get_async_customers(
     """asynchronously process getting audience size
 
     Args:
+        token (str): OKTA JWT Token.
         audience_id (ObjectId): audience id.
         audience_filters (dict): audience filters
         url (str): url of the service to call.
