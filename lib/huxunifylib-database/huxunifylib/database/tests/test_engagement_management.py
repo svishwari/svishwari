@@ -927,13 +927,11 @@ class TestEngagementManagement(unittest.TestCase):
 
         """
 
-        # create two audiences
-        # create an engagement with those two audiences
-        # add a destination to audience 1
-
         destination = dpm.get_delivery_platform_by_type(
             self.database, c.DELIVERY_PLATFORM_FACEBOOK
         )
+
+        destination_to_add = {c.OBJECT_ID: destination[c.ID]}
 
         audience_one = om.create_audience(
             self.database, "Audience1", [], [], self.user_name, 201
@@ -962,11 +960,11 @@ class TestEngagementManagement(unittest.TestCase):
         # due to mocking issues certain queries do not work
         # but have been verified on a real database
         with self.assertRaises(pymongo.errors.WriteError):
-            em.append_destination_to_engaged_audience(
+            em.append_destination_to_engagement_audience(
                 self.database,
                 engagement_id,
                 audience_one[c.ID],
-                destination[c.ID],
+                destination_to_add,
                 self.user_name,
             )
 
@@ -1003,11 +1001,13 @@ class TestEngagementManagement(unittest.TestCase):
 
         # due to mocking issues certain queries do not work
         # but have been verified on a real database
-        with self.assertRaises(pymongo.errors.WriteError):
-            em.append_destination_to_engaged_audience(
-                self.database,
-                engagement_id,
-                audience_one[c.ID],
-                self.destinations[0][c.ID],
-                self.user_name,
-            )
+        # Due to that issue this return will be None when the DB is mocked
+        updated_engagement = em.remove_destination_from_engagement_audience(
+            self.database,
+            engagement_id,
+            audience_one[c.ID],
+            self.destinations[0][c.ID],
+            self.user_name,
+        )
+
+        self.assertIsNone(updated_engagement)

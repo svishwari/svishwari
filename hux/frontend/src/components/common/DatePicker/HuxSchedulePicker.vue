@@ -4,8 +4,7 @@
       <span class="pr-2">
         <span class="neroBlack--text text-caption">Repeat</span>
         <v-select
-          v-model="schedule.periodicity"
-          @input="$emit('input', schedule)"
+          v-model="value.periodicity"
           :items="repeatItems"
           dense
           outlined
@@ -17,8 +16,7 @@
       <span class="pr-2">
         <span class="neroBlack--text text-caption">Every</span>
         <v-select
-          v-model="schedule.every"
-          @input="$emit('input', schedule)"
+          v-model="value.every"
           :items="everyItems"
           dense
           outlined
@@ -32,8 +30,7 @@
       </span>
       <span class="pr-2">
         <v-select
-          v-model="schedule.hour"
-          @input="$emit('input', schedule)"
+          v-model="value.hour"
           :items="hourItems"
           dense
           outlined
@@ -44,8 +41,7 @@
       </span>
       <span class="pr-2">
         <v-select
-          v-model="schedule.minute"
-          @input="$emit('input', schedule)"
+          v-model="value.minute"
           :items="minItems"
           dense
           outlined
@@ -56,8 +52,7 @@
       </span>
       <span>
         <v-select
-          v-model="schedule.period"
-          @input="$emit('input', schedule)"
+          v-model="value.period"
           :items="periodItems"
           dense
           outlined
@@ -68,10 +63,10 @@
       </span>
     </div>
 
-    <div v-if="schedule.periodicity === 'Weekly'" class="mt-6">
+    <div v-if="value.periodicity === 'Weekly'" class="mt-6">
       <div class="text-caption black--text mb-1">On</div>
       <v-btn
-        v-for="day in schedule.days"
+        v-for="day in days"
         :key="day.value"
         min-width="30"
         width="30"
@@ -79,24 +74,23 @@
         min-height="30"
         class="day-button"
         :ripple="false"
-        @click="day.selected = !day.selected"
-        :color="day.selected ? 'background' : 'aliceBlue'"
+        @click="toggleWeekDay(day)"
+        :color="isDaySelected(day) ? 'background' : 'aliceBlue'"
       >
         <span
           class="text-h6"
-          :class="day.selected ? 'secondary--text' : 'gray--text'"
+          :class="isDaySelected(day) ? 'secondary--text' : 'gray--text'"
         >
           {{ day.day }}
         </span>
       </v-btn>
     </div>
 
-    <div v-if="schedule.periodicity === 'Monthly'" class="mt-6">
+    <div v-if="value.periodicity === 'Monthly'" class="mt-6">
       <div class="text-caption black--text mb-1">On</div>
       <div class="d-flex">
         <v-select
-          v-model="schedule.monthlyPeriod"
-          @input="$emit('input', schedule)"
+          v-model="value.monthlyPeriod"
           :items="monthlyPeriodItems"
           dense
           outlined
@@ -105,9 +99,8 @@
           append-icon="mdi-chevron-down"
         />
         <v-select
-          v-if="schedule.monthlyPeriod !== 'Day'"
-          v-model="schedule.monthlyDay"
-          @input="$emit('input', schedule)"
+          v-if="value.monthlyPeriod !== 'Day'"
+          v-model="value.monthlyDay"
           :items="monthlyDayItems"
           dense
           outlined
@@ -117,8 +110,7 @@
         />
         <v-select
           v-else
-          v-model="schedule.monthlyDayDate"
-          @input="$emit('input', schedule)"
+          v-model="value.monthlyDayDate"
           :items="monthlyDayDateItems"
           dense
           outlined
@@ -133,34 +125,32 @@
       Delivery takes place
       <span class="neroBlack--text">
         [every
-        {{ schedule.every !== 1 ? schedule.every : "" }}
-        {{ timeFrame }}{{ schedule.every !== 1 ? "s" : "" }}]
+        {{ value.every !== 1 ? value.every : "" }}
+        {{ timeFrame }}{{ value.every !== 1 ? "s" : "" }}]
       </span>
-      <span v-if="schedule.periodicity !== 'Daily'">on </span>
-      <span class="neroBlack--text" v-if="schedule.periodicity === 'Weekly'">
+      <span v-if="value.periodicity !== 'Daily'">on </span>
+      <span class="neroBlack--text" v-if="value.periodicity === 'Weekly'">
         <span v-if="selectedDaysString !== '[]'">
           {{ selectedDaysString }}
         </span>
       </span>
-      <span class="neroBlack--text" v-if="schedule.periodicity === 'Monthly'">
-        <span v-if="schedule.monthlyPeriod === 'Day'">
-          [Day {{ schedule.monthlyDayDate }}]
+      <span class="neroBlack--text" v-if="value.periodicity === 'Monthly'">
+        <span v-if="value.monthlyPeriod === 'Day'">
+          [Day {{ value.monthlyDayDate }}]
         </span>
         <span v-else>
-          [the {{ schedule.monthlyPeriod }} {{ schedule.monthlyDay }}]
+          [the {{ value.monthlyPeriod }} {{ value.monthlyDay }}]
         </span>
       </span>
       starting at
       <span class="neroBlack--text">
-        [{{ schedule.hour }}:{{ schedule.minute }}{{ schedule.period }}]
+        [{{ value.hour }}:{{ value.minute }}{{ value.period }}]
       </span>
     </div>
 
     <div
       class="gray--text pt-1"
-      v-if="
-        schedule.periodicity === 'Monthly' && schedule.monthlyDayDate === 31
-      "
+      v-if="value.periodicity === 'Monthly' && value.monthlyDayDate === 31"
     >
       Some months are fewer than 31 days, for these months the delivery will
       take place on the last day of the month.
@@ -198,74 +188,57 @@ export default {
         "Saturday",
       ],
       monthlyDayDateItems: Array.from({ length: 31 }, (_, i) => i + 1),
-      schedule: {
-        periodicity: "Daily",
-        every: 1,
-        hour: 12,
-        minute: 15,
-        period: "AM",
-        monthlyPeriod: "Day",
-        monthlyDay: "Day",
-        monthlyDayDate: 1,
-        days: [
-          {
-            day: "S",
-            value: "Sunday",
-            selected: false,
-          },
-          {
-            day: "M",
-            value: "Monday",
-            selected: true,
-          },
-          {
-            day: "T",
-            value: "Tuesday",
-            selected: false,
-          },
-          {
-            day: "W",
-            value: "Wednesday",
-            selected: false,
-          },
-          {
-            day: "T",
-            value: "Thursday",
-            selected: false,
-          },
-          {
-            day: "F",
-            value: "Friday",
-            selected: false,
-          },
-          {
-            day: "S",
-            value: "Saturday",
-            selected: false,
-          },
-        ],
-      },
+      days: [
+        {
+          day: "S",
+          value: "Sunday",
+        },
+        {
+          day: "M",
+          value: "Monday",
+        },
+        {
+          day: "T",
+          value: "Tuesday",
+        },
+        {
+          day: "W",
+          value: "Wednesday",
+        },
+        {
+          day: "T",
+          value: "Thursday",
+        },
+        {
+          day: "F",
+          value: "Friday",
+        },
+        {
+          day: "S",
+          value: "Saturday",
+        },
+      ],
     }
   },
   computed: {
     everyItems() {
-      return this.schedule.periodicity === "Daily"
+      return this.value.periodicity === "Daily"
         ? Array.from({ length: 7 }, (_, i) => i + 1)
-        : this.schedule.periodicity === "Weekly"
+        : this.value.periodicity === "Weekly"
         ? Array.from({ length: 4 }, (_, i) => i + 1)
         : Array.from({ length: 12 }, (_, i) => i + 1)
     },
 
     timeFrame() {
-      return this.schedule.periodicity === "Daily"
+      return this.value.periodicity === "Daily"
         ? "day"
-        : this.schedule.periodicity === "Weekly"
+        : this.value.periodicity === "Weekly"
         ? "week"
         : "month"
     },
 
     selectedDays() {
-      return this.schedule.days.filter((each) => each.selected)
+      return this.days.filter((each) => this.isDaySelected(each))
     },
 
     selectedDaysString() {
@@ -281,8 +254,21 @@ export default {
     },
   },
 
-  mounted() {
-    this.$emit("input", this.schedule)
+  methods: {
+    toggleWeekDay(day) {
+      if (this.isDaySelected(day)) {
+        if (this.value.days.length !== 1) {
+          let index = this.value.days.indexOf(day.value)
+          this.value.days.splice(index, 1)
+        }
+      } else {
+        this.value.days.push(day.value)
+      }
+    },
+
+    isDaySelected(day) {
+      return this.value.days.includes(day.value)
+    },
   },
 }
 </script>

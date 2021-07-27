@@ -32,7 +32,7 @@
                   v-if="key === 'current_version'"
                   class="text-caption gray--text pt-1"
                 >
-                  Current Version
+                  Current version
                 </div>
                 <div
                   v-else-if="key === 'rmse'"

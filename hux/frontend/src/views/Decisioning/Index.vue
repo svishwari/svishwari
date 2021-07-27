@@ -22,6 +22,7 @@
           :icon="`model-${model.type || 'unsubscribe'}`"
           :title="model.name"
           :description="model.description"
+          :disabled="model.status !== 'Active'"
           class="mr-10 cursor-pointer"
           @click.native="goToDashboard(model.type)"
         >
