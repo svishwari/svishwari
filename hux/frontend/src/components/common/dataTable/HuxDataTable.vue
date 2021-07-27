@@ -221,6 +221,9 @@ export default {
         }
       }
     }
+    tr:last-child > td {
+      border-bottom: thin solid rgba(0, 0, 0, 0.12);
+    }
     ::v-deep .v-data-table__expanded__content {
       padding: 0px;
     }
