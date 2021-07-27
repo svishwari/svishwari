@@ -686,7 +686,7 @@ export default {
           }
         }
       }
-      .mb-2 {
+      label {
         margin-bottom: 2px !important;
       }
     }
