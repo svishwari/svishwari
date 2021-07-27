@@ -638,6 +638,20 @@ class AudienceRules(SwaggerView):
                         "max": 1.0,
                         "steps": 0.05,
                     },
+                    "ltv_predicted": {
+                        "name": "Predicted lifetime value",
+                        "type": "range",
+                        "min": 0,
+                        "max": 100000,
+                        "steps": 500,
+                    },
+                    "propensity_to_purchase": {
+                        "name": "Propensity to purchase",
+                        "type": "range",
+                        "min": 0.0,
+                        "max": 1.0,
+                        "steps": 0.05,
+                    },
                 },
                 "general": {
                     "age": {

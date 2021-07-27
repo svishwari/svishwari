@@ -55,7 +55,7 @@ class NotificationSchema(Schema):
     @post_dump
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
-    def post_serialize(self, data: dict, many=False) -> dict:
+    def post_serialize(self, data: dict, many: bool = False) -> dict:
         """process the schema before serializing.
 
         Args:
@@ -63,7 +63,7 @@ class NotificationSchema(Schema):
             many (bool): If there are many to process
 
         Returns:
-            Response: Returns a notification object
+            dict: Returns a notification object
 
         """
         # change notification type and category to title case

@@ -1,21 +1,16 @@
 <template>
   <div>
     <v-card
-      tile
       v-if="showTooltip"
+      tile
       :style="{
         transform: `translate(${position.x}px, ${position.y}px)`,
         'border-radius': '0px !important',
       }"
-      class="mx-auto description-tooltip-style"
+      class="mx-auto tooltip-style"
     >
-      <div class="bar-hover neroBlack--text">
-        <span class="feature-name">
-          {{ sourceInput.name }}
-        </span>
-        <span class="feature-description">
-          {{ sourceInput.description }}
-        </span>
+      <div class="bar-hover">
+        {{ sourceInput.ltv | Currency }}
       </div>
     </v-card>
   </div>
@@ -63,26 +58,26 @@ export default {
 }
 
 .card-padding {
-  padding: 7px 20px 20px 20px;
+  padding: 10px 0px 0px 13px;
 }
 
-.description-tooltip-style {
+.income-tooltip-style {
   @extend .box-shadow-3;
   border-radius: 0px;
-  max-width: 230px;
   height: auto;
-  top: -620px;
-  left: -230px;
   z-index: 1;
+  color: #0c9ddb;
   .bar-hover {
     @extend .card-padding;
-    .feature-name {
-      @extend .global-text-line;
-    }
-    .feature-description {
-      @extend .global-text-line;
-      margin-top: 8px;
-    }
   }
+}
+
+.tooltip-style {
+  @extend .income-tooltip-style;
+  max-width: 70px;
+  height: 40px;
+  top: -350px;
+  left: -60px;
+  z-index: 1;
 }
 </style>
