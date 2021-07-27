@@ -43,8 +43,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
     # submit the post request to get documentation
     try:
         response = requests.get(
-            f"{config.CDP_SERVICE}/docs",
-            headers=config.CDP_HEADERS,
+            f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
         return response.status_code, "CDM available."
@@ -54,7 +53,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def get_customer_profiles() -> dict:
+def get_customer_profiles(token: str) -> dict:
     """Retrieves customer profiles.
 
     Args:
@@ -68,7 +67,10 @@ def get_customer_profiles() -> dict:
     config = get_config()
 
     response = requests.get(
-        f"{config.CDP_SERVICE}/customer-profiles", headers=config.CDP_HEADERS
+        f"{config.CDP_SERVICE}/customer-profiles",
+        headers={
+            "Authorization": token,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -81,7 +83,7 @@ def get_customer_profiles() -> dict:
     }
 
 
-def get_customer_profile(hux_id: str) -> dict:
+def get_customer_profile(token: str, hux_id: str) -> dict:
     """Retrieves a customer profile.
 
     Args:
@@ -97,7 +99,9 @@ def get_customer_profile(hux_id: str) -> dict:
 
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
-        headers=config.CDP_HEADERS,
+        headers={
+            "Authorization": token,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -107,6 +111,7 @@ def get_customer_profile(hux_id: str) -> dict:
 
 
 def get_customers_overview(
+    token: str,
     filters: Optional[dict] = None,
 ) -> dict:
     """Fetch customers overview data.
@@ -126,7 +131,9 @@ def get_customers_overview(
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
-        headers=config.CDP_HEADERS,
+        headers={
+            "Authorization": token,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -135,7 +142,9 @@ def get_customers_overview(
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
-def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
+def get_customers_count_async(
+    token: str, audiences: list, default_size: int = 0
+) -> dict:
     """Retrieves audience size asynchronously
 
     Args:
@@ -154,7 +163,8 @@ def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
     task_args = [
         (
             x[db_c.ID],
-            x[api_c.AUDIENCE_FILTERS]
+            x[api_c.AUDIENCE_FILTERS],
+            token
             if x.get(api_c.AUDIENCE_FILTERS)
             else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
             url,
@@ -208,7 +218,9 @@ def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
     return audience_size_dict
 
 
-async def get_async_customers(audience_id, audience_filters, url) -> dict:
+async def get_async_customers(
+    token: str, audience_id, audience_filters, url
+) -> dict:
     """asynchronously process getting audience size
 
     Args:
@@ -223,7 +235,13 @@ async def get_async_customers(audience_id, audience_filters, url) -> dict:
     # setup the aiohttp session so we can process the calls asynchronously
     async with aiohttp.ClientSession() as session, async_timeout.timeout(10):
         # run the async post request
-        async with session.post(url, json=audience_filters) as response:
+        async with session.post(
+            url,
+            json=audience_filters,
+            headers={
+                "Authorization": token,
+            },
+        ) as response:
             # await the responses, and return them as they come in.
             return await response.json(), str(audience_id)
 
