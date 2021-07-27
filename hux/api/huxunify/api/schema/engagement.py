@@ -153,6 +153,41 @@ class AudienceEngagementDeleteSchema(Schema):
     )
 
 
+class DestinationEngagedAudienceAddSchema(Schema):
+    """
+    Schema for adding destination to engagement audience
+    """
+
+    id = fields.String(
+        attribute=db_c.OBJECT_ID,
+        example="60ae035b6c5bf45da27f17e5",
+        required=True,
+    )
+    delivery_platform_config = fields.Dict(
+        attribute=db_c.DELIVERY_PLATFORM_CONFIG,
+        example={db_c.DATA_EXTENSION_NAME: "SFMC Date Extension"},
+        required=False,
+        default=None,
+    )
+
+    @pre_load
+    # pylint: disable=unused-argument
+    def pre_process_details(
+        self, destination: dict, many: bool = False
+    ) -> dict:
+        """process the schema before loading.
+
+        Args:
+            destination (dict): destination to be appended
+            many (bool): If there are many to process
+        Returns:
+            dict: Returns a destination object
+
+        """
+        destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
+        return destination
+
+
 class DisplayAdsSummary(Schema):
     """
     Schema for Display Ads Summary
