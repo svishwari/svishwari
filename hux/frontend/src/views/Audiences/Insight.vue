@@ -52,7 +52,7 @@
         v-if="audience.lookalike_audience"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 pt-2">
             <span class="original-audience-text">
               {{ audience.name }}
             </span>
@@ -511,8 +511,5 @@ export default {
   font-size: 14px;
   line-height: 19px;
   color: var(--v-primary-base) !important;
-}
-.card-width {
-  width: 156px !important;
 }
 </style>
