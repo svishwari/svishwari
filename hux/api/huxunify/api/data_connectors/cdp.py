@@ -69,7 +69,7 @@ def get_customer_profiles(token: str) -> dict:
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles",
         headers={
-            "Authorization": token,
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
     )
 
@@ -100,7 +100,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
         headers={
-            "Authorization": token,
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
     )
 
@@ -132,7 +132,7 @@ def get_customers_overview(
         f"{config.CDP_SERVICE}/customer-profiles/insights",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
         headers={
-            "Authorization": token,
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
     )
 
@@ -239,7 +239,7 @@ async def get_async_customers(
             url,
             json=audience_filters,
             headers={
-                "Authorization": token,
+                api_c.CUSTOMERS_API_HEADER_KEY: token,
             },
         ) as response:
             # await the responses, and return them as they come in.

@@ -446,6 +446,7 @@ AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 LOOKALIKE_AUDIENCES = "lookalike-audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 
+
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,
     COUNTRIES: 2,
@@ -575,6 +576,7 @@ CUSTOMERS_TAG = "customers"
 CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
+CUSTOMERS_API_HEADER_KEY = "x-api-key"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
