@@ -27,6 +27,10 @@ from huxunify.api.config import get_config
 from huxunify.api.data_connectors.cdp import (
     get_customers_overview,
 )
+from huxunify.api.data_connectors.aws import (
+    set_cloud_watch_rule,
+    put_rule_targets_aws_batch,
+)
 
 
 def map_destination_credentials_to_dict(destination: dict) -> tuple:
@@ -105,6 +109,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     return env_dict, secret_dict
 
 
+# pylint: disable=too-many-instance-attributes
 class DestinationBatchJob:
     """
     Class for housing the Destination batch config.
@@ -116,6 +121,7 @@ class DestinationBatchJob:
         audience_delivery_job_id: ObjectId,
         aws_secrets: dict,
         aws_envs: dict,
+        destination_type: str,
     ) -> None:
         """Init the class with the config variables
 
@@ -124,6 +130,7 @@ class DestinationBatchJob:
             audience_delivery_job_id (ObjectId): ObjectId of the audience delivery job.
             aws_secrets (dict): The AWS secret dict for a batch job.
             aws_envs (dict): The AWS env dict for a batch job.
+            destination_type (str): The type of destination (i.e. facebook, sfcm)
 
         Returns:
 
@@ -132,11 +139,14 @@ class DestinationBatchJob:
         self.audience_delivery_job_id = audience_delivery_job_id
         self.aws_secrets = aws_secrets
         self.aws_envs = aws_envs
+        self.destination_type = destination_type
         self.aws_batch_connector = None
         self.result = None
+        self.scheduled = False
 
     def register(
         self,
+        engagement_doc: dict,
         job_head_name: str = "audiencerouter",
         aws_batch_mem_limit: int = 2048,
         aws_batch_connector: AWSBatchConnector = None,
@@ -144,6 +154,7 @@ class DestinationBatchJob:
         """Register a destination job
 
         Args:
+            engagement_doc (dict): Engagement document.
             job_head_name (str): The aws batch job head name.
             aws_batch_mem_limit (int): AWS Batch RAM limit.
             aws_batch_connector (AWSBatchConnector): AWS batch connector.
@@ -186,6 +197,46 @@ class DestinationBatchJob:
 
         self.result = db_const.STATUS_PENDING
 
+        # check if engagement has a delivery flight schedule set
+        if not (
+            engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)
+        ):
+            logging.warning(
+                "Delivery schedule is not set for %s",
+                engagement_doc[db_const.ID],
+            )
+            return
+
+        # create the rule name
+        cw_name = f"{engagement_doc[db_const.ID]}-{self.destination_type}"
+
+        # TODO hookup converted cron job expression HUS-794
+        if not set_cloud_watch_rule(
+            cw_name,
+            "cron(15 0 * * ? *)",
+            config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
+        ):
+            logging.error(
+                "Error creating cloud watch rule for engagement with ID %s",
+                engagement_doc[db_const.ID],
+            )
+            return
+
+        # setup the batch params for the registered job.
+        batch_params = {
+            "JobDefinition": response_batch_register["jobDefinitionArn"],
+            "JobName": response_batch_register["jobDefinitionName"],
+        }
+
+        put_rule_targets_aws_batch(
+            cw_name,
+            batch_params,
+            config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
+            config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
+        )
+
+        self.scheduled = True
+
     def submit(self) -> None:
         """Submit a destination job
 
@@ -194,6 +245,11 @@ class DestinationBatchJob:
         Returns:
 
         """
+
+        # don't process if schedule set.
+        if self.scheduled:
+            return
+
         # Connect to AWS Batch
         if (
             self.aws_batch_connector is None
@@ -319,6 +375,7 @@ def get_destination_config(
         audience_delivery_job[db_const.ID],
         secret_dict,
         env_dict,
+        delivery_platform[db_const.DELIVERY_PLATFORM_TYPE],
     )
 
 

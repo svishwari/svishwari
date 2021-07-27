@@ -511,7 +511,7 @@ def weighted_engagement_status(engagements: list) -> list:
 
                 status_rank = {
                     api_c.STATUS: status,
-                    api_c.WEIGHT: api_c.STATUS_WEIGHTS[status],
+                    api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(status, 0),
                 }
                 status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
@@ -543,3 +543,36 @@ def weighted_engagement_status(engagements: list) -> list:
         )
 
     return engagements
+
+
+def weight_delivery_status(engagements: list) -> str:
+    """Returns a weighted delivery status by rolling up the individual
+    delivery status values.
+
+    Args:
+        engagements (list): input engagement delivery list.
+
+    Returns:
+        str: a string denoting engagement status.
+    """
+
+    # generate a list of dict objects with status and weight
+    # used later to sort by the weight integer value.
+    status_ranks = [
+        {
+            api_c.STATUS: x[api_c.STATUS],
+            api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(x[api_c.STATUS], 0),
+        }
+        for x in engagements[api_c.DELIVERIES]
+        if api_c.STATUS in x
+    ]
+
+    # sort delivery status list of dict by weight.
+    status_ranks.sort(key=lambda x: x[api_c.WEIGHT])
+
+    # take the first item in the sorted list, and grab the status
+    return (
+        status_ranks[0][api_c.STATUS]
+        if status_ranks
+        else api_c.STATUS_NOT_DELIVERED
+    )

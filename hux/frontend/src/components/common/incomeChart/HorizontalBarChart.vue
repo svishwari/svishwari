@@ -165,28 +165,20 @@ export default {
         d3Select.selectAll("rect").style("fill-opacity", "0.5")
         d3Select
           .select(d.srcElement)
-          .attr("fill-opacity", (d) => changeHoverCirclePosition(d))
+          .attr("fill-opacity", (d) => changeHoverPosition(d))
           .style("fill-opacity", "1")
       }
 
       let removeHoverEffects = () => {
         d3Select.selectAll("rect").style("fill-opacity", "1")
-        d3Select.select(this.$refs.huxChart).select("circle").remove()
         this.tooltipDisplay(false)
       }
 
-      let changeHoverCirclePosition = (data) => {
-        let featureData = data
-        featureData.xPosition = x(data.ltv)
-        featureData.yPosition = y(data.ltv) + 12
-        this.tooltipDisplay(true, featureData)
-        svg
-          .append("circle")
-          .classed("removeableCircle", false)
-          .style("stroke", "#00A3E0")
-          .style("stroke-opacity", "1")
-          .style("fill", "white")
-          .style("pointer-events", "none")
+      let changeHoverPosition = (data) => {
+        let incomeData = data
+        incomeData.xPosition = x(data.ltv)
+        incomeData.yPosition = y(data.ltv) + 12
+        this.tooltipDisplay(true, incomeData)
       }
     },
 
@@ -196,8 +188,8 @@ export default {
       this.$emit("cordinates", this.tooltip)
     },
 
-    tooltipDisplay(showTip, featureData) {
-      this.$emit("tooltipDisplay", showTip, featureData)
+    tooltipDisplay(showTip, incomeData) {
+      this.$emit("tooltipDisplay", showTip, incomeData)
     },
   },
 

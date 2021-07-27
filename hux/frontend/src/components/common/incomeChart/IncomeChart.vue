@@ -2,7 +2,7 @@
   <div class="container">
     <div class="d-flex justify-content-start">
       <horizontal-bar-chart
-        v-model="features"
+        v-model="incomes"
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
       />
@@ -22,19 +22,20 @@
 <script>
 import BarChartTooltip from "@/components/common/incomeChart/BarChartTooltip"
 import HorizontalBarChart from "@/components/common/incomeChart/HorizontalBarChart"
+//TODO: API Integration
 import data from "./incomeData.json"
+
 export default {
   name: "income-chart",
   components: { HorizontalBarChart, BarChartTooltip },
   data() {
     return {
       show: false,
-      isArcHover: false,
       tooltip: {
         x: 0,
         y: 0,
       },
-      features: data.income,
+      incomes: data.income,
       currentData: {},
     }
   },

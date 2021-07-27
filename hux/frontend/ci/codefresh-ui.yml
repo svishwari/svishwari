@@ -90,9 +90,9 @@ steps:
     type: deloittehux/jfrog-docker-publish
     arguments:
       BUILD_NAME: '${{BUILD_NAME}}'
-      BUILD_NUMBER: '${{CF_BUILD_NUMBER}}'
+      BUILD_NUMBER: '${{DOCKER_TAG}}'
       JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
-      BUILD_TAG: '${{CF_BUILD_NUMBER}}'
+      BUILD_TAG: '${{DOCKER_TAG}}'
     when:
       branch:
         only:

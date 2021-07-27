@@ -7,7 +7,7 @@
         transform: `translate(${position.x}px, ${position.y}px)`,
         'border-radius': '0px !important',
       }"
-      class="mx-auto score-tooltip-style"
+      class="mx-auto tooltip-style"
     >
       <div class="bar-hover">
         {{ sourceInput.ltv | Currency }}
@@ -58,31 +58,23 @@ export default {
 }
 
 .card-padding {
-  padding: 10px 20px 20px 10px;
+  padding: 10px 0px 0px 13px;
 }
 
-.description-tooltip-style {
+.income-tooltip-style {
   @extend .box-shadow-3;
   border-radius: 0px;
-  max-width: 230px;
   height: auto;
   z-index: 1;
   color: #0c9ddb;
   .bar-hover {
     @extend .card-padding;
-    .feature-name {
-      @extend .global-text-line;
-    }
-    .feature-description {
-      @extend .global-text-line;
-      margin-top: 8px;
-    }
   }
 }
 
-.score-tooltip-style {
-  @extend .description-tooltip-style;
-  max-width: 100px;
+.tooltip-style {
+  @extend .income-tooltip-style;
+  max-width: 70px;
   height: 40px;
   top: -350px;
   left: -60px;
