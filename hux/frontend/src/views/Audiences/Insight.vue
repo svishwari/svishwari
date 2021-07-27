@@ -174,7 +174,7 @@
               <tooltip>
                 <template #label-content>
                   <span class="font-weight-semi-bold">
-                    {{ getFormattedValue(insightInfoItems[item]) }}
+                    {{ getFormattedValue(insightInfoItems[item]) | Empty }}
                   </span>
                 </template>
                 <template #hover-content>
