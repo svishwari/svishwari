@@ -43,6 +43,7 @@ from huxunify.api.route.utils import (
     get_user_name,
     api_error_handler,
     validate_destination_id,
+    get_token_from_request,
 )
 
 # setup the orchestration blueprint
@@ -136,7 +137,10 @@ class AudienceView(SwaggerView):
         }
 
         # get customer sizes
-        customer_size_dict = get_customers_count_async(audiences)
+        token_response = get_token_from_request(request)
+        customer_size_dict = get_customers_count_async(
+            token_response[0], audiences
+        )
 
         # process each audience object
         for audience in audiences:
@@ -227,6 +231,8 @@ class AudienceGetView(SwaggerView):
         if not ObjectId.is_valid(audience_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        token_response = get_token_from_request(request)
+
         database = get_db_client()
 
         # get the audience
@@ -279,7 +285,9 @@ class AudienceGetView(SwaggerView):
         )
 
         # get live audience size
-        customers = get_customers_overview(audience[api_c.AUDIENCE_FILTERS])
+        customers = get_customers_overview(
+            token_response[0], audience[api_c.AUDIENCE_FILTERS]
+        )
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
