@@ -5,6 +5,7 @@ export default {
 
   // App
   home: "/",
+  login: "/login",
   overview: "/overview",
 
   // Orchestration

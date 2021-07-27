@@ -3,15 +3,9 @@ import VueRouter from "vue-router"
 
 import Auth from "@okta/okta-vue"
 import { pageTitle } from "@/utils"
-const config = require("@/config")
+import config from "@/config"
 
-Vue.use(Auth, {
-  issuer: config.default.oidc.issuer,
-  clientId: config.default.oidc.clientId,
-  redirectUri: window.location.origin + "/login/callback",
-  scopes: ["openid", "profile", "email"],
-  pkce: true,
-})
+Vue.use(Auth, config.oidc)
 
 Vue.use(VueRouter)
 
