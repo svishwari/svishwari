@@ -714,7 +714,7 @@ def append_destination_to_engagement_audience(
     database: DatabaseClient,
     engagement_id: ObjectId,
     audience_id: ObjectId,
-    destination_id: ObjectId,
+    destination: dict,
     user_name: str,
 ) -> dict:
     """A function to append destination to engagement audience
@@ -723,7 +723,7 @@ def append_destination_to_engagement_audience(
         database (DatabaseClient): A database client.
         engagement_id (ObjectId): MongoDB ID of the engagement.
         audience_id (ObjectId): MongoDB ID of the audience.
-        destination_id (ObjectId): MongoDB ID of the destination.
+        destination (dict): Destination to add to engagement audience.
         user_name (str): Name of the user appending the destination to the audience.
 
     Returns:
@@ -742,7 +742,7 @@ def append_destination_to_engagement_audience(
                 db_c.UPDATED_BY: user_name,
             },
             "$push": {
-                "audiences.$.destinations": {db_c.OBJECT_ID: destination_id}
+                "audiences.$.destinations": destination
             },
         },
     )
