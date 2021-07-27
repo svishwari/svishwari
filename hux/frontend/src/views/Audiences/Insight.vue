@@ -2,7 +2,7 @@
   <div class="audience-insight-wrap">
     <PageHeader class="background-border" :headerHeightChanges="'py-3'">
       <template #left>
-        <Breadcrumb :items="items" />
+        <Breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
         <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
@@ -19,10 +19,11 @@
       </template>
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
+
     <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
       <MetricCard
         v-for="(item, i) in audience.audienceHistory"
-        class="ma-4 audience-summary"
+        class="ma-2 audience-summary"
         :key="i"
         :grow="0"
         :title="item.title"
@@ -44,9 +45,38 @@
           <Avatar :name="item.fullName" />
         </template>
       </MetricCard>
+      <MetricCard
+        class="ma-2 audience-summary original-audience"
+        :grow="0"
+        :title="'Original Audience'"
+        v-if="audience.lookalike_audience"
+      >
+        <template #subtitle-extended>
+          <span class="mr-2 pt-2">
+            <span class="original-audience-text">
+              {{ audience.name }}
+            </span>
+          </span>
+        </template>
+      </MetricCard>
+      <MetricCard
+        class="ma-2 audience-summary"
+        :grow="0"
+        :title="'Original • Actual size'"
+        v-if="audience.lookalike_audience"
+      >
+        <template #subtitle-extended>
+          <span class="mr-2">
+            <span class="neroBlack--text font-weight-semi-bold">
+              <size :value="audience.size" /> &bull;
+              <size :value="audience.size" />
+            </span>
+          </span>
+        </template>
+      </MetricCard>
 
       <MetricCard
-        class="ma-4 audience-summary"
+        class="ma-2 audience-summary"
         :title="'Attributes'"
         v-if="Object.keys(appliedFilters).length > 0"
       >
@@ -93,6 +123,40 @@
           </div>
         </template>
       </MetricCard>
+    </div>
+    <div class="px-15 my-1 mb-4">
+      <v-card class="rounded-lg card-style" minHeight="145px" flat>
+        <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+          <div class="d-flex align-center">
+            <span class="text-h5">Engagement &amp; delivery overview</span>
+          </div>
+          <div class="d-flex align-center">
+            <v-btn
+              text
+              class="d-flex align-center primary--text text-decoration-none"
+              disabled
+            >
+              <Icon type="audiences" :size="16" class="mr-1" />
+              Add an Engagement
+            </v-btn>
+          </div>
+        </v-card-title>
+        <v-progress-linear
+          v-if="!engagements"
+          :active="!engagements"
+          :indeterminate="!engagements"
+        />
+        <v-card-text class="pl-6 pr-6 pb-6">
+          <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
+            <status-list
+              v-for="item in engagements"
+              :key="item.id"
+              :audience="item"
+              :statusIcon="17"
+            />
+          </v-col>
+        </v-card-text>
+      </v-card>
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
@@ -147,6 +211,8 @@ import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
+import StatusList from "../../components/common/StatusList.vue"
+import Size from "../../components/common/huxTable/Size.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 
 export default {
@@ -159,6 +225,8 @@ export default {
     Avatar,
     Tooltip,
     Icon,
+    StatusList,
+    Size,
     IncomeChart,
   },
   data() {
@@ -174,6 +242,8 @@ export default {
           text: "",
           disabled: true,
           href: this.$route.path,
+          icon: "lookalike",
+          size: 12,
         },
       ],
       loading: false,
@@ -212,6 +282,30 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
+
+      //TODO: Mock data for the Engagement
+      engagements: [
+        {
+          id: 1,
+          last_delivered: "2021-07-13T15:38:42.629Z",
+          lookalike: true,
+          name: "My Engagement 1",
+          size: 265234579,
+          status: "Active",
+          destinations: [
+            {
+              id: "4",
+              name: "Facebook",
+              type: "facebook",
+              latest_delivery: {
+                status: "Active",
+                size: 265234579,
+                update_time: "2021-07-13T15:38:42.629Z",
+              },
+            },
+          ],
+        },
+      ],
     }
   },
   computed: {
@@ -222,6 +316,35 @@ export default {
       return this.getAudience(this.$route.params.id)
     },
 
+    breadcrumbItems() {
+      const items = [
+        {
+          text: "Audiences",
+          disabled: false,
+          href: "/audiences",
+          icon: "audiences",
+        },
+      ]
+      if (this.audience) {
+        if (this.audience.lookalike_audience == true) {
+          items.push({
+            text: this.audience.name,
+            disabled: true,
+            href: this.$route.path,
+            icon: "lookalike",
+            size: 12,
+          })
+        } else {
+          items.push({
+            text: this.audience.name,
+            disabled: true,
+            href: this.$route.path,
+          })
+        }
+        return items
+      }
+      return items
+    },
     /**
      * This computed property is converting the audience filters conditions
      * into groups of fiters and having custom keys which are needed
@@ -386,5 +509,16 @@ export default {
 }
 .icon-border {
   cursor: default;
+}
+.original-audience {
+  background: var(--v-white-base) !important;
+}
+.original-audience-text {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--v-primary-base) !important;
 }
 </style>
