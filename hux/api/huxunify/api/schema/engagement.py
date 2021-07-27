@@ -4,7 +4,7 @@ Schemas for the Engagements API
 """
 from bson import ObjectId
 from flask_marshmallow import Schema
-from marshmallow import fields, validate, pre_load
+from marshmallow import fields, validate, pre_load, post_dump
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
@@ -450,6 +450,26 @@ class EngagementGetSchema(Schema):
     created_by = fields.String(attribute=db_c.CREATED_BY)
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
+
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    @post_dump
+    def post_serialize(self, engagement: dict, many=False) -> dict:
+        """process the schema before serializing.
+
+        Args:
+            engagement (dict): The notification object
+            many (bool): If there are many to process
+
+        Returns:
+            Response: Returns an engagement object
+
+        """
+        # Set delivery_schedule as null if delivery schedule is not available
+        if not engagement.get(api_c.DELIVERY_SCHEDULE):
+            engagement[api_c.DELIVERY_SCHEDULE] = None
+
+        return engagement
 
 
 def weighted_engagement_status(engagements: list) -> list:
