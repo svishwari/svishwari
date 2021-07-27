@@ -258,7 +258,10 @@ def is_audience_lookalikeable(audience: dict) -> str:
             == db_c.DELIVERY_PLATFORM_FACEBOOK
         ):
             status = api_c.STATUS_INACTIVE
-            if delivery.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED:
+            if delivery.get(db_c.STATUS) in [
+                db_c.STATUS_SUCCEEDED,
+                db_c.AUDIENCE_STATUS_DELIVERED,
+            ]:
                 # success, break the loop and return active.
                 return api_c.STATUS_ACTIVE
     return status
