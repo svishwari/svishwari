@@ -106,9 +106,6 @@ class Config:
         "CDP_SERVICE",
         default="https://customer-profile-api.main.use1.hux-unified-dev1.in",
     )
-    CDP_HEADERS = {
-        "Authorization": "",
-    }
 
     # Preserve ordering in json
     JSON_SORT_KEYS = False

@@ -16,6 +16,7 @@ from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.utils import name_exists
 
 
+# pylint: disable=too-many-arguments
 @retry(
     wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
@@ -703,3 +704,85 @@ def add_delivery_job(
         logging.error(exc)
 
     return None
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def append_destination_to_engagement_audience(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination: dict,
+    user_name: str,
+) -> dict:
+    """A function to append destination to engagement audience
+
+    Args:
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): MongoDB ID of the engagement.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination (dict): Destination to add to engagement audience.
+        user_name (str): Name of the user appending the destination to the audience.
+
+    Returns:
+        dict: updated engagement object
+
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.ENGAGEMENTS_COLLECTION
+    ]
+
+    return collection.find_one_and_update(
+        {db_c.ID: engagement_id, "audiences.id": audience_id},
+        {
+            "$set": {
+                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                db_c.UPDATED_BY: user_name,
+            },
+            "$push": {"audiences.$.destinations": destination},
+        },
+    )
+
+
+@retry(
+    wait=wait_fixed(db_c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def remove_destination_from_engagement_audience(
+    database: DatabaseClient,
+    engagement_id: ObjectId,
+    audience_id: ObjectId,
+    destination_id: ObjectId,
+    user_name: str,
+) -> dict:
+    """A function to remove destination from engagement audience
+
+    Args
+        database (DatabaseClient): A database client.
+        engagement_id (ObjectId): MongoDB ID of the engagement.
+        audience_id (ObjectId): MongoDB ID of the audience.
+        destination_id (ObjectId): MongoDB ID of the destination to be removed
+        user_name (str): Name of the user removing the destination from the audience.
+
+    Returns:
+        dict: updated engagement object
+
+    """
+    collection = database[db_c.DATA_MANAGEMENT_DATABASE][
+        db_c.AUDIENCES_COLLECTION
+    ]
+
+    return collection.find_one_and_update(
+        {db_c.ID: engagement_id, "audiences.id": audience_id},
+        {
+            "$set": {
+                db_c.UPDATE_TIME: datetime.datetime.utcnow(),
+                db_c.UPDATED_BY: user_name,
+            },
+            "$pull": {
+                "audiences.$.destinations": {db_c.OBJECT_ID: destination_id}
+            },
+        },
+    )

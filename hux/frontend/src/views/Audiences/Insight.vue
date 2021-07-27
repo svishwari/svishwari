@@ -52,7 +52,7 @@
         v-if="audience.lookalike_audience"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 pt-2">
             <span class="original-audience-text">
               {{ audience.name }}
             </span>
@@ -185,7 +185,7 @@
               <tooltip>
                 <template #label-content>
                   <span class="font-weight-semi-bold">
-                    {{ getFormattedValue(insightInfoItems[item]) }}
+                    {{ getFormattedValue(insightInfoItems[item]) | Empty }}
                   </span>
                 </template>
                 <template #hover-content>
@@ -197,6 +197,12 @@
         </div>
       </v-card>
     </div>
+    <v-row class="px-15 mt-2">
+      <v-col cols="3">
+        <income-chart></income-chart>
+      </v-col>
+    </v-row>
+
     <v-divider class="my-8"></v-divider>
     <EmptyStateChart>
       <template #chart-image>
@@ -221,6 +227,8 @@ import Icon from "../../components/common/Icon.vue"
 import StatusList from "../../components/common/StatusList.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
+import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+
 export default {
   name: "AudienceInsight",
   components: {
@@ -235,6 +243,7 @@ export default {
     Size,
     LookAlikeAudience,
     LookAlikeCard,
+    IncomeChart,
   },
   data() {
     return {

@@ -1,11 +1,10 @@
 <template>
-  <div ref="chartBox" class="container">
+  <div class="container">
     <div class="d-flex justify-content-start">
       <horizontal-bar-chart
-        v-model="features"
+        v-model="incomes"
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
-        :chartDimensions="chartDimensions"
       />
     </div>
     <bar-chart-tooltip
@@ -21,31 +20,23 @@
 </template>
 
 <script>
-import BarChartTooltip from "@/components/common/featureChart/BarChartTooltip"
-import HorizontalBarChart from "@/components/common/featureChart/HorizontalBarChart"
+import BarChartTooltip from "@/components/common/incomeChart/BarChartTooltip"
+import HorizontalBarChart from "@/components/common/incomeChart/HorizontalBarChart"
+//TODO: API Integration
+import data from "./incomeData.json"
+
 export default {
-  name: "feature-chart",
+  name: "income-chart",
   components: { HorizontalBarChart, BarChartTooltip },
-  props: {
-    featureData: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
       show: false,
-      isArcHover: false,
       tooltip: {
         x: 0,
         y: 0,
       },
-      features: this.featureData,
+      incomes: data.income,
       currentData: {},
-      chartDimensions: {
-        width: 0,
-        height: 0,
-      },
     }
   },
   methods: {
@@ -61,10 +52,6 @@ export default {
       this.tooltip.y = args.y
     },
   },
-  mounted() {
-    this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
-  },
 }
 </script>
 
@@ -76,7 +63,7 @@ export default {
   line-height: 19px;
 }
 .container {
-  height: 650px;
+  height: 350px;
   padding: 0px !important;
 }
 </style>
