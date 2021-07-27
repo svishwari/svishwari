@@ -122,6 +122,8 @@ class TestDeliveryPlatform(unittest.TestCase):
                 "Lookalike audience",
                 0.01,
                 "US",
+                "Kam Chancellor",
+                31,
             )
         )
 
@@ -748,6 +750,8 @@ class TestDeliveryPlatform(unittest.TestCase):
             "Lookalike audience new",
             0.01,
             "US",
+            "Kam Chancellor",
+            31,
         )
 
         self.assertTrue(doc is not None)
@@ -756,6 +760,8 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.LOOKALIKE_AUD_NAME in doc)
         self.assertTrue(c.LOOKALIKE_AUD_COUNTRY in doc)
         self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
+        self.assertEqual(doc[c.CREATED_BY], "Kam Chancellor")
+        self.assertEqual(doc[c.SIZE], 31)
 
         delivery_job_doc = dpm.set_delivery_job(
             self.database,
@@ -859,6 +865,8 @@ class TestDeliveryPlatform(unittest.TestCase):
             lookalike_audience_id=lookalike_audience_id,
             audience_size_percentage=0.03,
             country="UK",
+            user_name="Marshawn Lynch",
+            audience_size=24,
         )
 
         self.assertTrue(doc is not None)
@@ -868,6 +876,8 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[c.LOOKALIKE_AUD_COUNTRY],
             "UK",
         )
+        self.assertEqual(doc[c.SIZE], 24)
+        self.assertEqual(doc[c.UPDATED_BY], "Marshawn Lynch")
 
         doc = dpm.update_lookalike_audience_name(
             self.database,
