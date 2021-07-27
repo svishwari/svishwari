@@ -118,7 +118,19 @@ export default {
 
     deliverySchedule() {
       const schedule = JSON.parse(this.value.delivery_schedule)
-      return schedule ? schedule : "Manual"
+      if (!schedule) {
+        return "Manual"
+      } else {
+        if (this.value && this.value.recurring) {
+          return (
+            this.value.recurring.start +
+            (this.value.recurring.end ? " - " : "") +
+            (this.value.recurring.end ? this.value.recurring.end : "")
+          )
+        } else {
+          return "Now"
+        }
+      }
     },
 
     overview() {

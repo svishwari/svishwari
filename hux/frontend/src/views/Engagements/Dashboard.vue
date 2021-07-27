@@ -27,7 +27,9 @@
       <div class="summary-wrap d-flex mb-6">
         <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
-            <div class="font-weight-semi-bold neroBlack--text my-2">Manual</div>
+            <div class="font-weight-semi-bold neroBlack--text my-2">
+              {{ deliverySchedule }}
+            </div>
           </template>
         </MetricCard>
         <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
@@ -127,6 +129,7 @@
                 :engagementId="engagementId"
                 :statusIcon="17"
                 @onAddDestination="triggerSelectDestination(item.id)"
+                @removeAudience="triggerDetachAudiences($event)"
               />
             </v-col>
           </v-card-text>
@@ -667,6 +670,44 @@ export default {
         },
       ]
     },
+    deliverySchedule() {
+      if (this.engagementList && this.engagementList.delivery_schedule) {
+        if (
+          !this.engagementList.delivery_schedule.start_date &&
+          !this.engagementList.delivery_schedule.end_date
+        ) {
+          return "Now"
+        } else {
+          if (
+            this.engagementList.delivery_schedule.start_date &&
+            this.engagementList.delivery_schedule.end_date
+          ) {
+            return (
+              this.$options.filters.Date(
+                this.engagementList.delivery_schedule.start_date,
+                "MMMM D"
+              ) +
+              " - " +
+              this.$options.filters.Date(
+                this.engagementList.delivery_schedule.end_date,
+                "MMMM D"
+              )
+            )
+          } else if (this.engagementList.delivery_schedule.start_date) {
+            return this.$options.filters.Date(
+              this.engagementList.delivery_schedule.start_date,
+              "MMMM D"
+            )
+          } else if (this.engagementList.delivery_schedule.end_date) {
+            return this.$options.filters.Date(
+              this.engagementList.delivery_schedule.end_date,
+              "MMMM D"
+            )
+          }
+        }
+      }
+      return "Manual"
+    },
   },
   methods: {
     ...mapActions({
@@ -799,6 +840,9 @@ export default {
       let audienceDetails = []
 
       // audience id pushing in one array
+      if (engData.audiences.filter((aud) => !aud.id).length > 0) {
+        engData.audiences = []
+      }
       engData.audiences.forEach((data) => audienceIds.push(data.id))
       Object.keys(this.selectedAudiences).forEach((audId) => {
         if (
@@ -825,8 +869,12 @@ export default {
         audEngobj.name = element.name
         audEngobj.size = element.size
         audEngobj.last_delivered = element.last_delivered
+        if (audEngobj.destinations.filter((dest) => !dest.id).length > 0) {
+          audEngobj.destinations = []
+        }
         audiencesDetailsData.push(audEngobj)
       })
+
       // extracting the destination data
       for (let i = 0; i < audiencesDetailsData.length; i++) {
         for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {

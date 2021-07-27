@@ -1,5 +1,3 @@
-import moment from "moment"
-
 // data sources
 
 const bluecore = {
@@ -188,10 +186,8 @@ const defaultEngagement = ({ audiences = [] }) => {
     name: "Default engagement",
     description: null,
     delivery_schedule: null,
-    status: "Delivering",
+    status: "Delivered",
     audiences: audiences,
-    create_time: () => moment().toJSON(),
-    update_time: () => moment().toJSON(),
   }
 }
 
@@ -345,6 +341,30 @@ const likelyCustomer = () => {
     update_time: "2021-06-24T18:44:00.381000",
   }
 }
+const sampleEng = {
+  create_time: "2021-07-15T19:13:26.281Z",
+  update_time: "2021-07-15T19:13:26.281Z",
+  audiences: [
+    {
+      id: "2",
+      destinations: [
+        {
+          latest_delivery: {
+            status: "Not Delivered",
+            size: 1000,
+          },
+        },
+      ],
+      status: "Not Delivered",
+    },
+  ],
+  id: "60f088d6c297e84b3a9e7514",
+  created_by: "Rahul Goel",
+  updated_by: "",
+  status: "Not Delivered",
+  description: "Pre-Demo Test Engagement",
+  name: "Pre-Demo Test Engagement",
+}
 
 export default function (server) {
   // seed data sources
@@ -409,7 +429,7 @@ export default function (server) {
           created_by: defaultAudienceSeed.created_by,
           update_time: defaultAudienceSeed.update_time,
           updated_by: defaultAudienceSeed.updated_by,
-          status: "Delivering",
+          status: "Delivered",
           destinations: defaultAudienceSeed.destinations.models.map(
             (destination) => {
               return {
@@ -430,6 +450,7 @@ export default function (server) {
 
   // seed Engagement Audience Performance
   server.createList("audiencePerformance", 10)
+  server.create("engagement", sampleEng)
 
   // seed models
   server.create("model", unsubscribeModel)
@@ -441,7 +462,8 @@ export default function (server) {
   server.createList("dataExtension", 5)
 
   // seed campaigns
-  server.createList("campaign", 1)
+  server.createList("campaignOption", 1)
+
   // for alert and notifications
   server.createList("notification", 50)
 }

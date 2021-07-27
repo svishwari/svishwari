@@ -7,7 +7,7 @@
       <div class="px-15 modal-content">
         <v-icon :color="type" size="44">mdi-information-outline</v-icon>
         <div class="neroBlack--text text-h3 py-3">{{ title }}</div>
-        <div class="neroBlack--text text-h6 pt-3 pb-10">{{ body }}</div>
+        <div class="neroBlack--text text-h6 pb-10">{{ body }}</div>
       </div>
       <div
         class="
@@ -46,7 +46,7 @@
 <script>
 import huxButton from "@/components/common/huxButton"
 export default {
-  name: "confirm-modal",
+  name: "ConfirmModal",
 
   components: {
     huxButton,

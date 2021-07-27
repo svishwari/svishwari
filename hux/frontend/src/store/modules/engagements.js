@@ -11,7 +11,8 @@ const state = {
   audiencePerformance: {},
 
   deliveries: {},
-  campaignMappings: {},
+  campaignMappingOptions: {},
+  campaignMappings: [],
 }
 
 const getters = {
@@ -28,7 +29,10 @@ const getters = {
 
   audiencePerformanceByEmail: (state) => state.audiencePerformance.email,
 
-  destinationCampaignMappings: (state) => state.campaignMappings,
+  campaignMappingOptions: (state) => state.campaignMappingOptions,
+  campaignMapping: (state) => (id) => {
+    return state.campaignMappings[id]
+  },
 }
 
 const mutations = {
@@ -75,13 +79,16 @@ const mutations = {
   },
 
   SET_CAMPAIGN_MAPPINGS(state, payload) {
-    state.campaignMappings = {
+    state.campaignMappingOptions = {
       campaigns: payload[0].campaigns,
       delivery_jobs: payload[0].delivery_jobs.map((job) => ({
         ...job,
         name: moment(job.created_time).format("MM/D/YYYY hh:ssA"),
       })),
     }
+  },
+  SET_CAMPAIGNS(state, data) {
+    Vue.set(state.campaignMappings, data.id, data.payload)
   },
 }
 
@@ -136,7 +143,6 @@ const actions = {
         name: engagement.name,
 
         description: engagement.description,
-
         delivery_schedule:
           engagement.delivery_schedule === 0
             ? null
@@ -208,14 +214,27 @@ const actions = {
       throw error
     }
   },
-  async getCampaignMappings({ commit }, { id, audienceId, destinationId }) {
+  async fetchCampaignMappings({ commit }, { id, audienceId, destinationId }) {
     try {
-      const response = await api.engagements.getCampaignMappings({
+      const response = await api.engagements.getCampaignMappingOptions({
         resourceId: id,
         audienceId: audienceId,
         destinationId: destinationId,
       })
       commit("SET_CAMPAIGN_MAPPINGS", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async getCampaigns({ commit }, { id, audienceId, destinationId }) {
+    try {
+      const response = await api.engagements.getCampaigns({
+        resourceId: id,
+        audienceId: audienceId,
+        destinationId: destinationId,
+      })
+      commit("SET_CAMPAIGNS", { id: destinationId, payload: response.data })
     } catch (error) {
       handleError(error)
       throw error

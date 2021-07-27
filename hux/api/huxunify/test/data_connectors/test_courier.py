@@ -6,6 +6,9 @@ from unittest import TestCase, mock
 import mongomock
 from bson import ObjectId
 from hypothesis import given, strategies as st
+import requests_mock
+import boto3
+from botocore.stub import Stubber
 
 import huxunifylib.database.constants as c
 from huxunifylib.database.client import DatabaseClient
@@ -20,7 +23,7 @@ from huxunifylib.database.engagement_management import (
     set_engagement,
 )
 from huxunifylib.database.orchestration_management import create_audience
-from huxunifylib.connectors.aws_batch_connector import AWSBatchConnector
+from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     FacebookCredentials,
     SFMCCredentials,
@@ -30,12 +33,16 @@ from huxunify.api import constants as api_c
 from huxunify.api.data_connectors.aws import (
     parameter_store,
     get_auth_from_parameter_store,
+    set_cloud_watch_rule,
+    put_rule_targets_aws_batch,
 )
 from huxunify.api.data_connectors.courier import (
     map_destination_credentials_to_dict,
     get_destination_config,
     get_audience_destination_pairs,
 )
+from huxunify.api.config import get_config
+from huxunify.test import constants as t_c
 
 
 class CourierTest(TestCase):
@@ -320,6 +327,13 @@ class CourierTest(TestCase):
         )
         self.assertTrue(delivery_route)
 
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        request_mocker.start()
+
         for pair in delivery_route:
             with mock.patch.object(
                 parameter_store,
@@ -378,7 +392,7 @@ class CourierTest(TestCase):
                 "register_job",
                 return_value=return_value,
             ):
-                batch_destination.register()
+                batch_destination.register(self.engagement)
 
             self.assertEqual(batch_destination.result, c.STATUS_PENDING)
 
@@ -415,7 +429,7 @@ class CourierTest(TestCase):
                 "register_job",
                 return_value=return_value,
             ):
-                batch_destination.register()
+                batch_destination.register(self.engagement)
             self.assertEqual(batch_destination.result, c.STATUS_PENDING)
 
             with mock.patch.object(
@@ -501,3 +515,238 @@ class CourierTest(TestCase):
                 destination[c.DELIVERY_PLATFORM_TYPE]
             ][api_c.AWS_SSM_NAME]:
                 self.assertEqual(auth[secret.upper()], simulated_secret)
+
+    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
+    def test_create_cloud_watch_rule(self, mock_boto_client: mock.MagicMock):
+        """Test function create_cloud_watch_rule
+        Args:
+            mock_boto_client (mock.MagicMock): mock boto client.
+        Returns:
+        """
+
+        # use audience once
+        for destination_id in self.audience_one[c.DESTINATIONS]:
+
+            # get destination
+            destination = get_delivery_platform(self.database, destination_id)
+
+            # create the rule name
+            cw_name = f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
+
+            # put params
+            put_rule_params = {
+                "Name": cw_name,
+                "ScheduleExpression": "cron(15 0 * * ? *)",
+                "Description": "",
+                "State": api_c.ENABLED.upper(),
+                "RoleArn": "fake_arn",
+            }
+
+            put_rule_response = {
+                "RuleArn": "test-result-rulearn",
+                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
+            }
+
+            # simulate the event return rule
+            client = boto3.client(
+                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
+            )
+            stub_client = Stubber(client)
+            stub_client.add_response(
+                "put_rule", put_rule_response, put_rule_params
+            )
+            stub_client.activate()
+
+            mock_boto_client.return_value = client
+
+            result = set_cloud_watch_rule(
+                cw_name, "cron(15 0 * * ? *)", "fake_arn"
+            )
+
+            # test mocked client result
+            self.assertEqual(result, put_rule_response["RuleArn"])
+
+    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
+    def test_create_cloud_watch_rule_fail(
+        self, mock_boto_client: mock.MagicMock
+    ):
+        """Test function create_cloud_watch_rule failure.
+        Args:
+            mock_boto_client (mock.MagicMock): mock boto client.
+        Returns:
+        """
+
+        # use audience once
+        for destination_id in self.audience_one[c.DESTINATIONS]:
+            # get destination
+            destination = get_delivery_platform(self.database, destination_id)
+
+            # create the rule name
+            cw_name = f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
+
+            # put params
+            put_rule_params = {
+                "Name": cw_name,
+                "ScheduleExpression": "cron(15 0 * * ? *)",
+                "Description": "",
+                "State": api_c.ENABLED.upper(),
+                "RoleArn": "fake_arn",
+            }
+
+            put_rule_response = {
+                "RuleArn": "test-result-rulearn",
+                "ResponseMetadata": {
+                    "HTTPStatusCode": HTTPStatus.BAD_REQUEST.value
+                },
+            }
+
+            # simulate the event return rule
+            client = boto3.client(
+                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
+            )
+            stub_client = Stubber(client)
+            stub_client.add_response(
+                "put_rule", put_rule_response, put_rule_params
+            )
+            stub_client.activate()
+
+            mock_boto_client.return_value = client
+
+            result = set_cloud_watch_rule(
+                cw_name, "cron(15 0 * * ? *)", "fake_arn"
+            )
+
+            # test mocked client result
+            self.assertIsNone(result)
+
+    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
+    def test_put_targets(self, mock_boto_client: mock.MagicMock):
+        """Test function put_targets.
+        Args:
+            mock_boto_client (mock.MagicMock): mock boto client.
+        Returns:
+        """
+
+        # get destination
+        destination = get_delivery_platform(
+            self.database, self.audience_one[c.DESTINATIONS][0]
+        )
+
+        # create the rule name
+        cw_name = (
+            f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
+        )
+
+        batch_params = {
+            "JobDefinition": "sample_job_def",
+            "JobName": "sample_job_name",
+        }
+
+        # put params
+        put_targets_params = {
+            "Rule": cw_name,
+            "Targets": [
+                {
+                    "Id": cw_name,
+                    "Arn": "fake_arn",
+                    "RoleArn": "fake_role_arn",
+                    "BatchParameters": batch_params,
+                }
+            ],
+        }
+
+        put_targets_response = {
+            "FailedEntryCount": 0,
+            "FailedEntries": [
+                {
+                    "TargetId": cw_name,
+                    "ErrorCode": "test-pass",
+                    "ErrorMessage": "",
+                },
+            ],
+            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value},
+        }
+
+        # simulate the event return rule
+        client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
+        stub_client = Stubber(client)
+        stub_client.add_response(
+            "put_targets", put_targets_response, put_targets_params
+        )
+        stub_client.activate()
+
+        mock_boto_client.return_value = client
+
+        result = put_rule_targets_aws_batch(
+            cw_name, batch_params, "fake_arn", "fake_role_arn"
+        )
+
+        # test mocked client result
+        self.assertEqual(result, 0)
+
+    @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
+    def test_put_targets_failure(self, mock_boto_client: mock.MagicMock):
+        """Test function put_targets failure.
+        Args:
+            mock_boto_client (mock.MagicMock): mock boto client.
+        Returns:
+        """
+
+        # get destination
+        destination = get_delivery_platform(
+            self.database, self.audience_one[c.DESTINATIONS][0]
+        )
+
+        # create the rule name
+        cw_name = (
+            f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
+        )
+
+        batch_params = {
+            "JobDefinition": "sample_job_def",
+            "JobName": "sample_job_name",
+        }
+
+        # put params
+        put_targets_params = {
+            "Rule": cw_name,
+            "Targets": [
+                {
+                    "Id": cw_name,
+                    "Arn": "fake_arn",
+                    "RoleArn": "fake_role_arn",
+                    "BatchParameters": batch_params,
+                }
+            ],
+        }
+
+        put_targets_response = {
+            "FailedEntryCount": 1,
+            "FailedEntries": [
+                {
+                    "TargetId": cw_name,
+                    "ErrorCode": "test-pass",
+                    "ErrorMessage": "",
+                },
+            ],
+            "ResponseMetadata": {
+                "HTTPStatusCode": HTTPStatus.BAD_REQUEST.value
+            },
+        }
+
+        # simulate the event return rule
+        client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
+        stub_client = Stubber(client)
+        stub_client.add_response(
+            "put_targets", put_targets_response, put_targets_params
+        )
+        stub_client.activate()
+
+        mock_boto_client.return_value = client
+
+        result = put_rule_targets_aws_batch(
+            cw_name, batch_params, "fake_arn", "fake_role_arn"
+        )
+
+        # test mocked client result
+        self.assertIsNone(result)

@@ -1,19 +1,20 @@
 """
 Purpose of this file is to house all tests related to orchestration
 """
-
 from http import HTTPStatus
 from unittest import TestCase, mock
 from bson import ObjectId
 import mongomock
 import requests_mock
 
-from huxunifylib.database import constants as db_c, data_management
+from huxunifylib.connectors import FacebookConnector
+from huxunifylib.database import data_management, constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
+    get_engagement,
     get_engagements_by_audience,
 )
 from huxunifylib.database.orchestration_management import (
@@ -21,9 +22,10 @@ from huxunifylib.database.orchestration_management import (
     get_audience,
 )
 from huxunifylib.database.client import DatabaseClient
+from huxunify.api.data_connectors.aws import parameter_store
+from huxunify.api import constants as api_c
 import huxunify.test.constants as t_c
 from huxunify.app import create_app
-from huxunify.api import constants as api_c
 
 
 class OrchestrationRouteTest(TestCase):
@@ -44,10 +46,12 @@ class OrchestrationRouteTest(TestCase):
         )
 
         # mock request for introspect call
-        request_mocker = requests_mock.Mocker()
-        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
-        request_mocker.start()
+        self.request_mocker = requests_mock.Mocker()
+        self.request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE
+        )
+        self.request_mocker.start()
 
         self.app = create_app().test_client()
 
@@ -65,7 +69,6 @@ class OrchestrationRouteTest(TestCase):
             "huxunify.api.route.orchestration.get_db_client",
             return_value=self.database,
         ).start()
-        self.addCleanup(mock.patch.stopall)
 
         # mock get_db_client() for the userinfo utils.
         mock.patch(
@@ -73,12 +76,16 @@ class OrchestrationRouteTest(TestCase):
             return_value=self.database,
         ).start()
 
+        mock.patch.object(
+            parameter_store, "get_store_value", return_value="secret"
+        ).start()
+
         self.addCleanup(mock.patch.stopall)
 
         destinations = [
             {
                 db_c.DELIVERY_PLATFORM_NAME: "Facebook",
-                db_c.DELIVERY_PLATFORM_TYPE: "facebook",
+                db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_FACEBOOK,
                 db_c.STATUS: db_c.STATUS_SUCCEEDED,
                 db_c.ENABLED: True,
                 db_c.ADDED: True,
@@ -147,14 +154,14 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCES: [
                     {
                         db_c.OBJECT_ID: self.audiences[0][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [
+                        api_c.DESTINATIONS: [
                             {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [
+                        api_c.DESTINATIONS: [
                             {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
@@ -168,7 +175,7 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCES: [
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [],
+                        api_c.DESTINATIONS: [],
                     },
                 ],
                 api_c.USER_NAME: self.user_name,
@@ -257,6 +264,94 @@ class OrchestrationRouteTest(TestCase):
             audience_doc[db_c.DESTINATIONS],
             [{api_c.ID: d[db_c.ID]} for d in self.destinations],
         )
+
+    def test_create_audience_empty_user_info(self):
+        """Test create audience with destination given empty user info.
+
+        The introspect call returns a valid response but user info call
+        returns an empty response.
+
+        Args:
+
+        Returns:
+
+        """
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+        # simulating userinfo endpoint to give invalid user response
+        self.request_mocker.get(t_c.USER_INFO_CALL, json={})
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.AUTH401_ERROR_MESSAGE}
+        self.assertEqual(valid_response, response.json)
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
+
+    def test_create_audience_invalid_user_info(self):
+        """Test create audience with destination given invalid user info.
+
+        The introspect call returns a valid response but user info call
+        returns an invalid response, i.e., missing some fields.
+
+        Args:
+
+        Returns:
+
+        """
+
+        audience_post = {
+            db_c.AUDIENCE_NAME: "Test Audience Create",
+            api_c.AUDIENCE_FILTERS: [
+                {
+                    api_c.AUDIENCE_SECTION_AGGREGATOR: "ALL",
+                    api_c.AUDIENCE_SECTION_FILTERS: [
+                        {
+                            api_c.AUDIENCE_FILTER_FIELD: "filter_field",
+                            api_c.AUDIENCE_FILTER_TYPE: "type",
+                            api_c.AUDIENCE_FILTER_VALUE: "value",
+                        }
+                    ],
+                }
+            ],
+            api_c.DESTINATIONS: [
+                {api_c.ID: str(d[db_c.ID])} for d in self.destinations
+            ],
+        }
+        # simulating userinfo endpoint to give invalid user response
+        self.request_mocker.get(
+            t_c.USER_INFO_CALL, json=t_c.INVALID_USER_RESPONSE
+        )
+
+        response = self.test_client.post(
+            self.audience_api_endpoint,
+            json=audience_post,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        valid_response = {"message": api_c.AUTH401_ERROR_MESSAGE}
+        self.assertEqual(valid_response, response.json)
+        self.assertEqual(HTTPStatus.UNAUTHORIZED, response.status_code)
 
     def test_create_audience_with_no_destinations_no_engagements(self):
         """Test create audience with no destinations or engagements
@@ -421,6 +516,13 @@ class OrchestrationRouteTest(TestCase):
         Returns:
         """
 
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
         response = self.test_client.get(
             f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
             headers=t_c.STANDARD_HEADERS,
@@ -466,6 +568,11 @@ class OrchestrationRouteTest(TestCase):
 
         Returns:
         """
+
+        mock.patch(
+            "huxunify.api.route.orchestration.get_customers_count_async",
+            return_value={},
+        ).start()
 
         response = self.test_client.get(
             f"{self.audience_api_endpoint}",
@@ -513,3 +620,115 @@ class OrchestrationRouteTest(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(new_name, response.json[db_c.AUDIENCE_NAME])
+
+    def test_create_lookalike_audience(self):
+        """Test create lookalike audience
+        Args:
+
+        Returns:
+        """
+        mock_facebook_connector = mock.patch.object(
+            FacebookConnector,
+            "get_new_lookalike_audience",
+            return_value="LA_ID_12345",
+        )
+        mock_facebook_connector.start()
+
+        lookalike_audience_name = "NEW LA AUDIENCE"
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: lookalike_audience_name,
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
+        )
+
+        new_engagement = get_engagement(
+            self.database, ObjectId(self.engagement_ids[0])
+        )
+
+        self.assertEqual(HTTPStatus.CREATED, response.status_code)
+        self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
+
+        engaged_lookalike_audience = None
+
+        for audience in new_engagement[api_c.AUDIENCES]:
+            if audience[api_c.ID] == ObjectId(response.json[api_c.ID]):
+                engaged_lookalike_audience = audience
+
+        self.assertIsNotNone(engaged_lookalike_audience)
+
+        mock_facebook_connector.stop()
+
+    def test_create_lookalike_audience_invalid_engagement_ids(self):
+        """Test create lookalike audience with invalid engagement ids
+        Args:
+
+        Returns:
+        """
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: str(self.audiences[0][db_c.ID]),
+                api_c.NAME: "NEW LA AUDIENCE",
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: ["bad_id1", "bad_id2"],
+            },
+        )
+
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_create_lookalike_audience_invalid_source_audience_id(self):
+        """Test create lookalike audience with invalid engagement ids
+        Args:
+
+        Returns:
+        """
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: "bad_id1",
+                api_c.NAME: "NEW LA AUDIENCE",
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
+        )
+
+        valid_response = {"message": api_c.INVALID_OBJECT_ID}
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(valid_response, response.json)
+
+    def test_create_lookalike_audience_source_audience_not_found(self):
+        """Test create lookalike audience with invalid engagement ids
+        Args:
+
+        Returns:
+        """
+
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+            headers=t_c.STANDARD_HEADERS,
+            json={
+                api_c.AUDIENCE_ID: str(ObjectId()),
+                api_c.NAME: "NEW LA AUDIENCE",
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
+                api_c.ENGAGEMENT_IDS: self.engagement_ids,
+            },
+        )
+
+        valid_response = {"message": api_c.AUDIENCE_NOT_FOUND}
+
+        self.assertEqual(HTTPStatus.NOT_FOUND, response.status_code)
+        self.assertEqual(valid_response, response.json)
