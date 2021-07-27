@@ -43,8 +43,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
     # submit the post request to get documentation
     try:
         response = requests.get(
-            f"{config.CDP_SERVICE}/docs",
-            headers=config.CDP_HEADERS,
+            f"{config.CDP_SERVICE}/healthcheck",
             timeout=5,
         )
         return response.status_code, "CDM available."
@@ -54,10 +53,11 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def get_customer_profiles() -> dict:
+def get_customer_profiles(token: str) -> dict:
     """Retrieves customer profiles.
 
     Args:
+        token (str): OKTA JWT Token.
 
     Returns:
         dict: dictionary containing the customer profile information
@@ -68,7 +68,10 @@ def get_customer_profiles() -> dict:
     config = get_config()
 
     response = requests.get(
-        f"{config.CDP_SERVICE}/customer-profiles", headers=config.CDP_HEADERS
+        f"{config.CDP_SERVICE}/customer-profiles",
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -81,10 +84,11 @@ def get_customer_profiles() -> dict:
     }
 
 
-def get_customer_profile(hux_id: str) -> dict:
+def get_customer_profile(token: str, hux_id: str) -> dict:
     """Retrieves a customer profile.
 
     Args:
+        token (str): OKTA JWT Token.
         hux_id (str): hux id for a customer.
 
     Returns:
@@ -97,7 +101,9 @@ def get_customer_profile(hux_id: str) -> dict:
 
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
-        headers=config.CDP_HEADERS,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -107,11 +113,13 @@ def get_customer_profile(hux_id: str) -> dict:
 
 
 def get_customers_overview(
+    token: str,
     filters: Optional[dict] = None,
 ) -> dict:
     """Fetch customers overview data.
 
     Args:
+        token (str): OKTA JWT Token.
         filters (Optional[dict]): filters to pass into
             customers_overview endpoint.
 
@@ -126,7 +134,9 @@ def get_customers_overview(
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
-        headers=config.CDP_HEADERS,
+        headers={
+            api_c.CUSTOMERS_API_HEADER_KEY: token,
+        },
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
@@ -135,10 +145,13 @@ def get_customers_overview(
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
-def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
+def get_customers_count_async(
+    token: str, audiences: list, default_size: int = 0
+) -> dict:
     """Retrieves audience size asynchronously
 
     Args:
+        token (str): OKTA JWT Token.
         audiences (list): list of audience docs.
         default_size (int): default size if the audience post fails. default is zero.
 
@@ -153,6 +166,7 @@ def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
     # generate arg list for the async query
     task_args = [
         (
+            token,
             x[db_c.ID],
             x[api_c.AUDIENCE_FILTERS]
             if x.get(api_c.AUDIENCE_FILTERS)
@@ -208,10 +222,13 @@ def get_customers_count_async(audiences: list, default_size: int = 0) -> dict:
     return audience_size_dict
 
 
-async def get_async_customers(audience_id, audience_filters, url) -> dict:
+async def get_async_customers(
+    token: str, audience_id: ObjectId, audience_filters, url
+) -> dict:
     """asynchronously process getting audience size
 
     Args:
+        token (str): OKTA JWT Token.
         audience_id (ObjectId): audience id.
         audience_filters (dict): audience filters
         url (str): url of the service to call.
@@ -223,9 +240,21 @@ async def get_async_customers(audience_id, audience_filters, url) -> dict:
     # setup the aiohttp session so we can process the calls asynchronously
     async with aiohttp.ClientSession() as session, async_timeout.timeout(10):
         # run the async post request
-        async with session.post(url, json=audience_filters) as response:
+        async with session.post(
+            url,
+            json=audience_filters,
+            headers={
+                api_c.CUSTOMERS_API_HEADER_KEY: token,
+            },
+        ) as response:
             # await the responses, and return them as they come in.
-            return await response.json(), str(audience_id)
+            try:
+                return await response.json(), str(audience_id)
+            except aiohttp.client.ContentTypeError:
+                logging.error(
+                    "CDM post request failed for audience id %s", audience_id
+                )
+                return {"code": 500}, str(audience_id)
 
 
 def get_idr_data_feeds() -> list:
