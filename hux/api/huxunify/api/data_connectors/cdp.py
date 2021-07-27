@@ -223,7 +223,7 @@ def get_customers_count_async(
 
 
 async def get_async_customers(
-    token: str, audience_id, audience_filters, url
+    token: str, audience_id: ObjectId, audience_filters, url
 ) -> dict:
     """asynchronously process getting audience size
 
@@ -248,7 +248,13 @@ async def get_async_customers(
             },
         ) as response:
             # await the responses, and return them as they come in.
-            return await response.json(), str(audience_id)
+            try:
+                return await response.json(), str(audience_id)
+            except aiohttp.client.ContentTypeError:
+                logging.error(
+                    "CDM post request failed for audience id %s", audience_id
+                )
+                return {"code": 500}, str(audience_id)
 
 
 def get_idr_data_feeds() -> list:
