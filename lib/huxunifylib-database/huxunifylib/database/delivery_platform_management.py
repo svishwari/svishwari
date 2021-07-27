@@ -791,7 +791,6 @@ def get_all_delivery_platform_lookalike_audiences(
     ]
 
     # if deleted is not included in the filters, add it.
-    # otherwise leave as it.
     if filter_dict:
         filter_dict[c.DELETED] = 0
     else:
