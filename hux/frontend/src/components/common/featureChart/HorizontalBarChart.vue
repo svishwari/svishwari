@@ -98,8 +98,8 @@ export default {
           "transform",
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
-      
-      let maxValue = Math.max(...(this.chartData.map(data => data.score)))
+
+      let maxValue = Math.max(...this.chartData.map((data) => data.score))
 
       let x = d3Scale.scaleLinear().domain([0, maxValue]).range([0, this.width])
 
