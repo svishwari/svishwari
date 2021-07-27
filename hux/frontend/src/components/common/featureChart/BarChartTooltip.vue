@@ -9,7 +9,7 @@
       }"
       class="mx-auto description-tooltip-style"
     >
-      <div class="bar-hover">
+      <div class="bar-hover neroBlack--text">
         <span class="feature-name">
           {{ sourceInput.name }}
         </span>

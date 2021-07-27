@@ -10,7 +10,7 @@
         class="d-flex chart-style justify-space-between pb-6 pl-6 pt-5"
       >
         <div class="mt-2">
-          <span class="d-flex align-center black--text text-decoration-none">
+          <span class="d-flex align-center neroBlack--text text-h5">
             Top 20 feature importance
           </span>
         </div>
@@ -27,7 +27,7 @@
           }"
           class="mx-auto score-tooltip-style"
         >
-          <div class="bar-hover">
+          <div class="neroBlack--text caption">
             {{ scoreTip.score }}
           </div>
         </v-card>
@@ -98,8 +98,10 @@ export default {
           "transform",
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
+      
+      let maxValue = Math.max(...(this.chartData.map(data => data.score)))
 
-      let x = d3Scale.scaleLinear().domain([0, 3]).range([0, this.width])
+      let x = d3Scale.scaleLinear().domain([0, maxValue]).range([0, this.width])
 
       let y = d3Scale
         .scaleBand()
@@ -270,9 +272,9 @@ export default {
     .score-tooltip-style {
       @extend .box-shadow-3;
       border-radius: 0px;
-      padding: 7px 20px 20px 20px;
+      padding: 7px 14px 12px 14px;
       max-width: 61px;
-      height: 34px;
+      height: 30px;
       z-index: 1;
       border-radius: 0px !important;
       position: absolute;
