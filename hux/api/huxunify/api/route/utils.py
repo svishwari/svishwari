@@ -263,6 +263,14 @@ def get_user_name() -> object:
             """
 
             # override if flag set locally
+
+            # set of keys required from userinfo
+            required_keys = {
+                constants.OKTA_ID_SUB,
+                constants.EMAIL,
+                constants.NAME,
+            }
+
             if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
                 # return a default user id
                 kwargs[constants.USER_NAME] = "test user"
@@ -278,10 +286,15 @@ def get_user_name() -> object:
             # get the user information
             user_info = get_user_info(token_response[0])
 
+            # checking if required keys are present in user_info
+            if not required_keys.issubset(user_info.keys()):
+                return {
+                    "message": constants.AUTH401_ERROR_MESSAGE
+                }, HTTPStatus.UNAUTHORIZED
+
             # check if the user is in the database
             database = get_db_client()
             user = get_user(database, user_info[constants.OKTA_ID_SUB])
-
             # return found user, or create one and return it.
             kwargs[constants.USER_NAME] = (
                 user[db_c.USER_DISPLAY_NAME]

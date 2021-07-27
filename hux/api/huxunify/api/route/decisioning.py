@@ -83,6 +83,7 @@ class ModelsView(SwaggerView):
         }
         all_models = tecton.get_models()
         all_models.append(purchase_model)
+        all_models.sort(key=lambda x: x[api_c.NAME])
         return (
             jsonify(ModelSchema(many=True).dump(all_models)),
             HTTPStatus.OK.value,

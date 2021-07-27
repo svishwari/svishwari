@@ -511,7 +511,7 @@ def weighted_engagement_status(engagements: list) -> list:
 
                 status_rank = {
                     api_c.STATUS: status,
-                    api_c.WEIGHT: api_c.STATUS_WEIGHTS[status],
+                    api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(status, 0),
                 }
                 status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
@@ -561,7 +561,7 @@ def weight_delivery_status(engagements: list) -> str:
     status_ranks = [
         {
             api_c.STATUS: x[api_c.STATUS],
-            api_c.WEIGHT: api_c.STATUS_WEIGHTS[x[api_c.STATUS]],
+            api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(x[api_c.STATUS], 0),
         }
         for x in engagements[api_c.DELIVERIES]
         if api_c.STATUS in x

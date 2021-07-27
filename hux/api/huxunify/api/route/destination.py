@@ -568,7 +568,12 @@ class DestinationDataExtView(SwaggerView):
             ext_list = connector.get_list_of_data_extensions()
 
         return (
-            jsonify(DestinationDataExtGetSchema().dump(ext_list, many=True)),
+            jsonify(
+                sorted(
+                    DestinationDataExtGetSchema().dump(ext_list, many=True),
+                    key=lambda i: i[api_c.NAME],
+                )
+            ),
             HTTPStatus.OK,
         )
 
@@ -670,6 +675,7 @@ class DestinationDataExtPostView(SwaggerView):
                 extension = connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
                 )
+                # pylint: disable=too-many-function-args
                 create_notification(
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,

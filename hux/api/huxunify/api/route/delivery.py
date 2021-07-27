@@ -162,7 +162,7 @@ class EngagementDeliverDestinationView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register()
+            batch_destination.register(engagement)
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
@@ -261,7 +261,7 @@ class EngagementDeliverAudienceView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register()
+            batch_destination.register(engagement)
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
@@ -348,7 +348,7 @@ class EngagementDeliverView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register()
+            batch_destination.register(engagement)
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
@@ -436,7 +436,7 @@ class AudienceDeliverView(SwaggerView):
                 batch_destination = get_destination_config(
                     database, engagement[db_c.ID], *pair
                 )
-                batch_destination.register()
+                batch_destination.register(engagement)
                 batch_destination.submit()
                 delivery_job_ids.append(
                     str(batch_destination.audience_delivery_job_id)

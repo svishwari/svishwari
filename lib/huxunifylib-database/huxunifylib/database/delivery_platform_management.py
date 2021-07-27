@@ -771,27 +771,43 @@ def get_delivery_platform_lookalike_audience(
 )
 def get_all_delivery_platform_lookalike_audiences(
     database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
 ) -> Union[list, None]:
     """A function to get all delivery platform lookalike audience configurations.
 
     Args:
         database (DatabaseClient): A database client.
+        filter_dict (dict): filter dictionary for adding custom filters.
+        projection (dict): Dict that specifies which fields to return or not return.
 
     Returns:
         Union[list, None]: List of all lookalike audience configurations.
 
     """
 
-    ret_docs = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.LOOKALIKE_AUDIENCE_COLLECTION
+    ]
+
+    # if deleted is not included in the filters, add it.
+    if filter_dict:
+        filter_dict[c.DELETED] = 0
+    else:
+        filter_dict = {c.DELETED: 0}
+
+    # exclude the deleted field from returning
+    if projection:
+        projection[c.DELETED] = 0
+    else:
+        projection = {c.DELETED: 0}
 
     try:
-        ret_docs = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
+        return list(collection.find(filter_dict, projection))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return ret_docs
+    return None
 
 
 @retry(
