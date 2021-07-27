@@ -385,6 +385,7 @@ export default {
       } else {
         parent.conditions.splice(child, 1)
       }
+      this.getOverallSize()
     },
     getPlaceHolderText(condition) {
       switch (condition.attribute.key) {

@@ -15,6 +15,7 @@ from huxunify.api.schema.engagement import (
     CampaignPutSchema,
     CampaignMappingSchema,
     weighted_engagement_status,
+    weight_delivery_status,
 )
 from huxunify.api import constants as api_c
 
@@ -312,3 +313,87 @@ class EngagementSchemaTest(TestCase):
         # check audience status per weighting
         for audience in weighted[api_c.AUDIENCES]:
             self.assertEqual(audience[api_c.STATUS], api_c.STATUS_ERROR)
+
+    def test_weighted_ranking_bad_status(self) -> None:
+        """Test weighted ranking logic.
+
+        Returns:
+            Response: None
+
+        """
+        bad_status_value = "bad_status_value"
+        engagement = {
+            api_c.ID: ObjectId(),
+            api_c.AUDIENCES: [
+                {
+                    api_c.DESTINATIONS: [
+                        {
+                            api_c.ID: ObjectId(),
+                            api_c.NAME: "Facebook",
+                            api_c.LATEST_DELIVERY: {
+                                db_c.ID: ObjectId(),
+                                api_c.STATUS: bad_status_value,
+                            },
+                        },
+                    ],
+                    api_c.NAME: "SFMC Demo",
+                    api_c.ID: ObjectId(),
+                }
+            ],
+        }
+
+        # test the weights
+        weighted = weighted_engagement_status([engagement])[0]
+
+        # check engagement status per weighting
+        self.assertEqual(weighted[api_c.STATUS], bad_status_value)
+
+        # check audience status per weighting
+        for audience in weighted[api_c.AUDIENCES]:
+            self.assertEqual(audience[api_c.STATUS], bad_status_value)
+
+    def test_weight_delivery_status(self) -> None:
+        """Test weight_delivery_status.
+
+        Returns:
+            Response: None
+
+        """
+
+        engagement = {
+            "deliveries": [
+                {
+                    "status": "Failed",
+                },
+                {
+                    "status": "In progress",
+                },
+            ],
+        }
+
+        # check engagement status per weighting
+        self.assertEqual(
+            db_c.STATUS_FAILED, weight_delivery_status(engagement)
+        )
+
+    def test_weight_delivery_bad_status(self) -> None:
+        """Test weight_delivery_status with a bad status.
+
+        Returns:
+            Response: None
+
+        """
+
+        engagement = {
+            "deliveries": [
+                {
+                    "status": "bad",
+                },
+                {
+                    "status": "In progress",
+                },
+            ],
+        }
+
+        # check engagement status per weighting
+        self.assertEqual("bad", weight_delivery_status(engagement))
