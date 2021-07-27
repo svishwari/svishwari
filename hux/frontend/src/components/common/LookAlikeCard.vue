@@ -43,7 +43,7 @@
                       {{ data.size | Numeric(true, false, true) | Empty("-") }}
                     </template>
                     <template #hover-content>
-                      {{ data.size | Empty("-") }}
+                      {{ data.size | Numeric(true) | Empty("-") }}
                     </template>
                   </Tooltip></template
                 >
@@ -70,13 +70,13 @@
       class="pl-4 pr-4 pt-4"
     >
       <v-list-item-subtitle>
-        This audience has no lookalike yet.
+        This audience has no lookalikes yet.
       </v-list-item-subtitle>
       <span>Create one by clicking the "Create lookalike" above.</span>
     </v-card-text>
     <v-card-text v-if="status == 'Disabled'" class="pl-4 pr-4 pt-4">
-      <span
-        >This audience is currently getting prepared in Facebook. This could
+      <span>
+        This audience is currently getting prepared in Facebook. This could
         take a couple hours so check back later.
       </span>
     </v-card-text>

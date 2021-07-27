@@ -254,7 +254,7 @@ export default {
       lookalikesData: [
         {
           id: "1",
-          delivery_platform_id: "facebook",
+          delivery_platform_type: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
@@ -265,7 +265,7 @@ export default {
         },
         {
           id: "2",
-          delivery_platform_id: "facebook",
+          delivery_platform_type: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
@@ -276,7 +276,7 @@ export default {
         },
         {
           id: "3",
-          delivery_platform_id: "facebook",
+          delivery_platform_type: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
@@ -287,7 +287,7 @@ export default {
         },
         {
           id: "4",
-          delivery_platform_id: "facebook",
+          delivery_platform_type: "facebook",
           country: "USA",
           audience_size_percentage: 0,
           create_time: "2021-07-26T19:09:19.956Z",
