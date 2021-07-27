@@ -329,6 +329,8 @@ export const defineRoutes = (server) => {
     }
     data.attrs.feature_importance = featureData.featureList
     data.attrs.lift_data = liftData.lift_data
+    data.attrs.model_name = data.attrs.name
+    data.attrs.model_type = data.attrs.type
 
     return data
   })
