@@ -100,6 +100,10 @@ class AudienceGetSchema(Schema):
 
     # TODO - HUS-436
     lookalikes = fields.List(fields.String())
+    is_lookalike = fields.Boolean(default=False)
+
+    # defines if lookalikes can be created from the audience.
+    lookalikeable = fields.String(default=api_c.STATUS_INACTIVE)
 
 
 class AudiencePutSchema(Schema):
@@ -214,3 +218,36 @@ class LookalikeAudienceGetSchema(Schema):
     create_time = DateTimeWithZ(required=True)
     update_time = DateTimeWithZ(required=True)
     favorite = fields.Boolean(required=True)
+
+
+def is_audience_lookalikeable(audience: dict) -> str:
+    """Identify if an audience is able to have a lookalike created from it.
+    Three possible outcomes
+      - active = yes (i.e. successful facebook deliveries.)
+      - inactive = no (i.e. facebook destinations, but no successful deliveries)
+      - disabled = N/A (i.e. no facebook destinations)
+
+    Args:
+        audience:
+
+    Returns:
+        str: string denoting the lookalikeable status of the audience.
+    """
+
+    # if no deliveries, return disabled
+    if api_c.DELIVERIES not in audience:
+        return api_c.DISABLED
+
+    # check if any of the deliveries were sent to facebook
+    status = api_c.DISABLED
+    for delivery in audience[api_c.DELIVERIES]:
+        # check if delivered to facebook.
+        if (
+            delivery.get(db_c.DELIVERY_PLATFORM_TYPE)
+            == db_c.DELIVERY_PLATFORM_FACEBOOK
+        ):
+            status = api_c.STATUS_INACTIVE
+            if delivery.get(db_c.STATUS) == db_c.STATUS_SUCCEEDED:
+                # success, break the loop and return active.
+                return api_c.STATUS_ACTIVE
+    return status

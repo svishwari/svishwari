@@ -445,6 +445,8 @@ AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 LOOKALIKE_AUDIENCES = "lookalike-audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
+LOOKALIKEABLE = "lookalikeable"
+IS_LOOKALIKE = "is_lookalike"
 
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,

@@ -25,6 +25,7 @@ from huxunify.api.schema.orchestration import (
     AudiencePostSchema,
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
+    is_audience_lookalikeable,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -143,6 +144,7 @@ class AudienceView(SwaggerView):
             )
 
             audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
+            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
