@@ -267,6 +267,7 @@ class AudienceGetView(SwaggerView):
 
         # TODO - HUS-436
         audience[db_c.LOOKALIKE_AUDIENCE_COLLECTION] = []
+        audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
