@@ -588,6 +588,7 @@ CUSTOMERS_TAG = "customers"
 CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
+CUSTOMERS_API_HEADER_KEY = "x-api-key"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
