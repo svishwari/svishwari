@@ -1,4 +1,4 @@
-FROM cypress/base:10
+FROM huxhub.repo.mgnt.in/cypress/base:latest
 WORKDIR /app
 COPY package*.json /app/
 RUN npm ci

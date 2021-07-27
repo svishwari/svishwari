@@ -2,32 +2,36 @@ import ROUTES from "../support/routes.js";
 
 describe("Tests user sign in", () => {
   before(() => {
-    // visit the application sign-on page
-    cy.visit(ROUTES.index);
+    // visit the application
+    cy.visit(ROUTES.home);
+
+    // TODO: add a selector for this button in the UI
     cy.get("button").click();
 
     cy.location("pathname")
-      .should("not.eq", ROUTES.index)
+      .should("not.eq", ROUTES.home)
       .then((pathname) => {
-        // redirects to sign-on (Okta)
-        if (pathname !== "/auth") {
-          cy.get("input[id=okta-signin-username]").type(
-            Cypress.env("USER_EMAIL")
-          );
+        if (pathname === ROUTES.oktaSignInRedirectURI) {
+          // User has authenticated with okta successfully, so it redirects to
+          // this URI and we can just continue on to our test cases...
+        } else {
+          // TODO: move to selectors
+          cy.get("input[id=okta-signin-username]")
+          .type(Cypress.env("USER_EMAIL"), { log: false });
 
-          cy.get("input[id=okta-signin-password]").type(
-            Cypress.env("USER_PASSWORD")
-          );
+          // TODO: move to selectors
+          cy.get("input[id=okta-signin-password]")
+            .type(Cypress.env("USER_PASSWORD"), { log: false });
+
+          // TODO: move to selectors
           cy.get("input[id=okta-signin-submit]").click();
 
-          //TODO: MFA related authentication
+          // TODO: add MFA related authentication if needed
         }
       });
   });
 
   it("should be able to view overview page", () => {
-    //TODO: need to find an alternate solution to wait
-    cy.wait(10000);
     cy.location("pathname").should("eq", ROUTES.overview);
   });
 });

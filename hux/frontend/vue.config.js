@@ -1,6 +1,14 @@
 module.exports = {
+  devServer: {
+    port: 8080,
+    https: true,
+    disableHostCheck: true,
+  },
+
   lintOnSave: process.env.NODE_ENV !== "production",
+
   filenameHashing: true,
+
   productionSourceMap: false,
 
   configureWebpack: {
