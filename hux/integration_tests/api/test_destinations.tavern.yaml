@@ -151,7 +151,9 @@ stages:
         - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
-          function: tavern_test_utils:get_sfmc_destination_id
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "sfmc"
 
   - name: test destinations/{destination_id}/data-extensions
 
@@ -210,7 +212,9 @@ stages:
         - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
-          function: tavern_test_utils:get_sfmc_destination_id
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "sfmc"
 
   - name: test destinations/{destination_id}
 
@@ -353,7 +357,9 @@ stages:
         - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
-          function: tavern_test_utils:get_sfmc_destination_id
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "sfmc"
 
   - name: test destinations/{destination_id}/data-extensions already exists
 
@@ -445,7 +451,9 @@ stages:
         - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
-          function: tavern_test_utils:get_facebook_destination_id
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "facebook"
 
   - name: test destinations put/update destination success
 
