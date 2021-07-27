@@ -4,7 +4,7 @@ Schemas for the Engagements API
 """
 from bson import ObjectId
 from flask_marshmallow import Schema
-from marshmallow import fields, validate, pre_load, post_dump
+from marshmallow import fields, validate, pre_load, post_dump, post_load
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
@@ -153,7 +153,7 @@ class AudienceEngagementDeleteSchema(Schema):
     )
 
 
-class DestinationEngagedAudienceAddSchema(Schema):
+class DestinationEngagedAudienceSchema(Schema):
     """
     Schema for adding destination to engagement audience
     """
@@ -170,16 +170,13 @@ class DestinationEngagedAudienceAddSchema(Schema):
         default=None,
     )
 
-    @pre_load
+    @post_load
     # pylint: disable=unused-argument
-    def pre_process_details(
-        self, destination: dict, many: bool = False
-    ) -> dict:
-        """process the schema before loading.
+    def post_process_details(self, destination: dict, **kwarg) -> dict:
+        """process the schema after loading.
 
         Args:
             destination (dict): destination to be appended
-            many (bool): If there are many to process
         Returns:
             dict: Returns a destination object
 

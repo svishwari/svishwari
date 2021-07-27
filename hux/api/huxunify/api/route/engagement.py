@@ -24,6 +24,7 @@ from huxunifylib.database.engagement_management import (
     remove_audiences_from_engagement,
     append_audiences_to_engagement,
     append_destination_to_engagement_audience,
+    remove_destination_from_engagement_audience,
 )
 from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.database import (
@@ -45,7 +46,7 @@ from huxunify.api.schema.engagement import (
     CampaignSchema,
     CampaignMappingSchema,
     CampaignPutSchema,
-    DestinationEngagedAudienceAddSchema,
+    DestinationEngagedAudienceSchema,
     weighted_engagement_status,
 )
 from huxunify.api.schema.errors import NotFoundError
@@ -773,7 +774,8 @@ class DeleteAudienceEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
-    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATIONS}",
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCE}/"
+    f"<audience_id>/{api_c.DESTINATIONS}",
     "AddDestinationEngagedAudience",
 )
 class AddDestinationEngagedAudience(SwaggerView):
@@ -851,19 +853,19 @@ class AddDestinationEngagedAudience(SwaggerView):
         ):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        destination = DestinationEngagedAudienceAddSchema().load(
-            request.get_json(), partial=True, many=True
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
         )
 
         database = get_db_client()
 
         # validate destinations exist
         destination_to_attach = get_delivery_platform(
-            database, destination[api_c.DESTINATION_ID]
+            database, destination[api_c.ID]
         )
         if not destination_to_attach:
             return {
-                "message": f"Destination does not exist: {destination[api_c.DESTINATION_ID]}"
+                "message": f"Destination does not exist: {destination[api_c.ID]}"
             }, HTTPStatus.BAD_REQUEST
 
         append_destination_to_engagement_audience(
@@ -880,14 +882,135 @@ class AddDestinationEngagedAudience(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f'Destination "{destination[db_c.NAME]}" added to audience '
+                f'Destination "{destination_to_attach[db_c.NAME]}" added to '
+                f'audience "{audience[db_c.NAME]}" from engagement '
+                f'"{engagement[db_c.NAME]}" by {user_name}'
+            ),
+            api_c.ENGAGEMENT_TAG,
+        )
+
+        return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCE}/"
+    f"<audience_id>/{api_c.DESTINATIONS}",
+    "RemoveDestinationEngagedAudience",
+)
+class RemoveDestinationEngagedAudience(SwaggerView):
+    """
+    Class to add destination to an engaged audience
+    """
+
+    parameters = [
+        {
+            "name": db_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": db_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60fff065b2075450922261cf",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destinations body.",
+            "example": {
+                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                db_c.DELIVERY_PLATFORM_CONFIG: {
+                    db_c.DATA_EXTENSION_NAME: "SFMC Data Extension"
+                },
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": EngagementGetSchema,
+            "description": "Destination added to Engagement Audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create the engagement.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def delete(
+        self, engagement_id: str, audience_id: str, user_name: str
+    ) -> Tuple[dict, int]:
+        """Adds destinations to engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement id
+            audience_id (str): Audience id
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination Audience Engagement added, HTTP status.
+
+        """
+
+        if not (
+            ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
+        ):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
+        )
+
+        database = get_db_client()
+
+        # validate destinations exist
+        destination_to_remove = get_delivery_platform(
+            database, destination[api_c.ID]
+        )
+        if not destination_to_remove:
+            return {
+                "message": f"Destination does not exist: {destination[api_c.ID]}"
+            }, HTTPStatus.BAD_REQUEST
+
+        remove_destination_from_engagement_audience(
+            database,
+            ObjectId(engagement_id),
+            ObjectId(audience_id),
+            destination[api_c.ID],
+            user_name,
+        )
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        audience = get_audience(database, ObjectId(audience_id))
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Destination "{destination_to_remove[db_c.NAME]}" removed from audience '
                 f'"{audience[db_c.NAME]}" from engagement '
                 f'"{engagement[db_c.NAME]}" by {user_name}'
             ),
             api_c.ENGAGEMENT_TAG,
         )
 
-        return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
+        return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
 
 
 @add_view_to_blueprint(
