@@ -7,12 +7,23 @@ from typing import Tuple
 from bson import ObjectId
 from flask import Blueprint, jsonify
 from flasgger import SwaggerView
-from huxunifylib.database import constants as db_c, engagement_management
 from huxunifylib.database import (
-    orchestration_management,
+    constants as db_c,
     delivery_platform_management,
 )
-from huxunifylib.database.engagement_management import get_engagement
+from huxunifylib.database.delivery_platform_management import (
+    get_delivery_platform,
+)
+from huxunifylib.database.engagement_management import (
+    get_engagement,
+    get_engagements_by_audience,
+)
+from huxunifylib.database.notification_management import create_notification
+from huxunifylib.database.orchestration_management import (
+    get_audience,
+    get_all_audiences,
+)
+
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
@@ -122,6 +133,8 @@ class EngagementDeliverDestinationView(SwaggerView):
         """
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
+        target_audience = get_audience(database, audience_id)
+        target_destination = get_delivery_platform(database, destination_id)
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -149,11 +162,23 @@ class EngagementDeliverDestinationView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register()
+            batch_destination.register(engagement)
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
             )
+        # create notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"Successfully scheduled a delivery of audience "
+                f'"{target_audience[db_c.NAME]}" from engagement '
+                f'"{engagement[db_c.NAME]}" to destination '
+                f'"{target_destination[db_c.NAME]}".'
+            ),
+            api_c.DELIVERY_TAG,
+        )
         return {
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
@@ -224,6 +249,7 @@ class EngagementDeliverAudienceView(SwaggerView):
         """
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
+        audience = get_audience(database, audience_id)
 
         # submit jobs for the audience/destination pairs
         delivery_job_ids = []
@@ -235,12 +261,22 @@ class EngagementDeliverAudienceView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register()
+            batch_destination.register(engagement)
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
             )
-
+        # create notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"Successfully scheduled a delivery of "
+                f'audience "{audience[db_c.NAME]}" from engagement '
+                f'"{engagement[db_c.NAME]}" across platforms.'
+            ),
+            api_c.DELIVERY_TAG,
+        )
         return {
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
@@ -312,12 +348,21 @@ class EngagementDeliverView(SwaggerView):
             batch_destination = get_destination_config(
                 database, engagement_id, *pair
             )
-            batch_destination.register()
+            batch_destination.register(engagement)
             batch_destination.submit()
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
             )
-
+        # create notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"Successfully scheduled a delivery of all audiences "
+                f'from engagement "{engagement[db_c.NAME]}".'
+            ),
+            api_c.DELIVERY_TAG,
+        )
         return {
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
@@ -376,10 +421,10 @@ class AudienceDeliverView(SwaggerView):
         """
 
         database = get_db_client()
+        # get audience
+        audience = get_audience(database, audience_id)
         # get engagements
-        engagements = engagement_management.get_engagements_by_audience(
-            database, audience_id
-        )
+        engagements = get_engagements_by_audience(database, audience_id)
         # submit jobs for the audience/destination pairs
         delivery_job_ids = []
         for engagement in engagements:
@@ -391,12 +436,21 @@ class AudienceDeliverView(SwaggerView):
                 batch_destination = get_destination_config(
                     database, engagement[db_c.ID], *pair
                 )
-                batch_destination.register()
+                batch_destination.register(engagement)
                 batch_destination.submit()
                 delivery_job_ids.append(
                     str(batch_destination.audience_delivery_job_id)
                 )
-
+        # create notification
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"Successfully scheduled a delivery of audience "
+                f'"{audience[db_c.NAME]}".'
+            ),
+            api_c.DELIVERY_TAG,
+        )
         return {
             "message": f"Successfully created delivery job(s) for audience ID {audience_id}"
         }, HTTPStatus.OK
@@ -492,10 +546,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         }
 
         # get audiences at once to lookup name for each delivery job
-        audience_dict = {
-            x[db_c.ID]: x
-            for x in orchestration_management.get_all_audiences(database)
-        }
+        audience_dict = {x[db_c.ID]: x for x in get_all_audiences(database)}
 
         delivery_history = []
         for job in delivery_jobs:
@@ -594,7 +645,7 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         # check if audience exists
         database = get_db_client()
-        audience = orchestration_management.get_audience(database, audience_id)
+        audience = get_audience(database, audience_id)
         if not audience:
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
@@ -615,9 +666,7 @@ class AudienceDeliverHistoryView(SwaggerView):
         # get engagements ahead of time by the audience
         engagement_dict = {
             x[db_c.ID]: x
-            for x in engagement_management.get_engagements_by_audience(
-                database, audience_id
-            )
+            for x in get_engagements_by_audience(database, audience_id)
         }
 
         delivery_history = []

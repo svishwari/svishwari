@@ -11,7 +11,10 @@
       <Icon :type="icon" :size="60" color="primary" class="d-block" />
     </div>
 
-    <div class="text-h4 px-3 pb-2">
+    <div
+      class="text-h4 px-3 pb-2"
+      :class="disabled ? 'neroBlack--text' : 'primary--text'"
+    >
       {{ title }}
     </div>
 

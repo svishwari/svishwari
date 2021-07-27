@@ -42,6 +42,7 @@ TOTAL_HOUSEHOLD_IDS = "total_household_ids"
 UPDATED = "updated"
 TOTAL_CUSTOMERS = "total_customers"
 COUNTRIES = "total_countries"
+TOTAL_COUNT = "total_count"
 STATES = "total_us_states"
 CITIES = "total_cities"
 MIN_AGE = "min_age"
@@ -121,6 +122,7 @@ DATE = "date"
 # AWS defines
 AWS_MODULE_NAME = "huxunify.api.data_connectors.aws"
 AWS_SSM_NAME = "ssm"
+AWS_EVENTS_NAME = "events"
 AWS_BATCH_NAME = "batch"
 AWS_HEALTH_TESTS = {
     AWS_SSM_NAME: ["get_parameter", {"Name": "unifieddb_host_alias"}],
@@ -132,6 +134,7 @@ DELIVERY_SCHEDULE = "delivery_schedule"
 START_DATE = "start_date"
 END_DATE = "end_date"
 ENABLED = "enabled"
+DISABLED = "disabled"
 SIZE = "size"
 IS_ADDED = "is_added"
 UNKNOWN = "unknown"
@@ -161,9 +164,11 @@ STATUS_WEIGHTS = {
     STATUS_INACTIVE: 5,
     STATUS_DRAFT: 4,
     STATUS_PENDING: 3,
+    db_c.STATUS_IN_PROGRESS: 3,
     STATUS_PAUSED: 2,
     STATUS_STOPPED: 1,
     STATUS_ERROR: 0,
+    db_c.STATUS_FAILED: 0,
 }
 
 # Facebook connector defines
@@ -183,6 +188,8 @@ SFMC_PERFORMANCE_EXT_NAME = "sfmc_performance_ext_name"
 SFMC_PERFORMANCE_EXT_VALUES = "sfmc_performance_ext_values"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS = "perf_data_extensions"
 SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
+SFMC_DATA_EXTENSION_NAME = "Name"
+SFMC_CUSTOMER_KEY = "CustomerKey"
 
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
@@ -303,6 +310,7 @@ INVALID_AUTH = "You are not authorized to visit this page."
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
+DESTINATION_NOT_SUPPORTED = "Destination is not supported."
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -416,6 +424,7 @@ ORCHESTRATION_TAG = "orchestration"
 AUDIENCE = "audience"
 AUDIENCE_ID = "audience_id"
 AUDIENCE_IDS = "audience_ids"
+SOURCE_AUDIENCE_ID = "source_audience_id"
 AUDIENCE_NAME = "name"
 AUDIENCE_FILTERS = "filters"
 AUDIENCE_SECTION_AGGREGATOR = "section_aggregator"
@@ -428,11 +437,14 @@ AUDIENCE_FILTER_VALUE = "value"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_ENGAGEMENTS = "engagements"
 AUDIENCE_SIZE = "audience_size"
+AUDIENCE_SIZE_PERCENTAGE = "audience_size_percentage"
 AUDIENCE_STATUS = "audience_status"
 AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
 AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
+LOOKALIKE_AUDIENCES = "lookalike-audiences"
+LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,

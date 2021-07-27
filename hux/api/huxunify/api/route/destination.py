@@ -9,6 +9,7 @@ from flask import Blueprint, request, jsonify
 from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
@@ -311,7 +312,6 @@ class DestinationPutView(SwaggerView):
             )
             is_added = True
 
-        # update the destination
         return (
             DestinationGetSchema().dump(
                 destination_management.update_delivery_platform(
@@ -420,6 +420,7 @@ class DestinationValidatePostView(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.DESTINATIONS_TAG]
 
+    # pylint: disable=bare-except
     @api_error_handler()
     def post(self) -> Tuple[dict, int]:
         """Validates the credentials for a destination.
@@ -459,15 +460,20 @@ class DestinationValidatePostView(SwaggerView):
                     "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
                 }, HTTPStatus.OK
         elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC:
-            connector = SFMCConnector(
-                auth_details=set_sfmc_auth_details(
-                    body.get(api_c.AUTHENTICATION_DETAILS)
+            try:
+                connector = SFMCConnector(
+                    auth_details=set_sfmc_auth_details(
+                        body.get(api_c.AUTHENTICATION_DETAILS)
+                    )
                 )
-            )
 
-            ext_list = DestinationDataExtGetSchema().dump(
-                connector.get_list_of_data_extensions(), many=True
-            )
+                ext_list = DestinationDataExtGetSchema().dump(
+                    connector.get_list_of_data_extensions(), many=True
+                )
+            except:
+                return {
+                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+                }, HTTPStatus.BAD_REQUEST
 
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
@@ -562,7 +568,12 @@ class DestinationDataExtView(SwaggerView):
             ext_list = connector.get_list_of_data_extensions()
 
         return (
-            jsonify(DestinationDataExtGetSchema().dump(ext_list, many=True)),
+            jsonify(
+                sorted(
+                    DestinationDataExtGetSchema().dump(ext_list, many=True),
+                    key=lambda i: i[api_c.NAME],
+                )
+            ),
             HTTPStatus.OK,
         )
 
@@ -630,9 +641,9 @@ class DestinationDataExtPostView(SwaggerView):
         Returns:
             Tuple[dict, int]: Data Extension ID, HTTP Status.
         """
-
+        database = get_db_client()
         destination = destination_management.get_delivery_platform(
-            get_db_client(), destination_id
+            database, destination_id
         )
 
         if (
@@ -663,6 +674,17 @@ class DestinationDataExtPostView(SwaggerView):
             try:
                 extension = connector.create_data_extension(
                     body.get(api_c.DATA_EXTENSION)
+                )
+                # pylint: disable=too-many-function-args
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
+                        f"{get_user_name()} created new data extension "
+                        f'"{body.get(api_c.DATA_EXTENSION)}" '
+                        f'in "{destination[db_c.NAME]}".'
+                    ),
+                    api_c.DESTINATIONS_TAG,
                 )
             except AudienceAlreadyExists:
                 # TODO - this is a work around until ORCH-288 is done

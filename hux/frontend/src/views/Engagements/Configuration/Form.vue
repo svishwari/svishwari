@@ -126,6 +126,11 @@
       </FormStep>
 
       <FormStep :step="3" label="Select audience(s) and destination(s)">
+        <p v-if="hasAudiences" class="text-caption">
+          First add and deliver an audience to Facebook in order to create a
+          lookalike audience from this engagement’s dashboard.
+        </p>
+
         <DataCards
           bordered
           :items="Object.values(value.audiences)"
@@ -391,9 +396,10 @@ export default {
         start_date: !this.isManualDelivery
           ? new Date(this.selectedStartDate).toISOString()
           : null,
-        end_date: !this.isManualDelivery
-          ? new Date(this.selectedEndDate).toISOString()
-          : null,
+        end_date:
+          !this.isManualDelivery && this.selectedEndDate
+            ? new Date(this.selectedEndDate).toISOString()
+            : null,
       }
     },
 
@@ -411,6 +417,10 @@ export default {
       } else {
         return true
       }
+    },
+
+    hasAudiences() {
+      return Boolean(this.totalSelectedAudiences > 0)
     },
 
     hasDestinations() {

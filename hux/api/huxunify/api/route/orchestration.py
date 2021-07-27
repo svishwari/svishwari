@@ -1,8 +1,6 @@
 """
 Paths for Orchestration API
 """
-import datetime
-import random
 from http import HTTPStatus
 from random import randrange
 from typing import Tuple, Union
@@ -12,6 +10,7 @@ from flask import Blueprint, request, jsonify
 from marshmallow import INCLUDE
 from pymongo import MongoClient
 
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
     orchestration_management,
@@ -20,16 +19,20 @@ from huxunifylib.database import (
     data_management,
 )
 import huxunifylib.database.constants as db_c
-
 from huxunify.api.schema.orchestration import (
     AudienceGetSchema,
     AudiencePutSchema,
     AudiencePostSchema,
+    LookalikeAudiencePostSchema,
+    LookalikeAudienceGetSchema,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
 )
-from huxunify.api.data_connectors.cdp import get_customers_overview
+from huxunify.api.data_connectors.cdp import (
+    get_customers_overview,
+    get_customers_count_async,
+)
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 import huxunify.api.constants as api_c
 from huxunify.api.route.utils import (
@@ -37,9 +40,9 @@ from huxunify.api.route.utils import (
     get_db_client,
     secured,
     get_user_name,
+    api_error_handler,
     validate_destination_id,
 )
-from huxunify.api.route.utils import api_error_handler
 
 # setup the orchestration blueprint
 orchestration_bp = Blueprint(
@@ -108,21 +111,38 @@ class AudienceView(SwaggerView):
 
         """
 
+        # get all audiences and deliveries
         database = get_db_client()
-        audiences = orchestration_management.get_all_audiences(database)
+        audiences = orchestration_management.get_all_audiences_and_deliveries(
+            database
+        )
+
+        # get all audiences because document DB does not allow for replaceRoot
+        audience_dict = {
+            x[db_c.ID]: x
+            for x in orchestration_management.get_all_audiences(database)
+        }
+
+        # get customer sizes
+        customer_size_dict = get_customers_count_async(audiences)
+
+        # process each audience object
         for audience in audiences:
+            # workaround because DocumentDB does not allow $replaceRoot
+            # do replace root by bringing the nested engagement up a level.
+            audience.update(audience_dict[audience[db_c.ID]])
+
+            # remove any empty deliveries
+            audience[api_c.DELIVERIES] = [
+                x for x in audience[api_c.DELIVERIES] if x
+            ]
+
+            # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
                 database, audience.get(api_c.DESTINATIONS_TAG)
             )
 
-            # TODO - Fetch Engagements, Audience data (size,..) from CDM based on the filters
-            # Add stub size, last_delivered_on for test purposes.
-            audience[api_c.SIZE] = randrange(10000000)
-            audience[
-                api_c.AUDIENCE_LAST_DELIVERED
-            ] = datetime.datetime.utcnow() - random.random() * datetime.timedelta(
-                days=1000
-            )
+            audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
@@ -222,8 +242,13 @@ class AudienceGetView(SwaggerView):
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
 
         # get the max last delivered date for all destinations in an audience
-        audience[api_c.AUDIENCE_LAST_DELIVERED] = max(
-            [x[api_c.AUDIENCE_LAST_DELIVERED] for x in engagements]
+        delivery_times = [
+            x[api_c.AUDIENCE_LAST_DELIVERED]
+            for x in engagements
+            if x.get(api_c.AUDIENCE_LAST_DELIVERED)
+        ]
+        audience[api_c.AUDIENCE_LAST_DELIVERED] = (
+            max(delivery_times) if delivery_times else None
         )
 
         # set the destinations
@@ -386,19 +411,46 @@ class AudiencePostView(SwaggerView):
                 user_name=user_name,
             )
 
+            # add notification
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f"{user_name} added a new audience named "
+                    f'"{audience_doc[db_c.NAME]}".'
+                ),
+                api_c.ORCHESTRATION_TAG,
+            )
+
             # attach the audience to each of the engagements
             for engagement_id in engagement_ids:
-                engagement_management.append_audiences_to_engagement(
-                    database,
-                    engagement_id,
-                    user_name,
-                    [
-                        {
-                            db_c.OBJECT_ID: audience_doc[db_c.ID],
-                            db_c.DESTINATIONS: body.get(api_c.DESTINATIONS),
-                        }
-                    ],
+                engagement = (
+                    engagement_management.append_audiences_to_engagement(
+                        database,
+                        engagement_id,
+                        user_name,
+                        [
+                            {
+                                db_c.OBJECT_ID: audience_doc[db_c.ID],
+                                db_c.DESTINATIONS: body.get(
+                                    api_c.DESTINATIONS
+                                ),
+                            }
+                        ],
+                    )
                 )
+                # add audience attached notification
+                create_notification(
+                    database,
+                    db_c.NOTIFICATION_TYPE_SUCCESS,
+                    (
+                        f"{user_name} added audience "
+                        f'"{audience_doc[db_c.NAME]}" to engagement '
+                        f'"{engagement[db_c.NAME]}".'
+                    ),
+                    api_c.ORCHESTRATION_TAG,
+                )
+
         except db_exceptions.DuplicateName:
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
@@ -495,8 +547,9 @@ class AudiencePutView(SwaggerView):
         # load into the schema object
         body = AudiencePutSchema().load(request.get_json(), partial=True)
 
+        database = get_db_client()
         audience_doc = orchestration_management.update_audience(
-            database=get_db_client(),
+            database=database,
             audience_id=ObjectId(audience_id),
             name=body.get(api_c.AUDIENCE_NAME),
             audience_filters=body.get(api_c.AUDIENCE_FILTERS),
@@ -504,6 +557,12 @@ class AudiencePutView(SwaggerView):
             user_name=user_name,
         )
 
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f'{user_name} updated audience "{audience_doc[db_c.NAME]}".',
+            api_c.ORCHESTRATION_TAG,
+        )
         # TODO : attach the audience to each of the engagements
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.OK
 
@@ -556,6 +615,20 @@ class AudienceRules(SwaggerView):
                         "max": 1.0,
                         "steps": 0.05,
                     },
+                    "ltv_predicted": {
+                        "name": "Predicted lifetime value",
+                        "type": "range",
+                        "min": 0,
+                        "max": 100000,
+                        "steps": 500,
+                    },
+                    "propensity_to_purchase": {
+                        "name": "Propensity to purchase",
+                        "type": "range",
+                        "min": 0.0,
+                        "max": 1.0,
+                        "steps": 0.05,
+                    },
                 },
                 "general": {
                     "age": {
@@ -597,3 +670,138 @@ class AudienceRules(SwaggerView):
         rules_constants.update(rules_from_cdm)
 
         return rules_constants, HTTPStatus.OK.value
+
+
+@add_view_to_blueprint(
+    orchestration_bp,
+    f"{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
+    "SetLookalikeAudience",
+)
+class SetLookalikeAudience(SwaggerView):
+    """
+    Set Lookalike Audience Class
+    """
+
+    parameters = [
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Lookalike Audience Parameters.",
+            "example": {
+                api_c.NAME: "New Lookalike Audience",
+                api_c.AUDIENCE_ID: str(ObjectId()),
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 85,
+                api_c.ENGAGEMENT_IDS: [
+                    str(ObjectId()),
+                    str(ObjectId()),
+                    str(ObjectId()),
+                ],
+            },
+        }
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": LookalikeAudienceGetSchema,
+            "description": "Successfully created lookalike audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create a lookalike audience"
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ORCHESTRATION_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    @get_user_name()
+    def post(self, user_name: str) -> Tuple[dict, int]:
+        """Sets lookalike audience
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            user_name (str): user_name extracted from Okta
+
+        Returns:
+            Tuple[dict, int]: lookalike audience configuration, HTTP status.
+
+        """
+
+        body = LookalikeAudiencePostSchema().load(
+            request.get_json(), partial=True
+        )
+
+        for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+            if not ObjectId.is_valid(engagement_id):
+                return {
+                    "message": api_c.INVALID_OBJECT_ID
+                }, HTTPStatus.BAD_REQUEST
+
+        if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
+            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+
+        database = get_db_client()
+        source_audience = orchestration_management.get_audience(
+            database, ObjectId(body[api_c.AUDIENCE_ID])
+        )
+
+        if not source_audience:
+            return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+
+        destination = destination_management.get_delivery_platform_by_type(
+            database, db_c.DELIVERY_PLATFORM_FACEBOOK
+        )
+
+        # TODO: HUS-778 enable once facebook account is active again
+        # destination_connector = facebook_connector.FacebookConnector(
+        #     auth_details=get_auth_from_parameter_store(
+        #     destination[api_c.AUTHENTICATION_DETAILS],
+        #     destination[api_c.DELIVERY_PLATFORM_TYPE],
+        # ))
+        #
+        # if not destination_connector.check_connection():
+        #     return {
+        #                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        #            }, HTTPStatus.BAD_REQUEST
+        #
+        # destination_connector.get_new_lookalike_audience(
+        #     source_audience[db_c.NAME],
+        #     body[api_c.NAME],
+        #     body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+        #     "US",
+        # )
+
+        lookalike_audience = (
+            destination_management.create_delivery_platform_lookalike_audience(
+                database,
+                destination[db_c.ID],
+                ObjectId(body[api_c.AUDIENCE_ID]),
+                body[api_c.NAME],
+                body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+                "US",
+            )
+        )
+
+        for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+            engaged_audience = {
+                api_c.ID: lookalike_audience[db_c.ID],
+                db_c.LOOKALIKE: True,
+                api_c.DESTINATIONS: {api_c.ID: destination[db_c.ID]},
+            }
+
+            engagement_management.append_audiences_to_engagement(
+                database,
+                ObjectId(engagement_id),
+                user_name,
+                [engaged_audience],
+            )
+
+        return (
+            LookalikeAudienceGetSchema().dump(lookalike_audience),
+            HTTPStatus.CREATED,
+        )

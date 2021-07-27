@@ -4,7 +4,7 @@ Schemas for the Engagements API
 """
 from bson import ObjectId
 from flask_marshmallow import Schema
-from marshmallow import fields, validate, pre_load
+from marshmallow import fields, validate, pre_load, post_dump
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
@@ -451,6 +451,26 @@ class EngagementGetSchema(Schema):
     update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
     updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
+    # pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    @post_dump
+    def post_serialize(self, engagement: dict, many: bool = False) -> dict:
+        """process the schema before serializing.
+
+        Args:
+            engagement (dict): The engagement object
+            many (bool): If there are many to process
+
+        Returns:
+            dict: Returns an engagement object
+
+        """
+        # Set delivery_schedule as null if delivery schedule is not available
+        if not engagement.get(api_c.DELIVERY_SCHEDULE):
+            engagement[api_c.DELIVERY_SCHEDULE] = None
+
+        return engagement
+
 
 def weighted_engagement_status(engagements: list) -> list:
     """Returns a weighted engagement status by rolling up the individual
@@ -511,7 +531,7 @@ def weighted_engagement_status(engagements: list) -> list:
 
                 status_rank = {
                     api_c.STATUS: status,
-                    api_c.WEIGHT: api_c.STATUS_WEIGHTS[status],
+                    api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(status, 0),
                 }
                 status_ranks.append(status_rank)
                 audience_status_rank.append(status_rank)
@@ -561,7 +581,7 @@ def weight_delivery_status(engagements: list) -> str:
     status_ranks = [
         {
             api_c.STATUS: x[api_c.STATUS],
-            api_c.WEIGHT: api_c.STATUS_WEIGHTS[x[api_c.STATUS]],
+            api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(x[api_c.STATUS], 0),
         }
         for x in engagements[api_c.DELIVERIES]
         if api_c.STATUS in x

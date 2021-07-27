@@ -14,6 +14,7 @@ from flasgger import SwaggerView
 
 from huxunifylib.connectors import FacebookConnector
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
     get_engagement,
     get_engagements_summary,
@@ -348,8 +349,9 @@ class SetEngagement(SwaggerView):
             request.get_json(), partial=("delivery_schedule",)
         )
 
+        database = get_db_client()
         engagement_id = set_engagement(
-            database=get_db_client(),
+            database=database,
             name=body[db_c.ENGAGEMENT_NAME],
             description=body[db_c.ENGAGEMENT_DESCRIPTION]
             if db_c.ENGAGEMENT_DESCRIPTION in body
@@ -360,11 +362,18 @@ class SetEngagement(SwaggerView):
             else None,
             user_name=user_name,
         )
-
-        return (
-            EngagementGetSchema().dump(
-                get_engagement(get_db_client(), engagement_id=engagement_id)
+        engagement = get_engagement(database, engagement_id=engagement_id)
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f"{user_name} created a new engagement named "
+                f'"{engagement[db_c.NAME]}".'
             ),
+            api_c.ENGAGEMENT_TAG,
+        )
+        return (
+            EngagementGetSchema().dump(engagement),
             HTTPStatus.CREATED,
         )
 
@@ -449,8 +458,10 @@ class UpdateEngagement(SwaggerView):
 
         body = EngagementPostSchema().load(request.get_json())
 
+        database = get_db_client()
+
         engagement = update_engagement(
-            database=get_db_client(),
+            database=database,
             engagement_id=ObjectId(engagement_id),
             user_name=user_name,
             name=body[db_c.ENGAGEMENT_NAME],
@@ -463,6 +474,12 @@ class UpdateEngagement(SwaggerView):
             else {},
         )
 
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+            f'{user_name} updated engagement "{engagement[db_c.NAME]}".',
+            api_c.ENGAGEMENT_TAG,
+        )
         return (
             EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
@@ -501,8 +518,9 @@ class DeleteEngagement(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
+    @get_user_name()
     @api_error_handler()
-    def delete(self, engagement_id: str) -> Tuple[dict, int]:
+    def delete(self, engagement_id: str, user_name: str) -> Tuple[dict, int]:
         """Deletes an engagement.
 
         ---
@@ -520,9 +538,16 @@ class DeleteEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        if delete_engagement(
-            get_db_client(), engagement_id=ObjectId(engagement_id)
-        ):
+        engagement_id = ObjectId(engagement_id)
+        database = get_db_client()
+        engagement = get_engagement(database, engagement_id)
+        if delete_engagement(database, engagement_id):
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                f'{user_name} deleted engagement "{engagement[db_c.NAME]}".',
+                api_c.ENGAGEMENT_TAG,
+            )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
         return {
@@ -615,18 +640,33 @@ class AddAudienceEngagement(SwaggerView):
 
         # validate audiences exist
         database = get_db_client()
+        audience_names = []
         for audience in body[api_c.AUDIENCES]:
-            if not get_audience(database, ObjectId(audience[api_c.ID])):
+            audience_to_attach = get_audience(
+                database, ObjectId(audience[api_c.ID])
+            )
+            if not audience_to_attach:
                 return {
                     "message": f"Audience does not exist: {audience[api_c.ID]}"
                 }, HTTPStatus.BAD_REQUEST
-
+            audience_names.append(audience_to_attach[db_c.NAME])
         append_audiences_to_engagement(
             database,
             ObjectId(engagement_id),
             user_name,
             body[api_c.AUDIENCES],
         )
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        for audience_name in audience_names:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_SUCCESS,
+                (
+                    f'{user_name} added audience "{audience_name}" '
+                    f'to engagement "{engagement[db_c.NAME]}".'
+                ),
+                api_c.ENGAGEMENT_TAG,
+            )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
@@ -695,21 +735,36 @@ class DeleteAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
         audience_ids = []
         body = AudienceEngagementDeleteSchema().load(
             request.get_json(), partial=True
         )
+        audience_names = []
         for audience_id in body[api_c.AUDIENCE_IDS]:
             if not ObjectId.is_valid(audience_id):
                 return HTTPStatus.BAD_REQUEST
             audience_ids.append(ObjectId(audience_id))
+            audience = get_audience(database, ObjectId(audience_id))
+            audience_names.append(audience[db_c.NAME])
 
         remove_audiences_from_engagement(
-            get_db_client(),
+            database,
             ObjectId(engagement_id),
             user_name,
             audience_ids,
         )
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        for audience_name in audience_names:
+            create_notification(
+                database,
+                db_c.NOTIFICATION_TYPE_INFORMATIONAL,
+                (
+                    f'{user_name} removed audience "{audience_name}" '
+                    f'from engagement "{engagement[db_c.NAME]}".'
+                ),
+                api_c.ENGAGEMENT_TAG,
+            )
         return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
 
