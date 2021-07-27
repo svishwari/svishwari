@@ -174,9 +174,6 @@ class ModelOverview(SwaggerView):
 
         """
         model_id = int(model_id)
-        if model_id not in api_c.SUPPORTED_MODELS:
-            return {"message": "Invalid Model Type"}, HTTPStatus.BAD_REQUEST
-
         output = {
             api_c.MODEL_TYPE: model_id,
             api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
