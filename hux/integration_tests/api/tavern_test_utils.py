@@ -1,7 +1,6 @@
 """
 purpose of this file is to house external function utilities needed for tavern integration tests
 """
-import huxunifylib.database.constants as db_c
 from box import Box
 
 # TODO: Check to see if there is a way to pass in other arguments
@@ -20,8 +19,8 @@ def get_facebook_destination_id(response):
         Box(ObjectId): destination_id of destination type facebook
     """
     for json in response.json():
-        if json[db_c.TYPE] == db_c.DELIVERY_PLATFORM_FACEBOOK:
-            return Box({"facebook_destination_id": json[db_c.OBJECT_ID]})
+        if json["type"] == "facebook":
+            return Box({"facebook_destination_id": json["id"]})
     return None
 
 
@@ -36,6 +35,6 @@ def get_sfmc_destination_id(response):
         Box(ObjectId): destination_id of destination type sfmc
     """
     for json in response.json():
-        if json[db_c.TYPE] == db_c.DELIVERY_PLATFORM_SFMC:
-            return Box({"sfmc_destination_id": json[db_c.OBJECT_ID]})
+        if json["type"] == "sfmc":
+            return Box({"sfmc_destination_id": json["id"]})
     return None

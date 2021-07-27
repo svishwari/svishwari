@@ -19,4 +19,8 @@ RUN pip install tavern
 #WORKDIR /app/hux-unified/api
 
 # run the pytests application
+# pip install
+# RUN pip install python-box
+# append hux-unified integration_tests path to python path.
+#ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/integration_tests/api"
 CMD ["py.test", "test_core.tavern.yaml", "-v"]
