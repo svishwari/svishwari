@@ -186,6 +186,12 @@
         </div>
       </v-card>
     </div>
+    <v-row class="px-15 mt-2">
+      <v-col cols="3">
+        <income-chart></income-chart>
+      </v-col>
+    </v-row>
+
     <v-divider class="my-8"></v-divider>
     <EmptyStateChart>
       <template #chart-image>
@@ -207,6 +213,8 @@ import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
 import StatusList from "../../components/common/StatusList.vue"
 import Size from "../../components/common/huxTable/Size.vue"
+import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+
 export default {
   name: "AudienceInsight",
   components: {
@@ -219,6 +227,7 @@ export default {
     Icon,
     StatusList,
     Size,
+    IncomeChart,
   },
   data() {
     return {
