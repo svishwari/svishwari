@@ -63,7 +63,7 @@ class NotificationSchema(Schema):
             many (bool): If there are many to process
 
         Returns:
-            Response: Returns a notification object
+            dict: Returns a notification object
 
         """
         # change notification type and category to title case

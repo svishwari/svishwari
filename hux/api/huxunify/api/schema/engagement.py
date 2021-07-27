@@ -462,7 +462,7 @@ class EngagementGetSchema(Schema):
             many (bool): If there are many to process
 
         Returns:
-            Response: Returns an engagement object
+            dict: Returns an engagement object
 
         """
         # Set delivery_schedule as null if delivery schedule is not available
