@@ -931,9 +931,7 @@ class TestEngagementManagement(unittest.TestCase):
             self.database, c.DELIVERY_PLATFORM_FACEBOOK
         )
 
-        destination_to_add = {
-            c.OBJECT_ID: destination[c.ID]
-        }
+        destination_to_add = {c.OBJECT_ID: destination[c.ID]}
 
         audience_one = om.create_audience(
             self.database, "Audience1", [], [], self.user_name, 201

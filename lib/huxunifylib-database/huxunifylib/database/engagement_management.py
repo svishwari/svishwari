@@ -741,9 +741,7 @@ def append_destination_to_engagement_audience(
                 db_c.UPDATE_TIME: datetime.datetime.utcnow(),
                 db_c.UPDATED_BY: user_name,
             },
-            "$push": {
-                "audiences.$.destinations": destination
-            },
+            "$push": {"audiences.$.destinations": destination},
         },
     )
 
