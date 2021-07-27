@@ -137,14 +137,14 @@ class ModelVersionView(SwaggerView):
 
 
 @add_view_to_blueprint(
-    model_bp, f"{api_c.MODELS_ENDPOINT}/<model_type>/overview", "ModelOverview"
+    model_bp, f"{api_c.MODELS_ENDPOINT}/<model_id>/overview", "ModelOverview"
 )
 class ModelOverview(SwaggerView):
     """
     Model Overview Class
     """
 
-    parameters = api_c.MODEL_TYPE_PARAMS
+    parameters = api_c.MODEL_ID_PARAMS
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model features.",
@@ -158,8 +158,8 @@ class ModelOverview(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
-    def get(self, model_type: str) -> Tuple[dict, int]:
+    # @api_error_handler()
+    def get(self, model_id: int) -> Tuple[dict, int]:
         """Retrieves model overview.
 
         ---
@@ -167,31 +167,32 @@ class ModelOverview(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            model_type (str): model type
+            model_id (int): model id
 
         Returns:
             Tuple[dict, int]: dict of model features and http code
 
         """
-        if model_type not in api_c.SUPPORTED_MODELS:
+        model_id = int(model_id)
+        if model_id not in api_c.SUPPORTED_MODELS:
             return {"message": "Invalid Model Type"}, HTTPStatus.BAD_REQUEST
 
         output = {
-            api_c.MODEL_TYPE: model_type,
-            api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_type][api_c.NAME],
-            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_type][
+            api_c.MODEL_TYPE: model_id,
+            api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
+            api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_id][
                 api_c.DESCRIPTION
             ],
             api_c.PERFORMANCE_METRIC: {
-                api_c.AUC: api_c.SUPPORTED_MODELS[model_type][api_c.AUC],
-                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_type][
+                api_c.AUC: api_c.SUPPORTED_MODELS[model_id][api_c.AUC],
+                api_c.PRECISION: api_c.SUPPORTED_MODELS[model_id][
                     api_c.PRECISION
                 ],
-                api_c.RECALL: api_c.SUPPORTED_MODELS[model_type][api_c.RECALL],
-                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_type][
+                api_c.RECALL: api_c.SUPPORTED_MODELS[model_id][api_c.RECALL],
+                api_c.CURRENT_VERSION: api_c.SUPPORTED_MODELS[model_id][
                     api_c.CURRENT_VERSION
                 ],
-                api_c.RMSE: api_c.SUPPORTED_MODELS[model_type][api_c.RMSE],
+                api_c.RMSE: api_c.SUPPORTED_MODELS[model_id][api_c.RMSE],
             },
             api_c.FEATURE_IMPORTANCE: sorted(
                 [
