@@ -258,6 +258,8 @@ def is_audience_lookalikeable(audience: dict) -> str:
             == db_c.DELIVERY_PLATFORM_FACEBOOK
         ):
             status = api_c.STATUS_INACTIVE
+
+            # TODO - HUS-815
             if delivery.get(db_c.STATUS) in [
                 db_c.STATUS_SUCCEEDED,
                 db_c.AUDIENCE_STATUS_DELIVERED,
