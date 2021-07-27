@@ -27,7 +27,7 @@ cron_exp = {
 
 def generate_cron(schedule: dict) -> str:
     """
-
+    To generate cron expression based on the schedule object
     Args:
         schedule: dictionary object of schedule
 
@@ -49,19 +49,17 @@ def generate_cron(schedule: dict) -> str:
         if schedule["every"] > 1:
             if schedule.get("day_of_week")[0] == "Weekend":
                 cron_exp["day_of_week"] = ",".join(["SAT", "SUN"])
-                cron_exp["day_of_week"] += "{}{}".format(
-                    "/", schedule["every"]
-                )
+                cron_exp[
+                    "day_of_week"
+                ] = f"{cron_exp['day_of_week']}/{schedule['every']}"
             else:
                 cron_exp["day_of_week"] = ",".join(schedule.get("day_of_week"))
-                cron_exp["day_of_week"] += "{}{}".format(
-                    "/", schedule["every"]
-                )
+                cron_exp[
+                    "day_of_week"
+                ] = f"{cron_exp['day_of_week']}/{schedule['every']}"
 
     if schedule["periodicity"] == "Daily":
         cron_exp["day_of_month"] = "?"
         if schedule["every"] > 1:
-            cron_exp["day_of_week"] = "{}{}{}".format(
-                "1", "/", schedule["every"]
-            )
+            cron_exp["day_of_week"] = f"1/{schedule['every']}"
     return " ".join([str(val) for val in cron_exp.values()])
