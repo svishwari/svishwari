@@ -454,11 +454,11 @@ class EngagementGetSchema(Schema):
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
     @post_dump
-    def post_serialize(self, engagement: dict, many=False) -> dict:
+    def post_serialize(self, engagement: dict, many: bool = False) -> dict:
         """process the schema before serializing.
 
         Args:
-            engagement (dict): The notification object
+            engagement (dict): The engagement object
             many (bool): If there are many to process
 
         Returns:

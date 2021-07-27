@@ -55,7 +55,7 @@ class NotificationSchema(Schema):
     @post_dump
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
-    def post_serialize(self, data: dict, many=False) -> dict:
+    def post_serialize(self, data: dict, many: bool = False) -> dict:
         """process the schema before serializing.
 
         Args:
