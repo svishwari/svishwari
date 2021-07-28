@@ -55,7 +55,7 @@ class DeliveriesSchema(Schema):
     Delivery schema class
     """
 
-    _id = fields.String()
+    id = fields.String(attribute=db_c.ID)
     create_time = DateTimeWithZ()
     update_time = DateTimeWithZ()
     created_by = fields.String()

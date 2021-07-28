@@ -157,8 +157,13 @@ class AudienceView(SwaggerView):
             audience.update(audience_dict[audience[db_c.ID]])
 
             # remove any empty deliveries, take the last X number of deliveries
+            # only show the delivered/succeeded
             audience[api_c.DELIVERIES] = [
-                x for x in audience[api_c.DELIVERIES] if x
+                x
+                for x in audience[api_c.DELIVERIES]
+                if x
+                and x.get(db_c.STATUS)
+                in [api_c.DELIVERED, db_c.STATUS_SUCCEEDED]
             ][
                 : request.args.get(
                     api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
