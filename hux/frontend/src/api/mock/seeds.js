@@ -214,7 +214,7 @@ const defaultAudience = ({ destinations = [], engagements = [] }) => {
         ],
       },
     ],
-    name: "My Audience blah blah blah blah blah",
+    name: "My Audience",
   }
 }
 
@@ -407,6 +407,7 @@ export default function (server) {
     "audience",
     defaultAudience({
       destinations: [facebookSeed],
+      // engagements: [engagementSeed],
     })
   )
   server.create("audience", multipleSectionFilters())

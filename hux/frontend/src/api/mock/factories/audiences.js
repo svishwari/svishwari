@@ -20,9 +20,9 @@ export const audienceInsights = pick(customersOverview, [
 
 const engagementData = () => {
   return {
-    id: faker.datatype.uuid(),
+    id: `${faker.datatype.number({ min: 1, max: 10 })}`,
     name: `Engagement ${faker.datatype.number({ min: 1, max: 10 })}`,
-    status: faker.random.arrayElement(["Delivered", "Not delivering", "Draft"]),
+    status: "Delivered",
     description: `Engagement description for ${faker.address.state()}`,
     deliveries: [
       {
@@ -31,12 +31,7 @@ const engagementData = () => {
         type: "facebook",
         size: 20901,
         update_time: "2021-07-13T15:38:42.629Z",
-        status: faker.random.arrayElement([
-          "Delivered",
-          "Not delivering",
-          "Delivering",
-          "Draft",
-        ]),
+        status: "Delivered",
         next_delivery: "2021-07-28T15:38:42.629Z",
         delivery_schedule_type: "Daily",
       },
@@ -51,7 +46,7 @@ const mockEngagements = (num = 3) => {
  * Audience schema
  */
 export const audience = {
-  name: (index) => `My audience blah blah blah ${index + 1}`,
+  name: (index) => `My audience ${index + 1}`,
   size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
   last_delivered: () => faker.date.recent(),
   create_time: () => faker.date.recent(),
@@ -59,6 +54,4 @@ export const audience = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   engagements: () => mockEngagements(2),
-  //TODO
-  // lookalike_audience: () => true,
 }

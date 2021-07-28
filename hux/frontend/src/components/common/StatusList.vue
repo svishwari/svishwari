@@ -12,7 +12,9 @@
         >
           <tooltip>
             <template #label-content>
-              {{ section.name }}
+              <span class="ellipsis">
+                {{ section.name }}
+              </span>
             </template>
             <template #hover-content>
               <div class="py-2 white d-flex flex-column">
@@ -30,7 +32,7 @@
           v-if="section.status"
           :status="section.status"
           :iconSize="statusIcon"
-          class="ml-2"
+          class="ml-3"
           collapsed
           showLabel
           :tooltipTitle="`${sectionTypePrefix} status`"
@@ -204,13 +206,6 @@
     >
       <slot name="empty-destinations"></slot>
     </div>
-
-    <hux-alert
-      v-model="showDeliveryAlert"
-      type="success"
-      title="YAY!"
-      message="Successfully delivered your audience."
-    />
   </v-card>
 </template>
 
@@ -220,18 +215,12 @@ import Logo from "./Logo.vue"
 import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import Tooltip from "./Tooltip.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
-import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 
 export default {
   components: {
     Logo,
     Status,
     Tooltip,
-    HuxAlert,
-    ConfirmModal,
-    EditDeliverySchedule,
   },
 
   name: "StatusList",
@@ -440,6 +429,7 @@ export default {
                 section[this.deliveriesKey].filter(
                   (delivery) => delivery.status === "Delivering"
                 ).length > 0
+              break
 
             default:
               break
@@ -484,6 +474,13 @@ export default {
   box-sizing: border-box;
   border-radius: 12px !important;
   display: table;
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 25ch;
+    display: inline-block;
+    white-space: nowrap;
+  }
   .v-card__title {
     background: var(--v-background-base);
     border-radius: 12px 12px 0px 0px;

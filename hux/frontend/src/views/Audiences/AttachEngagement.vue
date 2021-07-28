@@ -331,6 +331,11 @@ export default {
       required: true,
       default: () => [],
     },
+    closeOnAction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   watch: {
@@ -389,19 +394,41 @@ export default {
       this.engagements.push(newEngagement)
       this.sortEngagements()
       this.onEngagementClick(newEngagement)
-      this.goToStep1()
-      this.loading = false
+      if (this.closeOnAction) {
+        this.$emit("onAddEngagement", newEngagement)
+        this.loading = false
+        this.localDrawer = false
+      } else {
+        this.goToStep1()
+        this.loading = false
+      }
     },
     onEngagementClick: function (engagement) {
-      if (this.selectedEngagements.includes(engagement)) {
+      if (
+        this.selectedEngagements.filter((eng) => eng.id === engagement.id)
+          .length > 0
+      ) {
         if (this.selectedEngagements.length !== 1) {
-          const deselectedId = this.selectedEngagements.indexOf(engagement)
+          const deselectedId = this.selectedEngagements.indexOf(
+            (eng) => eng.id === engagement.id
+          )
 
           this.selectedEngagements.splice(deselectedId, 1)
+          if (this.closeOnAction) {
+            this.$emit("onAddEngagement", {
+              data: engagement,
+              action: "Detach",
+            })
+            this.localDrawer = false
+          }
           this.$emit("onEngagementChange", this.selectedEngagements)
         }
       } else {
         this.selectedEngagements.push(engagement)
+        if (this.closeOnAction) {
+          this.$emit("onAddEngagement", { data: engagement, action: "Attach" })
+          this.localDrawer = false
+        }
         this.$emit("onEngagementChange", this.selectedEngagements)
       }
     },
