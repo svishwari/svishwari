@@ -24,6 +24,13 @@ module.exports = {
         order: [["template", "script"], "style"],
       },
     ],
+    "vue/component-name-in-template-casing": [
+      "error",
+      "kebab-case",
+      {
+        registeredComponentsOnly: true,
+      },
+    ],
     "vue/attributes-order": [
       "error",
       {
