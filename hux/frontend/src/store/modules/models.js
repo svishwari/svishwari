@@ -17,7 +17,7 @@ const getters = {
 const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
-      Vue.set(state.items, item.id, item)
+      Vue.set(state.items, `_${item.id}`, item)
     })
   },
 
