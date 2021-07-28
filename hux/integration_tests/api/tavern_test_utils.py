@@ -1,5 +1,6 @@
 """
-purpose of this file is to house external function utilities needed for tavern integration tests
+Purpose of this file is to house external function utilities needed for
+tavern integration tests
 """
 from typing import Union
 from box import Box
@@ -7,8 +8,9 @@ from box import Box
 
 def get_destination_id(response: object, **kwargs: dict) -> Union[Box, None]:
     """
-    Purpose of this function is to get the destination id from the response object based on the
-    passed in destination_type key in the kwargs dict and return it wrapped in a Box object.
+    Purpose of this function is to get the destination id from the response
+    object based on the passed in destination_type key in the kwargs dict
+    and return it wrapped in a Box object.
 
     Args:
         response (object): response object.
