@@ -165,8 +165,10 @@ class AudienceView(SwaggerView):
                 and x.get(db_c.STATUS)
                 in [api_c.DELIVERED, db_c.STATUS_SUCCEEDED]
             ][
-                : request.args.get(
-                    api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
+                : int(
+                    request.args.get(
+                        api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
+                    )
                 )
             ]
 
