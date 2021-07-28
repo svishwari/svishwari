@@ -645,6 +645,7 @@ def update_delivery_platform(
     return doc
 
 
+# pylint: disable=too-many-locals
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
@@ -656,6 +657,8 @@ def create_delivery_platform_lookalike_audience(
     name: str,
     audience_size_percentage: float,
     country: str = None,
+    user_name: str = "",
+    audience_size: int = 0,
 ) -> Union[dict, None]:
     """A function to create a delivery platform lookalike audience.
 
@@ -666,6 +669,8 @@ def create_delivery_platform_lookalike_audience(
         name (str): Name of the lookalike audience.
         audience_size_percentage (float): Size percentage of the lookalike audience.
         country (str): Country of the lookalike audience.
+        user_name (str): Name of the user creating the lookalike.
+        audience_size (int): Size of the audience at creation.
 
     Returns:
         Union[dict, None]: The lookalike audience configuration.
@@ -705,7 +710,9 @@ def create_delivery_platform_lookalike_audience(
         c.DELETED: False,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
-        c.FAVORITE: False,
+        c.SIZE: audience_size,
+        c.CREATED_BY: user_name,
+        c.UPDATED_BY: user_name,
     }
 
     try:
@@ -771,27 +778,43 @@ def get_delivery_platform_lookalike_audience(
 )
 def get_all_delivery_platform_lookalike_audiences(
     database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
 ) -> Union[list, None]:
     """A function to get all delivery platform lookalike audience configurations.
 
     Args:
         database (DatabaseClient): A database client.
+        filter_dict (dict): filter dictionary for adding custom filters.
+        projection (dict): Dict that specifies which fields to return or not return.
 
     Returns:
         Union[list, None]: List of all lookalike audience configurations.
 
     """
 
-    ret_docs = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.LOOKALIKE_AUDIENCE_COLLECTION
+    ]
+
+    # if deleted is not included in the filters, add it.
+    if filter_dict:
+        filter_dict[c.DELETED] = False
+    else:
+        filter_dict = {c.DELETED: False}
+
+    # exclude the deleted field from returning
+    if projection:
+        projection[c.DELETED] = 0
+    else:
+        projection = {c.DELETED: 0}
 
     try:
-        ret_docs = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
+        return list(collection.find(filter_dict, projection))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return ret_docs
+    return None
 
 
 @retry(
@@ -905,6 +928,8 @@ def update_lookalike_audience(
     name: str = None,
     audience_size_percentage: float = None,
     country: str = None,
+    user_name: str = "",
+    audience_size: int = None,
 ) -> Union[dict, None]:
     """A function to update lookalike audience.
 
@@ -914,6 +939,8 @@ def update_lookalike_audience(
         name (str): The new name of the lookalike audience.
         audience_size_percentage (float): The new size percentage of the lookalike audience.
         country (str): Updated lookalike audience country.
+        user_name (str): Username of the user updating the audience.
+        audience_size (int): Size of the audience at update time.
 
     Returns:
         Union[dict, None]: The updated lookalike audience configuration.
@@ -944,7 +971,11 @@ def update_lookalike_audience(
         c.LOOKALIKE_AUD_COUNTRY: country,
         c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
         c.UPDATE_TIME: datetime.datetime.utcnow(),
+        c.UPDATED_BY: user_name,
     }
+
+    if audience_size:
+        update_doc[c.SIZE] = audience_size
 
     for item in list(update_doc):
         if update_doc[item] is None:
@@ -1159,7 +1190,7 @@ def set_delivery_job_status(
 
     if job_status in (c.AUDIENCE_STATUS_DELIVERED, c.STATUS_FAILED):
         update_doc[c.JOB_END_TIME] = curr_time
-    elif job_status == c.STATUS_IN_PROGRESS:
+    elif job_status == c.AUDIENCE_STATUS_DELIVERING:
         update_doc[c.JOB_START_TIME] = curr_time
 
     try:

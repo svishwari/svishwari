@@ -116,10 +116,16 @@
   box-sizing: border-box;
   border-radius: 12px;
 }
+
 .list-shadow {
   @extend .box-shadow-5;
   border-radius: 4px !important;
 }
+
 .w-100 {
   width: 100%;
+}
+
+.mw-100 {
+  max-width: 100%;
 }

@@ -116,7 +116,7 @@ const routes = [
     },
   },
   {
-    path: "/models/:type",
+    path: "/models/:id/overview",
     name: "ModelDashboard",
     component: () => import("@/views/Decisioning/Dashboard"),
     meta: {

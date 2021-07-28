@@ -82,6 +82,11 @@ class DriftSchema(Schema):
 class PerformanceMetricSchema(Schema):
     """Performance Metric Schema"""
 
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
+
     # TODO - Update as it becomes available.
     rmse = Float(example=350)
     auc = Float(example=0.79)
