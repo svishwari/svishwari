@@ -58,6 +58,7 @@
             v-model="value.delivery_schedule"
             row
             class="ma-0 radio-div"
+            @change="changeSchedule()"
           >
             <v-radio
               :value="0"
@@ -443,6 +444,15 @@ export default {
       addEngagement: "engagements/add",
       deliverEngagement: "engagements/deliver",
     }),
+
+    changeSchedule() {
+      if (this.value.delivery_schedule) {
+        this.selectedStartDate = "Select date"
+        this.selectedEndDate = "Select date"
+        this.disableEndDate = true
+        this.$set(this.value, "recurring", null)
+      }
+    },
 
     closeAllDrawers() {
       this.showSelectAudiencesDrawer = false
