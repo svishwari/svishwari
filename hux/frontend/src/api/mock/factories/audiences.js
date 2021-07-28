@@ -38,10 +38,32 @@ const engagementData = () => {
     ],
   }
 }
+
+const lookalikeAudience = () => {
+  return {
+    id: faker.datatype.number({ min: 1, max: 10 }),
+    delivery_platform_id: "60b9601a6021710aa146df30",
+    country: "US",
+    audience_size_percentage: faker.datatype.float({
+      min: 100,
+      max: 1000,
+      precision: 0.01,
+    }),
+    create_time: faker.date.recent(),
+    update_time: faker.date.recent(),
+    favorite: faker.datatype.boolean(),
+    name: faker.fake("{{name.firstName}} {{name.lastName}}"),
+    size: faker.datatype.number({ min: 10000000, max: 999999999 }),
+  }
+}
+
 const mockEngagements = (num = 3) => {
   return Array.from({ length: num }, engagementData)
 }
 
+const mockLookalikeAudiences = (num = 3) => {
+  return Array.from({ length: num }, lookalikeAudience)
+}
 /**
  * Audience schema
  */
@@ -54,4 +76,7 @@ export const audience = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   engagements: () => mockEngagements(2),
+  lookalikeable: () =>
+    faker.random.arrayElement(["Inactive", "Disabled", "Active"]),
+  lookalike_audiences: () => mockLookalikeAudiences(5),
 }

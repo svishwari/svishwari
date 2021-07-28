@@ -6,11 +6,9 @@
       minHeight="662px"
       flat
     >
-      <v-card-title
-        class="d-flex chart-style justify-space-between pb-6 pl-6 pt-5"
-      >
+      <v-card-title class="chart-style pb-6 pl-6 pt-5">
         <div class="mt-2">
-          <span class="d-flex align-center neroBlack--text text-h5">
+          <span class="neroBlack--text text-h5">
             Top 20 feature importance
           </span>
         </div>
@@ -63,7 +61,7 @@ export default {
   data() {
     return {
       chartWidth: "",
-      width: 560,
+      width: 350,
       height: 620,
       show: false,
       showScoreTip: false,
@@ -83,8 +81,12 @@ export default {
   methods: {
     async initiateHorizontalBarChart() {
       await this.chartDimensions
-      this.width =
-        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
+      let currentWidth = this.chartDimensions.width
+      this.width = currentWidth == 0 ? 560 : currentWidth
+
+      if (currentWidth < 519) this.width = 470
+      if (currentWidth < 426) this.width = 870
+
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
 

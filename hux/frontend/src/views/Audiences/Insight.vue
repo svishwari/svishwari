@@ -127,44 +127,64 @@
       class="px-15 my-1 mb-4 pt-6"
       v-if="audience && audience.engagements && audience.engagements.length > 0"
     >
-      <v-col :md="audience.lookalike_audience ? 12 : 9" class="pa-0">
-        <delivery-overview
-          :sections="audience && audience.engagements"
-          sectionType="engagement"
-          deliveriesKey="deliveries"
-          :loadingRelationships="loadingRelationships"
-          @onOverviewSectionAction="triggerOverviewAction($event)"
-          @onOverviewDestinationAction="triggerDestinationAction($event)"
+      <v-row class="pb-5">
+        <v-col
+          :md="
+            audience.lookalikeable && audience.lookalikeable != 'Inactive'
+              ? 9
+              : 12
+          "
+          class="pa-0"
         >
-          <template #title-left>
-            <span class="text-h5">Engagement &amp; delivery overview</span>
-          </template>
-          <template #title-right>
-            <div class="d-flex align-center">
-              <v-btn
-                text
-                class="
-                  d-flex
-                  align-center
-                  primary--text
-                  text-decoration-none
-                  pr-0
-                "
-                @click="openAttachEngagementDrawer()"
-              >
-                Add to an engagement
-              </v-btn>
-              <v-btn text color="primary">
-                <icon type="history" :size="16" class="mr-1" />
-                Delivery history
-              </v-btn>
-            </div>
-          </template>
-          <template #empty-deliveries>
-            Nothing to show here yet. Add an engagement.
-          </template>
-        </delivery-overview>
-      </v-col>
+          <delivery-overview
+            :sections="audience && audience.engagements"
+            sectionType="engagement"
+            deliveriesKey="deliveries"
+            :loadingRelationships="loadingRelationships"
+            @onOverviewSectionAction="triggerOverviewAction($event)"
+            @onOverviewDestinationAction="triggerDestinationAction($event)"
+          >
+            <template #title-left>
+              <span class="text-h5">Engagement &amp; delivery overview</span>
+            </template>
+            <template #title-right>
+              <div class="d-flex align-center">
+                <v-btn
+                  text
+                  class="
+                    d-flex
+                    align-center
+                    primary--text
+                    text-decoration-none
+                    pr-0
+                  "
+                  @click="openAttachEngagementDrawer()"
+                >
+                  Add to an engagement
+                </v-btn>
+                <v-btn text color="primary">
+                  <icon type="history" :size="16" class="mr-1" />
+                  Delivery history
+                </v-btn>
+              </div>
+            </template>
+            <template #empty-deliveries>
+              Nothing to show here yet. Add an engagement.
+            </template>
+          </delivery-overview>
+        </v-col>
+        <v-col
+          v-if="audience.lookalikeable && audience.lookalikeable != 'Inactive'"
+          md="3"
+          class="pl-6 py-0"
+        >
+          <look-alike-card
+            v-model="audience.lookalike_audiences"
+            :status="audience.lookalikeable"
+            @createLookalike="showLookalikeDrawer = true"
+          />
+        </v-col>
+      </v-row>
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
@@ -236,6 +256,7 @@
       @onEngagementChange="setSelectedEngagements"
       @onAddEngagement="triggerAttachEngagement($event)"
     />
+    <look-alike-audience :toggle="showLookalikeDrawer" />
   </div>
 </template>
 
@@ -248,12 +269,14 @@ import Avatar from "@/components/common/Avatar"
 import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
+import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import Icon from "../../components/common/Icon.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
+import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 
 export default {
@@ -271,10 +294,62 @@ export default {
     AttachEngagement,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
+    LookAlikeAudience,
+    LookAlikeCard,
     IncomeChart,
   },
   data() {
     return {
+      // 3 states can be Active, Inactive & Disabled
+      lookalikeable: "Active",
+      showLookalikeDrawer: false,
+      // TO DO replace with API call
+      lookalikesData: [
+        {
+          id: "1",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience1",
+          size: "45000",
+        },
+        {
+          id: "2",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience2",
+          size: "45000",
+        },
+        {
+          id: "3",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience3",
+          size: "45000",
+        },
+        {
+          id: "4",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience4",
+          size: "45000",
+        },
+      ],
       items: [
         {
           text: "Audiences",
