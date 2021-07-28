@@ -77,7 +77,7 @@ export default {
   max-width: 70px;
   height: 40px;
   top: -338px;
-  left: -35px;
+  left: -90px;
   z-index: 1;
 }
 </style>
