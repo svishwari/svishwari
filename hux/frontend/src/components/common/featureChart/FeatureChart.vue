@@ -1,10 +1,11 @@
 <template>
-  <div class="container">
+  <div ref="chartBox" class="container">
     <div class="d-flex justify-content-start">
       <horizontal-bar-chart
         v-model="features"
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
+        :chartDimensions="chartDimensions"
       />
     </div>
     <bar-chart-tooltip
@@ -22,10 +23,15 @@
 <script>
 import BarChartTooltip from "@/components/common/featureChart/BarChartTooltip"
 import HorizontalBarChart from "@/components/common/featureChart/HorizontalBarChart"
-import data from "./featureData.json"
 export default {
   name: "feature-chart",
   components: { HorizontalBarChart, BarChartTooltip },
+  props: {
+    featureData: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       show: false,
@@ -34,8 +40,12 @@ export default {
         x: 0,
         y: 0,
       },
-      features: data.featureList,
+      features: this.featureData,
       currentData: {},
+      chartDimensions: {
+        width: 0,
+        height: 0,
+      },
     }
   },
   methods: {
@@ -50,6 +60,10 @@ export default {
       this.tooltip.x = args.x
       this.tooltip.y = args.y
     },
+  },
+  mounted() {
+    this.chartDimensions.width = this.$refs.chartBox.clientWidth
+    this.chartDimensions.height = this.$refs.chartBox.clientHeight
   },
 }
 </script>

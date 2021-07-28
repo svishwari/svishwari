@@ -133,54 +133,6 @@
             </div>
           </template>
         </delivery-overview>
-        <!-- <v-card class="rounded-lg card-style" minHeight="145px" flat>
-          <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
-            <div class="d-flex align-center">
-              <Icon
-                type="audiences"
-                :size="24"
-                color="neroBlack"
-                class="mr-2"
-              /><span class="text-h5">Audiences</span>
-            </div>
-            <div class="d-flex align-center">
-              <v-btn
-                text
-                class="d-flex align-center primary--text text-decoration-none"
-                @click="triggerSelectAudience()"
-              >
-                <Icon type="audiences" :size="16" class="mr-1" />
-                Add an audience
-              </v-btn>
-              <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
-                <icon type="history" :size="16" class="mr-1" />
-                Delivery history
-              </v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
-            <div
-              class="empty-state pa-5 text--gray"
-              v-if="audienceMergedData.length == 0"
-            >
-              Nothing to show here yet. Add an audience, assign and deliver that
-              audience to a destination.
-            </div>
-            <v-col
-              class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
-              v-if="audienceMergedData.length >= 0"
-            >
-              <status-list
-                v-for="item in audienceMergedData"
-                :key="item.id"
-                :audience="item"
-                :engagementId="engagementId"
-                :statusIcon="17"
-                @onAddDestination="triggerSelectDestination(item.id)"
-              />
-            </v-col>
-          </v-card-text>
-        </v-card> -->
         <v-tabs v-model="tabOption" class="mt-8">
           <v-tabs-slider color="primary"></v-tabs-slider>
 
@@ -272,6 +224,25 @@
       :title="alert.title"
       :message="alert.message"
     />
+
+    <confirm-modal
+      v-model="showConfirmModal"
+      title="You are about to edit delivery schedule."
+      rightBtnText="Yes, edit delivery schedule"
+      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+      @onCancel="showConfirmModal = false"
+      @onConfirm="
+        showConfirmModal = false
+        editDeliveryDrawer = true
+      "
+    />
+
+    <edit-delivery-schedule
+      v-model="editDeliveryDrawer"
+      :audience-id="selectedAudienceId"
+      :destination="scheduleDestination"
+      :engagement-id="engagementId"
+    />
   </div>
 </template>
 
@@ -293,6 +264,8 @@ import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationD
 import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
 import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import HuxAlert from "../../components/common/HuxAlert.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 
 export default {
   name: "engagementDashboard",
@@ -312,6 +285,8 @@ export default {
     DeliveryHistoryDrawer,
     DeliveryOverview,
     HuxAlert,
+    ConfirmModal,
+    EditDeliverySchedule,
   },
   data() {
     return {
@@ -342,6 +317,14 @@ export default {
       selectedAudienceId: null,
       selectedDestination: [],
       showDeliveryHistoryDrawer: false,
+      // Edit Schedule data props
+      showConfirmModal: false,
+      editDeliveryDrawer: false,
+      scheduleDestination: {
+        name: null,
+        type: null,
+        id: null,
+      },
     }
   },
   computed: {
@@ -992,6 +975,11 @@ export default {
               destinationId: event.data.id,
             })
             this.flashAlert = true
+            break
+          case "edit delivery schedule":
+            this.showConfirmModal = true
+            this.selectedAudienceId = event.parent.id
+            this.scheduleDestination = event.data
             break
           default:
             break

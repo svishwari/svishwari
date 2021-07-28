@@ -3,7 +3,9 @@ Schemas for the Model Object
 """
 
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, Float, DateTime, Nested
+from marshmallow.fields import Str, Int, Float, Nested
+
+from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
 class ModelSchema(Schema):
@@ -15,11 +17,11 @@ class ModelSchema(Schema):
     status = Str()
     latest_version = Str()
     past_version_count = Int()
-    last_trained = DateTime()
+    last_trained = DateTimeWithZ()
     owner = Str()
     lookback_window = Int()
     prediction_window = Int()
-    fulcrum_date = DateTime()
+    fulcrum_date = DateTimeWithZ()
     type = Str()
 
 
@@ -29,7 +31,7 @@ class ModelVersionSchema(Schema):
     name = Str(required=True)
     description = Str()
     status = Str()
-    trained_date = DateTime()
+    trained_date = DateTimeWithZ()
     version = Str()
 
 
@@ -74,11 +76,16 @@ class DriftSchema(Schema):
 
     # TODO - Update as it becomes available.
     drift = Float()
-    run_date = DateTime()
+    run_date = DateTimeWithZ()
 
 
 class PerformanceMetricSchema(Schema):
     """Performance Metric Schema"""
+
+    class Meta:
+        """Meta class to handle ordering of schema"""
+
+        ordered = True
 
     # TODO - Update as it becomes available.
     rmse = Float(example=350)

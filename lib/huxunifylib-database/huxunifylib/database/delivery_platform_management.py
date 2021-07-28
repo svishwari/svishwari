@@ -645,6 +645,7 @@ def update_delivery_platform(
     return doc
 
 
+# pylint: disable=too-many-locals
 @retry(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
@@ -656,6 +657,8 @@ def create_delivery_platform_lookalike_audience(
     name: str,
     audience_size_percentage: float,
     country: str = None,
+    user_name: str = "",
+    audience_size: int = 0,
 ) -> Union[dict, None]:
     """A function to create a delivery platform lookalike audience.
 
@@ -666,6 +669,8 @@ def create_delivery_platform_lookalike_audience(
         name (str): Name of the lookalike audience.
         audience_size_percentage (float): Size percentage of the lookalike audience.
         country (str): Country of the lookalike audience.
+        user_name (str): Name of the user creating the lookalike.
+        audience_size (int): Size of the audience at creation.
 
     Returns:
         Union[dict, None]: The lookalike audience configuration.
@@ -705,7 +710,9 @@ def create_delivery_platform_lookalike_audience(
         c.DELETED: False,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
-        c.FAVORITE: False,
+        c.SIZE: audience_size,
+        c.CREATED_BY: user_name,
+        c.UPDATED_BY: user_name,
     }
 
     try:
@@ -771,27 +778,43 @@ def get_delivery_platform_lookalike_audience(
 )
 def get_all_delivery_platform_lookalike_audiences(
     database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
 ) -> Union[list, None]:
     """A function to get all delivery platform lookalike audience configurations.
 
     Args:
         database (DatabaseClient): A database client.
+        filter_dict (dict): filter dictionary for adding custom filters.
+        projection (dict): Dict that specifies which fields to return or not return.
 
     Returns:
         Union[list, None]: List of all lookalike audience configurations.
 
     """
 
-    ret_docs = None
-    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
-    collection = platform_db[c.LOOKALIKE_AUDIENCE_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.LOOKALIKE_AUDIENCE_COLLECTION
+    ]
+
+    # if deleted is not included in the filters, add it.
+    if filter_dict:
+        filter_dict[c.DELETED] = False
+    else:
+        filter_dict = {c.DELETED: False}
+
+    # exclude the deleted field from returning
+    if projection:
+        projection[c.DELETED] = 0
+    else:
+        projection = {c.DELETED: 0}
 
     try:
-        ret_docs = list(collection.find({c.DELETED: False}, {c.DELETED: 0}))
+        return list(collection.find(filter_dict, projection))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
-    return ret_docs
+    return None
 
 
 @retry(
@@ -905,6 +928,8 @@ def update_lookalike_audience(
     name: str = None,
     audience_size_percentage: float = None,
     country: str = None,
+    user_name: str = "",
+    audience_size: int = None,
 ) -> Union[dict, None]:
     """A function to update lookalike audience.
 
@@ -914,6 +939,8 @@ def update_lookalike_audience(
         name (str): The new name of the lookalike audience.
         audience_size_percentage (float): The new size percentage of the lookalike audience.
         country (str): Updated lookalike audience country.
+        user_name (str): Username of the user updating the audience.
+        audience_size (int): Size of the audience at update time.
 
     Returns:
         Union[dict, None]: The updated lookalike audience configuration.
@@ -944,7 +971,11 @@ def update_lookalike_audience(
         c.LOOKALIKE_AUD_COUNTRY: country,
         c.LOOKALIKE_AUD_SIZE_PERCENTAGE: audience_size_percentage,
         c.UPDATE_TIME: datetime.datetime.utcnow(),
+        c.UPDATED_BY: user_name,
     }
+
+    if audience_size:
+        update_doc[c.SIZE] = audience_size
 
     for item in list(update_doc):
         if update_doc[item] is None:
@@ -1157,9 +1188,9 @@ def set_delivery_job_status(
     update_doc[c.JOB_STATUS] = job_status
     update_doc[c.UPDATE_TIME] = curr_time
 
-    if job_status in (c.STATUS_SUCCEEDED, c.STATUS_FAILED):
+    if job_status in (c.AUDIENCE_STATUS_DELIVERED, c.STATUS_FAILED):
         update_doc[c.JOB_END_TIME] = curr_time
-    elif job_status == c.STATUS_IN_PROGRESS:
+    elif job_status == c.AUDIENCE_STATUS_DELIVERING:
         update_doc[c.JOB_START_TIME] = curr_time
 
     try:
@@ -1455,7 +1486,6 @@ def create_delivery_job_generic_campaigns(
     delivery_job_id: ObjectId,
     generic_campaign: list,
 ) -> Union[dict, None]:
-
     """A function to create/update delivery platform generic campaigns.
 
     Args:
@@ -1498,7 +1528,6 @@ def delete_delivery_job_generic_campaigns(
     database: DatabaseClient,
     delivery_job_ids: list,
 ) -> int:
-
     """A function to update delivery platform generic campaigns.
 
     Args:
@@ -2291,3 +2320,97 @@ def get_all_audience_customers(
         logging.error(exc)
 
     return audience_customers_docs
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def set_performance_metrics_bulk(
+    database: DatabaseClient,
+    performance_metric_docs: list,
+) -> dict:
+    """Store bulk performance metrics data.
+
+    Args:
+        database (DatabaseClient): A database client.
+        performance_metric_docs (list): A list containing performance metrics documents.
+
+    Returns:
+        dict: dict containing insert_status & list of inserted ids.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    insert_result = {"insert_status": False}
+
+    try:
+        result = collection.insert_many(performance_metric_docs, ordered=True)
+
+        if result.acknowledged:
+            insert_result["insert_status"] = True
+            insert_result["inserted_ids"] = result.inserted_ids
+
+        collection.create_index([(c.DELIVERY_JOB_ID, pymongo.ASCENDING)])
+
+        return insert_result
+    except pymongo.errors.BulkWriteError as exc:
+        for err in exc.details["writeErrors"]:
+            if err["code"] == c.DUPLICATE_ERR_CODE:
+                logging.warning(
+                    "Ignoring %s due to duplicate unique field!",
+                    str(err["op"]),
+                )
+                continue
+            logging.error(exc)
+            return insert_result
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+        return insert_result
+
+    return insert_result
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_most_recent_performance_metric_by_delivery_job(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> Union[dict, None]:
+    """Retrieve the most recent campaign performance
+    metrics associated with a given delivery job ID.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
+
+    Returns:
+        Union[dict, None]: most recent performance metric.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
+
+    # Check validity of delivery job ID
+    doc = get_delivery_job(database, delivery_job_id)
+    if not doc:
+        raise de.InvalidID(delivery_job_id)
+
+    try:
+        cursor = (
+            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+            .sort([(c.JOB_END_TIME, -1)])
+            .limit(1)
+        )
+        return cursor[0]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None

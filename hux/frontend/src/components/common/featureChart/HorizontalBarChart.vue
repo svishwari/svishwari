@@ -1,14 +1,16 @@
 <template>
   <div>
     <v-card
-      class="rounded-lg card-style"
-      maxWidth="570px"
-      minHeight="660px"
+      class="rounded-lg card-style box-shadow-5"
+      maxWidth="chartWidth"
+      minHeight="662px"
       flat
     >
-      <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+      <v-card-title
+        class="d-flex chart-style justify-space-between pb-6 pl-6 pt-5"
+      >
         <div class="mt-2">
-          <span class="d-flex align-center black--text text-decoration-none">
+          <span class="d-flex align-center neroBlack--text text-h5">
             Top 20 feature importance
           </span>
         </div>
@@ -17,6 +19,18 @@
           ref="huxChart"
           @mouseover="getCordinates($event)"
         ></div>
+        <v-card
+          tile
+          v-if="showScoreTip"
+          :style="{
+            transform: `translate(${scoreTip.xPosition}px, ${scoreTip.yPosition}px)`,
+          }"
+          class="mx-auto score-tooltip-style"
+        >
+          <div class="neroBlack--text caption">
+            {{ scoreTip.score }}
+          </div>
+        </v-card>
       </v-card-title>
       <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text>
     </v-card>
@@ -35,22 +49,42 @@ export default {
       type: Array,
       required: true,
     },
+    chartDimensions: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
+    },
   },
   data() {
     return {
-      width: 520,
+      chartWidth: "",
+      width: 560,
       height: 620,
       show: false,
+      showScoreTip: false,
+      scoreTip: {
+        score: 0,
+        xPosition: 0,
+        yPosition: 0,
+      },
       tooltip: {
         x: 0,
         y: 0,
       },
-      margin: { top: 20, right: 10, bottom: 70, left: 110 },
+      margin: { top: 20, right: 10, bottom: 70, left: 130 },
       chartData: this.value,
     }
   },
   methods: {
-    initiateHorizontalBarChart() {
+    async initiateHorizontalBarChart() {
+      await this.chartDimensions
+      this.width =
+        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
 
@@ -65,16 +99,25 @@ export default {
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
 
-      let x = d3Scale.scaleLinear().domain([0, 3]).range([0, this.width])
+      let maxValue = Math.max(...this.chartData.map((data) => data.score))
 
-      let appendElipsis = (text) =>
-        text && text.length > 20 ? text.slice(0, 19) + "..." : text
+      let x = d3Scale.scaleLinear().domain([0, maxValue]).range([0, this.width])
 
       let y = d3Scale
         .scaleBand()
         .range([0, this.height])
         .domain(this.chartData.map((d) => d.name))
         .padding(0.1)
+
+      let appendElipsis = (text) =>
+        text && text.length > 20 ? text.slice(0, 19) + "..." : text
+
+      let featureLabelHover = (srcData) => {
+        let currentFeature = this.chartData.find(
+          (data) => data.name == srcData.getAttribute("data")
+        )
+        this.tooltipDisplay(true, currentFeature)
+      }
 
       svg
         .append("g")
@@ -83,15 +126,23 @@ export default {
         .call((g) => g.selectAll(".path").attr("stroke", "#d0d0ce"))
         .attr("stroke-width", "0.2")
         .attr("stroke-opacity", "0.3")
+        .selectAll("text")
+        .attr("fill", "#4f4f4f")
+        .style("font-size", "12px")
 
       svg
         .append("g")
         .call(d3Axis.axisLeft(y).tickSize(0).tickFormat(appendElipsis))
         .call((g) => {
           g.select("path").attr("opacity", 0.1).attr("stroke", "none")
+          g.selectAll("text").attr("data", (d) => d)
         })
         .selectAll("text")
+        .attr("fill", "#4f4f4f")
+        .style("font-size", "12px")
         .style("text-anchor", "end")
+        .on("mouseover", (d) => featureLabelHover(d.srcElement))
+        .on("mouseout", () => this.tooltipDisplay(false))
 
       svg
         .append("g")
@@ -127,6 +178,7 @@ export default {
             ")"
         )
         .style("text-anchor", "middle")
+        .attr("fill", "#4f4f4f")
         .text("Score")
 
       svg
@@ -152,25 +204,29 @@ export default {
 
       let removeHoverEffects = () => {
         d3Select.selectAll("rect").style("fill-opacity", "1")
+        this.showTip = false
         d3Select.select(this.$refs.huxChart).select("circle").remove()
+        this.showScoreTip = false
         this.tooltipDisplay(false)
       }
 
       let changeHoverCirclePosition = (data) => {
         let featureData = data
-        featureData.xPosition = x(data.score)
-        featureData.yPosition = y(data.name) + 12
+        this.scoreTip.xPosition = x(data.score)
+        this.scoreTip.yPosition = y(data.name) + 12
+        this.scoreTip.score = data.score
         this.tooltipDisplay(true, featureData)
         svg
           .append("circle")
           .classed("removeableCircle", true)
-          .attr("cx", featureData.xPosition)
-          .attr("cy", featureData.yPosition)
+          .attr("cx", this.scoreTip.xPosition)
+          .attr("cy", this.scoreTip.yPosition)
           .attr("r", 4)
           .style("stroke", "#00A3E0")
           .style("stroke-opacity", "1")
           .style("fill", "white")
           .style("pointer-events", "none")
+        this.showScoreTip = true
       }
     },
 
@@ -190,9 +246,15 @@ export default {
       d3Select.select(this.$refs.huxChart).select("svg").remove()
       this.initiateHorizontalBarChart()
     },
+    chartDimensions: function () {
+      this.chartWidth = this.chartDimensions.width + "px"
+      this.width =
+        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
+    },
   },
 
   mounted() {
+    this.chartWidth = this.chartDimensions.width + "px"
     this.initiateHorizontalBarChart()
   },
 }
@@ -202,8 +264,23 @@ export default {
 .card-style {
   margin-bottom: 40px;
   height: 550px;
-  .chart-section {
-    margin-bottom: -20px;
+  .chart-style {
+    position: relative;
+    .chart-section {
+      margin-bottom: -20px;
+    }
+    .score-tooltip-style {
+      @extend .box-shadow-3;
+      border-radius: 0px;
+      padding: 7px 14px 12px 14px;
+      max-width: 61px;
+      height: 30px;
+      z-index: 1;
+      border-radius: 0px !important;
+      position: absolute;
+      left: 159px;
+      top: 52px;
+    }
   }
 }
 </style>

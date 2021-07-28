@@ -1,12 +1,17 @@
 import { Response } from "miragejs"
+import moment from "moment"
+
 import { audienceInsights } from "./factories/audiences"
 import { customersOverview } from "./factories/customers"
+import { me } from "./factories/me"
 import {
   destinationsConstants,
   destinationsDataExtensions,
 } from "./factories/destination"
 import idrOverview from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
+import featureData from "./factories/featureData.json"
+import liftData from "./factories/liftChartData.json"
 
 export const defineRoutes = (server) => {
   // data sources
@@ -72,20 +77,43 @@ export const defineRoutes = (server) => {
   server.post("/engagements", (schema, request) => {
     const requestData = JSON.parse(request.requestBody)
 
+    let errorResponse
+
+    // validations: duplicate name
     let duplicateLength = schema.engagements.where({
       name: requestData.name,
     }).models.length
 
     if (duplicateLength > 0) {
-      return new Response(
-        400,
-        {},
-        {
-          message: "Name already exists.",
-        }
-      )
+      errorResponse = {
+        message: "Name already exists.",
+      }
     }
-    return schema.engagements.create(requestData)
+
+    // validations: null as description
+    if (requestData.description === null) {
+      errorResponse = {
+        description: ["Field may not be null."],
+      }
+    }
+
+    if (errorResponse) {
+      const errorCode = 400
+      const errorHeaders = {}
+      return new Response(errorCode, errorHeaders, errorResponse)
+    }
+
+    const now = moment().toJSON()
+
+    const attrs = {
+      ...requestData,
+      create_time: () => now,
+      created_by: me.full_name(),
+      update_time: () => now,
+      updated_by: me.full_name(),
+    }
+
+    return server.create("engagement", attrs)
   })
 
   server.post("/engagements/:id", (schema) => {
@@ -151,9 +179,35 @@ export const defineRoutes = (server) => {
     return new Response(code, headers, body)
   })
 
-  server.post("/engagements/:id/audience/:audienceId/deliver", () => {
-    return { message: "Successfully created delivery jobs" }
-  })
+  server.post(
+    "/engagements/:id/audience/:audienceId/deliver",
+    (schema, request) => {
+      const engagementId = request.params.id
+      const audienceId = request.params.audienceId
+
+      const engagement = schema.engagements.find(engagementId)
+
+      const attrs = {
+        status: "Delivering",
+        audiences: engagement.audiences.map((audience) => {
+          if (audience.id === audienceId) {
+            audience.destinations = audience.destinations.map((destination) => {
+              destination.latest_delivery = {
+                update_time: moment().toJSON(),
+                status: "Delivering",
+              }
+              return destination
+            })
+          }
+          return audience
+        }),
+      }
+
+      engagement.update(attrs)
+
+      return { message: "Successfully created delivery jobs" }
+    }
+  )
 
   server.post(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/deliver",
@@ -164,16 +218,59 @@ export const defineRoutes = (server) => {
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
     (schema) => {
-      return schema.campaigns.all()
+      return schema.campaignOptions.all()
     }
   )
   server.put(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
-    () => {
+    (schema, request) => {
+      const engagementId = request.params.id
+      const audienceId = request.params.audienceId
+      const destinationId = request.params.destinationId
+      const engagement = schema.engagements.find(engagementId)
+      const requestData = JSON.parse(request.requestBody)
+
+      engagement.campaign_mappings[destinationId] = requestData.campaigns
+      const audience = engagement.campaign_performance[
+        "adsPerformance"
+      ].audience_performance.filter((aud) => aud.id === audienceId)
+      if (audience.length === 1) {
+        const destination = audience[0].destinations.filter(
+          (dest) => dest.id === destinationId
+        )
+        if (destination.length === 1) {
+          destination[0].campaigns = []
+          const exclude = new Set(["id", "name", "destinations"])
+          const countData = Object.fromEntries(
+            Object.entries(audience[0]).filter(
+              (entry) => !exclude.has(entry[0])
+            )
+          )
+          Object.entries(countData).forEach(
+            (entry) => (destination[0][entry[0]] = entry[1])
+          )
+          destination[0].is_mapped = true
+          const campaigns = requestData.campaigns.map((camp) => {
+            const mockCamp = { ...countData }
+            mockCamp["id"] = camp.id
+            mockCamp["name"] = camp.name
+            return mockCamp
+          })
+          destination[0].campaigns.push(...campaigns)
+        }
+      }
       return { message: "Successfully created mappings" }
     }
   )
-
+  server.get(
+    "/engagements/:id/audience/:audienceId/destination/:destinationId/campaigns",
+    (schema, request) => {
+      const engagementId = request.params.id
+      const destinationId = request.params.destinationId
+      const engagement = schema.engagements.find(engagementId)
+      return engagement.campaign_mappings[destinationId] || []
+    }
+  )
   server.get("/engagements/:id/delivery-history", (schema, request) => {
     const id = request.params.id
     const engagement = schema.engagements.find(id)
@@ -200,21 +297,45 @@ export const defineRoutes = (server) => {
     "/engagements/:id/audience-performance/email",
     (schema, request) => {
       const id = request.params.id
-      const response = schema.audiencePerformances.find(id)
-      return response["email_audience_performance"]
+      const engagement = schema.engagements.find(id)
+      engagement.campaign_performance["emailPerformance"] =
+        engagement.campaign_performance["emailPerformance"] ||
+        schema.audiencePerformances.find(id)["email_audience_performance"]
+      return engagement.campaign_performance["emailPerformance"]
     }
   )
   server.get(
     "/engagements/:id/audience-performance/display-ads",
     (schema, request) => {
       const id = request.params.id
-      const response = schema.audiencePerformances.find(id)
-      return response["displayads_audience_performance"]
+      const engagement = schema.engagements.find(id)
+      engagement.campaign_performance["adsPerformance"] =
+        engagement.campaign_performance["adsPerformance"] ||
+        schema.audiencePerformances.find(id)["displayads_audience_performance"]
+      return engagement.campaign_performance["adsPerformance"]
     }
   )
 
   // models
   server.get("/models")
+
+  server.get("/models/:id/overview", (schema, request) => {
+    const id = request.params.id
+    const data = schema.models.find(id)
+    data.attrs.performance_metric = {
+      recall: 0.65,
+      current_version: "3.1.2",
+      rmse: -1,
+      auc: 0.79,
+      precision: 0.82,
+    }
+    data.attrs.feature_importance = featureData.featureList
+    data.attrs.lift_data = liftData.lift_data
+    data.attrs.model_name = data.attrs.name
+    data.attrs.model_type = data.attrs.type
+
+    return data
+  })
 
   // customers
   server.get("/customers")
@@ -234,8 +355,7 @@ export const defineRoutes = (server) => {
   // identity resolution
   server.get("/idr/overview", () => idrOverview)
 
-  // notification
-  // server.get("/notifications")
+  // notifications
   server.get("/notifications", (schema, request) => {
     const notifications = schema.notifications.all()
     return notifications.slice(0, request.queryParams.batch_size)
@@ -265,7 +385,18 @@ export const defineRoutes = (server) => {
         return schema.destinations.find(id)
       })
     }
-    return schema.audiences.create(requestData)
+
+    const now = moment().toJSON()
+
+    const attrs = {
+      ...requestData,
+      create_time: () => now,
+      created_by: me.full_name(),
+      update_time: () => now,
+      updated_by: me.full_name(),
+    }
+
+    return server.create("audience", attrs)
   })
 
   server.post("/audiences/:id/deliver", () => {

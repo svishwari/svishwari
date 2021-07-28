@@ -52,7 +52,7 @@
         v-if="audience.lookalike_audience"
       >
         <template #subtitle-extended>
-          <span class="mr-2">
+          <span class="mr-2 pt-2">
             <span class="original-audience-text">
               {{ audience.name }}
             </span>
@@ -181,7 +181,7 @@
               <tooltip>
                 <template #label-content>
                   <span class="font-weight-semi-bold">
-                    {{ getFormattedValue(insightInfoItems[item]) }}
+                    {{ getFormattedValue(insightInfoItems[item]) | Empty }}
                   </span>
                 </template>
                 <template #hover-content>
@@ -193,6 +193,12 @@
         </div>
       </v-card>
     </div>
+    <v-row class="px-15 mt-2">
+      <v-col cols="3">
+        <income-chart></income-chart>
+      </v-col>
+    </v-row>
+
     <v-divider class="my-8"></v-divider>
     <EmptyStateChart>
       <template #chart-image>
@@ -241,6 +247,7 @@ import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
+import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 
 export default {
   name: "AudienceInsight",
@@ -257,6 +264,7 @@ export default {
     AttachEngagement,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
+    IncomeChart,
   },
   watch: {
     selectedDestinations: {
@@ -619,8 +627,5 @@ export default {
   font-size: 14px;
   line-height: 19px;
   color: var(--v-primary-base) !important;
-}
-.card-width {
-  width: 156px !important;
 }
 </style>

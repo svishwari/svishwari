@@ -25,6 +25,7 @@ from huxunify.api.route.utils import (
     secured,
     add_view_to_blueprint,
     api_error_handler,
+    get_token_from_request,
 )
 from huxunify.api.data_connectors.cdp import (
     get_customer_profiles,
@@ -77,6 +78,7 @@ class CustomerOverview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a customer data overview.
 
@@ -89,7 +91,8 @@ class CustomerOverview(SwaggerView):
         """
 
         # TODO - resolve post demo, set unique IDs as total customers.
-        customers = get_customers_overview()
+        token_response = get_token_from_request(request)
+        customers = get_customers_overview(token_response[0])
 
         if (
             api_c.TOTAL_UNIQUE_IDS in customers
@@ -160,6 +163,7 @@ class CustomerPostOverview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self) -> Tuple[dict, int]:
         """Retrieves the overview of customer data with the requested filters applied.
 
@@ -175,7 +179,8 @@ class CustomerPostOverview(SwaggerView):
         """
 
         # TODO - cdm to return single field
-        customers = get_customers_overview(request.json)
+        token_response = get_token_from_request(request)
+        customers = get_customers_overview(token_response[0], request.json)
 
         if (
             api_c.TOTAL_RECORDS in customers
@@ -212,6 +217,7 @@ class CustomerDashboardOverview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a customer data dashboard overview.
 
@@ -222,9 +228,11 @@ class CustomerDashboardOverview(SwaggerView):
         Returns:
             Tuple[dict, int] dict of Customer data overview and http code
         """
-
+        token_response = get_token_from_request(request)
         return (
-            CustomerOverviewSchema().dump(get_customers_overview()),
+            CustomerOverviewSchema().dump(
+                get_customers_overview(token_response[0])
+            ),
             HTTPStatus.OK,
         )
 
@@ -255,6 +263,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
@@ -266,8 +275,11 @@ class Customersview(SwaggerView):
             Tuple[dict, int] dict of Customers and http code
         """
 
+        # get token
+        token_response = get_token_from_request(request)
+
         return (
-            CustomersSchema().dump(get_customer_profiles()),
+            CustomersSchema().dump(get_customer_profiles(token_response[0])),
             HTTPStatus.OK,
         )
 
@@ -322,9 +334,11 @@ class CustomerProfileSearch(SwaggerView):
             Tuple[dict, int]: dict of customer profile and http code
 
         """
+        token_response = get_token_from_request(request)
+
         return (
             redact_fields(
-                get_customer_profile(hux_id),
+                get_customer_profile(token_response[0], hux_id),
                 api_c.CUSTOMER_PROFILE_REDACTED_FIELDS,
             ),
             HTTPStatus.OK.value,
@@ -476,6 +490,7 @@ class CustomerGeoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def get(self) -> Tuple[list, int]:
         """Retrieves a Customer profiles geographical insights.
 
@@ -544,6 +559,7 @@ class CustomerDemoVisualView(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
+    @api_error_handler()
     def post(self) -> Tuple[dict, int]:
         """Retrieves a Demographical customer insights.
 

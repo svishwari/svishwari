@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
@@ -145,6 +145,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      getDestinations: "destinations/getAll",
+    }),
+
     isAdded(id) {
       return Boolean(
         this.selectedDestinations.filter((destination) => destination.id === id)
@@ -171,6 +175,12 @@ export default {
       )
       this.selectedDestinations.splice(index, 1)
     },
+  },
+
+  mounted() {
+    this.loading = true
+    this.getDestinations()
+    this.loading = false
   },
 }
 </script>

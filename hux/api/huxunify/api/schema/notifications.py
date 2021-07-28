@@ -4,12 +4,13 @@ Schemas for the notifications API
 
 from flask_marshmallow import Schema
 from marshmallow import post_dump
-from marshmallow.fields import Str, DateTime
+from marshmallow.fields import Str
 from marshmallow.validate import OneOf
 
 from huxunifylib.database import constants as db_c
 
 from huxunify.api import constants as api_c
+from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
 class NotificationSchema(Schema):
@@ -27,7 +28,7 @@ class NotificationSchema(Schema):
         required=True,
         example="Facebook Delivery Stopped",
     )
-    created = DateTime(
+    created = DateTimeWithZ(
         attribute="created",
         required=True,
         allow_none=False,
@@ -43,6 +44,7 @@ class NotificationSchema(Schema):
                     api_c.DELIVERY_TAG,
                     api_c.ORCHESTRATION_TAG,
                     api_c.CUSTOMERS_TAG,
+                    api_c.CDP_DATA_SOURCES_TAG,
                 ]
             )
         ],
@@ -53,7 +55,7 @@ class NotificationSchema(Schema):
     @post_dump
     # pylint: disable=unused-argument
     # pylint: disable=no-self-use
-    def post_serialize(self, data: dict, many=False) -> dict:
+    def post_serialize(self, data: dict, many: bool = False) -> dict:
         """process the schema before serializing.
 
         Args:
@@ -61,7 +63,7 @@ class NotificationSchema(Schema):
             many (bool): If there are many to process
 
         Returns:
-            Response: Returns a notification object
+            dict: Returns a notification object
 
         """
         # change notification type and category to title case

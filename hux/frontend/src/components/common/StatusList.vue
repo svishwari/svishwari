@@ -221,9 +221,18 @@ import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import Tooltip from "./Tooltip.vue"
 import HuxAlert from "@/components/common/HuxAlert.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 
 export default {
-  components: { Logo, Status, Tooltip, HuxAlert },
+  components: {
+    Logo,
+    Status,
+    Tooltip,
+    HuxAlert,
+    ConfirmModal,
+    EditDeliverySchedule,
+  },
 
   name: "StatusList",
 
@@ -313,6 +322,24 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
     }),
 
+    closeModal() {
+      this.showConfirmModal = false
+    },
+
+    closeDrawer() {
+      this.editDeliveryDrawer = false
+    },
+
+    onEditDeliverySchedule(destination) {
+      this.showConfirmModal = true
+      this.selectedDestination = destination
+    },
+
+    openEditDeliveryScheduleDrawer() {
+      this.closeModal()
+      this.editDeliveryDrawer = true
+    },
+
     getSize(value) {
       return getApproxSize(value)
     },
@@ -330,6 +357,9 @@ export default {
           break
         case "add a destination":
           this.triggerAddDestination(engagementId, audienceId)
+          break
+        case "remove audience":
+          this.$emit("removeAudience", this.audience)
           break
         default:
           break

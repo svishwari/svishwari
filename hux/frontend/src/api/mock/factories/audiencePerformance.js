@@ -96,6 +96,7 @@ const audiencePerformanceMock = {
                 ? faker.finance.amount(1, 100, 3) / 100
                 : 0,
             }
+            if (!is_mapped) fakeDestinationRollup["campaigns"] = []
             destinationArray.push(fakeDestinationRollup)
           }
           return destinationArray

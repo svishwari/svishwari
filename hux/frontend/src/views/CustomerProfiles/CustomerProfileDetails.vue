@@ -36,10 +36,10 @@
                 {{ this.singleCustomer.last_name }}
               </span>
             </v-card-title>
-            <v-card-text class="justify-center title-text py-4">
+            <v-card-text class="justify-center title-text py-3">
               <icon type="smile" :size="16" color="blue" />
               <div>Hux ID</div>
-              <span class="id-size">{{ singleCustomer.hux_id }} </span>
+              <span class="sample-card-text">{{ singleCustomer.hux_id }} </span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -53,7 +53,7 @@
             class="rounded-lg card-info-wrapper card-shadow no-background"
           >
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
-              <div class="title-text pb-1">
+              <div class="text-caption gray--text pb-1">
                 {{ data.title }}
                 <Tooltip v-if="data.hoverTooltip" positionTop>
                   <template #label-content>
@@ -113,7 +113,7 @@
       <v-row>
         <v-col cols="5">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
-            <v-card-title class="py-5 card-heading">
+            <v-card-title class="py-3 card-heading">
               {{ cardTitles[0].title }}
               <v-icon size="17" color="neroBlack" class="ml-2">
                 mdi-lock-outline
@@ -175,7 +175,7 @@
         </v-col>
         <v-col cols="3">
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
-            <v-card-title class="card-heading py-5">
+            <v-card-title class="card-heading py-3">
               {{ cardTitles[1].title }}
             </v-card-title>
             <v-card-text class="title-text">
@@ -195,7 +195,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="4" class="matix-card-space">
           <identity-chart></identity-chart>
         </v-col>
       </v-row>
@@ -536,7 +536,7 @@ export default {
 .matix-card-space {
   padding-right: 5px !important;
 }
-.id-size {
-  font-size: 14px;
+::v-deep .v-input {
+  @extend .sample-card-text;
 }
 </style>

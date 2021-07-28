@@ -30,7 +30,12 @@
                   </div>
                 </div>
                 <extensionInactive1 v-if="!isActive" />
-                <div class="label primary--text mt-2">New data extension</div>
+                <div
+                  class="label primary--text"
+                  :class="[isActive ? 'mt-2' : 'mt-1']"
+                >
+                  New data extension
+                </div>
               </div>
             </div>
             <diV
@@ -45,7 +50,10 @@
                   </div>
                 </div>
                 <extensionInactive2 v-if="isActive" />
-                <div class="label primary--text mt-2">
+                <div
+                  class="label primary--text"
+                  :class="[!isActive ? 'mt-2' : 'mt-1']"
+                >
                   Existing data extension
                 </div>
               </div>
@@ -336,6 +344,13 @@ export default {
     padding: 11px;
   }
   .add-destination-wrapper {
+    .check-wrap {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--v-secondary-base);
+      padding: 11px;
+    }
     .extension-type {
       height: 100px;
       width: 196px;

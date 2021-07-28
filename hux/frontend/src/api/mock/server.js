@@ -18,7 +18,10 @@ import modelFactory from "./factories/model"
 import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
 import deliveryFactory from "./factories/delivery"
-import campaignFactory from "./factories/campaigns"
+import {
+  CampaignMappingOptionsFactory,
+  CampaignFactory,
+} from "./factories/campaigns"
 import { notification as notificationFactory } from "./factories/notifications"
 
 export function makeServer({ environment = "development" } = {}) {
@@ -39,6 +42,7 @@ export function makeServer({ environment = "development" } = {}) {
     dataExtension: Model,
     deliveryFactory: Model,
     campaign: Model,
+    campaignOption: Model,
     notification: Model,
   }
 
@@ -53,7 +57,8 @@ export function makeServer({ environment = "development" } = {}) {
     audiencePerformance: Factory.extend(audiencePerformanceFactory),
     dataExtension: Factory.extend(dataExtensionFactory),
     delivery: Factory.extend(deliveryFactory),
-    campaign: Factory.extend(campaignFactory),
+    campaignOption: Factory.extend(CampaignMappingOptionsFactory),
+    campaign: Factory.extend(CampaignFactory),
     notification: Factory.extend(notificationFactory),
   }
 

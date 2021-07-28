@@ -1,19 +1,6 @@
 <template>
   <div>
     <v-card
-      v-if="showTooltip"
-      tile
-      :style="{
-        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
-        'border-radius': '0px !important',
-      }"
-      class="mx-auto score-tooltip-style"
-    >
-      <div class="bar-hover">
-        {{ sourceInput.score }}
-      </div>
-    </v-card>
-    <v-card
       tile
       v-if="showTooltip"
       :style="{
@@ -22,7 +9,7 @@
       }"
       class="mx-auto description-tooltip-style"
     >
-      <div class="bar-hover">
+      <div class="bar-hover neroBlack--text">
         <span class="feature-name">
           {{ sourceInput.name }}
         </span>
@@ -76,7 +63,7 @@ export default {
 }
 
 .card-padding {
-  padding: 10px 20px 20px 20px;
+  padding: 7px 20px 20px 20px;
 }
 
 .description-tooltip-style {
@@ -84,8 +71,8 @@ export default {
   border-radius: 0px;
   max-width: 230px;
   height: auto;
-  top: -692px;
-  left: -695px;
+  top: -620px;
+  left: -230px;
   z-index: 1;
   .bar-hover {
     @extend .card-padding;
@@ -97,14 +84,5 @@ export default {
       margin-top: 8px;
     }
   }
-}
-
-.score-tooltip-style {
-  @extend .description-tooltip-style;
-  max-width: 61px;
-  height: 34px;
-  top: -650px;
-  left: -410px;
-  z-index: 1;
 }
 </style>
