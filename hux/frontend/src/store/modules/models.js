@@ -1,3 +1,4 @@
+import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
 
@@ -15,7 +16,9 @@ const getters = {
 
 const mutations = {
   SET_ALL(state, items) {
-    state.items = items
+    items.forEach((item) => {
+      Vue.set(state.items, item.id, item)
+    })
   },
 
   SET_OVERVIEW(state, data) {
