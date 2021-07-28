@@ -123,17 +123,17 @@
         </template>
       </MetricCard>
     </div>
-    <div class="px-15 my-1 mb-4 pt-6">
-      <v-col md="9" class="pa-0">
+    <div
+      class="px-15 my-1 mb-4 pt-6"
+      v-if="audience && audience.engagements && audience.engagements.length > 0"
+    >
+      <v-col :md="audience.lookalike_audience ? 9 : 12" class="pa-0">
         <delivery-overview
           :sections="audience && audience.engagements"
           sectionType="engagement"
           deliveriesKey="deliveries"
           @onOverviewSectionAction="triggerOverviewAction($event)"
           @onOverviewDestinationAction="triggerDestinationAction($event)"
-          v-if="
-            audience && audience.engagements && audience.engagements.length > 0
-          "
         >
           <template #title-left>
             <span class="text-h5">Engagement &amp; delivery overview</span>
@@ -260,13 +260,13 @@ export default {
   },
   watch: {
     selectedDestinations: {
-      handler: (_) => {
+      handler: () => {
         // TODO API Integration pending as API discovery is pending.
       },
       deep: true,
     },
     selectedEngagements: {
-      handler: function (_) {
+      handler: function () {
         // TODO API Integration pending as API discovery is pending.
       },
       deep: true,
