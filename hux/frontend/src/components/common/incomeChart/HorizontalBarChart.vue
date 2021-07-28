@@ -132,6 +132,11 @@ export default {
             .attr("stroke-opacity", "0.3")
         )
 
+      var ticks = d3Select.selectAll(".tick text")
+
+      ticks.each(function (_, i) {
+        if (i % 2 != 0) d3Select.select(this).remove()
+      })
       svg
         .selectAll("myRect")
         .data(this.chartData)
