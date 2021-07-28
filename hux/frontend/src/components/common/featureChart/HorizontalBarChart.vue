@@ -6,9 +6,7 @@
       minHeight="662px"
       flat
     >
-      <v-card-title
-        class="chart-style pb-6 pl-6 pt-5"
-      >
+      <v-card-title class="chart-style pb-6 pl-6 pt-5">
         <div class="mt-2">
           <span class="neroBlack--text text-h5">
             Top 20 feature importance
@@ -84,13 +82,11 @@ export default {
     async initiateHorizontalBarChart() {
       await this.chartDimensions
       let currentWidth = this.chartDimensions.width
-      this.width = currentWidth == 0 ? 560 : currentWidth 
+      this.width = currentWidth == 0 ? 560 : currentWidth
 
-      if (currentWidth < 519)
-      this.width = 470
-      if (currentWidth < 426)
-      this.width = 870
-        
+      if (currentWidth < 519) this.width = 470
+      if (currentWidth < 426) this.width = 870
+
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
 
@@ -253,7 +249,7 @@ export default {
       this.initiateHorizontalBarChart()
     },
     chartDimensions: function () {
-      console.log('lolz')
+      console.log("lolz")
       this.chartWidth = this.chartDimensions.width + "px"
       this.width =
         this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width

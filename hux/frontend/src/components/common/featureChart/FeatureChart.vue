@@ -1,11 +1,11 @@
 <template>
   <div ref="chartBox" class="container">
-      <horizontal-bar-chart
-        v-model="features"
-        @cordinates="getCordinates"
-        @tooltipDisplay="toolTipDisplay"
-        :chartDimensions="chartDimensions"
-      />
+    <horizontal-bar-chart
+      v-model="features"
+      @cordinates="getCordinates"
+      @tooltipDisplay="toolTipDisplay"
+      :chartDimensions="chartDimensions"
+    />
     <bar-chart-tooltip
       :position="{
         x: tooltip.x,
