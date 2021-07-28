@@ -27,6 +27,7 @@ api/test_core.tavern.yaml .                                                     
 Tavern supports access to external functions in a python script as long as the script is part of PYTHONPATH environment variable when executing the test.
 
 PYTHONPATH environment variable can be set on a terminal session depending on the environment as shown below.
+
 #### Windows
 ```buildoutcfg
 SET PYTHONPATH=%PYTHONPATH%;<absolute_path_to_script>
