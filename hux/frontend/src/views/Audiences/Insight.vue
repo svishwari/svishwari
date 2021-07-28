@@ -169,7 +169,10 @@
               </div>
             </template>
             <template #empty-deliveries>
-              Nothing to show here yet. Add an engagement.
+              <div class="mb-16">
+                This engagement has no destinations yet. Add destinations in the
+                submenu located in the right corner above.
+              </div>
             </template>
           </delivery-overview>
         </v-col>
