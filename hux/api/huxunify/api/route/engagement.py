@@ -367,8 +367,8 @@ class SetEngagement(SwaggerView):
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
             (
-                f"{user_name} created a new engagement named "
-                f'"{engagement[db_c.NAME]}".'
+                f'New engagement named "{engagement[db_c.NAME]}" '
+                f"created by {user_name}."
             ),
             api_c.ENGAGEMENT_TAG,
         )
@@ -477,7 +477,7 @@ class UpdateEngagement(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'{user_name} updated engagement "{engagement[db_c.NAME]}".',
+            f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
         )
         return (
@@ -545,7 +545,10 @@ class DeleteEngagement(SwaggerView):
             create_notification(
                 database,
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-                f'{user_name} deleted engagement "{engagement[db_c.NAME]}".',
+                (
+                    f'Engagement "{engagement[db_c.NAME]}" '
+                    f"deleted by {user_name}."
+                ),
                 api_c.ENGAGEMENT_TAG,
             )
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
@@ -662,8 +665,8 @@ class AddAudienceEngagement(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f'{user_name} added audience "{audience_name}" '
-                    f'to engagement "{engagement[db_c.NAME]}".'
+                    f'Audience "{audience_name}" added to engagement '
+                    f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
             )
@@ -760,8 +763,8 @@ class DeleteAudienceEngagement(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_INFORMATIONAL,
                 (
-                    f'{user_name} removed audience "{audience_name}" '
-                    f'from engagement "{engagement[db_c.NAME]}".'
+                    f'Audience "{audience_name}" removed from engagement '
+                    f'"{engagement[db_c.NAME]}" by {user_name}.'
                 ),
                 api_c.ENGAGEMENT_TAG,
             )

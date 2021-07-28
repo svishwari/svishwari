@@ -389,7 +389,6 @@ DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
 SPEND = "spend"
 
-
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
 CDP_DATA_SOURCE_CATEGORY = "category"
@@ -445,6 +444,8 @@ AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
 LOOKALIKE_AUDIENCES = "lookalike-audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
+LOOKALIKEABLE = "lookalikeable"
+IS_LOOKALIKE = "is_lookalike"
 
 STUB_INSIGHTS_RESPONSE = {
     TOTAL_CUSTOMERS: 121321321,
@@ -477,6 +478,7 @@ MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
+MODEL_ID = "model_id"
 MODEL_NAME_PARAMS = [
     {
         "name": MODEL_NAME,
@@ -497,6 +499,16 @@ MODEL_TYPE_PARAMS = [
         "example": "ltv",
     }
 ]
+MODEL_ID_PARAMS = [
+    {
+        "name": MODEL_ID,
+        "description": "Model id",
+        "type": "integer",
+        "in": "path",
+        "required": True,
+        "example": "1",
+    }
+]
 PURCHASE = "purchase"
 LTV = "ltv"
 RMSE = "rmse"
@@ -508,7 +520,8 @@ PERFORMANCE_METRIC = "performance_metric"
 FEATURE_IMPORTANCE = "feature_importance"
 SCORE = "score"
 SUPPORTED_MODELS = {
-    LTV: {
+    1: {
+        MODEL_TYPE: LTV,
         NAME: "Lifetime value",
         DESCRIPTION: "Predicts the lifetime value of a customer based on models",
         CURRENT_VERSION: "3.1.2",
@@ -517,7 +530,8 @@ SUPPORTED_MODELS = {
         PRECISION: -1,
         RECALL: -1,
     },
-    UNSUBSCRIBE: {
+    2: {
+        MODEL_TYPE: UNSUBSCRIBE,
         NAME: "Propensity to Unsubscribe",
         DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
         CURRENT_VERSION: "3.1.2",
@@ -526,7 +540,8 @@ SUPPORTED_MODELS = {
         PRECISION: 0.82,
         RECALL: 0.65,
     },
-    PURCHASE: {
+    3: {
+        MODEL_TYPE: PURCHASE,
         NAME: "Propensity to Purchase",
         DESCRIPTION: "Propensity of a customer making purchase after receiving an email ",
         CURRENT_VERSION: "3.1.2",
@@ -575,6 +590,7 @@ CUSTOMERS_TAG = "customers"
 CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
+CUSTOMERS_API_HEADER_KEY = "x-api-key"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"

@@ -25,6 +25,7 @@ from huxunify.api.schema.orchestration import (
     AudiencePostSchema,
     LookalikeAudiencePostSchema,
     LookalikeAudienceGetSchema,
+    is_audience_lookalikeable,
 )
 from huxunify.api.schema.engagement import (
     weight_delivery_status,
@@ -42,6 +43,7 @@ from huxunify.api.route.utils import (
     get_user_name,
     api_error_handler,
     validate_destination_id,
+    get_token_from_request,
 )
 
 # setup the orchestration blueprint
@@ -86,6 +88,17 @@ class AudienceView(SwaggerView):
     Audience view class
     """
 
+    parameters = [
+        {
+            "name": api_c.LOOKALIKEABLE,
+            "description": "Only return audiences that are lookalikeable",
+            "in": "query",
+            "type": "string",
+            "required": False,
+            "default": False,
+        },
+    ]
+
     responses = {
         HTTPStatus.OK.value: {
             "description": "List of all Audiences.",
@@ -124,7 +137,10 @@ class AudienceView(SwaggerView):
         }
 
         # get customer sizes
-        customer_size_dict = get_customers_count_async(audiences)
+        token_response = get_token_from_request(request)
+        customer_size_dict = get_customers_count_async(
+            token_response[0], audiences
+        )
 
         # process each audience object
         for audience in audiences:
@@ -143,6 +159,16 @@ class AudienceView(SwaggerView):
             )
 
             audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
+            audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
+        # if lookalikeable flag was passed, filter out the audiences
+        # that are not lookalikeable.
+        if request.args.get(api_c.LOOKALIKEABLE, False):
+            audiences = [
+                x
+                for x in audiences
+                if x[api_c.LOOKALIKEABLE] == api_c.STATUS_ACTIVE
+            ]
 
         return (
             jsonify(AudienceGetSchema().dump(audiences, many=True)),
@@ -205,6 +231,8 @@ class AudienceGetView(SwaggerView):
         if not ObjectId.is_valid(audience_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        token_response = get_token_from_request(request)
+
         database = get_db_client()
 
         # get the audience
@@ -257,7 +285,9 @@ class AudienceGetView(SwaggerView):
         )
 
         # get live audience size
-        customers = get_customers_overview(audience[api_c.AUDIENCE_FILTERS])
+        customers = get_customers_overview(
+            token_response[0], audience[api_c.AUDIENCE_FILTERS]
+        )
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
@@ -265,6 +295,7 @@ class AudienceGetView(SwaggerView):
 
         # TODO - HUS-436
         audience[db_c.LOOKALIKE_AUDIENCE_COLLECTION] = []
+        audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         return (
             AudienceGetSchema(unknown=INCLUDE).dump(audience),
@@ -416,8 +447,8 @@ class AudiencePostView(SwaggerView):
                 database,
                 db_c.NOTIFICATION_TYPE_SUCCESS,
                 (
-                    f"{user_name} added a new audience named "
-                    f'"{audience_doc[db_c.NAME]}".'
+                    f'New audience named "{audience_doc[db_c.NAME]}" '
+                    f"added by {user_name}."
                 ),
                 api_c.ORCHESTRATION_TAG,
             )
@@ -444,9 +475,9 @@ class AudiencePostView(SwaggerView):
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
-                        f"{user_name} added audience "
-                        f'"{audience_doc[db_c.NAME]}" to engagement '
-                        f'"{engagement[db_c.NAME]}".'
+                        f'Audience "{audience_doc[db_c.NAME]}" '
+                        f'added to engagement "{engagement[db_c.NAME]}" '
+                        f"by {user_name}."
                     ),
                     api_c.ORCHESTRATION_TAG,
                 )
@@ -560,7 +591,7 @@ class AudiencePutView(SwaggerView):
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_INFORMATIONAL,
-            f'{user_name} updated audience "{audience_doc[db_c.NAME]}".',
+            f'Audience "{audience_doc[db_c.NAME]}" updated by {user_name}.',
             api_c.ORCHESTRATION_TAG,
         )
         # TODO : attach the audience to each of the engagements
@@ -610,6 +641,20 @@ class AudienceRules(SwaggerView):
                 "model_scores": {
                     "propensity_to_unsubscribe": {
                         "name": "Propensity to unsubscribe",
+                        "type": "range",
+                        "min": 0.0,
+                        "max": 1.0,
+                        "steps": 0.05,
+                    },
+                    "ltv_predicted": {
+                        "name": "Predicted lifetime value",
+                        "type": "range",
+                        "min": 0,
+                        "max": 100000,
+                        "steps": 500,
+                    },
+                    "propensity_to_purchase": {
+                        "name": "Propensity to purchase",
                         "type": "range",
                         "min": 0.0,
                         "max": 1.0,

@@ -533,6 +533,8 @@ class OrchestrationRouteTest(TestCase):
             ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
         )
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.DISABLED)
+        self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
     def test_get_audience_does_not_exist(self):
         """Test get audience that does not exist
@@ -588,6 +590,8 @@ class OrchestrationRouteTest(TestCase):
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
+            self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.DISABLED)
+            self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
     def test_update_audience(self):
         """Test update an audience.
