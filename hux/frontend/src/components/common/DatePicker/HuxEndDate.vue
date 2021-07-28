@@ -39,7 +39,10 @@
         <template>
           <div class="dropdown-menuitems">
             <v-list-item @click="onCancel()" v-if="isSubMenu">
-              <v-list-item-title class="d-flex align-center" @click="resetDate()">
+              <v-list-item-title
+                class="d-flex align-center"
+                @click="resetDate()"
+              >
                 No end date
               </v-list-item-title>
             </v-list-item>
@@ -137,8 +140,8 @@ export default {
       this.$refs.endmenu.$parent.$el.parentNode.children[0].click()
     },
     resetDate() {
-     this.$emit("on-date-select", null)
-     this.onCancel()
+      this.$emit("on-date-select", null)
+      this.onCancel()
     },
     selectDate(data) {
       this.$emit("on-date-select", data)

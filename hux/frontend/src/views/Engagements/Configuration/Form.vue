@@ -445,8 +445,8 @@ export default {
       deliverEngagement: "engagements/deliver",
     }),
 
-    changeSchedule(){
-      if(this.value.delivery_schedule){
+    changeSchedule() {
+      if (this.value.delivery_schedule) {
         this.selectedStartDate = "Select date"
         this.selectedEndDate = "Select date"
         this.disableEndDate = true
