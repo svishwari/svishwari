@@ -249,7 +249,6 @@ export default {
       this.initiateHorizontalBarChart()
     },
     chartDimensions: function () {
-      console.log("lolz")
       this.chartWidth = this.chartDimensions.width + "px"
       this.width =
         this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
