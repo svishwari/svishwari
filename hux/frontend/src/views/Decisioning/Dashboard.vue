@@ -145,7 +145,7 @@ export default {
 
   async mounted() {
     this.loading = true
-    await this.getOverview(this.$route.params.type)
+    await this.getOverview(this.$route.params.id)
     this.loading = false
   },
 }
