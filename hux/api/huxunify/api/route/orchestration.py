@@ -150,27 +150,28 @@ class AudienceView(SwaggerView):
             token_response[0], audiences
         )
 
+        # get the x number of last deliveries to provide per audiencec
+        delivery_limit = int(
+            request.args.get(
+                api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
+            )
+        )
+
         # process each audience object
         for audience in audiences:
             # workaround because DocumentDB does not allow $replaceRoot
             # do replace root by bringing the nested engagement up a level.
             audience.update(audience_dict[audience[db_c.ID]])
 
-            # remove any empty deliveries, take the last X number of deliveries
-            # only show the delivered/succeeded
+            # take the last X number of deliveries
+            # remove any empty ones, and only show the delivered/succeeded
             audience[api_c.DELIVERIES] = [
                 x
                 for x in audience[api_c.DELIVERIES]
                 if x
                 and x.get(db_c.STATUS)
                 in [api_c.DELIVERED, db_c.STATUS_SUCCEEDED]
-            ][
-                : int(
-                    request.args.get(
-                        api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
-                    )
-                )
-            ]
+            ][:delivery_limit]
 
             # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
