@@ -354,7 +354,10 @@ export default {
       addEngagementToDB: "engagements/add",
     }),
     isEngagementSelected: function (engagement) {
-      return this.selectedEngagements.includes(engagement)
+      return (
+        this.selectedEngagements.filter((eng) => eng.id === engagement.id)
+          .length > 0
+      )
     },
     goToAddNewEngagement: function () {
       this.resetNewEngagement()

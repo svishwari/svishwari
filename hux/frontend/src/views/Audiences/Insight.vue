@@ -93,7 +93,6 @@
                   :size="filterKey == 'general' ? 10 : 21"
                   class="mr-1"
                 />
-                <!-- <span class="ml-1"></span> -->
                 <tooltip
                   v-for="filter in Object.keys(appliedFilters[filterKey])"
                   :key="filter"
@@ -127,10 +126,14 @@
     <div class="px-15 my-1 mb-4 pt-6">
       <v-col md="9" class="pa-0">
         <delivery-overview
-          :sections="engagements"
+          :sections="audience && audience.engagements"
           sectionType="engagement"
+          deliveriesKey="deliveries"
           @onOverviewSectionAction="triggerOverviewAction($event)"
           @onOverviewDestinationAction="triggerDestinationAction($event)"
+          v-if="
+            audience && audience.engagements && audience.engagements.length > 0
+          "
         >
           <template #title-left>
             <span class="text-h5">Engagement &amp; delivery overview</span>
@@ -146,6 +149,7 @@
                   text-decoration-none
                   pr-0
                 "
+                @click="engagementDrawer = !engagementDrawer"
               >
                 Add to an engagement
               </v-btn>
@@ -195,24 +199,29 @@
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
-    <!-- Drawer Tight coupling -->
-    <select-destinations-drawer
-      v-model="selectedAudience"
-      :selected-audience-id="selectedAudienceId"
+    <!-- Add destination workflow -->
+    <SelectDestinationsDrawer
+      v-model="selectedDestinations"
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
-      @onSalesforce="triggerDataExtensionDrawer"
-      @addedDestination="triggerAttachDestination($event)"
+      @onSalesforceAdd="openSalesforceExtensionDrawer"
+    />
+    -->
+
+    <!-- Salesforce extension workflow -->
+    <DestinationDataExtensionDrawer
+      v-model="selectedDestinations"
+      :toggle="showSalesforceExtensionDrawer"
+      :destination="salesforceDestination"
+      @onToggle="(val) => (showSalesforceExtensionDrawer = val)"
+      @onBack="openSelectDestinationsDrawer"
     />
 
-    <destination-data-extension-drawer
-      v-model="selectedAudience"
-      :selected-destination="selectedDestination"
-      :selected-audience-id="selectedAudienceId"
-      :toggle="showDataExtensionDrawer"
-      @onToggle="(val) => (showDataExtensionDrawer = val)"
-      @updateDestination="triggerAttachDestination($event)"
-      @onBack="closeDrawers"
+    <!-- Engagement workflow -->
+    <AttachEngagement
+      v-model="engagementDrawer"
+      :finalEngagements="selectedEngagements"
+      @onEngagementChange="setSelectedEngagements"
     />
   </div>
 </template>
@@ -229,8 +238,9 @@ import EmptyStateChart from "@/components/common/EmptyStateChart"
 import Icon from "../../components/common/Icon.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import DeliveryOverview from "../../components/DeliveryOverview.vue"
-import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinations.vue"
-import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
+import AttachEngagement from "@/views/Audiences/AttachEngagement"
+import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
+import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
 
 export default {
   name: "AudienceInsight",
@@ -244,8 +254,23 @@ export default {
     Icon,
     Size,
     DeliveryOverview,
+    AttachEngagement,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
+  },
+  watch: {
+    selectedDestinations: {
+      handler: (_) => {
+        // TODO API Integration pending as API discovery is pending.
+      },
+      deep: true,
+    },
+    selectedEngagements: {
+      handler: function (_) {
+        // TODO API Integration pending as API discovery is pending.
+      },
+      deep: true,
+    },
   },
   data() {
     return {
@@ -300,59 +325,13 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
-      //TODO: Mock data for the Engagement
-      engagements: [
-        {
-          id: 1,
-          name: "Engagement 1",
-          status: "Delivering",
-          description: "This is a description of the engagement",
-          destinations: [
-            {
-              id: "4",
-              name: "Facebook",
-              type: "facebook",
-              size: 20901,
-              update_time: "2021-07-13T15:38:42.629Z",
-              status: "Delivered",
-              next_delivery: "2021-07-28T15:38:42.629Z",
-              delivery_schedule_type: "Daily",
-            },
-            {
-              id: "7878",
-              name: "Mailchimp",
-              type: "mailchimp",
-              size: 50101,
-              update_time: "2021-07-17T15:38:42.629Z",
-              status: "Not Delivered",
-              next_delivery: "2021-08-01T15:38:42.629Z",
-              delivery_schedule_type: "Daily",
-            },
-            {
-              id: "7879",
-              name: "Facebook",
-              type: "facebook",
-              size: 50101,
-              update_time: "2021-07-17T15:38:42.629Z",
-              status: "Not Delivered",
-              next_delivery: "2021-08-01T15:38:42.629Z",
-              delivery_schedule_type: "Daily",
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: "Empty Engagement",
-          status: "Draft",
-          description: "",
-          destinations: [],
-        },
-      ],
-      selectedAudience: [],
+      selectedEngagements: [],
+      selectedDestinations: [],
       showSelectDestinationsDrawer: false,
-      showDataExtensionDrawer: false,
-      selectedAudienceId: null,
-      selectedDestination: [],
+      showSalesforceExtensionDrawer: false,
+      salesforceDestination: {},
+
+      engagementDrawer: false,
     }
   },
   computed: {
@@ -361,6 +340,9 @@ export default {
     }),
     audience() {
       return this.getAudience(this.$route.params.id)
+    },
+    audienceId() {
+      return this.audience && this.audience.id
     },
     breadcrumbItems() {
       const items = [
@@ -443,6 +425,8 @@ export default {
   methods: {
     ...mapActions({
       getAudienceById: "audiences/getAudienceById",
+      getDestinations: "destinations/getAll",
+      attachAudience: "engagements/attachAudience",
     }),
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
@@ -493,17 +477,46 @@ export default {
           return item.subtitle
       }
     },
-    triggerOverviewAction(data) {
-      console.log("Section", data)
-    },
-    triggerDestinationAction(data) {
-      console.log("Destination", data)
+    triggerOverviewAction(event) {
+      switch (event.target.title.toLowerCase()) {
+        case "add a destination":
+          this.closeAllDrawers()
+          this.selectedDestinations = []
+          this.selectedEngagements = []
+          this.selectedEngagements.push(event.data)
+          this.selectedDestinations.push(
+            ...event.data.deliveries.map((dest) => ({ id: dest.id }))
+          )
+          this.showSelectDestinationsDrawer = true
+          break
+        case "delivery all":
+          break
+        case "view delivery history":
+          break
+        default:
+          break
+      }
     },
 
     // Drawer Section Starts
-    closeDrawers() {
+    setSelectedEngagements(engagementsList) {
+      this.selectedEngagements = engagementsList
+    },
+    closeAllDrawers() {
+      this.engagementDrawer = false
       this.showSelectDestinationsDrawer = false
-      this.showDataExtensionDrawer = false
+      this.showSalesforceExtensionDrawer = false
+    },
+
+    openSelectDestinationsDrawer() {
+      this.closeAllDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
+
+    openSalesforceExtensionDrawer(destination) {
+      this.closeAllDrawers()
+      this.salesforceDestination = destination
+      this.showSalesforceExtensionDrawer = true
     },
     triggerSelectDestination() {
       this.closeDrawers()
@@ -514,13 +527,32 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
+    async triggerAttachDestination(destination) {
+      const payload = {
+        audiences: [
+          {
+            id: this.audience.id,
+            destinations: destination,
+          },
+        ],
+      }
+      await this.attachAudience({
+        engagementId: this.selectedEngagementId,
+        data: payload,
+      })
+      await this.loadAudienceInsights()
+    },
+    async loadAudienceInsights() {
+      this.loading = true
+      await this.getAudienceById(this.$route.params.id)
+      this.items[1].text = this.audience.name
+      this.mapInsights()
+      await this.getDestinations()
+      this.loading = false
+    },
   },
   async mounted() {
-    this.loading = true
-    await this.getAudienceById(this.$route.params.id)
-    this.items[1].text = this.audience.name
-    this.mapInsights()
-    this.loading = false
+    await this.loadAudienceInsights()
   },
 }
 </script>

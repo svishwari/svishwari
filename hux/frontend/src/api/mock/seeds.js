@@ -154,7 +154,7 @@ const sfmc = {
   name: "Salesforce Marketing Cloud",
   type: "sfmc",
   is_enabled: true,
-  is_added: false,
+  is_added: true,
 }
 
 const adobe = {
@@ -218,7 +218,7 @@ const defaultAudience = ({ destinations = [], engagements = [] }) => {
         ],
       },
     ],
-    name: "My Audience",
+    name: "My Audience blah blah blah blah blah",
   }
 }
 
@@ -416,6 +416,8 @@ export default function (server) {
             (destination) => {
               return {
                 id: destination.id,
+                name: "Facebook",
+                type: "facebook",
                 latest_delivery: {
                   id: "60ae035b6c5bf45da27f17e5",
                   status: "Delivered",

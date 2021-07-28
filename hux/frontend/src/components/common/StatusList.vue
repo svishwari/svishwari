@@ -33,7 +33,7 @@
           class="ml-2"
           collapsed
           showLabel
-          tooltipTitle="Engagement status"
+          :tooltipTitle="`${sectionTypePrefix} status`"
         />
       </span>
       <v-menu class="menu-wrapper" bottom offset-y>
@@ -43,17 +43,14 @@
           </v-icon>
         </template>
         <v-list class="menu-list-wrapper">
-          <v-list-item-group>
+          <v-list-item-group v-model="selection" active-class="">
             <v-list-item
-              v-for="item in menuItems"
+              v-for="item in sectionActionItems(section)"
               :key="item.id"
               :disabled="!item.active"
+              @click="$emit('onSectionAction', { target: item, data: section })"
             >
-              <v-list-item-title
-                @click="
-                  $emit('onSectionAction', { target: item, item: section })
-                "
-              >
+              <v-list-item-title>
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
@@ -61,9 +58,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0" v-if="section.destinations.length > 0">
+    <v-list dense class="pa-0" v-if="section[deliveriesKey].length > 0">
       <v-list-item
-        v-for="item in section.destinations"
+        v-for="item in section[deliveriesKey]"
         :key="item.id"
         @click="toggleFocus()"
       >
@@ -104,24 +101,45 @@
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
                     <v-list-item
-                      v-for="option in destinationMenuItems"
+                      v-for="option in deliveryActionItems(item)"
                       :key="option.id"
                       :disabled="!option.active"
+                      @click="
+                        $emit('onDestinationAction', {
+                          target: option,
+                          data: item,
+                          parent: section,
+                        })
+                      "
                     >
-                      <v-list-item-title
-                        v-if="option.title === 'Deliver now'"
-                        @click="
-                          $emit('onDestinationAction', {
-                            target: option,
-                            item: item,
-                          })
-                        "
+                      <v-list-item-title v-if="!option.menu">
+                        {{ option.title }}
+                      </v-list-item-title>
+
+                      <v-menu
+                        v-model="isSubMenuOpen"
+                        v-else
+                        offset-x
+                        nudge-right="16"
+                        nudge-top="4"
                       >
-                        {{ option.title }}
-                      </v-list-item-title>
-                      <v-list-item-title v-else>
-                        {{ option.title }}
-                      </v-list-item-title>
+                        <template #activator="{ on, attrs }">
+                          <v-list-item-title v-bind="attrs" v-on="on">
+                            {{ option.title }}
+                            <v-icon> mdi-chevron-right </v-icon>
+                          </v-list-item-title>
+                        </template>
+                        <template #default>
+                          <div class="sub-menu-class white">
+                            <Logo
+                              v-if="option.menu.icon"
+                              :size="18"
+                              :type="option.menu.icon"
+                            />
+                            <span class="ml-1">{{ option.menu.title }}</span>
+                          </div>
+                        </template>
+                      </v-menu>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -181,7 +199,7 @@
       </v-list-item>
     </v-list>
     <div
-      v-if="section.destinations.length == 0"
+      v-if="section[deliveriesKey].length == 0"
       class="py-2 px-4 empty-destinations"
     >
       <slot name="empty-destinations"></slot>
@@ -212,6 +230,34 @@ export default {
   data() {
     return {
       showDeliveryAlert: false,
+      selection: null,
+      isSubMenuOpen: null,
+      lookALikeAllowedEntries: ["Facebook"],
+      engagementMenuOptions: [
+        { id: 1, title: "View delivery history", active: false },
+        { id: 2, title: "Deliver all", active: false },
+        { id: 3, title: "Add a destination", active: false },
+        { id: 5, title: "Remove engagement", active: false },
+      ],
+      destinationMenuOptions: [
+        { id: 2, title: "Create lookalike", active: false },
+        { id: 1, title: "Deliver now", active: true },
+        { id: 3, title: "Edit delivery schedule", active: true },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: false },
+      ],
+      audienceMenuOptions: [
+        {
+          id: 1,
+          title: "Deliver now",
+          active: false,
+        },
+        { id: 2, title: "Add a destination", active: true },
+        { id: 3, title: "Create lookalike", active: false },
+        { id: 4, title: "Pause all delivery", active: false },
+        { id: 5, title: "Remove audience", active: true },
+      ],
     }
   },
 
@@ -234,9 +280,30 @@ export default {
       type: Array,
       required: false,
     },
-    destinationMenuItems: {
-      type: Array,
+    deliveriesKey: {
+      type: String,
+      required: true,
+      default: "destinations",
+    },
+    sectionType: {
+      type: String,
       required: false,
+    },
+  },
+
+  computed: {
+    sectionTypePrefix() {
+      return this.$options.filters.TitleCase(this.sectionType)
+    },
+    sectionActions() {
+      return this.sectionType === "engagement"
+        ? this.engagementMenuOptions
+        : this.audienceMenuOptions
+    },
+    destinationActions() {
+      return this.sectionType === "engagement"
+        ? this.destinationMenuOptions
+        : []
     },
   },
 
@@ -295,6 +362,84 @@ export default {
       } catch (error) {
         console.error(error)
       }
+    },
+    sectionActionItems(section) {
+      // { id: 1, title: "View delivery history", active: true },
+      //   { id: 2, title: "Deliver all", active: true },
+      //   { id: 3, title: "Add a destination", active: true },
+      //   { id: 5, title: "Remove engagement", active: false },
+      if (this.sectionType === "engagement") {
+        this.engagementMenuOptions.forEach((element) => {
+          switch (element.title.toLowerCase()) {
+            case "view delivery history":
+              element["active"] =
+                section[this.deliveriesKey].filter(
+                  (delivery) => delivery.status === "Delivered"
+                ).length > 0
+              break
+            case "deliver all":
+              element["active"] = section[this.deliveriesKey].length > 0
+              break
+            case "add a destination":
+              element["active"] = true
+              break
+            case "remove engagement":
+              element["active"] = true
+              break
+            default:
+              break
+          }
+        })
+        return this.engagementMenuOptions
+      } else {
+        this.audienceMenuOptions.forEach((element) => {
+          switch (element.title.toLowerCase()) {
+            case "deliver now":
+              element["active"] = section[this.deliveriesKey].length > 0
+              break
+
+            case "create lookalike":
+              element["active"] =
+                section[this.deliveriesKey].filter((delivery) =>
+                  this.lookALikeAllowedEntries.includes(delivery.name)
+                ).length > 0
+              break
+
+            case "Pause all delivery":
+              element["active"] =
+                section[this.deliveriesKey].filter(
+                  (delivery) => delivery.status === "Delivering"
+                ).length > 0
+
+            default:
+              break
+          }
+        })
+        return this.audienceMenuOptions
+      }
+    },
+    deliveryActionItems(delivery) {
+      const createLookaLikeOption = {
+        id: 1,
+        title: "Create lookalike",
+        active: false,
+      }
+      if (delivery.name === "Facebook") {
+        ;(createLookaLikeOption["active"] = true),
+          (createLookaLikeOption["menu"] = {
+            id: "1.1",
+            title: "Facebook",
+            icon: "facebook",
+          })
+      }
+      return [
+        { ...createLookaLikeOption },
+        { id: 2, title: "Deliver now", active: true },
+        { id: 3, title: "Edit delivery schedule", active: true },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: true },
+      ]
     },
   },
 }
