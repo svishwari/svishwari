@@ -58,7 +58,8 @@ export default {
     }
   },
   methods: {
-    initiateHorizontalBarChart() {
+    async initiateHorizontalBarChart() {
+      await this.chartData
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
 
@@ -73,7 +74,9 @@ export default {
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
 
-      var x = d3Scale.scaleLinear().domain([0, 4000]).range([1, this.width])
+      let maxValue = Math.max(...this.chartData.map((data) => data.ltv))
+
+      let x = d3Scale.scaleLinear().domain([0, maxValue]).range([1, this.width])
 
       let y = d3Scale
         .scaleBand()
@@ -129,11 +132,12 @@ export default {
             .attr("stroke-opacity", "0.3")
         )
 
-      var ticks = d3Select.selectAll(".tick text")
+      //TODO: after API integration
+      // var ticks = d3Select.selectAll(".tick text")
 
-      ticks.each(function (_, i) {
-        if (i % 2 != 0) d3Select.select(this).remove()
-      })
+      // ticks.each(function (_, i) {
+      //   if (i % 2 != 0) d3Select.select(this).remove()
+      // })
 
       svg
         .selectAll("myRect")
@@ -177,7 +181,7 @@ export default {
       let changeHoverPosition = (data) => {
         let incomeData = data
         incomeData.xPosition = x(data.ltv)
-        incomeData.yPosition = y(data.ltv) + 12
+        incomeData.yPosition = y(data.name) + 12
         this.tooltipDisplay(true, incomeData)
       }
     },
