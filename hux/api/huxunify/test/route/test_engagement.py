@@ -1520,16 +1520,16 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code)
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
 
     def test_remove_destination_from_engagement_audience(self):
         """Test remove destination from engagement audience"""
         engagement_id = self.engagement_ids[0]
         audience_id = self.audiences[1][db_c.ID]
 
-        destination_to_remove = {
-            api_c.ID: str(self.destinations[0][db_c.ID])
-        }
+        destination_to_remove = {api_c.ID: str(self.destinations[0][db_c.ID])}
 
         response = self.app.post(
             f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
@@ -1538,7 +1538,9 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
 
-        self.assertEqual(HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code)
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
 
     def test_set_engagement_flight_schedule(self):
         """
