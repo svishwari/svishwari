@@ -1,37 +1,52 @@
-import ROUTES from "../support/routes.js";
+import route from "../support/routes.js";
+
+const selector = {
+  home: {
+    // TODO: add a better selector for this button in the UI
+    signin: "button",
+  },
+  login: {
+    email: "input[id=okta-signin-username]",
+    password: "input[id=okta-signin-password]",
+    submit: "input[id=okta-signin-submit]",
+  }
+}
 
 describe("Tests user sign in", () => {
   before(() => {
-    // visit the application
-    cy.visit(ROUTES.home);
+    // opens the app
+    cy.visit(route.home);
 
-    // TODO: add a selector for this button in the UI
-    cy.get("button").click();
+    // clicks the signin button
+    cy.get(selector.home.signin).click();
 
-    cy.location("pathname")
-      .should("not.eq", ROUTES.home)
-      .then((pathname) => {
-        if (pathname === ROUTES.oktaSignInRedirectURI) {
-          // User has authenticated with okta successfully, so it redirects to
-          // this URI and we can just continue on to our test cases...
-        } else {
-          // TODO: move to selectors
-          cy.get("input[id=okta-signin-username]")
-          .type(Cypress.env("USER_EMAIL"), { log: false });
+    // we should now be on the login page
+    cy.location("pathname").should("eq", route.login);
 
-          // TODO: move to selectors
-          cy.get("input[id=okta-signin-password]")
-            .type(Cypress.env("USER_PASSWORD"), { log: false });
+    // fill in the form
+    cy.get(selector.login.email)
+      .type(Cypress.env("USER_EMAIL"), { log: false });
 
-          // TODO: move to selectors
-          cy.get("input[id=okta-signin-submit]").click();
+    cy.get(selector.login.password)
+      .type(Cypress.env("USER_PASSWORD"), { log: false });
 
-          // TODO: add MFA related authentication if needed
-        }
-      });
+    // submit the form
+    cy.get(selector.login.submit).click();
+
+    // TODO: add MFA related authentication if needed
+
+    // we should no longer be on the login page
+    cy.location("pathname", { timeout: 10000 })
+      .should("not.eq", route.login)
+      .then(() => {
+        // okta does its authentication... 
+        // once its done, we should be redirected back to the app
+        cy.location("pathname")
+          .should("eq", route.oktaSignInRedirectURI);
+      })
   });
 
-  it("should be able to view overview page", () => {
-    cy.location("pathname").should("eq", ROUTES.overview);
+  it("should be able to view the overview", () => {
+    cy.location("pathname").should("eq", route.overview);
   });
 });
