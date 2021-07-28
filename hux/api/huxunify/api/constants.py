@@ -26,6 +26,7 @@ CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
+DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 

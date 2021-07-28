@@ -97,6 +97,14 @@ class AudienceView(SwaggerView):
             "required": False,
             "default": False,
         },
+        {
+            "name": api_c.DELIVERIES,
+            "description": "Number of delivery objects to return per audience",
+            "in": "query",
+            "type": "int",
+            "required": False,
+            "default": api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT,
+        },
     ]
 
     responses = {
@@ -148,10 +156,14 @@ class AudienceView(SwaggerView):
             # do replace root by bringing the nested engagement up a level.
             audience.update(audience_dict[audience[db_c.ID]])
 
-            # remove any empty deliveries, take the last three deliveries
+            # remove any empty deliveries, take the last X number of deliveries
             audience[api_c.DELIVERIES] = [
                 x for x in audience[api_c.DELIVERIES] if x
-            ][:3]
+            ][
+                : request.args.get(
+                    api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
+                )
+            ]
 
             # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
@@ -168,7 +180,7 @@ class AudienceView(SwaggerView):
 
         # set the is_lookalike property to True so UI knows it is a lookalike.
         for lookalike in lookalikes:
-            lookalike["is_lookalike"] = True
+            lookalike[api_c.IS_LOOKALIKE] = True
 
         # combine the two lists and serve.
         audiences += lookalikes
