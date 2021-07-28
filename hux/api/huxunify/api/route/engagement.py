@@ -780,7 +780,7 @@ class DeleteAudienceEngagement(SwaggerView):
 )
 class AddDestinationEngagedAudience(SwaggerView):
     """
-    Class to add destination to an engaged audience
+    Class to add a destination to an engagement audience
     """
 
     parameters = [
@@ -832,7 +832,7 @@ class AddDestinationEngagedAudience(SwaggerView):
     def post(
         self, engagement_id: str, audience_id: str, user_name: str
     ) -> Tuple[dict, int]:
-        """Adds destinations to engagement audience.
+        """Adds a destination to an engagement audience.
 
         ---
         security:
@@ -900,7 +900,7 @@ class AddDestinationEngagedAudience(SwaggerView):
 )
 class RemoveDestinationEngagedAudience(SwaggerView):
     """
-    Class to add destination to an engaged audience
+    Class to remove a destination from an engagement audience
     """
 
     parameters = [
@@ -952,7 +952,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
     def delete(
         self, engagement_id: str, audience_id: str, user_name: str
     ) -> Tuple[dict, int]:
-        """Adds destinations to engagement audience.
+        """Removes a destination from an engagement audience.
 
         ---
         security:
