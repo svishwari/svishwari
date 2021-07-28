@@ -2,7 +2,7 @@
 purpose of this script is for housing the decision routes for the API.
 """
 from datetime import datetime
-from random import random, randint, uniform
+from random import uniform
 from http import HTTPStatus
 from typing import Tuple, List
 
@@ -176,6 +176,9 @@ class ModelOverview(SwaggerView):
         model_id = int(model_id)
         output = {
             api_c.MODEL_ID: model_id,
+            api_c.MODEL_TYPE: api_c.SUPPORTED_MODELS[model_id][
+                api_c.MODEL_TYPE
+            ],
             api_c.MODEL_NAME: api_c.SUPPORTED_MODELS[model_id][api_c.NAME],
             api_c.DESCRIPTION: api_c.SUPPORTED_MODELS[model_id][
                 api_c.DESCRIPTION
@@ -196,7 +199,7 @@ class ModelOverview(SwaggerView):
                     {
                         api_c.NAME: f"feature name {x}",
                         api_c.DESCRIPTION: f"description of feature name {x}",
-                        api_c.SCORE: round(random(), 2),
+                        api_c.SCORE: round(uniform(0, 0.25), 2),
                     }
                     for x in range(1, 21)
                 ],
@@ -205,17 +208,35 @@ class ModelOverview(SwaggerView):
             ),
             api_c.LIFT_DATA: [
                 {
-                    api_c.BUCKET: x,
-                    api_c.PREDICTED_VALUE: round(uniform(100, 1000), 2),
-                    api_c.ACTUAL_VALUE: round(uniform(100, 1000), 2),
-                    api_c.PROFILE_COUNT: randint(1, 100),
-                    api_c.PREDICTED_RATE: round(random(), 2),
-                    api_c.ACTUAL_RATE: round(random(), 2),
-                    api_c.PREDICTED_LIFT: round(uniform(1, 2), 2),
-                    api_c.ACTUAL_LIFT: round(uniform(1, 2), 2),
-                    api_c.PROFILE_SIZE_PERCENT: round(uniform(1, 100), 2),
+                    api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.BUCKET][x],
+                    api_c.PREDICTED_VALUE: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.PREDICTED_VALUE][x],
+                    api_c.ACTUAL_VALUE: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.ACTUAL_VALUE][x],
+                    api_c.PROFILE_COUNT: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.PROFILE_COUNT][x],
+                    api_c.PREDICTED_RATE: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.PREDICTED_RATE][x],
+                    api_c.ACTUAL_RATE: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.ACTUAL_RATE][x],
+                    api_c.PREDICTED_LIFT: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.PREDICTED_LIFT][x],
+                    api_c.ACTUAL_LIFT: api_c.SUPPORTED_MODELS[model_id][
+                        api_c.LIFT_DATA
+                    ][api_c.ACTUAL_LIFT][x],
+                    api_c.PROFILE_SIZE_PERCENT: api_c.SUPPORTED_MODELS[
+                        model_id
+                    ][api_c.LIFT_DATA][api_c.PROFILE_SIZE_PERCENT][x],
                 }
-                for x in range(10, 110, 10)
+                for x in range(10)
             ],
         }
         return ModelDashboardSchema().dump(output), HTTPStatus.OK
