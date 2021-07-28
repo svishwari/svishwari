@@ -55,7 +55,7 @@
               'primary--text': header.fixed,
               'expanded-row': isExpanded,
             }"
-            :style="{ width: header.width, left: 0 }"
+            :style="{ width: header.width }"
           >
             <div v-if="header.value == 'name'" class="w-80">
               <menu-cell
@@ -69,9 +69,9 @@
                     v-if="item.audiences.length > 0"
                     :class="{ 'normal-icon': isExpanded }"
                     @click="
-                      expand(!isExpanded)
-                      getAudiencesForEngagement(item)
-                      markCurrentRow(item.id)
+                      expand(!isExpanded);
+                      getAudiencesForEngagement(item);
+                      markCurrentRow(item.id);
                     "
                   >
                     mdi-chevron-right
@@ -95,7 +95,7 @@
               <size :value="item[header.value]" />
             </div>
             <div v-if="header.value == 'delivery_schedule'">
-              {{ manualDeliverySchedule }}
+              {{ manualDeliverySchedule | Empty("-") }}
             </div>
             <div v-if="header.value == 'update_time'">
               <!-- TODO replace with header value -->
@@ -132,15 +132,16 @@
             v-if="parentItem.audiences.length > 0"
           >
             <template #row-item="{ item }">
+              <td :style="{ width: headers[0].width }"></td>
               <td
-                v-for="header in subHeaders"
+                v-for="header in getAudienceHeaders(subHeaders)"
                 :key="header.value"
-                :colspan="header.value == 'name' ? 3 : 0"
                 :class="{
                   'child-row': header.value == 'name',
                 }"
+                :style="{ width: header.width }"
               >
-                <div v-if="header.value == 'name'" class="ml-4">
+                <div v-if="header.value == 'name'">
                   <tooltip>
                     <template #label-content>
                       <router-link
@@ -148,7 +149,7 @@
                           name: 'AudienceInsight',
                           params: { id: item['id'] },
                         }"
-                        class="text-decoration-none primary--text"
+                        class="text-decoration-none primary--text ellipsis-21"
                         append
                         >{{ item[header.value] }}
                       </router-link>
@@ -159,30 +160,30 @@
                   </tooltip>
                 </div>
                 <div v-if="header.value == 'size'">
-                  <div class="ml-16 pl-1">
+                  <div>
                     <size :value="item[header.value]" />
                   </div>
                 </div>
                 <div v-if="header.value == 'delivery_schedule'">
-                  {{ item[header.value] }}
+                  {{ item[header.value] | Empty("-") }}
                 </div>
                 <div v-if="header.value == 'update_time'">
-                  <div class="ml-16 pl-6" style="width: max-content">
+                  <div style="width: max-content">
                     <time-stamp :value="item['create_time']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'updated_by'">
-                  <div class="ml-16 pl-8">
+                  <div>
                     <Avatar :name="item['created_by']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
-                  <div class="ml-11">
+                  <div>
                     <time-stamp :value="item[header.value]" />
                   </div>
                 </div>
                 <div v-if="header.value == 'created_by'">
-                  <div class="ml-13">
+                  <div>
                     <Avatar :name="item[header.value]" />
                   </div>
                 </div>
@@ -227,18 +228,18 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import PageHeader from "@/components/PageHeader"
-import EmptyPage from "@/components/common/EmptyPage"
-import Breadcrumb from "@/components/common/Breadcrumb"
-import huxButton from "@/components/common/huxButton"
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
-import Avatar from "../../components/common/Avatar.vue"
-import Size from "../../components/common/huxTable/Size.vue"
-import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
-import Status from "../../components/common/Status.vue"
-import Tooltip from "../../components/common/Tooltip.vue"
-import MenuCell from "../../components/common/huxTable/MenuCell.vue"
+import { mapGetters, mapActions } from "vuex";
+import PageHeader from "@/components/PageHeader";
+import EmptyPage from "@/components/common/EmptyPage";
+import Breadcrumb from "@/components/common/Breadcrumb";
+import huxButton from "@/components/common/huxButton";
+import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue";
+import Avatar from "../../components/common/Avatar.vue";
+import Size from "../../components/common/huxTable/Size.vue";
+import TimeStamp from "../../components/common/huxTable/TimeStamp.vue";
+import Status from "../../components/common/Status.vue";
+import Tooltip from "../../components/common/Tooltip.vue";
+import MenuCell from "../../components/common/huxTable/MenuCell.vue";
 export default {
   name: "engagements",
   components: {
@@ -290,7 +291,7 @@ export default {
         { text: "Created", value: "create_time", width: "200px" },
         { text: "Created by", value: "created_by", width: "140px" },
       ],
-    }
+    };
   },
   computed: {
     ...mapGetters({
@@ -298,12 +299,12 @@ export default {
       audiencesData: "audiences/audience",
     }),
     audience(id) {
-      return this.audiencesData(id)
+      return this.audiencesData(id);
     },
     subHeaders() {
-      const _headers = JSON.parse(JSON.stringify(this.columnDefs))
-      _headers.splice(1, 2)
-      return _headers
+      const _headers = JSON.parse(JSON.stringify(this.columnDefs));
+      _headers.splice(1, 1);
+      return _headers;
     },
   },
   methods: {
@@ -313,26 +314,30 @@ export default {
       updateAudienceList: "engagements/updateAudienceList",
       markCurrentRow: "engagements/markCurrentRow",
     }),
+    getAudienceHeaders(headers) {
+      headers[0].width = "200px";
+      return headers;
+    },
     // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
-      this.audienceList = []
-      let audienceIds = item.audiences.map((key) => key.id)
+      this.audienceList = [];
+      let audienceIds = item.audiences.map((key) => key.id);
       for (let id of audienceIds) {
-        await this.getAudienceById(id)
-        this.audienceList.push(this.audiencesData(id))
+        await this.getAudienceById(id);
+        this.audienceList.push(this.audiencesData(id));
       }
-      await this.updateAudienceList({ id: item.id, data: this.audienceList })
+      await this.updateAudienceList({ id: item.id, data: this.audienceList });
     },
   },
   async mounted() {
-    this.loading = true
-    await this.getAllEngagements()
+    this.loading = true;
+    await this.getAllEngagements();
     this.rowData = this.engagementData.sort((a, b) =>
       a.name > b.name ? 1 : -1
-    )
-    this.loading = false
+    );
+    this.loading = false;
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -340,6 +345,14 @@ export default {
   background: var(--v-white-base);
   ::v-deep .menu-cell-wrapper .action-icon {
     display: none;
+  }
+  .ellipsis-21 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 21ch;
+    display: inline-block;
+    width: 21ch;
+    white-space: nowrap;
   }
   .mdi-chevron-right {
     margin-top: -4px;
@@ -445,7 +458,6 @@ export default {
     .v-data-table__wrapper {
       box-shadow: inset 0px 10px 10px -4px #d0d0ce !important;
       .child-row {
-        padding-left: 317px;
         border-right: none;
       }
     }
