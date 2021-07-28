@@ -235,8 +235,6 @@
       @onSalesforceAdd="openSalesforceExtensionDrawer"
       @onAddDestination="triggerAttachDestination()"
     />
-    -->
-
     <!-- Salesforce extension workflow -->
     <DestinationDataExtensionDrawer
       v-model="selectedDestinations"
@@ -558,7 +556,7 @@ export default {
     },
     triggerOverviewAction(event) {
       switch (event.target.title.toLowerCase()) {
-        case "add a destination":
+        case "add a destination": {
           this.closeAllDrawers()
           this.selectedDestinations = []
           // this.selectedEngagements = []
@@ -568,12 +566,13 @@ export default {
           )
           this.showSelectDestinationsDrawer = true
           break
+        }
         case "delivery all":
           break
         case "view delivery history":
           break
-        case "remove engagement":
-          const payload = {
+        case "remove engagement": {
+          let payload = {
             data: {
               id: event.data.id,
               action: "Detach",
@@ -581,6 +580,7 @@ export default {
           }
           this.triggerAttachEngagement(payload)
           break
+        }
         default:
           break
       }
