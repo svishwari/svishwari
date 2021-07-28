@@ -680,9 +680,10 @@ class DestinationDataExtPostView(SwaggerView):
                     database,
                     db_c.NOTIFICATION_TYPE_SUCCESS,
                     (
-                        f"New data extension "
+                        f"New data extension named"
                         f'"{body.get(api_c.DATA_EXTENSION)}" created in '
-                        f'"{destination[db_c.NAME]}" by {get_user_name()}.'
+                        f'destination "{destination[db_c.NAME]}" '
+                        f"by {get_user_name()}."
                     ),
                     api_c.DESTINATIONS_TAG,
                 )
