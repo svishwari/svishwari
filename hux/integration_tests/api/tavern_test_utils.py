@@ -6,6 +6,8 @@ from typing import Union
 from box import Box
 
 
+# TODO: Change the constants like "sfmc", "facebook" in this method by
+# importing and referencing if from huxunifylib.database.constants
 def get_destination_id(response: object, **kwargs: dict) -> Union[Box, None]:
     """
     Purpose of this function is to get the destination id from the response
