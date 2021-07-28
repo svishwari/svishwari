@@ -69,9 +69,9 @@
                     v-if="item.audiences.length > 0"
                     :class="{ 'normal-icon': isExpanded }"
                     @click="
-                      expand(!isExpanded);
-                      getAudiencesForEngagement(item);
-                      markCurrentRow(item.id);
+                      expand(!isExpanded)
+                      getAudiencesForEngagement(item)
+                      markCurrentRow(item.id)
                     "
                   >
                     mdi-chevron-right
@@ -228,18 +228,18 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import PageHeader from "@/components/PageHeader";
-import EmptyPage from "@/components/common/EmptyPage";
-import Breadcrumb from "@/components/common/Breadcrumb";
-import huxButton from "@/components/common/huxButton";
-import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue";
-import Avatar from "../../components/common/Avatar.vue";
-import Size from "../../components/common/huxTable/Size.vue";
-import TimeStamp from "../../components/common/huxTable/TimeStamp.vue";
-import Status from "../../components/common/Status.vue";
-import Tooltip from "../../components/common/Tooltip.vue";
-import MenuCell from "../../components/common/huxTable/MenuCell.vue";
+import { mapGetters, mapActions } from "vuex"
+import PageHeader from "@/components/PageHeader"
+import EmptyPage from "@/components/common/EmptyPage"
+import Breadcrumb from "@/components/common/Breadcrumb"
+import huxButton from "@/components/common/huxButton"
+import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
+import Avatar from "../../components/common/Avatar.vue"
+import Size from "../../components/common/huxTable/Size.vue"
+import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
+import Status from "../../components/common/Status.vue"
+import Tooltip from "../../components/common/Tooltip.vue"
+import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 export default {
   name: "engagements",
   components: {
@@ -291,7 +291,7 @@ export default {
         { text: "Created", value: "create_time", width: "200px" },
         { text: "Created by", value: "created_by", width: "140px" },
       ],
-    };
+    }
   },
   computed: {
     ...mapGetters({
@@ -299,12 +299,12 @@ export default {
       audiencesData: "audiences/audience",
     }),
     audience(id) {
-      return this.audiencesData(id);
+      return this.audiencesData(id)
     },
     subHeaders() {
-      const _headers = JSON.parse(JSON.stringify(this.columnDefs));
-      _headers.splice(1, 1);
-      return _headers;
+      const _headers = JSON.parse(JSON.stringify(this.columnDefs))
+      _headers.splice(1, 1)
+      return _headers
     },
   },
   methods: {
@@ -315,29 +315,29 @@ export default {
       markCurrentRow: "engagements/markCurrentRow",
     }),
     getAudienceHeaders(headers) {
-      headers[0].width = "200px";
-      return headers;
+      headers[0].width = "200px"
+      return headers
     },
     // TODO: replace with data from GET /engagements when available
     async getAudiencesForEngagement(item) {
-      this.audienceList = [];
-      let audienceIds = item.audiences.map((key) => key.id);
+      this.audienceList = []
+      let audienceIds = item.audiences.map((key) => key.id)
       for (let id of audienceIds) {
-        await this.getAudienceById(id);
-        this.audienceList.push(this.audiencesData(id));
+        await this.getAudienceById(id)
+        this.audienceList.push(this.audiencesData(id))
       }
-      await this.updateAudienceList({ id: item.id, data: this.audienceList });
+      await this.updateAudienceList({ id: item.id, data: this.audienceList })
     },
   },
   async mounted() {
-    this.loading = true;
-    await this.getAllEngagements();
+    this.loading = true
+    await this.getAllEngagements()
     this.rowData = this.engagementData.sort((a, b) =>
       a.name > b.name ? 1 : -1
-    );
-    this.loading = false;
+    )
+    this.loading = false
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

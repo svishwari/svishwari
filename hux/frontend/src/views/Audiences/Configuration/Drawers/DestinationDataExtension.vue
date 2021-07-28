@@ -30,7 +30,12 @@
                   </div>
                 </div>
                 <extensionInactive1 v-if="!isActive" />
-                <div class="label primary--text" :class="[isActive ? 'mt-2' : 'mt-1']">New data extension</div>
+                <div
+                  class="label primary--text"
+                  :class="[isActive ? 'mt-2' : 'mt-1']"
+                >
+                  New data extension
+                </div>
               </div>
             </div>
             <diV
@@ -45,7 +50,10 @@
                   </div>
                 </div>
                 <extensionInactive2 v-if="isActive" />
-                <div class="label primary--text" :class="[!isActive ? 'mt-2' : 'mt-1']">
+                <div
+                  class="label primary--text"
+                  :class="[!isActive ? 'mt-2' : 'mt-1']"
+                >
                   Existing data extension
                 </div>
               </div>
