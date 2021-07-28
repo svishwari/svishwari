@@ -47,7 +47,6 @@ export default {
   },
   methods: {
     updateValue(value) {
-      console.log("change")
       this.$emit("input", value)
     },
   },

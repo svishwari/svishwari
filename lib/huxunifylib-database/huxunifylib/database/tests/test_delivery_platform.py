@@ -122,6 +122,8 @@ class TestDeliveryPlatform(unittest.TestCase):
                 "Lookalike audience",
                 0.01,
                 "US",
+                "Kam Chancellor",
+                31,
             )
         )
 
@@ -650,6 +652,39 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_lookalike_audiences(self):
+        """Test get lookalike audiences functions."""
+
+        # Set delivery job lookalike audiences
+        lookalike_audiences = (
+            dpm.get_all_delivery_platform_lookalike_audiences(self.database)
+        )
+
+        # test that data was returned.
+        self.assertTrue(lookalike_audiences)
+
+        # get the country of the audience and filter by it
+        lookalike_audience = lookalike_audiences[0]
+        country_audiences = dpm.get_all_delivery_platform_lookalike_audiences(
+            self.database,
+            {
+                c.LOOKALIKE_AUD_COUNTRY: lookalike_audience[
+                    c.LOOKALIKE_AUD_COUNTRY
+                ]
+            },
+        )
+
+        # test audience
+        self.assertTrue(country_audiences)
+
+        # ensure the country for all returned audiences are what we filtered on
+        for audience in country_audiences:
+            self.assertEqual(
+                lookalike_audience[c.LOOKALIKE_AUD_COUNTRY],
+                audience[c.LOOKALIKE_AUD_COUNTRY],
+            )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_audience_recent_delivery_job(self):
         """Test get_audience_recent_delivery_job."""
 
@@ -715,6 +750,8 @@ class TestDeliveryPlatform(unittest.TestCase):
             "Lookalike audience new",
             0.01,
             "US",
+            "Kam Chancellor",
+            31,
         )
 
         self.assertTrue(doc is not None)
@@ -723,6 +760,8 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.LOOKALIKE_AUD_NAME in doc)
         self.assertTrue(c.LOOKALIKE_AUD_COUNTRY in doc)
         self.assertTrue(c.LOOKALIKE_AUD_SIZE_PERCENTAGE in doc)
+        self.assertEqual(doc[c.CREATED_BY], "Kam Chancellor")
+        self.assertEqual(doc[c.SIZE], 31)
 
         delivery_job_doc = dpm.set_delivery_job(
             self.database,
@@ -826,6 +865,8 @@ class TestDeliveryPlatform(unittest.TestCase):
             lookalike_audience_id=lookalike_audience_id,
             audience_size_percentage=0.03,
             country="UK",
+            user_name="Marshawn Lynch",
+            audience_size=24,
         )
 
         self.assertTrue(doc is not None)
@@ -835,6 +876,8 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[c.LOOKALIKE_AUD_COUNTRY],
             "UK",
         )
+        self.assertEqual(doc[c.SIZE], 24)
+        self.assertEqual(doc[c.UPDATED_BY], "Marshawn Lynch")
 
         doc = dpm.update_lookalike_audience_name(
             self.database,

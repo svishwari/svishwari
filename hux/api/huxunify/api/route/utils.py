@@ -4,7 +4,7 @@ purpose of this file is to house route utilities
 import logging
 from datetime import datetime
 from functools import wraps
-from typing import Any, Tuple
+from typing import Any, Tuple, Union, Dict
 from http import HTTPStatus
 from bson import ObjectId
 
@@ -21,7 +21,12 @@ from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
 from huxunifylib.database.user_management import get_user, set_user
-from huxunifylib.database import constants as db_c
+from huxunifylib.database.engagement_management import get_engagement
+from huxunifylib.database import (
+    orchestration_management,
+    delivery_platform_management as destination_management,
+    constants as db_c,
+)
 import huxunifylib.database.db_exceptions as de
 
 from huxunify.api.config import get_config
@@ -258,6 +263,14 @@ def get_user_name() -> object:
             """
 
             # override if flag set locally
+
+            # set of keys required from userinfo
+            required_keys = {
+                constants.OKTA_ID_SUB,
+                constants.EMAIL,
+                constants.NAME,
+            }
+
             if config("TEST_AUTH_OVERRIDE", cast=bool, default=False):
                 # return a default user id
                 kwargs[constants.USER_NAME] = "test user"
@@ -273,10 +286,15 @@ def get_user_name() -> object:
             # get the user information
             user_info = get_user_info(token_response[0])
 
+            # checking if required keys are present in user_info
+            if not required_keys.issubset(user_info.keys()):
+                return {
+                    "message": constants.AUTH401_ERROR_MESSAGE
+                }, HTTPStatus.UNAUTHORIZED
+
             # check if the user is in the database
             database = get_db_client()
             user = get_user(database, user_info[constants.OKTA_ID_SUB])
-
             # return found user, or create one and return it.
             kwargs[constants.USER_NAME] = (
                 user[db_c.USER_DISPLAY_NAME]
@@ -472,3 +490,176 @@ def update_metrics(
         )
     )
     return metric
+
+
+def validate_delivery_params(func) -> object:
+    """A decorator for common validations in delivery.py
+
+    Performs checks to determine if object ids are valid,
+    engagement id exists, engagements have audiences,
+    audience id exists,audience is attached. Also converts
+    all string ids to ObjectId.
+
+    Example: @validate_delivery_params
+
+    Args:
+        func(object): function object
+    Returns:
+        object: returns a wrapped decorated function object.
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> object:
+        """Decorator for validation and converting to ObjectId.
+        Args:
+            *args (object): function arguments.
+            **kwargs (dict): function keyword arguments.
+
+        Returns:
+           object: returns a decorated function object.
+        """
+
+        # check for valid object id and convert to object id
+        for key, val in kwargs.items():
+            if ObjectId.is_valid(val):
+                kwargs[key] = ObjectId(val)
+            else:
+                return {
+                    "message": constants.INVALID_OBJECT_ID
+                }, HTTPStatus.BAD_REQUEST
+
+        database = get_db_client()
+
+        # check if engagement id exists
+        engagement_id = kwargs.get("engagement_id", None)
+        if engagement_id:
+            engagement = get_engagement(database, engagement_id)
+            if engagement:
+                if db_c.AUDIENCES not in engagement:
+                    return {
+                        "message": "Engagement has no audiences."
+                    }, HTTPStatus.BAD_REQUEST
+            else:
+                # validate that the engagement has audiences
+                return {
+                    "message": constants.ENGAGEMENT_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
+
+        # check if audience id exists
+        audience_id = kwargs.get("audience_id", None)
+        if audience_id:
+            # check if audience id exists
+            audience = None
+            try:
+                audience = orchestration_management.get_audience(
+                    database, audience_id
+                )
+            except de.InvalidID:
+                # get audience returns invalid if the audience does not exist.
+                # pass and catch in the next step.
+                pass
+            if not audience:
+                return {
+                    "message": "Audience does not exist."
+                }, HTTPStatus.BAD_REQUEST
+
+            if audience_id and engagement_id:
+                # validate that the audience is attached
+                audience_ids = [
+                    x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
+                ]
+                if audience_id not in audience_ids:
+                    return {
+                        "message": "Audience is not attached to the engagement."
+                    }, HTTPStatus.BAD_REQUEST
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def validate_destination_id(
+    destination_id: str, check_if_destination_in_db: bool = True
+) -> Union[ObjectId, Tuple[Dict[str, str], int]]:
+    """Checks on destination_id
+
+    Check if destination id is valid converts it to object_id.
+    Also can check if destination_id is in db
+
+    Args:
+        destination_id (str) : Destination id.
+        check_if_destination_in_db (bool): Optional; flag to check if destination in db
+
+    Returns:
+        response(dict): Message and HTTP status to be returned in response in
+            case of failing checks,
+        destination_id (ObjectId): Destination id as object id if
+            all checks are successful.
+    """
+    if not ObjectId.is_valid(destination_id):
+        return {"message": constants.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
+    destination_id = ObjectId(destination_id)
+
+    if check_if_destination_in_db:
+        if not destination_management.get_delivery_platform(
+            get_db_client(), destination_id
+        ):
+            return {
+                "message": constants.DESTINATION_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+    return destination_id
+
+
+def validate_destination(
+    check_if_destination_in_db: bool = True,
+) -> object:
+    """
+    This decorator handles validation of destination objects.
+    Example: @validate_destination_wrapper()
+
+    Args:
+        check_if_destination_in_db (bool): Optional; If check_destination_exists
+            a check is performed to verify if destination exists in the db.
+
+    Returns:
+        Response: decorator
+    """
+
+    def wrapper(in_function) -> object:
+        """Decorator for wrapping a function
+
+        Args:
+            in_function (object): function object.
+
+        Returns:
+           object: returns a wrapped decorated function object.
+        """
+
+        @wraps(in_function)
+        def decorator(*args, **kwargs) -> object:
+            """Decorator for handling destination validation.
+
+            Args:
+                *args (object): function arguments.
+                **kwargs (dict): function keyword arguments.
+
+            Returns:
+               object: returns a decorated function object.
+            """
+            destination_id = kwargs.get("destination_id", None)
+            return_val = validate_destination_id(
+                destination_id, check_if_destination_in_db
+            )
+            # check if destination_id is returned
+            if isinstance(return_val, ObjectId):
+                kwargs["destination_id"] = ObjectId(destination_id)
+            else:
+                # return response message
+                return return_val
+            return in_function(*args, **kwargs)
+
+        decorator.__wrapped__ = in_function
+        return decorator
+
+    return wrapper

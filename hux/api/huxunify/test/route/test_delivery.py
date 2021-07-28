@@ -61,13 +61,13 @@ class TestDeliveryRoutes(TestCase):
             "localhost", 27017, None, None
         ).connect()
 
-        # mock get db client from engagements
+        # mock get db client from utils
         mock.patch(
-            "huxunify.api.route.engagement.get_db_client",
+            "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
 
-        # mock get db client from orchestration
+        # mock get db client from delivery
         mock.patch(
             "huxunify.api.route.delivery.get_db_client",
             return_value=self.database,

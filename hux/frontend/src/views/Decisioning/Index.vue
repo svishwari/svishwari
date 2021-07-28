@@ -22,8 +22,9 @@
           :icon="`model-${model.type || 'unsubscribe'}`"
           :title="model.name"
           :description="model.description"
+          :disabled="model.status !== 'Active'"
           class="mr-10 cursor-pointer"
-          @click.native="goToDashboard(model.type)"
+          @click.native="goToDashboard(model.id)"
         >
           <template slot="top">
             <Status
@@ -129,10 +130,10 @@ export default {
       getModels: "models/getAll",
     }),
 
-    goToDashboard(type) {
+    goToDashboard(id) {
       this.$router.push({
         name: "ModelDashboard",
-        params: { type: type },
+        params: { id: id },
       })
     },
   },

@@ -24,13 +24,18 @@
               @click="toggleClass($event)"
             >
               <div class="child mt-4">
-                <div class="icon">
-                  <v-icon color="info" size="44" class="ml-2" v-if="isActive">
-                    mdi-check-circle
-                  </v-icon>
+                <div class="icon d-flex justify-center">
+                  <div class="check-wrap d-flex align-center" v-if="isActive">
+                    <v-icon color="white" size="21"> mdi-check-bold </v-icon>
+                  </div>
                 </div>
                 <extensionInactive1 v-if="!isActive" />
-                <div class="label primary--text">New data extension</div>
+                <div
+                  class="label primary--text"
+                  :class="[isActive ? 'mt-2' : 'mt-1']"
+                >
+                  New data extension
+                </div>
               </div>
             </div>
             <diV
@@ -39,13 +44,18 @@
               @click="toggleClass($event)"
             >
               <div class="child mt-4">
-                <div class="icon">
-                  <v-icon color="info" size="44" class="ml-2" v-if="!isActive">
-                    mdi-check-circle
-                  </v-icon>
+                <div class="icon d-flex justify-center">
+                  <div class="check-wrap d-flex align-center" v-if="!isActive">
+                    <v-icon color="white" size="21"> mdi-check-bold </v-icon>
+                  </div>
                 </div>
                 <extensionInactive2 v-if="isActive" />
-                <div class="label primary--text">Existing data extension</div>
+                <div
+                  class="label primary--text"
+                  :class="[!isActive ? 'mt-2' : 'mt-1']"
+                >
+                  Existing data extension
+                </div>
               </div>
             </diV>
           </div>
@@ -327,6 +337,13 @@ export default {
 <style lang="scss" scoped>
 .data-extension-drawer {
   .add-destination-wrapper {
+    .check-wrap {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--v-secondary-base);
+      padding: 11px;
+    }
     .extension-type {
       height: 100px;
       width: 196px;
