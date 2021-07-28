@@ -1,13 +1,11 @@
 <template>
   <div ref="chartBox" class="container">
-    <div class="d-flex justify-content-start">
       <horizontal-bar-chart
         v-model="features"
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
         :chartDimensions="chartDimensions"
       />
-    </div>
     <bar-chart-tooltip
       :position="{
         x: tooltip.x,
@@ -63,7 +61,7 @@ export default {
   },
   mounted() {
     this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+    this.chartDimensions.height = this.$refs.chartBox
   },
 }
 </script>
