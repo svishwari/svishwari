@@ -123,10 +123,7 @@
         </template>
       </MetricCard>
     </div>
-    <div
-      class="px-15 my-1 mb-4 pt-6"
-      v-if="audience && audience.engagements && audience.engagements.length > 0"
-    >
+    <div class="px-15 my-1 mb-4 pt-6" v-if="relatedEngagements.length > 0">
       <v-row class="pa-3 pb-5">
         <v-col
           :md="
@@ -137,7 +134,7 @@
           class="pa-0"
         >
           <delivery-overview
-            :sections="audience && audience.engagements"
+            :sections="relatedEngagements"
             sectionType="engagement"
             deliveriesKey="deliveries"
             :loadingRelationships="loadingRelationships"
@@ -334,6 +331,7 @@ export default {
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
+      relatedEngagements: [],
       items: [
         {
           text: "Audiences",
@@ -599,12 +597,11 @@ export default {
     },
     async triggerOverviewDestinationAction(event) {
       try {
-        const engagementId = this.engagementId
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
             await this.deliverAudienceDestination({
-              id: engagementId,
-              audienceId: event.parent.id,
+              id: event.parent.id,
+              audienceId: this.audienceId,
               destinationId: event.data.id,
             })
             this.flashAlert = true
@@ -718,6 +715,7 @@ export default {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
+      this.relatedEngagements = this.audience.engagements
       this.items[1].text = this.audience.name
       this.mapInsights()
       await this.getDestinations()
