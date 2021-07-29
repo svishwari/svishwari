@@ -16,6 +16,29 @@ from huxunify.api.schema.customers import CustomerOverviewSchema
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
 
 
+class LookalikeAudienceGetSchema(Schema):
+    """
+    Schema for retrieving the lookalike audience
+    """
+
+    _id = fields.String(
+        data_key=api_c.ID,
+        required=True,
+        validate=validate_object_id,
+    )
+    delivery_platform_id = fields.String(
+        required=True, validate=validate_object_id
+    )
+    audience_id = fields.String(required=True, validate=validate_object_id)
+    name = fields.String(required=True)
+    country = fields.String()
+    audience_size_percentage = fields.Float(required=True)
+    size = fields.Float(default=0)
+    create_time = DateTimeWithZ(required=True)
+    update_time = DateTimeWithZ(required=True)
+    favorite = fields.Boolean(required=True)
+
+
 class AudienceDeliverySchema(Schema):
     """
     Audience delivery schema class
@@ -32,7 +55,7 @@ class DeliveriesSchema(Schema):
     Delivery schema class
     """
 
-    _id = fields.String()
+    id = fields.String(attribute=db_c.ID)
     create_time = DateTimeWithZ()
     update_time = DateTimeWithZ()
     created_by = fields.String()
@@ -98,9 +121,7 @@ class AudienceGetSchema(Schema):
     created_by = fields.String()
     updated_by = fields.String()
     deliveries = fields.Nested(AudienceDeliverySchema, many=True)
-
-    # TODO - HUS-436
-    lookalikes = fields.List(fields.String())
+    lookalike_audiences = fields.Nested(LookalikeAudienceGetSchema, many=True)
     is_lookalike = fields.Boolean(default=False)
 
     # defines if lookalikes can be created from the audience.
@@ -197,28 +218,6 @@ class LookalikeAudiencePostSchema(Schema):
     name = fields.String(required=True)
     audience_size_percentage = fields.Float(required=True)
     engagement_ids = fields.List(fields.String(), required=True)
-
-
-class LookalikeAudienceGetSchema(Schema):
-    """
-    Schema for retrieving the lookalike audience
-    """
-
-    _id = fields.String(
-        data_key=api_c.ID,
-        required=True,
-        validate=validate_object_id,
-    )
-    delivery_platform_id = fields.String(
-        required=True, validate=validate_object_id
-    )
-    audience_id = fields.String(required=True, validate=validate_object_id)
-    name = fields.String(required=True)
-    country = fields.String()
-    audience_size_percentage = fields.Float(required=True)
-    create_time = DateTimeWithZ(required=True)
-    update_time = DateTimeWithZ(required=True)
-    favorite = fields.Boolean(required=True)
 
 
 def is_audience_lookalikeable(audience: dict) -> str:
