@@ -22,7 +22,8 @@ const getters = {
   audience: (state) => (id) => {
     let currentAudience = state.audiences[id]
     if (currentAudience) {
-      currentAudience.lookalikeable =  currentAudience.lookalikeable.toLowerCase()
+      currentAudience.lookalikeable =
+        currentAudience.lookalikeable.toLowerCase()
     }
     return currentAudience
   },
