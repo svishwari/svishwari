@@ -185,8 +185,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chart-container {
-  max-width: 280px;
-  height: 280px;
+  max-width: 100%;
   #chart {
     text-align: center;
   }
