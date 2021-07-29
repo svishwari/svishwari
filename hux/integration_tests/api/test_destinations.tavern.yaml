@@ -480,37 +480,37 @@ stages:
 #      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
 #      json: {}
 #
-#---
-#test_name: Test destinations put/update invalid destination ID failure
-#
-#strict:
-#  - json:list_any_order
-#
-#includes:
-#  - !include common.yaml
-#
-#stages:
-#  - name: test destinations put/update destination failure invalid destination ID
-#
-#    # Define the request to be made...
-#    request:
-#      url: "{host}/{version}/destinations/XYZ"
-#      method: PUT
-#      headers:
-#        content-type: application/json
-#        Authorization: "Bearer {token}"
-#      json:
-#        authentication_details:
-#          facebook_access_token: "unified_facebook_access_token"
-#          facebook_app_secret: "unified_facebook_app_secret"
-#          facebook_app_id: "2849684615131430"
-#          facebook_ad_account_id: "act_1429837470372777"
-#
-#    # ...and the expected response code and body
-#    response:
-#      strict: false
-#      status_code: 400
-#      headers:
-#        content-type: application/json
-#      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-#      json: {}
+---
+test_name: Test destinations put/update invalid destination ID failure
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test destinations put/update destination failure invalid destination ID
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/XYZ"
+      method: PUT
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        authentication_details:
+          facebook_access_token: "unified_facebook_access_token"
+          facebook_app_secret: "unified_facebook_app_secret"
+          facebook_app_id: "2849684615131430"
+          facebook_ad_account_id: "act_1429837470372777"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
+      json: {}
