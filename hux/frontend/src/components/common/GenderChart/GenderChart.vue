@@ -128,7 +128,7 @@ export default {
         .enter()
         .append("g")
         .attr("class", "legend")
-        .attr("transform", function (d, i) {
+        .attr("transform", function (d) {
           var y = line * 25
           var x = col
           col += d.label.length * 10 + 25
@@ -157,8 +157,8 @@ export default {
           return d.label
         })
 
-        // Creating label svg element
-        var label = d3Select
+      // Creating label svg element
+      var label = d3Select
         .select("#label")
         .append("svg")
         .attr("width", 200)
@@ -167,15 +167,15 @@ export default {
         .style("margin-left", "24px")
         .style("margin-top", "20px")
 
-        // Appending text to label
-        label
+      // Appending text to label
+      label
         .append("text")
         .attr("x", 18)
         .attr("y", 9)
         .attr("dy", ".35em")
         .attr("class", "neroBlack--text")
-        .text(function (d) {
-          return 'Gender'
+        .text(function () {
+          return "Gender"
         })
     },
   },
