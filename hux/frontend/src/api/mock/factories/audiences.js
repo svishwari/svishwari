@@ -1,4 +1,4 @@
-import faker, { fake } from "faker"
+import faker from "faker"
 
 import { pick } from "lodash"
 import { customersOverview } from "./customers"
