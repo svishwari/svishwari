@@ -17,7 +17,9 @@ const getters = {
 const mutations = {
   SET_ALL(state, items) {
     items.forEach((item) => {
-      Vue.set(state.items, item.id, item)
+      // appending _ converts id from numeric to string which helps in preserving the order of the keys
+      // the order is changed incase the keys of the object are numeric and preserved incase of string
+      Vue.set(state.items, `_${item.id}`, item)
     })
   },
 

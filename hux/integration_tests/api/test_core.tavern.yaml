@@ -2,7 +2,7 @@
 test_name: Test Health Check and Core Functions
 
 includes:
-  - !include common.yaml
+  - !include config/common.yaml
 
 stages:
   - name: Health-Check
