@@ -255,7 +255,7 @@
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
-      @onCreate="lookalikeCreated=true"
+      @onCreate="lookalikeCreated = true"
     />
   </div>
 </template>
