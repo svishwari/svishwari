@@ -1,0 +1,63 @@
+version: "1.0"
+stages:
+  - "prepare"
+  - "docker"
+  - "artifactory"
+
+steps:
+
+  PrepareBuildDetails:
+    stage: prepare
+    title: Prepare Build Details
+    type: parallel
+    steps:
+      GetTriggerName:
+        stage: prepare
+        title: get trigger name using id from spec yaml
+        type: deloittehux/get-trigger-name
+      BuildNumber:
+        stage: prepare
+        title: Bump default BUILD_NUMBER annotation
+        type: bump-build-number
+
+  CloneRepository:
+    stage: "prepare"
+    title: Cloning ${{CF_REPO_NAME}} repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}'
+
+  NumberTag:
+    stage: prepare
+    description: Set docker tag from build number
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
+
+  VersionTag:
+    stage: prepare
+    description: Set docker tag based Git tag
+    type: freestyle
+    image: huxhub.repo.mgnt.in/alpine
+    commands:
+      - cf_export DOCKER_TAG=${{CF_BRANCH}}
+
+  BuildImage:
+    stage: "docker"
+    title: "Building Docker Image"
+    type: "build"
+    image_name: '${{BUILD_NAME}}'
+    working_directory: 'hux-unified/${{SUB_REPO}}/frontend'
+    dockerfile: 'Dockerfile'
+    tag: '${{DOCKER_TAG}}'
+
+  PublishToArtifactory:
+    stage: artifactory
+    title: Publish artifact and codefresh build info to Artifactory
+    type: deloittehux/jfrog-docker-publish
+    arguments:
+      BUILD_NAME: '${{BUILD_NAME}}'
+      BUILD_NUMBER: '${{DOCKER_TAG}}'
+      JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
+      BUILD_TAG: '${{DOCKER_TAG}}'
