@@ -55,7 +55,7 @@
             :style="{ width: header.width, left: 0 }"
           >
             <div v-if="header.value == 'name'" class="w-100 d-flex">
-              <span v-if="item.lookalike_audience == true" class="mr-3">
+              <span v-if="item.is_lookalike == true" class="mr-3">
                 <icon
                   type="lookalike"
                   :size="20"

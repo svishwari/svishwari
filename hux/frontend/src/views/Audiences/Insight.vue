@@ -49,7 +49,7 @@
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
-        v-if="audience.lookalike_audience"
+        v-if="audience.is_lookalike"
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
@@ -63,7 +63,7 @@
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original • Actual size'"
-        v-if="audience.lookalike_audience"
+        v-if="audience.is_lookalike"
       >
         <template #subtitle-extended>
           <span class="mr-2">
@@ -326,7 +326,7 @@ export default {
         },
       ]
       if (this.audience) {
-        if (this.audience.lookalike_audience == true) {
+        if (this.audience.is_lookalike) {
           items.push({
             text: this.audience.name,
             disabled: true,

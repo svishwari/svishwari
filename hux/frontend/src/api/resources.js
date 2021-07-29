@@ -11,4 +11,5 @@ export default {
   identity: "/idr",
   models: "/models",
   notifications: "/notifications",
+  lookalike: "/lookalike-audiences",
 }
