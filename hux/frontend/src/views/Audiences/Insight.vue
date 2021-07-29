@@ -281,7 +281,6 @@ export default {
   name: "AudienceInsight",
   components: {
     MetricCard,
-    EmptyStateChart,
     PageHeader,
     Breadcrumb,
     Avatar,
