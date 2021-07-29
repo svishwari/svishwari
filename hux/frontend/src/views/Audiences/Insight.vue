@@ -20,9 +20,9 @@
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
+    <div class="row px-15 my-1" v-if="audienceHistory.length > 0">
       <MetricCard
-        v-for="(item, i) in audience.audienceHistory"
+        v-for="(item, i) in audienceHistory"
         class="ma-2 audience-summary"
         :key="i"
         :grow="0"
@@ -184,7 +184,7 @@
           <look-alike-card
             v-model="audience.lookalike_audiences"
             :status="audience.lookalikeable"
-            @createLookalike="showLookalikeDrawer = true"
+            @createLookalike="openLookAlikeDrawer"
           />
         </v-col>
       </v-row>
@@ -257,7 +257,11 @@
       @onEngagementChange="setSelectedEngagements"
       @onAddEngagement="triggerAttachEngagement($event)"
     />
-    <look-alike-audience :toggle="showLookalikeDrawer" />
+    <look-alike-audience
+      :toggle="showLookAlikeDrawer"
+      :selected-audience="selectedAudience"
+      @onToggle="(val) => (showLookAlikeDrawer = val)"
+    />
   </div>
 </template>
 
@@ -301,56 +305,9 @@ export default {
   },
   data() {
     return {
-      // 3 states can be Active, Inactive & Disabled
-      lookalikeable: "Active",
-      showLookalikeDrawer: false,
-      // TO DO replace with API call
-      lookalikesData: [
-        {
-          id: "1",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience1",
-          size: "45000",
-        },
-        {
-          id: "2",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience2",
-          size: "45000",
-        },
-        {
-          id: "3",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience3",
-          size: "45000",
-        },
-        {
-          id: "4",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience4",
-          size: "45000",
-        },
-      ],
+      selectedAudience: null,
+      showLookAlikeDrawer: false,
+      audienceHistory: [],
       items: [
         {
           text: "Audiences",
@@ -368,7 +325,6 @@ export default {
       ],
       loading: false,
       loadingRelationships: false,
-
       insightInfoItems: {
         total_customers: {
           title: "Target size",
@@ -605,6 +561,10 @@ export default {
       }))
       this.engagementDrawer = true
     },
+    openLookAlikeDrawer() {
+      this.selectedAudience = this.audience
+      this.showLookAlikeDrawer = true
+    },
     openSelectDestinationsDrawer() {
       this.closeAllDrawers()
       this.showSelectDestinationsDrawer = true
@@ -673,6 +633,7 @@ export default {
     async loadAudienceInsights() {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
+      this.audienceHistory = this.audience.audienceHistory
       this.items[1].text = this.audience.name
       this.mapInsights()
       await this.getDestinations()

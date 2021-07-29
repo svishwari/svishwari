@@ -117,7 +117,6 @@ export default {
 
 <style lang="scss" scoped>
 .lookalike-card {
-  max-width: 320px;
   min-height: 261px;
   max-height: 261px;
   overflow: hidden;
@@ -128,19 +127,20 @@ export default {
 
   .name-col {
     min-width: 118px;
+    max-width: 118px;
   }
   .cell {
     padding-left: 18px !important;
-    font-family: Open Sans;
-    font-style: normal;
     font-weight: normal;
     font-size: 14px !important;
     line-height: 22px;
     display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
     text-decoration: none;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+    overflow: hidden !important;
   }
 
   .title-text {
