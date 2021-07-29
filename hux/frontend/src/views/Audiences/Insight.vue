@@ -125,38 +125,49 @@
       </MetricCard>
     </div>
     <div class="px-15 my-1 mb-4">
-      <v-card class="rounded-lg card-style" minHeight="145px" flat>
-        <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-          <div class="d-flex align-center">
-            <span class="text-h5">Engagement &amp; delivery overview</span>
-          </div>
-          <div class="d-flex align-center">
-            <v-btn
-              text
-              class="d-flex align-center primary--text text-decoration-none"
-              disabled
-            >
-              <Icon type="audiences" :size="16" class="mr-1" />
-              Add an Engagement
-            </v-btn>
-          </div>
-        </v-card-title>
-        <v-progress-linear
-          v-if="!engagements"
-          :active="!engagements"
-          :indeterminate="!engagements"
-        />
-        <v-card-text class="pl-6 pr-6 pb-6">
-          <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
-            <status-list
-              v-for="item in engagements"
-              :key="item.id"
-              :audience="item"
-              :statusIcon="17"
+      <v-row>
+        <v-col :cols="lookalikable != 'Inactive' ? 9 : 12">
+          <v-card class="rounded-lg card-style" minHeight="145px" flat>
+            <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
+              <div class="d-flex align-center">
+                <span class="text-h5">Engagement &amp; delivery overview</span>
+              </div>
+              <div class="d-flex align-center">
+                <v-btn
+                  text
+                  class="d-flex align-center primary--text text-decoration-none"
+                  disabled
+                >
+                  <Icon type="audiences" :size="16" class="mr-1" />
+                  Add an Engagement
+                </v-btn>
+              </div>
+            </v-card-title>
+            <v-progress-linear
+              v-if="!engagements"
+              :active="!engagements"
+              :indeterminate="!engagements"
             />
-          </v-col>
-        </v-card-text>
-      </v-card>
+            <v-card-text class="pl-6 pr-6 pb-6">
+              <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
+                <status-list
+                  v-for="item in engagements"
+                  :key="item.id"
+                  :audience="item"
+                  :statusIcon="17"
+                />
+              </v-col>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col v-if="lookalikable != 'Inactive'" cols="3">
+          <look-alike-card
+            v-model="lookalikesData"
+            :status="lookalikable"
+            @createLookalike="showLookalikeDrawer = true"
+          />
+        </v-col>
+      </v-row>
     </div>
     <div class="px-15 my-1">
       <v-card class="rounded pa-5 box-shadow-5">
@@ -198,6 +209,7 @@
         <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
       </template>
     </EmptyStateChart>
+    <look-alike-audience :toggle="showLookalikeDrawer" />
   </div>
 </template>
 
@@ -210,9 +222,11 @@ import Avatar from "@/components/common/Avatar"
 import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
+import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import Icon from "../../components/common/Icon.vue"
 import StatusList from "../../components/common/StatusList.vue"
 import Size from "../../components/common/huxTable/Size.vue"
+import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 
 export default {
@@ -227,10 +241,62 @@ export default {
     Icon,
     StatusList,
     Size,
+    LookAlikeAudience,
+    LookAlikeCard,
     IncomeChart,
   },
   data() {
     return {
+      // 3 states can be Active, Inactive & Disabled
+      lookalikable: "Active",
+      showLookalikeDrawer: false,
+      // TO DO replace with API call
+      lookalikesData: [
+        {
+          id: "1",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience1",
+          size: "45000",
+        },
+        {
+          id: "2",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience2",
+          size: "45000",
+        },
+        {
+          id: "3",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience3",
+          size: "45000",
+        },
+        {
+          id: "4",
+          delivery_platform_id: "60b9601a6021710aa146df30",
+          country: "USA",
+          audience_size_percentage: 0,
+          create_time: "2021-07-26T19:09:19.956Z",
+          update_time: "2021-07-26T19:09:19.956Z",
+          favorite: true,
+          name: "Audience4",
+          size: "45000",
+        },
+      ],
       items: [
         {
           text: "Audiences",

@@ -1,0 +1,516 @@
+---
+test_name: Test destinations constants API
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test destinations/constants API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/constants"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        facebook:
+          facebook_ad_account_id:
+              name: !anystr
+              type: "text"
+              required: !anybool
+              description: !anything
+          facebook_app_id:
+              name: !anystr
+              type: "text"
+              required: !anybool
+              description: !anything
+          facebook_app_secret:
+              name: !anystr
+              type: "password"
+              required: !anybool
+              description: !anything
+          facebook_access_token:
+              name: !anystr
+              type: "password"
+              required: !anybool
+              description: !anything
+        sfmc:
+          sfmc_account_id:
+              name: !anystr
+              type: "text"
+              required: !anybool
+              description: !anything
+          sfmc_auth_base_uri:
+              name: !anystr
+              type: "text"
+              required: !anybool
+              description: !anything
+          sfmc_client_id:
+              name: !anystr
+              type: "text"
+              required: !anybool
+              description: !anything
+          sfmc_client_secret:
+              name: !anystr
+              type: "password"
+              required: !anybool
+              description: !anything
+          sfmc_rest_base_uri:
+              name: !anystr
+              type: "text"
+              required: !anybool
+              description: !anything
+          sfmc_soap_base_uri:
+              name: !anystr
+              type: "text"
+              required: !anybool
+              description: !anything
+
+---
+test_name: Test destinations API
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test destinations API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+        - type: !anystr
+        - name: !anystr
+        - status: !anystr
+        - is_added: !anybool
+        - is_enabled: !anybool
+        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+
+---
+test_name: Test destinations retrieve destination data-extensions
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get destinations API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+        - type: !anystr
+        - name: !anystr
+        - status: !anystr
+        - is_added: !anybool
+        - is_enabled: !anybool
+        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+      save:
+        $ext:
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "sfmc"
+
+  - name: test destinations/{destination_id}/data-extensions
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/{sfmc_destination_id}/data-extensions"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - name: !anystr
+        - data_extension_id: !anystr
+
+---
+test_name: Test destinations retrieve destination
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get destinations API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+        - type: !anystr
+        - name: !anystr
+        - status: !anystr
+        - is_added: !anybool
+        - is_enabled: !anybool
+        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+      save:
+        $ext:
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "sfmc"
+
+  - name: test destinations/{destination_id}
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/{sfmc_destination_id}"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        id: !anystr
+        type: !anystr
+        name: !anystr
+        status: !anystr
+        is_added: !anybool
+        is_enabled: !anybool
+        create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        updated_by: !anystr
+        perf_data_extension:
+          name: !anystr
+          data_extension_id: !anystr
+
+---
+test_name: Test destinations validate facebook destination failure
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test facebook destinations/validate failure
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/validate"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        type: "facebook"
+        authentication_details:
+           facebook_access_token: "unified_facebook_access_token"
+           facebook_app_secret: "unified_facebook_app_secret"
+           facebook_app_id: "2849684615131430"
+           facebook_ad_account_id: "act_1429837470372777"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      json:
+        message: !re_search "fail"
+
+---
+test_name: Test destinations validate sfmc destination failure
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test sfmc destinations/validate failure
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/validate"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        type: "sfmc"
+        authentication_details:
+           sfmc_client_secret: "unified_sfmc_client_secret"
+           sfmc_client_id: "8g7zm3khwl08rfoo7p8vgct7"
+           sfmc_account_id: "7329755"
+           sfmc_auth_base_uri: "https://mc4xx9cczd48t2zwg0n4gjzmr-48.auth.marketingcloudapis.com/"
+           sfmc_soap_base_uri: "https://mc4xx9cczd48t2zwg0n4gjzmr-48.soap.marketingcloudapis.com/"
+           sfmc_rest_base_uri: "https://mc4xx9cczd48t2zwg0n4gjzmr-48.rest.marketingcloudapis.com/"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      json:
+        message: !re_search "fail"
+
+---
+test_name: Test destinations create destination data-extension already exists
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get destinations API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+        - type: !anystr
+        - name: !anystr
+        - status: !anystr
+        - is_added: !anybool
+        - is_enabled: !anybool
+        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+      save:
+        $ext:
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "sfmc"
+
+  - name: test destinations/{destination_id}/data-extensions already exists
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/{sfmc_destination_id}/data-extensions"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        data_extension: "Journey Entry"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        data_extension_id: !anystr
+        name: "Journey Entry"
+
+---
+test_name: Test destinations create destination data-extension invalid destination ID
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test destinations/{destination_id}/data-extensions invalid destination ID
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/XYZ/data-extensions"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        data_extension: "Journey Entry"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      json:
+        message: !re_search "not valid"
+
+---
+test_name: Test destinations put/update destination success
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get destinations API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+        - type: !anystr
+        - name: !anystr
+        - status: !anystr
+        - is_added: !anybool
+        - is_enabled: !anybool
+        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+      save:
+        $ext:
+          function: tavern_test_utils:get_destination_id
+          extra_kwargs:
+            destination_type: "facebook"
+
+  - name: test destinations put/update destination success
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/{facebook_destination_id}"
+      method: PUT
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        authentication_details:
+          facebook_access_token: "unified_facebook_access_token"
+          facebook_app_secret: "unified_facebook_app_secret"
+          facebook_app_id: "2849684615131430"
+          facebook_ad_account_id: "act_1429837470372777"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
+      json: {}
+
+---
+test_name: Test destinations put/update invalid destination ID failure
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test destinations put/update destination failure invalid destination ID
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/XYZ"
+      method: PUT
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        authentication_details:
+          facebook_access_token: "unified_facebook_access_token"
+          facebook_app_secret: "unified_facebook_app_secret"
+          facebook_app_id: "2849684615131430"
+          facebook_ad_account_id: "act_1429837470372777"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
+      json: {}

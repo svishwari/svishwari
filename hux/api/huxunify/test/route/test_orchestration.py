@@ -668,6 +668,35 @@ class OrchestrationRouteTest(TestCase):
 
         mock_facebook_connector.stop()
 
+        # test getting the audience and lookalikes response
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{self.audience_api_endpoint}/{self.audiences[0][db_c.ID]}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        audience = response.json
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(
+            ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
+        )
+        self.assertTrue(audience[api_c.LOOKALIKE_AUDIENCES])
+
+        # test returned audience
+        lookalike_audience = audience[api_c.LOOKALIKE_AUDIENCES][0]
+        self.assertEqual(
+            ObjectId(lookalike_audience[db_c.OBJECT_ID]),
+            engaged_lookalike_audience[db_c.OBJECT_ID],
+        )
+        self.assertEqual(
+            lookalike_audience[db_c.NAME], lookalike_audience_name
+        )
+
     def test_create_lookalike_audience_invalid_engagement_ids(self):
         """Test create lookalike audience with invalid engagement ids
         Args:

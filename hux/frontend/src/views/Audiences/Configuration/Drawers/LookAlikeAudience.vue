@@ -241,7 +241,7 @@ export default {
     },
 
     selectedAudience: {
-      required: true,
+      required: false,
     },
   },
 
