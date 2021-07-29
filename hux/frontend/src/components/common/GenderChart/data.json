@@ -1,15 +1,15 @@
 {
   "gender": {
     "gender_other": {
-      "population_percentage": 0.0211,
+      "population_percentage": 0.0511,
       "size": 289655
     },
     "gender_women": {
-      "population_percentage": 0.5201,
+      "population_percentage": 0.5001,
       "size": 6955119
     },
     "gender_men": {
-      "population_percentage": 0.4601,
+      "population_percentage": 0.4501,
       "size": 5627732
     }
   }
