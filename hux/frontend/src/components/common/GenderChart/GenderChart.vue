@@ -91,8 +91,8 @@ export default {
       var svg = d3Select
         .select("#mainPie")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("viewBox", `0 0 250 200`) // for responsive
+        .style("margin-left", "40px")
         .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
 
@@ -115,8 +115,7 @@ export default {
       var legendSvg = d3Select
         .select("#legend")
         .append("svg")
-        .attr("width", 500)
-        .attr("height", 20)
+        .attr("viewBox", `0 0 200 20`) // for responsive
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
         .style("margin-left", "40px")
