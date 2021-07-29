@@ -455,30 +455,32 @@ stages:
           extra_kwargs:
             destination_type: "facebook"
 
-  - name: test destinations put/update destination success
-
-    # Define the request to be made...
-    request:
-      url: "{host}/{version}/destinations/{facebook_destination_id}"
-      method: PUT
-      headers:
-        content-type: application/json
-        Authorization: "Bearer {token}"
-      json:
-        authentication_details:
-          facebook_access_token: "unified_facebook_access_token"
-          facebook_app_secret: "unified_facebook_app_secret"
-          facebook_app_id: "2849684615131430"
-          facebook_ad_account_id: "act_1429837470372777"
-
-    # ...and the expected response code and body
-    response:
-      strict: false
-      status_code: 200
-      headers:
-        content-type: application/json
-      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-      json: {}
+# Commenting out this stage of test since it is updating destination's auth credentials
+# in DB with incorrect/dummy values that is causing deliveries to fail
+#  - name: test destinations put/update destination success
+#
+#    # Define the request to be made...
+#    request:
+#      url: "{host}/{version}/destinations/{facebook_destination_id}"
+#      method: PUT
+#      headers:
+#        content-type: application/json
+#        Authorization: "Bearer {token}"
+#      json:
+#        authentication_details:
+#          facebook_access_token: "unified_facebook_access_token"
+#          facebook_app_secret: "unified_facebook_app_secret"
+#          facebook_app_id: "2849684615131430"
+#          facebook_ad_account_id: "act_1429837470372777"
+#
+#    # ...and the expected response code and body
+#    response:
+#      strict: false
+#      status_code: 200
+#      headers:
+#        content-type: application/json
+#      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
+#      json: {}
 
 ---
 test_name: Test destinations put/update invalid destination ID failure
