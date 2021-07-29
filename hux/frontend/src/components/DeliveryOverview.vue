@@ -13,10 +13,7 @@
       <div class="empty-state pa-5 text--gray" v-if="sections.length == 0">
         <slot name="empty-sections"></slot>
       </div>
-      <v-col
-        class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
-        v-if="sections.length >= 0"
-      >
+      <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3" v-else>
         <status-list
           v-for="item in sections"
           :key="item.id"

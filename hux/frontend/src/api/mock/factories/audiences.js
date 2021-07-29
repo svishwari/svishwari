@@ -1,4 +1,4 @@
-import faker from "faker"
+import faker, { fake } from "faker"
 
 import { pick } from "lodash"
 import { customersOverview } from "./customers"
@@ -54,6 +54,7 @@ const lookalikeAudience = () => {
     favorite: faker.datatype.boolean(),
     name: faker.fake("{{name.firstName}} {{name.lastName}}"),
     size: faker.datatype.number({ min: 10000000, max: 999999999 }),
+    lookalike_audience: faker.datatype.boolean(),
   }
 }
 
@@ -76,7 +77,6 @@ export const audience = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   engagements: () => mockEngagements(2),
-  lookalikeable: () =>
-    faker.random.arrayElement(["Inactive", "Disabled", "Active"]),
+  lookalikeable: () => faker.random.arrayElement(["Active"]),
   lookalike_audiences: () => mockLookalikeAudiences(5),
 }

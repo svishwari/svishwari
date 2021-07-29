@@ -318,7 +318,7 @@ const likelyCustomer = () => {
   return {
     updated_by: "Rahul Goel",
     created_by: "Rahul Goel",
-    lookalike_audience: true,
+    is_lookalike: true,
     audience_insights: {
       total_customers: 121321321,
       total_countries: 2,
