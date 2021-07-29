@@ -59,6 +59,7 @@ from huxunify.api.route.utils import (
     group_perf_metric,
     update_metrics,
     validate_destination,
+    validate_destination_id,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -859,18 +860,13 @@ class AddDestinationEngagedAudience(SwaggerView):
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
         )
+        destination[api_c.ID] = validate_destination_id(destination[api_c.ID])
 
         database = get_db_client()
-
-        # validate destinations exist
+        # get destinations
         destination_to_attach = get_delivery_platform(
             database, destination[api_c.ID]
         )
-        if not destination_to_attach:
-            return {
-                "message": f"Destination does not exist: {destination[api_c.ID]}"
-            }, HTTPStatus.BAD_REQUEST
-
         append_destination_to_engagement_audience(
             database,
             ObjectId(engagement_id),
@@ -976,12 +972,12 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         destination = DestinationEngagedAudienceSchema().load(
             request.get_json(), partial=True
         )
+        destination_id = validate_destination_id(destination[api_c.ID])
 
         database = get_db_client()
-
-        # validate destinations exist
+        # get destination
         destination_to_remove = get_delivery_platform(
-            database, destination[api_c.ID]
+            database, destination_id
         )
         if not destination_to_remove:
             return {
@@ -992,7 +988,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
             database,
             ObjectId(engagement_id),
             ObjectId(audience_id),
-            destination[api_c.ID],
+            destination_id,
             user_name,
         )
 

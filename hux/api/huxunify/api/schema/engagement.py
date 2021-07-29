@@ -4,7 +4,7 @@ Schemas for the Engagements API
 """
 from bson import ObjectId
 from flask_marshmallow import Schema
-from marshmallow import fields, validate, pre_load, post_dump, post_load
+from marshmallow import fields, validate, pre_load, post_dump
 from huxunifylib.database import constants as db_c
 from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import must_not_be_blank, validate_object_id
@@ -169,20 +169,6 @@ class DestinationEngagedAudienceSchema(Schema):
         required=False,
         default=None,
     )
-
-    @post_load
-    # pylint: disable=unused-argument
-    def post_process_details(self, destination: dict, **kwarg) -> dict:
-        """process the schema after loading.
-
-        Args:
-            destination (dict): destination to be appended
-        Returns:
-            dict: Returns a destination object
-
-        """
-        destination[db_c.OBJECT_ID] = ObjectId(destination[db_c.OBJECT_ID])
-        return destination
 
 
 class DisplayAdsSummary(Schema):
