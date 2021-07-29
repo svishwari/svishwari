@@ -1,0 +1,121 @@
+<template>
+  <v-card class="rounded-lg card-style" minHeight="261px" flat>
+    <v-card-title class="d-flex justify-space-between pb-1 pl-6 pt-3">
+      <slot name="title-left"></slot>
+      <slot name="title-right"></slot>
+    </v-card-title>
+    <v-progress-linear
+      v-if="loadingRelationships"
+      :active="loadingRelationships"
+      :indeterminate="loadingRelationships"
+    />
+    <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
+      <div class="empty-state pa-5 text--gray" v-if="sections.length == 0">
+        <slot name="empty-sections"></slot>
+      </div>
+      <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3" v-else>
+        <status-list
+          v-for="item in sections"
+          :key="item.id"
+          :section="item"
+          :statusIcon="17"
+          :menuItems="sectionActions"
+          :deliveriesKey="deliveriesKey"
+          :sectionType="sectionType"
+          :destinationMenuItems="destinationActions"
+          @onSectionAction="$emit('onOverviewSectionAction', $event)"
+          @onDestinationAction="$emit('onOverviewDestinationAction', $event)"
+        >
+          <template #empty-destinations>
+            <slot name="empty-deliveries" :sectionId="item.id" />
+          </template>
+        </status-list>
+      </v-col>
+    </v-card-text>
+  </v-card>
+</template>
+
+<script>
+import StatusList from "./common/StatusList.vue"
+export default {
+  components: { StatusList },
+  name: "DeliveryOverview",
+  data() {
+    return {
+      engagementMenuOptions: [
+        { id: 1, title: "View delivery history", active: true },
+        { id: 2, title: "Deliver all", active: true },
+        { id: 3, title: "Add a destination", active: true },
+        { id: 5, title: "Remove engagement", active: false },
+      ],
+      destinationMenuOptions: [
+        { id: 2, title: "Create lookalike", active: false },
+        { id: 1, title: "Deliver now", active: true },
+        { id: 3, title: "Edit delivery schedule", active: true },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: false },
+      ],
+      audienceMenuOptions: [
+        {
+          id: 1,
+          title: "Deliver now",
+          active: false,
+        },
+        { id: 2, title: "Add a destination", active: true },
+        { id: 3, title: "Create lookalike", active: false },
+        { id: 4, title: "Pause all delivery", active: false },
+        { id: 5, title: "Remove audience", active: true },
+      ],
+    }
+  },
+  computed: {
+    sectionActions() {
+      return this.sectionType === "engagement"
+        ? this.engagementMenuOptions
+        : this.audienceMenuOptions
+    },
+    destinationActions() {
+      return this.sectionType === "engagement"
+        ? this.destinationMenuOptions
+        : []
+    },
+    sectionList() {
+      return this.sectionsforEach((section) => {
+        section.destinations.map((destination) => {
+          const destinationObj = JSON.parse(JSON.stringify(destination))
+          destinationObj["status"] = destination.latest_delivery.status
+          destinationObj["size"] = destination.latest_delivery.size
+          destinationObj["update_time"] =
+            destination.latest_delivery.update_time
+          return destinationObj
+        })
+      })
+    },
+  },
+  props: {
+    sections: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    sectionType: {
+      type: String,
+      required: true,
+      default: "engagement",
+    },
+    deliveriesKey: {
+      type: String,
+      required: true,
+      default: "destinations",
+    },
+    loadingRelationships: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped></style>

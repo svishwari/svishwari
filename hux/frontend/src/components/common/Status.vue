@@ -13,8 +13,9 @@
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -33,8 +34,9 @@
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -53,8 +55,9 @@
           <span class="half-right-circle mr-2 secondary" />
         </span>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -86,8 +89,9 @@
           v-on="on"
         />
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -106,8 +110,9 @@
           mdi-information
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -126,8 +131,9 @@
           mdi-message-alert
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -146,8 +152,9 @@
           mdi-checkbox-blank-circle-outline
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -166,8 +173,9 @@
           mdi-checkbox-marked-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -186,8 +194,9 @@
           mdi-message-alert
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div class="px-4 py-2 white d-flex flex-column" v-if="showLabel">
+        <span class="mb-2" v-if="tooltipTitle">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -238,6 +247,11 @@ export default {
       type: Number,
       required: false,
       default: 24,
+    },
+    tooltipTitle: {
+      type: String,
+      required: false,
+      default: "",
     },
   },
 }

@@ -5,7 +5,7 @@
     >
       <span>Lookalikes</span>
       <v-btn
-        :disabled="status == 'Disabled'"
+        :disabled="status == 'disabled'"
         text
         color="primary"
         @click="onCreateLookalike"
@@ -14,7 +14,7 @@
         Create lookalike
       </v-btn>
     </v-card-title>
-    <v-card-text v-if="lookalikesData && status == 'Active'" class="pl-0 pr-0">
+    <v-card-text v-if="lookalikesData && status == 'active'" class="pl-0 pr-0">
       <v-simple-table fixed-header height="200px">
         <template v-slot:default>
           <tbody>
@@ -27,7 +27,7 @@
                         name: 'AudienceInsight',
                         params: { id: data.id },
                       }"
-                      class="cell"
+                      class="cell text-decoration-none"
                       append
                     >
                       {{ data.name }}
@@ -66,7 +66,7 @@
       </v-simple-table>
     </v-card-text>
     <v-card-text
-      v-if="!lookalikesData && status == 'Active'"
+      v-if="!lookalikesData && status == 'active'"
       class="pl-4 pr-4 pt-4"
     >
       <v-list-item-subtitle>
@@ -74,7 +74,7 @@
       </v-list-item-subtitle>
       <span>Create one by clicking the "Create lookalike" above.</span>
     </v-card-text>
-    <v-card-text v-if="status == 'Disabled'" class="pl-4 pr-4 pt-4">
+    <v-card-text v-if="status == 'disabled'" class="pl-4 pr-4 pt-4">
       <span>
         This audience is currently getting prepared in Facebook. This could take
         a couple hours so check back later.
@@ -117,8 +117,8 @@ export default {
 
 <style lang="scss" scoped>
 .lookalike-card {
-  max-width: 320px;
-  min-height: 250px;
+  min-height: 261px;
+  max-height: 261px;
   overflow: hidden;
 
   ::v-deep .v-card-text {
@@ -127,19 +127,19 @@ export default {
 
   .name-col {
     min-width: 118px;
+    max-width: 118px;
   }
   .cell {
     padding-left: 18px !important;
-    font-family: Open Sans;
-    font-style: normal;
     font-weight: normal;
     font-size: 14px !important;
     line-height: 22px;
     display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
-    text-decoration: none;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+    overflow: hidden !important;
   }
 
   .title-text {
