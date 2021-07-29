@@ -26,6 +26,7 @@ CREATED_BY = "created_by"
 UPDATED_BY = "updated_by"
 MATCH_CONFIDENCE = "match_confidence"
 DELIVERIES = "deliveries"
+DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 
@@ -442,7 +443,7 @@ AUDIENCE_ROUTER_STUB_TEST = "AUDIENCE_ROUTER_STUB_TEST"
 AUDIENCE_ROUTER_STUB_VALUE = "1"
 AUDIENCE_ROUTER_CERT_PATH = "../rds-combined-ca-bundle.pem"
 AUDIENCE_ROUTER_MONGO_PASSWORD_FROM = "unifieddb_rw"
-LOOKALIKE_AUDIENCES = "lookalike-audiences"
+LOOKALIKE_AUDIENCES = "lookalike_audiences"
 LOOKALIKE_AUDIENCES_ENDPOINT = "/lookalike-audiences"
 LOOKALIKEABLE = "lookalikeable"
 IS_LOOKALIKE = "is_lookalike"
@@ -547,7 +548,7 @@ ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
 # TODO Remove this data once actual data from tecton flows
 SUPPORTED_MODELS = {
-    1: {
+    2: {
         MODEL_TYPE: LTV,
         NAME: "Lifetime value",
         DESCRIPTION: "Predicts the lifetime value of a customer based on models",
@@ -557,7 +558,7 @@ SUPPORTED_MODELS = {
         PRECISION: -1,
         RECALL: -1,
         LIFT_DATA: {
-            BUCKET: list(range(10, 110)),
+            BUCKET: list(range(10, 110, 10)),
             PREDICTED_VALUE: [
                 15007.58,
                 28587.99,
@@ -646,7 +647,7 @@ SUPPORTED_MODELS = {
             ],
         },
     },
-    2: {
+    1: {
         MODEL_TYPE: UNSUBSCRIBE,
         NAME: "Propensity to Unsubscribe",
         DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
@@ -656,7 +657,7 @@ SUPPORTED_MODELS = {
         PRECISION: 0.82,
         RECALL: 0.65,
         LIFT_DATA: {
-            BUCKET: list(range(10, 110)),
+            BUCKET: list(range(10, 110, 10)),
             PREDICTED_VALUE: [
                 201,
                 201.6,

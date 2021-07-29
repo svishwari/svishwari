@@ -97,6 +97,14 @@ class AudienceView(SwaggerView):
             "required": False,
             "default": False,
         },
+        {
+            "name": api_c.DELIVERIES,
+            "description": "Number of delivery objects to return per audience",
+            "in": "query",
+            "type": "int",
+            "required": False,
+            "default": api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT,
+        },
     ]
 
     responses = {
@@ -142,16 +150,28 @@ class AudienceView(SwaggerView):
             token_response[0], audiences
         )
 
+        # get the x number of last deliveries to provide per audience
+        delivery_limit = int(
+            request.args.get(
+                api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
+            )
+        )
+
         # process each audience object
         for audience in audiences:
             # workaround because DocumentDB does not allow $replaceRoot
             # do replace root by bringing the nested engagement up a level.
             audience.update(audience_dict[audience[db_c.ID]])
 
-            # remove any empty deliveries
+            # take the last X number of deliveries
+            # remove any empty ones, and only show the delivered/succeeded
             audience[api_c.DELIVERIES] = [
-                x for x in audience[api_c.DELIVERIES] if x
-            ]
+                x
+                for x in audience[api_c.DELIVERIES]
+                if x
+                and x.get(db_c.STATUS)
+                in [api_c.DELIVERED, db_c.STATUS_SUCCEEDED]
+            ][:delivery_limit]
 
             # set the destinations
             audience[api_c.DESTINATIONS_TAG] = add_destinations(
@@ -160,6 +180,18 @@ class AudienceView(SwaggerView):
 
             audience[api_c.SIZE] = customer_size_dict.get(audience[db_c.ID])
             audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
+
+        # get all lookalikes and append to the audience list
+        lookalikes = destination_management.get_all_delivery_platform_lookalike_audiences(
+            database
+        )
+
+        # set the is_lookalike property to True so UI knows it is a lookalike.
+        for lookalike in lookalikes:
+            lookalike[api_c.IS_LOOKALIKE] = True
+
+        # combine the two lists and serve.
+        audiences += lookalikes
 
         # if lookalikeable flag was passed, filter out the audiences
         # that are not lookalikeable.
@@ -292,9 +324,11 @@ class AudienceGetView(SwaggerView):
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
         audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
-
-        # TODO - HUS-436
-        audience[db_c.LOOKALIKE_AUDIENCE_COLLECTION] = []
+        audience[
+            api_c.LOOKALIKE_AUDIENCES
+        ] = destination_management.get_all_delivery_platform_lookalike_audiences(
+            database, {db_c.LOOKALIKE_SOURCE_AUD_ID: audience_id}
+        )
         audience[api_c.LOOKALIKEABLE] = is_audience_lookalikeable(audience)
 
         return (
@@ -815,6 +849,8 @@ class SetLookalikeAudience(SwaggerView):
                 body[api_c.NAME],
                 body[api_c.AUDIENCE_SIZE_PERCENTAGE],
                 "US",
+                user_name,
+                0,  # TODO HUS-801 - set lookalike SIZE correctly.
             )
         )
 
