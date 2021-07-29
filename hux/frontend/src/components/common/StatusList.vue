@@ -5,20 +5,37 @@
         <router-link
           :to="{
             name: 'AudienceInsight',
-            params: { id: audience.id },
+            params: { id: section.id },
           }"
           class="text-decoration-none"
           append
         >
-          {{ audience.name }}
+          <tooltip>
+            <template #label-content>
+              <span class="ellipsis">
+                {{ section.name }}
+              </span>
+            </template>
+            <template #hover-content>
+              <div class="py-2 white d-flex flex-column">
+                <span>
+                  {{ section.name }}
+                </span>
+                <span class="mt-3" v-if="section.description">
+                  {{ section.description }}
+                </span>
+              </div>
+            </template>
+          </tooltip>
         </router-link>
         <status
-          v-if="audience.lookalike"
-          :status="audience.status"
+          v-if="section.status"
+          :status="section.status"
           :iconSize="statusIcon"
-          class="ml-2"
+          class="ml-3"
           collapsed
           showLabel
+          :tooltipTitle="`${sectionTypePrefix} status`"
         />
       </span>
       <v-menu class="menu-wrapper" bottom offset-y>
@@ -28,15 +45,14 @@
           </v-icon>
         </template>
         <v-list class="menu-list-wrapper">
-          <v-list-item-group>
+          <v-list-item-group v-model="selection" active-class="">
             <v-list-item
-              v-for="item in topNavItems"
+              v-for="item in sectionActionItems(section)"
               :key="item.id"
               :disabled="!item.active"
+              @click="$emit('onSectionAction', { target: item, data: section })"
             >
-              <v-list-item-title
-                @click="triggerAction(item.title, engagementId, audience.id)"
-              >
+              <v-list-item-title>
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
@@ -44,9 +60,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0" v-if="audience.destinations.length > 0">
+    <v-list dense class="pa-0" v-if="section[deliveriesKey].length > 0">
       <v-list-item
-        v-for="item in audience.destinations"
+        v-for="item in section[deliveriesKey]"
         :key="item.id"
         @click="toggleFocus()"
       >
@@ -57,9 +73,13 @@
                 <Logo :type="item.type" :size="18" />
               </template>
               <template #hover-content>
-                <div class="d-flex align-center">
-                  <Logo :type="item.type" :size="18" />
-                  <span class="ml-2">{{ item.name }}</span>
+                <div class="d-flex flex-column">
+                  <div class="d-flex align-center">
+                    <Logo :type="item.type" :size="18" />
+                    <span class="ml-2">{{ item.name }}</span>
+                  </div>
+                  <span class="mb-1 mt-2">Last delivered:</span>
+                  <span>{{ item.update_time | Date | Empty("-") }}</span>
                 </div>
               </template>
             </tooltip>
@@ -75,7 +95,7 @@
                     class="mr-2 more-action"
                     color="primary"
                     @click.prevent
-                    v-if="!audience.lookalike"
+                    v-if="!section.lookalike"
                   >
                     mdi-dots-vertical
                   </v-icon>
@@ -83,31 +103,45 @@
                 <v-list class="menu-list-wrapper">
                   <v-list-item-group>
                     <v-list-item
-                      v-for="option in options"
+                      v-for="option in deliveryActionItems(item)"
                       :key="option.id"
                       :disabled="!option.active"
+                      @click="
+                        $emit('onDestinationAction', {
+                          target: option,
+                          data: item,
+                          parent: section,
+                        })
+                      "
                     >
-                      <v-list-item-title
-                        v-if="option.title === 'Deliver now'"
-                        @click="
-                          deliverEngagementAudienceDestination(
-                            engagementId,
-                            audience.id,
-                            item.id
-                          )
-                        "
+                      <v-list-item-title v-if="!option.menu">
+                        {{ option.title }}
+                      </v-list-item-title>
+
+                      <v-menu
+                        v-model="isSubMenuOpen"
+                        v-else
+                        offset-x
+                        nudge-right="16"
+                        nudge-top="4"
                       >
-                        {{ option.title }}
-                      </v-list-item-title>
-                      <v-list-item-title
-                        v-else-if="option.title === 'Edit delivery schedule'"
-                        @click="onEditDeliverySchedule(item)"
-                      >
-                        {{ option.title }}
-                      </v-list-item-title>
-                      <v-list-item-title v-else>
-                        {{ option.title }}
-                      </v-list-item-title>
+                        <template #activator="{ on, attrs }">
+                          <v-list-item-title v-bind="attrs" v-on="on">
+                            {{ option.title }}
+                            <v-icon> mdi-chevron-right </v-icon>
+                          </v-list-item-title>
+                        </template>
+                        <template #default>
+                          <div class="sub-menu-class white">
+                            <Logo
+                              v-if="option.menu.icon"
+                              :size="18"
+                              :type="option.menu.icon"
+                            />
+                            <span class="ml-1">{{ option.menu.title }}</span>
+                          </div>
+                        </template>
+                      </v-menu>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -115,119 +149,63 @@
             </span>
           </div>
         </v-list-item-content>
-        <v-list-item-content
-          v-if="item.latest_delivery.status"
-          class="status-col py-1"
-        >
+        <v-list-item-content v-if="item.status" class="status-col py-1">
           <status
-            :status="item.latest_delivery.status"
+            :status="item.status"
             :iconSize="statusIcon"
             collapsed
             showLabel
+            tooltipTitle="Destination status"
           />
         </v-list-item-content>
-        <v-list-item-content
-          v-if="item.latest_delivery.size"
-          class="size-col py-1"
-        >
+        <v-list-item-content v-if="item.size" class="size-col py-1">
           <tooltip>
             <template #label-content>
-              {{ getSize(item.latest_delivery.size) }}
+              {{ getSize(item.size) }}
             </template>
             <template #hover-content>
-              {{ item.latest_delivery.size | Numeric(true, false) }}
+              {{ item.size | Numeric(true, false) }}
+            </template>
+          </tooltip>
+        </v-list-item-content>
+        <v-list-item-content v-if="!item.size" class="deliverdOn-col py-1">
+          <tooltip>
+            <template #label-content>
+              {{ getSize(item.size) | Empty("-") }}
+            </template>
+            <template #hover-content>
+              {{ item.size | Numeric(true, false) | Empty("-") }}
             </template>
           </tooltip>
         </v-list-item-content>
         <v-list-item-content
-          v-if="!item.latest_delivery.size"
+          v-if="item.update_time"
           class="deliverdOn-col py-1"
         >
           <tooltip>
             <template #label-content>
-              {{ getSize(item.latest_delivery.size) | Empty("-") }}
+              {{ item.update_time | Date("relative") | Empty("-") }}
             </template>
             <template #hover-content>
-              {{
-                item.latest_delivery.size | Numeric(true, false) | Empty("-")
-              }}
-            </template>
-          </tooltip>
-        </v-list-item-content>
-        <v-list-item-content
-          v-if="item.latest_delivery.update_time"
-          class="deliverdOn-col py-1"
-        >
-          <tooltip>
-            <template #label-content>
-              {{
-                item.latest_delivery.update_time | Date("relative") | Empty("-")
-              }}
-            </template>
-            <template #hover-content>
-              {{ item.latest_delivery.update_time | Date | Empty("-") }}
-            </template>
-          </tooltip>
-        </v-list-item-content>
-        <v-list-item-content
-          v-if="!item.latest_delivery.update_time"
-          class="deliverdOn-col py-1"
-        >
-          <tooltip>
-            <template #label-content>
-              {{
-                item.latest_delivery.update_time | Date("relative") | Empty("-")
-              }}
-            </template>
-            <template #hover-content>
-              {{ item.latest_delivery.update_time | Date | Empty("-") }}
+              <div class="py-2 white d-flex flex-column">
+                <span class="mb-1">Last delivered:</span>
+                <span>{{ item.update_time | Date | Empty("-") }}</span>
+                <span class="mt-2 mb-1">Next delivery:</span>
+                <span>{{ item.next_delivery | Date | Empty("-") }}</span>
+                <span class="mt-2 mb-1">Delivery schedule:</span>
+                <span>{{ item.delivery_schedule_type | Empty("-") }}</span>
+              </div>
             </template>
           </tooltip>
         </v-list-item-content>
       </v-list-item>
     </v-list>
     <div
-      v-if="audience.destinations.length == 0"
-      class="py-4 px-15 empty-destinations"
+      v-if="section[deliveriesKey].length == 0"
+      class="py-2 px-4 empty-destinations"
     >
-      <div class="no-destinations text--gray pb-5">
-        There are no destinations assigned to this audience.
-        <br />
-        Add one now.
-        <br />
-        <v-icon
-          size="30"
-          class="add-icon cursor-pointer mt-3"
-          color="primary"
-          @click="triggerAddDestination(engagementId, audience.id)"
-        >
-          mdi-plus-circle
-        </v-icon>
-      </div>
+      <slot name="empty-destinations"></slot>
     </div>
-
-    <hux-alert
-      v-model="showDeliveryAlert"
-      type="success"
-      title="YAY!"
-      message="Successfully delivered your audience."
-    />
-
-    <confirm-modal
-      v-model="showConfirmModal"
-      title="You are about to edit delivery schedule."
-      rightBtnText="Yes, edit delivery schedule"
-      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
-      @onCancel="closeModal()"
-      @onConfirm="openEditDeliveryScheduleDrawer()"
-    />
-
-    <edit-delivery-schedule
-      v-model="editDeliveryDrawer"
-      :audience-id="audience.id"
-      :destination="selectedDestination"
-      :engagement-id="engagementId"
-    />
   </v-card>
 </template>
 
@@ -237,68 +215,93 @@ import Logo from "./Logo.vue"
 import Status from "./Status.vue"
 import { getApproxSize } from "@/utils"
 import Tooltip from "./Tooltip.vue"
-import HuxAlert from "@/components/common/HuxAlert.vue"
-import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 
 export default {
   components: {
     Logo,
     Status,
     Tooltip,
-    HuxAlert,
-    ConfirmModal,
-    EditDeliverySchedule,
   },
 
   name: "StatusList",
 
   data() {
     return {
-      options: [
-        { id: 1, title: "Deliver now", active: true },
+      showDeliveryAlert: false,
+      selection: null,
+      isSubMenuOpen: null,
+      lookALikeAllowedEntries: ["Facebook"],
+      engagementMenuOptions: [
+        { id: 1, title: "View delivery history", active: false },
+        { id: 2, title: "Deliver all", active: false },
+        { id: 3, title: "Add a destination", active: false },
+        { id: 5, title: "Remove engagement", active: false },
+      ],
+      destinationMenuOptions: [
         { id: 2, title: "Create lookalike", active: false },
+        { id: 1, title: "Deliver now", active: true },
         { id: 3, title: "Edit delivery schedule", active: true },
         { id: 4, title: "Pause delivery", active: false },
         { id: 5, title: "Open destination", active: false },
         { id: 6, title: "Remove destination", active: false },
       ],
-      topNavItems: [
+      audienceMenuOptions: [
         {
           id: 1,
           title: "Deliver now",
-          active: this.audience && this.audience.destinations.length > 0,
+          active: false,
         },
         { id: 2, title: "Add a destination", active: true },
         { id: 3, title: "Create lookalike", active: false },
         { id: 4, title: "Pause all delivery", active: false },
         { id: 5, title: "Remove audience", active: true },
       ],
-      showDeliveryAlert: false,
-      showConfirmModal: false,
-      editDeliveryDrawer: false,
-      selectedDestination: {
-        name: null,
-        type: null,
-        id: null,
-      },
     }
   },
 
   props: {
-    audience: {
+    section: {
       type: Object,
-      required: true,
+      required: false,
     },
 
     engagementId: {
       type: String,
-      required: true,
+      required: false,
     },
     statusIcon: {
       type: Number,
       required: false,
       default: 24,
+    },
+    menuItems: {
+      type: Array,
+      required: false,
+    },
+    deliveriesKey: {
+      type: String,
+      required: true,
+      default: "destinations",
+    },
+    sectionType: {
+      type: String,
+      required: false,
+    },
+  },
+
+  computed: {
+    sectionTypePrefix() {
+      return this.$options.filters.TitleCase(this.sectionType)
+    },
+    sectionActions() {
+      return this.sectionType === "engagement"
+        ? this.engagementMenuOptions
+        : this.audienceMenuOptions
+    },
+    destinationActions() {
+      return this.sectionType === "engagement"
+        ? this.destinationMenuOptions
+        : []
     },
   },
 
@@ -379,6 +382,85 @@ export default {
         console.error(error)
       }
     },
+    sectionActionItems(section) {
+      // { id: 1, title: "View delivery history", active: true },
+      //   { id: 2, title: "Deliver all", active: true },
+      //   { id: 3, title: "Add a destination", active: true },
+      //   { id: 5, title: "Remove engagement", active: false },
+      if (this.sectionType === "engagement") {
+        this.engagementMenuOptions.forEach((element) => {
+          switch (element.title.toLowerCase()) {
+            case "view delivery history":
+              element["active"] =
+                section[this.deliveriesKey].filter(
+                  (delivery) => delivery.status === "Delivered"
+                ).length > 0
+              break
+            case "deliver all":
+              element["active"] = section[this.deliveriesKey].length > 0
+              break
+            case "add a destination":
+              element["active"] = true
+              break
+            case "remove engagement":
+              element["active"] = true
+              break
+            default:
+              break
+          }
+        })
+        return this.engagementMenuOptions
+      } else {
+        this.audienceMenuOptions.forEach((element) => {
+          switch (element.title.toLowerCase()) {
+            case "deliver now":
+              element["active"] = section[this.deliveriesKey].length > 0
+              break
+
+            case "create lookalike":
+              element["active"] =
+                section[this.deliveriesKey].filter((delivery) =>
+                  this.lookALikeAllowedEntries.includes(delivery.name)
+                ).length > 0
+              break
+
+            case "Pause all delivery":
+              element["active"] =
+                section[this.deliveriesKey].filter(
+                  (delivery) => delivery.status === "Delivering"
+                ).length > 0
+              break
+
+            default:
+              break
+          }
+        })
+        return this.audienceMenuOptions
+      }
+    },
+    deliveryActionItems(delivery) {
+      const createLookaLikeOption = {
+        id: 1,
+        title: "Create lookalike",
+        active: false,
+      }
+      if (delivery.name === "Facebook") {
+        ;(createLookaLikeOption["active"] = true),
+          (createLookaLikeOption["menu"] = {
+            id: "1.1",
+            title: "Facebook",
+            icon: "facebook",
+          })
+      }
+      return [
+        { ...createLookaLikeOption },
+        { id: 2, title: "Deliver now", active: true },
+        { id: 3, title: "Edit delivery schedule", active: true },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: true },
+      ]
+    },
   },
 }
 </script>
@@ -392,6 +474,13 @@ export default {
   box-sizing: border-box;
   border-radius: 12px !important;
   display: table;
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 25ch;
+    display: inline-block;
+    white-space: nowrap;
+  }
   .v-card__title {
     background: var(--v-background-base);
     border-radius: 12px 12px 0px 0px;
@@ -408,7 +497,6 @@ export default {
     .no-destinations {
       font-size: 12px;
       line-height: 16px;
-      text-align: center;
     }
   }
   .v-list {

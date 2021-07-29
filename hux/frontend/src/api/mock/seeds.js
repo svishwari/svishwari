@@ -152,7 +152,7 @@ const sfmc = {
   name: "Salesforce Marketing Cloud",
   type: "sfmc",
   is_enabled: true,
-  is_added: false,
+  is_added: true,
 }
 
 const adobe = {
@@ -318,6 +318,7 @@ const likelyCustomer = () => {
   return {
     updated_by: "Rahul Goel",
     created_by: "Rahul Goel",
+    is_lookalike: true,
     audience_insights: {
       total_customers: 121321321,
       total_countries: 2,
@@ -415,9 +416,11 @@ export default function (server) {
     "audience",
     defaultAudience({
       destinations: [facebookSeed],
+      // engagements: [engagementSeed],
     })
   )
   server.create("audience", multipleSectionFilters())
+  // look alike audiences
   server.create("audience", likelyCustomer())
   server.createList("audience", 10)
   server.create("audience", { created_by: null, updated_by: null })
@@ -443,6 +446,8 @@ export default function (server) {
             (destination) => {
               return {
                 id: destination.id,
+                name: "Facebook",
+                type: "facebook",
                 latest_delivery: {
                   id: "60ae035b6c5bf45da27f17e5",
                   status: "Delivered",

@@ -142,7 +142,9 @@ export const defineRoutes = (server) => {
         (engAud) => engAud.id === aud.id
       )
       if (existsAudience.length > 0) {
-        existsAudience[0].destinations = aud.destinations
+        existsAudience[0].destinations = aud.destinations.map((des) =>
+          schema.destinations.find(des.id)
+        )
         return
       }
       const audienceObj = {

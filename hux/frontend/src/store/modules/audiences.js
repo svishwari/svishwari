@@ -20,7 +20,12 @@ const state = {
 const getters = {
   list: (state) => Object.values(state.audiences),
   audience: (state) => (id) => {
-    return state.audiences[id]
+    let currentAudience = state.audiences[id]
+    if (currentAudience) {
+      currentAudience.lookalikeable =
+        currentAudience.lookalikeable.toLowerCase()
+    }
+    return currentAudience
   },
   audiencesRules: (state) => state.constants,
 }
@@ -84,26 +89,32 @@ const actions = {
         },
         {
           title: "Women",
-          subtitle: audienceInsights.gender_women.toLocaleString("en-US", {
-            style: "percent",
-            maximumFractionDigits: 2,
-          }),
+          subtitle:
+            audienceInsights.gender_women &&
+            audienceInsights.gender_women.toLocaleString("en-US", {
+              style: "percent",
+              maximumFractionDigits: 2,
+            }),
           icon: "mdi-gender-female",
         },
         {
           title: "Men",
-          subtitle: audienceInsights.gender_men.toLocaleString("en-US", {
-            style: "percent",
-            maximumFractionDigits: 2,
-          }),
+          subtitle:
+            audienceInsights.gender_men &&
+            audienceInsights.gender_women.toLocaleString("en-US", {
+              style: "percent",
+              maximumFractionDigits: 2,
+            }),
           icon: "mdi-gender-male",
         },
         {
           title: "Other",
-          subtitle: audienceInsights.gender_other.toLocaleString("en-US", {
-            style: "percent",
-            maximumFractionDigits: 2,
-          }),
+          subtitle:
+            audienceInsights.gender_other &&
+            audienceInsights.gender_other.toLocaleString("en-US", {
+              style: "percent",
+              maximumFractionDigits: 2,
+            }),
           icon: "mdi-gender-male-female",
         },
       ]

@@ -20,9 +20,9 @@
     </PageHeader>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="row px-15 my-1" v-if="audience && audience.audienceHistory">
+    <div class="row px-15 my-1" v-if="audienceHistory.length > 0">
       <MetricCard
-        v-for="(item, i) in audience.audienceHistory"
+        v-for="(item, i) in audienceHistory"
         class="ma-2 audience-summary"
         :key="i"
         :grow="0"
@@ -93,7 +93,6 @@
                   :size="filterKey == 'general' ? 10 : 21"
                   class="mr-1"
                 />
-                <!-- <span class="ml-1"></span> -->
                 <tooltip
                   v-for="filter in Object.keys(appliedFilters[filterKey])"
                   :key="filter"
@@ -124,47 +123,70 @@
         </template>
       </MetricCard>
     </div>
-    <div class="px-15 my-1 mb-4">
-      <v-row>
-        <v-col :cols="lookalikable != 'Inactive' ? 9 : 12">
-          <v-card class="rounded-lg card-style" minHeight="145px" flat>
-            <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-              <div class="d-flex align-center">
-                <span class="text-h5">Engagement &amp; delivery overview</span>
-              </div>
+    <div
+      class="px-15 my-1 mb-4 pt-6"
+      v-if="audience && audience.engagements && audience.engagements.length > 0"
+    >
+      <v-row class="pa-3 pb-5">
+        <v-col
+          :md="
+            audience.lookalikeable && audience.lookalikeable != 'inactive'
+              ? 9
+              : 12
+          "
+          class="pa-0"
+        >
+          <delivery-overview
+            :sections="audience && audience.engagements"
+            sectionType="engagement"
+            deliveriesKey="deliveries"
+            :loadingRelationships="loadingRelationships"
+            @onOverviewSectionAction="triggerOverviewAction($event)"
+            @onOverviewDestinationAction="
+              triggerOverviewDestinationAction($event)
+            "
+          >
+            <template #title-left>
+              <span class="text-h5">Engagement &amp; delivery overview</span>
+            </template>
+            <template #title-right>
               <div class="d-flex align-center">
                 <v-btn
                   text
-                  class="d-flex align-center primary--text text-decoration-none"
-                  disabled
+                  class="
+                    d-flex
+                    align-center
+                    primary--text
+                    text-decoration-none
+                    pr-0
+                  "
+                  @click="openAttachEngagementDrawer()"
                 >
-                  <Icon type="audiences" :size="16" class="mr-1" />
-                  Add an Engagement
+                  Add to an engagement
+                </v-btn>
+                <v-btn text color="primary">
+                  <icon type="history" :size="16" class="mr-1" />
+                  Delivery history
                 </v-btn>
               </div>
-            </v-card-title>
-            <v-progress-linear
-              v-if="!engagements"
-              :active="!engagements"
-              :indeterminate="!engagements"
-            />
-            <v-card-text class="pl-6 pr-6 pb-6">
-              <v-col class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3">
-                <status-list
-                  v-for="item in engagements"
-                  :key="item.id"
-                  :audience="item"
-                  :statusIcon="17"
-                />
-              </v-col>
-            </v-card-text>
-          </v-card>
+            </template>
+            <template #empty-deliveries>
+              <div class="mb-16">
+                This engagement has no destinations yet. Add destinations in the
+                submenu located in the right corner above.
+              </div>
+            </template>
+          </delivery-overview>
         </v-col>
-        <v-col v-if="lookalikable != 'Inactive'" cols="3">
+        <v-col
+          v-if="audience.lookalikeable && audience.lookalikeable != 'inactive'"
+          md="3"
+          class="pl-6 pr-0 py-0"
+        >
           <look-alike-card
-            v-model="lookalikesData"
-            :status="lookalikable"
-            @createLookalike="showLookalikeDrawer = true"
+            v-model="audience.lookalike_audiences"
+            :status="audience.lookalikeable"
+            @createLookalike="openLookAlikeDrawer"
           />
         </v-col>
       </v-row>
@@ -202,14 +224,65 @@
         <income-chart></income-chart>
       </v-col>
     </v-row>
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
 
-    <v-divider class="my-8"></v-divider>
-    <EmptyStateChart>
-      <template #chart-image>
-        <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
-      </template>
-    </EmptyStateChart>
-    <look-alike-audience :toggle="showLookalikeDrawer" />
+    <confirm-modal
+      v-model="showConfirmModal"
+      title="You are about to edit delivery schedule."
+      rightBtnText="Yes, edit delivery schedule"
+      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+      @onCancel="showConfirmModal = false"
+      @onConfirm="
+        showConfirmModal = false
+        editDeliveryDrawer = true
+      "
+    />
+
+    <edit-delivery-schedule
+      v-model="editDeliveryDrawer"
+      :audience-id="selectedAudienceId"
+      :destination="scheduleDestination"
+      :engagement-id="engagementId"
+    />
+    <!-- Add destination workflow -->
+    <SelectDestinationsDrawer
+      v-model="selectedDestinations"
+      closeOnAction
+      :toggle="showSelectDestinationsDrawer"
+      @onToggle="(val) => (showSelectDestinationsDrawer = val)"
+      @onSalesforceAdd="openSalesforceExtensionDrawer"
+      @onAddDestination="triggerAttachDestination()"
+    />
+    <!-- Salesforce extension workflow -->
+    <DestinationDataExtensionDrawer
+      v-model="selectedDestinations"
+      closeOnAction
+      :toggle="showSalesforceExtensionDrawer"
+      :destination="salesforceDestination"
+      @onToggle="(val) => (showSalesforceExtensionDrawer = val)"
+      @onBack="openSelectDestinationsDrawer"
+      @updateDestination="triggerAttachDestination($event)"
+    />
+
+    <!-- Engagement workflow -->
+    <AttachEngagement
+      v-model="engagementDrawer"
+      closeOnAction
+      :finalEngagements="selectedEngagements"
+      @onEngagementChange="setSelectedEngagements"
+      @onAddEngagement="triggerAttachEngagement($event)"
+    />
+    <look-alike-audience
+      :toggle="showLookAlikeDrawer"
+      :selected-audience="selectedAudience"
+      @onBack="reloadAudienceData()"
+      @onCreate="lookalikeCreated = true"
+    />
   </div>
 </template>
 
@@ -221,11 +294,16 @@ import Breadcrumb from "@/components/common/Breadcrumb"
 import Avatar from "@/components/common/Avatar"
 import Tooltip from "../../components/common/Tooltip.vue"
 import MetricCard from "@/components/common/MetricCard"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import Icon from "../../components/common/Icon.vue"
-import StatusList from "../../components/common/StatusList.vue"
 import Size from "../../components/common/huxTable/Size.vue"
+import DeliveryOverview from "../../components/DeliveryOverview.vue"
+import HuxAlert from "../../components/common/HuxAlert.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
+import AttachEngagement from "@/views/Audiences/AttachEngagement"
+import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
+import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 
@@ -233,70 +311,29 @@ export default {
   name: "AudienceInsight",
   components: {
     MetricCard,
-    EmptyStateChart,
     PageHeader,
     Breadcrumb,
     Avatar,
     Tooltip,
     Icon,
-    StatusList,
     Size,
+    DeliveryOverview,
+    AttachEngagement,
+    SelectDestinationsDrawer,
+    DestinationDataExtensionDrawer,
     LookAlikeAudience,
     LookAlikeCard,
     IncomeChart,
+    HuxAlert,
+    ConfirmModal,
+    EditDeliverySchedule,
   },
   data() {
     return {
-      // 3 states can be Active, Inactive & Disabled
-      lookalikable: "Active",
-      showLookalikeDrawer: false,
-      // TO DO replace with API call
-      lookalikesData: [
-        {
-          id: "1",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience1",
-          size: "45000",
-        },
-        {
-          id: "2",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience2",
-          size: "45000",
-        },
-        {
-          id: "3",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience3",
-          size: "45000",
-        },
-        {
-          id: "4",
-          delivery_platform_id: "60b9601a6021710aa146df30",
-          country: "USA",
-          audience_size_percentage: 0,
-          create_time: "2021-07-26T19:09:19.956Z",
-          update_time: "2021-07-26T19:09:19.956Z",
-          favorite: true,
-          name: "Audience4",
-          size: "45000",
-        },
-      ],
+      selectedAudience: null,
+      showLookAlikeDrawer: false,
+      lookalikeCreated: false,
+      audienceHistory: [],
       items: [
         {
           text: "Audiences",
@@ -313,6 +350,13 @@ export default {
         },
       ],
       loading: false,
+      loadingRelationships: false,
+      flashAlert: false,
+      alert: {
+        type: "success",
+        title: "YAY!",
+        message: "Successfully triggered delivery.",
+      },
       insightInfoItems: {
         total_customers: {
           title: "Target size",
@@ -348,30 +392,23 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
+      selectedEngagements: [],
+      selectedDestinations: [],
+      showSelectDestinationsDrawer: false,
+      showSalesforceExtensionDrawer: false,
+      salesforceDestination: {},
 
-      //TODO: Mock data for the Engagement
-      engagements: [
-        {
-          id: 1,
-          last_delivered: "2021-07-13T15:38:42.629Z",
-          lookalike: true,
-          name: "My Engagement 1",
-          size: 265234579,
-          status: "Active",
-          destinations: [
-            {
-              id: "4",
-              name: "Facebook",
-              type: "facebook",
-              latest_delivery: {
-                status: "Active",
-                size: 265234579,
-                update_time: "2021-07-13T15:38:42.629Z",
-              },
-            },
-          ],
-        },
-      ],
+      engagementDrawer: false,
+      // Edit Schedule data props
+      selectedAudienceId: null,
+      engagementId: null,
+      showConfirmModal: false,
+      editDeliveryDrawer: false,
+      scheduleDestination: {
+        name: null,
+        type: null,
+        id: null,
+      },
     }
   },
   computed: {
@@ -381,7 +418,9 @@ export default {
     audience() {
       return this.getAudience(this.$route.params.id)
     },
-
+    audienceId() {
+      return this.audience && this.audience.id
+    },
     breadcrumbItems() {
       const items = [
         {
@@ -463,6 +502,11 @@ export default {
   methods: {
     ...mapActions({
       getAudienceById: "audiences/getAudienceById",
+      getDestinations: "destinations/getAll",
+      attachAudience: "engagements/attachAudience",
+      detachAudience: "engagements/detachAudience",
+      deliverAudience: "engagements/deliverAudience",
+      deliverAudienceDestination: "engagements/deliverAudienceDestination",
     }),
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
@@ -513,13 +557,175 @@ export default {
           return item.subtitle
       }
     },
+    async triggerOverviewAction(event) {
+      switch (event.target.title.toLowerCase()) {
+        case "add a destination": {
+          this.closeAllDrawers()
+          this.selectedDestinations = []
+          // this.selectedEngagements = []
+          this.selectedEngagements.push(event.data)
+          this.selectedDestinations.push(
+            ...event.data.deliveries.map((dest) => ({ id: dest.id }))
+          )
+          this.showSelectDestinationsDrawer = true
+          break
+        }
+        case "deliver all":
+          try {
+            await this.deliverAudience({
+              id: event.data.id,
+              audienceId: this.audienceId,
+            })
+            this.flashAlert = true
+          } catch (error) {
+            console.error(error)
+          }
+          break
+        case "view delivery history":
+          break
+        case "remove engagement": {
+          let payload = {
+            data: {
+              id: event.data.id,
+              action: "Detach",
+            },
+          }
+          this.triggerAttachEngagement(payload)
+          break
+        }
+        default:
+          break
+      }
+    },
+    async triggerOverviewDestinationAction(event) {
+      try {
+        const engagementId = this.engagementId
+        switch (event.target.title.toLowerCase()) {
+          case "deliver now":
+            await this.deliverAudienceDestination({
+              id: engagementId,
+              audienceId: event.parent.id,
+              destinationId: event.data.id,
+            })
+            this.flashAlert = true
+            break
+          case "edit delivery schedule":
+            this.showConfirmModal = true
+            this.selectedAudienceId = event.parent.id
+            this.scheduleDestination = event.data
+            break
+          default:
+            break
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    // Drawer Section Starts
+    setSelectedEngagements(engagementsList) {
+      this.selectedEngagements = engagementsList
+    },
+    closeAllDrawers() {
+      this.engagementDrawer = false
+      this.showSelectDestinationsDrawer = false
+      this.showSalesforceExtensionDrawer = false
+    },
+    openAttachEngagementDrawer() {
+      this.closeAllDrawers()
+      this.selectedEngagements = this.audience.engagements.map((eng) => ({
+        id: eng.id,
+      }))
+      this.engagementDrawer = true
+    },
+    openLookAlikeDrawer() {
+      this.selectedAudience = this.audience
+      this.lookalikeCreated = false
+      this.showLookAlikeDrawer = true
+    },
+    async reloadAudienceData() {
+      this.showLookAlikeDrawer = false
+      if (this.lookalikeCreated) {
+        await this.loadAudienceInsights()
+      }
+    },
+    openSelectDestinationsDrawer() {
+      this.closeAllDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
+
+    openSalesforceExtensionDrawer(destination) {
+      this.closeAllDrawers()
+      this.salesforceDestination = destination
+      this.showSalesforceExtensionDrawer = true
+    },
+    triggerSelectDestination() {
+      this.closeDrawers()
+      this.showSelectDestinationsDrawer = true
+    },
+    triggerDataExtensionDrawer(destination) {
+      this.closeDrawers()
+      this.selectedDestination = destination || []
+      this.showDataExtensionDrawer = true
+    },
+    async triggerAttachDestination() {
+      const payload = {
+        audiences: [
+          {
+            id: this.audienceId,
+            destinations: this.selectedDestinations.map((dest) => {
+              return dest.type === "sfmc"
+                ? {
+                    id: dest.id,
+                    delivery_platform_config: dest.delivery_platform_config,
+                  }
+                : { id: dest.id }
+            }),
+          },
+        ],
+      }
+      await this.attachAudience({
+        engagementId: this.selectedEngagements[0].id,
+        data: payload,
+      })
+      await this.loadAudienceInsights()
+    },
+    async triggerAttachEngagement(event) {
+      if (event.action === "Attach") {
+        const payload = {
+          audiences: [
+            {
+              id: this.audienceId,
+              destinations: [],
+            },
+          ],
+        }
+        await this.attachAudience({
+          engagementId: event.data.id,
+          data: payload,
+        })
+      } else {
+        const payload = { audience_ids: [] }
+        payload.audience_ids.push(this.audienceId)
+        await this.detachAudience({
+          engagementId: event.data.id,
+          data: payload,
+        })
+      }
+      await this.loadAudienceInsights()
+    },
+    async loadAudienceInsights() {
+      this.loading = true
+      await this.getAudienceById(this.$route.params.id)
+      this.audienceHistory = this.audience.audienceHistory
+      this.items[1].text = this.audience.name
+      this.mapInsights()
+      await this.getDestinations()
+      this.loading = false
+    },
   },
   async mounted() {
-    this.loading = true
-    await this.getAudienceById(this.$route.params.id)
-    this.items[1].text = this.audience.name
-    this.mapInsights()
-    this.loading = false
+    await this.loadAudienceInsights()
   },
 }
 </script>

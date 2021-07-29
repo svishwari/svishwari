@@ -336,6 +336,13 @@ export default {
 </script>
 <style lang="scss" scoped>
 .data-extension-drawer {
+  .check-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--v-secondary-base);
+    padding: 11px;
+  }
   .add-destination-wrapper {
     .check-wrap {
       width: 42px;

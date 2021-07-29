@@ -29,7 +29,7 @@ export function makeServer({ environment = "development" } = {}) {
   const models = {
     audience: Model.extend({
       destinations: hasMany("destination"),
-      engagements: hasMany("engagement"),
+      // engagements: hasMany("engagement"),
     }),
     customer: Model,
     customerProfile: Model,
@@ -80,7 +80,10 @@ export function makeServer({ environment = "development" } = {}) {
     serializers: {
       application: AppSerializer,
       audience: AppSerializer.extend({
-        include: ["destinations", "engagements"],
+        include: [
+          "destinations",
+          // "engagements"
+        ],
       }),
       customer: AppSerializer.extend({
         root: true,
