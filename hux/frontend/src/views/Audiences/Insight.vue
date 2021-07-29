@@ -597,12 +597,11 @@ export default {
     },
     async triggerOverviewDestinationAction(event) {
       try {
-        const engagementId = this.engagementId
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
             await this.deliverAudienceDestination({
-              id: engagementId,
-              audienceId: event.parent.id,
+              id: event.parent.id,
+              audienceId: this.audienceId,
               destinationId: event.data.id,
             })
             this.flashAlert = true
