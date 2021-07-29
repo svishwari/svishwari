@@ -123,7 +123,7 @@
         </template>
       </metric-card>
     </div>
-    <div class="px-15 my-1 mb-4 pt-6" v-if="relatedEngagements.length > 0">
+    <div v-if="relatedEngagements.length > 0" class="px-15 my-1 mb-4 pt-6">
       <v-row class="pa-3 pb-5">
         <v-col
           :md="
@@ -135,9 +135,9 @@
         >
           <delivery-overview
             :sections="relatedEngagements"
-            sectionType="engagement"
-            deliveriesKey="deliveries"
-            :loadingRelationships="loadingRelationships"
+            section-type="engagement"
+            deliveries-key="deliveries"
+            :loading-relationships="loadingRelationships"
             @onOverviewSectionAction="triggerOverviewAction($event)"
             @onOverviewDestinationAction="
               triggerOverviewDestinationAction($event)
