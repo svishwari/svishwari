@@ -426,7 +426,9 @@
 
     <v-divider class="mt-10" />
     <v-subheader>Donut Chart</v-subheader>
-    <gender-chart></gender-chart>
+    <div class="gender-chart">
+      <gender-chart></gender-chart>
+    </div>
 
     <v-divider class="mt-10" />
 
@@ -1310,5 +1312,8 @@ export default {
   &.normal-icon {
     transform: rotate(90deg);
   }
+}
+.gender-chart {
+  width: 255px;
 }
 </style>

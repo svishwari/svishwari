@@ -57,8 +57,8 @@ export default {
       ]
 
       // Initialize width, height & color range
-      var width = 200,
-        height = 200,
+      var width = 250,
+        height = 273,
         radius = Math.min(width, height) / 2
       var line = 0
       var col = 0
@@ -91,8 +91,9 @@ export default {
       var svg = d3Select
         .select("#mainPie")
         .append("svg")
-        .attr("viewBox", `0 0 250 200`) // for responsive
+        .attr("viewBox", `0 0 ${width} ${height}`) // for responsive
         .style("margin-left", "40px")
+        .style("margin-right", "40px")
         .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
 
@@ -115,10 +116,11 @@ export default {
       var legendSvg = d3Select
         .select("#legend")
         .append("svg")
-        .attr("viewBox", `0 0 200 20`) // for responsive
+        .attr("viewBox", `0 0 200 25`) // for responsive
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
-        .style("margin-left", "40px")
+        .style("margin-left", "20px")
+        .style("margin-right", "20px")
 
       // calculating legend distance
       var legend = legendSvg
