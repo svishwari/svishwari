@@ -548,7 +548,7 @@ ACTUAL_LIFT = "actual_lift"
 PROFILE_SIZE_PERCENT = "profile_size_percent"
 # TODO Remove this data once actual data from tecton flows
 SUPPORTED_MODELS = {
-    1: {
+    2: {
         MODEL_TYPE: LTV,
         NAME: "Lifetime value",
         DESCRIPTION: "Predicts the lifetime value of a customer based on models",
@@ -558,7 +558,7 @@ SUPPORTED_MODELS = {
         PRECISION: -1,
         RECALL: -1,
         LIFT_DATA: {
-            BUCKET: list(range(10, 110)),
+            BUCKET: list(range(10, 110, 10)),
             PREDICTED_VALUE: [
                 15007.58,
                 28587.99,
@@ -647,7 +647,7 @@ SUPPORTED_MODELS = {
             ],
         },
     },
-    2: {
+    1: {
         MODEL_TYPE: UNSUBSCRIBE,
         NAME: "Propensity to Unsubscribe",
         DESCRIPTION: "Predicts how likely a customer will unsubscribe from an email list",
@@ -657,7 +657,7 @@ SUPPORTED_MODELS = {
         PRECISION: 0.82,
         RECALL: 0.65,
         LIFT_DATA: {
-            BUCKET: list(range(10, 110)),
+            BUCKET: list(range(10, 110, 10)),
             PREDICTED_VALUE: [
                 201,
                 201.6,
