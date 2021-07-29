@@ -976,9 +976,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
 
         database = get_db_client()
         # get destination
-        destination_to_remove = get_delivery_platform(
-            database, destination_id
-        )
+        destination_to_remove = get_delivery_platform(database, destination_id)
         if not destination_to_remove:
             return {
                 "message": f"Destination does not exist: {destination[api_c.ID]}"
