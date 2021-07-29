@@ -141,6 +141,18 @@ const actions = {
       throw error
     }
   },
+
+  async addLookalike({ commit }, payload) {
+    try {
+      const response = await api.lookalike.create(payload)
+      commit("SET_ONE", response.data)
+      return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
   async fetchConstants({ commit }) {
     try {
       const response = await api.audiences.getRules()

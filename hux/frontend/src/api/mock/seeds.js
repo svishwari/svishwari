@@ -194,7 +194,16 @@ const defaultEngagement = ({ audiences = [] }) => {
 // models
 const unsubscribeModel = {
   name: "Propensity to Unsubscribe",
+  status: "Active",
+  type: "unsubscribe",
+  id: "2",
+}
+
+const ltvModel = {
+  name: "LTV",
   status: "Pending",
+  type: "ltv",
+  id: "1",
 }
 
 // audiences
@@ -454,6 +463,7 @@ export default function (server) {
 
   // seed models
   server.create("model", unsubscribeModel)
+  server.create("model", ltvModel)
 
   // seed customers
   server.createList("customer", 100)
