@@ -402,4 +402,25 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/audiences/rules", () => attributeRules)
+
+  //lookalike audiences
+  server.post("/lookalike-audiences", (schema, request) => {
+    let requestData = JSON.parse(request.requestBody)
+    requestData.engagements = requestData.engagement_ids.map((id) => {
+      return schema.engagements.find(id)
+    })
+    requestData.is_lookalike = true
+    const now = moment().toJSON()
+    const attrs = {
+      ...requestData,
+      create_time: now,
+      created_by: me.full_name(),
+      update_time: now,
+      updated_by: me.full_name(),
+      size: 0,
+    }
+    delete attrs["engagement_ids"]
+
+    return schema.audiences.create(attrs)
+  })
 }
