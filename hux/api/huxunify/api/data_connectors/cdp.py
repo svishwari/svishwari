@@ -70,10 +70,7 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
 
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles",
-        data={
-            "limit": batch_size,
-            "offset": offset
-        },
+        data={"limit": batch_size, "offset": offset},
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -118,8 +115,8 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
 
 
 def get_customers_overview(
-        token: str,
-        filters: Optional[dict] = None,
+    token: str,
+    filters: Optional[dict] = None,
 ) -> dict:
     """Fetch customers overview data.
 
@@ -151,7 +148,7 @@ def get_customers_overview(
 
 
 def get_customers_count_async(
-        token: str, audiences: list, default_size: int = 0
+    token: str, audiences: list, default_size: int = 0
 ) -> dict:
     """Retrieves audience size asynchronously
 
@@ -228,7 +225,7 @@ def get_customers_count_async(
 
 
 async def get_async_customers(
-        token: str, audience_id: ObjectId, audience_filters, url
+    token: str, audience_id: ObjectId, audience_filters, url
 ) -> dict:
     """asynchronously process getting audience size
 
@@ -246,11 +243,11 @@ async def get_async_customers(
     async with aiohttp.ClientSession() as session, async_timeout.timeout(10):
         # run the async post request
         async with session.post(
-                url,
-                json=audience_filters,
-                headers={
-                    api_c.CUSTOMERS_API_HEADER_KEY: token,
-                },
+            url,
+            json=audience_filters,
+            headers={
+                api_c.CUSTOMERS_API_HEADER_KEY: token,
+            },
         ) as response:
             # await the responses, and return them as they come in.
             try:
@@ -285,7 +282,7 @@ def get_idr_data_feeds() -> list:
             api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3232,
             api_c.MATCH_RATE: 0.97,
             api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-                                          - datetime.timedelta(days=1),
+            - datetime.timedelta(days=1),
         },
         {
             api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4fe",
@@ -295,7 +292,7 @@ def get_idr_data_feeds() -> list:
             api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 3012,
             api_c.MATCH_RATE: 0.98,
             api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-                                          - datetime.timedelta(days=7),
+            - datetime.timedelta(days=7),
         },
         {
             api_c.DATAFEED_ID: "60e87d6d70815aade4d6c4ff",
@@ -305,7 +302,7 @@ def get_idr_data_feeds() -> list:
             api_c.DATAFEED_RECORDS_PROCESSED_COUNT: 2045,
             api_c.MATCH_RATE: 0.98,
             api_c.DATAFEED_LAST_RUN_DATE: datetime.datetime.utcnow()
-                                          - datetime.timedelta(days=30),
+            - datetime.timedelta(days=30),
         },
     ]
 

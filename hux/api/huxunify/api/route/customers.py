@@ -95,8 +95,8 @@ class CustomerOverview(SwaggerView):
         customers = get_customers_overview(token_response[0])
 
         if (
-                api_c.TOTAL_UNIQUE_IDS in customers
-                and api_c.TOTAL_CUSTOMERS in customers
+            api_c.TOTAL_UNIQUE_IDS in customers
+            and api_c.TOTAL_CUSTOMERS in customers
         ):
             customers[api_c.TOTAL_CUSTOMERS] = customers[
                 api_c.TOTAL_UNIQUE_IDS
@@ -183,8 +183,8 @@ class CustomerPostOverview(SwaggerView):
         customers = get_customers_overview(token_response[0], request.json)
 
         if (
-                api_c.TOTAL_RECORDS in customers
-                and api_c.TOTAL_CUSTOMERS in customers
+            api_c.TOTAL_RECORDS in customers
+            and api_c.TOTAL_CUSTOMERS in customers
         ):
             customers[api_c.TOTAL_CUSTOMERS] = customers[api_c.TOTAL_RECORDS]
 
@@ -244,6 +244,7 @@ class Customersview(SwaggerView):
     """
     Customers Overview class
     """
+
     parameters = [
         {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
@@ -262,7 +263,7 @@ class Customersview(SwaggerView):
             "example": "10",
             "required": False,
             "default": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
-        }
+        },
     ]
     responses = {
         HTTPStatus.OK.value: {
@@ -277,7 +278,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    #@api_error_handler()
+    # @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
@@ -292,15 +293,18 @@ class Customersview(SwaggerView):
         # get token
         token_response = get_token_from_request(request)
         batch_size = (
-                int(request.args.get(api_c.QUERY_PARAMETER_BATCH_SIZE)) or api_c.CUSTOMERS_DEFAULT_BATCH_SIZE
+            int(request.args.get(api_c.QUERY_PARAMETER_BATCH_SIZE))
+            or api_c.CUSTOMERS_DEFAULT_BATCH_SIZE
         )
         batch_number = (
-                int(request.args.get(api_c.QUERY_PARAMETER_BATCH_NUMBER))
-                or api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER
+            int(request.args.get(api_c.QUERY_PARAMETER_BATCH_NUMBER))
+            or api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER
         )
         offset = (batch_number - 1) * batch_size
         return (
-            CustomersSchema().dump(get_customer_profiles(token_response[0], batch_size, offset)),
+            CustomersSchema().dump(
+                get_customer_profiles(token_response[0], batch_size, offset)
+            ),
             HTTPStatus.OK,
         )
 
