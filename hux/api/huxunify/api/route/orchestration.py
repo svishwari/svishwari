@@ -150,7 +150,7 @@ class AudienceView(SwaggerView):
             token_response[0], audiences
         )
 
-        # get the x number of last deliveries to provide per audiencec
+        # get the x number of last deliveries to provide per audience
         delivery_limit = int(
             request.args.get(
                 api_c.DELIVERIES, api_c.DEFAULT_AUDIENCE_DELIVERY_COUNT
