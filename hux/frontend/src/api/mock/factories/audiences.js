@@ -54,7 +54,7 @@ const lookalikeAudience = () => {
     favorite: faker.datatype.boolean(),
     name: faker.fake("{{name.firstName}} {{name.lastName}}"),
     size: faker.datatype.number({ min: 10000000, max: 999999999 }),
-    lookalike_audience: faker.datatype.boolean(),
+    is_lookalike: faker.datatype.boolean(),
   }
 }
 

@@ -142,7 +142,9 @@
             deliveriesKey="deliveries"
             :loadingRelationships="loadingRelationships"
             @onOverviewSectionAction="triggerOverviewAction($event)"
-            @onOverviewDestinationAction="triggerDestinationAction($event)"
+            @onOverviewDestinationAction="
+              triggerOverviewDestinationAction($event)
+            "
           >
             <template #title-left>
               <span class="text-h5">Engagement &amp; delivery overview</span>
@@ -222,7 +224,31 @@
         <income-chart></income-chart>
       </v-col>
     </v-row>
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
 
+    <confirm-modal
+      v-model="showConfirmModal"
+      title="You are about to edit delivery schedule."
+      rightBtnText="Yes, edit delivery schedule"
+      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+      @onCancel="showConfirmModal = false"
+      @onConfirm="
+        showConfirmModal = false
+        editDeliveryDrawer = true
+      "
+    />
+
+    <edit-delivery-schedule
+      v-model="editDeliveryDrawer"
+      :audience-id="selectedAudienceId"
+      :destination="scheduleDestination"
+      :engagement-id="engagementId"
+    />
     <!-- Add destination workflow -->
     <SelectDestinationsDrawer
       v-model="selectedDestinations"
@@ -272,6 +298,9 @@ import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 import Icon from "../../components/common/Icon.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import DeliveryOverview from "../../components/DeliveryOverview.vue"
+import HuxAlert from "../../components/common/HuxAlert.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import AttachEngagement from "@/views/Audiences/AttachEngagement"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
@@ -295,6 +324,9 @@ export default {
     LookAlikeAudience,
     LookAlikeCard,
     IncomeChart,
+    HuxAlert,
+    ConfirmModal,
+    EditDeliverySchedule,
   },
   data() {
     return {
@@ -319,6 +351,12 @@ export default {
       ],
       loading: false,
       loadingRelationships: false,
+      flashAlert: false,
+      alert: {
+        type: "success",
+        title: "YAY!",
+        message: "Successfully triggered delivery.",
+      },
       insightInfoItems: {
         total_customers: {
           title: "Target size",
@@ -361,6 +399,16 @@ export default {
       salesforceDestination: {},
 
       engagementDrawer: false,
+      // Edit Schedule data props
+      selectedAudienceId: null,
+      engagementId: null,
+      showConfirmModal: false,
+      editDeliveryDrawer: false,
+      scheduleDestination: {
+        name: null,
+        type: null,
+        id: null,
+      },
     }
   },
   computed: {
@@ -457,6 +505,8 @@ export default {
       getDestinations: "destinations/getAll",
       attachAudience: "engagements/attachAudience",
       detachAudience: "engagements/detachAudience",
+      deliverAudience: "engagements/deliverAudience",
+      deliverAudienceDestination: "engagements/deliverAudienceDestination",
     }),
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
@@ -507,7 +557,7 @@ export default {
           return item.subtitle
       }
     },
-    triggerOverviewAction(event) {
+    async triggerOverviewAction(event) {
       switch (event.target.title.toLowerCase()) {
         case "add a destination": {
           this.closeAllDrawers()
@@ -520,7 +570,16 @@ export default {
           this.showSelectDestinationsDrawer = true
           break
         }
-        case "delivery all":
+        case "deliver all":
+          try {
+            await this.deliverAudience({
+              id: event.data.id,
+              audienceId: this.audienceId,
+            })
+            this.flashAlert = true
+          } catch (error) {
+            console.error(error)
+          }
           break
         case "view delivery history":
           break
@@ -536,6 +595,30 @@ export default {
         }
         default:
           break
+      }
+    },
+    async triggerOverviewDestinationAction(event) {
+      try {
+        const engagementId = this.engagementId
+        switch (event.target.title.toLowerCase()) {
+          case "deliver now":
+            await this.deliverAudienceDestination({
+              id: engagementId,
+              audienceId: event.parent.id,
+              destinationId: event.data.id,
+            })
+            this.flashAlert = true
+            break
+          case "edit delivery schedule":
+            this.showConfirmModal = true
+            this.selectedAudienceId = event.parent.id
+            this.scheduleDestination = event.data
+            break
+          default:
+            break
+        }
+      } catch (error) {
+        console.error(error)
       }
     },
 
