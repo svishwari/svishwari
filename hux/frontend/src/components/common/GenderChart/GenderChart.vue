@@ -21,7 +21,7 @@ export default {
   props: {
     value: {
       type: Array,
-      required: false,
+      required: false, // TODO: Integration & change to true while accepting the data
     },
   },
   data() {
@@ -70,7 +70,7 @@ export default {
       var arc = d3Shape
         .arc()
         .outerRadius(radius - 10)
-        .innerRadius(radius - 40)
+        .innerRadius(radius - 30)
 
       // Assign value to chart
       var pie = d3Shape
@@ -93,8 +93,6 @@ export default {
         .append("svg")
         .attr("width", width)
         .attr("height", height)
-        // .style("margin-left", "50px")
-        // .style("margin-top", "15px")
         .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
 
@@ -121,7 +119,7 @@ export default {
         .attr("height", 20)
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
-        .style("margin-left", "60px")
+        .style("margin-left", "40px")
 
       // calculating legend distance
       var legend = legendSvg
@@ -133,13 +131,7 @@ export default {
         .attr("transform", function (d, i) {
           var y = line * 25
           var x = col
-          col += d.label.length * 13 + 10
-          if (col > width) {
-            x = 0
-            col = d.label.length * 13 + 10
-            line++
-            y = line * 25
-          }
+          col += d.label.length * 10 + 25
           return "translate(" + x + "," + y + ")"
         })
 
@@ -159,13 +151,13 @@ export default {
         .attr("x", 18)
         .attr("y", 9)
         .attr("dy", ".35em")
+        .attr("class", "neroBlack--text")
         .style("text-anchor", "start")
-        .style("font-family", "monospace")
         .text(function (d) {
           return d.label
         })
 
-        // Creating legends svg element
+        // Creating label svg element
         var label = d3Select
         .select("#label")
         .append("svg")
@@ -175,14 +167,13 @@ export default {
         .style("margin-left", "24px")
         .style("margin-top", "20px")
 
-        // Appending text to legend
+        // Appending text to label
         label
         .append("text")
         .attr("x", 18)
         .attr("y", 9)
         .attr("dy", ".35em")
-        .style("text-anchor", "start")
-        .style("font-family", "monospace")
+        .attr("class", "neroBlack--text")
         .text(function (d) {
           return 'Gender'
         })
