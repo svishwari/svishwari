@@ -20,7 +20,11 @@ const state = {
 const getters = {
   list: (state) => Object.values(state.audiences),
   audience: (state) => (id) => {
-    return state.audiences[id]
+    let currentAudience = state.audiences[id]
+    if (currentAudience) {
+      currentAudience.lookalikeable =  currentAudience.lookalikeable.toLowerCase()
+    }
+    return currentAudience
   },
   audiencesRules: (state) => state.constants,
 }

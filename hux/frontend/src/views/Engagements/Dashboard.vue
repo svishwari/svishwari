@@ -248,7 +248,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-
+import { handleError } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status"
@@ -759,8 +759,6 @@ export default {
       getAvailableDestinations: "destinations/getAll",
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
-      // destinationById: "destinations/get",
-      // getAudienceById: "audiences/getAudienceById",
       attachAudience: "engagements/attachAudience",
       detachAudience: "engagements/detachAudience",
       deliverAudience: "engagements/deliverAudience",
@@ -950,7 +948,8 @@ export default {
               })
               this.flashAlert = true
             } catch (error) {
-              console.error(error)
+              handleError(error)
+              throw error
             }
             break
 
@@ -961,7 +960,8 @@ export default {
             break
         }
       } catch (error) {
-        console.error(error)
+        handleError(error)
+        throw error
       }
     },
     async triggerOverviewDestinationAction(event) {
@@ -985,7 +985,8 @@ export default {
             break
         }
       } catch (error) {
-        console.error(error)
+        handleError(error)
+        throw error
       }
     },
     //#endregion

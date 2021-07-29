@@ -130,7 +130,7 @@
       <v-row class="pa-3 pb-5">
         <v-col
           :md="
-            audience.lookalikeable && audience.lookalikeable != 'Inactive'
+            audience.lookalikeable && audience.lookalikeable != 'inactive'
               ? 9
               : 12
           "
@@ -177,9 +177,9 @@
           </delivery-overview>
         </v-col>
         <v-col
-          v-if="audience.lookalikeable && audience.lookalikeable != 'Inactive'"
+          v-if="audience.lookalikeable && audience.lookalikeable != 'inactive'"
           md="3"
-          class="pl-6 py-0"
+          class="pl-6 pr-0 py-0"
         >
           <look-alike-card
             v-model="audience.lookalike_audiences"
@@ -223,12 +223,6 @@
       </v-col>
     </v-row>
 
-    <v-divider class="my-8"></v-divider>
-    <EmptyStateChart>
-      <template #chart-image>
-        <img src="@/assets/images/empty-state-chart-3.png" alt="Empty state" />
-      </template>
-    </EmptyStateChart>
     <!-- Add destination workflow -->
     <SelectDestinationsDrawer
       v-model="selectedDestinations"
@@ -260,7 +254,7 @@
     <look-alike-audience
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
-      @onToggle="(val) => (showLookAlikeDrawer = val)"
+      @onBack="reloadAudienceData()"
     />
   </div>
 </template>
@@ -564,6 +558,10 @@ export default {
     openLookAlikeDrawer() {
       this.selectedAudience = this.audience
       this.showLookAlikeDrawer = true
+    },
+    async reloadAudienceData() {
+      this.showLookAlikeDrawer = false
+      await this.loadAudienceInsights()
     },
     openSelectDestinationsDrawer() {
       this.closeAllDrawers()
