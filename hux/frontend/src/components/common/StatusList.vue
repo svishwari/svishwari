@@ -70,7 +70,7 @@
           <div class="d-flex align-center">
             <tooltip>
               <template #label-content>
-                <Logo :type="item.type" :size="18" />
+                <Logo :type="item.delivery_platform_type" :size="18" />
               </template>
               <template #hover-content>
                 <div class="d-flex flex-column">
