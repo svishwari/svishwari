@@ -191,10 +191,6 @@ export default {
   #chart {
     text-align: center;
   }
-  .arc text {
-    font: 10px sans-serif;
-    text-anchor: middle;
-  }
   .pieBox {
     display: inline-block;
     height: auto;
