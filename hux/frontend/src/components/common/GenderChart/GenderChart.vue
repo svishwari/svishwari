@@ -31,6 +31,10 @@ export default {
       type: Number,
       required: true,
     },
+    label: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -181,9 +185,7 @@ export default {
         .attr("y", 9)
         .attr("dy", ".35em")
         .attr("class", "neroBlack--text")
-        .text(function () {
-          return "Gender"
-        })
+        .text(this.label)
     },
   },
   mounted() {
