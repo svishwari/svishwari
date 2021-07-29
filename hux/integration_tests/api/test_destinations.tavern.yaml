@@ -414,103 +414,103 @@ stages:
       json:
         message: !re_search "not valid"
 
----
-test_name: Test destinations put/update destination success
-
-strict:
-  - json:list_any_order
-
-includes:
-  - !include common.yaml
-
-stages:
-  - name: get destinations API
-
-    # Define the request to be made...
-    request:
-      url: "{host}/{version}/destinations"
-      method: GET
-      headers:
-        content-type: application/json
-        Authorization: "Bearer {token}"
-
-    # ...and the expected response code and body
-    response:
-      strict: false
-      status_code: 200
-      headers:
-        content-type: application/json
-      json:
-        - id: !anystr
-        - type: !anystr
-        - name: !anystr
-        - status: !anystr
-        - is_added: !anybool
-        - is_enabled: !anybool
-        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-      save:
-        $ext:
-          function: tavern_test_utils:get_destination_id
-          extra_kwargs:
-            destination_type: "facebook"
-
-  - name: test destinations put/update destination success
-
-    # Define the request to be made...
-    request:
-      url: "{host}/{version}/destinations/{facebook_destination_id}"
-      method: PUT
-      headers:
-        content-type: application/json
-        Authorization: "Bearer {token}"
-      json:
-        authentication_details:
-          facebook_access_token: "unified_facebook_access_token"
-          facebook_app_secret: "unified_facebook_app_secret"
-          facebook_app_id: "2849684615131430"
-          facebook_ad_account_id: "act_1429837470372777"
-
-    # ...and the expected response code and body
-    response:
-      strict: false
-      status_code: 200
-      headers:
-        content-type: application/json
-      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-      json: {}
-
----
-test_name: Test destinations put/update invalid destination ID failure
-
-strict:
-  - json:list_any_order
-
-includes:
-  - !include common.yaml
-
-stages:
-  - name: test destinations put/update destination failure invalid destination ID
-
-    # Define the request to be made...
-    request:
-      url: "{host}/{version}/destinations/XYZ"
-      method: PUT
-      headers:
-        content-type: application/json
-        Authorization: "Bearer {token}"
-      json:
-        authentication_details:
-          facebook_access_token: "unified_facebook_access_token"
-          facebook_app_secret: "unified_facebook_app_secret"
-          facebook_app_id: "2849684615131430"
-          facebook_ad_account_id: "act_1429837470372777"
-
-    # ...and the expected response code and body
-    response:
-      strict: false
-      status_code: 400
-      headers:
-        content-type: application/json
-      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-      json: {}
+#---
+#test_name: Test destinations put/update destination success
+#
+#strict:
+#  - json:list_any_order
+#
+#includes:
+#  - !include common.yaml
+#
+#stages:
+#  - name: get destinations API
+#
+#    # Define the request to be made...
+#    request:
+#      url: "{host}/{version}/destinations"
+#      method: GET
+#      headers:
+#        content-type: application/json
+#        Authorization: "Bearer {token}"
+#
+#    # ...and the expected response code and body
+#    response:
+#      strict: false
+#      status_code: 200
+#      headers:
+#        content-type: application/json
+#      json:
+#        - id: !anystr
+#        - type: !anystr
+#        - name: !anystr
+#        - status: !anystr
+#        - is_added: !anybool
+#        - is_enabled: !anybool
+#        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+#        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+#      save:
+#        $ext:
+#          function: tavern_test_utils:get_destination_id
+#          extra_kwargs:
+#            destination_type: "facebook"
+#
+#  - name: test destinations put/update destination success
+#
+#    # Define the request to be made...
+#    request:
+#      url: "{host}/{version}/destinations/{facebook_destination_id}"
+#      method: PUT
+#      headers:
+#        content-type: application/json
+#        Authorization: "Bearer {token}"
+#      json:
+#        authentication_details:
+#          facebook_access_token: "unified_facebook_access_token"
+#          facebook_app_secret: "unified_facebook_app_secret"
+#          facebook_app_id: "2849684615131430"
+#          facebook_ad_account_id: "act_1429837470372777"
+#
+#    # ...and the expected response code and body
+#    response:
+#      strict: false
+#      status_code: 200
+#      headers:
+#        content-type: application/json
+#      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
+#      json: {}
+#
+#---
+#test_name: Test destinations put/update invalid destination ID failure
+#
+#strict:
+#  - json:list_any_order
+#
+#includes:
+#  - !include common.yaml
+#
+#stages:
+#  - name: test destinations put/update destination failure invalid destination ID
+#
+#    # Define the request to be made...
+#    request:
+#      url: "{host}/{version}/destinations/XYZ"
+#      method: PUT
+#      headers:
+#        content-type: application/json
+#        Authorization: "Bearer {token}"
+#      json:
+#        authentication_details:
+#          facebook_access_token: "unified_facebook_access_token"
+#          facebook_app_secret: "unified_facebook_app_secret"
+#          facebook_app_id: "2849684615131430"
+#          facebook_ad_account_id: "act_1429837470372777"
+#
+#    # ...and the expected response code and body
+#    response:
+#      strict: false
+#      status_code: 400
+#      headers:
+#        content-type: application/json
+#      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
+#      json: {}
