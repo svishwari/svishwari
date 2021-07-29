@@ -255,6 +255,7 @@
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
+      @onCreate="lookalikeCreated=true"
     />
   </div>
 </template>
@@ -299,6 +300,7 @@ export default {
     return {
       selectedAudience: null,
       showLookAlikeDrawer: false,
+      lookalikeCreated: false,
       audienceHistory: [],
       items: [
         {
@@ -555,11 +557,14 @@ export default {
     },
     openLookAlikeDrawer() {
       this.selectedAudience = this.audience
+      this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
     async reloadAudienceData() {
       this.showLookAlikeDrawer = false
-      await this.loadAudienceInsights()
+      if (this.lookalikeCreated) {
+        await this.loadAudienceInsights()
+      }
     },
     openSelectDestinationsDrawer() {
       this.closeAllDrawers()
