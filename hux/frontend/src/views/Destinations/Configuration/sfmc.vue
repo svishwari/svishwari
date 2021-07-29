@@ -9,9 +9,9 @@
         placeholder="Select"
         dense
         outlined
-        @input="onDataExtensionSelection"
         background-color="white"
         append-icon="mdi-chevron-down"
+        @input="onDataExtensionSelection"
       />
     </v-col>
   </v-row>
@@ -19,7 +19,14 @@
 
 <script>
 export default {
-  name: "sfmc",
+  name: "Sfmc",
+
+  props: {
+    dataExtensions: {
+      type: Array,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -45,13 +52,6 @@ export default {
         (each) => each.data_extension_id === value
       )[0]
       this.$emit("select", this.selectedDataExtension)
-    },
-  },
-
-  props: {
-    dataExtensions: {
-      type: Array,
-      required: true,
     },
   },
 }

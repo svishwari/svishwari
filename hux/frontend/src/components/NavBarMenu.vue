@@ -1,8 +1,8 @@
 <template>
   <div class="d-flex navbar-menu align-center">
-    <HeaderNavigation />
+    <header-navigation />
     <v-divider vertical color="lightGrey" />
-    <UserAvatar />
+    <user-avatar />
   </div>
 </template>
 

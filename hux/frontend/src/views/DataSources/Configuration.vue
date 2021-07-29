@@ -1,6 +1,6 @@
 <template>
   <div class="add-data-source--wrap">
-    <Drawer v-model="localDrawer" @onClose="closeAddDataSource">
+    <drawer v-model="localDrawer" @onClose="closeAddDataSource">
       <template #header-left>
         <div class="d-flex align-baseline">
           <h3 class="text-h3 font-weight-light pr-2">Select a data source</h3>
@@ -18,7 +18,7 @@
           <huxButton
             variant="tertiary"
             size="large"
-            :isTile="true"
+            :is-tile="true"
             class="mr-2"
             @click="closeAddDataSource"
           >
@@ -27,8 +27,8 @@
           <huxButton
             variant="primary"
             size="large"
-            :isTile="true"
-            :isDisabled="!isDataSourcesSelected"
+            :is-tile="true"
+            :is-disabled="!isDataSourcesSelected"
             @click="addDataSources"
           >
             {{ dataSourcesBtnText }}
@@ -38,44 +38,44 @@
       <template #default>
         <div class="ma-3">
           <div class="font-weight-light">Data sources</div>
-          <CardHorizontal
+          <card-horizontal
             v-for="dataSource in enabledDataSources"
             :key="dataSource.id"
             :title="dataSource.name"
             :icon="dataSource.type"
-            :isAdded="
+            :is-added="
               dataSource.is_added ||
               selectedDataSourceIds.includes(dataSource.id)
             "
-            :isAvailable="dataSource.is_enabled"
-            :isAlreadyAdded="dataSource.is_added"
-            @click="onDataSourceClick(dataSource.id)"
+            :is-available="dataSource.is_enabled"
+            :is-already-added="dataSource.is_added"
             class="my-3"
+            @click="onDataSourceClick(dataSource.id)"
           />
 
           <v-divider style="border-color: var(--v-zircon-base)" />
 
-          <CardHorizontal
+          <card-horizontal
             v-for="dataSource in disabledDataSources"
             :key="dataSource.id"
             :title="dataSource.name"
             :icon="dataSource.type"
-            :isAdded="
+            :is-added="
               dataSource.is_added ||
               selectedDataSourceIds.includes(dataSource.id)
             "
-            :isAvailable="dataSource.is_enabled"
-            :isAlreadyAdded="dataSource.is_added"
+            :is-available="dataSource.is_enabled"
+            :is-already-added="dataSource.is_added"
             class="my-3"
-            hideButton
+            hide-button
           >
             <span class="font-weight-light letter-spacing-sm"
               ><i>Coming soon</i></span
             >
-          </CardHorizontal>
+          </card-horizontal>
         </div>
       </template>
-    </Drawer>
+    </drawer>
   </div>
 </template>
 
@@ -93,19 +93,19 @@ export default {
     huxButton,
   },
 
-  data() {
-    return {
-      localDrawer: this.value,
-      selectedDataSourceIds: [],
-    }
-  },
-
   props: {
     value: {
       type: Boolean,
       required: true,
       default: false,
     },
+  },
+
+  data() {
+    return {
+      localDrawer: this.value,
+      selectedDataSourceIds: [],
+    }
   },
 
   computed: {
@@ -127,6 +127,17 @@ export default {
 
     disabledDataSources() {
       return this.dataSources.filter((each) => !each.is_enabled)
+    },
+  },
+  watch: {
+    value: function () {
+      this.localDrawer = this.value
+    },
+    localDrawer: function () {
+      this.$emit("input", this.localDrawer)
+      if (!this.localDrawer) {
+        this.$emit("onClose")
+      }
     },
   },
   methods: {
@@ -154,17 +165,6 @@ export default {
     closeAddDataSource: function () {
       this.localDrawer = false
       this.selectedDataSourceIds = []
-    },
-  },
-  watch: {
-    value: function () {
-      this.localDrawer = this.value
-    },
-    localDrawer: function () {
-      this.$emit("input", this.localDrawer)
-      if (!this.localDrawer) {
-        this.$emit("onClose")
-      }
     },
   },
 }

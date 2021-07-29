@@ -1,7 +1,7 @@
 <template>
   <v-menu :min-width="200" left offset-y close-on-click>
     <template #activator="{ on }">
-      <span v-on="on" class="d-flex cursor-pointer">
+      <span class="d-flex cursor-pointer" v-on="on">
         <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
           <v-icon color="primary"> mdi-bell-outline </v-icon>
         </v-btn>
@@ -19,8 +19,8 @@
             <div class="d-flex text-caption">
               <status
                 :status="data.notification_type"
-                :showLabel="false"
-                :iconSize="17"
+                :show-label="false"
+                :icon-size="17"
               />
               <tooltip>
                 <template #label-content>
@@ -68,6 +68,9 @@ export default {
       return this.notification.slice(0, 5)
     },
   },
+  async mounted() {
+    await this.getNotification(5)
+  },
   methods: {
     ...mapActions({
       getNotification: "notifications/getAll",
@@ -78,9 +81,6 @@ export default {
         query: { batch_size: 25 },
       })
     },
-  },
-  async mounted() {
-    await this.getNotification(5)
   },
 }
 </script>

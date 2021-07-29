@@ -17,8 +17,8 @@
       <template v-if="expandable">
         <v-icon
           color="primary"
-          @click="onExpandIconClick"
           class="cursor-pointer px-6 ml-auto"
+          @click="onExpandIconClick"
         >
           {{ expanded ? "mdi-arrow-collapse" : "mdi-arrow-expand" }}
         </v-icon>
@@ -47,13 +47,6 @@
 <script>
 export default {
   name: "Drawer",
-
-  data() {
-    return {
-      localDrawer: this.value,
-      expanded: false,
-    }
-  },
 
   props: {
     toRight: {
@@ -109,6 +102,13 @@ export default {
       required: false,
       default: "px-6",
     },
+  },
+
+  data() {
+    return {
+      localDrawer: this.value,
+      expanded: false,
+    }
   },
 
   computed: {

@@ -1,35 +1,35 @@
 <template>
   <v-card
-    tile
     v-if="showTooltip"
+    tile
     :style="{
       transform: `translate(${position.x}px, ${position.y}px)`,
       'border-radius': '0px !important',
     }"
     class="mx-auto card-style"
   >
-    <div class="arc-hover" v-if="isArcHover">
-      <Icon v-if="sourceInput.icon" :type="sourceInput.icon" :size="12" />
+    <div v-if="isArcHover" class="arc-hover">
+      <icon v-if="sourceInput.icon" :type="sourceInput.icon" :size="12" />
       <span class="prop-name">{{ sourceInput.name }}</span>
       <div
-        class="sub-props pt-4"
         v-for="item in sourceInput.assetsData"
         :key="item.name"
+        class="sub-props pt-4"
       >
-        <Logo v-if="item.icon" :type="item.icon" :size="14" />
+        <logo v-if="item.icon" :type="item.icon" :size="14" />
         <span class="subprop-name">{{ item.description }}</span>
         <span class="value ml-1">{{ item.value }}</span>
       </div>
     </div>
-    <div class="ribbon-hover" v-if="!isArcHover">
-      <Icon
+    <div v-if="!isArcHover" class="ribbon-hover">
+      <icon
         v-if="sourceInput.sourceIcon"
         :type="sourceInput.sourceIcon"
         :size="12"
       />
       <span class="prop-name">{{ sourceInput.sourceName }}</span>
       <span class="pipe"></span>
-      <Icon
+      <icon
         v-if="sourceInput.targetIcon"
         :type="sourceInput.targetIcon"
         :size="12"

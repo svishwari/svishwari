@@ -1,7 +1,7 @@
 <template>
-  <Drawer
-    class="add-audience-drawer-wrapper"
+  <drawer
     v-model="localToggle"
+    class="add-audience-drawer-wrapper"
     :width="drawerWidth"
     :loading="loading"
     expandable
@@ -18,11 +18,11 @@
           Build a target audience from the data you own.
         </h6>
         <v-form ref="newAudienceRef" v-model="newAudienceValidity">
-          <TextField
-            labelText="Audience name"
+          <text-field
+            v-model="newAudience.name"
+            label-text="Audience name"
             placeholder="Name"
             class="audience-name-field"
-            v-model="newAudience.name"
             :rules="newAudienceRules"
             required
           />
@@ -31,15 +31,15 @@
           Audience overview
         </div>
         <div class="d-flex align-center pb-4">
-          <MetricCard
+          <metric-card
             v-for="(item, i) in overviewListItems"
+            :key="i"
             class="list-item ma-0 mr-3"
             :class="{ 'd-none': i > overviewListItems.length - 3 && !expanded }"
-            :key="i"
             :title="item.title"
           >
             <template #subtitle-extended>
-              <Tooltip>
+              <tooltip>
                 <template #label-content>
                   <span class="font-weight-semi-bold">
                     {{ getFormattedValue(item) }}
@@ -48,17 +48,17 @@
                 <template #hover-content>
                   {{ item.subtitle | Empty }}
                 </template>
-              </Tooltip>
+              </tooltip>
             </template>
-          </MetricCard>
+          </metric-card>
         </div>
         <hr class="zircon mb-4" />
         <div class="pt-1 pr-0">
           <attribute-rules
             :rules="attributeRules"
+            apply-caption-style
+            enable-title
             @updateOverview="(data) => mapCDMOverview(data)"
-            applyCaptionStyle
-            enableTitle
           />
         </div>
       </div>
@@ -77,7 +77,7 @@
         Create &amp; add
       </v-btn>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
@@ -97,12 +97,6 @@ export default {
     Tooltip,
     MetricCard,
     AttributeRules,
-  },
-
-  computed: {
-    ...mapGetters({
-      overview: "customers/overview",
-    }),
   },
 
   props: {
@@ -147,6 +141,12 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      overview: "customers/overview",
+    }),
+  },
+
   watch: {
     toggle(value) {
       this.localToggle = value
@@ -155,6 +155,13 @@ export default {
     localToggle(value) {
       this.$emit("onToggle", value)
     },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getOverview()
+    this.mapCDMOverview(this.overview)
+    this.loading = false
   },
 
   methods: {
@@ -280,13 +287,6 @@ export default {
         this.loading = false
       }
     },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getOverview()
-    this.mapCDMOverview(this.overview)
-    this.loading = false
   },
 }
 </script>

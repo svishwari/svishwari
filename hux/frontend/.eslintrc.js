@@ -93,6 +93,7 @@ module.exports = {
     ],
     // TODO: this should be as we move forward
     "vue/no-v-html": "off",
+    "vue/no-template-shadow": "error",
   },
   overrides: [
     {

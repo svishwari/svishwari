@@ -14,6 +14,7 @@
           delivery time.
         </span>
         <data-cards
+          v-if="!loading"
           bordered
           :items="mappings"
           :fields="[
@@ -33,7 +34,6 @@
             },
           ]"
           class="pt-11 campaigns-wrapper"
-          v-if="!loading"
         >
           <template #field:campaign="row">
             <hux-dropdown
@@ -56,13 +56,13 @@
               <tooltip v-if="canAddNewMapping(row.index)">
                 <template #label-content>
                   <v-btn
+                    v-if="availableCampaignsOptions().length > 0"
                     x-small
                     fab
                     class="primary mr-0"
                     height="21"
                     width="21"
                     @click="addNewMappingItem()"
-                    v-if="availableCampaignsOptions().length > 0"
                   >
                     <v-icon size="14">mdi-plus</v-icon>
                   </v-btn>
@@ -71,9 +71,9 @@
               </tooltip>
 
               <v-btn
+                v-if="canDeleteMapping(row.index)"
                 icon
                 color="primary"
-                v-if="canDeleteMapping(row.index)"
                 height="21"
                 @click="removeMapping(row.index)"
               >
@@ -88,7 +88,7 @@
       <v-btn tile color="white" @click="closeDrawer">
         <span class="primary--text">Cancel</span>
       </v-btn>
-      <v-btn tile color="primary" @click="mapSelections" :disabled="!canMapNow">
+      <v-btn tile color="primary" :disabled="!canMapNow" @click="mapSelections">
         Map selection
       </v-btn>
     </template>
@@ -123,15 +123,6 @@ export default {
       identityAttrs: {},
     }
   },
-  watch: {
-    toggle(value) {
-      this.localToggle = value
-    },
-
-    localToggle(value) {
-      this.$emit("onToggle", value)
-    },
-  },
   computed: {
     ...mapGetters({
       campaignMappingOptions: "engagements/campaignMappingOptions",
@@ -165,6 +156,16 @@ export default {
     },
     deliveryOptions() {
       return this.campaignMappingOptions.delivery_jobs
+    },
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
     },
   },
   methods: {

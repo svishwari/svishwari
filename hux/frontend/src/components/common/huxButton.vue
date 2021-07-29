@@ -11,7 +11,7 @@
     :icon="iconType"
     @click="onClick"
   >
-    <Icon v-if="isCustomIcon" class="mr-2" :type="icon" :size="24" />
+    <icon v-if="isCustomIcon" class="mr-2" :type="icon" :size="24" />
     <v-icon v-show="iconPosition == 'left'" dark class="mr-1">
       {{ icon }}
     </v-icon>
@@ -33,22 +33,6 @@ export default {
   name: "HuxButton",
   components: {
     Icon,
-  },
-  data() {
-    return {
-      loader: null,
-      loading: false,
-    }
-  },
-  watch: {
-    loader() {
-      if (this.enableLoading) {
-        const l = this.loader
-        this[l] = !this[l]
-        setTimeout(() => (this[l] = false), 3000)
-        this.loader = null
-      }
-    },
   },
   props: {
     enableLoading: {
@@ -114,12 +98,28 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      loader: null,
+      loading: false,
+    }
+  },
   computed: {
     buttonSize: function () {
       return "v-size--" + this.size
     },
     buttonTextColor: function () {
       return this.ButtonTextColor
+    },
+  },
+  watch: {
+    loader() {
+      if (this.enableLoading) {
+        const l = this.loader
+        this[l] = !this[l]
+        setTimeout(() => (this[l] = false), 3000)
+        this.loader = null
+      }
     },
   },
   methods: {

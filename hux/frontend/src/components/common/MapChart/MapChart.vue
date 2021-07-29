@@ -6,7 +6,7 @@
         @cordinates="getCordinates"
         @tooltipDisplay="toolTipDisplay"
       />
-      <v-card class="rounded-lg card-style" minHeight="20px">
+      <v-card class="rounded-lg card-style" min-height="20px">
         <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-5">
           <div class="mt-2">
             <span class="d-flex align-center black--text text-decoration-none">
@@ -15,11 +15,11 @@
           </div>
         </v-card-title>
         <v-divider class="ml-6 mr-8 mt-0 mb-2" />
-        <v-card-text minHeight="100px" class="content-style pl-6 pr-4 pb-4">
+        <v-card-text min-height="100px" class="content-style pl-6 pr-4 pb-4">
           <div
-            class="sub-props pt-4"
             v-for="item in mapChartData"
             :key="item.name"
+            class="sub-props pt-4"
           >
             <span class="subprop-name">{{ item.name }}</span>
             <span class="value ml-2 font-weight-semi-bold">
@@ -34,8 +34,8 @@
         x: tooltip.x,
         y: tooltip.y,
       }"
-      :showTooltip="show"
-      :sourceInput="currentData"
+      :show-tooltip="show"
+      :source-input="currentData"
     >
     </map-chart-tooltip>
   </div>
@@ -47,7 +47,7 @@ import GeoChart from "@/components/common/MapChart/GeoChart"
 // TODO: this should be come up from props while doing API Integration
 import mapData from "./mapData.json"
 export default {
-  name: "map-chart",
+  name: "MapChart",
   components: { GeoChart, MapChartTooltip },
   data() {
     return {
@@ -59,6 +59,9 @@ export default {
       mapChartData: mapData.demographic_overview,
       currentData: {},
     }
+  },
+  mounted() {
+    this.sortStateData()
   },
   methods: {
     sortStateData() {
@@ -83,9 +86,6 @@ export default {
     generateToolTipData(currentStateinfo) {
       this.currentData = currentStateinfo
     },
-  },
-  mounted() {
-    this.sortStateData()
   },
 }
 </script>

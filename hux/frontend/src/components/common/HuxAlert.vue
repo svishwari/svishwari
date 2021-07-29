@@ -1,8 +1,8 @@
 <template>
   <v-snackbar
+    v-model="isOpen"
     height="56"
     :timeout="timeout"
-    v-model="isOpen"
     app
     top
     :type="type"
@@ -19,13 +19,7 @@
 
 <script>
 export default {
-  name: "hux-alert",
-
-  data() {
-    return {
-      isOpen: false,
-    }
-  },
+  name: "HuxAlert",
 
   props: {
     type: {
@@ -57,6 +51,12 @@ export default {
       required: false,
       default: true,
     },
+  },
+
+  data() {
+    return {
+      isOpen: false,
+    }
   },
 
   computed: {
