@@ -1,6 +1,6 @@
 <template>
   <v-card class="rounded-lg card-style" minHeight="261px" flat>
-    <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
+    <v-card-title class="d-flex justify-space-between pb-1 pl-6 pt-3">
       <slot name="title-left"></slot>
       <slot name="title-right"></slot>
     </v-card-title>

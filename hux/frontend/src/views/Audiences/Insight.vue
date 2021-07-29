@@ -127,7 +127,7 @@
       class="px-15 my-1 mb-4 pt-6"
       v-if="audience && audience.engagements && audience.engagements.length > 0"
     >
-      <v-row class="pb-5">
+      <v-row class="pa-3 pb-5">
         <v-col
           :md="
             audience.lookalikeable && audience.lookalikeable != 'Inactive'
