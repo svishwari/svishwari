@@ -427,7 +427,7 @@
     <v-divider class="mt-10" />
     <v-subheader>Donut Chart</v-subheader>
     <div class="gender-chart">
-      <gender-chart></gender-chart>
+      <gender-chart :width="250" :height="273"></gender-chart>
     </div>
 
     <v-divider class="mt-10" />

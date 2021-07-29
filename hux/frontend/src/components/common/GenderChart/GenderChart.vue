@@ -23,12 +23,18 @@ export default {
       type: Array,
       required: false, // TODO: Integration & change to true while accepting the data
     },
+    width: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
       chartData: data,
-      width: 700,
-      height: 500,
     }
   },
   methods: {
@@ -57,8 +63,8 @@ export default {
       ]
 
       // Initialize width, height & color range
-      var width = 250,
-        height = 273,
+      var width = this.width,
+        height = this.height,
         radius = Math.min(width, height) / 2
       var line = 0
       var col = 0
@@ -70,7 +76,7 @@ export default {
       var arc = d3Shape
         .arc()
         .outerRadius(radius - 10)
-        .innerRadius(radius - 30)
+        .innerRadius(radius - 35)
 
       // Assign value to chart
       var pie = d3Shape
