@@ -427,7 +427,12 @@
     <v-divider class="mt-10" />
     <v-subheader>Donut Chart</v-subheader>
     <div class="gender-chart">
-      <gender-chart :width="250" :height="273" label="Gender" :genderChartData="genderChartData"></gender-chart>
+      <gender-chart
+        :width="250"
+        :height="273"
+        label="Gender"
+        :genderChartData="genderChartData"
+      ></gender-chart>
     </div>
 
     <v-divider class="mt-10" />
@@ -726,20 +731,23 @@ export default {
   },
   data() {
     return {
-      genderChartData : [
+      genderChartData: [
         {
           label: "Men",
-          population_percentage: genderData.gender.gender_men.population_percentage,
+          population_percentage:
+            genderData.gender.gender_men.population_percentage,
           size: genderData.gender.gender_men.size,
         },
         {
           label: "Women",
-          population_percentage: genderData.gender.gender_women.population_percentage,
+          population_percentage:
+            genderData.gender.gender_women.population_percentage,
           size: genderData.gender.gender_women.size,
         },
         {
           label: "Other",
-          population_percentage: genderData.gender.gender_other.population_percentage,
+          population_percentage:
+            genderData.gender.gender_other.population_percentage,
           size: genderData.gender.gender_other.size,
         },
       ],

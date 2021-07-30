@@ -36,11 +36,10 @@ export default {
     },
   },
   data() {
-    return { }
+    return {}
   },
   methods: {
     async initiateGenderChart() {
-      
       var data = await this.genderChartData // TODO: Get this from API
 
       // Initialize width, height & color range
@@ -103,7 +102,7 @@ export default {
       var legendSvg = d3Select
         .select("#legend")
         .append("svg")
-        .attr("viewBox", `0 0 200 25`) // for responsive
+        .attr("viewBox", "0 0 200 25") // for responsive
         .attr("id", "mainSvg")
         .attr("class", "svgBox")
         .style("margin-left", "20px")
