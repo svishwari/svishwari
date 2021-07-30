@@ -297,9 +297,9 @@ export default {
         this.overviewListItems[3].subtitle = this.overview.total_cities
         this.overviewListItems[4].subtitle =
           this.overview.min_age + "-" + this.overview.max_age
-        this.overviewListItems[5].subtitle = this.overview.gender_men
+        this.overviewListItems[5].subtitle = this.overview.gender_women
         this.overviewListItems[5].value = "percentage"
-        this.overviewListItems[6].subtitle = this.overview.gender_women
+        this.overviewListItems[6].subtitle = this.overview.gender_men
         this.overviewListItems[6].value = "percentage"
         this.overviewListItems[7].subtitle = this.overview.gender_other
         this.overviewListItems[7].value = "percentage"

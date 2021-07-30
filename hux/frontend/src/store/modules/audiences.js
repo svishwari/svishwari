@@ -101,7 +101,7 @@ const actions = {
           title: "Men",
           subtitle:
             audienceInsights.gender_men &&
-            audienceInsights.gender_women.toLocaleString("en-US", {
+            audienceInsights.gender_men.toLocaleString("en-US", {
               style: "percent",
               maximumFractionDigits: 2,
             }),

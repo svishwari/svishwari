@@ -80,7 +80,10 @@
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
             <div class="neroBlack--text text-h5 pb-4">Lift chart</div>
-            <LiftChart :data="model.lift_data || []" />
+            <LiftChart
+              :data="model.lift_data || []"
+              :rmse="model.performance_metric['rmse']"
+            />
           </v-card>
         </v-col>
       </v-row>
