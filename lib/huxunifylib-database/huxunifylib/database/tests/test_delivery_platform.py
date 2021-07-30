@@ -1912,10 +1912,10 @@ class TestDeliveryPlatform(unittest.TestCase):
                 self.database, delivery_job_id
             )
         )
-        print("doc", recent_campaign_activity_doc)
+
         self.assertIsNotNone(recent_campaign_activity_doc)
 
         self.assertEqual(
             recent_campaign_activity_doc[c.EVENT_DETAILS][c.EVENT_DATE],
-            "6/27/2021 12:00:00 AM",
+            "6/28/2021 12:00:00 AM",
         )
