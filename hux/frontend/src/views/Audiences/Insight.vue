@@ -216,7 +216,7 @@
         </div>
       </v-card>
     </div>
-    <v-row class="px-15 mt-2">
+    <v-row v-if="audienceInsights" class="px-15 mt-2">
       <v-col cols="3">
         <income-chart></income-chart>
       </v-col>
@@ -412,12 +412,16 @@ export default {
   computed: {
     ...mapGetters({
       getAudience: "audiences/audience",
+      getAudienceInsights: "audiences/insights",
     }),
     audience() {
       return this.getAudience(this.$route.params.id)
     },
     audienceId() {
       return this.audience && this.audience.id
+    },
+    audienceInsights() {
+      return this.getAudienceInsights(this.audienceId)
     },
     breadcrumbItems() {
       const items = [

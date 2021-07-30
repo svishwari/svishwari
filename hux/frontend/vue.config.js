@@ -1,8 +1,6 @@
 module.exports = {
   devServer: {
-    port: 8080,
-    https: true,
-    disableHostCheck: true,
+    disableHostCheck: true, // enabled for: host.docker.internal
   },
 
   lintOnSave: process.env.NODE_ENV !== "production",

@@ -176,7 +176,9 @@ def get_engagements_summary(
         # add the destination name to the nested destinations.
         {
             "$addFields": {
-                f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.NAME}": f"$destination.{db_c.NAME}"
+                f"{db_c.AUDIENCES}.{db_c.DESTINATIONS}.{db_c.NAME}": f"$destination.{db_c.NAME}",
+                "audiences.destinations.delivery_platform_type"
+                "": "$destination.delivery_platform_type",
             }
         },
         # remove the found destination from the pipeline.
@@ -230,6 +232,7 @@ def get_engagements_summary(
                     "$push": {
                         db_c.OBJECT_ID: "$audiences.destinations.id",
                         db_c.NAME: "$audiences.destinations.name",
+                        "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         db_c.DELIVERY_JOB_ID: "$audiences.destinations.delivery_job_id",
                         db_c.LATEST_DELIVERY: {
                             db_c.UPDATE_TIME: "$audiences.destinations.latest_delivery.update_time",
