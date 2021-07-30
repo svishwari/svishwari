@@ -36,7 +36,10 @@ class LookalikeAudienceGetSchema(Schema):
     size = fields.Float(default=0)
     create_time = DateTimeWithZ(required=True)
     update_time = DateTimeWithZ(required=True)
+    created_by = fields.String()
+    updated_by = fields.String()
     favorite = fields.Boolean(required=True)
+    is_lookalike = fields.Boolean(default=True)
 
 
 class AudienceDeliverySchema(Schema):
@@ -246,10 +249,10 @@ def is_audience_lookalikeable(audience: dict) -> str:
         deliveries += audience[api_c.DELIVERIES]
 
     if not deliveries:
-        return api_c.DISABLED
+        return api_c.STATUS_DISABLED
 
     # check if any of the deliveries were sent to facebook
-    status = api_c.DISABLED
+    status = api_c.STATUS_DISABLED
     for delivery in deliveries:
         # check if delivered to facebook.
         if (
