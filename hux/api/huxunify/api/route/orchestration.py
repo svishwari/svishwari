@@ -294,6 +294,7 @@ class AudienceGetView(SwaggerView):
             )
             # set the filters from the audience object
             lookalike[db_c.AUDIENCE_FILTERS] = audience[db_c.AUDIENCE_FILTERS]
+            lookalike[api_c.IS_LOOKALIKE] = True
 
             # set audience to lookalike
             audience = lookalike
