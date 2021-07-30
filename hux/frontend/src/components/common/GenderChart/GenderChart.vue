@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import data from "@/components/common/GenderChart/data.json"
 import * as d3Select from "d3-selection"
 import * as d3Scale from "d3-scale"
 import * as d3Shape from "d3-shape"
@@ -19,9 +18,9 @@ export default {
   name: "GenderChart",
   components: {},
   props: {
-    value: {
+    genderChartData: {
       type: Array,
-      required: false, // TODO: Integration & change to true while accepting the data
+      required: true,
     },
     width: {
       type: Number,
@@ -37,34 +36,12 @@ export default {
     },
   },
   data() {
-    return {
-      chartData: data,
-    }
+    return { }
   },
   methods: {
     async initiateGenderChart() {
-      await this.chartData
-
-      var data = [
-        {
-          label: "Men",
-          population_percentage:
-            this.chartData.gender.gender_men.population_percentage,
-          size: this.chartData.gender.gender_men.size,
-        },
-        {
-          label: "Women",
-          population_percentage:
-            this.chartData.gender.gender_women.population_percentage,
-          size: this.chartData.gender.gender_women.size,
-        },
-        {
-          label: "Other",
-          population_percentage:
-            this.chartData.gender.gender_other.population_percentage,
-          size: this.chartData.gender.gender_other.size,
-        },
-      ]
+      
+      var data = await this.genderChartData // TODO: Get this from API
 
       // Initialize width, height & color range
       var width = this.width,
@@ -122,7 +99,7 @@ export default {
           return color(d.data.population_percentage)
         })
 
-      // Creating legends svg element
+      // Creating legends svg element & apply style
       var legendSvg = d3Select
         .select("#legend")
         .append("svg")
@@ -132,7 +109,7 @@ export default {
         .style("margin-left", "20px")
         .style("margin-right", "20px")
 
-      // calculating legend distance
+      // calculating distance b/n each legend
       var legend = legendSvg
         .selectAll(".legend")
         .data(data)
@@ -146,7 +123,7 @@ export default {
           return "translate(" + x + "," + y + ")"
         })
 
-      // creating legend circle
+      // creating legend circle & fill color
       legend
         .append("circle")
         .attr("cx", 10)
@@ -156,7 +133,7 @@ export default {
           return color(d.population_percentage)
         })
 
-      // creating legend text
+      // creating legend text & apply css class
       legend
         .append("text")
         .attr("x", 18)
@@ -168,7 +145,7 @@ export default {
           return d.label
         })
 
-      // Creating label svg element
+      // Creating label svg element & apply style
       var label = d3Select
         .select("#label")
         .append("svg")
@@ -178,7 +155,7 @@ export default {
         .style("margin-left", "24px")
         .style("margin-top", "20px")
 
-      // Appending text to label
+      // Appending text to label & apply css class
       label
         .append("text")
         .attr("x", 18)
