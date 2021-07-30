@@ -204,6 +204,7 @@ export default {
         audience_size_percentage: this.lookalikeAudience.value,
         engagement_ids: engagementIds,
       }
+      this.$emit("onCreate")
       await this.createLookalikeAudience(payload)
       this.onBack()
     },

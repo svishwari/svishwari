@@ -280,6 +280,7 @@ export default {
       }
 
       this.value.push(destinationWithDataExtension)
+      this.$emit("updateDestination")
       this.onBack()
     },
 
@@ -305,6 +306,11 @@ export default {
     destination: {
       type: Object,
       required: true,
+    },
+    closeOnAction: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 

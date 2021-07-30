@@ -82,6 +82,10 @@ export default {
           this.$emit("onSalesforceAdd", destination)
         } else {
           this.value.push(destination)
+          if (this.closeOnAction) {
+            this.$emit("onAddDestination")
+            this.localToggle = false
+          }
         }
       }
     },
@@ -105,6 +109,11 @@ export default {
     },
 
     toggle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    closeOnAction: {
       type: Boolean,
       required: false,
       default: false,
