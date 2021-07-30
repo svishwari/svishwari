@@ -1,6 +1,12 @@
 module.exports = {
+  devServer: {
+    disableHostCheck: true, // enabled for: host.docker.internal
+  },
+
   lintOnSave: process.env.NODE_ENV !== "production",
+
   filenameHashing: true,
+
   productionSourceMap: false,
 
   configureWebpack: {
