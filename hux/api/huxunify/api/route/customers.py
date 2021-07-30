@@ -251,7 +251,7 @@ class Customersview(SwaggerView):
             "in": "query",
             "type": "integer",
             "description": "Max number of customers to be returned.",
-            "example": "5",
+            "example": api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
             "required": False,
             "default": api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
         },
@@ -260,7 +260,7 @@ class Customersview(SwaggerView):
             "in": "query",
             "type": "string",
             "description": "Number of which batch of customers should be returned.",
-            "example": "10",
+            "example": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
             "required": False,
             "default": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
         },
@@ -278,7 +278,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    # @api_error_handler()
+    @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 

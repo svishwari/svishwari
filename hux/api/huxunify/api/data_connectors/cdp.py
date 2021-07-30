@@ -56,8 +56,8 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
     """Retrieves customer profiles.
 
     Args:
-        offset (int): Offset for customer profiles
         batch_size (int): number of customer profiles to be returned in a batch
+        offset (int): Offset for customer profiles
         token (str): OKTA JWT Token.
 
     Returns:
