@@ -151,7 +151,7 @@ export default {
         .attr("width", 200)
         .attr("height", 20)
         .attr("id", "label")
-        .style("margin-left", "24px")
+        .style("margin-left", "5px")
         .style("margin-top", "20px")
 
       // Appending text to label & apply css class
