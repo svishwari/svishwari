@@ -67,6 +67,7 @@ stages:
         "total_us_states": !anyint
         "total_known_ids": !anyint
         "min_age": !anyint
+        "avg_age" : !anyint
         "min_ltv_predicted": !anyfloat
         "max_ltv_predicted": !anyfloat
         "match_rate": !anyfloat
