@@ -852,7 +852,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
         {
             "section_aggregator": "ALL",
             "section_filters": [
-                {"field": "country", "type": "equals", "value": "us"}
+                {"field": "country", "type": "equals", "value": "US"}
             ],
         }
     ]
