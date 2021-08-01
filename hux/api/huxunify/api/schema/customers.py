@@ -98,6 +98,7 @@ class CustomerOverviewSchema(Schema):
     total_cities = Integer(required=True)
     min_age = Integer(required=True)
     max_age = Integer(required=True)
+    avg_age = Integer(required=True)
     gender_women = Float(required=True)
     gender_men = Float(required=True)
     gender_other = Float(required=True)
