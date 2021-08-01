@@ -145,6 +145,7 @@ stages:
         "max_ltv_predicted": !anyfloat
         "total_countries": !anyint
         "min_age": !anyint
+        "avg_age" : !anyint
         "total_us_states": !anyint
         "gender_other": !anyfloat
         "max_ltv_actual": !anyfloat
