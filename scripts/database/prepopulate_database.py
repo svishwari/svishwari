@@ -41,7 +41,7 @@ data_sources_constants = [
     },
     {
         c.DATA_SOURCE_NAME: "Facebook",
-        c.DATA_SOURCE_TYPE: "facebook",
+        c.DATA_SOURCE_TYPE: c.DELIVERY_PLATFORM_FACEBOOK,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
@@ -55,21 +55,21 @@ data_sources_constants = [
     },
     {
         c.DATA_SOURCE_NAME: "Adobe Experience",
-        c.DATA_SOURCE_TYPE: "adobe-experience",
+        c.DATA_SOURCE_TYPE: c.DELIVERY_PLATFORM_ADOBE,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Mailchimp",
-        c.DATA_SOURCE_TYPE: "mailchimp",
+        c.DATA_SOURCE_TYPE: c.DELIVERY_PLATFORM_MAILCHIMP,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
     },
     {
         c.DATA_SOURCE_NAME: "Amazon Advertising",
-        c.DATA_SOURCE_TYPE: "amazon-advertising",
+        c.DATA_SOURCE_TYPE: c.DELIVERY_PLATFORM_AMAZON,
         c.STATUS: c.PENDING,
         c.ENABLED: False,
         c.ADDED: False,
