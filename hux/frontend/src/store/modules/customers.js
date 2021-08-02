@@ -8,6 +8,9 @@ const state = {
   items: {},
 
   overview: {},
+
+  // TODO: to be integrated with HUS-226
+  insights: null,
 }
 
 const getters = {
@@ -16,6 +19,8 @@ const getters = {
   single: (state) => (id) => state.items[id],
 
   overview: (state) => state.overview,
+
+  insights: (state) => state.insights,
 }
 
 const mutations = {
