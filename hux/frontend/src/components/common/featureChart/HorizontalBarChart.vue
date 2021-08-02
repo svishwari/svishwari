@@ -2,8 +2,8 @@
   <div>
     <v-card
       class="rounded-lg card-style box-shadow-5"
-      maxWidth="chartWidth"
-      minHeight="662px"
+      max-width="chartWidth"
+      min-height="662px"
       flat
     >
       <v-card-title class="chart-style pb-6 pl-6 pt-5">
@@ -13,13 +13,13 @@
           </span>
         </div>
         <div
-          class="chart-section"
           ref="huxChart"
+          class="chart-section"
           @mouseover="getCordinates($event)"
         ></div>
         <v-card
-          tile
           v-if="showScoreTip"
+          tile
           :style="{
             transform: `translate(${scoreTip.xPosition}px, ${scoreTip.yPosition}px)`,
           }"
@@ -41,7 +41,7 @@ import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
 
 export default {
-  name: "horizontal-bar-chart",
+  name: "HorizontalBarChart",
   props: {
     value: {
       type: Array,
@@ -77,6 +77,23 @@ export default {
       margin: { top: 20, right: 10, bottom: 70, left: 130 },
       chartData: this.value,
     }
+  },
+
+  watch: {
+    value: function () {
+      d3Select.select(this.$refs.huxChart).select("svg").remove()
+      this.initiateHorizontalBarChart()
+    },
+    chartDimensions: function () {
+      this.chartWidth = this.chartDimensions.width + "px"
+      this.width =
+        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
+    },
+  },
+
+  mounted() {
+    this.chartWidth = this.chartDimensions.width + "px"
+    this.initiateHorizontalBarChart()
   },
   methods: {
     async initiateHorizontalBarChart() {
@@ -241,23 +258,6 @@ export default {
     tooltipDisplay(showTip, featureData) {
       this.$emit("tooltipDisplay", showTip, featureData)
     },
-  },
-
-  watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateHorizontalBarChart()
-    },
-    chartDimensions: function () {
-      this.chartWidth = this.chartDimensions.width + "px"
-      this.width =
-        this.chartDimensions.width == 0 ? 560 : this.chartDimensions.width
-    },
-  },
-
-  mounted() {
-    this.chartWidth = this.chartDimensions.width + "px"
-    this.initiateHorizontalBarChart()
   },
 }
 </script>

@@ -11,10 +11,10 @@
         Select attribute(s) - <i class="text-caption gray--text">Optional</i>
       </strong>
       <v-card
+        v-if="rules.length == 0"
         tile
         elevation="0"
         class="mt-2 blank-section"
-        v-if="rules.length == 0"
       >
         <div class="gray--text font-weight-normal">
           You have not added any attributes, yet!
@@ -29,13 +29,13 @@
         </v-icon>
       </v-card>
     </v-col>
-    <v-col col="12" v-if="rules.length > 0" class="pt-0 pr-0 pa-0">
+    <v-col v-if="rules.length > 0" col="12" class="pt-0 pr-0 pa-0">
       <div v-for="(rule, index) in rules" :key="rule.id">
         <div
           class="d-flex align-center col-12 pa-0 neroBlack--text text-caption"
         >
           <span class="mr-2">Match</span>
-          <HuxSwitch
+          <hux-switch
             v-model="rule.operand"
             @input="triggerSizingForRule(rule)"
           />
@@ -43,29 +43,29 @@
         </div>
 
         <v-col
-          col="12"
           v-for="(condition, ixcondition) in rule.conditions"
           :key="condition.id"
+          col="12"
           class="rule-section pa-0 mb-2"
         >
           <v-col md="10" class="pa-0">
             <div class="condition-card">
               <div class="condition-container">
                 <div class="condition-items col-10 pa-0">
-                  <HuxDropdown
+                  <hux-dropdown
                     :selected="condition.attribute"
                     :items="attributeOptions"
                     label="Select attribute"
                     @on-select="onSelect('attribute', condition, $event)"
                   />
-                  <HuxDropdown
+                  <hux-dropdown
                     v-if="isText(condition)"
                     label="Select operator"
                     :items="operatorOptions"
                     :selected="condition.operator"
                     @on-select="onSelect('operator', condition, $event)"
                   />
-                  <TextField
+                  <text-field
                     v-if="condition.operator && isText(condition)"
                     v-model="condition.text"
                     class="item-text-field"
@@ -73,24 +73,24 @@
                     required
                     @blur="triggerSizing(condition)"
                   />
-                  <HuxSlider
+                  <hux-slider
                     v-if="condition.attribute && !isText(condition)"
                     v-model="condition.range"
-                    :readOnly="false"
+                    :read-only="false"
                     :min="condition.attribute.min"
                     :max="condition.attribute.max"
                     :step="condition.attribute.steps"
-                    isRangeSlider
+                    is-range-slider
                     @onFinalValue="triggerSizing(condition)"
                   />
                 </div>
                 <div class="condition-actions col-2 pa-0">
-                  <v-icon @click="addNewCondition(rule.id)" color="primary">
+                  <v-icon color="primary" @click="addNewCondition(rule.id)">
                     mdi-plus-circle
                   </v-icon>
                   <v-icon
-                    @click="removeCondition(rule, ixcondition)"
                     color="primary"
+                    @click="removeCondition(rule, ixcondition)"
                   >
                     mdi-delete-outline
                   </v-icon>
@@ -115,7 +115,7 @@
           </v-col>
         </v-col>
 
-        <div class="col-12 seperator mt-5 mb-1" v-if="index != lastIndex">
+        <div v-if="index != lastIndex" class="col-12 seperator mt-5 mb-1">
           <hr class="zircon" />
           <v-chip
             small
@@ -142,9 +142,9 @@
             <span class="title text-caption">Result Size</span>
             <span class="value text-h6 pt-1 font-weight-semi-bold">
               <v-progress-circular
+                v-if="loadingOverAllSize"
                 :value="16"
                 indeterminate
-                v-if="loadingOverAllSize"
               />
               <span v-else>
                 {{ overAllSize | Numeric(false, false, true) }}
@@ -272,6 +272,9 @@ export default {
     lastIndex() {
       return this.rules.length - 1
     },
+  },
+  async mounted() {
+    await this.getAudiencesRules()
   },
   methods: {
     ...mapActions({
@@ -407,9 +410,6 @@ export default {
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
     },
-  },
-  async mounted() {
-    await this.getAudiencesRules()
   },
 }
 </script>

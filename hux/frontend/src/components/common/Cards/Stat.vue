@@ -13,7 +13,7 @@
         <div class="text-caption gray--text">{{ label }}</div>
       </div>
     </template>
-    <div class="px-4 py-3 text-caption white" v-if="$slots.default">
+    <div v-if="$slots.default" class="px-4 py-3 text-caption white">
       <slot name="default" />
     </div>
   </v-menu>
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: "stat",
+  name: "Stat",
 
   props: {
     label: {

@@ -1,6 +1,6 @@
 <template>
   <div class="overview-wrap">
-    <PageHeader :title="`Welcome back, ${fullName}!`" class="py-7">
+    <page-header :title="`Welcome back, ${fullName}!`" class="py-7">
       <template slot="description">
         Hux is here to help you make better, faster decisions to improve your
         Customer Experiences.
@@ -21,8 +21,8 @@
               width="40"
               color="primary"
               v-bind="attrs"
-              v-on="on"
               :disabled="true"
+              v-on="on"
             >
               <v-icon size="23" color="white">mdi-cog</v-icon>
             </v-btn>
@@ -36,8 +36,8 @@
               <v-checkbox
                 v-for="(item, ix) in Object.keys(configureOptions)"
                 :key="ix"
-                :label="item | TitleCase"
                 v-model="configureOptions[item]"
+                :label="item | TitleCase"
                 hide-details
               >
               </v-checkbox>
@@ -45,25 +45,25 @@
           </v-list>
         </v-menu>
       </template>
-    </PageHeader>
-    <div class="quickAccessMenu" v-if="this.configureOptions['configureHux']">
+    </page-header>
+    <div v-if="configureOptions['configureHux']" class="quickAccessMenu">
       <h5 class="mb-3 text-h5">Configure Hux</h5>
       <div class="card-wrap d-flex">
-        <CardInfo
+        <card-info
           v-for="(item, i) in configureHuxOptions"
           :key="i"
           :title="item.title"
           :description="item.description"
           :active="item.active"
           :to="item.route"
-        ></CardInfo>
+        ></card-info>
       </div>
     </div>
-    <EmptyStateChart>
+    <empty-state-chart>
       <template #chart-image>
         <img src="@/assets/images/empty-state-chart-1.png" alt="Empty state" />
       </template>
-    </EmptyStateChart>
+    </empty-state-chart>
   </div>
 </template>
 
@@ -73,7 +73,7 @@ import CardInfo from "@/components/common/CardInfo"
 import EmptyStateChart from "@/components/common/EmptyStateChart"
 
 export default {
-  name: "overview",
+  name: "Overview",
   components: {
     PageHeader,
     CardInfo,

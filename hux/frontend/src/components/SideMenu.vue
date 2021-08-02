@@ -18,7 +18,7 @@
       />
       <v-menu open-on-hover offset-y>
         <template #activator="{ on }">
-          <div v-on="on" class="client">
+          <div class="client" v-on="on">
             <span>
               {{ clientName }}
             </span>
@@ -43,27 +43,27 @@
       :key="item.title"
       color="rgba(0, 85, 135, 0.9)"
     >
-      <div class="list-group" v-if="item.label">
+      <div v-if="item.label" class="list-group">
         <span v-if="!isMini">
           {{ item.label }}
         </span>
       </div>
 
-      <v-list-item class="my-2" v-if="!item.menu" :to="item.link">
-        <v-list-item-icon class="my-3" v-if="item.icon">
-          <Tooltip
-            :key="item.title"
+      <v-list-item v-if="!item.menu" class="my-2" :to="item.link">
+        <v-list-item-icon v-if="item.icon" class="my-3">
+          <tooltip
             v-if="item.title"
-            positionTop
+            :key="item.title"
+            position-top
             color="black"
           >
             <template #label-content>
-              <Icon :type="item.icon" :size="iconSize" color="white" />
+              <icon :type="item.icon" :size="iconSize" color="white" />
             </template>
             <template #hover-content>
               {{ item.title }}
             </template>
-          </Tooltip>
+          </tooltip>
         </v-list-item-icon>
         <v-list-item-title class="white--text">
           {{ item.title }}
@@ -76,20 +76,20 @@
           :key="menu.title"
           :to="menu.link"
         >
-          <v-list-item-icon class="my-3" v-if="menu.icon">
-            <Tooltip
-              :key="menu.title"
+          <v-list-item-icon v-if="menu.icon" class="my-3">
+            <tooltip
               v-if="menu.icon"
-              positionTop
+              :key="menu.title"
+              position-top
               color="black"
             >
               <template #label-content>
-                <Icon :type="menu.icon" :size="iconSize" color="white" />
+                <icon :type="menu.icon" :size="iconSize" color="white" />
               </template>
               <template #hover-content>
                 {{ menu.title }}
               </template>
-            </Tooltip>
+            </tooltip>
           </v-list-item-icon>
           <v-list-item-title class="white--text">
             {{ menu.title }}
@@ -98,7 +98,7 @@
       </div>
     </v-list>
 
-    <template #append v-if="!isMini">
+    <template v-if="!isMini" #append>
       <div class="nav-footer">Hux by Deloitte Digital</div>
     </template>
   </v-navigation-drawer>
@@ -118,6 +118,11 @@ export default {
     toggle: Boolean,
   },
 
+  data: () => ({
+    clientName: "Demo Client",
+    items: menuConfig.menu,
+  }),
+
   computed: {
     isMini() {
       return this.$vuetify.breakpoint.smAndDown || this.toggle
@@ -127,11 +132,6 @@ export default {
       return this.isMini ? 24 : 21
     },
   },
-
-  data: () => ({
-    clientName: "Demo Client",
-    items: menuConfig.menu,
-  }),
 }
 </script>
 

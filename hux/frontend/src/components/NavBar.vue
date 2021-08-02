@@ -2,15 +2,15 @@
   <div class="app-nav-bar">
     <v-app-bar app color="white" dark elevation="0" pa-0>
       <v-app-bar-nav-icon
-        @click.stop="toggleSidebarMenu"
         class="nav-back-burger"
+        @click.stop="toggleSidebarMenu"
       >
         <v-icon :class="{ 'rotate-icon-180': toggleMini }">
           mdi-backburger
         </v-icon>
       </v-app-bar-nav-icon>
       <v-spacer></v-spacer>
-      <NavBarMenu></NavBarMenu>
+      <nav-bar-menu></nav-bar-menu>
     </v-app-bar>
   </div>
 </template>

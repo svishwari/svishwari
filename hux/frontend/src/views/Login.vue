@@ -5,7 +5,7 @@
         <span class="overlay"></span>
       </v-col>
       <v-col cols="6" class="right-section">
-        <Logo />
+        <logo />
         <h1 class="text-h4 font-weight-regular">
           Access your <span class="altcolor">360&deg;</span> view
         </h1>
