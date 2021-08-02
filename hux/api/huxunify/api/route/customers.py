@@ -627,7 +627,7 @@ class CustomerDemoVisualView(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_INSIGHTS}/<{api_c.HUX_ID}>/events",
+    f"/{api_c.CUSTOMERS_ENDPOINT}/<{api_c.HUX_ID}>/events",
     "CustomerEvents",
 )
 class CustomerEvents(SwaggerView):
