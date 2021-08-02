@@ -638,7 +638,7 @@ class CustomerEvents(SwaggerView):
     parameters = [
         {
             "name": api_c.HUX_ID,
-            "description": f"{api_c.HUX_ID}.",
+            "description": "ID of the customer whose events need to be fetched.",
             "type": "string",
             "in": "path",
             "required": True,
@@ -652,7 +652,7 @@ class CustomerEvents(SwaggerView):
             "example": {
                 "filters": {
                     "start_date": "2021-07-25T00:00:00Z",
-                    "end_date": "2021-08-02-T00:00:00Z",
+                    "end_date": "2021-08-02T00:00:00Z",
                 }
             },
         },
