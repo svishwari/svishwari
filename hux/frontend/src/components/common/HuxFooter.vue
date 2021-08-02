@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  name: "hux-footer",
+  name: "HuxFooter",
 
   props: {
     maxWidth: {

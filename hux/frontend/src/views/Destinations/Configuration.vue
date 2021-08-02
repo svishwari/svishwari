@@ -11,7 +11,7 @@
 
     <div class="d-flex align-center mb-10">
       <template v-if="selectedDestination">
-        <Logo :type="selectedDestination.type" />
+        <logo :type="selectedDestination.type" />
         <span class="pl-2">{{ selectedDestination.name }}</span>
         <a class="pl-2" color="primary" @click="toggleDrawer()">Change</a>
       </template>
@@ -33,21 +33,21 @@
             :key="key"
             cols="6"
           >
-            <TextField
+            <text-field
               v-model="authenticationDetails[key]"
               :label-text="destinationFields[key].name"
               :required="destinationFields[key].required"
               :rules="[rules.required]"
-              :placeholderText="
+              :placeholder-text="
                 destinationFields[key].type == 'text'
                   ? `Enter ${destinationFields[key].name}`
                   : `**********`
               "
               :input-type="destinationFields[key].type"
               :help-text="destinationFields[key].description"
-              @blur="reset"
               height="40"
               icon="mdi-alert-circle-outline"
+              @blur="reset"
             />
           </v-col>
         </v-row>
@@ -59,8 +59,8 @@
           :icon-position="isValidated ? 'left' : null"
           :variant="isValidated ? 'success' : 'primary'"
           size="large"
-          :isTile="true"
-          :isDisabled="!isFormValid"
+          :is-tile="true"
+          :is-disabled="!isFormValid"
           @click="validate()"
         >
           {{ isValidated ? "Success!" : "Validate connection" }}
@@ -70,7 +70,7 @@
           class="processing-button"
           variant="primary"
           size="large"
-          :isTile="true"
+          :is-tile="true"
         >
           Validating...
         </hux-button>
@@ -82,7 +82,7 @@
         v-if="isSalesforceSelected && isValidated"
         class="destination-auth-wrap background pa-4 rounded mt-10"
       >
-        <SFMC :dataExtensions="dataExtensions" @select="setExtension" />
+        <s-f-m-c :data-extensions="dataExtensions" @select="setExtension" />
       </div>
     </v-form>
 
@@ -91,7 +91,7 @@
         <hux-button
           variant="tertiary"
           size="large"
-          :isTile="true"
+          :is-tile="true"
           @click="cancel()"
         >
           <span class="primary--text">Cancel</span>
@@ -101,8 +101,8 @@
         <hux-button
           variant="primary"
           size="large"
-          :isTile="true"
-          :isDisabled="!isFullyConfigured"
+          :is-tile="true"
+          :is-disabled="!isFullyConfigured"
           @click="add()"
         >
           Add &amp; return
@@ -110,7 +110,7 @@
       </template>
     </hux-footer>
 
-    <Drawer v-model="drawer">
+    <drawer v-model="drawer">
       <template #header-left>
         <div class="d-flex align-baseline">
           <h5 class="text-h3 pr-2 neroBlack--text">Select a destination</h5>
@@ -126,36 +126,36 @@
       </template>
       <template #default>
         <div class="ma-3 font-weight-light">
-          <CardHorizontal
+          <card-horizontal
             v-for="destination in enabledDestinations"
             :key="destination.id"
             :title="destination.name"
             :icon="destination.type"
-            :isAdded="destination.is_added || isSelected(destination.id)"
-            :isAvailable="destination.is_enabled"
-            :isAlreadyAdded="destination.is_added"
-            @click="onSelectDestination(destination.id)"
+            :is-added="destination.is_added || isSelected(destination.id)"
+            :is-available="destination.is_enabled"
+            :is-already-added="destination.is_added"
             class="my-3"
+            @click="onSelectDestination(destination.id)"
           />
 
           <v-divider style="border-color: var(--v-zircon-base)" />
 
-          <CardHorizontal
+          <card-horizontal
             v-for="destination in disabledDestinations"
             :key="destination.id"
             :title="destination.name"
             :icon="destination.type"
-            :isAdded="destination.is_added || isSelected(destination.id)"
-            hideButton
-            :isAvailable="destination.is_enabled"
-            :isAlreadyAdded="destination.is_added"
+            :is-added="destination.is_added || isSelected(destination.id)"
+            hide-button
+            :is-available="destination.is_enabled"
+            :is-already-added="destination.is_added"
             class="my-3"
           >
             <i class="font-weight-light letter-spacing-sm">Coming soon</i>
-          </CardHorizontal>
+          </card-horizontal>
         </div>
       </template>
-    </Drawer>
+    </drawer>
   </page>
 </template>
 
@@ -169,7 +169,7 @@ import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 
-import SFMC from "./Configuration/sfmc"
+import SFMC from "./Configuration/SFMC.vue"
 
 export default {
   name: "ConfigureDestination",
@@ -239,6 +239,19 @@ export default {
         ? this.selectedDataExtension !== null
         : this.isValidated
     },
+  },
+
+  async mounted() {
+    this.loading = true
+
+    if (this.$route.query.select) {
+      this.drawer = true
+    }
+
+    await this.getDestinationConstants()
+    await this.getDestinations()
+
+    this.loading = false
   },
 
   methods: {
@@ -314,19 +327,6 @@ export default {
       // TODO: need to add modal that confirms to leave configuration
       this.$router.push({ name: "Connections" })
     },
-  },
-
-  async mounted() {
-    this.loading = true
-
-    if (this.$route.query.select) {
-      this.drawer = true
-    }
-
-    await this.getDestinationConstants()
-    await this.getDestinations()
-
-    this.loading = false
   },
 }
 </script>

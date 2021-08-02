@@ -74,8 +74,8 @@
         min-height="30"
         class="day-button"
         :ripple="false"
-        @click="toggleWeekDay(day)"
         :color="isDaySelected(day) ? 'background' : 'aliceBlue'"
+        @click="toggleWeekDay(day)"
       >
         <span
           class="text-h6"
@@ -129,12 +129,12 @@
         {{ timeFrame }}{{ value.every !== 1 ? "s" : "" }}]
       </span>
       <span v-if="value.periodicity !== 'Daily'">on </span>
-      <span class="neroBlack--text" v-if="value.periodicity === 'Weekly'">
+      <span v-if="value.periodicity === 'Weekly'" class="neroBlack--text">
         <span v-if="selectedDaysString !== '[]'">
           {{ selectedDaysString }}
         </span>
       </span>
-      <span class="neroBlack--text" v-if="value.periodicity === 'Monthly'">
+      <span v-if="value.periodicity === 'Monthly'" class="neroBlack--text">
         <span v-if="value.monthlyPeriod === 'Day'">
           [Day {{ value.monthlyDayDate }}]
         </span>
@@ -149,8 +149,8 @@
     </div>
 
     <div
-      class="gray--text pt-1"
       v-if="value.periodicity === 'Monthly' && value.monthlyDayDate === 31"
+      class="gray--text pt-1"
     >
       Some months are fewer than 31 days, for these months the delivery will
       take place on the last day of the month.

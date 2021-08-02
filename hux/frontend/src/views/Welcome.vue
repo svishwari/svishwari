@@ -1,7 +1,7 @@
 <template>
-  <div class="welcome-wrap" v-if="!authenticated">
+  <div v-if="!authenticated" class="welcome-wrap">
     <div class="content">
-      <Logo />
+      <logo />
       <h1>Welcome to Hux!</h1>
       <span>
         An all-purpose tool to transform raw data into powerful market insights

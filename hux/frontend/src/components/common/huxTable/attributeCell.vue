@@ -18,7 +18,7 @@
 <script>
 import Vue from "vue"
 export default Vue.extend({
-  name: "attributeCell",
+  name: "AttributeCell",
   data() {
     return {
       cellValue: null,

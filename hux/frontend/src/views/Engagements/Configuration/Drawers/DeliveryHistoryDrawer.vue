@@ -140,6 +140,17 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      engagementDeliveries: "engagements/deliveries",
+      getDestination: "destinations/single",
+    }),
+
+    items() {
+      return this.engagementDeliveries(this.engagementId)
+    },
+  },
+
   watch: {
     toggle(value) {
       this.localToggle = value
@@ -150,15 +161,8 @@ export default {
     },
   },
 
-  computed: {
-    ...mapGetters({
-      engagementDeliveries: "engagements/deliveries",
-      getDestination: "destinations/single",
-    }),
-
-    items() {
-      return this.engagementDeliveries(this.engagementId)
-    },
+  async mounted() {
+    await this.fetchHistory()
   },
 
   methods: {
@@ -171,10 +175,6 @@ export default {
       await this.getEngagementDeliveries(this.engagementId)
       this.loading = false
     },
-  },
-
-  async mounted() {
-    await this.fetchHistory()
   },
 }
 </script>
