@@ -710,8 +710,8 @@ class AudienceRules(SwaggerView):
                         "name": "Predicted lifetime value",
                         "type": "range",
                         "min": 0,
-                        "max": 100000,
-                        "steps": 500,
+                        "max": 1100,
+                        "steps": 20,
                     },
                     "propensity_to_purchase": {
                         "name": "Propensity to purchase",
