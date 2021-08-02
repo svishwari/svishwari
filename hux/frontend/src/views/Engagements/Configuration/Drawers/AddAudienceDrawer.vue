@@ -214,7 +214,8 @@ export default {
           return this.$options.filters.percentageConvert(
             item.subtitle,
             true,
-            true
+            false,
+            "%"
           )
         default:
           return item.subtitle

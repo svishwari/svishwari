@@ -135,9 +135,9 @@ export const customerProfile = {
  * Customers overview schema
  */
 export const customersOverview = {
-  gender_men: 0.67621,
-  gender_other: 0.8935,
-  gender_women: 0.30828,
+  gender_men: 67.621,
+  gender_other: 89.35,
+  gender_women: 30.828,
   match_rate: 0.5972,
   max_age: 35,
   max_ltv_actual: 90.4685,
