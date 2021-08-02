@@ -234,12 +234,12 @@
                       :style="{
                         width: totalWidth(getDestinationHeaders(headers)),
                       }"
-                    >
+                    >in
                       <span class="error--text mr-6">
                         <v-icon small color="error" class="mr-1">
                           mdi-information-outline
                         </v-icon>
-                        To view KPI you need to map to a Facebook campaign.
+                        To view KPIs you need to map to a Facebook campaign.
                       </span>
                       <v-btn
                         tile
