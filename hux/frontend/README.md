@@ -96,15 +96,15 @@ From the guide, you will need to
 
     |Sign-in redirect URIs|Sign-out redirect URIs|Initiate login URI|
     |-|-|-|
-    |https://localhost:8080/login/callback|https://localhost:8080/login|https://localhost:8080/login|
-    |https://host.docker.internal:8080/login/callback|https://host.docker.internal:8080/login|-|
+    |http://localhost:8080/login/callback|http://localhost:8080/login|http://localhost:8080/login|
+    |https://host.docker.internal:9090/login/callback|https://host.docker.internal:9090/login|-|
 
 4. Configure the Trusted Origins (`Security > API > Trusted Origins tab`) with the base URI of our frontend app:
 
     |Origin URL|Type|
     |-|-|
-    |https://localhost:8080|CORS|
-    |https://host.docker.internal:8080|CORS|
+    |http://localhost:8080|CORS|
+    |https://host.docker.internal:9090|CORS|
 
   > NOTE: We have included redirect URIs and base URIs specifically to run end-to-end integration tests with Docker locally using the special DNS name `host.docker.internal`
 

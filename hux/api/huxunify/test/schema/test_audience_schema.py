@@ -71,4 +71,6 @@ class EngagementSchemaTest(TestCase):
         }
 
         # check engagement status per weighting
-        self.assertEqual(api_c.DISABLED, is_audience_lookalikeable(audience))
+        self.assertEqual(
+            api_c.STATUS_DISABLED, is_audience_lookalikeable(audience)
+        )
