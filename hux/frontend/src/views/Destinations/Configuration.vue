@@ -169,7 +169,7 @@ import huxButton from "@/components/common/huxButton"
 import HuxFooter from "@/components/common/HuxFooter"
 import TextField from "@/components/common/TextField"
 
-import SFMC from "./Configuration/Salesforce.vue"
+import SFMC from "./Configuration/SFMC.vue"
 
 export default {
   name: "ConfigureDestination",
