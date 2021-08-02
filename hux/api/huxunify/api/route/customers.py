@@ -523,7 +523,7 @@ class CustomerGeoVisualView(SwaggerView):
 
 @add_view_to_blueprint(
     customers_bp,
-    f"/{api_c.CUSTOMERS_ENDPOINT}/{api_c.DEMOGRAPHIC}",
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.DEMOGRAPHIC}",
     "CustomerInsightsDemo",
 )
 class CustomerDemoVisualView(SwaggerView):
