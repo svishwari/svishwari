@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "34e47c99a1dade93b1d67de7a37949a392b137d463b98c1bacf9147c8e49e893"
+            "sha256": "6b0b55c4cd63914987301d76867ef20fe45e94d39da9f947fe8d037d5eb1951a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -30,12 +30,8 @@
             "version": "==21.2.0"
         },
         "huxunifylib-database": {
-            "hashes": [
-                "sha256:86979127b45b1f70f5f27362e63b2e9ce24b46b8c4527e944efdf41084aa174d",
-                "sha256:86a6736995091fe35d2dc600834e11cbcc99f19807ac8cd72428bab0de97b8c5"
-            ],
-            "index": "jfrog",
-            "version": "==0.2.51"
+            "editable": true,
+            "path": "./../lib/huxunifylib-database"
         },
         "hypothesis": {
             "hashes": [

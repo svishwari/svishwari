@@ -11,7 +11,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from pymongo import MongoClient
 
-from scripts.database.share import get_mongo_client
+from database.share import get_mongo_client
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
@@ -339,11 +339,15 @@ def insert_data_sources(database: MongoClient, data_sources: list) -> None:
             source_type=data_source[c.DATA_SOURCE_TYPE],
             status=data_source[c.STATUS],
         )[c.ID]
-        logging.info("Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id)
+        logging.info(
+            "Added %s, %s.", data_source[c.DATA_SOURCE_NAME], result_id
+        )
     logging.info("Prepopulate data sources complete.")
 
 
-def insert_delivery_platforms(database: MongoClient, delivery_platforms: list) -> None:
+def insert_delivery_platforms(
+    database: MongoClient, delivery_platforms: list
+) -> None:
     """
         Insertion of Delivery Platforms Collection
 
