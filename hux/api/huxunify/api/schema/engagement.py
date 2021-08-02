@@ -159,12 +159,10 @@ class DestinationEngagedAudienceSchema(Schema):
     """
 
     id = fields.String(
-        attribute=db_c.OBJECT_ID,
         example="60ae035b6c5bf45da27f17e5",
         required=True,
     )
     delivery_platform_config = fields.Dict(
-        attribute=db_c.DELIVERY_PLATFORM_CONFIG,
         example={db_c.DATA_EXTENSION_NAME: "SFMC Date Extension"},
         required=False,
         default=None,
