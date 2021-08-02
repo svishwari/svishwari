@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: "map-slider",
+  name: "MapSlider",
   props: {
     min: {
       type: Number,

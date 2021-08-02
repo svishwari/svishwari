@@ -21,7 +21,7 @@
                 <span>
                   {{ section.name }}
                 </span>
-                <span class="mt-3" v-if="section.description">
+                <span v-if="section.description" class="mt-3">
                   {{ section.description }}
                 </span>
               </div>
@@ -31,16 +31,16 @@
         <status
           v-if="section.status"
           :status="section.status"
-          :iconSize="statusIcon"
+          :icon-size="statusIcon"
           class="ml-3"
           collapsed
-          showLabel
-          :tooltipTitle="`${sectionTypePrefix} status`"
+          show-label
+          :tooltip-title="`${sectionTypePrefix} status`"
         />
       </span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on" class="top-action">
+          <v-icon v-bind="attrs" class="top-action" v-on="on">
             mdi-dots-vertical
           </v-icon>
         </template>
@@ -60,7 +60,7 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0" v-if="section[deliveriesKey].length > 0">
+    <v-list v-if="section[deliveriesKey].length > 0" dense class="pa-0">
       <v-list-item
         v-for="item in section[deliveriesKey]"
         :key="item.id"
@@ -70,12 +70,12 @@
           <div class="d-flex align-center">
             <tooltip>
               <template #label-content>
-                <Logo :type="item.delivery_platform_type" :size="18" />
+                <logo :type="item.delivery_platform_type" :size="18" />
               </template>
               <template #hover-content>
                 <div class="d-flex flex-column">
                   <div class="d-flex align-center">
-                    <Logo :type="item.type" :size="18" />
+                    <logo :type="item.type" :size="18" />
                     <span class="ml-2">{{ item.name }}</span>
                   </div>
                   <span class="mb-1 mt-2">Last delivered:</span>
@@ -90,12 +90,12 @@
               <v-menu class="menu-wrapper" bottom offset-y>
                 <template #activator="{ on, attrs }">
                   <v-icon
+                    v-if="!section.lookalike"
                     v-bind="attrs"
-                    v-on="on"
                     class="mr-2 more-action"
                     color="primary"
+                    v-on="on"
                     @click.prevent
-                    v-if="!section.lookalike"
                   >
                     mdi-dots-vertical
                   </v-icon>
@@ -119,8 +119,8 @@
                       </v-list-item-title>
 
                       <v-menu
-                        v-model="isSubMenuOpen"
                         v-else
+                        v-model="isSubMenuOpen"
                         offset-x
                         nudge-right="16"
                         nudge-top="4"
@@ -133,7 +133,7 @@
                         </template>
                         <template #default>
                           <div class="sub-menu-class white">
-                            <Logo
+                            <logo
                               v-if="option.menu.icon"
                               :size="18"
                               :type="option.menu.icon"
@@ -152,10 +152,10 @@
         <v-list-item-content v-if="item.status" class="status-col py-1">
           <status
             :status="item.status"
-            :iconSize="statusIcon"
+            :icon-size="statusIcon"
             collapsed
-            showLabel
-            tooltipTitle="Destination status"
+            show-label
+            tooltip-title="Destination status"
           />
         </v-list-item-content>
         <v-list-item-content v-if="item.size" class="size-col py-1">
@@ -217,13 +217,42 @@ import { getApproxSize } from "@/utils"
 import Tooltip from "./Tooltip.vue"
 
 export default {
+  name: "StatusList",
   components: {
     Logo,
     Status,
     Tooltip,
   },
 
-  name: "StatusList",
+  props: {
+    section: {
+      type: Object,
+      required: false,
+    },
+
+    engagementId: {
+      type: String,
+      required: false,
+    },
+    statusIcon: {
+      type: Number,
+      required: false,
+      default: 24,
+    },
+    menuItems: {
+      type: Array,
+      required: false,
+    },
+    deliveriesKey: {
+      type: String,
+      required: true,
+      default: "destinations",
+    },
+    sectionType: {
+      type: String,
+      required: false,
+    },
+  },
 
   data() {
     return {
@@ -257,36 +286,6 @@ export default {
         { id: 5, title: "Remove audience", active: true },
       ],
     }
-  },
-
-  props: {
-    section: {
-      type: Object,
-      required: false,
-    },
-
-    engagementId: {
-      type: String,
-      required: false,
-    },
-    statusIcon: {
-      type: Number,
-      required: false,
-      default: 24,
-    },
-    menuItems: {
-      type: Array,
-      required: false,
-    },
-    deliveriesKey: {
-      type: String,
-      required: true,
-      default: "destinations",
-    },
-    sectionType: {
-      type: String,
-      required: false,
-    },
   },
 
   computed: {

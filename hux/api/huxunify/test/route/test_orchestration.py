@@ -533,7 +533,7 @@ class OrchestrationRouteTest(TestCase):
             ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
         )
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.DISABLED)
+        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_DISABLED)
         self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
     def test_get_audience_does_not_exist(self):
@@ -590,7 +590,9 @@ class OrchestrationRouteTest(TestCase):
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-            self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.DISABLED)
+            self.assertEqual(
+                audience[api_c.LOOKALIKEABLE], api_c.STATUS_DISABLED
+            )
             self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
     def test_update_audience(self):
@@ -639,6 +641,13 @@ class OrchestrationRouteTest(TestCase):
         mock_facebook_connector.start()
 
         lookalike_audience_name = "NEW LA AUDIENCE"
+
+        # setup facebook connector mock address
+        mock.patch.object(
+            FacebookConnector,
+            "check_connection",
+            return_value=True,
+        ).start()
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",

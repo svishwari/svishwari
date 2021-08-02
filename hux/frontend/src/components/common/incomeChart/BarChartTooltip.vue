@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: "bar-chart-tooltip",
+  name: "BarChartTooltip",
   props: {
     position: {
       type: Object,

@@ -20,7 +20,7 @@
           <tbody>
             <tr v-for="data in lookalikesData" :key="data.id">
               <td class="title-text name-col">
-                <Tooltip>
+                <tooltip>
                   <template #label-content>
                     <router-link
                       :to="{
@@ -34,30 +34,30 @@
                     </router-link>
                   </template>
                   <template #hover-content> {{ data.name }} </template>
-                </Tooltip>
+                </tooltip>
               </td>
               <td class="table-text cl">
                 <template>
-                  <Tooltip>
+                  <tooltip>
                     <template #label-content>
                       {{ data.size | Numeric(true, false, true) | Empty("-") }}
                     </template>
                     <template #hover-content>
                       {{ data.size | Numeric(true) | Empty("-") }}
                     </template>
-                  </Tooltip></template
+                  </tooltip></template
                 >
               </td>
               <td class="table-text cl">
                 <template>
-                  <Tooltip>
+                  <tooltip>
                     <template #label-content>
                       {{ data.update_time | Date("relative") | Empty("-") }}
                     </template>
                     <template #hover-content>
                       {{ data.update_time | Date | Empty("-") }}
                     </template>
-                  </Tooltip>
+                  </tooltip>
                 </template>
               </td>
             </tr>
@@ -87,15 +87,10 @@
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 export default {
-  name: "look-alike-card",
+  name: "LookAlikeCard",
   components: {
     Icon,
     Tooltip,
-  },
-  data() {
-    return {
-      lookalikesData: this.value,
-    }
   },
   props: {
     value: {
@@ -106,6 +101,11 @@ export default {
       type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      lookalikesData: this.value,
+    }
   },
   methods: {
     onCreateLookalike: function () {

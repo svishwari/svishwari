@@ -2,8 +2,8 @@
   <div>
     <v-card
       class="rounded-lg card-style"
-      maxWidth="798px"
-      minHeight="100px"
+      max-width="798px"
+      min-height="100px"
       flat
     >
       <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
@@ -16,8 +16,8 @@
           </a>
         </div>
         <div
-          class="chart-section"
           ref="huxChart"
+          class="chart-section"
           @mouseover="getCordinates($event)"
         ></div>
         <div class="map-slider">
@@ -43,7 +43,7 @@ import * as statesList from "../../../../public/usaStateList.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 
 export default {
-  name: "geo-chart",
+  name: "GeoChart",
   components: {
     mapSlider,
   },
@@ -66,6 +66,13 @@ export default {
         y: 0,
       },
     }
+  },
+
+  watch: {
+    value: function () {
+      d3Select.select(this.$refs.huxChart).select("svg").remove()
+      this.initiateMapChart()
+    },
   },
   methods: {
     async initiateMapChart() {
@@ -164,13 +171,6 @@ export default {
 
     tooltipDisplay(showTip, currentStateData) {
       this.$emit("tooltipDisplay", showTip, currentStateData)
-    },
-  },
-
-  watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateMapChart()
     },
   },
 }

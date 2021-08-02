@@ -2,7 +2,7 @@
   <div class="d-flex">
     <v-menu :min-width="200" left offset-y close-on-click>
       <template #activator="{ on }">
-        <span v-on="on" class="d-flex cursor-pointer">
+        <span class="d-flex cursor-pointer" v-on="on">
           <v-btn class="mx-2 box-shadow-25" color="white" fab x-small>
             <v-icon color="secondary"> mdi-plus </v-icon>
           </v-btn>
@@ -13,9 +13,9 @@
           <v-list-item-title class="font-weight-bold"> Add </v-list-item-title>
         </v-list-item>
         <v-list-item
-          @click="routerRedirect(link.path)"
           v-for="link in dropdownLinks"
           :key="link.name"
+          @click="routerRedirect(link.path)"
         >
           <v-list-item-title class="text-h6 neroBlack--text">
             {{ link.name }}
@@ -23,7 +23,7 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <Notification />
+    <notification />
   </div>
 </template>
 

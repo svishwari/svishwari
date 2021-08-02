@@ -12,8 +12,8 @@
         x: tooltip.x,
         y: tooltip.y,
       }"
-      :showTooltip="show"
-      :sourceInput="currentData"
+      :show-tooltip="show"
+      :source-input="currentData"
     >
     </bar-chart-tooltip>
   </div>
@@ -26,7 +26,7 @@ import HorizontalBarChart from "@/components/common/incomeChart/HorizontalBarCha
 import data from "./incomeData.json"
 
 export default {
-  name: "income-chart",
+  name: "IncomeChart",
   components: { HorizontalBarChart, BarChartTooltip },
   data() {
     return {

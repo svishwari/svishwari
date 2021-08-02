@@ -149,6 +149,7 @@ STATUS_DELIVERING = "Delivering"
 STATUS_DELIVERY_PAUSED = "Delivery Paused"
 STATUS_ACTIVE = "Active"
 STATUS_INACTIVE = "Inactive"
+STATUS_DISABLED = "Disabled"
 STATUS_DRAFT = "Draft"
 STATUS_PENDING = "Pending"
 STATUS_ERROR = "Error"
@@ -856,7 +857,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
         {
             "section_aggregator": "ALL",
             "section_filters": [
-                {"field": "country", "type": "equals", "value": "us"}
+                {"field": "country", "type": "equals", "value": "US"}
             ],
         }
     ]

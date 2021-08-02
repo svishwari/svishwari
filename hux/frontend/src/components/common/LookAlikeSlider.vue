@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "look-alike-slider",
+  name: "LookAlikeSlider",
   props: {
     value: {
       type: Number,

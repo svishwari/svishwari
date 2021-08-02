@@ -1,7 +1,7 @@
 <template>
   <v-menu v-model="menu" offset-y close-on-click>
     <template #activator="{ on }">
-      <span v-on="on" class="d-flex cursor-pointer mr-6">
+      <span class="d-flex cursor-pointer mr-6" v-on="on">
         <v-btn color="primary" class="font-weight-bold" small outlined fab>
           {{ initials }}
         </v-btn>
@@ -51,11 +51,7 @@ export default {
       menu: false,
     }
   },
-  methods: {
-    initiateLogout() {
-      this.$auth.logout()
-    },
-  },
+
   computed: {
     ...mapGetters({
       firstName: "getFirstname",
@@ -63,6 +59,11 @@ export default {
     }),
     initials() {
       return this.firstName[0] + this.lastName[0]
+    },
+  },
+  methods: {
+    initiateLogout() {
+      this.$auth.logout()
     },
   },
 }

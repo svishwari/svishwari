@@ -18,6 +18,7 @@ from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 
+
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [

@@ -1,0 +1,6 @@
+logs
+*.log
+
+cypress.env.**
+**/cypress/screenshots
+**/cypress/videos
