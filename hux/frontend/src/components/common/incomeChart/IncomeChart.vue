@@ -35,7 +35,7 @@ export default {
         x: 0,
         y: 0,
       },
-      incomes: data.spend,
+      incomes: data.income,
       currentData: {},
     }
   },

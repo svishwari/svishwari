@@ -234,7 +234,8 @@
                       :style="{
                         width: totalWidth(getDestinationHeaders(headers)),
                       }"
-                    >in
+                    >
+                      in
                       <span class="error--text mr-6">
                         <v-icon small color="error" class="mr-1">
                           mdi-information-outline
