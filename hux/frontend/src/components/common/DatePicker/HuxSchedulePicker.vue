@@ -6,6 +6,7 @@
         <v-select
           v-model="value.periodicity"
           :items="repeatItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -18,6 +19,7 @@
         <v-select
           v-model="value.every"
           :items="everyItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -32,6 +34,7 @@
         <v-select
           v-model="value.hour"
           :items="hourItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -43,6 +46,7 @@
         <v-select
           v-model="value.minute"
           :items="minItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -54,6 +58,7 @@
         <v-select
           v-model="value.period"
           :items="periodItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -92,6 +97,7 @@
         <v-select
           v-model="value.monthlyPeriod"
           :items="monthlyPeriodItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -102,6 +108,7 @@
           v-if="value.monthlyPeriod !== 'Day'"
           v-model="value.monthlyDay"
           :items="monthlyDayItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -112,6 +119,7 @@
           v-else
           v-model="value.monthlyDayDate"
           :items="monthlyDayDateItems"
+          :menu-props="menuProps"
           dense
           outlined
           background-color="white"
@@ -149,7 +157,11 @@
     </div>
 
     <div
-      v-if="value.periodicity === 'Monthly' && value.monthlyDayDate === 31"
+      v-if="
+        value.periodicity === 'Monthly' &&
+        value.monthlyPeriod === 'Day' &&
+        value.monthlyDayDate === 31
+      "
       class="gray--text pt-1"
     >
       Some months are fewer than 31 days, for these months the delivery will
@@ -218,6 +230,11 @@ export default {
           value: "Saturday",
         },
       ],
+      menuProps: {
+        contentClass: "select-menu-class",
+        offsetY: true,
+        nudgeBottom: "4px",
+      },
     }
   },
   computed: {
@@ -295,6 +312,14 @@ export default {
 
   ::v-deep .period-select {
     width: 78px;
+  }
+}
+
+.select-menu-class {
+  .v-select-list {
+    ::v-deep .v-list-item__title {
+      font-size: 14px;
+    }
   }
 }
 
