@@ -240,12 +240,7 @@ export default {
     }),
 
     getActionItems(audience) {
-      // let filteredAudience = filterAudiencesByDestinations(
-      //   [audience],
-      //   ["facebook"]
-      // )
-
-      let isOneOfDestinationFacebook = audience.lookalikeable === "Active"
+      let isLookalikeableActive = audience.lookalikeable === "Active"
 
       let actionItems = [
         { title: "Favorite", isDisabled: true },
@@ -254,7 +249,7 @@ export default {
         { title: "Duplicate", isDisabled: true },
         {
           title: "Create a lookalike",
-          isDisabled: !isOneOfDestinationFacebook,
+          isDisabled: !isLookalikeableActive,
           menu: {
             title: "Facebook",
             onClick: () => {
