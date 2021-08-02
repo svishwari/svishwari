@@ -140,7 +140,9 @@ class EngagementDeliverDestinationView(SwaggerView):
         valid_destination = False
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if destination_id == destination[db_c.OBJECT_ID]:
+                if isinstance(
+                    destination, dict
+                ) and destination_id == destination.get(db_c.OBJECT_ID):
                     valid_destination = True
 
         if not valid_destination:
