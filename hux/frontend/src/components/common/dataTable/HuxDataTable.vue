@@ -40,13 +40,14 @@
             <!-- TODO: find a better solution and remove v-html -->
             <span :key="h.value" v-html="h.text" />
           </template>
-          <tooltip v-if="h.hoverTooltip" :key="h.value" position-top>
+          <tooltip v-if="h.hoverTooltip" position-top>
             <template #label-content>
               <icon
                 v-if="h.hoverTooltip"
                 :key="h.value"
                 type="info"
                 :size="12"
+                class="ml-1"
               />
             </template>
             <template #hover-content>
