@@ -1,7 +1,7 @@
 <template>
   <div class="list-wrapper">
     <div class="d-flex align-end mb-4">
-      <Icon type="destinations" :size="20" color="neroBlack" />
+      <icon type="destinations" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Destinations</h5>
       <router-link
         :to="{ name: 'DestinationConfiguration' }"
@@ -11,16 +11,16 @@
       </router-link>
     </div>
     <template v-if="hasAddedDestinations">
-      <CardHorizontal
+      <card-horizontal
         v-for="destination in addedDestinations"
         :key="destination.id"
         :title="destination.name"
         :icon="destination.type"
-        hideButton
+        hide-button
         class="mb-3 list"
       />
     </template>
-    <EmptyStateData v-else>
+    <empty-state-data v-else>
       <template #icon> mdi-alert-circle-outline </template>
       <template #title> Oops! There’s nothing here yet </template>
       <template #subtitle>
@@ -28,7 +28,7 @@
         <br />
         Begin by selecting the plus button above.
       </template>
-    </EmptyStateData>
+    </empty-state-data>
   </div>
 </template>
 
@@ -40,7 +40,7 @@ import EmptyStateData from "@/components/common/EmptyStateData"
 import Icon from "@/components/common/Icon"
 
 export default {
-  name: "destinations-list",
+  name: "DestinationsList",
 
   components: {
     CardHorizontal,

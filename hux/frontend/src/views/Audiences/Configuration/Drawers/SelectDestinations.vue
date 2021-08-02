@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localToggle" :loading="loading">
+  <drawer v-model="localToggle" :loading="loading">
     <template #header-left>
       <div class="d-flex align-baseline">
         <h3 class="text-h3 font-weight-light pr-2">
@@ -10,14 +10,14 @@
 
     <template #default>
       <div class="ma-3 font-weight-light">
-        <CardHorizontal
+        <card-horizontal
           v-for="destination in destinationsList"
           :key="destination.id"
           :title="destination.name"
           :icon="destination.type"
-          :isAdded="isAdded(destination)"
-          @click="add(destination)"
+          :is-added="isAdded(destination)"
           class="my-3"
+          @click="add(destination)"
         />
       </div>
     </template>
@@ -27,7 +27,7 @@
         {{ destinationsList.length }} results
       </div>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
@@ -44,6 +44,31 @@ export default {
     CardHorizontal,
   },
 
+  props: {
+    value: {
+      type: Array,
+      required: true,
+    },
+
+    toggle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    closeOnAction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      loading: false,
+      localToggle: false,
+    }
+  },
+
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
@@ -56,11 +81,20 @@ export default {
     },
   },
 
-  data() {
-    return {
-      loading: false,
-      localToggle: false,
-    }
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
+    },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getDestinations()
+    this.loading = false
   },
 
   methods: {
@@ -82,6 +116,10 @@ export default {
           this.$emit("onSalesforceAdd", destination)
         } else {
           this.value.push(destination)
+          if (this.closeOnAction) {
+            this.$emit("onAddDestination")
+            this.localToggle = false
+          }
         }
       }
     },
@@ -89,35 +127,6 @@ export default {
     undoAdd(destination) {
       const index = this.value.indexOf(destination)
       this.value.splice(index, 1)
-    },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getDestinations()
-    this.loading = false
-  },
-
-  props: {
-    value: {
-      type: Array,
-      required: true,
-    },
-
-    toggle: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
-
-  watch: {
-    toggle(value) {
-      this.localToggle = value
-    },
-
-    localToggle(value) {
-      this.$emit("onToggle", value)
     },
   },
 }

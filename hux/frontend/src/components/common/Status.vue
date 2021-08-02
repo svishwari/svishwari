@@ -9,12 +9,13 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="success" class="mr-2" :size="iconSize">
+        <v-icon color="success" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -29,12 +30,13 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="columbiaBlue" class="mr-2" :size="iconSize">
+        <v-icon color="columbiaBlue" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -48,13 +50,14 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <span v-on="on" class="d-flex align-center">
+        <span class="d-flex align-center" v-on="on">
           <span class="half-left-circle success" />
           <span class="half-right-circle mr-2 secondary" />
         </span>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -86,8 +89,9 @@
           v-on="on"
         />
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -102,12 +106,13 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="red" class="mr-2" :size="iconSize">
+        <v-icon color="red" class="mr-2" :size="iconSize" v-on="on">
           mdi-information
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -122,12 +127,13 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="blue" class="mr-2" :size="iconSize">
+        <v-icon color="blue" class="mr-2" :size="iconSize" v-on="on">
           mdi-message-alert
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -142,12 +148,13 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="blue" class="mr-2" :size="iconSize">
+        <v-icon color="blue" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-blank-circle-outline
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -162,12 +169,13 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="green" class="mr-2" :size="iconSize">
+        <v-icon color="green" class="mr-2" :size="iconSize" v-on="on">
           mdi-checkbox-marked-circle
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -182,12 +190,13 @@
 
     <v-menu v-else bottom offset-y open-on-hover>
       <template #activator="{ on }">
-        <v-icon v-on="on" color="blue" class="mr-2" :size="iconSize">
+        <v-icon color="blue" class="mr-2" :size="iconSize" v-on="on">
           mdi-message-alert
         </v-icon>
       </template>
-      <div class="px-4 py-2 white" v-if="showLabel">
-        {{ status | TitleCase }}
+      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+        <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
+        <span> {{ status | TitleCase }}</span>
       </div>
     </v-menu>
   </div>
@@ -195,24 +204,7 @@
 
 <script>
 export default {
-  name: "status",
-
-  data() {
-    return {
-      Statuses: {
-        Active: ["Active", "Delivered", "Succeeded"],
-        Inactive: ["Caution", "Not Delivered"],
-        Activating: ["Activating", "In progress"],
-        Draft: ["Draft"],
-        Disabled: ["Disabled", "Delivery Paused", "Inactive"],
-        Error: ["Error", "Failed", "Critical"],
-        Pending: ["Pending", "Delivering"],
-        Feedback: ["Feedback"],
-        Success: ["Success"],
-        Informational: ["Informational"],
-      },
-    }
-  },
+  name: "Status",
 
   props: {
     status: {
@@ -239,6 +231,28 @@ export default {
       required: false,
       default: 24,
     },
+    tooltipTitle: {
+      type: String,
+      required: false,
+      default: "",
+    },
+  },
+
+  data() {
+    return {
+      Statuses: {
+        Active: ["Active", "Delivered", "Succeeded"],
+        Inactive: ["Caution", "Not Delivered"],
+        Activating: ["Activating", "In progress"],
+        Draft: ["Draft"],
+        Disabled: ["Disabled", "Delivery Paused", "Inactive"],
+        Error: ["Error", "Failed", "Critical"],
+        Pending: ["Pending", "Delivering"],
+        Feedback: ["Feedback"],
+        Success: ["Success"],
+        Informational: ["Informational"],
+      },
+    }
   },
 }
 </script>

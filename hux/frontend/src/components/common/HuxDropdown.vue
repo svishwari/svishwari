@@ -1,13 +1,13 @@
 <template>
   <div class="hux-dropdown">
     <v-menu
+      v-model="openMenu"
       :close-on-content-click="false"
       :offset-x="isOffsetX"
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
       close-on-click
-      v-model="openMenu"
       class="hux-dropdown"
     >
       <template #activator="{ on }">
@@ -23,20 +23,20 @@
         <huxButton
           v-else
           :v-on="on"
-          @click="openMenu = true"
           text
           width="200"
           icon=" mdi-chevron-down"
-          iconPosition="right"
+          icon-position="right"
           tile
           class="ma-2 main-button pr-1"
+          @click="openMenu = true"
         >
           {{ isSubMenu ? item.name : optionSelected["name"] || label }}
         </huxButton>
       </template>
       <v-list>
         <template v-for="(item, index) in items">
-          <div class="dropdown-menuitems" :key="index">
+          <div :key="index" class="dropdown-menuitems">
             <v-divider v-if="item.isDivider" :key="index" />
             <div
               v-if="item.isGroup"
@@ -53,23 +53,23 @@
               :key="index"
               :label="item.name"
               :items="item.menu"
-              @on-select="onSelect"
               :is-open-on-hover="false"
               :is-offset-x="true"
               :is-offset-y="false"
               :is-sub-menu="true"
               :selected="selected"
+              @on-select="onSelect"
             />
             <v-list-item v-else :key="index" @click="onSelect(item)">
               <v-list-item-title class="d-flex align-center">
                 <v-icon
+                  v-if="optionSelected.name == item.name"
                   :color="color"
                   size="16"
-                  v-if="optionSelected.name == item.name"
                   >mdi-check</v-icon
                 >
                 <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
-                <icon type="model" :size="21" v-if="item.modelIcon" />
+                <icon v-if="item.modelIcon" type="model" :size="21" />
                 {{ item.name }}
               </v-list-item-title>
             </v-list-item>
@@ -83,15 +83,10 @@
 import huxButton from "@/components/common/huxButton"
 import Icon from "./Icon.vue"
 export default {
-  name: "hux-dropdown",
+  name: "HuxDropdown",
   components: {
     huxButton,
     Icon,
-  },
-  computed: {
-    optionSelected() {
-      return this.selected || this.label
-    },
   },
   props: {
     selected: {
@@ -111,16 +106,21 @@ export default {
     isSubMenu: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
   },
+  data: function () {
+    return {
+      openMenu: this.value,
+    }
+  },
+  computed: {
+    optionSelected() {
+      return this.selected || this.label
+    },
+  },
   methods: {
     onSelect(item) {
       this.$emit("on-select", item)
       this.openMenu = false
     },
-  },
-  data: function () {
-    return {
-      openMenu: this.value,
-    }
   },
 }
 </script>

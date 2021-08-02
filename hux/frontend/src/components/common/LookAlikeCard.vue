@@ -5,7 +5,7 @@
     >
       <span>Lookalikes</span>
       <v-btn
-        :disabled="status == 'Disabled'"
+        :disabled="status == 'disabled'"
         text
         color="primary"
         @click="onCreateLookalike"
@@ -14,50 +14,50 @@
         Create lookalike
       </v-btn>
     </v-card-title>
-    <v-card-text v-if="lookalikesData && status == 'Active'" class="pl-0 pr-0">
+    <v-card-text v-if="lookalikesData && status == 'active'" class="pl-0 pr-0">
       <v-simple-table fixed-header height="200px">
         <template v-slot:default>
           <tbody>
             <tr v-for="data in lookalikesData" :key="data.id">
               <td class="title-text name-col">
-                <Tooltip>
+                <tooltip>
                   <template #label-content>
                     <router-link
                       :to="{
                         name: 'AudienceInsight',
                         params: { id: data.id },
                       }"
-                      class="cell"
+                      class="cell text-decoration-none"
                       append
                     >
                       {{ data.name }}
                     </router-link>
                   </template>
                   <template #hover-content> {{ data.name }} </template>
-                </Tooltip>
+                </tooltip>
               </td>
               <td class="table-text cl">
                 <template>
-                  <Tooltip>
+                  <tooltip>
                     <template #label-content>
                       {{ data.size | Numeric(true, false, true) | Empty("-") }}
                     </template>
                     <template #hover-content>
                       {{ data.size | Numeric(true) | Empty("-") }}
                     </template>
-                  </Tooltip></template
+                  </tooltip></template
                 >
               </td>
               <td class="table-text cl">
                 <template>
-                  <Tooltip>
+                  <tooltip>
                     <template #label-content>
                       {{ data.update_time | Date("relative") | Empty("-") }}
                     </template>
                     <template #hover-content>
                       {{ data.update_time | Date | Empty("-") }}
                     </template>
-                  </Tooltip>
+                  </tooltip>
                 </template>
               </td>
             </tr>
@@ -66,7 +66,7 @@
       </v-simple-table>
     </v-card-text>
     <v-card-text
-      v-if="!lookalikesData && status == 'Active'"
+      v-if="!lookalikesData && status == 'active'"
       class="pl-4 pr-4 pt-4"
     >
       <v-list-item-subtitle>
@@ -74,7 +74,7 @@
       </v-list-item-subtitle>
       <span>Create one by clicking the "Create lookalike" above.</span>
     </v-card-text>
-    <v-card-text v-if="status == 'Disabled'" class="pl-4 pr-4 pt-4">
+    <v-card-text v-if="status == 'disabled'" class="pl-4 pr-4 pt-4">
       <span>
         This audience is currently getting prepared in Facebook. This could take
         a couple hours so check back later.
@@ -87,15 +87,10 @@
 import Icon from "@/components/common/Icon.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 export default {
-  name: "look-alike-card",
+  name: "LookAlikeCard",
   components: {
     Icon,
     Tooltip,
-  },
-  data() {
-    return {
-      lookalikesData: this.value,
-    }
   },
   props: {
     value: {
@@ -107,6 +102,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      lookalikesData: this.value,
+    }
+  },
   methods: {
     onCreateLookalike: function () {
       this.$emit("createLookalike")
@@ -117,8 +117,8 @@ export default {
 
 <style lang="scss" scoped>
 .lookalike-card {
-  max-width: 320px;
-  min-height: 250px;
+  min-height: 261px;
+  max-height: 261px;
   overflow: hidden;
 
   ::v-deep .v-card-text {
@@ -127,19 +127,19 @@ export default {
 
   .name-col {
     min-width: 118px;
+    max-width: 118px;
   }
   .cell {
     padding-left: 18px !important;
-    font-family: Open Sans;
-    font-style: normal;
     font-weight: normal;
     font-size: 14px !important;
     line-height: 22px;
     display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
-    text-decoration: none;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+    overflow: hidden !important;
   }
 
   .title-text {

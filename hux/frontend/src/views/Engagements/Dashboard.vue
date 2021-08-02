@@ -1,12 +1,12 @@
 <template>
   <div class="engagement-dash">
     <!-- Page Header -->
-    <PageHeader class="d-flex">
+    <page-header class="d-flex">
       <template #left>
         <div class="d-flex align-center bread-crumb">
-          <Breadcrumb :items="breadcrumbItems" />
-          <div class="ml-3" v-if="engagementList && engagementList.status">
-            <Status :status="engagementList.status" :iconSize="17"></Status>
+          <breadcrumb :items="breadcrumbItems" />
+          <div v-if="engagementList && engagementList.status" class="ml-3">
+            <status :status="engagementList.status" :icon-size="17"></status>
           </div>
         </div>
       </template>
@@ -19,21 +19,21 @@
           mdi-download
         </v-icon>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
     <div v-if="!loading" class="inner-wrap px-15 py-8">
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-6">
-        <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
+        <metric-card class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
             <div class="font-weight-semi-bold neroBlack--text my-2">
               {{ deliverySchedule }}
             </div>
           </template>
-        </MetricCard>
-        <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
-          <template #subtitle-extended v-if="summaryCards[1].subLabel">
+        </metric-card>
+        <metric-card class="mr-3 shrink" :title="summaryCards[1].title">
+          <template v-if="summaryCards[1].subLabel" #subtitle-extended>
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
@@ -46,11 +46,11 @@
                 </template>
               </tooltip>
             </span>
-            <Avatar :name="summaryCards[1].subLabel" />
+            <avatar :name="summaryCards[1].subLabel" />
           </template>
-        </MetricCard>
-        <MetricCard class="mr-3 shrink" :title="summaryCards[2].title">
-          <template #subtitle-extended v-if="summaryCards[2].subLabel">
+        </metric-card>
+        <metric-card class="mr-3 shrink" :title="summaryCards[2].title">
+          <template v-if="summaryCards[2].subLabel" #subtitle-extended>
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
@@ -63,40 +63,51 @@
                 </template>
               </tooltip>
             </span>
-            <Avatar :name="summaryCards[2].subLabel" />
+            <avatar :name="summaryCards[2].subLabel" />
           </template>
-        </MetricCard>
-        <MetricCard
+        </metric-card>
+        <metric-card
           v-if="engagementList && engagementList.description"
           class="mr-3 grow"
           title=""
-          :maxWidth="800"
+          :max-width="800"
         >
           <template #subtitle-extended>
             {{ summaryCards[3].title }}
           </template>
-        </MetricCard>
+        </metric-card>
       </div>
 
       <div class="audience-summary">
         <!-- Audience Destination Cards Wrapper -->
-        <v-card class="rounded-lg card-style" minHeight="145px" flat>
-          <v-card-title class="d-flex justify-space-between pb-4 pl-6 pt-5">
+        <delivery-overview
+          :sections="engagementList && engagementList.audiences"
+          section-type="audience"
+          deliveries-key="destinations"
+          :loading-relationships="loadingAudiences"
+          @onOverviewSectionAction="triggerOverviewAction($event)"
+          @onOverviewDestinationAction="
+            triggerOverviewDestinationAction($event)
+          "
+        >
+          <template #title-left>
             <div class="d-flex align-center">
-              <Icon
+              <icon
                 type="audiences"
                 :size="24"
                 color="neroBlack"
                 class="mr-2"
               /><span class="text-h5">Audiences</span>
             </div>
+          </template>
+          <template #title-right>
             <div class="d-flex align-center">
               <v-btn
                 text
                 class="d-flex align-center primary--text text-decoration-none"
                 @click="triggerSelectAudience()"
               >
-                <Icon type="audiences" :size="16" class="mr-1" />
+                <icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
               </v-btn>
               <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
@@ -104,36 +115,24 @@
                 Delivery history
               </v-btn>
             </div>
-          </v-card-title>
-          <v-progress-linear
-            v-if="loadingAudiences"
-            :active="loadingAudiences"
-            :indeterminate="loadingAudiences"
-          />
-          <v-card-text v-else class="pl-6 pr-6 pb-4 pt-0">
-            <div
-              class="empty-state pa-5 text--gray"
-              v-if="audienceMergedData.length == 0"
-            >
-              Nothing to show here yet. Add an audience, assign and deliver that
-              audience to a destination.
+          </template>
+          <template #empty-deliveries="{ sectionId }">
+            <div class="pt-3 empty-audience pb-12">
+              There are no destinations assigned to this audience.
+              <br />
+              Add one now.
+              <br />
+              <v-icon
+                size="30"
+                class="add-icon cursor-pointer pt-3"
+                color="primary"
+                @click="triggerSelectDestination(sectionId)"
+              >
+                mdi-plus-circle
+              </v-icon>
             </div>
-            <v-col
-              class="d-flex flex-row pl-0 pt-0 pr-0 overflow-auto pb-3"
-              v-if="audienceMergedData.length >= 0"
-            >
-              <status-list
-                v-for="item in audienceMergedData"
-                :key="item.id"
-                :audience="item"
-                :engagementId="engagementId"
-                :statusIcon="17"
-                @onAddDestination="triggerSelectDestination(item.id)"
-                @removeAudience="triggerDetachAudiences($event)"
-              />
-            </v-col>
-          </v-card-text>
-        </v-card>
+          </template>
+        </delivery-overview>
         <v-tabs v-model="tabOption" class="mt-8">
           <v-tabs-slider color="primary"></v-tabs-slider>
 
@@ -144,7 +143,7 @@
             @click="fetchCampaignPerformanceDetails('ads')"
           >
             <span style="width: 15px">
-              <Icon type="display_ads" :size="10" class="mr-2" />
+              <icon type="display_ads" :size="10" class="mr-2" />
             </span>
             Display ads
           </v-tab>
@@ -160,8 +159,8 @@
             />
             <campaign-summary
               :summary="displayAdsSummary"
-              :campaignData="audiencePerformanceAdsData"
-              :engagementId="engagementId"
+              :campaign-data="audiencePerformanceAdsData"
+              :engagement-id="engagementId"
               type="ads"
               @onUpdateCampaignMappings="fetchCampaignPerformanceDetails('ads')"
             />
@@ -173,7 +172,7 @@
             />
             <campaign-summary
               :summary="emailSummary"
-              :campaignData="audiencePerformanceEmailData"
+              :campaign-data="audiencePerformanceEmailData"
               type="email"
             />
           </v-tab-item>
@@ -184,9 +183,9 @@
       ref="selectAudiences"
       v-model="selectedAudiences"
       :toggle="showSelectAudiencesDrawer"
+      enable-multiple
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
       @onAdd="triggerCreateAudience()"
-      enableMultiple
       @triggerAddAudiences="triggerAttachAudiences($event)"
     />
     <add-audience-drawer
@@ -214,24 +213,48 @@
       @updateDestination="triggerAttachDestination($event)"
       @onBack="closeDrawers"
     />
-    <DeliveryHistoryDrawer
-      :engagementId="engagementId"
+    <delivery-history-drawer
+      :engagement-id="engagementId"
       :toggle="showDeliveryHistoryDrawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
+    />
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
+
+    <confirm-modal
+      v-model="showConfirmModal"
+      title="You are about to edit delivery schedule."
+      right-btn-text="Yes, edit delivery schedule"
+      body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
+      @onCancel="showConfirmModal = false"
+      @onConfirm="
+        showConfirmModal = false
+        editDeliveryDrawer = true
+      "
+    />
+
+    <edit-delivery-schedule
+      v-model="editDeliveryDrawer"
+      :audience-id="selectedAudienceId"
+      :destination="scheduleDestination"
+      :engagement-id="engagementId"
     />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-
+import { handleError } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status"
 import MetricCard from "@/components/common/MetricCard"
 import Avatar from "@/components/common/Avatar"
 import Icon from "@/components/common/Icon"
-import StatusList from "../../components/common/StatusList.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import CampaignSummary from "../../components/CampaignSummary.vue"
 import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer.vue"
@@ -239,9 +262,13 @@ import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
 import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
 import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
+import DeliveryOverview from "../../components/DeliveryOverview.vue"
+import HuxAlert from "../../components/common/HuxAlert.vue"
+import ConfirmModal from "@/components/common/ConfirmModal.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 
 export default {
-  name: "engagementDashboard",
+  name: "EngagementDashboard",
   components: {
     PageHeader,
     Breadcrumb,
@@ -249,7 +276,6 @@ export default {
     MetricCard,
     Avatar,
     Icon,
-    StatusList,
     Tooltip,
     CampaignSummary,
     AddAudienceDrawer,
@@ -257,6 +283,10 @@ export default {
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
     DeliveryHistoryDrawer,
+    DeliveryOverview,
+    HuxAlert,
+    ConfirmModal,
+    EditDeliverySchedule,
   },
   data() {
     return {
@@ -265,6 +295,12 @@ export default {
       loading: false,
       loadingTab: false,
       loadingAudiences: false,
+      flashAlert: false,
+      alert: {
+        type: "success",
+        title: "YAY!",
+        message: "Successfully triggered delivery.",
+      },
       tabOption: 0,
       Tooltips: [
         { acronym: "CPM", description: "Cost per Thousand Impressions" },
@@ -281,6 +317,14 @@ export default {
       selectedAudienceId: null,
       selectedDestination: [],
       showDeliveryHistoryDrawer: false,
+      // Edit Schedule data props
+      showConfirmModal: false,
+      editDeliveryDrawer: false,
+      scheduleDestination: {
+        name: null,
+        type: null,
+        id: null,
+      },
     }
   },
   computed: {
@@ -709,15 +753,23 @@ export default {
       return "Manual"
     },
   },
+  async mounted() {
+    this.loading = true
+    await this.getAudiences()
+    await this.getAvailableDestinations()
+    await this.loadEngagement(this.$route.params.id)
+    this.loading = false
+  },
   methods: {
     ...mapActions({
-      attachAudience: "engagements/attachAudience",
-      detachAudience: "engagements/detachAudience",
-      destinationById: "destinations/get",
-      getAudienceById: "audiences/getAudienceById",
       getAudiences: "audiences/getAll",
+      getAvailableDestinations: "destinations/getAll",
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
       getEngagementById: "engagements/get",
+      attachAudience: "engagements/attachAudience",
+      detachAudience: "engagements/detachAudience",
+      deliverAudience: "engagements/deliverAudience",
+      deliverAudienceDestination: "engagements/deliverAudienceDestination",
     }),
 
     // Drawer Section Starts
@@ -832,84 +884,6 @@ export default {
     },
     // Drawer Section Ends
 
-    async audienceList() {
-      this.loadingAudiences = true
-      let engData = this.getEngagement(this.$route.params.id)
-      let audienceIds = []
-      let audiencesDetailsData = []
-      let audienceDetails = []
-
-      // audience id pushing in one array
-      if (engData.audiences.filter((aud) => !aud.id).length > 0) {
-        engData.audiences = []
-      }
-      engData.audiences.forEach((data) => audienceIds.push(data.id))
-      Object.keys(this.selectedAudiences).forEach((audId) => {
-        if (
-          engData.audiences.filter((engAud) => engAud.id === audId).length === 0
-        )
-          delete this.selectedAudiences[audId]
-      })
-      // getting audience by id
-      for (let id of audienceIds) {
-        await this.getAudienceById(id)
-        const audience = this.getAudience(id)
-        audienceDetails.push(audience)
-        audience.destinations = engData.audiences.filter(
-          (aud) => aud.id === id
-        )[0].destinations
-        this.selectedAudiences[id] = audience
-      }
-      // extracting the audience data and merging into object
-      audienceDetails.forEach((element) => {
-        let filteredAudience = engData.audiences.filter(
-          (d) => d.id == element.id
-        )
-        let audEngobj = Object.assign(filteredAudience[0])
-        audEngobj.name = element.name
-        audEngobj.size = element.size
-        audEngobj.last_delivered = element.last_delivered
-        if (audEngobj.destinations.filter((dest) => !dest.id).length > 0) {
-          audEngobj.destinations = []
-        }
-        audiencesDetailsData.push(audEngobj)
-      })
-
-      // extracting the destination data
-      for (let i = 0; i < audiencesDetailsData.length; i++) {
-        for (let j = 0; j < audiencesDetailsData[i].destinations.length; j++) {
-          let destination = audiencesDetailsData[i].destinations[j]
-          await this.destinationById(destination.id)
-          let response = this.getDestinations(destination.id)
-          let destinationWithDelivery = {
-            id: response.id,
-            name: response.name,
-            type: response.type,
-            // TODO: remove the fallback to audience details once HUS-579 is tested
-            latest_delivery: destination.latest_delivery
-              ? destination.latest_delivery.status === "Delivered"
-                ? destination.latest_delivery
-                : {
-                    status: destination.latest_delivery.status,
-                  }
-              : audiencesDetailsData[i].status === "Delivered"
-              ? {
-                  size: audiencesDetailsData[i].size,
-                  status: audiencesDetailsData[i].status,
-                  update_time: audiencesDetailsData[i].last_delivered,
-                }
-              : {
-                  status: audiencesDetailsData[i].status,
-                },
-          }
-          audiencesDetailsData[i].destinations[j] = destinationWithDelivery
-        }
-      }
-      // pushing merged data into variable
-      this.audienceMergedData = audiencesDetailsData
-      this.loadingAudiences = false
-    },
-
     formattedDate(value) {
       if (value) {
         return this.$options.filters.Date(value, "relative") + " by"
@@ -940,24 +914,92 @@ export default {
       if (acronymObject.length === 0) return null
       return acronymObject[0].description
     },
+    mapDeliveries() {
+      this.engagementList.audiences.forEach((audience) => {
+        this.selectedAudiences[audience.id] = audience
+        audience.destinations.map((destination) => {
+          if (destination.latest_delivery) {
+            destination["status"] = destination.latest_delivery.status
+            destination["size"] = destination.latest_delivery.size
+            destination["update_time"] = destination.latest_delivery.update_time
+          }
+          return destination
+        })
+      })
+      this.loadingAudiences = false
+    },
     async loadEngagement(engagementId) {
       await this.getEngagementById(engagementId)
       await this.getAudiencePerformanceById({
         type: "ads",
         id: this.engagementList.id,
       })
-      this.audienceList()
+      this.mapDeliveries()
+      // this.audienceList()
     },
+    //#region Delivery Overview Region
+    async triggerOverviewAction(event) {
+      try {
+        const engagementId = this.engagementId
+        switch (event.target.title.toLowerCase()) {
+          case "add a destination":
+            this.closeDrawers()
+            this.triggerSelectDestination(event.data.id)
+            break
 
+          case "deliver now":
+            try {
+              await this.deliverAudience({
+                id: engagementId,
+                audienceId: event.data.id,
+              })
+              this.flashAlert = true
+            } catch (error) {
+              handleError(error)
+              throw error
+            }
+            break
+
+          case "remove audience":
+            this.triggerDetachAudiences(event.data)
+            break
+          default:
+            break
+        }
+      } catch (error) {
+        handleError(error)
+        throw error
+      }
+    },
+    async triggerOverviewDestinationAction(event) {
+      try {
+        const engagementId = this.engagementId
+        switch (event.target.title.toLowerCase()) {
+          case "deliver now":
+            await this.deliverAudienceDestination({
+              id: engagementId,
+              audienceId: event.parent.id,
+              destinationId: event.data.id,
+            })
+            this.flashAlert = true
+            break
+          case "edit delivery schedule":
+            this.showConfirmModal = true
+            this.selectedAudienceId = event.parent.id
+            this.scheduleDestination = event.data
+            break
+          default:
+            break
+        }
+      } catch (error) {
+        handleError(error)
+        throw error
+      }
+    },
+    //#endregion
     openDeliveryHistoryDrawer() {
       this.showDeliveryHistoryDrawer = true
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getAudiences()
-    await this.loadEngagement(this.$route.params.id)
-    this.loading = false
   },
 }
 </script>
@@ -967,9 +1009,15 @@ export default {
   .page-header--wrap {
     box-shadow: 0px 1px 0px var(--v-lightGrey-base) !important;
   }
+  .empty-audience {
+    width: 190px;
+    text-align: center;
+    margin: 0 auto;
+  }
   .empty-state {
     background: var(--v-aliceBlue-base);
-    width: 100%;
+    width: 190px;
+    margin: 0 auto;
     font-size: 14px;
     line-height: 22px;
     color: var(--v-gray-base);

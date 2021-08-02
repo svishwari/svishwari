@@ -1,13 +1,13 @@
 <template>
-  <Drawer
-    class="data-extension-drawer"
+  <drawer
     v-model="localToggle"
+    class="data-extension-drawer"
     :loading="loading"
   >
     <template #header-left>
       <div class="d-flex align-baseline">
         <h3 class="text-h3 pr-2 d-flex align-center">
-          <Logo type="sfmc" />
+          <logo type="sfmc" />
           <div class="pl-2 font-weight-light">Salesforce Marketing Cloud</div>
         </h3>
       </div>
@@ -25,7 +25,7 @@
             >
               <div class="child mt-4">
                 <div class="icon d-flex justify-center">
-                  <div class="check-wrap d-flex align-center" v-if="isActive">
+                  <div v-if="isActive" class="check-wrap d-flex align-center">
                     <v-icon color="white" size="21"> mdi-check-bold </v-icon>
                   </div>
                 </div>
@@ -45,7 +45,7 @@
             >
               <div class="child mt-4">
                 <div class="icon d-flex justify-center">
-                  <div class="check-wrap d-flex align-center" v-if="!isActive">
+                  <div v-if="!isActive" class="check-wrap d-flex align-center">
                     <v-icon color="white" size="21"> mdi-check-bold </v-icon>
                   </div>
                 </div>
@@ -60,7 +60,7 @@
             </diV>
           </div>
 
-          <div class="mt-6" v-if="isActive">
+          <div v-if="isActive" class="mt-6">
             <div>
               <label class="d-flex align-items-center">
                 <span class="neroBlack--text text-caption">Journey type</span>
@@ -82,21 +82,21 @@
                 </v-radio>
               </v-radio-group>
             </div>
-            <TextField
+            <text-field
               v-model="extension"
-              labelText="Data extension name"
+              label-text="Data extension name"
               icon="mdi-alert-circle-outline"
-              placeholderText="What is the name for this new data extension?"
-              :helpText="tooltipText"
+              placeholder-text="What is the name for this new data extension?"
+              :help-text="tooltipText"
               height="40"
-              backgroundColor="white"
+              background-color="white"
               class="mt-1 text-caption neroBlack--text pt-2 input-placeholder"
               :rules="newExtensionRules"
               required
             />
           </div>
 
-          <div class="mt-6 data-extension" v-else>
+          <div v-else class="mt-6 data-extension">
             <label
               class="
                 d-flex
@@ -123,9 +123,9 @@
         </div>
       </v-form>
       <v-card
+        v-if="!isActive"
         height="56"
         class="feedback-card shadow mt-5 rounded-0"
-        v-if="!isActive"
       >
         <v-card-text class="mt-4">
           <v-row align="center" class="mx-0">
@@ -145,35 +145,35 @@
 
     <template #footer-right>
       <div class="d-flex align-baseline">
-        <HuxButton
+        <hux-button
           variant="primary"
-          isTile
+          is-tile
           width="80"
           height="40"
           class="ma-2"
-          :isDisabled="isActive ? !isFormValid : !extension"
+          :is-disabled="isActive ? !isFormValid : !extension"
           @click="addDestination()"
         >
           Add
-        </HuxButton>
+        </hux-button>
       </div>
     </template>
 
     <template #footer-left>
       <div class="d-flex align-baseline">
-        <HuxButton
+        <hux-button
           variant="white"
-          isTile
+          is-tile
           width="80"
           height="40"
           class="ma-2 drawer-back"
           @click="onBack()"
         >
           Back
-        </HuxButton>
+        </hux-button>
       </div>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex"
@@ -195,18 +195,26 @@ export default {
     extensionInactive2,
   },
 
-  computed: {
-    ...mapGetters({
-      dataExtensions: "destinations/dataExtensions",
-    }),
+  props: {
+    value: {
+      type: Array,
+      required: true,
+    },
 
-    dataExtensionNames() {
-      return this.dataExtensions.map((each) => {
-        return {
-          text: each.name,
-          value: each,
-        }
-      })
+    toggle: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    destination: {
+      type: Object,
+      required: true,
+    },
+    closeOnAction: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
@@ -238,6 +246,34 @@ export default {
       tooltipText:
         "When creating a new journey in Salesforce Marketing Cloud, look for the name input here when searching Data Extension Entry Source in Salesforce Marketing Cloud.",
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      dataExtensions: "destinations/dataExtensions",
+    }),
+
+    dataExtensionNames() {
+      return this.dataExtensions.map((each) => {
+        return {
+          text: each.name,
+          value: each,
+        }
+      })
+    },
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    async localToggle(value) {
+      this.$emit("onToggle", value)
+      if (value) {
+        await this.getDataExtensions(this.destination.id)
+      }
+    },
   },
   methods: {
     ...mapActions({
@@ -280,6 +316,7 @@ export default {
       }
 
       this.value.push(destinationWithDataExtension)
+      this.$emit("updateDestination")
       this.onBack()
     },
 
@@ -287,37 +324,6 @@ export default {
       this.$refs.salesforceExtensionRef.reset()
       this.resetForm()
       this.$emit("onBack")
-    },
-  },
-
-  props: {
-    value: {
-      type: Array,
-      required: true,
-    },
-
-    toggle: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-
-    destination: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  watch: {
-    toggle(value) {
-      this.localToggle = value
-    },
-
-    async localToggle(value) {
-      this.$emit("onToggle", value)
-      if (value) {
-        await this.getDataExtensions(this.destination.id)
-      }
     },
   },
 }

@@ -13,15 +13,29 @@ const NEW_AUDIENCE = {
 
 const state = {
   audiences: [],
+
+  // TODO: to be integrated with HUS-226
+  insights: {},
+
   newAudience: NEW_AUDIENCE,
+
   constants: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.audiences),
+
   audience: (state) => (id) => {
-    return state.audiences[id]
+    let currentAudience = state.audiences[id]
+    if (currentAudience) {
+      currentAudience.lookalikeable =
+        currentAudience.lookalikeable.toLowerCase()
+    }
+    return currentAudience
   },
+
+  insights: (state) => (id) => state.insights[id],
+
   audiencesRules: (state) => state.constants,
 }
 
@@ -38,6 +52,7 @@ const mutations = {
   SET_ONE(state, item) {
     Vue.set(state.audiences, item.id, item)
   },
+
   SET_CONSTANTS(state, item) {
     Vue.set(state, "constants", item)
   },
@@ -53,6 +68,7 @@ const actions = {
       throw error
     }
   },
+
   async getAudienceById({ commit }, id) {
     try {
       const response = await api.audiences.find(id)
@@ -84,26 +100,32 @@ const actions = {
         },
         {
           title: "Women",
-          subtitle: audienceInsights.gender_women.toLocaleString("en-US", {
-            style: "percent",
-            maximumFractionDigits: 2,
-          }),
+          subtitle:
+            audienceInsights.gender_women &&
+            audienceInsights.gender_women.toLocaleString("en-US", {
+              style: "percent",
+              maximumFractionDigits: 2,
+            }),
           icon: "mdi-gender-female",
         },
         {
           title: "Men",
-          subtitle: audienceInsights.gender_men.toLocaleString("en-US", {
-            style: "percent",
-            maximumFractionDigits: 2,
-          }),
+          subtitle:
+            audienceInsights.gender_men &&
+            audienceInsights.gender_women.toLocaleString("en-US", {
+              style: "percent",
+              maximumFractionDigits: 2,
+            }),
           icon: "mdi-gender-male",
         },
         {
           title: "Other",
-          subtitle: audienceInsights.gender_other.toLocaleString("en-US", {
-            style: "percent",
-            maximumFractionDigits: 2,
-          }),
+          subtitle:
+            audienceInsights.gender_other &&
+            audienceInsights.gender_other.toLocaleString("en-US", {
+              style: "percent",
+              maximumFractionDigits: 2,
+            }),
           icon: "mdi-gender-male-female",
         },
       ]
@@ -163,6 +185,7 @@ const actions = {
       throw error
     }
   },
+
   async fetchFilterSize(_, filter) {
     try {
       const response = await api.customers.getOverview(filter)

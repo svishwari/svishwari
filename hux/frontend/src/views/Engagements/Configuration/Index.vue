@@ -1,5 +1,5 @@
 <template>
-  <Page class="white">
+  <page class="white">
     <template #header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
@@ -11,12 +11,12 @@
       you planning to run it? Who are you targeting?
     </p>
 
-    <EngagementOverview v-model="data" />
+    <engagement-overview v-model="data" />
 
     <v-divider class="divider my-4 mb-8"></v-divider>
 
-    <EngagementForm v-model="data" />
-  </Page>
+    <engagement-form v-model="data" />
+  </page>
 </template>
 
 <script>
@@ -47,18 +47,18 @@ export default {
     }
   },
 
-  methods: {
-    ...mapActions({
-      getAudiences: "audiences/getAll",
-      getDestinations: "destinations/getAll",
-    }),
-  },
-
   async mounted() {
     this.loading = true
     await this.getAudiences()
     await this.getDestinations()
     this.loading = false
+  },
+
+  methods: {
+    ...mapActions({
+      getAudiences: "audiences/getAll",
+      getDestinations: "destinations/getAll",
+    }),
   },
 }
 </script>

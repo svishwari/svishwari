@@ -8,7 +8,7 @@
     </div>
 
     <div v-if="icon" class="d-flex justify-center pb-4">
-      <Icon :type="icon" :size="60" color="primary" class="d-block" />
+      <icon :type="icon" :size="60" color="primary" class="d-block" />
     </div>
 
     <div
@@ -22,7 +22,7 @@
       {{ description }}
     </div>
 
-    <div class="px-3 pt-2" v-if="$slots.default">
+    <div v-if="$slots.default" class="px-3 pt-2">
       <slot />
     </div>
   </v-card>
@@ -32,7 +32,7 @@
 import Icon from "@/components/common/Icon"
 
 export default {
-  name: "descriptive-card",
+  name: "DescriptiveCard",
 
   components: {
     Icon,

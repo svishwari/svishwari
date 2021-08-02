@@ -394,6 +394,7 @@ class EngagementAudienceDestinationSchema(Schema):
     id = fields.String()
     delivery_job_id = fields.String()
     delivery_platform_config = fields.Nested(EngagementDataExtensionSchema)
+    delivery_platform_type = fields.String()
     latest_delivery = fields.Nested(LatestDeliverySchema)
 
 
