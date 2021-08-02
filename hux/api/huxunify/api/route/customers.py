@@ -238,7 +238,7 @@ class CustomerDashboardOverview(SwaggerView):
 
 
 @add_view_to_blueprint(
-    customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}/", "Customersview"
+    customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "Customersview"
 )
 class Customersview(SwaggerView):
     """
@@ -278,7 +278,7 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    # @api_error_handler()
     def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
@@ -293,14 +293,14 @@ class Customersview(SwaggerView):
         # get token
         token_response = get_token_from_request(request)
         batch_size = (
-            int(request.args.get(api_c.QUERY_PARAMETER_BATCH_SIZE))
+            request.args.get(api_c.QUERY_PARAMETER_BATCH_SIZE)
             or api_c.CUSTOMERS_DEFAULT_BATCH_SIZE
         )
         batch_number = (
-            int(request.args.get(api_c.QUERY_PARAMETER_BATCH_NUMBER))
+            request.args.get(api_c.QUERY_PARAMETER_BATCH_NUMBER)
             or api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER
         )
-        offset = (batch_number - 1) * batch_size
+        offset = (int(batch_number) - 1) * int(batch_size)
         return (
             CustomersSchema().dump(
                 get_customer_profiles(token_response[0], batch_size, offset)

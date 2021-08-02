@@ -93,12 +93,18 @@ class TestCustomersOverview(TestCase):
         batch_size = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE
         batch_number = api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER
         response = self.test_client.get(
-            f"{self.customers}/?{api_c.QUERY_PARAMETER_BATCH_SIZE}={batch_size}&"
+            f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}={batch_size}&"
             f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}={batch_number}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
+
+        response = self.test_client.get(
+            f"{self.customers}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertEqual(data[api_c.TOTAL_CUSTOMERS], 1)
         self.assertTrue(data[api_c.CUSTOMERS_TAG])
