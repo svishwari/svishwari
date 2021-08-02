@@ -349,7 +349,7 @@ class AudienceGetView(SwaggerView):
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
+        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS)
         audience[
             api_c.LOOKALIKE_AUDIENCES
         ] = destination_management.get_all_delivery_platform_lookalike_audiences(
