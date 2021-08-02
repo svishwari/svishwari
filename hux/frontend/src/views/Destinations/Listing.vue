@@ -1,17 +1,17 @@
 <template>
   <div class="destinations-view-wrap">
-    <PageHeader class="background-border">
+    <page-header class="background-border">
       <template slot="left">
-        <Breadcrumb :items="items" />
+        <breadcrumb :items="items" />
       </template>
       <template slot="right">
         <v-icon color="lightGrey" size="22" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
-    </PageHeader>
-    <PageHeader
-      bgColor="background"
+    </page-header>
+    <page-header
+      bg-color="background"
       style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">
@@ -37,38 +37,38 @@
         >
           <huxButton
             icon="mdi-plus"
-            iconPosition="left"
+            icon-position="left"
             variant="primary"
             size="large"
-            isTile
+            is-tile
           >
             Destination
           </huxButton>
         </router-link>
       </template>
-    </PageHeader>
-    <PageHeader
-      bgColor="aliceBlue"
+    </page-header>
+    <page-header
+      bg-color="aliceBlue"
       style="height: 70px; border: 1px solid var(--v-lightGrey-base) !important"
     >
       <template slot="left">
         <div class="d-flex filters-wrapper">
-          <DropdownMenu
+          <dropdown-menu
             v-for="(item, index) in filters"
             :key="item.name"
             v-model="item.selectedValue"
-            :labelText="item.name"
-            :menuItem="item.values"
+            :label-text="item.name"
+            :menu-item="item.values"
             @updatelabelText="onFilterSelection(index)"
           />
         </div>
       </template>
-    </PageHeader>
+    </page-header>
     <hux-table
-      :columnDef="columnDefs"
-      :tableData="rowData"
+      :column-def="columnDefs"
+      :table-data="rowData"
       height="250px"
-      hasCheckBox
+      has-check-box
     />
   </div>
 </template>
@@ -81,7 +81,7 @@ import huxButton from "@/components/common/huxButton"
 import HuxTable from "@/components/common/huxTable.vue"
 
 export default {
-  name: "connections",
+  name: "Connections",
   components: { huxButton, PageHeader, Breadcrumb, DropdownMenu, HuxTable },
   data() {
     return {

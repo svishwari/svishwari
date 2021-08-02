@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="localModal" :width="width">
     <template #activator="{ on, attrs }">
-      <slot name="activator" v-on="on" v-bind="attrs"></slot>
+      <slot name="activator" v-bind="attrs" v-on="on"></slot>
     </template>
     <div class="white text-center pt-10">
       <div class="px-15 modal-content">
@@ -24,7 +24,7 @@
           size="large"
           variant="tertiary"
           height="40"
-          isTile
+          is-tile
           @click="onCancel()"
         >
           {{ leftBtnText }}
@@ -33,7 +33,7 @@
           size="large"
           :variant="type"
           height="40"
-          isTile
+          is-tile
           @click="onConfirm()"
         >
           {{ rightBtnText }}

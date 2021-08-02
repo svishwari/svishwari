@@ -3,13 +3,13 @@
     <ag-grid-vue
       class="ag-theme-alpine hux-table"
       style="width: 100%; height: 100%"
-      :columnDefs="appliedColumns"
-      :rowData="filterRows"
-      :gridOptions="gridOptions"
-      :overlayLoadingTemplate="overlayLoadingTemplate"
-      :overlayNoRowsTemplate="overlayNoRowsTemplate"
-      :frameworkComponents="frameworkComponents"
-      :rowHeight="rowHeight"
+      :column-defs="appliedColumns"
+      :row-data="filterRows"
+      :grid-options="gridOptions"
+      :overlay-loading-template="overlayLoadingTemplate"
+      :overlay-no-rows-template="overlayNoRowsTemplate"
+      :framework-components="frameworkComponents"
+      :row-height="rowHeight"
     ></ag-grid-vue>
   </div>
 </template>
@@ -20,7 +20,7 @@ import "ag-grid-community/dist/styles/ag-theme-balham.css"
 import { AgGridVue } from "ag-grid-vue"
 
 export default {
-  name: "huxTable",
+  name: "HuxTable",
 
   components: {
     AgGridVue,
@@ -95,16 +95,6 @@ export default {
       return this.tableData
     },
   },
-  methods: {
-    refresh: async function () {
-      let vo = this
-      try {
-        vo.gridOptions.api.redrawRows()
-      } catch (err) {
-        console.error(err)
-      }
-    },
-  },
   beforeMount() {
     this.gridOptions = {
       rowSelection: "multiple",
@@ -116,6 +106,16 @@ export default {
       "<span style=\"padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;\">This is a custom 'no rows' overlay</span>"
   },
   mounted() {},
+  methods: {
+    refresh: async function () {
+      let vo = this
+      try {
+        vo.gridOptions.api.redrawRows()
+      } catch (err) {
+        console.error(err)
+      }
+    },
+  },
 }
 </script>
 

@@ -30,6 +30,9 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 
+QUERY_PARAMETER_BATCH_SIZE = "batch_size"
+QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
@@ -146,6 +149,7 @@ STATUS_DELIVERING = "Delivering"
 STATUS_DELIVERY_PAUSED = "Delivery Paused"
 STATUS_ACTIVE = "Active"
 STATUS_INACTIVE = "Inactive"
+STATUS_DISABLED = "Disabled"
 STATUS_DRAFT = "Draft"
 STATUS_PENDING = "Pending"
 STATUS_ERROR = "Error"
@@ -836,6 +840,8 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
+CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
+CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -851,7 +857,7 @@ CUSTOMER_OVERVIEW_DEFAULT_FILTER = {
         {
             "section_aggregator": "ALL",
             "section_filters": [
-                {"field": "country", "type": "equals", "value": "us"}
+                {"field": "country", "type": "equals", "value": "US"}
             ],
         }
     ]

@@ -4,14 +4,14 @@
       mdi-checkbox-blank-circle
     </v-icon>
     <huxButton
-      class="ma-0"
       v-if="cellValue == 'Delivering'"
-      isOutlined
+      class="ma-0"
+      is-outlined
       size="small"
       variant="successs"
       width="20"
       height="20"
-      iconType
+      icon-type
     ></huxButton>
     <v-icon v-if="cellValue == 'Error'" class="material-icons alert">
       mdi-alert-circle

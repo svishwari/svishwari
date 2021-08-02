@@ -1,35 +1,35 @@
 <template>
   <v-form>
-    <FormSteps>
-      <FormStep :step="1" label="General information">
+    <form-steps>
+      <form-step :step="1" label="General information">
         <v-row>
           <v-col>
-            <TextField
+            <text-field
               v-model="value.name"
-              labelText="Engagement name"
+              label-text="Engagement name"
               placeholder="Give this engagement a name"
               :rules="[(value) => !!value || 'Engagement name is required']"
               :error-messages="errorMessages"
-              @blur="errorMessages = []"
               required
+              @blur="errorMessages = []"
             />
           </v-col>
           <v-col>
-            <TextField
+            <text-field
               v-model="value.description"
-              labelText="Description"
+              label-text="Description"
               placeholder="What is the purpose of this engagement?"
             />
           </v-col>
         </v-row>
-      </FormStep>
+      </form-step>
 
-      <FormStep :step="2">
+      <form-step :step="2">
         <template slot="label">
           <h5 class="text-h5 d-flex align-start">
             Setup a delivery schedule
 
-            <Tooltip>
+            <tooltip>
               <template #label-content>
                 <v-icon color="primary" :size="12" class="ml-1">
                   mdi-information-outline
@@ -49,7 +49,7 @@
                   </p>
                 </v-sheet>
               </template>
-            </Tooltip>
+            </tooltip>
           </h5>
         </template>
 
@@ -105,9 +105,9 @@
           </div>
 
           <v-icon
+            v-if="value.delivery_schedule == 1"
             class="icon icon-right"
             size="16"
-            v-if="value.delivery_schedule == 1"
           >
             mdi-arrow-right
           </v-icon>
@@ -117,22 +117,22 @@
               class="mt-n4"
               :label="selectedEndDate"
               :selected="selectedEndDate"
-              :isSubMenu="true"
-              :minDate="selectedStartDate"
+              :is-sub-menu="true"
+              :min-date="selectedStartDate"
+              :is-disabled="disableEndDate"
               @on-date-select="onEndDateSelect"
-              :isDisabled="disableEndDate"
             />
           </div>
         </v-row>
-      </FormStep>
+      </form-step>
 
-      <FormStep :step="3" label="Select audience(s) and destination(s)">
+      <form-step :step="3" label="Select audience(s) and destination(s)">
         <p v-if="hasAudiences" class="text-caption">
           First add and deliver an audience to Facebook in order to create a
           lookalike audience from this engagement’s dashboard.
         </p>
 
-        <DataCards
+        <data-cards
           bordered
           :items="Object.values(value.audiences)"
           :fields="[
@@ -154,7 +154,7 @@
           ]"
         >
           <template #field:size="row">
-            <Tooltip>
+            <tooltip>
               <template #label-content>
                 {{ row.value | Numeric(true, true) | Empty }}
               </template>
@@ -163,26 +163,26 @@
                   row.value | Numeric | Empty("Size unavailable at this time")
                 }}
               </template>
-            </Tooltip>
+            </tooltip>
           </template>
 
           <template #field:destinations="row">
             <div class="destinations-wrap">
               <v-row class="align-center">
                 <div>
-                  <Tooltip
+                  <tooltip
                     v-for="destination in row.value"
                     :key="destination.id"
                   >
                     <template #label-content>
                       <div class="destination-logo-wrapper">
                         <div class="logo-wrapper">
-                          <Logo
+                          <logo
                             class="added-logo ml-2 svg-icon"
                             :type="destinationType(destination.id)"
                             :size="24"
                           />
-                          <Logo
+                          <logo
                             class="delete-icon"
                             type="delete"
                             @click.native="
@@ -195,10 +195,10 @@
                     <template #hover-content>
                       <div class="d-flex align-center">Remove</div>
                     </template>
-                  </Tooltip>
+                  </tooltip>
                 </div>
                 <div>
-                  <Tooltip>
+                  <tooltip>
                     <template #label-content>
                       <v-btn
                         x-small
@@ -210,7 +210,7 @@
                       </v-btn>
                     </template>
                     <template #hover-content>Add destination(s)</template>
-                  </Tooltip>
+                  </tooltip>
                 </div>
               </v-row>
             </div>
@@ -218,7 +218,7 @@
 
           <template #field:manage="row">
             <div class="d-flex align-center justify-end">
-              <Tooltip v-if="isLastItem(row.index)">
+              <tooltip v-if="isLastItem(row.index)">
                 <template #label-content>
                   <v-btn
                     x-small
@@ -230,7 +230,7 @@
                   </v-btn>
                 </template>
                 <template #hover-content>Add another audience</template>
-              </Tooltip>
+              </tooltip>
 
               <v-btn icon color="primary" @click="removeAudience(row.item)">
                 <v-icon>mdi-delete-outline</v-icon>
@@ -252,11 +252,11 @@
               </v-btn>
             </v-col>
           </template>
-        </DataCards>
-      </FormStep>
-    </FormSteps>
+        </data-cards>
+      </form-step>
+    </form-steps>
 
-    <HuxFooter>
+    <hux-footer>
       <template #left>
         <v-btn tile color="white" height="40" @click.native="$router.go(-1)">
           <span class="primary--text">Cancel</span>
@@ -286,23 +286,23 @@
           Create
         </v-btn>
       </template>
-    </HuxFooter>
+    </hux-footer>
 
-    <SelectAudiencesDrawer
+    <select-audiences-drawer
       v-model="value.audiences"
       :toggle="showSelectAudiencesDrawer"
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
       @onAdd="openAddAudiencesDrawer()"
     />
 
-    <AddAudienceDrawer
+    <add-audience-drawer
       v-model="value.audiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
       @onCancelAndBack="openSelectAudiencesDrawer()"
     />
 
-    <SelectDestinationsDrawer
+    <select-destinations-drawer
       v-model="value.audiences"
       :selected-audience-id="selectedAudienceId"
       :toggle="showSelectDestinationsDrawer"
@@ -310,7 +310,7 @@
       @onSalesforce="openDataExtensionDrawer"
     />
 
-    <DestinationDataExtensionDrawer
+    <destination-data-extension-drawer
       v-model="value.audiences"
       :selected-destination="selectedDestination"
       :selected-audience-id="selectedAudienceId"

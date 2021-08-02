@@ -3,12 +3,12 @@
     <h5 class="text-h5 mb-4">Engagement overview</h5>
 
     <v-row no-gutters>
-      <MetricCard
+      <metric-card
         v-for="(item, index) in overview"
         :key="index"
         :title="item.title"
         :icon="item.icon"
-        :maxWidth="172"
+        :max-width="172"
         class="mr-4"
       >
         <template #subtitle-extended>
@@ -16,7 +16,7 @@
             v-if="item.title === 'Target size'"
             class="font-weight-semi-bold"
           >
-            <Tooltip>
+            <tooltip>
               <template #label-content>
                 <span class="font-weight-semi-bold">
                   {{ item.subtitle | Numeric(false, false, true) }}
@@ -25,7 +25,7 @@
               <template #hover-content>
                 {{ item.subtitle | Empty }}
               </template>
-            </Tooltip>
+            </tooltip>
           </span>
 
           <span
@@ -36,17 +36,17 @@
           </span>
 
           <div v-if="item.destinations" class="d-flex align-center">
-            <Tooltip
+            <tooltip
               v-for="destination in item.destinations"
               :key="destination.type"
             >
               <template #label-content>
-                <Logo class="mr-2" :type="destination.type" :size="20" />
+                <logo class="mr-2" :type="destination.type" :size="20" />
               </template>
               <template #hover-content>
                 <span>{{ destination.name }}</span>
               </template>
-            </Tooltip>
+            </tooltip>
             <span
               v-if="!item.destinations.length"
               class="font-weight-semi-bold"
@@ -55,7 +55,7 @@
             </span>
           </div>
         </template>
-      </MetricCard>
+      </metric-card>
     </v-row>
   </div>
 </template>

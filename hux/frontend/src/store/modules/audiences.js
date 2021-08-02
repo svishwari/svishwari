@@ -13,12 +13,18 @@ const NEW_AUDIENCE = {
 
 const state = {
   audiences: [],
+
+  // TODO: to be integrated with HUS-226
+  insights: {},
+
   newAudience: NEW_AUDIENCE,
+
   constants: {},
 }
 
 const getters = {
   list: (state) => Object.values(state.audiences),
+
   audience: (state) => (id) => {
     let currentAudience = state.audiences[id]
     if (currentAudience) {
@@ -27,6 +33,9 @@ const getters = {
     }
     return currentAudience
   },
+
+  insights: (state) => (id) => state.insights[id],
+
   audiencesRules: (state) => state.constants,
 }
 
@@ -43,6 +52,7 @@ const mutations = {
   SET_ONE(state, item) {
     Vue.set(state.audiences, item.id, item)
   },
+
   SET_CONSTANTS(state, item) {
     Vue.set(state, "constants", item)
   },
@@ -58,6 +68,7 @@ const actions = {
       throw error
     }
   },
+
   async getAudienceById({ commit }, id) {
     try {
       const response = await api.audiences.find(id)
@@ -174,6 +185,7 @@ const actions = {
       throw error
     }
   },
+
   async fetchFilterSize(_, filter) {
     try {
       const response = await api.customers.getOverview(filter)

@@ -1,33 +1,52 @@
-import ROUTES from "../support/routes.js";
+import route from "../support/routes.js";
+
+const selector = {
+  home: {
+    // TODO: add a better selector for this button in the UI
+    signin: "button",
+  },
+  login: {
+    email: "input[id=okta-signin-username]",
+    password: "input[id=okta-signin-password]",
+    submit: "input[id=okta-signin-submit]",
+  }
+}
 
 describe("Tests user sign in", () => {
   before(() => {
-    // visit the application sign-on page
-    cy.visit(ROUTES.index);
-    cy.get("button").click();
+    // opens the app
+    cy.visit(route.home);
 
-    cy.location("pathname")
-      .should("not.eq", ROUTES.index)
-      .then((pathname) => {
-        // redirects to sign-on (Okta)
-        if (pathname !== "/auth") {
-          cy.get("input[id=okta-signin-username]").type(
-            Cypress.env("USER_EMAIL")
-          );
+    // clicks the signin button
+    cy.get(selector.home.signin).click();
 
-          cy.get("input[id=okta-signin-password]").type(
-            Cypress.env("USER_PASSWORD")
-          );
-          cy.get("input[id=okta-signin-submit]").click();
+    // we should now be on the login page
+    cy.location("pathname").should("eq", route.login);
 
-          //TODO: MFA related authentication
-        }
-      });
+    // fill in the form
+    cy.get(selector.login.email)
+      .type(Cypress.env("USER_EMAIL"), { log: false });
+
+    cy.get(selector.login.password)
+      .type(Cypress.env("USER_PASSWORD"), { log: false });
+
+    // submit the form
+    cy.get(selector.login.submit).click();
+
+    // TODO: add MFA related authentication if needed
+
+    // we should no longer be on the login page
+    cy.location("pathname", { timeout: 10000 })
+      .should("not.eq", route.login)
+      .then(() => {
+        // okta does its authentication... 
+        // once its done, we should be redirected back to the app
+        cy.location("pathname")
+          .should("eq", route.oktaSignInRedirectURI);
+      })
   });
 
-  it("should be able to view overview page", () => {
-    //TODO: need to find an alternate solution to wait
-    cy.wait(10000);
-    cy.location("pathname").should("eq", ROUTES.overview);
+  it("should be able to view the overview", () => {
+    cy.location("pathname").should("eq", route.overview);
   });
 });

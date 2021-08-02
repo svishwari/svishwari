@@ -1,16 +1,16 @@
 <template>
   <div class="engagements-wrap">
-    <PageHeader :headerHeightChanges="'py-3'">
+    <page-header :header-height-changes="'py-3'">
       <template #left>
-        <Breadcrumb :items="breadcrumbItems" />
+        <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1">
           mdi-download
         </v-icon>
       </template>
-    </PageHeader>
-    <PageHeader class="top-bar" :headerHeight="71">
+    </page-header>
+    <page-header class="top-bar" :header-height="71">
       <template #left>
         <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
         <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
@@ -24,24 +24,24 @@
           append
         >
           <huxButton
-            ButtonText="Engagement"
+            button-text="Engagement"
             icon="mdi-plus"
-            iconPosition="left"
+            icon-position="left"
             variant="primary"
             size="large"
-            isTile
+            is-tile
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
             Engagement
           </huxButton>
         </router-link>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table
       v-if="rowData.length > 0"
       :headers="columnDefs"
-      :dataItems="rowData"
+      :data-items="rowData"
       nested
     >
       <template #item-row="{ item, expand, isExpanded }">
@@ -60,9 +60,9 @@
             <div v-if="header.value == 'name'" class="w-80">
               <menu-cell
                 :value="item[header.value]"
-                :menuOptions="actionItems"
-                routeName="EngagementDashboard"
-                :routeParam="item['id']"
+                :menu-options="actionItems"
+                route-name="EngagementDashboard"
+                :route-param="item['id']"
               >
                 <template #expand-icon>
                   <v-icon
@@ -85,10 +85,10 @@
             <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
-                :showLabel="true"
+                :show-label="true"
                 collapsed
                 class="d-flex"
-                :iconSize="17"
+                :icon-size="17"
               />
             </div>
             <div v-if="header.value == 'size'">
@@ -116,20 +116,20 @@
       </template>
       <template #expanded-row="{ headers, parentItem }">
         <td
+          v-if="parentItem.audiences.length > 0"
           :colspan="headers.length"
           class="pa-0 child"
-          v-if="parentItem.audiences.length > 0"
         >
           <v-progress-linear
             :active="parentItem.isCurrentRow"
             :indeterminate="parentItem.isCurrentRow"
           />
           <hux-data-table
-            :headers="headers"
-            :dataItems="parentItem.audienceList"
-            :showHeader="false"
-            class="expanded-table"
             v-if="parentItem.audiences.length > 0"
+            :headers="headers"
+            :data-items="parentItem.audienceList"
+            :show-header="false"
+            class="expanded-table"
           >
             <template #row-item="{ item }">
               <td :style="{ width: headers[0].width }"></td>
@@ -174,7 +174,7 @@
                 </div>
                 <div v-if="header.value == 'updated_by'">
                   <div>
-                    <Avatar :name="item['created_by']" />
+                    <avatar :name="item['created_by']" />
                   </div>
                 </div>
                 <div v-if="header.value == 'create_time'">
@@ -184,7 +184,7 @@
                 </div>
                 <div v-if="header.value == 'created_by'">
                   <div>
-                    <Avatar :name="item[header.value]" />
+                    <avatar :name="item[header.value]" />
                   </div>
                 </div>
               </td>
@@ -194,8 +194,8 @@
       </template>
     </hux-data-table>
 
-    <v-row class="pt-3 pb-7 pl-3" v-if="rowData.length == 0 && !loading">
-      <EmptyPage>
+    <v-row v-if="rowData.length == 0 && !loading" class="pt-3 pb-7 pl-3">
+      <empty-page>
         <template #icon>mdi-alert-circle-outline</template>
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
@@ -210,19 +210,19 @@
             append
           >
             <huxButton
-              ButtonText="Engagement"
+              button-text="Engagement"
               icon="mdi-plus"
-              iconPosition="left"
+              icon-position="left"
               variant="primary"
               size="large"
-              isTile
+              is-tile
               class="ma-2 font-weight-regular"
             >
               Engagement
             </huxButton>
           </router-link>
         </template>
-      </EmptyPage>
+      </empty-page>
     </v-row>
   </div>
 </template>
@@ -241,7 +241,7 @@ import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 export default {
-  name: "engagements",
+  name: "Engagements",
   components: {
     PageHeader,
     Breadcrumb,
@@ -307,6 +307,16 @@ export default {
       return _headers
     },
   },
+
+  async mounted() {
+    this.loading = true
+    await this.getAllEngagements()
+    this.rowData = this.engagementData.sort((a, b) =>
+      a.name > b.name ? 1 : -1
+    )
+    this.loading = false
+  },
+
   methods: {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
@@ -328,14 +338,6 @@ export default {
       }
       await this.updateAudienceList({ id: item.id, data: this.audienceList })
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getAllEngagements()
-    this.rowData = this.engagementData.sort((a, b) =>
-      a.name > b.name ? 1 : -1
-    )
-    this.loading = false
   },
 }
 </script>

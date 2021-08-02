@@ -1,12 +1,12 @@
 <template>
   <div class="engagement-dash">
     <!-- Page Header -->
-    <PageHeader class="d-flex">
+    <page-header class="d-flex">
       <template #left>
         <div class="d-flex align-center bread-crumb">
-          <Breadcrumb :items="breadcrumbItems" />
-          <div class="ml-3" v-if="engagementList && engagementList.status">
-            <Status :status="engagementList.status" :iconSize="17"></Status>
+          <breadcrumb :items="breadcrumbItems" />
+          <div v-if="engagementList && engagementList.status" class="ml-3">
+            <status :status="engagementList.status" :icon-size="17"></status>
           </div>
         </div>
       </template>
@@ -19,21 +19,21 @@
           mdi-download
         </v-icon>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
     <div v-if="!loading" class="inner-wrap px-15 py-8">
       <!-- Summary Cards Wrapper -->
       <div class="summary-wrap d-flex mb-6">
-        <MetricCard class="mr-3 shrink" :title="summaryCards[0].title">
+        <metric-card class="mr-3 shrink" :title="summaryCards[0].title">
           <template #subtitle-extended>
             <div class="font-weight-semi-bold neroBlack--text my-2">
               {{ deliverySchedule }}
             </div>
           </template>
-        </MetricCard>
-        <MetricCard class="mr-3 shrink" :title="summaryCards[1].title">
-          <template #subtitle-extended v-if="summaryCards[1].subLabel">
+        </metric-card>
+        <metric-card class="mr-3 shrink" :title="summaryCards[1].title">
+          <template v-if="summaryCards[1].subLabel" #subtitle-extended>
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
@@ -46,11 +46,11 @@
                 </template>
               </tooltip>
             </span>
-            <Avatar :name="summaryCards[1].subLabel" />
+            <avatar :name="summaryCards[1].subLabel" />
           </template>
-        </MetricCard>
-        <MetricCard class="mr-3 shrink" :title="summaryCards[2].title">
-          <template #subtitle-extended v-if="summaryCards[2].subLabel">
+        </metric-card>
+        <metric-card class="mr-3 shrink" :title="summaryCards[2].title">
+          <template v-if="summaryCards[2].subLabel" #subtitle-extended>
             <span class="mr-2">
               <tooltip>
                 <template #label-content>
@@ -63,28 +63,28 @@
                 </template>
               </tooltip>
             </span>
-            <Avatar :name="summaryCards[2].subLabel" />
+            <avatar :name="summaryCards[2].subLabel" />
           </template>
-        </MetricCard>
-        <MetricCard
+        </metric-card>
+        <metric-card
           v-if="engagementList && engagementList.description"
           class="mr-3 grow"
           title=""
-          :maxWidth="800"
+          :max-width="800"
         >
           <template #subtitle-extended>
             {{ summaryCards[3].title }}
           </template>
-        </MetricCard>
+        </metric-card>
       </div>
 
       <div class="audience-summary">
         <!-- Audience Destination Cards Wrapper -->
         <delivery-overview
           :sections="engagementList && engagementList.audiences"
-          sectionType="audience"
-          deliveriesKey="destinations"
-          :loadingRelationships="loadingAudiences"
+          section-type="audience"
+          deliveries-key="destinations"
+          :loading-relationships="loadingAudiences"
           @onOverviewSectionAction="triggerOverviewAction($event)"
           @onOverviewDestinationAction="
             triggerOverviewDestinationAction($event)
@@ -92,7 +92,7 @@
         >
           <template #title-left>
             <div class="d-flex align-center">
-              <Icon
+              <icon
                 type="audiences"
                 :size="24"
                 color="neroBlack"
@@ -107,7 +107,7 @@
                 class="d-flex align-center primary--text text-decoration-none"
                 @click="triggerSelectAudience()"
               >
-                <Icon type="audiences" :size="16" class="mr-1" />
+                <icon type="audiences" :size="16" class="mr-1" />
                 Add an audience
               </v-btn>
               <v-btn text color="primary" @click="openDeliveryHistoryDrawer()">
@@ -143,7 +143,7 @@
             @click="fetchCampaignPerformanceDetails('ads')"
           >
             <span style="width: 15px">
-              <Icon type="display_ads" :size="10" class="mr-2" />
+              <icon type="display_ads" :size="10" class="mr-2" />
             </span>
             Display ads
           </v-tab>
@@ -159,8 +159,8 @@
             />
             <campaign-summary
               :summary="displayAdsSummary"
-              :campaignData="audiencePerformanceAdsData"
-              :engagementId="engagementId"
+              :campaign-data="audiencePerformanceAdsData"
+              :engagement-id="engagementId"
               type="ads"
               @onUpdateCampaignMappings="fetchCampaignPerformanceDetails('ads')"
             />
@@ -172,7 +172,7 @@
             />
             <campaign-summary
               :summary="emailSummary"
-              :campaignData="audiencePerformanceEmailData"
+              :campaign-data="audiencePerformanceEmailData"
               type="email"
             />
           </v-tab-item>
@@ -183,9 +183,9 @@
       ref="selectAudiences"
       v-model="selectedAudiences"
       :toggle="showSelectAudiencesDrawer"
+      enable-multiple
       @onToggle="(val) => (showSelectAudiencesDrawer = val)"
       @onAdd="triggerCreateAudience()"
-      enableMultiple
       @triggerAddAudiences="triggerAttachAudiences($event)"
     />
     <add-audience-drawer
@@ -213,8 +213,8 @@
       @updateDestination="triggerAttachDestination($event)"
       @onBack="closeDrawers"
     />
-    <DeliveryHistoryDrawer
-      :engagementId="engagementId"
+    <delivery-history-drawer
+      :engagement-id="engagementId"
       :toggle="showDeliveryHistoryDrawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
     />
@@ -228,7 +228,7 @@
     <confirm-modal
       v-model="showConfirmModal"
       title="You are about to edit delivery schedule."
-      rightBtnText="Yes, edit delivery schedule"
+      right-btn-text="Yes, edit delivery schedule"
       body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
       @onCancel="showConfirmModal = false"
       @onConfirm="
@@ -268,7 +268,7 @@ import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 
 export default {
-  name: "engagementDashboard",
+  name: "EngagementDashboard",
   components: {
     PageHeader,
     Breadcrumb,
@@ -753,6 +753,13 @@ export default {
       return "Manual"
     },
   },
+  async mounted() {
+    this.loading = true
+    await this.getAudiences()
+    await this.getAvailableDestinations()
+    await this.loadEngagement(this.$route.params.id)
+    this.loading = false
+  },
   methods: {
     ...mapActions({
       getAudiences: "audiences/getAll",
@@ -993,13 +1000,6 @@ export default {
     openDeliveryHistoryDrawer() {
       this.showDeliveryHistoryDrawer = true
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getAudiences()
-    await this.getAvailableDestinations()
-    await this.loadEngagement(this.$route.params.id)
-    this.loading = false
   },
 }
 </script>

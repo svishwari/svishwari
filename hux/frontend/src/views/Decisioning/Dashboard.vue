@@ -1,21 +1,21 @@
 <template>
-  <Page class="model-dashboard-wrap" max-width="100%">
+  <page class="model-dashboard-wrap" max-width="100%">
     <template #header>
-      <PageHeader>
+      <page-header>
         <template #left>
-          <Breadcrumb :items="breadcrumbItems" />
+          <breadcrumb :items="breadcrumbItems" />
         </template>
-      </PageHeader>
+      </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
     </template>
-    <template #default v-if="!loading">
+    <template v-if="!loading" #default>
       <v-row>
         <v-col col="6">
           <div class="model-dashboard__card px-6 py-5">
             {{ model.description }}
           </div>
           <div class="d-flex justify-center align-center mt-6 rounded-lg">
-            <feature-chart :featureData="model.feature_importance || []" />
+            <feature-chart :feature-data="model.feature_importance || []" />
           </div>
         </v-col>
         <v-col col="6">
@@ -72,7 +72,7 @@
             "
             height="662"
           >
-            <EmptyStateChart />
+            <empty-state-chart />
           </v-card>
         </v-col>
       </v-row>
@@ -80,7 +80,7 @@
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
             <div class="neroBlack--text text-h5 pb-4">Lift chart</div>
-            <LiftChart
+            <lift-chart
               :data="model.lift_data || []"
               :rmse="model.performance_metric['rmse']"
             />
@@ -88,7 +88,7 @@
         </v-col>
       </v-row>
     </template>
-  </Page>
+  </page>
 </template>
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb"
@@ -140,16 +140,16 @@ export default {
     },
   },
 
-  methods: {
-    ...mapActions({
-      getOverview: "models/getOverview",
-    }),
-  },
-
   async mounted() {
     this.loading = true
     await this.getOverview(this.$route.params.id)
     this.loading = false
+  },
+
+  methods: {
+    ...mapActions({
+      getOverview: "models/getOverview",
+    }),
   },
 }
 </script>

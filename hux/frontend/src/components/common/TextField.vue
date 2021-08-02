@@ -5,7 +5,7 @@
         {{ labelText }}
         <em v-if="!required"> - optional</em>
       </span>
-      <Tooltip positionTop v-if="helpText">
+      <tooltip v-if="helpText" position-top>
         <template #label-content>
           <v-icon color="primary" size="small" class="ml-2 mb-2">
             {{ icon }}
@@ -17,7 +17,7 @@
         >
           {{ helpText }}
         </template>
-      </Tooltip>
+      </tooltip>
     </label>
     <v-text-field
       v-model="TextFieldValue"
@@ -26,7 +26,7 @@
       :label="placeholderText"
       :append-icon="appendIcon"
       :rules="rules"
-      :type="InputType"
+      :type="inputType"
       :placeholder="placeholder"
       :background-color="backgroundColor"
       single-line
@@ -45,13 +45,8 @@
 <script>
 import Tooltip from "@/components/common/Tooltip"
 export default {
-  name: "text-field",
+  name: "TextField",
   components: { Tooltip },
-  data: function () {
-    return {
-      TextFieldValue: null,
-    }
-  },
   props: {
     required: {
       type: Boolean,
@@ -86,7 +81,7 @@ export default {
       required: false,
       default: null,
     },
-    InputType: {
+    inputType: {
       type: String,
       required: false,
       default: "text",
@@ -101,6 +96,11 @@ export default {
       required: false,
       default: () => [],
     },
+  },
+  data: function () {
+    return {
+      TextFieldValue: null,
+    }
   },
 
   methods: {
