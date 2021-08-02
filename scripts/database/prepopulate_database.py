@@ -375,7 +375,7 @@ def insert_delivery_platforms(
                 delivery_platform[c.DELIVERY_PLATFORM_NAME],
                 result_id,
             )
-    logging.info("Prepopulate destinations complete.")
+    logging.info("Pre populate destinations complete.")
 
 
 if __name__ == "__main__":
