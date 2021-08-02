@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 data_sources_constants = [
     {
         c.DATA_SOURCE_NAME: "Bluecore",
-        c.DATA_SOURCE_TYPE: c.DATA_SOURCE_PLATFORM_BLUECORE,
+        c.DATA_SOURCE_TYPE: c.CDP_DATA_SOURCE_BLUECORE,
         c.STATUS: c.ACTIVE,
         c.ENABLED: True,
         c.ADDED: True,
