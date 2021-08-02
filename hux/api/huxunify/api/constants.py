@@ -894,6 +894,15 @@ DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
 DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
 DATAFEED_LAST_RUN_DATE = "last_run"
 
+# customer event fields
+CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
+CUSTOMER_DAILY_EVENT_WISE_COUNT = "event_type_counts"
+ABANDONED_CART_EVENT = "abandoned_cart"
+CUSTOMER_LOGIN_EVENT = "customer_login"
+VIEWED_CART_EVENT = "viewed_cart"
+VIEWED_CHECKOUT_EVENT = "viewed_checkout"
+VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
+
 # FILTERING
 REDACTED = "++REDACTED++"
 CUSTOMER_PROFILE_REDACTED_FIELDS = [

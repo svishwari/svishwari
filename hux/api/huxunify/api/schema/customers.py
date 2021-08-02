@@ -237,3 +237,21 @@ class CustomerDemographicInsightsSchema(Schema):
     gender = Nested(CustomerGenderInsightsSchema)
     income = List(Nested(CustomerIncomeInsightsSchema))
     spend = Nested(CustomerSpendingInsightsSchema)
+
+
+class CustomerEventCountSchema(Schema):
+    """Customer Event with Count Schema"""
+
+    abandoned_cart = Integer(required=True, example=1)
+    viewed_cart = Integer(required=True, example=1)
+    customer_login = Integer(required=True, example=1)
+    viewed_checkout = Integer(required=True, example=1)
+    viewed_sale_item = Integer(required=True, example=1)
+
+
+class CustomerEventsSchema(Schema):
+    """Customer Events Schema"""
+
+    date = DateTimeWithZ(required=True)
+    total_event_count = Integer(required=True, example=5)
+    event_type_counts = Nested(CustomerEventCountSchema)

@@ -307,6 +307,117 @@ def get_idr_data_feeds() -> list:
     return response
 
 
+def get_customer_events_data(hux_id: str) -> list:
+    """Get events for a customer grouped by date.
+
+    Args:
+        hux_id (str): hux id for a customer.
+    Returns:
+        list: customer events with respective counts
+    """
+
+    # pylint: disable=unused-argument
+    # TODO: Remove pylint unused-argument and update after CDM API for customer events is available
+    response = [
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=7),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 16,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 2,
+                api_c.CUSTOMER_LOGIN_EVENT: 3,
+                api_c.VIEWED_CART_EVENT: 3,
+                api_c.VIEWED_CHECKOUT_EVENT: 3,
+                api_c.VIEWED_SALE_ITEM_EVENT: 5,
+            },
+        },
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=6),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 10,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 2,
+                api_c.CUSTOMER_LOGIN_EVENT: 2,
+                api_c.VIEWED_CART_EVENT: 3,
+                api_c.VIEWED_CHECKOUT_EVENT: 1,
+                api_c.VIEWED_SALE_ITEM_EVENT: 2,
+            },
+        },
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=5),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 16,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 2,
+                api_c.CUSTOMER_LOGIN_EVENT: 3,
+                api_c.VIEWED_CART_EVENT: 3,
+                api_c.VIEWED_CHECKOUT_EVENT: 3,
+                api_c.VIEWED_SALE_ITEM_EVENT: 5,
+            },
+        },
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=4),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 18,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 2,
+                api_c.CUSTOMER_LOGIN_EVENT: 3,
+                api_c.VIEWED_CART_EVENT: 3,
+                api_c.VIEWED_CHECKOUT_EVENT: 4,
+                api_c.VIEWED_SALE_ITEM_EVENT: 6,
+            },
+        },
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=3),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 2,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 0,
+                api_c.CUSTOMER_LOGIN_EVENT: 1,
+                api_c.VIEWED_CART_EVENT: 0,
+                api_c.VIEWED_CHECKOUT_EVENT: 0,
+                api_c.VIEWED_SALE_ITEM_EVENT: 1,
+            },
+        },
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=2),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 15,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 3,
+                api_c.CUSTOMER_LOGIN_EVENT: 3,
+                api_c.VIEWED_CART_EVENT: 3,
+                api_c.VIEWED_CHECKOUT_EVENT: 1,
+                api_c.VIEWED_SALE_ITEM_EVENT: 5,
+            },
+        },
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=1),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 16,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 3,
+                api_c.CUSTOMER_LOGIN_EVENT: 1,
+                api_c.VIEWED_CART_EVENT: 3,
+                api_c.VIEWED_CHECKOUT_EVENT: 4,
+                api_c.VIEWED_SALE_ITEM_EVENT: 5,
+            },
+        },
+        {
+            api_c.DATE: datetime.datetime.utcnow(),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 17,
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: 3,
+                api_c.CUSTOMER_LOGIN_EVENT: 2,
+                api_c.VIEWED_CART_EVENT: 4,
+                api_c.VIEWED_CHECKOUT_EVENT: 3,
+                api_c.VIEWED_SALE_ITEM_EVENT: 5,
+            },
+        },
+    ]
+    return response
+
+
 def clean_cdm_fields(body: dict) -> dict:
     """Clean and map any CDM fields date types.
 
