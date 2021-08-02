@@ -591,14 +591,14 @@ class TestEngagementRoutes(TestCase):
                 db_c.AUDIENCES: [
                     {
                         db_c.OBJECT_ID: self.audiences[0][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [
+                        api_c.DESTINATIONS: [
                             {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
                     },
                     {
                         db_c.OBJECT_ID: self.audiences[1][db_c.ID],
-                        api_c.DESTINATIONS_TAG: [
+                        api_c.DESTINATIONS: [
                             {db_c.OBJECT_ID: dest[db_c.ID]}
                             for dest in self.destinations
                         ],
@@ -1496,6 +1496,51 @@ class TestEngagementRoutes(TestCase):
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, delete_audience_response.status_code)
+
+    def test_add_destination_to_engagement_audience(self):
+        """Test add destination to engagement audience"""
+        engagement_id = self.engagement_ids[0]
+        audience_id = self.audiences[1][db_c.ID]
+
+        new_destination = {
+            db_c.DELIVERY_PLATFORM_NAME: db_c.DELIVERY_PLATFORM_SFMC.title(),
+            db_c.DELIVERY_PLATFORM_TYPE: db_c.DELIVERY_PLATFORM_SFMC,
+            db_c.STATUS: db_c.STATUS_SUCCEEDED,
+            db_c.ENABLED: True,
+            db_c.ADDED: True,
+            db_c.DELETED: False,
+        }
+
+        destination = set_delivery_platform(self.database, **new_destination)
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json={db_c.OBJECT_ID: str(destination[db_c.ID])},
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+
+    def test_remove_destination_from_engagement_audience(self):
+        """Test remove destination from engagement audience"""
+        engagement_id = self.engagement_ids[0]
+        audience_id = self.audiences[1][db_c.ID]
+
+        destination_to_remove = {api_c.ID: str(self.destinations[0][db_c.ID])}
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}/"
+            f"{api_c.AUDIENCE}/{str(audience_id)}/destinations",
+            json=destination_to_remove,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
 
     def test_set_engagement_flight_schedule(self):
         """
