@@ -376,9 +376,6 @@ class TestCustomersOverview(TestCase):
         """
         if not customer_id:
             return
-        print(
-            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}/events"
-        )
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}/events",
             headers=t_c.STANDARD_HEADERS,
