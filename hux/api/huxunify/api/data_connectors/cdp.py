@@ -18,6 +18,7 @@ from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 
+
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [
@@ -52,12 +53,10 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
+def get_customer_profiles(token: str) -> dict:
     """Retrieves customer profiles.
 
     Args:
-        batch_size (int): number of customer profiles to be returned in a batch
-        offset (int): Offset for customer profiles
         token (str): OKTA JWT Token.
 
     Returns:
@@ -70,7 +69,6 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
 
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles",
-        data={"limit": batch_size, "offset": offset},
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
