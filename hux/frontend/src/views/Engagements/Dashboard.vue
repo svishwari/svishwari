@@ -755,21 +755,23 @@ export default {
   },
   async mounted() {
     this.loading = true
+    await this.loadEngagement(this.$route.params.id)
     await this.getAudiences()
     await this.getAvailableDestinations()
-    await this.loadEngagement(this.$route.params.id)
     this.loading = false
   },
   methods: {
     ...mapActions({
-      getAudiences: "audiences/getAll",
-      getAvailableDestinations: "destinations/getAll",
-      getAudiencePerformanceById: "engagements/getAudiencePerformance",
-      getEngagementById: "engagements/get",
       attachAudience: "engagements/attachAudience",
-      detachAudience: "engagements/detachAudience",
+      attachAudienceDestination: "engagements/attachAudienceDestination",
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
+      detachAudience: "engagements/detachAudience",
+      detachAudienceDestination: "engagements/detachAudienceDestination",
+      getAudiences: "audiences/getAll",
+      getAudiencePerformanceById: "engagements/getAudiencePerformance",
+      getAvailableDestinations: "destinations/getAll",
+      getEngagementById: "engagements/get",
     }),
 
     // Drawer Section Starts
@@ -802,19 +804,12 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
-    async triggerAttachDestination() {
-      this.loadingAudiences = true
-      const payload = {
-        audiences: [
-          {
-            id: this.selectedAudienceId,
-            destinations:
-              this.selectedAudiences[this.selectedAudienceId].destinations,
-          },
-        ],
-      }
-      await this.attachAudience({
+    async triggerAttachDestination(event) {
+      // this.loadingAudiences = true
+      const payload = event.destination
+      await this.attachAudienceDestination({
         engagementId: this.engagementId,
+        audienceId: this.selectedAudienceId,
         data: payload,
       })
       await this.loadEngagement(this.engagementId)
@@ -935,7 +930,6 @@ export default {
         id: this.engagementList.id,
       })
       this.mapDeliveries()
-      // this.audienceList()
     },
     //#region Delivery Overview Region
     async triggerOverviewAction(event) {
@@ -987,6 +981,15 @@ export default {
             this.showConfirmModal = true
             this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
+            break
+          case "remove destination":
+            this.selectedAudienceId = event.data.id
+            await this.detachAudienceDestination({
+              engagementId: this.engagementId,
+              audienceId: this.selectedAudienceId,
+              data: { id: event.data.id },
+            })
+            await this.loadEngagement(this.engagementId)
             break
           default:
             break
