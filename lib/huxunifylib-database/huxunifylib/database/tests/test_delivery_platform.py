@@ -964,7 +964,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         self.assertTrue(doc is not None)
@@ -1023,7 +1023,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=[],
+            generic_campaigns=[],
         )
 
         metrics_list = dpm.get_performance_metrics_by_engagement_details(
@@ -1063,7 +1063,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         doc = dpm.set_transferred_for_feedback(
@@ -1094,7 +1094,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         metrics_doc_2 = dpm.set_performance_metrics(
@@ -1105,7 +1105,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 11234, "Conversions": 150},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         dpm.set_transferred_for_feedback(
@@ -1417,7 +1417,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
-            generic_campaign_id=self.individual_generic_campaigns[0],
+            generic_campaigns=self.individual_generic_campaigns[0],
         )
 
         self.assertIsNotNone(doc)
@@ -1681,7 +1681,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
-            generic_campaign_id=self.individual_generic_campaigns[0],
+            generic_campaigns=self.individual_generic_campaigns[0],
         )
 
         doc = dpm.set_campaign_activity_transferred_for_feedback(
