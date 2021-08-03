@@ -161,10 +161,6 @@ export default {
     },
   },
 
-  async mounted() {
-    await this.fetchHistory()
-  },
-
   methods: {
     ...mapActions({
       getEngagementDeliveries: "engagements/getDeliveries",

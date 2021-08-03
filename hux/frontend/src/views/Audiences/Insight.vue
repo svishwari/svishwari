@@ -254,7 +254,7 @@
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
-      @onAddDestination="triggerAttachDestination()"
+      @onAddDestination="triggerAttachDestination($event)"
     />
     <!-- Salesforce extension workflow -->
     <destination-data-extension-drawer
@@ -515,6 +515,8 @@ export default {
       detachAudience: "engagements/detachAudience",
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
+      attachAudienceDestination: "engagements/attachAudienceDestination",
+      detachAudienceDestination: "engagements/detachAudienceDestination",
     }),
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
@@ -624,6 +626,14 @@ export default {
             this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
             break
+          case "remove destination":
+            this.selectedAudienceId = event.data.id
+            await this.detachAudienceDestination({
+              engagementId: this.engagementId,
+              audienceId: this.selectedAudienceId,
+              data: { id: event.data.id },
+            })
+            break
           case "create lookalike":
             this.openLookAlikeDrawer()
             break
@@ -681,24 +691,11 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
-    async triggerAttachDestination() {
-      const payload = {
-        audiences: [
-          {
-            id: this.audienceId,
-            destinations: this.selectedDestinations.map((dest) => {
-              return dest.type === "sfmc"
-                ? {
-                    id: dest.id,
-                    delivery_platform_config: dest.delivery_platform_config,
-                  }
-                : { id: dest.id }
-            }),
-          },
-        ],
-      }
-      await this.attachAudience({
-        engagementId: this.selectedEngagements[0].id,
+    async triggerAttachDestination(event) {
+      const payload = event.destination
+      await this.attachAudienceDestination({
+        engagementId: this.engagementId,
+        audienceId: this.selectedAudienceId,
         data: payload,
       })
       await this.loadAudienceInsights()

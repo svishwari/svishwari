@@ -316,7 +316,16 @@ export default {
       }
 
       this.value.push(destinationWithDataExtension)
-      this.$emit("updateDestination")
+      this.$emit("updateDestination", {
+        destination: {
+          id: destinationWithDataExtension.id,
+          delivery_platform_config: {
+            data_extension_name:
+              destinationWithDataExtension.delivery_platform_config
+                .data_extension_name,
+          },
+        },
+      })
       this.onBack()
     },
 
