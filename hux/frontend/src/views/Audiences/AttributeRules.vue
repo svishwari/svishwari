@@ -313,7 +313,7 @@ export default {
         ],
       }
       let data = await this.getRealtimeSize(filterJSON)
-      condition.size = data.total_records
+      condition.size = data.total_customers
       condition.awaitingSize = false
     },
 
@@ -356,7 +356,7 @@ export default {
       }
       let data = await this.getRealtimeSize(filterJSON)
       this.$emit("updateOverview", data)
-      this.overAllSize = data.total_records
+      this.overAllSize = data.total_customers
       this.loadingOverAllSize = false
     },
 

@@ -26,12 +26,7 @@ const getters = {
   list: (state) => Object.values(state.audiences),
 
   audience: (state) => (id) => {
-    let currentAudience = state.audiences[id]
-    if (currentAudience) {
-      currentAudience.lookalikeable =
-        currentAudience.lookalikeable.toLowerCase()
-    }
-    return currentAudience
+    return state.audiences[id]
   },
 
   insights: (state) => (id) => state.insights[id],
@@ -112,7 +107,7 @@ const actions = {
           title: "Men",
           subtitle:
             audienceInsights.gender_men &&
-            audienceInsights.gender_women.toLocaleString("en-US", {
+            audienceInsights.gender_men.toLocaleString("en-US", {
               style: "percent",
               maximumFractionDigits: 2,
             }),

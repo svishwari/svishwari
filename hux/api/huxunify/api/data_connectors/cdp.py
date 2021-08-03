@@ -326,5 +326,6 @@ def clean_cdm_fields(body: dict) -> dict:
             # ignoretz this to make it naive format for uniformity
             body[date_field] = parse(body[date_field], ignoretz=True)
         except (ParserError, TypeError):
-            body[date_field] = DEFAULT_DATETIME
+            body[date_field] = None
+
     return body

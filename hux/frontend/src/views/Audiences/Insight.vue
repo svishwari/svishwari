@@ -127,7 +127,7 @@
       <v-row class="pa-3 pb-5">
         <v-col
           :md="
-            audience.lookalikeable && audience.lookalikeable != 'inactive'
+            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
               ? 9
               : 12
           "
@@ -176,13 +176,13 @@
           </delivery-overview>
         </v-col>
         <v-col
-          v-if="audience.lookalikeable && audience.lookalikeable != 'inactive'"
+          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
           md="3"
           class="pl-6 pr-0 py-0"
         >
           <look-alike-card
-            v-model="audience.lookalike_audiences"
-            :status="audience.lookalikeable"
+            v-model="lookalikeAudiences"
+            :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
           />
         </v-col>
@@ -332,6 +332,8 @@ export default {
       lookalikeCreated: false,
       audienceHistory: [],
       relatedEngagements: [],
+      isLookalikable: false,
+      is_lookalike: false,
       items: [
         {
           text: "Audiences",
@@ -372,7 +374,7 @@ export default {
           subtitle: "",
           icon: "mdi-map-marker-radius",
         },
-        max_age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
         gender_women: {
           title: "Women",
           subtitle: "",
@@ -404,7 +406,7 @@ export default {
       editDeliveryDrawer: false,
       scheduleDestination: {
         name: null,
-        type: null,
+        delivery_platform_type: null,
         id: null,
       },
     }
@@ -528,7 +530,10 @@ export default {
         (insight) => {
           return {
             title: this.insightInfoItems[insight].title,
-            subtitle: this.audience.audience_insights[insight],
+            subtitle:
+              insight !== "age"
+                ? this.audience.audience_insights[insight]
+                : `${this.audience.audience_insights["min_age"]}-${this.audience.audience_insights["max_age"]}`,
             icon: this.insightInfoItems[insight].icon,
           }
         }
@@ -637,7 +642,7 @@ export default {
     },
     openAttachEngagementDrawer() {
       this.closeAllDrawers()
-      this.selectedEngagements = this.audience.engagements.map((eng) => ({
+      this.selectedEngagements = this.relatedEngagements.map((eng) => ({
         id: eng.id,
       }))
       this.engagementDrawer = true
@@ -723,9 +728,12 @@ export default {
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
       this.relatedEngagements = this.audience.engagements
+      this.lookalikeAudiences = this.audience.lookalike_audiences
+      this.isLookalikable = this.audience.lookalikeable
+      this.is_lookalike = this.audience.is_lookalike
       this.items[1].text = this.audience.name
       this.mapInsights()
-      await this.getDestinations()
+      this.getDestinations()
       this.loading = false
     },
   },

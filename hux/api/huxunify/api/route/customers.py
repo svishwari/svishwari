@@ -94,14 +94,6 @@ class CustomerOverview(SwaggerView):
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0])
 
-        if (
-            api_c.TOTAL_UNIQUE_IDS in customers
-            and api_c.TOTAL_CUSTOMERS in customers
-        ):
-            customers[api_c.TOTAL_CUSTOMERS] = customers[
-                api_c.TOTAL_UNIQUE_IDS
-            ]
-
         return (
             CustomerOverviewSchema().dump(customers),
             HTTPStatus.OK,
@@ -181,12 +173,6 @@ class CustomerPostOverview(SwaggerView):
         # TODO - cdm to return single field
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0], request.json)
-
-        if (
-            api_c.TOTAL_RECORDS in customers
-            and api_c.TOTAL_CUSTOMERS in customers
-        ):
-            customers[api_c.TOTAL_CUSTOMERS] = customers[api_c.TOTAL_RECORDS]
 
         return (
             CustomerOverviewSchema().dump(customers),

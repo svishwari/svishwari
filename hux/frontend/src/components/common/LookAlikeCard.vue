@@ -5,7 +5,7 @@
     >
       <span>Lookalikes</span>
       <v-btn
-        :disabled="status == 'disabled'"
+        :disabled="status == 'Disabled'"
         text
         color="primary"
         @click="onCreateLookalike"
@@ -14,7 +14,7 @@
         Create lookalike
       </v-btn>
     </v-card-title>
-    <v-card-text v-if="lookalikesData && status == 'active'" class="pl-0 pr-0">
+    <v-card-text v-if="lookalikesData && status == 'Active'" class="pl-0 pr-0">
       <v-simple-table fixed-header height="200px">
         <template v-slot:default>
           <tbody>
@@ -66,7 +66,7 @@
       </v-simple-table>
     </v-card-text>
     <v-card-text
-      v-if="!lookalikesData && status == 'active'"
+      v-if="!lookalikesData && status == 'Active'"
       class="pl-4 pr-4 pt-4"
     >
       <v-list-item-subtitle>
@@ -74,7 +74,7 @@
       </v-list-item-subtitle>
       <span>Create one by clicking the "Create lookalike" above.</span>
     </v-card-text>
-    <v-card-text v-if="status == 'disabled'" class="pl-4 pr-4 pt-4">
+    <v-card-text v-if="status == 'Disabled'" class="pl-4 pr-4 pt-4">
       <span>
         This audience is currently getting prepared in Facebook. This could take
         a couple hours so check back later.

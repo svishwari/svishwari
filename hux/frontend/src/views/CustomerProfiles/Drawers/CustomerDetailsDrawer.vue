@@ -18,7 +18,7 @@
         </template>
       </page-header>
       <hux-data-table
-        :headers="columnDefs"
+        :columns="columnDefs"
         :sort-column="'hux_id'"
         :data-items="customers"
       >
