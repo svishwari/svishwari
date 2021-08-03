@@ -72,24 +72,10 @@ client["engagements"].detachDestination = (resourceId, audienceId, data) => {
   } else {
     const audienceId = data.audience_ids[0]
     return http.delete(
-      `/engagements/${resourceId}/audiences/${audienceId}/destinations/${data}`
+      `/engagements/${resourceId}/audiences/${audienceId}/destinations/${data.id}`
     )
   }
   return http.del(data)
-}
-
-client["engagements"].attachDestination = (resourceId, audienceId, data) => {
-  return http.post(
-    `/engagements/${resourceId}/audiences/${audienceId}/destinations`,
-    data
-  )
-}
-
-client["engagements"].detachDestination = (resourceId, audienceId, data) => {
-  return http.post(
-    `/engagements/${resourceId}/audiences/${audienceId}/destinations`,
-    data
-  )
 }
 
 client["engagements"].detachAudience = (resourceId, data) => {
