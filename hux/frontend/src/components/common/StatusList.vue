@@ -148,8 +148,8 @@
                                   :size="18"
                                   :type="option.menu.icon"
                                 />
-                                <span class="ml-1"
-                                  >{{ option.menu.title }}
+                                <span class="ml-1">
+                                  {{ option.menu.title }}
                                 </span>
                               </v-list-item-title>
                             </v-list-item>
@@ -401,10 +401,6 @@ export default {
       }
     },
     sectionActionItems(section) {
-      // { id: 1, title: "View delivery history", active: true },
-      //   { id: 2, title: "Deliver all", active: true },
-      //   { id: 3, title: "Add a destination", active: true },
-      //   { id: 5, title: "Remove engagement", active: false },
       if (this.sectionType === "engagement") {
         this.engagementMenuOptions.forEach((element) => {
           switch (element.title.toLowerCase()) {
@@ -436,10 +432,6 @@ export default {
               break
 
             case "create lookalike":
-              // element["active"] =
-              //   section[this.deliveriesKey].filter((delivery) =>
-              //     this.lookALikeAllowedEntries.includes(delivery.name)
-              //   ).length > 0
               element["active"] = section.lookalikable === "Active"
               break
 

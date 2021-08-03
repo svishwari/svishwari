@@ -733,7 +733,6 @@ export default {
       this.audienceHistory = this.audience.audienceHistory
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
-      this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
       this.is_lookalike = this.audience.is_lookalike
       this.items[1].text = this.audience.name
