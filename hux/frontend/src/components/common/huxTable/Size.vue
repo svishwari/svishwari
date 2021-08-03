@@ -20,6 +20,7 @@ export default Vue.extend({
     value: {
       type: Number,
       required: true,
+      default: 0,
     },
   },
   computed: {

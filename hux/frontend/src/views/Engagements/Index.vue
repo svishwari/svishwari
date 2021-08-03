@@ -40,11 +40,11 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <hux-data-table
       v-if="rowData.length > 0"
-      :headers="columnDefs"
+      :columns="columnDefs"
       :data-items="rowData"
       nested
     >
-      <template #item-row="{ item, expand, isExpanded }">
+      <template #item-row="{ item, expandFunc, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
           <td
             v-for="header in columnDefs"
@@ -69,7 +69,7 @@
                     v-if="item.audiences.length > 0"
                     :class="{ 'normal-icon': isExpanded }"
                     @click="
-                      expand(!isExpanded)
+                      expandFunc(!isExpanded)
                       getAudiencesForEngagement(item)
                       markCurrentRow(item.id)
                     "
@@ -114,10 +114,10 @@
           </td>
         </tr>
       </template>
-      <template #expanded-row="{ headers, parentItem }">
+      <template #expanded-row="{ expandedHeaders, parentItem }">
         <td
           v-if="parentItem.audiences.length > 0"
-          :colspan="headers.length"
+          :colspan="expandedHeaders.length"
           class="pa-0 child"
         >
           <v-progress-linear
@@ -126,13 +126,13 @@
           />
           <hux-data-table
             v-if="parentItem.audiences.length > 0"
-            :headers="headers"
+            :columns="expandedHeaders"
             :data-items="parentItem.audienceList"
             :show-header="false"
             class="expanded-table"
           >
             <template #row-item="{ item }">
-              <td :style="{ width: headers[0].width }"></td>
+              <td :style="{ width: expandedHeaders[0].width }"></td>
               <td
                 v-for="header in getAudienceHeaders(subHeaders)"
                 :key="header.value"
