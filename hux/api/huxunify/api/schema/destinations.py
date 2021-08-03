@@ -278,6 +278,41 @@ class SFMCAuthCredsSchema(Schema):
     )
 
 
+class TwilioAuthConstants(Schema):
+    """
+    Twilio Auth constants schema class
+    """
+
+    class Meta:
+        """
+        set the ordering of twilio auth constants
+        """
+
+        ordered = True
+
+    auth_token = fields.Dict(
+        required=True,
+        validate=must_not_be_blank,
+        example={
+            api_c.NAME: "Auth Token",
+            api_c.TYPE: "text",
+            api_c.REQUIRED: True,
+            api_c.DESCRIPTION: None,
+        },
+    )
+
+
+class TwilioAuthCredsSchema(Schema):
+    """
+    Twilio Auth Credentials schema class
+    """
+
+    auth_token = fields.String(
+        required=True,
+        example="7329755",
+    )
+
+
 class DestinationConstantsSchema(Schema):
     """
     Destination constants schema class
@@ -292,6 +327,7 @@ class DestinationConstantsSchema(Schema):
 
     facebook = fields.Nested(FacebookAuthConstants)
     sfmc = fields.Nested(SFMCAuthConstants)
+    twilio = fields.Nested(TwilioAuthConstants)
 
 
 class DestinationDataExtPostSchema(Schema):
