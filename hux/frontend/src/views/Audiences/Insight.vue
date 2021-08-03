@@ -181,6 +181,7 @@
           class="pl-6 pr-0 py-0"
         >
           <look-alike-card
+            :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
             :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
@@ -632,6 +633,9 @@ export default {
               audienceId: this.selectedAudienceId,
               data: { id: event.data.id },
             })
+            break
+          case "create lookalike":
+            this.openLookAlikeDrawer()
             break
           default:
             break

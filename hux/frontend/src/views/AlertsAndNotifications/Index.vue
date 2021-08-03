@@ -29,7 +29,7 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <v-row v-if="!loading" class="pb-7 pl-3 white">
       <hux-data-table
-        :headers="columnDefs"
+        :columns="columnDefs"
         :data-items="getNotificationData"
         :disable-sort="true"
       >

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-subheader> Data Table </v-subheader>
-    <hux-data-table :headers="headers" :data-items="dataItems">
+    <hux-data-table :columns="headers" :data-items="dataItems">
       <template #un-expanded-row="{ field, item, expand, isExpanded }">
         <span v-if="field == 'engagementName'" class="primary--text">
           <v-icon
@@ -491,7 +491,7 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Nested Data Table</v-subheader>
-    <hux-data-table :headers="headerNest" :data-items="dataItemsNest" nested>
+    <hux-data-table :columns="headerNest" :data-items="dataItemsNest" nested>
       <template #item-row="{ item, expand, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
           <td
@@ -532,7 +532,7 @@
       <template #expanded-row="{ expandedHeaders, item }">
         <td :colspan="expandedHeaders.length" class="pa-0 child">
           <hux-data-table
-            :headers="expandedHeaders"
+            :columns="expandedHeaders"
             :data-items="item.child"
             :show-header="false"
             class="expanded-table"
@@ -580,7 +580,7 @@
             <template #expanded-row="{ subExpandedHeaders, expandedItem }">
               <td :colspan="subExpandedHeaders.length" class="pa-0 child">
                 <hux-data-table
-                  :headers="subExpandedHeaders"
+                  :columns="subExpandedHeaders"
                   :data-items="expandedItem.childNest"
                   :show-header="false"
                   class="expanded-table"

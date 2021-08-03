@@ -33,7 +33,7 @@
           </div>
           <v-select
             v-model="selectAudience"
-            :items="fbDeliveredAudiences"
+            :items="lookalikeAbleAudiences"
             dense
             outlined
             class="delivered-audience-selection pb-10"
@@ -118,7 +118,6 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { filterAudiencesByDestinations } from "@/utils"
 
 import Drawer from "@/components/common/Drawer"
 import LookAlikeSlider from "@/components/common/LookAlikeSlider"
@@ -181,10 +180,11 @@ export default {
         this.lookalikeAudience.audience = value
       },
     },
-    fbDeliveredAudiences() {
-      let filteredAudience = filterAudiencesByDestinations(this.audiences, [
-        "facebook",
-      ])
+    lookalikeAbleAudiences() {
+      // This assumes we cannot create a lookalike audience from a lookalike audience
+      let filteredAudience = this.audiences.filter(
+        (each) => each.lookalikeable === "Active" && !each.is_lookalike
+      )
 
       return filteredAudience.map((each) => {
         return {
