@@ -322,7 +322,7 @@ export default {
       editDeliveryDrawer: false,
       scheduleDestination: {
         name: null,
-        type: null,
+        delivery_platform_type: null,
         id: null,
       },
     }
