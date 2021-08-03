@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="pa-2 card-style">
+  <v-card v-if="hasData" flat class="pa-2 card-style">
     <v-card-title>
       <h5 class="text-h5 neroBlack--text">Data feeds</h5>
     </v-card-title>
@@ -117,6 +117,12 @@ export default {
         },
       ],
     }
+  },
+
+  computed: {
+    hasData() {
+      return this.data && this.data.length
+    },
   },
 }
 </script>
