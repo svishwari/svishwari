@@ -258,14 +258,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .half-right-circle {
-  height: 18px;
-  width: 9px;
-  border-radius: 0 18px 18px 0;
+  height: 14px;
+  width: 7px;
+  border-radius: 0 14px 14px 0;
 }
 .half-left-circle {
-  height: 18px;
-  width: 9px;
-  border-radius: 18px 0 0 18px;
+  height: 14px;
+  width: 7px;
+  border-radius: 14px 0 0 14px;
 }
 .dotted {
   border-style: dotted;

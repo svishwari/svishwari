@@ -181,6 +181,7 @@
           class="pl-6 pr-0 py-0"
         >
           <look-alike-card
+            :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
             :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
@@ -622,6 +623,9 @@ export default {
             this.showConfirmModal = true
             this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
+            break
+          case "create lookalike":
+            this.openLookAlikeDrawer()
             break
           default:
             break
