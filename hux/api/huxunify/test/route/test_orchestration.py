@@ -226,6 +226,13 @@ class OrchestrationRouteTest(TestCase):
 
         """
 
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
             api_c.AUDIENCE_FILTERS: [
@@ -362,6 +369,13 @@ class OrchestrationRouteTest(TestCase):
 
         """
 
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
             api_c.AUDIENCE_FILTERS: [
@@ -410,6 +424,13 @@ class OrchestrationRouteTest(TestCase):
         Returns:
 
         """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
 
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Engagements",
@@ -482,6 +503,13 @@ class OrchestrationRouteTest(TestCase):
         Returns:
 
         """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
 
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
