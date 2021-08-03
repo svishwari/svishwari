@@ -213,7 +213,7 @@ The process is driven by the YAML file [hux/api/ci/codefresh-api.yml](https://gi
 Each environment will have different environment variables configured.
 The environment variables are stored and managed in the TechOps repository located [here](https://github.com/DeloitteHux/hux-unified-deploy/blob/main)
 
-**Environment**|** Instructions **|** Value File**
+**Environment**|**Instructions**|**Values File**
 :-----:|:-----:|:-----:
 DEV1| Automatically on Merge to Main|[values-huxui-main-use1-unified-dev1.yaml](https://github.com/DeloitteHux/hux-unified-deploy/blob/main/unified-api/k8s/charts/values-huxui-main-use1-unified-dev1.yaml)
 STG1| Automatically on Merge to Main|[values-huxui-main-use1-unified-stg1.yaml](https://github.com/DeloitteHux/hux-unified-deploy/blob/main/unified-api/k8s/charts/values-huxui-main-use1-unified-stg1.yaml)
