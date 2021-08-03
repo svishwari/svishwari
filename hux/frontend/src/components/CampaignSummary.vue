@@ -241,7 +241,7 @@
                         <v-icon small color="error" class="mr-1">
                           mdi-information-outline
                         </v-icon>
-                        To view KPI you need to map to a Facebook campaign.
+                        To view KPIs you need to map to a Facebook campaign.
                       </span>
                       <v-btn
                         tile
@@ -328,7 +328,6 @@ import Icon from "./common/Icon.vue"
 import Logo from "./common/Logo.vue"
 import CampaignMapDrawer from "@/views/Engagements/Configuration/Drawers/CampaignMapDrawer.vue"
 import { mapActions } from "vuex"
-
 export default {
   name: "CampaignSummary",
   components: {
@@ -535,7 +534,6 @@ export default {
       percentileColumns: [
         // Ads Columns
         "click_through_rate",
-
         "engagement_rate",
         // Email Columns
         "hard_bounces_rate",
@@ -843,7 +841,6 @@ export default {
       }
       .v-data-table__expanded__row {
         background: var(--v-aliceBlue-base);
-
         td:nth-child(1) {
           background: var(--v-aliceBlue-base);
         }
@@ -857,7 +854,6 @@ export default {
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }
-
       ::v-deep table {
         background: inherit;
         tbody {
