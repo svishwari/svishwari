@@ -381,7 +381,6 @@ def insert_delivery_platforms(
 if __name__ == "__main__":
     # Initiate Data Base client
     db_client = get_mongo_client()
-    print("m")
     drop_collections(db_client)
     insert_data_sources(db_client, data_sources_constants)
     insert_delivery_platforms(db_client, delivery_platforms_constants)
