@@ -355,6 +355,7 @@ def get_audience_insights(
                             },
                         }
                     },
+                    {"$match": {"deliveries.name": {"$exists": True}}},
                     {
                         "$group": {
                             "_id": "$_id",
