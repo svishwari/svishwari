@@ -63,6 +63,7 @@
                 :menu-options="actionItems"
                 route-name="EngagementDashboard"
                 :route-param="item['id']"
+                :data="item"
               >
                 <template #expand-icon>
                   <v-icon
@@ -224,6 +225,20 @@
         </template>
       </empty-page>
     </v-row>
+
+    <look-alike-audience
+      :toggle="showLookAlikeDrawer"
+      :selected-audience="selectedAudience"
+      @onBack="reloadAudienceData()"
+      @onCreate="onCreated()"
+    />
+
+    <hux-alert
+      v-model="flashAlert"
+      :type="alert.type"
+      :title="alert.title"
+      :message="alert.message"
+    />
   </div>
 </template>
 
@@ -240,6 +255,8 @@ import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "../../components/common/Tooltip.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
+import HuxAlert from "@/components/common/HuxAlert.vue"
+import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 export default {
   name: "Engagements",
   components: {
@@ -254,15 +271,28 @@ export default {
     Status,
     Tooltip,
     MenuCell,
+    LookAlikeAudience,
   },
   data() {
     return {
+      showLookAlikeDrawer: false,
+      flashAlert: false,
+      alert: {
+        type: "success",
+        title: "YAY!",
+        message: "Successfully triggered delivery.",
+      },
       actionItems: [
         { title: "Favorite" },
         { title: "Export" },
         { title: "Edit" },
         { title: "Duplicate" },
-        { title: "Create a lookalike" },
+        {
+          title: "Create a lookalike",
+          onClick: (value) => {
+            this.openLookAlikeDrawer(value)
+          },
+        },
         { title: "Delete" },
       ],
       breadcrumbItems: [
@@ -337,6 +367,19 @@ export default {
         this.audienceList.push(this.audiencesData(id))
       }
       await this.updateAudienceList({ id: item.id, data: this.audienceList })
+    },
+    openLookAlikeDrawer(value){
+      console.log("openLookAlikeDrawer",value)
+      this.showLookAlikeDrawer = true
+      this.selectedAudience = event
+    },
+    reloadAudienceData() {
+      this.showLookAlikeDrawer = false
+    },
+    onCreated() {
+      // this.lookalikeCreated = true
+      this.alert.message = "Lookalike created successfully"
+      this.flashAlert = true
     },
   },
 }

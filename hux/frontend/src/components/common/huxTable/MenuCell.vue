@@ -33,7 +33,7 @@
                 :key="index"
                 :disabled="item.isDisabled"
               >
-                <v-list-item-title v-if="!item.menu">
+                <v-list-item-title v-if="!item.menu" @click="item.onClick && item.onClick(data)">
                   {{ item.title }}
                 </v-list-item-title>
 
@@ -104,6 +104,10 @@ export default Vue.extend({
     routeParam: {
       type: String,
       required: true,
+    },
+    data: {
+      type: Object,
+      required: false,
     },
   },
 
