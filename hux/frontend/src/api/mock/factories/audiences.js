@@ -54,7 +54,7 @@ const lookalikeAudience = () => {
     favorite: faker.datatype.boolean(),
     name: faker.fake("{{name.firstName}} {{name.lastName}}"),
     size: faker.datatype.number({ min: 10000000, max: 999999999 }),
-    is_lookalike: faker.datatype.boolean(),
+    is_lookalike: true,
   }
 }
 
@@ -77,6 +77,7 @@ export const audience = {
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   engagements: () => mockEngagements(2),
+  is_lookalike: () => false,
   lookalikeable: () => faker.random.arrayElement(["Active"]),
   lookalike_audiences: () => mockLookalikeAudiences(5),
 }

@@ -126,7 +126,11 @@
     <div v-if="relatedEngagements.length > 0" class="px-15 my-1 mb-4 pt-6">
       <v-row class="pa-3 pb-5">
         <v-col
-          :md="isLookalikable && isLookalikable != 'inactive' ? 9 : 12"
+          :md="
+            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
+              ? 9
+              : 12
+          "
           class="pa-0"
         >
           <delivery-overview
@@ -172,7 +176,7 @@
           </delivery-overview>
         </v-col>
         <v-col
-          v-if="isLookalikable && isLookalikable != 'inactive'"
+          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
           md="3"
           class="pl-6 pr-0 py-0"
         >
@@ -329,6 +333,7 @@ export default {
       audienceHistory: [],
       relatedEngagements: [],
       isLookalikable: false,
+      is_lookalike: false,
       items: [
         {
           text: "Audiences",
@@ -725,6 +730,7 @@ export default {
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
+      this.is_lookalike = this.audience.is_lookalike
       this.items[1].text = this.audience.name
       this.mapInsights()
       this.getDestinations()
