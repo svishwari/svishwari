@@ -1819,7 +1819,7 @@ def set_performance_metrics(
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
         c.METRICS_END_TIME: end_time,
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign_id,
         c.PERFORMANCE_METRICS: metrics_dict,
         # By default not transferred for feedback to CDM yet
         c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
@@ -2066,7 +2066,7 @@ def set_campaign_activity(
         c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: datetime.datetime.utcnow(),
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign_id,
         c.EVENT_DETAILS: event_details,
         # By default not transferred for feedback to CDM yet
         c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
