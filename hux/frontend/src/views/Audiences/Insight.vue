@@ -182,6 +182,7 @@
         >
           <look-alike-card
             v-model="lookalikeAudiences"
+            :key="lookalikeAudiences"
             :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
           />
@@ -623,6 +624,9 @@ export default {
             this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
             break
+          case "create lookalike":
+            this.openLookAlikeDrawer()
+            break
           default:
             break
         }
@@ -728,6 +732,7 @@ export default {
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
       this.relatedEngagements = this.audience.engagements
+      this.lookalikeAudiences = this.audience.lookalike_audiences
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
       this.is_lookalike = this.audience.is_lookalike

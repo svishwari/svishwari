@@ -243,6 +243,13 @@
       :destination="scheduleDestination"
       :engagement-id="engagementId"
     />
+
+    <look-alike-audience
+      :toggle="showLookAlikeDrawer"
+      :selected-audience="selectedAudience"
+      @onBack="reloadAudienceData()"
+      @onCreate="onCreated()"
+    />
   </div>
 </template>
 
@@ -266,6 +273,7 @@ import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import HuxAlert from "../../components/common/HuxAlert.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
+import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 
 export default {
   name: "EngagementDashboard",
@@ -287,9 +295,12 @@ export default {
     HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
+    LookAlikeAudience,
   },
   data() {
     return {
+      selectedAudience: null,
+      showLookAlikeDrawer: false,
       destinationArr: [],
       audienceMergedData: [],
       loading: false,
@@ -991,6 +1002,9 @@ export default {
             })
             await this.loadEngagement(this.engagementId)
             break
+          case "create lookalike":
+            this.openLookAlikeDrawer(event)
+            break
           default:
             break
         }
@@ -1002,6 +1016,19 @@ export default {
     //#endregion
     openDeliveryHistoryDrawer() {
       this.showDeliveryHistoryDrawer = true
+    },
+    openLookAlikeDrawer(event) {
+      this.selectedAudience = event.parent
+      this.lookalikeCreated = false
+      this.showLookAlikeDrawer = true
+    },
+    async reloadAudienceData() {
+      this.showLookAlikeDrawer = false
+    },
+    onCreated() {
+      this.lookalikeCreated = true
+      this.alert.message = "Lookalike created successfully"
+      this.flashAlert = true
     },
   },
 }
