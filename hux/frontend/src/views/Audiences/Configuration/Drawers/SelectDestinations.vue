@@ -109,7 +109,6 @@ export default {
     },
 
     add(destination) {
-      debugger
       if (this.isAdded(destination)) {
         this.undoAdd(destination)
       } else {
