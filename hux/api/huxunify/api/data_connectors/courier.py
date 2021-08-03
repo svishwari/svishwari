@@ -401,6 +401,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         [aud[db_const.OBJECT_ID], dest]
         for aud in audiences
         for dest in aud[db_const.DESTINATIONS]
+        if isinstance(dest, dict)
     ]
 
 

@@ -1,5 +1,5 @@
 <template>
-  <hux-data-table :headers="headers" :data-items="data" disable-sort>
+  <hux-data-table :columns="headers" :data-items="data" disable-sort>
     <template #row-item="{ item }">
       <td
         v-for="header in headers"
@@ -29,22 +29,36 @@ export default {
       type: Array,
       required: false,
     },
+    rmse: {
+      type: Number,
+      required: true,
+    },
   },
-
-  data() {
-    return {
-      headers: [
+  computed: {
+    suffix() {
+      return this.rmse !== -1 ? "$" : ""
+    },
+    headers() {
+      return [
         { text: "Bucket", value: "bucket", width: "94px" },
-        { text: "Predicted $", value: "predicted_value", width: "117px" },
-        { text: "Actual $", value: "actual_value", width: "117px" },
+        {
+          text: `Predicted ${this.suffix}`,
+          value: "predicted_value",
+          width: "117px",
+        },
+        {
+          text: `Actual ${this.suffix}`,
+          value: "actual_value",
+          width: "117px",
+        },
         { text: "Profiles", value: "profile_count", width: "117px" },
         {
-          text: "Rate $<div class='pt-2'>(predicted)</div>",
+          text: `Rate ${this.suffix}<div class='pt-2'>(predicted)</div>`,
           value: "predicted_rate",
           width: "117px",
         },
         {
-          text: "Rate $<div class='pt-2'>(actual)</div>",
+          text: `Rate ${this.suffix}<div class='pt-2'>(actual)</div>`,
           value: "actual_rate",
           width: "117px",
         },
@@ -63,8 +77,8 @@ export default {
           value: "profile_size_percent",
           width: "117px",
         },
-      ],
-    }
+      ]
+    },
   },
 }
 </script>

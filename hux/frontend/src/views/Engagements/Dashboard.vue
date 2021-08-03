@@ -243,6 +243,13 @@
       :destination="scheduleDestination"
       :engagement-id="engagementId"
     />
+
+    <look-alike-audience
+      :toggle="showLookAlikeDrawer"
+      :selected-audience="selectedAudience"
+      @onBack="reloadAudienceData()"
+      @onCreate="onCreated()"
+    />
   </div>
 </template>
 
@@ -266,6 +273,7 @@ import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import HuxAlert from "../../components/common/HuxAlert.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
+import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
 
 export default {
   name: "EngagementDashboard",
@@ -287,9 +295,12 @@ export default {
     HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
+    LookAlikeAudience,
   },
   data() {
     return {
+      selectedAudience: null,
+      showLookAlikeDrawer: false,
       destinationArr: [],
       audienceMergedData: [],
       loading: false,
@@ -322,7 +333,7 @@ export default {
       editDeliveryDrawer: false,
       scheduleDestination: {
         name: null,
-        type: null,
+        delivery_platform_type: null,
         id: null,
       },
     }
@@ -755,21 +766,23 @@ export default {
   },
   async mounted() {
     this.loading = true
-    await this.getAudiences()
-    await this.getAvailableDestinations()
     await this.loadEngagement(this.$route.params.id)
+    this.getAudiences()
+    this.getAvailableDestinations()
     this.loading = false
   },
   methods: {
     ...mapActions({
-      getAudiences: "audiences/getAll",
-      getAvailableDestinations: "destinations/getAll",
-      getAudiencePerformanceById: "engagements/getAudiencePerformance",
-      getEngagementById: "engagements/get",
       attachAudience: "engagements/attachAudience",
-      detachAudience: "engagements/detachAudience",
+      attachAudienceDestination: "engagements/attachAudienceDestination",
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
+      detachAudience: "engagements/detachAudience",
+      detachAudienceDestination: "engagements/detachAudienceDestination",
+      getAudiences: "audiences/getAll",
+      getAudiencePerformanceById: "engagements/getAudiencePerformance",
+      getAvailableDestinations: "destinations/getAll",
+      getEngagementById: "engagements/get",
     }),
 
     // Drawer Section Starts
@@ -802,19 +815,12 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
-    async triggerAttachDestination() {
-      this.loadingAudiences = true
-      const payload = {
-        audiences: [
-          {
-            id: this.selectedAudienceId,
-            destinations:
-              this.selectedAudiences[this.selectedAudienceId].destinations,
-          },
-        ],
-      }
-      await this.attachAudience({
+    async triggerAttachDestination(event) {
+      // this.loadingAudiences = true
+      const payload = event.destination
+      await this.attachAudienceDestination({
         engagementId: this.engagementId,
+        audienceId: this.selectedAudienceId,
         data: payload,
       })
       await this.loadEngagement(this.engagementId)
@@ -935,7 +941,6 @@ export default {
         id: this.engagementList.id,
       })
       this.mapDeliveries()
-      // this.audienceList()
     },
     //#region Delivery Overview Region
     async triggerOverviewAction(event) {
@@ -988,6 +993,18 @@ export default {
             this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
             break
+          case "remove destination":
+            this.selectedAudienceId = event.data.id
+            await this.detachAudienceDestination({
+              engagementId: this.engagementId,
+              audienceId: this.selectedAudienceId,
+              data: { id: event.data.id },
+            })
+            await this.loadEngagement(this.engagementId)
+            break
+          case "create lookalike":
+            this.openLookAlikeDrawer(event)
+            break
           default:
             break
         }
@@ -999,6 +1016,19 @@ export default {
     //#endregion
     openDeliveryHistoryDrawer() {
       this.showDeliveryHistoryDrawer = true
+    },
+    openLookAlikeDrawer(event) {
+      this.selectedAudience = event.parent
+      this.lookalikeCreated = false
+      this.showLookAlikeDrawer = true
+    },
+    async reloadAudienceData() {
+      this.showLookAlikeDrawer = false
+    },
+    onCreated() {
+      this.lookalikeCreated = true
+      this.alert.message = "Lookalike created successfully"
+      this.flashAlert = true
     },
   },
 }

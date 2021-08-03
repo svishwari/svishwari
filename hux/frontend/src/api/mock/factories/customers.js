@@ -136,7 +136,7 @@ export const customerProfile = {
  */
 export const customersOverview = {
   gender_men: 0.67621,
-  gender_other: 0.8935,
+  gender_other: 0,
   gender_women: 0.30828,
   match_rate: 0.5972,
   max_age: 35,

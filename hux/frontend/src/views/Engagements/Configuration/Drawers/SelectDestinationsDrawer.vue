@@ -169,7 +169,9 @@ export default {
         this.selectedDestinations.push({
           id: destination.id,
         })
-        this.$emit("addedDestination", this.selectedDestinations)
+        this.$emit("addedDestination", {
+          destination: { id: destination.id },
+        })
         this.localToggle = false
       }
     },

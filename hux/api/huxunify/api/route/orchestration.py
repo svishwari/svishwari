@@ -344,7 +344,8 @@ class AudienceGetView(SwaggerView):
 
         # get live audience size
         customers = get_customers_overview(
-            token_response[0], audience[api_c.AUDIENCE_FILTERS]
+            token_response[0],
+            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
         )
 
         # Add insights, size.

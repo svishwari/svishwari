@@ -56,6 +56,26 @@ client["engagements"].deliver = (resourceId, data) => {
 client["engagements"].attachAudience = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/audiences`, data)
 }
+client["engagements"].attachDestination = (resourceId, audienceId, data) => {
+  return http.post(
+    `/engagements/${resourceId}/audiences/${audienceId}/destinations`,
+    data
+  )
+}
+
+client["engagements"].detachDestination = (resourceId, audienceId, data) => {
+  if (process.env.NODE_ENV !== "development") {
+    return http.delete(
+      `/engagements/${resourceId}/audiences/${audienceId}/destinations`,
+      { data: data }
+    )
+  } else {
+    const audienceId = data.audience_ids[0]
+    return http.delete(
+      `/engagements/${resourceId}/audiences/${audienceId}/destinations/${data.id}`
+    )
+  }
+}
 
 client["engagements"].detachAudience = (resourceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.

@@ -45,7 +45,7 @@
               <template #label-content>
                 <span class="font-weight-semi-bold">
                   <span v-if="item.value == 'percentage'">
-                    {{ item.subtitle | percentageConvert(true, true) }}
+                    {{ item.subtitle | Numeric(true, false, false, true) }}
                   </span>
                   <span v-if="item.value == 'numeric'">
                     {{ item.subtitle | Numeric(true, true) }}
@@ -54,7 +54,7 @@
               </template>
               <template #hover-content>
                 <span v-if="item.value == 'percentage'">
-                  {{ item.subtitle | percentageConvert(true, true) }}
+                  {{ item.subtitle | Numeric(true, false, false, true) }}
                 </span>
                 <span v-else>
                   {{ item.subtitle | Numeric(true, false, false) }}
@@ -93,7 +93,7 @@
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | percentageConvert(true, true) }}
+                        {{ item.subtitle | Numeric(true, false, false, true) }}
                       </span>
                       <span v-if="item.value == 'numeric'">
                         {{ item.subtitle | Numeric(true, true) }}
@@ -108,12 +108,15 @@
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | percentageConvert(true, true) }}
+                      {{ item.subtitle | Numeric(true, false, false, true) }}
                     </span>
                     <span v-if="item.value == 'numeric'">
                       {{ item.subtitle | Numeric(true, false, false) }}
                     </span>
-                    <span v-else>
+                    <span v-if="item.value == 'none'">
+                      {{ item.subtitle }}
+                    </span>
+                    <span v-if="item.value == ''">
                       {{ item.subtitle }}
                     </span>
                   </template>
@@ -313,9 +316,9 @@ export default {
         this.overviewListItems[4].subtitle =
           this.overview.min_age + "–" + this.overview.max_age
         this.overviewListItems[4].value = "none"
-        this.overviewListItems[5].subtitle = this.overview.gender_men
+        this.overviewListItems[5].subtitle = this.overview.gender_women
         this.overviewListItems[5].value = "percentage"
-        this.overviewListItems[6].subtitle = this.overview.gender_women
+        this.overviewListItems[6].subtitle = this.overview.gender_men
         this.overviewListItems[6].value = "percentage"
         this.overviewListItems[7].subtitle = this.overview.gender_other
         this.overviewListItems[7].value = "percentage"

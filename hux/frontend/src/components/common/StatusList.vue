@@ -4,7 +4,7 @@
       <span class="d-flex">
         <router-link
           :to="{
-            name: 'AudienceInsight',
+            name: 'routeName',
             params: { id: section.id },
           }"
           class="text-decoration-none"
@@ -132,14 +132,28 @@
                           </v-list-item-title>
                         </template>
                         <template #default>
-                          <div class="sub-menu-class white">
-                            <logo
-                              v-if="option.menu.icon"
-                              :size="18"
-                              :type="option.menu.icon"
-                            />
-                            <span class="ml-1">{{ option.menu.title }}</span>
-                          </div>
+                          <v-list>
+                            <v-list-item
+                              @click="
+                                $emit('onDestinationAction', {
+                                  target: option,
+                                  data: item,
+                                  parent: section,
+                                })
+                              "
+                            >
+                              <v-list-item-title>
+                                <logo
+                                  v-if="option.menu.icon"
+                                  :size="18"
+                                  :type="option.menu.icon"
+                                />
+                                <span class="ml-1">
+                                  {{ option.menu.title }}
+                                </span>
+                              </v-list-item-title>
+                            </v-list-item>
+                          </v-list>
                         </template>
                       </v-menu>
                     </v-list-item>
@@ -258,7 +272,7 @@ export default {
     return {
       showDeliveryAlert: false,
       selection: null,
-      isSubMenuOpen: null,
+      isSubMenuOpen: false,
       lookALikeAllowedEntries: ["Facebook"],
       engagementMenuOptions: [
         { id: 1, title: "View delivery history", active: false },
@@ -291,6 +305,11 @@ export default {
   computed: {
     sectionTypePrefix() {
       return this.$options.filters.TitleCase(this.sectionType)
+    },
+    routeName() {
+      return this.sectionType === "engagement"
+        ? "EngagementDashboard"
+        : "AudienceInsight"
     },
     sectionActions() {
       return this.sectionType === "engagement"
@@ -382,10 +401,6 @@ export default {
       }
     },
     sectionActionItems(section) {
-      // { id: 1, title: "View delivery history", active: true },
-      //   { id: 2, title: "Deliver all", active: true },
-      //   { id: 3, title: "Add a destination", active: true },
-      //   { id: 5, title: "Remove engagement", active: false },
       if (this.sectionType === "engagement") {
         this.engagementMenuOptions.forEach((element) => {
           switch (element.title.toLowerCase()) {
@@ -417,10 +432,7 @@ export default {
               break
 
             case "create lookalike":
-              element["active"] =
-                section[this.deliveriesKey].filter((delivery) =>
-                  this.lookALikeAllowedEntries.includes(delivery.name)
-                ).length > 0
+              element["active"] = section.lookalikable === "Active"
               break
 
             case "Pause all delivery":
@@ -545,6 +557,13 @@ export default {
       &:hover {
         background: var(--v-aliceBlue-base);
       }
+    }
+    ::v-deep .sub-menu-class {
+      display: flex;
+      align-items: center;
+      padding: 5px 8px;
+      min-height: 32px;
+      @extend .cursor-pointer;
     }
   }
 }

@@ -256,6 +256,22 @@ const actions = {
       throw error
     }
   },
+  async attachAudienceDestination(_, { engagementId, audienceId, data }) {
+    try {
+      await api.engagements.attachDestination(engagementId, audienceId, data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+  async detachAudienceDestination(_, { engagementId, audienceId, data }) {
+    try {
+      await api.engagements.detachDestination(engagementId, audienceId, data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
   async saveCampaignMappings(_, { id, audienceId, destinationId, data }) {
     try {
       await api.engagements.updateCampaignMapping(
