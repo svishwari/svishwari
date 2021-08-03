@@ -756,8 +756,8 @@ export default {
   async mounted() {
     this.loading = true
     await this.loadEngagement(this.$route.params.id)
-    await this.getAudiences()
-    await this.getAvailableDestinations()
+    this.getAudiences()
+    this.getAvailableDestinations()
     this.loading = false
   },
   methods: {

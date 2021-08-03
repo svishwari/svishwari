@@ -47,8 +47,8 @@
         <v-list class="menu-list-wrapper">
           <v-list-item-group v-model="selection" active-class="">
             <v-list-item
-              v-for="(item, index) in sectionActionItems(section)"
-              :key="index"
+              v-for="item in sectionActionItems(section)"
+              :key="item.id"
               :disabled="!item.active"
               @click="$emit('onSectionAction', { target: item, data: section })"
             >
@@ -62,8 +62,8 @@
     </v-card-title>
     <v-list v-if="section[deliveriesKey].length > 0" dense class="pa-0">
       <v-list-item
-        v-for="(item, index) in section[deliveriesKey]"
-        :key="index"
+        v-for="item in section[deliveriesKey]"
+        :key="item.id"
         @click="toggleFocus()"
       >
         <v-list-item-content class="icon-col py-1">
