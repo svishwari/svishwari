@@ -322,7 +322,16 @@ export default {
               .data_extension_name,
         },
       })
-      this.$emit("updateDestination", this.value[this.selectedAudienceId])
+      this.$emit("updateDestination", {
+        destination: {
+          id: destinationWithDataExtension.id,
+          delivery_platform_config: {
+            data_extension_name:
+              destinationWithDataExtension.delivery_platform_config
+                .data_extension_name,
+          },
+        },
+      })
       this.onBack()
     },
 

@@ -11,7 +11,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <hux-data-table
-        :headers="headers"
+        :columns="headers"
         :data-items="items"
         sort-column="delivered"
       >

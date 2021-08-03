@@ -727,7 +727,7 @@ export default {
       this.isLookalikable = this.audience.lookalikeable
       this.items[1].text = this.audience.name
       this.mapInsights()
-      await this.getDestinations()
+      this.getDestinations()
       this.loading = false
     },
   },

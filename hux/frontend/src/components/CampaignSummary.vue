@@ -97,7 +97,7 @@
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
         <!-- Campaign Nested Table -->
-        <hux-data-table :headers="headers" :data-items="data" nested>
+        <hux-data-table :columns="headers" :data-items="data" nested>
           <template #item-row="{ item, expandFunc, isExpanded }">
             <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
               <td v-for="header in headers" :key="header.value">
@@ -157,7 +157,7 @@
             <td :colspan="expandedHeaders.length" class="pa-0 child">
               <hux-data-table
                 v-if="parentItem"
-                :headers="expandedHeaders"
+                :columns="expandedHeaders"
                 :data-items="
                   getFormattedItems(parentItem.destinations || item.campaigns)
                 "
@@ -273,7 +273,7 @@
                   <td :colspan="subExpandedHeaders.length" class="pa-0 child">
                     <hux-data-table
                       v-if="expandedParentItem"
-                      :headers="subExpandedHeaders"
+                      :columns="subExpandedHeaders"
                       :data-items="
                         getFormattedItems(expandedParentItem.campaigns)
                       "
