@@ -190,7 +190,7 @@ export default {
       this.overviewListItems[1].subtitle = data.total_countries
       this.overviewListItems[2].subtitle = data.total_us_states
       this.overviewListItems[3].subtitle = data.total_cities
-      this.overviewListItems[4].subtitle = data.max_age
+      this.overviewListItems[4].subtitle = data.min_age + "-" + data.max_age
       this.overviewListItems[5].subtitle = data.gender_women
       this.overviewListItems[6].subtitle = data.gender_men
       this.overviewListItems[7].subtitle = data.gender_other

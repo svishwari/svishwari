@@ -369,7 +369,7 @@ export default {
           subtitle: "",
           icon: "mdi-map-marker-radius",
         },
-        max_age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
         gender_women: {
           title: "Women",
           subtitle: "",
@@ -525,7 +525,10 @@ export default {
         (insight) => {
           return {
             title: this.insightInfoItems[insight].title,
-            subtitle: this.audience.audience_insights[insight],
+            subtitle:
+              insight !== "age"
+                ? this.audience.audience_insights[insight]
+                : `${this.audience.audience_insights["min_age"]}-${this.audience.audience_insights["max_age"]}`,
             icon: this.insightInfoItems[insight].icon,
           }
         }
