@@ -220,6 +220,9 @@
       <v-col cols="3">
         <income-chart></income-chart>
       </v-col>
+       <v-col cols="3">
+          <area-chart></area-chart>
+        </v-col>
     </v-row>
     <hux-alert
       v-model="flashAlert"
@@ -303,6 +306,7 @@ import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/Se
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+import AreaChart from "@/components/common/areaChart/AreaChart"
 
 export default {
   name: "AudienceInsight",
@@ -324,6 +328,7 @@ export default {
     HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
+    AreaChart
   },
   data() {
     return {

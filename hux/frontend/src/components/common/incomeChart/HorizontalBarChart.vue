@@ -2,8 +2,8 @@
   <div>
     <v-card
       class="rounded-lg card-style"
-      maxWidth="300px"
-      minHeight="150px"
+      max-width="300px"
+      min-height="150px"
       flat
     >
       <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
@@ -21,8 +21,8 @@
           </span>
         </div>
         <div
-          class="chart-section"
           ref="huxChart"
+          class="chart-section"
           @mouseover="getCordinates($event)"
         ></div>
       </v-card-title>
@@ -35,9 +35,8 @@
 import * as d3Select from "d3-selection"
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
-
 export default {
-  name: "horizontal-bar-chart",
+  name: "HorizontalBarChart",
   props: {
     value: {
       type: Array,
@@ -57,12 +56,20 @@ export default {
       chartData: this.value,
     }
   },
+  watch: {
+    value: function () {
+      d3Select.select(this.$refs.huxChart).select("svg").remove()
+      this.initiateHorizontalBarChart()
+    },
+  },
+  mounted() {
+    this.initiateHorizontalBarChart()
+  },
   methods: {
     async initiateHorizontalBarChart() {
       await this.chartData
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
-
       let svg = d3Select
         .select(this.$refs.huxChart)
         .append("svg")
@@ -73,19 +80,14 @@ export default {
           "transform",
           "translate(" + this.margin.left + "," + this.margin.top + ")"
         )
-
       let maxValue = Math.max(...this.chartData.map((data) => data.ltv))
-
       let x = d3Scale.scaleLinear().domain([0, maxValue]).range([1, this.width])
-
       let y = d3Scale
         .scaleBand()
         .range([0, this.height])
         .domain(this.chartData.map((d) => d.name))
         .padding(0.1)
-
       let appendCurrencySign = (text) => "$" + text.toLocaleString()
-
       svg
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
@@ -100,7 +102,6 @@ export default {
         .attr("stroke-width", "0")
         .attr("stroke-opacity", "0.3")
         .style("font-size", 12)
-
       svg
         .append("g")
         .call((g) => {
@@ -108,7 +109,6 @@ export default {
         })
         .selectAll("text")
         .style("text-anchor", "end")
-
       svg
         .append("g")
         .call(
@@ -131,9 +131,7 @@ export default {
             .attr("stroke", "none")
             .attr("stroke-opacity", "0.3")
         )
-
       var ticks = d3Select.selectAll(".tick text")
-
       ticks.each(function (_, i) {
         if (i % 2 != 0) d3Select.select(this).remove()
       })
@@ -150,7 +148,6 @@ export default {
         .attr("rx", 2)
         .on("mouseover", (d) => applyHoverEffects(d))
         .on("mouseout", () => removeHoverEffects())
-
       svg
         .selectAll("myRect")
         .data(this.chartData)
@@ -162,7 +159,6 @@ export default {
         .style("fill", "white")
         .style("font-size", 12)
         .text((d) => `${d.name}`)
-
       let applyHoverEffects = (d) => {
         d3Select.selectAll("rect").style("fill-opacity", "0.5")
         d3Select
@@ -170,12 +166,10 @@ export default {
           .attr("fill-opacity", (d) => changeHoverPosition(d))
           .style("fill-opacity", "1")
       }
-
       let removeHoverEffects = () => {
         d3Select.selectAll("rect").style("fill-opacity", "1")
         this.tooltipDisplay(false)
       }
-
       let changeHoverPosition = (data) => {
         let incomeData = data
         incomeData.xPosition = x(data.ltv)
@@ -183,27 +177,14 @@ export default {
         this.tooltipDisplay(true, incomeData)
       }
     },
-
     getCordinates(event) {
       this.tooltip.x = event.offsetX
       this.tooltip.y = event.offsetY
       this.$emit("cordinates", this.tooltip)
     },
-
     tooltipDisplay(showTip, incomeData) {
       this.$emit("tooltipDisplay", showTip, incomeData)
     },
-  },
-
-  watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateHorizontalBarChart()
-    },
-  },
-
-  mounted() {
-    this.initiateHorizontalBarChart()
   },
 }
 </script>
