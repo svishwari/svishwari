@@ -181,8 +181,8 @@
           class="pl-6 pr-0 py-0"
         >
           <look-alike-card
-            v-model="lookalikeAudiences"
             :key="lookalikeAudiences"
+            v-model="lookalikeAudiences"
             :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
           />

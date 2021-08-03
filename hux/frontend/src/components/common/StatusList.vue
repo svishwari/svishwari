@@ -143,7 +143,7 @@
                               "
                             >
                               <v-list-item-title>
-                                <Logo
+                                <logo
                                   v-if="option.menu.icon"
                                   :size="18"
                                   :type="option.menu.icon"
