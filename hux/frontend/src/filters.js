@@ -51,7 +51,7 @@ export default {
    * @returns Formatted empty data field eg. "N/A"
    */
   Empty(value, placeholder = "—") {
-    if (!value) return placeholder
+    if (!value && value !== 0) return placeholder
     return value
   },
 
