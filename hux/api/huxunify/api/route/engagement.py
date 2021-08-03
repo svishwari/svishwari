@@ -1579,10 +1579,12 @@ class EngagementMetricsDisplayAds(SwaggerView):
         performance_metrics = []
         if ads_destination:
             # Get Performance metrics by engagement and destination
-            performance_metrics = get_performance_metrics_by_engagement_details(
-                database,
-                ObjectId(engagement_id),
-                [ads_destination.get(db_c.ID)],
+            performance_metrics = (
+                get_performance_metrics_by_engagement_details(
+                    database,
+                    ObjectId(engagement_id),
+                    [ads_destination.get(db_c.ID)],
+                )
             )
             if performance_metrics:
                 # Get all the delivery jobs for the given engagement and destination
@@ -1593,7 +1595,8 @@ class EngagementMetricsDisplayAds(SwaggerView):
                 delivery_jobs = [
                     x
                     for x in delivery_jobs
-                    if x[db_c.DELIVERY_PLATFORM_ID] == ads_destination.get(db_c.ID)
+                    if x[db_c.DELIVERY_PLATFORM_ID]
+                    == ads_destination.get(db_c.ID)
                 ]
 
         # Group all the performance metrics for the engagement
@@ -1693,10 +1696,12 @@ class EngagementMetricsEmail(SwaggerView):
         performance_metrics = []
         if email_destination:
             # Get Performance metrics by engagement and destination
-            performance_metrics = get_performance_metrics_by_engagement_details(
-                database,
-                ObjectId(engagement_id),
-                [email_destination.get(db_c.ID)],
+            performance_metrics = (
+                get_performance_metrics_by_engagement_details(
+                    database,
+                    ObjectId(engagement_id),
+                    [email_destination.get(db_c.ID)],
+                )
             )
 
             if performance_metrics:
@@ -1708,7 +1713,8 @@ class EngagementMetricsEmail(SwaggerView):
                 delivery_jobs = [
                     x
                     for x in delivery_jobs
-                    if x[db_c.DELIVERY_PLATFORM_ID] == email_destination.get(db_c.ID)
+                    if x[db_c.DELIVERY_PLATFORM_ID]
+                    == email_destination.get(db_c.ID)
                 ]
 
         # Group all the performance metrics for the engagement
