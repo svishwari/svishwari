@@ -65,7 +65,7 @@ import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
-  name: "LiftChart",
+  name: "DataFeeds",
 
   components: {
     HuxDataTable,
@@ -108,7 +108,7 @@ export default {
           value: "match_rate",
           width: "130px",
           hoverTooltip:
-            "Percentage of input records that are consolidated into Hux Ids.",
+            "Percentage of input records that are consolidated into Hux IDs.",
         },
         {
           text: "Last run",
@@ -128,16 +128,6 @@ export default {
       tr {
         th {
           background: var(--v-aliceBlue-base);
-          height: 40px !important;
-        }
-      }
-    }
-    .liftchart-bucket {
-      background: var(--v-aliceBlue-base);
-    }
-    tbody {
-      tr {
-        td {
           height: 40px !important;
         }
       }
