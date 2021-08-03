@@ -228,15 +228,17 @@ def get_engagements_summary(
                     },
                 },
                 # push the grouped destinations into an array
-                "destinations": {
+                db_c.DESTINATIONS: {
                     "$push": {
-                        "id": "$audiences.destinations.id",
-                        "name": "$audiences.destinations.name",
+                        db_c.OBJECT_ID: "$audiences.destinations.id",
+                        db_c.NAME: "$audiences.destinations.name",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "latest_delivery": {
                             "update_time": "$audiences.destinations.latest_delivery.update_time",
                             "status": "$audiences.destinations.latest_delivery.status",
+                            "size": "$audiences.destinations.latest_delivery."
+                            "delivery_platform_audience_size",
                         },
                     }
                 },
