@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-card
-      tile
       v-if="showTooltip"
+      tile
       :style="{
         transform: `translate(${position.x}px, ${position.y}px)`,
         'border-radius': '0px !important',
@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: "bar-chart-tooltip",
+  name: "BarChartTooltip",
   props: {
     position: {
       type: Object,

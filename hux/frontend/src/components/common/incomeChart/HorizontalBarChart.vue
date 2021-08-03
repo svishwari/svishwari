@@ -2,8 +2,8 @@
   <div>
     <v-card
       class="rounded-lg card-style"
-      maxWidth="300px"
-      minHeight="150px"
+      max-width="300px"
+      min-height="150px"
       flat
     >
       <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
@@ -21,8 +21,8 @@
           </span>
         </div>
         <div
-          class="chart-section"
           ref="huxChart"
+          class="chart-section"
           @mouseover="getCordinates($event)"
         ></div>
       </v-card-title>
@@ -36,7 +36,7 @@ import * as d3Select from "d3-selection"
 import * as d3Axis from "d3-axis"
 import * as d3Scale from "d3-scale"
 export default {
-  name: "horizontal-bar-chart",
+  name: "HorizontalBarChart",
   props: {
     value: {
       type: Array,
@@ -55,6 +55,17 @@ export default {
       margin: { top: 20, right: 40, bottom: 20, left: 5 },
       chartData: this.value,
     }
+  },
+
+  watch: {
+    value: function () {
+      d3Select.select(this.$refs.huxChart).select("svg").remove()
+      this.initiateHorizontalBarChart()
+    },
+  },
+
+  mounted() {
+    this.initiateHorizontalBarChart()
   },
   methods: {
     async initiateHorizontalBarChart() {
@@ -176,15 +187,6 @@ export default {
     tooltipDisplay(showTip, incomeData) {
       this.$emit("tooltipDisplay", showTip, incomeData)
     },
-  },
-  watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.initiateHorizontalBarChart()
-    },
-  },
-  mounted() {
-    this.initiateHorizontalBarChart()
   },
 }
 </script>

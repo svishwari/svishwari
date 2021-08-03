@@ -8,7 +8,7 @@
         class="font-weight-light"
       >
         <div v-if="item.icon" class="d-flex pr-2">
-          <Icon :type="item.icon" :size="24" color="neroBlack" />
+          <icon :type="item.icon" :size="24" color="neroBlack" />
         </div>
         <span :class="{ 'neroBlack--text': item.disabled, 'pl-1': true }">{{
           item.text
@@ -24,7 +24,7 @@
 <script>
 import Icon from "@/components/common/Icon"
 export default {
-  name: "breadcrumb",
+  name: "Breadcrumb",
 
   components: { Icon },
 

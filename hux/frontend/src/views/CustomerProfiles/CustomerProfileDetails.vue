@@ -1,8 +1,8 @@
 <template>
   <div>
-    <PageHeader class="background-border" :headerHeightChanges="'py-3'">
+    <page-header class="background-border" :header-height-changes="'py-3'">
       <template #left>
-        <Breadcrumb :items="items" />
+        <breadcrumb :items="items" />
       </template>
       <template #right>
         <v-icon
@@ -13,7 +13,7 @@
           mdi-download
         </v-icon>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
     <div v-if="!loading && singleCustomer" class="pl-15 py-6 pr-9">
@@ -30,10 +30,10 @@
           >
             <v-card-title class="title-font-size">
               <span class="d-inline-block text-truncate mr-1">
-                {{ this.singleCustomer.first_name }}
+                {{ singleCustomer.first_name }}
               </span>
               <span class="d-inline-block text-truncate">
-                {{ this.singleCustomer.last_name }}
+                {{ singleCustomer.last_name }}
               </span>
             </v-card-title>
             <v-card-text class="justify-center title-text py-3">
@@ -44,9 +44,9 @@
           </v-card>
         </v-col>
         <v-col
-          :cols="data.colValue"
           v-for="data in customerDataDisplay"
           :key="data.id"
+          :cols="data.colValue"
           class="matix-card-space"
         >
           <v-card
@@ -55,18 +55,18 @@
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
               <div class="text-caption gray--text pb-1">
                 {{ data.title }}
-                <Tooltip v-if="data.hoverTooltip" positionTop>
+                <tooltip v-if="data.hoverTooltip" position-top>
                   <template #label-content>
-                    <Icon type="info" :size="12" v-if="data.hoverTooltip" />
+                    <icon v-if="data.hoverTooltip" type="info" :size="12" />
                   </template>
                   <template #hover-content>
                     {{ data.hoverTooltip }}
                   </template>
-                </Tooltip>
+                </tooltip>
               </div>
               <hux-slider
                 v-if="data.format === 'slider'"
-                :isRangeSlider="false"
+                :is-range-slider="false"
                 :value="data.value"
               ></hux-slider>
               <span v-else class="sample-card-text">
@@ -85,8 +85,8 @@
         <v-col cols="3"> </v-col>
         <v-col
           v-for="data in customerDetailsMore"
-          :cols="data.colValue"
           :key="data.id"
+          :cols="data.colValue"
           class="matix-card-space"
         >
           <v-card
@@ -95,14 +95,14 @@
             <v-card-text class="pl-3 pr-3 pb-3 pt-3 matrix-card">
               <div class="title-text pb-1">
                 {{ data.title }}
-                <Tooltip v-if="data.hoverTooltip" positionTop>
+                <tooltip v-if="data.hoverTooltip" position-top>
                   <template #label-content>
-                    <Icon type="info" :size="12" v-if="data.hoverTooltip" />
+                    <icon v-if="data.hoverTooltip" type="info" :size="12" />
                   </template>
                   <template #hover-content>
                     {{ data.hoverTooltip }}
                   </template>
-                </Tooltip>
+                </tooltip>
               </div>
               <div class="sample-card-text">{{ data.value }}</div>
             </v-card-text>
@@ -422,6 +422,11 @@ export default {
       return details
     },
   },
+  async mounted() {
+    this.loading = true
+    await this.getCustomer(this.id)
+    this.loading = false
+  },
   methods: {
     ...mapActions({
       getCustomer: "customers/get",
@@ -432,11 +437,6 @@ export default {
       }
       return "-"
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getCustomer(this.id)
-    this.loading = false
   },
 }
 </script>

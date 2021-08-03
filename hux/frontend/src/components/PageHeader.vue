@@ -9,9 +9,9 @@
   >
     <div>
       <div class="d-flex">
-        <Icon
-          :type="icon"
+        <icon
           v-if="icon"
+          :type="icon"
           class="pr-1"
           :size="20"
           color="neroBlack"

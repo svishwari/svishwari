@@ -1,8 +1,8 @@
 <template>
-  <Drawer v-model="localDrawer" @onClose="goToStep1()" :loading="loading">
+  <drawer v-model="localDrawer" :loading="loading" @onClose="goToStep1()">
     <template #header-left>
       <div class="d-flex align-center">
-        <Icon
+        <icon
           v-if="viewStep == '1'"
           type="engagements"
           :size="18"
@@ -21,7 +21,7 @@
         <v-stepper-items>
           <v-stepper-content step="1">
             <div v-if="!areEngagementAlreadyCreated">
-              <EmptyPage>
+              <empty-page>
                 <template #icon>mdi-alert-circle-outline</template>
                 <template #title>Oops! There’s nothing here yet</template>
                 <template #subtitle>
@@ -31,28 +31,28 @@
                 <template #button>
                   <huxButton
                     icon="mdi-plus"
-                    iconPosition="left"
+                    icon-position="left"
                     variant="primary"
                     size="small"
-                    :isTile="true"
-                    @click="goToStep2()"
+                    :is-tile="true"
                     class="ma-2"
+                    @click="goToStep2()"
                   >
                     New engagement
                   </huxButton>
                 </template>
-              </EmptyPage>
+              </empty-page>
             </div>
-            <div class="ma-1" v-else>
+            <div v-else class="ma-1">
               <h6 class="mb-6 text-h6 neroBlack--text">
                 Select an existing engagement or create a new one. You are
                 required to have at least one selected.
               </h6>
               <huxButton
                 icon="mdi-plus"
-                iconPosition="left"
+                icon-position="left"
                 variant="primary"
-                :isTile="true"
+                :is-tile="true"
                 height="40"
                 @click="goToAddNewEngagement()"
               >
@@ -71,17 +71,17 @@
                     mdi-arrow-down
                   </v-icon>
                 </div>
-                <CardHorizontal
+                <card-horizontal
                   v-for="engagement in engagements"
                   :key="engagement.id"
-                  :isAdded="isEngagementSelected(engagement)"
-                  :enableBlueBackground="isEngagementSelected(engagement)"
-                  @click="onEngagementClick(engagement)"
+                  :is-added="isEngagementSelected(engagement)"
+                  :enable-blue-background="isEngagementSelected(engagement)"
                   class="my-3 mb-4 mt-1"
+                  @click="onEngagementClick(engagement)"
                 >
                   <v-menu open-on-hover offset-x offset-y :max-width="177">
                     <template #activator="{ on }">
-                      <div v-on="on" class="pl-2 font-weight-regular">
+                      <div class="pl-2 font-weight-regular" v-on="on">
                         {{ engagement.name }}
                       </div>
                     </template>
@@ -100,7 +100,7 @@
                       </div>
                     </template>
                   </v-menu>
-                </CardHorizontal>
+                </card-horizontal>
               </div>
             </div>
           </v-stepper-content>
@@ -111,19 +111,19 @@
                 audience.
               </h6>
               <v-form ref="newEngagementRef" v-model="newEngagementValid">
-                <TextField
-                  labelText="Engagement name"
-                  placeholder="Give this engagement a name"
+                <text-field
                   v-model="newEngagement.name"
+                  label-text="Engagement name"
+                  placeholder="Give this engagement a name"
                   height="40"
                   :rules="newEngagementRules"
                   required
                 />
-                <TextField
-                  labelText="Description"
+                <text-field
+                  v-model="newEngagement.description"
+                  label-text="Description"
                   placeholder="What is the purpose of this engagement?"
                   height="40"
-                  v-model="newEngagement.description"
                 />
                 <div class="mb-2">
                   <span class="neroBlack--text text-caption">
@@ -131,7 +131,7 @@
                   </span>
                   <v-menu max-width="240" open-on-hover offset-y>
                     <template #activator="{ on }">
-                      <v-icon v-on="on" color="primary" :size="12" class="ml-1">
+                      <v-icon color="primary" :size="12" class="ml-1" v-on="on">
                         mdi-information-outline
                       </v-icon>
                     </template>
@@ -195,8 +195,8 @@
                   </v-btn-toggle>
                 </div>
                 <v-row
-                  class="delivery-schedule ml-0 mt-6"
                   v-if="newEngagement.delivery_schedule == 1"
+                  class="delivery-schedule ml-0 mt-6"
                 >
                   <div>
                     <span class="date-picker-label">Start date</span>
@@ -216,8 +216,8 @@
                       class=""
                       :label="selectedEndDate"
                       :selected="selectedEndDate"
-                      :isSubMenu="true"
-                      :minDate="selectedStartDate"
+                      :is-sub-menu="true"
+                      :min-date="selectedStartDate"
                       @on-date-select="(val) => (selectedEndDate = val)"
                     />
                   </div>
@@ -229,13 +229,13 @@
       </v-stepper>
     </template>
     <template #footer-right>
-      <div class="d-flex align-baseline" v-if="viewStep == 2">
+      <div v-if="viewStep == 2" class="d-flex align-baseline">
         <huxButton
           variant="primary"
-          :isTile="true"
+          :is-tile="true"
           height="40"
           width="146"
-          :isDisabled="!newEngagementValid"
+          :is-disabled="!newEngagementValid"
           @click.native="addEngagement()"
         >
           Create &amp; add
@@ -245,15 +245,15 @@
 
     <template #footer-left>
       <div
-        class="d-flex align-baseline gray--text text-caption"
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
+        class="d-flex align-baseline gray--text text-caption"
       >
         {{ engagements.length }} results
       </div>
-      <div class="d-flex align-baseline" v-if="viewStep == 2">
+      <div v-if="viewStep == 2" class="d-flex align-baseline">
         <huxButton
           variant="white"
-          :isTile="true"
+          :is-tile="true"
           height="40"
           width="146"
           @click.native="goToStep1()"
@@ -262,7 +262,7 @@
         </huxButton>
       </div>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
@@ -280,7 +280,7 @@ import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
 
 export default {
-  name: "attach-engagement",
+  name: "AttachEngagement",
 
   components: {
     Drawer,
@@ -293,9 +293,21 @@ export default {
     HuxEndDate,
   },
 
-  computed: {
-    areEngagementAlreadyCreated() {
-      return this.engagements.length > 0
+  props: {
+    value: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    finalEngagements: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    closeOnAction: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
@@ -320,21 +332,9 @@ export default {
     }
   },
 
-  props: {
-    value: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    finalEngagements: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    closeOnAction: {
-      type: Boolean,
-      required: false,
-      default: false,
+  computed: {
+    areEngagementAlreadyCreated() {
+      return this.engagements.length > 0
     },
   },
 
@@ -351,6 +351,16 @@ export default {
     finalEngagements: function (newVal) {
       this.selectedEngagements = newVal
     },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.fetchEngagements()
+    this.engagements = JSON.parse(
+      JSON.stringify(this.$store.getters["engagements/list"])
+    )
+    this.sortEngagements()
+    this.loading = false
   },
 
   methods: {
@@ -446,15 +456,6 @@ export default {
       this.toggleSort()
       this.sortEngagements()
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.fetchEngagements()
-    this.engagements = JSON.parse(
-      JSON.stringify(this.$store.getters["engagements/list"])
-    )
-    this.sortEngagements()
-    this.loading = false
   },
 }
 </script>

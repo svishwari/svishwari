@@ -12,7 +12,7 @@ import svgAsComponent from "./SVG"
 import theme from "@/plugins/theme"
 
 export default {
-  name: "icon",
+  name: "Icon",
 
   components: {
     svgAsComponent,

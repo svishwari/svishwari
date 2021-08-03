@@ -344,12 +344,13 @@ class AudienceGetView(SwaggerView):
 
         # get live audience size
         customers = get_customers_overview(
-            token_response[0], audience[api_c.AUDIENCE_FILTERS]
+            token_response[0],
+            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
         )
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
+        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS)
         audience[
             api_c.LOOKALIKE_AUDIENCES
         ] = destination_management.get_all_delivery_platform_lookalike_audiences(
@@ -710,8 +711,8 @@ class AudienceRules(SwaggerView):
                         "name": "Predicted lifetime value",
                         "type": "range",
                         "min": 0,
-                        "max": 100000,
-                        "steps": 500,
+                        "max": 1100,
+                        "steps": 20,
                     },
                     "propensity_to_purchase": {
                         "name": "Propensity to purchase",

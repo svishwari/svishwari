@@ -1,5 +1,5 @@
 <template>
-  <page class="white create-audience-wrap" maxWidth="100%">
+  <page class="white create-audience-wrap" max-width="100%">
     <div>
       <div class="heading font-weight-light neroBlack--text">
         Add an audience
@@ -14,10 +14,10 @@
         Audience overview
       </div>
       <div class="row overview-list mb-0 ml-0 mt-1">
-        <MetricCard
-          class="list-item mr-3"
+        <metric-card
           v-for="(item, i) in overviewListItems"
           :key="i"
+          class="list-item mr-3"
           :grow="i === 0 ? 2 : 1"
           :title="item.title"
           :icon="item.icon"
@@ -34,29 +34,29 @@
               </template>
             </tooltip>
           </template>
-        </MetricCard>
+        </metric-card>
       </div>
       <v-divider class="divider mt-2 mb-9"></v-divider>
     </div>
 
     <div class="timeline-wrapper">
-      <v-form ref="form" class="ml-0" v-model="isFormValid" lazy-validation>
+      <v-form ref="form" v-model="isFormValid" class="ml-0" lazy-validation>
         <!-- TODO: this can be moved Configuration folder -->
-        <FormSteps>
-          <FormStep
+        <form-steps>
+          <form-step
             :step="1"
             label="General information"
             class="neroBlack--text step-1"
           >
             <v-row class="pt-1">
               <v-col cols="4">
-                <TextField
-                  placeholderText="What is the name for this audience ?"
-                  height="40"
-                  labelText="Audience name"
-                  backgroundColor="white"
-                  required
+                <text-field
                   v-model="audience.audienceName"
+                  placeholder-text="What is the name for this audience ?"
+                  height="40"
+                  label-text="Audience name"
+                  background-color="white"
+                  required
                   class="
                     mt-1
                     text-caption
@@ -82,6 +82,7 @@
                     <div>
                       <v-chip
                         v-for="item in selectedEngagements"
+                        :key="item.id"
                         :close="isMinEngagementSelected"
                         small
                         class="mx-2 my-1 font-weight-semi-bold"
@@ -89,7 +90,6 @@
                         color="pillBlue"
                         close-icon="mdi-close"
                         @click:close="detachEngagement(item)"
-                        :key="item.id"
                       >
                         {{ item.name }}
                       </v-chip>
@@ -98,9 +98,9 @@
                 </div>
               </v-col>
             </v-row>
-          </FormStep>
+          </form-step>
 
-          <FormStep
+          <form-step
             :step="2"
             label="Select attribute(s)"
             optional="- Optional"
@@ -112,9 +112,9 @@
                 @updateOverview="(data) => mapCDMOverview(data)"
               />
             </v-col>
-          </FormStep>
+          </form-step>
 
-          <FormStep
+          <form-step
             :step="3"
             label="Select destination(s)"
             optional="- Optional"
@@ -139,12 +139,12 @@
                     <template #label-content>
                       <div class="destination-logo-wrapper">
                         <div class="logo-wrapper">
-                          <Logo
+                          <logo
                             class="added-logo ml-2 svg-icon"
                             :type="destination.type"
                             :size="24"
                           />
-                          <Logo
+                          <logo
                             class="delete-icon"
                             type="delete"
                             @click.native="removeDestination(destination)"
@@ -161,9 +161,9 @@
                 </div>
               </v-col>
             </v-row>
-          </FormStep>
+          </form-step>
 
-          <FormStep
+          <form-step
             :step="4"
             label="Create a lookalike audience"
             :optional="
@@ -174,7 +174,7 @@
             :disabled="!isLookAlikeCreateable"
             class="neroBlack--text"
           >
-            <div class="dark--text" v-if="isLookAlikeCreateable">
+            <div v-if="isLookAlikeCreateable" class="dark--text">
               Would you like to create a lookalike audience from this audience?
               This will create a one-off new audience in Facebook when this<br />
               audience is first delivered.
@@ -207,19 +207,19 @@
               class="mt-0"
             >
               <v-col col="6" class="pr-14">
-                <TextField
-                  placeholderText="What is the name for this new lookalike audience?"
-                  height="40"
-                  labelText="Lookalike audience name"
-                  backgroundColor="white"
-                  required
+                <text-field
                   v-model="lookalikeAudience.name"
+                  placeholder-text="What is the name for this new lookalike audience?"
+                  height="40"
+                  label-text="Lookalike audience name"
+                  background-color="white"
+                  required
                   class="text-caption neroBlack--text"
                 />
               </v-col>
               <v-col col="6" class="pr-14">
                 <div class="neroBlack--text text-caption">Audience reach</div>
-                <LookAlikeSlider v-model="lookalikeAudience.value" />
+                <look-alike-slider v-model="lookalikeAudience.value" />
                 <div class="gray--text text-caption pt-4">
                   Audience reach ranges from 1% to 10% of the combined
                   population of your selected locations. A 1% lookalike consists
@@ -228,15 +228,15 @@
                 </div>
               </v-col>
             </v-row>
-          </FormStep>
-        </FormSteps>
+          </form-step>
+        </form-steps>
       </v-form>
 
-      <HuxFooter maxWidth="inherit">
+      <hux-footer max-width="inherit">
         <template #left>
           <huxButton
             variant="white"
-            isTile
+            is-tile
             width="94"
             height="40"
             @click.native="$router.go(-1)"
@@ -247,20 +247,20 @@
         <template #right>
           <huxButton
             variant="primary"
-            isTile
+            is-tile
             width="94"
             height="44"
+            :is-disabled="!isAudienceFormValid"
             @click="createAudience()"
-            :isDisabled="!isAudienceFormValid"
           >
             Create
           </huxButton>
         </template>
-      </HuxFooter>
+      </hux-footer>
     </div>
 
     <!-- Add destination workflow -->
-    <SelectDestinationsDrawer
+    <select-destinations-drawer
       v-model="selectedDestinations"
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
@@ -268,7 +268,7 @@
     />
 
     <!-- Salesforce extension workflow -->
-    <DestinationDataExtensionDrawer
+    <destination-data-extension-drawer
       v-model="selectedDestinations"
       :toggle="showSalesforceExtensionDrawer"
       :destination="salesforceDestination"
@@ -277,9 +277,9 @@
     />
 
     <!-- Engagement workflow -->
-    <AttachEngagement
+    <attach-engagement
       v-model="engagementDrawer"
-      :finalEngagements="selectedEngagements"
+      :final-engagements="selectedEngagements"
       @onEngagementChange="setSelectedEngagements"
     />
   </page>
@@ -398,6 +398,15 @@ export default {
     },
   },
 
+  async mounted() {
+    this.loading = true
+    await this.getOverview()
+    if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
+    await this.getAudiencesRules()
+    this.mapCDMOverview(this.overview)
+    this.loading = false
+  },
+
   methods: {
     ...mapActions({
       fetchEngagements: "engagements/getAll",
@@ -455,7 +464,7 @@ export default {
       this.overviewListItems[1].subtitle = data.total_countries
       this.overviewListItems[2].subtitle = data.total_us_states
       this.overviewListItems[3].subtitle = data.total_cities
-      this.overviewListItems[4].subtitle = data.max_age
+      this.overviewListItems[4].subtitle = data.min_age + "-" + data.max_age
       this.overviewListItems[5].subtitle = data.gender_women
       this.overviewListItems[6].subtitle = data.gender_men
       this.overviewListItems[7].subtitle = data.gender_other
@@ -556,14 +565,6 @@ export default {
     validateForm(value) {
       this.addDestinationFormValid = value
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getOverview()
-    if (this.$route.params.id) await this.getAudienceById(this.$route.params.id)
-    await this.getAudiencesRules()
-    this.mapCDMOverview(this.overview)
-    this.loading = false
   },
 }
 </script>

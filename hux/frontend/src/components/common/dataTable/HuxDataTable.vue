@@ -17,7 +17,7 @@
         single-select
         :disable-sort="disableSort"
       >
-        <template #item="{ item, expand, isExpanded }" v-if="nested">
+        <template v-if="nested" #item="{ item, expand, isExpanded }">
           <slot
             name="item-row"
             :item="item"
@@ -26,7 +26,7 @@
           ></slot>
         </template>
         <template v-for="h in headers" v-slot:[`header.${h.value}`]>
-          <tooltip :key="h.value" v-if="h.tooltipValue">
+          <tooltip v-if="h.tooltipValue" :key="h.value">
             <template #label-content>
               {{ h.text }}
             </template>
@@ -38,31 +38,35 @@
           </tooltip>
           <template v-if="!h.tooltipValue">
             <!-- TODO: find a better solution and remove v-html -->
-            <span v-html="h.text" :key="h.value" />
+            <span :key="h.value" v-html="h.text" />
           </template>
-          <Tooltip :key="h.value" v-if="h.hoverTooltip" positionTop>
+          <tooltip v-if="h.hoverTooltip" :key="h.value" position-top>
             <template #label-content>
-              <Icon
+              <icon
+                v-if="h.hoverTooltip"
+                :key="h.value"
                 type="info"
                 :size="12"
-                :key="h.value"
-                v-if="h.hoverTooltip"
               />
             </template>
             <template #hover-content>
               {{ h.hoverTooltip }}
             </template>
-          </Tooltip>
+          </tooltip>
         </template>
-        <template #body="{ headers, items }" v-if="!nested">
+        <template v-if="!nested" #body="{ nestedHeaders, items }">
           <tbody>
             <tr v-for="item in items" :key="item.id">
-              <slot name="row-item" :item="item" :headers="headers" />
+              <slot name="row-item" :item="item" :headers="nestedHeaders" />
             </tr>
           </tbody>
         </template>
-        <template #expanded-item="{ headers, item }">
-          <slot name="expanded-row" :headers="headers" :parentItem="item" />
+        <template #expanded-item="{ expandedHeaders, item }">
+          <slot
+            name="expanded-row"
+            :headers="expandedHeaders"
+            :parentItem="item"
+          />
         </template>
       </v-data-table>
     </div>

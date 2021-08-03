@@ -2,7 +2,7 @@
   <div>
     <page-header>
       <template slot="left">
-        <Breadcrumb
+        <breadcrumb
           :items="[
             {
               text: $options.name,
@@ -14,9 +14,9 @@
     </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <v-row class="pa-14" v-if="!loading">
+    <v-row v-if="!loading" class="pa-14">
       <template v-if="hasModels">
-        <DescriptiveCard
+        <descriptive-card
           v-for="model in models"
           :key="model.id"
           :icon="`model-${model.type || 'unsubscribe'}`"
@@ -27,8 +27,8 @@
           @click.native="goToDashboard(model.id)"
         >
           <template slot="top">
-            <Status
-              :iconSize="17"
+            <status
+              :icon-size="17"
               :status="model.status || ''"
               collapsed
               class="d-flex"
@@ -41,7 +41,7 @@
             </p>
 
             <div class="d-flex justify-center mb-6">
-              <CardStat
+              <card-stat
                 label="Version"
                 :value="model.latest_version | Empty"
                 stat-class="border-0"
@@ -62,27 +62,27 @@
                   Prediction period (days)<br />
                   {{ model.prediction_window }}
                 </div>
-              </CardStat>
-              <CardStat
+              </card-stat>
+              <card-stat
                 label="Last trained"
                 :value="model.last_trained | Date('relative') | Empty"
               >
                 {{ model.last_trained | Date | Empty }}
-              </CardStat>
+              </card-stat>
             </div>
           </template>
-        </DescriptiveCard>
+        </descriptive-card>
       </template>
 
       <template v-else>
-        <EmptyPage>
+        <empty-page>
           <template #icon> mdi-alert-circle-outline </template>
           <template #title> Oops! There’s nothing here yet </template>
           <template #subtitle>
             Our team is still working hard activating your models. But they
             should be up and running soon! Please be patient in the meantime!
           </template>
-        </EmptyPage>
+        </empty-page>
       </template>
     </v-row>
   </div>
@@ -125,6 +125,12 @@ export default {
     },
   },
 
+  async mounted() {
+    this.loading = true
+    await this.getModels()
+    this.loading = false
+  },
+
   methods: {
     ...mapActions({
       getModels: "models/getAll",
@@ -136,12 +142,6 @@ export default {
         params: { id: id },
       })
     },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getModels()
-    this.loading = false
   },
 }
 </script>

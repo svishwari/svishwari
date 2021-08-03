@@ -153,6 +153,22 @@ class AudienceEngagementDeleteSchema(Schema):
     )
 
 
+class DestinationEngagedAudienceSchema(Schema):
+    """
+    Schema for adding destination to engagement audience
+    """
+
+    id = fields.String(
+        example="60ae035b6c5bf45da27f17e5",
+        required=True,
+    )
+    delivery_platform_config = fields.Dict(
+        example={db_c.DATA_EXTENSION_NAME: "SFMC Date Extension"},
+        required=False,
+        default=None,
+    )
+
+
 class DisplayAdsSummary(Schema):
     """
     Schema for Display Ads Summary

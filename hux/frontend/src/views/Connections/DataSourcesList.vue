@@ -1,7 +1,7 @@
 <template>
   <div class="list-wrapper">
     <div class="d-flex align-end mb-4">
-      <Icon type="data-sources-list" :size="20" color="neroBlack" />
+      <icon type="data-sources-list" :size="20" color="neroBlack" />
       <h5 class="text-h4 ml-2 mt-1">Data Sources</h5>
       <router-link
         :to="{
@@ -15,19 +15,19 @@
     </div>
 
     <template v-if="hasAddedDatasources">
-      <CardHorizontal
+      <card-horizontal
         v-for="dataSource in addedDataSources"
         :key="dataSource.id"
         :title="dataSource.name"
         :icon="dataSource.type"
-        hideButton
+        hide-button
         class="mb-3 pr-10 list"
       >
-        <Status :status="dataSource.status" :iconSize="17" class="status" />
-      </CardHorizontal>
+        <status :status="dataSource.status" :icon-size="17" class="status" />
+      </card-horizontal>
     </template>
 
-    <EmptyStateData v-else>
+    <empty-state-data v-else>
       <template #icon> mdi-alert-circle-outline </template>
       <template #title> Oops! There’s nothing here yet </template>
       <template #subtitle>
@@ -35,7 +35,7 @@
         <br />
         Begin by selecting the plus button above.
       </template>
-    </EmptyStateData>
+    </empty-state-data>
   </div>
 </template>
 
@@ -48,7 +48,7 @@ import Status from "@/components/common/Status"
 import EmptyStateData from "@/components/common/EmptyStateData"
 
 export default {
-  name: "data-sources-list",
+  name: "DataSourcesList",
 
   components: { EmptyStateData, CardHorizontal, Status, Icon },
 
