@@ -406,7 +406,7 @@ class LatestDeliverySchema(Schema):
     id = fields.String()
     status = fields.String()
     update_time = DateTimeWithZ()
-    size = fields.Int(default=0)
+    size = fields.Int(default=1000)
 
 
 class EngagementAudienceDestinationSchema(Schema):
