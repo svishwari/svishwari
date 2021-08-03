@@ -422,11 +422,8 @@ class DestinationValidatePostView(SwaggerView):
 
     # pylint: disable=bare-except
     @api_error_handler(
-        custom_message={
-            ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
-        }
+        custom_message={"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
     )
-    @validate_destination()
     def post(self) -> Tuple[dict, int]:
         """Validates the credentials for a destination.
 
