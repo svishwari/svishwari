@@ -418,7 +418,7 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
                     for item in perf_metrics
                     if name in item.keys()
                 ]
-            )
+            ) if perf_metrics else None
     elif metric_type == constants.EMAIL:
         for name in constants.EMAIL_METRICS:
             metric[name] = sum(
@@ -427,7 +427,7 @@ def group_perf_metric(perf_metrics: list, metric_type: str) -> dict:
                     for item in perf_metrics
                     if name in item.keys()
                 ]
-            )
+            ) if perf_metrics else None
 
     return metric
 
