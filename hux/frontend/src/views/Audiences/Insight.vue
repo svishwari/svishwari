@@ -123,8 +123,11 @@
         </template>
       </metric-card>
     </div>
-    <div v-if="relatedEngagements.length > 0" class="px-15 my-1 mb-4 pt-6">
-      <v-row class="pa-3 pb-5">
+    <div
+      v-if="relatedEngagements.length > 0"
+      class="px-15 my-1 mb-4 pt-6 relationships"
+    >
+      <v-row class="pa-3 pb-5" style="min-height: 200px">
         <v-col
           :md="
             !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
@@ -147,7 +150,7 @@
               <span class="text-h5">Engagement &amp; delivery overview</span>
             </template>
             <template #title-right>
-              <div class="d-flex align-center">
+              <div class="d-flex align-center section-right">
                 <v-btn
                   text
                   class="
@@ -159,10 +162,16 @@
                   "
                   @click="openAttachEngagementDrawer()"
                 >
+                  <icon
+                    type="engagements"
+                    :size="14"
+                    color="primary"
+                    class="mr-2"
+                  />
                   Add to an engagement
                 </v-btn>
                 <v-btn text color="primary">
-                  <icon type="history" :size="16" class="mr-1" />
+                  <icon type="history" :size="14" class="mr-1" />
                   Delivery history
                 </v-btn>
               </div>
@@ -276,6 +285,7 @@
       @onAddEngagement="triggerAttachEngagement($event)"
     />
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
@@ -663,6 +673,7 @@ export default {
     },
     openLookAlikeDrawer() {
       this.selectedAudience = this.audience
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
@@ -751,6 +762,14 @@ export default {
   }
   .audience-summary {
     padding: 10px 15px;
+  }
+  .relationships {
+    .section-right {
+      .v-size--default {
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
   }
   .container {
     .filter-list {
