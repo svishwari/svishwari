@@ -12,6 +12,8 @@
         />
       </template>
     </page-header>
+    {{loading}}
+    {{hasModels}}
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
     <v-row v-if="!loading" class="pa-14">
@@ -127,7 +129,9 @@ export default {
 
   async mounted() {
     this.loading = true
+    console.log("before")
     await this.getModels()
+    console.log("after")
     this.loading = false
   },
 

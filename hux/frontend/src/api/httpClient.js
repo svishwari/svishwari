@@ -15,7 +15,7 @@ const httpClient = axios.create({
 })
 
 httpClient.interceptors.request.use(async (config) => {
-  const accessToken = await Vue.prototype.$auth.getAccessToken()
+  const accessToken = "await Vue.prototype.$auth.getAccessToken()"
   config.headers.Authorization = `Bearer ${accessToken}`
   return config
 })
