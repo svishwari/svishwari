@@ -4,7 +4,7 @@
       <span class="d-flex">
         <router-link
           :to="{
-            name: 'routeName',
+            name: routeName,
             params: { id: section.id },
           }"
           class="text-decoration-none"
