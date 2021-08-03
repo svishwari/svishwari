@@ -353,6 +353,7 @@ def get_audience_insights(
                                     c.AUDIENCE_STATUS_NOT_DELIVERED,
                                 ]
                             },
+                            "deliveries.id": "$destinations.id",
                         }
                     },
                     {"$match": {"deliveries.name": {"$exists": True}}},
