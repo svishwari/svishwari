@@ -28,7 +28,7 @@ const engagementData = () => {
       {
         id: "7",
         name: "Facebook",
-        type: "facebook",
+        delivery_platform_type: "facebook",
         size: 20901,
         update_time: "2021-07-13T15:38:42.629Z",
         status: "Delivered",

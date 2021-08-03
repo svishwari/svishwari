@@ -95,10 +95,10 @@
                       <span v-if="item.value == 'percentage'">
                         {{ item.subtitle | percentageConvert(true, true) }}
                       </span>
-                      <span v-if="item.value == 'numeric'">
+                      <span v-else-if="item.value == 'numeric'">
                         {{ item.subtitle | Numeric(true, true) }}
                       </span>
-                      <span v-if="item.value == ''">
+                      <span v-else>
                         {{ item.subtitle }}
                       </span>
                     </span>
@@ -107,8 +107,11 @@
                     <span v-if="item.value == 'percentage'">
                       {{ item.subtitle | percentageConvert(true, true) }}
                     </span>
-                    <span v-else>
+                    <span v-else-if="item.value !== 'age'">
                       {{ item.subtitle | Numeric(true, false, false) }}
+                    </span>
+                    <span v-else>
+                      {{ item.subtitle }}
                     </span>
                   </template>
                 </tooltip>
@@ -305,6 +308,7 @@ export default {
         this.overviewListItems[3].subtitle = this.overview.total_cities
         this.overviewListItems[4].subtitle =
           this.overview.min_age + "-" + this.overview.max_age
+        this.overviewListItems[4].value = "age"
         this.overviewListItems[5].subtitle = this.overview.gender_women
         this.overviewListItems[5].value = "percentage"
         this.overviewListItems[6].subtitle = this.overview.gender_men

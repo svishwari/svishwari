@@ -533,8 +533,17 @@ class OrchestrationRouteTest(TestCase):
             ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
         )
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_DISABLED)
+        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_INACTIVE)
         self.assertFalse(audience[api_c.IS_LOOKALIKE])
+
+        # validate the facebook destination in the audience is set to "Not delivered"
+        for audience in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+            self.assertTrue(
+                all(
+                    x[api_c.STATUS] == db_c.AUDIENCE_STATUS_NOT_DELIVERED
+                    for x in audience[api_c.DELIVERIES]
+                )
+            )
 
     def test_get_audience_does_not_exist(self):
         """Test get audience that does not exist
