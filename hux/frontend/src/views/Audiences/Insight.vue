@@ -126,11 +126,7 @@
     <div v-if="relatedEngagements.length > 0" class="px-15 my-1 mb-4 pt-6">
       <v-row class="pa-3 pb-5">
         <v-col
-          :md="
-            audience.lookalikeable && audience.lookalikeable != 'inactive'
-              ? 9
-              : 12
-          "
+          :md="isLookalikable && isLookalikable != 'inactive' ? 9 : 12"
           class="pa-0"
         >
           <delivery-overview
@@ -176,13 +172,13 @@
           </delivery-overview>
         </v-col>
         <v-col
-          v-if="audience.lookalikeable && audience.lookalikeable != 'inactive'"
+          v-if="isLookalikable && isLookalikable != 'inactive'"
           md="3"
           class="pl-6 pr-0 py-0"
         >
           <look-alike-card
-            v-model="audience.lookalike_audiences"
-            :status="audience.lookalikeable"
+            v-model="lookalikeAudiences"
+            :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
           />
         </v-col>
@@ -332,6 +328,7 @@ export default {
       lookalikeCreated: false,
       audienceHistory: [],
       relatedEngagements: [],
+      isLookalikable: false,
       items: [
         {
           text: "Audiences",
@@ -637,7 +634,7 @@ export default {
     },
     openAttachEngagementDrawer() {
       this.closeAllDrawers()
-      this.selectedEngagements = this.audience.engagements.map((eng) => ({
+      this.selectedEngagements = this.relatedEngagements.map((eng) => ({
         id: eng.id,
       }))
       this.engagementDrawer = true
@@ -723,6 +720,8 @@ export default {
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
       this.relatedEngagements = this.audience.engagements
+      this.lookalikeAudiences = this.audience.lookalike_audiences
+      this.isLookalikable = this.audience.lookalikeable
       this.items[1].text = this.audience.name
       this.mapInsights()
       await this.getDestinations()

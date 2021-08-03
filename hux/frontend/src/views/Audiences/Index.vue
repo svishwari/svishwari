@@ -133,7 +133,6 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { filterAudiencesByDestinations } from "@/utils"
 
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
@@ -246,13 +245,7 @@ export default {
     }),
 
     getActionItems(audience) {
-      let filteredAudience = filterAudiencesByDestinations(
-        [audience],
-        ["facebook"]
-      )
-
-      let isOneOfDestinationFacebook =
-        filteredAudience.length > 0 ? true : false
+      let isLookalikeableActive = audience.lookalikeable === "Active"
 
       let actionItems = [
         { title: "Favorite", isDisabled: true },
@@ -261,7 +254,7 @@ export default {
         { title: "Duplicate", isDisabled: true },
         {
           title: "Create a lookalike",
-          isDisabled: !isOneOfDestinationFacebook,
+          isDisabled: !isLookalikeableActive,
           menu: {
             title: "Facebook",
             onClick: () => {
