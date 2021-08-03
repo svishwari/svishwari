@@ -432,7 +432,13 @@ class DestinationValidatePostView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     # pylint: disable=bare-except
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={
+            ValidationError: {
+                "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+            }
+        }
+    )
     def post(self) -> Tuple[dict, int]:
         """Validates the credentials for a destination.
 
@@ -491,7 +497,7 @@ class DestinationValidatePostView(SwaggerView):
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
             }, HTTPStatus.OK
         elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_TWILIO:
-            destination_connector = TwilioConnector(
+            TwilioConnector(
                 auth_details={
                     TwilioCredentials.TWILIO_AUTH_TOKEN.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
