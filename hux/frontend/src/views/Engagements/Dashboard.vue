@@ -214,6 +214,7 @@
       @onBack="closeDrawers"
     />
     <delivery-history-drawer
+      ref="deliveryHistory"
       :engagement-id="engagementId"
       :toggle="showDeliveryHistoryDrawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
@@ -805,7 +806,7 @@ export default {
       this.showDataExtensionDrawer = true
     },
     async triggerAttachDestination(event) {
-      // this.loadingAudiences = true
+      this.loadingAudiences = true
       const payload = event.destination
       await this.attachAudienceDestination({
         engagementId: this.engagementId,
@@ -1001,6 +1002,7 @@ export default {
     },
     //#endregion
     openDeliveryHistoryDrawer() {
+      this.$refs.deliveryHistory.fetchHistory()
       this.showDeliveryHistoryDrawer = true
     },
   },

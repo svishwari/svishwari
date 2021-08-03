@@ -109,6 +109,7 @@ export default {
     },
 
     add(destination) {
+      debugger
       if (this.isAdded(destination)) {
         this.undoAdd(destination)
       } else {
@@ -117,7 +118,9 @@ export default {
         } else {
           this.value.push(destination)
           if (this.closeOnAction) {
-            this.$emit("onAddDestination")
+            this.$emit("onAddDestination", {
+              destination: { id: destination.id },
+            })
             this.localToggle = false
           }
         }
