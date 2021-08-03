@@ -75,7 +75,6 @@ client["engagements"].detachDestination = (resourceId, audienceId, data) => {
       `/engagements/${resourceId}/audiences/${audienceId}/destinations/${data.id}`
     )
   }
-  return http.del(data)
 }
 
 client["engagements"].detachAudience = (resourceId, data) => {
