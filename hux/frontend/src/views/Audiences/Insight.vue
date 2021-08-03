@@ -126,7 +126,11 @@
     <div v-if="relatedEngagements.length > 0" class="px-15 my-1 mb-4 pt-6">
       <v-row class="pa-3 pb-5">
         <v-col
-          :md="!is_lookalike && isLookalikable && isLookalikable != 'Inactive' ? 9 : 12"
+          :md="
+            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
+              ? 9
+              : 12
+          "
           class="pa-0"
         >
           <delivery-overview
