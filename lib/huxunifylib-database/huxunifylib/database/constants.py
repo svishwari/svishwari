@@ -107,6 +107,8 @@ STATUS_PENDING = "Pending"
 STATUS_IN_PROGRESS = "In progress"
 STATUS_FAILED = "Failed"
 STATUS_SUCCEEDED = "Succeeded"
+STATUS_PAUSED = "Paused"
+STATUS_DELIVERED = "Delivered"
 STATUS_TRANSFERRED_FOR_FEEDBACK = "transferred_for_feedback"
 
 INGESTED_DATA = "data"

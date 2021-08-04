@@ -214,6 +214,7 @@ def get_engagements_summary(
                     db_c.ID: "$_id",
                     db_c.NAME: "$name",
                     db_c.ENGAGEMENT_DESCRIPTION: "$description",
+                    # db_c.STATUS: "$status",
                     db_c.CREATE_TIME: "$create_time",
                     db_c.CREATED_BY: "$created_by",
                     db_c.UPDATED_BY: "$updated_by",
@@ -249,6 +250,7 @@ def get_engagements_summary(
                     db_c.ID: "$_id._id",
                     db_c.NAME: "$_id.name",
                     db_c.ENGAGEMENT_DESCRIPTION: "$_id.description",
+                    db_c.STATUS: "$_id.status",
                     db_c.CREATE_TIME: "$_id.create_time",
                     db_c.CREATED_BY: "$_id.created_by",
                     db_c.UPDATED_BY: "$_id.updated_by",
@@ -273,6 +275,7 @@ def get_engagements_summary(
                 db_c.ID: "$_id._id",
                 db_c.NAME: "$_id.name",
                 db_c.ENGAGEMENT_DESCRIPTION: "$_id.description",
+                db_c.STATUS: "$_id.status",
                 db_c.CREATE_TIME: "$_id.create_time",
                 db_c.CREATED_BY: "$_id.created_by",
                 db_c.UPDATED_BY: "$_id.updated_by",
@@ -401,6 +404,7 @@ def update_engagement(
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
+    status: str = None,
 ) -> Union[dict, None]:
     """A function to update fields in an engagement
 
@@ -412,6 +416,7 @@ def update_engagement(
         description (str): Descriptions of the engagement.
         audiences (list): list of audiences.
         delivery_schedule (dict): delivery schedule dict.
+        status (str): Engagement status.
 
     Returns:
         Union[dict, None]: dict object of the engagement that has been updated
@@ -431,6 +436,7 @@ def update_engagement(
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.UPDATED_BY: user_name,
+        db_c.STATUS: status,
     }
 
     # remove dict entries that are None
