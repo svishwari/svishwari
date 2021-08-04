@@ -24,12 +24,17 @@ const mutations = {
   SET_ONE(state, item) {
     Vue.set(state.items, item)
   },
+
+  RESET_ALL(state) {
+    Vue.set(state, "items", {})
+  },
 }
 
 const actions = {
-  async getAll({ commit }, data) {
+  async getAll({ commit }, batchSize) {
     try {
-      const response = await api.notifications.getNotification(data)
+      commit("RESET_ALL")
+      const response = await api.notifications.getNotifications(batchSize)
       commit("SET_ALL", response.data)
     } catch (error) {
       handleError(error)

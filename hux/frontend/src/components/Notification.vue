@@ -14,7 +14,7 @@
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
-        <v-list-item v-for="data in getNotificationData" :key="data.id">
+        <v-list-item v-for="data in sortedNotifications" :key="data.id">
           <v-list-item-title class="text-h6 neroBlack--text list-main">
             <div class="d-flex text-caption">
               <status
@@ -58,9 +58,11 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { orderBy } from "lodash"
 import Status from "./common/Status.vue"
 import Tooltip from "./common/Tooltip.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
+
 export default {
   name: "Notification",
   components: {
@@ -72,8 +74,8 @@ export default {
     ...mapGetters({
       notifications: "notifications/list",
     }),
-    getNotificationData() {
-      return this.notifications.slice(0, 5)
+    sortedNotifications() {
+      return orderBy(this.notifications, "created", "desc").slice(0, 5)
     },
   },
   async mounted() {
