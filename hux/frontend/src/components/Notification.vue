@@ -40,8 +40,16 @@
         </v-list-item>
       </div>
       <v-list-item>
-        <v-list-item-title class="text-h6 view-all text-decoration-none">
-          <div @click="alertRouters()">View all alerts</div>
+        <v-list-item-title>
+          <router-link
+            :to="{
+              name: 'AlertsAndNotifications',
+              query: { batch_size: 25 },
+            }"
+            class="text-h6 view-all text-decoration-none"
+          >
+            View all alerts
+          </router-link>
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -62,25 +70,19 @@ export default {
   },
   computed: {
     ...mapGetters({
-      notification: "notifications/list",
+      notifications: "notifications/list",
     }),
     getNotificationData() {
-      return this.notification.slice(0, 5)
+      return this.notifications.slice(0, 5)
     },
   },
   async mounted() {
-    await this.getNotification(5)
+    await this.getAllNotifications(5)
   },
   methods: {
     ...mapActions({
-      getNotification: "notifications/getAll",
+      getAllNotifications: "notifications/getAll",
     }),
-    alertRouters() {
-      this.$router.push({
-        name: "AlertsAndNotifications",
-        query: { batch_size: 25 },
-      })
-    },
   },
 }
 </script>
