@@ -14,7 +14,7 @@
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
-        <v-list-item v-for="data in sortedNotifications" :key="data.id">
+        <v-list-item v-for="data in mostRecentNotifications" :key="data.id">
           <v-list-item-title class="text-h6 neroBlack--text list-main">
             <div class="d-flex text-caption">
               <status
@@ -74,7 +74,7 @@ export default {
     ...mapGetters({
       notifications: "notifications/list",
     }),
-    sortedNotifications() {
+    mostRecentNotifications() {
       return orderBy(this.notifications, "created", "desc").slice(0, 5)
     },
   },
