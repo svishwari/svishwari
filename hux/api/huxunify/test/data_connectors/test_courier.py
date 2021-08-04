@@ -193,7 +193,6 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
-                api_c.AUDIENCE_ROUTER_STUB_TEST: "1",
             },
         )
         self.assertEqual(

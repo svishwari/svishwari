@@ -64,8 +64,6 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             FacebookCredentials.FACEBOOK_APP_ID.name: auth[
                 api_const.FACEBOOK_APP_ID
             ],
-            # use stub for facebook
-            api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
         }
         secret_dict = {
             FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[

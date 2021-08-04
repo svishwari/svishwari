@@ -537,6 +537,7 @@ class EngagementDeliverHistoryView(SwaggerView):
             z.get(api_c.ID)
             for x in engagement[api_c.AUDIENCES]
             for z in x[api_c.DESTINATIONS]
+            if isinstance(z, dict)
         ]
 
         # get destinations at once to lookup name for each delivery job

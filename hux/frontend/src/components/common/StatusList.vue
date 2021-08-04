@@ -4,7 +4,7 @@
       <span class="d-flex">
         <router-link
           :to="{
-            name: 'routeName',
+            name: routeName,
             params: { id: section.id },
           }"
           class="text-decoration-none"
@@ -35,6 +35,7 @@
           class="ml-3"
           collapsed
           show-label
+          show-icon-tooltip
           :tooltip-title="`${sectionTypePrefix} status`"
         />
       </span>
@@ -75,7 +76,7 @@
               <template #hover-content>
                 <div class="d-flex flex-column">
                   <div class="d-flex align-center">
-                    <logo :type="item.type" :size="18" />
+                    <logo :type="item.delivery_platform_type" :size="18" />
                     <span class="ml-2">{{ item.name }}</span>
                   </div>
                   <span class="mb-1 mt-2">Last delivered:</span>
@@ -169,6 +170,7 @@
             :icon-size="statusIcon"
             collapsed
             show-label
+            show-icon-tooltip
             tooltip-title="Destination status"
           />
         </v-list-item-content>
