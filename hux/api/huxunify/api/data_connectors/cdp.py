@@ -327,6 +327,8 @@ def generate_idr_matching_trends_distribution(
         list: Generated exponential data
 
     """
+    # TODO: Remove after CDM API for IDR matching trends is available
+
     data = [
         multiplier * math.e ** (x * lambda_ / number_of_points)
         for x in range(0, number_of_points)
@@ -351,6 +353,8 @@ def normalize_values(
     Returns:
         list: Normalized values.
     """
+    # TODO: Remove after CDM API for IDR matching trends is available
+
     min_val = min(values)
     max_val = max(values)
     return [
@@ -371,6 +375,8 @@ def add_randomness(values: list, variation_percentage: float = 0.005):
     Returns:
         list: Values with randomness
     """
+    # TODO: Remove after CDM API for IDR matching trends is available
+
     return [
         val
         + randint(
@@ -385,6 +391,7 @@ def get_idr_matching_trends() -> list:
     Returns:
        list: count of known, anonymous, unique ids on a day.
     """
+    # TODO: Update after CDM API for IDR matching trends is available
     year_for_date = datetime.datetime.now().year
     start_date = datetime.datetime.fromisoformat(f"{year_for_date}-01-01")
     end_date = datetime.datetime.utcnow()
