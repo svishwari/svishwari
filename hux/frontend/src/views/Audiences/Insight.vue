@@ -585,7 +585,7 @@ export default {
         case "add a destination": {
           this.closeAllDrawers()
           this.selectedDestinations = []
-          // this.selectedEngagements = []
+          this.engagementId = event.data.id
           this.selectedEngagements.push(event.data)
           this.selectedDestinations.push(
             ...event.data.deliveries.map((dest) => ({ id: dest.id }))
@@ -706,7 +706,7 @@ export default {
       const payload = event.destination
       await this.attachAudienceDestination({
         engagementId: this.engagementId,
-        audienceId: this.selectedAudienceId,
+        audienceId: this.audienceId,
         data: payload,
       })
       await this.loadAudienceInsights()

@@ -301,6 +301,7 @@ export default {
   },
   data() {
     return {
+      engagementList: {},
       selectedAudience: null,
       showLookAlikeDrawer: false,
       destinationArr: [],
@@ -351,10 +352,6 @@ export default {
 
     engagementId() {
       return this.$route.params.id
-    },
-
-    engagementList() {
-      return this.getEngagement(this.engagementId)
     },
 
     breadcrumbItems() {
@@ -938,6 +935,7 @@ export default {
     },
     async loadEngagement(engagementId) {
       await this.getEngagementById(engagementId)
+      this.engagementList = this.getEngagement(this.engagementId)
       await this.getAudiencePerformanceById({
         type: "ads",
         id: this.engagementList.id,

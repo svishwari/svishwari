@@ -149,8 +149,7 @@
                     route-name="AudienceInsight"
                     :route-param="item['id']"
                     :data="item"
-                  >
-                  </menu-cell>
+                  />
                 </div>
                 <div v-if="header.value == 'size'">
                   <div>
