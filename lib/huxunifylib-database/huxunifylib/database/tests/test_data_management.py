@@ -369,7 +369,7 @@ class TestDataManagement(unittest.TestCase):
     def test_set_ingestion_job_status(self):
         """Test set_ingestion_job_status."""
 
-        status = c.STATUS_IN_PROGRESS
+        status = c.AUDIENCE_STATUS_DELIVERING
         status_msg = "This is a test."
 
         doc = am.set_ingestion_job_status(
