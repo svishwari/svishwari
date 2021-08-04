@@ -53,7 +53,7 @@
                   <template #default>
                     <div
                       class="sub-menu-class white"
-                      @click="item.menu.onClick()"
+                      @click="item.menu.onClick(data)"
                     >
                       <logo
                         v-if="item.menu.icon"

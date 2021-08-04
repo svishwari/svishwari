@@ -245,6 +245,7 @@
     />
 
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
@@ -1019,6 +1020,7 @@ export default {
     },
     openLookAlikeDrawer(event) {
       this.selectedAudience = event.parent
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },

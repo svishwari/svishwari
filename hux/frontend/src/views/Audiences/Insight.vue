@@ -276,6 +276,7 @@
       @onAddEngagement="triggerAttachEngagement($event)"
     />
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
@@ -653,6 +654,7 @@ export default {
     },
     openLookAlikeDrawer() {
       this.selectedAudience = this.audience
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },

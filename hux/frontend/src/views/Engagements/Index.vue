@@ -143,22 +143,14 @@
                 :style="{ width: header.width }"
               >
                 <div v-if="header.value == 'name'">
-                  <tooltip>
-                    <template #label-content>
-                      <router-link
-                        :to="{
-                          name: 'AudienceInsight',
-                          params: { id: item['id'] },
-                        }"
-                        class="text-decoration-none primary--text ellipsis-21"
-                        append
-                        >{{ item[header.value] }}
-                      </router-link>
-                    </template>
-                    <template #hover-content>
-                      {{ item[header.value] }}
-                    </template>
-                  </tooltip>
+                  <menu-cell
+                    :value="item[header.value]"
+                    :menu-options="audienceActionItems"
+                    route-name="AudienceInsight"
+                    :route-param="item['id']"
+                    :data="item"
+                  >
+                  </menu-cell>
                 </div>
                 <div v-if="header.value == 'size'">
                   <div>
@@ -227,6 +219,7 @@
     </v-row>
 
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
@@ -272,9 +265,12 @@ export default {
     Tooltip,
     MenuCell,
     LookAlikeAudience,
+    HuxAlert,
   },
   data() {
     return {
+      reRenderKey: 0,
+      selectedAudience: null,
       showLookAlikeDrawer: false,
       flashAlert: false,
       alert: {
@@ -283,17 +279,30 @@ export default {
         message: "Successfully triggered delivery.",
       },
       actionItems: [
-        { title: "Favorite" },
-        { title: "Export" },
-        { title: "Edit" },
-        { title: "Duplicate" },
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        { title: "Edit engagement", isDisabled: true },
+        { title: "Duplicate", isDisabled: true },
+        { title: "Make inactive", isDisabled: true },
+        { title: "Delete engagement", isDisabled: true },
+      ],
+      audienceActionItems: [
+        { title: "Favorite", isDisabled: true },
+        { title: "Export", isDisabled: true },
+        { title: "Edit audience", isDisabled: true },
+        { title: "Duplicate", isDisabled: true },
         {
           title: "Create a lookalike",
-          onClick: (value) => {
-            this.openLookAlikeDrawer(value)
+          isDisabled: false,
+          menu: {
+            title: "Facebook",
+            isDisabled: true,
+            onClick: (value) => {
+              this.openLookAlikeDrawer(value)
+            },
           },
         },
-        { title: "Delete" },
+        { title: "Remove audience", isDisabled: true },
       ],
       breadcrumbItems: [
         {
@@ -368,18 +377,25 @@ export default {
       }
       await this.updateAudienceList({ id: item.id, data: this.audienceList })
     },
-    openLookAlikeDrawer(value){
-      console.log("openLookAlikeDrawer",value)
+    openLookAlikeDrawer(value) {
+      this.selectedAudience = value
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
+      this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
-      this.selectedAudience = event
     },
     reloadAudienceData() {
       this.showLookAlikeDrawer = false
     },
-    onCreated() {
+    async onCreated() {
       // this.lookalikeCreated = true
       this.alert.message = "Lookalike created successfully"
       this.flashAlert = true
+      // this.loading = true
+      // await this.getAllEngagements()
+      // this.rowData = this.engagementData.sort((a, b) =>
+      //   a.name > b.name ? 1 : -1
+      // )
+      // this.loading = false
     },
   },
 }
