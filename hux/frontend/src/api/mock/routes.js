@@ -8,7 +8,7 @@ import {
   destinationsConstants,
   destinationsDataExtensions,
 } from "./factories/destination"
-import { idrOverview } from "./factories/identity"
+import { idrOverview, idrDataFeedReport } from "./factories/identity"
 import attributeRules from "./factories/attributeRules"
 import featureData from "./factories/featureData.json"
 import liftData from "./factories/liftChartData.json"
@@ -359,8 +359,9 @@ export const defineRoutes = (server) => {
     (schema) => {
       return schema.idrDataFeeds.all()
     },
-    { timing: 4000 }
+    { timing: 10 }
   )
+  server.get("/idr/datafeeds/:datafeed_id", () => idrDataFeedReport)
 
   // notifications
   server.get("/notifications", (schema, request) => {
