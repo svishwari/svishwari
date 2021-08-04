@@ -658,8 +658,7 @@ export default {
     dataErrorMesssage(name) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-      this.alert.message =
-        "Failed to schedule a delivery of audience" + name
+      this.alert.message = "Failed to schedule a delivery of audience" + name
       this.flashAlert = true
     },
 
