@@ -946,7 +946,8 @@ export default {
                 id: engagementId,
                 audienceId: event.data.id,
               })
-              this.flashAlert = true
+              this.dataPendingMesssage(event.data.name)
+             
             } catch (error) {
               handleError(error)
               throw error
@@ -960,10 +961,12 @@ export default {
             break
         }
       } catch (error) {
+        this.dataErrorMesssage()
         handleError(error)
         throw error
       }
     },
+  
     async triggerOverviewDestinationAction(event) {
       try {
         const engagementId = this.engagementId
@@ -974,7 +977,7 @@ export default {
               audienceId: event.parent.id,
               destinationId: event.data.id,
             })
-            this.flashAlert = true
+            this.dataPendingMesssage(event.data.name)
             break
           case "edit delivery schedule":
             this.showConfirmModal = true
@@ -985,10 +988,25 @@ export default {
             break
         }
       } catch (error) {
+        this.dataErrorMesssage()
         handleError(error)
         throw error
       }
     },
+    //Alert Message 
+      dataPendingMesssage(name){
+        this.alert.type="success"
+        this.alert.title=""
+        this.alert.message="Your audience, <" + name + ">, has started delivering."
+       this.flashAlert = true
+    },
+       dataErrorMesssage(){
+        this.alert.type="error"
+        this.alert.title="OH NO!"
+        this.alert.message="This is an error or alert! It will disappear in 5 seconds on its own."
+       this.flashAlert = true
+    },
+
     //#endregion
     openDeliveryHistoryDrawer() {
       this.showDeliveryHistoryDrawer = true
