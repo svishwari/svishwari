@@ -36,10 +36,10 @@
       />
       <span class="prop-name">{{ sourceInput.targetName }}</span>
       <span class="text-line"
-        >{{ sourceInput.currentOccurance }} Co-occurances</span
+        >{{ sourceInput.currentOccurence }} Co-occurrences</span
       >
       <span class="text-line-italic"
-        >out of {{ sourceInput.totalOccurance }} total co-occurances</span
+        >out of {{ sourceInput.totalOccurence }} total co-occurrences</span
       >
     </div>
   </v-card>
