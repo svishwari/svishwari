@@ -2444,7 +2444,7 @@ def get_most_recent_campaign_activity_by_delivery_job(
     # Check validity of delivery job ID
     doc = get_delivery_job(database, delivery_job_id)
     if not doc:
-        raise de.InvalidID(delivery_job_id)
+        return None
 
     try:
         cursor = (

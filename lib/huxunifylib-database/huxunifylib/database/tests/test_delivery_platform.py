@@ -1883,7 +1883,7 @@ class TestDeliveryPlatform(unittest.TestCase):
                 "event_details": {
                     "subscriber_key": "1001",
                     "event_type": "click",
-                    "event_date": "6/28/2021 12:00:00 AM",
+                    "event_date": datetime.datetime(2021, 6, 28, 0, 0),
                     "url": "https://google.com",
                 },
                 "name": "My SFMC delivery platform",
@@ -1893,7 +1893,7 @@ class TestDeliveryPlatform(unittest.TestCase):
                 "event_details": {
                     "subscriber_key": "1001",
                     "event_type": "sent",
-                    "event_date": "6/27/2021 12:00:00 AM",
+                    "event_date": datetime.datetime(2021, 6, 27, 0, 0),
                 },
                 "name": "My SFMC delivery platform",
                 "delivery_job_id": delivery_job_id,
@@ -1917,5 +1917,5 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertEqual(
             recent_campaign_activity_doc[c.EVENT_DETAILS][c.EVENT_DATE],
-            "6/28/2021 12:00:00 AM",
+            datetime.datetime(2021, 6, 28, 0, 0),
         )
