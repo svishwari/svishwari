@@ -31,7 +31,7 @@ steps:
     stage: set_env
     title: Set environment variables
     type: freestyle
-    image: alpine
+    image: huxhub.repo.mgnt.in/alpine
     working_directory: "${{CF_REPO_NAME}}"
     commands:
       - cat ./hux/integration_tests/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
