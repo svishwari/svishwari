@@ -31,7 +31,7 @@ describe("Filters", () => {
   })
 
   describe("Percentage filter", () => {
-    it("should convert and display values as a percentage", () => {
+    it("should convert and display a number as a percentage", () => {
       expect(filters.Percentage(0)).toEqual("0%")
       expect(filters.Percentage(0.01)).toEqual("1%")
       expect(filters.Percentage(0.02)).toEqual("2%")
@@ -39,6 +39,12 @@ describe("Filters", () => {
       expect(filters.Percentage(0.044)).toEqual("4%")
       expect(filters.Percentage(0.9949)).toEqual("99%")
       expect(filters.Percentage(1.1005)).toEqual("110%")
+    })
+
+    it("should convert and display a number as a percentage up to two decimal places", () => {
+      expect(filters.Percentage(0.0000495, false)).toEqual("0%")
+      expect(filters.Percentage(0.051, false)).toEqual("5.1%")
+      expect(filters.Percentage(0.01249995, false)).toEqual("1.25%")
     })
   })
 })
