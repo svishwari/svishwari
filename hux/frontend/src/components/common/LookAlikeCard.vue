@@ -1,5 +1,8 @@
 <template>
-  <v-card class="rounded-lg card-info-wrapper lookalike-card box-shadow-5">
+  <v-card
+    class="rounded-lg card-info-wrapper lookalike-card box-shadow-5"
+    height="100%"
+  >
     <v-card-title
       class="card-heading d-flex justify-space-between py-3 pl-4 pr-0"
     >
@@ -117,8 +120,6 @@ export default {
 
 <style lang="scss" scoped>
 .lookalike-card {
-  min-height: 261px;
-  max-height: 261px;
   overflow: hidden;
 
   ::v-deep .v-card-text {
@@ -173,6 +174,11 @@ export default {
     ::v-deep .v-list-item {
       min-height: 44px;
     }
+  }
+  ::v-deep .v-data-table__wrapper {
+    height: inherit !important;
+    min-height: 100px !important;
+    max-height: 190px;
   }
 }
 </style>
