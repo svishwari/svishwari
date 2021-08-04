@@ -1,10 +1,8 @@
 <template>
   <div class="container">
-    <v-card tile class="chart-container rounded-lg box-shadow-5">
-      <div id="label"></div>
-      <div id="chart"></div>
-      <div id="legend"></div>
-    </v-card>
+    <div id="label"></div>
+    <div id="chart"></div>
+    <div id="legend"></div>
   </div>
 </template>
 
@@ -15,10 +13,10 @@ import * as d3Shape from "d3-shape"
 import "d3-transition"
 
 export default {
-  name: "GenderChart",
+  name: "DoughnutChart",
   components: {},
   props: {
-    genderChartData: {
+    data: {
       type: Array,
       required: true,
     },
@@ -40,26 +38,26 @@ export default {
   },
   methods: {
     async initiateGenderChart() {
-      var data = await this.genderChartData // TODO: Get this from API
+      let data = await this.data // TODO: Get this from API
 
       // Initialize width, height & color range
-      var width = this.width,
+      let width = this.width,
         height = this.height,
         radius = Math.min(width, height) / 2
-      var line = 0
-      var col = 0
-      var color = d3Scale
+      let line = 0
+      let col = 0
+      let color = d3Scale
         .scaleOrdinal()
         .range(["#0C9DDB", "#005587", "#42EFFD"])
 
       // Define outer-radius & inner-radius of donut-chart
-      var arc = d3Shape
+      let arc = d3Shape
         .arc()
         .outerRadius(radius - 10)
         .innerRadius(radius - 35)
 
       // Assign value to chart
-      var pie = d3Shape
+      let pie = d3Shape
         .pie()
         .sort(null)
         .value(function (d) {
@@ -74,7 +72,7 @@ export default {
         .attr("class", "pieBox")
 
       // assign style attribute to chart div
-      var svg = d3Select
+      let svg = d3Select
         .select("#mainPie")
         .append("svg")
         .attr("viewBox", `0 0 ${width} ${height}`) // for responsive
@@ -84,7 +82,7 @@ export default {
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
 
       // create arc & append class attribute
-      var g = svg
+      let g = svg
         .selectAll(".arc")
         .data(pie(data))
         .enter()
@@ -99,7 +97,7 @@ export default {
         })
 
       // Creating legends svg element & apply style
-      var legendSvg = d3Select
+      let legendSvg = d3Select
         .select("#legend")
         .append("svg")
         .attr("viewBox", "0 0 200 25") // for responsive
@@ -109,15 +107,15 @@ export default {
         .style("margin-right", "20px")
 
       // calculating distance b/n each legend
-      var legend = legendSvg
+      let legend = legendSvg
         .selectAll(".legend")
         .data(data)
         .enter()
         .append("g")
         .attr("class", "legend")
         .attr("transform", function (d) {
-          var y = line * 25
-          var x = col
+          let y = line * 25
+          let x = col
           col += d.label.length * 10 + 25
           return "translate(" + x + "," + y + ")"
         })
@@ -145,7 +143,7 @@ export default {
         })
 
       // Creating label svg element & apply style
-      var label = d3Select
+      let label = d3Select
         .select("#label")
         .append("svg")
         .attr("width", 200)

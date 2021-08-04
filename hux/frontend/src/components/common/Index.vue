@@ -427,12 +427,12 @@
     <v-divider class="mt-10" />
     <v-subheader>Donut Chart</v-subheader>
     <div class="gender-chart">
-      <gender-chart
+      <doughnut-chart
         :width="250"
         :height="273"
+        :data="genderChartData"
         label="Gender"
-        :genderChartData="genderChartData"
-      ></gender-chart>
+      ></doughnut-chart>
     </div>
 
     <v-divider class="mt-10" />
@@ -666,8 +666,8 @@ import { generateColor } from "@/utils"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
-import GenderChart from "@/components/common/GenderChart/GenderChart"
-import genderData from "@/components/common/GenderChart/genderData.json"
+import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
+import genderData from "@/components/common/DoughnutChart/genderData.json"
 
 export default {
   name: "Components",
@@ -699,7 +699,7 @@ export default {
     Size,
     HuxStartDate,
     HuxEndDate,
-    GenderChart,
+    DoughnutChart,
   },
   methods: {
     onupdatelabelText(newValue) {
