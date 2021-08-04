@@ -612,6 +612,7 @@ def update_delivery_platform(
 
     if added is not None:
         update_doc[c.ADDED] = added
+        update_doc[c.STATUS] = c.STATUS_SUCCEEDED
 
     if enabled is not None:
         update_doc[c.ENABLED] = enabled
