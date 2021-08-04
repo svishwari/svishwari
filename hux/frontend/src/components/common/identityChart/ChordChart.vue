@@ -3,28 +3,28 @@
     <v-list-item three-line>
       <v-list-item-content>
         <div class="title-section">
-          <Tooltip positionTop>
+          <tooltip position-top>
             <template #label-content>
               Individual Identity
-              <Icon type="info" :size="12" />
+              <icon type="info" :size="12" />
             </template>
             <template #hover-content>
               {{ tooltipText }}
             </template>
-          </Tooltip>
+          </tooltip>
         </div>
         <v-list-item-subtitle
-          class="legend-section"
           v-for="item in legendsData"
           :key="item.id"
+          class="legend-section"
         >
-          <Icon :type="item.icon" :size="12" />
+          <icon :type="item.icon" :size="12" />
           <span>{{ item.prop }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
       <div
-        class="chart-section"
         ref="huxChart"
+        class="chart-section"
         @mouseover="getCordinates($event)"
       ></div>
     </v-list-item>
@@ -40,7 +40,7 @@ import * as d3Array from "d3-array"
 import Tooltip from "@/components/common/Tooltip"
 import Icon from "@/components/common/Icon"
 export default {
-  name: "chord-chart",
+  name: "ChordChart",
   components: { Icon, Tooltip },
   props: {
     /**
@@ -85,6 +85,18 @@ export default {
         y: 0,
       },
     }
+  },
+
+  watch: {
+    value: function () {
+      d3Select.select(this.$refs.huxChart).select("svg").remove()
+      this.calculateChartValues()
+    },
+  },
+
+  mounted() {
+    this.initializeValues()
+    this.calculateChartValues()
   },
   methods: {
     initializeValues() {
@@ -198,24 +210,12 @@ export default {
       this.$emit("tooltipDisplay", showTip, isArcHover, groupIndex)
     },
   },
-
-  watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-      this.calculateChartValues()
-    },
-  },
-
-  mounted() {
-    this.initializeValues()
-    this.calculateChartValues()
-  },
 }
 </script>
 
 <style lang="scss" scoped>
 .chart-container {
-  max-width: 424px;
+  max-width: none;
   height: 252px;
 
   .legend-section {

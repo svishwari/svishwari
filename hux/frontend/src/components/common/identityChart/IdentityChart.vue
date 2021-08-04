@@ -2,21 +2,21 @@
   <div class="container">
     <chord-chart
       v-model="chartMatrix"
-      :colorCodes="colorCodes"
-      :chartLegendsData="chartLegendsData"
-      v-on:cordinates="getCordinates"
-      v-on:tooltipDisplay="toolTipDisplay"
+      :color-codes="colorCodes"
+      :chart-legends-data="chartLegendsData"
+      @cordinates="getCordinates"
+      @tooltipDisplay="toolTipDisplay"
     />
-    <ChartTooltip
+    <chart-tooltip
       :position="{
         x: tooltip.x,
         y: tooltip.y,
       }"
-      :showTooltip="show"
-      :isArcHover="isArcHover"
-      :sourceInput="currentData"
+      :show-tooltip="show"
+      :is-arc-hover="isArcHover"
+      :source-input="currentData"
     >
-    </ChartTooltip>
+    </chart-tooltip>
   </div>
 </template>
 
@@ -25,7 +25,7 @@ import ChartTooltip from "@/components/common/identityChart/ChartTooltip"
 import ChordChart from "@/components/common/identityChart/ChordChart"
 import identity_resolution from "@/components/common/identityChart/chartData.json"
 export default {
-  name: "identity-chart",
+  name: "IdentityChart",
   components: { ChordChart, ChartTooltip },
   data() {
     return {
@@ -74,6 +74,10 @@ export default {
       chartMatrix: [],
       groupNames: [],
     }
+  },
+  mounted() {
+    this.generateChartGroups()
+    this.transformData()
   },
   methods: {
     generateChartGroups() {
@@ -167,10 +171,6 @@ export default {
       }
       return extractedValues
     },
-  },
-  mounted() {
-    this.generateChartGroups()
-    this.transformData()
   },
 }
 </script>

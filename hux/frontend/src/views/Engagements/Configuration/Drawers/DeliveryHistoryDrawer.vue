@@ -11,7 +11,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <hux-data-table
-        :headers="headers"
+        :columns="headers"
         :data-items="items"
         sort-column="delivered"
       >
@@ -140,16 +140,6 @@ export default {
     }
   },
 
-  watch: {
-    toggle(value) {
-      this.localToggle = value
-    },
-
-    localToggle(value) {
-      this.$emit("onToggle", value)
-    },
-  },
-
   computed: {
     ...mapGetters({
       engagementDeliveries: "engagements/deliveries",
@@ -158,6 +148,16 @@ export default {
 
     items() {
       return this.engagementDeliveries(this.engagementId)
+    },
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
     },
   },
 
@@ -171,10 +171,6 @@ export default {
       await this.getEngagementDeliveries(this.engagementId)
       this.loading = false
     },
-  },
-
-  async mounted() {
-    await this.fetchHistory()
   },
 }
 </script>

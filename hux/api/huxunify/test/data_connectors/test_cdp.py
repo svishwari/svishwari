@@ -14,7 +14,6 @@ from huxunify.test import constants as t_c
 from huxunify.api.data_connectors.cdp import (
     clean_cdm_fields,
     DATETIME_FIELDS,
-    DEFAULT_DATETIME,
 )
 from huxunify.app import create_app
 
@@ -127,8 +126,7 @@ class CDPTest(TestCase):
                 self.assertEqual(date_text, value)
                 continue
 
-            # otherwise ensure the result was mapped to the default time
-            self.assertEqual(value, DEFAULT_DATETIME)
+            self.assertEqual(value, None)
 
     def test_get_idr_data_feeds(self):
         """

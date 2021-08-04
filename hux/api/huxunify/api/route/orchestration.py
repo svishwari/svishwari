@@ -2,7 +2,6 @@
 Paths for Orchestration API
 """
 from http import HTTPStatus
-from random import randrange
 from typing import Tuple, Union
 from flasgger import SwaggerView
 from bson import ObjectId
@@ -344,12 +343,13 @@ class AudienceGetView(SwaggerView):
 
         # get live audience size
         customers = get_customers_overview(
-            token_response[0], audience[api_c.AUDIENCE_FILTERS]
+            token_response[0],
+            {api_c.AUDIENCE_FILTERS: audience[api_c.AUDIENCE_FILTERS]},
         )
 
         # Add insights, size.
         audience[api_c.AUDIENCE_INSIGHTS] = customers
-        audience[api_c.SIZE] = customers.get(api_c.TOTAL_RECORDS)
+        audience[api_c.SIZE] = customers.get(api_c.TOTAL_CUSTOMERS)
         audience[
             api_c.LOOKALIKE_AUDIENCES
         ] = destination_management.get_all_delivery_platform_lookalike_audiences(
@@ -443,6 +443,8 @@ class AudiencePostView(SwaggerView):
 
         body = AudiencePostSchema().load(request.get_json(), partial=True)
 
+        token_response = get_token_from_request(request)
+
         # validate destinations
         database = get_db_client()
         if db_c.DESTINATIONS in body:
@@ -493,6 +495,12 @@ class AudiencePostView(SwaggerView):
                 engagement_ids.append(engagement_id)
 
         try:
+            # get live audience size
+            customers = get_customers_overview(
+                token_response[0],
+                {api_c.AUDIENCE_FILTERS: body.get(api_c.AUDIENCE_FILTERS)},
+            )
+
             # create the audience
             audience_doc = orchestration_management.create_audience(
                 database=database,
@@ -500,6 +508,7 @@ class AudiencePostView(SwaggerView):
                 audience_filters=body.get(api_c.AUDIENCE_FILTERS),
                 destination_ids=body.get(api_c.DESTINATIONS),
                 user_name=user_name,
+                size=customers.get(api_c.TOTAL_CUSTOMERS, 0),
             )
 
             # add notification
@@ -546,7 +555,7 @@ class AudiencePostView(SwaggerView):
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
             }, HTTPStatus.BAD_REQUEST
-        audience_doc[api_c.SIZE] = randrange(10000000)
+
         return AudienceGetSchema().dump(audience_doc), HTTPStatus.CREATED
 
 
@@ -710,8 +719,8 @@ class AudienceRules(SwaggerView):
                         "name": "Predicted lifetime value",
                         "type": "range",
                         "min": 0,
-                        "max": 100000,
-                        "steps": 500,
+                        "max": 1100,
+                        "steps": 20,
                     },
                     "propensity_to_purchase": {
                         "name": "Propensity to purchase",

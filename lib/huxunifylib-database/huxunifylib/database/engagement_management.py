@@ -237,6 +237,8 @@ def get_engagements_summary(
                         db_c.LATEST_DELIVERY: {
                             db_c.UPDATE_TIME: "$audiences.destinations.latest_delivery.update_time",
                             db_c.STATUS: "$audiences.destinations.latest_delivery.status",
+                            db_c.SIZE: "$audiences.destinations.latest_delivery."
+                            "delivery_platform_audience_size",
                         },
                     }
                 },

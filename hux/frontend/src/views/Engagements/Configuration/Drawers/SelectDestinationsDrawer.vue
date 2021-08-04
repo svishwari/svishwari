@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localToggle" :width="640">
+  <drawer v-model="localToggle" :width="640">
     <template #header-left>
       <h3 class="text-h3">Add destinations to this audience</h3>
     </template>
@@ -8,7 +8,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <div class="pa-8">
-        <DataCards
+        <data-cards
           :items="connectedDestinations"
           :fields="[
             {
@@ -20,14 +20,14 @@
               sortable: false,
             },
           ]"
-          :selectedItems="selectedDestinations"
+          :selected-items="selectedDestinations"
           empty="No destinations have been connected and added yet."
         >
           <template #field:name="{ item }">
             <div class="d-flex align-center">
-              <Logo
-                class="mr-2"
+              <logo
                 :key="item.type"
+                class="mr-2"
                 :type="item.type"
                 :size="26"
               />
@@ -37,32 +37,32 @@
 
           <template #field:manage="{ item }">
             <div class="d-flex align-center justify-end">
-              <HuxButton
+              <hux-button
                 v-if="isAdded(item.id)"
                 variant="secondary"
                 width="100"
                 height="40"
                 icon="mdi-check"
-                iconPosition="left"
-                :boxShadow="false"
+                icon-position="left"
+                :box-shadow="false"
                 @click="undoAdd(item)"
               >
                 Added
-              </HuxButton>
-              <HuxButton
+              </hux-button>
+              <hux-button
                 v-else
-                isOutlined
+                is-outlined
                 variant="primary"
                 width="100"
                 height="40"
-                :boxShadow="false"
+                :box-shadow="false"
                 @click="add(item)"
               >
                 Add
-              </HuxButton>
+              </hux-button>
             </div>
           </template>
-        </DataCards>
+        </data-cards>
       </div>
     </template>
 
@@ -71,7 +71,7 @@
         {{ connectedDestinations.length }} results
       </span>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
@@ -115,16 +115,6 @@ export default {
     }
   },
 
-  watch: {
-    toggle(value) {
-      this.localToggle = value
-    },
-
-    localToggle(value) {
-      this.$emit("onToggle", value)
-    },
-  },
-
   computed: {
     ...mapGetters({
       destinations: "destinations/list",
@@ -142,6 +132,22 @@ export default {
       }
       return []
     },
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
+    },
+  },
+
+  mounted() {
+    this.loading = true
+    this.getDestinations()
+    this.loading = false
   },
 
   methods: {
@@ -163,7 +169,9 @@ export default {
         this.selectedDestinations.push({
           id: destination.id,
         })
-        this.$emit("addedDestination", this.selectedDestinations)
+        this.$emit("addedDestination", {
+          destination: { id: destination.id },
+        })
         this.localToggle = false
       }
     },
@@ -175,12 +183,6 @@ export default {
       )
       this.selectedDestinations.splice(index, 1)
     },
-  },
-
-  mounted() {
-    this.loading = true
-    this.getDestinations()
-    this.loading = false
   },
 }
 </script>

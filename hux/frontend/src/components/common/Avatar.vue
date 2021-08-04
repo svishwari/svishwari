@@ -1,5 +1,5 @@
 <template>
-  <Tooltip>
+  <tooltip>
     <template #label-content>
       <span
         class="blue-grey d-flex align-center justify-center"
@@ -11,7 +11,7 @@
     <template #hover-content>
       {{ localName }}
     </template>
-  </Tooltip>
+  </tooltip>
 </template>
 
 <script>

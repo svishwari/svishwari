@@ -1,5 +1,5 @@
 <template>
-  <Drawer
+  <drawer
     v-model="localToggle"
     :loading="loading"
     class="lookalike-drawer"
@@ -7,22 +7,22 @@
   >
     <template #header-left>
       <div class="d-flex align-center">
-        <Icon type="lookalike" :size="32" color="secondary" class="mr-2" />
+        <icon type="lookalike" :size="32" color="secondary" class="mr-2" />
         <h3 class="text-h3">Create a lookalike audience in Facebook</h3>
       </div>
     </template>
 
     <template #default>
-      <v-form v-model="isFormValid" ref="lookalikeForm">
+      <v-form ref="lookalikeForm" v-model="isFormValid">
         <div class="lookalike-form px-4 py-3">
           <div class="text-h6 darkGrey--text pb-8">
             Creating a lookalike audience will create a one-off new audience in
             Facebook.
           </div>
-          <TextField
+          <text-field
             v-model="lookalikeAudience.name"
             class="pb-3"
-            labelText="Lookalike audience name"
+            label-text="Lookalike audience name"
             placeholder="What is the name for this new lookalike audience?"
             :rules="lookalikeNameRules"
             required
@@ -33,7 +33,7 @@
           </div>
           <v-select
             v-model="selectAudience"
-            :items="fbDeliveredAudiences"
+            :items="lookalikeAbleAudiences"
             dense
             outlined
             class="delivered-audience-selection pb-10"
@@ -46,11 +46,11 @@
             Attach this audience to an engagement - you must have at least one
           </div>
 
-          <HuxDropDownSearch
+          <hux-drop-down-search
             v-model="lookalikeAudience.engagements"
-            :toggleDropDown="toggleDropDown"
-            @onToggle="(val) => (toggleDropDown = val)"
+            :toggle-drop-down="toggleDropDown"
             :items="engagements"
+            @onToggle="(val) => (toggleDropDown = val)"
           >
             <template #activator>
               <div class="dropdown-select-activator">
@@ -64,10 +64,11 @@
                 />
               </div>
             </template>
-          </HuxDropDownSearch>
+          </hux-drop-down-search>
 
           <v-chip
             v-for="(item, index) in lookalikeAudience.engagements"
+            :key="item.id"
             :close="selectedEngagementsLength > 1"
             small
             class="mr-2 my-2 font-weight-semi-bold"
@@ -75,7 +76,6 @@
             color="pillBlue"
             close-icon="mdi-close"
             @click:close="detachEngagement(index)"
-            :key="item.id"
           >
             {{ item.name }}
           </v-chip>
@@ -90,35 +90,34 @@
             a bigger, broader audience.
           </div>
 
-          <LookAlikeSlider v-model="lookalikeAudience.value" class="mr-6" />
+          <look-alike-slider v-model="lookalikeAudience.value" class="mr-6" />
         </div>
       </v-form>
     </template>
 
     <template #footer-right>
       <div class="d-flex align-baseline">
-        <HuxButton
+        <hux-button
           variant="primary"
-          isTile
+          is-tile
           height="40"
           class="ma-2"
-          :isDisabled="!(isFormValid && selectedEngagementsLength !== 0)"
+          :is-disabled="!(isFormValid && selectedEngagementsLength !== 0)"
           @click="createLookalike()"
         >
           Create &amp; deliver
-        </HuxButton>
+        </hux-button>
       </div>
     </template>
 
     <template #footer-left>
       <div />
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { filterAudiencesByDestinations } from "@/utils"
 
 import Drawer from "@/components/common/Drawer"
 import LookAlikeSlider from "@/components/common/LookAlikeSlider"
@@ -139,35 +138,15 @@ export default {
     HuxDropDownSearch,
   },
 
-  computed: {
-    ...mapGetters({
-      engagements: "engagements/list",
-      audiences: "audiences/list",
-    }),
-
-    selectAudience: {
-      get() {
-        return this.selectedAudience
-      },
-      set(value) {
-        this.lookalikeAudience.audience = value
-      },
-    },
-    fbDeliveredAudiences() {
-      let filteredAudience = filterAudiencesByDestinations(this.audiences, [
-        "facebook",
-      ])
-
-      return filteredAudience.map((each) => {
-        return {
-          text: each.name,
-          value: each,
-        }
-      })
+  props: {
+    toggle: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
 
-    selectedEngagementsLength() {
-      return this.lookalikeAudience.engagements.length
+    selectedAudience: {
+      required: false,
     },
   },
 
@@ -185,6 +164,60 @@ export default {
       isFormValid: false,
       lookalikeNameRules: [(v) => !!v || "Lookalike audience name is required"],
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      engagements: "engagements/list",
+      audiences: "audiences/list",
+    }),
+
+    selectAudience: {
+      get() {
+        return this.selectedAudience
+      },
+      set(value) {
+        this.lookalikeAudience.audience = value
+      },
+    },
+    lookalikeAbleAudiences() {
+      // This assumes we cannot create a lookalike audience from a lookalike audience
+      let filteredAudience = this.audiences.filter(
+        (each) => each.lookalikeable === "Active" && !each.is_lookalike
+      )
+
+      return filteredAudience.map((each) => {
+        return {
+          text: each.name,
+          value: each,
+        }
+      })
+    },
+
+    selectedEngagementsLength() {
+      return this.lookalikeAudience.engagements.length
+    },
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
+    },
+
+    selectedAudience(value) {
+      this.lookalikeAudience.audience = value
+    },
+  },
+
+  async mounted() {
+    this.loading = true
+    await this.getAllEngagements()
+    await this.getAllAudiences()
+    this.loading = false
   },
 
   methods: {
@@ -224,39 +257,6 @@ export default {
       this.reset()
       this.localToggle = false
       this.$emit("onBack")
-    },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getAllEngagements()
-    await this.getAllAudiences()
-    this.loading = false
-  },
-
-  props: {
-    toggle: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-
-    selectedAudience: {
-      required: false,
-    },
-  },
-
-  watch: {
-    toggle(value) {
-      this.localToggle = value
-    },
-
-    localToggle(value) {
-      this.$emit("onToggle", value)
-    },
-
-    selectedAudience(value) {
-      this.lookalikeAudience.audience = value
     },
   },
 }

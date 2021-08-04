@@ -4,11 +4,11 @@
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
-    @click="$emit('click')"
     height="90"
     :disabled="!active"
     elevation="0"
     :ripple="interactable"
+    @click="$emit('click')"
   >
     <div class="d-flex align-center justify-space-between">
       <div class="flex-grow-1">
@@ -19,7 +19,7 @@
         >
           {{ title }}
         </span>
-        <Tooltip v-else>
+        <tooltip v-else>
           <template #label-content>
             <span
               class="text-caption"
@@ -31,7 +31,7 @@
           <template #hover-content>
             {{ titleTooltip }}
           </template>
-        </Tooltip>
+        </tooltip>
 
         <slot name="extra-item"></slot>
 
@@ -51,8 +51,8 @@
 <script>
 import Tooltip from "./Tooltip.vue"
 export default {
+  name: "MetricCard",
   components: { Tooltip },
-  name: "metric-card",
 
   props: {
     icon: {

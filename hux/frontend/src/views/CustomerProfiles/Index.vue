@@ -1,14 +1,14 @@
 <template>
   <div class="customer-dashboard-wrap">
-    <PageHeader class="background-border" :headerHeightChanges="'py-3'">
+    <page-header class="background-border" :header-height-changes="'py-3'">
       <template #left>
-        <Breadcrumb :items="items" />
+        <breadcrumb :items="items" />
       </template>
       <template #right>
         <hux-button
           class="mr-4 pa-3"
-          isCustomIcon
-          isTile
+          is-custom-icon
+          is-tile
           icon="customer-profiles"
           variant="white"
           @click="viewCustomerList()"
@@ -19,20 +19,20 @@
           mdi-download
         </v-icon>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <div v-if="!loading">
       <div class="row px-15 mt-6 mb-6 row-margin">
-        <MetricCard
+        <metric-card
           v-for="item in primaryItems"
+          :key="item.title"
           class="card-margin"
           :grow="item.toolTipText ? 1 : 0"
           :icon="item.icon"
-          :key="item.title"
           :title="item.title"
         >
           <template #subtitle-extended>
-            <Tooltip v-if="!item.toolTipText">
+            <tooltip v-if="!item.toolTipText">
               <template #label-content>
                 <span class="font-weight-semi-bold" v-html="updatedTimeStamp">
                 </span>
@@ -40,12 +40,12 @@
               <template #hover-content>
                 {{ item.subtitle }}
               </template>
-            </Tooltip>
-            <Tooltip v-if="item.toolTipText">
+            </tooltip>
+            <tooltip v-if="item.toolTipText">
               <template #label-content>
                 <span class="font-weight-semi-bold">
                   <span v-if="item.value == 'percentage'">
-                    {{ item.subtitle | percentageConvert(true, true) }}
+                    {{ item.subtitle | Numeric(true, false, false, true) }}
                   </span>
                   <span v-if="item.value == 'numeric'">
                     {{ item.subtitle | Numeric(true, true) }}
@@ -54,34 +54,34 @@
               </template>
               <template #hover-content>
                 <span v-if="item.value == 'percentage'">
-                  {{ item.subtitle | percentageConvert(true, true) }}
+                  {{ item.subtitle | Numeric(true, false, false, true) }}
                 </span>
                 <span v-else>
                   {{ item.subtitle | Numeric(true, false, false) }}
                 </span>
               </template>
-            </Tooltip>
+            </tooltip>
           </template>
           <template v-if="item.toolTipText" #extra-item>
-            <Tooltip positionTop>
+            <tooltip position-top>
               <template #label-content>
-                <Icon type="info" :size="12" />
+                <icon type="info" :size="12" />
               </template>
               <template #hover-content>
                 {{ item.toolTipText }}
               </template>
-            </Tooltip>
+            </tooltip>
           </template>
-        </MetricCard>
+        </metric-card>
       </div>
-      <div class="px-15 my-1" v-if="overviewListItems">
+      <div v-if="overviewListItems" class="px-15 my-1">
         <v-card class="rounded pa-5 box-shadow-5">
           <div class="overview">Customer overview</div>
           <div class="row overview-list mb-0 ml-0 mt-1">
-            <MetricCard
+            <metric-card
               v-for="item in overviewListItems"
-              class="mr-3"
               :key="item.title"
+              class="mr-3"
               :grow="item.toolTipText ? 2 : 1"
               :title="item.title"
               :icon="item.icon"
@@ -89,41 +89,50 @@
               @click="item.toolTipText ? viewCustomerList() : ''"
             >
               <template #subtitle-extended>
-                <Tooltip>
+                <tooltip>
                   <template #label-content>
                     <span class="font-weight-semi-bold">
                       <span v-if="item.value == 'percentage'">
-                        {{ item.subtitle | percentageConvert(true, true) }}
+                        {{ item.subtitle | Numeric(true, false, false, true) }}
                       </span>
                       <span v-if="item.value == 'numeric'">
                         {{ item.subtitle | Numeric(true, true) }}
                       </span>
-                      <span v-if="item.value == ''">
+                      <span v-if="item.value == 'none'">
                         {{ item.subtitle }}
+                      </span>
+                      <span v-if="item.value == ''">
+                        {{ item.subtitle | Numeric(true, true) }}
                       </span>
                     </span>
                   </template>
                   <template #hover-content>
                     <span v-if="item.value == 'percentage'">
-                      {{ item.subtitle | percentageConvert(true, true) }}
+                      {{ item.subtitle | Numeric(true, false, false, true) }}
                     </span>
-                    <span v-else>
+                    <span v-if="item.value == 'numeric'">
                       {{ item.subtitle | Numeric(true, false, false) }}
                     </span>
+                    <span v-if="item.value == 'none'">
+                      {{ item.subtitle }}
+                    </span>
+                    <span v-if="item.value == ''">
+                      {{ item.subtitle }}
+                    </span>
                   </template>
-                </Tooltip>
+                </tooltip>
               </template>
               <template v-if="item.toolTipText" #extra-item>
-                <Tooltip positionTop>
+                <tooltip position-top>
                   <template #label-content>
-                    <Icon type="info" :size="12" />
+                    <icon type="info" :size="12" />
                   </template>
                   <template #hover-content>
                     {{ item.toolTipText }}
                   </template>
-                </Tooltip>
+                </tooltip>
               </template>
-            </MetricCard>
+            </metric-card>
           </div>
         </v-card>
       </div>
@@ -136,15 +145,15 @@
         </v-col>
       </v-row>
       <v-divider class="my-8"></v-divider>
-      <EmptyStateChart>
+      <empty-state-chart>
         <template #chart-image>
           <img
             src="@/assets/images/empty-state-chart-3.png"
             alt="Empty state"
           />
         </template>
-      </EmptyStateChart>
-      <CustomerDetails v-model="customerProfilesDrawer" />
+      </empty-state-chart>
+      <customer-details v-model="customerProfilesDrawer" />
     </div>
   </div>
 </template>
@@ -289,6 +298,13 @@ export default {
     },
   },
 
+  async mounted() {
+    this.loading = true
+    await this.getOverview()
+    this.mapOverviewData()
+    this.loading = false
+  },
+
   methods: {
     ...mapActions({
       getOverview: "customers/getOverview",
@@ -301,11 +317,13 @@ export default {
         this.overviewListItems[1].subtitle = this.overview.total_countries
         this.overviewListItems[2].subtitle = this.overview.total_us_states
         this.overviewListItems[3].subtitle = this.overview.total_cities
+        this.overviewListItems[3].value = "numeric"
         this.overviewListItems[4].subtitle =
-          this.overview.min_age + "-" + this.overview.max_age
-        this.overviewListItems[5].subtitle = this.overview.gender_men
+          this.overview.min_age + "–" + this.overview.max_age
+        this.overviewListItems[4].value = "none"
+        this.overviewListItems[5].subtitle = this.overview.gender_women
         this.overviewListItems[5].value = "percentage"
-        this.overviewListItems[6].subtitle = this.overview.gender_women
+        this.overviewListItems[6].subtitle = this.overview.gender_men
         this.overviewListItems[6].value = "percentage"
         this.overviewListItems[7].subtitle = this.overview.gender_other
         this.overviewListItems[7].value = "percentage"
@@ -340,13 +358,6 @@ export default {
     viewCustomerList() {
       this.customerProfilesDrawer = !this.customerProfilesDrawer
     },
-  },
-
-  async mounted() {
-    this.loading = true
-    await this.getOverview()
-    this.mapOverviewData()
-    this.loading = false
   },
 }
 </script>

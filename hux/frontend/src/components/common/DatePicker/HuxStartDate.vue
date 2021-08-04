@@ -2,24 +2,24 @@
   <div class="hux-date-picker">
     <v-menu
       ref="menu"
+      v-model="menu"
       :close-on-content-click="false"
       :return-value.sync="start"
       :offset-x="isOffsetX"
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
-      v-model="menu"
     >
       <template #activator="{ on }">
         <huxButton
           :v-on="on"
-          @click="menu = true"
           text
           width="200"
           icon=" mdi-chevron-down"
-          iconPosition="right"
+          icon-position="right"
           tile
           class="ma-2 main-button pr-1"
+          @click="menu = true"
         >
           {{ optionSelected["name"] || label }}
         </huxButton>
@@ -36,8 +36,8 @@
       </v-list>
       <v-list v-if="!endDate">
         <v-date-picker
-          class="start-date-picker"
           v-model="start"
+          class="start-date-picker"
           :min="todaysDate"
           no-title
           scrollable
@@ -51,7 +51,7 @@
           <v-spacer></v-spacer>
           <huxButton
             variant="tertiary"
-            isTile
+            is-tile
             class="btn-cancel ml-4"
             @click="menu = false"
           >
@@ -59,7 +59,7 @@
           </huxButton>
           <huxButton
             variant="tertiary"
-            isTile
+            is-tile
             class="btn-select mr-4"
             @click="
               $refs.menu.save(start)
@@ -76,14 +76,9 @@
 <script>
 import huxButton from "@/components/common/huxButton"
 export default {
-  name: "hux-start-date",
+  name: "HuxStartDate",
   components: {
     huxButton,
-  },
-  computed: {
-    optionSelected() {
-      return this.selected || this.label
-    },
   },
   props: {
     selected: {
@@ -98,11 +93,6 @@ export default {
     isOffsetY: { type: Boolean, default: true },
     isOpenOnHover: { type: Boolean, default: false },
     transition: { type: String, default: "scale-transition" },
-  },
-  methods: {
-    selectDate(data) {
-      this.$emit("on-date-select", data)
-    },
   },
   data: function () {
     return {
@@ -119,6 +109,16 @@ export default {
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       ).toISOString(),
     }
+  },
+  computed: {
+    optionSelected() {
+      return this.selected || this.label
+    },
+  },
+  methods: {
+    selectDate(data) {
+      this.$emit("on-date-select", data)
+    },
   },
 }
 </script>

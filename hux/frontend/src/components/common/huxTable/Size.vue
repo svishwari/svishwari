@@ -14,12 +14,13 @@
 import Vue from "vue"
 import Tooltip from "../Tooltip.vue"
 export default Vue.extend({
+  name: "Size",
   components: { Tooltip },
-  name: "size",
   props: {
     value: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
   },
   computed: {

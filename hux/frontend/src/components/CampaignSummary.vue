@@ -2,16 +2,16 @@
   <div class="pa-0 campaign-summary">
     <v-card flat class="card-style" style="position: sticky">
       <v-card-text>
-        <div class="empty-state pa-5 text--gray" v-if="summary.length == 0">
+        <div v-if="summary.length == 0" class="empty-state pa-5 text--gray">
           Be patient! Performance data is currently not available, check back
           tomorrow to see if the magic is ready.
         </div>
         <div v-if="summary.length > 0" class="d-flex summary-tab-wrap">
-          <MetricCard
-            class="list-item mr-3"
+          <metric-card
             v-for="(item, i) in summaryCards"
             :key="item.id"
-            :maxWidth="item.width"
+            class="list-item mr-3"
+            :max-width="item.width"
             :grow="i === 0 ? 2 : 1"
             :title="item.title"
           >
@@ -84,11 +84,11 @@
                 </tooltip>
               </span>
             </template>
-          </MetricCard>
+          </metric-card>
         </div>
       </v-card-text>
     </v-card>
-    <v-card minHeight="145px" flat class="mt-6 card-style">
+    <v-card min-height="145px" flat class="mt-6 card-style">
       <v-card-title class="d-flex justify-space-between pb-4 pl-7">
         <div class="d-flex align-center">
           <icon type="audiences" :size="24" color="neroBlack" class="mr-2" />
@@ -97,8 +97,8 @@
       </v-card-title>
       <v-card-text class="pl-6 pb-6 mt-0 pr-0">
         <!-- Campaign Nested Table -->
-        <hux-data-table :headers="headers" :dataItems="data" nested>
-          <template #item-row="{ item, expand, isExpanded }">
+        <hux-data-table :columns="headers" :data-items="data" nested>
+          <template #item-row="{ item, expandFunc, isExpanded }">
             <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
               <td v-for="header in headers" :key="header.value">
                 <div
@@ -108,7 +108,7 @@
                   <v-icon
                     :class="{ 'rotate-icon-90': isExpanded }"
                     size="18"
-                    @click="expand(!isExpanded)"
+                    @click="expandFunc(!isExpanded)"
                   >
                     mdi-chevron-right
                   </v-icon>
@@ -130,10 +130,10 @@
                         <tooltip>
                           <template #label-content>
                             <v-icon
+                              v-if="needsCampaignMapping(item)"
                               small
                               color="error"
                               class="ml-2"
-                              v-if="needsCampaignMapping(item)"
                             >
                               mdi-information-outline
                             </v-icon>
@@ -153,20 +153,20 @@
             </tr>
           </template>
 
-          <template #expanded-row="{ headers, parentItem }">
-            <td :colspan="headers.length" class="pa-0 child">
+          <template #expanded-row="{ expandedHeaders, parentItem }">
+            <td :colspan="expandedHeaders.length" class="pa-0 child">
               <hux-data-table
-                :headers="headers"
-                :dataItems="
+                v-if="parentItem"
+                :columns="expandedHeaders"
+                :data-items="
                   getFormattedItems(parentItem.destinations || item.campaigns)
                 "
-                :showHeader="false"
-                v-if="parentItem"
+                :show-header="false"
                 nested
               >
-                <template #item-row="{ item, expand, isExpanded }">
+                <template #item-row="{ item, expandFunc, isExpanded }">
                   <tr :class="{ 'v-data-table__expanded__row': isExpanded }">
-                    <td :style="{ width: headers[0].width }">
+                    <td :style="{ width: expandedHeaders[0].width }">
                       <div
                         class="w-100 d-flex align-center"
                         :class="{
@@ -184,28 +184,28 @@
                               'mr-2': true,
                             }"
                             size="18"
-                            @click="expand(!isExpanded)"
+                            @click="expandFunc(!isExpanded)"
                           >
                             mdi-chevron-right
                           </v-icon>
 
                           <span class="d-flex align-center">
                             <logo
-                              :type="logoType(item[headers[0].value])"
+                              :type="logoType(item[expandedHeaders[0].value])"
                               :size="18"
                               class="mr-3"
                             />
                             <span class="text--neroblack ellipsis">
-                              {{ item[headers[0].value] | Empty("-") }}
+                              {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                             <v-btn
+                              v-if="item.is_mapped"
                               icon
                               small
                               class="ml-3"
-                              v-if="item.is_mapped"
                               @click="triggerCampaignMap(parentItem, item)"
                             >
-                              <Icon type="mapping" :size="28" />
+                              <icon type="mapping" :size="28" />
                             </v-btn>
                           </span>
                         </span>
@@ -217,12 +217,12 @@
                             append
                           >
                             <logo
-                              :type="logoType(item[headers[0].value])"
+                              :type="logoType(item[expandedHeaders[0].value])"
                               :size="18"
                               class="mr-3"
                             />
                             <span class="text--neroblack ellipsis">
-                              {{ item[headers[0].value] | Empty("-") }}
+                              {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                           </router-link>
                         </span>
@@ -230,16 +230,18 @@
                     </td>
                     <td
                       v-if="!item.is_mapped"
-                      :colspan="getDestinationHeaders(headers).length"
+                      :colspan="getDestinationHeaders(expandedHeaders).length"
                       :style="{
-                        width: totalWidth(getDestinationHeaders(headers)),
+                        width: totalWidth(
+                          getDestinationHeaders(expandedHeaders)
+                        ),
                       }"
                     >
                       <span class="error--text mr-6">
                         <v-icon small color="error" class="mr-1">
                           mdi-information-outline
                         </v-icon>
-                        To view KPI you need to map to a Facebook campaign.
+                        To view KPIs you need to map to a Facebook campaign.
                       </span>
                       <v-btn
                         tile
@@ -256,26 +258,30 @@
                       </v-btn>
                     </td>
                     <td
-                      v-for="header in getDestinationHeaders(headers)"
+                      v-for="header in getDestinationHeaders(expandedHeaders)"
+                      v-else
                       :key="header.value"
                       :style="{ width: header.width }"
-                      v-else
                     >
                       {{ item[header.value] }}
                     </td>
                   </tr>
                 </template>
-                <template #expanded-row="{ headers, parentItem }">
-                  <td :colspan="headers.length" class="pa-0 child">
+                <template
+                  #expanded-row="{ subExpandedHeaders, expandedParentItem }"
+                >
+                  <td :colspan="subExpandedHeaders.length" class="pa-0 child">
                     <hux-data-table
-                      :headers="headers"
-                      :dataItems="getFormattedItems(parentItem.campaigns)"
-                      :showHeader="false"
-                      v-if="parentItem"
+                      v-if="expandedParentItem"
+                      :columns="subExpandedHeaders"
+                      :data-items="
+                        getFormattedItems(expandedParentItem.campaigns)
+                      "
+                      :show-header="false"
                     >
                       <template #row-item="{ item }">
                         <td
-                          v-for="header in headers"
+                          v-for="header in subExpandedHeaders"
                           :key="header.value"
                           :style="{ width: header.width }"
                         >
@@ -306,9 +312,9 @@
       </v-card-text>
     </v-card>
     <campaign-map-drawer
+      ref="campaignMapDrawer"
       :toggle="showCampaignMapDrawer"
       @onToggle="(toggle) => (showCampaignMapDrawer = toggle)"
-      ref="campaignMapDrawer"
       @onCampaignMappings="updateCampaignMappings($event)"
     />
   </div>
@@ -322,7 +328,6 @@ import Icon from "./common/Icon.vue"
 import Logo from "./common/Logo.vue"
 import CampaignMapDrawer from "@/views/Engagements/Configuration/Drawers/CampaignMapDrawer.vue"
 import { mapActions } from "vuex"
-
 export default {
   name: "CampaignSummary",
   components: {
@@ -332,6 +337,27 @@ export default {
     Icon,
     Logo,
     CampaignMapDrawer,
+  },
+  props: {
+    summary: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    campaignData: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    type: {
+      type: String,
+      required: true,
+      default: "ads",
+    },
+    engagementId: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -508,7 +534,6 @@ export default {
       percentileColumns: [
         // Ads Columns
         "click_through_rate",
-
         "engagement_rate",
         // Email Columns
         "hard_bounces_rate",
@@ -649,27 +674,6 @@ export default {
     },
     summaryCards() {
       return this.summary.length === 0 ? [] : this.summary
-    },
-  },
-  props: {
-    summary: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    campaignData: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
-    type: {
-      type: String,
-      required: true,
-      default: "ads",
-    },
-    engagementId: {
-      type: String,
-      required: false,
     },
   },
   methods: {
@@ -837,7 +841,6 @@ export default {
       }
       .v-data-table__expanded__row {
         background: var(--v-aliceBlue-base);
-
         td:nth-child(1) {
           background: var(--v-aliceBlue-base);
         }
@@ -851,7 +854,6 @@ export default {
           border-bottom: thin solid rgba(0, 0, 0, 0.12);
         }
       }
-
       ::v-deep table {
         background: inherit;
         tbody {

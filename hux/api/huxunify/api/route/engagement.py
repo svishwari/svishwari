@@ -23,6 +23,8 @@ from huxunifylib.database.engagement_management import (
     update_engagement,
     remove_audiences_from_engagement,
     append_audiences_to_engagement,
+    append_destination_to_engagement_audience,
+    remove_destination_from_engagement_audience,
 )
 from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.database import (
@@ -32,6 +34,7 @@ from huxunifylib.database import (
 from huxunifylib.database.delivery_platform_management import (
     get_performance_metrics_by_engagement_details,
     get_delivery_jobs_using_metadata,
+    get_delivery_platform,
 )
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
@@ -43,6 +46,7 @@ from huxunify.api.schema.engagement import (
     CampaignSchema,
     CampaignMappingSchema,
     CampaignPutSchema,
+    DestinationEngagedAudienceSchema,
     weighted_engagement_status,
 )
 from huxunify.api.schema.errors import NotFoundError
@@ -55,6 +59,7 @@ from huxunify.api.route.utils import (
     group_perf_metric,
     update_metrics,
     validate_destination,
+    validate_destination_id,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api import constants as api_c
@@ -773,6 +778,237 @@ class DeleteAudienceEngagement(SwaggerView):
 
 @add_view_to_blueprint(
     engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCE}/"
+    f"<audience_id>/{api_c.DESTINATIONS}",
+    "AddDestinationEngagedAudience",
+)
+class AddDestinationEngagedAudience(SwaggerView):
+    """
+    Class to add a destination to an engagement audience
+    """
+
+    parameters = [
+        {
+            "name": db_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": db_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60fff065b2075450922261cf",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destinations body.",
+            "example": {
+                api_c.ID: "60ae035b6c5bf45da27f17e6",
+                db_c.DELIVERY_PLATFORM_CONFIG: {
+                    db_c.DATA_EXTENSION_NAME: "SFMC Test Audience"
+                },
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": EngagementGetSchema,
+            "description": "Destination added to Engagement Audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create the engagement.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def post(
+        self, engagement_id: str, audience_id: str, user_name: str
+    ) -> Tuple[dict, int]:
+        """Adds a destination to an engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement id
+            audience_id (str): Audience id
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination Audience Engagement added, HTTP status.
+
+        """
+
+        if not (
+            ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
+        ):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
+        )
+        destination[api_c.ID] = validate_destination_id(destination[api_c.ID])
+
+        database = get_db_client()
+        # get destinations
+        destination_to_attach = get_delivery_platform(
+            database, destination[api_c.ID]
+        )
+        append_destination_to_engagement_audience(
+            database,
+            ObjectId(engagement_id),
+            ObjectId(audience_id),
+            destination,
+            user_name,
+        )
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        audience = get_audience(database, ObjectId(audience_id))
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Destination "{destination_to_attach[db_c.NAME]}" added to '
+                f'audience "{audience[db_c.NAME]}" from engagement '
+                f'"{engagement[db_c.NAME]}" by {user_name}'
+            ),
+            api_c.ENGAGEMENT_TAG,
+        )
+
+        return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/{api_c.AUDIENCE}/"
+    f"<audience_id>/{api_c.DESTINATIONS}",
+    "RemoveDestinationEngagedAudience",
+)
+class RemoveDestinationEngagedAudience(SwaggerView):
+    """
+    Class to remove a destination from an engagement audience
+    """
+
+    parameters = [
+        {
+            "name": db_c.ENGAGEMENT_ID,
+            "description": "Engagement ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "5f5f7262997acad4bac4373b",
+        },
+        {
+            "name": db_c.AUDIENCE_ID,
+            "description": "Audience ID.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "60fff065b2075450922261cf",
+        },
+        {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "description": "Input Destinations body.",
+            "example": {
+                api_c.ID: "60ae035b6c5bf45da27f17e6",
+            },
+        },
+    ]
+
+    responses = {
+        HTTPStatus.CREATED.value: {
+            "schema": EngagementGetSchema,
+            "description": "Destination added to Engagement Audience.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to create the engagement.",
+        },
+    }
+
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    @api_error_handler()
+    @get_user_name()
+    def delete(
+        self, engagement_id: str, audience_id: str, user_name: str
+    ) -> Tuple[dict, int]:
+        """Removes a destination from an engagement audience.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): Engagement id
+            audience_id (str): Audience id
+            user_name (str): user_name extracted from Okta.
+
+        Returns:
+            Tuple[dict, int]: Destination Audience Engagement added, HTTP status.
+
+        """
+
+        if not (
+            ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
+        ):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+
+        destination = DestinationEngagedAudienceSchema().load(
+            request.get_json(), partial=True
+        )
+        destination_id = validate_destination_id(destination[api_c.ID])
+
+        database = get_db_client()
+        # get destination
+        destination_to_remove = get_delivery_platform(database, destination_id)
+        if not destination_to_remove:
+            return {
+                "message": f"Destination does not exist: {destination[api_c.ID]}"
+            }, HTTPStatus.BAD_REQUEST
+
+        remove_destination_from_engagement_audience(
+            database,
+            ObjectId(engagement_id),
+            ObjectId(audience_id),
+            destination_id,
+            user_name,
+        )
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        audience = get_audience(database, ObjectId(audience_id))
+
+        create_notification(
+            database,
+            db_c.NOTIFICATION_TYPE_SUCCESS,
+            (
+                f'Destination "{destination_to_remove[db_c.NAME]}" removed from audience '
+                f'"{audience[db_c.NAME]}" from engagement '
+                f'"{engagement[db_c.NAME]}" by {user_name}'
+            ),
+            api_c.ENGAGEMENT_TAG,
+        )
+
+        return EngagementGetSchema().dump(engagement), HTTPStatus.OK.value
+
+
+@add_view_to_blueprint(
+    engagement_bp,
     f"{api_c.ENGAGEMENT_ENDPOINT}/<engagement_id>/"
     f"{api_c.AUDIENCE}/<audience_id>/{api_c.DESTINATION}/<destination_id>/{api_c.CAMPAIGNS}",
     "UpdateCampaignsForAudience",
@@ -1339,38 +1575,29 @@ class EngagementMetricsDisplayAds(SwaggerView):
             )
         )
 
-        if not ads_destination:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+        delivery_jobs = []
+        performance_metrics = []
+        if ads_destination:
+            # Get Performance metrics by engagement and destination
+            performance_metrics = (
+                get_performance_metrics_by_engagement_details(
+                    database,
+                    ObjectId(engagement_id),
+                    [ads_destination.get(db_c.ID)],
+                )
+            )
+            if performance_metrics:
+                # Get all the delivery jobs for the given engagement and destination
+                delivery_jobs = get_delivery_jobs_using_metadata(
+                    database, engagement_id=ObjectId(engagement_id)
+                )
 
-        # Get Performance metrics by engagement and destination
-        performance_metrics = get_performance_metrics_by_engagement_details(
-            database,
-            ObjectId(engagement_id),
-            [ads_destination.get(db_c.ID)],
-        )
-
-        if not performance_metrics:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
-
-        # Get all the delivery jobs for the given engagement and destination
-        delivery_jobs = get_delivery_jobs_using_metadata(
-            database, engagement_id=ObjectId(engagement_id)
-        )
-
-        delivery_jobs = [
-            x
-            for x in delivery_jobs
-            if x[db_c.DELIVERY_PLATFORM_ID] == ads_destination.get(db_c.ID)
-        ]
-
-        if not delivery_jobs:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+                delivery_jobs = [
+                    x
+                    for x in delivery_jobs
+                    if x[db_c.DELIVERY_PLATFORM_ID]
+                    == ads_destination.get(db_c.ID)
+                ]
 
         # Group all the performance metrics for the engagement
         final_metric = {
@@ -1465,38 +1692,30 @@ class EngagementMetricsEmail(SwaggerView):
             )
         )
 
-        if not email_destination:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+        delivery_jobs = []
+        performance_metrics = []
+        if email_destination:
+            # Get Performance metrics by engagement and destination
+            performance_metrics = (
+                get_performance_metrics_by_engagement_details(
+                    database,
+                    ObjectId(engagement_id),
+                    [email_destination.get(db_c.ID)],
+                )
+            )
 
-        # Get Performance metrics by engagement and destination
-        performance_metrics = get_performance_metrics_by_engagement_details(
-            database,
-            ObjectId(engagement_id),
-            [email_destination.get(db_c.ID)],
-        )
+            if performance_metrics:
+                # Get all the delivery jobs for the given engagement and destination
+                delivery_jobs = get_delivery_jobs_using_metadata(
+                    database, engagement_id=ObjectId(engagement_id)
+                )
 
-        if not performance_metrics:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
-
-        # Get all the delivery jobs for the given engagement and destination
-        delivery_jobs = get_delivery_jobs_using_metadata(
-            database, engagement_id=ObjectId(engagement_id)
-        )
-
-        delivery_jobs = [
-            x
-            for x in delivery_jobs
-            if x[db_c.DELIVERY_PLATFORM_ID] == email_destination.get(db_c.ID)
-        ]
-
-        if not delivery_jobs:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+                delivery_jobs = [
+                    x
+                    for x in delivery_jobs
+                    if x[db_c.DELIVERY_PLATFORM_ID]
+                    == email_destination.get(db_c.ID)
+                ]
 
         # Group all the performance metrics for the engagement
         final_metric = {
