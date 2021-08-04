@@ -42,10 +42,7 @@
                           percentileColumns.includes(item.field.split('|')[1])
                         "
                       >
-                        {{
-                          item.value.split("|")[1]
-                            | percentageConvert(true, true)
-                        }}
+                        {{ item.value.split("|")[1] | Percentage }}
                       </span>
                       <span
                         v-else-if="
@@ -71,7 +68,7 @@
                         {{ item.value | Numeric(false, false, true) }}
                       </span>
                       <span v-else-if="percentileColumns.includes(item.field)">
-                        {{ item.value | percentageConvert(true, true) }}
+                        {{ item.value | Percentage }}
                       </span>
                       <span v-else-if="currencyColumns.includes(item.field)">
                         {{ item.value | Currency }}
@@ -114,8 +111,11 @@
                   </v-icon>
 
                   <span class="d-flex align-center">
-                    <!-- TODO Route Link to Audience Insight Page -->
-                    <router-link to="#" class="text-decoration-none" append>
+                    <router-link
+                      :to="{ name: 'AudienceInsight', params: { id: item.id } }"
+                      class="text-decoration-none"
+                      append
+                    >
                       <span class="audience-name d-flex align-center">
                         <tooltip>
                           <template #label-content>
@@ -715,9 +715,11 @@ export default {
         if (this.numericColumns.includes(key)) {
           obj[key] = this.$options.filters.Numeric(obj[key], true, false)
         } else if (this.percentileColumns.includes(key)) {
-          obj[key] = this.$options.filters.percentageConvert(
+          obj[key] = this.$options.filters.Numeric(
             obj[key],
             true,
+            false,
+            false,
             true
           )
         } else if (this.currencyColumns.includes(key)) {
