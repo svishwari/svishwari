@@ -591,7 +591,7 @@ export default {
             })
             this.dataPendingMesssage(event.data.name)
           } catch (error) {
-            this.dataErrorMesssage()
+            this.dataErrorMesssage(event.data.name)
             console.error(error)
           }
           break
@@ -642,7 +642,7 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage()
+        this.dataErrorMesssage(event.data.name)
         console.error(error)
       }
     },
@@ -655,11 +655,11 @@ export default {
         "Your audience, " + name + " , has started delivering."
       this.flashAlert = true
     },
-    dataErrorMesssage() {
+    dataErrorMesssage(name) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
       this.alert.message =
-        "This is an error or alert! It will disappear in 5 seconds on its own."
+        "Failed to schedule a delivery of audience" + name
       this.flashAlert = true
     },
 
