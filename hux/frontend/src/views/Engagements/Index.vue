@@ -269,7 +269,6 @@ export default {
   },
   data() {
     return {
-      reRenderKey: 0,
       selectedAudience: null,
       showLookAlikeDrawer: false,
       flashAlert: false,
