@@ -347,6 +347,12 @@ def get_audience_insights(
                             "deliveries.delivery_platform_type"
                             "": "$destinations.delivery_platform_type",
                             "deliveries.name": "$destinations.name",
+                            "deliveries.status": {
+                                "$ifNull": [
+                                    "$deliveries.status",
+                                    c.AUDIENCE_STATUS_NOT_DELIVERED,
+                                ]
+                            },
                             "deliveries.id": "$destinations.id",
                         }
                     },
@@ -354,9 +360,7 @@ def get_audience_insights(
                         "$group": {
                             "_id": "$_id",
                             "deliveries": {"$push": "$deliveries"},
-                            "last_delivered": {
-                                "$last": "$deliveries.update_time"
-                            },
+                            "last_delivered": {"$last": "$deliveries.update_time"},
                         }
                     },
                     {
@@ -444,8 +448,7 @@ def get_all_audiences_and_deliveries(
                     },
                     {
                         "$addFields": {
-                            "delivery_jobs.delivery_platform_name"
-                            "": "$delivery.name",
+                            "delivery_jobs.delivery_platform_name" "": "$delivery.name",
                             "delivery_jobs.delivery_platform_type"
                             "": "$delivery.delivery_platform_type",
                         }
@@ -455,9 +458,7 @@ def get_all_audiences_and_deliveries(
                         "$group": {
                             "_id": "$_id",
                             "deliveries": {"$push": "$delivery_jobs"},
-                            "last_delivered": {
-                                "$last": "$delivery_jobs.update_time"
-                            },
+                            "last_delivered": {"$last": "$delivery_jobs.update_time"},
                         }
                     },
                     {"$project": {"deliveries.deleted": 0}},
