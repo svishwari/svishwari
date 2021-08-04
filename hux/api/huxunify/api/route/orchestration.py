@@ -318,14 +318,6 @@ class AudienceGetView(SwaggerView):
             engagement[api_c.DELIVERIES] = [
                 x for x in engagement[api_c.DELIVERIES] if x
             ]
-            check_status = {
-                db_c.STATUS_IN_PROGRESS: db_c.AUDIENCE_STATUS_DELIVERING
-            }
-
-            for delivery in engagement[api_c.DELIVERIES]:
-                delivery[api_c.STATUS] = check_status.get(
-                    delivery[api_c.STATUS], delivery[api_c.STATUS]
-                )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)

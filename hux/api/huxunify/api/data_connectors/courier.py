@@ -259,7 +259,7 @@ class DestinationBatchJob:
         # Submit the AWS batch job
         response_batch_submit = self.aws_batch_connector.submit_job()
 
-        status = db_const.STATUS_IN_PROGRESS
+        status = api_const.STATUS_DELIVERING
         if (
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
