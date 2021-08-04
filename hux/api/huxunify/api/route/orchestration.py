@@ -10,7 +10,10 @@ from flask import Blueprint, request, jsonify
 from marshmallow import INCLUDE
 from pymongo import MongoClient
 
-from huxunifylib.connectors import FacebookConnector
+from huxunifylib.connectors import (
+    FacebookConnector,
+    CustomAudienceDeliveryStatusError,
+)
 
 # from huxunifylib.connectors.connector_exceptions import (
 #     CustomAudienceDeliveryStatusError,
@@ -21,7 +24,7 @@ from huxunifylib.database import (
     orchestration_management,
     db_exceptions,
     engagement_management,
-    data_management,
+    data_management
 )
 import huxunifylib.database.constants as db_c
 from huxunify.api.schema.orchestration import (
@@ -805,7 +808,8 @@ class SetLookalikeAudience(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use, too-many-return-statements, too-many-branches
+    # pylint: disable=too-many-locals, too-many-function-args
     @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
@@ -826,8 +830,10 @@ class SetLookalikeAudience(SwaggerView):
         body = LookalikeAudiencePostSchema().load(
             request.get_json(), partial=True
         )
+        source_audience_id = body[api_c.AUDIENCE_ID]
+        engagement_ids = body[api_c.ENGAGEMENT_IDS]
 
-        for engagement_id in body[api_c.ENGAGEMENT_IDS]:
+        for engagement_id in engagement_ids:
             if not ObjectId.is_valid(engagement_id):
                 return {
                     "message": api_c.INVALID_OBJECT_ID
@@ -838,7 +844,7 @@ class SetLookalikeAudience(SwaggerView):
 
         database = get_db_client()
         source_audience = orchestration_management.get_audience(
-            database, ObjectId(body[api_c.AUDIENCE_ID])
+            database, ObjectId(source_audience_id)
         )
 
         if not source_audience:
@@ -860,20 +866,56 @@ class SetLookalikeAudience(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
 
-        # try:
-        #     # TODO: HUS-778 enable once we can get the facebook delivered audience name
-        #     # the facebook delivered audience name has a time stamp added by ORCH.
-        #     destination_connector.get_new_lookalike_audience(
-        #         source_audience[db_c.NAME],
-        #         body[api_c.NAME],
-        #         body[api_c.AUDIENCE_SIZE_PERCENTAGE],
-        #         "US",
-        #     )
-        # except CustomAudienceDeliveryStatusError:
-        #     return {
-        #         "message": "Unable to create a lookalike due to custom audience "
-        #                    "delivery status error"
-        #     }, HTTPStatus.NOT_FOUND
+        delivery_jobs = []
+        for engagement_id in engagement_ids:
+            delivery_jobs.extend(
+                destination_management.get_delivery_jobs(
+                    database,
+                    ObjectId(source_audience_id),
+                    ObjectId(engagement_id),
+                )
+            )
+
+        most_recent_job = None
+
+        audience_name_date_format = "%Y-%m-%d %H:%M:%S"
+
+        # find most recent successful facebook delivery job
+        for job in delivery_jobs:
+            if (
+                job[db_c.STATUS] == db_c.STATUS_SUCCEEDED
+                and job[db_c.DELIVERY_PLATFORM_ID] == destination[db_c.ID]
+            ):
+                if most_recent_job is None:
+                    most_recent_job = job
+                elif job[db_c.JOB_START_TIME].strftime(
+                    audience_name_date_format
+                ) > most_recent_job[db_c.JOB_START_TIME].strftime(
+                    audience_name_date_format
+                ):
+                    most_recent_job = job
+
+        if most_recent_job is None:
+            return {
+                "message": api_c.SUCCESSFUL_DELIVERY_JOB_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
+        try:
+            timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
+                audience_name_date_format
+            )
+
+            destination_connector.get_new_lookalike_audience(
+                f"{source_audience[db_c.NAME]} - {timestamp}",
+                body[api_c.NAME],
+                body[api_c.AUDIENCE_SIZE_PERCENTAGE],
+                "US",
+            )
+        except CustomAudienceDeliveryStatusError:
+            return {
+                "message": "Unable to create a lookalike due to custom audience "
+                "delivery status error"
+            }, HTTPStatus.NOT_FOUND
 
         lookalike_audience = (
             destination_management.create_delivery_platform_lookalike_audience(

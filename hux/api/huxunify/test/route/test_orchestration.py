@@ -11,6 +11,8 @@ from huxunifylib.connectors import FacebookConnector
 from huxunifylib.database import data_management, constants as db_c
 from huxunifylib.database.delivery_platform_management import (
     set_delivery_platform,
+    set_delivery_job,
+    set_delivery_job_status,
 )
 from huxunifylib.database.engagement_management import (
     set_engagement,
@@ -76,6 +78,7 @@ class OrchestrationRouteTest(TestCase):
             return_value=self.database,
         ).start()
 
+        # mock get_store_value of parameter store
         mock.patch.object(
             parameter_store, "get_store_value", return_value="secret"
         ).start()
@@ -187,6 +190,45 @@ class OrchestrationRouteTest(TestCase):
             engagement_id = set_engagement(self.database, **engagement)
             self.engagement_ids.append(str(engagement_id))
 
+        self.delivery_jobs = []
+        self.delivery_jobs.append(
+            set_delivery_job(
+                self.database,
+                self.audiences[0][db_c.ID],
+                self.destinations[0][db_c.ID],
+                [],
+                ObjectId(self.engagement_ids[0]),
+            )
+        )
+        self.delivery_jobs.append(
+            set_delivery_job(
+                self.database,
+                self.audiences[0][db_c.ID],
+                self.destinations[0][db_c.ID],
+                [],
+                ObjectId(self.engagement_ids[1]),
+            )
+        )
+
+        for delivery_job in self.delivery_jobs:
+            set_delivery_job_status(
+                self.database,
+                delivery_job[db_c.ID],
+                db_c.AUDIENCE_STATUS_DELIVERING,
+            )
+
+        for delivery_job in self.delivery_jobs:
+            set_delivery_job_status(
+                self.database,
+                delivery_job[db_c.ID],
+                db_c.AUDIENCE_STATUS_DELIVERED,
+            )
+
+        for delivery_job in self.delivery_jobs:
+            set_delivery_job_status(
+                self.database, delivery_job[db_c.ID], db_c.STATUS_SUCCEEDED
+            )
+
         # setup the flask test client
         self.test_client = create_app().test_client()
 
@@ -221,7 +263,6 @@ class OrchestrationRouteTest(TestCase):
         """Test create audience with destination.
 
         Args:
-
         Returns:
 
         """
@@ -633,21 +674,20 @@ class OrchestrationRouteTest(TestCase):
 
         Returns:
         """
-        mock_facebook_connector = mock.patch.object(
-            FacebookConnector,
-            "get_new_lookalike_audience",
-            return_value="LA_ID_12345",
-        )
-        mock_facebook_connector.start()
-
-        lookalike_audience_name = "NEW LA AUDIENCE"
-
         # setup facebook connector mock address
         mock.patch.object(
             FacebookConnector,
             "check_connection",
             return_value=True,
         ).start()
+
+        mock.patch.object(
+            FacebookConnector,
+            "get_new_lookalike_audience",
+            return_value="LA_ID_12345",
+        ).start()
+
+        lookalike_audience_name = "NEW LA AUDIENCE"
 
         response = self.test_client.post(
             f"{t_c.BASE_ENDPOINT}{api_c.LOOKALIKE_AUDIENCES_ENDPOINT}",
@@ -664,6 +704,7 @@ class OrchestrationRouteTest(TestCase):
             self.database, ObjectId(self.engagement_ids[0])
         )
 
+        print(response.json)
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
 
@@ -674,8 +715,6 @@ class OrchestrationRouteTest(TestCase):
                 engaged_lookalike_audience = audience
 
         self.assertIsNotNone(engaged_lookalike_audience)
-
-        mock_facebook_connector.stop()
 
         # test getting the audience and lookalikes response
         self.request_mocker.stop()
