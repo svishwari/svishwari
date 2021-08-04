@@ -243,6 +243,11 @@ class CustomerDemographicInsightsSchema(Schema):
 class CustomerEventCountSchema(Schema):
     """Customer Event with Count Schema"""
 
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
     abandoned_cart = Integer(required=True, example=1)
     viewed_cart = Integer(required=True, example=1)
     customer_login = Integer(required=True, example=1)

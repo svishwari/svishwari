@@ -321,99 +321,39 @@ def get_customer_events_data(hux_id: str) -> list:
     response = [
         {
             api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=7),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 16,
+            - datetime.timedelta(days=x),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT
+            ][
+                x
+            ],
             api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 2,
-                api_c.CUSTOMER_LOGIN_EVENT: 3,
-                api_c.VIEWED_CART_EVENT: 3,
-                api_c.VIEWED_CHECKOUT_EVENT: 3,
-                api_c.VIEWED_SALE_ITEM_EVENT: 5,
+                api_c.ABANDONED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.ABANDONED_CART_EVENT
+                ][
+                    x
+                ],
+                api_c.CUSTOMER_LOGIN_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.CUSTOMER_LOGIN_EVENT
+                ][
+                    x
+                ],
+                api_c.VIEWED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_CART_EVENT
+                ][x],
+                api_c.VIEWED_CHECKOUT_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_CHECKOUT_EVENT
+                ][
+                    x
+                ],
+                api_c.VIEWED_SALE_ITEM_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_SALE_ITEM_EVENT
+                ][
+                    x
+                ],
             },
-        },
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=6),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 10,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 2,
-                api_c.CUSTOMER_LOGIN_EVENT: 2,
-                api_c.VIEWED_CART_EVENT: 3,
-                api_c.VIEWED_CHECKOUT_EVENT: 1,
-                api_c.VIEWED_SALE_ITEM_EVENT: 2,
-            },
-        },
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=5),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 16,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 2,
-                api_c.CUSTOMER_LOGIN_EVENT: 3,
-                api_c.VIEWED_CART_EVENT: 3,
-                api_c.VIEWED_CHECKOUT_EVENT: 3,
-                api_c.VIEWED_SALE_ITEM_EVENT: 5,
-            },
-        },
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=4),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 18,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 2,
-                api_c.CUSTOMER_LOGIN_EVENT: 3,
-                api_c.VIEWED_CART_EVENT: 3,
-                api_c.VIEWED_CHECKOUT_EVENT: 4,
-                api_c.VIEWED_SALE_ITEM_EVENT: 6,
-            },
-        },
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=3),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 2,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 0,
-                api_c.CUSTOMER_LOGIN_EVENT: 1,
-                api_c.VIEWED_CART_EVENT: 0,
-                api_c.VIEWED_CHECKOUT_EVENT: 0,
-                api_c.VIEWED_SALE_ITEM_EVENT: 1,
-            },
-        },
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=2),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 15,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 3,
-                api_c.CUSTOMER_LOGIN_EVENT: 3,
-                api_c.VIEWED_CART_EVENT: 3,
-                api_c.VIEWED_CHECKOUT_EVENT: 1,
-                api_c.VIEWED_SALE_ITEM_EVENT: 5,
-            },
-        },
-        {
-            api_c.DATE: datetime.datetime.utcnow()
-            - datetime.timedelta(days=1),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 16,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 3,
-                api_c.CUSTOMER_LOGIN_EVENT: 1,
-                api_c.VIEWED_CART_EVENT: 3,
-                api_c.VIEWED_CHECKOUT_EVENT: 4,
-                api_c.VIEWED_SALE_ITEM_EVENT: 5,
-            },
-        },
-        {
-            api_c.DATE: datetime.datetime.utcnow(),
-            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: 17,
-            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
-                api_c.ABANDONED_CART_EVENT: 3,
-                api_c.CUSTOMER_LOGIN_EVENT: 2,
-                api_c.VIEWED_CART_EVENT: 4,
-                api_c.VIEWED_CHECKOUT_EVENT: 3,
-                api_c.VIEWED_SALE_ITEM_EVENT: 5,
-            },
-        },
+        }
+        for x in reversed(range(8))
     ]
     return response
 
