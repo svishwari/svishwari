@@ -14,7 +14,7 @@
         </v-list-item-title>
       </v-list-item>
       <div class="notification-div">
-        <v-list-item v-for="data in getNotificationData" :key="data.id">
+        <v-list-item v-for="data in mostRecentNotifications" :key="data.id">
           <v-list-item-title class="text-h6 neroBlack--text list-main">
             <div class="d-flex text-caption">
               <status
@@ -40,8 +40,16 @@
         </v-list-item>
       </div>
       <v-list-item>
-        <v-list-item-title class="text-h6 view-all text-decoration-none">
-          <div @click="alertRouters()">View all alerts</div>
+        <v-list-item-title>
+          <router-link
+            :to="{
+              name: 'AlertsAndNotifications',
+              query: { batch_size: 25 },
+            }"
+            class="text-h6 view-all text-decoration-none"
+          >
+            View all alerts
+          </router-link>
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -50,9 +58,11 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
+import { orderBy } from "lodash"
 import Status from "./common/Status.vue"
 import Tooltip from "./common/Tooltip.vue"
 import TimeStamp from "./common/huxTable/TimeStamp.vue"
+
 export default {
   name: "Notification",
   components: {
@@ -62,25 +72,19 @@ export default {
   },
   computed: {
     ...mapGetters({
-      notification: "notifications/list",
+      notifications: "notifications/list",
     }),
-    getNotificationData() {
-      return this.notification.slice(0, 5)
+    mostRecentNotifications() {
+      return orderBy(this.notifications, "created", "desc").slice(0, 5)
     },
   },
   async mounted() {
-    await this.getNotification(5)
+    await this.getAllNotifications(5)
   },
   methods: {
     ...mapActions({
-      getNotification: "notifications/getAll",
+      getAllNotifications: "notifications/getAll",
     }),
-    alertRouters() {
-      this.$router.push({
-        name: "AlertsAndNotifications",
-        query: { batch_size: 25 },
-      })
-    },
   },
 }
 </script>
