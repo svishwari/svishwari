@@ -1,6 +1,7 @@
 """
 Purpose of this file is to house all tests related to orchestration
 """
+import json
 from http import HTTPStatus
 from unittest import TestCase, mock
 from bson import ObjectId
@@ -631,9 +632,6 @@ class OrchestrationRouteTest(TestCase):
         self.assertListEqual(audience_ids, return_ids)
         for audience in audiences:
             self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-            self.assertEqual(
-                audience[api_c.LOOKALIKEABLE], api_c.STATUS_DISABLED
-            )
             self.assertFalse(audience[api_c.IS_LOOKALIKE])
 
     def test_update_audience(self):

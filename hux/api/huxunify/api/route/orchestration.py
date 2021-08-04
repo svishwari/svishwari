@@ -24,7 +24,7 @@ from huxunifylib.database import (
     orchestration_management,
     db_exceptions,
     engagement_management,
-    data_management
+    data_management,
 )
 import huxunifylib.database.constants as db_c
 from huxunify.api.schema.orchestration import (
@@ -785,7 +785,7 @@ class SetLookalikeAudience(SwaggerView):
             "example": {
                 api_c.NAME: "New Lookalike Audience",
                 api_c.AUDIENCE_ID: str(ObjectId()),
-                api_c.AUDIENCE_SIZE_PERCENTAGE: 85,
+                api_c.AUDIENCE_SIZE_PERCENTAGE: 1.5,
                 api_c.ENGAGEMENT_IDS: [
                     str(ObjectId()),
                     str(ObjectId()),
@@ -883,7 +883,8 @@ class SetLookalikeAudience(SwaggerView):
         # find most recent successful facebook delivery job
         for job in delivery_jobs:
             if (
-                job[db_c.STATUS] == db_c.STATUS_SUCCEEDED
+                job[db_c.STATUS]
+                in [db_c.STATUS_SUCCEEDED, db_c.AUDIENCE_STATUS_DELIVERED]
                 and job[db_c.DELIVERY_PLATFORM_ID] == destination[db_c.ID]
             ):
                 if most_recent_job is None:
