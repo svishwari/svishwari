@@ -33,7 +33,10 @@
                 :key="index"
                 :disabled="item.isDisabled"
               >
-                <v-list-item-title v-if="!item.menu" @click="item.onClick && item.onClick(data)">
+                <v-list-item-title
+                  v-if="!item.menu"
+                  @click="item.onClick && item.onClick(data)"
+                >
                   {{ item.title }}
                 </v-list-item-title>
 

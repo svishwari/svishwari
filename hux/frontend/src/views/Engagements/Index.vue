@@ -246,7 +246,6 @@ import Avatar from "../../components/common/Avatar.vue"
 import Size from "../../components/common/huxTable/Size.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
-import Tooltip from "../../components/common/Tooltip.vue"
 import MenuCell from "../../components/common/huxTable/MenuCell.vue"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
@@ -262,7 +261,6 @@ export default {
     Size,
     TimeStamp,
     Status,
-    Tooltip,
     MenuCell,
     LookAlikeAudience,
     HuxAlert,
