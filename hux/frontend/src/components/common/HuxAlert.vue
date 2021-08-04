@@ -13,15 +13,15 @@
       <status :status="type" :show-label="false" :height="20" :weight="20" />
 
       <span class="success--text">
-        <span class="px-1 font-weight-bold text-style">{{ title }}</span>
-        <span class="text-style">{{ message }}</span>
+        <span class="px-1 font-weight-bold text-h5">{{ title }}</span>
+        <span class="text-h5">{{ message }}</span>
       </span>
     </span>
     <span v-else>
       <div class="d-flex align-center" :class="typeClass">
         <v-icon outlined :color="type">{{ icon }}</v-icon>
-        <span class="px-4 font-weight-bold text-style">{{ title }}</span>
-        <span class="text-style">{{ message }}</span>
+        <span class="px-4 font-weight-bold text-h5">{{ title }}</span>
+        <span class="text-h5">{{ message }}</span>
       </div>
     </span>
   </v-snackbar>
