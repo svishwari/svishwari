@@ -291,6 +291,7 @@ export default {
           title: "Create a lookalike",
           isDisabled: false,
           menu: {
+            icon: "facebook",
             title: "Facebook",
             isDisabled: true,
             onClick: (value) => {
@@ -383,15 +384,8 @@ export default {
       this.showLookAlikeDrawer = false
     },
     async onCreated() {
-      // this.lookalikeCreated = true
       this.alert.message = "Lookalike created successfully"
       this.flashAlert = true
-      // this.loading = true
-      // await this.getAllEngagements()
-      // this.rowData = this.engagementData.sort((a, b) =>
-      //   a.name > b.name ? 1 : -1
-      // )
-      // this.loading = false
     },
   },
 }

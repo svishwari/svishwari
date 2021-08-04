@@ -153,7 +153,7 @@ export default Vue.extend({
   .ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 31ch;
+    max-width: 21ch;
     display: inline-block;
     width: 31ch;
     white-space: nowrap;
