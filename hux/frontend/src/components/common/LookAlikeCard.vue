@@ -14,7 +14,10 @@
         Create lookalike
       </v-btn>
     </v-card-title>
-    <v-card-text v-if="lookalikesData && status == 'Active'" class="pl-0 pr-0">
+    <v-card-text
+      v-if="lookalikesData.length > 0 && status == 'Active'"
+      class="pl-0 pr-0"
+    >
       <v-simple-table fixed-header height="200px">
         <template v-slot:default>
           <tbody>
@@ -36,7 +39,7 @@
                   <template #hover-content> {{ data.name }} </template>
                 </tooltip>
               </td>
-              <td class="table-text cl">
+              <td class="table-text">
                 <template>
                   <tooltip>
                     <template #label-content>
@@ -48,7 +51,7 @@
                   </tooltip></template
                 >
               </td>
-              <td class="table-text cl">
+              <td class="table-text">
                 <template>
                   <tooltip>
                     <template #label-content>
@@ -66,7 +69,7 @@
       </v-simple-table>
     </v-card-text>
     <v-card-text
-      v-if="!lookalikesData && status == 'Active'"
+      v-if="lookalikesData.length == 0 && status == 'Active'"
       class="pl-4 pr-4 pt-4"
     >
       <v-list-item-subtitle>
@@ -125,20 +128,34 @@ export default {
     padding: 0px !important;
   }
 
-  .name-col {
-    min-width: 118px;
-    max-width: 118px;
+  .v-data-table {
+    .v-data-table__wrapper {
+      tr {
+        td {
+          border-bottom: thin solid rgba(0, 0, 0, 0.12);
+        }
+        &:hover {
+          background: var(--v-white-base) !important;
+        }
+      }
+    }
   }
+
+  .name-col {
+    min-width: 130px;
+    max-width: 130px;
+  }
+
   .cell {
     padding-left: 18px !important;
     font-weight: normal;
-    font-size: 14px !important;
-    line-height: 22px;
+    font-size: 12px !important;
+    line-height: 16px;
     display: inline-block;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical !important;
-    -webkit-line-clamp: 3 !important;
+    -webkit-line-clamp: 1 !important;
     overflow: hidden !important;
   }
 
@@ -157,7 +174,7 @@ export default {
 
   .card-heading {
     font-size: 15px !important;
-    background-color: rgba(236, 244, 249, 1);
+    background-color: var(--v-aliceBlue-base);
     font-weight: 400;
     height: 54px !important;
   }
