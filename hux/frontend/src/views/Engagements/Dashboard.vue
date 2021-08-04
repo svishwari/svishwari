@@ -960,7 +960,6 @@ export default {
                 audienceId: event.data.id,
               })
               this.dataPendingMesssage(event.data.name)
-             
             } catch (error) {
               handleError(error)
               throw error
@@ -979,7 +978,7 @@ export default {
         throw error
       }
     },
-  
+
     async triggerOverviewDestinationAction(event) {
       try {
         const engagementId = this.engagementId
@@ -1018,18 +1017,20 @@ export default {
         throw error
       }
     },
-    //Alert Message 
-      dataPendingMesssage(name){
-        this.alert.type="success"
-        this.alert.title=""
-        this.alert.message="Your audience, <" + name + ">, has started delivering."
-       this.flashAlert = true
+    //Alert Message
+    dataPendingMesssage(name) {
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      this.alert.message =
+        "Your audience, " + name + ", has started delivering."
+      this.flashAlert = true
     },
-       dataErrorMesssage(){
-        this.alert.type="error"
-        this.alert.title="OH NO!"
-        this.alert.message="This is an error or alert! It will disappear in 5 seconds on its own."
-       this.flashAlert = true
+    dataErrorMesssage() {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message =
+        "This is an error or alert! It will disappear in 5 seconds on its own."
+      this.flashAlert = true
     },
 
     //#endregion

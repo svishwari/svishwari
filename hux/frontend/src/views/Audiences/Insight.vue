@@ -221,9 +221,9 @@
       <v-col cols="3">
         <income-chart></income-chart>
       </v-col>
-       <v-col cols="3">
-          <area-chart></area-chart>
-        </v-col>
+      <v-col cols="3">
+        <area-chart></area-chart>
+      </v-col>
     </v-row>
     <hux-alert
       v-model="flashAlert"
@@ -329,7 +329,7 @@ export default {
     HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
-    AreaChart
+    AreaChart,
   },
   data() {
     return {
@@ -594,9 +594,9 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
-           this.dataPendingMesssage(event.data.name)
+            this.dataPendingMesssage(event.data.name)
           } catch (error) {
-             this.dataErrorMesssage()
+            this.dataErrorMesssage()
             console.error(error)
           }
           break
@@ -625,7 +625,7 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-           this.dataPendingMesssage(event.data.name)
+            this.dataPendingMesssage(event.data.name)
             break
           case "edit delivery schedule":
             this.showConfirmModal = true
@@ -647,23 +647,25 @@ export default {
             break
         }
       } catch (error) {
-         this.dataErrorMesssage()
+        this.dataErrorMesssage()
         console.error(error)
       }
     },
 
- //Alert Message 
-      dataPendingMesssage(name){
-        this.alert.type="success"
-        this.alert.title=""
-        this.alert.message="Your audience, <" + name + ">, has started delivering."
-       this.flashAlert = true
+    //Alert Message
+    dataPendingMesssage(name) {
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      this.alert.message =
+        "Your audience, " + name + " , has started delivering."
+      this.flashAlert = true
     },
-       dataErrorMesssage(){
-        this.alert.type="error"
-        this.alert.title="OH NO!"
-        this.alert.message="This is an error or alert! It will disappear in 5 seconds on its own."
-       this.flashAlert = true
+    dataErrorMesssage() {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message =
+        "This is an error or alert! It will disappear in 5 seconds on its own."
+      this.flashAlert = true
     },
 
     // Drawer Section Starts
