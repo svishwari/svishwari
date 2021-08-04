@@ -19,6 +19,7 @@ from huxunify.api.schema.customers import (
     DataFeedDetailsSchema,
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
+    MatchingTrendsSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -32,6 +33,7 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profile,
     get_customers_overview,
     get_idr_data_feeds,
+    get_idr_matching_trends,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -605,5 +607,48 @@ class CustomerDemoVisualView(SwaggerView):
 
         return (
             CustomerDemographicInsightsSchema().dump(output),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.IDR_ENDPOINT}/{api_c.MATCHING_TRENDS}",
+    "IDRMatchingTrends",
+)
+class IDRMatchingTrends(SwaggerView):
+    """IDR Matching Trends YTD"""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": MatchingTrendsSchema},
+            "description": "Identity Resolution Matching Trends YTD Data",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get IDR Matching Trends"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use,unused-argument
+    @api_error_handler()
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves IDR Matching trends YTD data
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] dict of IDR Matching trends YTD and http code
+        """
+
+        return (
+            jsonify(
+                MatchingTrendsSchema().dump(
+                    get_idr_matching_trends(), many=True
+                )
+            ),
             HTTPStatus.OK,
         )

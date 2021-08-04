@@ -238,3 +238,17 @@ class CustomerDemographicInsightsSchema(Schema):
     gender = Nested(CustomerGenderInsightsSchema)
     income = List(Nested(CustomerIncomeInsightsSchema))
     spend = Nested(CustomerSpendingInsightsSchema)
+
+
+class MatchingTrendsSchema(Schema):
+    """IDR Matching Trends Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    date = DateTimeWithZ(required=True)
+    known_ids = Integer(required=True, example=100000)
+    unique_hux_ids = Integer(required=True, example=100000)
+    anonymous_ids = Integer(required=True, example=100000)

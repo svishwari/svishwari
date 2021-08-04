@@ -26,6 +26,7 @@ from huxunify.api.schema.customers import (
     CustomerSpendingInsightsSchema,
     CustomerGenderInsightsSchema,
     CustomerIncomeInsightsSchema,
+    MatchingTrendsSchema,
 )
 from huxunify.app import create_app
 
@@ -361,4 +362,24 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(
                 CustomerIncomeInsightsSchema(), response.json["income"], True
             )
+        )
+
+    def test_get_idr_trends_ytd(self):
+        """
+        Test get matching trends YTD
+
+        Args:
+
+        Returns:
+
+        """
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.MATCHING_TRENDS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(MatchingTrendsSchema(), response.json, True)
         )
