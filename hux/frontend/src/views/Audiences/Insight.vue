@@ -130,7 +130,7 @@
       <v-row class="pa-3 pb-5" style="min-height: 200px">
         <v-col
           :md="
-            !is_lookalike && isLookalikable && isLookalikable != 'Disabled'
+            showLookalike
               ? 9
               : 12
           "
@@ -185,7 +185,7 @@
           </delivery-overview>
         </v-col>
         <v-col
-          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Disabled'"
+          v-if="showLookalike"
           md="3"
           class="pl-6 pr-0 py-0"
         >
@@ -435,6 +435,9 @@ export default {
     },
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
+    },
+    showLookalike() {
+      return (!this.is_lookalike && this.isLookalikable && this.isLookalikable != 'Disabled') ? true : false
     },
     breadcrumbItems() {
       const items = [
