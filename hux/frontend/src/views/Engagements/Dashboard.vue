@@ -117,14 +117,14 @@
             </div>
           </template>
           <template #empty-deliveries="{ sectionId }">
-            <div class="pt-3 empty-audience pb-12">
+            <div class="pt-1 empty-audience pb-1">
               There are no destinations assigned to this audience.
               <br />
               Add one now.
               <br />
               <v-icon
                 size="30"
-                class="add-icon cursor-pointer pt-3"
+                class="add-icon cursor-pointer pt-2"
                 color="primary"
                 @click="triggerSelectDestination(sectionId)"
               >

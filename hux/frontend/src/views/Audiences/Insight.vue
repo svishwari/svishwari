@@ -177,7 +177,7 @@
               </div>
             </template>
             <template #empty-deliveries>
-              <div class="mb-16">
+              <div class="mb-2">
                 This engagement has no destinations yet. Add destinations in the
                 submenu located in the right corner above.
               </div>
