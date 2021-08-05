@@ -150,7 +150,7 @@ stages:
           destinations:
           - id: "{engagement_destination_id}"
 
-#  #TO DO i)add an audience to this engagement and ii)add a destination to this audience of this engagement
+# TODO add an audience to engagement and add a destination to  the audience of this engagement
 
   - name: delete this engagement
 
