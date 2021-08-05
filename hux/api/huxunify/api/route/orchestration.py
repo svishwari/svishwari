@@ -809,7 +809,7 @@ class SetLookalikeAudience(SwaggerView):
     tags = [api_c.ORCHESTRATION_TAG]
 
     # pylint: disable=no-self-use, too-many-return-statements, too-many-branches
-    # pylint: disable=too-many-locals, too-many-function-args
+    # pylint: disable=too-many-locals, too-many-function-args, unsubscriptable-object
     @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
