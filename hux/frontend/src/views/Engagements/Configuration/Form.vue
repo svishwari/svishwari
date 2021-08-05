@@ -93,11 +93,12 @@
               </template>
             </v-radio>
           </v-radio-group>
-
         </v-row>
         <v-row class="delivery-schedule mt-10 ml-n2">
-           <div v-if="value.delivery_schedule == 1">
-            <span class="date-picker-label neroBlack--text text-caption">Start date</span>
+          <div v-if="value.delivery_schedule == 1">
+            <span class="date-picker-label neroBlack--text text-caption">
+              Start date
+            </span>
             <hux-start-date
               class="mt-n4"
               :label="selectedStartDate"
@@ -105,9 +106,16 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-          <icon class="ml-2 mr-2" type="arrow" :size="28" v-if="value.delivery_schedule == 1"/>
+          <icon
+            v-if="value.delivery_schedule == 1"
+            class="ml-2 mr-2"
+            type="arrow"
+            :size="28"
+          />
           <div v-if="value.delivery_schedule == 1">
-            <span class="date-picker-label neroBlack--text text-caption">End date</span>
+            <span class="date-picker-label neroBlack--text text-caption">
+              End date
+            </span>
             <hux-end-date
               class="mt-n4"
               :label="selectedEndDate"

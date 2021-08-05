@@ -199,7 +199,9 @@
                             : '$radioOff'
                         "
                       />
-                      <v-icon class="ico primary--text" size="16"> mdi-clock-check-outline </v-icon>
+                      <v-icon class="ico primary--text" size="16">
+                        mdi-clock-check-outline
+                      </v-icon>
                       Recurring
                     </v-btn>
                   </v-btn-toggle>
@@ -209,7 +211,9 @@
                   class="delivery-schedule ml-0 mt-6"
                 >
                   <div>
-                    <span class="date-picker-label neroBlack--text text-caption">Start date</span>
+                    <span class="date-picker-label neroBlack--text text-caption">
+                      Start date
+                    </span>
                     <hux-start-date
                       class=""
                       :label="selectedStartDate"
@@ -217,9 +221,11 @@
                       @on-date-select="(val) => (selectedStartDate = val)"
                     />
                   </div>
-                  <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28"/>
+                  <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
                   <div>
-                    <span class="date-picker-label neroBlack--text text-caption">End date</span>
+                    <span class="date-picker-label neroBlack--text text-caption">
+                      End date
+                    </span>
                     <hux-end-date
                       class=""
                       :label="selectedEndDate"
