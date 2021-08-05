@@ -211,7 +211,9 @@
                   class="delivery-schedule ml-0 mt-6"
                 >
                   <div>
-                    <span class="date-picker-label neroBlack--text text-caption">
+                    <span
+                      class="date-picker-label neroBlack--text text-caption"
+                    >
                       Start date
                     </span>
                     <hux-start-date
@@ -223,7 +225,9 @@
                   </div>
                   <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
                   <div>
-                    <span class="date-picker-label neroBlack--text text-caption">
+                    <span
+                      class="date-picker-label neroBlack--text text-caption"
+                    >
                       End date
                     </span>
                     <hux-end-date
