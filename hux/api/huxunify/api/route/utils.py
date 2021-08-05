@@ -352,6 +352,7 @@ def api_error_handler(custom_message: dict = None) -> object:
             Returns:
                object: returns a decorated function object.
             """
+            logging.error("some error")
             try:
                 return in_function(*args, **kwargs)
 
@@ -362,14 +363,39 @@ def api_error_handler(custom_message: dict = None) -> object:
                     )
                 else:
                     error_message = validation_error.messages
+                logging.error(
+                    "{} {} while executing {} in module {}".format(
+                        validation_error.__class__,
+                        validation_error.messages,
+                        in_function.__qualname__,
+                        in_function.__module__,
+                    )
+                )
                 return error_message, HTTPStatus.BAD_REQUEST
 
-            except facebook_business.exceptions.FacebookRequestError:
+            except facebook_business.exceptions.FacebookRequestError as exc:
+                logging.error(
+                    "{} {} while executing {} in module {}".format(
+                        exc.__class__,
+                        exc,
+                        in_function.__qualname__,
+                        in_function.__module__,
+                    )
+                )
                 return {
                     "message": "Error connecting to Facebook"
                 }, HTTPStatus.BAD_REQUEST
 
-            except de.DuplicateName:
+            except de.DuplicateName as exc:
+                logging.error(
+                    "{} {} {} while executing {} in module {}".format(
+                        exc,
+                        exc.__class__,
+                        exc.exception_message,
+                        in_function.__qualname__,
+                        in_function.__module__,
+                    )
+                )
                 return {
                     "message": constants.DUPLICATE_NAME
                 }, HTTPStatus.BAD_REQUEST.value
@@ -379,9 +405,12 @@ def api_error_handler(custom_message: dict = None) -> object:
                 if custom_message:
                     return custom_message, HTTPStatus.BAD_REQUEST
                 logging.error(
-                    "%s: %s.",
-                    exc.__class__,
-                    exc,
+                    "{} {} while executing {} in module {}".format(
+                        exc.__class__,
+                        exc,
+                        in_function.__qualname__,
+                        in_function.__module__,
+                    )
                 )
 
                 return {
