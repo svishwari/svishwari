@@ -1018,7 +1018,8 @@ export default {
     //Alert Message
     dataPendingMesssage(name) {
       this.alert.type = "Pending"
-      this.alert.title = `Your audience, '${name}' , has started delivering.`
+      this.alert.title = ""
+      this.alert.message = `Your audience, '${name}' , has started delivering.`
       this.flashAlert = true
     },
     dataErrorMesssage(name) {
