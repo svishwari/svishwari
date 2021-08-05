@@ -157,13 +157,6 @@ export default {
     },
   },
 
-  async mounted() {
-    this.loading = true
-    await this.getOverview()
-    this.mapCDMOverview(this.overview)
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       addAudience: "audiences/add",
@@ -290,6 +283,12 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    async fetchDependencies() {
+      this.loading = true
+      await this.getOverview()
+      this.mapCDMOverview(this.overview)
+      this.loading = false
     },
   },
 }

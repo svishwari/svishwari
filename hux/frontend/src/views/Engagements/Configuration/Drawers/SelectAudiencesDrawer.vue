@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 import DataCards from "@/components/common/DataCards.vue"
 import Drawer from "@/components/common/Drawer.vue"
 import HuxButton from "@/components/common/huxButton.vue"
@@ -220,6 +220,9 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      getAudiences: "audiences/getAll",
+    }),
     isAdded(audience) {
       return Boolean(
         this.enableMultiple
@@ -262,6 +265,16 @@ export default {
         this.enableMultiple ? this.localSelectedAudiences : this.value,
         audience.id
       )
+    },
+
+    async fetchAudiences() {
+      try {
+        this.loading = true
+        await this.getAudiences()
+        this.loading = false
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

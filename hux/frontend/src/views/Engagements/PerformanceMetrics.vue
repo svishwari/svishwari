@@ -76,6 +76,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      tabOption: 0,
+    }
+  },
   computed: {
     audiencePerformanceAdsData() {
       return this.adData ? this.adData.audience_performance : []
@@ -305,11 +310,6 @@ export default {
         },
       ]
     },
-  },
-  data() {
-    return {
-      tabOption: 0,
-    }
   },
   methods: {
     formattedDate(value) {

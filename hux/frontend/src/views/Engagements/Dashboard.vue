@@ -89,6 +89,7 @@
         />
       </div>
     </div>
+    <!-- Select Audience Drawer -->
     <select-audiences-drawer
       ref="selectAudiences"
       v-model="selectedAudiences"
@@ -99,6 +100,7 @@
       @triggerAddAudiences="triggerAttachAudiences($event)"
     />
     <add-audience-drawer
+      ref="addNewAudience"
       v-model="selectedAudiences"
       :toggle="showAddAudiencesDrawer"
       @onToggle="(val) => (showAddAudiencesDrawer = val)"
@@ -106,6 +108,7 @@
       @onCreateAddAudience="triggerAttachAudience($event)"
     />
     <select-destinations-drawer
+      ref="selectDestinations"
       v-model="selectedAudiences"
       :selected-audience-id="selectedAudienceId"
       :toggle="showSelectDestinationsDrawer"
@@ -208,7 +211,7 @@ export default {
     return {
       selectedAudience: null,
       showLookAlikeDrawer: false,
-      engagementId: null,
+      engagementId: "",
       destinationArr: [],
       audienceMergedData: [],
       loading: false,
@@ -251,12 +254,10 @@ export default {
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
       getEngagement: "engagements/engagement",
-      getAudience: "audiences/audience",
-      getDestinations: "destinations/single",
     }),
 
     engagementList() {
-      return this.getEngagement(this.engagementId)
+      return this.getEngagement(this.engagementId) || {}
     },
 
     breadcrumbItems() {
@@ -276,313 +277,11 @@ export default {
       }
       return items
     },
-    audiencePerformanceAdsData() {
-      return this.audiencePerformanceAds
-        ? this.audiencePerformanceAds.audience_performance
-        : []
-    },
-    audiencePerformanceEmailData() {
-      return this.audiencePerformanceEmail
-        ? this.audiencePerformanceEmail.audience_performance
-        : []
-    },
-    displayAdsSummary() {
-      if (
-        !this.audiencePerformanceAds ||
-        (this.audiencePerformanceAds &&
-          this.audiencePerformanceAds.length === 0)
-      )
-        return []
-      return [
-        {
-          id: 1,
-          title: "Spend",
-          field: "spend",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(this.audiencePerformanceAds["summary"], "spend")
-            : "-",
-        },
-        {
-          id: 2,
-          field: "reach",
-          title: "Reach",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(this.audiencePerformanceAds["summary"], "reach")
-            : "-",
-        },
-        {
-          id: 3,
-          title: "Impressions",
-          field: "impressions",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(
-                this.audiencePerformanceAds["summary"],
-                "impressions"
-              )
-            : "-",
-        },
-        {
-          id: 4,
-          title: "Conversions",
-          field: "conversions",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(
-                this.audiencePerformanceAds["summary"],
-                "conversions"
-              )
-            : "-",
-        },
-        {
-          id: 5,
-          title: "Clicks",
-          field: "clicks",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(this.audiencePerformanceAds["summary"], "clicks")
-            : "-",
-        },
-        {
-          id: 6,
-          title: "Frequency",
-          field: "frequency",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(this.audiencePerformanceAds["summary"], "frequency")
-            : "-",
-        },
-        {
-          id: 7,
-          title: "CPM",
-          field: "cost_per_thousand_impressions",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(
-                this.audiencePerformanceAds["summary"],
-                "cost_per_thousand_impressions"
-              )
-            : "-",
-        },
-        {
-          id: 8,
-          title: "CTR",
-          field: "click_through_rate",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(
-                this.audiencePerformanceAds["summary"],
-                "click_through_rate"
-              )
-            : "-",
-        },
-        {
-          id: 9,
-          title: "CPA",
-          field: "cost_per_action",
-          value: this.audiencePerformanceAds
-            ? this.audiencePerformanceAds &&
-              this.fetchKey(
-                this.audiencePerformanceAds["summary"],
-                "cost_per_action"
-              )
-            : "-",
-        },
-        {
-          id: 10,
-          title: "CPC",
-          field: "cost_per_click",
-          value:
-            this.audiencePerformanceAds &&
-            this.fetchKey(
-              this.audiencePerformanceAds["summary"],
-              "cost_per_click"
-            ),
-        },
-        {
-          id: 11,
-          title: "Engagement rate",
-          field: "engagement_rate",
-          value:
-            this.audiencePerformanceAds &&
-            this.fetchKey(
-              this.audiencePerformanceAds["summary"],
-              "engagement_rate"
-            ),
-        },
-      ]
-    },
-    emailSummary() {
-      if (
-        !this.audiencePerformanceEmail ||
-        (this.audiencePerformanceEmail &&
-          this.audiencePerformanceEmail.length === 0)
-      )
-        return []
-      return [
-        {
-          id: 1,
-          title: "Sent",
-          field: "sent",
-          value:
-            this.audiencePerformanceEmail &&
-            this.audiencePerformanceEmail["summary"]
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(this.audiencePerformanceEmail["summary"], "sent")
-              : "-",
-        },
-        {
-          id: 2,
-          title: "Hard bounces / Rate",
-          field: "hard_bounces|hard_bounces_rate",
-          value: `${`${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "hard_bounces"
-                )
-              : "-"
-          }|${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "hard_bounces_rate"
-                )
-              : "-"
-          }`}`,
-        },
-        {
-          id: 3,
-          title: "Delivered / Rate",
-          field: "delivered|delivered_rate",
-          value: `${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "delivered"
-                )
-              : "-"
-          }|${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "delivered_rate"
-                )
-              : "-"
-          }`,
-        },
-        {
-          id: 4,
-          title: "Open / Rate",
-          field: "open|open_rate",
-          value: `${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(this.audiencePerformanceEmail["summary"], "open")
-              : "-"
-          }|${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "open_rate"
-                )
-              : "-"
-          }`,
-        },
-        {
-          id: 5,
-          title: "Click / CTR",
-          field: "clicks|click_through_rate",
-          value: `${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "clicks"
-                )
-              : "-"
-          }|${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "click_through_rate"
-                )
-              : "-"
-          }`,
-        },
-        {
-          id: 6,
-          title: "Click to open rate  ",
-          field: "click_to_open_rate",
-          value: this.audiencePerformanceEmail
-            ? this.audiencePerformanceEmail &&
-              this.fetchKey(
-                this.audiencePerformanceEmail["summary"],
-                "click_to_open_rate"
-              )
-            : "-",
-        },
-        {
-          id: 7,
-          title: "Unique clicks / Unique opens",
-          field: "unique_clicks|unique_opens",
-          value: `${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "unique_clicks"
-                )
-              : "-"
-          }|${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "unique_opens"
-                )
-              : "-"
-          }`,
-        },
-        {
-          id: 8,
-          title: "Unsubscribe / Rate",
-          field: "unsubscribe|unsubscribe_rate",
-          value: `${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "unsubscribe"
-                )
-              : "-"
-          }|${
-            this.audiencePerformanceEmail
-              ? this.audiencePerformanceEmail &&
-                this.fetchKey(
-                  this.audiencePerformanceEmail["summary"],
-                  "unsubscribe_rate"
-                )
-              : "-"
-          }`,
-        },
-      ]
-    },
   },
   async mounted() {
     this.loading = true
     this.engagementId = this.$route.params.id
     await this.loadEngagement(this.$route.params.id)
-    this.getAudiences()
-    this.getAvailableDestinations()
     this.loading = false
   },
   methods: {
@@ -593,9 +292,7 @@ export default {
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
       detachAudience: "engagements/detachAudience",
       detachAudienceDestination: "engagements/detachAudienceDestination",
-      getAudiences: "audiences/getAll",
       getAudiencePerformanceById: "engagements/getAudiencePerformance",
-      getAvailableDestinations: "destinations/getAll",
       getEngagementById: "engagements/get",
     }),
 
@@ -609,6 +306,7 @@ export default {
 
     triggerSelectAudience() {
       this.closeDrawers()
+      this.$refs.selectAudiences.fetchAudiences()
       this.showSelectAudiencesDrawer = true
       this.$refs.selectAudiences.localSelectedAudiences = JSON.parse(
         JSON.stringify(this.selectedAudiences)
@@ -617,11 +315,13 @@ export default {
 
     triggerCreateAudience() {
       this.closeDrawers()
+      this.$refs.showAddAudiencesDrawer.fetchDependencies()
       this.showAddAudiencesDrawer = true
     },
     triggerSelectDestination(audienceId) {
       this.closeDrawers()
       this.selectedAudienceId = audienceId
+      this.$refs.selectDestinations.fetchDestination()
       this.showSelectDestinationsDrawer = true
     },
     triggerDataExtensionDrawer(destination) {

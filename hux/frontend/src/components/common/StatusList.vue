@@ -244,6 +244,7 @@ export default {
     section: {
       type: Object,
       required: false,
+      default: () => {},
     },
 
     engagementId: {

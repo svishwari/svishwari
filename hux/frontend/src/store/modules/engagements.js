@@ -8,7 +8,10 @@ const namespaced = true
 const state = {
   items: {},
 
-  audiencePerformance: {},
+  audiencePerformance: {
+    ads: {},
+    email: {},
+  },
 
   deliveries: {},
   campaignMappingOptions: {},
