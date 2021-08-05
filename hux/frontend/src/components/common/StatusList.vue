@@ -407,10 +407,12 @@ export default {
         this.engagementMenuOptions.forEach((element) => {
           switch (element.title.toLowerCase()) {
             case "view delivery history":
-              element["active"] =
-                section[this.deliveriesKey].filter(
-                  (delivery) => delivery.status === "Delivered"
-                ).length > 0
+              element["active"] = false
+              // TODO
+              // element["active"] =
+              //   section[this.deliveriesKey].filter(
+              //     (delivery) => delivery.status === "Delivered"
+              //   ).length > 0
               break
             case "deliver all":
               element["active"] = section[this.deliveriesKey].length > 0

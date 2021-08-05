@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       engagementMenuOptions: [
-        { id: 1, title: "View delivery history", active: true },
+        { id: 1, title: "View delivery history", active: false },
         { id: 2, title: "Deliver all", active: true },
         { id: 3, title: "Add a destination", active: true },
         { id: 5, title: "Remove engagement", active: false },
