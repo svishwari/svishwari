@@ -11,10 +11,8 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     get_delivery_platform,
     set_delivery_job_status,
-    set_delivery_job_audience_size,
 )
 from huxunifylib.database.engagement_management import add_delivery_job
-from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
@@ -24,9 +22,6 @@ from huxunifylib.util.general.const import (
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.cdp import (
-    get_customers_overview,
-)
 from huxunify.api.data_connectors.aws import (
     set_cloud_watch_rule,
     put_rule_targets_aws_batch,
@@ -259,7 +254,7 @@ class DestinationBatchJob:
         # Submit the AWS batch job
         response_batch_submit = self.aws_batch_connector.submit_job()
 
-        status = db_const.STATUS_IN_PROGRESS
+        status = api_const.STATUS_DELIVERING
         if (
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
@@ -307,24 +302,6 @@ def get_destination_config(
         database,
         destination[db_const.OBJECT_ID],
     )
-
-    # get audience size and update the delivery job
-    audience = get_audience(database, audience_id)
-    try:
-        audience_insights = get_customers_overview(
-            audience[db_const.AUDIENCE_FILTERS]
-        )
-        set_delivery_job_audience_size(
-            database,
-            audience_delivery_job[db_const.ID],
-            audience_insights.get(api_const.TOTAL_RECORDS, 0),
-        )
-    except Exception as exc:  # pylint: disable=broad-except
-        logging.warning(
-            "Failed to set audience size %s: %s.",
-            exc.__class__,
-            exc,
-        )
 
     # get the configuration values
     config = get_config()

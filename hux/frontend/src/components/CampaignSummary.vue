@@ -170,7 +170,7 @@
                       <div
                         class="w-100 d-flex align-center"
                         :class="{
-                          'pl-11': !item.is_mapped,
+                          'pl-11': !item.is_mapped && type === 'ads',
                           'pl-3': item.campaigns && item.campaigns.length > 0,
                         }"
                       >
@@ -199,7 +199,7 @@
                               {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                             <v-btn
-                              v-if="item.is_mapped"
+                              v-if="item.is_mapped && type === 'ads'"
                               icon
                               small
                               class="ml-3"
@@ -229,7 +229,7 @@
                       </div>
                     </td>
                     <td
-                      v-if="!item.is_mapped"
+                      v-if="!item.is_mapped && type === 'ads'"
                       :colspan="getDestinationHeaders(expandedHeaders).length"
                       :style="{
                         width: totalWidth(
@@ -704,7 +704,8 @@ export default {
       return (
         (item.destinations &&
           item.destinations.some(
-            (dest) => !dest.is_mapped && dest.name === "Facebook"
+            (dest) =>
+              !dest.is_mapped && this.type === "ads" && dest.name === "Facebook"
           )) ||
         false
       )

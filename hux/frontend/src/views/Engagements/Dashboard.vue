@@ -117,14 +117,14 @@
             </div>
           </template>
           <template #empty-deliveries="{ sectionId }">
-            <div class="pt-3 empty-audience pb-12">
+            <div class="pt-1 empty-audience pb-1">
               There are no destinations assigned to this audience.
               <br />
               Add one now.
               <br />
               <v-icon
                 size="30"
-                class="add-icon cursor-pointer pt-3"
+                class="add-icon cursor-pointer pt-2"
                 color="primary"
                 @click="triggerSelectDestination(sectionId)"
               >
@@ -302,6 +302,7 @@ export default {
     return {
       selectedAudience: null,
       showLookAlikeDrawer: false,
+      engagementId: null,
       destinationArr: [],
       audienceMergedData: [],
       loading: false,
@@ -347,10 +348,6 @@ export default {
       getAudience: "audiences/audience",
       getDestinations: "destinations/single",
     }),
-
-    engagementId() {
-      return this.$route.params.id
-    },
 
     engagementList() {
       return this.getEngagement(this.engagementId)
@@ -767,6 +764,7 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.engagementId = this.$route.params.id
     await this.loadEngagement(this.$route.params.id)
     this.getAudiences()
     this.getAvailableDestinations()
@@ -980,22 +978,21 @@ export default {
     async triggerOverviewDestinationAction(event) {
       try {
         const engagementId = this.engagementId
+        this.selectedAudienceId = event.parent.id
         switch (event.target.title.toLowerCase()) {
           case "deliver now":
             await this.deliverAudienceDestination({
               id: engagementId,
-              audienceId: event.parent.id,
+              audienceId: this.selectedAudienceId,
               destinationId: event.data.id,
             })
             this.flashAlert = true
             break
           case "edit delivery schedule":
             this.showConfirmModal = true
-            this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
             break
           case "remove destination":
-            this.selectedAudienceId = event.data.id
             await this.detachAudienceDestination({
               engagementId: this.engagementId,
               audienceId: this.selectedAudienceId,
