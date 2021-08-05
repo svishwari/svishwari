@@ -10,7 +10,6 @@
 import * as d3Select from "d3-selection"
 import * as d3Scale from "d3-scale"
 import * as d3Shape from "d3-shape"
-import "d3-transition"
 
 export default {
   name: "DoughnutChart",
@@ -37,7 +36,7 @@ export default {
     return {}
   },
   methods: {
-    async initiateGenderChart() {
+    async initiateChart() {
       let data = await this.data // TODO: Get this from API
 
       // Initialize width, height & color range
@@ -163,7 +162,7 @@ export default {
     },
   },
   mounted() {
-    this.initiateGenderChart()
+    this.initiateChart()
   },
 }
 </script>
