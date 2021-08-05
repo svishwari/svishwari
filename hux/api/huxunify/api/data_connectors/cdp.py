@@ -386,8 +386,10 @@ def add_randomness(values: list, variation_percentage: float = 0.005):
     ]
 
 
-def get_idr_matching_trends() -> list:
+def get_idr_matching_trends(token: str) -> list:
     """Retrieves IDR matching trends data YTD
+    Args:
+        token (str): OKTA JWT Token.
     Returns:
        list: count of known, anonymous, unique ids on a day.
     """
@@ -400,6 +402,9 @@ def get_idr_matching_trends() -> list:
 
     days = [start_date + datetime.timedelta(days=i) for i in range(num_points)]
 
+    # call customer-profile insights to get id counts
+    customer_profile_info = get_customers_overview(token)
+    print(customer_profile_info[api_c.TOTAL_UNKNOWN_IDS], customer_profile_info[api_c.TOTAL_UNIQUE_IDS], customer_profile_info[api_c.TOTAL_KNOWN_IDS])
     known_ids = generate_idr_matching_trends_distribution(
         num_points,
         min_point=api_c.KNOWN_IDS_MIN_COUNT,

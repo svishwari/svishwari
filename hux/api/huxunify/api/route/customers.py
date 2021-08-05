@@ -643,11 +643,11 @@ class IDRMatchingTrends(SwaggerView):
         Returns:
             Tuple[dict, int] dict of IDR Matching trends YTD and http code
         """
-
+        token_response = get_token_from_request(request)
         return (
             jsonify(
                 MatchingTrendsSchema().dump(
-                    get_idr_matching_trends(), many=True
+                    get_idr_matching_trends(token_response[0]), many=True
                 )
             ),
             HTTPStatus.OK,
