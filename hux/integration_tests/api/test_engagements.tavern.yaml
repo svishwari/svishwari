@@ -125,7 +125,7 @@ stages:
         Authorization: "Bearer {token}"
       json:
         name: Updated Engagement 1
-        description: Updatede Description 1
+        description: Updated Description 1
         audiences:
           - id: "{engagement_audience_id}"
             destinations:
