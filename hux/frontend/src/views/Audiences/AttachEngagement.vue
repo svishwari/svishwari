@@ -211,8 +211,9 @@
                   class="delivery-schedule ml-0 mt-6"
                 >
                   <div>
-                    <span class="date-picker-label 
-                    neroBlack--text text-caption">
+                    <span
+                      class="date-picker-label neroBlack--text text-caption"
+                    >
                       Start date
                     </span>
                     <hux-start-date
@@ -224,8 +225,9 @@
                   </div>
                   <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
                   <div>
-                    <span class="date-picker-label 
-                    neroBlack--text text-caption">
+                    <span
+                      class="date-picker-label neroBlack--text text-caption"
+                    >
                       End date
                     </span>
                     <hux-end-date
@@ -262,8 +264,8 @@
     <template #footer-left>
       <div
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
-        class="d-flex align-baseline 
-        gray--text text-caption">
+        class="d-flex align-baseline gray--text text-caption"
+      >
         {{ engagements.length }} results
       </div>
       <div v-if="viewStep == 2" class="d-flex align-baseline">
