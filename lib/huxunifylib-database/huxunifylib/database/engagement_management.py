@@ -69,6 +69,7 @@ def set_engagement(
         db_c.UPDATED_BY: "",
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.DELETED: deleted,
+        db_c.STATUS: "Active",
         db_c.AUDIENCES: [
             {
                 db_c.OBJECT_ID: x[db_c.OBJECT_ID],
@@ -229,10 +230,10 @@ def get_engagements_summary(
                     },
                 },
                 # push the grouped destinations into an array
-                db_c.DESTINATIONS: {
+                "destinations": {
                     "$push": {
-                        db_c.OBJECT_ID: "$audiences.destinations.id",
-                        db_c.NAME: "$audiences.destinations.name",
+                        "id": "$audiences.destinations.id",
+                        "name": "$audiences.destinations.name",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "latest_delivery": {
