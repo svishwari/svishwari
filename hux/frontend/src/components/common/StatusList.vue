@@ -164,7 +164,7 @@
             </span>
           </div>
         </v-list-item-content>
-        <v-list-item-content v-if="item.status" class="status-col py-1">
+        <v-list-item-content v-if="item.status" class="status-col py-1 mr-2">
           <status
             :status="item.status"
             :icon-size="statusIcon"
@@ -174,7 +174,7 @@
             tooltip-title="Destination status"
           />
         </v-list-item-content>
-        <v-list-item-content v-if="item.size" class="size-col py-1">
+        <v-list-item-content v-if="item.size" class="size-col py-1 mr-2">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) }}
@@ -184,7 +184,7 @@
             </template>
           </tooltip>
         </v-list-item-content>
-        <v-list-item-content v-if="!item.size" class="deliverdOn-col py-1">
+        <v-list-item-content v-if="!item.size" class="size-col py-1">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) | Empty("-") }}
@@ -517,16 +517,16 @@ export default {
   .v-list {
     .v-list-item {
       .icon-col {
-        min-width: 69px;
-        max-width: 69px;
+        min-width: 55px;
+        max-width: 55px;
       }
       .status-col {
         min-width: 45px;
         max-width: 45px;
       }
       .size-col {
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 50px;
+        max-width: 50px;
         font-size: 12px;
         line-height: 16px;
         color: var(--v--neroBlack-base);
@@ -535,7 +535,7 @@ export default {
         font-size: 12px;
         line-height: 16px;
         color: var(--v-neroBlack-base);
-        min-width: 80px;
+        min-width: 60px;
       }
       &:hover,
       &:focus {
