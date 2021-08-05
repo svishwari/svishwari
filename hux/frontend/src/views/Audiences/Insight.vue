@@ -589,7 +589,7 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
-            this.dataPendingMesssage(event.data.name)
+            this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
             this.dataErrorMesssage(event.data.name)
             console.error(error)
@@ -620,7 +620,7 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-            this.dataPendingMesssage(event.data.name)
+           this.dataPendingMesssage(event.data.name, "audience")
             break
           case "edit delivery schedule":
             this.showConfirmModal = true
@@ -647,18 +647,23 @@ export default {
       }
     },
 
-    //Alert Message
-    dataPendingMesssage(name) {
+  //Alert Message
+    dataPendingMesssage(name, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
+      if(value == "engagement") {
+ this.alert.message =`Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
+      } else {
       this.alert.message =
-        "Your audience, " + name + " , has started delivering."
+       `Your audience, '${name}' , has started delivering.`
+      }
+
       this.flashAlert = true
     },
     dataErrorMesssage(name) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-      this.alert.message = "Failed to schedule a delivery of audience" + name
+      this.alert.message = `Failed to schedule a delivery for ${name}`
       this.flashAlert = true
     },
 

@@ -947,7 +947,8 @@ export default {
     async triggerOverviewAction(event) {
       try {
         const engagementId = this.engagementId
-        switch (event.target.title.toLowerCase()) {
+        switch (event.target.title
+        .toLowerCase()) {
           case "add a destination":
             this.closeDrawers()
             this.triggerSelectDestination(event.data.id)
@@ -959,8 +960,9 @@ export default {
                 id: engagementId,
                 audienceId: event.data.id,
               })
-              this.dataPendingMesssage(event.data.name)
+              this.dataPendingMesssage(event.data.name, "engagement")
             } catch (error) {
+              this.dataErrorMesssage(event.data.name, "engagement")
               handleError(error)
               throw error
             }
@@ -973,7 +975,6 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event.data.name)
         handleError(error)
         throw error
       }
@@ -989,7 +990,7 @@ export default {
               audienceId: event.parent.id,
               destinationId: event.data.id,
             })
-            this.dataPendingMesssage(event.data.name)
+            this.dataPendingMesssage(event.data.name, "audience")
             break
           case "edit delivery schedule":
             this.showConfirmModal = true
@@ -1012,25 +1013,26 @@ export default {
             break
         }
       } catch (error) {
-        this.dataErrorMesssage(event.data.name)
+        this.dataErrorMesssage(event.data.name, "audience")
         handleError(error)
         throw error
       }
     },
-    //Alert Message
-    dataPendingMesssage(name) {
+    
+ //Alert Message
+    dataPendingMesssage(name, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
-      this.alert.message =
-        "Your audience, " + name + ", has started delivering."
+        `Your audience, '${name}' , has started delivering.`
       this.flashAlert = true
     },
     dataErrorMesssage(name) {
       this.alert.type = "error"
       this.alert.title = "OH NO!"
-      this.alert.message = "Failed to schedule a delivery of audience" + name
+      this.alert.message = `Failed to schedule a delivery for '${name}'`
       this.flashAlert = true
     },
+
 
     //#endregion
     openDeliveryHistoryDrawer() {
