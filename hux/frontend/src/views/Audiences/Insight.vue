@@ -546,11 +546,24 @@ export default {
             subtitle:
               insight !== "age"
                 ? this.audience.audience_insights[insight]
-                : `${this.audience.audience_insights["min_age"]}-${this.audience.audience_insights["max_age"]}`,
+                : this.getAgeString(
+                    this.audience.audience_insights["min_age"],
+                    this.audience.audience_insights["max_age"]
+                  ),
             icon: this.insightInfoItems[insight].icon,
           }
         }
       )
+    },
+
+    getAgeString(min_age, max_age) {
+      if (min_age && max_age && min_age === max_age) {
+        return min_age
+      } else if (min_age && max_age) {
+        return `${min_age}-${max_age}`
+      } else {
+        return "-"
+      }
     },
 
     /**
