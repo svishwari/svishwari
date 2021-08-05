@@ -457,7 +457,7 @@ class CourierTest(TestCase):
             ):
                 batch_destination.submit()
 
-            self.assertEqual(batch_destination.result, c.STATUS_IN_PROGRESS)
+            self.assertEqual(batch_destination.result, api_c.STATUS_DELIVERING)
 
     @given(
         st.dictionaries(
