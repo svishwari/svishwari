@@ -130,7 +130,7 @@
       <v-row class="pa-3 pb-5" style="min-height: 200px">
         <v-col
           :md="
-            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
+            !is_lookalike && isLookalikable && isLookalikable != 'Disabled'
               ? 9
               : 12
           "
@@ -185,7 +185,7 @@
           </delivery-overview>
         </v-col>
         <v-col
-          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
+          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Disabled'"
           md="3"
           class="pl-6 pr-0 py-0"
         >

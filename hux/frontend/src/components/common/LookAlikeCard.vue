@@ -8,7 +8,7 @@
     >
       <span>Lookalikes</span>
       <v-btn
-        :disabled="status == 'Disabled'"
+        :disabled="status == 'Inactive'"
         text
         color="primary"
         @click="onCreateLookalike"
@@ -80,7 +80,7 @@
       </v-list-item-subtitle>
       <span>Create one by clicking the "Create lookalike" above.</span>
     </v-card-text>
-    <v-card-text v-if="status == 'Disabled'" class="pl-4 pr-4 pt-4">
+    <v-card-text v-if="status == 'Inactive'" class="pl-4 pr-4 pt-4">
       <span>
         This audience is currently getting prepared in Facebook. This could take
         a couple hours so check back later.
