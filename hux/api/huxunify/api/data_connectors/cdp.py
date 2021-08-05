@@ -404,25 +404,36 @@ def get_idr_matching_trends(token: str) -> list:
 
     # call customer-profile insights to get id counts
     customer_profile_info = get_customers_overview(token)
-    print(customer_profile_info[api_c.TOTAL_UNKNOWN_IDS], customer_profile_info[api_c.TOTAL_UNIQUE_IDS], customer_profile_info[api_c.TOTAL_KNOWN_IDS])
+    known_ids_count = customer_profile_info.get(
+        api_c.TOTAL_KNOWN_IDS, api_c.KNOWN_IDS_MAX_COUNT
+    )
+
+    unique_ids_count = customer_profile_info.get(
+        api_c.TOTAL_UNIQUE_IDS, api_c.UNIQUE_HUX_IDS_MAX_COUNT
+    )
+
+    unknown_ids_count = customer_profile_info.get(
+        api_c.TOTAL_UNKNOWN_IDS, api_c.ANONYMOUS_IDS_MIN_COUNT
+    )
+
     known_ids = generate_idr_matching_trends_distribution(
         num_points,
-        min_point=api_c.KNOWN_IDS_MIN_COUNT,
-        max_point=api_c.KNOWN_IDS_MAX_COUNT,
+        min_point=known_ids_count - (0.35 * known_ids_count),
+        max_point=known_ids_count,
         lambda_=api_c.KNOWN_IDS_LAMBDA,
     )
 
     unique_hux_ids = generate_idr_matching_trends_distribution(
         num_points,
-        min_point=api_c.UNIQUE_HUX_IDS_MIN_COUNT,
-        max_point=api_c.UNIQUE_HUX_IDS_MAX_COUNT,
+        min_point=unique_ids_count - (0.35 * known_ids_count),
+        max_point=unique_ids_count,
         lambda_=api_c.UNIQUE_HUX_IDS_LAMBDA,
     )
     # setting multiplier to -1 to get exponentially decreasing values
     anonymous_ids = generate_idr_matching_trends_distribution(
         num_points,
-        min_point=api_c.ANONYMOUS_IDS_MIN_COUNT,
-        max_point=api_c.ANONYMOUS_IDS_MAX_COUNT,
+        min_point=unknown_ids_count,
+        max_point=unknown_ids_count + (0.35 * unknown_ids_count),
         lambda_=api_c.ANONYMOUS_IDS_LAMBDA,
         multiplier=-1,
     )
