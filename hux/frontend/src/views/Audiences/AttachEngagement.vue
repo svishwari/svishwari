@@ -162,6 +162,11 @@
                   >
                     <v-btn
                       class="active-delivery-option"
+                      :class="
+                        newEngagement.delivery_schedule == 0
+                          ? 'btn-radio-active'
+                          : 'btn-radio-inactive'
+                      "
                       height="40"
                       width="175"
                     >
@@ -178,7 +183,12 @@
                       Manual
                     </v-btn>
                     <v-btn
-                      class="disabled-white-background"
+                      class="active-delivery-option"
+                      :class="
+                        newEngagement.delivery_schedule == 1
+                          ? 'btn-radio-active'
+                          : 'btn-radio-inactive'
+                      "
                       height="40"
                       width="175"
                     >
@@ -189,7 +199,7 @@
                             : '$radioOff'
                         "
                       />
-                      <v-icon class="ico"> mdi-clock-check-outline </v-icon>
+                      <v-icon class="ico primary--text" size="16"> mdi-clock-check-outline </v-icon>
                       Recurring
                     </v-btn>
                   </v-btn-toggle>
@@ -199,7 +209,7 @@
                   class="delivery-schedule ml-0 mt-6"
                 >
                   <div>
-                    <span class="date-picker-label">Start date</span>
+                    <span class="date-picker-label neroBlack--text text-caption">Start date</span>
                     <hux-start-date
                       class=""
                       :label="selectedStartDate"
@@ -207,11 +217,9 @@
                       @on-date-select="(val) => (selectedStartDate = val)"
                     />
                   </div>
-                  <v-icon class="icon icon-right" size="16">
-                    mdi-arrow-right
-                  </v-icon>
+                  <icon class="ml-2 mr-2" type="arrow" :size="28" v-if="value.delivery_schedule == 1"/>
                   <div>
-                    <span class="date-picker-label">End date</span>
+                    <span class="date-picker-label neroBlack--text text-caption">End date</span>
                     <hux-end-date
                       class=""
                       :label="selectedEndDate"
@@ -469,7 +477,7 @@ export default {
   .delivery-options {
     ::v-deep button {
       background: var(--v-white-base);
-      border: 1px solid var(--v-lightGrey-base);
+      // border: 1px solid var(--v-lightGrey-base);
       box-sizing: border-box;
       border-radius: 4px;
       border-left-width: 1px !important;
@@ -477,7 +485,7 @@ export default {
       height: 40px;
       padding: 10px;
       margin-right: 10px;
-      color: var(--v-lightGrey-base);
+      // color: var(--v-lightGrey-base);
       .v-icon {
         &.ico {
           width: 13.44px;
@@ -487,13 +495,14 @@ export default {
       }
       .v-btn__content {
         justify-content: start;
+        color: var(--v-primary-base) !important;
       }
       .theme--light {
-        color: var(--v-lightGrey-base) !important;
+        // color: var(--v-lightGrey-base) !important;
       }
       &.v-btn--active {
         border: 1px solid var(--v-primary-base) !important;
-        color: var(--v-primary-base) !important;
+        // color: var(--v-primary-base) !important;
         &::before {
           opacity: 0;
         }
@@ -507,8 +516,17 @@ export default {
         }
       }
     }
+    // .active-delivery-option {
+    //   border: 1px solid var(--v-lightGrey-base) !important;;
+    // }
+    // .theme--light.v-btn-toggle:not(.v-btn-toggle--group) .v-btn.v-btn {
+    //   border: 1px solid var(--v-lightGrey-base) !important;;
+    // }
     .active-delivery-option.v-btn.v-item--active {
       border-color: var(--v-primary-base) !important;
+    }
+    .active-delivery-option.v-btn.btn-radio-inactive {
+      border-color: var(--v-lightGrey-base) !important;
     }
     .disabled-white-background {
       background: white !important;

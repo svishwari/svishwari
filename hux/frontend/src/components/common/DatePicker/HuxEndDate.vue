@@ -241,7 +241,7 @@ export default {
     width: 94%;
     background-color: var(--v-aliceBlue-base) !important;
     .header-value {
-      margin-left: 12px;
+      margin-left: 48px;
       color: var(--v-primary-base) !important;
     }
   }
