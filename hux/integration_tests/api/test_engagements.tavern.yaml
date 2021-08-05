@@ -152,7 +152,7 @@ stages:
 
 # TODO add an audience to engagement and add a destination to  the audience of this engagement
 
-  - name: delete this engagement
+  - name: test delete engagement
 
     # Define the request to be made...
     request:
