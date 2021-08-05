@@ -23,62 +23,9 @@
     <v-progress-linear :active="loading" :indeterminate="loading" />
     <!-- Page Content Starts here -->
     <div v-if="!loading" class="inner-wrap px-15 py-8">
-      <!-- Summary Cards Wrapper -->
-      <div class="summary-wrap d-flex mb-6">
-        <metric-card class="mr-3 shrink" :title="summaryCards[0].title">
-          <template #subtitle-extended>
-            <div class="font-weight-semi-bold neroBlack--text my-2">
-              {{ deliverySchedule }}
-            </div>
-          </template>
-        </metric-card>
-        <metric-card class="mr-3 shrink" :title="summaryCards[1].title">
-          <template v-if="summaryCards[1].subLabel" #subtitle-extended>
-            <span class="mr-2">
-              <tooltip>
-                <template #label-content>
-                  <span class="font-weight-semi-bold neroBlack--text">
-                    {{ summaryCards[1].value }}
-                  </span>
-                </template>
-                <template #hover-content>
-                  {{ summaryCards[1].hoverValue | Date | Empty }}
-                </template>
-              </tooltip>
-            </span>
-            <avatar :name="summaryCards[1].subLabel" />
-          </template>
-        </metric-card>
-        <metric-card class="mr-3 shrink" :title="summaryCards[2].title">
-          <template v-if="summaryCards[2].subLabel" #subtitle-extended>
-            <span class="mr-2">
-              <tooltip>
-                <template #label-content>
-                  <span class="font-weight-semi-bold neroBlack--text">
-                    {{ summaryCards[2].value }}
-                  </span>
-                </template>
-                <template #hover-content>
-                  {{ summaryCards[2].hoverValue | Date | Empty }}
-                </template>
-              </tooltip>
-            </span>
-            <avatar :name="summaryCards[2].subLabel" />
-          </template>
-        </metric-card>
-        <metric-card
-          v-if="engagementList && engagementList.description"
-          class="mr-3 grow"
-          title=""
-          :max-width="800"
-        >
-          <template #subtitle-extended>
-            {{ summaryCards[3].title }}
-          </template>
-        </metric-card>
-      </div>
-
-      <div class="audience-summary">
+      <div>
+        <!-- Summary Cards Wrapper -->
+        <engagement-overview-summary :data="engagementList" />
         <!-- Audience Destination Cards Wrapper -->
         <delivery-overview
           :sections="engagementList && engagementList.audiences"
@@ -133,50 +80,13 @@
             </div>
           </template>
         </delivery-overview>
-        <v-tabs v-model="tabOption" class="mt-8">
-          <v-tabs-slider color="primary"></v-tabs-slider>
-
-          <v-tab
-            key="displayAds"
-            class="pa-2"
-            color
-            @click="fetchCampaignPerformanceDetails('ads')"
-          >
-            <span style="width: 15px">
-              <icon type="display_ads" :size="10" class="mr-2" />
-            </span>
-            Display ads
-          </v-tab>
-          <v-tab key="email" @click="fetchCampaignPerformanceDetails('email')">
-            @ Email
-          </v-tab>
-        </v-tabs>
-        <v-tabs-items v-model="tabOption" class="mt-2">
-          <v-tab-item key="displayAds">
-            <v-progress-linear
-              :active="loadingTab"
-              :indeterminate="loadingTab"
-            />
-            <campaign-summary
-              :summary="displayAdsSummary"
-              :campaign-data="audiencePerformanceAdsData"
-              :engagement-id="engagementId"
-              type="ads"
-              @onUpdateCampaignMappings="fetchCampaignPerformanceDetails('ads')"
-            />
-          </v-tab-item>
-          <v-tab-item key="email">
-            <v-progress-linear
-              :active="loadingTab"
-              :indeterminate="loadingTab"
-            />
-            <campaign-summary
-              :summary="emailSummary"
-              :campaign-data="audiencePerformanceEmailData"
-              type="email"
-            />
-          </v-tab-item>
-        </v-tabs-items>
+        <engagement-performance-metrics
+          :engagement-id="engagementId"
+          :ad-data="audiencePerformanceAds"
+          :email-data="audiencePerformanceEmail"
+          :loading-metrics="loadingTab"
+          @fetchMetrics="fetchCampaignPerformanceDetails($event)"
+        />
       </div>
     </div>
     <select-audiences-drawer
@@ -260,11 +170,7 @@ import { handleError } from "@/utils"
 import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status"
-import MetricCard from "@/components/common/MetricCard"
-import Avatar from "@/components/common/Avatar"
 import Icon from "@/components/common/Icon"
-import Tooltip from "../../components/common/Tooltip.vue"
-import CampaignSummary from "../../components/CampaignSummary.vue"
 import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer.vue"
 import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
 import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
@@ -275,18 +181,18 @@ import HuxAlert from "../../components/common/HuxAlert.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import LookAlikeAudience from "@/views/Audiences/Configuration/Drawers/LookAlikeAudience.vue"
+import EngagementOverviewSummary from "./Overview.vue"
+import EngagementPerformanceMetrics from "./PerformanceMetrics.vue"
 
 export default {
   name: "EngagementDashboard",
   components: {
     PageHeader,
+    EngagementOverviewSummary,
+    EngagementPerformanceMetrics,
     Breadcrumb,
     Status,
-    MetricCard,
-    Avatar,
     Icon,
-    Tooltip,
-    CampaignSummary,
     AddAudienceDrawer,
     SelectAudiencesDrawer,
     SelectDestinationsDrawer,
@@ -379,59 +285,6 @@ export default {
       return this.audiencePerformanceEmail
         ? this.audiencePerformanceEmail.audience_performance
         : []
-    },
-    summaryCards() {
-      const summary = [
-        {
-          id: 1,
-          title: "Delivery schedule",
-          value: this.fetchKey(this.engagementList, "delivery_schedule"),
-          subLabel: null,
-        },
-        {
-          id: 2,
-          title: "Last updated",
-          // TODO: need to remove mapping to created by
-          value:
-            this.formattedDate(
-              this.fetchKey(this.engagementList, "update_time")
-            ) !== "-"
-              ? this.formattedDate(
-                  this.fetchKey(this.engagementList, "update_time")
-                )
-              : this.formattedDate(
-                  this.fetchKey(this.engagementList, "create_time")
-                ),
-          hoverValue:
-            this.fetchKey(this.engagementList, "update_time") !== "-"
-              ? this.fetchKey(this.engagementList, "update_time")
-              : this.fetchKey(this.engagementList, "create_time"),
-          subLabel:
-            this.fetchKey(this.engagementList, "updated_by") !== "-"
-              ? this.fetchKey(this.engagementList, "updated_by")
-              : this.fetchKey(this.engagementList, "created_by"),
-          width: "19%",
-          minWidth: "164px",
-        },
-        {
-          id: 3,
-          title: "Created",
-          value: this.formattedDate(
-            this.fetchKey(this.engagementList, "create_time")
-          ),
-          hoverValue: this.fetchKey(this.engagementList, "create_time"),
-          subLabel: this.fetchKey(this.engagementList, "created_by"),
-          width: "19%",
-          minWidth: "164px",
-        },
-        {
-          id: 4,
-          title: this.fetchKey(this.engagementList, "description"),
-          value: null,
-          subLabel: null,
-        },
-      ]
-      return summary.filter((item) => item.title !== null)
     },
     displayAdsSummary() {
       if (
@@ -723,44 +576,6 @@ export default {
         },
       ]
     },
-    deliverySchedule() {
-      if (this.engagementList && this.engagementList.delivery_schedule) {
-        if (
-          !this.engagementList.delivery_schedule.start_date &&
-          !this.engagementList.delivery_schedule.end_date
-        ) {
-          return "Now"
-        } else {
-          if (
-            this.engagementList.delivery_schedule.start_date &&
-            this.engagementList.delivery_schedule.end_date
-          ) {
-            return (
-              this.$options.filters.Date(
-                this.engagementList.delivery_schedule.start_date,
-                "MMMM D"
-              ) +
-              " - " +
-              this.$options.filters.Date(
-                this.engagementList.delivery_schedule.end_date,
-                "MMMM D"
-              )
-            )
-          } else if (this.engagementList.delivery_schedule.start_date) {
-            return this.$options.filters.Date(
-              this.engagementList.delivery_schedule.start_date,
-              "MMMM D"
-            )
-          } else if (this.engagementList.delivery_schedule.end_date) {
-            return this.$options.filters.Date(
-              this.engagementList.delivery_schedule.end_date,
-              "MMMM D"
-            )
-          }
-        }
-      }
-      return "Manual"
-    },
   },
   async mounted() {
     this.loading = true
@@ -888,13 +703,6 @@ export default {
       await this.loadEngagement(this.engagementId)
     },
     // Drawer Section Ends
-
-    formattedDate(value) {
-      if (value) {
-        return this.$options.filters.Date(value, "relative") + " by"
-      }
-      return "-"
-    },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
     },
@@ -1095,50 +903,6 @@ export default {
             }
           }
         }
-      }
-    }
-
-    .v-tabs {
-      ::v-deep .v-tabs-bar {
-        background: transparent;
-        .v-tabs-bar__content {
-          border-bottom: 2px solid var(--v-zircon-base);
-          .v-tabs-slider-wrapper {
-            width: 128px;
-            .v-tabs-slider {
-              background-color: var(--v-info-base) !important;
-              border-color: var(--v-info-base) !important;
-            }
-          }
-          .v-tab {
-            text-transform: inherit;
-            padding: 8px;
-            color: var(--v-primary-base);
-            font-size: 15px;
-            line-height: 20px;
-            svg {
-              fill: transparent !important;
-              path {
-                stroke: var(--v-primary-base);
-              }
-            }
-            &.v-tab--active {
-              color: var(--v-info-base);
-              svg {
-                path {
-                  stroke: var(--v-info-base);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    .v-tabs-items {
-      overflow: inherit;
-      background-color: transparent !important;
-      .v-window-item--active {
-        background: transparent;
       }
     }
   }
