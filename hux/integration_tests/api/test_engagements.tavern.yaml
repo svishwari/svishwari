@@ -1,6 +1,6 @@
 #This test might fail due to Internal Server Error, just run multiple times or check if token expired
 #This tests the following endpoints:
-#GET      /audiences                      Retrieves all audiences   (This is just a helper api for this test)
+#GET      /audiences                      Retrieves all audiences 
 #POST     /engagements/{engagement_id}    Create an engagement
 #GET      /engagements/{engagement_id}    Retrieve an engagement
 #PUT      /engagements/{engagement_id}    Update an engagement
