@@ -17,10 +17,7 @@
         Create lookalike
       </v-btn>
     </v-card-title>
-    <v-card-text
-      v-if="lookalikesData.length > 0 && isActive"
-      class="pl-0 pr-0"
-    >
+    <v-card-text v-if="lookalikesData.length > 0 && isActive" class="pl-0 pr-0">
       <v-simple-table fixed-header height="200px">
         <template v-slot:default>
           <tbody>
