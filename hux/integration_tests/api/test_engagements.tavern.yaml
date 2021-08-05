@@ -83,7 +83,7 @@ stages:
           engagement_name: name
           engagement_desc: description
 
-  - name: read this engagement
+  - name: test get engagement by engagement_id
 
     # Define the request to be made...
     request:
