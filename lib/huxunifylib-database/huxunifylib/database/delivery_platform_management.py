@@ -612,6 +612,7 @@ def update_delivery_platform(
 
     if added is not None:
         update_doc[c.ADDED] = added
+        update_doc[c.DELIVERY_PLATFORM_STATUS] = c.STATUS_SUCCEEDED
 
     if enabled is not None:
         update_doc[c.ENABLED] = enabled
@@ -1781,7 +1782,7 @@ def set_performance_metrics(
     delivery_platform_id: ObjectId,
     delivery_platform_name: str,
     delivery_job_id: ObjectId,
-    generic_campaign_id: list,
+    generic_campaigns: list,
     metrics_dict: dict,
     start_time: datetime.datetime,
     end_time: datetime.datetime,
@@ -1793,7 +1794,7 @@ def set_performance_metrics(
         delivery_platform_id (ObjectId): delivery platform ID
         delivery_platform_name (str): delivery platform name
         delivery_job_id (ObjectId): The delivery job ID of audience.
-        generic_campaign_id: (dict): generic campaign ID
+        generic_campaigns: (dict): generic campaigns
         metrics_dict (dict): A dict containing performance metrics.
         start_time (datetime): Start time of metrics.
         end_time (datetime): End time of metrics.
@@ -1819,7 +1820,7 @@ def set_performance_metrics(
         c.CREATE_TIME: curr_time,
         c.METRICS_START_TIME: start_time,
         c.METRICS_END_TIME: end_time,
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaigns,
         c.PERFORMANCE_METRICS: metrics_dict,
         # By default not transferred for feedback to CDM yet
         c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,
@@ -2037,7 +2038,7 @@ def set_campaign_activity(
     delivery_platform_id: ObjectId,
     delivery_platform_name: str,
     delivery_job_id: ObjectId,
-    generic_campaign_id: dict,
+    generic_campaigns: dict,
     event_details: dict,
 ) -> Union[dict, None]:
     """Store campaign activity data.
@@ -2047,7 +2048,7 @@ def set_campaign_activity(
         delivery_platform_id (ObjectId): delivery platform ID
         delivery_platform_name (str): delivery platform name
         delivery_job_id (ObjectId): The delivery job ID of audience.
-        generic_campaign_id: (dict): generic campaign ID
+        generic_campaigns: (dict): generic campaigns
         event_dict (dict): A dict containing campaign activity data.
 
     Returns:
@@ -2066,7 +2067,7 @@ def set_campaign_activity(
         c.METRICS_DELIVERY_PLATFORM_NAME: delivery_platform_name,
         c.DELIVERY_JOB_ID: delivery_job_id,
         c.CREATE_TIME: datetime.datetime.utcnow(),
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID: generic_campaign_id,
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaigns,
         c.EVENT_DETAILS: event_details,
         # By default not transferred for feedback to CDM yet
         c.STATUS_TRANSFERRED_FOR_FEEDBACK: False,

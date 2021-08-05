@@ -21,7 +21,6 @@ import huxunify.test.constants as t_c
 import huxunify.api.constants as api_c
 from huxunify.app import create_app
 from huxunify.api.data_connectors.aws import parameter_store
-from huxunify.api.config import get_config
 
 
 # pylint: disable=too-many-instance-attributes
@@ -41,13 +40,6 @@ class TestDeliveryRoutes(TestCase):
         # mock request for introspect call
         request_mocker = requests_mock.Mocker()
         request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
-
-        # set the customer insights stub
-        insights_response = {api_c.TOTAL_RECORDS: 54612}
-        request_mocker.post(
-            f"{get_config().CDP_SERVICE}/customer-profiles/insights",
-            json=insights_response,
-        )
         request_mocker.start()
 
         self.app = create_app().test_client()

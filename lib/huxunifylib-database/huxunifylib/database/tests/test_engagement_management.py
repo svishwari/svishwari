@@ -657,7 +657,7 @@ class TestEngagementManagement(unittest.TestCase):
 
         # test list
         self.assertTrue(audience_insights, dict)
-        self.assertEqual(len(audience_insights), 2)
+        self.assertEqual(len(audience_insights), 3)
 
         for engagement in audience_insights:
             self.assertIn(c.DELIVERIES, engagement)

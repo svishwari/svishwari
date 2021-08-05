@@ -964,7 +964,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         self.assertTrue(doc is not None)
@@ -986,7 +986,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIn(c.PERFORMANCE_METRICS, doc)
         self.assertIn(c.METRICS_START_TIME, doc)
         self.assertIn(c.METRICS_END_TIME, doc)
-        self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
+        self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS, doc)
 
         # Status is to be set to non-transferred automatically
         self.assertEqual(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK], False)
@@ -1023,7 +1023,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=[],
+            generic_campaigns=[],
         )
 
         metrics_list = dpm.get_performance_metrics_by_engagement_details(
@@ -1063,7 +1063,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         doc = dpm.set_transferred_for_feedback(
@@ -1094,7 +1094,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 10000, "Conversions": 50},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         metrics_doc_2 = dpm.set_performance_metrics(
@@ -1105,7 +1105,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             metrics_dict={"Clicks": 11234, "Conversions": 150},
             start_time=start_time,
             end_time=end_time,
-            generic_campaign_id=self.generic_campaigns[0],
+            generic_campaigns=self.generic_campaigns[0],
         )
 
         dpm.set_transferred_for_feedback(
@@ -1417,7 +1417,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
-            generic_campaign_id=self.individual_generic_campaigns[0],
+            generic_campaigns=self.individual_generic_campaigns[0],
         )
 
         self.assertIsNotNone(doc)
@@ -1439,7 +1439,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             doc[c.EVENT_DETAILS]["event_date"], "2021-06-17T12:21:27.970Z"
         )
-        self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID, doc)
+        self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS, doc)
 
         # Status is to be set to non-transferred automatically
         self.assertFalse(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
@@ -1681,7 +1681,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_name=c.DELIVERY_PLATFORM_SFMC,
             delivery_job_id=delivery_job_id,
             event_details=event_details,
-            generic_campaign_id=self.individual_generic_campaigns[0],
+            generic_campaigns=self.individual_generic_campaigns[0],
         )
 
         doc = dpm.set_campaign_activity_transferred_for_feedback(
@@ -1786,7 +1786,7 @@ class TestDeliveryPlatform(unittest.TestCase):
                 ),
                 "start_time": datetime.datetime(2021, 6, 25, 0, 0),
                 "end_time": datetime.datetime(2021, 6, 26, 0, 0),
-                "delivery_platform_generic_campaign_id": {
+                "delivery_platform_generic_campaigns": {
                     "engagement_id": "Pro18",
                     "audience_id": "Aud2",
                     "data_extension_id": "D2988EE7-3AEB-40F5-82A4-DC49A473AAA4",
@@ -1817,7 +1817,7 @@ class TestDeliveryPlatform(unittest.TestCase):
                 ),
                 "start_time": datetime.datetime(2021, 6, 24, 0, 0),
                 "end_time": datetime.datetime(2021, 6, 25, 0, 0),
-                "delivery_platform_generic_campaign_id": {
+                "delivery_platform_generic_campaigns": {
                     "engagement_id": "Pro18",
                     "audience_id": "Aud2",
                     "data_extension_id": "D2988EE7-3AEB-40F5-82A4-DC49A473AAA4",

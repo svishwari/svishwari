@@ -1,5 +1,5 @@
 <template>
-  <hux-data-table :headers="headers" :data-items="data" disable-sort>
+  <hux-data-table :columns="headers" :data-items="data" disable-sort>
     <template #row-item="{ item }">
       <td
         v-for="header in headers"

@@ -40,7 +40,7 @@
     <v-row v-if="!loading" class="pt-3 pb-7 pl-3 white">
       <hux-data-table
         v-if="isDataExists"
-        :headers="columnDefs"
+        :columns="columnDefs"
         :data-items="audienceList"
       >
         <template #row-item="{ item }">
@@ -245,7 +245,9 @@ export default {
     }),
 
     getActionItems(audience) {
-      let isLookalikeableActive = audience.lookalikeable === "Active"
+      // This assumes we cannot create a lookalike audience from a lookalike audience
+      let isLookalikeableActive =
+        audience.lookalikeable === "Active" && !audience.is_lookalike
 
       let actionItems = [
         { title: "Favorite", isDisabled: true },

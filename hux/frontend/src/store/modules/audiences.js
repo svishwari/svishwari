@@ -68,6 +68,16 @@ const actions = {
     try {
       const response = await api.audiences.find(id)
       const audienceInsights = response.data.audience_insights
+      let min_age = audienceInsights.min_age
+      let max_age = audienceInsights.max_age
+      let age = "-"
+      if (min_age && max_age && min_age === max_age) {
+        age = min_age
+      } else if (min_age && max_age) {
+        age = `${min_age}-${max_age}`
+      } else {
+        age = "-"
+      }
       let insightInfo = [
         {
           title: "Target size",
@@ -90,7 +100,7 @@ const actions = {
         },
         {
           title: "Age",
-          subtitle: audienceInsights.min_age + " - " + audienceInsights.max_age,
+          subtitle: age,
           icon: "mdi-cake-variant",
         },
         {

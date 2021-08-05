@@ -10,7 +10,7 @@ name = "jfrog"
 
 [packages]
 pymongo = "*"
-huxunifylib-database = {version="*", index="jfrog"}
+huxunifylib-database = {path="../lib/huxunifylib-database", editable=true}
 hypothesis = "*"
 mongomock="*"
 
