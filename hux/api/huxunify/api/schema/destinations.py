@@ -290,7 +290,7 @@ class TwilioAuthConstants(Schema):
 
         ordered = True
 
-    auth_token = fields.Dict(
+    twilio_auth_token = fields.Dict(
         required=True,
         validate=must_not_be_blank,
         example={

@@ -494,7 +494,7 @@ class DestinationValidatePostView(SwaggerView):
                 auth_details={
                     TwilioCredentials.TWILIO_AUTH_TOKEN.value: body.get(
                         api_c.AUTHENTICATION_DETAILS
-                    ).get("auth_token"),
+                    ).get(api_c.TWILIO_AUTH_TOKEN),
                 },
             )
             return {

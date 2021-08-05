@@ -22,6 +22,7 @@ from huxunify.api import constants as api_c
 from huxunify.app import create_app
 
 
+# pylint: disable=too-many-public-methods
 class TestDestinationRoutes(TestCase):
     """Test Destination Routes"""
 
@@ -273,6 +274,7 @@ class TestDestinationRoutes(TestCase):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertIn(db_c.DELIVERY_PLATFORM_FACEBOOK, response.json)
         self.assertIn(db_c.DELIVERY_PLATFORM_SFMC, response.json)
+        self.assertIn(db_c.DELIVERY_PLATFORM_TWILIO, response.json)
 
     def test_validate_facebook_credentials(self):
         """
@@ -338,6 +340,81 @@ class TestDestinationRoutes(TestCase):
                 "facebook_app_secret": "717bdOQqZO99",
                 "facebook_app_id": "2951925002021888",
                 "facebook_ad_account_id": "111333777",
+            },
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/validate",
+            json=validation_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        validation_failed = {
+            "message": api_c.DESTINATION_AUTHENTICATION_FAILED
+        }
+
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
+        self.assertEqual(validation_failed, response.json)
+
+    # pylint: disable=unused-argument
+    @patch(
+        "huxunify.api.route.destination.TwilioConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_validate_twilio_credentials(self, mock_connector: MagicMock):
+        """
+        Test successful authentication with twilio
+
+        Args:
+            mock_connector (MagicMock): MagicMock of the Twilio Connector
+
+        Returns:
+        """
+
+        validation_details = {
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_TWILIO,
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.TWILIO_AUTH_TOKEN: "123456",
+            },
+        }
+
+        response = self.app.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.DESTINATIONS_ENDPOINT}/validate",
+            json=validation_details,
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        validation_succeeded = {
+            "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
+        }
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        self.assertEqual(validation_succeeded, response.json)
+
+    @patch(
+        "huxunify.api.route.destination.TwilioConnector",
+        **{"return_value.raiseError.side_effect": Exception()},
+    )
+    def test_validate_twilio_credentials_failure_bad_credentials(
+        self, mock_connector: MagicMock
+    ):
+        """
+        Test failure to authenticate with twilio due to bad credentials
+
+        Args:
+            mock_connector (MagicMock): MagicMock of the Twilio Connector
+
+        Returns:
+
+        """
+
+        # mocks the return value of the TwilioConnector Constructor
+        mock_connector.side_effect = Exception("Test Exception")
+
+        validation_details = {
+            api_c.TYPE: db_c.DELIVERY_PLATFORM_TWILIO,
+            api_c.AUTHENTICATION_DETAILS: {
+                api_c.TWILIO_AUTH_TOKEN: "123456",
             },
         }
 
