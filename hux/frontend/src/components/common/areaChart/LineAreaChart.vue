@@ -60,7 +60,7 @@ export default {
     async initiateAreaChart() {
       let areaChartData = [
         {
-           year: "2020-11-30T00:00:00.000Z",
+          year: "2020-11-30T00:00:00.000Z",
           aData: 2144,
           bData: 3199,
           cData: 3088,
@@ -192,6 +192,24 @@ export default {
 
 let appendLine = (d) => {
   console.log("d",d.srcElement)
+     d3Select
+          .select(d.srcElement)
+          .attr("fill-opacity", (d) => appendData(d))
+          .style("fill-opacity", "1")
+    // svg.selectAll(".dot")
+    // .attr("r", 5)
+    // .style("fill", "white")
+
+       svg
+          .append("circle")
+          .classed("removeableCircle", true)
+          .attr("cx", 30)
+          .attr("cy", 40)
+          .attr("r", 5)
+          .style("stroke", "red")
+          .style("stroke-opacity", "1")
+          .style("fill", "white")
+          .style("pointer-events", "none")
     
   //        stackedValues.forEach(function(layer, index) {
   //     console.log("layer", layer.index)
@@ -199,7 +217,7 @@ let appendLine = (d) => {
   // svg
   //  .append("circle")
   //  .attr("class", "dot")
-  //  .attr("r", 3)
+  //  .attr("r", 10)
   //  .attr("cx",  (d) => xScale(new Date(points.data.year)) + 40)
   //  .attr("cy", (d) => yScale(points[1]))
   // .style("fill","red")
@@ -233,6 +251,9 @@ let appendLine = (d) => {
      
 }
 
+ let appendData = (data) => {
+
+ }
 // let removeHover = () => {
 //   d3Select.select(this.$refs.huxChart).select(".tick line").remove()
 // }
