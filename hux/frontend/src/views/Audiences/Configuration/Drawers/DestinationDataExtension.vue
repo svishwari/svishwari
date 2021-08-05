@@ -26,7 +26,7 @@
               <div class="child mt-4">
                 <div class="icon d-flex justify-center">
                   <div v-if="isActive" class="check-wrap d-flex align-center">
-                    <icon type="vector" class="check-icon" />
+                    <icon type="check-icon" class="check-icon" />
                   </div>
                 </div>
                 <extensionInactive1 v-if="!isActive" />
@@ -46,7 +46,7 @@
               <div class="child mt-4">
                 <div class="icon d-flex justify-center">
                   <div v-if="!isActive" class="check-wrap d-flex align-center">
-                    <icon type="vector" class="check-icon" />
+                    <icon type="check-icon" class="check-icon" />
                   </div>
                 </div>
                 <extensionInactive2 v-if="isActive" />
