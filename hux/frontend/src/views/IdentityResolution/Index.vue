@@ -1,8 +1,8 @@
 <template>
   <div>
-    <PageHeader>
+    <page-header>
       <template #left>
-        <Breadcrumb
+        <breadcrumb
           :items="[
             {
               text: 'Identity Resolution',
@@ -13,34 +13,34 @@
           ]"
         />
       </template>
-    </PageHeader>
+    </page-header>
 
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <Page v-if="!loading" maxWidth="100%">
+    <page v-if="!loading" max-width="100%">
       <v-row no-gutters>
-        <MetricCard
+        <metric-card
           v-for="(metric, index) in overview"
           :key="index"
           :title="metric.title"
-          :minWidth="170"
+          :min-width="170"
           class="mx-2 my-2"
         >
           <template #extra-item>
-            <Tooltip positionTop>
+            <tooltip position-top>
               <template #label-content>
-                <Icon type="info" :size="12" />
+                <icon type="info" :size="12" />
               </template>
               <template #hover-content>
                 <v-sheet max-width="240px">
                   {{ metric.description }}
                 </v-sheet>
               </template>
-            </Tooltip>
+            </tooltip>
           </template>
 
           <template #subtitle-extended>
-            <Tooltip>
+            <tooltip>
               <template #label-content>
                 <span class="font-weight-semi-bold">
                   <template v-if="metric.format === 'numeric'">
@@ -59,22 +59,22 @@
                   {{ metric.value | Numeric(false, false, false, true) }}
                 </template>
               </template>
-            </Tooltip>
+            </tooltip>
           </template>
-        </MetricCard>
+        </metric-card>
       </v-row>
 
       <v-divider class="my-8"></v-divider>
 
-      <EmptyStateChart>
+      <empty-state-chart>
         <template #chart-image>
           <img
             src="@/assets/images/empty-state-chart-3.png"
             alt="Exciting visuals are in the works!"
           />
         </template>
-      </EmptyStateChart>
-    </Page>
+      </empty-state-chart>
+    </page>
   </div>
 </template>
 
@@ -114,16 +114,16 @@ export default {
     }),
   },
 
-  methods: {
-    ...mapActions({
-      getOverview: "identity/getOverview",
-    }),
-  },
-
   async mounted() {
     this.loading = true
     await this.getOverview()
     this.loading = false
+  },
+
+  methods: {
+    ...mapActions({
+      getOverview: "identity/getOverview",
+    }),
   },
 }
 </script>

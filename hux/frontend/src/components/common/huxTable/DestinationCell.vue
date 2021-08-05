@@ -5,17 +5,17 @@
         <v-row class="destination-cell-wrapper">
           <v-col class="d-flex align-center pr-0 mt-2">
             <v-btn
+              v-for="(item, index) in 2"
+              :key="index"
               class="mr-1"
               width="18"
               height="18"
               outlined
               fab
-              v-for="(item, index) in 2"
-              :key="index"
             >
-              <Logo :type="cellValue.details[index].logo" :size="18"></Logo>
+              <logo :type="cellValue.details[index].logo" :size="18"></logo>
             </v-btn>
-            <div class="extra-icon mr-1" v-show="cellValue.details.length > 2">
+            <div v-show="cellValue.details.length > 2" class="extra-icon mr-1">
               +{{ cellValue.details.length - 2 }}
             </div>
           </v-col>
@@ -25,12 +25,12 @@
     <v-list v-show="cellValue.details.length > 2">
       <v-list-item
         v-for="(item, index) in cellValue.details"
-        :key="index"
         v-show="index > 1"
+        :key="index"
       >
         <v-list-item-title>
           <v-btn class="mr-1" width="18" height="18" outlined fab>
-            <Logo :type="item.logo" :size="18"></Logo>
+            <logo :type="item.logo" :size="18"></logo>
           </v-btn>
           {{ item.name }}
         </v-list-item-title>

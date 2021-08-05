@@ -2,13 +2,13 @@
   <div class="hux-date-picker">
     <v-menu
       ref="endmenu"
+      v-model="endmenu"
       :close-on-content-click="false"
       :offset-x="isOffsetX"
       :offset-y="isOffsetY"
       :open-on-hover="isOpenOnHover"
       :transition="transition"
       close-on-click
-      v-model="endmenu"
     >
       <template #activator="{ on }">
         <v-list-item
@@ -23,14 +23,14 @@
         <huxButton
           v-else
           :v-on="on"
-          @click="endmenu = true"
           text
           width="200"
           icon=" mdi-chevron-down"
-          iconPosition="right"
+          icon-position="right"
           tile
           class="ma-2 main-button pr-1"
-          :isDisabled="isDisabled"
+          :is-disabled="isDisabled"
+          @click="endmenu = true"
         >
           {{ selected || "Select date" }}
         </huxButton>
@@ -38,7 +38,7 @@
       <v-list>
         <template>
           <div class="dropdown-menuitems">
-            <v-list-item @click="onCancel()" v-if="isSubMenu">
+            <v-list-item v-if="isSubMenu" @click="onCancel()">
               <v-list-item-title
                 class="d-flex align-center"
                 @click="resetDate()"
@@ -47,18 +47,18 @@
               </v-list-item-title>
             </v-list-item>
             <hux-end-date
+              v-if="isSubMenu"
               :is-offset-x="true"
               :is-offset-y="false"
-              :isSubMenu="false"
+              :is-sub-menu="false"
+              :min-date="minDate"
               @on-date-select="(val) => $emit('on-date-select', val)"
-              :minDate="minDate"
-              v-if="isSubMenu"
             />
             <v-list-item v-if="!isSubMenu">
               <v-list-item-title class="d-flex align-center">
                 <v-date-picker
-                  class="end-date-picker"
                   v-model="end"
+                  class="end-date-picker"
                   no-title
                   scrollable
                   :min="minDate"
@@ -71,7 +71,7 @@
                   <v-spacer></v-spacer>
                   <huxButton
                     variant="tertiary"
-                    isTile
+                    is-tile
                     class="btn-cancel ml-4"
                     @click="onCancel()"
                   >
@@ -79,7 +79,7 @@
                   </huxButton>
                   <huxButton
                     variant="tertiary"
-                    isTile
+                    is-tile
                     class="btn-select mr-4"
                     @click="
                       $refs.endmenu.save(end)
@@ -100,7 +100,7 @@
 <script>
 import huxButton from "@/components/common/huxButton"
 export default {
-  name: "hux-end-date",
+  name: "HuxEndDate",
   components: {
     huxButton,
   },
@@ -133,6 +133,14 @@ export default {
       default: false,
     },
   },
+  data: function () {
+    return {
+      endmenu: this.value,
+      end: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+    }
+  },
   methods: {
     onCancel() {
       this.endmenu = false
@@ -147,14 +155,6 @@ export default {
       this.$emit("on-date-select", data)
       this.$refs.endmenu.$parent.$el.parentNode.children[0].click()
     },
-  },
-  data: function () {
-    return {
-      endmenu: this.value,
-      end: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
-    }
   },
 }
 </script>

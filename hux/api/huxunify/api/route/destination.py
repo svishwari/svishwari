@@ -421,7 +421,9 @@ class DestinationValidatePostView(SwaggerView):
     tags = [api_c.DESTINATIONS_TAG]
 
     # pylint: disable=bare-except
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={"message": api_c.DESTINATION_AUTHENTICATION_FAILED}
+    )
     def post(self) -> Tuple[dict, int]:
         """Validates the credentials for a destination.
 
@@ -460,21 +462,18 @@ class DestinationValidatePostView(SwaggerView):
                     "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
                 }, HTTPStatus.OK
         elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC:
-            try:
-                connector = SFMCConnector(
-                    auth_details=set_sfmc_auth_details(
-                        body.get(api_c.AUTHENTICATION_DETAILS)
-                    )
+            connector = SFMCConnector(
+                auth_details=set_sfmc_auth_details(
+                    body.get(api_c.AUTHENTICATION_DETAILS)
                 )
+            )
 
-                ext_list = DestinationDataExtGetSchema().dump(
+            ext_list = sorted(
+                DestinationDataExtGetSchema().dump(
                     connector.get_list_of_data_extensions(), many=True
-                )
-            except:
-                return {
-                    "message": api_c.DESTINATION_AUTHENTICATION_FAILED
-                }, HTTPStatus.BAD_REQUEST
-
+                ),
+                key=lambda i: i[api_c.NAME].lower(),
+            )
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
@@ -571,7 +570,7 @@ class DestinationDataExtView(SwaggerView):
             jsonify(
                 sorted(
                     DestinationDataExtGetSchema().dump(ext_list, many=True),
-                    key=lambda i: i[api_c.NAME],
+                    key=lambda i: i[api_c.NAME].lower(),
                 )
             ),
             HTTPStatus.OK,

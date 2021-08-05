@@ -1,13 +1,13 @@
 <template>
   <v-menu
+    v-model="DropdownValue"
     offset-y
     close-on-click
     max-width="300"
     nudge-bottom="5"
-    v-model="DropdownValue"
   >
     <template #activator="{ on }">
-      <div v-on="on" class="d-flex avatar-menu">
+      <div class="d-flex avatar-menu" v-on="on">
         <v-btn tile class="main-button" color="tertiary">
           {{ labelText }}
           <v-icon right dark color="primary"> {{ iconType }} </v-icon>
@@ -32,12 +32,7 @@
 
 <script>
 export default {
-  name: "dropdown-menu",
-  data: function () {
-    return {
-      DropdownValue: this.value,
-    }
-  },
+  name: "DropdownMenu",
   props: {
     labelText: {
       type: String,
@@ -52,6 +47,11 @@ export default {
     menuItem: {
       type: Array,
     },
+  },
+  data: function () {
+    return {
+      DropdownValue: this.value,
+    }
   },
   methods: {
     clicked: function (item) {

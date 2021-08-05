@@ -7,10 +7,10 @@
         max-width="260px"
         :disabled="!active"
         :to="to"
-        @click="$emit('click')"
         :elevation="hover ? 10 : 0"
         :hover="true"
         :outlined="!active"
+        @click="$emit('click')"
       >
         <v-btn
           fab
@@ -40,7 +40,7 @@
 
 <script>
 export default {
-  name: "card-info",
+  name: "CardInfo",
 
   props: {
     icon: {

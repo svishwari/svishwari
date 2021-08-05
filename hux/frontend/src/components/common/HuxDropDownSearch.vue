@@ -13,8 +13,8 @@
     </template>
     <template #default>
       <v-text-field
-        color="neroBlack"
         v-model="searchText"
+        color="neroBlack"
         class="search-field-container"
         placeholder="Search"
         prepend-icon="mdi-magnify"
@@ -44,15 +44,6 @@
 export default {
   name: "HuxDropDownSearch",
 
-  computed: {
-    filteredItems() {
-      let searchText = this.searchText ? this.searchText.toLowerCase() : ""
-      return this.items.filter((each) =>
-        each.name.toLowerCase().includes(searchText)
-      )
-    },
-  },
-
   props: {
     value: {
       type: Array,
@@ -76,6 +67,15 @@ export default {
       localToggle: false,
       searchText: null,
     }
+  },
+
+  computed: {
+    filteredItems() {
+      let searchText = this.searchText ? this.searchText.toLowerCase() : ""
+      return this.items.filter((each) =>
+        each.name.toLowerCase().includes(searchText)
+      )
+    },
   },
 
   watch: {

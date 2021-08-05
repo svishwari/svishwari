@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "empty-state-chart",
+  name: "EmptyStateChart",
 }
 </script>
 <style lang="scss" scoped>

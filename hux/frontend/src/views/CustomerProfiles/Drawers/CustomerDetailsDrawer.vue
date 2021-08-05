@@ -1,8 +1,8 @@
 <template>
-  <Drawer
+  <drawer
     v-model="localDrawer"
-    :contentPadding="'pa-0'"
-    :contentHeaderPadding="'px-3'"
+    :content-padding="'pa-0'"
+    :content-header-padding="'px-3'"
   >
     <template #header-left>
       <div class="d-flex align-center">
@@ -12,15 +12,15 @@
 
     <template #default>
       <v-progress-linear :active="loading" :indeterminate="loading" />
-      <PageHeader class="top-bar" :headerHeight="40" :headerPadding="'px-4'">
+      <page-header class="top-bar" :header-height="40" :header-padding="'px-4'">
         <template slot="left">
           <v-icon size="18" color="lightGrey">mdi-magnify</v-icon>
         </template>
-      </PageHeader>
+      </page-header>
       <hux-data-table
-        :headers="columnDefs"
+        :columns="columnDefs"
         :sort-column="'hux_id'"
-        :dataItems="customers"
+        :data-items="customers"
       >
         <template #row-item="{ item }">
           <td
@@ -71,7 +71,7 @@
             </div>
             <div v-if="header.value == 'match_confidence'">
               <hux-slider
-                :isRangeSlider="false"
+                :is-range-slider="false"
                 :value="item[header.value]"
                 class="match-confidence"
               ></hux-slider>
@@ -91,7 +91,7 @@
         </template>
       </tooltip>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
@@ -110,6 +110,14 @@ export default {
     HuxSlider,
     Tooltip,
     PageHeader,
+  },
+
+  props: {
+    value: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   data() {
     return {
@@ -137,11 +145,15 @@ export default {
     }
   },
 
-  props: {
-    value: {
-      type: Boolean,
-      required: true,
-      default: false,
+  computed: {
+    ...mapGetters({
+      customersList: "customers/list",
+      customerOverview: "customers/overview",
+    }),
+
+    customers() {
+      let sortedCustomerList = this.customersList
+      return sortedCustomerList.sort((a, b) => a.id - b.id)
     },
   },
 
@@ -158,18 +170,6 @@ export default {
     this.loading = true
     await this.getCustomers()
     this.loading = false
-  },
-
-  computed: {
-    ...mapGetters({
-      customersList: "customers/list",
-      customerOverview: "customers/overview",
-    }),
-
-    customers() {
-      let sortedCustomerList = this.customersList
-      return sortedCustomerList.sort((a, b) => a.id - b.id)
-    },
   },
 
   methods: {

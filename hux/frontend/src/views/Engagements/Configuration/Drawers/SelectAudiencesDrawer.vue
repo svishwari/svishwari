@@ -1,5 +1,5 @@
 <template>
-  <Drawer v-model="localToggle" :width="640" :loading="loading">
+  <drawer v-model="localToggle" :width="640" :loading="loading">
     <template #header-left>
       <h3 class="text-h3">Add audiences to this engagement</h3>
     </template>
@@ -11,11 +11,11 @@
           New audience
         </v-btn>
 
-        <DataCards
+        <data-cards
           :items="audiences"
           sort="asc"
           empty="No audiences have been created."
-          :selectedItems="value"
+          :selected-items="value"
           :fields="[
             {
               key: 'name',
@@ -35,7 +35,7 @@
           ]"
         >
           <template #field:size="row">
-            <Tooltip>
+            <tooltip>
               <template #label-content>
                 {{ row.value | Numeric(true, true) | Empty }}
               </template>
@@ -44,37 +44,37 @@
                   row.value | Numeric | Empty("Size unavailable at this time")
                 }}
               </template>
-            </Tooltip>
+            </tooltip>
           </template>
 
           <template #field:manage="row">
             <div class="d-flex align-center justify-end">
-              <HuxButton
+              <hux-button
                 v-if="isAdded(row.item)"
                 variant="secondary"
                 width="100"
                 height="40"
                 icon="mdi-check"
-                iconPosition="left"
-                :boxShadow="false"
+                icon-position="left"
+                :box-shadow="false"
                 @click="remove(row.item)"
               >
                 Added
-              </HuxButton>
-              <HuxButton
+              </hux-button>
+              <hux-button
                 v-else
-                isOutlined
+                is-outlined
                 variant="primary"
                 width="100"
                 height="40"
-                :boxShadow="false"
+                :box-shadow="false"
                 @click="add(row.item)"
               >
                 Add
-              </HuxButton>
+              </hux-button>
             </div>
           </template>
-        </DataCards>
+        </data-cards>
       </div>
     </template>
 
@@ -88,27 +88,27 @@
         v-if="isAudienceSelected && enableMultiple"
         class="d-flex align-baseline"
       >
-        <huxButton
+        <hux-button
           variant="tertiary"
           size="large"
-          :isTile="true"
+          :is-tile="true"
           class="mr-2"
           @click="closeDrawer"
         >
           <span class="primary--text">Cancel</span>
-        </huxButton>
-        <huxButton
+        </hux-button>
+        <hux-button
           variant="primary"
           size="large"
-          :isTile="true"
-          :isDisabled="!isAudienceSelected"
+          :is-tile="true"
+          :is-disabled="!isAudienceSelected"
           @click="addSelectedAudiences"
         >
           {{ `Add ${audiencesCount} audience${audiencesCount > 1 ? "s" : ""}` }}
-        </huxButton>
+        </hux-button>
       </div>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
@@ -152,16 +152,6 @@ export default {
       loading: false,
       selectedAudiences: {},
     }
-  },
-
-  watch: {
-    toggle(value) {
-      this.localToggle = value
-    },
-
-    localToggle(value) {
-      this.$emit("onToggle", value)
-    },
   },
 
   computed: {
@@ -216,6 +206,16 @@ export default {
         })
       }
       return removed
+    },
+  },
+
+  watch: {
+    toggle(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("onToggle", value)
     },
   },
 

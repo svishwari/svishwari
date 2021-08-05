@@ -26,6 +26,7 @@ from huxunify.api.schema.customers import (
     CustomerSpendingInsightsSchema,
     CustomerGenderInsightsSchema,
     CustomerIncomeInsightsSchema,
+    CustomerEventsSchema,
 )
 from huxunify.app import create_app
 
@@ -90,11 +91,9 @@ class TestCustomersOverview(TestCase):
             json=expected_response,
         )
         self.request_mocker.start()
-        batch_size = api_c.CUSTOMERS_DEFAULT_BATCH_SIZE
-        batch_number = api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER
+
         response = self.test_client.get(
-            f"{self.customers}/?{api_c.QUERY_PARAMETER_BATCH_SIZE}={batch_size}&"
-            f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}={batch_number}",
+            self.customers,
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
@@ -363,4 +362,26 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(
                 CustomerIncomeInsightsSchema(), response.json["income"], True
             )
+        )
+
+    @given(customer_id=st.text(alphabet=string.ascii_letters))
+    def test_customer_events(self, customer_id: str):
+        """
+        Test customer events for a hux-id
+
+        Args:
+            customer_id (str): HUX ID of a customer.
+        Returns:
+
+        """
+        if not customer_id:
+            return
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}/events",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(CustomerEventsSchema(), response.json, True)
         )

@@ -2,21 +2,21 @@
   <div class="container">
     <chord-chart
       v-model="chartMatrix"
-      :colorCodes="colorCodes"
-      :chartLegendsData="chartLegendsData"
-      v-on:cordinates="getCordinates"
-      v-on:tooltipDisplay="toolTipDisplay"
+      :color-codes="colorCodes"
+      :chart-legends-data="chartLegendsData"
+      @cordinates="getCordinates"
+      @tooltipDisplay="toolTipDisplay"
     />
-    <ChartTooltip
+    <chart-tooltip
       :position="{
         x: tooltip.x,
         y: tooltip.y,
       }"
-      :showTooltip="show"
-      :isArcHover="isArcHover"
-      :sourceInput="currentData"
+      :show-tooltip="show"
+      :is-arc-hover="isArcHover"
+      :source-input="currentData"
     >
-    </ChartTooltip>
+    </chart-tooltip>
   </div>
 </template>
 
@@ -25,7 +25,7 @@ import ChartTooltip from "@/components/common/identityChart/ChartTooltip"
 import ChordChart from "@/components/common/identityChart/ChordChart"
 import identity_resolution from "@/components/common/identityChart/chartData.json"
 export default {
-  name: "identity-chart",
+  name: "IdentityChart",
   components: { ChordChart, ChartTooltip },
   data() {
     return {
@@ -68,12 +68,16 @@ export default {
         sourceName: null,
         targetIcon: null,
         targetName: null,
-        currentOccurance: 0,
-        totalOccurance: 0,
+        currentOccurence: 0,
+        totalOccurence: 0,
       },
       chartMatrix: [],
       groupNames: [],
     }
+  },
+  mounted() {
+    this.generateChartGroups()
+    this.transformData()
   },
   methods: {
     generateChartGroups() {
@@ -108,7 +112,7 @@ export default {
           this.ribbonData.sourceIcon = group1
           this.ribbonData.targetName = this.$options.filters.TitleCase(group2)
           this.ribbonData.targetIcon = group2
-          this.mapCoOccurances(sourceData[group1].cooccurrences, group2)
+          this.mapCoOccurences(sourceData[group1].cooccurrences, group2)
         }
       }
     },
@@ -127,11 +131,11 @@ export default {
       }
       return assetsData
     },
-    mapCoOccurances(cooccurances, identifier) {
-      this.ribbonData.totalOccurance = cooccurances.reduce((a, b) => ({
+    mapCoOccurences(cooccurences, identifier) {
+      this.ribbonData.totalOccurence = cooccurences.reduce((a, b) => ({
         count: a.count + b.count,
       })).count
-      this.ribbonData.currentOccurance = cooccurances.find(
+      this.ribbonData.currentOccurence = cooccurences.find(
         (data) => data.identifier === identifier
       ).count
     },
@@ -146,13 +150,13 @@ export default {
     createGroupRelationMatrix(element) {
       let groupRelation = new Array(5).fill(0)
       element.forEach((el) => {
-        let extractedValues = this.extractCoOccurancesCount(el)
+        let extractedValues = this.extractCoOccurencesCount(el)
         groupRelation[extractedValues.index] = extractedValues.countValue
       })
       this.chartMatrix.push(groupRelation)
     },
 
-    extractCoOccurancesCount(value) {
+    extractCoOccurencesCount(value) {
       let extractedValues = {
         index: 0,
         countValue: 0,
@@ -167,10 +171,6 @@ export default {
       }
       return extractedValues
     },
-  },
-  mounted() {
-    this.generateChartGroups()
-    this.transformData()
   },
 }
 </script>

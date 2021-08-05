@@ -1,9 +1,9 @@
 <template>
-  <page maxWidth="100%">
+  <page max-width="100%">
     <div slot="header">
       <page-header>
         <template slot="left">
-          <Breadcrumb :items="breadcrumbs" />
+          <breadcrumb :items="breadcrumbs" />
         </template>
       </page-header>
       <v-progress-linear :active="loading" :indeterminate="loading" />
@@ -17,7 +17,7 @@
           <destinations-list></destinations-list>
         </v-col>
       </v-row>
-      <div class="empty-state-wrap text-center" v-else>
+      <div v-else class="empty-state-wrap text-center">
         <v-icon color="secondary" x-large> mdi-alert-circle-outline </v-icon>
         <div class="text-h3">Oops! There’s nothing here yet</div>
         <div class="font-weight-regular text-h6 my-2">
@@ -32,11 +32,11 @@
         >
           <huxButton
             icon="mdi-plus"
-            iconPosition="left"
+            icon-position="left"
             variant="primary"
             size="small"
-            iconSize="small"
-            :isTile="true"
+            icon-size="small"
+            :is-tile="true"
             class="ma-2 text-h6 font-weight-regular"
           >
             Destination
@@ -47,12 +47,12 @@
           class="text-decoration-none"
         >
           <huxButton
-            ButtonText="Data source"
+            button-text="Data source"
             icon="mdi-plus"
-            iconPosition="left"
+            icon-position="left"
             variant="primary"
             size="small"
-            :isTile="true"
+            :is-tile="true"
             class="ma-2 text-h6 font-weight-regular"
           >
             Data source
@@ -60,7 +60,7 @@
         </router-link>
       </div>
     </div>
-    <DataSourceConfiguration v-model="drawer" />
+    <data-source-configuration v-model="drawer" />
   </page>
 </template>
 
@@ -76,7 +76,7 @@ import huxButton from "@/components/common/huxButton"
 import DataSourceConfiguration from "@/views/DataSources/Configuration"
 
 export default {
-  name: "connections",
+  name: "Connections",
 
   components: {
     DataSourcesList,
@@ -86,6 +86,19 @@ export default {
     Breadcrumb,
     huxButton,
     DataSourceConfiguration,
+  },
+
+  data() {
+    return {
+      breadcrumbs: [
+        {
+          text: "Connections",
+          icon: "connections",
+        },
+      ],
+      drawer: false,
+      loading: false,
+    }
   },
 
   computed: {
@@ -105,19 +118,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-      breadcrumbs: [
-        {
-          text: "Connections",
-          icon: "connections",
-        },
-      ],
-      drawer: false,
-      loading: false,
-    }
-  },
-
   watch: {
     $route() {
       if (this.$route.query.select) {
@@ -134,16 +134,6 @@ export default {
     },
   },
 
-  methods: {
-    ...mapActions({
-      getDataSources: "dataSources/getAll",
-      getDestinations: "destinations/getAll",
-    }),
-    toggleDrawer() {
-      this.drawer = !this.drawer
-    },
-  },
-
   async mounted() {
     this.loading = true
     await this.getDataSources()
@@ -153,6 +143,16 @@ export default {
     if (this.$route.query.select) {
       this.drawer = true
     }
+  },
+
+  methods: {
+    ...mapActions({
+      getDataSources: "dataSources/getAll",
+      getDestinations: "destinations/getAll",
+    }),
+    toggleDrawer() {
+      this.drawer = !this.drawer
+    },
   },
 }
 </script>

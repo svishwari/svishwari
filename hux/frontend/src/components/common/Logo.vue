@@ -11,7 +11,7 @@
 import svgAsComponent from "./SVG"
 
 export default {
-  name: "logo",
+  name: "Logo",
 
   components: {
     svgAsComponent,

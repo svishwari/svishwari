@@ -18,9 +18,9 @@
           <template #activator="{ on, attrs }">
             <v-icon
               v-bind="attrs"
-              v-on="on"
               class="mr-2 more-action"
               color="primary"
+              v-on="on"
               @click="takeActions($event)"
             >
               mdi-dots-vertical
@@ -38,8 +38,8 @@
                 </v-list-item-title>
 
                 <v-menu
-                  v-model="isSubMenuOpen"
                   v-else
+                  v-model="isSubMenuOpen"
                   offset-x
                   nudge-right="16"
                   nudge-top="4"
@@ -55,7 +55,7 @@
                       class="sub-menu-class white"
                       @click="item.menu.onClick()"
                     >
-                      <Logo
+                      <logo
                         v-if="item.menu.icon"
                         :size="18"
                         :type="item.menu.icon"
@@ -83,13 +83,6 @@ export default Vue.extend({
     Logo,
     Tooltip,
   },
-
-  data() {
-    return {
-      openMenu: null,
-      isSubMenuOpen: null,
-    }
-  },
   props: {
     navigateTo: {
       type: Object,
@@ -113,6 +106,13 @@ export default Vue.extend({
       required: true,
     },
   },
+
+  data() {
+    return {
+      openMenu: null,
+      isSubMenuOpen: null,
+    }
+  },
   computed: {
     routePath() {
       return {
@@ -121,15 +121,15 @@ export default Vue.extend({
       }
     },
   },
-  methods: {
-    takeActions(evnt) {
-      evnt.preventDefault()
-    },
-  },
 
   watch: {
     isSubMenuOpen(newValue) {
       this.openMenu = newValue
+    },
+  },
+  methods: {
+    takeActions(evnt) {
+      evnt.preventDefault()
     },
   },
 })

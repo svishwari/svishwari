@@ -18,6 +18,7 @@ from huxunifylib.database import constants as db_c
 from huxunify.api.config import get_config
 from huxunify.api import constants as api_c
 
+
 # fields to convert to datetime from the responses
 DEFAULT_DATETIME = datetime.datetime(1, 1, 1, 1, 00)
 DATETIME_FIELDS = [
@@ -52,12 +53,10 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
+def get_customer_profiles(token: str) -> dict:
     """Retrieves customer profiles.
 
     Args:
-        batch_size (int): number of customer profiles to be returned in a batch
-        offset (int): Offset for customer profiles
         token (str): OKTA JWT Token.
 
     Returns:
@@ -70,7 +69,6 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
 
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles",
-        data={"limit": batch_size, "offset": offset},
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
@@ -309,6 +307,57 @@ def get_idr_data_feeds() -> list:
     return response
 
 
+def get_customer_events_data(hux_id: str) -> list:
+    """Get events for a customer grouped by date.
+
+    Args:
+        hux_id (str): hux id for a customer.
+    Returns:
+        list: customer events with respective counts
+    """
+
+    # pylint: disable=unused-argument
+    # TODO: Remove pylint unused-argument and update after CDM API for customer events is available
+    response = [
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=x),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT
+            ][
+                x
+            ],
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.ABANDONED_CART_EVENT
+                ][
+                    x
+                ],
+                api_c.CUSTOMER_LOGIN_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.CUSTOMER_LOGIN_EVENT
+                ][
+                    x
+                ],
+                api_c.VIEWED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_CART_EVENT
+                ][x],
+                api_c.VIEWED_CHECKOUT_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_CHECKOUT_EVENT
+                ][
+                    x
+                ],
+                api_c.VIEWED_SALE_ITEM_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_SALE_ITEM_EVENT
+                ][
+                    x
+                ],
+            },
+        }
+        for x in reversed(range(8))
+    ]
+    return response
+
+
 def clean_cdm_fields(body: dict) -> dict:
     """Clean and map any CDM fields date types.
 
@@ -328,5 +377,6 @@ def clean_cdm_fields(body: dict) -> dict:
             # ignoretz this to make it naive format for uniformity
             body[date_field] = parse(body[date_field], ignoretz=True)
         except (ParserError, TypeError):
-            body[date_field] = DEFAULT_DATETIME
+            body[date_field] = None
+
     return body

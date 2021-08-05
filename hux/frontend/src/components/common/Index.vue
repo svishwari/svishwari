@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-subheader> Data Table </v-subheader>
-    <HuxDataTable :headers="headers" :dataItems="dataItems">
+    <hux-data-table :columns="headers" :data-items="dataItems">
       <template #un-expanded-row="{ field, item, expand, isExpanded }">
         <span v-if="field == 'engagementName'" class="primary--text">
           <v-icon
@@ -34,8 +34,8 @@
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
-                v-on="on"
                 :style="{ 'border-color': getColorCode(item[field]) }"
+                v-on="on"
               >
                 {{ item[field] }}
               </span>
@@ -48,8 +48,8 @@
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
-                v-on="on"
                 :style="{ 'border-color': getColorCode(item[field]) }"
+                v-on="on"
               >
                 {{ item[field] }}
               </span>
@@ -88,10 +88,10 @@
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
-                v-on="on"
                 :style="{
                   'border-color': getColorCode(field.lastUpdatedBy),
                 }"
+                v-on="on"
               >
                 {{ field.lastUpdatedBy }}
               </span>
@@ -105,8 +105,8 @@
               <span
                 class="avatar-border d-flex align-center justify-center"
                 v-bind="attrs"
-                v-on="on"
                 :style="{ 'border-color': getColorCode(field.createdBy) }"
+                v-on="on"
               >
                 {{ field.createdBy }}
               </span>
@@ -114,27 +114,27 @@
           </v-menu>
         </td>
       </template>
-    </HuxDataTable>
+    </hux-data-table>
     <v-divider class="mt-10" />
     <v-subheader> Info Card </v-subheader>
-    <CardInfo></CardInfo>
+    <card-info></card-info>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Text Field </v-subheader>
-    <TextField
+    <text-field
       v-model="TextFieldValue"
-      labelText="Add Account ID"
+      label-text="Add Account ID"
       icon="mdi-alert-circle-outline"
-      placeholderText="Account name"
+      placeholder-text="Account name"
       required
-    ></TextField>
+    ></text-field>
     {{ TextFieldValue }}
 
     <v-divider class="mt-10" />
 
     <v-subheader> Modal </v-subheader>
-    <ConfirmModal
+    <confirm-modal
       v-model="modal"
       type="primary"
       title="Action Word (i.e. Remove) ___________?"
@@ -147,13 +147,13 @@
           Open modal
         </huxButton>
       </template>
-    </ConfirmModal>
+    </confirm-modal>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Alert </v-subheader>
     <v-btn @click="alert = !alert">Toogle alert</v-btn>
-    <HuxAlert
+    <hux-alert
       v-model="alert"
       type="success"
       title="YAY!"
@@ -164,49 +164,49 @@
 
     <v-subheader> Button </v-subheader>
     <huxButton
-      isOutlined
+      is-outlined
       size="large"
       icon="mdi-check"
-      iconPosition="left"
+      icon-position="left"
       class="ma-2"
     >
       Added
     </huxButton>
-    <huxButton isOutlined size="x-small" variant="darkGrey" class="ma-2">
+    <huxButton is-outlined size="x-small" variant="darkGrey" class="ma-2">
       Add
     </huxButton>
-    <huxButton variant="primary" size="large" isTile class="ma-2">
+    <huxButton variant="primary" size="large" is-tile class="ma-2">
       Leave configuration
     </huxButton>
     <huxButton
       icon="mdi-check"
-      iconPosition="left"
+      icon-position="left"
       variant="success"
       size="x-large"
-      isTile
+      is-tile
       class="ma-2"
     >
       Success!
     </huxButton>
-    <huxButton variant="tertiary" isTile class="ma-2">
+    <huxButton variant="tertiary" is-tile class="ma-2">
       Cancel &amp; Return
     </huxButton>
-    <huxButton variant="tertiary" isTile isDisabled class="ma-2">
+    <huxButton variant="tertiary" is-tile is-disabled class="ma-2">
       Disabled
     </huxButton>
-    <huxButton variant="tertiary" isTile enableLoading class="ma-2">
+    <huxButton variant="tertiary" is-tile enable-loading class="ma-2">
       Loader
     </huxButton>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Select Dropdown </v-subheader>
-    <DropdownMenu
+    <dropdown-menu
       v-model="DropdownValue"
-      :labelText="labelText"
-      :menuItem="DropdownData"
+      :label-text="labelText"
+      :menu-item="DropdownData"
       @updatelabelText="onupdatelabelText"
-    ></DropdownMenu>
+    ></dropdown-menu>
     {{ DropdownValue }}
 
     <v-divider class="mt-10" />
@@ -231,37 +231,37 @@
     <hux-end-date
       :label="selectedEndDate"
       :selected="selectedEndDate"
-      :isSubMenu="true"
+      :is-sub-menu="true"
       @on-date-select="onEndDateSelect"
     />
     <v-divider class="mt-10" />
 
     <v-subheader> Page Header </v-subheader>
-    <PageHeader>
+    <page-header>
       <template slot="left">
-        <Breadcrumb :items="items" />
+        <breadcrumb :items="items" />
       </template>
-    </PageHeader>
+    </page-header>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Hux Range Slider</v-subheader>
     <hux-slider
-      :isRangeSlider="true"
+      v-model="sliderRange"
+      :is-range-slider="true"
       :min="0"
       :max="1"
       :step="0.05"
-      v-model="sliderRange"
     />
 
     <v-divider class="mt-10" />
 
     <v-subheader> Hux Table</v-subheader>
     <hux-table
-      :columnDef="columnDefs"
-      :tableData="rowData"
+      :column-def="columnDefs"
+      :table-data="rowData"
       height="250px"
-      hasCheckBox
+      has-check-box
     ></hux-table>
 
     <v-divider class="mt-10" />
@@ -289,43 +289,43 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Metric Card</v-subheader>
-    <MetricCard
-      class="ma-4"
-      :maxWidth="200"
+    <metric-card
       v-for="(item, i) in overviewListItems"
       :key="i"
+      class="ma-4"
+      :max-width="200"
       :title="item.title"
       :subtitle="item.subtitle"
       :icon="item.icon"
       :active="true"
-    ></MetricCard>
+    ></metric-card>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Headings </v-subheader>
-    <p v-for="i in 6" :class="`text-h${i}`" :key="i">Heading {{ i }}</p>
+    <p v-for="i in 6" :key="i" :class="`text-h${i}`">Heading {{ i }}</p>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Form Steps </v-subheader>
-    <FormSteps class="white pa-10">
-      <FormStep :step="1" label="General information" optional>
+    <form-steps class="white pa-10">
+      <form-step :step="1" label="General information" optional>
         Contents for step 1
-      </FormStep>
+      </form-step>
 
-      <FormStep :step="2" label="Select attribute(s)" border="inactive">
+      <form-step :step="2" label="Select attribute(s)" border="inactive">
         Contents for step 2
-      </FormStep>
+      </form-step>
 
-      <FormStep :step="3" :disabled="true">
+      <form-step :step="3" :disabled="true">
         Contents for disabled step 3
-      </FormStep>
-    </FormSteps>
+      </form-step>
+    </form-steps>
 
     <v-divider class="mt-10" />
 
     <v-subheader> Data Cards </v-subheader>
-    <DataCards
+    <data-cards
       :items="DataCards.items"
       :fields="DataCards.fields"
       :bordered="DataCards.bordered"
@@ -351,12 +351,12 @@
           </v-btn>
         </div>
       </template>
-    </DataCards>
+    </data-cards>
 
-    <v-btn @click="DataCards.bordered = !DataCards.bordered" class="mr-4">
+    <v-btn class="mr-4" @click="DataCards.bordered = !DataCards.bordered">
       Toggle bordered
     </v-btn>
-    <v-btn @click="DataCards.items.push(DataCards.newItem)" class="mr-4">
+    <v-btn class="mr-4" @click="DataCards.items.push(DataCards.newItem)">
       Add item
     </v-btn>
     <v-text-field
@@ -368,20 +368,20 @@
     <v-divider class="mt-10" />
 
     <v-subheader> Descriptive Card </v-subheader>
-    <DescriptiveCard
+    <descriptive-card
       icon="model-unsubscribe"
       title="Propensity to Unsubscribe"
       description="Propensity of a customer making a purchase after receiving an email."
     >
       <template slot="top">
-        <Status status="Pending" collapsed class="d-flex" />
+        <status status="Pending" collapsed class="d-flex" />
       </template>
 
       <template slot="default">
         <p class="text-caption gray--text">Sarah Miller</p>
 
         <div class="d-flex justify-center mb-6">
-          <CardStat label="Version" value="0.02" stat-class="border-0">
+          <card-stat label="Version" value="0.02" stat-class="border-0">
             <div class="mb-3">
               Trained date<br />
               12/22/2021 at 12:45pm
@@ -398,30 +398,30 @@
               Lookback period (days)<br />
               60
             </div>
-          </CardStat>
-          <CardStat label="Last trained" value="2 hrs ago">12:45pm</CardStat>
+          </card-stat>
+          <card-stat label="Last trained" value="2 hrs ago">12:45pm</card-stat>
         </div>
       </template>
-    </DescriptiveCard>
+    </descriptive-card>
 
     <v-divider class="mt-10" />
 
     <v-subheader>Icons</v-subheader>
-    <Icon type="model-unsubscribe" />
-    <Icon type="model-unsubscribe" :size="48" color="secondary" />
+    <icon type="model-unsubscribe" />
+    <icon type="model-unsubscribe" :size="48" color="secondary" />
 
     <v-divider class="mt-10" />
 
     <v-subheader>Score Slider</v-subheader>
-    <hux-slider :isRangeSlider="false" :value="0.45"></hux-slider>
+    <hux-slider :is-range-slider="false" :value="0.45"></hux-slider>
 
     <v-divider class="mt-10" />
 
     <v-subheader>Hux Identity Chart</v-subheader>
     <chord-chart
       v-model="chartData"
-      :colorCodes="colorCodes"
-      :chartLegendsData="chartLegendsData"
+      :color-codes="colorCodes"
+      :chart-legends-data="chartLegendsData"
     />
 
     <v-divider class="mt-10" />
@@ -443,8 +443,8 @@
         </v-col>
         <v-col v-for="(value, subindex) in row" :key="value">
           <input
-            v-model.lazy="chartData[index][subindex]"
             v-if="index !== subindex"
+            v-model.lazy="chartData[index][subindex]"
             solo
             dense
             type="number"
@@ -462,36 +462,36 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Logos</v-subheader>
-    <Logo type="bluecore"></Logo>
-    <Logo type="bluecore" :size="48"></Logo>
+    <logo type="bluecore"></logo>
+    <logo type="bluecore" :size="48"></logo>
 
-    <Logo type="facebook"></Logo>
-    <Logo type="facebook" :size="48"></Logo>
+    <logo type="facebook"></logo>
+    <logo type="facebook" :size="48"></logo>
 
-    <Logo type="tableau"></Logo>
-    <Logo type="tableau" :size="48"></Logo>
+    <logo type="tableau"></logo>
+    <logo type="tableau" :size="48"></logo>
 
-    <Logo type="google-ads"></Logo>
-    <Logo type="google-ads" :size="48"></Logo>
+    <logo type="google-ads"></logo>
+    <logo type="google-ads" :size="48"></logo>
 
-    <Logo type="google-analytics"></Logo>
-    <Logo type="google-analytics" :size="48"></Logo>
+    <logo type="google-analytics"></logo>
+    <logo type="google-analytics" :size="48"></logo>
 
-    <Logo type="aqfer"></Logo>
-    <Logo type="aqfer" :size="48"></Logo>
+    <logo type="aqfer"></logo>
+    <logo type="aqfer" :size="48"></logo>
 
-    <Logo type="netsuite"></Logo>
-    <Logo type="netsuite" :size="48"></Logo>
+    <logo type="netsuite"></logo>
+    <logo type="netsuite" :size="48"></logo>
 
-    <Logo type="sfmc"></Logo>
-    <Logo type="sfmc" :size="48"></Logo>
+    <logo type="sfmc"></logo>
+    <logo type="sfmc" :size="48"></logo>
 
-    <Logo type="twilio"></Logo>
-    <Logo type="twilio" :size="48"></Logo>
+    <logo type="twilio"></logo>
+    <logo type="twilio" :size="48"></logo>
     <v-divider class="mt-10" />
 
     <v-subheader>Nested Data Table</v-subheader>
-    <hux-data-table :headers="headerNest" :dataItems="dataItemsNest" nested>
+    <hux-data-table :columns="headerNest" :data-items="dataItemsNest" nested>
       <template #item-row="{ item, expand, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
           <td
@@ -517,10 +517,10 @@
             <div v-if="header.value == 'status'">
               <status
                 :status="item[header.value]"
-                :showLabel="true"
+                :show-label="true"
                 collapsed
                 class="d-flex"
-                :iconSize="17"
+                :icon-size="17"
               />
             </div>
             <div v-if="header.value == 'size'">
@@ -529,16 +529,16 @@
           </td>
         </tr>
       </template>
-      <template #expanded-row="{ headers, item }">
-        <td :colspan="headers.length" class="pa-0 child">
+      <template #expanded-row="{ expandedHeaders, item }">
+        <td :colspan="expandedHeaders.length" class="pa-0 child">
           <hux-data-table
-            :headers="headers"
-            :dataItems="item.child"
-            :showHeader="false"
+            :columns="expandedHeaders"
+            :data-items="item.child"
+            :show-header="false"
             class="expanded-table"
             nested
           >
-            <template #item-row="{ item, expand, isExpanded }">
+            <template #item-row="{ rowItem, expand, isExpanded }">
               <tr :class="{ 'expanded-row': isExpanded }">
                 <td
                   v-for="header in headerNest"
@@ -555,63 +555,63 @@
                     >
                       mdi-chevron-right
                     </v-icon>
-                    {{ item[header.value] }}
+                    {{ rowItem[header.value] }}
                   </div>
                   <div v-if="header.value == 'audiences'">
                     <div>
-                      <size :value="item[header.value]" />
+                      <size :value="rowItem[header.value]" />
                     </div>
                   </div>
                   <div v-if="header.value == 'status'">
                     <status
-                      :status="item[header.value]"
-                      :showLabel="true"
+                      :status="rowItem[header.value]"
+                      :show-label="true"
                       collapsed
                       class="d-flex"
-                      :iconSize="17"
+                      :icon-size="17"
                     />
                   </div>
                   <div v-if="header.value == 'size'">
-                    <size :value="item[header.value]" />
+                    <size :value="rowItem[header.value]" />
                   </div>
                 </td>
               </tr>
             </template>
-            <template #expanded-row="{ headers, item }">
-              <td :colspan="headers.length" class="pa-0 child">
+            <template #expanded-row="{ subExpandedHeaders, expandedItem }">
+              <td :colspan="subExpandedHeaders.length" class="pa-0 child">
                 <hux-data-table
-                  :headers="headers"
-                  :dataItems="item.childNest"
-                  :showHeader="false"
+                  :columns="subExpandedHeaders"
+                  :data-items="expandedItem.childNest"
+                  :show-header="false"
                   class="expanded-table"
                   nested
                 >
-                  <template #item-row="{ item }">
+                  <template #item-row="{ rowItem }">
                     <tr>
                       <td
-                        v-for="header in headerNest"
-                        :key="header.value"
-                        :style="{ width: header.width, left: 0 }"
+                        v-for="subHeader in headerNest"
+                        :key="subHeader.value"
+                        :style="{ width: subHeader.width, left: 0 }"
                       >
-                        <div v-if="header.value == 'name'">
-                          {{ item[header.value] }}
+                        <div v-if="subHeader.value == 'name'">
+                          {{ rowItem[subHeader.value] }}
                         </div>
-                        <div v-if="header.value == 'audiences'">
+                        <div v-if="subHeader.value == 'audiences'">
                           <div>
-                            <size :value="item[header.value]" />
+                            <size :value="rowItem[subHeader.value]" />
                           </div>
                         </div>
-                        <div v-if="header.value == 'status'">
+                        <div v-if="subHeader.value == 'status'">
                           <status
-                            :status="item[header.value]"
-                            :showLabel="true"
+                            :status="rowItem[subHeader.value]"
+                            :show-label="true"
                             collapsed
                             class="d-flex"
-                            :iconSize="17"
+                            :icon-size="17"
                           />
                         </div>
-                        <div v-if="header.value == 'size'">
-                          <size :value="item[header.value]" />
+                        <div v-if="subHeader.value == 'size'">
+                          <size :value="rowItem[subHeader.value]" />
                         </div>
                       </td>
                     </tr>
@@ -686,34 +686,6 @@ export default {
     Size,
     HuxStartDate,
     HuxEndDate,
-  },
-  methods: {
-    onupdatelabelText(newValue) {
-      this.labelText = newValue
-    },
-    onSelectMenuItem(item) {
-      console.log(item.name)
-      if (this.selectedMenuItem == item.name) {
-        this.selectedMenuItem = "Select a value..."
-      } else {
-        this.selectedMenuItem = item.name
-      }
-      if (item.action) {
-        item.action()
-      }
-    },
-    onStartDateSelect(val) {
-      this.selectedStartDate = val
-    },
-    onEndDateSelect(val) {
-      this.selectedEndDate = val
-    },
-    toggleModal() {
-      this.modal = !this.modal
-    },
-    getColorCode(name) {
-      return generateColor(name, 30, 60) + " !important"
-    },
   },
   data() {
     return {
@@ -1280,6 +1252,34 @@ export default {
     }
   },
   mounted() {},
+  methods: {
+    onupdatelabelText(newValue) {
+      this.labelText = newValue
+    },
+    onSelectMenuItem(item) {
+      console.log(item.name)
+      if (this.selectedMenuItem == item.name) {
+        this.selectedMenuItem = "Select a value..."
+      } else {
+        this.selectedMenuItem = item.name
+      }
+      if (item.action) {
+        item.action()
+      }
+    },
+    onStartDateSelect(val) {
+      this.selectedStartDate = val
+    },
+    onEndDateSelect(val) {
+      this.selectedEndDate = val
+    },
+    toggleModal() {
+      this.modal = !this.modal
+    },
+    getColorCode(name) {
+      return generateColor(name, 30, 60) + " !important"
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>

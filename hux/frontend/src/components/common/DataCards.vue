@@ -130,6 +130,19 @@ export default {
     }
   },
 
+  mounted() {
+    if (this.sort !== "none") {
+      if (this.sort === "asc") {
+        // Sorts the list in ascending order
+        this.sortDesc = false
+        this.setSortBy(this.fields[0].key)
+      } else {
+        // Sorts the list in descending order
+        this.setSortBy(this.fields[0].key)
+      }
+    }
+  },
+
   methods: {
     setSortBy(key) {
       if (this.isSortedBy(key)) {
@@ -155,19 +168,6 @@ export default {
         return Boolean(this.selectedItems && this.selectedItems[item.id])
       }
     },
-  },
-
-  mounted() {
-    if (this.sort !== "none") {
-      if (this.sort === "asc") {
-        // Sorts the list in ascending order
-        this.sortDesc = false
-        this.setSortBy(this.fields[0].key)
-      } else {
-        // Sorts the list in descending order
-        this.setSortBy(this.fields[0].key)
-      }
-    }
   },
 }
 </script>

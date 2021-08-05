@@ -30,9 +30,6 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 
-QUERY_PARAMETER_BATCH_SIZE = "batch_size"
-QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
-
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
@@ -556,98 +553,108 @@ SUPPORTED_MODELS = {
         MODEL_TYPE: LTV,
         NAME: "Lifetime value",
         DESCRIPTION: "Predicts the lifetime value of a customer based on models",
-        CURRENT_VERSION: "3.1.2",
-        RMSE: 350,
+        CURRENT_VERSION: "21.7.28",
+        RMSE: 233.5,
         AUC: -1,
         PRECISION: -1,
         RECALL: -1,
         LIFT_DATA: {
             BUCKET: list(range(10, 110, 10)),
             PREDICTED_VALUE: [
-                15007.58,
-                28587.99,
-                43044.47,
-                61834.16,
-                78894.74,
-                93745.37,
-                109899.63,
-                122684.49,
-                137940.49,
-                151782.41,
+                540766.43,
+                475291.73,
+                500646.42,
+                431053.37,
+                494181.79,
+                476907.53,
+                432766.33,
+                488546.42,
+                570121.00,
+                903394.33,
             ],
             ACTUAL_VALUE: [
-                17280.0,
-                31781.0,
-                46494.0,
-                61392.0,
-                76031.0,
-                90735.0,
-                105208.0,
-                120186.0,
-                134787.0,
-                149578.0,
+                553492.0,
+                531944.0,
+                531048.0,
+                531523.0,
+                531325.0,
+                531026.0,
+                531596.0,
+                531257.0,
+                531324.0,
+                531312.0,
             ],
-            PROFILE_COUNT: [21, 54, 102, 190, 300, 427, 612, 818, 1226, 2067],
+            PROFILE_COUNT: [
+                421,
+                971,
+                1624,
+                2029,
+                3152,
+                3933,
+                4599,
+                6335,
+                9224,
+                66160,
+            ],
             PREDICTED_RATE: [
-                714.65,
-                529.41,
-                422.0,
-                325.44,
-                262.98,
-                219.54,
-                179.57,
-                149.98,
-                112.51,
-                73.43,
+                1284.48,
+                489.49,
+                308.28,
+                212.45,
+                156.78,
+                121.26,
+                94.10,
+                77.12,
+                61.81,
+                13.65,
             ],
             ACTUAL_RATE: [
-                822.86,
-                588.54,
-                455.82,
-                323.12,
-                253.44,
-                212.49,
-                171.91,
-                146.93,
-                109.94,
-                72.36,
+                1314.71,
+                547.83,
+                327.00,
+                261.96,
+                168.57,
+                135.02,
+                115.59,
+                83.86,
+                57.60,
+                8.03,
             ],
             PREDICTED_LIFT: [
-                9.73,
-                7.21,
-                5.75,
-                4.43,
-                3.58,
-                2.99,
-                2.45,
-                2.04,
-                1.53,
-                1,
+                23.80,
+                9.07,
+                5.71,
+                3.94,
+                2.90,
+                2.25,
+                1.74,
+                1.43,
+                1.15,
+                0.25,
             ],
             ACTUAL_LIFT: [
-                11.37,
-                8.31,
-                6.3,
-                4.47,
-                3.5,
-                2.94,
-                2.38,
-                2.03,
-                1.52,
-                1,
+                24.26,
+                10.11,
+                6.03,
+                4.83,
+                3.11,
+                2.49,
+                2.13,
+                1.55,
+                1.06,
+                0.15,
             ],
             PROFILE_SIZE_PERCENT: [
-                1.02,
-                2.61,
-                4.93,
-                4.93,
-                9.19,
-                14.51,
-                20.66,
-                29.61,
-                39.57,
-                59.31,
-                100,
+                0.43,
+                0.99,
+                1.65,
+                2.06,
+                3.20,
+                3.99,
+                4.67,
+                6.43,
+                9.37,
+                67.20,
             ],
         },
     },
@@ -840,8 +847,6 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
-CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
-CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -899,6 +904,25 @@ DATAFEED_DATA_SOURCE = "data_source_type"
 DATAFEED_NEW_IDS_COUNT = "new_ids_generated"
 DATAFEED_RECORDS_PROCESSED_COUNT = "num_records_processed"
 DATAFEED_LAST_RUN_DATE = "last_run"
+
+# customer event fields
+CUSTOMER_TOTAL_DAILY_EVENT_COUNT = "total_event_count"
+CUSTOMER_DAILY_EVENT_WISE_COUNT = "event_type_counts"
+ABANDONED_CART_EVENT = "abandoned_cart"
+CUSTOMER_LOGIN_EVENT = "customer_login"
+VIEWED_CART_EVENT = "viewed_cart"
+VIEWED_CHECKOUT_EVENT = "viewed_checkout"
+VIEWED_SALE_ITEM_EVENT = "viewed_sale_item"
+# TODO remove once we get event counts from CDP.
+CUSTOMER_EVENTS_SAMPLE_COUNTS = {
+    CUSTOMER_TOTAL_DAILY_EVENT_COUNT: [17, 16, 15, 2, 18, 16, 10, 16],
+    ABANDONED_CART_EVENT: [3, 3, 3, 0, 2, 2, 2, 2],
+    CUSTOMER_LOGIN_EVENT: [2, 1, 3, 1, 3, 3, 2, 3],
+    VIEWED_CART_EVENT: [4, 3, 3, 0, 3, 3, 3, 3],
+    VIEWED_CHECKOUT_EVENT: [3, 4, 1, 0, 4, 3, 1, 3],
+    VIEWED_SALE_ITEM_EVENT: [5, 5, 5, 1, 6, 5, 2, 5],
+}
+
 
 # FILTERING
 REDACTED = "++REDACTED++"

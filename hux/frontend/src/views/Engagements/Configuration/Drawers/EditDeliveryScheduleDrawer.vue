@@ -1,5 +1,5 @@
 <template>
-  <Drawer
+  <drawer
     v-model="localToggle"
     :loading="loading"
     class="edit-delivery-drawer-wrapper rounded-0"
@@ -19,11 +19,11 @@
           scheduling pattern for this specific destination.
         </div>
         <div class="text-caption gray--text pt-8 pb-1">Destination</div>
-        <CardHorizontal
+        <card-horizontal
           :title="destination.name"
-          :icon="destination.type"
+          :icon="destination.delivery_platform_type"
           class="cursor-default"
-          hideButton
+          hide-button
         />
         <div class="d-flex justify-end py-4 primary--text">
           <span class="cursor-pointer" @click="resetSchedule">
@@ -35,17 +35,17 @@
     </template>
 
     <template #footer-left>
-      <HuxButton variant="white" isTile height="40" @click="reset()">
+      <hux-button variant="white" is-tile height="40" @click="reset()">
         Cancel
-      </HuxButton>
+      </hux-button>
     </template>
 
     <template #footer-right>
-      <HuxButton variant="primary" isTile height="40" @click="onUpdate()">
+      <hux-button variant="primary" is-tile height="40" @click="onUpdate()">
         Update
-      </HuxButton>
+      </hux-button>
     </template>
-  </Drawer>
+  </drawer>
 </template>
 
 <script>
@@ -72,7 +72,7 @@ export default {
     },
 
     audienceId: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
 
@@ -82,7 +82,7 @@ export default {
     },
 
     engagementId: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
   },
@@ -93,6 +93,16 @@ export default {
       localToggle: false,
       schedule: JSON.parse(JSON.stringify(DefaultDeliverySchedule)),
     }
+  },
+
+  watch: {
+    value(value) {
+      this.localToggle = value
+    },
+
+    localToggle(value) {
+      this.$emit("input", value)
+    },
   },
 
   methods: {
@@ -107,16 +117,6 @@ export default {
 
     resetSchedule() {
       this.schedule = JSON.parse(JSON.stringify(DefaultDeliverySchedule))
-    },
-  },
-
-  watch: {
-    value(value) {
-      this.localToggle = value
-    },
-
-    localToggle(value) {
-      this.$emit("input", value)
     },
   },
 }

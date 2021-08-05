@@ -286,6 +286,20 @@ def get_audience_insights(
                     {"$match": {"audiences.id": audience_id}},
                     {
                         "$lookup": {
+                            "from": "delivery_platforms",
+                            "localField": "audiences.destinations.id",
+                            "foreignField": "_id",
+                            "as": "delivery_platforms",
+                        }
+                    },
+                    {
+                        "$unwind": {
+                            "path": "$delivery_platforms",
+                            "preserveNullAndEmptyArrays": True,
+                        }
+                    },
+                    {
+                        "$lookup": {
                             "from": "delivery_jobs",
                             "localField": "audiences.destinations.delivery_job_id",
                             "foreignField": "_id",
@@ -298,7 +312,22 @@ def get_audience_insights(
                             "preserveNullAndEmptyArrays": True,
                         }
                     },
-                    {"$project": {"audiences": 0}},
+                    {
+                        "$addFields": {
+                            "deliveries": {
+                                "$ifNull": [
+                                    "$deliveries",
+                                    "$delivery_platforms",
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "$addFields": {
+                            "deliveries.delivery_platform_id": "$delivery_platforms._id"
+                        }
+                    },
+                    {"$project": {"audiences": 0, "delivery_platforms": 0}},
                     {
                         "$lookup": {
                             "from": "delivery_platforms",
@@ -318,6 +347,13 @@ def get_audience_insights(
                             "deliveries.delivery_platform_type"
                             "": "$destinations.delivery_platform_type",
                             "deliveries.name": "$destinations.name",
+                            "deliveries.status": {
+                                "$ifNull": [
+                                    "$deliveries.status",
+                                    c.AUDIENCE_STATUS_NOT_DELIVERED,
+                                ]
+                            },
+                            "deliveries.id": "$destinations.id",
                         }
                     },
                     {
