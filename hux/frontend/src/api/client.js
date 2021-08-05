@@ -56,25 +56,24 @@ client["engagements"].deliver = (resourceId, data) => {
 client["engagements"].attachAudience = (resourceId, data) => {
   return http.post(`/engagements/${resourceId}/audiences`, data)
 }
-client["engagements"].attachDestination = (resourceId, audienceId, data) => {
+client["engagements"].attachDestination = (engagementId, audienceId, data) => {
   return http.post(
-    `/engagements/${resourceId}/audiences/${audienceId}/destinations`,
+    `/engagements/${engagementId}/audience/${audienceId}/destinations`,
     data
   )
 }
 
-client["engagements"].detachDestination = (resourceId, audienceId, data) => {
+client["engagements"].detachDestination = (engagementId, audienceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
     return http.delete(
-      `/engagements/${resourceId}/audiences/${audienceId}/destinations`,
+      `/engagements/${engagementId}/audiences/${audienceId}/destinations`,
       { data: data }
     )
   } else {
-    const audienceId = data.audience_ids[0]
     return http.delete(
-      `/engagements/${resourceId}/audiences/${audienceId}/destinations/${data[0].id}`
+      `/engagements/${engagementId}/audiences/${audienceId}/destinations/${data.id}`
     )
   }
 }
@@ -161,8 +160,8 @@ client["audiences"].deliver = (resourceId, data) => {
 //#endregion
 
 //#region Notifications
-client["notifications"].getNotification = (data) => {
-  return http.get(`/notifications?batch_size=${data}`)
+client["notifications"].getNotifications = (batchSize) => {
+  return http.get(`/notifications?batch_size=${batchSize}`)
 }
 //#endregion
 
