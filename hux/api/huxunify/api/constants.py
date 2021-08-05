@@ -706,6 +706,7 @@ SUPPORTED_MODELS = {
             ],
             DESCRIPTION: [
                 "8to12m-ITEMEXTCOST-sum",
+                "8to12m-ITEMEXTCOST-sum",
                 "fwbk_2m-STORENAME-Woolen Mill Store",
                 "fwbk_2m-ITEMEXTPRICE-sum",
                 "8to12m-ORDTDOL-sum",
