@@ -230,8 +230,13 @@ export default {
   }
   ::v-deep .v-card__actions {
     display: flow-root !important;
+    height: 40px;
     .btn-select {
       float: right;
+    }
+    .v-btn {
+      height: 24px;
+      margin-top: 3px;
     }
   }
   ::v-deep .date-picker-header {

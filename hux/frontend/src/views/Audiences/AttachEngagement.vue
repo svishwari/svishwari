@@ -217,7 +217,7 @@
                       @on-date-select="(val) => (selectedStartDate = val)"
                     />
                   </div>
-                  <icon class="ml-2 mr-2" type="arrow" :size="28" v-if="value.delivery_schedule == 1"/>
+                  <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28"/>
                   <div>
                     <span class="date-picker-label neroBlack--text text-caption">End date</span>
                     <hux-end-date
@@ -496,9 +496,6 @@ export default {
       .v-btn__content {
         justify-content: start;
         color: var(--v-primary-base) !important;
-      }
-      .theme--light {
-        // color: var(--v-lightGrey-base) !important;
       }
       &.v-btn--active {
         border: 1px solid var(--v-primary-base) !important;
