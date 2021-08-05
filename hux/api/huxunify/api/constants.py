@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """This module contains connector defines."""
 
 from huxunifylib.database import constants as db_c
