@@ -584,6 +584,7 @@ export default {
       switch (event.target.title.toLowerCase()) {
         case "add a destination": {
           this.closeAllDrawers()
+          this.engagementId = event.data.id
           this.selectedDestinations = []
           // this.selectedEngagements = []
           this.selectedEngagements.push(event.data)
@@ -632,12 +633,12 @@ export default {
             this.flashAlert = true
             break
           case "edit delivery schedule":
+            this.engagementId = event.parent.id
             this.showConfirmModal = true
-            this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
             break
           case "remove destination":
-            this.selectedAudienceId = event.data.id
+            this.engagementId = event.parent.id
             await this.detachAudienceDestination({
               engagementId: this.engagementId,
               audienceId: this.selectedAudienceId,
@@ -739,6 +740,7 @@ export default {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
+      this.selectedAudienceId = this.$route.params.id
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
