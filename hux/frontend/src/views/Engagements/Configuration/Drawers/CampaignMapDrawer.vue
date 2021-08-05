@@ -16,7 +16,7 @@
         <data-cards
           v-if="!loading"
           bordered
-          empty="No campaign mapping have been created."
+          empty="No campaigns available to map to a delivery moment."
           :items="mappings"
           :fields="[
             {
