@@ -636,7 +636,7 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-           this.dataPendingMesssage(event.data.name, "audience")
+            this.dataPendingMesssage(event.data.name, "audience")
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -663,15 +663,14 @@ export default {
       }
     },
 
-  //Alert Message
+    //Alert Message
     dataPendingMesssage(name, value) {
       this.alert.type = "Pending"
       this.alert.title = ""
-      if(value == "engagement") {
- this.alert.message =`Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
+      if (value == "engagement") {
+        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
       } else {
-      this.alert.message =
-       `Your audience, '${name}' , has started delivering.`
+        this.alert.message = `Your audience, '${name}' , has started delivering.`
       }
 
       this.flashAlert = true

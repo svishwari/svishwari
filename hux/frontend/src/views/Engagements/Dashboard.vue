@@ -945,8 +945,7 @@ export default {
     async triggerOverviewAction(event) {
       try {
         const engagementId = this.engagementId
-        switch (event.target.title
-        .toLowerCase()) {
+        switch (event.target.title.toLowerCase()) {
           case "add a destination":
             this.closeDrawers()
             this.triggerSelectDestination(event.data.id)
@@ -1015,12 +1014,11 @@ export default {
         throw error
       }
     },
-    
- //Alert Message
-    dataPendingMesssage(name, value) {
+
+    //Alert Message
+    dataPendingMesssage(name) {
       this.alert.type = "Pending"
-      this.alert.title = ""
-        `Your audience, '${name}' , has started delivering.`
+      this.alert.title = `Your audience, '${name}' , has started delivering.`
       this.flashAlert = true
     },
     dataErrorMesssage(name) {
@@ -1029,7 +1027,6 @@ export default {
       this.alert.message = `Failed to schedule a delivery for '${name}'`
       this.flashAlert = true
     },
-
 
     //#endregion
     openDeliveryHistoryDrawer() {
