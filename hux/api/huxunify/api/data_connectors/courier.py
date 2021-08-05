@@ -18,7 +18,6 @@ from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
     SFMCCredentials,
-    CustomerProfileAPIDetails,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_const
@@ -337,8 +336,8 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
+        api_const.CDP_SERVICE_URL: config.CDP_SERVICE,
         **ds_env_dict,
-        CustomerProfileAPIDetails.CDP_SERVICE_URL.name: config.CDP_SERVICE,
     }
 
     # setup the secrets dict
