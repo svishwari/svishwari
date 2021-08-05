@@ -211,9 +211,8 @@
                   class="delivery-schedule ml-0 mt-6"
                 >
                   <div>
-                    <span
-                      class="date-picker-label neroBlack--text text-caption"
-                    >
+                    <span class="date-picker-label 
+                    neroBlack--text text-caption">
                       Start date
                     </span>
                     <hux-start-date
@@ -225,9 +224,8 @@
                   </div>
                   <icon class="ml-1 mt-9 mr-2" type="arrow" :size="28" />
                   <div>
-                    <span
-                      class="date-picker-label neroBlack--text text-caption"
-                    >
+                    <span class="date-picker-label 
+                    neroBlack--text text-caption">
                       End date
                     </span>
                     <hux-end-date
@@ -264,8 +262,8 @@
     <template #footer-left>
       <div
         v-if="viewStep == 1 && areEngagementAlreadyCreated"
-        class="d-flex align-baseline gray--text text-caption"
-      >
+        class="d-flex align-baseline 
+        gray--text text-caption">
         {{ engagements.length }} results
       </div>
       <div v-if="viewStep == 2" class="d-flex align-baseline">
@@ -487,7 +485,6 @@ export default {
   .delivery-options {
     ::v-deep button {
       background: var(--v-white-base);
-      // border: 1px solid var(--v-lightGrey-base);
       box-sizing: border-box;
       border-radius: 4px;
       border-left-width: 1px !important;
@@ -495,7 +492,6 @@ export default {
       height: 40px;
       padding: 10px;
       margin-right: 10px;
-      // color: var(--v-lightGrey-base);
       .v-icon {
         &.ico {
           width: 13.44px;
@@ -509,7 +505,6 @@ export default {
       }
       &.v-btn--active {
         border: 1px solid var(--v-primary-base) !important;
-        // color: var(--v-primary-base) !important;
         &::before {
           opacity: 0;
         }
@@ -523,12 +518,6 @@ export default {
         }
       }
     }
-    // .active-delivery-option {
-    //   border: 1px solid var(--v-lightGrey-base) !important;;
-    // }
-    // .theme--light.v-btn-toggle:not(.v-btn-toggle--group) .v-btn.v-btn {
-    //   border: 1px solid var(--v-lightGrey-base) !important;;
-    // }
     .active-delivery-option.v-btn.v-item--active {
       border-color: var(--v-primary-base) !important;
     }
