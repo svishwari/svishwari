@@ -9,6 +9,13 @@ const destinationSchema = () => {
     delivery_platform_config: {
       data_extension_name: "faker data",
     },
+    delivery_platform_type: "facebook",
+    name: "Facebook",
+    latest_delivery: {
+      update_time: "2021-07-30T13:28:51.450Z",
+      status: "Delivered",
+      size: 1000,
+    },
   }
 }
 

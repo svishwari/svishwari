@@ -1,23 +1,23 @@
 <template>
   <transition>
     <v-range-slider
+      v-if="isRangeSlider"
+      v-model="localValue"
       class="hux-range-slider"
       :max="max"
       :min="min"
       :step="step"
       thumb-label="always"
-      v-if="isRangeSlider"
-      v-model="localValue"
       @end="onFinalValue"
     ></v-range-slider>
     <v-slider
+      v-else
+      v-model="currentValue"
       class="hux-score-slider"
       always-dirty
       :color="currentColor"
       :readonly="readOnly"
       :track-color="currentColor"
-      v-else
-      v-model="currentValue"
       @end="onFinalValue"
     >
       <template #append>
@@ -37,7 +37,7 @@
 import colors from "../../plugins/colors"
 
 export default {
-  name: "hux-slider",
+  name: "HuxSlider",
   props: {
     value: {
       type: [Number, Array],

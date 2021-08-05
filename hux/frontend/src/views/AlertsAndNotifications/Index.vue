@@ -1,11 +1,11 @@
 <template>
   <div class="notification-wrap">
-    <PageHeader :headerHeightChanges="'py-3'">
+    <page-header :header-height-changes="'py-3'">
       <template slot="left">
-        <Breadcrumb :items="breadcrumbItems" />
+        <breadcrumb :items="breadcrumbItems" />
       </template>
-    </PageHeader>
-    <PageHeader class="top-bar mb-3" :headerHeight="71">
+    </page-header>
+    <page-header class="top-bar mb-3" :header-height="71">
       <template #left>
         <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
         <v-icon medium color="lightGrey" class="pl-4">mdi-magnify</v-icon>
@@ -13,25 +13,26 @@
 
       <template #right>
         <huxButton
-          ButtonText="Return to previous page"
+          button-text="Return to previous page"
           icon="mdi-keyboard-return"
-          iconPosition="left"
+          icon-position="left"
           variant="primary"
           size="large"
-          isTile
+          is-tile
           class="ma-2 font-weight-regular no-shadow mr-0"
           @click="goBack()"
         >
           Return to previous page
         </huxButton>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pb-7 pl-3 white" v-if="!loading">
+    <v-row v-if="!loading" class="pb-7 pl-3 white">
       <hux-data-table
-        :headers="columnDefs"
-        :dataItems="getNotificationData"
-        :disableSort="true"
+        :columns="columnDefs"
+        :data-items="notifications"
+        :sort-column="sortColumn"
+        :sort-desc="sortDesc"
       >
         <template #row-item="{ item }">
           <td
@@ -51,11 +52,11 @@
             <div v-if="header.value == 'notification_type'">
               <status
                 :status="item['notification_type']"
-                :showLabel="true"
-                :iconSize="17"
+                :show-label="true"
+                :icon-size="17"
               />
             </div>
-            <tooltip v-if="header.value == 'description'" positionTop>
+            <tooltip v-if="header.value == 'description'" position-top>
               <template #label-content>
                 <span>{{ item[header.value] }}</span>
               </template>
@@ -128,29 +129,30 @@ export default {
           width: "auto",
         },
       ],
+      sortColumn: "created",
+      sortDesc: true,
       loading: false,
     }
   },
   computed: {
     ...mapGetters({
-      notification: "notifications/list",
+      notifications: "notifications/list",
     }),
-    getNotificationData() {
-      return this.notification
-    },
+  },
+
+  async mounted() {
+    this.loading = true
+    const batchSize = this.$route.query.batch_size
+    await this.getAllNotifications(batchSize)
+    this.loading = false
   },
   methods: {
     ...mapActions({
-      getNotification: "notifications/getAll",
+      getAllNotifications: "notifications/getAll",
     }),
     goBack() {
       this.$router.go(-1)
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getNotification(25)
-    this.loading = false
   },
 }
 </script>

@@ -3,14 +3,14 @@
     v-model="localValue"
     inset
     :label="operandLabel"
-    v-on:input="updateValue($event.target.value)"
     class="hux-slider"
+    @input="updateValue($event.target.value)"
   ></v-switch>
 </template>
 
 <script>
 export default {
-  name: "huxSwitch",
+  name: "HuxSwitch",
   props: {
     value: {
       type: Boolean,

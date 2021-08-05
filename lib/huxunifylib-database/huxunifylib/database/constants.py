@@ -63,6 +63,32 @@ DATA_SOURCE_FIELD_TYPE = "type"
 DATA_SOURCE_RECENT_JOB_ID = "recent_ingestion_job_id"
 DATA_SOURCE_NON_BREAKDOWN_FIELDS = "non_breakdown_fields"
 
+DATA_SOURCE_PLATFORM_NETSUITE = "netsuite"
+DATA_SOURCE_PLATFORM_AQFER = "aqfer"
+DATA_SOURCE_PLATFORM_FACEBOOK = "facebook"
+DATA_SOURCE_PLATFORM_SFMC = "sfmc"
+DATA_SOURCE_PLATFORM_ADOBE = "adobe-experience"
+DATA_SOURCE_PLATFORM_MAILCHIMP = "mailchimp"
+DATA_SOURCE_PLATFORM_AMAZONADS = "amazon-advertising"
+DATA_SOURCE_PLATFORM_AMAZONS3 = "amazon-s3"
+DATA_SOURCE_PLATFORM_AOL = "aol"
+DATA_SOURCE_PLATFORM_APACHE_HIVE = "apache-hive"
+DATA_SOURCE_PLATFORM_AZUREBLOB = "azure-blob"
+DATA_SOURCE_PLATFORM_GA360 = "GA360"
+DATA_SOURCE_PLATFORM_GOOGLEADS = "google-ads"
+DATA_SOURCE_PLATFORM_GMAIL = "gmail"
+DATA_SOURCE_PLATFORM_GOOGLE_ANALYTICS = "google-analytics"
+DATA_SOURCE_PLATFORM_IBMDB2 = "IBMDB2"
+DATA_SOURCE_PLATFORM_INSIGHTIQ = "insightIQ"
+DATA_SOURCE_PLATFORM_JIRA = "jira"
+DATA_SOURCE_PLATFORM_MANDRILL = "mandrill"
+DATA_SOURCE_PLATFORM_MARIADB = "mariaDB"
+DATA_SOURCE_PLATFORM_MEDALLIA = "medallia"
+DATA_SOURCE_PLATFORM_AZURESQL = "microsoftAzureSQL"
+DATA_SOURCE_PLATFORM_QUALTRICS = "qualtrics"
+DATA_SOURCE_PLATFORM_TABLEAU = "tableau"
+DATA_SOURCE_PLATFORM_TWILIO = "twilio"
+
 DATA_SOURCE_TYPE_FIRST_PARTY = 1
 DATA_SOURCE_TYPE_THIRD_PARTY = 3
 
@@ -101,8 +127,8 @@ S_TYPE_DOB_DAY_HASHED = "date_of_birth_day_hashed"  # internal only
 S_TYPE_DOB_MONTH_HASHED = "date_of_birth_month_hashed"  # internal only
 S_TYPE_DOB_YEAR_HASHED = "date_of_birth_year_hashed"  # internal only
 S_TYPE_EMAIL_HASHED = "email_address_hashed"  # internal only
-S_TYPE_CITY_HASHED = "city_lowercase_hashed"  # internal only
-S_TYPE_COUNTRY_CODE_HASHED = "country_code_lowercase_hashed"  # internal only
+S_TYPE_CITY_HASHED = "city_hashed"  # internal only
+S_TYPE_COUNTRY_CODE_HASHED = "country_code_hashed"  # internal only
 S_TYPE_GENDER_HASHED = "gender_hashed"  # internal only
 S_TYPE_PHONE_NUMBER_HASHED = "phone_number_digits_only_hashed"  # internal only
 S_TYPE_POSTAL_CODE_HASHED = "postal_code_hashed"  # internal only
@@ -167,7 +193,7 @@ AUDIENCE_TYPE_DESC = "description"
 AUDIENCE_LAST_DELIVERED = "last_delivered"
 AUDIENCE_STATUS_DELIVERED = "Delivered"
 AUDIENCE_STATUS_DELIVERING = "Delivering"
-AUDIENCE_STATUS_NOT_DELIVERED = "Not delivered"
+AUDIENCE_STATUS_NOT_DELIVERED = "Not Delivered"
 AUDIENCE_STATUS_DRAFT = "Draft"
 AUDIENCE_STATUS_ERROR = "Error"
 AUDIENCE_STATUS_PAUSED = "Paused"
@@ -233,7 +259,6 @@ CAMPAIGNS = "campaigns"
 DESTINATIONS = "destinations"
 AUDIENCES = "audiences"
 FAVORITE_COMPONENTS = [CAMPAIGNS, DESTINATIONS, AUDIENCES]
-
 
 DELIVERY_JOB_ID = "delivery_job_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
@@ -302,11 +327,9 @@ ENGAGEMENT_NAME = "name"
 ENGAGEMENT_DESCRIPTION = "description"
 ENGAGEMENT_DELIVERY_SCHEDULE = "delivery_schedule"
 
-
 # pagination constants
 PAGINATION_ASCENDING = "ascending"
 PAGINATION_DESCENDING = "descending"
-
 
 # Custom type definitions
 CUSTOM_TYPE_BOOL = "boolean"

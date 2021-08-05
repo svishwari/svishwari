@@ -1,8 +1,8 @@
 <template>
   <div class="audience-insight-wrap">
-    <PageHeader class="background-border" :headerHeightChanges="'py-3'">
+    <page-header class="background-border" :header-height-changes="'py-3'">
       <template #left>
-        <Breadcrumb :items="breadcrumbItems" />
+        <breadcrumb :items="breadcrumbItems" />
       </template>
       <template #right>
         <v-icon size="22" color="lightGrey" class="mr-2"> mdi-refresh </v-icon>
@@ -17,21 +17,21 @@
           mdi-download
         </v-icon>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="row px-15 my-1" v-if="audienceHistory.length > 0">
-      <MetricCard
+    <div v-if="audienceHistory.length > 0" class="row px-15 my-1">
+      <metric-card
         v-for="(item, i) in audienceHistory"
-        class="ma-2 audience-summary"
         :key="i"
+        class="ma-2 audience-summary"
         :grow="0"
         :title="item.title"
         :icon="item.icon"
       >
         <template #subtitle-extended>
           <span class="mr-2">
-            <Tooltip>
+            <tooltip>
               <template #label-content>
                 <span class="neroBlack--text font-weight-semi-bold">
                   {{ getFormattedTime(item.subtitle) }}
@@ -40,16 +40,16 @@
               <template #hover-content>
                 {{ item.subtitle | Date | Empty }}
               </template>
-            </Tooltip>
+            </tooltip>
           </span>
-          <Avatar :name="item.fullName" />
+          <avatar :name="item.fullName" />
         </template>
-      </MetricCard>
-      <MetricCard
+      </metric-card>
+      <metric-card
+        v-if="audience.is_lookalike"
         class="ma-2 audience-summary original-audience"
         :grow="0"
         :title="'Original Audience'"
-        v-if="audience.is_lookalike"
       >
         <template #subtitle-extended>
           <span class="mr-2 pt-2">
@@ -58,12 +58,12 @@
             </span>
           </span>
         </template>
-      </MetricCard>
-      <MetricCard
+      </metric-card>
+      <metric-card
+        v-if="audience.is_lookalike"
         class="ma-2 audience-summary"
         :grow="0"
         :title="'Original • Actual size'"
-        v-if="audience.is_lookalike"
       >
         <template #subtitle-extended>
           <span class="mr-2">
@@ -73,12 +73,12 @@
             </span>
           </span>
         </template>
-      </MetricCard>
+      </metric-card>
 
-      <MetricCard
+      <metric-card
+        v-if="Object.keys(appliedFilters).length > 0"
         class="ma-2 audience-summary"
         :title="'Attributes'"
-        v-if="Object.keys(appliedFilters).length > 0"
       >
         <template #extra-item>
           <div class="container pl-0">
@@ -121,13 +121,16 @@
             </ul>
           </div>
         </template>
-      </MetricCard>
+      </metric-card>
     </div>
-    <div class="px-15 my-1 mb-4 pt-6" v-if="relatedEngagements.length > 0">
-      <v-row class="pa-3 pb-5">
+    <div
+      v-if="relatedEngagements.length > 0"
+      class="px-15 my-1 mb-4 pt-6 relationships"
+    >
+      <v-row class="pa-3 pb-5" style="min-height: 200px">
         <v-col
           :md="
-            audience.lookalikeable && audience.lookalikeable != 'inactive'
+            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
               ? 9
               : 12
           "
@@ -135,9 +138,9 @@
         >
           <delivery-overview
             :sections="relatedEngagements"
-            sectionType="engagement"
-            deliveriesKey="deliveries"
-            :loadingRelationships="loadingRelationships"
+            section-type="engagement"
+            deliveries-key="deliveries"
+            :loading-relationships="loadingRelationships"
             @onOverviewSectionAction="triggerOverviewAction($event)"
             @onOverviewDestinationAction="
               triggerOverviewDestinationAction($event)
@@ -147,7 +150,7 @@
               <span class="text-h5">Engagement &amp; delivery overview</span>
             </template>
             <template #title-right>
-              <div class="d-flex align-center">
+              <div class="d-flex align-center section-right">
                 <v-btn
                   text
                   class="
@@ -159,16 +162,22 @@
                   "
                   @click="openAttachEngagementDrawer()"
                 >
+                  <icon
+                    type="engagements"
+                    :size="14"
+                    color="primary"
+                    class="mr-2"
+                  />
                   Add to an engagement
                 </v-btn>
                 <v-btn text color="primary">
-                  <icon type="history" :size="16" class="mr-1" />
+                  <icon type="history" :size="14" class="mr-1" />
                   Delivery history
                 </v-btn>
               </div>
             </template>
             <template #empty-deliveries>
-              <div class="mb-16">
+              <div class="mb-2">
                 This engagement has no destinations yet. Add destinations in the
                 submenu located in the right corner above.
               </div>
@@ -176,13 +185,14 @@
           </delivery-overview>
         </v-col>
         <v-col
-          v-if="audience.lookalikeable && audience.lookalikeable != 'inactive'"
+          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
           md="3"
           class="pl-6 pr-0 py-0"
         >
           <look-alike-card
-            v-model="audience.lookalike_audiences"
-            :status="audience.lookalikeable"
+            :key="lookalikeAudiences"
+            v-model="lookalikeAudiences"
+            :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
           />
         </v-col>
@@ -192,10 +202,10 @@
       <v-card class="rounded pa-5 box-shadow-5">
         <div class="overview">Audience overview</div>
         <div class="row overview-list mb-0 ml-0 mt-1">
-          <MetricCard
+          <metric-card
             v-for="(item, i) in Object.keys(insightInfoItems)"
-            class="mr-3"
             :key="i"
+            class="mr-3"
             :grow="i === 0 ? 2 : 1"
             :title="insightInfoItems[item].title"
             :icon="insightInfoItems[item].icon"
@@ -212,7 +222,7 @@
                 </template>
               </tooltip>
             </template>
-          </MetricCard>
+          </metric-card>
         </div>
       </v-card>
     </div>
@@ -234,7 +244,7 @@
     <confirm-modal
       v-model="showConfirmModal"
       title="You are about to edit delivery schedule."
-      rightBtnText="Yes, edit delivery schedule"
+      right-btn-text="Yes, edit delivery schedule"
       body="This will override the default delivery schedule. However, this action is not permanent, the new delivery schedule can be reset to the default settings at any time."
       @onCancel="showConfirmModal = false"
       @onConfirm="
@@ -250,18 +260,18 @@
       :engagement-id="engagementId"
     />
     <!-- Add destination workflow -->
-    <SelectDestinationsDrawer
+    <select-destinations-drawer
       v-model="selectedDestinations"
-      closeOnAction
+      close-on-action
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
-      @onAddDestination="triggerAttachDestination()"
+      @onAddDestination="triggerAttachDestination($event)"
     />
     <!-- Salesforce extension workflow -->
-    <DestinationDataExtensionDrawer
+    <destination-data-extension-drawer
       v-model="selectedDestinations"
-      closeOnAction
+      close-on-action
       :toggle="showSalesforceExtensionDrawer"
       :destination="salesforceDestination"
       @onToggle="(val) => (showSalesforceExtensionDrawer = val)"
@@ -270,14 +280,15 @@
     />
 
     <!-- Engagement workflow -->
-    <AttachEngagement
+    <attach-engagement
       v-model="engagementDrawer"
-      closeOnAction
-      :finalEngagements="selectedEngagements"
+      close-on-action
+      :final-engagements="selectedEngagements"
       @onEngagementChange="setSelectedEngagements"
       @onAddEngagement="triggerAttachEngagement($event)"
     />
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
@@ -337,6 +348,8 @@ export default {
       lookalikeCreated: false,
       audienceHistory: [],
       relatedEngagements: [],
+      isLookalikable: false,
+      is_lookalike: false,
       items: [
         {
           text: "Audiences",
@@ -377,7 +390,7 @@ export default {
           subtitle: "",
           icon: "mdi-map-marker-radius",
         },
-        max_age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
+        age: { title: "Age", subtitle: "", icon: "mdi-cake-variant" },
         gender_women: {
           title: "Women",
           subtitle: "",
@@ -409,7 +422,7 @@ export default {
       editDeliveryDrawer: false,
       scheduleDestination: {
         name: null,
-        type: null,
+        delivery_platform_type: null,
         id: null,
       },
     }
@@ -506,6 +519,9 @@ export default {
       }
     },
   },
+  async mounted() {
+    await this.loadAudienceInsights()
+  },
   methods: {
     ...mapActions({
       getAudienceById: "audiences/getAudienceById",
@@ -514,6 +530,8 @@ export default {
       detachAudience: "engagements/detachAudience",
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
+      attachAudienceDestination: "engagements/attachAudienceDestination",
+      detachAudienceDestination: "engagements/detachAudienceDestination",
     }),
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
@@ -530,11 +548,27 @@ export default {
         (insight) => {
           return {
             title: this.insightInfoItems[insight].title,
-            subtitle: this.audience.audience_insights[insight],
+            subtitle:
+              insight !== "age"
+                ? this.audience.audience_insights[insight]
+                : this.getAgeString(
+                    this.audience.audience_insights["min_age"],
+                    this.audience.audience_insights["max_age"]
+                  ),
             icon: this.insightInfoItems[insight].icon,
           }
         }
       )
+    },
+
+    getAgeString(min_age, max_age) {
+      if (min_age && max_age && min_age === max_age) {
+        return min_age
+      } else if (min_age && max_age) {
+        return `${min_age}-${max_age}`
+      } else {
+        return "-"
+      }
     },
 
     /**
@@ -568,6 +602,7 @@ export default {
       switch (event.target.title.toLowerCase()) {
         case "add a destination": {
           this.closeAllDrawers()
+          this.engagementId = event.data.id
           this.selectedDestinations = []
           // this.selectedEngagements = []
           this.selectedEngagements.push(event.data)
@@ -616,9 +651,20 @@ export default {
             this.flashAlert = true
             break
           case "edit delivery schedule":
+            this.engagementId = event.parent.id
             this.showConfirmModal = true
-            this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
+            break
+          case "remove destination":
+            this.engagementId = event.parent.id
+            await this.detachAudienceDestination({
+              engagementId: this.engagementId,
+              audienceId: this.selectedAudienceId,
+              data: { id: event.data.id },
+            })
+            break
+          case "create lookalike":
+            this.openLookAlikeDrawer()
             break
           default:
             break
@@ -639,13 +685,14 @@ export default {
     },
     openAttachEngagementDrawer() {
       this.closeAllDrawers()
-      this.selectedEngagements = this.audience.engagements.map((eng) => ({
+      this.selectedEngagements = this.relatedEngagements.map((eng) => ({
         id: eng.id,
       }))
       this.engagementDrawer = true
     },
     openLookAlikeDrawer() {
       this.selectedAudience = this.audience
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
@@ -674,24 +721,11 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
-    async triggerAttachDestination() {
-      const payload = {
-        audiences: [
-          {
-            id: this.audienceId,
-            destinations: this.selectedDestinations.map((dest) => {
-              return dest.type === "sfmc"
-                ? {
-                    id: dest.id,
-                    delivery_platform_config: dest.delivery_platform_config,
-                  }
-                : { id: dest.id }
-            }),
-          },
-        ],
-      }
-      await this.attachAudience({
-        engagementId: this.selectedEngagements[0].id,
+    async triggerAttachDestination(event) {
+      const payload = event.destination
+      await this.attachAudienceDestination({
+        engagementId: this.engagementId,
+        audienceId: this.selectedAudienceId,
         data: payload,
       })
       await this.loadAudienceInsights()
@@ -724,15 +758,16 @@ export default {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
+      this.selectedAudienceId = this.$route.params.id
       this.relatedEngagements = this.audience.engagements
+      this.lookalikeAudiences = this.audience.lookalike_audiences
+      this.isLookalikable = this.audience.lookalikeable
+      this.is_lookalike = this.audience.is_lookalike
       this.items[1].text = this.audience.name
       this.mapInsights()
-      await this.getDestinations()
+      this.getDestinations()
       this.loading = false
     },
-  },
-  async mounted() {
-    await this.loadAudienceInsights()
   },
 }
 </script>
@@ -747,6 +782,14 @@ export default {
   }
   .audience-summary {
     padding: 10px 15px;
+  }
+  .relationships {
+    .section-right {
+      .v-size--default {
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
   }
   .container {
     .filter-list {

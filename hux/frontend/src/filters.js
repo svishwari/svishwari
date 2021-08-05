@@ -50,8 +50,8 @@ export default {
    * @param {*} placeholder Placeholder eg. "N/A"
    * @returns Formatted empty data field eg. "N/A"
    */
-  Empty(value, placeholder = "—") {
-    if (!value) return placeholder
+  Empty(value, placeholder = "-") {
+    if (!value && value !== 0) return placeholder
     return value
   },
 

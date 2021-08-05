@@ -1,7 +1,6 @@
 <template>
   <v-card
     class="d-flex justify-space-between align-center px-5 py-2 rounded"
-    @click="$emit('click')"
     :class="{
       'card-horizontal-disabled': isDisabledOrDeselectable,
       'box-shadow-5': !isDisabledOrDeselectable,
@@ -9,21 +8,22 @@
     :disabled="isDisabled"
     :color="isDisabledOrDeselectable ? 'background' : 'white'"
     height="60"
+    @click="$emit('click')"
   >
     <div v-if="icon || title" class="d-flex align-center">
-      <Logo :type="icon" />
+      <logo :type="icon" />
       <div class="pl-2 text-h6 neroBlack--text">{{ title }}</div>
     </div>
     <slot></slot>
     <div v-if="isAvailable && !hideButton">
       <huxButton
-        :isOutlined="!isAdded"
+        :is-outlined="!isAdded"
         :variant="isAdded ? 'secondary' : 'primary'"
         :icon="isAdded ? 'mdi-check' : null"
         size="large"
-        :isDisabled="isAlreadyAdded"
-        :boxShadow="false"
-        iconPosition="left"
+        :is-disabled="isAlreadyAdded"
+        :box-shadow="false"
+        icon-position="left"
         class="ma-2"
       >
         <span
@@ -43,7 +43,7 @@
 import huxButton from "@/components/common/huxButton"
 import Logo from "@/components/common/Logo"
 export default {
-  name: "card-horizontal",
+  name: "CardHorizontal",
   components: {
     huxButton,
     Logo,

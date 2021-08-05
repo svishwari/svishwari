@@ -19,6 +19,7 @@ from huxunify.api.schema.customers import (
     DataFeedDetailsSchema,
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
+    CustomerEventsSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -32,6 +33,7 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profile,
     get_customers_overview,
     get_idr_data_feeds,
+    get_customer_events_data,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -93,14 +95,6 @@ class CustomerOverview(SwaggerView):
         # TODO - resolve post demo, set unique IDs as total customers.
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0])
-
-        if (
-            api_c.TOTAL_UNIQUE_IDS in customers
-            and api_c.TOTAL_CUSTOMERS in customers
-        ):
-            customers[api_c.TOTAL_CUSTOMERS] = customers[
-                api_c.TOTAL_UNIQUE_IDS
-            ]
 
         return (
             CustomerOverviewSchema().dump(customers),
@@ -182,12 +176,6 @@ class CustomerPostOverview(SwaggerView):
         token_response = get_token_from_request(request)
         customers = get_customers_overview(token_response[0], request.json)
 
-        if (
-            api_c.TOTAL_RECORDS in customers
-            and api_c.TOTAL_CUSTOMERS in customers
-        ):
-            customers[api_c.TOTAL_CUSTOMERS] = customers[api_c.TOTAL_RECORDS]
-
         return (
             CustomerOverviewSchema().dump(customers),
             HTTPStatus.OK,
@@ -238,33 +226,18 @@ class CustomerDashboardOverview(SwaggerView):
 
 
 @add_view_to_blueprint(
-    customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}/", "Customersview"
+    customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "Customersview"
+)
+@add_view_to_blueprint(
+    customers_bp,
+    api_c.CUSTOMERS_ENDPOINT,
+    "Customersview_no_of_cust",
 )
 class Customersview(SwaggerView):
     """
     Customers Overview class
     """
 
-    parameters = [
-        {
-            "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
-            "in": "query",
-            "type": "integer",
-            "description": "Max number of customers to be returned.",
-            "example": api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
-            "required": False,
-            "default": api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
-        },
-        {
-            "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
-            "in": "query",
-            "type": "string",
-            "description": "Number of which batch of customers should be returned.",
-            "example": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
-            "required": False,
-            "default": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
-        },
-    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": CustomersSchema,
@@ -292,19 +265,9 @@ class Customersview(SwaggerView):
 
         # get token
         token_response = get_token_from_request(request)
-        batch_size = (
-            int(request.args.get(api_c.QUERY_PARAMETER_BATCH_SIZE))
-            or api_c.CUSTOMERS_DEFAULT_BATCH_SIZE
-        )
-        batch_number = (
-            int(request.args.get(api_c.QUERY_PARAMETER_BATCH_NUMBER))
-            or api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER
-        )
-        offset = (batch_number - 1) * batch_size
+
         return (
-            CustomersSchema().dump(
-                get_customer_profiles(token_response[0], batch_size, offset)
-            ),
+            CustomersSchema().dump(get_customer_profiles(token_response[0])),
             HTTPStatus.OK,
         )
 
@@ -644,5 +607,74 @@ class CustomerDemoVisualView(SwaggerView):
 
         return (
             CustomerDemographicInsightsSchema().dump(output),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_ENDPOINT}/<{api_c.HUX_ID}>/events",
+    "CustomerEvents",
+)
+class CustomerEvents(SwaggerView):
+    """
+    Customer events under customer profile
+    """
+
+    parameters = [
+        {
+            "name": api_c.HUX_ID,
+            "description": "ID of the customer whose events need to be fetched.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "1531-1234-21",
+        },
+        {
+            "name": "body",
+            "description": "Customer Events Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": {
+                    "start_date": "2021-07-25T00:00:00Z",
+                    "end_date": "2021-08-02T00:00:00Z",
+                }
+            },
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomerEventsSchema,
+            },
+            "description": "Events for a Customer grouped by day.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get events for customer."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def post(self, hux_id: str) -> Tuple[dict, int]:
+        """Retrieves events for a given HUX ID.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+        Args:
+            hux_id (str): ID of the customer
+        Returns:
+            Tuple[dict, int] list of Customer events grouped by day and http code
+        """
+        return (
+            jsonify(
+                CustomerEventsSchema().dump(
+                    get_customer_events_data(hux_id), many=True
+                )
+            ),
             HTTPStatus.OK,
         )

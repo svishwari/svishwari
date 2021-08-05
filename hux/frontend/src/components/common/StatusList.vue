@@ -4,7 +4,7 @@
       <span class="d-flex">
         <router-link
           :to="{
-            name: 'AudienceInsight',
+            name: routeName,
             params: { id: section.id },
           }"
           class="text-decoration-none"
@@ -21,7 +21,7 @@
                 <span>
                   {{ section.name }}
                 </span>
-                <span class="mt-3" v-if="section.description">
+                <span v-if="section.description" class="mt-3">
                   {{ section.description }}
                 </span>
               </div>
@@ -31,16 +31,17 @@
         <status
           v-if="section.status"
           :status="section.status"
-          :iconSize="statusIcon"
+          :icon-size="statusIcon"
           class="ml-3"
           collapsed
-          showLabel
-          :tooltipTitle="`${sectionTypePrefix} status`"
+          show-label
+          show-icon-tooltip
+          :tooltip-title="`${sectionTypePrefix} status`"
         />
       </span>
       <v-menu class="menu-wrapper" bottom offset-y>
         <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on" class="top-action">
+          <v-icon v-bind="attrs" class="top-action" v-on="on">
             mdi-dots-vertical
           </v-icon>
         </template>
@@ -60,7 +61,7 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-list dense class="pa-0" v-if="section[deliveriesKey].length > 0">
+    <v-list v-if="section[deliveriesKey].length > 0" dense class="pa-0">
       <v-list-item
         v-for="item in section[deliveriesKey]"
         :key="item.id"
@@ -70,12 +71,12 @@
           <div class="d-flex align-center">
             <tooltip>
               <template #label-content>
-                <Logo :type="item.delivery_platform_type" :size="18" />
+                <logo :type="item.delivery_platform_type" :size="18" />
               </template>
               <template #hover-content>
                 <div class="d-flex flex-column">
                   <div class="d-flex align-center">
-                    <Logo :type="item.type" :size="18" />
+                    <logo :type="item.delivery_platform_type" :size="18" />
                     <span class="ml-2">{{ item.name }}</span>
                   </div>
                   <span class="mb-1 mt-2">Last delivered:</span>
@@ -90,12 +91,12 @@
               <v-menu class="menu-wrapper" bottom offset-y>
                 <template #activator="{ on, attrs }">
                   <v-icon
+                    v-if="!section.lookalike"
                     v-bind="attrs"
-                    v-on="on"
                     class="mr-2 more-action"
                     color="primary"
+                    v-on="on"
                     @click.prevent
-                    v-if="!section.lookalike"
                   >
                     mdi-dots-vertical
                   </v-icon>
@@ -119,8 +120,8 @@
                       </v-list-item-title>
 
                       <v-menu
-                        v-model="isSubMenuOpen"
                         v-else
+                        v-model="isSubMenuOpen"
                         offset-x
                         nudge-right="16"
                         nudge-top="4"
@@ -132,14 +133,28 @@
                           </v-list-item-title>
                         </template>
                         <template #default>
-                          <div class="sub-menu-class white">
-                            <Logo
-                              v-if="option.menu.icon"
-                              :size="18"
-                              :type="option.menu.icon"
-                            />
-                            <span class="ml-1">{{ option.menu.title }}</span>
-                          </div>
+                          <v-list>
+                            <v-list-item
+                              @click="
+                                $emit('onDestinationAction', {
+                                  target: option,
+                                  data: item,
+                                  parent: section,
+                                })
+                              "
+                            >
+                              <v-list-item-title>
+                                <logo
+                                  v-if="option.menu.icon"
+                                  :size="18"
+                                  :type="option.menu.icon"
+                                />
+                                <span class="ml-1">
+                                  {{ option.menu.title }}
+                                </span>
+                              </v-list-item-title>
+                            </v-list-item>
+                          </v-list>
                         </template>
                       </v-menu>
                     </v-list-item>
@@ -149,16 +164,17 @@
             </span>
           </div>
         </v-list-item-content>
-        <v-list-item-content v-if="item.status" class="status-col py-1">
+        <v-list-item-content v-if="item.status" class="status-col py-1 mr-2">
           <status
             :status="item.status"
-            :iconSize="statusIcon"
+            :icon-size="statusIcon"
             collapsed
-            showLabel
-            tooltipTitle="Destination status"
+            show-label
+            show-icon-tooltip
+            tooltip-title="Destination status"
           />
         </v-list-item-content>
-        <v-list-item-content v-if="item.size" class="size-col py-1">
+        <v-list-item-content v-if="item.size" class="size-col py-1 mr-2">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) }}
@@ -168,7 +184,7 @@
             </template>
           </tooltip>
         </v-list-item-content>
-        <v-list-item-content v-if="!item.size" class="deliverdOn-col py-1">
+        <v-list-item-content v-if="!item.size" class="size-col py-1">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) | Empty("-") }}
@@ -217,46 +233,11 @@ import { getApproxSize } from "@/utils"
 import Tooltip from "./Tooltip.vue"
 
 export default {
+  name: "StatusList",
   components: {
     Logo,
     Status,
     Tooltip,
-  },
-
-  name: "StatusList",
-
-  data() {
-    return {
-      showDeliveryAlert: false,
-      selection: null,
-      isSubMenuOpen: null,
-      lookALikeAllowedEntries: ["Facebook"],
-      engagementMenuOptions: [
-        { id: 1, title: "View delivery history", active: false },
-        { id: 2, title: "Deliver all", active: false },
-        { id: 3, title: "Add a destination", active: false },
-        { id: 5, title: "Remove engagement", active: false },
-      ],
-      destinationMenuOptions: [
-        { id: 2, title: "Create lookalike", active: false },
-        { id: 1, title: "Deliver now", active: true },
-        { id: 3, title: "Edit delivery schedule", active: true },
-        { id: 4, title: "Pause delivery", active: false },
-        { id: 5, title: "Open destination", active: false },
-        { id: 6, title: "Remove destination", active: false },
-      ],
-      audienceMenuOptions: [
-        {
-          id: 1,
-          title: "Deliver now",
-          active: false,
-        },
-        { id: 2, title: "Add a destination", active: true },
-        { id: 3, title: "Create lookalike", active: false },
-        { id: 4, title: "Pause all delivery", active: false },
-        { id: 5, title: "Remove audience", active: true },
-      ],
-    }
   },
 
   props: {
@@ -289,9 +270,48 @@ export default {
     },
   },
 
+  data() {
+    return {
+      showDeliveryAlert: false,
+      selection: null,
+      isSubMenuOpen: false,
+      lookALikeAllowedEntries: ["Facebook"],
+      engagementMenuOptions: [
+        { id: 1, title: "View delivery history", active: false },
+        { id: 2, title: "Deliver all", active: false },
+        { id: 3, title: "Add a destination", active: false },
+        { id: 5, title: "Remove engagement", active: false },
+      ],
+      destinationMenuOptions: [
+        { id: 2, title: "Create lookalike", active: false },
+        { id: 1, title: "Deliver now", active: true },
+        { id: 3, title: "Edit delivery schedule", active: true },
+        { id: 4, title: "Pause delivery", active: false },
+        { id: 5, title: "Open destination", active: false },
+        { id: 6, title: "Remove destination", active: false },
+      ],
+      audienceMenuOptions: [
+        {
+          id: 1,
+          title: "Deliver now",
+          active: false,
+        },
+        { id: 2, title: "Add a destination", active: true },
+        { id: 3, title: "Create lookalike", active: false },
+        { id: 4, title: "Pause all delivery", active: false },
+        { id: 5, title: "Remove audience", active: true },
+      ],
+    }
+  },
+
   computed: {
     sectionTypePrefix() {
       return this.$options.filters.TitleCase(this.sectionType)
+    },
+    routeName() {
+      return this.sectionType === "engagement"
+        ? "EngagementDashboard"
+        : "AudienceInsight"
     },
     sectionActions() {
       return this.sectionType === "engagement"
@@ -383,18 +403,16 @@ export default {
       }
     },
     sectionActionItems(section) {
-      // { id: 1, title: "View delivery history", active: true },
-      //   { id: 2, title: "Deliver all", active: true },
-      //   { id: 3, title: "Add a destination", active: true },
-      //   { id: 5, title: "Remove engagement", active: false },
       if (this.sectionType === "engagement") {
         this.engagementMenuOptions.forEach((element) => {
           switch (element.title.toLowerCase()) {
             case "view delivery history":
-              element["active"] =
-                section[this.deliveriesKey].filter(
-                  (delivery) => delivery.status === "Delivered"
-                ).length > 0
+              element["active"] = false
+              // TODO
+              // element["active"] =
+              //   section[this.deliveriesKey].filter(
+              //     (delivery) => delivery.status === "Delivered"
+              //   ).length > 0
               break
             case "deliver all":
               element["active"] = section[this.deliveriesKey].length > 0
@@ -418,10 +436,7 @@ export default {
               break
 
             case "create lookalike":
-              element["active"] =
-                section[this.deliveriesKey].filter((delivery) =>
-                  this.lookALikeAllowedEntries.includes(delivery.name)
-                ).length > 0
+              element["active"] = section.lookalikable === "Active"
               break
 
             case "Pause all delivery":
@@ -502,16 +517,16 @@ export default {
   .v-list {
     .v-list-item {
       .icon-col {
-        min-width: 69px;
-        max-width: 69px;
+        min-width: 55px;
+        max-width: 55px;
       }
       .status-col {
         min-width: 45px;
         max-width: 45px;
       }
       .size-col {
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 50px;
+        max-width: 50px;
         font-size: 12px;
         line-height: 16px;
         color: var(--v--neroBlack-base);
@@ -520,7 +535,7 @@ export default {
         font-size: 12px;
         line-height: 16px;
         color: var(--v-neroBlack-base);
-        min-width: 80px;
+        min-width: 60px;
       }
       &:hover,
       &:focus {
@@ -546,6 +561,13 @@ export default {
       &:hover {
         background: var(--v-aliceBlue-base);
       }
+    }
+    ::v-deep .sub-menu-class {
+      display: flex;
+      align-items: center;
+      padding: 5px 8px;
+      min-height: 32px;
+      @extend .cursor-pointer;
     }
   }
 }

@@ -153,6 +153,22 @@ class AudienceEngagementDeleteSchema(Schema):
     )
 
 
+class DestinationEngagedAudienceSchema(Schema):
+    """
+    Schema for adding destination to engagement audience
+    """
+
+    id = fields.String(
+        example="60ae035b6c5bf45da27f17e5",
+        required=True,
+    )
+    delivery_platform_config = fields.Dict(
+        example={db_c.DATA_EXTENSION_NAME: "SFMC Date Extension"},
+        required=False,
+        default=None,
+    )
+
+
 class DisplayAdsSummary(Schema):
     """
     Schema for Display Ads Summary
@@ -176,7 +192,7 @@ class DisplayAdsSummary(Schema):
     engagement_rate = fields.Float()
 
 
-class DispAdIndividualCampaignSummary(DisplayAdsSummary):
+class DispAdIndividualDestinationSummary(DisplayAdsSummary):
     """
     Schema for Individual Campaign Summary
     """
@@ -187,6 +203,7 @@ class DispAdIndividualCampaignSummary(DisplayAdsSummary):
         ordered = True
 
     name = fields.String()
+    id = fields.String()
     is_mapped = fields.Boolean()
 
 
@@ -201,7 +218,10 @@ class DispAdIndividualAudienceSummary(DisplayAdsSummary):
         ordered = True
 
     name = fields.String()
-    destinations = fields.List(fields.Nested(DispAdIndividualCampaignSummary))
+    id = fields.String()
+    destinations = fields.List(
+        fields.Nested(DispAdIndividualDestinationSummary)
+    )
 
 
 class AudiencePerformanceDisplayAdsSchema(Schema):
@@ -246,7 +266,7 @@ class EmailSummary(Schema):
     unsubscribe_rate = fields.Float()
 
 
-class EmailIndividualCampaignSummary(EmailSummary):
+class EmailIndividualDestinationSummary(EmailSummary):
     """
     Schema for Individual Campaign Summary of Email
     """
@@ -257,6 +277,7 @@ class EmailIndividualCampaignSummary(EmailSummary):
         ordered = True
 
     name = fields.String()
+    id = fields.String()
     is_mapped = fields.Boolean()
 
 
@@ -271,7 +292,10 @@ class EmailIndividualAudienceSummary(EmailSummary):
         ordered = True
 
     name = fields.String()
-    destinations = fields.List(fields.Nested(EmailIndividualCampaignSummary))
+    id = fields.String()
+    destinations = fields.List(
+        fields.Nested(EmailIndividualDestinationSummary)
+    )
 
 
 class AudiencePerformanceEmailSchema(Schema):
@@ -382,7 +406,7 @@ class LatestDeliverySchema(Schema):
     id = fields.String()
     status = fields.String()
     update_time = DateTimeWithZ()
-    size = fields.Int(default=1000)
+    size = fields.Int(default=0)
 
 
 class EngagementAudienceDestinationSchema(Schema):

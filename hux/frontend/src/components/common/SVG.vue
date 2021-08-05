@@ -4,13 +4,7 @@
 
 <script>
 export default {
-  name: "svgAsComponent",
-
-  data() {
-    return {
-      svg: null,
-    }
-  },
+  name: "SvgAsComponent",
 
   props: {
     src: {
@@ -32,6 +26,12 @@ export default {
       type: String,
       required: false,
     },
+  },
+
+  data() {
+    return {
+      svg: null,
+    }
   },
 
   computed: {

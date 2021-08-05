@@ -1,16 +1,16 @@
 <template>
   <div class="audiences-wrap white">
-    <PageHeader :headerHeightChanges="'py-3'">
+    <page-header :header-height-changes="'py-3'">
       <template slot="left">
-        <Breadcrumb :items="breadcrumbItems" />
+        <breadcrumb :items="breadcrumbItems" />
       </template>
       <template slot="right">
         <v-icon size="22" color="lightGrey" class="icon-border pa-2 ma-1"
           >mdi-download</v-icon
         >
       </template>
-    </PageHeader>
-    <PageHeader class="top-bar" :headerHeight="71">
+    </page-header>
+    <page-header class="top-bar" :header-height="71">
       <template slot="left">
         <v-icon medium color="lightGrey">mdi-filter-variant</v-icon>
         <v-icon medium color="lightGrey" class="pl-6">mdi-magnify</v-icon>
@@ -25,23 +25,23 @@
         >
           <huxButton
             icon="mdi-plus"
-            iconPosition="left"
+            icon-position="left"
             variant="primary"
             size="large"
-            isTile
+            is-tile
             class="ma-2 font-weight-regular no-shadow mr-0"
           >
             Audience
           </huxButton>
         </router-link>
       </template>
-    </PageHeader>
+    </page-header>
     <v-progress-linear :active="loading" :indeterminate="loading" />
-    <v-row class="pt-3 pb-7 pl-3 white" v-if="!loading">
+    <v-row v-if="!loading" class="pt-3 pb-7 pl-3 white">
       <hux-data-table
-        :headers="columnDefs"
-        :dataItems="audienceList"
         v-if="isDataExists"
+        :columns="columnDefs"
+        :data-items="audienceList"
       >
         <template #row-item="{ item }">
           <td
@@ -65,9 +65,9 @@
               </span>
               <menu-cell
                 :value="item[header.value]"
-                :menuOptions="getActionItems(item)"
-                routeName="AudienceInsight"
-                :routeParam="item['id']"
+                :menu-options="getActionItems(item)"
+                route-name="AudienceInsight"
+                :route-param="item['id']"
               />
             </div>
             <div v-if="header.value == 'size'">
@@ -82,19 +82,19 @@
             </div>
             <div v-if="header.value == 'updated_by'">
               <!-- TODO replace with header value -->
-              <Avatar :name="item['created_by']" />
+              <avatar :name="item['created_by']" />
             </div>
             <div v-if="header.value == 'create_time'">
               <time-stamp :value="item[header.value]" />
             </div>
             <div v-if="header.value == 'created_by'">
-              <Avatar :name="item[header.value]" />
+              <avatar :name="item[header.value]" />
             </div>
           </td>
         </template>
       </hux-data-table>
 
-      <EmptyPage v-if="!isDataExists">
+      <empty-page v-if="!isDataExists">
         <template #icon>mdi-alert-circle-outline</template>
         <template #title>Oops! There’s nothing here yet</template>
         <template #subtitle>
@@ -110,20 +110,20 @@
           >
             <huxButton
               icon="mdi-plus"
-              iconPosition="left"
+              icon-position="left"
               variant="primary"
               size="large"
-              isTile
+              is-tile
               class="ma-2 font-weight-regular"
             >
               Audience
             </huxButton>
           </router-link>
         </template>
-      </EmptyPage>
+      </empty-page>
     </v-row>
 
-    <LookAlikeAudience
+    <look-alike-audience
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onToggle="(val) => (showLookAlikeDrawer = val)"
@@ -133,7 +133,6 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { filterAudiencesByDestinations } from "@/utils"
 
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
@@ -148,7 +147,7 @@ import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience"
 import Icon from "@/components/common/Icon.vue"
 
 export default {
-  name: "audiences",
+  name: "Audiences",
   components: {
     PageHeader,
     Breadcrumb,
@@ -235,19 +234,20 @@ export default {
       return false
     },
   },
+  async mounted() {
+    this.loading = true
+    await this.getAllAudiences()
+    this.loading = false
+  },
   methods: {
     ...mapActions({
       getAllAudiences: "audiences/getAll",
     }),
 
     getActionItems(audience) {
-      let filteredAudience = filterAudiencesByDestinations(
-        [audience],
-        ["facebook"]
-      )
-
-      let isOneOfDestinationFacebook =
-        filteredAudience.length > 0 ? true : false
+      // This assumes we cannot create a lookalike audience from a lookalike audience
+      let isLookalikeableActive =
+        audience.lookalikeable === "Active" && !audience.is_lookalike
 
       let actionItems = [
         { title: "Favorite", isDisabled: true },
@@ -256,7 +256,7 @@ export default {
         { title: "Duplicate", isDisabled: true },
         {
           title: "Create a lookalike",
-          isDisabled: !isOneOfDestinationFacebook,
+          isDisabled: !isLookalikeableActive,
           menu: {
             title: "Facebook",
             onClick: () => {
@@ -275,11 +275,6 @@ export default {
       this.selectedAudience = audience
       this.showLookAlikeDrawer = true
     },
-  },
-  async mounted() {
-    this.loading = true
-    await this.getAllAudiences()
-    this.loading = false
   },
 }
 </script>

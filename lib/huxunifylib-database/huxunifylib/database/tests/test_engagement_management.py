@@ -621,12 +621,19 @@ class TestEngagementManagement(unittest.TestCase):
 
         engagements = []
         for item in range(2):
+
+            # set destination for audience
+            audience = self.audience
+            audience[c.DESTINATIONS].append(
+                {c.OBJECT_ID: self.destination[c.ID]}
+            )
+
             # create engagement normally
             engagement_id = em.set_engagement(
                 self.database,
                 f"Engagement Aud {item}",
                 f"Engagement {item} Description",
-                [self.audience],
+                [audience],
                 self.user_name,
             )
 
