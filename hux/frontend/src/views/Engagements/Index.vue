@@ -384,7 +384,7 @@ export default {
       this.showLookAlikeDrawer = false
     },
     async onCreated() {
-      this.alert.message = "Lookalike created successfully"
+      this.alert.message = `Your lookalike audience, ${name}, has been created successfully.`
       this.flashAlert = true
     },
   },
