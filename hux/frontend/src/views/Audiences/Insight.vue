@@ -128,14 +128,7 @@
       class="px-15 my-1 mb-4 pt-6 relationships"
     >
       <v-row class="pa-3 pb-5" style="min-height: 200px">
-        <v-col
-          :md="
-            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
-              ? 9
-              : 12
-          "
-          class="pa-0"
-        >
+        <v-col :md="showLookalike ? 9 : 12" class="pa-0">
           <delivery-overview
             :sections="relatedEngagements"
             section-type="engagement"
@@ -184,11 +177,7 @@
             </template>
           </delivery-overview>
         </v-col>
-        <v-col
-          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
-          md="3"
-          class="pl-6 pr-0 py-0"
-        >
+        <v-col v-if="showLookalike" md="3" class="pl-6 pr-0 py-0">
           <look-alike-card
             :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
@@ -435,6 +424,13 @@ export default {
     },
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
+    },
+    showLookalike() {
+      return !this.is_lookalike &&
+        this.isLookalikable &&
+        this.isLookalikable != "Disabled"
+        ? true
+        : false
     },
     breadcrumbItems() {
       const items = [
