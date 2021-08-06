@@ -219,9 +219,9 @@
       <v-col cols="3">
         <income-chart></income-chart>
       </v-col>
-       <v-col cols="3">
-          <area-chart></area-chart>
-        </v-col>
+      <v-col cols="3">
+        <area-chart></area-chart>
+      </v-col>
     </v-row>
     <hux-alert
       v-model="flashAlert"
@@ -328,7 +328,7 @@ export default {
     HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
-    AreaChart
+    AreaChart,
   },
   data() {
     return {

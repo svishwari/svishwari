@@ -183,7 +183,7 @@ export default {
     Icon,
     CustomerDetails,
     IncomeChart,
-    AreaChart
+    AreaChart,
   },
 
   data() {

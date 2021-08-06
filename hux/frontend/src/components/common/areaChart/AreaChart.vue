@@ -1,9 +1,7 @@
 <template>
   <div class="container">
     <div class="d-flex justify-content-start">
-      <line-area-chart
-      v-model="spendData"
-      />
+      <line-area-chart v-model="spendData" />
     </div>
   </div>
 </template>
@@ -14,7 +12,7 @@ import LineAreaChart from "@/components/common/areaChart/LineAreaChart"
 import data from "./areaChart.json"
 
 export default {
-  name: "area-chart",
+  name: "AreaChart",
   components: { LineAreaChart },
   data() {
     return {
