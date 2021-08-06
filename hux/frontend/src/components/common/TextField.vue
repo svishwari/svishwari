@@ -7,7 +7,7 @@
       </span>
       <tooltip v-if="helpText" position-top>
         <template #label-content>
-          <v-icon color="primary" size="small" class="ml-2 mb-2">
+          <v-icon color="primary" size="small" class="ml-2">
             {{ icon }}
           </v-icon>
         </template>
@@ -131,12 +131,22 @@ export default {
         }
       }
     }
+
     &.error--text {
       .v-input__control {
         .v-input__slot {
           fieldset {
             color: inherit;
           }
+        }
+      }
+    }
+  }
+  ::v-deep .v-text-field {
+    .v-text-field__slot {
+      input {
+        &::placeholder {
+          color: var(--v-gray-base) !important;
         }
       }
     }
