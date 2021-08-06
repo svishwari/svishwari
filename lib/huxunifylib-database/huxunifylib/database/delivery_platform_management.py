@@ -1399,7 +1399,7 @@ def get_all_delivery_jobs(
     filter_dict: dict = None,
     projection: dict = None,
     sort_list: list = None,
-    limit: int = 1,
+    limit: int = None,
 ) -> Union[list, None]:
     """A function to get all delivery jobs based on the args provided.
 
@@ -1445,7 +1445,7 @@ def get_all_delivery_jobs(
             cursor = cursor.sort(sort_list)
 
         # apply limit if set.
-        return list(cursor.limit(limit) if limit > 0 else cursor)
+        return list(cursor if isinstance(limit, int) else cursor.limit(limit))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
