@@ -114,12 +114,11 @@ class EngagementPutSchema(Schema):
 
     @pre_load
     # pylint: disable=unused-argument
-    def pre_process_details(self, data, many: bool = False):
+    def pre_process_details(self, data, **kwarg):
         """process the schema before loading.
 
         Args:
             data (dict): The Engagement data source object
-            many (bool): If there are many to process
         Returns:
             Response: Returns a Engagement data source object
 
