@@ -644,7 +644,7 @@ class TestDeliveryPlatform(unittest.TestCase):
                 c.JOB_STATUS: c.STATUS_PENDING,
             },
         )
-        delivery_job: dict = delivery_jobs[0] if delivery_jobs else None
+        delivery_job = delivery_jobs[0] if delivery_jobs else {}
 
         self.assertIsNotNone(delivery_job)
         self.assertIn(c.AUDIENCE_ID, delivery_job)
