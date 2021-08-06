@@ -214,14 +214,12 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCE_STATUS_DELIVERING,
             )
 
-        for delivery_job in self.delivery_jobs:
             set_delivery_job_status(
                 self.database,
                 delivery_job[db_c.ID],
                 db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
-        for delivery_job in self.delivery_jobs:
             set_delivery_job_status(
                 self.database, delivery_job[db_c.ID], db_c.STATUS_SUCCEEDED
             )
