@@ -149,6 +149,7 @@ export default {
    * @returns output value eg. "89%" or "89.32%"
    */
   Percentage(value, round = true) {
+    if (isNaN(value)) return "-"
     return this.Numeric(value, round, false, false, true)
   },
 }
