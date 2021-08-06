@@ -195,6 +195,9 @@ SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
+# Twilio connector defines
+TWILIO_AUTH_TOKEN = "twilio_auth_token"
+
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
@@ -263,6 +266,14 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    db_c.DELIVERY_PLATFORM_TWILIO: {
+        TWILIO_AUTH_TOKEN: {
+            NAME: "Auth Token",
+            TYPE: "text",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -284,6 +295,10 @@ DESTINATION_SECRETS = {
             SFMC_REST_BASE_URI,
         ],
         AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
+    },
+    db_c.DELIVERY_PLATFORM_TWILIO: {
+        MONGO: [],
+        AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
     },
 }
 
