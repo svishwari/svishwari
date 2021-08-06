@@ -136,7 +136,7 @@
           </div>
         </v-card>
       </div>
-      <v-row class="px-15 mt-2">
+      <v-row v-if="customersInsights" class="px-15 mt-2">
         <v-col cols="3">
           <income-chart></income-chart>
         </v-col>
