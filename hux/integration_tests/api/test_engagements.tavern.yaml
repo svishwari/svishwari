@@ -75,7 +75,7 @@ stages:
         create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z" 
         created_by: !anystr
         update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z" 
-        updated_by: !anystr         #initially this is empty
+        updated_by: !anystr
       save:
         json:
           test_engagement_id: id
