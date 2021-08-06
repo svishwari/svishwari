@@ -115,9 +115,15 @@
           <v-card class="rounded-lg card-info-wrapper box-shadow-5">
             <v-card-title class="py-3 card-heading">
               {{ cardTitles[0].title }}
-              <v-icon size="17" color="neroBlack" class="ml-2">
-                mdi-lock-outline
-              </v-icon>
+              <tooltip position-top>
+                <v-icon size="17" color="neroBlack" class="ml-2">
+                  mdi-lock-outline
+                </v-icon>
+                <template #tooltip>
+                  You do not have access to see individual information.<br />
+                  Contact your administrator for access.
+                </template>
+              </tooltip>
             </v-card-title>
             <v-card-text class="justify-center title-text">
               <v-simple-table>
@@ -526,6 +532,7 @@ export default {
 .blur-text {
   color: transparent;
   text-shadow: 0 0 8px #000;
+  user-select: none;
 }
 .no-background {
   background: none !important;

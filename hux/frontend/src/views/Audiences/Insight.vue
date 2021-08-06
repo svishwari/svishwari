@@ -123,16 +123,12 @@
         </template>
       </metric-card>
     </div>
-    <div v-if="relatedEngagements.length > 0" class="px-15 my-1 mb-4 pt-6">
-      <v-row class="pa-3 pb-5">
-        <v-col
-          :md="
-            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
-              ? 9
-              : 12
-          "
-          class="pa-0"
-        >
+    <div
+      v-if="relatedEngagements.length > 0"
+      class="px-15 my-1 mb-4 pt-6 relationships"
+    >
+      <v-row class="pa-3 pb-5" style="min-height: 200px">
+        <v-col :md="showLookalike ? 9 : 12" class="pa-0">
           <delivery-overview
             :sections="relatedEngagements"
             section-type="engagement"
@@ -147,7 +143,7 @@
               <span class="text-h5">Engagement &amp; delivery overview</span>
             </template>
             <template #title-right>
-              <div class="d-flex align-center">
+              <div class="d-flex align-center section-right">
                 <v-btn
                   text
                   class="
@@ -159,28 +155,31 @@
                   "
                   @click="openAttachEngagementDrawer()"
                 >
+                  <icon
+                    type="engagements"
+                    :size="14"
+                    color="primary"
+                    class="mr-2"
+                  />
                   Add to an engagement
                 </v-btn>
                 <v-btn text color="primary">
-                  <icon type="history" :size="16" class="mr-1" />
+                  <icon type="history" :size="14" class="mr-1" />
                   Delivery history
                 </v-btn>
               </div>
             </template>
             <template #empty-deliveries>
-              <div class="mb-16">
+              <div class="mb-2">
                 This engagement has no destinations yet. Add destinations in the
                 submenu located in the right corner above.
               </div>
             </template>
           </delivery-overview>
         </v-col>
-        <v-col
-          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
-          md="3"
-          class="pl-6 pr-0 py-0"
-        >
+        <v-col v-if="showLookalike" md="3" class="pl-6 pr-0 py-0">
           <look-alike-card
+            :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
             :status="isLookalikable"
             @createLookalike="openLookAlikeDrawer"
@@ -253,7 +252,7 @@
       :toggle="showSelectDestinationsDrawer"
       @onToggle="(val) => (showSelectDestinationsDrawer = val)"
       @onSalesforceAdd="openSalesforceExtensionDrawer"
-      @onAddDestination="triggerAttachDestination()"
+      @onAddDestination="triggerAttachDestination($event)"
     />
     <!-- Salesforce extension workflow -->
     <destination-data-extension-drawer
@@ -275,6 +274,7 @@
       @onAddEngagement="triggerAttachEngagement($event)"
     />
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
@@ -425,6 +425,13 @@ export default {
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
     },
+    showLookalike() {
+      return !this.is_lookalike &&
+        this.isLookalikable &&
+        this.isLookalikable != "Disabled"
+        ? true
+        : false
+    },
     breadcrumbItems() {
       const items = [
         {
@@ -514,6 +521,8 @@ export default {
       detachAudience: "engagements/detachAudience",
       deliverAudience: "engagements/deliverAudience",
       deliverAudienceDestination: "engagements/deliverAudienceDestination",
+      attachAudienceDestination: "engagements/attachAudienceDestination",
+      detachAudienceDestination: "engagements/detachAudienceDestination",
     }),
     getFormattedTime(time) {
       return this.$options.filters.Date(time, "relative") + " by"
@@ -533,11 +542,24 @@ export default {
             subtitle:
               insight !== "age"
                 ? this.audience.audience_insights[insight]
-                : `${this.audience.audience_insights["min_age"]}-${this.audience.audience_insights["max_age"]}`,
+                : this.getAgeString(
+                    this.audience.audience_insights["min_age"],
+                    this.audience.audience_insights["max_age"]
+                  ),
             icon: this.insightInfoItems[insight].icon,
           }
         }
       )
+    },
+
+    getAgeString(min_age, max_age) {
+      if (min_age && max_age && min_age === max_age) {
+        return min_age
+      } else if (min_age && max_age) {
+        return `${min_age}-${max_age}`
+      } else {
+        return "-"
+      }
     },
 
     /**
@@ -558,11 +580,7 @@ export default {
         case "Women":
         case "Men":
         case "Other":
-          return this.$options.filters.percentageConvert(
-            item.subtitle,
-            true,
-            true
-          )
+          return this.$options.filters.Percentage(item.subtitle)
         default:
           return item.subtitle
       }
@@ -571,6 +589,7 @@ export default {
       switch (event.target.title.toLowerCase()) {
         case "add a destination": {
           this.closeAllDrawers()
+          this.engagementId = event.data.id
           this.selectedDestinations = []
           // this.selectedEngagements = []
           this.selectedEngagements.push(event.data)
@@ -619,9 +638,20 @@ export default {
             this.flashAlert = true
             break
           case "edit delivery schedule":
+            this.engagementId = event.parent.id
             this.showConfirmModal = true
-            this.selectedAudienceId = event.parent.id
             this.scheduleDestination = event.data
+            break
+          case "remove destination":
+            this.engagementId = event.parent.id
+            await this.detachAudienceDestination({
+              engagementId: this.engagementId,
+              audienceId: this.selectedAudienceId,
+              data: { id: event.data.id },
+            })
+            break
+          case "create lookalike":
+            this.openLookAlikeDrawer()
             break
           default:
             break
@@ -649,6 +679,7 @@ export default {
     },
     openLookAlikeDrawer() {
       this.selectedAudience = this.audience
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
@@ -677,24 +708,11 @@ export default {
       this.selectedDestination = destination || []
       this.showDataExtensionDrawer = true
     },
-    async triggerAttachDestination() {
-      const payload = {
-        audiences: [
-          {
-            id: this.audienceId,
-            destinations: this.selectedDestinations.map((dest) => {
-              return dest.type === "sfmc"
-                ? {
-                    id: dest.id,
-                    delivery_platform_config: dest.delivery_platform_config,
-                  }
-                : { id: dest.id }
-            }),
-          },
-        ],
-      }
-      await this.attachAudience({
-        engagementId: this.selectedEngagements[0].id,
+    async triggerAttachDestination(event) {
+      const payload = event.destination
+      await this.attachAudienceDestination({
+        engagementId: this.engagementId,
+        audienceId: this.selectedAudienceId,
         data: payload,
       })
       await this.loadAudienceInsights()
@@ -727,6 +745,7 @@ export default {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
+      this.selectedAudienceId = this.$route.params.id
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
@@ -750,6 +769,14 @@ export default {
   }
   .audience-summary {
     padding: 10px 15px;
+  }
+  .relationships {
+    .section-right {
+      .v-size--default {
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
   }
   .container {
     .filter-list {

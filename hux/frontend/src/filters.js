@@ -51,7 +51,9 @@ export default {
    * @returns Formatted empty data field eg. "N/A"
    */
   Empty(value, placeholder = "—") {
-    if (!value) return placeholder
+    if (String(value).trim() === "" || value === null || value === undefined) {
+      return placeholder
+    }
     return value
   },
 
@@ -63,7 +65,7 @@ export default {
     percentage = false,
     append = ""
   ) {
-    if (isNaN(value)) return "-"
+    if (typeof value !== "number") return value
 
     let abrv = ""
 
@@ -116,6 +118,7 @@ export default {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
     })
   },
+
   /**
    * Formats any string(fullname) to shortname.
    *
@@ -128,6 +131,7 @@ export default {
       .map((n) => n[0])
       .join("")
   },
+
   Currency(value) {
     if (isNaN(value)) return "-"
     return Number(value).toLocaleString("en-US", {
@@ -137,26 +141,14 @@ export default {
       maximumFractionDigits: 0,
     })
   },
+
   /**
-   * Formats any input with decimal to percentage.
+   * Formats as a percentage.
    *
    * @param {*} value The input eg. "0.893251"
-   * @returns output value eg. "90%"
+   * @returns output value eg. "89%" or "89.32%"
    */
-  percentageConvert(value, round = false, percentage = false, append = "") {
-    if (isNaN(value)) return "-"
-    if (!value) return ""
-
-    if (percentage) {
-      value = value * 100
-      append = "%"
-    }
-
-    return (
-      value.toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: round && Number(value) ? 0 : 2,
-      }) + append
-    )
+  Percentage(value, round = true) {
+    return this.Numeric(value, round, false, false, true)
   },
 }

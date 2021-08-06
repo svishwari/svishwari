@@ -1,6 +1,6 @@
 <template>
-  <v-card class="rounded-lg card-style" min-height="261px" flat>
-    <v-card-title class="d-flex justify-space-between pb-1 pl-6 pt-3">
+  <v-card class="rounded-lg card-style delivery-overview" flat height="100%">
+    <v-card-title class="d-flex justify-space-between pb-2 pl-6 pt-3">
       <slot name="title-left"></slot>
       <slot name="title-right"></slot>
     </v-card-title>
@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       engagementMenuOptions: [
-        { id: 1, title: "View delivery history", active: true },
+        { id: 1, title: "View delivery history", active: false },
         { id: 2, title: "Deliver all", active: true },
         { id: 3, title: "Add a destination", active: true },
         { id: 5, title: "Remove engagement", active: false },
