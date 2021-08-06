@@ -269,7 +269,7 @@ DESTINATION_CONSTANTS = {
     db_c.DELIVERY_PLATFORM_TWILIO: {
         TWILIO_AUTH_TOKEN: {
             NAME: "Auth Token",
-            TYPE: "text",
+            TYPE: "password",
             REQUIRED: True,
             DESCRIPTION: None,
         },
