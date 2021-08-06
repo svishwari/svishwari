@@ -178,9 +178,9 @@ export default {
       this.selectedDestinations.splice(index, 1)
     },
 
-    fetchDestination() {
+    async fetchDestination() {
       this.loading = true
-      this.getDestinations()
+      await this.getDestinations()
       this.loading = false
     },
   },

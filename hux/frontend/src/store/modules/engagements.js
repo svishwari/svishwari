@@ -82,7 +82,7 @@ const mutations = {
   },
 
   SET_CAMPAIGN_MAPPINGS(state, payload) {
-    if (payload) {
+    if (Object.keys(payload).length > 0) {
       state.campaignMappingOptions = {
         campaigns: payload.campaigns,
         delivery_jobs: payload.delivery_jobs.map((job) => ({
@@ -230,7 +230,7 @@ const actions = {
       })
       commit("SET_CAMPAIGN_MAPPINGS", response.data)
     } catch (error) {
-      commit("SET_CAMPAIGN_MAPPINGS", undefined)
+      commit("SET_CAMPAIGN_MAPPINGS", {})
       handleError(error)
       throw error
     }

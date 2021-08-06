@@ -312,12 +312,6 @@ export default {
     },
   },
   methods: {
-    formattedDate(value) {
-      if (value) {
-        return this.$options.filters.Date(value, "relative") + " by"
-      }
-      return "-"
-    },
     fetchKey(obj, key) {
       return obj && obj[key] ? obj[key] : "-"
     },
