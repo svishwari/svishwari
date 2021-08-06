@@ -50,8 +50,10 @@ export default {
    * @param {*} placeholder Placeholder eg. "N/A"
    * @returns Formatted empty data field eg. "N/A"
    */
-  Empty(value, placeholder = "-") {
-    if (!value && value !== 0) return placeholder
+  Empty(value, placeholder = "—") {
+    if (String(value).trim() === "" || value === null || value === undefined) {
+      return placeholder
+    }
     return value
   },
 
@@ -63,7 +65,7 @@ export default {
     percentage = false,
     append = ""
   ) {
-    if (isNaN(value)) return "-"
+    if (typeof value !== "number") return value
 
     let abrv = ""
 
@@ -78,7 +80,7 @@ export default {
         abrv = "M"
       } else if (value >= 1000) {
         value = value / 1000
-        abrv = "K"
+        abrv = "k"
       }
     }
     if (approx) {
@@ -147,6 +149,7 @@ export default {
    * @returns output value eg. "89%" or "89.32%"
    */
   Percentage(value, round = true) {
+    if (isNaN(value)) return "-"
     return this.Numeric(value, round, false, false, true)
   },
 }

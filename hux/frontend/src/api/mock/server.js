@@ -14,6 +14,7 @@ import { customer, customerProfile } from "./factories/customers"
 import dataSourceFactory from "./factories/dataSource"
 import { destination as destinationFactory } from "./factories/destination"
 import { engagement as engagementFactory } from "./factories/engagement"
+import { idrDataFeed as idrDataFeedFactory } from "./factories/identity"
 import modelFactory from "./factories/model"
 import audiencePerformanceFactory from "./factories/audiencePerformance"
 import dataExtensionFactory from "./factories/dataExtensions"
@@ -37,6 +38,7 @@ export function makeServer({ environment = "development" } = {}) {
     destination: Model.extend({
       destinationable: belongsTo({ polymorphic: true }),
     }),
+    idrDataFeed: Model,
     engagement: Model.extend(),
     model: Model,
     audiencePerformance: Model,
@@ -54,6 +56,7 @@ export function makeServer({ environment = "development" } = {}) {
     dataSource: Factory.extend(dataSourceFactory),
     destination: Factory.extend(destinationFactory),
     engagement: Factory.extend(engagementFactory),
+    idrDataFeed: Factory.extend(idrDataFeedFactory),
     model: Factory.extend(modelFactory),
     audiencePerformance: Factory.extend(audiencePerformanceFactory),
     dataExtension: Factory.extend(dataExtensionFactory),
