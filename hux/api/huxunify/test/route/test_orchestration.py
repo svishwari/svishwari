@@ -204,7 +204,7 @@ class OrchestrationRouteTest(TestCase):
                 self.destinations[0][db_c.ID],
                 [],
                 ObjectId(self.engagement_ids[1]),
-            )
+            ),
         ]
 
         for delivery_job in self.delivery_jobs:
