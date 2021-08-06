@@ -114,7 +114,7 @@ class EngagementPutSchema(Schema):
 
     @pre_load
     # pylint: disable=unused-argument
-    def pre_process_details(self, data, **kwarg):
+    def pre_process_details(self, data: dict, **kwarg):
         """process the schema before loading.
 
         Args:
