@@ -878,8 +878,6 @@ class SetLookalikeAudience(SwaggerView):
 
         most_recent_job = None
 
-        audience_name_date_format = "%Y-%m-%d %H:%M:%S"
-
         # find most recent successful facebook delivery job
         for job in delivery_jobs:
             if (
@@ -890,9 +888,9 @@ class SetLookalikeAudience(SwaggerView):
                 if most_recent_job is None:
                     most_recent_job = job
                 elif job[db_c.JOB_START_TIME].strftime(
-                    audience_name_date_format
+                    db_c.AUDIENCE_NAME_DATE_FORMAT
                 ) > most_recent_job[db_c.JOB_START_TIME].strftime(
-                    audience_name_date_format
+                    db_c.AUDIENCE_NAME_DATE_FORMAT
                 ):
                     most_recent_job = job
 
@@ -903,7 +901,7 @@ class SetLookalikeAudience(SwaggerView):
 
         try:
             timestamp = most_recent_job[db_c.JOB_START_TIME].strftime(
-                audience_name_date_format
+                db_c.AUDIENCE_NAME_DATE_FORMAT
             )
 
             destination_connector.get_new_lookalike_audience(
