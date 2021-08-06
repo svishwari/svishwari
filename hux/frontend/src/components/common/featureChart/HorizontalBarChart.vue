@@ -1,17 +1,10 @@
 <template>
   <div>
-    <v-card
-      class="rounded-lg card-style box-shadow-5"
-      max-width="chartWidth"
-      min-height="662px"
-      flat
+    <div
+      class="card-style"
+      :style="{ maxWidth: chartWidth, minHeight: '662px' }"
     >
-      <v-card-title class="chart-style pb-6 pl-6 pt-5">
-        <div class="mt-2">
-          <span class="neroBlack--text text-h5">
-            Top 20 feature importance
-          </span>
-        </div>
+      <div class="chart-style pb-6 pl-4 pt-1">
         <div
           ref="huxChart"
           class="chart-section"
@@ -29,9 +22,8 @@
             {{ scoreTip.score }}
           </div>
         </v-card>
-      </v-card-title>
-      <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text>
-    </v-card>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -74,7 +66,7 @@ export default {
         x: 0,
         y: 0,
       },
-      margin: { top: 20, right: 10, bottom: 70, left: 130 },
+      margin: { top: 5, right: 50, bottom: 70, left: 130 },
       chartData: this.value,
     }
   },
@@ -100,9 +92,6 @@ export default {
       await this.chartDimensions
       let currentWidth = this.chartDimensions.width
       this.width = currentWidth == 0 ? 560 : currentWidth
-
-      if (currentWidth < 519) this.width = 470
-      if (currentWidth < 426) this.width = 870
 
       this.width = this.width - this.margin.left - this.margin.right
       this.height = this.height - this.margin.top - this.margin.bottom
@@ -193,7 +182,7 @@ export default {
           "translate(" +
             this.width / 2 +
             " ," +
-            (this.height + this.margin.top + 20) +
+            (this.height + this.margin.top + 30) +
             ")"
         )
         .style("text-anchor", "middle")
@@ -233,7 +222,7 @@ export default {
         let featureData = data
         this.scoreTip.xPosition = x(data.score)
         this.scoreTip.yPosition = y(data.name) + 12
-        this.scoreTip.score = data.score
+        this.scoreTip.score = data.score.toFixed(2)
         this.tooltipDisplay(true, featureData)
         svg
           .append("circle")
@@ -275,13 +264,13 @@ export default {
       @extend .box-shadow-3;
       border-radius: 0px;
       padding: 7px 14px 12px 14px;
-      max-width: 61px;
+      max-width: 70px;
       height: 30px;
       z-index: 1;
       border-radius: 0px !important;
       position: absolute;
-      left: 159px;
-      top: 52px;
+      left: 152px;
+      top: -6px;
     }
   }
 }
