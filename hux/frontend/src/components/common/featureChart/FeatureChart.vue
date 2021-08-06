@@ -48,7 +48,7 @@ export default {
   },
   mounted() {
     this.chartDimensions.width = this.$refs.chartBox.clientWidth
-    this.chartDimensions.height = this.$refs.chartBox
+    this.chartDimensions.height = this.$refs.chartBox.clientHeight
   },
   methods: {
     toolTipDisplay(...arg) {
