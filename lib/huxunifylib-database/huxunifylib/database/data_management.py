@@ -816,7 +816,7 @@ def set_ingestion_job_status_no_default_audience(
     update_dict = {}
     update_dict[c.UPDATE_TIME] = curr_time
 
-    if job_status == c.STATUS_IN_PROGRESS:
+    if job_status == c.AUDIENCE_STATUS_DELIVERING:
         update_dict[c.JOB_START_TIME] = curr_time
     elif job_status in (c.STATUS_SUCCEEDED, c.STATUS_FAILED):
         update_dict[c.JOB_END_TIME] = curr_time

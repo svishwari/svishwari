@@ -1871,3 +1871,51 @@ class TestDeliveryPlatform(unittest.TestCase):
             recent_performance_metrics_doc[c.JOB_END_TIME],
             datetime.datetime(2021, 6, 26, 0, 0),
         )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_most_recent_campaign_activity_by_delivery_job(self):
+        """Campaign Activity batch docs are set and
+        latest campaign activity event is retrieved."""
+
+        delivery_job_id = self._set_delivery_job()
+        campaign_activity_docs = [
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "click",
+                    "event_date": datetime.datetime(2021, 6, 28, 0, 0),
+                    "url": "https://google.com",
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+            },
+            {
+                "event_details": {
+                    "subscriber_key": "1001",
+                    "event_type": "sent",
+                    "event_date": datetime.datetime(2021, 6, 27, 0, 0),
+                },
+                "name": "My SFMC delivery platform",
+                "delivery_job_id": delivery_job_id,
+            },
+        ]
+
+        status = dpm.set_campaign_activities(
+            database=self.database,
+            campaign_activity_docs=campaign_activity_docs,
+        )
+
+        self.assertTrue(status)
+
+        recent_campaign_activity_doc = (
+            dpm.get_most_recent_campaign_activity_by_delivery_job(
+                self.database, delivery_job_id
+            )
+        )
+
+        self.assertIsNotNone(recent_campaign_activity_doc)
+
+        self.assertEqual(
+            recent_campaign_activity_doc[c.EVENT_DETAILS][c.EVENT_DATE],
+            datetime.datetime(2021, 6, 28, 0, 0),
+        )

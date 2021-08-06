@@ -27,6 +27,7 @@ from huxunify.api.schema.customers import (
     CustomerGenderInsightsSchema,
     CustomerIncomeInsightsSchema,
     MatchingTrendsSchema,
+    CustomerEventsSchema,
 )
 from huxunify.app import create_app
 
@@ -388,4 +389,26 @@ class TestCustomersOverview(TestCase):
 
         self.assertTrue(
             t_c.validate_schema(MatchingTrendsSchema(), response.json, True)
+        )
+
+    @given(customer_id=st.text(alphabet=string.ascii_letters))
+    def test_customer_events(self, customer_id: str):
+        """
+        Test customer events for a hux-id
+
+        Args:
+            customer_id (str): HUX ID of a customer.
+        Returns:
+
+        """
+        if not customer_id:
+            return
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}/events",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(CustomerEventsSchema(), response.json, True)
         )
