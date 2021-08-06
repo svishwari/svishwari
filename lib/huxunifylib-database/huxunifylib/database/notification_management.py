@@ -102,7 +102,7 @@ def get_notifications(
     try:
         return list(
             collection.find()
-            .sort([(c.ID, sort_order)])
+            .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
             .skip(skips)
             .limit(batch_size)
         )

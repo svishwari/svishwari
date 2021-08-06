@@ -11,7 +11,7 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <hux-data-table
-        :headers="headers"
+        :columns="headers"
         :data-items="items"
         sort-column="delivered"
       >
@@ -159,10 +159,6 @@ export default {
     localToggle(value) {
       this.$emit("onToggle", value)
     },
-  },
-
-  async mounted() {
-    await this.fetchHistory()
   },
 
   methods: {

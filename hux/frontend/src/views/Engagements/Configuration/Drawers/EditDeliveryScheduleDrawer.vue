@@ -21,7 +21,7 @@
         <div class="text-caption gray--text pt-8 pb-1">Destination</div>
         <card-horizontal
           :title="destination.name"
-          :icon="destination.type"
+          :icon="destination.delivery_platform_type"
           class="cursor-default"
           hide-button
         />
@@ -72,7 +72,7 @@ export default {
     },
 
     audienceId: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
 
@@ -82,7 +82,7 @@ export default {
     },
 
     engagementId: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
   },

@@ -3,7 +3,7 @@
     <div class="table-overflow" :style="{ 'margin-left': fixedWidth }">
       <v-data-table
         :expanded.sync="expanded"
-        :headers="headers"
+        :headers="columns"
         :hide-default-header="!showHeader"
         :height="height"
         :items="dataItems"
@@ -21,11 +21,11 @@
           <slot
             name="item-row"
             :item="item"
-            :expand="expand"
+            :expandFunc="expand"
             :isExpanded="isExpanded"
           ></slot>
         </template>
-        <template v-for="h in headers" v-slot:[`header.${h.value}`]>
+        <template v-for="h in columns" v-slot:[`header.${h.value}`]>
           <tooltip v-if="h.tooltipValue" :key="h.value">
             <template #label-content>
               {{ h.text }}
@@ -47,6 +47,7 @@
                 :key="h.value"
                 type="info"
                 :size="12"
+                class="ml-1"
               />
             </template>
             <template #hover-content>
@@ -61,10 +62,10 @@
             </tr>
           </tbody>
         </template>
-        <template #expanded-item="{ expandedHeaders, item }">
+        <template #expanded-item="{ headers, item }">
           <slot
             name="expanded-row"
-            :headers="expandedHeaders"
+            :expandedHeaders="headers"
             :parentItem="item"
           />
         </template>
@@ -86,7 +87,7 @@ export default {
       default: () => [],
       required: true,
     },
-    headers: {
+    columns: {
       type: Array,
       default: () => [],
       required: true,
@@ -129,7 +130,7 @@ export default {
   },
   computed: {
     fixedWidth() {
-      const fixedHeaders = this.headers.filter((item) => item.fixed)
+      const fixedHeaders = this.columns.filter((item) => item.fixed)
 
       return fixedHeaders.length > 0
         ? fixedHeaders

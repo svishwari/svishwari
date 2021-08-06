@@ -38,6 +38,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
+    EngagementPutSchema,
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
@@ -461,7 +462,7 @@ class UpdateEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        body = EngagementPostSchema().load(request.get_json())
+        body = EngagementPutSchema().load(request.get_json())
 
         database = get_db_client()
 
@@ -469,14 +470,13 @@ class UpdateEngagement(SwaggerView):
             database=database,
             engagement_id=ObjectId(engagement_id),
             user_name=user_name,
-            name=body[db_c.ENGAGEMENT_NAME],
-            description=body[db_c.ENGAGEMENT_DESCRIPTION]
-            if db_c.ENGAGEMENT_DESCRIPTION in body
-            else None,
-            audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
+            name=body.get(db_c.ENGAGEMENT_NAME),
+            description=body.get(db_c.ENGAGEMENT_DESCRIPTION),
+            audiences=body.get(db_c.AUDIENCES),
             delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
             else {},
+            status=body.get(db_c.STATUS),
         )
 
         create_notification(
@@ -485,6 +485,7 @@ class UpdateEngagement(SwaggerView):
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
         )
+
         return (
             EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
@@ -1575,38 +1576,29 @@ class EngagementMetricsDisplayAds(SwaggerView):
             )
         )
 
-        if not ads_destination:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+        delivery_jobs = []
+        performance_metrics = []
+        if ads_destination:
+            # Get Performance metrics by engagement and destination
+            performance_metrics = (
+                get_performance_metrics_by_engagement_details(
+                    database,
+                    ObjectId(engagement_id),
+                    [ads_destination.get(db_c.ID)],
+                )
+            )
+            if performance_metrics:
+                # Get all the delivery jobs for the given engagement and destination
+                delivery_jobs = get_delivery_jobs_using_metadata(
+                    database, engagement_id=ObjectId(engagement_id)
+                )
 
-        # Get Performance metrics by engagement and destination
-        performance_metrics = get_performance_metrics_by_engagement_details(
-            database,
-            ObjectId(engagement_id),
-            [ads_destination.get(db_c.ID)],
-        )
-
-        if not performance_metrics:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
-
-        # Get all the delivery jobs for the given engagement and destination
-        delivery_jobs = get_delivery_jobs_using_metadata(
-            database, engagement_id=ObjectId(engagement_id)
-        )
-
-        delivery_jobs = [
-            x
-            for x in delivery_jobs
-            if x[db_c.DELIVERY_PLATFORM_ID] == ads_destination.get(db_c.ID)
-        ]
-
-        if not delivery_jobs:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+                delivery_jobs = [
+                    x
+                    for x in delivery_jobs
+                    if x[db_c.DELIVERY_PLATFORM_ID]
+                    == ads_destination.get(db_c.ID)
+                ]
 
         # Group all the performance metrics for the engagement
         final_metric = {
@@ -1701,38 +1693,30 @@ class EngagementMetricsEmail(SwaggerView):
             )
         )
 
-        if not email_destination:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+        delivery_jobs = []
+        performance_metrics = []
+        if email_destination:
+            # Get Performance metrics by engagement and destination
+            performance_metrics = (
+                get_performance_metrics_by_engagement_details(
+                    database,
+                    ObjectId(engagement_id),
+                    [email_destination.get(db_c.ID)],
+                )
+            )
 
-        # Get Performance metrics by engagement and destination
-        performance_metrics = get_performance_metrics_by_engagement_details(
-            database,
-            ObjectId(engagement_id),
-            [email_destination.get(db_c.ID)],
-        )
+            if performance_metrics:
+                # Get all the delivery jobs for the given engagement and destination
+                delivery_jobs = get_delivery_jobs_using_metadata(
+                    database, engagement_id=ObjectId(engagement_id)
+                )
 
-        if not performance_metrics:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
-
-        # Get all the delivery jobs for the given engagement and destination
-        delivery_jobs = get_delivery_jobs_using_metadata(
-            database, engagement_id=ObjectId(engagement_id)
-        )
-
-        delivery_jobs = [
-            x
-            for x in delivery_jobs
-            if x[db_c.DELIVERY_PLATFORM_ID] == email_destination.get(db_c.ID)
-        ]
-
-        if not delivery_jobs:
-            return {
-                "message": "No performance metrics found for engagement."
-            }, HTTPStatus.OK
+                delivery_jobs = [
+                    x
+                    for x in delivery_jobs
+                    if x[db_c.DELIVERY_PLATFORM_ID]
+                    == email_destination.get(db_c.ID)
+                ]
 
         # Group all the performance metrics for the engagement
         final_metric = {

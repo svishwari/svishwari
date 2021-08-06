@@ -144,12 +144,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.loading = true
-    this.getDestinations()
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       getDestinations: "destinations/getAll",
@@ -169,7 +163,9 @@ export default {
         this.selectedDestinations.push({
           id: destination.id,
         })
-        this.$emit("addedDestination", this.selectedDestinations)
+        this.$emit("addedDestination", {
+          destination: { id: destination.id },
+        })
         this.localToggle = false
       }
     },
@@ -180,6 +176,12 @@ export default {
         (destination) => destination.id === id
       )
       this.selectedDestinations.splice(index, 1)
+    },
+
+    async fetchDestination() {
+      this.loading = true
+      await this.getDestinations()
+      this.loading = false
     },
   },
 }

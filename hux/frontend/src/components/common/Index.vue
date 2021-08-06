@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-subheader> Data Table </v-subheader>
-    <hux-data-table :headers="headers" :data-items="dataItems">
+    <hux-data-table :columns="headers" :data-items="dataItems">
       <template #un-expanded-row="{ field, item, expand, isExpanded }">
         <span v-if="field == 'engagementName'" class="primary--text">
           <v-icon
@@ -425,6 +425,17 @@
     />
 
     <v-divider class="mt-10" />
+    <v-subheader>Donut Chart</v-subheader>
+    <div class="gender-chart">
+      <doughnut-chart
+        :width="250"
+        :height="273"
+        :data="genderChartData"
+        label="Gender"
+      ></doughnut-chart>
+    </div>
+
+    <v-divider class="mt-10" />
 
     <v-container class="my-4">
       <v-row align="baseline">
@@ -491,7 +502,7 @@
     <v-divider class="mt-10" />
 
     <v-subheader>Nested Data Table</v-subheader>
-    <hux-data-table :headers="headerNest" :data-items="dataItemsNest" nested>
+    <hux-data-table :columns="headerNest" :data-items="dataItemsNest" nested>
       <template #item-row="{ item, expand, isExpanded }">
         <tr :class="{ 'expanded-row': isExpanded }">
           <td
@@ -532,7 +543,7 @@
       <template #expanded-row="{ expandedHeaders, item }">
         <td :colspan="expandedHeaders.length" class="pa-0 child">
           <hux-data-table
-            :headers="expandedHeaders"
+            :columns="expandedHeaders"
             :data-items="item.child"
             :show-header="false"
             class="expanded-table"
@@ -580,7 +591,7 @@
             <template #expanded-row="{ subExpandedHeaders, expandedItem }">
               <td :colspan="subExpandedHeaders.length" class="pa-0 child">
                 <hux-data-table
-                  :headers="subExpandedHeaders"
+                  :columns="subExpandedHeaders"
                   :data-items="expandedItem.childNest"
                   :show-header="false"
                   class="expanded-table"
@@ -655,6 +666,8 @@ import { generateColor } from "@/utils"
 import Size from "@/components/common/huxTable/Size.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
+import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
+import genderData from "@/components/common/DoughnutChart/genderData.json"
 
 export default {
   name: "Components",
@@ -686,9 +699,30 @@ export default {
     Size,
     HuxStartDate,
     HuxEndDate,
+    DoughnutChart,
   },
   data() {
     return {
+      genderChartData: [
+        {
+          label: "Men",
+          population_percentage:
+            genderData.gender.gender_men.population_percentage,
+          size: genderData.gender.gender_men.size,
+        },
+        {
+          label: "Women",
+          population_percentage:
+            genderData.gender.gender_women.population_percentage,
+          size: genderData.gender.gender_women.size,
+        },
+        {
+          label: "Other",
+          population_percentage:
+            genderData.gender.gender_other.population_percentage,
+          size: genderData.gender.gender_other.size,
+        },
+      ],
       DataCards: {
         items: [
           {
@@ -1304,5 +1338,8 @@ export default {
   &.normal-icon {
     transform: rotate(90deg);
   }
+}
+.gender-chart {
+  width: 255px;
 }
 </style>

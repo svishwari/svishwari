@@ -19,6 +19,8 @@ from huxunify.api.schema.customers import (
     DataFeedDetailsSchema,
     CustomerGeoVisualSchema,
     CustomerDemographicInsightsSchema,
+    MatchingTrendsSchema,
+    CustomerEventsSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -32,6 +34,8 @@ from huxunify.api.data_connectors.cdp import (
     get_customer_profile,
     get_customers_overview,
     get_idr_data_feeds,
+    get_idr_matching_trends,
+    get_customer_events_data,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.schema.customers import (
@@ -605,5 +609,117 @@ class CustomerDemoVisualView(SwaggerView):
 
         return (
             CustomerDemographicInsightsSchema().dump(output),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.IDR_ENDPOINT}/{api_c.MATCHING_TRENDS}",
+    "IDRMatchingTrends",
+)
+class IDRMatchingTrends(SwaggerView):
+    """IDR Matching Trends YTD"""
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": MatchingTrendsSchema},
+            "description": "Identity Resolution Matching Trends YTD Data",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get IDR Matching Trends"
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use,unused-argument
+    @api_error_handler()
+    def get(self) -> Tuple[dict, int]:
+        """Retrieves IDR Matching trends YTD data
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] dict of IDR Matching trends YTD and http code
+        """
+        token_response = get_token_from_request(request)
+        return (
+            jsonify(
+                MatchingTrendsSchema().dump(
+                    get_idr_matching_trends(token_response[0]), many=True
+                )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_ENDPOINT}/<{api_c.HUX_ID}>/events",
+    "CustomerEvents",
+)
+class CustomerEvents(SwaggerView):
+    """
+    Customer events under customer profile
+    """
+
+    parameters = [
+        {
+            "name": api_c.HUX_ID,
+            "description": "ID of the customer whose events need to be fetched.",
+            "type": "string",
+            "in": "path",
+            "required": True,
+            "example": "1531-1234-21",
+        },
+        {
+            "name": "body",
+            "description": "Customer Events Filters",
+            "type": "object",
+            "in": "body",
+            "example": {
+                "filters": {
+                    "start_date": "2021-07-25T00:00:00Z",
+                    "end_date": "2021-08-02T00:00:00Z",
+                }
+            },
+        },
+    ]
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {
+                "type": "array",
+                "items": CustomerEventsSchema,
+            },
+            "description": "Events for a Customer grouped by day.",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get events for customer."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    def post(self, hux_id: str) -> Tuple[dict, int]:
+        """Retrieves events for a given HUX ID.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+        Args:
+            hux_id (str): ID of the customer
+        Returns:
+            Tuple[dict, int] list of Customer events grouped by day and http code
+        """
+        return (
+            jsonify(
+                CustomerEventsSchema().dump(
+                    get_customer_events_data(hux_id), many=True
+                )
+            ),
             HTTPStatus.OK,
         )

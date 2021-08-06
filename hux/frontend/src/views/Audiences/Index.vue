@@ -40,7 +40,7 @@
     <v-row v-if="!loading" class="pt-3 pb-7 pl-3 white">
       <hux-data-table
         v-if="isDataExists"
-        :headers="columnDefs"
+        :columns="columnDefs"
         :data-items="audienceList"
       >
         <template #row-item="{ item }">
@@ -133,7 +133,6 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import { filterAudiencesByDestinations } from "@/utils"
 
 import PageHeader from "@/components/PageHeader"
 import EmptyPage from "@/components/common/EmptyPage"
@@ -246,13 +245,9 @@ export default {
     }),
 
     getActionItems(audience) {
-      let filteredAudience = filterAudiencesByDestinations(
-        [audience],
-        ["facebook"]
-      )
-
-      let isOneOfDestinationFacebook =
-        filteredAudience.length > 0 ? true : false
+      // This assumes we cannot create a lookalike audience from a lookalike audience
+      let isLookalikeableActive =
+        audience.lookalikeable === "Active" && !audience.is_lookalike
 
       let actionItems = [
         { title: "Favorite", isDisabled: true },
@@ -261,7 +256,7 @@ export default {
         { title: "Duplicate", isDisabled: true },
         {
           title: "Create a lookalike",
-          isDisabled: !isOneOfDestinationFacebook,
+          isDisabled: !isLookalikeableActive,
           menu: {
             title: "Facebook",
             onClick: () => {

@@ -207,6 +207,7 @@ class TestEngagementMetricsDisplayAds(TestCase):
         self.assertEqual(response.json["summary"]["impressions"], 70487)
         self.assertEqual(response.json["summary"]["spend"], 14507)
         self.assertTrue(response.json["audience_performance"])
+        self.assertTrue(response.json["audience_performance"][0]["id"])
         self.assertTrue(
             response.json["audience_performance"][0]["impressions"], 70487
         )
@@ -394,6 +395,7 @@ class TestEngagementMetricsEmail(TestCase):
         self.assertEqual(response.json["summary"]["hard_bounces"], 125)
         self.assertEqual(response.json["summary"]["sent"], 125)
         self.assertTrue(response.json["audience_performance"])
+        self.assertTrue(response.json["audience_performance"][0]["id"])
         self.assertEqual(
             response.json["audience_performance"][0]["hard_bounces"], 125
         )
@@ -1116,6 +1118,7 @@ class TestEngagementRoutes(TestCase):
         self.assertEqual(len(engagements), len(expected_engagements))
         for engagement in engagements:
             self.assertEqual(self.user_name, engagement[db_c.CREATED_BY])
+            self.assertIsNotNone(engagement[db_c.STATUS])
 
     def test_get_engagement_by_id_valid_id(self):
         """
@@ -1136,6 +1139,7 @@ class TestEngagementRoutes(TestCase):
         return_engagement = response.json
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
         self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
+        self.assertEqual(api_c.STATUS_ERROR, return_engagement[db_c.STATUS])
 
     def test_get_engagement_by_id_invalid_id(self):
         """
