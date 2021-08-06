@@ -56,14 +56,12 @@ export default {
       chartData: this.value,
     }
   },
-
   watch: {
     value: function () {
       d3Select.select(this.$refs.huxChart).select("svg").remove()
       this.initiateHorizontalBarChart()
     },
   },
-
   mounted() {
     this.initiateHorizontalBarChart()
   },
