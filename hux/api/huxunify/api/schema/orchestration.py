@@ -184,6 +184,7 @@ class EngagementDeliveryHistorySchema(Schema):
         DestinationGetSchema(only=(api_c.NAME, api_c.TYPE, db_c.ID))
     )
     size = fields.Integer()
+    match_rate = fields.Float(default=0, example=0.21)
     delivered = DateTimeWithZ(required=True, allow_none=True)
 
 
@@ -209,6 +210,7 @@ class AudienceDeliveryHistorySchema(Schema):
         DestinationGetSchema(only=(api_c.NAME, api_c.TYPE, db_c.ID))
     )
     size = fields.Integer()
+    match_rate = fields.Float(default=0, example=0.21)
     delivered = DateTimeWithZ(required=True, allow_none=True)
 
 

@@ -1656,3 +1656,138 @@ class TestEngagementRoutes(TestCase):
         # now test removal.
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertFalse(response.json[api_c.DELIVERY_SCHEDULE])
+
+
+# pylint: disable=too-many-instance-attributes
+class TestEngagementAudienceDestinationMatchRate(TestCase):
+    """
+    Tests for match_rate in get Engagement API
+    """
+
+    def setUp(self) -> None:
+        """
+        Setup resources before each test
+
+        Args:
+
+        Returns:
+        """
+
+        # mock request for introspect call
+        request_mocker = requests_mock.Mocker()
+        request_mocker.post(t_c.INTROSPECT_CALL, json=t_c.VALID_RESPONSE)
+        request_mocker.get(t_c.USER_INFO_CALL, json=t_c.VALID_USER_RESPONSE)
+        request_mocker.start()
+
+        self.app = create_app().test_client()
+
+        # init mongo patch initially
+        mongo_patch = mongomock.patch(servers=(("localhost", 27017),))
+        mongo_patch.start()
+
+        # setup the mock DB client
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
+
+        mock.patch(
+            "huxunify.api.route.engagement.get_db_client",
+            return_value=self.database,
+        ).start()
+        self.addCleanup(mock.patch.stopall)
+
+        # mock get_db_client() for the userinfo utils.
+        mock.patch(
+            "huxunify.api.route.utils.get_db_client",
+            return_value=self.database,
+        ).start()
+
+        # mock FacebookConnector
+        mock.patch.object(
+            FacebookConnector, "get_campaigns", return_value=t_c.BATCH_RESPONSE
+        ).start()
+
+        self.addCleanup(mock.patch.stopall)
+
+        # write a user to the database
+        self.user_name = "felix hernandez"
+        set_user(
+            self.database,
+            "fake",
+            "felix_hernandez@fake.com",
+            display_name=self.user_name,
+        )
+
+        self.audience_id = create_audience(self.database, "Test Audience", [])[
+            db_c.ID
+        ]
+        self.delivery_platform = set_delivery_platform(
+            self.database,
+            db_c.DELIVERY_PLATFORM_FACEBOOK,
+            "facebook_delivery_platform",
+            authentication_details={},
+            status=db_c.STATUS_SUCCEEDED,
+        )
+        self.audiences = [
+            {
+                api_c.ID: self.audience_id,
+                api_c.DESTINATIONS: [
+                    {
+                        api_c.ID: self.delivery_platform[db_c.ID],
+                        db_c.LATEST_DELIVERY: {
+                            api_c.SIZE: 1000,
+                        },
+                    },
+                ],
+            }
+        ]
+        self.engagement_id = set_engagement(
+            self.database,
+            "Test engagement",
+            None,
+            self.audiences,
+            None,
+            None,
+            False,
+        )
+        self.delivery_job = set_delivery_job(
+            self.database,
+            self.audience_id,
+            self.delivery_platform[db_c.ID],
+            [
+                {
+                    db_c.ENGAGEMENT_ID: self.engagement_id,
+                    db_c.AUDIENCE_ID: self.audience_id,
+                }
+            ],
+            self.engagement_id,
+        )
+
+        self.addCleanup(mock.patch.stopall)
+
+    def test_get_engagement_by_id_validate_match_rate(self):
+        """
+        Test get all engagements API
+
+        Args:
+
+        Returns:
+
+        """
+        engagements = get_engagements(self.database)
+
+        engagement_id = str(engagements[0]["_id"])
+        response = self.app.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.ENGAGEMENT_ENDPOINT}/{engagement_id}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        return_engagement = response.json
+        self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
+        self.assertTrue(
+            return_engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][
+                db_c.LATEST_DELIVERY
+            ][api_c.MATCH_RATE]
+            > 0
+        )
