@@ -182,7 +182,7 @@ export default {
           "translate(" +
             this.width / 2 +
             " ," +
-            (this.height + this.margin.top + 40) +
+            (this.height + this.margin.top + 30) +
             ")"
         )
         .style("text-anchor", "middle")
