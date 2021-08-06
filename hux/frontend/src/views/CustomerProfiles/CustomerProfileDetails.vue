@@ -532,6 +532,7 @@ export default {
 .blur-text {
   color: transparent;
   text-shadow: 0 0 8px #000;
+  user-select: none;
 }
 .no-background {
   background: none !important;
