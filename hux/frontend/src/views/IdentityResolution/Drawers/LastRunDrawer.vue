@@ -31,34 +31,32 @@
           </v-expansion-panel-header>
 
           <v-expansion-panel-content class="panel-content">
-            <hux-data-table :headers="headers" :data-items="reports[reportKey]">
+            <hux-data-table :columns="columns" :data-items="reports[reportKey]">
               <template #row-item="{ item }">
                 <td
-                  v-for="(header, index) in headers"
+                  v-for="(col, index) in columns"
                   :key="index"
-                  :style="{ width: header.width }"
+                  :style="{ width: col.width }"
                   class="text-body-1"
                 >
-                  <template v-if="header.value === 'result'">
+                  <template v-if="col.value === 'result'">
                     <template v-if="resultAsPercentage.includes(item.metric)">
-                      {{
-                        item[header.value] | Numeric(true, false, false, true)
-                      }}
+                      {{ item[col.value] | Numeric(true, false, false, true) }}
                     </template>
                     <template v-else-if="resultAsDate.includes(item.metric)">
-                      {{ item[header.value] | Date }}
+                      {{ item[col.value] | Date }}
                     </template>
                     <template
                       v-else-if="item.metric === 'Process time in seconds'"
                     >
-                      {{ item[header.value] }} second(s)
+                      {{ item[col.value] }} second(s)
                     </template>
                     <template v-else>
-                      {{ item[header.value] }}
+                      {{ item[col.value] }}
                     </template>
                   </template>
                   <template v-else>
-                    {{ item[header.value] }}
+                    {{ item[col.value] }}
                   </template>
                 </td>
               </template>
@@ -99,7 +97,7 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      headers: [
+      columns: [
         {
           value: "metric",
           text: "Metrics",
