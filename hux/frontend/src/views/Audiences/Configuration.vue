@@ -10,7 +10,7 @@
         this audience.
       </div>
 
-      <div class="overview font-weight-regular neroBlack--text mt-15">
+      <div class="overview font-weight-regular neroBlack--text mt-8">
         Audience overview
       </div>
       <div class="row overview-list mb-0 ml-0 mt-1">
@@ -48,7 +48,7 @@
             label="General information"
             class="neroBlack--text step-1"
           >
-            <v-row class="pt-1">
+            <v-row class="pt-1 mt-n10">
               <v-col cols="4">
                 <text-field
                   v-model="audience.audienceName"
@@ -72,13 +72,9 @@
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
                   <div class="mt-2 d-flex align-center">
-                    <v-icon
-                      size="30"
-                      class="add-icon cursor-pointer"
-                      color="primary"
-                      @click="engagementDrawer = !engagementDrawer"
-                      >mdi-plus-circle</v-icon
-                    >
+                    <span @click="engagementDrawer = !engagementDrawer">  
+                      <icon  class="add-icon cursor-pointer" type="add" :size="30" />
+                    </span>
                     <div>
                       <v-chip
                         v-for="item in selectedEngagements"
@@ -124,14 +120,9 @@
             <v-row class="pt-1">
               <v-col cols="12">
                 <div class="d-flex align-center">
-                  <v-icon
-                    size="30"
-                    class="add-icon mt-1"
-                    color="primary"
-                    @click="openSelectDestinationsDrawer()"
-                  >
-                    mdi-plus-circle
-                  </v-icon>
+                  <span @click="openSelectDestinationsDrawer()">  
+                    <icon  class="add-icon cursor-pointer mt-1" type="add" :size="30" />
+                  </span>
                   <tooltip
                     v-for="destination in selectedDestinations"
                     :key="destination.id"
@@ -301,6 +292,7 @@ import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/Se
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
 import Logo from "@/components/common/Logo"
 import Tooltip from "@/components/common/Tooltip.vue"
+import Icon from "@/components/common/Icon"
 
 export default {
   name: "Configuration",
@@ -319,6 +311,7 @@ export default {
     Tooltip,
     SelectDestinationsDrawer,
     DestinationDataExtensionDrawer,
+    Icon,
   },
   data() {
     return {
@@ -704,14 +697,14 @@ export default {
       .step-2 {
         .form-step__content {
           padding-top: 0px !important;
-          margin-top: -8px;
+          margin-top: 0px;
           padding-bottom: 30px !important;
         }
       }
       .step-3 {
         .form-step__content {
           padding-top: 0px !important;
-          margin-top: -8px;
+          margin-top: 0px;
         }
       }
     }
