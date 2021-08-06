@@ -2,6 +2,38 @@ import faker from "faker"
 import { customersOverview } from "./customers"
 
 /**
+ * Identity resolution data feed last run / waterfall report schema
+ */
+export const idrDataFeedReport = {
+  pinning: {
+    new_company_ids: 1,
+    filename: "Input.csv",
+    address_id_match: 1,
+    new_household_ids: 1,
+    db_reads: 1,
+    company_id_match: 1,
+    db_writes: 1,
+    new_address_ids: 1,
+    output_records: 2,
+    empty_records: 0,
+    household_id_match: 1,
+    input_records: 2,
+    individual_id_match: 1,
+    date_time: "2021-08-03T20:35:26.103Z",
+    process_time: 6.43,
+    new_individual_ids: 1,
+  },
+  stitched: {
+    time_stamp: "2021-08-03T20:35:26.103Z",
+    records_source: "Input waterfall",
+    merge_rate: 0,
+    match_rate: 0.6606,
+    digital_ids_merged: 6,
+    digital_ids_added: 3,
+  },
+}
+
+/**
  * Identity resolution data feeds schema
  */
 export const idrDataFeed = {
