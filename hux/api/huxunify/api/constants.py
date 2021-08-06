@@ -269,7 +269,7 @@ DESTINATION_CONSTANTS = {
     db_c.DELIVERY_PLATFORM_TWILIO: {
         TWILIO_AUTH_TOKEN: {
             NAME: "Auth Token",
-            TYPE: "text",
+            TYPE: "password",
             REQUIRED: True,
             DESCRIPTION: None,
         },
@@ -350,6 +350,7 @@ DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
+INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
