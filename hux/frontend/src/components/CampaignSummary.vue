@@ -883,7 +883,7 @@ export default {
     }
   }
   .icon-info {
-    margin-top: -3px
+    margin-top: -3px;
   }
 }
 </style>

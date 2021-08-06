@@ -140,9 +140,6 @@
         <v-col cols="3">
           <income-chart></income-chart>
         </v-col>
-        <v-col cols="3">
-          <area-chart></area-chart>
-        </v-col>
       </v-row>
       <v-divider class="my-8"></v-divider>
       <empty-state-chart>
@@ -169,7 +166,6 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import AreaChart from "@/components/common/areaChart/AreaChart"
 
 export default {
   name: "CustomerProfiles",
@@ -183,7 +179,6 @@ export default {
     Icon,
     CustomerDetails,
     IncomeChart,
-    AreaChart
   },
 
   data() {
