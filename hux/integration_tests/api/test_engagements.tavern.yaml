@@ -1,4 +1,3 @@
-#This test might fail due to Internal Server Error, just run multiple times or check if token expired
 #This tests the following endpoints:
 #GET      /audiences                      Retrieves all audiences 
 #POST     /engagements/{engagement_id}    Create an engagement
