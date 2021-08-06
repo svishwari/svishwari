@@ -5,51 +5,51 @@
     </v-card-title>
     <v-card-text>
       <hux-data-table
-        :headers="headers"
+        :columns="columns"
         :data-items="data"
         :sort-column="sortColumn"
         :sort-desc="sortDesc"
       >
         <template #row-item="{ item }">
           <td
-            v-for="header in headers"
-            :key="header.value"
+            v-for="col in columns"
+            :key="col.value"
             class="neroBlack--text text-h6"
           >
-            <tooltip v-if="header.value === 'datafeed_name'">
+            <tooltip v-if="col.value === 'datafeed_name'">
               <span
                 class="d-inline-block mw-100 text-truncate text-decoration-none"
               >
-                {{ item[header.value] }}
+                {{ item[col.value] }}
               </span>
               <template #tooltip>
-                {{ item[header.value] }}
+                {{ item[col.value] }}
               </template>
             </tooltip>
-            <template v-else-if="header.value === 'data_source_type'">
+            <template v-else-if="col.value === 'data_source_type'">
               <logo
-                :key="item[header.value]"
-                :type="item[header.value]"
+                :key="item[col.value]"
+                :type="item[col.value]"
                 :size="26"
                 class="my-3"
               />
             </template>
-            <template v-else-if="header.value === 'match_rate'">
-              {{ item[header.value] | Numeric(false, false, false, true) }}
+            <template v-else-if="col.value === 'match_rate'">
+              {{ item[col.value] | Numeric(false, false, false, true) }}
             </template>
-            <tooltip v-else-if="header.value === 'new_ids_generated'">
-              {{ item[header.value] | Numeric(false, true) }}
+            <tooltip v-else-if="col.value === 'new_ids_generated'">
+              {{ item[col.value] | Numeric(false, true) }}
               <template #tooltip>
-                {{ item[header.value] | Numeric }} IDs
+                {{ item[col.value] | Numeric }} IDs
               </template>
             </tooltip>
-            <tooltip v-else-if="header.value === 'num_records_processed'">
-              {{ item[header.value] | Numeric(false, true) }}
+            <tooltip v-else-if="col.value === 'num_records_processed'">
+              {{ item[col.value] | Numeric(false, true) }}
               <template #tooltip>
-                {{ item[header.value] | Numeric }} Records
+                {{ item[col.value] | Numeric }} Records
               </template>
             </tooltip>
-            <tooltip v-else-if="header.value === 'last_run'">
+            <tooltip v-else-if="col.value === 'last_run'">
               <v-btn
                 text
                 class="pa-1"
@@ -57,9 +57,9 @@
                 color="primary"
                 @click="openLastRunDrawer(item)"
               >
-                {{ item[header.value] | Date("relative") }}
+                {{ item[col.value] | Date("relative") }}
               </v-btn>
-              <template #tooltip>{{ item[header.value] | Date }}</template>
+              <template #tooltip>{{ item[col.value] | Date }}</template>
             </tooltip>
           </td>
         </template>
@@ -97,7 +97,7 @@ export default {
 
   data() {
     return {
-      headers: [
+      columns: [
         {
           text: "Data feed",
           value: "datafeed_name",
