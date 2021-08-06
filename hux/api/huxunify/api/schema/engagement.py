@@ -114,7 +114,7 @@ class EngagementPutSchema(Schema):
 
     @pre_load
     # pylint: disable=unused-argument
-    def pre_process_details(self, data, **kwarg):
+    def pre_process_details(self, data, many: bool = False):
         """process the schema before loading.
 
         Args:
@@ -579,6 +579,7 @@ def weighted_engagement_status(engagements: list) -> list:
                     destination[api_c.LATEST_DELIVERY][
                         api_c.STATUS
                     ] = api_c.STATUS_NOT_DELIVERED
+                    # if status is not set, it is considered as not-delivered
                     break
 
                 # TODO after ORCH-285 so no status mapping needed.
