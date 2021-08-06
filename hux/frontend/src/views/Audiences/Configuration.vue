@@ -448,11 +448,7 @@ export default {
         case "Women":
         case "Men":
         case "Other":
-          return this.$options.filters.percentageConvert(
-            item.subtitle,
-            true,
-            true
-          )
+          return this.$options.filters.Percentage(item.subtitle)
         default:
           return item.subtitle
       }

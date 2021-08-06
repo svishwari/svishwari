@@ -26,7 +26,7 @@
               <div class="child mt-4">
                 <div class="icon d-flex justify-center">
                   <div v-if="isActive" class="check-wrap d-flex align-center">
-                    <v-icon color="white" size="21"> mdi-check-bold </v-icon>
+                    <icon type="check-icon" class="check-icon" />
                   </div>
                 </div>
                 <extensionInactive1 v-if="!isActive" />
@@ -46,7 +46,7 @@
               <div class="child mt-4">
                 <div class="icon d-flex justify-center">
                   <div v-if="!isActive" class="check-wrap d-flex align-center">
-                    <v-icon color="white" size="21"> mdi-check-bold </v-icon>
+                    <icon type="check-icon" class="check-icon" />
                   </div>
                 </div>
                 <extensionInactive2 v-if="isActive" />
@@ -183,6 +183,7 @@ import Logo from "@/components/common/Logo"
 import TextField from "@/components/common/TextField"
 import extensionInactive1 from "@/assets/logos/extension-inactive-1.svg"
 import extensionInactive2 from "@/assets/logos/extension-inactive-2.svg"
+import Icon from "@/components/common/Icon"
 export default {
   name: "DestinationDataExtensionDrawer",
 
@@ -193,6 +194,7 @@ export default {
     TextField,
     extensionInactive1,
     extensionInactive2,
+    Icon,
   },
 
   props: {
@@ -350,7 +352,6 @@ export default {
     .extension-type {
       height: 100px;
       width: 196px;
-      left: 24px;
       top: 126px;
       border-radius: 4px;
       background: var(--v-white-base);
@@ -364,6 +365,10 @@ export default {
           color: var(--v-darkBlue-base);
         }
       }
+      .check-icon {
+        width: 20px !important;
+        height: 15px !important;
+      }
     }
     .data-extension {
       ::v-deep .v-input {
@@ -375,7 +380,7 @@ export default {
               border-width: 1px !important;
             }
             input::placeholder {
-              color: var(--v-lightGrey-base) !important;
+              color: var(--v-gray-base) !important;
             }
           }
           .v-text-field__details {
@@ -388,7 +393,7 @@ export default {
       ::v-deep .v-text-field {
         .v-text-field__slot {
           label {
-            color: var(--v-lightGrey-base) !important;
+            color: var(--v-gray-base) !important;
           }
         }
       }
