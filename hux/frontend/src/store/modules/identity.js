@@ -1,3 +1,4 @@
+import Vue from "vue"
 import api from "@/api/client"
 import { handleError } from "@/utils"
 
@@ -48,6 +49,8 @@ const namespaced = true
 
 const state = {
   overview: {},
+
+  dataFeeds: {},
 }
 
 const getters = {
@@ -61,19 +64,37 @@ const getters = {
       }
     })
   },
+
+  dataFeeds: (state) => Object.values(state.dataFeeds),
 }
 
 const mutations = {
   SET_OVERVIEW(state, data) {
     state.overview = data
   },
+
+  SET_DATA_FEEDS(state, items) {
+    items.forEach((item) => {
+      Vue.set(state.dataFeeds, item.datafeed_id, item)
+    })
+  },
 }
 
 const actions = {
   async getOverview({ commit }) {
     try {
-      const response = await api.identity.overview()
+      const response = await api.idr.overview()
       commit("SET_OVERVIEW", response.data)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDataFeeds({ commit }) {
+    try {
+      const response = await api.idr.datafeeds()
+      commit("SET_DATA_FEEDS", response.data)
     } catch (error) {
       handleError(error)
       throw error

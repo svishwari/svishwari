@@ -69,6 +69,7 @@ def set_engagement(
         db_c.UPDATED_BY: "",
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.DELETED: deleted,
+        db_c.STATUS: "Active",
         db_c.AUDIENCES: [
             {
                 db_c.OBJECT_ID: x[db_c.OBJECT_ID],
@@ -214,6 +215,7 @@ def get_engagements_summary(
                     "_id": "$_id",
                     "name": "$name",
                     "description": "$description",
+                    "status": "$status",
                     "create_time": "$create_time",
                     "created_by": "$created_by",
                     "updated_by": "$updated_by",
@@ -228,10 +230,10 @@ def get_engagements_summary(
                     },
                 },
                 # push the grouped destinations into an array
-                db_c.DESTINATIONS: {
+                "destinations": {
                     "$push": {
-                        db_c.OBJECT_ID: "$audiences.destinations.id",
-                        db_c.NAME: "$audiences.destinations.name",
+                        "id": "$audiences.destinations.id",
+                        "name": "$audiences.destinations.name",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "latest_delivery": {
@@ -251,6 +253,7 @@ def get_engagements_summary(
                     "_id": "$_id._id",
                     "name": "$_id.name",
                     "description": "$_id.description",
+                    "status": "$_id.status",
                     "create_time": "$_id.create_time",
                     "created_by": "$_id.created_by",
                     "updated_by": "$_id.updated_by",
@@ -275,6 +278,7 @@ def get_engagements_summary(
                 "_id": "$_id._id",
                 "name": "$_id.name",
                 "description": "$_id.description",
+                "status": "$_id.status",
                 "create_time": "$_id.create_time",
                 "created_by": "$_id.created_by",
                 "updated_by": "$_id.updated_by",
@@ -403,6 +407,7 @@ def update_engagement(
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
+    status: str = None,
 ) -> Union[dict, None]:
     """A function to update fields in an engagement
 
@@ -414,6 +419,7 @@ def update_engagement(
         description (str): Descriptions of the engagement.
         audiences (list): list of audiences.
         delivery_schedule (dict): delivery schedule dict.
+        status (str): Engagement status.
 
     Returns:
         Union[dict, None]: dict object of the engagement that has been updated
@@ -433,6 +439,7 @@ def update_engagement(
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.UPDATED_BY: user_name,
+        db_c.STATUS: status,
     }
 
     # remove dict entries that are None
