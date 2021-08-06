@@ -295,6 +295,10 @@ DESTINATION_SECRETS = {
         ],
         AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
     },
+    db_c.DELIVERY_PLATFORM_TWILIO: {
+        MONGO: [],
+        AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
+    },
 }
 
 # user preferences

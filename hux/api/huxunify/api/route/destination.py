@@ -6,7 +6,6 @@ from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
 from huxunifylib.database.notification_management import create_notification
@@ -251,7 +250,6 @@ class DestinationPutView(SwaggerView):
 
     # pylint: disable=unexpected-keyword-arg
     # pylint: disable=too-many-return-statements
-    @marshal_with(DestinationPutSchema)
     @api_error_handler(
         custom_message={
             ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}

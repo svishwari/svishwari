@@ -278,6 +278,18 @@ class SFMCAuthCredsSchema(Schema):
     )
 
 
+class TwilioAuthCredsSchema(Schema):
+    """
+    Twilio Auth Credentials schema class
+    """
+
+    twilio_auth_token = fields.String(
+        required=True,
+        validate=must_not_be_blank,
+        example="wue812x2813eyqshjsdbw",
+    )
+
+
 class TwilioAuthConstants(Schema):
     """
     Twilio Auth constants schema class
@@ -299,17 +311,6 @@ class TwilioAuthConstants(Schema):
             api_c.REQUIRED: True,
             api_c.DESCRIPTION: None,
         },
-    )
-
-
-class TwilioAuthCredsSchema(Schema):
-    """
-    Twilio Auth Credentials schema class
-    """
-
-    auth_token = fields.String(
-        required=True,
-        example="7329755",
     )
 
 
