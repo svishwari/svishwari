@@ -190,25 +190,22 @@ class OrchestrationRouteTest(TestCase):
             engagement_id = set_engagement(self.database, **engagement)
             self.engagement_ids.append(str(engagement_id))
 
-        self.delivery_jobs = []
-        self.delivery_jobs.append(
+        self.delivery_jobs = [
             set_delivery_job(
                 self.database,
                 self.audiences[0][db_c.ID],
                 self.destinations[0][db_c.ID],
                 [],
                 ObjectId(self.engagement_ids[0]),
-            )
-        )
-        self.delivery_jobs.append(
+            ),
             set_delivery_job(
                 self.database,
                 self.audiences[0][db_c.ID],
                 self.destinations[0][db_c.ID],
                 [],
                 ObjectId(self.engagement_ids[1]),
-            )
-        )
+            ),
+        ]
 
         for delivery_job in self.delivery_jobs:
             set_delivery_job_status(
@@ -217,14 +214,12 @@ class OrchestrationRouteTest(TestCase):
                 db_c.AUDIENCE_STATUS_DELIVERING,
             )
 
-        for delivery_job in self.delivery_jobs:
             set_delivery_job_status(
                 self.database,
                 delivery_job[db_c.ID],
                 db_c.AUDIENCE_STATUS_DELIVERED,
             )
 
-        for delivery_job in self.delivery_jobs:
             set_delivery_job_status(
                 self.database, delivery_job[db_c.ID], db_c.STATUS_SUCCEEDED
             )
@@ -738,7 +733,6 @@ class OrchestrationRouteTest(TestCase):
             self.database, ObjectId(self.engagement_ids[0])
         )
 
-        print(response.json)
         self.assertEqual(HTTPStatus.CREATED, response.status_code)
         self.assertEqual(lookalike_audience_name, response.json[api_c.NAME])
 
