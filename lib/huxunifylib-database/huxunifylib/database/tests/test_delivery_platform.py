@@ -634,6 +634,47 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(audience_size, 1000)
 
     @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_all_delivery_jobs_filters(self):
+        """Test test_get_all_delivery_jobs."""
+
+        delivery_jobs = dpm.get_all_delivery_jobs(
+            self.database,
+            {
+                c.AUDIENCE_ID: self.source_audience_doc[c.ID],
+                c.JOB_STATUS: c.STATUS_PENDING,
+            },
+        )
+        delivery_job: dict = delivery_jobs[0] if delivery_jobs else None
+
+        self.assertIsNotNone(delivery_job)
+        self.assertIn(c.AUDIENCE_ID, delivery_job)
+        self.assertIn(c.CREATE_TIME, delivery_job)
+        self.assertIn(c.JOB_STATUS, delivery_job)
+        self.assertIn(c.DELIVERY_PLATFORM_ID, delivery_job)
+        self.assertEqual(
+            delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
+        )
+        self.assertEqual(delivery_job[c.STATUS], c.STATUS_PENDING)
+
+    @mongomock.patch(servers=(("localhost", 27017),))
+    def test_get_all_delivery_jobs_sort(self):
+        """Test test_get_all_delivery_job."""
+
+        delivery_jobs = dpm.get_all_delivery_jobs(
+            self.database, {c.JOB_STATUS: c.STATUS_PENDING}, limit=5
+        )
+
+        # test has data and limit
+        self.assertTrue(delivery_jobs)
+        self.assertLessEqual(len(delivery_jobs), 5)
+
+        # test the sort order is correct. first item should be max value
+        self.assertEqual(
+            delivery_jobs[0][c.CREATE_TIME],
+            max([x[c.CREATE_TIME] for x in delivery_jobs]),
+        )
+
+    @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_lookalike_audiences(self):
         """Test delivery job lookalike audiences functions."""
 

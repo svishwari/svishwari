@@ -1393,6 +1393,71 @@ def get_delivery_jobs(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
+def get_all_delivery_jobs(
+    database: DatabaseClient,
+    filter_dict: dict = None,
+    projection: dict = None,
+    sort_list: list = None,
+    limit: int = 1,
+) -> Union[list, None]:
+    """A function to get all delivery jobs based on the args provided.
+
+    Args:
+        database (DatabaseClient): A database client.
+        filter_dict (dict): filter dictionary for adding custom filters.
+        projection (dict): Dict that specifies which fields to return or not return.
+        sort_list (list): Sort list for mongo.
+        limit (int): the number of documents to return in the query.
+
+    Returns:
+        Union[list, None]: List of n delivery jobs.
+
+    """
+
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.DELIVERY_JOBS_COLLECTION
+    ]
+
+    # if deleted is not included in the filters, add it.
+    if filter_dict:
+        filter_dict[c.DELETED] = False
+    else:
+        filter_dict = {c.DELETED: False}
+
+    # exclude the deleted field from returning
+    if projection:
+        projection[c.DELETED] = 0
+    else:
+        projection = {c.DELETED: 0}
+
+    # if sort list is none, set to default, otherwise set to the passed in list.
+    # note, if an empty list is passed in, not sorting will happen.
+    sort_list = (
+        [(c.CREATE_TIME, pymongo.DESCENDING)]
+        if sort_list is None
+        else sort_list
+    )
+
+    try:
+        cursor = collection.find(filter_dict, projection).sort(
+            [(c.CREATE_TIME, pymongo.DESCENDING)] if sort_list else []
+        )
+
+        if sort_list:
+            cursor = cursor.sort(sort_list)
+
+        # apply limit if set.
+        return list(cursor.limit(limit) if limit > 0 else cursor)
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
 def get_audience_recent_delivery_job(
     database: DatabaseClient,
     audience_id: ObjectId,
