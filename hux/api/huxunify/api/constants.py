@@ -269,7 +269,7 @@ DESTINATION_CONSTANTS = {
     db_c.DELIVERY_PLATFORM_TWILIO: {
         TWILIO_AUTH_TOKEN: {
             NAME: "Auth Token",
-            TYPE: "text",
+            TYPE: "password",
             REQUIRED: True,
             DESCRIPTION: None,
         },
@@ -350,6 +350,7 @@ DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
+INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
@@ -1060,6 +1061,25 @@ RECORDS_SOURCE = "records_source"
 TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
+
+# IDR Matching Trends
+MATCHING_TRENDS = "matching-trends"
+
+KNOWN_IDS = "known_ids"
+UNIQUE_HUX_IDS = "unique_hux_ids"
+ANONYMOUS_IDS = "anonymous_ids"
+
+KNOWN_IDS_MIN_COUNT = 50000
+KNOWN_IDS_MAX_COUNT = 79000
+KNOWN_IDS_LAMBDA = 1.6
+
+UNIQUE_HUX_IDS_MIN_COUNT = 100000
+UNIQUE_HUX_IDS_MAX_COUNT = 156000
+UNIQUE_HUX_IDS_LAMBDA = 1.5
+
+ANONYMOUS_IDS_MIN_COUNT = 79000
+ANONYMOUS_IDS_MAX_COUNT = 120000
+ANONYMOUS_IDS_LAMBDA = 5
 
 # IDR Data feeds
 DATAFEED_ID = "datafeed_id"

@@ -39,6 +39,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
+    EngagementPutSchema,
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
@@ -471,7 +472,7 @@ class UpdateEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        body = EngagementPostSchema().load(request.get_json())
+        body = EngagementPutSchema().load(request.get_json())
 
         database = get_db_client()
 
@@ -479,14 +480,13 @@ class UpdateEngagement(SwaggerView):
             database=database,
             engagement_id=ObjectId(engagement_id),
             user_name=user_name,
-            name=body[db_c.ENGAGEMENT_NAME],
-            description=body[db_c.ENGAGEMENT_DESCRIPTION]
-            if db_c.ENGAGEMENT_DESCRIPTION in body
-            else None,
-            audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
+            name=body.get(db_c.ENGAGEMENT_NAME),
+            description=body.get(db_c.ENGAGEMENT_DESCRIPTION),
+            audiences=body.get(db_c.AUDIENCES),
             delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
             else {},
+            status=body.get(db_c.STATUS),
         )
 
         create_notification(
@@ -495,6 +495,7 @@ class UpdateEngagement(SwaggerView):
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
         )
+
         return (
             EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,

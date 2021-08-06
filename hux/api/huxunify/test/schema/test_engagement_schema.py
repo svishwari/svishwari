@@ -4,9 +4,9 @@ Purpose of this file is to test the engagement schemas
 """
 from unittest import TestCase
 
-from random import uniform
+from datetime import datetime, timedelta
 from bson import ObjectId
-
+from random import uniform
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.engagement import (
     EngagementGetSchema,
@@ -278,7 +278,7 @@ class EngagementSchemaTest(TestCase):
 
         """
         engagement = {
-            api_c.ID: ObjectId(),
+            db_c.ID: ObjectId(),
             api_c.AUDIENCES: [
                 {
                     api_c.DESTINATIONS: [
@@ -287,7 +287,7 @@ class EngagementSchemaTest(TestCase):
                             api_c.NAME: "Facebook",
                             api_c.LATEST_DELIVERY: {
                                 db_c.ID: ObjectId(),
-                                api_c.STATUS: api_c.STATUS_ERROR,
+                                api_c.STATUS: api_c.STATUS_DELIVERING,
                             },
                         },
                         {
@@ -308,12 +308,56 @@ class EngagementSchemaTest(TestCase):
         # test the weights
         weighted = weighted_engagement_status([engagement])[0]
 
-        # check engagement status per weighting
-        self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_ERROR)
-
         # check audience status per weighting
         for audience in weighted[api_c.AUDIENCES]:
-            self.assertEqual(audience[api_c.STATUS], api_c.STATUS_ERROR)
+            self.assertEqual(audience[api_c.STATUS], api_c.STATUS_DELIVERING)
+
+        # check engagement status per weighting
+        self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_DELIVERING)
+
+        # Test "Active" status for engagement
+        engagement = {
+            db_c.ID: ObjectId(),
+            api_c.AUDIENCES: [
+                {
+                    api_c.DESTINATIONS: [
+                        {
+                            api_c.ID: ObjectId(),
+                            api_c.NAME: "Facebook",
+                            api_c.LATEST_DELIVERY: {
+                                db_c.ID: ObjectId(),
+                                api_c.STATUS: api_c.STATUS_DELIVERED,
+                            },
+                        },
+                    ],
+                    api_c.NAME: "SFMC Demo",
+                    api_c.ID: ObjectId(),
+                }
+            ],
+            api_c.DELIVERY_SCHEDULE: {
+                db_c.JOB_START_TIME: datetime.today() - timedelta(days=10),
+                db_c.JOB_END_TIME: datetime.today() + timedelta(days=5),
+            },
+        }
+
+        weighted = weighted_engagement_status([engagement])[0]
+        self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_ACTIVE)
+
+        # Test "Inactive" status for engagement
+        engagement[api_c.DELIVERY_SCHEDULE] = {
+            db_c.JOB_START_TIME: datetime.today() - timedelta(days=10),
+            db_c.JOB_END_TIME: datetime.today() - timedelta(days=5),
+        }
+        weighted = weighted_engagement_status([engagement])[0]
+        self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)
+
+        engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
+        engagement[api_c.DELIVERY_SCHEDULE] = {
+            db_c.JOB_START_TIME: datetime.today() - timedelta(days=10),
+            db_c.JOB_END_TIME: datetime.today() + timedelta(days=5),
+        }
+        weighted = weighted_engagement_status([engagement])[0]
+        self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_INACTIVE)
 
     def test_weighted_ranking_bad_status(self) -> None:
         """Test weighted ranking logic.
@@ -324,7 +368,7 @@ class EngagementSchemaTest(TestCase):
         """
         bad_status_value = "bad_status_value"
         engagement = {
-            api_c.ID: ObjectId(),
+            db_c.ID: ObjectId(),
             api_c.AUDIENCES: [
                 {
                     api_c.DESTINATIONS: [
@@ -347,11 +391,11 @@ class EngagementSchemaTest(TestCase):
         weighted = weighted_engagement_status([engagement])[0]
 
         # check engagement status per weighting
-        self.assertEqual(weighted[api_c.STATUS], bad_status_value)
+        self.assertEqual(weighted[api_c.STATUS], api_c.STATUS_ERROR)
 
         # check audience status per weighting
         for audience in weighted[api_c.AUDIENCES]:
-            self.assertEqual(audience[api_c.STATUS], bad_status_value)
+            self.assertEqual(audience[api_c.STATUS], api_c.STATUS_ERROR)
 
     def test_weight_delivery_status(self) -> None:
         """Test weight_delivery_status.

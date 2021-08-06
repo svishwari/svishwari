@@ -189,7 +189,9 @@
                             : '$radioOff'
                         "
                       />
-                      <v-icon class="ico"> mdi-clock-check-outline </v-icon>
+                      <v-icon class="ico" size="16">
+                        mdi-clock-check-outline
+                      </v-icon>
                       Recurring
                     </v-btn>
                   </v-btn-toggle>
@@ -512,6 +514,9 @@ export default {
     }
     .disabled-white-background {
       background: white !important;
+      &.v-btn.v-item--active {
+        border-color: var(--v-primary-base) !important;
+      }
     }
   }
   .delivery-schedule {
