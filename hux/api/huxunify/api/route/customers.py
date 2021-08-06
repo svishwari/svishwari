@@ -264,7 +264,9 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
+    )
     def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
@@ -278,13 +280,13 @@ class Customersview(SwaggerView):
 
         # get token
         token_response = get_token_from_request(request)
-        batch_size = (
-            request.args.get(api_c.QUERY_PARAMETER_BATCH_SIZE)
-            or api_c.CUSTOMERS_DEFAULT_BATCH_SIZE
+        batch_size = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_SIZE,
+            default=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
         )
-        batch_number = (
-            request.args.get(api_c.QUERY_PARAMETER_BATCH_NUMBER)
-            or api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER
+        batch_number = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            default=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
         )
         offset = (int(batch_number) - 1) * int(batch_size)
         return (
