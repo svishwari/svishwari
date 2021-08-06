@@ -278,8 +278,7 @@ export default {
       columnDefs: [
         { text: "Engagement name", value: "name", width: "300px" },
         { text: "Audiences", value: "audiences", width: "200px" },
-        { text: "Status", value: "status", width: "160px" },
-        { text: "Size", value: "size", width: "200px" },
+        { text: "Status", value: "status", width: "200px" },
         {
           text: "Delivery schedule",
           value: "delivery_schedule",
