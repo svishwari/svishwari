@@ -101,7 +101,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     ):
         env_dict = {}
         secret_dict = {
-            TwilioCredentials.TWILIO_AUTH_TOKEN: auth[
+            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
                 api_const.TWILIO_AUTH_TOKEN
             ]
         }
