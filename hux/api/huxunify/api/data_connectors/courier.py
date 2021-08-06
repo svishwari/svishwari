@@ -11,22 +11,18 @@ from huxunifylib.database.delivery_platform_management import (
     set_delivery_job,
     get_delivery_platform,
     set_delivery_job_status,
-    set_delivery_job_audience_size,
 )
 from huxunifylib.database.engagement_management import add_delivery_job
-from huxunifylib.database.orchestration_management import get_audience
 from huxunifylib.connectors import AWSBatchConnector
 from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
     SFMCCredentials,
+    TwilioCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
-from huxunify.api.data_connectors.cdp import (
-    get_customers_overview,
-)
 from huxunify.api.data_connectors.aws import (
     set_cloud_watch_rule,
     put_rule_targets_aws_batch,
@@ -64,8 +60,6 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             FacebookCredentials.FACEBOOK_APP_ID.name: auth[
                 api_const.FACEBOOK_APP_ID
             ],
-            # use stub for facebook
-            api_const.AUDIENCE_ROUTER_STUB_TEST: api_const.AUDIENCE_ROUTER_STUB_VALUE,
         }
         secret_dict = {
             FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
@@ -99,6 +93,16 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         secret_dict = {
             SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
                 api_const.SFMC_CLIENT_SECRET
+            ]
+        }
+    elif (
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_TWILIO
+    ):
+        env_dict = {}
+        secret_dict = {
+            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
+                api_const.TWILIO_AUTH_TOKEN
             ]
         }
     else:
@@ -261,7 +265,7 @@ class DestinationBatchJob:
         # Submit the AWS batch job
         response_batch_submit = self.aws_batch_connector.submit_job()
 
-        status = db_const.STATUS_IN_PROGRESS
+        status = api_const.STATUS_DELIVERING
         if (
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
@@ -310,24 +314,6 @@ def get_destination_config(
         destination[db_const.OBJECT_ID],
     )
 
-    # get audience size and update the delivery job
-    audience = get_audience(database, audience_id)
-    try:
-        audience_insights = get_customers_overview(
-            audience[db_const.AUDIENCE_FILTERS]
-        )
-        set_delivery_job_audience_size(
-            database,
-            audience_delivery_job[db_const.ID],
-            audience_insights.get(api_const.TOTAL_RECORDS, 0),
-        )
-    except Exception as exc:  # pylint: disable=broad-except
-        logging.warning(
-            "Failed to set audience size %s: %s.",
-            exc.__class__,
-            exc,
-        )
-
     # get the configuration values
     config = get_config()
 
@@ -361,6 +347,7 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
+        api_const.CDP_SERVICE_URL: config.CDP_SERVICE,
         **ds_env_dict,
     }
 
@@ -401,6 +388,7 @@ def get_audience_destination_pairs(audiences: list) -> list:
         [aud[db_const.OBJECT_ID], dest]
         for aud in audiences
         for dest in aud[db_const.DESTINATIONS]
+        if isinstance(dest, dict)
     ]
 
 

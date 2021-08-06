@@ -267,6 +267,13 @@ class OrchestrationRouteTest(TestCase):
 
         """
 
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
             api_c.AUDIENCE_FILTERS: [
@@ -403,6 +410,13 @@ class OrchestrationRouteTest(TestCase):
 
         """
 
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
             api_c.AUDIENCE_FILTERS: [
@@ -451,6 +465,13 @@ class OrchestrationRouteTest(TestCase):
         Returns:
 
         """
+
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
 
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Engagements",
@@ -524,6 +545,13 @@ class OrchestrationRouteTest(TestCase):
 
         """
 
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
         audience_post = {
             db_c.AUDIENCE_NAME: "Test Audience Create",
             api_c.AUDIENCE_FILTERS: [
@@ -574,8 +602,17 @@ class OrchestrationRouteTest(TestCase):
             ObjectId(audience[db_c.OBJECT_ID]), self.audiences[0][db_c.ID]
         )
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
-        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_DISABLED)
+        self.assertEqual(audience[api_c.LOOKALIKEABLE], api_c.STATUS_INACTIVE)
         self.assertFalse(audience[api_c.IS_LOOKALIKE])
+
+        # validate the facebook destination in the audience is set to "Not delivered"
+        for audience in audience[api_c.AUDIENCE_ENGAGEMENTS]:
+            self.assertTrue(
+                all(
+                    x[api_c.STATUS] == db_c.AUDIENCE_STATUS_NOT_DELIVERED
+                    for x in audience[api_c.DELIVERIES]
+                )
+            )
 
     def test_get_audience_does_not_exist(self):
         """Test get audience that does not exist

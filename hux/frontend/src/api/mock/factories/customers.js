@@ -136,7 +136,7 @@ export const customerProfile = {
  */
 export const customersOverview = {
   gender_men: 0.67621,
-  gender_other: 0.8935,
+  gender_other: 0,
   gender_women: 0.30828,
   match_rate: 0.5972,
   max_age: 35,
@@ -145,7 +145,7 @@ export const customersOverview = {
   min_age: 7,
   min_ltv_actual: 77.9244,
   min_ltv_predicted: 52.0197,
-  total_cities: 48,
+  total_cities: 14354,
   total_countries: 3,
   total_customers: 23905153,
   total_household_ids: 33311636,

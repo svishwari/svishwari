@@ -238,3 +238,40 @@ class CustomerDemographicInsightsSchema(Schema):
     gender = Nested(CustomerGenderInsightsSchema)
     income = List(Nested(CustomerIncomeInsightsSchema))
     spend = Nested(CustomerSpendingInsightsSchema)
+
+
+class MatchingTrendsSchema(Schema):
+    """IDR Matching Trends Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    date = DateTimeWithZ(required=True)
+    known_ids = Integer(required=True, example=100000)
+    unique_hux_ids = Integer(required=True, example=100000)
+    anonymous_ids = Integer(required=True, example=100000)
+
+
+class CustomerEventCountSchema(Schema):
+    """Customer Event with Count Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    abandoned_cart = Integer(required=True, example=1)
+    viewed_cart = Integer(required=True, example=1)
+    customer_login = Integer(required=True, example=1)
+    viewed_checkout = Integer(required=True, example=1)
+    viewed_sale_item = Integer(required=True, example=1)
+
+
+class CustomerEventsSchema(Schema):
+    """Customer Events Schema"""
+
+    date = DateTimeWithZ(required=True)
+    total_event_count = Integer(required=True, example=5)
+    event_type_counts = Nested(CustomerEventCountSchema)

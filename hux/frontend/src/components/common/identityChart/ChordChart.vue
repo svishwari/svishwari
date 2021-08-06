@@ -215,7 +215,7 @@ export default {
 
 <style lang="scss" scoped>
 .chart-container {
-  max-width: 424px;
+  max-width: none;
   height: 252px;
 
   .legend-section {

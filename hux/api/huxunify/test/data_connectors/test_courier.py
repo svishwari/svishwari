@@ -193,7 +193,6 @@ class CourierTest(TestCase):
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
-                api_c.AUDIENCE_ROUTER_STUB_TEST: "1",
             },
         )
         self.assertEqual(
@@ -286,6 +285,27 @@ class CourierTest(TestCase):
 
         self.assertTrue(delivery_route)
         self.assertEqual(len(delivery_route), 2)
+
+    def test_get_pairs_invalid_dest(self):
+        """Test get audience/destination pairs
+
+        Args:
+
+        Returns:
+
+        """
+
+        # take the first engagement audience and set an invalid audience destination
+        invalid_engagement = self.engagement[c.AUDIENCES]
+        invalid_engagement[0][api_c.DESTINATIONS] = "invalid_data"
+
+        # now test getting the delivery route, which should yield one destination pair.
+        delivery_route = get_audience_destination_pairs(invalid_engagement)
+
+        self.assertTrue(delivery_route)
+
+        # test for a list length of one. the invalid data is removed from the return.
+        self.assertEqual(len(delivery_route), 1)
 
     def test_get_delivery_route_audience(self):
         """Test get delivery route with specific audience
@@ -437,7 +457,7 @@ class CourierTest(TestCase):
             ):
                 batch_destination.submit()
 
-            self.assertEqual(batch_destination.result, c.STATUS_IN_PROGRESS)
+            self.assertEqual(batch_destination.result, api_c.STATUS_DELIVERING)
 
     @given(
         st.dictionaries(

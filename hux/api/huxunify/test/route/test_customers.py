@@ -26,6 +26,8 @@ from huxunify.api.schema.customers import (
     CustomerSpendingInsightsSchema,
     CustomerGenderInsightsSchema,
     CustomerIncomeInsightsSchema,
+    MatchingTrendsSchema,
+    CustomerEventsSchema,
 )
 from huxunify.app import create_app
 
@@ -361,4 +363,52 @@ class TestCustomersOverview(TestCase):
             t_c.validate_schema(
                 CustomerIncomeInsightsSchema(), response.json["income"], True
             )
+        )
+
+    def test_get_idr_trends_ytd(self):
+        """
+        Test get matching trends YTD
+
+        Args:
+
+        Returns:
+
+        """
+        self.request_mocker.stop()
+        self.request_mocker.post(
+            f"{t_c.TEST_CONFIG.CDP_SERVICE}/customer-profiles/insights",
+            json=t_c.CUSTOMER_INSIGHT_RESPONSE,
+        )
+        self.request_mocker.start()
+
+        response = self.test_client.get(
+            f"{t_c.BASE_ENDPOINT}{api_c.IDR_ENDPOINT}/{api_c.MATCHING_TRENDS}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(MatchingTrendsSchema(), response.json, True)
+        )
+
+    @given(customer_id=st.text(alphabet=string.ascii_letters))
+    def test_customer_events(self, customer_id: str):
+        """
+        Test customer events for a hux-id
+
+        Args:
+            customer_id (str): HUX ID of a customer.
+        Returns:
+
+        """
+        if not customer_id:
+            return
+        response = self.test_client.post(
+            f"{t_c.BASE_ENDPOINT}{api_c.CUSTOMERS_ENDPOINT}/{customer_id}/events",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+
+        self.assertTrue(
+            t_c.validate_schema(CustomerEventsSchema(), response.json, True)
         )

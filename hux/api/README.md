@@ -22,6 +22,7 @@ The API is UI-driven.
          * [flask-marshmallow](#flask-marshmallow)
          * [apispec](#apispec)
       * [Docker](#docker)
+   * [Deployment](#deployment)
    * [Usage](#usage)
    * [Style Guide](#style-guide)
       * [pylint](#pylint)
@@ -58,7 +59,7 @@ pip install pipenv
 ### Load custom artifacts
 Follow the below steps to get the custom artifactory set to session path
 1. Access JFrog via Okta Dashboard
-2. On JFrog page - click on "Edit Profile" by selecting account name on top right 
+2. On JFrog page - click on "Edit Profile" by selecting account name on top right
 3. Generate a new API Key under "Authentication Settings" and copy it
 4. Proceed with the following commands
 
@@ -148,11 +149,11 @@ subdomain               =
 role_arn                =
 region                  =
 http_attempts_count     =
-http_retry_delay        = 
-credentials_file        = 
+http_retry_delay        =
+credentials_file        =
 saml_cache              = false
-saml_cache_file         = 
-target_url              = 
+saml_cache_file         =
+target_url              =
 disable_remember_device = false
 disable_sessions        = false
 ```
@@ -198,6 +199,39 @@ sudo docker build . -f ./hux/api/Dockerfile --build-arg ARTIFACTORY_PYTHON_READ=
 # after it is built, run it to test
 sudo docker run -p 5000 hux-unifed-test
 ```
+
+## Deployment
+The API deployment is currently managed by the TechOps team.
+The steps to deploying to each environment are as follows
+
+### CD/Codefresh Configuration
+The CI/CD process for the API is located [here](https://g.codefresh.io/pipelines/edit/workflow?id=605a45789f86ae45939bfec3&pipeline=unified_solution_api_ci&projects=Hux_Unified_Solution&projectId=605a4546bfffd0aea1e243a0&rightbar=steps&context=DeloitteHux_github) in Codefresh.
+
+The process is driven by the YAML file [hux/api/ci/codefresh-api.yml](https://github.com/DeloitteHux/hux-unified/blob/main/hux/api/ci/codefresh-api.yml#L151).
+
+### Deployment Environment Variables
+Each environment will have different environment variables configured.
+The environment variables are stored and managed in the TechOps repository located [here](https://github.com/DeloitteHux/hux-unified-deploy/blob/main)
+
+**Environment**|**Instructions**|**Values File**
+:-----:|:-----:|:-----:
+DEV1| Automatically on Merge to Main|[values-huxui-main-use1-unified-dev1.yaml](https://github.com/DeloitteHux/hux-unified-deploy/blob/main/unified-api/k8s/charts/values-huxui-main-use1-unified-dev1.yaml)
+STG1| Automatically on Merge to Main|[values-huxui-main-use1-unified-stg1.yaml](https://github.com/DeloitteHux/hux-unified-deploy/blob/main/unified-api/k8s/charts/values-huxui-main-use1-unified-stg1.yaml)
+RC1| Creating a git release [HERE](https://github.com/DeloitteHux/hux-unified/releases/new) with the tag pattern of `app-v#.#.#`|[values-huxui-main-use1-unified-rc1.yaml](https://github.com/DeloitteHux/hux-unified-deploy/blob/main/unified-api/k8s/charts/values-huxui-main-use1-unified-rc1.yaml)
+
+PRD| |Coming Soon
+
+#### Example
+```
+OKTA_CLIENT_ID: 0oab1i3ldgYyRvk5r2p7
+OKTA_ISSUER: https://deloittedigital-ms.okta.com
+CDP_SERVICE: https://customer-profile-api.main.use1.hux-unified-dev1.in
+```
+
+### RC1 Deployment
+
+
+
 
 ## Usage
 

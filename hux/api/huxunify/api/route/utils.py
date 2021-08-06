@@ -384,6 +384,8 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
+                if custom_message:
+                    return custom_message, HTTPStatus.BAD_REQUEST
                 logging.error(
                     "%s: %s.",
                     exc.__class__,

@@ -6,7 +6,6 @@ import huxunifylib.database.data_management as dm
 import huxunifylib.database.constants as c
 from database.share import get_mongo_client
 
-
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
@@ -415,13 +414,11 @@ CONSTANTS_LIST = [
     (
         c.AUDIENCE_FILTER_CONSTANTS,
         {
-            "operators": {
-                "text_operators": {
-                    "contains": "Contains",
-                    "does_not_contain": "Does not contain",
-                    "equals": "Equals",
-                    "does_not_equal": "Does not equal",
-                }
+            "text_operators": {
+                "contains": "Contains",
+                "does_not_contain": "Does not contain",
+                "equals": "Equals",
+                "does_not_equal": "Does not equal",
             }
         },
     ),
@@ -429,7 +426,6 @@ CONSTANTS_LIST = [
 
 # Loop through the list and set constants
 for item in CONSTANTS_LIST:
-
     CONSTANT_NAME = item[0]
     CONSTANT_VALUE = item[1]
 
@@ -447,6 +443,5 @@ for item in CONSTANTS_LIST:
 
     assert doc[c.CONSTANT_NAME] == CONSTANT_NAME
     assert doc[c.CONSTANT_VALUE] == CONSTANT_VALUE
-
 
 logging.info("Done with setting the constants!")

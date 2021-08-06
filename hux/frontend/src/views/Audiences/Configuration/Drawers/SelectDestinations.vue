@@ -117,7 +117,9 @@ export default {
         } else {
           this.value.push(destination)
           if (this.closeOnAction) {
-            this.$emit("onAddDestination")
+            this.$emit("onAddDestination", {
+              destination: { id: destination.id },
+            })
             this.localToggle = false
           }
         }
