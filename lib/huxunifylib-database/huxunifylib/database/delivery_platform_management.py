@@ -1432,7 +1432,7 @@ def get_all_delivery_jobs(
         projection = {c.DELETED: 0}
 
     # if sort list is none, set to default, otherwise set to the passed in list.
-    # note, if an empty list is passed in, not sorting will happen.
+    # note, if an empty list is passed in, no sorting will happen.
     sort_list = (
         [(c.CREATE_TIME, pymongo.DESCENDING)]
         if sort_list is None
@@ -1440,10 +1440,7 @@ def get_all_delivery_jobs(
     )
 
     try:
-        cursor = collection.find(filter_dict, projection).sort(
-            [(c.CREATE_TIME, pymongo.DESCENDING)] if sort_list else []
-        )
-
+        cursor = collection.find(filter_dict, projection)
         if sort_list:
             cursor = cursor.sort(sort_list)
 
