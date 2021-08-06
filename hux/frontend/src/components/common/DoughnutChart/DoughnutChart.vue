@@ -35,6 +35,9 @@ export default {
   data() {
     return {}
   },
+  mounted() {
+    this.initiateChart()
+  },
   methods: {
     async initiateChart() {
       let data = await this.data // TODO: Get this from API
@@ -160,9 +163,6 @@ export default {
         .attr("class", "neroBlack--text")
         .text(this.label)
     },
-  },
-  mounted() {
-    this.initiateChart()
   },
 }
 </script>
