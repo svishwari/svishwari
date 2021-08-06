@@ -66,28 +66,46 @@ class TestAudienceManagement(unittest.TestCase):
 
         audience_doc = am.create_audience(
             self.database,
-            "My Audience",
+            "Audience1",
             self.audience_filters,
             user_name=self.user_name,
             size=1450,
         )
-        return audience_doc
+
+        am.create_audience(
+            self.database,
+            "Audience2",
+            self.audience_filters,
+            user_name=self.user_name,
+            size=1450
+        )
+
+        return am.get_all_audiences(self.database)
 
     def test_set_audience(self):
         """Audience is set."""
 
-        audience_doc = self._setup_audience()
+        audiences = self._setup_audience()
+        audience_doc = am.get_audience(self.database, audiences[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertIn(c.ID, audience_doc)
         self.assertIn(c.SIZE, audience_doc)
         self.assertEqual(audience_doc[c.SIZE], 1450)
 
+    def test_get_audience_filter_variant(self):
+        """Test get audiences. The filter variant of the function"""
+
+        audiences = self._setup_audience()
+
+        print(audiences)
+        print(len(audiences))
+
     def test_get_audience(self):
         """Test get audience."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertTrue(c.ID in audience_doc)
@@ -110,7 +128,7 @@ class TestAudienceManagement(unittest.TestCase):
         """Test get audience with user."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertIn(c.ID, audience_doc)
@@ -121,7 +139,7 @@ class TestAudienceManagement(unittest.TestCase):
         """Test update audience name."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
 
@@ -129,7 +147,7 @@ class TestAudienceManagement(unittest.TestCase):
         new_name = "New name"
         doc = am.update_audience(
             self.database,
-            set_audience[c.ID],
+            audience_doc[c.ID],
             new_name,
         )
 
@@ -141,32 +159,32 @@ class TestAudienceManagement(unittest.TestCase):
         """Test update audience and check name remains unchanged"""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
 
         doc = am.update_audience(
             self.database,
-            set_audience[c.ID],
+            audience_doc[c.ID],
             destination_ids=self.destination_ids,
             user_name=self.user_name,
         )
         self.assertTrue(doc is not None)
         self.assertTrue(c.AUDIENCE_NAME in doc)
-        self.assertEqual(doc[c.AUDIENCE_NAME], set_audience[c.AUDIENCE_NAME])
+        self.assertEqual(doc[c.AUDIENCE_NAME], audience_doc[c.AUDIENCE_NAME])
 
     def test_duplicate_audience_name(self):
         """Test duplicate audience name."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
 
         with self.assertRaises(de.DuplicateName):
             am.create_audience(
                 self.database,
-                "My Audience",
+                "Audience1",
                 self.audience_filters,
             )
 
@@ -174,7 +192,7 @@ class TestAudienceManagement(unittest.TestCase):
         """Test update audience filters."""
 
         set_audience = self._setup_audience()
-        audience_doc = am.get_audience(self.database, set_audience[c.ID])
+        audience_doc = am.get_audience(self.database, set_audience[0][c.ID])
 
         self.assertIsNotNone(audience_doc)
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
@@ -202,8 +220,8 @@ class TestAudienceManagement(unittest.TestCase):
         ]
         doc = am.update_audience(
             self.database,
-            set_audience[c.ID],
-            set_audience[c.AUDIENCE_NAME],
+            audience_doc[c.ID],
+            audience_doc[c.AUDIENCE_NAME],
             new_filters,
             user_name=self.user_name,
         )
@@ -275,7 +293,7 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = am.get_all_audiences(self.database)
 
         self.assertIsNotNone(audiences)
-        self.assertEqual(len(audiences), 1)
+        self.assertEqual(len(audiences), 2)
 
         am.create_audience(
             self.database,
@@ -294,9 +312,9 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = am.get_all_audiences(self.database)
 
         self.assertIsNotNone(audiences)
-        self.assertEqual(len(audiences), 3)
-        self.assertEqual(audiences[0][c.AUDIENCE_NAME], "My Audience")
-        self.assertEqual(audiences[1][c.AUDIENCE_NAME], "New Audience 1")
+        self.assertEqual(len(audiences), 4)
+        self.assertEqual(audiences[0][c.AUDIENCE_NAME], "Audience1")
+        self.assertEqual(audiences[1][c.AUDIENCE_NAME], "Audience2")
 
     def test_get_all_audiences_with_users(self):
         """Test get_all_audiences with users."""
@@ -305,7 +323,7 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = am.get_all_audiences(self.database)
 
         self.assertIsNotNone(audiences)
-        self.assertEqual(len(audiences), 1)
+        self.assertEqual(len(audiences), 2)
 
         am.create_audience(
             self.database,
