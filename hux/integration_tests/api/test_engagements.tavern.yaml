@@ -191,7 +191,7 @@ stages:
 
 
 
-#TO DO: Testing other end-points like retreiving all engagements, adding destiations to engagement, etc.
+# TODO  Testing other endpoints like retrieving all engagements, adding destinations to engagement
 #Below code needs some work to be done upon
 
 # ---
