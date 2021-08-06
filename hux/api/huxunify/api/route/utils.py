@@ -377,10 +377,9 @@ def api_error_handler(custom_message: dict = None) -> object:
                     "message": constants.DUPLICATE_NAME
                 }, HTTPStatus.BAD_REQUEST.value
 
-            except CustomAudienceDeliveryStatusError:
+            except CustomAudienceDeliveryStatusError as exc:
                 return {
-                    "message": "Unable to create a lookalike due to custom audience "
-                    "delivery status error"
+                    "message": "Delivered custom audience is inactive or unusable."
                 }, HTTPStatus.NOT_FOUND
 
             except Exception as exc:  # pylint: disable=broad-except
