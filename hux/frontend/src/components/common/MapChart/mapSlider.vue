@@ -30,12 +30,8 @@ export default {
   },
   data() {
     return {
-      minValue: this.min
-        ? this.$options.filters.percentageConvert(this.min, true, true)
-        : "-%",
-      maxValue: this.max
-        ? this.$options.filters.percentageConvert(this.max, true, true)
-        : "-%",
+      minValue: this.min ? this.$options.filters.Percentage(this.min) : "-%",
+      maxValue: this.max ? this.$options.filters.Percentage(this.max) : "-%",
     }
   },
 }

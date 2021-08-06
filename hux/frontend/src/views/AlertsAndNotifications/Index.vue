@@ -30,8 +30,9 @@
     <v-row v-if="!loading" class="pb-7 pl-3 white">
       <hux-data-table
         :columns="columnDefs"
-        :data-items="getNotificationData"
-        :disable-sort="true"
+        :data-items="notifications"
+        :sort-column="sortColumn"
+        :sort-desc="sortDesc"
       >
         <template #row-item="{ item }">
           <td
@@ -128,26 +129,26 @@ export default {
           width: "auto",
         },
       ],
+      sortColumn: "created",
+      sortDesc: true,
       loading: false,
     }
   },
   computed: {
     ...mapGetters({
-      notification: "notifications/list",
+      notifications: "notifications/list",
     }),
-    getNotificationData() {
-      return this.notification
-    },
   },
 
   async mounted() {
     this.loading = true
-    await this.getNotification(25)
+    const batchSize = this.$route.query.batch_size
+    await this.getAllNotifications(batchSize)
     this.loading = false
   },
   methods: {
     ...mapActions({
-      getNotification: "notifications/getAll",
+      getAllNotifications: "notifications/getAll",
     }),
     goBack() {
       this.$router.go(-1)

@@ -318,6 +318,12 @@ class AudienceGetView(SwaggerView):
             engagement[api_c.DELIVERIES] = [
                 x for x in engagement[api_c.DELIVERIES] if x
             ]
+            if {api_c.STATUS: api_c.STATUS_NOT_DELIVERED} in engagement[
+                api_c.DELIVERIES
+            ]:
+                engagement[api_c.DELIVERIES].remove(
+                    {api_c.STATUS: api_c.STATUS_NOT_DELIVERED}
+                )
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)

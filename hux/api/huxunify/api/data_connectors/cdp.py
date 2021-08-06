@@ -307,6 +307,57 @@ def get_idr_data_feeds() -> list:
     return response
 
 
+def get_customer_events_data(hux_id: str) -> list:
+    """Get events for a customer grouped by date.
+
+    Args:
+        hux_id (str): hux id for a customer.
+    Returns:
+        list: customer events with respective counts
+    """
+
+    # pylint: disable=unused-argument
+    # TODO: Remove pylint unused-argument and update after CDM API for customer events is available
+    response = [
+        {
+            api_c.DATE: datetime.datetime.utcnow()
+            - datetime.timedelta(days=x),
+            api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                api_c.CUSTOMER_TOTAL_DAILY_EVENT_COUNT
+            ][
+                x
+            ],
+            api_c.CUSTOMER_DAILY_EVENT_WISE_COUNT: {
+                api_c.ABANDONED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.ABANDONED_CART_EVENT
+                ][
+                    x
+                ],
+                api_c.CUSTOMER_LOGIN_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.CUSTOMER_LOGIN_EVENT
+                ][
+                    x
+                ],
+                api_c.VIEWED_CART_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_CART_EVENT
+                ][x],
+                api_c.VIEWED_CHECKOUT_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_CHECKOUT_EVENT
+                ][
+                    x
+                ],
+                api_c.VIEWED_SALE_ITEM_EVENT: api_c.CUSTOMER_EVENTS_SAMPLE_COUNTS[
+                    api_c.VIEWED_SALE_ITEM_EVENT
+                ][
+                    x
+                ],
+            },
+        }
+        for x in reversed(range(8))
+    ]
+    return response
+
+
 def clean_cdm_fields(body: dict) -> dict:
     """Clean and map any CDM fields date types.
 

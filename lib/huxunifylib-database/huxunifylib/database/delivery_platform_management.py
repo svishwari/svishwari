@@ -612,6 +612,7 @@ def update_delivery_platform(
 
     if added is not None:
         update_doc[c.ADDED] = added
+        update_doc[c.DELIVERY_PLATFORM_STATUS] = c.STATUS_SUCCEEDED
 
     if enabled is not None:
         update_doc[c.ENABLED] = enabled
@@ -2406,6 +2407,50 @@ def get_most_recent_performance_metric_by_delivery_job(
         cursor = (
             collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
             .sort([(c.JOB_END_TIME, -1)])
+            .limit(1)
+        )
+        return cursor[0]
+
+    except pymongo.errors.OperationFailure as exc:
+        logging.error(exc)
+
+    return None
+
+
+@retry(
+    wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
+    retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
+)
+def get_most_recent_campaign_activity_by_delivery_job(
+    database: DatabaseClient,
+    delivery_job_id: ObjectId,
+) -> Union[dict, None]:
+    """Retrieve the most recent campaign activity
+    event associated with a given delivery job ID.
+
+    Args:
+        database (DatabaseClient): database client.
+        delivery_job_id (ObjectId): delivery job ID.
+
+    Raises:
+        de.InvalidID: Invalid ID for delivery job.
+
+    Returns:
+        Union[dict, None]: most recent performance metric.
+    """
+
+    platform_db = database[c.DATA_MANAGEMENT_DATABASE]
+    collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
+
+    # Check validity of delivery job ID
+    doc = get_delivery_job(database, delivery_job_id)
+    if not doc:
+        return None
+
+    try:
+        cursor = (
+            collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
+            .sort([(f"{c.EVENT_DETAILS}.{c.EVENT_DATE}", -1)])
             .limit(1)
         )
         return cursor[0]

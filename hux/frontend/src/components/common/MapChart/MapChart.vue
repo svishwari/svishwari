@@ -23,7 +23,7 @@
           >
             <span class="subprop-name">{{ item.name }}</span>
             <span class="value ml-2 font-weight-semi-bold">
-              {{ item.population_percentage | percentageConvert(true, true) }}
+              {{ item.population_percentage | Percentage }}
             </span>
           </div>
         </v-card-text>

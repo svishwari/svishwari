@@ -68,8 +68,8 @@ export default {
         sourceName: null,
         targetIcon: null,
         targetName: null,
-        currentOccurance: 0,
-        totalOccurance: 0,
+        currentOccurence: 0,
+        totalOccurence: 0,
       },
       chartMatrix: [],
       groupNames: [],
@@ -112,7 +112,7 @@ export default {
           this.ribbonData.sourceIcon = group1
           this.ribbonData.targetName = this.$options.filters.TitleCase(group2)
           this.ribbonData.targetIcon = group2
-          this.mapCoOccurances(sourceData[group1].cooccurrences, group2)
+          this.mapCoOccurences(sourceData[group1].cooccurrences, group2)
         }
       }
     },
@@ -122,20 +122,18 @@ export default {
         let tempSourceData = {}
         ;(tempSourceData.icon = item.name.toLowerCase()),
           (tempSourceData.description = item.name),
-          (tempSourceData.value = this.$options.filters.percentageConvert(
-            item.percentage,
-            true,
-            true
+          (tempSourceData.value = this.$options.filters.Percentage(
+            item.percentage
           ))
         assetsData.push(tempSourceData)
       }
       return assetsData
     },
-    mapCoOccurances(cooccurances, identifier) {
-      this.ribbonData.totalOccurance = cooccurances.reduce((a, b) => ({
+    mapCoOccurences(cooccurences, identifier) {
+      this.ribbonData.totalOccurence = cooccurences.reduce((a, b) => ({
         count: a.count + b.count,
       })).count
-      this.ribbonData.currentOccurance = cooccurances.find(
+      this.ribbonData.currentOccurence = cooccurences.find(
         (data) => data.identifier === identifier
       ).count
     },
@@ -150,13 +148,13 @@ export default {
     createGroupRelationMatrix(element) {
       let groupRelation = new Array(5).fill(0)
       element.forEach((el) => {
-        let extractedValues = this.extractCoOccurancesCount(el)
+        let extractedValues = this.extractCoOccurencesCount(el)
         groupRelation[extractedValues.index] = extractedValues.countValue
       })
       this.chartMatrix.push(groupRelation)
     },
 
-    extractCoOccurancesCount(value) {
+    extractCoOccurencesCount(value) {
       let extractedValues = {
         index: 0,
         countValue: 0,
