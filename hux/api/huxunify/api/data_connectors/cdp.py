@@ -333,12 +333,11 @@ def generate_idr_matching_trends_distribution(
         multiplier * math.e ** (x * lambda_ / number_of_points)
         for x in range(0, number_of_points)
     ]
-    data = add_randomness(
+    return add_randomness(
         normalize_values(
             data, max_range_val=max_point, min_range_val=min_point
         )
     )
-    return data
 
 
 def normalize_values(
@@ -438,7 +437,7 @@ def get_idr_matching_trends(token: str) -> list:
         multiplier=-1,
     )
 
-    response = [
+    return [
         {
             api_c.DATE: day,
             api_c.KNOWN_IDS: known_ids_count,
@@ -449,7 +448,6 @@ def get_idr_matching_trends(token: str) -> list:
             days, known_ids, unique_hux_ids, anonymous_ids
         )
     ]
-    return response
 
 
 def get_customer_events_data(hux_id: str) -> list:
