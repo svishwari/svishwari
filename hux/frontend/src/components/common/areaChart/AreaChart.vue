@@ -2,25 +2,16 @@
   <div class="container">
     <div class="d-flex justify-content-start">
       <line-area-chart
+      v-model="spendData"
       />
     </div>
-    <!-- <bar-chart-tooltip
-      :position="{
-        x: tooltip.x,
-        y: tooltip.y,
-      }"
-      :showTooltip="show"
-      :sourceInput="currentData"
-    >
-    </bar-chart-tooltip> -->
   </div>
 </template>
 
 <script>
-// import BarChartTooltip from "@/components/common/incomeChart/BarChartTooltip"
 import LineAreaChart from "@/components/common/areaChart/LineAreaChart"
 //TODO: API Integration
-// import data from "./incomeData.json"
+import data from "./areaChart.json"
 
 export default {
   name: "area-chart",
@@ -32,22 +23,8 @@ export default {
         x: 0,
         y: 0,
       },
-    //   incomes: data.income,
-      currentData: {},
+      spendData: data.spend,
     }
-  },
-  methods: {
-    // toolTipDisplay(...arg) {
-    //   this.show = arg[0]
-    //   if (this.show) {
-    //     this.currentData = arg[1]
-    //   }
-    // },
-
-    // getCordinates(args) {
-    //   this.tooltip.x = args.x
-    //   this.tooltip.y = args.y
-    // },
   },
 }
 </script>

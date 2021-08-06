@@ -7,12 +7,12 @@
       flat
     >
       <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-        <div class="mt-2 ml-2">
+        <div class="mt-1 ml-2 mb-2">
           <span
             class="
               d-flex
               align-center
-              income-card-title
+              area-card-title
               black--text
               text-decoration-none
             "
@@ -42,56 +42,60 @@ import * as d3TimeFormat from "d3-time-format"
 
 export default {
   name: "line-area-chart",
-  props: {
+   props: {
     value: {
       type: Array,
       required: true,
     },
-
   },
   data() {
     return {
       width: 355,
-      height: 237,
-      chartData: this.value,
+      height: 250,
+      gender_men: [],
+       gender_other:[],
+       gender_women:[],
+       yValueData: [],
+       areaChart: [],
+       areaChartData: [],
+       genders: ["Women", "Men", "Other"],
+      chartData: this.value,  
     }
   },
   methods: {
-    async initiateAreaChart() {
-      let areaChartData = [
-        {
-          year: "2020-11-30T00:00:00.000Z",
-          aData: 2144,
-          bData: 3199,
-          cData: 3088,
-        },
-        {
-          year: "2020-12-30T00:00:00.000Z",
-          aData: 3144,
-          bData: 4265,
-           cData: 3842,
-        },
-        {
-          year: "2021-01-30T00:00:00.000Z",
-          aData: 3211,
-          bData: 4986,
-           cData: 3999,
-        },
-        {
-          year: "2021-02-28T00:00:00.000Z",
-          aData: 3211,
-          bData: 4986,
-           cData: 3999,
-        },
-        {
-           year: "2021-03-30T00:00:00.000Z",
-          aData: 4866,
-          bData: 6109,
-           cData: 6109,
-        },
-      ]
+async initiateAreaChart() {     
+this.gender_men.push(...this.chartData.gender_men)
+this.gender_women.push(...this.chartData.gender_women)
+this.gender_other.push(...this.chartData.gender_other)
+this.gender_men.forEach(element => {
+  this.gender_women.forEach(value => {
+    if(element.date === value.date) {
+      this.areaChart.push({
+        date : element.date,
+        men_spend : element.ltv,
+        women_spend: value.ltv
+      }
+      )
+    }
+  });
+});
 
-      let colorCodes = ["rgba(0, 85, 135, 1)", "rgba(12, 157, 219, 1)","rgba(66, 239, 253, 1)"]
+this.areaChart.forEach(element => {
+  this.gender_other.forEach(value => {
+    if(element.date === value.date) {
+      this.yValueData.push(element.men_spend,element.women_spend, value.ltv)
+      this.areaChartData.push({
+        date : element.date,
+        men_spend : element.men_spend,
+        women_spend: element.women_spend,
+        others_spend: value.ltv
+      }
+      )
+    }
+  });
+});
+
+      let colorCodes = ["rgba(0, 85, 135, 1)","rgba(12, 157, 219, 1)","rgba(66, 239, 253, 1)"]
 
       let svg = d3Select
         .select(this.$refs.huxChart)
@@ -113,8 +117,6 @@ export default {
         +svg.attr("width") - margin.left - margin.right - strokeWidth * 2
       let height = +svg.attr("height") - margin.top - margin.bottom
 
- 
-
       let grp = chart
         .append("g")
         .attr(
@@ -122,10 +124,8 @@ export default {
           `translate(-${margin.left - strokeWidth},-${margin.top})`
         )
 
- 
-
-      let stack = d3Shape.stack().keys(["aData", "bData", "cData"])
-      let stackedValues = stack(areaChartData)
+      let stack = d3Shape.stack().keys([ "women_spend","men_spend", "others_spend"])
+      let stackedValues = stack(this.areaChartData)
       let stackedData = []
 
  
@@ -137,33 +137,32 @@ export default {
          d[0] = 0
           currentStack.push({
             values: d,
-            year: new Date(areaChartData[i].year),
+            date: new Date(this.areaChartData[i].date),
           })
         })
        
         stackedData.push(currentStack)
        
-      })
-      //  console.log("stackedData",stackedData)
+      }) 
 
- 
+let appendyAxisFormate = (text) => `$ ${parseInt(text / 1000) + "k"}`
 
       let yScale = d3Scale
         .scaleLinear()
         .range([height, 0])
         .domain([
           0,
-          d3Array.max(stackedValues[stackedValues.length - 1], (dp) => dp[1]),
+          Math.max(...this.yValueData) + 500,
         ])
 
       let xScale = d3Scale
         .scaleLinear()
         .range([0, width])
-        .domain(d3Array.extent(areaChartData, (dataPoint) => new Date(dataPoint.year)))
-
+        .domain(d3Array.extent(this.areaChartData, (dataPoint) => new Date(dataPoint.date)))
+       
       let area = d3Shape
         .area()
-        .x((dataPoint) => xScale(dataPoint.year))
+        .x((dataPoint) => xScale(dataPoint.date))
         .y0((dataPoint) => yScale(dataPoint.values[0]))
         .y1((dataPoint) => yScale(dataPoint.values[1]))
 
@@ -186,88 +185,17 @@ export default {
         .attr("stroke-width", 2)
         .attr("fill-opacity", 0.5)
         .attr("d", (d) => area(d))
-        .on("mouseover", (d) => appendLine(d))
-        // .on("mouseout", () => removeHover())
 
-
-let appendLine = (d) => {
-  console.log("d",d.srcElement)
-     d3Select
-          .select(d.srcElement)
-          .attr("fill-opacity", (d) => appendData(d))
-          .style("fill-opacity", "1")
-    // svg.selectAll(".dot")
-    // .attr("r", 5)
-    // .style("fill", "white")
-
-       svg
-          .append("circle")
-          .classed("removeableCircle", true)
-          .attr("cx", 30)
-          .attr("cy", 40)
-          .attr("r", 5)
-          .style("stroke", "red")
-          .style("stroke-opacity", "1")
-          .style("fill", "white")
-          .style("pointer-events", "none")
-    
-  //        stackedValues.forEach(function(layer, index) {
-  //     console.log("layer", layer.index)
-  // layer.forEach(points => {
-  // svg
-  //  .append("circle")
-  //  .attr("class", "dot")
-  //  .attr("r", 10)
-  //  .attr("cx",  (d) => xScale(new Date(points.data.year)) + 40)
-  //  .attr("cy", (d) => yScale(points[1]))
-  // .style("fill","red")
-  //       .attr("stroke", "red")
-  // });
-  
-    //   svg
-    //     .append("g")
-    //     .call(
-    //       d3Axis
-    //         .axisBottom(xScale)
-    //         .tickSize(0)
-    //         .tickFormat("")
-    //         .ticks(5)
-    //         .tickSizeInner(this.height)
-    //     )
-    //     .call((g) =>
-    //       g
-    //         .selectAll(".tick line")
-    //         .attr("stroke", "#d0d0ce")
-    //         .attr("stroke-opacity", "0.3")
-    //     )
-    //     .call((g) =>
-    //       g
-    //         .selectAll("path")
-    //         .attr("stroke", "none")
-    //         .attr("stroke-opacity", "0.3")
-    //     )
-
-
-     
-}
-
- let appendData = (data) => {
-
- }
-// let removeHover = () => {
-//   d3Select.select(this.$refs.huxChart).select(".tick line").remove()
-// }
       chart
         .append("g")
         .attr("transform", `translate(0,${height})`)
-        .call(d3Axis.axisBottom(xScale).ticks(areaChartData.length).tickFormat(d3TimeFormat.timeFormat("%b %Y")))
-
- 
+        .call(d3Axis.axisBottom(xScale).ticks(this.areaChartData.length).tickFormat(d3TimeFormat.timeFormat("%b %Y")))
 
       chart
         .append("g")
         .attr("transform", `translate(0, 0)`)
-        .call(d3Axis.axisLeft(yScale))
+        .call(d3Axis.axisLeft(yScale).ticks(6).tickFormat(appendyAxisFormate))
+
 
 stackedValues.forEach(function(layer, index) {
   layer.forEach(points => {
@@ -275,49 +203,13 @@ stackedValues.forEach(function(layer, index) {
    .append("circle")
    .attr("class", "dot")
    .attr("r", 3)
-   .attr("cx",  (d) => xScale(new Date(points.data.year)) + 40)
+   .attr("cx",  (d) => xScale(new Date(points.data.date)) + 40)
    .attr("cy", (d) => yScale(points[1]))
   .style("fill", colorCodes[index])
         .attr("stroke", colorCodes[index])
   });
 
-//    var legendSvg = d3Select
-//         .select("#legend")
-//         .append("svg")
-//         .attr("viewBox", "0 0 200 25") // for responsive
-//         .attr("id", "mainSvg")
-//         .attr("class", "svgBox")
-//         .style("margin-left", "20px")
-//         .style("margin-right", "20px")
-
-//           // calculating distance b/n each legend
-//       var legend = legendSvg
-//         .selectAll(".legend")
-//         .data(data)
-//         .enter()
-//         .append("g")
-//         .attr("class", "legend")
-//         .attr("transform", function (d) {
-//           var y = line * 25
-//           var x = col
-//           col += d.label.length * 10 + 25
-//           return "translate(" + x + "," + y + ")"
-//         })
-
-//          // creating legend circle & fill color
-//       legend
-//         .append("circle")
-//         .attr("cx", 10)
-//         .attr("cy", 10)
-//         .attr("r", 6)
-//         .style("fill", function (d) {
-//           return color(d.population_percentage)
-//         })
-
 })
-
-
-
     },
   },
 
@@ -348,6 +240,13 @@ stackedValues.forEach(function(layer, index) {
   height: 325px;
   .chart-section {
     margin-bottom: -20px;
+  }
+    .area-card-title {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 20px;
   }
 }
 </style>
