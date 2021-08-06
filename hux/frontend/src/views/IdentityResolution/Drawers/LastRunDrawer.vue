@@ -1,7 +1,7 @@
 <template>
   <drawer v-model="localToggle" content-padding="pa-0">
     <template #header-left>
-      <h3 class="text-h3">
+      <h3 v-if="dataFeed" class="text-h3">
         {{ dataFeed.datafeed_name }} – {{ dataFeed.last_run | Date }}
       </h3>
     </template>
