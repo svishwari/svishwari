@@ -122,10 +122,8 @@ export default {
         let tempSourceData = {}
         ;(tempSourceData.icon = item.name.toLowerCase()),
           (tempSourceData.description = item.name),
-          (tempSourceData.value = this.$options.filters.percentageConvert(
-            item.percentage,
-            true,
-            true
+          (tempSourceData.value = this.$options.filters.Percentage(
+            item.percentage
           ))
         assetsData.push(tempSourceData)
       }

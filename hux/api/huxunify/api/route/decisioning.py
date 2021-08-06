@@ -174,6 +174,41 @@ class ModelOverview(SwaggerView):
 
         """
         model_id = int(model_id)
+
+        feature_importance_data = api_c.SUPPORTED_MODELS[model_id].get(
+            api_c.FEATURE_IMPORTANCE, None
+        )
+
+        if feature_importance_data:
+            feature_importance_data = sorted(
+                [
+                    {
+                        api_c.NAME: feature_importance_data[api_c.NAME][x],
+                        api_c.DESCRIPTION: feature_importance_data[
+                            api_c.DESCRIPTION
+                        ][x],
+                        api_c.SCORE: feature_importance_data[api_c.SCORE][x],
+                    }
+                    for x in range(0, 20)
+                ],
+                key=lambda x: x[api_c.SCORE],
+                reverse=True,
+            )
+        else:
+            # stubbing out feature importance data if not present
+            feature_importance_data = sorted(
+                [
+                    {
+                        api_c.NAME: f"feature name {x}",
+                        api_c.DESCRIPTION: f"description of feature name {x}",
+                        api_c.SCORE: round(uniform(0, 0.25), 2),
+                    }
+                    for x in range(1, 21)
+                ],
+                key=lambda x: x[api_c.SCORE],
+                reverse=True,
+            )
+
         output = {
             api_c.MODEL_ID: model_id,
             api_c.MODEL_TYPE: api_c.SUPPORTED_MODELS[model_id][
@@ -194,18 +229,7 @@ class ModelOverview(SwaggerView):
                 ],
                 api_c.RMSE: api_c.SUPPORTED_MODELS[model_id][api_c.RMSE],
             },
-            api_c.FEATURE_IMPORTANCE: sorted(
-                [
-                    {
-                        api_c.NAME: f"feature name {x}",
-                        api_c.DESCRIPTION: f"description of feature name {x}",
-                        api_c.SCORE: round(uniform(0, 0.25), 2),
-                    }
-                    for x in range(1, 21)
-                ],
-                key=lambda x: x[api_c.SCORE],
-                reverse=True,
-            ),
+            api_c.FEATURE_IMPORTANCE: feature_importance_data,
             api_c.LIFT_DATA: [
                 {
                     api_c.BUCKET: api_c.SUPPORTED_MODELS[model_id][

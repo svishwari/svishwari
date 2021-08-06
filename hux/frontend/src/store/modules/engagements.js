@@ -8,7 +8,10 @@ const namespaced = true
 const state = {
   items: {},
 
-  audiencePerformance: {},
+  audiencePerformance: {
+    ads: {},
+    email: {},
+  },
 
   deliveries: {},
   campaignMappingOptions: {},
@@ -79,12 +82,16 @@ const mutations = {
   },
 
   SET_CAMPAIGN_MAPPINGS(state, payload) {
-    state.campaignMappingOptions = {
-      campaigns: payload[0].campaigns,
-      delivery_jobs: payload[0].delivery_jobs.map((job) => ({
-        ...job,
-        name: moment(job.created_time).format("MM/D/YYYY hh:ssA"),
-      })),
+    if (Object.keys(payload).length > 0) {
+      state.campaignMappingOptions = {
+        campaigns: payload.campaigns,
+        delivery_jobs: payload.delivery_jobs.map((job) => ({
+          ...job,
+          name: moment(job.created_time).format("MM/D/YYYY hh:ssA"),
+        })),
+      }
+    } else {
+      state.campaignMappingOptions = {}
     }
   },
   SET_CAMPAIGNS(state, data) {
@@ -223,6 +230,7 @@ const actions = {
       })
       commit("SET_CAMPAIGN_MAPPINGS", response.data)
     } catch (error) {
+      commit("SET_CAMPAIGN_MAPPINGS", {})
       handleError(error)
       throw error
     }

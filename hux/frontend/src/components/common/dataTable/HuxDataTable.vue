@@ -47,6 +47,7 @@
                 :key="h.value"
                 type="info"
                 :size="12"
+                class="ml-1"
               />
             </template>
             <template #hover-content>

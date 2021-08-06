@@ -128,14 +128,7 @@
       class="px-15 my-1 mb-4 pt-6 relationships"
     >
       <v-row class="pa-3 pb-5" style="min-height: 200px">
-        <v-col
-          :md="
-            !is_lookalike && isLookalikable && isLookalikable != 'Inactive'
-              ? 9
-              : 12
-          "
-          class="pa-0"
-        >
+        <v-col :md="showLookalike ? 9 : 12" class="pa-0">
           <delivery-overview
             :sections="relatedEngagements"
             section-type="engagement"
@@ -184,11 +177,7 @@
             </template>
           </delivery-overview>
         </v-col>
-        <v-col
-          v-if="!is_lookalike && isLookalikable && isLookalikable != 'Inactive'"
-          md="3"
-          class="pl-6 pr-0 py-0"
-        >
+        <v-col v-if="showLookalike" md="3" class="pl-6 pr-0 py-0">
           <look-alike-card
             :key="lookalikeAudiences"
             v-model="lookalikeAudiences"
@@ -436,6 +425,13 @@ export default {
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
     },
+    showLookalike() {
+      return !this.is_lookalike &&
+        this.isLookalikable &&
+        this.isLookalikable != "Disabled"
+        ? true
+        : false
+    },
     breadcrumbItems() {
       const items = [
         {
@@ -584,11 +580,7 @@ export default {
         case "Women":
         case "Men":
         case "Other":
-          return this.$options.filters.percentageConvert(
-            item.subtitle,
-            true,
-            true
-          )
+          return this.$options.filters.Percentage(item.subtitle)
         default:
           return item.subtitle
       }
@@ -613,8 +605,9 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
-            this.flashAlert = true
+            this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
+            this.dataErrorMesssage(event.data.name)
             console.error(error)
           }
           break
@@ -643,7 +636,7 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-            this.flashAlert = true
+            this.dataPendingMesssage(event.data.name, "audience")
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -665,8 +658,28 @@ export default {
             break
         }
       } catch (error) {
+        this.dataErrorMesssage(event.data.name)
         console.error(error)
       }
+    },
+
+    //Alert Message
+    dataPendingMesssage(name, value) {
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      if (value == "engagement") {
+        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
+      } else {
+        this.alert.message = `Your audience, '${name}' , has started delivering.`
+      }
+
+      this.flashAlert = true
+    },
+    dataErrorMesssage(name) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = `Failed to schedule a delivery for ${name}`
+      this.flashAlert = true
     },
 
     // Drawer Section Starts

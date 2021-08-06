@@ -18,6 +18,7 @@ from huxunifylib.util.general.const import (
     MongoDBCredentials,
     FacebookCredentials,
     SFMCCredentials,
+    TwilioCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
 from huxunify.api import constants as api_const
@@ -92,6 +93,16 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         secret_dict = {
             SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
                 api_const.SFMC_CLIENT_SECRET
+            ]
+        }
+    elif (
+        destination[db_const.DELIVERY_PLATFORM_TYPE]
+        == db_const.DELIVERY_PLATFORM_TWILIO
+    ):
+        env_dict = {}
+        secret_dict = {
+            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
+                api_const.TWILIO_AUTH_TOKEN
             ]
         }
     else:
@@ -336,6 +347,7 @@ def get_destination_config(
         MongoDBCredentials.MONGO_DB_PORT.name: str(config.MONGO_DB_PORT),
         MongoDBCredentials.MONGO_DB_USERNAME.name: config.MONGO_DB_USERNAME,
         MongoDBCredentials.MONGO_SSL_CERT.name: api_const.AUDIENCE_ROUTER_CERT_PATH,
+        api_const.CDP_SERVICE_URL: config.CDP_SERVICE,
         **ds_env_dict,
     }
 

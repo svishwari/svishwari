@@ -157,13 +157,6 @@ export default {
     },
   },
 
-  async mounted() {
-    this.loading = true
-    await this.getOverview()
-    this.mapCDMOverview(this.overview)
-    this.loading = false
-  },
-
   methods: {
     ...mapActions({
       addAudience: "audiences/add",
@@ -219,11 +212,7 @@ export default {
         case "Women":
         case "Men":
         case "Other":
-          return this.$options.filters.percentageConvert(
-            item.subtitle,
-            true,
-            true
-          )
+          return this.$options.filters.Percentage(item.subtitle)
         default:
           return item.subtitle
       }
@@ -294,6 +283,12 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    async fetchDependencies() {
+      this.loading = true
+      await this.getOverview()
+      this.mapCDMOverview(this.overview)
+      this.loading = false
     },
   },
 }
