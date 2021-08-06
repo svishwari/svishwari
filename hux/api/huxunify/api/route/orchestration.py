@@ -327,13 +327,11 @@ class AudienceGetView(SwaggerView):
                 )
 
             # TODO: HUS-837 Change once match_rate data can be fetched from CDM
-            if db_c.AUDIENCES in engagement:
-                for audience in engagement[db_c.AUDIENCES]:
-                    for destination in audience[db_c.DESTINATIONS]:
-                        if db_c.LATEST_DELIVERY in destination:
-                            destination[db_c.LATEST_DELIVERY][
-                                api_c.MATCH_RATE
-                            ] = round(uniform(0.2, 0.9), 2)
+            # validate if engagement contain deliveries since there are checks
+            # above to remove empty and not-delivered deliveries
+            if api_c.DELIVERIES in engagement:
+                for delivery in engagement[api_c.DELIVERIES]:
+                    delivery[api_c.MATCH_RATE] = round(uniform(0.2, 0.9), 2)
 
             # set the weighted status for the engagement based on deliveries
             engagement[api_c.STATUS] = weight_delivery_status(engagement)

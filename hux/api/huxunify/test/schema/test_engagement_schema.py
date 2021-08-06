@@ -400,12 +400,15 @@ class EngagementSchemaTest(TestCase):
         self.assertEqual("bad", weight_delivery_status(engagement))
 
     def test_match_rate_engagement_get_schema(self) -> None:
-        """Test engagement get schema match_rate.
+        """
+        Test engagement get schema match_rate.
+
+        Args:
 
         Returns:
-            Response: None
-
+            None
         """
+
         engagement = {
             api_c.ID: "5f5f7262997acad4bac4374a",
             api_c.NAME: "Engagement 1",
@@ -442,9 +445,9 @@ class EngagementSchemaTest(TestCase):
 
         destinations = engagement[api_c.AUDIENCES][0][api_c.DESTINATIONS]
 
-        self.assertTrue(
-            destinations[0][api_c.LATEST_DELIVERY][api_c.MATCH_RATE] > 0.2
+        self.assertGreater(
+            destinations[0][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
         )
-        self.assertTrue(
-            destinations[1][api_c.LATEST_DELIVERY][api_c.MATCH_RATE] > 0.2
+        self.assertGreater(
+            destinations[1][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
         )

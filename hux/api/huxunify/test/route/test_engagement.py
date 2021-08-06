@@ -1694,6 +1694,7 @@ class TestEngagementAudienceDestinationMatchRate(TestCase):
             "huxunify.api.route.engagement.get_db_client",
             return_value=self.database,
         ).start()
+
         self.addCleanup(mock.patch.stopall)
 
         # mock get_db_client() for the userinfo utils.
@@ -1701,13 +1702,6 @@ class TestEngagementAudienceDestinationMatchRate(TestCase):
             "huxunify.api.route.utils.get_db_client",
             return_value=self.database,
         ).start()
-
-        # mock FacebookConnector
-        mock.patch.object(
-            FacebookConnector, "get_campaigns", return_value=t_c.BATCH_RESPONSE
-        ).start()
-
-        self.addCleanup(mock.patch.stopall)
 
         # write a user to the database
         self.user_name = "felix hernandez"
@@ -1718,9 +1712,6 @@ class TestEngagementAudienceDestinationMatchRate(TestCase):
             display_name=self.user_name,
         )
 
-        self.audience_id = create_audience(self.database, "Test Audience", [])[
-            db_c.ID
-        ]
         self.delivery_platform = set_delivery_platform(
             self.database,
             db_c.DELIVERY_PLATFORM_FACEBOOK,
@@ -1728,19 +1719,32 @@ class TestEngagementAudienceDestinationMatchRate(TestCase):
             authentication_details={},
             status=db_c.STATUS_SUCCEEDED,
         )
+
+        self.destinations = [
+            {
+                db_c.ID: self.delivery_platform[db_c.ID],
+                db_c.LATEST_DELIVERY: {
+                    api_c.SIZE: 1000,
+                },
+            },
+        ]
+
+        self.audience_id = create_audience(
+            self.database,
+            "Test Audience",
+            [],
+            self.destinations,
+            self.user_name,
+            0,
+        )[db_c.ID]
+
         self.audiences = [
             {
                 api_c.ID: self.audience_id,
-                api_c.DESTINATIONS: [
-                    {
-                        api_c.ID: self.delivery_platform[db_c.ID],
-                        db_c.LATEST_DELIVERY: {
-                            api_c.SIZE: 1000,
-                        },
-                    },
-                ],
+                db_c.DESTINATIONS: self.destinations,
             }
         ]
+
         self.engagement_id = set_engagement(
             self.database,
             "Test engagement",
@@ -1750,6 +1754,7 @@ class TestEngagementAudienceDestinationMatchRate(TestCase):
             None,
             False,
         )
+
         self.delivery_job = set_delivery_job(
             self.database,
             self.audience_id,
@@ -1765,16 +1770,19 @@ class TestEngagementAudienceDestinationMatchRate(TestCase):
 
         self.addCleanup(mock.patch.stopall)
 
-    def test_get_engagement_by_id_validate_match_rate(self):
+    def test_get_engagement_by_id_validate_match_rate(self) -> None:
         """
-        Test get all engagements API
+        Test get engagement API with valid id and valid match_rate present
 
         Args:
 
         Returns:
-
+            None
         """
+
         engagements = get_engagements(self.database)
+
+        self.assertTrue(engagements)
 
         engagement_id = str(engagements[0]["_id"])
         response = self.app.get(
@@ -1783,11 +1791,12 @@ class TestEngagementAudienceDestinationMatchRate(TestCase):
         )
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
+
         return_engagement = response.json
+
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
-        # self.assertTrue(
+        # self.assertGreater(
         #     return_engagement[db_c.AUDIENCES][0][db_c.DESTINATIONS][0][
         #         db_c.LATEST_DELIVERY
-        #     ][api_c.MATCH_RATE]
-        #     > 0
+        #     ][api_c.MATCH_RATE], 0
         # )
