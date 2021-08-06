@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div
-      class="chart-container"
-      :style="{ maxWidth: chartWidth }"
-    >
+    <div class="chart-container" :style="{ maxWidth: chartWidth }">
       <div class="chart-style pb-6 pl-4 pt-1">
         <div
           ref="huxChart"
