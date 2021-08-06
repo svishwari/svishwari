@@ -72,8 +72,12 @@
                   Add to an engagement -
                   <i style="tilt">you must have at least one</i>
                   <div class="mt-2 d-flex align-center">
-                    <span @click="engagementDrawer = !engagementDrawer">  
-                      <icon  class="add-icon cursor-pointer" type="add" :size="30" />
+                    <span @click="engagementDrawer = !engagementDrawer">
+                      <icon
+                        class="add-icon cursor-pointer"
+                        type="add"
+                        :size="30"
+                      />
                     </span>
                     <div>
                       <v-chip
@@ -120,8 +124,12 @@
             <v-row class="pt-1">
               <v-col cols="12">
                 <div class="d-flex align-center">
-                  <span @click="openSelectDestinationsDrawer()">  
-                    <icon  class="add-icon cursor-pointer mt-1" type="add" :size="30" />
+                  <span @click="openSelectDestinationsDrawer()">
+                    <icon
+                      class="add-icon cursor-pointer mt-1"
+                      type="add"
+                      :size="30"
+                    />
                   </span>
                   <tooltip
                     v-for="destination in selectedDestinations"

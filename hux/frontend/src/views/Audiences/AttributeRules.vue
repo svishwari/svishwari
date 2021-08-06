@@ -17,8 +17,8 @@
         class="mt-2 blank-section"
       >
         <div class="gray--text font-weight-normal new-attribute">
-          <span @click="addNewSection()">  
-            <icon  class="add-icon cursor-pointer" type="add" :size="30" />
+          <span @click="addNewSection()">
+            <icon class="add-icon cursor-pointer" type="add" :size="30" />
           </span>
           <span class="mt-1 ml-4">
             You have not added any attributes, yet.
@@ -128,8 +128,12 @@
       <div class="add-section-wrap">
         <v-col md="10" class="pa-0 pt-3">
           <div class="add-section pa-5">
-            <span @click="addNewSection()">  
-              <icon  class="add-icon cursor-pointer mt-1" type="add" :size="30" />
+            <span @click="addNewSection()">
+              <icon
+                class="add-icon cursor-pointer mt-1"
+                type="add"
+                :size="30"
+              />
             </span>
             <span class="primary--text pl-1">New section</span>
           </div>
