@@ -144,9 +144,9 @@ client["engagements"].getCampaigns = ({
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
-client["identity"].overview = () => {
-  return http.get("/idr/overview")
-}
+client["idr"].overview = () => http.get("/idr/overview")
+client["idr"].datafeeds = () => http.get("/idr/datafeeds")
+client["idr"].datafeedReport = (id) => http.get(`/idr/datafeeds/${id}`)
 //#endregion
 
 //#region audiences endpoints

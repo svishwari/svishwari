@@ -479,6 +479,9 @@ export default function (server) {
   // seed campaigns
   server.createList("campaignOption", 1)
 
-  // for alert and notifications
+  // seed notifications
   server.createList("notification", 50)
+
+  // seed idr datafeeds
+  server.createList("idrDataFeed", 10)
 }
