@@ -351,13 +351,6 @@ export default {
       getDestinations: "destinations/single",
     }),
 
-    engagementId() {
-      return this.$route.params.id
-    },
-    engagementList() {
-      return this.getEngagement(this.engagementId)
-    },
-
     breadcrumbItems() {
       const items = [
         {
