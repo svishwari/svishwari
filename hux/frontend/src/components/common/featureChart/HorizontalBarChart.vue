@@ -1,8 +1,8 @@
 <template>
   <div>
     <div
-      class="card-style"
-      :style="{ maxWidth: chartWidth, minHeight: '662px' }"
+      class="chart-container"
+      :style="{ maxWidth: chartWidth }"
     >
       <div class="chart-style pb-6 pl-4 pt-1">
         <div
@@ -252,9 +252,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-style {
+.chart-container {
   margin-bottom: 40px;
-  height: 550px;
+  min-height: 662px;
   .chart-style {
     position: relative;
     .chart-section {
