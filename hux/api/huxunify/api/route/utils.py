@@ -17,6 +17,9 @@ from pymongo import MongoClient
 from marshmallow import ValidationError
 
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.connectors import (
+    CustomAudienceDeliveryStatusError,
+)
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -373,6 +376,12 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": constants.DUPLICATE_NAME
                 }, HTTPStatus.BAD_REQUEST.value
+
+            except CustomAudienceDeliveryStatusError:
+                return {
+                    "message": "Unable to create a lookalike due to custom audience "
+                    "delivery status error"
+                }, HTTPStatus.NOT_FOUND
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
