@@ -18,7 +18,7 @@
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
-                  Top {{model.feature_importance.length}} feature importance
+                  Top {{ model.feature_importance.length }} feature importance
                 </span>
               </div>
             </v-card-title>
