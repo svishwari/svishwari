@@ -3,10 +3,10 @@
 Purpose of this file is to test the engagement schemas
 """
 from unittest import TestCase
-
 from datetime import datetime, timedelta
-from bson import ObjectId
 from random import uniform
+from bson import ObjectId
+
 from huxunifylib.database import constants as db_c
 from huxunify.api.schema.engagement import (
     EngagementGetSchema,

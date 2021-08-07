@@ -3,7 +3,6 @@
 Purpose of this file is to test the orchestration schemas
 """
 from unittest import TestCase
-
 from datetime import datetime
 from random import uniform
 
@@ -46,7 +45,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert AudienceGetSchema().validate(doc) == {}
+        self.assertFalse(AudienceGetSchema().validate(doc))
 
     def test_unsuccessful_audience_get_schema_bad_name(self) -> None:
         """
@@ -73,7 +72,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert AudienceGetSchema().validate(doc) != {}
+        self.assertTrue(AudienceGetSchema().validate(doc))
 
     def test_unsuccessful_audience_get_schema_engagement_no_name(
         self,
@@ -106,7 +105,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert AudienceGetSchema().validate(doc) != {}
+        self.assertTrue(AudienceGetSchema().validate(doc))
 
     def test_match_rate_audience_get_schema(self) -> None:
         """
@@ -152,7 +151,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert AudienceGetSchema().validate(audience) == {}
+        self.assertFalse(AudienceGetSchema().validate(audience))
 
         deliveries = audience[db_c.ENGAGEMENTS_COLLECTION][0][db_c.DELIVERIES]
 
@@ -186,7 +185,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert EngagementDeliveryHistorySchema().validate(doc) == {}
+        self.assertFalse(EngagementDeliveryHistorySchema().validate(doc))
 
     def test_match_rate_engagement_delivery_history_schema(self) -> None:
         """
@@ -215,8 +214,8 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert (
-            EngagementDeliveryHistorySchema().validate(delivery_history) == {}
+        self.assertFalse(
+            EngagementDeliveryHistorySchema().validate(delivery_history)
         )
 
         self.assertGreater(delivery_history[api_c.MATCH_RATE], 0.2)
@@ -248,7 +247,7 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert AudienceDeliveryHistorySchema().validate(doc) == {}
+        self.assertFalse(AudienceDeliveryHistorySchema().validate(doc))
 
     def test_match_rate_audience_delivery_history_schema(self) -> None:
         """
@@ -277,6 +276,8 @@ class OrchestrationSchemaTest(TestCase):
             ),
         }
 
-        assert AudienceDeliveryHistorySchema().validate(delivery_history) == {}
+        self.assertFalse(
+            AudienceDeliveryHistorySchema().validate(delivery_history)
+        )
 
         self.assertGreater(delivery_history[api_c.MATCH_RATE], 0.2)
