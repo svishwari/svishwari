@@ -19,9 +19,9 @@
       <div class="sub-props pt-4">
         <span class="subprop-name">W/M/O</span>
         <span class="value ml-1">
-          {{ sourceInput.women | Percentage | Empty }} |
-          {{ sourceInput.men | Percentage | Empty }} |
-          {{ sourceInput.other | Percentage | Empty }}
+          {{ sourceInput.women | Numeric(true, false, false, true) | Empty }} |
+          {{ sourceInput.men | Numeric(true, false, false, true) | Empty }} |
+          {{ sourceInput.other | Numeric(true, false, false, true) | Empty }}
         </span>
       </div>
       <div class="sub-props pt-4">

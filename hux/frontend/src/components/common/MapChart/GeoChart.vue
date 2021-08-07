@@ -1,20 +1,16 @@
 <template>
-  <div>
-    <v-card
-      class="rounded-lg card-style"
-      max-width="798px"
-      min-height="100px"
-      flat
+    <div
+      class="chart-container"
     >
-      <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-        <div class="mt-2">
+      <!-- <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5"> -->
+        <!-- <div class="mt-2">
           <a
             href="#"
             class="d-flex align-center black--text text-decoration-none"
           >
             Demographic overview
           </a>
-        </div>
+        </div> -->
         <div
           ref="huxChart"
           class="chart-section"
@@ -27,10 +23,9 @@
             :max="maxValue"
           ></map-slider>
         </div>
-      </v-card-title>
-      <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text>
-    </v-card>
-  </div>
+      <!-- </v-card-title> -->
+      <!-- <v-card-text class="pl-6 pr-6 pb-6"> </v-card-text> -->
+    </div>
 </template>
 
 <script>
@@ -57,7 +52,7 @@ export default {
     return {
       chartData: this.value,
       width: 700,
-      height: 500,
+      height: 300,
       show: false,
       minValue: 0,
       maxValue: 0,
@@ -107,9 +102,14 @@ export default {
       this.minValue = Math.min(...total_range)
       this.maxValue = Math.max(...total_range)
 
-      let projection = d3Geo
-        .geoIdentity()
-        .fitSize([600, 500], featureCollection)
+      // let projection = d3Geo
+      //   .geoIdentity()
+      //   .fitSize([500, 300], featureCollection)
+
+
+          var projection = d3Geo.geoIdentity()
+  .fitExtent([[20,20],[700-10,350-50]], featureCollection)
+
       let path = d3Geo.geoPath().projection(projection)
 
       let colorScale = d3Scale
@@ -177,11 +177,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-style {
+.chart-container {
   margin-bottom: 40px;
   height: 550px;
+  max-width: 798px;
+  min-height: 100px;
   .chart-section {
-    margin-bottom: -20px;
+   // margin-bottom: -20px;
   }
   .map-slider {
     max-height: 30px;
