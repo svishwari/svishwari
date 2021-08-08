@@ -136,7 +136,7 @@
           </div>
         </v-card>
       </div>
-       <v-row class="px-15 mt-2">
+      <v-row class="px-15 mt-2">
         <v-col md="8">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
@@ -146,7 +146,7 @@
                 </span>
               </div>
             </v-card-title>
-            <map-chart :mapData="mapChartData"></map-chart>
+            <map-chart :map-data="mapChartData"></map-chart>
             <map-slider />
           </v-card>
         </v-col>
@@ -158,7 +158,7 @@
               </div>
             </v-card-title>
             <v-divider class="ml-6 mr-8 mt-0 mb-1" />
-            <map-state-list :mapData="mapChartData"></map-state-list>
+            <map-state-list :map-data="mapChartData"></map-state-list>
           </v-card>
         </v-col>
       </v-row>
@@ -193,7 +193,7 @@
               <div class="mt-2">
                 <span class="neroBlack--text text-h5"> Gender </span>
               </div>
-            </v-card-title> 
+            </v-card-title>
             <empty-state-chart />
           </v-card>
         </v-col>

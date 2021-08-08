@@ -25,6 +25,12 @@ import GeoChart from "@/components/common/MapChart/GeoChart"
 export default {
   name: "MapChart",
   components: { GeoChart, MapChartTooltip },
+  props: {
+    mapData: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       show: false,
@@ -39,12 +45,6 @@ export default {
       mapChartData: this.mapData,
       currentData: {},
     }
-  },
-  props: {
-    mapData: {
-      type: Array,
-      required: true,
-    },
   },
   created() {
     window.addEventListener("resize", this.sizeHandler)

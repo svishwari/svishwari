@@ -150,10 +150,11 @@ export default {
    */
   Percentage(value, round = true, append = "%") {
     value = value * 100
-    return value.toLocaleString("en-US", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: round && Number(value) ? 0 : 2,
-    }) +
-    append
+    return (
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: round && Number(value) ? 0 : 2,
+      }) + append
+    )
   },
 }

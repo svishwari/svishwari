@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: "map-state-list",
+  name: "MapStateList",
   props: {
     mapData: {
       type: Array,
@@ -25,6 +25,9 @@ export default {
       mapChartData: this.mapData,
     }
   },
+  mounted() {
+    this.sortStateData()
+  },
   methods: {
     sortStateData() {
       if (this.mapChartData) {
@@ -33,9 +36,6 @@ export default {
         )
       }
     },
-  },
-  mounted() {
-    this.sortStateData()
   },
 }
 </script>
