@@ -194,7 +194,12 @@
                 <span class="neroBlack--text text-h5"> Gender </span>
               </div>
             </v-card-title>
-            <empty-state-chart />
+            <doughnut-chart
+        :width="250"
+        :height="240"
+        :data="genderChartData"
+        label="Gender"
+      ></doughnut-chart>
           </v-card>
         </v-col>
       </v-row>
@@ -231,7 +236,10 @@ import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapData from "@/components/common/MapChart/mapData.json"
+import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
+import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
+
 
 export default {
   name: "CustomerProfiles",
@@ -248,6 +256,7 @@ export default {
     MapChart,
     MapStateList,
     mapSlider,
+    DoughnutChart
   },
 
   data() {
@@ -346,6 +355,26 @@ export default {
           text: "",
           disabled: true,
           href: this.$route.path,
+        },
+      ],
+      genderChartData: [
+        {
+          label: "Men",
+          population_percentage:
+            genderData.gender.gender_men.population_percentage,
+          size: genderData.gender.gender_men.size,
+        },
+        {
+          label: "Women",
+          population_percentage:
+            genderData.gender.gender_women.population_percentage,
+          size: genderData.gender.gender_women.size,
+        },
+        {
+          label: "Other",
+          population_percentage:
+            genderData.gender.gender_other.population_percentage,
+          size: genderData.gender.gender_other.size,
         },
       ],
       loading: false,
