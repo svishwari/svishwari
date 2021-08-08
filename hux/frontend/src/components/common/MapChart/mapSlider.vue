@@ -22,10 +22,12 @@ export default {
     min: {
       type: Number,
       required: false,
+      default: 0.01,
     },
     max: {
       type: Number,
       required: false,
+      default: 0.59,
     },
   },
   data() {
@@ -41,9 +43,10 @@ export default {
 .hux-map-slider {
   margin-right: 10px;
   transform: rotate(90deg);
-  max-width: 140px;
-  margin-left: 655px;
-  margin-top: -115px;
+  max-width: 138px;
+  margin-right: -27px;
+  margin-top: 68px;
+  float: right;
   ::v-deep .v-input__control {
     .v-input__slot {
       min-width: 75px;

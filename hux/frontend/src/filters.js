@@ -148,7 +148,12 @@ export default {
    * @param {*} value The input eg. "0.893251"
    * @returns output value eg. "89%" or "89.32%"
    */
-  Percentage(value, round = true) {
-    return this.Numeric(value, round, false, false, true)
+  Percentage(value, round = true, append = "%") {
+    value = value * 100
+    return value.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: round && Number(value) ? 0 : 2,
+    }) +
+    append
   },
 }

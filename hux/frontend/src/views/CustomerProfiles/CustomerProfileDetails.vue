@@ -205,68 +205,6 @@
           <identity-chart></identity-chart>
         </v-col>
       </v-row>
-      <v-row class="mt-0">
-        <v-col md="8">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="neroBlack--text text-h5">
-                  Demographic Overview
-                </span>
-              </div>
-            </v-card-title>
-            <map-chart></map-chart>
-          </v-card>
-        </v-col>
-        <v-col md="4">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="neroBlack--text text-h5">
-                  United States
-                </span>
-              </div>
-            </v-card-title>
-            <v-divider class="ml-6 mr-8 mt-0 mb-2" />
-            <map-state-list :mapData="mapChartData"></map-state-list>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row class="mt-0">
-        <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="neroBlack--text text-h5">
-                  Top location & Income
-                </span>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-col>
-        <v-col md="6">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="neroBlack--text text-h5">
-                  Gender / monthly spending in 2021
-                </span>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-col>
-        <v-col md="3">
-          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
-              <div class="mt-2">
-                <span class="neroBlack--text text-h5">
-                  Gender
-                </span>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-col>
-      </v-row>
     </div>
   </div>
 </template>
@@ -280,9 +218,6 @@ import Tooltip from "@/components/common/Tooltip.vue"
 import Icon from "@/components/common/Icon"
 import HuxSlider from "@/components/common/HuxSlider"
 import IdentityChart from "@/components/common/identityChart/IdentityChart"
-import MapChart from "@/components/common/MapChart/MapChart"
-import MapStateList from "@/components/common/MapChart/MapStateList"
-import mapData from "@/components/common/MapChart/mapData.json"
 
 export default {
   name: "CustomerProfileDetails",
@@ -293,12 +228,9 @@ export default {
     Icon,
     HuxSlider,
     IdentityChart,
-    MapChart,
-    MapStateList,
   },
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
       items: [
         {
           text: "Customer Profiles",

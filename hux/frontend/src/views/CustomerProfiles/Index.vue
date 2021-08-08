@@ -136,12 +136,74 @@
           </div>
         </v-card>
       </div>
+       <v-row class="px-15 mt-2">
+        <v-col md="8">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Demographic Overview
+                </span>
+              </div>
+            </v-card-title>
+            <map-chart :mapData="mapChartData"></map-chart>
+            <map-slider />
+          </v-card>
+        </v-col>
+        <v-col md="4">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5"> United States </span>
+              </div>
+            </v-card-title>
+            <v-divider class="ml-6 mr-8 mt-0 mb-1" />
+            <map-state-list :mapData="mapChartData"></map-state-list>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row class="px-15 mt-2">
+        <v-col md="3">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Top location & Income
+                </span>
+              </div>
+            </v-card-title>
+            <empty-state-chart />
+          </v-card>
+        </v-col>
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Gender / monthly spending in 2021
+                </span>
+              </div>
+            </v-card-title>
+            <empty-state-chart />
+          </v-card>
+        </v-col>
+        <v-col md="3">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5"> Gender </span>
+              </div>
+            </v-card-title> 
+            <empty-state-chart />
+          </v-card>
+        </v-col>
+      </v-row>
       <v-row v-if="customersInsights" class="px-15 mt-2">
         <v-col cols="3">
           <income-chart></income-chart>
         </v-col>
       </v-row>
-      <v-divider class="my-8"></v-divider>
+      <!-- <v-divider class="my-8"></v-divider>
       <empty-state-chart>
         <template #chart-image>
           <img
@@ -149,7 +211,7 @@
             alt="Empty state"
           />
         </template>
-      </empty-state-chart>
+      </empty-state-chart> -->
       <customer-details v-model="customerProfilesDrawer" />
     </div>
   </div>
@@ -166,6 +228,10 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+import MapChart from "@/components/common/MapChart/MapChart"
+import MapStateList from "@/components/common/MapChart/MapStateList"
+import mapData from "@/components/common/MapChart/mapData.json"
+import mapSlider from "@/components/common/MapChart/mapSlider"
 
 export default {
   name: "CustomerProfiles",
@@ -179,10 +245,14 @@ export default {
     Icon,
     CustomerDetails,
     IncomeChart,
+    MapChart,
+    MapStateList,
+    mapSlider,
   },
 
   data() {
     return {
+      mapChartData: mapData.demographic_overview,
       customerProfilesDrawer: false,
       overviewListItems: [
         {
