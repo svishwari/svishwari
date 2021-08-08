@@ -195,11 +195,11 @@
               </div>
             </v-card-title>
             <doughnut-chart
-        :width="250"
-        :height="240"
-        :data="genderChartData"
-        label="Gender"
-      ></doughnut-chart>
+              :width="250"
+              :height="240"
+              :data="genderChartData"
+              label="Gender"
+            ></doughnut-chart>
           </v-card>
         </v-col>
       </v-row>
@@ -240,7 +240,6 @@ import genderData from "@/components/common/DoughnutChart/genderData.json"
 import mapSlider from "@/components/common/MapChart/mapSlider"
 import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 
-
 export default {
   name: "CustomerProfiles",
   components: {
@@ -256,7 +255,7 @@ export default {
     MapChart,
     MapStateList,
     mapSlider,
-    DoughnutChart
+    DoughnutChart,
   },
 
   data() {

@@ -279,11 +279,11 @@
             </div>
           </v-card-title>
           <doughnut-chart
-        :width="250"
-        :height="200"
-        :data="genderChartData"
-        label="Gender"
-      ></doughnut-chart>
+            :width="250"
+            :height="200"
+            :data="genderChartData"
+            label="Gender"
+          ></doughnut-chart>
         </v-card>
       </v-col>
     </v-row>
