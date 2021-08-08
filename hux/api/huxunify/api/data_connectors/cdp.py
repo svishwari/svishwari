@@ -5,7 +5,9 @@ import datetime
 import logging
 import time
 import asyncio
+import math
 from typing import Tuple, Optional
+from random import randint
 
 import requests
 import aiohttp
@@ -305,6 +307,147 @@ def get_idr_data_feeds() -> list:
     ]
 
     return response
+
+
+def generate_idr_matching_trends_distribution(
+    number_of_points: int,
+    min_point: int = 5,
+    max_point: int = 9,
+    lambda_: float = 0.5,
+    multiplier: int = 1,
+):
+    """Generates normalized exponential data with randomness
+    Args:
+        number_of_points (int): Number of points to generate
+        min_point (int): Maximum value in data.
+        max_point (int): Minimum value in data.
+        lambda_ (float): Value to control rise of exponent
+        multiplier (int): 1 represent increasing exponential data, -1 for decreasing
+    Returns:
+        list: Generated exponential data
+
+    """
+    # TODO: Remove after CDM API for IDR matching trends is available
+
+    data = [
+        multiplier * math.e ** (x * lambda_ / number_of_points)
+        for x in range(0, number_of_points)
+    ]
+    return add_randomness(
+        normalize_values(
+            data, max_range_val=max_point, min_range_val=min_point
+        )
+    )
+
+
+def normalize_values(
+    values: list, max_range_val: int = 1, min_range_val: int = 0
+):
+    """Normalizes values in a list to be in the given range
+    Args:
+        values (list): Values to be normalized.
+        max_range_val (int): Maximum value in range.
+        min_range_val (int): Minimum value in range.
+
+    Returns:
+        list: Normalized values.
+    """
+    # TODO: Remove after CDM API for IDR matching trends is available
+
+    min_val = min(values)
+    max_val = max(values)
+    return [
+        int(
+            ((x - min_val) / (max_val - min_val))
+            * (max_range_val - min_range_val)
+        )
+        + min_range_val
+        for x in values
+    ]
+
+
+def add_randomness(values: list, variation_percentage: float = 0.005):
+    """Adds random numbers to a list of values
+    Args:
+        values (list): List of values which needs randomness
+        variation_percentage (float): Variation percentage which is added or subtracted from a value
+    Returns:
+        list: Values with randomness
+    """
+    # TODO: Remove after CDM API for IDR matching trends is available
+
+    return [
+        val
+        + randint(
+            -int(variation_percentage * val), int(variation_percentage * val)
+        )
+        for val in values
+    ]
+
+
+def get_idr_matching_trends(token: str) -> list:
+    """Retrieves IDR matching trends data YTD
+    Args:
+        token (str): OKTA JWT Token.
+    Returns:
+       list: count of known, anonymous, unique ids on a day.
+    """
+    # TODO: Update after CDM API for IDR matching trends is available
+    year_for_date = datetime.datetime.now().year
+    start_date = datetime.datetime.fromisoformat(f"{year_for_date}-01-01")
+    end_date = datetime.datetime.utcnow()
+    diff_date = end_date - start_date
+    num_points = diff_date.days
+
+    days = [start_date + datetime.timedelta(days=i) for i in range(num_points)]
+
+    # call customer-profile insights to get id counts
+    customer_profile_info = get_customers_overview(token)
+    known_ids_count = customer_profile_info.get(
+        api_c.TOTAL_KNOWN_IDS, api_c.KNOWN_IDS_MAX_COUNT
+    )
+
+    unique_ids_count = customer_profile_info.get(
+        api_c.TOTAL_UNIQUE_IDS, api_c.UNIQUE_HUX_IDS_MAX_COUNT
+    )
+
+    unknown_ids_count = customer_profile_info.get(
+        api_c.TOTAL_UNKNOWN_IDS, api_c.ANONYMOUS_IDS_MIN_COUNT
+    )
+
+    known_ids = generate_idr_matching_trends_distribution(
+        num_points,
+        min_point=known_ids_count - (0.35 * known_ids_count),
+        max_point=known_ids_count,
+        lambda_=api_c.KNOWN_IDS_LAMBDA,
+    )
+
+    unique_hux_ids = generate_idr_matching_trends_distribution(
+        num_points,
+        min_point=unique_ids_count - (0.35 * known_ids_count),
+        max_point=unique_ids_count,
+        lambda_=api_c.UNIQUE_HUX_IDS_LAMBDA,
+    )
+    # setting multiplier to -1 to get exponentially decreasing values
+    anonymous_ids = generate_idr_matching_trends_distribution(
+        num_points,
+        min_point=unknown_ids_count,
+        max_point=unknown_ids_count + (0.35 * unknown_ids_count),
+        lambda_=api_c.ANONYMOUS_IDS_LAMBDA,
+        multiplier=-1,
+    )
+
+    return [
+        {
+            api_c.DATE: day,
+            api_c.KNOWN_IDS: known_ids_count,
+            api_c.UNIQUE_HUX_IDS: unique_hux_ids_count,
+            api_c.ANONYMOUS_IDS: anonymous_ids_count,
+        }
+        for day, known_ids_count, unique_hux_ids_count, anonymous_ids_count in zip(
+            days, known_ids, unique_hux_ids, anonymous_ids
+        )
+    ]
 
 
 def get_customer_events_data(hux_id: str) -> list:
