@@ -19,22 +19,22 @@
 export default {
   name: "MapSlider",
   props: {
-    min: {
-      type: Number,
+    mapData: {
+      type: Array,
       required: false,
-      default: 0.01,
-    },
-    max: {
-      type: Number,
-      required: false,
-      default: 0.59,
     },
   },
   data() {
     return {
-      minValue: this.min ? this.$options.filters.Percentage(this.min) : "-%",
-      maxValue: this.max ? this.$options.filters.Percentage(this.max) : "-%",
+      minValue: "-%",
+      maxValue: "-%",
     }
+  },
+  async mounted() {
+    await this.mapData
+    let total_range = this.mapData.map((data) => data.population_percentage)
+    this.minValue = this.$options.filters.Percentage(Math.min(...total_range))
+    this.maxValue = this.$options.filters.Percentage(Math.max(...total_range))
   },
 }
 </script>
