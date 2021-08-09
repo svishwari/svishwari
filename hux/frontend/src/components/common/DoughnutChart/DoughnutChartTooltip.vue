@@ -3,7 +3,7 @@
     v-if="showTooltip"
     class="tooltip"
     :style="{
-      transform: `translate(${tooltip.x}px, ${tooltip.y}px)`
+      transform: `translate(${tooltip.x}px, ${tooltip.y}px)`,
     }"
   >
     <v-card tile>
