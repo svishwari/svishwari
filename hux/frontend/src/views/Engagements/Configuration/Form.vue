@@ -93,9 +93,12 @@
               </template>
             </v-radio>
           </v-radio-group>
-
+        </v-row>
+        <v-row class="delivery-schedule mt-10 ml-n2">
           <div v-if="value.delivery_schedule == 1">
-            <span class="text-h5 date-picker-label">Start date</span>
+            <span class="date-picker-label neroBlack--text text-caption">
+              Start date
+            </span>
             <hux-start-date
               class="mt-n4"
               :label="selectedStartDate"
@@ -103,23 +106,22 @@
               @on-date-select="onStartDateSelect"
             />
           </div>
-
-          <v-icon
+          <icon
             v-if="value.delivery_schedule == 1"
-            class="icon icon-right"
-            size="16"
-          >
-            mdi-arrow-right
-          </v-icon>
+            class="ml-2 mr-2"
+            type="arrow"
+            :size="28"
+          />
           <div v-if="value.delivery_schedule == 1">
-            <span class="text-h5 date-picker-label">End date</span>
+            <span class="date-picker-label neroBlack--text text-caption">
+              End date
+            </span>
             <hux-end-date
               class="mt-n4"
               :label="selectedEndDate"
               :selected="selectedEndDate"
               :is-sub-menu="true"
               :min-date="selectedStartDate"
-              :is-disabled="disableEndDate"
               @on-date-select="onEndDateSelect"
             />
           </div>
@@ -336,6 +338,7 @@ import SelectDestinationsDrawer from "./Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "./Drawers/DestinationDataExtensionDrawer.vue"
 import HuxStartDate from "@/components/common/DatePicker/HuxStartDate"
 import HuxEndDate from "@/components/common/DatePicker/HuxEndDate"
+import Icon from "@/components/common/Icon.vue"
 
 export default {
   name: "EngagementsForm",
@@ -354,6 +357,7 @@ export default {
     DestinationDataExtensionDrawer,
     HuxStartDate,
     HuxEndDate,
+    Icon,
   },
 
   props: {
@@ -543,7 +547,7 @@ export default {
       this.selectedEndDate = null
       this.disableEndDate = false
       this.$set(this.value, "recurring", {
-        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
+        start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
         end: null,
       })
     },
@@ -551,8 +555,8 @@ export default {
     onEndDateSelect(val) {
       this.selectedEndDate = val
       this.$set(this.value, "recurring", {
-        start: this.$options.filters.Date(this.selectedStartDate, "MMMM D"),
-        end: this.$options.filters.Date(this.selectedEndDate, "MMMM D"),
+        start: this.$options.filters.Date(this.selectedStartDate, "MMM D"),
+        end: this.$options.filters.Date(this.selectedEndDate, "MMM D"),
       })
     },
   },
@@ -578,6 +582,9 @@ export default {
 }
 .radio-div {
   margin-top: -11px !important;
+  .v-radio {
+    width: 175px;
+  }
 }
 .destinations-wrap {
   display: flex;

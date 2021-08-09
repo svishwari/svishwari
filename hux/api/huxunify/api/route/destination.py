@@ -6,7 +6,6 @@ from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
 from flask import Blueprint, request, jsonify
-from flask_apispec import marshal_with
 from marshmallow import ValidationError
 
 from huxunifylib.database.notification_management import create_notification
@@ -14,10 +13,15 @@ from huxunifylib.database import (
     delivery_platform_management as destination_management,
 )
 import huxunifylib.database.constants as db_c
-from huxunifylib.util.general.const import FacebookCredentials, SFMCCredentials
+from huxunifylib.util.general.const import (
+    FacebookCredentials,
+    SFMCCredentials,
+    TwilioCredentials,
+)
 from huxunifylib.connectors import (
     FacebookConnector,
     SFMCConnector,
+    TwilioConnector,
     AudienceAlreadyExists,
 )
 from huxunify.api.data_connectors.aws import (
@@ -33,6 +37,7 @@ from huxunify.api.schema.destinations import (
     DestinationDataExtGetSchema,
     SFMCAuthCredsSchema,
     FacebookAuthCredsSchema,
+    TwilioAuthCredsSchema,
 )
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 from huxunify.api.route.utils import (
@@ -245,7 +250,6 @@ class DestinationPutView(SwaggerView):
 
     # pylint: disable=unexpected-keyword-arg
     # pylint: disable=too-many-return-statements
-    @marshal_with(DestinationPutSchema)
     @api_error_handler(
         custom_message={
             ValidationError: {"message": api_c.INVALID_AUTH_DETAILS}
@@ -299,6 +303,11 @@ class DestinationPutView(SwaggerView):
             == db_c.DELIVERY_PLATFORM_FACEBOOK
         ):
             FacebookAuthCredsSchema().load(auth_details)
+        elif (
+            destination[db_c.DELIVERY_PLATFORM_TYPE]
+            == db_c.DELIVERY_PLATFORM_TWILIO
+        ):
+            TwilioAuthCredsSchema().load(auth_details)
 
         if auth_details:
             # store the secrets for the updated authentication details
@@ -477,6 +486,17 @@ class DestinationValidatePostView(SwaggerView):
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
+            }, HTTPStatus.OK
+        elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_TWILIO:
+            TwilioConnector(
+                auth_details={
+                    TwilioCredentials.TWILIO_AUTH_TOKEN.value: body.get(
+                        api_c.AUTHENTICATION_DETAILS
+                    ).get(api_c.TWILIO_AUTH_TOKEN),
+                },
+            )
+            return {
+                "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
             }, HTTPStatus.OK
         else:
             return {

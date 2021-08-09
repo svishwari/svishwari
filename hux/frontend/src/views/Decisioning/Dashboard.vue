@@ -14,9 +14,16 @@
           <div class="model-dashboard__card px-6 py-5">
             {{ model.description }}
           </div>
-          <div class="d-flex justify-center align-center mt-6 rounded-lg">
+          <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Top {{ model.feature_importance.length }} feature importance
+                </span>
+              </div>
+            </v-card-title>
             <feature-chart :feature-data="model.feature_importance || []" />
-          </div>
+          </v-card>
         </v-col>
         <v-col col="6">
           <div class="d-flex">
