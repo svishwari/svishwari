@@ -843,9 +843,9 @@ class OrchestrationRouteTest(TestCase):
         self.assertEqual(audience[db_c.CREATED_BY], self.user_name)
 
         # validate that the match_rate in deliveries contained within
-        # engagements are greater than 0
+        # engagements are greater than or equal to 0
         for engagement in audience[api_c.AUDIENCE_ENGAGEMENTS]:
-            self.assertGreater(
+            self.assertGreaterEqual(
                 all(x[api_c.MATCH_RATE] for x in engagement[api_c.DELIVERIES]),
                 0,
             )

@@ -598,6 +598,7 @@ class TestEngagementRoutes(TestCase):
                                 db_c.OBJECT_ID: dest[db_c.ID],
                                 db_c.LATEST_DELIVERY: {
                                     api_c.SIZE: 1000,
+                                    api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
                                 },
                             }
                             for dest in self.destinations
@@ -610,6 +611,7 @@ class TestEngagementRoutes(TestCase):
                                 db_c.OBJECT_ID: dest[db_c.ID],
                                 db_c.LATEST_DELIVERY: {
                                     api_c.SIZE: 1000,
+                                    api_c.STATUS: api_c.STATUS_NOT_DELIVERED,
                                 },
                             }
                             for dest in self.destinations

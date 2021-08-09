@@ -485,7 +485,7 @@ class EngagementSchemaTest(TestCase):
             ],
         }
 
-        assert EngagementGetSchema().validate(engagement) == {}
+        self.assertFalse(EngagementGetSchema().validate(engagement))
 
         destinations = engagement[api_c.AUDIENCES][0][api_c.DESTINATIONS]
 
