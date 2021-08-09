@@ -455,7 +455,10 @@ stages:
           extra_kwargs:
             destination_type: "facebook"
 
-# Commenting out this stage of test since it is updating destination's auth credentials
+# Commenting out this stage of test since it is not ideal to have destination's
+# correct authentication details here in plain text and running this test with
+# the below dummy credentials used will update the authentication details with
+# wrong values
 # in DB with incorrect/dummy values that is causing deliveries to fail
 #  - name: test destinations put/update destination success
 #
@@ -479,8 +482,12 @@ stages:
 #      status_code: 200
 #      headers:
 #        content-type: application/json
-#      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-#      json: {}
+#      json:
+#        name: "Facebook",
+#        type: "facebook",
+#        status: "Succeeded",
+#        id: {facebook_destination_id}
+#        is_enabled: !anybool
 
 ---
 test_name: Test destinations put/update invalid destination ID failure
@@ -514,5 +521,5 @@ stages:
       status_code: 400
       headers:
         content-type: application/json
-      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-      json: {}
+      json:
+        message: !re_search "not valid"
