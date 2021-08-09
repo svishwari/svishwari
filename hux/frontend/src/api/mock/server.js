@@ -74,7 +74,7 @@ export function makeServer({ environment = "development" } = {}) {
     routes() {
       this.urlPrefix = config.apiUrl
       this.namespace = config.apiBasePath
-      this.timing = 0
+      this.timing = 1000
       defineRoutes(this)
 
       // pass requests to external APIs through

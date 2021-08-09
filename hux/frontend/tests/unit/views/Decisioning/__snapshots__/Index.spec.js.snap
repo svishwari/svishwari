@@ -3,9 +3,10 @@
 exports[`Listing of models Models store successfully filled 1`] = `
 <div>
   <page-header-stub bgcolor="white" headerpadding="px-8" headerheightchanges="py-5"><template></template></page-header-stub>
-  true
-  false
-  <v-progress-linear-stub color="primary" value="0" buffervalue="100" height="4" active="true" indeterminate="true"></v-progress-linear-stub>
-  <!---->
+  <v-progress-linear-stub color="primary" value="0" buffervalue="100" height="4"></v-progress-linear-stub>
+  <v-row-stub tag="div" class="pa-14">
+    <descriptive-card-stub icon="model-unsubscribe" title="Propensity to Unsubscribe" description="Propensity of a customer unsubscribing to emails." class="mr-10 cursor-pointer"><template></template> <template></template></descriptive-card-stub>
+    <descriptive-card-stub icon="model-ltv" title="LTV" description="Propensity of a customer unsubscribing to emails." disabled="true" class="mr-10 cursor-pointer"><template></template> <template></template></descriptive-card-stub>
+  </v-row-stub>
 </div>
 `;
