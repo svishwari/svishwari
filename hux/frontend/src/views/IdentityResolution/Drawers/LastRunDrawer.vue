@@ -175,13 +175,49 @@ export default {
 }
 
 .panel-header {
-  @extend .border-bottom;
-  @extend .border-zircon;
+  border-bottom: 1px solid #d5dce1;
   flex-direction: row-reverse;
+  height: 40px;
 
   ::v-deep .v-expansion-panel-header__icon {
     margin-left: 0;
     margin-right: 8px;
+  }
+}
+
+::v-deep .v-expansion-panel--active {
+  > .v-expansion-panel-header--active {
+    .v-expansion-panel-header__icon:not(.v-expansion-panel-header__icon--disable-rotate) {
+      .v-icon {
+        transform: rotate(0deg);
+      }
+    }
+  }
+}
+
+::v-deep .v-expansion-panels {
+  .v-expansion-panel-header {
+    .v-expansion-panel-header__icon {
+      .v-icon {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+}
+
+::v-deep .v-data-table {
+  > .v-data-table__wrapper {
+    > table {
+      > thead,
+      > tbody,
+      > tfoot {
+        tr {
+          td {
+            height: 40px;
+          }
+        }
+      }
+    }
   }
 }
 </style>
