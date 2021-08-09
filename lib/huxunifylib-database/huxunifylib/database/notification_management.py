@@ -41,7 +41,9 @@ def create_notification(
         raise InvalidNotificationType(notification_type)
 
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     # get current time
     current_time = datetime.utcnow()
@@ -91,7 +93,9 @@ def get_notifications(
 
     """
     # get collection
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.NOTIFICATIONS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.NOTIFICATIONS_COLLECTION
+    ]
 
     skips = batch_size * (batch_number - 1)
 

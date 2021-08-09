@@ -63,5 +63,9 @@ class NotificationManagementTest(TestCase):
             batch_number=1,
         )
 
-        self.assertCountEqual(self.notifications, notifications["notifications"])
-        self.assertEqual(len(self.notifications), notifications["total_records"])
+        self.assertCountEqual(
+            self.notifications, notifications["notifications"]
+        )
+        self.assertEqual(
+            len(self.notifications), notifications["total_records"]
+        )
