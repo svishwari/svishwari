@@ -225,6 +225,10 @@ def get_engagements_summary(
                     "audience_name": "$audiences.name",
                     "audience_id": "$audiences.id",
                     "audience_size": "$audiences.size",
+                    "audience_created_by": "$audiences.created_by",
+                    "audience_updated_by": "$audiences.updated_by",
+                    "audience_update_time": "$audiences.update_time",
+                    "audience_create_time": "$audiences.create_time",
                     "delivery_schedule": {
                         "$ifNull": ["$delivery_schedule", ""]
                     },
@@ -238,7 +242,12 @@ def get_engagements_summary(
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "latest_delivery": {
                             "update_time": "$audiences.destinations.latest_delivery.update_time",
-                            "status": "$audiences.destinations.latest_delivery.status",
+                            "status": {
+                                "$ifNull": [
+                                    "$audiences.destinations.latest_delivery.status",
+                                    db_c.AUDIENCE_STATUS_NOT_DELIVERED,
+                                ]
+                            },
                             "size": "$audiences.destinations.latest_delivery."
                             "delivery_platform_audience_size",
                         },
@@ -266,6 +275,10 @@ def get_engagements_summary(
                         "id": "$_id.audience_id",
                         "name": "$_id.audience_name",
                         "size": "$_id.audience_size",
+                        "created_by": "$_id.created_by",
+                        "updated_by": "$_id.updated_by",
+                        "update_time": "$_id.update_time",
+                        "create_time": "$_id.create_time",
                         "destinations": "$destinations",
                     }
                 },
