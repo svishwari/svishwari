@@ -528,6 +528,9 @@ export default {
     }
     .disabled-white-background {
       background: white !important;
+      &.v-btn.v-item--active {
+        border-color: var(--v-primary-base) !important;
+      }
     }
   }
   .delivery-schedule {

@@ -86,7 +86,6 @@
               <status
                 :status="item[header.value]"
                 :show-label="true"
-                collapsed
                 class="d-flex"
                 :icon-size="17"
               />
@@ -279,8 +278,7 @@ export default {
       columnDefs: [
         { text: "Engagement name", value: "name", width: "300px" },
         { text: "Audiences", value: "audiences", width: "200px" },
-        { text: "Status", value: "status", width: "140px" },
-        { text: "Size", value: "size", width: "200px" },
+        { text: "Status", value: "status", width: "200px" },
         {
           text: "Delivery schedule",
           value: "delivery_schedule",

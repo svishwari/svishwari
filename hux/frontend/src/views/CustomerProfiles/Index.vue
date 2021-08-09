@@ -313,8 +313,15 @@ export default {
         this.overviewListItems[2].subtitle = this.overview.total_us_states
         this.overviewListItems[3].subtitle = this.overview.total_cities
         this.overviewListItems[3].value = "numeric"
-        this.overviewListItems[4].subtitle =
-          this.overview.min_age + "–" + this.overview.max_age
+        let min_age = this.overview.min_age
+        let max_age = this.overview.max_age
+        if (min_age && max_age && min_age === max_age) {
+          this.overviewListItems[4].subtitle = min_age
+        } else if (min_age && max_age) {
+          this.overviewListItems[4].subtitle = `${min_age}-${max_age}`
+        } else {
+          this.overviewListItems[4].subtitle = "-"
+        }
         this.overviewListItems[4].value = "none"
         this.overviewListItems[5].subtitle = this.overview.gender_women
         this.overviewListItems[5].value = "percentage"

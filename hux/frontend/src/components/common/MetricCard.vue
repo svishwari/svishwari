@@ -4,7 +4,7 @@
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
-    height="90"
+    height="78"
     :disabled="!active"
     elevation="0"
     :ripple="interactable"

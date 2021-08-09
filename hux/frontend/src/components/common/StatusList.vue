@@ -164,7 +164,7 @@
             </span>
           </div>
         </v-list-item-content>
-        <v-list-item-content v-if="item.status" class="status-col py-1">
+        <v-list-item-content v-if="item.status" class="status-col py-1 mr-2">
           <status
             :status="item.status"
             :icon-size="statusIcon"
@@ -174,17 +174,25 @@
             tooltip-title="Destination status"
           />
         </v-list-item-content>
-        <v-list-item-content v-if="item.size" class="size-col py-1">
+        <v-list-item-content v-if="item.size" class="size-col py-1 mr-2">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) }}
             </template>
             <template #hover-content>
-              {{ item.size | Numeric(true, false) }}
+              <div class="d-flex flex-column text-caption">
+                <span>Audience size</span>
+                <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
+                <span>Match rate</span>
+                <i v-if="!item.match_rate">
+                  Pending... check back in a few hours
+                </i>
+                <span v-else>{{ item.match_rate | Percentage }}</span>
+              </div>
             </template>
           </tooltip>
         </v-list-item-content>
-        <v-list-item-content v-if="!item.size" class="deliverdOn-col py-1">
+        <v-list-item-content v-if="!item.size" class="size-col py-1">
           <tooltip>
             <template #label-content>
               {{ getSize(item.size) | Empty("-") }}
@@ -244,6 +252,7 @@ export default {
     section: {
       type: Object,
       required: false,
+      default: () => {},
     },
 
     engagementId: {
@@ -517,16 +526,16 @@ export default {
   .v-list {
     .v-list-item {
       .icon-col {
-        min-width: 69px;
-        max-width: 69px;
+        min-width: 55px;
+        max-width: 55px;
       }
       .status-col {
         min-width: 45px;
         max-width: 45px;
       }
       .size-col {
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 50px;
+        max-width: 50px;
         font-size: 12px;
         line-height: 16px;
         color: var(--v--neroBlack-base);
@@ -535,7 +544,7 @@ export default {
         font-size: 12px;
         line-height: 16px;
         color: var(--v-neroBlack-base);
-        min-width: 80px;
+        min-width: 60px;
       }
       &:hover,
       &:focus {

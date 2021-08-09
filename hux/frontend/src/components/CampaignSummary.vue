@@ -42,10 +42,7 @@
                           percentileColumns.includes(item.field.split('|')[1])
                         "
                       >
-                        {{
-                          item.value.split("|")[1]
-                            | percentageConvert(true, true)
-                        }}
+                        {{ item.value.split("|")[1] | Percentage }}
                       </span>
                       <span
                         v-else-if="
@@ -71,7 +68,7 @@
                         {{ item.value | Numeric(false, false, true) }}
                       </span>
                       <span v-else-if="percentileColumns.includes(item.field)">
-                        {{ item.value | percentageConvert(true, true) }}
+                        {{ item.value | Percentage }}
                       </span>
                       <span v-else-if="currencyColumns.includes(item.field)">
                         {{ item.value | Currency }}
@@ -114,8 +111,11 @@
                   </v-icon>
 
                   <span class="d-flex align-center">
-                    <!-- TODO Route Link to Audience Insight Page -->
-                    <router-link to="#" class="text-decoration-none" append>
+                    <router-link
+                      :to="{ name: 'AudienceInsight', params: { id: item.id } }"
+                      class="text-decoration-none"
+                      append
+                    >
                       <span class="audience-name d-flex align-center">
                         <tooltip>
                           <template #label-content>
@@ -170,7 +170,7 @@
                       <div
                         class="w-100 d-flex align-center"
                         :class="{
-                          'pl-11': !item.is_mapped,
+                          'pl-11': !item.is_mapped && type === 'ads',
                           'pl-3': item.campaigns && item.campaigns.length > 0,
                         }"
                       >
@@ -199,7 +199,7 @@
                               {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                             <v-btn
-                              v-if="item.is_mapped"
+                              v-if="item.is_mapped && type === 'ads'"
                               icon
                               small
                               class="ml-3"
@@ -229,7 +229,7 @@
                       </div>
                     </td>
                     <td
-                      v-if="!item.is_mapped"
+                      v-if="!item.is_mapped && type === 'ads'"
                       :colspan="getDestinationHeaders(expandedHeaders).length"
                       :style="{
                         width: totalWidth(
@@ -565,36 +565,6 @@ export default {
           reach: "-",
           spend: "-",
         },
-        {
-          campaigns: [],
-          click_through_rate: "-",
-          clicks: "-",
-          conversions: "-",
-          cost_per_action: "-",
-          cost_per_click: "-",
-          cost_per_thousand_impressions: "-",
-          engagement_rate: "-",
-          frequency: "-",
-          impressions: "-",
-          name: "Audience 2",
-          reach: "-",
-          spend: "-",
-        },
-        {
-          campaigns: [],
-          click_through_rate: "-",
-          clicks: "-",
-          conversions: "-",
-          cost_per_action: "-",
-          cost_per_click: "-",
-          cost_per_thousand_impressions: "-",
-          engagement_rate: "-",
-          frequency: "-",
-          impressions: "-",
-          name: "Audience 3",
-          reach: "-",
-          spend: "-",
-        },
       ],
       emptyCampaignEmailData: [
         {
@@ -614,42 +584,6 @@ export default {
           unsubscribe: "-",
           unsubscribe_rate: "-",
           name: "Audience 1",
-        },
-        {
-          campaigns: [],
-          sent: "-",
-          hard_bounces: "-",
-          hard_bounces_rate: "-",
-          delivered: "-",
-          delivered_rate: "-",
-          open: "-",
-          open_rate: "-",
-          clicks: "-",
-          click_through_rate: "-",
-          click_to_open_rate: "-",
-          unique_clicks: "-",
-          unique_opens: "-",
-          unsubscribe: "-",
-          unsubscribe_rate: "-",
-          name: "Audience 2",
-        },
-        {
-          campaigns: [],
-          sent: "-",
-          hard_bounces: "-",
-          hard_bounces_rate: "-",
-          delivered: "-",
-          delivered_rate: "-",
-          open: "-",
-          open_rate: "-",
-          clicks: "-",
-          click_through_rate: "-",
-          click_to_open_rate: "-",
-          unique_clicks: "-",
-          unique_opens: "-",
-          unsubscribe: "-",
-          unsubscribe_rate: "-",
-          name: "Audience 3",
         },
       ],
       audienceId: null,
@@ -704,7 +638,8 @@ export default {
       return (
         (item.destinations &&
           item.destinations.some(
-            (dest) => !dest.is_mapped && dest.name === "Facebook"
+            (dest) =>
+              !dest.is_mapped && this.type === "ads" && dest.name === "Facebook"
           )) ||
         false
       )
@@ -715,9 +650,11 @@ export default {
         if (this.numericColumns.includes(key)) {
           obj[key] = this.$options.filters.Numeric(obj[key], true, false)
         } else if (this.percentileColumns.includes(key)) {
-          obj[key] = this.$options.filters.percentageConvert(
+          obj[key] = this.$options.filters.Numeric(
             obj[key],
             true,
+            false,
+            false,
             true
           )
         } else if (this.currencyColumns.includes(key)) {

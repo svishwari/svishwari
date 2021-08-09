@@ -68,12 +68,12 @@ client["engagements"].detachDestination = (engagementId, audienceId, data) => {
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
     return http.delete(
-      `/engagements/${engagementId}/audiences/${audienceId}/destinations`,
+      `/engagements/${engagementId}/audience/${audienceId}/destinations`,
       { data: data }
     )
   } else {
     return http.delete(
-      `/engagements/${engagementId}/audiences/${audienceId}/destinations/${data.id}`
+      `/engagements/${engagementId}/audience/${audienceId}/destinations/${data.id}`
     )
   }
 }
@@ -82,10 +82,10 @@ client["engagements"].detachAudience = (resourceId, data) => {
   // NOTE: The Hux API supports post data for a DELETE request method.
   // Typically, this isn't RESTful so Mirage does not support this, hence this check
   if (process.env.NODE_ENV !== "development") {
-    return http.delete(`/engagements/${resourceId}/audiences`, { data: data })
+    return http.delete(`/engagements/${resourceId}/audience`, { data: data })
   } else {
     const audienceId = data.audience_ids[0]
-    return http.delete(`/engagements/${resourceId}/audiences/${audienceId}`)
+    return http.delete(`/engagements/${resourceId}/audience/${audienceId}`)
   }
 }
 
@@ -144,9 +144,9 @@ client["engagements"].getCampaigns = ({
 //#endregion Engagement custom endpoints
 
 //#region Customer Identity endpoint(s)
-client["identity"].overview = () => {
-  return http.get("/idr/overview")
-}
+client["idr"].overview = () => http.get("/idr/overview")
+client["idr"].datafeeds = () => http.get("/idr/datafeeds")
+client["idr"].datafeedReport = (id) => http.get(`/idr/datafeeds/${id}`)
 //#endregion
 
 //#region audiences endpoints

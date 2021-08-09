@@ -47,7 +47,10 @@
           mdi-checkbox-blank-circle
         </v-icon>
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <v-icon
@@ -78,7 +81,10 @@
           <span class="half-right-circle mr-2 secondary" />
         </span>
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <span v-if="showIconTooltip" class="d-flex align-center">
@@ -119,7 +125,10 @@
           v-on="on"
         />
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <v-btn
@@ -151,7 +160,10 @@
           mdi-information
         </v-icon>
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <v-icon
@@ -182,7 +194,10 @@
           mdi-message-alert
         </v-icon>
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <v-icon
@@ -213,7 +228,10 @@
           mdi-checkbox-blank-circle-outline
         </v-icon>
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <v-icon
@@ -244,7 +262,10 @@
           mdi-checkbox-marked-circle
         </v-icon>
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <v-icon
@@ -275,7 +296,10 @@
           mdi-message-alert
         </v-icon>
       </template>
-      <div v-if="showLabel" class="px-4 py-2 white d-flex flex-column">
+      <div
+        v-if="showLabel"
+        class="px-4 py-2 white d-flex flex-column text-caption"
+      >
         <span v-if="tooltipTitle" class="mb-2">{{ tooltipTitle }} </span>
         <span class="d-flex align-center">
           <v-icon
