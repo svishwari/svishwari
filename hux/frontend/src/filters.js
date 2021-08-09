@@ -80,7 +80,7 @@ export default {
         abrv = "M"
       } else if (value >= 1000) {
         value = value / 1000
-        abrv = "k"
+        abrv = "K"
       }
     }
     if (approx) {

@@ -146,9 +146,9 @@ export default Vue.extend({
   .ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 31ch;
+    max-width: 28ch;
     display: inline-block;
-    width: 31ch;
+    width: 28ch;
     white-space: nowrap;
   }
   :hover {
