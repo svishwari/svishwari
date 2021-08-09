@@ -78,7 +78,7 @@ def get_notifications(
     batch_size: int,
     sort_order: int,
     batch_number: int,
-) -> Union[list, None]:
+) -> Union[dict, None]:
     """A function to get notifications
 
     Args:
@@ -89,7 +89,7 @@ def get_notifications(
         batch_number (int): Number of which batch should be returned
 
     Returns:
-        Union[list, None]: MongoDB document for a notification.
+        Union[dict, None]: MongoDB notification documents with total count of notifications .
 
     """
     # get collection
@@ -100,11 +100,14 @@ def get_notifications(
     skips = batch_size * (batch_number - 1)
 
     try:
-        return list(
-            collection.find()
-            .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
-            .skip(skips)
-            .limit(batch_size)
+        return dict(
+            total_records=collection.count_documents({}),
+            notifications=list(
+                collection.find()
+                .sort([(c.NOTIFICATION_FIELD_CREATED, -1), (c.ID, sort_order)])
+                .skip(skips)
+                .limit(batch_size)
+            ),
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
