@@ -102,7 +102,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import DataCards from "../../../../components/common/DataCards.vue"
 import HuxDropdown from "../../../../components/common/HuxDropdown.vue"
 import Tooltip from "../../../../components/common/Tooltip.vue"
-import { handleError } from "@/utils"
+
 export default {
   name: "CampaignMapDrawer",
   components: { Drawer, DataCards, HuxDropdown, Tooltip },
