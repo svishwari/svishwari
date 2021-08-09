@@ -822,14 +822,14 @@ class TestEngagementManagement(unittest.TestCase):
 
         engagement_docs = em.get_engagements_summary(database=self.database)
 
+        # get all engagements for validation
+        all_engagements = em.get_engagements(self.database)
+
         self.assertTrue(engagement_docs)
         self.assertFalse([e for e in engagement_docs if c.DELETED in e])
 
         # ensure length of grouped engagements is equal to length of all engagements.
         # this checks to ensure the grouping was done correctly.
-        # get all engagements for validation
-        all_engagements = em.get_engagements(self.database)
-
         self.assertEqual(len(engagement_docs), len(all_engagements))
 
         # test the grouped engagements for existence of key fields
