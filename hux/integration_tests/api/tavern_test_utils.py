@@ -30,3 +30,19 @@ def get_destination_id(response: object, **kwargs: dict) -> Union[Box, None]:
         if json["type"] == "sfmc" and destination_type == "sfmc":
             return Box({"sfmc_destination_id": json["id"]})
     return None
+
+def get_audience_id(response: object) -> Union[Box, None]:
+    """
+    Purpose of this function is to get the audience id from the response
+    object with some destinations as well and take one destination_id as well.
+
+    Args:
+        response (object): response object.
+
+    Returns:
+        Box: engagement_audience_id and engagement_destination_id.
+    """
+    for json in response.json():
+        if len(json["destinations"])>0:
+            return Box({"engagement_audience_id": json["id"],"engagement_destination_id":json["destinations"][0]["id"]})
+    return None
