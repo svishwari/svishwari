@@ -140,8 +140,9 @@ export default {
       return []
     },
     mappings() {
-      return Object.keys(this.campaignMappingOptions).length > 0
-        ? this.campaigns.map((camp) => {
+      return JSON.stringify(this.campaignMappingOptions) === "{}"
+        ? []
+        : this.campaigns.map((camp) => {
             return camp["id"]
               ? {
                   campaign: this.campaignMappingOptions.campaigns.filter(
@@ -154,7 +155,6 @@ export default {
                 }
               : camp
           })
-        : []
     },
     canMapNow() {
       return this.mappings.length > 0
@@ -227,15 +227,13 @@ export default {
       this.identityAttrs = attrs
       try {
         this.loading = true
-        await this.getCampaigns(attrs)
         await this.getCampaignMappingsOptions(attrs)
+        await this.getCampaigns(attrs)
         const campaigns = await this.campaignMapping(attrs.destinationId)
         this.campaigns =
           campaigns.length > 0
             ? campaigns
             : [JSON.parse(JSON.stringify(this.emptyCampaign))]
-      } catch (error) {
-        handleError(error)
       } finally {
         this.loading = false
       }

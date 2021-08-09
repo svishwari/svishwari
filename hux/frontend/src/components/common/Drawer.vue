@@ -9,7 +9,7 @@
     hide-overlay
     temporary
   >
-    <v-toolbar width="100%" class="box-shadow-25">
+    <v-toolbar width="100%" class="drawer-header box-shadow-25">
       <v-toolbar-title :class="contentHeaderPadding">
         <slot name="header-left"></slot>
         <slot name="header-right"></slot>
@@ -24,17 +24,24 @@
         </v-icon>
       </template>
     </v-toolbar>
+
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
-    <div class="drawer-content" :class="contentPadding">
+    <div
+      class="drawer-content"
+      :class="{
+        contentPadding,
+        'drawer-content-without-footer': !hasFooterSlots,
+      }"
+    >
       <slot></slot>
     </div>
 
     <v-footer
-      class="d-flex justify-space-between align-center px-6 py-5"
+      v-if="hasFooterSlots"
+      class="drawer-footer d-flex justify-space-between align-center px-6 py-5"
       absolute
       padless
-      height="80"
       color="white"
       elevation="5"
     >
@@ -117,8 +124,13 @@ export default {
         transitionDuration: this.disableTransition ? "0s" : "0.5s",
       }
     },
+
     drawerWidth() {
       return this.expanded ? this.expandedWidth : this.width
+    },
+
+    hasFooterSlots() {
+      return !!(this.$slots["footer-left"] || this.$slots["footer-right"])
     },
   },
 
@@ -150,12 +162,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$drawer-header-height: 64px;
+$drawer-footer-height: 80px;
+
 ::v-deep .v-navigation-drawer__content {
   overflow-y: hidden;
 }
+.drawer-header {
+  ::v-deep > .v-toolbar__content {
+    height: $drawer-header-height !important;
+  }
+}
+.drawer-footer {
+  height: $drawer-footer-height;
+}
 .drawer-content {
-  height: calc(100% - 130px);
+  height: calc(100% - #{$drawer-header-height + $drawer-footer-height});
   overflow-y: auto;
+}
+.drawer-content-without-footer {
+  height: calc(100% - #{$drawer-header-height});
 }
 ::v-deep .v-icon.v-icon::after {
   content: none;

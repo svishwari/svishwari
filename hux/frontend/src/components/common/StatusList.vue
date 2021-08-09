@@ -180,7 +180,15 @@
               {{ getSize(item.size) }}
             </template>
             <template #hover-content>
-              {{ item.size | Numeric(true, false) }}
+              <div class="d-flex flex-column text-caption">
+                <span>Audience size</span>
+                <span class="pb-3">{{ item.size | Numeric(true, false) }}</span>
+                <span>Match rate</span>
+                <i v-if="!item.match_rate">
+                  Pending... check back in a few hours
+                </i>
+                <span v-else>{{ item.match_rate | Percentage }}</span>
+              </div>
             </template>
           </tooltip>
         </v-list-item-content>
@@ -244,6 +252,7 @@ export default {
     section: {
       type: Object,
       required: false,
+      default: () => {},
     },
 
     engagementId: {
