@@ -23,7 +23,7 @@ python -m pip install . -U
 
 Set PYTHONPATH to the scripts
 ```
-export PYTHONPATH="PYTHONPATH="/<realpath>/hux-unified/scripts:$PYTHONPATH""
+export "PYTHONPATH="/<realpath>/hux-unified/scripts:$PYTHONPATH""
 export PYTHONPATH
 
 ```
