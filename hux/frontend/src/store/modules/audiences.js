@@ -20,6 +20,8 @@ const state = {
   newAudience: NEW_AUDIENCE,
 
   constants: {},
+
+  deliveries: {},
 }
 
 const getters = {
@@ -32,6 +34,11 @@ const getters = {
   insights: (state) => (id) => state.insights[id],
 
   audiencesRules: (state) => state.constants,
+
+  deliveries: (state) => (id) => {
+    const deliveries = state.deliveries[id]
+    return deliveries ? Object.values(state.deliveries[id]) : []
+  },
 }
 
 const mutations = {
@@ -50,6 +57,10 @@ const mutations = {
 
   SET_CONSTANTS(state, item) {
     Vue.set(state, "constants", item)
+  },
+
+  SET_DELIVERIES(state, { audienceId, deliveries }) {
+    Vue.set(state.deliveries, audienceId, deliveries)
   },
 }
 
@@ -195,6 +206,19 @@ const actions = {
     try {
       const response = await api.customers.getOverview(filter)
       return response.data
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  },
+
+  async getDeliveries({ commit }, audienceId) {
+    try {
+      const response = await api.audiences.deliveries(audienceId)
+      commit("SET_DELIVERIES", {
+        audienceId: audienceId,
+        deliveries: response.data,
+      })
     } catch (error) {
       handleError(error)
       throw error

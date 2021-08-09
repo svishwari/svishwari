@@ -143,7 +143,7 @@
               <span class="text-h5">Engagement &amp; delivery overview</span>
             </template>
             <template #title-right>
-              <div class="d-flex align-center section-right">
+              <div class="d-flex align-center">
                 <v-btn
                   text
                   class="
@@ -151,7 +151,7 @@
                     align-center
                     primary--text
                     text-decoration-none
-                    pr-0
+                    body-2
                   "
                   @click="openAttachEngagementDrawer()"
                 >
@@ -163,7 +163,12 @@
                   />
                   Add to an engagement
                 </v-btn>
-                <v-btn text color="primary">
+                <v-btn
+                  text
+                  color="primary"
+                  class="body-2 ml-n3"
+                  @click="openDeliveryHistoryDrawer()"
+                >
                   <icon type="history" :size="14" class="mr-1" />
                   Delivery history
                 </v-btn>
@@ -280,50 +285,63 @@
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
     />
+
+    <delivery-history-drawer
+      :audience-id="audienceId"
+      :toggle="showDeliveryHistoryDrawer"
+      @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
+    />
   </div>
 </template>
 
 <script>
+// helpers
 import { generateColor } from "@/utils"
 import { mapGetters, mapActions } from "vuex"
-import PageHeader from "@/components/PageHeader"
-import Breadcrumb from "@/components/common/Breadcrumb"
-import Avatar from "@/components/common/Avatar"
-import Tooltip from "../../components/common/Tooltip.vue"
-import MetricCard from "@/components/common/MetricCard"
-import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
-import Icon from "../../components/common/Icon.vue"
-import Size from "../../components/common/huxTable/Size.vue"
-import DeliveryOverview from "../../components/DeliveryOverview.vue"
-import HuxAlert from "../../components/common/HuxAlert.vue"
+
+// common components
+import Avatar from "@/components/common/Avatar.vue"
+import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
-import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
-import AttachEngagement from "@/views/Audiences/AttachEngagement"
-import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations"
-import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
+import DeliveryOverview from "@/components/DeliveryOverview.vue"
+import HuxAlert from "@/components/common/HuxAlert.vue"
+import Icon from "@/components/common/Icon.vue"
+import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
-import IncomeChart from "@/components/common/incomeChart/IncomeChart"
+import MetricCard from "@/components/common/MetricCard.vue"
+import PageHeader from "@/components/PageHeader.vue"
+import Size from "@/components/common/huxTable/Size.vue"
+import Tooltip from "@/components/common/Tooltip.vue"
+
+// views
+import AttachEngagement from "@/views/Audiences/AttachEngagement.vue"
+import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
+import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension.vue"
+import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
+import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
+import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
 
 export default {
   name: "AudienceInsight",
   components: {
-    MetricCard,
-    PageHeader,
-    Breadcrumb,
-    Avatar,
-    Tooltip,
-    Icon,
-    Size,
-    DeliveryOverview,
     AttachEngagement,
-    SelectDestinationsDrawer,
+    Avatar,
+    Breadcrumb,
+    ConfirmModal,
+    DeliveryHistoryDrawer,
+    DeliveryOverview,
     DestinationDataExtensionDrawer,
+    EditDeliverySchedule,
+    HuxAlert,
+    Icon,
+    IncomeChart,
     LookAlikeAudience,
     LookAlikeCard,
-    IncomeChart,
-    HuxAlert,
-    ConfirmModal,
-    EditDeliverySchedule,
+    MetricCard,
+    PageHeader,
+    SelectDestinationsDrawer,
+    Size,
+    Tooltip,
   },
   data() {
     return {
@@ -394,6 +412,7 @@ export default {
       ],
       selectedEngagements: [],
       selectedDestinations: [],
+      showDeliveryHistoryDrawer: false,
       showSelectDestinationsDrawer: false,
       showSalesforceExtensionDrawer: false,
       salesforceDestination: {},
@@ -420,7 +439,7 @@ export default {
       return this.getAudience(this.$route.params.id)
     },
     audienceId() {
-      return this.audience && this.audience.id
+      return this.$route.params.id
     },
     audienceInsights() {
       return this.getAudienceInsights(this.audienceId)
@@ -704,6 +723,9 @@ export default {
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },
+    openDeliveryHistoryDrawer() {
+      this.showDeliveryHistoryDrawer = true
+    },
     async reloadAudienceData() {
       this.showLookAlikeDrawer = false
       if (this.lookalikeCreated) {
@@ -790,14 +812,6 @@ export default {
   }
   .audience-summary {
     padding: 10px 15px;
-  }
-  .relationships {
-    .section-right {
-      .v-size--default {
-        font-size: 12px;
-        line-height: 16px;
-      }
-    }
   }
   .container {
     .filter-list {

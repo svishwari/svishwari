@@ -27,7 +27,9 @@
                 v-if="['audience', 'engagement'].includes(col.value)"
                 :to="{
                   name:
-                    col.value === 'audience' ? 'AudienceInsight' : 'Engagement',
+                    col.value === 'audience'
+                      ? 'AudienceInsight'
+                      : 'EngagementDashboard',
                   params: { id: item[col.value].id },
                 }"
                 class="d-inline-block mw-100 text-truncate text-decoration-none"
@@ -148,7 +150,8 @@ export default {
     }),
 
     items() {
-      return this.engagementDeliveries(this.engagementId)
+      if (this.audienceId) return this.audienceDeliveries(this.audienceId)
+      else return this.engagementDeliveries(this.engagementId)
     },
   },
 
