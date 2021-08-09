@@ -57,9 +57,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
             FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                 api_const.FACEBOOK_AD_ACCOUNT_ID
             ],
-            FacebookCredentials.FACEBOOK_APP_ID.name: auth[
-                api_const.FACEBOOK_APP_ID
-            ],
+            FacebookCredentials.FACEBOOK_APP_ID.name: auth[api_const.FACEBOOK_APP_ID],
         }
         secret_dict = {
             FacebookCredentials.FACEBOOK_ACCESS_TOKEN.name: auth[
@@ -71,29 +69,18 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
         }
 
     elif (
-        destination[db_const.DELIVERY_PLATFORM_TYPE]
-        == db_const.DELIVERY_PLATFORM_SFMC
+        destination[db_const.DELIVERY_PLATFORM_TYPE] == db_const.DELIVERY_PLATFORM_SFMC
     ):
         env_dict = {
-            SFMCCredentials.SFMC_CLIENT_ID.name: auth[
-                api_const.SFMC_CLIENT_ID
-            ],
-            SFMCCredentials.SFMC_AUTH_URL.name: auth[
-                api_const.SFMC_AUTH_BASE_URI
-            ],
-            SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
-                api_const.SFMC_ACCOUNT_ID
-            ],
-            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
-                api_const.SFMC_SOAP_BASE_URI
-            ],
+            SFMCCredentials.SFMC_CLIENT_ID.name: auth[api_const.SFMC_CLIENT_ID],
+            SFMCCredentials.SFMC_AUTH_URL.name: auth[api_const.SFMC_AUTH_BASE_URI],
+            SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[api_const.SFMC_ACCOUNT_ID],
+            SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[api_const.SFMC_SOAP_BASE_URI],
             SFMCCredentials.SFMC_URL.name: auth[api_const.SFMC_REST_BASE_URI],
         }
 
         secret_dict = {
-            SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
-                api_const.SFMC_CLIENT_SECRET
-            ]
+            SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[api_const.SFMC_CLIENT_SECRET]
         }
     elif (
         destination[db_const.DELIVERY_PLATFORM_TYPE]
@@ -101,9 +88,7 @@ def map_destination_credentials_to_dict(destination: dict) -> tuple:
     ):
         env_dict = {}
         secret_dict = {
-            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[
-                api_const.TWILIO_AUTH_TOKEN
-            ]
+            TwilioCredentials.TWILIO_AUTH_TOKEN.name: auth[api_const.TWILIO_AUTH_TOKEN]
         }
     else:
         raise KeyError(
@@ -194,17 +179,15 @@ class DestinationBatchJob:
             set_delivery_job_status(
                 self.database,
                 self.audience_delivery_job_id,
-                db_const.STATUS_FAILED,
+                db_const.AUDIENCE_STATUS_ERROR,
             )
-            self.result = db_const.STATUS_FAILED
+            self.result = db_const.AUDIENCE_STATUS_ERROR
             return
 
-        self.result = db_const.STATUS_PENDING
+        self.result = db_const.AUDIENCE_STATUS_DELIVERING
 
         # check if engagement has a delivery flight schedule set
-        if not (
-            engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)
-        ):
+        if not (engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)):
             logging.warning(
                 "Delivery schedule is not set for %s",
                 engagement_doc[db_const.ID],
@@ -318,9 +301,7 @@ def get_destination_config(
     config = get_config()
 
     # get destination specific env values
-    ds_env_dict, ds_secret_dict = map_destination_credentials_to_dict(
-        delivery_platform
-    )
+    ds_env_dict, ds_secret_dict = map_destination_credentials_to_dict(delivery_platform)
 
     # update the engagement latest delivery job
     try:
