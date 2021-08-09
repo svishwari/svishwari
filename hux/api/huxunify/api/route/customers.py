@@ -235,7 +235,7 @@ class Customersview(SwaggerView):
         {
             "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
             "in": "query",
-            "type": "integer",
+            "type": "string",
             "description": "Max number of customers to be returned.",
             "example": api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
             "required": False,
@@ -286,7 +286,7 @@ class Customersview(SwaggerView):
         )
         batch_number = request.args.get(
             api_c.QUERY_PARAMETER_BATCH_NUMBER,
-            default=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+            default=api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
         )
         offset = (int(batch_number) - 1) * int(batch_size)
         return (

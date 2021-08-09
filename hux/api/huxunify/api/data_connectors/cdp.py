@@ -70,8 +70,7 @@ def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
     config = get_config()
 
     response = requests.get(
-        f"{config.CDP_SERVICE}/customer-profiles",
-        data={"limit": batch_size, "offset": offset},
+        f"{config.CDP_SERVICE}/customer-profiles?limit={batch_size}&offset={offset}",
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
