@@ -15,7 +15,9 @@ class TestAudienceManagement(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
 
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
         # write a user to the database
@@ -92,11 +94,15 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][0][c.AUDIENCE_FILTERS_SECTION_AGGREGATOR],
+            audience_doc[c.AUDIENCE_FILTERS][0][
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            ],
             c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][1][c.AUDIENCE_FILTERS_SECTION_AGGREGATOR],
+            audience_doc[c.AUDIENCE_FILTERS][1][
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            ],
             c.AUDIENCE_FILTER_AGGREGATOR_ANY,
         )
 
@@ -174,7 +180,9 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS])
         self.assertIsNotNone(audience_doc[c.AUDIENCE_FILTERS][0])
         self.assertEqual(
-            audience_doc[c.AUDIENCE_FILTERS][0][c.AUDIENCE_FILTERS_SECTION_AGGREGATOR],
+            audience_doc[c.AUDIENCE_FILTERS][0][
+                c.AUDIENCE_FILTERS_SECTION_AGGREGATOR
+            ],
             c.AUDIENCE_FILTER_AGGREGATOR_ALL,
         )
         self.assertEqual(len(audience_doc[c.AUDIENCE_FILTERS]), 2)
@@ -316,7 +324,9 @@ class TestAudienceManagement(unittest.TestCase):
         audiences = am.get_all_audiences(self.database)
 
         self.assertIsNotNone(audiences)
-        self.assertTrue(all(x[c.CREATED_BY] == self.user_name for x in audiences))
+        self.assertTrue(
+            all(x[c.CREATED_BY] == self.user_name for x in audiences)
+        )
 
     def test_get_all_audiences_with_deliveries(self):
         """Test get_all_audiences with deliveries."""
@@ -383,4 +393,6 @@ class TestAudienceManagement(unittest.TestCase):
                     delivery_platform_doc[c.DELIVERY_PLATFORM_TYPE],
                 )
                 self.assertIn(c.UPDATE_TIME, delivery)
-                self.assertEqual(delivery[c.STATUS], c.AUDIENCE_STATUS_DELIVERING)
+                self.assertEqual(
+                    delivery[c.STATUS], c.AUDIENCE_STATUS_DELIVERING
+                )
