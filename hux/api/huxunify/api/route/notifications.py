@@ -24,7 +24,9 @@ from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
-notifications_bp = Blueprint(api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__)
+notifications_bp = Blueprint(
+    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
+)
 
 
 @notifications_bp.before_request
@@ -92,10 +94,15 @@ class NotificationsSearch(SwaggerView):
             Tuple[dict, int] dict of notifications and http code
         """
 
-        batch_size = request.args.get("batch_size") or api_c.DEFAULT_ALERT_BATCH_SIZE
-        sort_order = request.args.get("sort_order") or db_c.PAGINATION_DESCENDING
+        batch_size = (
+            request.args.get("batch_size") or api_c.DEFAULT_ALERT_BATCH_SIZE
+        )
+        sort_order = (
+            request.args.get("sort_order") or db_c.PAGINATION_DESCENDING
+        )
         batch_number = (
-            request.args.get("batch_number") or api_c.DEFAULT_ALERT_BATCH_NUMBER
+            request.args.get("batch_number")
+            or api_c.DEFAULT_ALERT_BATCH_NUMBER
         )
 
         if (

@@ -105,6 +105,6 @@ class TestNotificationRoutes(TestCase):
 
         self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(len(self.notifications), response.json["total"])
-        self.assertIn(self.notifications[0], response.json[api_c.NOTIFICATIONS_TAG])
-        self.assertIn(self.notifications[1], response.json[api_c.NOTIFICATIONS_TAG])
-        self.assertIn(self.notifications[2], response.json[api_c.NOTIFICATIONS_TAG])
+        self.assertCountEqual(
+            self.notifications, response.json[api_c.NOTIFICATIONS_TAG]
+        )
