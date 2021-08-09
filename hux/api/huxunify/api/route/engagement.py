@@ -1222,8 +1222,6 @@ class UpdateCampaignsForAudience(SwaggerView):
             HTTPStatus.OK,
         )
 
-        # return {"message": "Successfully attached campaigns."}, HTTPStatus.OK
-
 
 @add_view_to_blueprint(
     engagement_bp,
