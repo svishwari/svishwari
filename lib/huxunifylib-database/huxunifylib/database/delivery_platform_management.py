@@ -1399,7 +1399,7 @@ def get_all_delivery_jobs(
     filter_dict: dict = None,
     projection: dict = None,
     sort_list: list = None,
-    limit: int = 1,
+    limit: int = None,
 ) -> Union[list, None]:
     """A function to get all delivery jobs based on the args provided.
 
@@ -1432,7 +1432,7 @@ def get_all_delivery_jobs(
         projection = {c.DELETED: 0}
 
     # if sort list is none, set to default, otherwise set to the passed in list.
-    # note, if an empty list is passed in, not sorting will happen.
+    # note, if an empty list is passed in, no sorting will happen.
     sort_list = (
         [(c.CREATE_TIME, pymongo.DESCENDING)]
         if sort_list is None
@@ -1440,15 +1440,12 @@ def get_all_delivery_jobs(
     )
 
     try:
-        cursor = collection.find(filter_dict, projection).sort(
-            [(c.CREATE_TIME, pymongo.DESCENDING)] if sort_list else []
-        )
-
+        cursor = collection.find(filter_dict, projection)
         if sort_list:
             cursor = cursor.sort(sort_list)
 
         # apply limit if set.
-        return list(cursor.limit(limit) if limit > 0 else cursor)
+        return list(cursor if isinstance(limit, int) else cursor.limit(limit))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
