@@ -107,7 +107,8 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual("Audience2", audience[0][c.NAME])
 
     def test_get_audience_filter_variant_order_by_name(self):
-        """Test get audiences. The filter variant of the function. Get the audiences ordered by name"""
+        """Test get audiences. The filter variant of the function.
+        Get the audiences ordered by name"""
 
         self._setup_audience()
 
@@ -119,7 +120,8 @@ class TestAudienceManagement(unittest.TestCase):
         self.assertEqual("Audience1", audience[1][c.NAME])
 
     def test_get_audience_filter_variant_filter_for_name(self):
-        """Test get audiences. The filter variant of the function. Get only the name of the audience"""
+        """Test get audiences. The filter variant of the function.
+        Get only the name of the audience"""
 
         self._setup_audience()
 
