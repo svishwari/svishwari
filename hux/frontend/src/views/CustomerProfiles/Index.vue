@@ -147,7 +147,7 @@
               </div>
             </v-card-title>
             <map-chart :map-data="mapChartData"></map-chart>
-            <map-slider :mapData="mapChartData"/>
+            <map-slider :map-data="mapChartData" />
           </v-card>
         </v-col>
         <v-col md="4">

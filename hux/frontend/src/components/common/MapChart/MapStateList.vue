@@ -4,7 +4,7 @@
       <div v-for="item in mapChartData" :key="item.name" class="sub-props pt-4">
         <span class="subprop-name">{{ item.name }}</span>
         <span class="value ml-2 font-weight-semi-bold">
-          {{ item.population_percentage | Percentage }}
+          {{ item.population_percentage | Numeric(true, false, false, true) }}
         </span>
       </div>
     </div>
