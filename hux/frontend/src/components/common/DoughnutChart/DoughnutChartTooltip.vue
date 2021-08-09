@@ -3,11 +3,10 @@
     v-if="showTooltip"
     class="tooltip"
     :style="{
-      transform: `translate(${tooltip.x}px, ${tooltip.y}px)`,
-      'border-radius': '0px !important',
+      transform: `translate(${tooltip.x}px, ${tooltip.y}px)`
     }"
   >
-    <v-card>
+    <v-card tile>
       <div class="type mb-1">
         <span v-if="sourceInput.label == 'Men'" class="circle-men"></span>
         <span v-if="sourceInput.label == 'Women'" class="circle-women"></span>
@@ -65,9 +64,9 @@ export default {
 
 <style lang="scss" scoped>
 .circle {
-  height: 12px;
-  border-radius: 12px;
-  width: 12px;
+  height: 9px;
+  border-radius: 9px;
+  width: 9px;
   float: left;
   margin-top: 3px;
   margin-right: 3px;
@@ -81,15 +80,15 @@ export default {
     @extend .box-shadow-25;
     .circle-men {
       @extend .circle;
-      border: 1px solid var(--v-royalBlue-base);
+      border: 2px solid var(--v-royalBlue-base);
     }
     .circle-other {
       @extend .circle;
-      border: 1px solid var(--v-oceanBlue-base);
+      border: 2px solid var(--v-oceanBlue-base);
     }
     .circle-women {
       @extend .circle;
-      border: 1px solid var(--v-primary-base);
+      border: 2px solid var(--v-primary-base);
     }
   }
 }
