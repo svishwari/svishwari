@@ -282,7 +282,8 @@
             :width="250"
             :height="200"
             :data="genderChartData"
-            label="Gender" />
+            label="Gender"
+          />
         </v-card>
       </v-col>
     </v-row>
