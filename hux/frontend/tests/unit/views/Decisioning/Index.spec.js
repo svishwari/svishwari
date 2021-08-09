@@ -9,7 +9,7 @@ import Vuetify from "vuetify"
 import filters from "@/filters"
 //Miragejs
 import { makeServer } from "@/api/mock/server.js"
-import { unsubscribeModel,ltvModel } from "@/api/mock/seeds.js"
+import { unsubscribeModel, ltvModel } from "@/api/mock/seeds.js"
 
 let server
 
@@ -36,7 +36,12 @@ Object.keys(filters).forEach((filterName) => {
 
 describe("Listing of models", () => {
   test("Models store successfully filled", async function () {
-    const wrapper = shallowMount(Index, { store, vuetify, localVue, sync: false })
+    const wrapper = shallowMount(Index, {
+      store,
+      vuetify,
+      localVue,
+      sync: false,
+    })
     // TODO: find a better way to this
     // Here we are manually triggering the api call
     await wrapper.vm.getModels()
