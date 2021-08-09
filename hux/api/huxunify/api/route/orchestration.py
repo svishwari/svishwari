@@ -816,7 +816,7 @@ class SetLookalikeAudience(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ORCHESTRATION_TAG]
 
-    # pylint: disable=no-self-use
+    # pylint: disable=no-self-use, unsubscriptable-object
     @api_error_handler()
     @get_user_name()
     def post(self, user_name: str) -> Tuple[dict, int]:
