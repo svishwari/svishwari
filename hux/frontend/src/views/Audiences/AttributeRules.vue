@@ -16,17 +16,14 @@
         elevation="0"
         class="mt-2 blank-section"
       >
-        <div class="gray--text font-weight-normal">
-          You have not added any attributes, yet!
+        <div class="gray--text font-weight-normal new-attribute">
+          <span @click="addNewSection()">
+            <icon class="add-icon cursor-pointer" type="add" :size="30" />
+          </span>
+          <span class="mt-1 ml-4">
+            You have not added any attributes, yet.
+          </span>
         </div>
-        <v-icon
-          size="30"
-          class="add-icon"
-          color="primary"
-          @click="addNewSection()"
-        >
-          mdi-plus-circle
-        </v-icon>
       </v-card>
     </v-col>
     <v-col v-if="rules.length > 0" col="12" class="pt-0 pr-0 pa-0">
@@ -131,9 +128,13 @@
       <div class="add-section-wrap">
         <v-col md="10" class="pa-0 pt-3">
           <div class="add-section pa-5">
-            <v-btn icon color="primary" @click="addNewSection()">
-              <v-icon>mdi-plus-circle</v-icon>
-            </v-btn>
+            <span @click="addNewSection()">
+              <icon
+                class="add-icon cursor-pointer mt-1"
+                type="add"
+                :size="30"
+              />
+            </span>
             <span class="primary--text pl-1">New section</span>
           </div>
         </v-col>
@@ -163,6 +164,7 @@ import HuxDropdown from "../../components/common/HuxDropdown.vue"
 import HuxSlider from "../../components/common/HuxSlider.vue"
 import HuxSwitch from "../../components/common/Switch.vue"
 import TextField from "../../components/common/TextField.vue"
+import Icon from "@/components/common/Icon"
 
 const NEW_RULE_SECTION = {
   id: "",
@@ -187,6 +189,7 @@ export default {
     HuxSwitch,
     HuxDropdown,
     HuxSlider,
+    Icon,
   },
   props: {
     rules: {
@@ -424,6 +427,9 @@ export default {
     align-items: center;
     border-radius: 5px !important;
     padding: 14px 16px;
+    .new-attribute {
+      display: flex;
+    }
   }
   ::v-deep .seperator {
     position: relative;
