@@ -89,7 +89,7 @@ import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
-  name: "DestinationsDrawer",
+  name: "DeliveryHistoryDrawer",
 
   components: {
     HuxDataTable,
@@ -119,22 +119,22 @@ export default {
         {
           value: "audience",
           text: "Audience name",
-          width: "250px",
+          width: "35%",
         },
         {
           value: "destination",
           text: "Destination",
-          width: "auto",
+          width: "20%",
         },
         {
           value: "size",
           text: "Target size",
-          width: "auto",
+          width: "18%",
         },
         {
           value: "delivered",
           text: "Delivered",
-          width: "auto",
+          width: "27%",
         },
       ],
     }
@@ -159,6 +159,12 @@ export default {
     localToggle(value) {
       this.$emit("onToggle", value)
     },
+  },
+
+  async updated() {
+    if (this.toggle) {
+      await this.fetchHistory()
+    }
   },
 
   methods: {

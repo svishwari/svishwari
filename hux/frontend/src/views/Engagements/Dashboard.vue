@@ -127,7 +127,6 @@
       @onBack="closeDrawers"
     />
     <delivery-history-drawer
-      ref="deliveryHistory"
       :engagement-id="engagementId"
       :toggle="showDeliveryHistoryDrawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
@@ -539,7 +538,6 @@ export default {
 
     //#endregion
     openDeliveryHistoryDrawer() {
-      this.$refs.deliveryHistory.fetchHistory()
       this.showDeliveryHistoryDrawer = true
     },
     openLookAlikeDrawer(event) {
