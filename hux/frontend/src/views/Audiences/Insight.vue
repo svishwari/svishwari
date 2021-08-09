@@ -230,7 +230,7 @@
               </span>
             </div>
           </v-card-title>
-          <map-chart :map-data="mapChartData"></map-chart>
+          <map-chart :map-data="mapChartData" />
           <map-slider :map-data="mapChartData" />
         </v-card>
       </v-col>
@@ -242,7 +242,7 @@
             </div>
           </v-card-title>
           <v-divider class="ml-6 mr-8 mt-0 mb-1" />
-          <map-state-list :map-data="mapChartData"></map-state-list>
+          <map-state-list :map-data="mapChartData" />
         </v-card>
       </v-col>
     </v-row>
@@ -252,7 +252,7 @@
           <v-card-title class="chart-style pb-2 pl-5 pt-5">
             <div class="mt-2">
               <span class="neroBlack--text text-h5">
-                Top location & Income
+                Top location &amp; Income
               </span>
             </div>
           </v-card-title>
@@ -282,8 +282,7 @@
             :width="250"
             :height="200"
             :data="genderChartData"
-            label="Gender"
-          ></doughnut-chart>
+            label="Gender" />
         </v-card>
       </v-col>
     </v-row>

@@ -456,9 +456,9 @@ export default {
     content: none;
   }
 }
-// ::v-deep .v-card__title {
-//   background: var(--v-aliceBlue-base);
-// }
+::v-deep .v-card__title {
+  background: var(--v-aliceBlue-base);
+}
 ::v-deep .v-card__text {
   padding: 0px;
 }

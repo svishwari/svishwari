@@ -146,7 +146,7 @@
                 </span>
               </div>
             </v-card-title>
-            <map-chart :map-data="mapChartData"></map-chart>
+            <map-chart :map-data="mapChartData" />
             <map-slider :map-data="mapChartData" />
           </v-card>
         </v-col>
@@ -158,7 +158,7 @@
               </div>
             </v-card-title>
             <v-divider class="ml-6 mr-8 mt-0 mb-1" />
-            <map-state-list :map-data="mapChartData"></map-state-list>
+            <map-state-list :map-data="mapChartData" />
           </v-card>
         </v-col>
       </v-row>
@@ -198,25 +198,15 @@
               :width="250"
               :height="240"
               :data="genderChartData"
-              label="Gender"
-            ></doughnut-chart>
+              label="Gender" />
           </v-card>
         </v-col>
       </v-row>
       <v-row v-if="customersInsights" class="px-15 mt-2">
         <v-col cols="3">
-          <income-chart></income-chart>
+          <income-chart />
         </v-col>
       </v-row>
-      <!-- <v-divider class="my-8"></v-divider>
-      <empty-state-chart>
-        <template #chart-image>
-          <img
-            src="@/assets/images/empty-state-chart-3.png"
-            alt="Empty state"
-          />
-        </template>
-      </empty-state-chart> -->
       <customer-details v-model="customerProfilesDrawer" />
     </div>
   </div>

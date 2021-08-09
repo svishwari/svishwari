@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <!-- <div id="label"></div> -->
     <div id="chart"></div>
     <div id="legend"></div>
   </div>
