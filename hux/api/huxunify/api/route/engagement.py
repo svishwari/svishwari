@@ -151,16 +151,25 @@ def group_engagement_performance_metrics(
                 for x in audience_delivery_jobs
                 if x[db_c.DELIVERY_PLATFORM_ID] == destination_id
             ]
+
+            # get delivery platform
+            delivery_platform = (
+                delivery_platform_management.get_delivery_platform(
+                    database, destination_id
+                )
+            )
+
             #  Group performance metrics for the destination
             destination_metrics = update_metrics(
                 destination_id,
-                delivery_platform_management.get_delivery_platform(
-                    database, destination_id
-                )[api_c.NAME],
+                delivery_platform[api_c.NAME],
                 audience_destination_jobs,
                 performance_metrics,
                 metrics_type,
             )
+            destination_metrics[
+                api_c.DELIVERY_PLATFORM_TYPE
+            ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
             audience_destination_metrics_list.append(destination_metrics)
             # TODO : HUS-796 - Group performance metrics by campaigns
         audience_metrics[
