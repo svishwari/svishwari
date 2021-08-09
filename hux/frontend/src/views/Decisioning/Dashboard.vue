@@ -17,7 +17,7 @@
           <v-card class="mt-6 rounded-lg box-shadow-5" height="662">
             <v-card-title class="chart-style pb-2 pl-5 pt-5">
               <div class="mt-2">
-                <span class="neroBlack--text text-h5">
+                <span v-if="model.feature_importance" class="neroBlack--text text-h5">
                   Top {{ model.feature_importance.length }} feature importance
                 </span>
               </div>
@@ -87,7 +87,7 @@
         <v-col col="12">
           <v-card class="rounded-lg box-shadow-5 px-6 py-5">
             <div class="neroBlack--text text-h5 pb-4">Lift chart</div>
-            <lift-chart
+            <lift-chart v-if="model.performance_metric"
               :data="model.lift_data || []"
               :rmse="model.performance_metric['rmse']"
             />
