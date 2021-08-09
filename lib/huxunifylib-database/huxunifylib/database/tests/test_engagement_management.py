@@ -825,38 +825,35 @@ class TestEngagementManagement(unittest.TestCase):
         self.assertTrue(engagement_docs)
         self.assertFalse([e for e in engagement_docs if c.DELETED in e])
 
-        # TODO - AGGREGATE PIPELINE YIELDS ZERO IN MONGOMOCK DUE TO AGGREGATION.
-        # TESTED IN DOCUMENT DB and MONGO, and it works without any issues.
+        # ensure length of grouped engagements is equal to length of all engagements.
+        # this checks to ensure the grouping was done correctly.
+        # get all engagements for validation
+        all_engagements = em.get_engagements(self.database)
 
-        # # ensure length of grouped engagements is equal to length of all engagements.
-        # # this checks to ensure the grouping was done correctly.
-        # # get all engagements for validation
-        # all_engagements = em.get_engagements(self.database)
+        self.assertEqual(len(engagement_docs), len(all_engagements))
 
-        # self.assertEqual(len(engagement_docs), len(all_engagements))
-        #
-        # # test the grouped engagements for existence of key fields
-        # for engagement in engagement_docs:
-        #     self.assertIn(c.ID, engagement)
-        #     self.assertIn(c.NAME, engagement)
-        #     self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
-        #     self.assertIn(c.CREATED_BY, engagement)
-        #     self.assertIn(c.UPDATED_BY, engagement)
-        #     self.assertIn(c.CREATE_TIME, engagement)
-        #     self.assertIn(c.UPDATE_TIME, engagement)
-        #     self.assertIn(c.AUDIENCES, engagement)
-        #     self.assertIn(c.SIZE, engagement)
-        #
-        #     for audience in engagement[c.AUDIENCES]:
-        #         self.assertIn(c.NAME, audience)
-        #         self.assertIn(c.DESTINATIONS, audience)
-        #         self.assertIn(c.OBJECT_ID, audience)
-        #         self.assertIn(c.SIZE, audience)
-        #         if not audience[c.DESTINATIONS]:
-        #             continue
-        #         for destination in audience[c.DESTINATIONS]:
-        #             self.assertIn(c.NAME, destination)
-        #             self.assertIn(c.OBJECT_ID, destination)
+        # test the grouped engagements for existence of key fields
+        for engagement in engagement_docs:
+            self.assertIn(c.ID, engagement)
+            self.assertIn(c.NAME, engagement)
+            self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
+            self.assertIn(c.CREATED_BY, engagement)
+            self.assertIn(c.UPDATED_BY, engagement)
+            self.assertIn(c.CREATE_TIME, engagement)
+            self.assertIn(c.UPDATE_TIME, engagement)
+            self.assertIn(c.AUDIENCES, engagement)
+            self.assertIn(c.SIZE, engagement)
+
+            for audience in engagement[c.AUDIENCES]:
+                self.assertIn(c.NAME, audience)
+                self.assertIn(c.DESTINATIONS, audience)
+                self.assertIn(c.OBJECT_ID, audience)
+                self.assertIn(c.SIZE, audience)
+                if not audience[c.DESTINATIONS]:
+                    continue
+                for destination in audience[c.DESTINATIONS]:
+                    self.assertIn(c.NAME, destination)
+                    self.assertIn(c.OBJECT_ID, destination)
 
     def test_get_engagement_summary(self) -> None:
         """Test get_engagement_summary routine
@@ -927,30 +924,27 @@ class TestEngagementManagement(unittest.TestCase):
 
         # test the grouped engagements for existence of key fields
         self.assertIn(c.ID, engagement)
+        self.assertIn(c.NAME, engagement)
+        self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
+        self.assertIn(c.CREATED_BY, engagement)
+        self.assertIn(c.UPDATED_BY, engagement)
+        self.assertIn(c.CREATE_TIME, engagement)
+        self.assertIn(c.UPDATE_TIME, engagement)
+        self.assertIn(c.AUDIENCES, engagement)
+        self.assertEqual(
+            engagement[c.SIZE], audience[c.SIZE] + self.audience[c.SIZE]
+        )
 
-        # TODO - AGGREGATE PIPELINE YIELDS ZERO IN MONGOMOCK DUE TO AGGREGATION.
-        # TESTED IN DOCUMENT DB and MONGO, and it works without any issues.
-        # self.assertIn(c.NAME, engagement)
-        # self.assertIn(c.ENGAGEMENT_DESCRIPTION, engagement)
-        # self.assertIn(c.CREATED_BY, engagement)
-        # self.assertIn(c.UPDATED_BY, engagement)
-        # self.assertIn(c.CREATE_TIME, engagement)
-        # self.assertIn(c.UPDATE_TIME, engagement)
-        # self.assertIn(c.AUDIENCES, engagement)
-        # self.assertEqual(
-        #     engagement[c.SIZE], audience[c.SIZE] + self.audience[c.SIZE]
-        # )
-        #
-        # for audience in engagement[c.AUDIENCES]:
-        #     self.assertIn(c.NAME, audience)
-        #     self.assertIn(c.DESTINATIONS, audience)
-        #     self.assertIn(c.OBJECT_ID, audience)
-        #     self.assertIn(c.SIZE, audience)
-        #     if not audience[c.DESTINATIONS]:
-        #         continue
-        #     for destination in audience[c.DESTINATIONS]:
-        #         self.assertIn(c.NAME, destination)
-        #         self.assertIn(c.OBJECT_ID, destination)
+        for audience in engagement[c.AUDIENCES]:
+            self.assertIn(c.NAME, audience)
+            self.assertIn(c.DESTINATIONS, audience)
+            self.assertIn(c.OBJECT_ID, audience)
+            self.assertIn(c.SIZE, audience)
+            if not audience[c.DESTINATIONS]:
+                continue
+            for destination in audience[c.DESTINATIONS]:
+                self.assertIn(c.NAME, destination)
+                self.assertIn(c.OBJECT_ID, destination)
 
     def test_append_destination_to_engagement_audience(self):
         """
