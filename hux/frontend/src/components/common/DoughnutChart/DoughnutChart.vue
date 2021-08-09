@@ -3,7 +3,11 @@
     <div id="label"></div>
     <div id="chart" @mousemove="getCordinates($event)"></div>
     <div id="legend"></div>
-    <DoughnutChartTooltip :showTooltip="showTooltip" :tooltip="tooltip" :sourceInput="sourceInput"/>
+    <doughnut-chart-tooltip
+      :show-tooltip="showTooltip"
+      :tooltip="tooltip"
+      :source-input="sourceInput"
+    />
   </div>
 </template>
 
@@ -38,7 +42,7 @@ export default {
     return {
       sourceInput: null,
       showTooltip: false,
-       tooltip: {
+      tooltip: {
         x: 0,
         y: 0,
       },
@@ -108,7 +112,7 @@ export default {
         })
         .on("mouseover", (e, d) => showTooltip(e, d))
         .on("mouseout", (e, d) => hideTooltip(e, d))
-      
+
       let showTooltip = (e, d) => {
         this.sourceInput = d.data
         this.showTooltip = true
@@ -186,7 +190,7 @@ export default {
     getCordinates(event) {
       this.tooltip.x = event.offsetX + 60
       this.tooltip.y = event.offsetY - 200
-    }
+    },
   },
 }
 </script>
