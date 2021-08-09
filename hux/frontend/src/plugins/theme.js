@@ -31,4 +31,6 @@ export default {
   smoke: colors.smoke,
   cerulean: colors.cerulean,
   tealBlue: colors.tealBlue,
+  royalBlue: colors.royalBlue,
+  oceanBlue: colors.oceanBlue,
 }

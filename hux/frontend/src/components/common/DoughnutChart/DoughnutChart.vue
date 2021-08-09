@@ -1,19 +1,21 @@
 <template>
   <div class="container">
     <div id="label"></div>
-    <div id="chart"></div>
+    <div id="chart" @mousemove="getCordinates($event)"></div>
     <div id="legend"></div>
+    <DoughnutChartTooltip :showTooltip="showTooltip" :tooltip="tooltip" :sourceInput="sourceInput"/>
   </div>
 </template>
 
 <script>
+import DoughnutChartTooltip from "@/components/common/DoughnutChart/DoughnutChartTooltip"
 import * as d3Select from "d3-selection"
 import * as d3Scale from "d3-scale"
 import * as d3Shape from "d3-shape"
 
 export default {
   name: "DoughnutChart",
-  components: {},
+  components: { DoughnutChartTooltip },
   props: {
     data: {
       type: Array,
@@ -33,7 +35,14 @@ export default {
     },
   },
   data() {
-    return {}
+    return {
+      sourceInput: null,
+      showTooltip: false,
+       tooltip: {
+        x: 0,
+        y: 0,
+      },
+    }
   },
   mounted() {
     this.initiateChart()
@@ -97,6 +106,17 @@ export default {
         .style("fill", function (d) {
           return color(d.data.population_percentage)
         })
+        .on("mouseover", (e, d) => showTooltip(e, d))
+        .on("mouseout", (e, d) => hideTooltip(e, d))
+      
+      let showTooltip = (e, d) => {
+        this.sourceInput = d.data
+        this.showTooltip = true
+      }
+      let hideTooltip = (e, d) => {
+        this.sourceInput = d.data
+        this.showTooltip = false
+      }
 
       // Creating legends svg element & apply style
       let legendSvg = d3Select
@@ -163,11 +183,15 @@ export default {
         .attr("class", "neroBlack--text")
         .text(this.label)
     },
+    getCordinates(event) {
+      this.tooltip.x = event.offsetX + 60
+      this.tooltip.y = event.offsetY - 200
+    }
   },
 }
 </script>
 <style lang="scss" scoped>
-.chart-container {
+.container {
   max-width: 100%;
   #chart {
     text-align: center;
