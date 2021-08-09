@@ -344,6 +344,7 @@ def api_error_handler(custom_message: dict = None) -> object:
            object: returns a wrapped decorated function object.
         """
 
+        # pylint: disable=too-many-return-statements
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
             """Decorator for handling errors.
