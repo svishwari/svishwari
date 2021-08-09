@@ -86,11 +86,12 @@ def create_audience(
     wait=wait_fixed(c.CONNECT_RETRY_INTERVAL),
     retry=retry_if_exception_type(pymongo.errors.AutoReconnect),
 )
-def get_audience(
+def get_audience_by_filter(
     database: DatabaseClient,
     filter_dict: dict = None,
     projection: dict = None,
-    sort_list: list = None
+    sort_list: list = None,
+    limit: int = None,
 ) -> Union[list, None]:
     """A function to get all delivery platform lookalike audience configurations.
 
@@ -99,15 +100,14 @@ def get_audience(
         filter_dict (dict): filter dictionary for adding custom filters.
         projection (dict): Dict that specifies which fields to return or not return.
         sort_list (list): List of tuples to sort by.
+        limit (int):
 
     Returns:
         Union[list, None]: List of all lookalike audience configurations.
 
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][
-        c.AUDIENCES_COLLECTION
-    ]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][c.AUDIENCES_COLLECTION]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -121,8 +121,19 @@ def get_audience(
     else:
         projection = {c.DELETED: 0}
 
+    sort_list = (
+        [(c.CREATE_TIME, pymongo.DESCENDING)]
+        if sort_list is None
+        else sort_list
+    )
+
     try:
-        return list(collection.find(filter_dict, projection, sort_list))
+        cursor = collection.find(filter_dict, projection)
+
+        if sort_list:
+            cursor = cursor.sort(sort_list)
+
+        return list(cursor if isinstance(limit, int) else cursor.limit(limit))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 

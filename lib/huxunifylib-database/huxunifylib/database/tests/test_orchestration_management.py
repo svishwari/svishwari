@@ -2,6 +2,8 @@
 
 import unittest
 import mongomock
+import pymongo
+
 import huxunifylib.database.orchestration_management as am
 import huxunifylib.database.delivery_platform_management as dpm
 import huxunifylib.database.constants as c
@@ -64,7 +66,7 @@ class TestAudienceManagement(unittest.TestCase):
 
     def _setup_audience(self) -> dict:
 
-        audience_doc = am.create_audience(
+        am.create_audience(
             self.database,
             "Audience1",
             self.audience_filters,
@@ -77,7 +79,7 @@ class TestAudienceManagement(unittest.TestCase):
             "Audience2",
             self.audience_filters,
             user_name=self.user_name,
-            size=1450
+            size=1500,
         )
 
         return am.get_all_audiences(self.database)
@@ -98,8 +100,34 @@ class TestAudienceManagement(unittest.TestCase):
 
         audiences = self._setup_audience()
 
-        print(audiences)
-        print(len(audiences))
+        audience = am.get_audience_by_filter(
+            self.database, filter_dict={c.ID: audiences[1][c.ID]}, limit=1
+        )
+
+        self.assertEqual("Audience2", audience[0][c.NAME])
+
+    def test_get_audience_filter_variant_order_by_name(self):
+        """Test get audiences. The filter variant of the function. Get the audiences ordered by name"""
+
+        self._setup_audience()
+
+        audience = am.get_audience_by_filter(
+            self.database, sort_list=[("name", pymongo.DESCENDING)]
+        )
+
+        self.assertEqual("Audience2", audience[0][c.NAME])
+        self.assertEqual("Audience1", audience[1][c.NAME])
+
+    def test_get_audience_filter_variant_filter_for_name(self):
+        """Test get audiences. The filter variant of the function. Get only the name of the audience"""
+
+        self._setup_audience()
+
+        audience = am.get_audience_by_filter(
+            self.database, {}, {}, [("name", pymongo.DESCENDING)]
+        )
+
+        self.assertEqual("Audience2", audience[0][c.NAME])
 
     def test_get_audience(self):
         """Test get audience."""
