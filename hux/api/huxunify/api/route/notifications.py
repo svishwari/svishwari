@@ -6,14 +6,14 @@ from http import HTTPStatus
 from typing import Tuple
 
 import pymongo
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flasgger import SwaggerView
 
 from huxunifylib.database import (
     constants as db_c,
     notification_management,
 )
-from huxunify.api.schema.notifications import NotificationSchema
+from huxunify.api.schema.notifications import NotificationsSchema
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
@@ -24,9 +24,7 @@ from huxunify.api import constants as api_c
 from huxunify.api.schema.utils import AUTH401_RESPONSE
 
 # setup the notifications blueprint
-notifications_bp = Blueprint(
-    api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__
-)
+notifications_bp = Blueprint(api_c.NOTIFICATIONS_ENDPOINT, import_name=__name__)
 
 
 @notifications_bp.before_request
@@ -75,8 +73,8 @@ class NotificationsSearch(SwaggerView):
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of notifications.",
-            "schema": {"type": "array", "items": NotificationSchema},
+            "description": "List of notifications with total number of notifications.",
+            "schema": NotificationsSchema,
         },
     }
     responses.update(AUTH401_RESPONSE)
@@ -94,15 +92,10 @@ class NotificationsSearch(SwaggerView):
             Tuple[dict, int] dict of notifications and http code
         """
 
-        batch_size = (
-            request.args.get("batch_size") or api_c.DEFAULT_ALERT_BATCH_SIZE
-        )
-        sort_order = (
-            request.args.get("sort_order") or db_c.PAGINATION_DESCENDING
-        )
+        batch_size = request.args.get("batch_size") or api_c.DEFAULT_ALERT_BATCH_SIZE
+        sort_order = request.args.get("sort_order") or db_c.PAGINATION_DESCENDING
         batch_number = (
-            request.args.get("batch_number")
-            or api_c.DEFAULT_ALERT_BATCH_NUMBER
+            request.args.get("batch_number") or api_c.DEFAULT_ALERT_BATCH_NUMBER
         )
 
         if (
@@ -124,15 +117,12 @@ class NotificationsSearch(SwaggerView):
         )
 
         return (
-            jsonify(
-                NotificationSchema().dump(
-                    notification_management.get_notifications(
-                        get_db_client(),
-                        batch_size=int(batch_size),
-                        sort_order=sort_order,
-                        batch_number=int(batch_number),
-                    ),
-                    many=True,
+            NotificationsSchema().dump(
+                notification_management.get_notifications(
+                    get_db_client(),
+                    batch_size=int(batch_size),
+                    sort_order=sort_order,
+                    batch_number=int(batch_number),
                 )
             ),
             HTTPStatus.OK,
