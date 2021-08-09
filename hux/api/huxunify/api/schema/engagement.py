@@ -615,6 +615,10 @@ def weighted_engagement_status(engagements: list) -> list:
                     # map paused to delivered status
                     status = api_c.STATUS_DELIVERY_PAUSED
 
+                elif status == db_c.AUDIENCE_STATUS_NOT_DELIVERED:
+                    # map paused to delivered status
+                    status = api_c.STATUS_NOT_DELIVERED
+
                 else:
                     # map failed to delivered status
                     logging.error(
