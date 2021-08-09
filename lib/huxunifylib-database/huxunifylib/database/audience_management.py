@@ -161,7 +161,7 @@ def get_ingested_data(
     # Build a data frame
     audience_data = pd.DataFrame(data_dict)
 
-    return ((audience_data, next_start_id),)
+    return (audience_data, next_start_id)
 
 
 @retry(
