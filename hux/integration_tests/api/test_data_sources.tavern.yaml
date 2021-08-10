@@ -1,0 +1,324 @@
+---
+test_name: Test get data sources API
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test get data-sources API
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+          type: !anystr
+          name: !anystr
+          category: !anything
+          status: !anystr
+          feed_count: !anyint
+          is_added: !anybool
+          is_enabled: !anybool
+
+---
+test_name: Test get individual data-source by data_source_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get data-sources to save data_source_id
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+          type: !anystr
+          name: !anystr
+          category: !anything
+          status: !anystr
+          feed_count: !anyint
+          is_added: !anybool
+          is_enabled: !anybool
+      save:
+        json:
+          first_data_source: "[0]"
+
+  - name: test get data-sources/{data_source_id}
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources/{first_data_source.id}"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        id: !anystr
+        type: !anystr
+        name: !anystr
+        category: !anything
+        status: !anystr
+        feed_count: !anyint
+        is_added: !anybool
+        is_enabled: !anybool
+
+---
+test_name: Test get individual data-source by invalid data_source_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test get data-source by invalid data_source_id
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources/XYZ"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      json:
+        message: !re_search "Invalid"
+
+---
+test_name: Test data-sources post/create new data source and delete the same
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test post data-sources create new data source
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        name: "Tavern_Test_Name"
+        category: "Tavern_Test_Category"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        id: !anystr
+        name: !anystr
+        category: !anything
+        status: !anystr
+        feed_count: !anyint
+        is_added: !anybool
+        is_enabled: !anybool
+      save:
+        json:
+          created_data_source_id: id
+
+  - name: test delete data-sources delete newly created data source
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources/{created_data_source_id}"
+      method: DELETE
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        message: !re_search "SUCCESS"
+
+---
+test_name: Test delete data-source by invalid data_source_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test delete data-source by invalid data_source_id
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources/XYZ"
+      method: DELETE
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      json:
+        message: !re_search "Invalid"
+
+---
+test_name: Test patch/update individual data-sources by data_source_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get data-sources to save data_source_ids
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+          type: !anystr
+          name: !anystr
+          category: !anything
+          status: !anystr
+          feed_count: !anyint
+          is_added: !anybool
+          is_enabled: !anybool
+      save:
+        json:
+          first_data_source: "[0]"
+
+  - name: test patch/update data-sources to update individual data-source
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources"
+      method: PATCH
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        data_source_ids:
+          - "{first_data_source.id}"
+        body:
+          is_added: "{first_data_source.is_added}"
+          status: "{first_data_source.status}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+          type: !anystr
+          name: !anystr
+          category: !anything
+          status: !anystr
+          feed_count: !anyint
+          is_added: !anybool
+          is_enabled: !anybool
+
+---
+test_name: Test patch/update individual data-sources by invalid data_source_id
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: test patch/update data-sources by invalid data_source_id
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/data-sources"
+      method: PATCH
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        data_source_ids:
+          - "XYZ"
+        body:
+          is_added: false
+          status: "Pending"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 400
+      headers:
+        content-type: application/json
+      json:
+        description: !re_search "Fail"

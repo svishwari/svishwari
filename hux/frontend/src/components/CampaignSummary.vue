@@ -265,21 +265,18 @@
                     </td>
                   </tr>
                 </template>
-                <template
-                  #expanded-row="{ subExpandedHeaders, expandedParentItem }"
-                >
-                  <td :colspan="subExpandedHeaders.length" class="pa-0 child">
+                <!-- eslint-disable vue/no-template-shadow -->
+                <template #expanded-row="{ expandedHeaders, parentItem }">
+                  <td :colspan="expandedHeaders.length" class="pa-0 child">
                     <hux-data-table
-                      v-if="expandedParentItem"
-                      :columns="subExpandedHeaders"
-                      :data-items="
-                        getFormattedItems(expandedParentItem.campaigns)
-                      "
+                      v-if="parentItem"
+                      :columns="expandedHeaders"
+                      :data-items="getFormattedItems(parentItem.campaigns)"
                       :show-header="false"
                     >
                       <template #row-item="{ item }">
                         <td
-                          v-for="header in subExpandedHeaders"
+                          v-for="header in expandedHeaders"
                           :key="header.value"
                           :style="{ width: header.width }"
                         >
@@ -303,6 +300,7 @@
                     </hux-data-table>
                   </td>
                 </template>
+                <!-- eslint-enable -->
               </hux-data-table>
             </td>
           </template>
