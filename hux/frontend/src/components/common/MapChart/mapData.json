@@ -2,544 +2,544 @@
   "demographic_overview": [
     {
       "name": "Alabama",
-      "population_percentage": "0.060",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.060,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Alaska",
-      "population_percentage": "0.067",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.067,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Arizona",
-      "population_percentage": "0.066",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.066,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Arkansas",
-      "population_percentage": "0.345",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.345,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "California",
-      "population_percentage": "0.239",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.239,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Colorado",
-      "population_percentage": "0.189",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.189,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Connecticut",
-      "population_percentage": "0.233",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.233,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Delaware",
-      "population_percentage": "0.151",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.151,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "District of Columbia",
-      "population_percentage": "0.123",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.123,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Florida",
-      "population_percentage": "0.299",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.299,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Georgia",
-      "population_percentage": "0.321",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.321,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Hawaii",
-      "population_percentage": "0.445",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.445,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Idaho",
-      "population_percentage": "0.412",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.412,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Illinois",
-      "population_percentage": "0.050",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.050,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Indiana",
-      "population_percentage": "0.020",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.020,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Iowa",
-      "population_percentage": "0.265",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.265,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Kansas",
-      "population_percentage": "0.522",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.522,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
 
     {
       "name": "Kentucky",
-      "population_percentage": "0.010",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.010,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Louisiana",
-      "population_percentage": "0.199",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.199,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Maine",
-      "population_percentage": "0.021",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.021,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Maryland",
-      "population_percentage": "0.030",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.030,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Massachusetts",
-      "population_percentage": "0.435",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.435,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Michigan",
-      "population_percentage": "0.392",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.392,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Minnesota",
-      "population_percentage": "0.050",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.050,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Mississippi",
-      "population_percentage": "0.080",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.080,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Missouri",
-      "population_percentage": "0.111",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.111,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Montana",
-      "population_percentage": "0.010",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.010,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Nebraska",
-      "population_percentage": "0.230",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.230,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Nevada",
-      "population_percentage": "0.311",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.311,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "New Hampshire",
-      "population_percentage": "0.489",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.489,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "New Jersey",
-      "population_percentage": "0.116",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.116,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "New Mexico",
-      "population_percentage": "0.222",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.222,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "New York",
-      "population_percentage": "0.354",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.354,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "North Carolina",
-      "population_percentage": "0.292",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.292,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "North Dakota",
-      "population_percentage": "0.111",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.111,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Ohio",
-      "population_percentage": "0.333",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.333,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Oklahoma",
-      "population_percentage": "0.344",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.344,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Oregon",
-      "population_percentage": "0.444",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.444,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Pennsylvania",
-      "population_percentage": "0.555",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.555,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Rhode Island",
-      "population_percentage": "0.134",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.134,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "South Carolina",
-      "population_percentage": "0.029",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.029,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "South Dakota",
-      "population_percentage": "0.050",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.050,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Tennessee",
-      "population_percentage": "0.514",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.514,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Texas",
-      "population_percentage": "0.609",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.609,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Utah",
-      "population_percentage": "0.422",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.422,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Vermont",
-      "population_percentage": "0.368",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.368,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Virginia",
-      "population_percentage": "0.322",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.322,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Washington",
-      "population_percentage": "0.228",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.228,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "West Virginia",
-      "population_percentage": "0.129",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.129,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Wisconsin",
-      "population_percentage": "0.203",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.203,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Wyoming",
-      "population_percentage": "0.290",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.290,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "America Samoa",
-      "population_percentage": "0.144",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.144,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Federated States of Micronesia",
-      "population_percentage": "0.090",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.090,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Guam",
-      "population_percentage": "0.010",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.010,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Marshall Islands",
-      "population_percentage": "0.119",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.119,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Northern Mariana Islands",
-      "population_percentage": "0.365",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.365,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Palau",
-      "population_percentage": "0.209",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.209,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Puerto Rico",
-      "population_percentage": "0.109",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.109,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "U.S. Minor Outlying Islands",
-      "population_percentage": "0.362",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.362,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     },
     {
       "name": "Virgin Islands of the United States",
-      "population_percentage": "0.477",
-      "size": "123456",
-      "women": "0.6057",
-      "men": "0.6057",
-      "other": "0.6057",
-      "ltv": "1234.5"
+      "population_percentage": 0.477,
+      "size": 123456,
+      "women": 0.6057,
+      "men": 0.6057,
+      "other": 0.6057,
+      "ltv": 1234.5
     }
   ]
 }
