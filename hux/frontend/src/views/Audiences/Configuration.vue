@@ -119,9 +119,9 @@
             label="Select destination(s)"
             optional="- Optional"
             :tooltip="true"
-            tooltipHeading="Destination"
-            tooltipText="Locations where Audiences are planned to be run."
-            tooltipWidth="196"
+            tooltip-heading="Destination"
+            tooltip-text="Locations where Audiences are planned to be run."
+            tooltip-width="196"
             :border="!isLookAlikeCreateable ? 'inactive' : ''"
             class="neroBlack--text step-3"
           >
