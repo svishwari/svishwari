@@ -22,6 +22,12 @@ const destinationSchema = () => {
 const audienceData = () => {
   return {
     id: faker.datatype.number({ min: 1, max: 10 }),
+    name: "My audience 1",
+    status: "Delivered",
+    create_time: () => faker.date.recent(),
+    created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
+    update_time: () => faker.date.recent(),
+    updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
     destinations: mockDestinations(3),
     // TODO: this may need to be updated based on HUS-579...
     deliveries: mockDeliveries(2),
@@ -50,13 +56,13 @@ export const engagement = {
     start_date: faker.date.recent(),
     end_date: faker.date.soon(),
   }),
-  audiences: () => mockAudiences(1),
+  audiences: () => mockAudiences(faker.datatype.number({ min: 2, max: 5 })),
   size: () => faker.datatype.number({ min: 10000000, max: 999999999 }),
   create_time: () => faker.date.recent(),
   created_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
   update_time: () => faker.date.recent(),
   updated_by: () => faker.fake("{{name.firstName}} {{name.lastName}}"),
-  status: () => "Active",
+  status: faker.random.arrayElement(["Active", "Delivering", "Not Delivered"]),
   campaign_performance: {},
   campaign_mappings: {}, // This will enable us to maintain the mapping saved by user for the respective destination.
 }
