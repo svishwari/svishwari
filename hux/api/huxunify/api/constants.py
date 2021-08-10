@@ -31,6 +31,9 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 
+QUERY_PARAMETER_BATCH_SIZE = "batch_size"
+QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
@@ -325,6 +328,7 @@ PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
+INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
@@ -1012,6 +1016,8 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
+CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
+CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"

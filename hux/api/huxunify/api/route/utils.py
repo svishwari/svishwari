@@ -314,6 +314,7 @@ def get_user_name() -> object:
     return wrapper
 
 
+# pylint: disable=too-many-return-statements
 def api_error_handler(custom_message: dict = None) -> object:
     """
     This decorator handles generic errors for API requests.
@@ -363,6 +364,13 @@ def api_error_handler(custom_message: dict = None) -> object:
                 else:
                     error_message = validation_error.messages
                 return error_message, HTTPStatus.BAD_REQUEST
+
+            except ValueError:
+                return {
+                    "message": custom_message
+                    if custom_message
+                    else "Value Error Encountered"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
             except facebook_business.exceptions.FacebookRequestError:
                 return {
