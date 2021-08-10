@@ -221,7 +221,7 @@
                               :size="18"
                               class="mr-3"
                             />
-                            <span class="text--neroblack ellipsis">
+                            <span class="text--neroblack ellipsis icon-audiences">
                               {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                           </router-link>
@@ -245,7 +245,7 @@
                       </span>
                       <v-btn
                         tile
-                        class="error--text px-2 pl-2 pr-4"
+                        class="error--text px-2 pl-2 pr-4 icon-info"
                         color="white"
                         height="29"
                         width="99"
@@ -818,6 +818,10 @@ export default {
   }
   .icon-info {
     margin-top: -3px;
+  }
+  .icon-audiences {
+    position: absolute;
+    margin-top: -1px;
   }
 }
 </style>
