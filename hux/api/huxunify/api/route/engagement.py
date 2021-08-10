@@ -752,11 +752,13 @@ class DeleteAudienceEngagement(SwaggerView):
         audience_names = []
         for audience_id in body[api_c.AUDIENCE_IDS]:
             if not ObjectId.is_valid(audience_id):
-                return HTTPStatus.BAD_REQUEST
+                return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
             audience_ids.append(ObjectId(audience_id))
             audience = get_audience(database, ObjectId(audience_id))
             audience_names.append(audience[db_c.NAME])
 
+        print("Audiences: " + str(audience_ids))
+        print("Removing Audience(s) from the engagement")
         remove_audiences_from_engagement(
             database,
             ObjectId(engagement_id),
@@ -764,6 +766,8 @@ class DeleteAudienceEngagement(SwaggerView):
             audience_ids,
         )
         engagement = get_engagement(database, ObjectId(engagement_id))
+
+        print("Retrieved Engagement Successfully")
         for audience_name in audience_names:
             create_notification(
                 database,
