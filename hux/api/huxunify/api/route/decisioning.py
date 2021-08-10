@@ -92,7 +92,7 @@ class ModelsView(SwaggerView):
 
 @add_view_to_blueprint(
     model_bp,
-    f"{api_c.MODELS_ENDPOINT}/<name>/version-history",
+    f"{api_c.MODELS_ENDPOINT}/<model_id>/version-history",
     "ModelVersionView",
 )
 class ModelVersionView(SwaggerView):
@@ -100,7 +100,7 @@ class ModelVersionView(SwaggerView):
     Model Version Class
     """
 
-    parameters = api_c.MODEL_NAME_PARAMS
+    parameters = api_c.MODEL_ID_PARAMS
     responses = {
         HTTPStatus.OK.value: {
             "description": "Model version history.",
@@ -111,9 +111,8 @@ class ModelVersionView(SwaggerView):
     tags = [api_c.MODELS_TAG]
 
     # pylint: disable=no-self-use
-    @marshal_with(ModelVersionSchema(many=True))
     @api_error_handler()
-    def get(self, name: str) -> Tuple[List[dict], int]:
+    def get(self, model_id: int) -> Tuple[List[dict], int]:
         """Retrieves model version history.
 
         ---
@@ -121,19 +120,29 @@ class ModelVersionView(SwaggerView):
             - Bearer: [Authorization]
 
         Args:
-            name (str): model name
+            model_id (int): model id
 
         Returns:
             Tuple[List[dict], int]: dict of model versions and http code
 
         """
-        try:
-            return tecton.get_model_version_history(name), HTTPStatus.OK.value
+        version_history = tecton.get_model_version_history(model_id)
 
-        except Exception as exc:
-            raise handle_api_exception(
-                exc, "Unable to get model versions."
-            ) from exc
+        # sort by version
+        if version_history:
+            version_history.sort(
+                key=lambda s: [
+                    int(u)
+                    for u in s.get(api_c.CURRENT_VERSION).split(".")
+                    if s.get(api_c.CURRENT_VERSION)
+                ],
+                reverse=True,
+            )
+
+        return (
+            jsonify(ModelVersionSchema(many=True).dump(version_history)),
+            HTTPStatus.OK.value,
+        )
 
 
 @add_view_to_blueprint(

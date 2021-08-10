@@ -80,6 +80,46 @@ def map_model_response(response: dict) -> List[dict]:
     return models
 
 
+def map_model_version_history_response(
+    response: dict, model_id: int
+) -> List[dict]:
+    """Map model version history response to a usable dict.
+    Args:
+        response (dict): Input Tecton API response.
+        model_id (int): Model ID number.
+
+    Returns:
+        List[dict]: A cleaned model version dict.
+
+    """
+    if response.status_code != 200:
+        return []
+
+    if constants.RESULTS not in response.json():
+        return []
+
+    models = []
+
+    for meta_data in response.json()[constants.RESULTS]:
+        # get model metadata from tecton
+        feature = meta_data[constants.FEATURES]
+        model = {
+            constants.ID: model_id,
+            constants.LAST_TRAINED: parser.parse(feature[0]),
+            constants.DESCRIPTION: feature[1],
+            constants.FULCRUM_DATE: parser.parse(feature[2]),
+            constants.LOOKBACK_WINDOW: int(feature[3]),
+            constants.NAME: feature[5],
+            constants.TYPE: feature[5],
+            constants.OWNER: feature[7],
+            constants.STATUS: feature[9],
+            constants.CURRENT_VERSION: meta_data[constants.JOIN_KEYS][0],
+            constants.PREDICTION_WINDOW: int(feature[3]),
+        }
+        models.append(model)
+    return models
+
+
 def get_models() -> List[dict]:
     """Get models from Tecton.
 
@@ -102,17 +142,33 @@ def get_models() -> List[dict]:
 
 
 # pylint: disable=unused-argument
-def get_model_version_history(name: str) -> List[ModelVersionSchema]:
+def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
     """Get model version history based on name.
 
     Args:
-        name (str): model name.
+        model_id (int): model name.
 
     Returns:
          List[ModelVersionSchema] List of model versions.
     """
-    # TODO - when available.
-    return []
+    # get config
+    config = get_config()
+
+    # payload
+    payload = {
+        "params": {
+            "feature_service_name": "ui_metadata_model_history_service",
+            "join_key_map": {"model_id": f"{model_id}"},
+        }
+    }
+
+    # submit the post request to get the models
+    response = requests.post(
+        config.TECTON_FEATURE_SERVICE,
+        dumps(payload),
+        headers=config.TECTON_API_HEADERS,
+    )
+    return map_model_version_history_response(response, model_id)
 
 
 # pylint: disable=unused-argument

@@ -6,6 +6,7 @@ from flask_marshmallow import Schema
 from marshmallow.fields import Str, Int, Float, Nested
 
 from huxunify.api.schema.custom_schemas import DateTimeWithZ
+from huxunify.api import constants as c
 
 
 class ModelSchema(Schema):
@@ -28,11 +29,17 @@ class ModelSchema(Schema):
 class ModelVersionSchema(Schema):
     """Model Version Schema"""
 
+    id = Int()
     name = Str(required=True)
     description = Str()
     status = Str()
-    trained_date = DateTimeWithZ()
-    version = Str()
+    version = Str(attribute=c.CURRENT_VERSION)
+    version = Str(attribute=c.CURRENT_VERSION)
+    trained_date = DateTimeWithZ(attribute=c.LAST_TRAINED)
+    owner = Str()
+    lookback_window = Int()
+    prediction_window = Int()
+    fulcrum_date = DateTimeWithZ()
 
 
 class FeatureSchema(Schema):
