@@ -17,6 +17,9 @@ from pymongo import MongoClient
 from marshmallow import ValidationError
 
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.connectors import (
+    CustomAudienceDeliveryStatusError,
+)
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -342,6 +345,7 @@ def api_error_handler(custom_message: dict = None) -> object:
            object: returns a wrapped decorated function object.
         """
 
+        # pylint: disable=too-many-return-statements
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
             """Decorator for handling errors.
@@ -381,6 +385,11 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": constants.DUPLICATE_NAME
                 }, HTTPStatus.BAD_REQUEST.value
+
+            except CustomAudienceDeliveryStatusError as exc:
+                return {
+                    "message": "Delivered custom audience is inactive or unusable."
+                }, HTTPStatus.NOT_FOUND
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
