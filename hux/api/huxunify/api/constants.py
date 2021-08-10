@@ -408,7 +408,16 @@ IS_MAPPED = "is_mapped"
 DELIVERED = "delivered"
 UNSUBSCRIBE = "unsubscribe"
 SPEND = "spend"
-
+ENGAGEMENT_ID_PARAMS = [
+    {
+        "name": ENGAGEMENT_ID,
+        "description": "Engagement ID.",
+        "type": "string",
+        "in": "path",
+        "required": True,
+        "example": "60b8d6d7d3cf80b4edcd890b",
+    }
+]
 # CDP Data Source Constants
 CDP_DATA_SOURCE_NAME = "name"
 CDP_DATA_SOURCE_CATEGORY = "category"
@@ -1106,7 +1115,6 @@ CUSTOMER_EVENTS_SAMPLE_COUNTS = {
     VIEWED_CHECKOUT_EVENT: [3, 4, 1, 0, 4, 3, 1, 3],
     VIEWED_SALE_ITEM_EVENT: [5, 5, 5, 1, 6, 5, 2, 5],
 }
-
 
 # FILTERING
 REDACTED = "++REDACTED++"
