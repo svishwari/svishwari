@@ -137,22 +137,80 @@
         </v-card>
       </div>
       <v-row class="px-15 mt-2">
-        <v-col cols="3">
-          <income-chart></income-chart>
+        <v-col md="8">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Demographic Overview
+                </span>
+              </div>
+            </v-card-title>
+            <map-chart :map-data="mapChartData" />
+            <map-slider :map-data="mapChartData" />
+          </v-card>
         </v-col>
-        <v-col cols="3">
-          <AreaChart></AreaChart>
+        <v-col md="4">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5"> United States </span>
+              </div>
+            </v-card-title>
+            <v-divider class="ml-6 mr-8 mt-0 mb-1" />
+            <map-state-list :map-data="mapChartData" />
+          </v-card>
         </v-col>
       </v-row>
-      <v-divider class="my-8"></v-divider>
-      <empty-state-chart>
-        <template #chart-image>
-          <img
-            src="@/assets/images/empty-state-chart-3.png"
-            alt="Empty state"
-          />
-        </template>
-      </empty-state-chart>
+      <v-row class="px-15 mt-2">
+        <v-col md="3">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Top location & Income
+                </span>
+              </div>
+            </v-card-title>
+            <empty-state-chart />
+          </v-card>
+        </v-col>
+        <v-col md="6">
+          <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5">
+                  Gender / monthly spending in 2021
+                </span>
+              </div>
+            </v-card-title>
+             <AreaChart></AreaChart>
+          </v-card>
+        </v-col>
+        <v-col md="3">
+          <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
+            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+              <div class="mt-2">
+                <span class="neroBlack--text text-h5"> Gender </span>
+              </div>
+            </v-card-title>
+            <doughnut-chart
+              :width="250"
+              :height="240"
+              :data="genderChartData"
+              label="Gender"
+            />
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row class="px-15 mt-2">
+        <v-col cols="3">
+          <income-chart />
+        </v-col>
+        <v-col cols="3">
+         
+        </v-col>
+      </v-row>
       <customer-details v-model="customerProfilesDrawer" />
     </div>
   </div>
@@ -170,6 +228,12 @@ import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
 import AreaChart  from "@/components/common/areaChart/AreaChart"
+import MapChart from "@/components/common/MapChart/MapChart"
+import MapStateList from "@/components/common/MapChart/MapStateList"
+import mapData from "@/components/common/MapChart/mapData.json"
+import genderData from "@/components/common/DoughnutChart/genderData.json"
+import mapSlider from "@/components/common/MapChart/mapSlider"
+import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
 
 export default {
   name: "CustomerProfiles",
@@ -184,10 +248,15 @@ export default {
     CustomerDetails,
     IncomeChart,
     AreaChart,
+    MapChart,
+    MapStateList,
+    mapSlider,
+    DoughnutChart,
   },
 
   data() {
     return {
+      mapChartData: mapData.demographic_overview,
       customerProfilesDrawer: false,
       overviewListItems: [
         {
@@ -281,6 +350,26 @@ export default {
           text: "",
           disabled: true,
           href: this.$route.path,
+        },
+      ],
+      genderChartData: [
+        {
+          label: "Men",
+          population_percentage:
+            genderData.gender.gender_men.population_percentage,
+          size: genderData.gender.gender_men.size,
+        },
+        {
+          label: "Women",
+          population_percentage:
+            genderData.gender.gender_women.population_percentage,
+          size: genderData.gender.gender_women.size,
+        },
+        {
+          label: "Other",
+          population_percentage:
+            genderData.gender.gender_other.population_percentage,
+          size: genderData.gender.gender_other.size,
         },
       ],
       loading: false,

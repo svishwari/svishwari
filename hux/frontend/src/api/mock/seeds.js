@@ -192,14 +192,14 @@ const defaultEngagement = ({ audiences = [] }) => {
 }
 
 // models
-const unsubscribeModel = {
+export const unsubscribeModel = {
   name: "Propensity to Unsubscribe",
   status: "Active",
   type: "unsubscribe",
   id: "2",
 }
 
-const ltvModel = {
+export const ltvModel = {
   name: "LTV",
   status: "Pending",
   type: "ltv",
