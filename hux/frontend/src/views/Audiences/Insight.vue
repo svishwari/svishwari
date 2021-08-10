@@ -28,6 +28,7 @@
         :grow="0"
         :title="item.title"
         :icon="item.icon"
+        :height="75"
       >
         <template #subtitle-extended>
           <span class="mr-2">
@@ -79,9 +80,10 @@
         v-if="Object.keys(appliedFilters).length > 0"
         class="ma-2 audience-summary"
         :title="'Attributes'"
+        :height="75"
       >
         <template #extra-item>
-          <div class="container pl-0">
+          <div class="container pl-0 pt-2">
             <ul class="filter-list">
               <li
                 v-for="filterKey in Object.keys(appliedFilters)"
@@ -198,6 +200,7 @@
             :grow="i === 0 ? 2 : 1"
             :title="insightInfoItems[item].title"
             :icon="insightInfoItems[item].icon"
+            :height="80"
           >
             <template #subtitle-extended>
               <tooltip>

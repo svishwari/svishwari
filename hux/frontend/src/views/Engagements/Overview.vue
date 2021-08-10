@@ -1,13 +1,13 @@
 <template>
   <div class="summary-wrap d-flex mb-6">
-    <metric-card class="mr-3 shrink" :title="summaryCards[0].title">
+    <metric-card class="mr-3 pt-4 shrink" :title="summaryCards[0].title" :height="75">
       <template #subtitle-extended>
         <div class="font-weight-semi-bold neroBlack--text my-2">
           {{ deliverySchedule }}
         </div>
       </template>
     </metric-card>
-    <metric-card class="mr-3 shrink" :title="summaryCards[1].title">
+    <metric-card class="mr-3 pt-4 shrink" :title="summaryCards[1].title" :height="75">
       <template v-if="summaryCards[1].subLabel" #subtitle-extended>
         <span class="mr-2">
           <tooltip>
@@ -24,7 +24,7 @@
         <avatar :name="summaryCards[1].subLabel" />
       </template>
     </metric-card>
-    <metric-card class="mr-3 shrink" :title="summaryCards[2].title">
+    <metric-card class="mr-3 pt-4 shrink" :title="summaryCards[2].title" :height="75">
       <template v-if="summaryCards[2].subLabel" #subtitle-extended>
         <span class="mr-2">
           <tooltip>
@@ -46,6 +46,7 @@
       class="grow"
       title=""
       max-width="100%"
+      :height="75"
     >
       <template #subtitle-extended>
         {{ summaryCards[3].title }}
