@@ -366,12 +366,10 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return error_message, HTTPStatus.BAD_REQUEST
 
             except ValueError:
-                if custom_message:
-                    return {
-                        "message": custom_message
-                    }, HTTPStatus.INTERNAL_SERVER_ERROR
                 return {
-                    "message": "ValueError Encountered"
+                    "message": custom_message
+                    if custom_message
+                    else "Value Error Encountered"
                 }, HTTPStatus.INTERNAL_SERVER_ERROR
 
             except facebook_business.exceptions.FacebookRequestError:
