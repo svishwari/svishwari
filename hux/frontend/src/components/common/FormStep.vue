@@ -13,6 +13,23 @@
       <div class="form-step__label d-flex align-center">
         <slot v-if="$slots.label" name="label"></slot>
         <span v-else class="text-h5">{{ label || `Step ${step}` }}</span>
+        <v-menu :max-width="tooltipWidth" open-on-hover offset-y v-if="tooltip">
+          <template #activator="{ on }">
+            <v-icon color="primary" :size="12" class="ml-1" v-on="on">
+              mdi-information-outline
+            </v-icon>
+          </template>
+          <template #default>
+            <div class="px-4 py-2 white">
+              <div class="neroBlack--text text-caption">
+                {{tooltipHeading}}
+              </div>
+              <div class="neroBlack--text text-caption mt-1">
+                {{tooltipText}}
+              </div>
+            </div>
+          </template>
+        </v-menu>
         <span
           v-if="optional"
           class="text-caption pl-1"
@@ -61,6 +78,28 @@ export default {
     },
 
     border: {
+      type: String,
+      required: false,
+    },
+
+    tooltip: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    tooltipWidth: {
+      type: String,
+      required: false,
+      default: false,
+    },
+
+    tooltipHeading: {
+      type: String,
+      required: false,
+    },
+
+    tooltipText: {
       type: String,
       required: false,
     },
