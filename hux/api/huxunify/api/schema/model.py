@@ -34,7 +34,6 @@ class ModelVersionSchema(Schema):
     description = Str()
     status = Str()
     version = Str(attribute=c.CURRENT_VERSION)
-    version = Str(attribute=c.CURRENT_VERSION)
     trained_date = DateTimeWithZ(attribute=c.LAST_TRAINED)
     owner = Str()
     lookback_window = Int()
