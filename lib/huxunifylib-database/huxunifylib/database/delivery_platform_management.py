@@ -2404,12 +2404,13 @@ def get_most_recent_performance_metric_by_delivery_job(
         raise de.InvalidID(delivery_job_id)
 
     try:
-        cursor = (
+        cursor = list(
             collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
             .sort([(c.JOB_END_TIME, -1)])
             .limit(1)
         )
-        return cursor[0]
+        if len(cursor) > 0:
+            return cursor[0]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
@@ -2448,12 +2449,13 @@ def get_most_recent_campaign_activity_by_delivery_job(
         return None
 
     try:
-        cursor = (
+        cursor = list(
             collection.find({c.DELIVERY_JOB_ID: delivery_job_id})
             .sort([(f"{c.EVENT_DETAILS}.{c.EVENT_DATE}", -1)])
             .limit(1)
         )
-        return cursor[0]
+        if len(cursor) > 0:
+            return cursor[0]
 
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
