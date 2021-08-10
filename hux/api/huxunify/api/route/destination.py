@@ -2,13 +2,13 @@
 """
 Paths for destinations api
 """
-import logging
 from http import HTTPStatus
 from typing import Tuple
 from flasgger import SwaggerView
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database import (
     delivery_platform_management as destination_management,
@@ -295,9 +295,7 @@ class DestinationPutView(SwaggerView):
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSION
             )
             if not performance_de:
-                logging.error(
-                    "%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED[0]
-                )
+                logger.error("%s", api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED[0])
                 return (
                     {"message": api_c.PERFORMANCE_METRIC_DE_NOT_ASSIGNED},
                     HTTPStatus.BAD_REQUEST,
@@ -454,7 +452,7 @@ class DestinationValidatePostView(SwaggerView):
 
         # test the destination connection and update connection status
         if body.get(db_c.TYPE) == db_c.DELIVERY_PLATFORM_FACEBOOK:
-            logging.info("Trying to connect to Facebook")
+            logger.info("Trying to connect to Facebook.")
             destination_connector = FacebookConnector(
                 auth_details={
                     FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: body.get(
@@ -472,13 +470,13 @@ class DestinationValidatePostView(SwaggerView):
                 },
             )
             if destination_connector.check_connection():
-                logging.info("Facebook destination validated successfully")
+                logger.info("Facebook destination validated successfully.")
                 return {
                     "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
                 }, HTTPStatus.OK
-            logging.error("Could not validate Facebook successfully")
+            logger.error("Could not validate Facebook successfully.")
         elif body.get(api_c.DESTINATION_TYPE) == db_c.DELIVERY_PLATFORM_SFMC:
-            logging.info("Validating SFMC destination")
+            logger.info("Validating SFMC destination.")
             connector = SFMCConnector(
                 auth_details=set_sfmc_auth_details(
                     body.get(api_c.AUTHENTICATION_DETAILS)
@@ -491,7 +489,7 @@ class DestinationValidatePostView(SwaggerView):
                 ),
                 key=lambda i: i[api_c.NAME].lower(),
             )
-            logging.info("Successfully validated SFMC destination")
+            logger.info("Successfully validated SFMC destination.")
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS,
                 api_c.SFMC_PERFORMANCE_METRICS_DATA_EXTENSIONS: ext_list,
@@ -508,12 +506,16 @@ class DestinationValidatePostView(SwaggerView):
                 "message": api_c.DESTINATION_AUTHENTICATION_SUCCESS
             }, HTTPStatus.OK
         else:
-            logging.error("%s not supported yet", body.get(db_c.TYPE))
+            logger.error(
+                "Destination type %s not supported yet.", body.get(db_c.TYPE)
+            )
             return {
                 "message": api_c.DESTINATION_NOT_SUPPORTED
             }, HTTPStatus.BAD_REQUEST
 
-        logging.error("Could not validate %s", body.get(db_c.TYPE))
+        logger.error(
+            "Could not validate destination type %s.", body.get(db_c.TYPE)
+        )
         return (
             {"message": api_c.DESTINATION_AUTHENTICATION_FAILED},
             HTTPStatus.BAD_REQUEST,
@@ -579,9 +581,9 @@ class DestinationDataExtView(SwaggerView):
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
         ):
-            logging.error(
-                "Destination Authentication for %s failed since Authentication "
-                "details missing or delivery platform type missing",
+            logger.error(
+                "Destination Authentication for %s failed since authentication "
+                "details missing or delivery platform type missing.",
                 destination_id,
             )
             return {
@@ -601,8 +603,8 @@ class DestinationDataExtView(SwaggerView):
                 )
             )
             ext_list = connector.get_list_of_data_extensions()
-        logging.info(
-            "Found %s data extensions for %s", len(ext_list), destination_id
+        logger.info(
+            "Found %s data extensions for %s.", len(ext_list), destination_id
         )
         return (
             jsonify(
@@ -687,9 +689,9 @@ class DestinationDataExtPostView(SwaggerView):
             api_c.AUTHENTICATION_DETAILS not in destination
             or api_c.DELIVERY_PLATFORM_TYPE not in destination
         ):
-            logging.error(
+            logger.error(
                 "Destination Authentication for %s not executed since "
-                "Authentication details missing or delivery platform type missing",
+                "Authentication details missing or delivery platform type missing.",
                 destination_id,
             )
             return {
@@ -738,8 +740,8 @@ class DestinationDataExtPostView(SwaggerView):
                         extension = ext
             return DestinationDataExtGetSchema().dump(extension), status_code
 
-        logging.error(
-            "Could not create data extension for %s",
+        logger.error(
+            "Could not create data extension for platform type %s.",
             api_c.DELIVERY_PLATFORM_TYPE,
         )
         return {"message": api_c.OPERATION_FAILED}, HTTPStatus.BAD_REQUEST

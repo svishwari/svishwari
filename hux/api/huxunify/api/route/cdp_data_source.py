@@ -2,7 +2,6 @@
 """
 Paths for the CDP data sources API
 """
-import logging
 from http import HTTPStatus
 from typing import Tuple
 
@@ -11,6 +10,7 @@ from connexion.exceptions import ProblemException
 from flask import Blueprint, request, jsonify
 from flasgger import SwaggerView
 
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database import constants as db_c
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
@@ -86,7 +86,7 @@ class DataSourceSearch(SwaggerView):
 
         except Exception as exc:
 
-            logging.error(
+            logger.error(
                 "%s: %s.",
                 exc.__class__,
                 exc,
@@ -148,7 +148,7 @@ class IndividualDataSourceSearch(SwaggerView):
         if ObjectId.is_valid(data_source_id):
             data_source_id = ObjectId(data_source_id)
         else:
-            logging.error("encountered invalid object id %s", data_source_id)
+            logger.error("Encountered invalid object id %s.", data_source_id)
             return {
                 "message": f"Invalid CDP data source ID received {data_source_id}."
             }, HTTPStatus.BAD_REQUEST
@@ -163,7 +163,7 @@ class IndividualDataSourceSearch(SwaggerView):
             )
         except Exception as exc:
 
-            logging.error(
+            logger.error(
                 "%s: %s.",
                 exc.__class__,
                 exc,
@@ -285,8 +285,8 @@ class DeleteCdpDataSource(SwaggerView):
         if ObjectId.is_valid(data_source_id):
             data_source_id = ObjectId(data_source_id)
         else:
-            logging.error(
-                "Invalid CDP data source ID received %s", data_source_id
+            logger.error(
+                "Invalid CDP data source ID received %s.", data_source_id
             )
             return {
                 "message": f"Invalid CDP data source ID received {data_source_id}."
@@ -295,10 +295,10 @@ class DeleteCdpDataSource(SwaggerView):
         success_flag = delete_data_source(database, data_source_id)
 
         if success_flag:
-            logging.info("Successfully deleted data source %s", data_source_id)
+            logger.info("Successfully deleted data source %s.", data_source_id)
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK
 
-        logging.error("Could not delete data source %s", data_source_id)
+        logger.error("Could not delete data source %s.", data_source_id)
         return {
             "message": api_c.OPERATION_FAILED
         }, HTTPStatus.INTERNAL_SERVER_ERROR
@@ -361,8 +361,9 @@ class BatchUpdateDataSources(SwaggerView):
 
         # validate fields
         if api_c.CDP_DATA_SOURCE_IDS not in data and api_c.BODY not in data:
-            logging.error(
-                "%s not found in request data", api_c.CDP_DATA_SOURCE_IDS
+            logger.error(
+                "Field %s not found in request data.",
+                api_c.CDP_DATA_SOURCE_IDS,
             )
             return (
                 self.responses[HTTPStatus.BAD_REQUEST.value],
@@ -378,7 +379,7 @@ class BatchUpdateDataSources(SwaggerView):
         if not data_source_ids or len(data_source_ids) != len(
             data[api_c.CDP_DATA_SOURCE_IDS]
         ):
-            logging.error("Invalid Object ID/IDs found")
+            logger.error("Invalid Object ID/IDs found.")
             return (
                 self.responses[HTTPStatus.BAD_REQUEST.value],
                 HTTPStatus.BAD_REQUEST.value,
@@ -391,7 +392,7 @@ class BatchUpdateDataSources(SwaggerView):
             if k in [api_c.IS_ADDED, api_c.STATUS]
         }
         if not data:
-            logging.error("Data does not contain allowed fields")
+            logger.error("Data does not contain allowed fields.")
             return (
                 self.responses[HTTPStatus.BAD_REQUEST.value],
                 HTTPStatus.BAD_REQUEST.value,
@@ -408,8 +409,8 @@ class BatchUpdateDataSources(SwaggerView):
                     get_data_source(database, data_source_id)
                     for data_source_id in data_source_ids
                 ]
-                logging.info(
-                    "Successfully update data sources with data source IDs %s",
+                logger.info(
+                    "Successfully update data sources with data source IDs %s.",
                     ",".join(data_source_ids),
                 )
                 return (
@@ -420,7 +421,7 @@ class BatchUpdateDataSources(SwaggerView):
                     ),
                     HTTPStatus.OK.value,
                 )
-            logging.error("Could not update data sources")
+            logger.error("Could not update data sources.")
             return (
                 self.responses[HTTPStatus.BAD_REQUEST.value],
                 HTTPStatus.BAD_REQUEST.value,
@@ -428,7 +429,7 @@ class BatchUpdateDataSources(SwaggerView):
 
         except Exception as exc:
 
-            logging.error(
+            logger.error(
                 "%s: %s.",
                 exc.__class__,
                 exc,

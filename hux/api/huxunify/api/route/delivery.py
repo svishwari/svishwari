@@ -2,12 +2,12 @@
 """
 Paths for delivery API
 """
-import logging
 from http import HTTPStatus
 from typing import Tuple
 from bson import ObjectId
 from flask import Blueprint, jsonify
 from flasgger import SwaggerView
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database import (
     constants as db_c,
     delivery_platform_management,
@@ -147,8 +147,8 @@ class EngagementDeliverDestinationView(SwaggerView):
                     valid_destination = True
 
         if not valid_destination:
-            logging.error(
-                "Destination is not attached to the engagement %s  audience %s",
+            logger.error(
+                "Destination is not attached to the engagement %s  audience %s.",
                 engagement_id,
                 audience_id,
             )
@@ -175,8 +175,9 @@ class EngagementDeliverDestinationView(SwaggerView):
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
             )
-        logging.info(
-            "Successfully created delivery jobs %s", ",".join(delivery_job_ids)
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
         )
         # create notification
         create_notification(
@@ -278,8 +279,9 @@ class EngagementDeliverAudienceView(SwaggerView):
                 str(batch_destination.audience_delivery_job_id)
             )
         # create notification
-        logging.info(
-            "Successfully created delivery jobs %s", ",".join(delivery_job_ids)
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
         )
         create_notification(
             database,
@@ -377,8 +379,9 @@ class EngagementDeliverView(SwaggerView):
             ),
             api_c.DELIVERY_TAG,
         )
-        logging.info(
-            "Successfully created delivery jobs %s", ",".join(delivery_job_ids)
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
         )
         return {
             "message": f"Successfully created delivery job(s) "
@@ -459,8 +462,9 @@ class AudienceDeliverView(SwaggerView):
                     str(batch_destination.audience_delivery_job_id)
                 )
         # create notification
-        logging.info(
-            "Successfully created delivery jobs %s", ",".join(delivery_job_ids)
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
         )
         create_notification(
             database,
@@ -531,7 +535,7 @@ class EngagementDeliverHistoryView(SwaggerView):
 
         # validate object id
         if not ObjectId.is_valid(engagement_id):
-            logging.error("Invalid Object ID %s", engagement_id)
+            logger.error("Invalid Object ID %s.", engagement_id)
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the engagement ID
@@ -541,7 +545,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
         if not engagement:
-            logging.error("Engagement with ID %s not found", engagement_id)
+            logger.error("Engagement with ID %s not found.", engagement_id)
             return {
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
@@ -661,7 +665,7 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         # validate object id
         if not ObjectId.is_valid(audience_id):
-            logging.error("Invalid Object ID %s", audience_id)
+            logger.error("Invalid Object ID %s.", audience_id)
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the audience ID
@@ -671,7 +675,7 @@ class AudienceDeliverHistoryView(SwaggerView):
         database = get_db_client()
         audience = get_audience(database, audience_id)
         if not audience:
-            logging.error("Audience with ID %s not found", audience_id)
+            logger.error("Audience with ID %s not found.", audience_id)
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         delivery_jobs = (
