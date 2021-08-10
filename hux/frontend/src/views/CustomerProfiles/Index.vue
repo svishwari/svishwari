@@ -136,12 +136,12 @@
           </div>
         </v-card>
       </div>
-      <v-row v-if="customersInsights" class="px-15 mt-2">
+      <v-row class="px-15 mt-2">
         <v-col cols="3">
           <income-chart></income-chart>
         </v-col>
         <v-col cols="3">
-          <area-chart></area-chart>
+          <AreaChart></AreaChart>
         </v-col>
       </v-row>
       <v-divider class="my-8"></v-divider>
@@ -169,7 +169,7 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import AreaChart from "@/components/common/areaChart/AreaChart"
+import AreaChart  from "@/components/common/areaChart/AreaChart"
 
 export default {
   name: "CustomerProfiles",

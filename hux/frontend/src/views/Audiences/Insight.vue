@@ -219,9 +219,9 @@
       <v-col cols="3">
         <income-chart></income-chart>
       </v-col>
-      <v-col cols="3">
+      <!-- <v-col cols="3">
         <area-chart></area-chart>
-      </v-col>
+      </v-col> -->
     </v-row>
     <hux-alert
       v-model="flashAlert"
@@ -306,7 +306,6 @@ import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/Se
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import AreaChart from "@/components/common/areaChart/AreaChart"
 
 export default {
   name: "AudienceInsight",
@@ -328,7 +327,7 @@ export default {
     HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
-    AreaChart,
+    // AreaChart,
   },
   data() {
     return {
@@ -610,8 +609,9 @@ export default {
               id: event.data.id,
               audienceId: this.audienceId,
             })
-            this.flashAlert = true
+            this.dataPendingMesssage(event.data.name, "engagement")
           } catch (error) {
+            this.dataErrorMesssage(event.data.name)
             console.error(error)
           }
           break
@@ -640,7 +640,7 @@ export default {
               audienceId: this.audienceId,
               destinationId: event.data.id,
             })
-            this.flashAlert = true
+            this.dataPendingMesssage(event.data.name, "audience")
             break
           case "edit delivery schedule":
             this.engagementId = event.parent.id
@@ -662,8 +662,28 @@ export default {
             break
         }
       } catch (error) {
+        this.dataErrorMesssage(event.data.name)
         console.error(error)
       }
+    },
+
+    //Alert Message
+    dataPendingMesssage(name, value) {
+      this.alert.type = "Pending"
+      this.alert.title = ""
+      if (value == "engagement") {
+        this.alert.message = `Your audience, '${this.audience.name}', has started delivering as part of the engagement, '${name}'.`
+      } else {
+        this.alert.message = `Your audience, '${name}' , has started delivering.`
+      }
+
+      this.flashAlert = true
+    },
+    dataErrorMesssage(name) {
+      this.alert.type = "error"
+      this.alert.title = "OH NO!"
+      this.alert.message = `Failed to schedule a delivery for ${name}`
+      this.flashAlert = true
     },
 
     // Drawer Section Starts

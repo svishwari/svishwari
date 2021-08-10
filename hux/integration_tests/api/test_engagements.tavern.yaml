@@ -1,0 +1,190 @@
+#This tests the following endpoints:
+#GET      /audiences                      Retrieves all audiences 
+#POST     /engagements/{engagement_id}    Create an engagement
+#GET      /engagements/{engagement_id}    Retrieve an engagement
+#PUT      /engagements/{engagement_id}    Update an engagement
+#DELETE   /engagements/{engagement_id}    Delete an engagement
+
+---
+test_name: Test engagements APIs CRUD
+
+strict:
+  - json:list_any_order
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: get audience id to create new engagement
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/audiences?deliveries=2"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - id: !anystr
+          destinations:
+            - id: !anystr
+      save:
+        $ext:
+          function: tavern_test_utils:get_audience_id
+    
+  - name: create a new engagement
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/engagements"
+      method: POST
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        name: Test Engagement 1
+        description: Test Description 1
+        audiences:
+          - id: "{engagement_audience_id}"
+            destinations:
+              - id: "{engagement_destination_id}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 201
+      headers:
+        content-type: application/json
+      json:
+        id: !anystr
+        name: !anystr
+        description: !anystr
+        audiences:
+          - id: "{engagement_audience_id}"
+            destinations:
+              - id: "{engagement_destination_id}"
+        status: !anystr
+        delivery_schedule: !anything
+        create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z" 
+        created_by: !anystr
+        update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z" 
+        updated_by: !anystr
+      save:
+        json:
+          test_engagement_id: id
+          engagement_name: name
+          engagement_desc: description
+
+  - name: test get engagement by engagement_id
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/engagements/{test_engagement_id}"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        id: "{test_engagement_id}"
+        create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        description: "{engagement_desc}"
+        delivery_schedule: !anything
+        status: !anystr
+        name: "{engagement_name}"
+        audiences:
+        - id: "{engagement_audience_id}"
+          destinations:
+          - latest_delivery: !anything
+            id: "{engagement_destination_id}"
+          status: !anystr
+
+  - name: test update the engagement 
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/engagements/{test_engagement_id}"
+      method: PUT
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+      json:
+        name: Updated Engagement 1
+        description: Updated Description 1
+        audiences:
+          - id: "{engagement_audience_id}"
+            destinations:
+              - id: "{engagement_destination_id}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        id: "{test_engagement_id}"
+        create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+        description: !anystr
+        delivery_schedule: !anything
+        status: !anystr
+        name: !anystr
+        audiences:
+        - id: "{engagement_audience_id}"
+          destinations:
+          - id: "{engagement_destination_id}"
+
+# TODO add an audience to engagement and add a destination to  the audience of this engagement
+
+  - name: test delete engagement
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/engagements/{test_engagement_id}"
+      method: DELETE
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        message: !anystr
+
+  - name: confirm that this engagement has been deleted
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/engagements/{test_engagement_id}"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 404
+      headers:
+        content-type: application/json
+      json:
+        message: Not found

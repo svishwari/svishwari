@@ -8,7 +8,7 @@ export default {
   dataSources: "/data-sources",
   destinations: "/destinations",
   engagements: "/engagements",
-  identity: "/idr",
+  idr: "/idr",
   models: "/models",
   notifications: "/notifications",
   lookalike: "/lookalike-audiences",
