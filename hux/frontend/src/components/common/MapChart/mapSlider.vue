@@ -49,14 +49,15 @@ export default {
   float: right;
   ::v-deep {
     .v-input__control {
-    .v-input__slot {
-      min-width: 75px;
+      .v-input__slot {
+        min-width: 75px;
+      }
+    }
+    .v-input__prepend-outer,
+    .v-input__append-outer {
+      margin-top: 0px;
     }
   }
-.v-input__prepend-outer , .v-input__append-outer {
-    margin-top: 0px;
-  }
-  } 
   .slider-value-display {
     width: 30px;
     height: 16px;
