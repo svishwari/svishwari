@@ -2,6 +2,7 @@
 """
 Paths for engagement API
 """
+import csv
 import logging
 from http import HTTPStatus
 from typing import Tuple
@@ -14,6 +15,7 @@ from flasgger import SwaggerView
 
 from huxunifylib.connectors import FacebookConnector
 from huxunifylib.database import constants as db_c
+from huxunifylib.database.client import DatabaseClient
 from huxunifylib.database.notification_management import create_notification
 from huxunifylib.database.engagement_management import (
     get_engagement,
@@ -36,6 +38,8 @@ from huxunifylib.database.delivery_platform_management import (
     get_delivery_jobs_using_metadata,
     get_delivery_platform,
 )
+from pymongo import MongoClient
+
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
     EngagementPutSchema,
@@ -79,11 +83,11 @@ def before_request():
 
 # pylint: disable=too-many-locals
 def group_engagement_performance_metrics(
-    engagement: object,
-    delivery_jobs: list,
-    performance_metrics: list,
-    target_destinations: list,
-    metrics_type: str,
+        engagement: object,
+        delivery_jobs: list,
+        performance_metrics: list,
+        target_destinations: list,
+        metrics_type: str,
 ) -> dict:
     """Group performance metrics for engagement
 
@@ -134,8 +138,8 @@ def group_engagement_performance_metrics(
         for audience_destination in eng_audience.get(api_c.DESTINATIONS):
             destination_id = audience_destination.get(api_c.ID)
             if (
-                destination_id is None
-                or destination_id not in target_destinations
+                    destination_id is None
+                    or destination_id not in target_destinations
             ):
                 logging.warning(
                     "Invalid destination encountered, ignoring performance metrics for it. "
@@ -169,6 +173,129 @@ def group_engagement_performance_metrics(
         audience_metrics_list.append(audience_metrics)
 
     return audience_metrics_list
+
+
+def get_email_metrics(database: MongoClient, engagement: object, engagement_id: str) -> dict:
+    """
+
+    Args:
+        database(MongoClient):
+        engagement(object):
+        engagement_id(str): Engagement id
+
+    Returns:
+        dict: Email metrics for an engagement
+    """
+
+    # Get all destinations that are related to Email metrics
+    email_destination = (
+        delivery_platform_management.get_delivery_platform_by_type(
+            database, db_c.DELIVERY_PLATFORM_SFMC
+        )
+    )
+
+    delivery_jobs = []
+    performance_metrics = []
+    if email_destination:
+        # Get Performance metrics by engagement and destination
+        performance_metrics = (
+            get_performance_metrics_by_engagement_details(
+                database,
+                ObjectId(engagement_id),
+                [email_destination.get(db_c.ID)],
+            )
+        )
+
+        if performance_metrics:
+            # Get all the delivery jobs for the given engagement and destination
+            delivery_jobs = get_delivery_jobs_using_metadata(
+                database, engagement_id=ObjectId(engagement_id)
+            )
+
+            delivery_jobs = [
+                x
+                for x in delivery_jobs
+                if x[db_c.DELIVERY_PLATFORM_ID]
+                   == email_destination.get(db_c.ID)
+            ]
+
+    # Group all the performance metrics for the engagement
+    final_metric = {
+        api_c.SUMMARY: group_perf_metric(
+            [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
+            api_c.EMAIL,
+        )
+    }
+    audience_metrics_list = group_engagement_performance_metrics(
+        engagement,
+        delivery_jobs,
+        performance_metrics,
+        [email_destination.get(db_c.ID)],
+        api_c.EMAIL,
+    )
+    final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
+
+    return final_metric
+
+
+def get_displayads_metrics(database: MongoClient, engagement: object, engagement_id: str) -> dict:
+    """
+
+    Args:
+        database:
+        engagement:
+        engagement_id:
+
+    Returns:
+
+    """
+    # Get all destinations that are related to Display Ad metrics
+    ads_destination = (
+        delivery_platform_management.get_delivery_platform_by_type(
+            database, db_c.DELIVERY_PLATFORM_FACEBOOK
+        )
+    )
+
+    delivery_jobs = []
+    performance_metrics = []
+    if ads_destination:
+        # Get Performance metrics by engagement and destination
+        performance_metrics = (
+            get_performance_metrics_by_engagement_details(
+                database,
+                ObjectId(engagement_id),
+                [ads_destination.get(db_c.ID)],
+            )
+        )
+        if performance_metrics:
+            # Get all the delivery jobs for the given engagement and destination
+            delivery_jobs = get_delivery_jobs_using_metadata(
+                database, engagement_id=ObjectId(engagement_id)
+            )
+
+            delivery_jobs = [
+                x
+                for x in delivery_jobs
+                if x[db_c.DELIVERY_PLATFORM_ID]
+                   == ads_destination.get(db_c.ID)
+            ]
+
+    # Group all the performance metrics for the engagement
+    final_metric = {
+        api_c.SUMMARY: group_perf_metric(
+            [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
+            api_c.DISPLAY_ADS,
+        )
+    }
+    audience_metrics_list = group_engagement_performance_metrics(
+        engagement,
+        delivery_jobs,
+        performance_metrics,
+        [ads_destination.get(db_c.ID)],
+        api_c.DISPLAY_ADS,
+    )
+    final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
+    return final_metric
 
 
 @add_view_to_blueprint(
@@ -560,8 +687,8 @@ class DeleteEngagement(SwaggerView):
             return {"message": api_c.OPERATION_SUCCESS}, HTTPStatus.OK.value
 
         return {
-            "message": api_c.OPERATION_FAILED
-        }, HTTPStatus.INTERNAL_SERVER_ERROR.value
+                   "message": api_c.OPERATION_FAILED
+               }, HTTPStatus.INTERNAL_SERVER_ERROR.value
 
 
 @add_view_to_blueprint(
@@ -656,8 +783,8 @@ class AddAudienceEngagement(SwaggerView):
             )
             if not audience_to_attach:
                 return {
-                    "message": f"Audience does not exist: {audience[api_c.ID]}"
-                }, HTTPStatus.BAD_REQUEST
+                           "message": f"Audience does not exist: {audience[api_c.ID]}"
+                       }, HTTPStatus.BAD_REQUEST
             audience_names.append(audience_to_attach[db_c.NAME])
         append_audiences_to_engagement(
             database,
@@ -835,7 +962,7 @@ class AddDestinationEngagedAudience(SwaggerView):
     @api_error_handler()
     @get_user_name()
     def post(
-        self, engagement_id: str, audience_id: str, user_name: str
+            self, engagement_id: str, audience_id: str, user_name: str
     ) -> Tuple[dict, int]:
         """Adds a destination to an engagement audience.
 
@@ -854,7 +981,7 @@ class AddDestinationEngagedAudience(SwaggerView):
         """
 
         if not (
-            ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
+                ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
         ):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
@@ -947,7 +1074,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
     @api_error_handler()
     @get_user_name()
     def delete(
-        self, engagement_id: str, audience_id: str, user_name: str
+            self, engagement_id: str, audience_id: str, user_name: str
     ) -> Tuple[dict, int]:
         """Removes a destination from an engagement audience.
 
@@ -966,7 +1093,7 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         """
 
         if not (
-            ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
+                ObjectId.is_valid(engagement_id) and ObjectId.is_valid(audience_id)
         ):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
@@ -980,8 +1107,8 @@ class RemoveDestinationEngagedAudience(SwaggerView):
         destination_to_remove = get_delivery_platform(database, destination_id)
         if not destination_to_remove:
             return {
-                "message": f"Destination does not exist: {destination[api_c.ID]}"
-            }, HTTPStatus.BAD_REQUEST
+                       "message": f"Destination does not exist: {destination[api_c.ID]}"
+                   }, HTTPStatus.BAD_REQUEST
 
         remove_destination_from_engagement_audience(
             database,
@@ -1086,7 +1213,7 @@ class UpdateCampaignsForAudience(SwaggerView):
     @api_error_handler()
     @validate_destination()
     def put(
-        self, engagement_id: str, audience_id: str, destination_id: str
+            self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
         """Updates campaigns for an engagement audience.
 
@@ -1118,21 +1245,21 @@ class UpdateCampaignsForAudience(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+                       "message": api_c.ENGAGEMENT_NOT_FOUND
+                   }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
             return {
-                "message": "Engagement has no audiences."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Engagement has no audiences."
+                   }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
         audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
-                "message": "Audience is not attached to the engagement."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Audience is not attached to the engagement."
+                   }, HTTPStatus.BAD_REQUEST
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -1143,9 +1270,9 @@ class UpdateCampaignsForAudience(SwaggerView):
 
         if not valid_destination:
             return {
-                "message": "Destination is not attached to the "
-                "engagement audience."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Destination is not attached to the "
+                                  "engagement audience."
+                   }, HTTPStatus.BAD_REQUEST
 
         body = CampaignPutSchema().load(request.get_json())
 
@@ -1156,8 +1283,8 @@ class UpdateCampaignsForAudience(SwaggerView):
         )
         if delivery_jobs is None:
             return {
-                "message": "Could not attach campaigns."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Could not attach campaigns."
+                   }, HTTPStatus.BAD_REQUEST
 
         # Delete all the existing campaigns from associated delivery jobs
         delivery_platform_management.delete_delivery_job_generic_campaigns(
@@ -1169,17 +1296,17 @@ class UpdateCampaignsForAudience(SwaggerView):
             body[api_c.CAMPAIGNS], key=itemgetter(api_c.DELIVERY_JOB_ID)
         )
         for delivery_job_id, value in groupby(
-            campaigns, key=itemgetter(api_c.DELIVERY_JOB_ID)
+                campaigns, key=itemgetter(api_c.DELIVERY_JOB_ID)
         ):
             delivery_job = delivery_platform_management.get_delivery_job(
                 database, ObjectId(delivery_job_id)
             )
             if delivery_job is None and (
-                delivery_job[api_c.ENGAGEMENT_ID] != engagement_id
+                    delivery_job[api_c.ENGAGEMENT_ID] != engagement_id
             ):
                 return {
-                    "message": "Invalid data, cannot attach campaign."
-                }, HTTPStatus.BAD_REQUEST
+                           "message": "Invalid data, cannot attach campaign."
+                       }, HTTPStatus.BAD_REQUEST
 
             updated_campaigns = [
                 {k: v for k, v in d.items() if k in [api_c.NAME, api_c.ID]}
@@ -1252,7 +1379,7 @@ class AudienceCampaignsGetView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     def get(
-        self, engagement_id: str, audience_id: str, destination_id: str
+            self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
         """Get the campaign mappings from mongo.
 
@@ -1284,21 +1411,21 @@ class AudienceCampaignsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+                       "message": api_c.ENGAGEMENT_NOT_FOUND
+                   }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
             return {
-                "message": "Engagement has no audiences."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Engagement has no audiences."
+                   }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
         audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
-                "message": "Audience is not attached to the engagement."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Audience is not attached to the engagement."
+                   }, HTTPStatus.BAD_REQUEST
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -1309,9 +1436,9 @@ class AudienceCampaignsGetView(SwaggerView):
 
         if not valid_destination:
             return {
-                "message": "Destination is not attached to the "
-                "engagement audience."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Destination is not attached to the "
+                                  "engagement audience."
+                   }, HTTPStatus.BAD_REQUEST
 
         delivery_jobs = (
             delivery_platform_management.get_delivery_jobs_using_metadata(
@@ -1320,8 +1447,8 @@ class AudienceCampaignsGetView(SwaggerView):
         )
         if not delivery_jobs:
             return {
-                "message": "Could not find any campaigns."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Could not find any campaigns."
+                   }, HTTPStatus.BAD_REQUEST
 
         # Build response object
         campaigns = []
@@ -1401,7 +1528,7 @@ class AudienceCampaignMappingsGetView(SwaggerView):
     @api_error_handler()
     @validate_destination()
     def get(
-        self, engagement_id: str, audience_id: str, destination_id: str
+            self, engagement_id: str, audience_id: str, destination_id: str
     ) -> Tuple[dict, int]:
         """Get the list of possible campaign mappings to attach to audience.
 
@@ -1432,21 +1559,21 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         engagement = get_engagement(database, engagement_id)
         if not engagement:
             return {
-                "message": api_c.ENGAGEMENT_NOT_FOUND
-            }, HTTPStatus.NOT_FOUND
+                       "message": api_c.ENGAGEMENT_NOT_FOUND
+                   }, HTTPStatus.NOT_FOUND
 
         # validate that the engagement has audiences
         if db_c.AUDIENCES not in engagement:
             return {
-                "message": "Engagement has no audiences."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Engagement has no audiences."
+                   }, HTTPStatus.BAD_REQUEST
 
         # validate that the audience is attached
         audience_ids = [x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]]
         if audience_id not in audience_ids:
             return {
-                "message": "Audience is not attached to the engagement."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Audience is not attached to the engagement."
+                   }, HTTPStatus.BAD_REQUEST
 
         # validate that the destination ID is attached to the audience
         valid_destination = False
@@ -1457,9 +1584,9 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         if not valid_destination:
             return {
-                "message": "Destination is not attached to the "
-                "engagement audience."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Destination is not attached to the "
+                                  "engagement audience."
+                   }, HTTPStatus.BAD_REQUEST
 
         destination = delivery_platform_management.get_delivery_platform(
             database, destination_id
@@ -1473,8 +1600,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         )
         if not delivery_jobs:
             return {
-                "message": "Could not find any delivery jobs to map."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Could not find any delivery jobs to map."
+                   }, HTTPStatus.BAD_REQUEST
 
         # Get existing campaigns from facebook
         facebook_connector = FacebookConnector(
@@ -1488,8 +1615,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
 
         if campaigns is None:
             return {
-                "message": "Could not find any Campaigns to map."
-            }, HTTPStatus.BAD_REQUEST
+                       "message": "Could not find any Campaigns to map."
+                   }, HTTPStatus.BAD_REQUEST
 
         # Build response object
         campaign_schema = {
@@ -1512,16 +1639,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
     Display Ads Engagement Metrics
     """
 
-    parameters = [
-        {
-            "name": api_c.ENGAGEMENT_ID,
-            "description": "Engagement ID.",
-            "type": "string",
-            "in": "path",
-            "required": True,
-            "example": "60b8d6d7d3cf80b4edcd890b",
-        }
-    ]
+    parameters = api_c.ENGAGEMENT_ID_PARAMS
 
     responses = {
         HTTPStatus.OK.value: {
@@ -1597,7 +1715,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
                     x
                     for x in delivery_jobs
                     if x[db_c.DELIVERY_PLATFORM_ID]
-                    == ads_destination.get(db_c.ID)
+                       == ads_destination.get(db_c.ID)
                 ]
 
         # Group all the performance metrics for the engagement
@@ -1634,6 +1752,63 @@ class EngagementMetricsEmail(SwaggerView):
     Email Engagement Metrics
     """
 
+    parameters = api_c.ENGAGEMENT_ID_PARAMS
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "description": "Email Audience Performance Metrics",
+            "schema": {
+                "example": {"email_summary": "Audience Metrics Email"},
+            },
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to retrieve email engagement metrics.",
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.ENGAGEMENT_TAG]
+
+    @api_error_handler()
+    def get(self, engagement_id: str) -> Tuple[dict, int]:
+        """Retrieves email performance metrics.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Args:
+            engagement_id (str): ID of an engagement
+
+        Returns:
+            Tuple[dict, int]: Response of Email Performance Metrics,
+                HTTP Status Code
+
+        """
+
+        if not ObjectId.is_valid(engagement_id):
+            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
+
+        # setup the database
+        database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+        if not engagement:
+            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
+
+        final_metric = get_email_metrics(database, engagement, engagement_id)
+        return (
+            AudiencePerformanceEmailSchema().dump(final_metric),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    engagement_bp,
+    f"{api_c.ENGAGEMENT_ENDPOINT}/<{api_c.ENGAGEMENT_ID}>/"
+    f"{api_c.AUDIENCE_PERFORMANCE}/download",
+    "EngagementPerformanceDownloadSchema",
+)
+class EngagementPerformanceDownload(SwaggerView):
     parameters = [
         {
             "name": api_c.ENGAGEMENT_ID,
@@ -1686,54 +1861,9 @@ class EngagementMetricsEmail(SwaggerView):
         if not engagement:
             return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
-        # Get all destinations that are related to Email metrics
-        email_destination = (
-            delivery_platform_management.get_delivery_platform_by_type(
-                database, db_c.DELIVERY_PLATFORM_SFMC
-            )
-        )
-
-        delivery_jobs = []
-        performance_metrics = []
-        if email_destination:
-            # Get Performance metrics by engagement and destination
-            performance_metrics = (
-                get_performance_metrics_by_engagement_details(
-                    database,
-                    ObjectId(engagement_id),
-                    [email_destination.get(db_c.ID)],
-                )
-            )
-
-            if performance_metrics:
-                # Get all the delivery jobs for the given engagement and destination
-                delivery_jobs = get_delivery_jobs_using_metadata(
-                    database, engagement_id=ObjectId(engagement_id)
-                )
-
-                delivery_jobs = [
-                    x
-                    for x in delivery_jobs
-                    if x[db_c.DELIVERY_PLATFORM_ID]
-                    == email_destination.get(db_c.ID)
-                ]
-
-        # Group all the performance metrics for the engagement
-        final_metric = {
-            api_c.SUMMARY: group_perf_metric(
-                [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
-                api_c.EMAIL,
-            )
-        }
-        audience_metrics_list = group_engagement_performance_metrics(
-            engagement,
-            delivery_jobs,
-            performance_metrics,
-            [email_destination.get(db_c.ID)],
-            api_c.EMAIL,
-        )
-        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
+        # final_metric = get_email_metrics(database, engagement, engagement_id)
+        final_metric = get_displayads_metrics(database, engagement, engagement_id)
         return (
-            AudiencePerformanceEmailSchema().dump(final_metric),
+            AudiencePerformanceDisplayAdsSchema().dump(final_metric),
             HTTPStatus.OK,
         )
