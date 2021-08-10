@@ -487,8 +487,11 @@ class EngagementSchemaTest(TestCase):
 
         self.assertFalse(EngagementGetSchema().validate(engagement))
 
-        destinations = engagement[api_c.AUDIENCES][0][api_c.DESTINATIONS]
+        # deserialize the json document by loading it into the schema and
+        # test the schema to have the match_rate value set
+        schema = EngagementGetSchema().load(engagement)
 
+        destinations = schema[api_c.AUDIENCES][0][api_c.DESTINATIONS]
         self.assertGreater(
             destinations[0][api_c.LATEST_DELIVERY][api_c.MATCH_RATE], 0.2
         )
