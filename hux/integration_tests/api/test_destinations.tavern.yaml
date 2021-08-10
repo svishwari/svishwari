@@ -105,6 +105,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
@@ -141,6 +142,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
@@ -172,6 +174,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - name: !anystr
           data_extension_id: !anystr
 
@@ -202,6 +205,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
@@ -347,6 +351,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
@@ -378,6 +383,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - name: !anystr
           data_extension_id: !anystr
       save:
@@ -463,6 +469,7 @@ stages:
       headers:
         content-type: application/json
       json:
+        !anylist
         - id: !anystr
           type: !anystr
           name: !anystr
