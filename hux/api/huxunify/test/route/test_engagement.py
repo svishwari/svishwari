@@ -1139,7 +1139,7 @@ class TestEngagementRoutes(TestCase):
         return_engagement = response.json
         self.assertEqual(engagement_id, return_engagement[db_c.OBJECT_ID])
         self.assertEqual(self.user_name, return_engagement[db_c.CREATED_BY])
-        self.assertEqual(api_c.STATUS_ERROR, return_engagement[db_c.STATUS])
+        self.assertEqual(api_c.STATUS_INACTIVE, return_engagement[db_c.STATUS])
 
     def test_get_engagement_by_id_invalid_id(self):
         """
