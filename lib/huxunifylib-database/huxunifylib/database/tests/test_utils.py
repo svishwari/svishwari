@@ -470,7 +470,7 @@ class TestUtils(unittest.TestCase):
             database=self.database,
             delivery_platform_id=delivery_platform_id,
             delivery_job_id=delivery_job_doc[c.ID],
-            delivery_platform_name=c.DELIVERY_PLATFORM_FACEBOOK,
+            delivery_platform_type=c.DELIVERY_PLATFORM_FACEBOOK,
             generic_campaigns=self.generic_campaigns[0]["campaign_id"],
             metrics_dict={
                 "impressions": 12,
