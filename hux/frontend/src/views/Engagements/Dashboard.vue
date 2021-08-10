@@ -255,7 +255,7 @@ export default {
     ...mapGetters({
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
-      getEngagement: "engagements/engagement",
+      getEngagementObject: "engagements/engagement",
     }),
 
     breadcrumbItems() {
@@ -441,7 +441,7 @@ export default {
     },
     async loadEngagement(engagementId) {
       await this.getEngagementById(engagementId)
-      this.engagementList = this.getEngagement(this.engagementId)
+      this.engagementList = this.getEngagementObject(this.engagementId)
       await this.getAudiencePerformanceById({
         type: "ads",
         id: this.engagementList.id,

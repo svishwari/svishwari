@@ -220,73 +220,6 @@
         <income-chart></income-chart>
       </v-col>
     </v-row>
-    <v-row class="px-15 mt-2">
-      <v-col md="8">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="neroBlack--text text-h5">
-                Demographic Overview
-              </span>
-            </div>
-          </v-card-title>
-          <map-chart :map-data="mapChartData" />
-          <map-slider :map-data="mapChartData" />
-        </v-card>
-      </v-col>
-      <v-col md="4">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="neroBlack--text text-h5"> United States </span>
-            </div>
-          </v-card-title>
-          <v-divider class="ml-6 mr-8 mt-0 mb-1" />
-          <map-state-list :map-data="mapChartData" />
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row class="px-15 mt-2">
-      <v-col md="3">
-        <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="neroBlack--text text-h5">
-                Top location &amp; Income
-              </span>
-            </div>
-          </v-card-title>
-          <empty-state-chart />
-        </v-card>
-      </v-col>
-      <v-col md="6">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="neroBlack--text text-h5">
-                Gender / monthly spending in 2021
-              </span>
-            </div>
-          </v-card-title>
-          <empty-state-chart />
-        </v-card>
-      </v-col>
-      <v-col md="3">
-        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-          <v-card-title class="chart-style pb-2 pl-5 pt-5">
-            <div class="mt-2">
-              <span class="neroBlack--text text-h5"> Gender </span>
-            </div>
-          </v-card-title>
-          <doughnut-chart
-            :width="250"
-            :height="200"
-            :data="genderChartData"
-            label="Gender"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
     <hux-alert
       v-model="flashAlert"
       :type="alert.type"
@@ -308,7 +241,7 @@
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
-      :audience-id="selectedAudienceId"
+      :audience-id="audienceId"
       :destination="scheduleDestination"
       :engagement-id="engagementId"
     />
@@ -343,7 +276,7 @@
     <look-alike-audience
       ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
-      :selected-audience="selectedAudience"
+      :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
     />
@@ -370,13 +303,6 @@ import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/Se
 import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Drawers/DestinationDataExtension"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import MapChart from "@/components/common/MapChart/MapChart"
-import MapStateList from "@/components/common/MapChart/MapStateList"
-import mapData from "@/components/common/MapChart/mapData.json"
-import mapSlider from "@/components/common/MapChart/mapSlider"
-import genderData from "@/components/common/DoughnutChart/genderData.json"
-import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
-import EmptyStateChart from "@/components/common/EmptyStateChart"
 
 export default {
   name: "AudienceInsight",
@@ -398,16 +324,9 @@ export default {
     HuxAlert,
     ConfirmModal,
     EditDeliverySchedule,
-    MapChart,
-    MapStateList,
-    mapSlider,
-    DoughnutChart,
-    EmptyStateChart,
   },
   data() {
     return {
-      mapChartData: mapData.demographic_overview,
-      selectedAudience: null,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -472,26 +391,6 @@ export default {
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
       ],
-      genderChartData: [
-        {
-          label: "Men",
-          population_percentage:
-            genderData.gender.gender_men.population_percentage,
-          size: genderData.gender.gender_men.size,
-        },
-        {
-          label: "Women",
-          population_percentage:
-            genderData.gender.gender_women.population_percentage,
-          size: genderData.gender.gender_women.size,
-        },
-        {
-          label: "Other",
-          population_percentage:
-            genderData.gender.gender_other.population_percentage,
-          size: genderData.gender.gender_other.size,
-        },
-      ],
       selectedEngagements: [],
       selectedDestinations: [],
       showSelectDestinationsDrawer: false,
@@ -499,8 +398,6 @@ export default {
       salesforceDestination: {},
 
       engagementDrawer: false,
-      // Edit Schedule data props
-      selectedAudienceId: null,
       engagementId: null,
       showConfirmModal: false,
       editDeliveryDrawer: false,
@@ -691,7 +588,6 @@ export default {
           this.closeAllDrawers()
           this.engagementId = event.data.id
           this.selectedDestinations = []
-          this.engagementId = event.data.id
           this.selectedEngagements.push(event.data)
           this.selectedDestinations.push(
             ...event.data.deliveries.map((dest) => ({ id: dest.id }))
@@ -747,7 +643,7 @@ export default {
             this.engagementId = event.parent.id
             await this.detachAudienceDestination({
               engagementId: this.engagementId,
-              audienceId: this.selectedAudienceId,
+              audienceId: this.audienceId,
               data: { id: event.data.id },
             })
             break
@@ -799,7 +695,6 @@ export default {
       this.engagementDrawer = true
     },
     openLookAlikeDrawer() {
-      this.selectedAudience = this.audience
       this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
@@ -866,7 +761,6 @@ export default {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
-      this.selectedAudienceId = this.$route.params.id
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
