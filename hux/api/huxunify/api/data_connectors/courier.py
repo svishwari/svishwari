@@ -156,17 +156,20 @@ class DestinationBatchJob:
 
         """
         # Connect to AWS Batch
+        logging.info("Connecting to AWS Batch")
         if aws_batch_connector is None:
             aws_batch_connector = AWSBatchConnector(
                 job_head_name,
                 self.audience_delivery_job_id,
             )
         self.aws_batch_connector = aws_batch_connector
+        logging.info("Connected to AWS Batch")
 
         # get the configuration values
         config = get_config()
 
         # Register AWS batch job
+        logging.info("Registering AWS Batch job")
         response_batch_register = self.aws_batch_connector.register_job(
             job_role_arn=config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
             exec_role_arn=config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
@@ -180,6 +183,10 @@ class DestinationBatchJob:
             response_batch_register["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
+            logging.error(
+                "Failed to Register AWS Batch job for delivery job ID %s",
+                self.audience_delivery_job_id,
+            )
             set_delivery_job_status(
                 self.database,
                 self.audience_delivery_job_id,
@@ -187,7 +194,10 @@ class DestinationBatchJob:
             )
             self.result = db_const.STATUS_FAILED
             return
-
+        logging.info(
+            "Successfully Registered AWS Batch job for %s",
+            self.audience_delivery_job_id,
+        )
         self.result = db_const.STATUS_PENDING
 
         # check if engagement has a delivery flight schedule set
@@ -259,6 +269,10 @@ class DestinationBatchJob:
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
+            logging.error(
+                "Failed to Submit AWS Batch job for %s",
+                self.audience_delivery_job_id,
+            )
             status = db_const.STATUS_FAILED
 
         set_delivery_job_status(

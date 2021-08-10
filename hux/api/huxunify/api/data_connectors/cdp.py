@@ -50,6 +50,7 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
 
     except Exception as exception:  # pylint: disable=broad-except
         # report the generic error message
+        logging.error("CDM Health Check failed with %s", repr(exception))
         return False, getattr(exception, "message", repr(exception))
 
 
@@ -66,7 +67,7 @@ def get_customer_profiles(token: str) -> dict:
 
     # get config
     config = get_config()
-
+    logging.info("Getting Customer Profiles info from CDP API")
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles",
         headers={
@@ -75,9 +76,14 @@ def get_customer_profiles(token: str) -> dict:
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
+        logging.error(
+            "Unable to get Customer Profiles from CDP API got %s",
+            response.status_code,
+        )
         return {}
 
     response_data = response.json()[api_c.BODY]
+    logging.info("Successfully retrieved Customer Profiles info from CDP API")
     return {
         api_c.TOTAL_CUSTOMERS: len(response_data),
         api_c.CUSTOMERS_TAG: response_data,
@@ -98,7 +104,7 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
 
     # get config
     config = get_config()
-
+    logging.info("Getting Customer Profile info for %s from CDP API", hux_id)
     response = requests.get(
         f"{config.CDP_SERVICE}/customer-profiles/{hux_id}",
         headers={
@@ -107,8 +113,17 @@ def get_customer_profile(token: str, hux_id: str) -> dict:
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
+        logging.error(
+            "Unable to get Customer Profile info for %s from CDP API got %s",
+            hux_id,
+            response.status_code,
+        )
         return {}
 
+    logging.info(
+        "Successfully retrieved Customer Profile info for %s from CDP API",
+        hux_id,
+    )
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 
@@ -130,7 +145,7 @@ def get_customers_overview(
 
     # get config
     config = get_config()
-
+    logging.info("Getting Customer Profile Insights from CDP API")
     response = requests.post(
         f"{config.CDP_SERVICE}/customer-profiles/insights",
         json=filters if filters else api_c.CUSTOMER_OVERVIEW_DEFAULT_FILTER,
@@ -140,8 +155,15 @@ def get_customers_overview(
     )
 
     if response.status_code != 200 or api_c.BODY not in response.json():
+        logging.error(
+            "Could not get customer profile insights from CDP API got %s %s",
+            response.status_code,
+            response.text,
+        )
         return {}
-
+    logging.info(
+        "Successfully retrieved Customer Profile Insights from CDP API"
+    )
     return clean_cdm_fields(response.json()[api_c.BODY])
 
 

@@ -277,6 +277,7 @@ def get_user_name() -> object:
                 return in_function(*args, **kwargs)
 
             # get the auth token
+            logging.info("getting user info from OKTA")
             token_response = get_token_from_request(request)
 
             # if not 200, return response.
@@ -292,6 +293,7 @@ def get_user_name() -> object:
                     "message": constants.AUTH401_ERROR_MESSAGE
                 }, HTTPStatus.UNAUTHORIZED
 
+            logging.info("successfully got user info from OKTA")
             # check if the user is in the database
             database = get_db_client()
             user = get_user(database, user_info[constants.OKTA_ID_SUB])
@@ -352,7 +354,6 @@ def api_error_handler(custom_message: dict = None) -> object:
             Returns:
                object: returns a decorated function object.
             """
-            logging.error("some error")
             try:
                 return in_function(*args, **kwargs)
 
@@ -364,23 +365,21 @@ def api_error_handler(custom_message: dict = None) -> object:
                 else:
                     error_message = validation_error.messages
                 logging.error(
-                    "{} {} while executing {} in module {}".format(
-                        validation_error.__class__,
-                        validation_error.messages,
-                        in_function.__qualname__,
-                        in_function.__module__,
-                    )
+                    "%s: %s while executing %s in module %s",
+                    validation_error.__class__,
+                    validation_error.messages,
+                    in_function.__qualname__,
+                    in_function.__module__,
                 )
                 return error_message, HTTPStatus.BAD_REQUEST
 
             except facebook_business.exceptions.FacebookRequestError as exc:
                 logging.error(
-                    "{} {} while executing {} in module {}".format(
-                        exc.__class__,
-                        exc,
-                        in_function.__qualname__,
-                        in_function.__module__,
-                    )
+                    "%s: %s while executing %s in module %s",
+                    exc.__class__,
+                    exc.api_error_message(),
+                    in_function.__qualname__,
+                    in_function.__module__,
                 )
                 return {
                     "message": "Error connecting to Facebook"
@@ -388,13 +387,11 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except de.DuplicateName as exc:
                 logging.error(
-                    "{} {} {} while executing {} in module {}".format(
-                        exc,
-                        exc.__class__,
-                        exc.exception_message,
-                        in_function.__qualname__,
-                        in_function.__module__,
-                    )
+                    "%s: %s while executing %s in module %s",
+                    exc.__class__,
+                    exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
                 )
                 return {
                     "message": constants.DUPLICATE_NAME
@@ -402,16 +399,15 @@ def api_error_handler(custom_message: dict = None) -> object:
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
+                logging.error(
+                    "%s: %s while executing %s in module %s",
+                    exc.__class__,
+                    exc,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
                 if custom_message:
                     return custom_message, HTTPStatus.BAD_REQUEST
-                logging.error(
-                    "{} {} while executing {} in module {}".format(
-                        exc.__class__,
-                        exc,
-                        in_function.__qualname__,
-                        in_function.__module__,
-                    )
-                )
 
                 return {
                     "message": "Internal Server Error"
@@ -555,6 +551,12 @@ def validate_delivery_params(func) -> object:
             if ObjectId.is_valid(val):
                 kwargs[key] = ObjectId(val)
             else:
+                # error appropriate
+                logging.error(
+                    "Encountered an invalid ID while executing %s in %s",
+                    func.__qualname__,
+                    func.__module__,
+                )
                 return {
                     "message": constants.INVALID_OBJECT_ID
                 }, HTTPStatus.BAD_REQUEST
@@ -567,11 +569,21 @@ def validate_delivery_params(func) -> object:
             engagement = get_engagement(database, engagement_id)
             if engagement:
                 if db_c.AUDIENCES not in engagement:
+                    logging.error(
+                        "Engagement has no audiences while executing while executing %s in %s",
+                        func.__qualname__,
+                        func.__module__,
+                    )
                     return {
                         "message": "Engagement has no audiences."
                     }, HTTPStatus.BAD_REQUEST
             else:
                 # validate that the engagement has audiences
+                logging.error(
+                    "Engagement not found while executing  %s in %s",
+                    func.__qualname__,
+                    func.__module__,
+                )
                 return {
                     "message": constants.ENGAGEMENT_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
@@ -590,6 +602,11 @@ def validate_delivery_params(func) -> object:
                 # pass and catch in the next step.
                 pass
             if not audience:
+                logging.error(
+                    "Audience does not exist while executing  %s in %s",
+                    func.__qualname__,
+                    func.__module__,
+                )
                 return {
                     "message": "Audience does not exist."
                 }, HTTPStatus.BAD_REQUEST
@@ -600,6 +617,13 @@ def validate_delivery_params(func) -> object:
                     x[db_c.OBJECT_ID] for x in engagement[db_c.AUDIENCES]
                 ]
                 if audience_id not in audience_ids:
+                    logging.error(
+                        "Audience %s is not attached to engagement %s while executing %s in %s",
+                        audience_id,
+                        engagement_id,
+                        func.__qualname__,
+                        func.__module__,
+                    )
                     return {
                         "message": "Audience is not attached to the engagement."
                     }, HTTPStatus.BAD_REQUEST
@@ -628,6 +652,7 @@ def validate_destination_id(
             all checks are successful.
     """
     if not ObjectId.is_valid(destination_id):
+        logging.error("Invalid object ID %s", destination_id)
         return {"message": constants.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
     destination_id = ObjectId(destination_id)
 
@@ -635,6 +660,9 @@ def validate_destination_id(
         if not destination_management.get_delivery_platform(
             get_db_client(), destination_id
         ):
+            logging.error(
+                "Could not find destination with id %s", destination_id
+            )
             return {
                 "message": constants.DESTINATION_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
@@ -678,6 +706,7 @@ def validate_destination(
             Returns:
                object: returns a decorated function object.
             """
+
             destination_id = kwargs.get("destination_id", None)
             return_val = validate_destination_id(
                 destination_id, check_if_destination_in_db
@@ -687,7 +716,14 @@ def validate_destination(
                 kwargs["destination_id"] = ObjectId(destination_id)
             else:
                 # return response message
+                logging.error(
+                    "%s for %s in %s",
+                    return_val[0].get("message"),
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
                 return return_val
+
             return in_function(*args, **kwargs)
 
         decorator.__wrapped__ = in_function

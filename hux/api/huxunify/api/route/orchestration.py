@@ -1,6 +1,7 @@
 """
 Paths for Orchestration API
 """
+import logging
 from http import HTTPStatus
 from typing import Tuple, Union
 from flasgger import SwaggerView
@@ -267,6 +268,7 @@ class AudienceGetView(SwaggerView):
         """
 
         if not ObjectId.is_valid(audience_id):
+            logging.error("Invalid Object ID %s", audience_id)
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         token_response = get_token_from_request(request)
@@ -283,6 +285,7 @@ class AudienceGetView(SwaggerView):
                 database, audience_id
             )
             if not lookalike:
+                logging.error("Audience with id %s not found", audience_id)
                 return {
                     "message": api_c.AUDIENCE_NOT_FOUND
                 }, HTTPStatus.NOT_FOUND
@@ -305,6 +308,7 @@ class AudienceGetView(SwaggerView):
         )
 
         # process each engagement
+        logging.info("Processing each engagement")
         engagements = []
         for engagement in engagement_deliveries:
             # workaround because DocumentDB does not allow $replaceRoot
@@ -329,6 +333,7 @@ class AudienceGetView(SwaggerView):
             engagement[api_c.STATUS] = weight_delivery_status(engagement)
             engagements.append(engagement)
 
+        logging.info("Successfully processed each engagement")
         # set the list of engagements for an audience
         audience[api_c.AUDIENCE_ENGAGEMENTS] = engagements
 
@@ -458,12 +463,17 @@ class AudiencePostView(SwaggerView):
             for destination in body[db_c.DESTINATIONS]:
                 # check if dict instance
                 if not isinstance(destination, dict):
+                    logging.error("Destination must be objects")
                     return {
                         "message": "destinations must be objects"
                     }, HTTPStatus.BAD_REQUEST
 
                 # check if destination id assigned
                 if db_c.OBJECT_ID not in destination:
+                    logging.error(
+                        "Destination object missing the %s field.",
+                        db_c.OBJECT_ID,
+                    )
                     return {
                         "message": f"{destination} missing the "
                         f"{db_c.OBJECT_ID} field."
@@ -482,6 +492,7 @@ class AudiencePostView(SwaggerView):
             for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
                 # validate object id
                 if not ObjectId.is_valid(engagement_id):
+                    logging.error("Invalid Object ID %s", engagement_id)
                     return {
                         "message": f"{engagement_id} has an invalid "
                         f"{db_c.OBJECT_ID} field."
@@ -494,6 +505,9 @@ class AudiencePostView(SwaggerView):
                 if not engagement_management.get_engagement(
                     database, engagement_id
                 ):
+                    logging.error(
+                        "Engagement with ID %s does not exist.", engagement_id
+                    )
                     return {
                         "message": f"Engagement with ID {engagement_id} "
                         f"does not exist."
@@ -558,6 +572,9 @@ class AudiencePostView(SwaggerView):
                 )
 
         except db_exceptions.DuplicateName:
+            logging.error(
+                "Duplicate Audience name %s", body[api_c.AUDIENCE_NAME]
+            )
             return {
                 "message": f"Duplicate name '{body[api_c.AUDIENCE_NAME]}'"
             }, HTTPStatus.BAD_REQUEST
@@ -844,11 +861,13 @@ class SetLookalikeAudience(SwaggerView):
 
         for engagement_id in body[api_c.ENGAGEMENT_IDS]:
             if not ObjectId.is_valid(engagement_id):
+                logging.error("Invalid Object ID %s", engagement_id)
                 return {
                     "message": api_c.INVALID_OBJECT_ID
                 }, HTTPStatus.BAD_REQUEST
 
         if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
+            logging.error("Invalid Object ID %s", body[api_c.AUDIENCE_ID])
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
@@ -857,6 +876,7 @@ class SetLookalikeAudience(SwaggerView):
         )
 
         if not source_audience:
+            logging.error("Audience %s not found", body[api_c.AUDIENCE_ID])
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         destination = destination_management.get_delivery_platform_by_type(
@@ -871,6 +891,7 @@ class SetLookalikeAudience(SwaggerView):
         )
 
         if not destination_connector.check_connection():
+            logging.error("Facebook authentication failed.")
             return {
                 "message": api_c.DESTINATION_AUTHENTICATION_FAILED
             }, HTTPStatus.BAD_REQUEST
@@ -889,7 +910,7 @@ class SetLookalikeAudience(SwaggerView):
         #         "message": "Unable to create a lookalike due to custom audience "
         #                    "delivery status error"
         #     }, HTTPStatus.NOT_FOUND
-
+        logging.info("Creating delivery platform lookalike audience")
         lookalike_audience = (
             destination_management.create_delivery_platform_lookalike_audience(
                 database,
@@ -916,7 +937,9 @@ class SetLookalikeAudience(SwaggerView):
                 user_name,
                 [engaged_audience],
             )
-
+        logging.info(
+            "Successfully created delivery platform lookalike audience"
+        )
         return (
             LookalikeAudienceGetSchema().dump(lookalike_audience),
             HTTPStatus.CREATED,

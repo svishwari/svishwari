@@ -2,6 +2,7 @@
 """
 Paths for Notifications API
 """
+import logging
 from http import HTTPStatus
 from typing import Tuple
 
@@ -113,6 +114,7 @@ class NotificationsSearch(SwaggerView):
                 not in [db_c.PAGINATION_ASCENDING, db_c.PAGINATION_DESCENDING]
             )
         ):
+            logging.error("Invalid or incomplete arguments received")
             return {
                 "message": "Invalid or incomplete arguments received"
             }, HTTPStatus.BAD_REQUEST
