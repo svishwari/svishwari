@@ -99,8 +99,8 @@ def get_audience_by_filter(
         database (DatabaseClient): A database client.
         filter_dict (dict): filter dictionary for adding custom filters.
         projection (dict): Dict that specifies which fields to return or not return.
-        sort_list (list): List of tuples to sort by.
-        limit (int):
+        sort_list (list): List of tuples to sort by. Example: [(c.CREATE_TIME, pymongo.DESCENDING)]
+        limit (int): limit for number of audiences returned.
 
     Returns:
         Union[list, None]: List of all lookalike audience configurations.
@@ -121,11 +121,8 @@ def get_audience_by_filter(
     else:
         projection = {c.DELETED: 0}
 
-    sort_list = (
-        [(c.CREATE_TIME, pymongo.DESCENDING)]
-        if sort_list is None
-        else sort_list
-    )
+    if not isinstance(limit, int) and limit is not None:
+        raise de.InvalidValueException(limit)
 
     try:
         cursor = collection.find(filter_dict, projection)
@@ -133,7 +130,7 @@ def get_audience_by_filter(
         if sort_list:
             cursor = cursor.sort(sort_list)
 
-        return list(cursor if isinstance(limit, int) else cursor.limit(limit))
+        return list(cursor if limit else cursor.limit(limit))
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
