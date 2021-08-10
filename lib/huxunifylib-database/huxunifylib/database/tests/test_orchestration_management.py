@@ -441,6 +441,4 @@ class TestAudienceManagement(unittest.TestCase):
                     delivery_platform_doc[c.DELIVERY_PLATFORM_TYPE],
                 )
                 self.assertIn(c.UPDATE_TIME, delivery)
-                self.assertEqual(
-                    delivery[c.STATUS], c.AUDIENCE_STATUS_DELIVERING
-                )
+                self.assertEqual(delivery[c.STATUS], c.STATUS_PENDING)
