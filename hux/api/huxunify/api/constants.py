@@ -552,7 +552,6 @@ MODEL_LIST_PAYLOAD = {
         "join_key_map": {"model_metadata_client": "HUS"},
     }
 }
-
 FEATURES = "features"
 JOIN_KEYS = "joinKeys"
 RESULTS = "results"

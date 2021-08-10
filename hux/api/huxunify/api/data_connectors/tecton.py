@@ -84,6 +84,7 @@ def map_model_version_history_response(
     response: dict, model_id: int
 ) -> List[dict]:
     """Map model version history response to a usable dict.
+
     Args:
         response (dict): Input Tecton API response.
         model_id (int): Model ID number.
@@ -163,12 +164,14 @@ def get_model_version_history(model_id: int) -> List[ModelVersionSchema]:
     }
 
     # submit the post request to get the models
-    response = requests.post(
-        config.TECTON_FEATURE_SERVICE,
-        dumps(payload),
-        headers=config.TECTON_API_HEADERS,
+    return map_model_version_history_response(
+        requests.post(
+            config.TECTON_FEATURE_SERVICE,
+            dumps(payload),
+            headers=config.TECTON_API_HEADERS,
+        ),
+        model_id,
     )
-    return map_model_version_history_response(response, model_id)
 
 
 # pylint: disable=unused-argument
