@@ -160,7 +160,7 @@ export default {
       legend
         .append("text")
         .attr("x", 18)
-        .attr("y", 9)
+        .attr("y", 10)
         .attr("dy", ".35em")
         .attr("class", "neroBlack--text")
         .style("text-anchor", "start")
