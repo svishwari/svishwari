@@ -69,6 +69,7 @@
       </hux-data-table>
     </v-row>
     <v-divider class="hr-devider"></v-divider>
+    <observer v-if="notifications.length" @intersect="intersected"></observer>
   </div>
 </template>
 
@@ -81,6 +82,8 @@ import HuxDataTable from "../../components/common/dataTable/HuxDataTable.vue"
 import TimeStamp from "../../components/common/huxTable/TimeStamp.vue"
 import Status from "../../components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
+import Observer from "@/components/common/Observer"
+
 export default {
   name: "AlertsAndNotifications",
   components: {
@@ -91,6 +94,7 @@ export default {
     TimeStamp,
     Status,
     Tooltip,
+    Observer,
   },
   data() {
     return {
@@ -132,18 +136,25 @@ export default {
       sortColumn: "created",
       sortDesc: true,
       loading: false,
+      lastBatch: 0,
+      batchDetails: {
+        batchSize: 25,
+        batchNumber: 1,
+        isLazyLoad: false,
+      },
     }
   },
   computed: {
     ...mapGetters({
       notifications: "notifications/list",
+      totalNotifications: "notifications/total",
     }),
   },
 
   async mounted() {
     this.loading = true
-    const batchSize = this.$route.query.batch_size
-    await this.getAllNotifications(batchSize)
+    await this.fetchNotificationsByBatch()
+    this.calculateLastBatch()
     this.loading = false
   },
   methods: {
@@ -152,6 +163,21 @@ export default {
     }),
     goBack() {
       this.$router.go(-1)
+    },
+    intersected() {
+      if (this.batchDetails.batchNumber <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.fetchNotificationsByBatch()
+      }
+    },
+    async fetchNotificationsByBatch() {
+      await this.getAllNotifications(this.batchDetails)
+      this.batchDetails.batchNumber++
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.totalNotifications / this.batchDetails.batchSize
+      )
     },
   },
 }
