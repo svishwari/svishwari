@@ -244,7 +244,8 @@ class DispAdIndividualDestinationSummary(DisplayAdsSummary):
 
     name = fields.String()
     id = fields.String()
-    is_mapped = fields.Boolean()
+    is_mapped = fields.Boolean(default=False)
+    delivery_platform_type = fields.String()
 
 
 class DispAdIndividualAudienceSummary(DisplayAdsSummary):
@@ -318,7 +319,8 @@ class EmailIndividualDestinationSummary(EmailSummary):
 
     name = fields.String()
     id = fields.String()
-    is_mapped = fields.Boolean()
+    is_mapped = fields.Boolean(default=False)
+    delivery_platform_type = fields.String()
 
 
 class EmailIndividualAudienceSummary(EmailSummary):
@@ -470,9 +472,14 @@ class EngagementAudienceSchema(Schema):
     name = fields.String()
     id = fields.String()
     status = fields.String()
+    size = fields.Integer(default=0)
     destinations = fields.Nested(
         EngagementAudienceDestinationSchema, many=True
     )
+    create_time = DateTimeWithZ(attribute=db_c.CREATE_TIME)
+    created_by = fields.String(attribute=db_c.CREATED_BY)
+    update_time = DateTimeWithZ(attribute=db_c.UPDATE_TIME, allow_none=True)
+    updated_by = fields.String(attribute=db_c.UPDATED_BY, allow_none=True)
 
 
 class EngagementGetSchema(Schema):
@@ -607,6 +614,10 @@ def weighted_engagement_status(engagements: list) -> list:
                 elif status == db_c.AUDIENCE_STATUS_PAUSED:
                     # map paused to delivered status
                     status = api_c.STATUS_DELIVERY_PAUSED
+
+                elif status == db_c.AUDIENCE_STATUS_NOT_DELIVERED:
+                    # map paused to delivered status
+                    status = api_c.STATUS_NOT_DELIVERED
 
                 else:
                     # map failed to delivered status

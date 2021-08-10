@@ -11,62 +11,63 @@
       <v-progress-linear :active="loading" :indeterminate="loading" />
 
       <hux-data-table
-        :columns="headers"
+        :columns="columns"
         :data-items="items"
         sort-column="delivered"
       >
         <template #row-item="{ item }">
           <td
-            v-for="(header, index) in headers"
+            v-for="(col, index) in columns"
             :key="index"
-            :style="{ width: header.width }"
+            :style="{ width: col.width }"
             class="text-body-1"
           >
             <tooltip>
               <router-link
-                v-if="header.value === 'audience'"
+                v-if="['audience', 'engagement'].includes(col.value)"
                 :to="{
-                  name: 'AudienceInsight',
-                  params: { id: item.audience.id },
+                  name:
+                    col.value === 'audience'
+                      ? 'AudienceInsight'
+                      : 'EngagementDashboard',
+                  params: { id: item[col.value].id },
                 }"
                 class="d-inline-block mw-100 text-truncate text-decoration-none"
               >
-                {{ item.audience.name }}
+                {{ item[col.value].name }}
               </router-link>
               <template #tooltip>
-                {{ item.audience.name }}
+                {{ item[col.value].name }}
               </template>
             </tooltip>
-            <tooltip
-              v-if="header.value === 'destination' && item[header.value]"
-            >
+            <tooltip v-if="col.value === 'destination' && item[col.value]">
               <template #label-content>
                 <logo
-                  :key="item[header.value].type"
-                  :type="item[header.value].type"
+                  :key="item[col.value].type"
+                  :type="item[col.value].type"
                   :size="18"
                   class="mb-0"
                 >
                 </logo>
               </template>
               <template #hover-content>
-                {{ item[header.value].name }}
+                {{ item[col.value].name }}
               </template>
             </tooltip>
-            <tooltip v-if="header.value === 'size'">
+            <tooltip v-if="col.value === 'size'">
               <template #label-content>
-                {{ item[header.value] | Numeric(true, true) }}
+                {{ item[col.value] | Numeric(true, true) }}
               </template>
               <template #hover-content>
-                {{ item[header.value] | Numeric(true) }}
+                {{ item[col.value] | Numeric(true) }}
               </template>
             </tooltip>
-            <tooltip v-if="header.value === 'delivered'">
+            <tooltip v-if="col.value === 'delivered'">
               <template #label-content>
-                {{ item[header.value] | Date("relative") }}
+                {{ item[col.value] | Date("relative") }}
               </template>
               <template #hover-content>
-                {{ item[header.value] | Date }}
+                {{ item[col.value] | Date }}
               </template>
             </tooltip>
           </td>
@@ -89,7 +90,7 @@ import Logo from "@/components/common/Logo.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
 
 export default {
-  name: "DestinationsDrawer",
+  name: "DeliveryHistoryDrawer",
 
   components: {
     HuxDataTable,
@@ -100,8 +101,14 @@ export default {
   },
 
   props: {
+    audienceId: {
+      required: false,
+      default: null,
+    },
+
     engagementId: {
-      required: true,
+      required: false,
+      default: null,
     },
 
     toggle: {
@@ -115,26 +122,21 @@ export default {
     return {
       localToggle: false,
       loading: false,
-      headers: [
-        {
-          value: "audience",
-          text: "Audience name",
-          width: "250px",
-        },
+      columns: [
         {
           value: "destination",
           text: "Destination",
-          width: "auto",
+          width: "20%",
         },
         {
           value: "size",
           text: "Target size",
-          width: "auto",
+          width: "18%",
         },
         {
           value: "delivered",
           text: "Delivered",
-          width: "auto",
+          width: "27%",
         },
       ],
     }
@@ -142,12 +144,14 @@ export default {
 
   computed: {
     ...mapGetters({
+      audienceDeliveries: "audiences/deliveries",
       engagementDeliveries: "engagements/deliveries",
       getDestination: "destinations/single",
     }),
 
     items() {
-      return this.engagementDeliveries(this.engagementId)
+      if (this.audienceId) return this.audienceDeliveries(this.audienceId)
+      else return this.engagementDeliveries(this.engagementId)
     },
   },
 
@@ -161,14 +165,42 @@ export default {
     },
   },
 
+  async updated() {
+    if (this.toggle) {
+      await this.fetchHistory()
+    }
+  },
+
+  mounted() {
+    if (this.engagementId !== null)
+      this.columns.unshift({
+        value: "audience",
+        text: "Audience name",
+        width: "35%",
+      })
+
+    if (this.audienceId !== null)
+      this.columns.unshift({
+        value: "engagement",
+        text: "Engagement name",
+        width: "35%",
+      })
+  },
+
   methods: {
     ...mapActions({
+      getAudienceDeliveries: "audiences/getDeliveries",
       getEngagementDeliveries: "engagements/getDeliveries",
     }),
 
     async fetchHistory() {
       this.loading = true
-      await this.getEngagementDeliveries(this.engagementId)
+
+      if (this.engagementId)
+        await this.getEngagementDeliveries(this.engagementId)
+
+      if (this.audienceId) await this.getAudienceDeliveries(this.audienceId)
+
       this.loading = false
     },
   },

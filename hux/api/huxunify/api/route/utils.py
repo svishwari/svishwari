@@ -17,6 +17,9 @@ from pymongo import MongoClient
 from marshmallow import ValidationError
 
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.connectors import (
+    CustomAudienceDeliveryStatusError,
+)
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -314,6 +317,7 @@ def get_user_name() -> object:
     return wrapper
 
 
+# pylint: disable=too-many-return-statements
 def api_error_handler(custom_message: dict = None) -> object:
     """
     This decorator handles generic errors for API requests.
@@ -341,6 +345,7 @@ def api_error_handler(custom_message: dict = None) -> object:
            object: returns a wrapped decorated function object.
         """
 
+        # pylint: disable=too-many-return-statements
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
             """Decorator for handling errors.
@@ -364,6 +369,13 @@ def api_error_handler(custom_message: dict = None) -> object:
                     error_message = validation_error.messages
                 return error_message, HTTPStatus.BAD_REQUEST
 
+            except ValueError:
+                return {
+                    "message": custom_message
+                    if custom_message
+                    else "Value Error Encountered"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
+
             except facebook_business.exceptions.FacebookRequestError:
                 return {
                     "message": "Error connecting to Facebook"
@@ -373,6 +385,11 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": constants.DUPLICATE_NAME
                 }, HTTPStatus.BAD_REQUEST.value
+
+            except CustomAudienceDeliveryStatusError as exc:
+                return {
+                    "message": "Delivered custom audience is inactive or unusable."
+                }, HTTPStatus.NOT_FOUND
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.

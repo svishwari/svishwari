@@ -150,16 +150,25 @@ def group_engagement_performance_metrics(
                 for x in audience_delivery_jobs
                 if x[db_c.DELIVERY_PLATFORM_ID] == destination_id
             ]
+
+            # get delivery platform
+            delivery_platform = (
+                delivery_platform_management.get_delivery_platform(
+                    database, destination_id
+                )
+            )
+
             #  Group performance metrics for the destination
             destination_metrics = update_metrics(
                 destination_id,
-                delivery_platform_management.get_delivery_platform(
-                    database, destination_id
-                )[api_c.NAME],
+                delivery_platform[api_c.NAME],
                 audience_destination_jobs,
                 performance_metrics,
                 metrics_type,
             )
+            destination_metrics[
+                api_c.DELIVERY_PLATFORM_TYPE
+            ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
             audience_destination_metrics_list.append(destination_metrics)
             # TODO : HUS-796 - Group performance metrics by campaigns
         audience_metrics[
@@ -1187,6 +1196,8 @@ class UpdateCampaignsForAudience(SwaggerView):
         campaigns = sorted(
             body[api_c.CAMPAIGNS], key=itemgetter(api_c.DELIVERY_JOB_ID)
         )
+        delivery_jobs = []
+
         for delivery_job_id, value in groupby(
             campaigns, key=itemgetter(api_c.DELIVERY_JOB_ID)
         ):
@@ -1204,11 +1215,31 @@ class UpdateCampaignsForAudience(SwaggerView):
                 {k: v for k, v in d.items() if k in [api_c.NAME, api_c.ID]}
                 for d in value
             ]
-            delivery_platform_management.create_delivery_job_generic_campaigns(
-                get_db_client(), ObjectId(delivery_job_id), updated_campaigns
+            delivery_jobs.append(
+                delivery_platform_management.create_delivery_job_generic_campaigns(
+                    get_db_client(),
+                    ObjectId(delivery_job_id),
+                    updated_campaigns,
+                )
             )
 
-        return {"message": "Successfully attached campaigns."}, HTTPStatus.OK
+        # get return campaigns.
+        campaigns = []
+        for delivery_job in delivery_jobs:
+            if delivery_job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
+                delivery_campaigns = delivery_job[
+                    db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
+                ]
+                for campaign in delivery_campaigns:
+                    campaign[api_c.ID] = campaign[api_c.ID]
+                    campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
+                    campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
+                campaigns.extend(delivery_campaigns)
+
+        return (
+            jsonify(CampaignSchema().dump(campaigns, many=True)),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -1471,7 +1502,10 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         valid_destination = False
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                if destination_id == destination[db_c.OBJECT_ID]:
+                if (
+                    isinstance(destination, dict)
+                    and destination_id == destination[db_c.OBJECT_ID]
+                ):
                     valid_destination = True
 
         if not valid_destination:

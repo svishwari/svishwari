@@ -55,10 +55,12 @@ def check_cdm_api_connection() -> Tuple[bool, str]:
         return False, getattr(exception, "message", repr(exception))
 
 
-def get_customer_profiles(token: str) -> dict:
+def get_customer_profiles(token: str, batch_size: int, offset: int) -> dict:
     """Retrieves customer profiles.
 
     Args:
+        batch_size (int): number of customer profiles to be returned in a batch
+        offset (int): Offset for customer profiles
         token (str): OKTA JWT Token.
 
     Returns:
@@ -70,7 +72,7 @@ def get_customer_profiles(token: str) -> dict:
     config = get_config()
 
     response = requests.get(
-        f"{config.CDP_SERVICE}/customer-profiles",
+        f"{config.CDP_SERVICE}/customer-profiles?limit={batch_size}&offset={offset}",
         headers={
             api_c.CUSTOMERS_API_HEADER_KEY: token,
         },
