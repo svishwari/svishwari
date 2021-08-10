@@ -121,10 +121,12 @@
             :border="!isLookAlikeCreateable ? 'inactive' : ''"
             class="neroBlack--text step-3"
           >
-            <template slot="tootlip">
+            <template slot="label">
+              <h5 class="text-h5 d-flex align-start"> 
+              Select destination(s) 
               <tooltip>
                 <template #label-content>
-                  <v-icon color="primary" :size="12" class="ml-1">
+                  <v-icon color="primary" :size="12" class="ml-1 mb-2 mr-1">
                     mdi-information-outline
                   </v-icon>
                 </template>
@@ -137,6 +139,8 @@
                   </v-sheet>
                 </template>
               </tooltip>
+              - Optional
+              </h5> 
             </template>
 
             <v-row class="pt-1">

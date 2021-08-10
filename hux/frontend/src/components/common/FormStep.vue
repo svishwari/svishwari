@@ -13,7 +13,6 @@
       <div class="form-step__label d-flex align-center">
         <slot v-if="$slots.label" name="label"></slot>
         <span v-else class="text-h5">{{ label || `Step ${step}` }}</span>
-        <slot name="tootlip"></slot>
         <span
           v-if="optional"
           class="text-caption pl-1"
