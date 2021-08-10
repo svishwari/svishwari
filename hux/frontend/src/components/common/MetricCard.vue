@@ -100,7 +100,7 @@ export default {
     height: {
       type: [String, Number],
       required: false,
-      default: 90
+      default: 90,
     },
   },
 }
