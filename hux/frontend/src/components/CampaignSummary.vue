@@ -221,7 +221,9 @@
                               :size="18"
                               class="mr-3"
                             />
-                            <span class="text--neroblack ellipsis icon-audiences">
+                            <span
+                              class="text--neroblack ellipsis icon-audiences"
+                            >
                               {{ item[expandedHeaders[0].value] | Empty("-") }}
                             </span>
                           </router-link>
