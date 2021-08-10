@@ -121,24 +121,23 @@
             :border="!isLookAlikeCreateable ? 'inactive' : ''"
             class="neroBlack--text step-3"
           >
-
-          <template slot="tootlip">
-            <tooltip>
-              <template #label-content>
-                <v-icon color="primary" :size="12" class="ml-1">
-                  mdi-information-outline
-                </v-icon>
-              </template>
-              <template #hover-content>
-                <v-sheet max-width="240px">
-                  <h6 class="text-caption mb-2">Destination</h6>
-                  <p class="gray--text">
-                    Locations where Audiences are planned to be run.
-                  </p>
-                </v-sheet>
-              </template>
-            </tooltip>
-          </template>
+            <template slot="tootlip">
+              <tooltip>
+                <template #label-content>
+                  <v-icon color="primary" :size="12" class="ml-1">
+                    mdi-information-outline
+                  </v-icon>
+                </template>
+                <template #hover-content>
+                  <v-sheet max-width="240px">
+                    <h6 class="text-caption mb-2">Destination</h6>
+                    <p class="gray--text">
+                      Locations where Audiences are planned to be run.
+                    </p>
+                  </v-sheet>
+                </template>
+              </tooltip>
+            </template>
 
             <v-row class="pt-1">
               <v-col cols="12">
