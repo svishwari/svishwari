@@ -4,13 +4,17 @@ Paths for engagement API
 """
 import csv
 import logging
+import zipfile
+from datetime import time
 from http import HTTPStatus
+from io import BytesIO
 from typing import Tuple
+import zipfile as zf
 from itertools import groupby
 from operator import itemgetter
 
 from bson import ObjectId
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 from flasgger import SwaggerView
 
 from huxunifylib.connectors import FacebookConnector
@@ -1611,8 +1615,8 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
                 if (
-                    isinstance(destination, dict)
-                    and destination_id == destination[db_c.OBJECT_ID]
+                        isinstance(destination, dict)
+                        and destination_id == destination[db_c.OBJECT_ID]
                 ):
                     valid_destination = True
 
@@ -1721,52 +1725,7 @@ class EngagementMetricsDisplayAds(SwaggerView):
         if not engagement:
             return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
-        # Get all destinations that are related to Display Ad metrics
-        ads_destination = (
-            delivery_platform_management.get_delivery_platform_by_type(
-                database, db_c.DELIVERY_PLATFORM_FACEBOOK
-            )
-        )
-
-        delivery_jobs = []
-        performance_metrics = []
-        if ads_destination:
-            # Get Performance metrics by engagement and destination
-            performance_metrics = (
-                get_performance_metrics_by_engagement_details(
-                    database,
-                    ObjectId(engagement_id),
-                    [ads_destination.get(db_c.ID)],
-                )
-            )
-            if performance_metrics:
-                # Get all the delivery jobs for the given engagement and destination
-                delivery_jobs = get_delivery_jobs_using_metadata(
-                    database, engagement_id=ObjectId(engagement_id)
-                )
-
-                delivery_jobs = [
-                    x
-                    for x in delivery_jobs
-                    if x[db_c.DELIVERY_PLATFORM_ID]
-                       == ads_destination.get(db_c.ID)
-                ]
-
-        # Group all the performance metrics for the engagement
-        final_metric = {
-            api_c.SUMMARY: group_perf_metric(
-                [x[db_c.PERFORMANCE_METRICS] for x in performance_metrics],
-                api_c.DISPLAY_ADS,
-            )
-        }
-        audience_metrics_list = group_engagement_performance_metrics(
-            engagement,
-            delivery_jobs,
-            performance_metrics,
-            [ads_destination.get(db_c.ID)],
-            api_c.DISPLAY_ADS,
-        )
-        final_metric[api_c.AUDIENCE_PERFORMANCE_LABEL] = audience_metrics_list
+        final_metric = get_displayads_metrics(database, engagement, engagement_id)
 
         return (
             AudiencePerformanceDisplayAdsSchema().dump(final_metric),
@@ -1868,8 +1827,8 @@ class EngagementPerformanceDownload(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.ENGAGEMENT_TAG]
 
-    @api_error_handler()
-    def get(self, engagement_id: str) -> Tuple[dict, int]:
+    #@api_error_handler()
+    def get(self, engagement_id: str) -> Tuple[BytesIO, int]:
         """Retrieves email performance metrics.
 
         ---
@@ -1889,15 +1848,27 @@ class EngagementPerformanceDownload(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         # setup the database
-        database = get_db_client()
-
-        engagement = get_engagement(database, ObjectId(engagement_id))
-        if not engagement:
-            return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
+        # database = get_db_client()
+        #
+        # engagement = get_engagement(database, ObjectId(engagement_id))
+        # if not engagement:
+        #     return {"message": "Engagement not found."}, HTTPStatus.NOT_FOUND
 
         # final_metric = get_email_metrics(database, engagement, engagement_id)
-        final_metric = get_displayads_metrics(database, engagement, engagement_id)
+        # final_metric = get_displayads_metrics(database, engagement, engagement_id)
+
+        file_names = ["temp.csv", "tem.csv"]
+
+        memory_file = BytesIO()
+        with zipfile.ZipFile(memory_file, 'w') as zf:
+            #files = result['files']
+            for individualFile in file_names:
+                data = zipfile.ZipInfo(individualFile)
+                #data.date_time = time.localtime(time.time())[:6]
+                data.compress_type = zipfile.ZIP_DEFLATED
+                zf.writestr(data, individualFile)
+        memory_file.seek(0)
         return (
-            AudiencePerformanceDisplayAdsSchema().dump(final_metric),
+            send_file(memory_file, attachment_filename='output.zip', as_attachment=True),
             HTTPStatus.OK,
         )
