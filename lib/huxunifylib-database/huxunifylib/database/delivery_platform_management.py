@@ -1044,7 +1044,7 @@ def set_delivery_job(
         c.AUDIENCE_ID: audience_id,
         c.CREATE_TIME: curr_time,
         c.UPDATE_TIME: curr_time,
-        c.JOB_STATUS: c.STATUS_PENDING,
+        c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING,
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
         c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
             delivery_platform_generic_campaigns
