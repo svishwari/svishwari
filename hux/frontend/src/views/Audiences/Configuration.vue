@@ -21,6 +21,7 @@
           :grow="i === 0 ? 2 : 1"
           :title="item.title"
           :icon="item.icon"
+          :height="80"
         >
           <template #subtitle-extended>
             <tooltip>

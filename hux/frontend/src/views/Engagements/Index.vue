@@ -68,11 +68,7 @@
                   <v-icon
                     v-if="item.audiences.length > 0"
                     :class="{ 'normal-icon': isExpanded }"
-                    @click="
-                      expandFunc(!isExpanded)
-                      getAudiencesForEngagement(item)
-                      markCurrentRow(item.id)
-                    "
+                    @click="expandFunc(!isExpanded)"
                   >
                     mdi-chevron-right
                   </v-icon>
@@ -119,14 +115,10 @@
           :colspan="expandedHeaders.length"
           class="pa-0 child"
         >
-          <v-progress-linear
-            :active="parentItem.isCurrentRow"
-            :indeterminate="parentItem.isCurrentRow"
-          />
           <hux-data-table
             v-if="parentItem.audiences.length > 0"
             :columns="expandedHeaders"
-            :data-items="parentItem.audienceList"
+            :data-items="parentItem.audiences"
             :show-header="false"
             class="expanded-table"
           >
@@ -318,23 +310,11 @@ export default {
   methods: {
     ...mapActions({
       getAllEngagements: "engagements/getAll",
-      getAudienceById: "audiences/getAudienceById",
       updateAudienceList: "engagements/updateAudienceList",
-      markCurrentRow: "engagements/markCurrentRow",
     }),
     getAudienceHeaders(headers) {
       headers[0].width = "200px"
       return headers
-    },
-    // TODO: replace with data from GET /engagements when available
-    async getAudiencesForEngagement(item) {
-      this.audienceList = []
-      let audienceIds = item.audiences.map((key) => key.id)
-      for (let id of audienceIds) {
-        await this.getAudienceById(id)
-        this.audienceList.push(this.audiencesData(id))
-      }
-      await this.updateAudienceList({ id: item.id, data: this.audienceList })
     },
   },
 }

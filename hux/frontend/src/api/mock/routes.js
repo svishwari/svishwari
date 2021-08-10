@@ -218,7 +218,7 @@ export const defineRoutes = (server) => {
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
     (schema) => {
-      return schema.campaignOptions.all()
+      return schema.campaignOptions.find(1)
     }
   )
   server.put(
@@ -287,7 +287,7 @@ export const defineRoutes = (server) => {
           type: destination.type,
         },
         size: audience.size,
-        delivered: "2021-07-11T14:39:49.574Z",
+        delivered: moment().toJSON(),
       }
     })
   })
@@ -412,6 +412,26 @@ export const defineRoutes = (server) => {
   })
 
   server.get("/audiences/rules", () => attributeRules)
+  server.get("/audiences/:id/delivery-history", (schema, request) => {
+    const id = request.params.id
+    const audience = schema.audiences.find(id)
+    const destination = schema.destinations.find(7)
+    return audience.engagements.map((engagement) => {
+      return {
+        engagement: {
+          id: engagement.id,
+          name: engagement.name,
+        },
+        destination: {
+          id: destination.id,
+          name: destination.name,
+          type: destination.type,
+        },
+        size: audience.size,
+        delivered: moment().toJSON(),
+      }
+    })
+  })
 
   //lookalike audiences
   server.post("/lookalike-audiences", (schema, request) => {

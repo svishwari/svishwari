@@ -106,13 +106,13 @@ stages:
         content-type: application/json
       json:
         - id: !anystr
-        - type: !anystr
-        - name: !anystr
-        - status: !anystr
-        - is_added: !anybool
-        - is_enabled: !anybool
-        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          type: !anystr
+          name: !anystr
+          status: !anystr
+          is_added: !anybool
+          is_enabled: !anybool
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
 
 ---
 test_name: Test destinations retrieve destination data-extensions
@@ -142,13 +142,13 @@ stages:
         content-type: application/json
       json:
         - id: !anystr
-        - type: !anystr
-        - name: !anystr
-        - status: !anystr
-        - is_added: !anybool
-        - is_enabled: !anybool
-        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          type: !anystr
+          name: !anystr
+          status: !anystr
+          is_added: !anybool
+          is_enabled: !anybool
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
           function: tavern_test_utils:get_destination_id
@@ -173,7 +173,7 @@ stages:
         content-type: application/json
       json:
         - name: !anystr
-        - data_extension_id: !anystr
+          data_extension_id: !anystr
 
 ---
 test_name: Test destinations retrieve destination
@@ -203,13 +203,13 @@ stages:
         content-type: application/json
       json:
         - id: !anystr
-        - type: !anystr
-        - name: !anystr
-        - status: !anystr
-        - is_added: !anybool
-        - is_enabled: !anybool
-        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          type: !anystr
+          name: !anystr
+          status: !anystr
+          is_added: !anybool
+          is_enabled: !anybool
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
           function: tavern_test_utils:get_destination_id
@@ -348,18 +348,41 @@ stages:
         content-type: application/json
       json:
         - id: !anystr
-        - type: !anystr
-        - name: !anystr
-        - status: !anystr
-        - is_added: !anybool
-        - is_enabled: !anybool
-        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          type: !anystr
+          name: !anystr
+          status: !anystr
+          is_added: !anybool
+          is_enabled: !anybool
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
           function: tavern_test_utils:get_destination_id
           extra_kwargs:
             destination_type: "sfmc"
+
+  - name: get destinations/{destination_id}/data-extensions
+
+    # Define the request to be made...
+    request:
+      url: "{host}/{version}/destinations/{sfmc_destination_id}/data-extensions"
+      method: GET
+      headers:
+        content-type: application/json
+        Authorization: "Bearer {token}"
+
+    # ...and the expected response code and body
+    response:
+      strict: false
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        - name: !anystr
+          data_extension_id: !anystr
+      save:
+        json:
+          first_destination_data_extension: "[0]"
 
   - name: test destinations/{destination_id}/data-extensions already exists
 
@@ -371,7 +394,7 @@ stages:
         content-type: application/json
         Authorization: "Bearer {token}"
       json:
-        data_extension: "Journey Entry"
+        data_extension: "{first_destination_data_extension.name}"
 
     # ...and the expected response code and body
     response:
@@ -380,8 +403,7 @@ stages:
       headers:
         content-type: application/json
       json:
-        data_extension_id: !anystr
-        name: "Journey Entry"
+        data_extension_id: "{first_destination_data_extension.data_extension_id}"
 
 ---
 test_name: Test destinations create destination data-extension invalid destination ID
@@ -442,20 +464,23 @@ stages:
         content-type: application/json
       json:
         - id: !anystr
-        - type: !anystr
-        - name: !anystr
-        - status: !anystr
-        - is_added: !anybool
-        - is_enabled: !anybool
-        - create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
-        - update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          type: !anystr
+          name: !anystr
+          status: !anystr
+          is_added: !anybool
+          is_enabled: !anybool
+          create_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
+          update_time: !re_fullmatch "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z"
       save:
         $ext:
           function: tavern_test_utils:get_destination_id
           extra_kwargs:
             destination_type: "facebook"
 
-# Commenting out this stage of test since it is updating destination's auth credentials
+# Commenting out this stage of test since it is not ideal to have destination's
+# correct authentication details here in plain text and running this test with
+# the below dummy credentials used will update the authentication details with
+# wrong values
 # in DB with incorrect/dummy values that is causing deliveries to fail
 #  - name: test destinations put/update destination success
 #
@@ -479,8 +504,12 @@ stages:
 #      status_code: 200
 #      headers:
 #        content-type: application/json
-#      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-#      json: {}
+#      json:
+#        name: "Facebook",
+#        type: "facebook",
+#        status: "Succeeded",
+#        id: {facebook_destination_id}
+#        is_enabled: !anybool
 
 ---
 test_name: Test destinations put/update invalid destination ID failure
@@ -514,5 +543,5 @@ stages:
       status_code: 400
       headers:
         content-type: application/json
-      # TODO: This will have to be revisited in the future once the response body has the json populated (HUS-802)
-      json: {}
+      json:
+        message: !re_search "not valid"

@@ -31,6 +31,7 @@ def get_destination_id(response: object, **kwargs: dict) -> Union[Box, None]:
             return Box({"sfmc_destination_id": json["id"]})
     return None
 
+
 def get_audience_id(response: object) -> Union[Box, None]:
     """
     Purpose of this function is to get the audience id from the response
@@ -43,6 +44,11 @@ def get_audience_id(response: object) -> Union[Box, None]:
         Box: engagement_audience_id and engagement_destination_id.
     """
     for json in response.json():
-        if len(json["destinations"])>0:
-            return Box({"engagement_audience_id": json["id"],"engagement_destination_id":json["destinations"][0]["id"]})
+        if len(json["destinations"]) > 0:
+            return Box(
+                {
+                    "engagement_audience_id": json["id"],
+                    "engagement_destination_id": json["destinations"][0]["id"],
+                }
+            )
     return None

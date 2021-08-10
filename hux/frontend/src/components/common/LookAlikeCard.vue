@@ -3,17 +3,16 @@
     class="rounded-lg card-info-wrapper lookalike-card box-shadow-5"
     height="100%"
   >
-    <v-card-title
-      class="card-heading d-flex justify-space-between py-3 pl-4 pr-0"
-    >
+    <v-card-title class="card-heading d-flex justify-space-between py-3 pl-4">
       <span>Lookalikes</span>
       <v-btn
         :disabled="!isActive"
         text
         color="primary"
+        class="body-2 pa-1"
         @click="onCreateLookalike"
       >
-        <icon type="lookalike-card" :size="16" class="mr-1" />
+        <icon type="lookalike-card" :size="14" class="mr-1" />
         Create lookalike
       </v-btn>
     </v-card-title>
