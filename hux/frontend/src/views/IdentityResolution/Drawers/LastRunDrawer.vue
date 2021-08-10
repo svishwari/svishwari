@@ -175,7 +175,9 @@ export default {
 }
 
 .panel-header {
-  border-bottom: 1px solid #d5dce1;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-color: var(--v-greyBlue-base);
   flex-direction: row-reverse;
   height: 40px;
 
@@ -189,7 +191,7 @@ export default {
   > .v-expansion-panel-header--active {
     .v-expansion-panel-header__icon:not(.v-expansion-panel-header__icon--disable-rotate) {
       .v-icon {
-        transform: rotate(0deg);
+        @extend .rotate-icon-0;
       }
     }
   }
@@ -199,7 +201,7 @@ export default {
   .v-expansion-panel-header {
     .v-expansion-panel-header__icon {
       .v-icon {
-        transform: rotate(-90deg);
+        @extend .rotate-icon-n90;
       }
     }
   }
