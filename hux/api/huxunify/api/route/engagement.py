@@ -38,7 +38,6 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
-    EngagementPutSchema,
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
@@ -462,7 +461,7 @@ class UpdateEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        body = EngagementPutSchema().load(request.get_json())
+        body = EngagementPostSchema().load(request.get_json())
 
         database = get_db_client()
 
@@ -470,13 +469,14 @@ class UpdateEngagement(SwaggerView):
             database=database,
             engagement_id=ObjectId(engagement_id),
             user_name=user_name,
-            name=body.get(db_c.ENGAGEMENT_NAME),
-            description=body.get(db_c.ENGAGEMENT_DESCRIPTION),
-            audiences=body.get(db_c.AUDIENCES),
+            name=body[db_c.ENGAGEMENT_NAME],
+            description=body[db_c.ENGAGEMENT_DESCRIPTION]
+            if db_c.ENGAGEMENT_DESCRIPTION in body
+            else None,
+            audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
             delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
             else {},
-            status=body.get(db_c.STATUS),
         )
 
         create_notification(
@@ -485,7 +485,6 @@ class UpdateEngagement(SwaggerView):
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
         )
-
         return (
             EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
@@ -643,12 +642,20 @@ class AddAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+
+        if engagement is None:
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         body = AudienceEngagementSchema().load(
             request.get_json(), partial=True
         )
 
         # validate audiences exist
-        database = get_db_client()
         audience_names = []
         for audience in body[api_c.AUDIENCES]:
             audience_to_attach = get_audience(
@@ -665,7 +672,7 @@ class AddAudienceEngagement(SwaggerView):
             user_name,
             body[api_c.AUDIENCES],
         )
-        engagement = get_engagement(database, ObjectId(engagement_id))
+
         for audience_name in audience_names:
             create_notification(
                 database,
@@ -745,6 +752,14 @@ class DeleteAudienceEngagement(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+
+        if engagement is None:
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         audience_ids = []
         body = AudienceEngagementDeleteSchema().load(
             request.get_json(), partial=True
@@ -755,19 +770,19 @@ class DeleteAudienceEngagement(SwaggerView):
                 return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
             audience_ids.append(ObjectId(audience_id))
             audience = get_audience(database, ObjectId(audience_id))
+            if audience is None:
+                return {
+                    "message": api_c.AUDIENCE_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
             audience_names.append(audience[db_c.NAME])
 
-        print("Audiences: " + str(audience_ids))
-        print("Removing Audience(s) from the engagement")
         remove_audiences_from_engagement(
             database,
             ObjectId(engagement_id),
             user_name,
             audience_ids,
         )
-        engagement = get_engagement(database, ObjectId(engagement_id))
 
-        print("Retrieved Engagement Successfully")
         for audience_name in audience_names:
             create_notification(
                 database,
