@@ -981,7 +981,7 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(doc is not None)
         self.assertIn(c.DELIVERY_JOB_ID, doc)
         self.assertIn(c.METRICS_DELIVERY_PLATFORM_ID, doc)
-        self.assertIn(c.METRICS_DELIVERY_PLATFORM_NAME, doc)
+        self.assertIn(c.METRICS_DELIVERY_PLATFORM_TYPE, doc)
         self.assertIn(c.CREATE_TIME, doc)
         self.assertIn(c.PERFORMANCE_METRICS, doc)
         self.assertIn(c.METRICS_START_TIME, doc)
