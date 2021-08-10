@@ -21,6 +21,7 @@ export default {
   lightGrey: colors.lightGrey,
   columbiaBlue: colors.columbiaBlue,
   skyBlue: colors.skyBlue,
+  greyBlue: colors.greyBlue,
   pinkLittleDark: colors.pinkLittleDark,
   darkGreyHeading: colors.darkGreyHeading,
   lightGreyAnotherVariant: colors.lightGreyAnotherVariant,
@@ -31,4 +32,6 @@ export default {
   smoke: colors.smoke,
   cerulean: colors.cerulean,
   tealBlue: colors.tealBlue,
+  royalBlue: colors.royalBlue,
+  oceanBlue: colors.oceanBlue,
 }

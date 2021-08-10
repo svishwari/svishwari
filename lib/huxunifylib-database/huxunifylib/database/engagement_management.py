@@ -69,6 +69,7 @@ def set_engagement(
         db_c.UPDATED_BY: "",
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.DELETED: deleted,
+        db_c.STATUS: "Active",
         db_c.AUDIENCES: [
             {
                 db_c.OBJECT_ID: x[db_c.OBJECT_ID],
@@ -146,6 +147,10 @@ def get_engagements_summary(
             "$addFields": {
                 "audiences.name": "$audience.name",
                 "audiences.size": "$audience.size",
+                "audiences.created_by": "$audience.created_by",
+                "audiences.updated_by": "$audience.updated_by",
+                "audiences.update_time": "$audience.update_time",
+                "audiences.create_time": "$audience.create_time",
             }
         },
         # remove the unused audience object fields.
@@ -202,7 +207,7 @@ def get_engagements_summary(
         # add the delivery object to the nested destination via latest_delivery
         {
             "$addFields": {
-                "audiences.destinations.latest_delivery": "$delivery_job"
+                "audiences.destinations.latest_delivery": "$delivery_job",
             }
         },
         # remove the found delivery job from the top level.
@@ -214,6 +219,7 @@ def get_engagements_summary(
                     "_id": "$_id",
                     "name": "$name",
                     "description": "$description",
+                    "status": "$status",
                     "create_time": "$create_time",
                     "created_by": "$created_by",
                     "updated_by": "$updated_by",
@@ -223,20 +229,29 @@ def get_engagements_summary(
                     "audience_name": "$audiences.name",
                     "audience_id": "$audiences.id",
                     "audience_size": "$audiences.size",
+                    "audience_created_by": "$audiences.created_by",
+                    "audience_updated_by": "$audiences.updated_by",
+                    "audience_update_time": "$audiences.update_time",
+                    "audience_create_time": "$audiences.create_time",
                     "delivery_schedule": {
                         "$ifNull": ["$delivery_schedule", ""]
                     },
                 },
                 # push the grouped destinations into an array
-                db_c.DESTINATIONS: {
+                "destinations": {
                     "$push": {
-                        db_c.OBJECT_ID: "$audiences.destinations.id",
-                        db_c.NAME: "$audiences.destinations.name",
+                        "id": "$audiences.destinations.id",
+                        "name": "$audiences.destinations.name",
                         "delivery_platform_type": "$audiences.destinations.delivery_platform_type",
                         "delivery_job_id": "$audiences.destinations.delivery_job_id",
                         "latest_delivery": {
                             "update_time": "$audiences.destinations.latest_delivery.update_time",
-                            "status": "$audiences.destinations.latest_delivery.status",
+                            "status": {
+                                "$ifNull": [
+                                    "$audiences.destinations.latest_delivery.status",
+                                    db_c.AUDIENCE_STATUS_NOT_DELIVERED,
+                                ]
+                            },
                             "size": "$audiences.destinations.latest_delivery."
                             "delivery_platform_audience_size",
                         },
@@ -251,6 +266,7 @@ def get_engagements_summary(
                     "_id": "$_id._id",
                     "name": "$_id.name",
                     "description": "$_id.description",
+                    "status": "$_id.status",
                     "create_time": "$_id.create_time",
                     "created_by": "$_id.created_by",
                     "updated_by": "$_id.updated_by",
@@ -263,6 +279,10 @@ def get_engagements_summary(
                         "id": "$_id.audience_id",
                         "name": "$_id.audience_name",
                         "size": "$_id.audience_size",
+                        "created_by": "$_id.audience_created_by",
+                        "updated_by": "$_id.audience_updated_by",
+                        "update_time": "$_id.audience_update_time",
+                        "create_time": "$_id.audience_create_time",
                         "destinations": "$destinations",
                     }
                 },
@@ -275,6 +295,7 @@ def get_engagements_summary(
                 "_id": "$_id._id",
                 "name": "$_id.name",
                 "description": "$_id.description",
+                "status": "$_id.status",
                 "create_time": "$_id.create_time",
                 "created_by": "$_id.created_by",
                 "updated_by": "$_id.updated_by",
@@ -403,6 +424,7 @@ def update_engagement(
     description: str = None,
     audiences: list = None,
     delivery_schedule: dict = None,
+    status: str = None,
 ) -> Union[dict, None]:
     """A function to update fields in an engagement
 
@@ -414,6 +436,7 @@ def update_engagement(
         description (str): Descriptions of the engagement.
         audiences (list): list of audiences.
         delivery_schedule (dict): delivery schedule dict.
+        status (str): Engagement status.
 
     Returns:
         Union[dict, None]: dict object of the engagement that has been updated
@@ -433,6 +456,7 @@ def update_engagement(
         db_c.ENGAGEMENT_DELIVERY_SCHEDULE: delivery_schedule,
         db_c.UPDATE_TIME: datetime.datetime.utcnow(),
         db_c.UPDATED_BY: user_name,
+        db_c.STATUS: status,
     }
 
     # remove dict entries that are None

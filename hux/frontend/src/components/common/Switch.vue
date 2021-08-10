@@ -98,10 +98,10 @@ export default {
         }
       }
       .v-input--switch__track {
-        border: 1px solid var(--v-skyBlue-base);
+        border: 1px solid var(--v-success-base);
       }
       .v-input--switch__thumb {
-        background: var(--v-skyBlue-base);
+        background: var(--v-success-base);
       }
       .v-label {
         position: absolute !important;
@@ -111,7 +111,7 @@ export default {
         line-height: 16px;
         top: 3px !important;
         left: 3px !important;
-        color: var(--v-skyBlue-base);
+        color: var(--v-success-base);
       }
     }
   }

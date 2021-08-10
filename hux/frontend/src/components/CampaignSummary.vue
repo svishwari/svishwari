@@ -237,8 +237,8 @@
                         ),
                       }"
                     >
-                      <span class="error--text mr-6">
-                        <v-icon small color="error" class="mr-1">
+                      <span class="error--text mr-2">
+                        <v-icon small color="error" class="icon-info mr-1">
                           mdi-information-outline
                         </v-icon>
                         To view KPIs you need to map to a Facebook campaign.
@@ -251,9 +251,7 @@
                         width="99"
                         @click="triggerCampaignMap(parentItem, item)"
                       >
-                        <v-icon size="15" small class="mr-1">
-                          mdi-mapbox
-                        </v-icon>
+                        <icon type="map_now_icon" :size="20" class="mr-1" />
                         Map now
                       </v-btn>
                     </td>
@@ -267,21 +265,18 @@
                     </td>
                   </tr>
                 </template>
-                <template
-                  #expanded-row="{ subExpandedHeaders, expandedParentItem }"
-                >
-                  <td :colspan="subExpandedHeaders.length" class="pa-0 child">
+                <!-- eslint-disable vue/no-template-shadow -->
+                <template #expanded-row="{ expandedHeaders, parentItem }">
+                  <td :colspan="expandedHeaders.length" class="pa-0 child">
                     <hux-data-table
-                      v-if="expandedParentItem"
-                      :columns="subExpandedHeaders"
-                      :data-items="
-                        getFormattedItems(expandedParentItem.campaigns)
-                      "
+                      v-if="parentItem"
+                      :columns="expandedHeaders"
+                      :data-items="getFormattedItems(parentItem.campaigns)"
                       :show-header="false"
                     >
                       <template #row-item="{ item }">
                         <td
-                          v-for="header in subExpandedHeaders"
+                          v-for="header in expandedHeaders"
                           :key="header.value"
                           :style="{ width: header.width }"
                         >
@@ -305,6 +300,7 @@
                     </hux-data-table>
                   </td>
                 </template>
+                <!-- eslint-enable -->
               </hux-data-table>
             </td>
           </template>
@@ -565,36 +561,6 @@ export default {
           reach: "-",
           spend: "-",
         },
-        {
-          campaigns: [],
-          click_through_rate: "-",
-          clicks: "-",
-          conversions: "-",
-          cost_per_action: "-",
-          cost_per_click: "-",
-          cost_per_thousand_impressions: "-",
-          engagement_rate: "-",
-          frequency: "-",
-          impressions: "-",
-          name: "Audience 2",
-          reach: "-",
-          spend: "-",
-        },
-        {
-          campaigns: [],
-          click_through_rate: "-",
-          clicks: "-",
-          conversions: "-",
-          cost_per_action: "-",
-          cost_per_click: "-",
-          cost_per_thousand_impressions: "-",
-          engagement_rate: "-",
-          frequency: "-",
-          impressions: "-",
-          name: "Audience 3",
-          reach: "-",
-          spend: "-",
-        },
       ],
       emptyCampaignEmailData: [
         {
@@ -614,42 +580,6 @@ export default {
           unsubscribe: "-",
           unsubscribe_rate: "-",
           name: "Audience 1",
-        },
-        {
-          campaigns: [],
-          sent: "-",
-          hard_bounces: "-",
-          hard_bounces_rate: "-",
-          delivered: "-",
-          delivered_rate: "-",
-          open: "-",
-          open_rate: "-",
-          clicks: "-",
-          click_through_rate: "-",
-          click_to_open_rate: "-",
-          unique_clicks: "-",
-          unique_opens: "-",
-          unsubscribe: "-",
-          unsubscribe_rate: "-",
-          name: "Audience 2",
-        },
-        {
-          campaigns: [],
-          sent: "-",
-          hard_bounces: "-",
-          hard_bounces_rate: "-",
-          delivered: "-",
-          delivered_rate: "-",
-          open: "-",
-          open_rate: "-",
-          clicks: "-",
-          click_through_rate: "-",
-          click_to_open_rate: "-",
-          unique_clicks: "-",
-          unique_opens: "-",
-          unsubscribe: "-",
-          unsubscribe_rate: "-",
-          name: "Audience 3",
         },
       ],
       audienceId: null,
@@ -883,6 +813,9 @@ export default {
         }
       }
     }
+  }
+  .icon-info {
+    margin-top: -3px;
   }
 }
 </style>

@@ -31,6 +31,9 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 
+QUERY_PARAMETER_BATCH_SIZE = "batch_size"
+QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
@@ -195,6 +198,9 @@ SFMC_PERFORMANCE_METRICS_DATA_EXTENSION = "perf_data_extension"
 SFMC_DATA_EXTENSION_NAME = "Name"
 SFMC_CUSTOMER_KEY = "CustomerKey"
 
+# Twilio connector defines
+TWILIO_AUTH_TOKEN = "twilio_auth_token"
+
 OPERATION_SUCCESS = "SUCCESS"
 OPERATION_FAILED = "FAILED"
 
@@ -263,6 +269,14 @@ DESTINATION_CONSTANTS = {
             DESCRIPTION: None,
         },
     },
+    db_c.DELIVERY_PLATFORM_TWILIO: {
+        TWILIO_AUTH_TOKEN: {
+            NAME: "Auth Token",
+            TYPE: "password",
+            REQUIRED: True,
+            DESCRIPTION: None,
+        },
+    },
 }
 
 # DESTINATION Secret Mapping
@@ -284,6 +298,10 @@ DESTINATION_SECRETS = {
             SFMC_REST_BASE_URI,
         ],
         AWS_SSM_NAME: [SFMC_CLIENT_SECRET],
+    },
+    db_c.DELIVERY_PLATFORM_TWILIO: {
+        MONGO: [],
+        AWS_SSM_NAME: [TWILIO_AUTH_TOKEN],
     },
 }
 
@@ -310,11 +328,13 @@ PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
+INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
+SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -335,6 +355,7 @@ DESTINATION_AUTHENTICATION_SUCCESS = "Destination authentication successful."
 DESTINATION_AUTHENTICATION_FAILED = "Destination authentication failed."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported yet."
 INVALID_ID = "Invalid Object ID."
+INVALID_STATUS = "Invalid status value."
 INVALID_COMPONENT_NAME = "Invalid component name."
 DATA_EXTENSIONS = "data-extensions"
 DATA_EXTENSION = "data_extension"
@@ -996,6 +1017,8 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
+CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
+CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"
@@ -1045,6 +1068,25 @@ RECORDS_SOURCE = "records_source"
 TIME_STAMP = "time_stamp"
 STITCHED = "stitched"
 PINNING = "pinning"
+
+# IDR Matching Trends
+MATCHING_TRENDS = "matching-trends"
+
+KNOWN_IDS = "known_ids"
+UNIQUE_HUX_IDS = "unique_hux_ids"
+ANONYMOUS_IDS = "anonymous_ids"
+
+KNOWN_IDS_MIN_COUNT = 50000
+KNOWN_IDS_MAX_COUNT = 79000
+KNOWN_IDS_LAMBDA = 1.6
+
+UNIQUE_HUX_IDS_MIN_COUNT = 100000
+UNIQUE_HUX_IDS_MAX_COUNT = 156000
+UNIQUE_HUX_IDS_LAMBDA = 1.5
+
+ANONYMOUS_IDS_MIN_COUNT = 79000
+ANONYMOUS_IDS_MAX_COUNT = 120000
+ANONYMOUS_IDS_LAMBDA = 5
 
 # IDR Data feeds
 DATAFEED_ID = "datafeed_id"

@@ -16,7 +16,12 @@ export default {
 
     let date = moment(value)
 
-    if (format === "relative") return date.fromNow(noSuffix)
+    if (format === "relative") {
+      if (date.isBefore()) {
+        return date.fromNow(noSuffix)
+      }
+      return moment().fromNow(noSuffix)
+    }
 
     if (format === "calendar") return date.calendar()
 
@@ -50,8 +55,10 @@ export default {
    * @param {*} placeholder Placeholder eg. "N/A"
    * @returns Formatted empty data field eg. "N/A"
    */
-  Empty(value, placeholder = "-") {
-    if (!value && value !== 0) return placeholder
+  Empty(value, placeholder = "—") {
+    if (String(value).trim() === "" || value === null || value === undefined) {
+      return placeholder
+    }
     return value
   },
 
@@ -63,7 +70,7 @@ export default {
     percentage = false,
     append = ""
   ) {
-    if (isNaN(value)) return "-"
+    if (typeof value !== "number") return value
 
     let abrv = ""
 

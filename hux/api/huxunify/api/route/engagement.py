@@ -38,6 +38,7 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
+    EngagementPutSchema,
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
@@ -150,16 +151,25 @@ def group_engagement_performance_metrics(
                 for x in audience_delivery_jobs
                 if x[db_c.DELIVERY_PLATFORM_ID] == destination_id
             ]
+
+            # get delivery platform
+            delivery_platform = (
+                delivery_platform_management.get_delivery_platform(
+                    database, destination_id
+                )
+            )
+
             #  Group performance metrics for the destination
             destination_metrics = update_metrics(
                 destination_id,
-                delivery_platform_management.get_delivery_platform(
-                    database, destination_id
-                )[api_c.NAME],
+                delivery_platform[api_c.NAME],
                 audience_destination_jobs,
                 performance_metrics,
                 metrics_type,
             )
+            destination_metrics[
+                api_c.DELIVERY_PLATFORM_TYPE
+            ] = delivery_platform[db_c.DELIVERY_PLATFORM_TYPE]
             audience_destination_metrics_list.append(destination_metrics)
             # TODO : HUS-796 - Group performance metrics by campaigns
         audience_metrics[
@@ -470,7 +480,7 @@ class UpdateEngagement(SwaggerView):
             logging.error("Invalid Object ID %s", engagement_id)
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
-        body = EngagementPostSchema().load(request.get_json())
+        body = EngagementPutSchema().load(request.get_json())
 
         database = get_db_client()
 
@@ -478,14 +488,13 @@ class UpdateEngagement(SwaggerView):
             database=database,
             engagement_id=ObjectId(engagement_id),
             user_name=user_name,
-            name=body[db_c.ENGAGEMENT_NAME],
-            description=body[db_c.ENGAGEMENT_DESCRIPTION]
-            if db_c.ENGAGEMENT_DESCRIPTION in body
-            else None,
-            audiences=body[db_c.AUDIENCES] if db_c.AUDIENCES in body else None,
+            name=body.get(db_c.ENGAGEMENT_NAME),
+            description=body.get(db_c.ENGAGEMENT_DESCRIPTION),
+            audiences=body.get(db_c.AUDIENCES),
             delivery_schedule=body[db_c.ENGAGEMENT_DELIVERY_SCHEDULE]
             if db_c.ENGAGEMENT_DELIVERY_SCHEDULE in body
             else {},
+            status=body.get(db_c.STATUS),
         )
         logging.info(
             "Successfully updated engagement with ID %s", engagement_id
@@ -496,6 +505,7 @@ class UpdateEngagement(SwaggerView):
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
         )
+
         return (
             EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
@@ -1234,6 +1244,8 @@ class UpdateCampaignsForAudience(SwaggerView):
         campaigns = sorted(
             body[api_c.CAMPAIGNS], key=itemgetter(api_c.DELIVERY_JOB_ID)
         )
+        delivery_jobs = []
+
         for delivery_job_id, value in groupby(
             campaigns, key=itemgetter(api_c.DELIVERY_JOB_ID)
         ):
@@ -1256,15 +1268,35 @@ class UpdateCampaignsForAudience(SwaggerView):
                 {k: v for k, v in d.items() if k in [api_c.NAME, api_c.ID]}
                 for d in value
             ]
-            delivery_platform_management.create_delivery_job_generic_campaigns(
-                get_db_client(), ObjectId(delivery_job_id), updated_campaigns
+            delivery_jobs.append(
+                delivery_platform_management.create_delivery_job_generic_campaigns(
+                    get_db_client(),
+                    ObjectId(delivery_job_id),
+                    updated_campaigns,
+                )
             )
+
+        # get return campaigns.
+        campaigns = []
+        for delivery_job in delivery_jobs:
+            if delivery_job[db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]:
+                delivery_campaigns = delivery_job[
+                    db_c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS
+                ]
+                for campaign in delivery_campaigns:
+                    campaign[api_c.ID] = campaign[api_c.ID]
+                    campaign[api_c.DELIVERY_JOB_ID] = delivery_job[db_c.ID]
+                    campaign[db_c.CREATE_TIME] = delivery_job[db_c.CREATE_TIME]
+                campaigns.extend(delivery_campaigns)
         logging.info(
             "Successfully attached campaigns to engagement %s audience %s",
             engagement_id,
             audience_id,
         )
-        return {"message": "Successfully attached campaigns."}, HTTPStatus.OK
+        return (
+            jsonify(CampaignSchema().dump(campaigns, many=True)),
+            HTTPStatus.OK,
+        )
 
 
 @add_view_to_blueprint(
@@ -1560,8 +1592,10 @@ class AudienceCampaignMappingsGetView(SwaggerView):
         valid_destination = False
         for audience in engagement[db_c.AUDIENCES]:
             for destination in audience[db_c.DESTINATIONS]:
-                print(destination_id, destination)
-                if destination_id == destination[db_c.OBJECT_ID]:
+                if (
+                    isinstance(destination, dict)
+                    and destination_id == destination[db_c.OBJECT_ID]
+                ):
                     valid_destination = True
 
         if not valid_destination:

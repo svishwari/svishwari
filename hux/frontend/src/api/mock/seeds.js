@@ -192,14 +192,14 @@ const defaultEngagement = ({ audiences = [] }) => {
 }
 
 // models
-const unsubscribeModel = {
+export const unsubscribeModel = {
   name: "Propensity to Unsubscribe",
   status: "Active",
   type: "unsubscribe",
   id: "2",
 }
 
-const ltvModel = {
+export const ltvModel = {
   name: "LTV",
   status: "Pending",
   type: "ltv",
@@ -309,7 +309,6 @@ const multipleSectionFilters = () => {
     last_delivered: "2019-04-28T06:39:31.659551",
     create_time: "2021-06-24T18:44:00.381000",
     size: 3022188,
-    id: "60d4d270d364622dd6cc9aa7",
     update_time: "2021-06-24T18:44:00.381000",
   }
 }
@@ -479,6 +478,9 @@ export default function (server) {
   // seed campaigns
   server.createList("campaignOption", 1)
 
-  // for alert and notifications
+  // seed notifications
   server.createList("notification", 50)
+
+  // seed idr datafeeds
+  server.createList("idrDataFeed", 10)
 }

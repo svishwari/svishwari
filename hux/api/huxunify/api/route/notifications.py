@@ -7,14 +7,14 @@ from http import HTTPStatus
 from typing import Tuple
 
 import pymongo
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flasgger import SwaggerView
 
 from huxunifylib.database import (
     constants as db_c,
     notification_management,
 )
-from huxunify.api.schema.notifications import NotificationSchema
+from huxunify.api.schema.notifications import NotificationsSchema
 from huxunify.api.route.utils import (
     add_view_to_blueprint,
     get_db_client,
@@ -76,14 +76,16 @@ class NotificationsSearch(SwaggerView):
     ]
     responses = {
         HTTPStatus.OK.value: {
-            "description": "List of notifications.",
-            "schema": {"type": "array", "items": NotificationSchema},
+            "description": "List of notifications with total number of notifications.",
+            "schema": NotificationsSchema,
         },
     }
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.NOTIFICATIONS_TAG]
 
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
+    )
     def get(self) -> Tuple[dict, int]:
         """Retrieves notifications.
 
@@ -126,15 +128,12 @@ class NotificationsSearch(SwaggerView):
         )
 
         return (
-            jsonify(
-                NotificationSchema().dump(
-                    notification_management.get_notifications(
-                        get_db_client(),
-                        batch_size=int(batch_size),
-                        sort_order=sort_order,
-                        batch_number=int(batch_number),
-                    ),
-                    many=True,
+            NotificationsSchema().dump(
+                notification_management.get_notifications(
+                    get_db_client(),
+                    batch_size=int(batch_size),
+                    sort_order=sort_order,
+                    batch_number=int(batch_number),
                 )
             ),
             HTTPStatus.OK,

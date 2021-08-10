@@ -46,5 +46,41 @@ describe("Filters", () => {
       expect(filters.Percentage(0.051, false)).toEqual("5.1%")
       expect(filters.Percentage(0.01249995, false)).toEqual("1.25%")
     })
+
+    it("should not convert values that are not percentages", () => {
+      const nonPercentageValues = [null, undefined, {}, true, false]
+      nonPercentageValues.forEach((value) => {
+        expect(filters.Percentage(value)).toEqual(value)
+      })
+    })
+  })
+
+  describe("Empty filter", () => {
+    it("should handle empty values with a placeholder", () => {
+      const placeholder = "—"
+      const emptyValues = [null, undefined, "", "    "]
+
+      emptyValues.forEach((value) => {
+        expect(filters.Empty(filters.Numeric(value))).toEqual(placeholder)
+        expect(filters.Empty(filters.Percentage(value))).toEqual(placeholder)
+      })
+    })
+
+    it("should not convert numeric and percentage values with a placeholder", () => {
+      const placeholder = "—"
+      const nonEmptyValues = [0.0123, 0, 1, "0", "1", -1.23, "Hello"]
+
+      nonEmptyValues.forEach((value) => {
+        expect(filters.Empty(value)).not.toEqual(placeholder)
+        expect(filters.Empty(filters.Numeric(value))).not.toEqual(placeholder)
+        expect(filters.Empty(filters.Percentage(value))).not.toEqual(
+          placeholder
+        )
+      })
+    })
+
+    it("should allow for custom placeholders as well, when provided", () => {
+      expect(filters.Empty(null, "N/A")).toEqual("N/A")
+    })
   })
 })

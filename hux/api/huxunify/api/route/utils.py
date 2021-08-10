@@ -17,6 +17,9 @@ from pymongo import MongoClient
 from marshmallow import ValidationError
 
 from huxunifylib.connectors.util.client import db_client_factory
+from huxunifylib.connectors import (
+    CustomAudienceDeliveryStatusError,
+)
 from huxunifylib.database.cdp_data_source_management import (
     get_all_data_sources,
 )
@@ -316,6 +319,7 @@ def get_user_name() -> object:
     return wrapper
 
 
+# pylint: disable=too-many-return-statements
 def api_error_handler(custom_message: dict = None) -> object:
     """
     This decorator handles generic errors for API requests.
@@ -343,6 +347,7 @@ def api_error_handler(custom_message: dict = None) -> object:
            object: returns a wrapped decorated function object.
         """
 
+        # pylint: disable=too-many-return-statements
         @wraps(in_function)
         def decorator(*args, **kwargs) -> object:
             """Decorator for handling errors.
@@ -384,6 +389,12 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": "Error connecting to Facebook"
                 }, HTTPStatus.BAD_REQUEST
+            except ValueError:
+                return {
+                    "message": custom_message
+                    if custom_message
+                    else "Value Error Encountered"
+                }, HTTPStatus.INTERNAL_SERVER_ERROR
 
             except de.DuplicateName as exc:
                 logging.error(
@@ -396,6 +407,18 @@ def api_error_handler(custom_message: dict = None) -> object:
                 return {
                     "message": constants.DUPLICATE_NAME
                 }, HTTPStatus.BAD_REQUEST.value
+
+            except CustomAudienceDeliveryStatusError as exc:
+                logging.error(
+                    "%s: %s while executing %s in module %s",
+                    exc.__class__,
+                    exc.exception_message,
+                    in_function.__qualname__,
+                    in_function.__module__,
+                )
+                return {
+                    "message": "Delivered custom audience is inactive or unusable."
+                }, HTTPStatus.NOT_FOUND
 
             except Exception as exc:  # pylint: disable=broad-except
                 # log error, but return vague description to client.
@@ -706,7 +729,6 @@ def validate_destination(
             Returns:
                object: returns a decorated function object.
             """
-
             destination_id = kwargs.get("destination_id", None)
             return_val = validate_destination_id(
                 destination_id, check_if_destination_in_db
@@ -723,7 +745,6 @@ def validate_destination(
                     in_function.__module__,
                 )
                 return return_val
-
             return in_function(*args, **kwargs)
 
         decorator.__wrapped__ = in_function
