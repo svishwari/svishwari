@@ -372,7 +372,9 @@ class CourierTest(TestCase):
             audience_delivery_status = get_delivery_job_status(
                 self.database, batch_destination.audience_delivery_job_id
             )
-            self.assertEqual(audience_delivery_status, c.STATUS_PENDING)
+            self.assertEqual(
+                audience_delivery_status, c.AUDIENCE_STATUS_DELIVERING
+            )
 
     def test_destination_register_job(self):
         """Test destination batch register job
@@ -414,7 +416,9 @@ class CourierTest(TestCase):
             ):
                 batch_destination.register(self.engagement)
 
-            self.assertEqual(batch_destination.result, c.STATUS_PENDING)
+            self.assertEqual(
+                batch_destination.result, c.AUDIENCE_STATUS_DELIVERING
+            )
 
     def test_destination_submit_job(self):
         """Test destination batch submit job
@@ -450,7 +454,9 @@ class CourierTest(TestCase):
                 return_value=return_value,
             ):
                 batch_destination.register(self.engagement)
-            self.assertEqual(batch_destination.result, c.STATUS_PENDING)
+            self.assertEqual(
+                batch_destination.result, c.AUDIENCE_STATUS_DELIVERING
+            )
 
             with mock.patch.object(
                 AWSBatchConnector, "submit_job", return_value=return_value
