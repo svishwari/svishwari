@@ -33,7 +33,7 @@ export default {
   async mounted() {
     await this.mapData
     let total_range = this.mapData.map((data) => data.population_percentage)
-    this.minValue = this.$options.filters.Percentage(Math.min(...total_range))
+    this.minValue = this.$options.filters.Percentage(0)
     this.maxValue = this.$options.filters.Percentage(Math.max(...total_range))
   },
 }
@@ -47,16 +47,22 @@ export default {
   margin-right: -27px;
   margin-top: 68px;
   float: right;
-  ::v-deep .v-input__control {
+  ::v-deep {
+    .v-input__control {
     .v-input__slot {
       min-width: 75px;
     }
   }
+.v-input__prepend-outer , .v-input__append-outer {
+    margin-top: 0px;
+  }
+  } 
   .slider-value-display {
     width: 30px;
     height: 16px;
     color: var(--v-neroBlack-base);
     transform: rotate(-90deg);
+    font-size: 12px;
   }
   ::v-deep .v-slider__thumb {
     display: none;
@@ -77,7 +83,7 @@ export default {
         var(--v-tealBlue-base),
         var(--v-white-base)
       );
-      border: 1px solid var(--v-anchor-base);
+      border: 1px solid rgba(0, 124, 176, 0.2);
       border-radius: 5px;
     }
     .v-slider__track-background {

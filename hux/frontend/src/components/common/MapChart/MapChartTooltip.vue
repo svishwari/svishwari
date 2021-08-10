@@ -14,7 +14,7 @@
       </span>
       <div class="sub-props pt-4">
         <span class="subprop-name">Size</span>
-        <span class="value ml-1">{{ sourceInput.size | Empty }}</span>
+        <span class="value ml-1">{{ sourceInput.size | Numeric(true, false, false) | Empty }}</span>
       </div>
       <div class="sub-props pt-4">
         <span class="subprop-name">W/M/O</span>
