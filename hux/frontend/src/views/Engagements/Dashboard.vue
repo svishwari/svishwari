@@ -314,7 +314,7 @@ export default {
 
     triggerCreateAudience() {
       this.closeDrawers()
-      this.$refs.showAddAudiencesDrawer.fetchDependencies()
+      this.$refs.addNewAudience.fetchDependencies()
       this.showAddAudiencesDrawer = true
     },
     triggerSelectDestination(audienceId) {

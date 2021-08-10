@@ -225,6 +225,73 @@
         <income-chart></income-chart>
       </v-col>
     </v-row>
+    <v-row class="px-15 mt-2">
+      <v-col md="8">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Demographic Overview
+              </span>
+            </div>
+          </v-card-title>
+          <map-chart :map-data="mapChartData" />
+          <map-slider :map-data="mapChartData" />
+        </v-card>
+      </v-col>
+      <v-col md="4">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="386">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5"> United States </span>
+            </div>
+          </v-card-title>
+          <v-divider class="ml-6 mr-8 mt-0 mb-1" />
+          <map-state-list :map-data="mapChartData" />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row class="px-15 mt-2">
+      <v-col md="3">
+        <v-card class="mt-3 rounded-lg box-shadow-5 pl-2 pr-2" height="273">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Top location &amp; Income
+              </span>
+            </div>
+          </v-card-title>
+          <empty-state-chart />
+        </v-card>
+      </v-col>
+      <v-col md="6">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5">
+                Gender / monthly spending in 2021
+              </span>
+            </div>
+          </v-card-title>
+          <empty-state-chart />
+        </v-card>
+      </v-col>
+      <v-col md="3">
+        <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
+          <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <div class="mt-2">
+              <span class="neroBlack--text text-h5"> Gender </span>
+            </div>
+          </v-card-title>
+          <doughnut-chart
+            :width="250"
+            :height="200"
+            :data="genderChartData"
+            label="Gender"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
     <hux-alert
       v-model="flashAlert"
       :type="alert.type"
@@ -304,10 +371,17 @@ import Avatar from "@/components/common/Avatar.vue"
 import Breadcrumb from "@/components/common/Breadcrumb.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import DeliveryOverview from "@/components/DeliveryOverview.vue"
+import DoughnutChart from "@/components/common/DoughnutChart/DoughnutChart"
+import EmptyStateChart from "@/components/common/EmptyStateChart"
+import genderData from "@/components/common/DoughnutChart/genderData.json"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import Icon from "@/components/common/Icon.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart.vue"
 import LookAlikeCard from "@/components/common/LookAlikeCard.vue"
+import MapChart from "@/components/common/MapChart/MapChart"
+import mapData from "@/components/common/MapChart/mapData.json"
+import mapSlider from "@/components/common/MapChart/mapSlider"
+import MapStateList from "@/components/common/MapChart/MapStateList"
 import MetricCard from "@/components/common/MetricCard.vue"
 import PageHeader from "@/components/PageHeader.vue"
 import Size from "@/components/common/huxTable/Size.vue"
@@ -331,12 +405,17 @@ export default {
     DeliveryHistoryDrawer,
     DeliveryOverview,
     DestinationDataExtensionDrawer,
+    DoughnutChart,
     EditDeliverySchedule,
+    EmptyStateChart,
     HuxAlert,
     Icon,
     IncomeChart,
     LookAlikeAudience,
     LookAlikeCard,
+    MapChart,
+    mapSlider,
+    MapStateList,
     MetricCard,
     PageHeader,
     SelectDestinationsDrawer,
@@ -345,6 +424,7 @@ export default {
   },
   data() {
     return {
+      mapChartData: mapData.demographic_overview,
       selectedAudience: null,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
@@ -409,6 +489,26 @@ export default {
         { value: "propensity", icon: "model" },
         { value: "lifetime", icon: "lifetime" },
         { value: "churn", icon: "churn" },
+      ],
+      genderChartData: [
+        {
+          label: "Men",
+          population_percentage:
+            genderData.gender.gender_men.population_percentage,
+          size: genderData.gender.gender_men.size,
+        },
+        {
+          label: "Women",
+          population_percentage:
+            genderData.gender.gender_women.population_percentage,
+          size: genderData.gender.gender_women.size,
+        },
+        {
+          label: "Other",
+          population_percentage:
+            genderData.gender.gender_other.population_percentage,
+          size: genderData.gender.gender_other.size,
+        },
       ],
       selectedEngagements: [],
       selectedDestinations: [],

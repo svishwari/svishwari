@@ -218,7 +218,7 @@ export const defineRoutes = (server) => {
   server.get(
     "/engagements/:id/audience/:audienceId/destination/:destinationId/campaign-mappings",
     (schema) => {
-      return schema.campaignOptions.all()
+      return schema.campaignOptions.find(1)
     }
   )
   server.put(
