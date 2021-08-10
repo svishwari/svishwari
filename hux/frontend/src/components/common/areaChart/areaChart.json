@@ -1,40 +1,4 @@
 {
-  "gender": {
-    "gender_other": {
-      "population_percentage": 0.0211,
-      "size": 289655
-    },
-    "gender_women": {
-      "population_percentage": 0.5201,
-      "size": 6955119
-    },
-    "gender_men": {
-      "population_percentage": 0.4601,
-      "size": 5627732
-    }
-  },
-  "income": [
-    {
-      "name": "Houston",
-      "ltv": 4008
-    },
-    {
-      "name": "San Antonio",
-      "ltv": 3922
-    },
-    {
-      "name": "Dallas",
-      "ltv": 4231
-    },
-    {
-      "name": "Austin",
-      "ltv": 4198
-    },
-    {
-      "name": "Fort Worth",
-      "ltv": 4011
-    }
-  ],
   "spend": {
     "gender_other": [
       {

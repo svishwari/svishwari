@@ -177,7 +177,7 @@
         </v-col>
         <v-col md="6">
           <v-card class="mt-3 rounded-lg box-shadow-5" height="273">
-            <v-card-title class="chart-style pb-2 pl-5 pt-5">
+            <v-card-title class="chart-style pb-1 pl-5 pt-5">
               <div class="mt-2">
                 <span class="neroBlack--text text-h5">
                   Gender / monthly spending in 2021

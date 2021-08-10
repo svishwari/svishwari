@@ -1,19 +1,33 @@
 <template>
-  <div class="container">
+  <div ref="chartBox" class="container">
     <div class="d-flex justify-content-start">
-      <line-area-chart v-model="spendData" />
+      <line-area-chart 
+      v-model="spendData"  
+      @cordinates="getCordinates"
+      :chart-dimensions="chartDimensions"
+      @tooltipDisplay="toolTipDisplay" />
     </div>
+     <!-- <bar-chart-tooltip
+      :position="{
+        x: tooltip.x,
+        y: tooltip.y,
+      }"
+      :show-tooltip="show"
+      :source-input="currentData"
+    >
+    </bar-chart-tooltip> -->
   </div>
 </template>
 
 <script>
+import AreaChartTooltip from "@/components/common/areaChart/AreaChartTooltip"
 import LineAreaChart from "@/components/common/areaChart/LineAreaChart"
 //TODO: API Integration
 import data from "./areaChart.json"
 
 export default {
   name: "AreaChart",
-  components: { LineAreaChart },
+  components: { LineAreaChart, AreaChartTooltip },
   data() {
     return {
       show: false,
@@ -21,8 +35,31 @@ export default {
         x: 0,
         y: 0,
       },
+       chartDimensions: {
+        width: 0,
+        height: 0,
+      },
       spendData: data.spend,
+      currentData: {},
     }
+  },
+  mounted() {
+    this.chartDimensions.width = this.$refs.chartBox.clientWidth
+    this.chartDimensions.height = this.$refs.chartBox.clientHeight
+  },
+
+   methods: {
+    toolTipDisplay(...arg) {
+      this.show = arg[0]
+      if (this.show) {
+        this.currentData = arg[1]
+      }
+    },
+
+    getCordinates(args) {
+      this.tooltip.x = args.x
+      this.tooltip.y = args.y
+    },
   },
 }
 </script>

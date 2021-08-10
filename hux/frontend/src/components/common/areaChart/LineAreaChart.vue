@@ -1,32 +1,19 @@
 <template>
-  <div>
-    <v-card
-      class="rounded-lg card-style"
-      max-width="450px"
-      min-height="150px"
-      flat
+    <div
+      class="main-container"
+      :style="{ maxWidth: chartWidth }"
     >
-      <v-card-title class="d-flex justify-space-between pb-6 pl-6 pt-5">
-        <div class="mt-1 ml-2 mb-2">
-          <span
-            class="
-              d-flex
-              align-center
-              area-card-title
-              black--text
-              text-decoration-none
-            "
-          >
-            Area Chart
-          </span>
-        </div>
-        <div ref="huxChart" class="chart-section"></div>
-      </v-card-title>
-      <v-card-text class="pl-6 pr-6 pb-6">
+      <div class="">
+        <div 
+        ref="huxChart" 
+        class="chart-section"
+        @mouseover="getCordinates($event)"
+        ></div>
+      </div>
+      <div class="pt-2">
         <div id="legend"></div>
-      </v-card-text>
-    </v-card>
-  </div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -41,21 +28,36 @@ export default {
   name: "LineAreaChart",
   props: {
     value: {
-      type: Array,
-      required: true,
+      type: Object,
+      required: false,
+    },
+    chartDimensions: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          width: 0,
+          height: 0,
+        }
+      },
     },
   },
   data() {
     return {
+      chartWidth: "",
       width: 355,
-      height: 250,
+      height: 180,
+      show: false,
+      tooltip: {
+        x: 0,
+        y: 0,
+      },
       gender_men: [],
       gender_other: [],
       gender_women: [],
       yValueData: [],
       areaChart: [],
       areaChartData: [],
-      genders: ["Women", "Men", "Other"],
       chartData: this.value,
     }
   },
@@ -65,15 +67,25 @@ export default {
   watch: {
     value: function () {
       d3Select.select(this.$refs.huxChart).select("svg").remove()
+       d3Select.select("legend").remove()
       this.initiateAreaChart()
     },
   },
 
   mounted() {
+    
     this.initiateAreaChart()
   },
   methods: {
     async initiateAreaChart() {
+      await this.chartDimensions;
+      console.log("hello")
+      console.log("chartDimensions", this.chartDimensions)
+      this.chartWidth = this.chartDimensions.width + "px"
+      this.width = this.chartDimensions.width
+      let line = 0
+      let col = 0
+      let genders= [{label: "Women"}, {label: "Men"}, {label: "Other"},]
       this.gender_men.push(...this.chartData.gender_men)
       this.gender_women.push(...this.chartData.gender_women)
       this.gender_other.push(...this.chartData.gender_other)
@@ -112,6 +124,12 @@ export default {
         "rgba(12, 157, 219, 1)",
         "rgba(66, 239, 253, 1)",
       ]
+
+    let color = d3Scale
+        .scaleOrdinal()
+        .range([ "rgba(0, 85, 135, 1)",
+        "rgba(12, 157, 219, 1)",
+        "rgba(66, 239, 253, 1)"])
 
       let svg = d3Select
         .select(this.$refs.huxChart)
@@ -156,7 +174,7 @@ export default {
         stackedData.push(currentStack)
       })
 
-      let appendyAxisFormate = (text) => `$ ${parseInt(text / 1000) + "k"}`
+      let appendyAxisFormate = (text) => `$${parseInt(text / 1000) + "k"}`
 
       let yScale = d3Scale
         .scaleLinear()
@@ -201,38 +219,151 @@ export default {
       chart
         .append("g")
         .attr("transform", `translate(0,${height})`)
+        .attr("fill", "#4f4f4f")
         .call(
           d3Axis
             .axisBottom(xScale)
             .ticks(this.areaChartData.length)
             .tickFormat(d3TimeFormat.timeFormat("%b %Y"))
         )
+           .call((g) =>
+          g
+            .selectAll(".tick line")
+            .attr("stroke", "#ECECEC")
+        )
+          .call((g) =>
+          g
+            .selectAll("path")
+            .attr("stroke", "#ECECEC")
+        ).style("font-size", 12)
 
       chart
         .append("g")
         .attr("transform", "translate(0, 0)")
+        .attr("fill", "#4f4f4f")
         .call(d3Axis.axisLeft(yScale).ticks(6).tickFormat(appendyAxisFormate))
+        .call((g) =>
+          g
+            .selectAll(".tick line")
+            .attr("stroke", "#ECECEC")
+        )
+          .call((g) =>
+          g
+            .selectAll("path")
+            .attr("stroke", "#ECECEC")
+        ).style("font-size", 12)
 
       stackedValues.forEach(function (layer, index) {
         layer.forEach((points) => {
           svg
             .append("circle")
             .attr("class", "dot")
-            .attr("r", 3)
+            .attr("r", 3.5)
             .attr("cx", () => xScale(new Date(points.data.date)) + 40)
             .attr("cy", () => yScale(points[1]))
+            .attr("data", (d) => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])
+            .on("mouseover", (d) => dotHoverIn(d))
+            .on("mouseout", (d) => dotHoverOut(d))
         })
       })
+
+       let dotHoverIn = (d) => {
+          let xPosition = d.srcElement.getAttribute("cx")
+              svg
+            .append("line")
+            .attr("class", "hover-line")
+            .style("stroke", "black")
+            .attr("x1", xPosition)
+            .attr("y1", 0)
+            .attr("x2", xPosition)
+            .attr("y2", height)
+
+          svg.selectAll(".dot").each(function (_, i) {
+            if (this.getAttribute("cx") == xPosition) {
+          svg
+          .append("circle")
+          .classed("hover-circle", true)
+          .attr("cx", xPosition)
+          .attr("cy", this.getAttribute("cy"))
+          .attr("r", 6)
+          .style("stroke", this.getAttribute("stroke"))
+          .style("stroke-opacity", "1")
+          .style("fill", "white")
+          .style("pointer-events", "none")
+            }
+          })
+
+
+        }
+        
+        let dotHoverOut = (d) => {
+          d3Select.selectAll(".hover-line").remove()
+          d3Select.selectAll(".hover-circle").remove()
+        }
+
+        let legendSvg = d3Select
+        .select("#legend")
+        .append("svg")
+        .attr("viewBox", "0 0 200 25")
+        .attr("id", "mainSvg")
+        .attr("class", "svgBox")
+        .style("margin-left", "20px")
+        .style("margin-right", "20px")
+
+      let legend = legendSvg
+        .selectAll(".legend")
+        .data(genders)
+        .enter()
+        .append("g")
+        .attr("class", "legend")
+        .attr("transform", function (d) {
+          let y = line * 25
+          let x = col
+          col += 5 * 3 + 25
+          return "translate(" + x + "," + y + ")"
+        })
+
+      legend
+        .append("circle")
+        .attr("cx", 10)
+        .attr("cy", 10)
+        .attr("r", 3)
+         .style("fill", function (d) {
+          return color(d.label)
+        })
+
+      legend
+        .append("text")
+        .attr("x", 18)
+        .attr("y", 9)
+        .attr("dy", ".55em")
+        .attr("class", "neroBlack--text")
+        .style("font-size", 6)
+        .style("text-anchor", "start")
+        .text(function (d) {
+          return d.label
+        })
+
+    },
+    getCordinates(event) {
+      this.tooltip.x = event.offsetX
+      this.tooltip.y = event.offsetY
+      this.$emit("cordinates", this.tooltip)
+    },
+    tooltipDisplay(showTip, incomeData) {
+      this.$emit("tooltipDisplay", showTip, incomeData)
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.card-style {
+.main-container {
   margin-bottom: 40px;
+   max-width: 450px;
+  min-height: 120px;
   height: 325px;
   .chart-section {
     margin-bottom: -20px;
