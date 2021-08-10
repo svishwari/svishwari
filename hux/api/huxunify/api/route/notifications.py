@@ -82,7 +82,9 @@ class NotificationsSearch(SwaggerView):
     responses.update(AUTH401_RESPONSE)
     tags = [api_c.NOTIFICATIONS_TAG]
 
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
+    )
     def get(self) -> Tuple[dict, int]:
         """Retrieves notifications.
 
