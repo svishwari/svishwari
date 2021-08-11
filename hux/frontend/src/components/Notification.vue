@@ -44,7 +44,6 @@
           <router-link
             :to="{
               name: 'AlertsAndNotifications',
-              query: { batch_size: 25 },
             }"
             class="text-h6 view-all text-decoration-none"
           >
@@ -70,16 +69,28 @@ export default {
     TimeStamp,
     Tooltip,
   },
+  data() {
+    return {
+      batchDetails: {
+        batchSize: 5,
+        batchNumber: 1,
+        isLazyLoad: false,
+      },
+    }
+  },
   computed: {
     ...mapGetters({
       notifications: "notifications/list",
     }),
     mostRecentNotifications() {
-      return orderBy(this.notifications, "created", "desc").slice(0, 5)
+      return orderBy(this.notifications, "created", "desc").slice(
+        0,
+        this.batchDetails.batchSize
+      )
     },
   },
   async mounted() {
-    await this.getAllNotifications(5)
+    await this.getAllNotifications(this.batchDetails)
   },
   methods: {
     ...mapActions({

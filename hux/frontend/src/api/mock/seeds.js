@@ -470,7 +470,7 @@ export default function (server) {
   server.create("model", ltvModel)
 
   // seed customers
-  server.createList("customer", 100)
+  server.createList("customer", 5000)
 
   // seed data-extensions
   server.createList("dataExtension", 5)
@@ -479,7 +479,7 @@ export default function (server) {
   server.createList("campaignOption", 1)
 
   // seed notifications
-  server.createList("notification", 50)
+  server.createList("notification", 1000)
 
   // seed idr datafeeds
   server.createList("idrDataFeed", 10)
