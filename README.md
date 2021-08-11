@@ -13,17 +13,14 @@ customer-profile-api|[![Codefresh build status](https://g.codefresh.io/api/badge
 # Environments
 Hux unified solutions and other dependent environment URLs
 
-Component|Dev URL| Stage URL | RC1 URL | Prod URL | Authentication
----------|----------|----------|---------|----------|----------
-Hux Unified UI|[https://unified-ui-dev.main.use1.hux-unified-dev1.in/](https://unified-ui-dev.main.use1.hux-unified-dev1.in/)|[https://unified-ui.main.use1.hux-unified-stg1.in/](https://unified-ui.main.use1.hux-unified-stg1.in/)|[https://unified-ui.main.use1.hux-unified-rc1.in/](https://unified-ui.main.use1.hux-unified-rc1.in/)| - |Deloitte OKTA
-Hux Unified API|[https://unified-api-dev.main.use1.hux-unified-dev1.in/api/v1/ui/](https://unified-api-dev.main.use1.hux-unified-dev1.in/api/v1/ui/)|[https://unified-api.main.use1.hux-unified-stg1.in/api/v1/ui/](https://unified-api.main.use1.hux-unified-stg1.in/api/v1/ui/)|[https://unified-api.main.use1.hux-unified-rc1.in/api/v1/ui/](https://unified-api.main.use1.hux-unified-rc1.in/api/v1/ui/)| - |Deloitte OKTA
-CDM API|[https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/)| - |Deloitte OKTA
-Jupyter Hub|[https://jupyterhub.decisioning-pendleton.in/](https://jupyterhub.decisioning-pendleton.in/)| - | - |[https://jupyterhub.hux-decisioning.in/](https://jupyterhub.hux-decisioning.in/)|Deloitte OKTA
-Kubeflow|[https://kubeflow.decisioning-pendleton.in/](https://kubeflow.decisioning-pendleton.in/)| - | - |[https://kubeflow.hux-decisioning.in/](https://kubeflow.hux-decisioning.in/)|Deloitte OKTA
-Tecton|[http://decisioning-client.tecton.ai/](http://decisioning-client.tecton.ai/)| - | - |[https://decisioning-internal.tecton.ai/app/prod/home](https://decisioning-internal.tecton.ai/app/prod/home)|Deloitte OKTA
-Algorithmia| - | - | - |[https://algorithmia.hux-decisioning.in/](https://algorithmia.hux-decisioning.in/)|Deloitte OKTA
-Grafana|[https://grafana.decisioning-pendleton.in/login](https://grafana.decisioning-pendleton.in/login)| - | - |[https://grafana.hux-decisioning.in/](https://grafana.hux-decisioning.in/)|Deloitte OKTA
-Prometheus|[https://prometheus.decisioning-pendleton.in/graph](https://prometheus.decisioning-pendleton.in/graph)| - | - |[https://prometheus.hux-decisioning.in/](https://prometheus.hux-decisioning.in/)|Deloitte OKTA
+Component|Dev URL| Stage URL | RC1 URL | Prod URL |
+---------|----------|----------|---------|----------|
+Hux Unified UI|[https://unified-ui-dev.main.use1.hux-unified-dev1.in/](https://unified-ui-dev.main.use1.hux-unified-dev1.in/)|[https://unified-ui.main.use1.hux-unified-stg1.in/](https://unified-ui.main.use1.hux-unified-stg1.in/)|[https://unified-ui.main.use1.hux-unified-rc1.in/](https://unified-ui.main.use1.hux-unified-rc1.in/)| - |
+Hux Unified API|[https://unified-api-dev.main.use1.hux-unified-dev1.in/api/v1/ui/](https://unified-api-dev.main.use1.hux-unified-dev1.in/api/v1/ui/)|[https://unified-api.main.use1.hux-unified-stg1.in/api/v1/ui/](https://unified-api.main.use1.hux-unified-stg1.in/api/v1/ui/)|[https://unified-api.main.use1.hux-unified-rc1.in/api/v1/ui/](https://unified-api.main.use1.hux-unified-rc1.in/api/v1/ui/)| - |
+CDM API|[https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/)| - |
+Tecton|[http://decisioning-client.tecton.ai/](http://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|
+Grafana|[https://grafana.hux-unified-dev1.in/](https://grafana.hux-unified-dev1.in/)|[https://grafana.hux-unified-stg1.in/](https://grafana.hux-unified-stg1.in/)|[https://grafana.hux-unified-rc1.in/](https://grafana.hux-unified-rc1.in/)|[https://grafana.hux-decisioning.in/](https://grafana.hux-decisioning.in/)|
+Prometheus| - | - | - | - |
 
 ## Introduction (Project Justice League)
 Create a unified project platform.
