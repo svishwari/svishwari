@@ -8,7 +8,7 @@ stages:
   - tests
   - build_app
   - artifactory
-  - argo-deploy
+  - argo_deploy
 
 steps:
   PrepareBuildDetails:
@@ -52,7 +52,7 @@ steps:
         only:
           - /^app.*/i
 
-  set_env_var:
+  SetEnvVar:
     stage: set_env
     title: Set environment variables
     type: freestyle
@@ -123,7 +123,7 @@ steps:
           - /^app.*/i
 
   Deployment:
-    stage: argo-deploy
+    stage: argo_deploy
     description: "Deploy the application"
     type: freestyle
     image: huxhub.repo.mgnt.in/codefresh/cli:latest

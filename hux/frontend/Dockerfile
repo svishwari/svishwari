@@ -4,11 +4,11 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
 COPY yarn.lock /app/yarn.lock
+RUN yarn global add @vue/cli@4.5.6
 
 # dependencies
 FROM base as dependencies
 WORKDIR /app
-RUN yarn global add @vue/cli@4.5.6
 RUN yarn ci
 
 # test
