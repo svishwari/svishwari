@@ -5,6 +5,7 @@ stages:
   - git
   - build_tag
   - set_env
+  - test_image
   - test
   - build
   - artifactory
@@ -62,7 +63,7 @@ steps:
       - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   TestImage:
-    stage: "test"
+    stage: "test_image"
     title: "Build test image"
     type: "build"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
@@ -77,6 +78,7 @@ steps:
     stage: "test"
     title: "Running lint"
     image: "${{TestImage}}"
+    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
       - yarn lint
 
@@ -84,6 +86,7 @@ steps:
     stage: "test"
     title: "Running unit tests"
     image: "${{TestImage}}"
+    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     commands:
       - yarn test:unit
 
