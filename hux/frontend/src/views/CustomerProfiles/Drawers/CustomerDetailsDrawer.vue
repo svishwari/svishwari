@@ -148,7 +148,7 @@ export default {
       ],
       lastBatch: 0,
       batchDetails: {
-        batchSize: 1000,
+        batchSize: 100,
         batchNumber: 1,
       },
     }
