@@ -116,6 +116,7 @@ steps:
       branch:
         only:
           - main
+          - docker-multistage-builds
           - /^app.*/i
 
   Deployment:
