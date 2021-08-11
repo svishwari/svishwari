@@ -316,7 +316,7 @@
 
     <edit-delivery-schedule
       v-model="editDeliveryDrawer"
-      :audience-id="selectedAudienceId"
+      :audience-id="audienceId"
       :destination="scheduleDestination"
       :engagement-id="engagementId"
     />
@@ -351,7 +351,7 @@
     <look-alike-audience
       ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
-      :selected-audience="selectedAudience"
+      :selected-audience="audience"
       @onBack="reloadAudienceData()"
       @onCreate="lookalikeCreated = true"
     />
@@ -428,7 +428,6 @@ export default {
   data() {
     return {
       mapChartData: mapData.demographic_overview,
-      selectedAudience: null,
       showLookAlikeDrawer: false,
       lookalikeCreated: false,
       audienceHistory: [],
@@ -521,8 +520,6 @@ export default {
       salesforceDestination: {},
 
       engagementDrawer: false,
-      // Edit Schedule data props
-      selectedAudienceId: null,
       engagementId: null,
       showConfirmModal: false,
       editDeliveryDrawer: false,
@@ -713,7 +710,6 @@ export default {
           this.closeAllDrawers()
           this.engagementId = event.data.id
           this.selectedDestinations = []
-          // this.selectedEngagements = []
           this.selectedEngagements.push(event.data)
           this.selectedDestinations.push(
             ...event.data.deliveries.map((dest) => ({ id: dest.id }))
@@ -769,7 +765,7 @@ export default {
             this.engagementId = event.parent.id
             await this.detachAudienceDestination({
               engagementId: this.engagementId,
-              audienceId: this.selectedAudienceId,
+              audienceId: this.audienceId,
               data: { id: event.data.id },
             })
             break
@@ -821,7 +817,6 @@ export default {
       this.engagementDrawer = true
     },
     openLookAlikeDrawer() {
-      this.selectedAudience = this.audience
       this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
@@ -858,7 +853,7 @@ export default {
       const payload = event.destination
       await this.attachAudienceDestination({
         engagementId: this.engagementId,
-        audienceId: this.selectedAudienceId,
+        audienceId: this.audienceId,
         data: payload,
       })
       await this.loadAudienceInsights()
@@ -891,7 +886,6 @@ export default {
       this.loading = true
       await this.getAudienceById(this.$route.params.id)
       this.audienceHistory = this.audience.audienceHistory
-      this.selectedAudienceId = this.$route.params.id
       this.relatedEngagements = this.audience.engagements
       this.lookalikeAudiences = this.audience.lookalike_audiences
       this.isLookalikable = this.audience.lookalikeable
