@@ -1,5 +1,10 @@
-# 1. Build the Test Image
+# application environment variables
+ARG TAVERN_TEST_HOST_ARG
+ARG TAVERN_TEST_API_VERSION_ARG
+RUN echo -e "TAVERN_TEST_HOST=$TAVERN_TEST_HOST_ARG" \
+    "\TAVERN_TEST_API_VERSION=$TAVERN_TEST_API_VERSION_ARG" \ > /tmp/env_file
 
+# build the test environment
 FROM python:3.7-slim-buster AS hux-unified
 
 # set the work dir on the docker image
@@ -21,8 +26,8 @@ RUN pip install python-box
 
 # run the pytests application
 # add tavern test host and api version as environment variables
-ENV TAVERN_TEST_HOST=https://unified-api-dev.main.use1.hux-unified-dev1.in
-ENV TAVERN_TEST_API_VERSION=api/v1
+ENV TAVERN_TEST_HOST "$TAVERN_TEST_HOST_ARG"
+ENV TAVERN_TEST_API_VERSION "$TAVERN_TEST_API_VERSION_ARG"
 # append hux-unified integration_tests api path to python path
 #ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/integration_tests/api"
-CMD ["py.test", "test_core.tavern.yaml", "-v"]
+#CMD ["py.test", "test_core.tavern.yaml", "-v"]
