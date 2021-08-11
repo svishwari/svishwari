@@ -529,7 +529,7 @@ export default {
         .v-radio.theme--light {
           ::v-deep .v-input--selection-controls__input {
             .v-icon.notranslate.mdi.mdi-radiobox-blank.theme--light {
-              color:var(--v-gray-base) !important;
+              color: var(--v-gray-base) !important;
             }
           }
         }
