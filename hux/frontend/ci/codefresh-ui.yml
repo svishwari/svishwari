@@ -73,14 +73,6 @@ steps:
     no_cache: false
     no_cf_cache: false
 
-  UnitTests:
-    stage: tests
-    title: "Running unit tests."
-    image: ${{TestImage}}
-    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
-    commands:
-      - yarn test:unit
-
   Lint:
     stage: tests
     title: "Running lint."
@@ -88,6 +80,14 @@ steps:
     working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
     commands:
       - yarn lint
+
+  UnitTests:
+    stage: tests
+    title: "Running unit tests."
+    image: ${{TestImage}}
+    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
+    commands:
+      - yarn test:unit
 
   AppImage:
     stage: build_app
