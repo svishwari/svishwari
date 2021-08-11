@@ -61,9 +61,9 @@ steps:
     commands: 
       - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
-  Test:
+  TestImage:
     stage: "test"
-    title: "Running lint and tests"
+    title: "Build test image"
     type: "build"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     dockerfile: "Dockerfile"
@@ -72,6 +72,20 @@ steps:
     target: test
     no_cache: false
     no_cf_cache: false
+
+  Lint:
+    stage: "test"
+    title: "Running lint"
+    image: "${{TestImage}}"
+    commands:
+      - yarn lint
+
+  UnitTests:
+    stage: "test"
+    title: "Running unit tests"
+    image: "${{TestImage}}"
+    commands:
+      - yarn test:unit
 
   DockerBuild:
     stage: "build"

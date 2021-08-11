@@ -15,8 +15,6 @@ RUN yarn ci
 FROM dependencies AS test
 WORKDIR /app
 COPY . /app
-RUN yarn lint
-RUN yarn test:unit
 
 # build
 FROM dependencies AS build
