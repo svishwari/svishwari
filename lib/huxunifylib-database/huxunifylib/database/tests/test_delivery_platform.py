@@ -23,7 +23,9 @@ class TestDeliveryPlatform(unittest.TestCase):
     @mongomock.patch(servers=(("localhost", 27017),))
     def setUp(self):
 
-        self.database = DatabaseClient("localhost", 27017, None, None).connect()
+        self.database = DatabaseClient(
+            "localhost", 27017, None, None
+        ).connect()
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
@@ -112,15 +114,17 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.generic_campaigns,
         )
 
-        self.lookalike_audience_doc = dpm.create_delivery_platform_lookalike_audience(
-            self.database,
-            self.delivery_platform_doc[c.ID],
-            self.source_audience_doc[c.ID],
-            "Lookalike audience",
-            0.01,
-            "US",
-            "Kam Chancellor",
-            31,
+        self.lookalike_audience_doc = (
+            dpm.create_delivery_platform_lookalike_audience(
+                self.database,
+                self.delivery_platform_doc[c.ID],
+                self.source_audience_doc[c.ID],
+                "Lookalike audience",
+                0.01,
+                "US",
+                "Kam Chancellor",
+                31,
+            )
         )
 
         doc = dpm.set_connection_status(
@@ -188,7 +192,9 @@ class TestDeliveryPlatform(unittest.TestCase):
 
     def test_set_delivery_platform_sfmc(self):
         """Test set_delivery_platform for sfmc."""
-        sfmc_configuration = {c.PERFORMANCE_METRICS_DATA_EXTENSION: "data_extension"}
+        sfmc_configuration = {
+            c.PERFORMANCE_METRICS_DATA_EXTENSION: "data_extension"
+        }
         doc = dpm.set_delivery_platform(
             self.database,
             c.DELIVERY_PLATFORM_SFMC,
@@ -232,7 +238,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
         self.assertIsNone(doc)
 
-        doc = dpm.get_delivery_platform(self.database, self.delivery_platform_doc[c.ID])
+        doc = dpm.get_delivery_platform(
+            self.database, self.delivery_platform_doc[c.ID]
+        )
         self.assertIsNotNone(doc)
 
         doc = dpm.get_delivery_platform_by_type(
@@ -247,7 +255,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             delivery_platform_type=c.DELIVERY_PLATFORM_FACEBOOK,
             deleted=True,
         )
-        doc = dpm.get_delivery_platform(self.database, self.delivery_platform_doc[c.ID])
+        doc = dpm.get_delivery_platform(
+            self.database, self.delivery_platform_doc[c.ID]
+        )
         self.assertIsNone(doc)
 
     @mongomock.patch(servers=(("localhost", 27017),))
@@ -255,7 +265,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         """Test get_delivery_platform."""
 
         # Get delivery platform
-        doc = dpm.get_delivery_platform(self.database, self.delivery_platform_doc[c.ID])
+        doc = dpm.get_delivery_platform(
+            self.database, self.delivery_platform_doc[c.ID]
+        )
 
         self.assertIsNotNone(doc)
         self.assertTrue(c.DELIVERY_PLATFORM_NAME in doc)
@@ -267,9 +279,13 @@ class TestDeliveryPlatform(unittest.TestCase):
             doc[c.DELIVERY_PLATFORM_NAME], "My delivery platform for Facebook"
         )
 
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_FACEBOOK)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_FACEBOOK
+        )
 
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], self.auth_details_facebook)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_AUTH], self.auth_details_facebook
+        )
         self.assertEqual(doc[c.DELIVERY_PLATFORM_STATUS], c.STATUS_PENDING)
 
     @mongomock.patch(servers=(("localhost", 27017),))
@@ -312,7 +328,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             "My second delivery platform for SFMC",
         )
 
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_SFMC)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_SFMC
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_platform_sfmc(self):
@@ -329,9 +347,13 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.DELIVERY_PLATFORM_AUTH in doc)
         self.assertTrue(c.DELIVERY_PLATFORM_STATUS in doc)
 
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_NAME], "My delivery platform for SFMC")
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_NAME], "My delivery platform for SFMC"
+        )
 
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_SFMC)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_SFMC
+        )
 
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], self.auth_details_sfmc)
         self.assertEqual(doc[c.DELIVERY_PLATFORM_STATUS], c.STATUS_PENDING)
@@ -400,7 +422,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         # Set and get name
         new_name = "New name"
 
-        doc = dpm.set_name(self.database, self.delivery_platform_doc[c.ID], new_name)
+        doc = dpm.set_name(
+            self.database, self.delivery_platform_doc[c.ID], new_name
+        )
 
         self.assertIsNotNone(doc)
         self.assertTrue(c.DELIVERY_PLATFORM_NAME in doc)
@@ -456,7 +480,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.DELIVERY_PLATFORM_AUTH in doc)
 
         self.assertEqual(doc[c.DELIVERY_PLATFORM_NAME], "Updated name")
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_FACEBOOK)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_FACEBOOK
+        )
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertFalse(doc[c.ADDED])
         self.assertFalse(c.DELETED in doc)
@@ -476,7 +502,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.DELIVERY_PLATFORM_AUTH in doc)
 
         self.assertEqual(doc[c.DELIVERY_PLATFORM_NAME], "Test name")
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_GOOGLE)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_TYPE], c.DELIVERY_PLATFORM_GOOGLE
+        )
         self.assertEqual(doc[c.DELIVERY_PLATFORM_AUTH], new_auth_details)
         self.assertTrue(doc[c.ADDED])
 
@@ -544,15 +572,21 @@ class TestDeliveryPlatform(unittest.TestCase):
     def test_get_delivery_job(self):
         """Test get_delivery_job."""
 
-        delivery_job = dpm.get_delivery_job(self.database, self.delivery_job_doc[c.ID])
+        delivery_job = dpm.get_delivery_job(
+            self.database, self.delivery_job_doc[c.ID]
+        )
 
         self.assertIsNotNone(delivery_job)
         self.assertTrue(c.AUDIENCE_ID in delivery_job)
         self.assertTrue(c.CREATE_TIME in delivery_job)
         self.assertTrue(c.JOB_STATUS in delivery_job)
         self.assertTrue(c.DELIVERY_PLATFORM_ID in delivery_job)
-        self.assertEqual(delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID])
-        self.assertEqual(delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING)
+        self.assertEqual(
+            delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
+        )
+        self.assertEqual(
+            delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_delivery_job_status(self):
@@ -571,7 +605,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(c.JOB_STATUS in doc)
         self.assertEqual(doc[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERED)
 
-        status = dpm.get_delivery_job_status(self.database, self.delivery_job_doc[c.ID])
+        status = dpm.get_delivery_job_status(
+            self.database, self.delivery_job_doc[c.ID]
+        )
 
         self.assertEqual(status, c.AUDIENCE_STATUS_DELIVERED)
 
@@ -617,7 +653,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIn(c.CREATE_TIME, delivery_job)
         self.assertIn(c.JOB_STATUS, delivery_job)
         self.assertIn(c.DELIVERY_PLATFORM_ID, delivery_job)
-        self.assertEqual(delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID])
+        self.assertEqual(
+            delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
+        )
         self.assertEqual(delivery_job[c.STATUS], c.AUDIENCE_STATUS_DELIVERING)
 
     @mongomock.patch(servers=(("localhost", 27017),))
@@ -625,7 +663,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         """Test test_get_all_delivery_job."""
 
         delivery_jobs = dpm.get_all_delivery_jobs(
-            self.database, {c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING}, limit=5
+            self.database,
+            {c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING},
+            limit=5,
         )
 
         # test has data and limit
@@ -652,15 +692,17 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
         self.assertTrue(c.DELIVERY_PLATFORM_LOOKALIKE_AUDS in doc)
-        self.assertEqual(doc[c.DELIVERY_PLATFORM_LOOKALIKE_AUDS], lookalike_audiences)
+        self.assertEqual(
+            doc[c.DELIVERY_PLATFORM_LOOKALIKE_AUDS], lookalike_audiences
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_lookalike_audiences(self):
         """Test get lookalike audiences functions."""
 
         # Set delivery job lookalike audiences
-        lookalike_audiences = dpm.get_all_delivery_platform_lookalike_audiences(
-            self.database
+        lookalike_audiences = (
+            dpm.get_all_delivery_platform_lookalike_audiences(self.database)
         )
 
         # test that data was returned.
@@ -670,7 +712,11 @@ class TestDeliveryPlatform(unittest.TestCase):
         lookalike_audience = lookalike_audiences[0]
         country_audiences = dpm.get_all_delivery_platform_lookalike_audiences(
             self.database,
-            {c.LOOKALIKE_AUD_COUNTRY: lookalike_audience[c.LOOKALIKE_AUD_COUNTRY]},
+            {
+                c.LOOKALIKE_AUD_COUNTRY: lookalike_audience[
+                    c.LOOKALIKE_AUD_COUNTRY
+                ]
+            },
         )
 
         # test audience
@@ -694,7 +740,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.delivery_platform_doc[c.ID],
         )
 
-        self.assertTrue(self.delivery_job_doc[c.ID], most_recent_delivery[c.ID])
+        self.assertTrue(
+            self.delivery_job_doc[c.ID], most_recent_delivery[c.ID]
+        )
 
     def test_get_delivery_jobs(self):
         """Test get_audience_delivery_job."""
@@ -790,7 +838,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         updated_delivery_job_doc = dpm.get_delivery_job(
             self.database, delivery_job_doc[c.ID]
         )
-        self.assertTrue(c.DELIVERY_PLATFORM_LOOKALIKE_AUDS in updated_delivery_job_doc)
+        self.assertTrue(
+            c.DELIVERY_PLATFORM_LOOKALIKE_AUDS in updated_delivery_job_doc
+        )
 
         # create another lookalike audience with delivery job associated with
         # source audience
@@ -964,7 +1014,9 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertTrue(doc is not None)
 
-        metrics_list = dpm.get_performance_metrics(self.database, delivery_job_id)
+        metrics_list = dpm.get_performance_metrics(
+            self.database, delivery_job_id
+        )
 
         self.assertTrue(metrics_list is not None)
         self.assertEqual(len(metrics_list), 1)
@@ -1066,7 +1118,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(doc[c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
         # Read metrics separately of setting
-        metrics_list = dpm.get_performance_metrics(self.database, delivery_job_id)
+        metrics_list = dpm.get_performance_metrics(
+            self.database, delivery_job_id
+        )
         self.assertTrue(metrics_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK])
 
     @mongomock.patch(servers=(("localhost", 27017),))
@@ -1163,13 +1217,15 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertTrue(lookalike_audience is not None)
 
         # create another lookalike audience
-        lookalike_audience_new = dpm.create_delivery_platform_lookalike_audience(
-            self.database,
-            delivery_platform_id,
-            source_audience_id,
-            "Lookalike audience added",
-            0.05,
-            "US",
+        lookalike_audience_new = (
+            dpm.create_delivery_platform_lookalike_audience(
+                self.database,
+                delivery_platform_id,
+                source_audience_id,
+                "Lookalike audience added",
+                0.05,
+                "US",
+            )
         )
 
         self.assertTrue(lookalike_audience_new is not None)
@@ -1320,15 +1376,21 @@ class TestDeliveryPlatform(unittest.TestCase):
 
         self.assertIsNotNone(doc)
 
-        delivery_job = dpm.get_delivery_job(self.database, doc[c.ID], engagement_id)
+        delivery_job = dpm.get_delivery_job(
+            self.database, doc[c.ID], engagement_id
+        )
 
         self.assertIsNotNone(delivery_job)
         self.assertIn(c.AUDIENCE_ID, delivery_job)
         self.assertIn(c.CREATE_TIME, delivery_job)
         self.assertIn(c.JOB_STATUS, delivery_job)
         self.assertIn(c.DELIVERY_PLATFORM_ID, delivery_job)
-        self.assertEqual(delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID])
-        self.assertEqual(delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING)
+        self.assertEqual(
+            delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
+        )
+        self.assertEqual(
+            delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING
+        )
         self.assertIn(c.ENGAGEMENT_ID, delivery_job)
         self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
         self.assertFalse(c.DELETED in delivery_job)
@@ -1382,7 +1444,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.assertEqual(
                 delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
             )
-            self.assertEqual(delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING)
+            self.assertEqual(
+                delivery_job[c.JOB_STATUS], c.AUDIENCE_STATUS_DELIVERING
+            )
             self.assertIn(c.ENGAGEMENT_ID, delivery_job)
             self.assertEqual(engagement_id, delivery_job[c.ENGAGEMENT_ID])
 
@@ -1421,7 +1485,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIn(c.CREATE_TIME, doc)
         self.assertIn(c.EVENT_DETAILS, doc)
         self.assertEqual(doc[c.EVENT_DETAILS]["event"], "sent")
-        self.assertEqual(doc[c.EVENT_DETAILS]["event_date"], "2021-06-17T12:21:27.970Z")
+        self.assertEqual(
+            doc[c.EVENT_DETAILS]["event_date"], "2021-06-17T12:21:27.970Z"
+        )
         self.assertIn(c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS, doc)
 
         # Status is to be set to non-transferred automatically
@@ -1451,7 +1517,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         )
 
         self.assertIsNotNone(updated_doc)
-        self.assertEqual(len(updated_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1)
+        self.assertEqual(
+            len(updated_doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_delivery_job_engagement_detail(self):
@@ -1520,7 +1588,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertIsNotNone(doc)
         self.assertEqual(len(doc[c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS]), 1)
 
-        count = dpm.delete_delivery_job_generic_campaigns(self.database, [doc[c.ID]])
+        count = dpm.delete_delivery_job_generic_campaigns(
+            self.database, [doc[c.ID]]
+        )
         self.assertEqual(count, 1)
 
         doc = dpm.get_delivery_job(self.database, doc[c.ID])
@@ -1673,7 +1743,9 @@ class TestDeliveryPlatform(unittest.TestCase):
         campaign_activities_list = dpm.get_campaign_activity(
             self.database, delivery_job_id
         )
-        self.assertTrue(campaign_activities_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK])
+        self.assertTrue(
+            campaign_activities_list[0][c.STATUS_TRANSFERRED_FOR_FEEDBACK]
+        )
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_set_audience_customers(self):
@@ -1758,7 +1830,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             {
                 "delivery_platform_name": "sfmc",
                 "delivery_job_id": delivery_job_id,
-                "create_time": datetime.datetime(2021, 6, 26, 14, 4, 15, 369000),
+                "create_time": datetime.datetime(
+                    2021, 6, 26, 14, 4, 15, 369000
+                ),
                 "start_time": datetime.datetime(2021, 6, 25, 0, 0),
                 "end_time": datetime.datetime(2021, 6, 26, 0, 0),
                 "delivery_platform_generic_campaigns": {
@@ -1787,7 +1861,9 @@ class TestDeliveryPlatform(unittest.TestCase):
             {
                 "delivery_platform_name": "sfmc",
                 "delivery_job_id": delivery_job_id,
-                "create_time": datetime.datetime(2021, 6, 25, 14, 4, 15, 369000),
+                "create_time": datetime.datetime(
+                    2021, 6, 25, 14, 4, 15, 369000
+                ),
                 "start_time": datetime.datetime(2021, 6, 24, 0, 0),
                 "end_time": datetime.datetime(2021, 6, 25, 0, 0),
                 "delivery_platform_generic_campaigns": {

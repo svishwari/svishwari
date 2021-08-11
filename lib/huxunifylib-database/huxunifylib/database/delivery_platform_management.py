@@ -794,7 +794,9 @@ def get_all_delivery_platform_lookalike_audiences(
 
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.LOOKALIKE_AUDIENCE_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.LOOKALIKE_AUDIENCE_COLLECTION
+    ]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -1044,7 +1046,9 @@ def set_delivery_job(
         c.UPDATE_TIME: curr_time,
         c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING,
         c.DELIVERY_PLATFORM_ID: delivery_platform_id,
-        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (delivery_platform_generic_campaigns),
+        c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: (
+            delivery_platform_generic_campaigns
+        ),
         c.DELETED: False,
     }
     if engagement_id is not None:
@@ -1130,7 +1134,11 @@ def get_delivery_jobs_using_metadata(
         Union[list, None]: List of matching delivery jobs, if any.
     """
 
-    if engagement_id is None and audience_id is None and delivery_platform_id is None:
+    if (
+        engagement_id is None
+        and audience_id is None
+        and delivery_platform_id is None
+    ):
         raise de.InvalidID()
 
     am_db = database[c.DATA_MANAGEMENT_DATABASE]
@@ -1407,7 +1415,9 @@ def get_all_delivery_jobs(
 
     """
 
-    collection = database[c.DATA_MANAGEMENT_DATABASE][c.DELIVERY_JOBS_COLLECTION]
+    collection = database[c.DATA_MANAGEMENT_DATABASE][
+        c.DELIVERY_JOBS_COLLECTION
+    ]
 
     # if deleted is not included in the filters, add it.
     if filter_dict:
@@ -1424,7 +1434,9 @@ def get_all_delivery_jobs(
     # if sort list is none, set to default, otherwise set to the passed in list.
     # note, if an empty list is passed in, no sorting will happen.
     sort_list = (
-        [(c.CREATE_TIME, pymongo.DESCENDING)] if sort_list is None else sort_list
+        [(c.CREATE_TIME, pymongo.DESCENDING)]
+        if sort_list is None
+        else sort_list
     )
 
     try:
@@ -1557,7 +1569,11 @@ def create_delivery_job_generic_campaigns(
     try:
         return collection.find_one_and_update(
             {c.ID: delivery_job_id, c.DELETED: False},
-            {"$set": {c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign}},
+            {
+                "$set": {
+                    c.DELIVERY_PLATFORM_GENERIC_CAMPAIGNS: generic_campaign
+                }
+            },
             upsert=False,
             new=True,
         )
@@ -1930,7 +1946,9 @@ def get_performance_metrics(
         metric_queries.append({c.METRICS_END_TIME: {"$lte": max_end_time}})
 
     if pending_transfer_for_feedback:
-        metric_queries.append({c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}})
+        metric_queries.append(
+            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+        )
 
     mongo_query = {"$and": metric_queries}
 
@@ -1981,7 +1999,9 @@ def get_performance_metrics_by_engagement_details(
         # Get performance metrics for all delivery jobs
         collection = platform_db[c.PERFORMANCE_METRICS_COLLECTION]
         delivery_job_ids = [x[c.ID] for x in delivery_jobs]
-        return list(collection.find({c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}}))
+        return list(
+            collection.find({c.DELIVERY_JOB_ID: {"$in": delivery_job_ids}})
+        )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
 
@@ -2059,7 +2079,9 @@ def get_all_performance_metrics(
     try:
         if pending_transfer_for_feedback:
             metric_docs = list(
-                collection.find({c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}})
+                collection.find(
+                    {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+                )
             )
         else:
             metric_docs = list(collection.find())
@@ -2159,7 +2181,9 @@ def get_campaign_activity(
     event_queries = [{c.DELIVERY_JOB_ID: delivery_job_id}]
 
     if pending_transfer_for_feedback:
-        event_queries.append({c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}})
+        event_queries.append(
+            {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+        )
 
     try:
         return list(collection.find({"$and": event_queries}))
@@ -2230,7 +2254,9 @@ def get_all_feedback_campaign_activities(
     collection = platform_db[c.CAMPAIGN_ACTIVITY_COLLECTION]
     try:
         campaign_activities_docs = list(
-            collection.find({c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}})
+            collection.find(
+                {c.STATUS_TRANSFERRED_FOR_FEEDBACK: {"$eq": False}}
+            )
         )
     except pymongo.errors.OperationFailure as exc:
         logging.error(exc)
