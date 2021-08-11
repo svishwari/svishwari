@@ -5,9 +5,8 @@ stages:
   - git
   - build_tag
   - set_env
-  - lint
-  - docker
   - test
+  - docker
   - artifactory
   - argo-deploy
 
@@ -62,23 +61,33 @@ steps:
     commands: 
       - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
-  Lint:
-    stage: "lint"
-    title: "Running lint"
-    image: huxhub.repo.mgnt.in/node:lts-alpine
+  Test:
+    stage: "test"
+    title: "Running lint and tests"
+    type: "build"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
-    commands:
-    - yarn install
-    - yarn lint --no-fix
+    dockerfile: "Dockerfile"
+    image_name: "TestImage"
+    # tag: '${{DOCKER_TAG}}'
+    target: test
+    no_cache: false
+    no_cf_cache: false
+    build_arguments:
+      - API_URL=${{API_URL}}
+      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
+      - OKTA_ISSUER=${{OKTA_ISSUER}}
 
   DockerBuild:
+    stage: "docker"
     title: "Building Docker image"
     type: "build"
-    image_name: "${{BUILD_NAME}}"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
-    tag: '${{DOCKER_TAG}}'
     dockerfile: "Dockerfile"
-    stage: "docker"
+    image_name: "${{BUILD_NAME}}"
+    tag: '${{DOCKER_TAG}}'
+    target: serve
+    no_cache: false
+    no_cf_cache: false
     build_arguments:
       - API_URL=${{API_URL}}
       - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}

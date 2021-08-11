@@ -33,7 +33,7 @@ COPY . /app
 RUN yarn build
 
 # serve
-FROM huxhub.repo.mgnt.in/nginx:alpine
+FROM huxhub.repo.mgnt.in/nginx:alpine as serve
 COPY --from=build /app/dist /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d
