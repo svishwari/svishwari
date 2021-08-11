@@ -184,7 +184,7 @@
                 </span>
               </div>
             </v-card-title>
-             <AreaChart></AreaChart>
+             <area-chart/>
           </v-card>
         </v-col>
         <v-col md="3">

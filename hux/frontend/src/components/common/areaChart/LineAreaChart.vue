@@ -61,26 +61,20 @@ export default {
       chartData: this.value,
     }
   },
-
-  //adds dots where original data would go but without error
-
-  watch: {
-    value: function () {
-      d3Select.select(this.$refs.huxChart).select("svg").remove()
-       d3Select.select("legend").remove()
-      this.initiateAreaChart()
+    watch: {
+    chartDimensions: {
+      handler() {
+        d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
+        this.initiateAreaChart()
+        
+      },
+      immediate: false,
+      deep: true,
     },
-  },
-
-  mounted() {
-    
-    this.initiateAreaChart()
   },
   methods: {
     async initiateAreaChart() {
-      await this.chartDimensions;
-      console.log("hello")
-      console.log("chartDimensions", this.chartDimensions)
+      await this.chartData
       this.chartWidth = this.chartDimensions.width + "px"
       this.width = this.chartDimensions.width
       let line = 0
@@ -303,6 +297,8 @@ export default {
           d3Select.selectAll(".hover-circle").remove()
           this.tooltipDisplay(false)
         }
+
+        d3Select.select("#legend").selectAll("svg").remove()
 
         let legendSvg = d3Select
         .select("#legend")

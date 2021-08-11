@@ -79,8 +79,8 @@ export default {
   @extend .income-tooltip-style;
   max-width: 96px;
   height: 104px;
-         top: -366px;
-    left: -258px;
+  top: -366px;
+  left: -242px;
   z-index: 1;
 }
 </style>

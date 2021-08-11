@@ -26,7 +26,7 @@ import LineAreaChart from "@/components/common/areaChart/LineAreaChart"
 import data from "./areaChart.json"
 
 export default {
-  name: "AreaChart",
+  name: "area-chart",
   components: { LineAreaChart, AreaChartTooltip },
   data() {
     return {
