@@ -178,10 +178,10 @@ export default {
 
   async updated() {
     if (this.localDrawer) {
-    this.loading = true
-    await this.fetchCustomerByBatch()
-    this.calculateLastBatch()
-    this.loading = false
+      this.loading = true
+      await this.fetchCustomerByBatch()
+      this.calculateLastBatch()
+      this.loading = false
     } else {
       this.batchDetails.batchNumber = 1
       this.batchDetails.isLazyLoad = false
