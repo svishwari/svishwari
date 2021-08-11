@@ -157,6 +157,10 @@ client["audiences"].getRules = () => {
 client["audiences"].deliver = (resourceId, data) => {
   return http.post(`/audiences/${resourceId}/deliver`, data)
 }
+
+client["audiences"].deliveries = (resourceId, data) => {
+  return http.get(`/audiences/${resourceId}/delivery-history`, data)
+}
 //#endregion
 
 //#region Notifications

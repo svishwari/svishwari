@@ -31,6 +31,9 @@ DEFAULT_AUDIENCE_DELIVERY_COUNT = 2
 OVERVIEW = "overview"
 HUX_ID = "hux_id"
 
+QUERY_PARAMETER_BATCH_SIZE = "batch_size"
+QUERY_PARAMETER_BATCH_NUMBER = "batch_number"
+
 HEALTH_CHECK_ENDPOINT = "/health-check"
 HEALTH_CHECK = "healthcheck"
 
@@ -164,7 +167,6 @@ STATUS_WEIGHTS = {
     STATUS_NOT_DELIVERED: 9,
     STATUS_DELIVERING: 8,
     STATUS_DELIVERY_PAUSED: 7,
-    STATUS_ACTIVE: 6,
     STATUS_INACTIVE: 5,
     STATUS_DRAFT: 4,
     STATUS_PENDING: 3,
@@ -325,11 +327,13 @@ PERFORMANCE_METRIC_DE_NOT_ASSIGNED = (
 INVALID_AUTH_DETAILS = "Invalid authentication details."
 INVALID_AUTH_HEADER = "Authorization header is invalid."
 INVALID_AUTH = "You are not authorized to visit this page."
+INVALID_BATCH_PARAMS = "Invalid Batch Number or Batch Size"
 
 AUDIENCE_NOT_FOUND = "Audience not found."
 DESTINATION_NOT_FOUND = "Destination not found."
 ENGAGEMENT_NOT_FOUND = "Engagement not found."
 DESTINATION_NOT_SUPPORTED = "Destination is not supported."
+SUCCESSFUL_DELIVERY_JOB_NOT_FOUND = "No successful delivery job found"
 
 # Destination API fields
 DESTINATIONS_TAG = "destinations"
@@ -496,6 +500,7 @@ USER_ENDPOINT = "/users"
 MODELS_TAG = "model"
 MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
+MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
 MODEL_ID = "model_id"
@@ -550,6 +555,7 @@ FEATURES = "features"
 JOIN_KEYS = "joinKeys"
 RESULTS = "results"
 LATEST_VERSION = "latest_version"
+VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
 LAST_TRAINED = "last_trained"
 LOOKBACK_WINDOW = "lookback_window"
@@ -1012,6 +1018,8 @@ CUSTOMERS_INSIGHTS = "customers-insights"
 GEOGRAPHICAL = "geo"
 CUSTOMERS_DESCRIPTION = "Customers API"
 CUSTOMERS_API_HEADER_KEY = "x-api-key"
+CUSTOMERS_DEFAULT_BATCH_SIZE = "1000"
+CUSTOMERS_DEFAULT_BATCH_NUMBER = "1"
 
 # Notifications
 NOTIFICATIONS_TAG = "notifications"

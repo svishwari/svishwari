@@ -16,7 +16,12 @@ export default {
 
     let date = moment(value)
 
-    if (format === "relative") return date.fromNow(noSuffix)
+    if (format === "relative") {
+      if (date.isBefore()) {
+        return date.fromNow(noSuffix)
+      }
+      return moment().fromNow(noSuffix)
+    }
 
     if (format === "calendar") return date.calendar()
 
