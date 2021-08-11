@@ -768,11 +768,11 @@ class TotalCustomersGraphView(SwaggerView):
             total_customers.append(
                 {
                     api_c.TOTAL_CUSTOMERS: randint(10000000, 30000000),
-                    api_c.NEW_CUSTOMERS_ADDED: randint(10000, 100000),
+                    api_c.NEW_CUSTOMERS_ADDED: randint(1, 5000),
                     api_c.DATE: last_date,
                 }
             )
-            last_date = last_date + timedelta(days=1)
+            last_date += timedelta(days=1)
         return (
             jsonify(
                 TotalCustomersInsightsSchema().dump(total_customers, many=True)
