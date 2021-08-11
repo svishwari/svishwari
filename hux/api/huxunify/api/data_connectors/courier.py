@@ -203,8 +203,7 @@ class DestinationBatchJob:
                 self.audience_delivery_job_id,
                 db_const.AUDIENCE_STATUS_ERROR,
             )
-            self.result = (db_const.AUDIENCE_STATUS_ERROR,)
-
+            self.result = db_const.AUDIENCE_STATUS_ERROR
             return
         logger.info(
             "Successfully Registered AWS Batch job for %s.",

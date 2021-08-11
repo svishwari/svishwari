@@ -484,8 +484,10 @@ STUB_INSIGHTS_RESPONSE = {
 }
 
 PARAM_STORE_PREFIX = "unified"
-PARAMETER_STORE_ERROR_MSG = "An error occurred while attempting to store secrets in the parameter store."
-
+PARAMETER_STORE_ERROR_MSG = (
+    "An error occurred while attempting to"
+    " store secrets in the parameter store."
+)
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
