@@ -22,7 +22,7 @@ RUN pip install python-box
 # run the pytests application
 # add tavern test host and api version as environment variables
 ENV TAVERN_TEST_HOST=https://unified-api-dev.main.use1.hux-unified-dev1.in
-ENV TAVERN_TEST_VERSION=api/v1
+ENV TAVERN_TEST_API_VERSION=api/v1
 # append hux-unified integration_tests api path to python path
 #ENV PYTHONPATH "${PYTHONPATH}:/app/hux-unified/integration_tests/api"
 CMD ["py.test", "test_core.tavern.yaml", "-v"]

@@ -20,22 +20,22 @@ For instance:
 #### Windows
 ```buildoutcfg
 SET TAVERN_TEST_HOST=<hostname_of_test_server>
-SET TAVERN_TEST_VERSION=<api_version>
+SET TAVERN_TEST_API_VERSION=<api_version>
 ```
 To validate if the env variables is set as needed after running the above commands.
 ```buildoutcfg
 echo %TAVERN_TEST_HOST%
-echo %TAVERN_TEST_VERSION%
+echo %TAVERN_TEST_API_VERSION%
 ```
 #### Mac/Linux
 ```buildoutcfg
 TAVERN_TEST_HOST=<hostname_of_test_server>
-TAVERN_TEST_VERSION=<api_version>
+TAVERN_TEST_API_VERSION=<api_version>
 ```
 To validate if the env variables is set as needed after running the above commands.
 ```buildoutcfg
 echo $TAVERN_TEST_HOST
-echo $TAVERN_TEST_VERSION
+echo $TAVERN_TEST_API_VERSION
 ```
 
 **NOTE** that these environment variables will be set and hold true **ONLY** in that terminal session these commands were run on.
