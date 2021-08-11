@@ -362,10 +362,9 @@ export default {
     return {
       Statuses: {
         Active: ["Active", "Delivered", "Succeeded"],
-        Inactive: ["Caution", "Not Delivered"],
+        Inactive: ["Caution", "Not Delivered", "Inactive"],
         Activating: ["Activating", "In progress"],
         Draft: ["Draft"],
-        Disabled: ["Disabled", "Delivery Paused", "Inactive"],
         Error: ["Error", "Failed", "Critical"],
         Pending: ["Pending", "Delivering"],
         Feedback: ["Feedback"],
