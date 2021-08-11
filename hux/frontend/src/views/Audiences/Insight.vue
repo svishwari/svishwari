@@ -227,9 +227,6 @@
       <v-col cols="3">
         <income-chart></income-chart>
       </v-col>
-      <!-- <v-col cols="3">
-        <area-chart></area-chart>
-      </v-col> -->
     </v-row>
     <v-row class="px-15 mt-2">
       <v-col md="7">
@@ -279,7 +276,7 @@
               </span>
             </div>
           </v-card-title>
-          <empty-state-chart />
+          <area-chart />
         </v-card>
       </v-col>
       <v-col md="3">
@@ -400,6 +397,7 @@ import DestinationDataExtensionDrawer from "@/views/Audiences/Configuration/Draw
 import EditDeliverySchedule from "@/views/Engagements/Configuration/Drawers/EditDeliveryScheduleDrawer.vue"
 import SelectDestinationsDrawer from "@/views/Audiences/Configuration/Drawers/SelectDestinations.vue"
 import LookAlikeAudience from "./Configuration/Drawers/LookAlikeAudience.vue"
+import AreaChart from "@/components/common/areaChart/AreaChart"
 
 export default {
   name: "AudienceInsight",
@@ -427,6 +425,7 @@ export default {
     SelectDestinationsDrawer,
     Size,
     Tooltip,
+    AreaChart,
   },
   data() {
     return {

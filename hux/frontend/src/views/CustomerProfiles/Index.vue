@@ -203,11 +203,10 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row class="px-15 mt-2">
+      <v-row v-if="customersInsights" class="px-15 mt-2">
         <v-col cols="3">
           <income-chart />
         </v-col>
-        <v-col cols="3"> </v-col>
       </v-row>
       <customer-details v-model="customerProfilesDrawer" />
     </div>
