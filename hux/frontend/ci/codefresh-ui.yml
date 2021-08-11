@@ -16,11 +16,11 @@ steps:
     title: Prepare Build Details
     type: parallel
     steps:
-      GetTriggerName:
+      get_trigger_name:
         stage: prepare
         title: get trigger name using id from spec yaml
         type: deloittehux/get-trigger-name
-      BuildNumber:
+      build_number:
         stage: prepare
         title: Bump default BUILD_NUMBER annotation
         type: bump-build-number
@@ -65,7 +65,7 @@ steps:
     stage: tests
     title: "Building test image."
     type: build
-    working_directory: "/app"
+    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
     dockerfile: Dockerfile
     image_name: ${{BUILD_NAME}}
     # tag: ${{DOCKER_TAG}}
@@ -77,7 +77,7 @@ steps:
     stage: tests
     title: "Running lint."
     image: ${{test_image}}
-    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
+    working_directory: "/app"
     commands:
       - yarn lint
 
@@ -85,7 +85,7 @@ steps:
     stage: tests
     title: "Running unit tests."
     image: ${{test_image}}
-    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
+    working_directory: "/app"
     commands:
       - yarn test:unit
 
