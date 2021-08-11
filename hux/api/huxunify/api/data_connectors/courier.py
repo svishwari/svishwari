@@ -194,12 +194,12 @@ class DestinationBatchJob:
             set_delivery_job_status(
                 self.database,
                 self.audience_delivery_job_id,
-                db_const.STATUS_FAILED,
+                db_const.AUDIENCE_STATUS_ERROR,
             )
-            self.result = db_const.STATUS_FAILED
+            self.result = db_const.AUDIENCE_STATUS_ERROR
             return
 
-        self.result = db_const.STATUS_PENDING
+        self.result = db_const.AUDIENCE_STATUS_DELIVERING
 
         # check if engagement has a delivery flight schedule set
         if not (

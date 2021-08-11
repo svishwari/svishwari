@@ -338,6 +338,7 @@ export default {
         color: var(--v-primary-base) !important;
         font-size: 15px !important;
         line-height: 20px;
+        letter-spacing: inherit;
         svg {
           fill: transparent !important;
           path {

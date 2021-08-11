@@ -45,7 +45,7 @@
           <div class="date-picker-header" style="">
             <span class="header-label"> Date </span>
             <span class="header-value">
-              {{ optionSelected["name"] || label }}
+              {{ start || label }}
             </span>
           </div>
           <v-spacer></v-spacer>
@@ -175,8 +175,13 @@ export default {
   }
   ::v-deep .v-card__actions {
     display: flow-root !important;
+    height: 40px;
     .btn-select {
       float: right;
+    }
+    .v-btn {
+      height: 24px;
+      margin-top: 3px;
     }
   }
   ::v-deep .date-picker-header {
@@ -186,7 +191,7 @@ export default {
     width: 94%;
     background-color: var(--v-aliceBlue-base) !important;
     .header-value {
-      margin-left: 12px;
+      margin-left: 48px;
       color: var(--v-primary-base) !important;
     }
   }

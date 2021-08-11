@@ -127,7 +127,6 @@
       @onBack="closeDrawers"
     />
     <delivery-history-drawer
-      ref="deliveryHistory"
       :engagement-id="engagementId"
       :toggle="showDeliveryHistoryDrawer"
       @onToggle="(toggle) => (showDeliveryHistoryDrawer = toggle)"
@@ -178,7 +177,7 @@ import SelectAudiencesDrawer from "./Configuration/Drawers/SelectAudiencesDrawer
 import AddAudienceDrawer from "./Configuration/Drawers/AddAudienceDrawer.vue"
 import SelectDestinationsDrawer from "./Configuration/Drawers/SelectDestinationsDrawer.vue"
 import DestinationDataExtensionDrawer from "./Configuration/Drawers/DestinationDataExtensionDrawer.vue"
-import DeliveryHistoryDrawer from "./Configuration/Drawers/DeliveryHistoryDrawer.vue"
+import DeliveryHistoryDrawer from "@/views/Shared/Drawers/DeliveryHistoryDrawer.vue"
 import DeliveryOverview from "../../components/DeliveryOverview.vue"
 import HuxAlert from "../../components/common/HuxAlert.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
@@ -315,7 +314,7 @@ export default {
 
     triggerCreateAudience() {
       this.closeDrawers()
-      this.$refs.showAddAudiencesDrawer.fetchDependencies()
+      this.$refs.addNewAudience.fetchDependencies()
       this.showAddAudiencesDrawer = true
     },
     triggerSelectDestination(audienceId) {
@@ -539,7 +538,6 @@ export default {
 
     //#endregion
     openDeliveryHistoryDrawer() {
-      this.$refs.deliveryHistory.fetchHistory()
       this.showDeliveryHistoryDrawer = true
     },
     openLookAlikeDrawer(event) {
