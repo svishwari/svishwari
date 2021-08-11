@@ -564,6 +564,7 @@ export default {
     }
   }
 }
+
 ::v-deep.v-menu__content {
   .v-list-item {
     &.theme--light {
