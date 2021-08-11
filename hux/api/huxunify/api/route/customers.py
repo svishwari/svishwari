@@ -3,9 +3,10 @@
 Paths for customer API
 """
 from http import HTTPStatus
-from random import choice
+from random import choice, randint
 from typing import Tuple, List
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from faker import Faker
 import pandas as pd
 
@@ -21,6 +22,7 @@ from huxunify.api.schema.customers import (
     CustomerDemographicInsightsSchema,
     MatchingTrendsSchema,
     CustomerEventsSchema,
+    TotalCustomersInsightsSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -720,6 +722,60 @@ class CustomerEvents(SwaggerView):
                 CustomerEventsSchema().dump(
                     get_customer_events_data(hux_id), many=True
                 )
+            ),
+            HTTPStatus.OK,
+        )
+
+
+@add_view_to_blueprint(
+    customers_bp,
+    f"/{api_c.CUSTOMERS_INSIGHTS}/{api_c.TOTAL}",
+    "TotalCustomersGraphView",
+)
+class TotalCustomersGraphView(SwaggerView):
+    """
+    Total customer insights graph view class
+    """
+
+    responses = {
+        HTTPStatus.OK.value: {
+            "schema": {"type": "array", "items": TotalCustomersInsightsSchema},
+            "description": "Total Customer Insights .",
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            "description": "Failed to get Total Customer Insights."
+        },
+    }
+    responses.update(AUTH401_RESPONSE)
+    tags = [api_c.CUSTOMERS_TAG]
+
+    # pylint: disable=no-self-use
+    @api_error_handler()
+    def get(self) -> Tuple[list, int]:
+        """Retrieves total customer insights.
+
+        ---
+        security:
+            - Bearer: ["Authorization"]
+
+        Returns:
+            Tuple[dict, int] list of total customers & new customers added, http code
+        """
+        last_date = datetime.today() - relativedelta(months=6)
+        today = datetime.today()
+        total_customers = []
+        while last_date <= today:
+            total_customers.append(
+                {
+                    api_c.TOTAL_CUSTOMERS: randint(10000000, 30000000),
+                    api_c.NEW_CUSTOMERS_ADDED: randint(10000, 100000),
+                    api_c.DATE: last_date,
+                }
+            )
+            last_date = last_date + timedelta(days=1)
+        return (
+            jsonify(
+                TotalCustomersInsightsSchema().dump(total_customers, many=True)
             ),
             HTTPStatus.OK,
         )
