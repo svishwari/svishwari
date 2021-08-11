@@ -264,12 +264,13 @@ export default {
             .attr("data", (d) => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])
-            .on("mouseover", (d) => dotHoverIn(d))
+            .on("mouseover", (d) => dotHoverIn(d, points.data))
             .on("mouseout", (d) => dotHoverOut(d))
         })
       })
 
-       let dotHoverIn = (d) => {
+       let dotHoverIn = (d, value) => {
+          let areaData = value;
           let xPosition = d.srcElement.getAttribute("cx")
               svg
             .append("line")
@@ -294,13 +295,13 @@ export default {
           .style("pointer-events", "none")
             }
           })
-
-
+                this.tooltipDisplay(true, areaData)
         }
         
         let dotHoverOut = (d) => {
           d3Select.selectAll(".hover-line").remove()
           d3Select.selectAll(".hover-circle").remove()
+          this.tooltipDisplay(false)
         }
 
         let legendSvg = d3Select
@@ -352,8 +353,8 @@ export default {
       this.tooltip.y = event.offsetY
       this.$emit("cordinates", this.tooltip)
     },
-    tooltipDisplay(showTip, incomeData) {
-      this.$emit("tooltipDisplay", showTip, incomeData)
+    tooltipDisplay(showTip, spendData) {
+      this.$emit("tooltipDisplay", showTip, spendData)
     },
   },
 }

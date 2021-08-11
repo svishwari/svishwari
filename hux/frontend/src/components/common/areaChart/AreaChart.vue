@@ -7,7 +7,7 @@
       :chart-dimensions="chartDimensions"
       @tooltipDisplay="toolTipDisplay" />
     </div>
-     <!-- <bar-chart-tooltip
+     <Area-Chart-Tooltip
       :position="{
         x: tooltip.x,
         y: tooltip.y,
@@ -15,7 +15,7 @@
       :show-tooltip="show"
       :source-input="currentData"
     >
-    </bar-chart-tooltip> -->
+    </Area-Chart-Tooltip>
   </div>
 </template>
 

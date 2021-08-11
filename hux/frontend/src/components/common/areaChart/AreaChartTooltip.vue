@@ -1,16 +1,19 @@
 <template>
   <div>
     <v-card
-      v-if="showTooltip"
+     v-if="showTooltip"
       tile
       :style="{
-        transform: `translate(${sourceInput.xPosition}px, ${sourceInput.yPosition}px)`,
+        transform: `translate(${position.x}px, ${position.y}px)`,
         'border-radius': '0px !important',
       }"
       class="mx-auto tooltip-style"
     >
       <div class="bar-hover">
-        {{ sourceInput.ltv | Currency }}
+        <!-- {{sourceInput.date | Date("relative")}} -->
+        {{sourceInput.women_spend | currency}}
+        {{sourceInput.men_spend | currency}}
+        {{sourceInput.others_spend | currency}}
       </div>
     </v-card>
   </div>
@@ -18,7 +21,7 @@
 
 <script>
 export default {
-  name: "AreaChartTooltip",
+  name: "area-chart-tooltip",
   props: {
     position: {
       type: Object,
@@ -32,8 +35,8 @@ export default {
     },
     showTooltip: {
       type: Boolean,
-      required: false,
-      default: false,
+      required: true,
+      default: true,
     },
     sourceInput: {
       type: Object,
@@ -66,7 +69,7 @@ export default {
   border-radius: 0px;
   height: auto;
   z-index: 1;
-  color: #0c9ddb;
+  color: var(--v-grey-base);
   .bar-hover {
     @extend .card-padding;
   }
@@ -74,10 +77,10 @@ export default {
 
 .tooltip-style {
   @extend .income-tooltip-style;
-  max-width: 70px;
-  height: 40px;
-  top: -338px;
-  left: -90px;
+  max-width: 96px;
+  height: 104px;
+         top: -366px;
+    left: -258px;
   z-index: 1;
 }
 </style>
