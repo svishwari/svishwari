@@ -148,8 +148,9 @@ export default {
       ],
       lastBatch: 0,
       batchDetails: {
-        batchSize: 1000,
+        batchSize: 100,
         batchNumber: 1,
+        isLazyLoad: false,
       },
     }
   },
@@ -176,10 +177,15 @@ export default {
   },
 
   async updated() {
-    this.loading = true
-    await this.fetchCustomerByBatch()
-    this.calculateLastBatch()
-    this.loading = false
+    if (this.localDrawer) {
+      this.loading = true
+      await this.fetchCustomerByBatch()
+      this.calculateLastBatch()
+      this.loading = false
+    } else {
+      this.batchDetails.batchNumber = 1
+      this.batchDetails.isLazyLoad = false
+    }
   },
 
   methods: {
@@ -192,6 +198,7 @@ export default {
     },
     intersected() {
       if (this.batchDetails.batchNumber <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
         this.fetchCustomerByBatch()
       }
     },

@@ -37,11 +37,18 @@ const mutations = {
   SET_OVERVIEW(state, data) {
     state.overview = data
   },
+
+  RESET_LIST(state) {
+    Vue.set(state, "items", {})
+  },
 }
 
 const actions = {
   async getAll({ commit }, batchDetails) {
     try {
+      if (!batchDetails.isLazyLoad) {
+        commit("RESET_LIST")
+      }
       const response = await api.customers.getCustomers(
         batchDetails.batchSize,
         batchDetails.batchNumber
