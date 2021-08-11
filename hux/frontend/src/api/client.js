@@ -32,6 +32,12 @@ client["customers"].overview = () => {
 client["customers"].getOverview = (data) => {
   return http.post("/customers/overview", data)
 }
+
+client["customers"].getCustomers = (batchSize, batchNumber) => {
+  return http.get(
+    `/customers?batch_size=${batchSize}&batch_number=${batchNumber}`
+  )
+}
 //#endregion
 
 //#region Destinations endpoints
@@ -164,8 +170,10 @@ client["audiences"].deliveries = (resourceId, data) => {
 //#endregion
 
 //#region Notifications
-client["notifications"].getNotifications = (batchSize) => {
-  return http.get(`/notifications?batch_size=${batchSize}`)
+client["notifications"].getNotifications = (batchSize, batchNumber) => {
+  return http.get(
+    `/notifications?batch_size=${batchSize}&batch_number=${batchNumber}`
+  )
 }
 //#endregion
 

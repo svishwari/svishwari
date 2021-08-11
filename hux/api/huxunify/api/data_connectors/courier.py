@@ -2,7 +2,6 @@
 purpose of this file is to house all delivery related components.
  - delivery of an audience
 """
-import logging
 from http import HTTPStatus
 from bson import ObjectId
 from pymongo import MongoClient
@@ -21,6 +20,7 @@ from huxunifylib.util.general.const import (
     TwilioCredentials,
 )
 from huxunifylib.util.audience_router.const import AudienceRouterConfig
+from huxunifylib.util.general.logging import logger
 from huxunify.api import constants as api_const
 from huxunify.api.config import get_config
 from huxunify.api.data_connectors.aws import (
@@ -167,17 +167,20 @@ class DestinationBatchJob:
 
         """
         # Connect to AWS Batch
+        logger.info("Connecting to AWS Batch.")
         if aws_batch_connector is None:
             aws_batch_connector = AWSBatchConnector(
                 job_head_name,
                 self.audience_delivery_job_id,
             )
         self.aws_batch_connector = aws_batch_connector
+        logger.info("Connected to AWS Batch.")
 
         # get the configuration values
         config = get_config()
 
         # Register AWS batch job
+        logger.info("Registering AWS Batch job.")
         response_batch_register = self.aws_batch_connector.register_job(
             job_role_arn=config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
             exec_role_arn=config.AUDIENCE_ROUTER_EXECUTION_ROLE_ARN,
@@ -191,6 +194,10 @@ class DestinationBatchJob:
             response_batch_register["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
+            logger.error(
+                "Failed to Register AWS Batch job for delivery job ID %s.",
+                self.audience_delivery_job_id,
+            )
             set_delivery_job_status(
                 self.database,
                 self.audience_delivery_job_id,
@@ -198,15 +205,18 @@ class DestinationBatchJob:
             )
             self.result = db_const.AUDIENCE_STATUS_ERROR
             return
-
+        logger.info(
+            "Successfully Registered AWS Batch job for %s.",
+            self.audience_delivery_job_id,
+        )
         self.result = db_const.AUDIENCE_STATUS_DELIVERING
 
         # check if engagement has a delivery flight schedule set
         if not (
             engagement_doc and engagement_doc.get(api_const.DELIVERY_SCHEDULE)
         ):
-            logging.warning(
-                "Delivery schedule is not set for %s",
+            logger.warning(
+                "Delivery schedule is not set for %s.",
                 engagement_doc[db_const.ID],
             )
             return
@@ -220,8 +230,8 @@ class DestinationBatchJob:
             "cron(15 0 * * ? *)",
             config.AUDIENCE_ROUTER_JOB_ROLE_ARN,
         ):
-            logging.error(
-                "Error creating cloud watch rule for engagement with ID %s",
+            logger.error(
+                "Error creating cloud watch rule for engagement with ID %s.",
                 engagement_doc[db_const.ID],
             )
             return
@@ -270,7 +280,11 @@ class DestinationBatchJob:
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
-            status = db_const.STATUS_FAILED
+            logger.error(
+                "Failed to Submit AWS Batch job for %s.",
+                self.audience_delivery_job_id,
+            )
+            status = db_const.AUDIENCE_STATUS_ERROR
 
         set_delivery_job_status(
             self.database,
@@ -335,7 +349,7 @@ def get_destination_config(
         # mongomock does not support array_filters
         # but pymongo 3.6, MongoDB, and DocumentDB do.
         # log error, but keep process going.
-        logging.error(exc)
+        logger.error(exc)
 
     # Setup AWS Batch env dict
     env_dict = {

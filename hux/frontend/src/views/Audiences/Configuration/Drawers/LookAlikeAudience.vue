@@ -256,6 +256,12 @@ export default {
       this.localToggle = false
       this.$emit("onBack")
     },
+    async prefetchLookalikeDependencies() {
+      this.loading = true
+      await this.getAllEngagements()
+      await this.getAllAudiences()
+      this.loading = false
+    },
   },
 }
 </script>

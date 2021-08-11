@@ -525,6 +525,15 @@ export default {
     }
     .active-delivery-option.v-btn.btn-radio-inactive {
       border-color: var(--v-lightGrey-base) !important;
+      .v-btn__content {
+        .v-radio.theme--light {
+          ::v-deep .v-input--selection-controls__input {
+            .v-icon.notranslate.mdi.mdi-radiobox-blank.theme--light {
+              color: var(--v-gray-base) !important;
+            }
+          }
+        }
+      }
     }
     .disabled-white-background {
       background: white !important;

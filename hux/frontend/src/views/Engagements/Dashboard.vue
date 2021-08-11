@@ -158,6 +158,7 @@
     />
 
     <look-alike-audience
+      ref="lookalikeWorkflow"
       :toggle="showLookAlikeDrawer"
       :selected-audience="selectedAudience"
       @onBack="reloadAudienceData()"
@@ -208,6 +209,7 @@ export default {
   },
   data() {
     return {
+      engagementList: {},
       selectedAudience: null,
       showLookAlikeDrawer: false,
       engagementId: "",
@@ -252,12 +254,8 @@ export default {
     ...mapGetters({
       audiencePerformanceAds: "engagements/audiencePerformanceByAds",
       audiencePerformanceEmail: "engagements/audiencePerformanceByEmail",
-      getEngagement: "engagements/engagement",
+      getEngagementObject: "engagements/engagement",
     }),
-
-    engagementList() {
-      return this.getEngagement(this.engagementId) || {}
-    },
 
     breadcrumbItems() {
       const items = [
@@ -442,6 +440,7 @@ export default {
     },
     async loadEngagement(engagementId) {
       await this.getEngagementById(engagementId)
+      this.engagementList = this.getEngagementObject(this.engagementId)
       await this.getAudiencePerformanceById({
         type: "ads",
         id: this.engagementList.id,
@@ -542,6 +541,7 @@ export default {
     },
     openLookAlikeDrawer(event) {
       this.selectedAudience = event.parent
+      this.$refs.lookalikeWorkflow.prefetchLookalikeDependencies()
       this.lookalikeCreated = false
       this.showLookAlikeDrawer = true
     },

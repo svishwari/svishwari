@@ -7,6 +7,7 @@ from typing import Tuple
 from bson import ObjectId
 from flask import Blueprint, jsonify
 from flasgger import SwaggerView
+from huxunifylib.util.general.logging import logger
 from huxunifylib.database import (
     constants as db_c,
     delivery_platform_management,
@@ -146,6 +147,11 @@ class EngagementDeliverDestinationView(SwaggerView):
                     valid_destination = True
 
         if not valid_destination:
+            logger.error(
+                "Destination is not attached to the engagement %s  audience %s.",
+                engagement_id,
+                audience_id,
+            )
             return {
                 "message": "Destination is not attached to the "
                 "engagement audience."
@@ -169,6 +175,10 @@ class EngagementDeliverDestinationView(SwaggerView):
             delivery_job_ids.append(
                 str(batch_destination.audience_delivery_job_id)
             )
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
+        )
         # create notification
         create_notification(
             database,
@@ -269,6 +279,10 @@ class EngagementDeliverAudienceView(SwaggerView):
                 str(batch_destination.audience_delivery_job_id)
             )
         # create notification
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
+        )
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -365,6 +379,10 @@ class EngagementDeliverView(SwaggerView):
             ),
             api_c.DELIVERY_TAG,
         )
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
+        )
         return {
             "message": f"Successfully created delivery job(s) "
             f"{','.join(delivery_job_ids)}"
@@ -444,6 +462,10 @@ class AudienceDeliverView(SwaggerView):
                     str(batch_destination.audience_delivery_job_id)
                 )
         # create notification
+        logger.info(
+            "Successfully created delivery jobs %s.",
+            ",".join(delivery_job_ids),
+        )
         create_notification(
             database,
             db_c.NOTIFICATION_TYPE_SUCCESS,
@@ -513,6 +535,7 @@ class EngagementDeliverHistoryView(SwaggerView):
 
         # validate object id
         if not ObjectId.is_valid(engagement_id):
+            logger.error("Invalid Object ID %s.", engagement_id)
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the engagement ID
@@ -522,6 +545,7 @@ class EngagementDeliverHistoryView(SwaggerView):
         database = get_db_client()
         engagement = get_engagement(database, engagement_id)
         if not engagement:
+            logger.error("Engagement with ID %s not found.", engagement_id)
             return {
                 "message": api_c.ENGAGEMENT_NOT_FOUND
             }, HTTPStatus.NOT_FOUND
@@ -641,6 +665,7 @@ class AudienceDeliverHistoryView(SwaggerView):
 
         # validate object id
         if not ObjectId.is_valid(audience_id):
+            logger.error("Invalid Object ID %s.", audience_id)
             return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         # convert the audience ID
@@ -650,6 +675,7 @@ class AudienceDeliverHistoryView(SwaggerView):
         database = get_db_client()
         audience = get_audience(database, audience_id)
         if not audience:
+            logger.error("Audience with ID %s not found.", audience_id)
             return {"message": api_c.AUDIENCE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         delivery_jobs = (
