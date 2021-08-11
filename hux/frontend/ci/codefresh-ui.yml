@@ -118,8 +118,6 @@ steps:
       branch:
         only:
           - main
-          # TODO: remove used for testing
-          - docker-multistage-builds
           - /^app.*/i
 
   deployment:
