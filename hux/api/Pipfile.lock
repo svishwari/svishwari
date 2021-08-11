@@ -417,11 +417,11 @@
         },
         "huxunifylib-connectors": {
             "hashes": [
-                "sha256:03f825fa6d92816b40923070d579f2f1effffefdc553e3885b9c1ab8e4ee75bd",
-                "sha256:b6c729cf9523411e4ed0f5df46dbc4bee81bff5327fcf82c3e3a6503392125d8"
+                "sha256:08054bc4e0dd3e11a55f9f59d7729bbf2902484576af36077612fcefd232b15b",
+                "sha256:285bc6beb561d7794d5ec579faf912216447ffc8a00648f62d5207e54370d03b"
             ],
             "index": "jfrog",
-            "version": "==0.1.25"
+            "version": "==0.1.26"
         },
         "huxunifylib-database": {
             "editable": true,
@@ -429,19 +429,19 @@
         },
         "huxunifylib-util": {
             "hashes": [
-                "sha256:6858850184d4b81ffdbfb3c09eed49d09df9d695c24f17673fc5a27d249b117e",
-                "sha256:abb7ad86d000474062e7861a350a3d3f26cc067a76d4913f5cee7e34c242ebea"
+                "sha256:43821aedf9a0a964eaee63f05edb52b4d94aae99d152f97249987e1240cc6aa2",
+                "sha256:5291c0763ffdf69f6426403a902501a9de96dd457c7319e55fc64bcdb6a0522f"
             ],
             "index": "jfrog",
-            "version": "==0.1.25"
+            "version": "==0.1.26"
         },
         "identify": {
             "hashes": [
-                "sha256:242332b3bdd45a8af1752d5d5a3afb12bee26f8e67c4be06e394f82d05ef1a4d",
-                "sha256:a510cbe155f39665625c8a4c4b4f9360cbce539f51f23f47836ab7dd852db541"
+                "sha256:7199679b5be13a6b40e6e19ea473e789b11b4e3b60986499b1f589ffb03c217c",
+                "sha256:7bc6e829392bd017236531963d2d937d66fc27cadc643ac0aba2ce9f26157c79"
             ],
             "markers": "python_full_version >= '3.6.1'",
-            "version": "==2.2.12"
+            "version": "==2.2.13"
         },
         "idna": {
             "hashes": [
@@ -779,11 +779,11 @@
         },
         "pre-commit": {
             "hashes": [
-                "sha256:764972c60693dc668ba8e86eb29654ec3144501310f7198742a767bec385a378",
-                "sha256:b679d0fddd5b9d6d98783ae5f10fd0c4c59954f375b70a58cbe1ce9bcf9809a4"
+                "sha256:2386eeb4cf6633712c7cc9ede83684d53c8cafca6b59f79c738098b51c6d206c",
+                "sha256:ec3045ae62e1aa2eecfb8e86fa3025c2e3698f77394ef8d2011ce0aedd85b2d4"
             ],
             "index": "pypi",
-            "version": "==2.13.0"
+            "version": "==2.14.0"
         },
         "py-healthcheck": {
             "hashes": [

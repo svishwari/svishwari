@@ -544,7 +544,7 @@ class EngagementGetSchema(Schema):
         return engagement
 
 
-# pylint: disable=too-many-branches
+# pylint: disable=too-many-branches,too-many-statements
 def weighted_engagement_status(engagements: list) -> list:
     """Returns a weighted engagement status by rolling up the individual
     destination status values.
@@ -649,6 +649,18 @@ def weighted_engagement_status(engagements: list) -> list:
                 if audience_status_rank
                 else api_c.STATUS_NOT_DELIVERED
             )
+
+            # handle if no status ranks, assume audience status
+            if not status_ranks:
+                status_ranks = [
+                    {
+                        api_c.STATUS: audience[api_c.STATUS],
+                        api_c.WEIGHT: api_c.STATUS_WEIGHTS.get(
+                            audience[api_c.STATUS], 0
+                        ),
+                    }
+                ]
+
             audiences.append(audience)
 
         engagement[api_c.AUDIENCES] = audiences
@@ -656,11 +668,11 @@ def weighted_engagement_status(engagements: list) -> list:
         # Set engagement status.
         # Order in which these checks are made ensures correct engagement status.
         status = engagement.get(api_c.STATUS)
+        status_values = [x[api_c.STATUS] for x in status_ranks]
+
         if status is not None and status == api_c.STATUS_INACTIVE:
             engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
-        elif api_c.STATUS_DELIVERING in [
-            status[api_c.STATUS] for status in status_ranks
-        ]:
+        elif api_c.STATUS_DELIVERING in status_values:
             engagement[api_c.STATUS] = api_c.STATUS_DELIVERING
         elif engagement.get(db_c.ENGAGEMENT_DELIVERY_SCHEDULE):
             if (
@@ -675,6 +687,8 @@ def weighted_engagement_status(engagements: list) -> list:
                 engagement[api_c.STATUS] = api_c.STATUS_ACTIVE
             else:
                 engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
+        elif api_c.STATUS_NOT_DELIVERED in status_values:
+            engagement[api_c.STATUS] = api_c.STATUS_INACTIVE
         else:
             engagement[api_c.STATUS] = api_c.STATUS_ERROR
 

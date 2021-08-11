@@ -233,6 +233,7 @@ SUPPORTED_DELIVERY_PLATFORMS = [
     DELIVERY_PLATFORM_TWILIO,
     DELIVERY_PLATFORM_QUALTRICS,
 ]
+AUDIENCE_NAME_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 LOOKALIKE = "lookalike"
 LOOKALIKE_AUD_NAME = "name"
@@ -267,6 +268,7 @@ DELIVERY_PLATFORM_GENERIC_CAMPAIGN_ID = "delivery_platform_generic_campaign_id"
 DELIVERY_PLATFORM_GENERIC_CAMPAIGNS = "delivery_platform_generic_campaigns"
 METRICS_DELIVERY_PLATFORM_ID = "delivery_platform_id"
 METRICS_DELIVERY_PLATFORM_NAME = "delivery_platform_name"
+METRICS_DELIVERY_PLATFORM_TYPE = "delivery_platform_type"
 METRICS_START_TIME = "start_time"
 METRICS_END_TIME = "end_time"
 PERFORMANCE_METRICS = "performance_metrics"

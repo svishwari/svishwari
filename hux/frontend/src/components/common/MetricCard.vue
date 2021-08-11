@@ -4,7 +4,7 @@
     :class="{ 'no-click': !interactable }"
     :style="{ 'flex-grow': grow }"
     :max-width="maxWidth"
-    height="78"
+    :height="height"
     :disabled="!active"
     elevation="0"
     :ripple="interactable"
@@ -35,7 +35,7 @@
 
         <slot name="extra-item"></slot>
 
-        <div class="pt-1">
+        <div>
           <span class="font-weight-semi-bold">{{ subtitle }}</span>
           <slot name="subtitle-extended"></slot>
         </div>
@@ -97,6 +97,11 @@ export default {
       type: [String, Number],
       required: false,
     },
+    height: {
+      type: [String, Number],
+      required: false,
+      default: 90,
+    },
   },
 }
 </script>
@@ -126,6 +131,9 @@ export default {
     .v-list-item__title {
       color: var(--v-gray-base);
     }
+  }
+  div.d-flex.align-center.justify-space-between {
+    height: -webkit-fill-available;
   }
 }
 </style>

@@ -230,16 +230,31 @@ class CustomerDashboardOverview(SwaggerView):
 @add_view_to_blueprint(
     customers_bp, f"/{api_c.CUSTOMERS_ENDPOINT}", "Customersview"
 )
-@add_view_to_blueprint(
-    customers_bp,
-    api_c.CUSTOMERS_ENDPOINT,
-    "Customersview_no_of_cust",
-)
 class Customersview(SwaggerView):
     """
     Customers Overview class
     """
 
+    parameters = [
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_SIZE,
+            "in": "query",
+            "type": "string",
+            "description": "Max number of customers to be returned.",
+            "example": api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+            "required": False,
+            "default": api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+        },
+        {
+            "name": api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            "in": "query",
+            "type": "string",
+            "description": "Number of which batch of customers should be returned.",
+            "example": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+            "required": False,
+            "default": api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+        },
+    ]
     responses = {
         HTTPStatus.OK.value: {
             "schema": CustomersSchema,
@@ -253,7 +268,9 @@ class Customersview(SwaggerView):
     tags = [api_c.CUSTOMERS_TAG]
 
     # pylint: disable=no-self-use
-    @api_error_handler()
+    @api_error_handler(
+        custom_message={ValueError: {"message": api_c.INVALID_BATCH_PARAMS}}
+    )
     def get(self) -> Tuple[dict, int]:
         """Retrieves a list of customers.
 
@@ -267,9 +284,19 @@ class Customersview(SwaggerView):
 
         # get token
         token_response = get_token_from_request(request)
-
+        batch_size = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_SIZE,
+            default=api_c.CUSTOMERS_DEFAULT_BATCH_SIZE,
+        )
+        batch_number = request.args.get(
+            api_c.QUERY_PARAMETER_BATCH_NUMBER,
+            default=api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER,
+        )
+        offset = (int(batch_number) - 1) * int(batch_size)
         return (
-            CustomersSchema().dump(get_customer_profiles(token_response[0])),
+            CustomersSchema().dump(
+                get_customer_profiles(token_response[0], batch_size, offset)
+            ),
             HTTPStatus.OK,
         )
 
