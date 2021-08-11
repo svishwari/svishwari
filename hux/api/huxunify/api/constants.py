@@ -488,7 +488,6 @@ PARAMETER_STORE_ERROR_MSG = (
     "An error occurred while attempting to"
     " store secrets in the parameter store."
 )
-
 # users
 USER_TAG = "user"
 USER_NAME = "user_name"
@@ -500,6 +499,7 @@ USER_ENDPOINT = "/users"
 MODELS_TAG = "model"
 MODELS_DESCRIPTION = "MODEL API"
 MODELS_ENDPOINT = "/models"
+MODELS_VERSION_HISTORY = "version-history"
 MODEL_NAME = "model_name"
 MODEL_TYPE = "model_type"
 MODEL_ID = "model_id"
@@ -554,6 +554,7 @@ FEATURES = "features"
 JOIN_KEYS = "joinKeys"
 RESULTS = "results"
 LATEST_VERSION = "latest_version"
+VERSION = "version"
 FULCRUM_DATE = "fulcrum_date"
 LAST_TRAINED = "last_trained"
 LOOKBACK_WINDOW = "lookback_window"

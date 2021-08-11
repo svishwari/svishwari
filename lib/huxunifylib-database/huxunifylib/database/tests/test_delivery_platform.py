@@ -643,7 +643,7 @@ class TestDeliveryPlatform(unittest.TestCase):
             self.database,
             {
                 c.AUDIENCE_ID: self.source_audience_doc[c.ID],
-                c.JOB_STATUS: c.STATUS_PENDING,
+                c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING,
             },
         )
         delivery_job = delivery_jobs[0] if delivery_jobs else {}
@@ -656,14 +656,16 @@ class TestDeliveryPlatform(unittest.TestCase):
         self.assertEqual(
             delivery_job[c.AUDIENCE_ID], self.source_audience_doc[c.ID]
         )
-        self.assertEqual(delivery_job[c.STATUS], c.STATUS_PENDING)
+        self.assertEqual(delivery_job[c.STATUS], c.AUDIENCE_STATUS_DELIVERING)
 
     @mongomock.patch(servers=(("localhost", 27017),))
     def test_get_all_delivery_jobs_sort(self):
         """Test test_get_all_delivery_job."""
 
         delivery_jobs = dpm.get_all_delivery_jobs(
-            self.database, {c.JOB_STATUS: c.STATUS_PENDING}, limit=5
+            self.database,
+            {c.JOB_STATUS: c.AUDIENCE_STATUS_DELIVERING},
+            limit=5,
         )
 
         # test has data and limit

@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <div id="label"></div>
     <div id="chart" @mousemove="getCordinates($event)"></div>
     <div id="legend"></div>
     <doughnut-chart-tooltip

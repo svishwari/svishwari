@@ -33,7 +33,10 @@
                 :key="index"
                 :disabled="item.isDisabled"
               >
-                <v-list-item-title v-if="!item.menu">
+                <v-list-item-title
+                  v-if="!item.menu"
+                  @click="item.onClick && item.onClick(data)"
+                >
                   {{ item.title }}
                 </v-list-item-title>
 
@@ -53,7 +56,7 @@
                   <template #default>
                     <div
                       class="sub-menu-class white"
-                      @click="item.menu.onClick()"
+                      @click="item.menu.onClick(data)"
                     >
                       <logo
                         v-if="item.menu.icon"
@@ -104,6 +107,10 @@ export default Vue.extend({
     routeParam: {
       type: String,
       required: true,
+    },
+    data: {
+      type: Object,
+      required: false,
     },
   },
 
