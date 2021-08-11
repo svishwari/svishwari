@@ -262,9 +262,6 @@ class AudienceGetView(SwaggerView):
 
         """
 
-        if not ObjectId.is_valid(audience_id):
-            return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
-
         token_response = get_token_from_request(request)
 
         database = get_db_client()
@@ -476,12 +473,6 @@ class AudiencePostView(SwaggerView):
         if api_c.AUDIENCE_ENGAGEMENTS in body:
             # validate list of dict objects
             for engagement_id in body[api_c.AUDIENCE_ENGAGEMENTS]:
-                # validate object id
-                if not ObjectId.is_valid(engagement_id):
-                    return {
-                        "message": f"{engagement_id} has an invalid "
-                        f"{db_c.OBJECT_ID} field."
-                    }, HTTPStatus.BAD_REQUEST
 
                 # map to an object ID field
                 engagement_id = ObjectId(engagement_id)
@@ -839,15 +830,6 @@ class SetLookalikeAudience(SwaggerView):
         )
         source_audience_id = body[api_c.AUDIENCE_ID]
         engagement_ids = body[api_c.ENGAGEMENT_IDS]
-
-        for engagement_id in engagement_ids:
-            if not ObjectId.is_valid(engagement_id):
-                return {
-                    "message": api_c.INVALID_OBJECT_ID
-                }, HTTPStatus.BAD_REQUEST
-
-        if not ObjectId.is_valid(body[api_c.AUDIENCE_ID]):
-            return {"message": api_c.INVALID_OBJECT_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
         source_audience = orchestration_management.get_audience(
