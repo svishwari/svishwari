@@ -112,7 +112,7 @@ stages:
 
 
 ---
-test_name: Test Retrieve all audiences API
+test_name: Test retrieve non existant audience
 
 strict:
   - json:list_any_order
