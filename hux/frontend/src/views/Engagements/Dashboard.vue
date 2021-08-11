@@ -626,4 +626,7 @@ export default {
 .theme--light.v-btn.v-btn--disabled.v-btn--has-bg {
   background-color: white !important;
 }
+::v-deep .v-snack__wrapper {
+  max-width: 1300px !important;
+}
 </style>
