@@ -1,19 +1,16 @@
 <template>
-    <div
-      class="main-container"
-      :style="{ maxWidth: chartWidth }"
-    >
-      <div class="">
-        <div 
-        ref="huxChart" 
+  <div class="main-container" :style="{ maxWidth: chartWidth }">
+    <div class="">
+      <div
+        ref="huxChart"
         class="chart-section"
         @mouseover="getCordinates($event)"
-        ></div>
-      </div>
-      <div class="pt-2">
-        <div id="legend"></div>
-      </div>
+      ></div>
     </div>
+    <div class="pt-2">
+      <div id="legend"></div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -61,12 +58,11 @@ export default {
       chartData: this.value,
     }
   },
-    watch: {
+  watch: {
     chartDimensions: {
       handler() {
         d3Select.select(this.$refs.huxChart).selectAll("svg").remove()
         this.initiateAreaChart()
-        
       },
       immediate: false,
       deep: true,
@@ -79,7 +75,7 @@ export default {
       this.width = this.chartDimensions.width
       let line = 0
       let col = 0
-      let genders= [{label: "Women"}, {label: "Men"}, {label: "Other"},]
+      let genders = [{ label: "Women" }, { label: "Men" }, { label: "Other" }]
       this.gender_men.push(...this.chartData.gender_men)
       this.gender_women.push(...this.chartData.gender_women)
       this.gender_other.push(...this.chartData.gender_other)
@@ -119,11 +115,13 @@ export default {
         "rgba(66, 239, 253, 1)",
       ]
 
-    let color = d3Scale
+      let color = d3Scale
         .scaleOrdinal()
-        .range([ "rgba(0, 85, 135, 1)",
-        "rgba(12, 157, 219, 1)",
-        "rgba(66, 239, 253, 1)"])
+        .range([
+          "rgba(0, 85, 135, 1)",
+          "rgba(12, 157, 219, 1)",
+          "rgba(66, 239, 253, 1)",
+        ])
 
       let svg = d3Select
         .select(this.$refs.huxChart)
@@ -220,32 +218,18 @@ export default {
             .ticks(this.areaChartData.length)
             .tickFormat(d3TimeFormat.timeFormat("%b %Y"))
         )
-           .call((g) =>
-          g
-            .selectAll(".tick line")
-            .attr("stroke", "#ECECEC")
-        )
-          .call((g) =>
-          g
-            .selectAll("path")
-            .attr("stroke", "#ECECEC")
-        ).style("font-size", 12)
+        .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
+        .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
+        .style("font-size", 12)
 
       chart
         .append("g")
         .attr("transform", "translate(0, 0)")
         .attr("fill", "#4f4f4f")
         .call(d3Axis.axisLeft(yScale).ticks(6).tickFormat(appendyAxisFormate))
-        .call((g) =>
-          g
-            .selectAll(".tick line")
-            .attr("stroke", "#ECECEC")
-        )
-          .call((g) =>
-          g
-            .selectAll("path")
-            .attr("stroke", "#ECECEC")
-        ).style("font-size", 12)
+        .call((g) => g.selectAll(".tick line").attr("stroke", "#ECECEC"))
+        .call((g) => g.selectAll("path").attr("stroke", "#ECECEC"))
+        .style("font-size", 12)
 
       stackedValues.forEach(function (layer, index) {
         layer.forEach((points) => {
@@ -263,44 +247,44 @@ export default {
         })
       })
 
-       let dotHoverIn = (d, value) => {
-          let areaData = value;
-          let xPosition = d.srcElement.getAttribute("cx")
-              svg
-            .append("line")
-            .attr("class", "hover-line")
-            .style("stroke", "black")
-            .attr("x1", xPosition)
-            .attr("y1", 0)
-            .attr("x2", xPosition)
-            .attr("y2", height)
+      let dotHoverIn = (d, value) => {
+        let areaData = value
+        let xPosition = d.srcElement.getAttribute("cx")
+        svg
+          .append("line")
+          .attr("class", "hover-line")
+          .style("stroke", "black")
+          .attr("x1", xPosition)
+          .attr("y1", 0)
+          .attr("x2", xPosition)
+          .attr("y2", height)
 
-          svg.selectAll(".dot").each(function (_, i) {
-            if (this.getAttribute("cx") == xPosition) {
-          svg
-          .append("circle")
-          .classed("hover-circle", true)
-          .attr("cx", xPosition)
-          .attr("cy", this.getAttribute("cy"))
-          .attr("r", 6)
-          .style("stroke", this.getAttribute("stroke"))
-          .style("stroke-opacity", "1")
-          .style("fill", "white")
-          .style("pointer-events", "none")
-            }
-          })
-                this.tooltipDisplay(true, areaData)
-        }
-        
-        let dotHoverOut = (d) => {
-          d3Select.selectAll(".hover-line").remove()
-          d3Select.selectAll(".hover-circle").remove()
-          this.tooltipDisplay(false)
-        }
+        svg.selectAll(".dot").each(function (_, i) {
+          if (this.getAttribute("cx") == xPosition) {
+            svg
+              .append("circle")
+              .classed("hover-circle", true)
+              .attr("cx", xPosition)
+              .attr("cy", this.getAttribute("cy"))
+              .attr("r", 6)
+              .style("stroke", this.getAttribute("stroke"))
+              .style("stroke-opacity", "1")
+              .style("fill", "white")
+              .style("pointer-events", "none")
+          }
+        })
+        this.tooltipDisplay(true, areaData)
+      }
 
-        d3Select.select("#legend").selectAll("svg").remove()
+      let dotHoverOut = (d) => {
+        d3Select.selectAll(".hover-line").remove()
+        d3Select.selectAll(".hover-circle").remove()
+        this.tooltipDisplay(false)
+      }
 
-        let legendSvg = d3Select
+      d3Select.select("#legend").selectAll("svg").remove()
+
+      let legendSvg = d3Select
         .select("#legend")
         .append("svg")
         .attr("viewBox", "0 0 200 25")
@@ -327,7 +311,7 @@ export default {
         .attr("cx", 10)
         .attr("cy", 10)
         .attr("r", 3)
-         .style("fill", function (d) {
+        .style("fill", function (d) {
           return color(d.label)
         })
 
@@ -342,7 +326,6 @@ export default {
         .text(function (d) {
           return d.label
         })
-
     },
     getCordinates(event) {
       this.tooltip.x = event.offsetX
@@ -359,7 +342,7 @@ export default {
 <style lang="scss" scoped>
 .main-container {
   margin-bottom: 40px;
-   max-width: 450px;
+  max-width: 450px;
   min-height: 120px;
   height: 325px;
   .chart-section {

@@ -184,7 +184,7 @@
                 </span>
               </div>
             </v-card-title>
-             <area-chart/>
+            <area-chart />
           </v-card>
         </v-col>
         <v-col md="3">
@@ -207,9 +207,7 @@
         <v-col cols="3">
           <income-chart />
         </v-col>
-        <v-col cols="3">
-         
-        </v-col>
+        <v-col cols="3"> </v-col>
       </v-row>
       <customer-details v-model="customerProfilesDrawer" />
     </div>
@@ -227,7 +225,7 @@ import huxButton from "@/components/common/huxButton"
 import Icon from "@/components/common/Icon"
 import CustomerDetails from "./Drawers/CustomerDetailsDrawer.vue"
 import IncomeChart from "@/components/common/incomeChart/IncomeChart"
-import AreaChart  from "@/components/common/areaChart/AreaChart"
+import AreaChart from "@/components/common/areaChart/AreaChart"
 import MapChart from "@/components/common/MapChart/MapChart"
 import MapStateList from "@/components/common/MapChart/MapStateList"
 import mapData from "@/components/common/MapChart/mapData.json"

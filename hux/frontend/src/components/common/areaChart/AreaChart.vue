@@ -1,13 +1,14 @@
 <template>
   <div ref="chartBox" class="container">
     <div class="d-flex justify-content-start">
-      <line-area-chart 
-      v-model="spendData"  
-      @cordinates="getCordinates"
-      :chart-dimensions="chartDimensions"
-      @tooltipDisplay="toolTipDisplay" />
+      <line-area-chart
+        v-model="spendData"
+        :chart-dimensions="chartDimensions"
+        @cordinates="getCordinates"
+        @tooltipDisplay="toolTipDisplay"
+      />
     </div>
-     <Area-Chart-Tooltip
+    <area-chart-tooltip
       :position="{
         x: tooltip.x,
         y: tooltip.y,
@@ -15,7 +16,7 @@
       :show-tooltip="show"
       :source-input="currentData"
     >
-    </Area-Chart-Tooltip>
+    </area-chart-tooltip>
   </div>
 </template>
 
@@ -26,7 +27,7 @@ import LineAreaChart from "@/components/common/areaChart/LineAreaChart"
 import data from "./areaChart.json"
 
 export default {
-  name: "area-chart",
+  name: "AreaChart",
   components: { LineAreaChart, AreaChartTooltip },
   data() {
     return {
@@ -35,7 +36,7 @@ export default {
         x: 0,
         y: 0,
       },
-       chartDimensions: {
+      chartDimensions: {
         width: 0,
         height: 0,
       },
@@ -48,7 +49,7 @@ export default {
     this.chartDimensions.height = this.$refs.chartBox.clientHeight
   },
 
-   methods: {
+  methods: {
     toolTipDisplay(...arg) {
       this.show = arg[0]
       if (this.show) {
