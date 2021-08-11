@@ -79,6 +79,7 @@
           </td>
         </template>
       </hux-data-table>
+      <observer v-if="customers.length" @intersect="intersected"></observer>
     </template>
     <template #footer-left>
       <tooltip>
@@ -101,6 +102,7 @@ import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import HuxSlider from "@/components/common/HuxSlider"
 import Tooltip from "@/components/common/Tooltip"
 import PageHeader from "@/components/PageHeader"
+import Observer from "@/components/common/Observer"
 
 export default {
   name: "CustomerDetails",
@@ -110,6 +112,7 @@ export default {
     HuxSlider,
     Tooltip,
     PageHeader,
+    Observer,
   },
 
   props: {
@@ -123,6 +126,7 @@ export default {
     return {
       loading: true,
       localDrawer: this.value,
+      batchCount: 1,
       columnDefs: [
         {
           text: "Hux ID",
@@ -142,6 +146,11 @@ export default {
             "A percentage that indicates the level of certainty that all incoming records were accurately matched to a given customer.",
         },
       ],
+      lastBatch: 0,
+      batchDetails: {
+        batchSize: 1000,
+        batchNumber: 1,
+      },
     }
   },
 
@@ -168,7 +177,8 @@ export default {
 
   async updated() {
     this.loading = true
-    await this.getCustomers()
+    await this.fetchCustomerByBatch()
+    this.calculateLastBatch()
     this.loading = false
   },
 
@@ -176,6 +186,20 @@ export default {
     ...mapActions({
       getCustomers: "customers/getAll",
     }),
+    async fetchCustomerByBatch() {
+      await this.getCustomers(this.batchDetails)
+      this.batchDetails.batchNumber++
+    },
+    intersected() {
+      if (this.batchDetails.batchNumber <= this.lastBatch) {
+        this.fetchCustomerByBatch()
+      }
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.customerOverview.total_customers / this.batchDetails.batchSize
+      )
+    },
   },
 }
 </script>
