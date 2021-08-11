@@ -67,7 +67,7 @@ steps:
     type: "build"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     dockerfile: "Dockerfile"
-    # image_name: "${{BUILD_NAME}}"
+    image_name: "${{BUILD_NAME}}"
     # tag: "${{DOCKER_TAG}}"
     target: test
     no_cache: false
