@@ -18,19 +18,19 @@ COPY . /app
 
 # build
 FROM dependencies AS build
+WORKDIR /app
 ARG OKTA_ISSUER
 ARG OKTA_CLIENT_ID
 ARG API_URL
 RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
     "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT_ID" \
     "\nVUE_APP_API_URL=$API_URL" \ > .env
-WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . /app
 RUN yarn build
 
-# serve
-FROM huxhub.repo.mgnt.in/nginx:alpine as serve
+# release
+FROM huxhub.repo.mgnt.in/nginx:alpine as release
 COPY --from=build /app/dist /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d

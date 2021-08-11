@@ -5,9 +5,8 @@ stages:
   - git
   - build_tag
   - set_env
-  - test_image
-  - test
-  - build
+  - tests
+  - build_app
   - artifactory
   - argo-deploy
 
@@ -63,42 +62,42 @@ steps:
       - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
   TestImage:
-    stage: "test_image"
-    title: "Build test image"
-    type: "build"
+    stage: tests
+    title: "Building test image."
+    type: build
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
-    dockerfile: "Dockerfile"
-    image_name: "${{BUILD_NAME}}"
-    # tag: "${{DOCKER_TAG}}"
+    dockerfile: Dockerfile
+    image_name: ${{BUILD_NAME}}
+    # tag: ${{DOCKER_TAG}}
     target: test
     no_cache: false
     no_cf_cache: false
 
-  Lint:
-    stage: "test"
-    title: "Running lint"
-    image: "${{TestImage}}"
-    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
-    commands:
-      - yarn lint
-
   UnitTests:
-    stage: "test"
-    title: "Running unit tests"
-    image: "${{TestImage}}"
-    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
+    stage: tests
+    title: "Running unit tests."
+    image: ${{TestImage}}
+    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
     commands:
       - yarn test:unit
 
-  DockerBuild:
-    stage: "build"
-    title: "Building Docker image"
-    type: "build"
-    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
-    dockerfile: "Dockerfile"
-    image_name: "${{BUILD_NAME}}"
-    tag: "${{DOCKER_TAG}}"
-    target: serve
+  Lint:
+    stage: tests
+    title: "Running lint."
+    image: ${{TestImage}}
+    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
+    commands:
+      - yarn lint
+
+  AppImage:
+    stage: build_app
+    title: "Building application image."
+    type: build
+    working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
+    dockerfile: Dockerfile
+    image_name: ${{BUILD_NAME}}
+    tag: ${{DOCKER_TAG}}
+    target: release
     no_cache: false
     no_cf_cache: false
     build_arguments:
@@ -119,6 +118,7 @@ steps:
       branch:
         only:
           - main
+          # TODO: remove used for testing
           - docker-multistage-builds
           - /^app.*/i
 
