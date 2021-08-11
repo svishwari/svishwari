@@ -60,9 +60,7 @@ class CourierTest(TestCase):
 
         """
         # setup the mock DB client
-        self.database = DatabaseClient(
-            "localhost", 27017, None, None
-        ).connect()
+        self.database = DatabaseClient("localhost", 27017, None, None).connect()
 
         self.database.drop_database(c.DATA_MANAGEMENT_DATABASE)
 
@@ -76,9 +74,7 @@ class CourierTest(TestCase):
 
         # create the list of destinations
         destinations = []
-        for destination in [
-            (c.DELIVERY_PLATFORM_FACEBOOK, self.auth_details_facebook)
-        ]:
+        for destination in [(c.DELIVERY_PLATFORM_FACEBOOK, self.auth_details_facebook)]:
             # TODO - remove when we remove delivery-platform types
             destination_doc = set_delivery_platform(
                 self.database,
@@ -122,15 +118,13 @@ class CourierTest(TestCase):
                 {
                     c.OBJECT_ID: self.audience_one[c.ID],
                     c.DESTINATIONS: [
-                        {c.OBJECT_ID: x}
-                        for x in self.audience_one[c.DESTINATIONS]
+                        {c.OBJECT_ID: x} for x in self.audience_one[c.DESTINATIONS]
                     ],
                 },
                 {
                     c.OBJECT_ID: self.audience_two[c.ID],
                     c.DESTINATIONS: [
-                        {c.OBJECT_ID: x}
-                        for x in self.audience_two[c.DESTINATIONS]
+                        {c.OBJECT_ID: x} for x in self.audience_two[c.DESTINATIONS]
                     ],
                 },
             ],
@@ -178,18 +172,14 @@ class CourierTest(TestCase):
             "get_store_value",
             return_value="sample_auth",
         ):
-            env_dict, secret_dict = map_destination_credentials_to_dict(
-                destination
-            )
+            env_dict, secret_dict = map_destination_credentials_to_dict(destination)
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
         self.assertDictEqual(
             env_dict,
             {
-                FacebookCredentials.FACEBOOK_APP_ID.name: auth[
-                    api_c.FACEBOOK_APP_ID
-                ],
+                FacebookCredentials.FACEBOOK_APP_ID.name: auth[api_c.FACEBOOK_APP_ID],
                 FacebookCredentials.FACEBOOK_AD_ACCOUNT_ID.name: auth[
                     api_c.FACEBOOK_AD_ACCOUNT_ID
                 ],
@@ -237,37 +227,23 @@ class CourierTest(TestCase):
             "get_store_value",
             return_value="sample_auth",
         ):
-            env_dict, secret_dict = map_destination_credentials_to_dict(
-                destination
-            )
+            env_dict, secret_dict = map_destination_credentials_to_dict(destination)
 
         # ensure mapping.
         auth = destination[api_c.AUTHENTICATION_DETAILS]
         self.assertDictEqual(
             env_dict,
             {
-                SFMCCredentials.SFMC_CLIENT_ID.name: auth[
-                    api_c.SFMC_CLIENT_ID
-                ],
-                SFMCCredentials.SFMC_AUTH_URL.name: auth[
-                    api_c.SFMC_AUTH_BASE_URI
-                ],
-                SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[
-                    api_c.SFMC_ACCOUNT_ID
-                ],
-                SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[
-                    api_c.SFMC_SOAP_BASE_URI
-                ],
+                SFMCCredentials.SFMC_CLIENT_ID.name: auth[api_c.SFMC_CLIENT_ID],
+                SFMCCredentials.SFMC_AUTH_URL.name: auth[api_c.SFMC_AUTH_BASE_URI],
+                SFMCCredentials.SFMC_ACCOUNT_ID.name: auth[api_c.SFMC_ACCOUNT_ID],
+                SFMCCredentials.SFMC_SOAP_ENDPOINT.name: auth[api_c.SFMC_SOAP_BASE_URI],
                 SFMCCredentials.SFMC_URL.name: auth[api_c.SFMC_REST_BASE_URI],
             },
         )
         self.assertDictEqual(
             secret_dict,
-            {
-                SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[
-                    api_c.SFMC_CLIENT_SECRET
-                ]
-            },
+            {SFMCCredentials.SFMC_CLIENT_SECRET.name: auth[api_c.SFMC_CLIENT_SECRET]},
         )
 
     def test_get_pairs(self):
@@ -279,9 +255,7 @@ class CourierTest(TestCase):
 
         """
 
-        delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
-        )
+        delivery_route = get_audience_destination_pairs(self.engagement[c.AUDIENCES])
 
         self.assertTrue(delivery_route)
         self.assertEqual(len(delivery_route), 2)
@@ -319,9 +293,7 @@ class CourierTest(TestCase):
         engagement = self.engagement.copy()
         engagement[c.AUDIENCES] = [engagement[c.AUDIENCES][0]]
 
-        delivery_route = get_audience_destination_pairs(
-            engagement[c.AUDIENCES]
-        )
+        delivery_route = get_audience_destination_pairs(engagement[c.AUDIENCES])
 
         self.assertTrue(delivery_route)
 
@@ -342,9 +314,7 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
-        )
+        delivery_route = get_audience_destination_pairs(self.engagement[c.AUDIENCES])
         self.assertTrue(delivery_route)
 
         request_mocker = requests_mock.Mocker()
@@ -372,7 +342,7 @@ class CourierTest(TestCase):
             audience_delivery_status = get_delivery_job_status(
                 self.database, batch_destination.audience_delivery_job_id
             )
-            self.assertEqual(audience_delivery_status, c.STATUS_PENDING)
+            self.assertEqual(audience_delivery_status, c.AUDIENCE_STATUS_DELIVERING)
 
     def test_destination_register_job(self):
         """Test destination batch register job
@@ -382,9 +352,7 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
-        )
+        delivery_route = get_audience_destination_pairs(self.engagement[c.AUDIENCES])
         self.assertTrue(delivery_route)
 
         # walk the delivery route
@@ -397,16 +365,12 @@ class CourierTest(TestCase):
                 batch_destination = get_destination_config(
                     self.database, self.engagement[c.ID], *pair
                 )
-            batch_destination.aws_envs[
-                AudienceRouterConfig.BATCH_SIZE.name
-            ] = 1000
+            batch_destination.aws_envs[AudienceRouterConfig.BATCH_SIZE.name] = 1000
             batch_destination.aws_envs[api_c.AUDIENCE_ROUTER_STUB_TEST] = 1
             self.assertIsNotNone(batch_destination)
 
             # Register job
-            return_value = {
-                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
-            }
+            return_value = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
             with mock.patch.object(
                 AWSBatchConnector,
                 "register_job",
@@ -414,7 +378,7 @@ class CourierTest(TestCase):
             ):
                 batch_destination.register(self.engagement)
 
-            self.assertEqual(batch_destination.result, c.STATUS_PENDING)
+            self.assertEqual(batch_destination.result, c.AUDIENCE_STATUS_DELIVERING)
 
     def test_destination_submit_job(self):
         """Test destination batch submit job
@@ -424,9 +388,7 @@ class CourierTest(TestCase):
         Returns:
 
         """
-        delivery_route = get_audience_destination_pairs(
-            self.engagement[c.AUDIENCES]
-        )
+        delivery_route = get_audience_destination_pairs(self.engagement[c.AUDIENCES])
         self.assertTrue(delivery_route)
 
         # walk the delivery route
@@ -441,16 +403,14 @@ class CourierTest(TestCase):
                 )
 
             # Register job
-            return_value = {
-                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}
-            }
+            return_value = {"ResponseMetadata": {"HTTPStatusCode": HTTPStatus.OK.value}}
             with mock.patch.object(
                 AWSBatchConnector,
                 "register_job",
                 return_value=return_value,
             ):
                 batch_destination.register(self.engagement)
-            self.assertEqual(batch_destination.result, c.STATUS_PENDING)
+            self.assertEqual(batch_destination.result, c.AUDIENCE_STATUS_DELIVERING)
 
             with mock.patch.object(
                 AWSBatchConnector, "submit_job", return_value=return_value
@@ -515,9 +475,7 @@ class CourierTest(TestCase):
             simulated_secret = (
                 f"simulated_secret_{destination[c.DELIVERY_PLATFORM_TYPE]}"
             )
-            for _ in api_c.DESTINATION_SECRETS[
-                destination[c.DELIVERY_PLATFORM_TYPE]
-            ]:
+            for _ in api_c.DESTINATION_SECRETS[destination[c.DELIVERY_PLATFORM_TYPE]]:
                 mock.patch.object(
                     parameter_store,
                     "get_store_value",
@@ -568,28 +526,20 @@ class CourierTest(TestCase):
             }
 
             # simulate the event return rule
-            client = boto3.client(
-                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
-            )
+            client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
             stub_client = Stubber(client)
-            stub_client.add_response(
-                "put_rule", put_rule_response, put_rule_params
-            )
+            stub_client.add_response("put_rule", put_rule_response, put_rule_params)
             stub_client.activate()
 
             mock_boto_client.return_value = client
 
-            result = set_cloud_watch_rule(
-                cw_name, "cron(15 0 * * ? *)", "fake_arn"
-            )
+            result = set_cloud_watch_rule(cw_name, "cron(15 0 * * ? *)", "fake_arn")
 
             # test mocked client result
             self.assertEqual(result, put_rule_response["RuleArn"])
 
     @mock.patch("huxunify.api.data_connectors.aws.get_aws_client")
-    def test_create_cloud_watch_rule_fail(
-        self, mock_boto_client: mock.MagicMock
-    ):
+    def test_create_cloud_watch_rule_fail(self, mock_boto_client: mock.MagicMock):
         """Test function create_cloud_watch_rule failure.
         Args:
             mock_boto_client (mock.MagicMock): mock boto client.
@@ -615,26 +565,18 @@ class CourierTest(TestCase):
 
             put_rule_response = {
                 "RuleArn": "test-result-rulearn",
-                "ResponseMetadata": {
-                    "HTTPStatusCode": HTTPStatus.BAD_REQUEST.value
-                },
+                "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.BAD_REQUEST.value},
             }
 
             # simulate the event return rule
-            client = boto3.client(
-                api_c.AWS_EVENTS_NAME, get_config().AWS_REGION
-            )
+            client = boto3.client(api_c.AWS_EVENTS_NAME, get_config().AWS_REGION)
             stub_client = Stubber(client)
-            stub_client.add_response(
-                "put_rule", put_rule_response, put_rule_params
-            )
+            stub_client.add_response("put_rule", put_rule_response, put_rule_params)
             stub_client.activate()
 
             mock_boto_client.return_value = client
 
-            result = set_cloud_watch_rule(
-                cw_name, "cron(15 0 * * ? *)", "fake_arn"
-            )
+            result = set_cloud_watch_rule(cw_name, "cron(15 0 * * ? *)", "fake_arn")
 
             # test mocked client result
             self.assertIsNone(result)
@@ -653,9 +595,7 @@ class CourierTest(TestCase):
         )
 
         # create the rule name
-        cw_name = (
-            f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
-        )
+        cw_name = f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
 
         batch_params = {
             "JobDefinition": "sample_job_def",
@@ -718,9 +658,7 @@ class CourierTest(TestCase):
         )
 
         # create the rule name
-        cw_name = (
-            f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
-        )
+        cw_name = f"{self.engagement[c.ID]}-{destination[c.DELIVERY_PLATFORM_TYPE]}"
 
         batch_params = {
             "JobDefinition": "sample_job_def",
@@ -749,9 +687,7 @@ class CourierTest(TestCase):
                     "ErrorMessage": "",
                 },
             ],
-            "ResponseMetadata": {
-                "HTTPStatusCode": HTTPStatus.BAD_REQUEST.value
-            },
+            "ResponseMetadata": {"HTTPStatusCode": HTTPStatus.BAD_REQUEST.value},
         }
 
         # simulate the event return rule
