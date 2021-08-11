@@ -767,7 +767,7 @@ class TotalCustomersGraphView(SwaggerView):
         while last_date <= today:
             total_customers.append(
                 {
-                    api_c.TOTAL_CUSTOMERS: randint(10000000, 30000000),
+                    api_c.TOTAL_CUSTOMERS: randint(50000, 156000),
                     api_c.NEW_CUSTOMERS_ADDED: randint(1, 5000),
                     api_c.DATE: last_date,
                 }
