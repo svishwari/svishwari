@@ -11,7 +11,7 @@ stages:
   - argo_deploy
 
 steps:
-  PrepareBuildDetails:
+  prepare_build_details:
     stage: prepare
     title: Prepare Build Details
     type: parallel
@@ -25,14 +25,14 @@ steps:
         title: Bump default BUILD_NUMBER annotation
         type: bump-build-number
 
-  CloneRepository:
+  clone_repository:
     stage: git
     title: Cloning ${{CF_REPO_NAME}} repository...
     type: git-clone
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
     revision: "${{CF_BRANCH}}"
 
-  NumberTag:
+  number_tag:
     stage: build_tag
     description: Set docker tag from build number
     type: freestyle
@@ -40,7 +40,7 @@ steps:
     commands:
       - cf_export DOCKER_TAG=${{CF_BUILD_NUMBER}}
 
-  VersionTag:
+  version_tag:
     stage: build_tag
     description: Set docker tag based Git tag
     type: freestyle
@@ -52,7 +52,7 @@ steps:
         only:
           - /^app.*/i
 
-  SetEnvVar:
+  set_env:
     stage: set_env
     title: Set environment variables
     type: freestyle
@@ -61,11 +61,11 @@ steps:
     commands: 
       - cat ./hux/frontend/ci/$TRIGGER_NAME/config.env >> ${{CF_VOLUME_PATH}}/env_vars_to_export
 
-  TestImage:
+  test_image:
     stage: tests
     title: "Building test image."
     type: build
-    working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
+    working_directory: "/app"
     dockerfile: Dockerfile
     image_name: ${{BUILD_NAME}}
     # tag: ${{DOCKER_TAG}}
@@ -73,23 +73,23 @@ steps:
     no_cache: false
     no_cf_cache: false
 
-  Lint:
+  lint:
     stage: tests
     title: "Running lint."
-    image: ${{TestImage}}
+    image: ${{test_image}}
     working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
     commands:
       - yarn lint
 
-  UnitTests:
+  unit_tests:
     stage: tests
     title: "Running unit tests."
-    image: ${{TestImage}}
+    image: ${{test_image}}
     working_directory: ${{CF_REPO_NAME}}/${{SUB_REPO}}
     commands:
       - yarn test:unit
 
-  AppImage:
+  app_image:
     stage: build_app
     title: "Building application image."
     type: build
@@ -105,7 +105,7 @@ steps:
       - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
       - OKTA_ISSUER=${{OKTA_ISSUER}}
 
-  PublishToArtifactory:
+  publish_to_artifactory:
     stage: artifactory
     title: Publish artifact and codefresh build info to Artifactory
     type: deloittehux/jfrog-docker-publish
@@ -122,7 +122,7 @@ steps:
           - docker-multistage-builds
           - /^app.*/i
 
-  Deployment:
+  deployment:
     stage: argo_deploy
     description: "Deploy the application"
     type: freestyle
