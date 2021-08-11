@@ -309,7 +309,6 @@ const multipleSectionFilters = () => {
     last_delivered: "2019-04-28T06:39:31.659551",
     create_time: "2021-06-24T18:44:00.381000",
     size: 3022188,
-    id: "60d4d270d364622dd6cc9aa7",
     update_time: "2021-06-24T18:44:00.381000",
   }
 }
@@ -471,7 +470,7 @@ export default function (server) {
   server.create("model", ltvModel)
 
   // seed customers
-  server.createList("customer", 100)
+  server.createList("customer", 5000)
 
   // seed data-extensions
   server.createList("dataExtension", 5)
@@ -480,7 +479,7 @@ export default function (server) {
   server.createList("campaignOption", 1)
 
   // seed notifications
-  server.createList("notification", 50)
+  server.createList("notification", 1000)
 
   // seed idr datafeeds
   server.createList("idrDataFeed", 10)

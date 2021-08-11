@@ -77,6 +77,7 @@
 <script>
 import Tooltip from "../Tooltip.vue"
 import Icon from "@/components/common/Icon"
+
 const ALL = -1
 export default {
   name: "HuxDataTable",

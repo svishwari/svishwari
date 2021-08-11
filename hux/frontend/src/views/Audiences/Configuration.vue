@@ -21,6 +21,7 @@
           :grow="i === 0 ? 2 : 1"
           :title="item.title"
           :icon="item.icon"
+          :height="80"
         >
           <template #subtitle-extended>
             <tooltip>
@@ -121,6 +122,28 @@
             :border="!isLookAlikeCreateable ? 'inactive' : ''"
             class="neroBlack--text step-3"
           >
+            <template slot="label">
+              <h5 class="text-h5 d-flex align-start">
+                Select destination(s)
+                <tooltip>
+                  <template #label-content>
+                    <v-icon color="primary" :size="12" class="ml-1 mb-2 mr-1">
+                      mdi-information-outline
+                    </v-icon>
+                  </template>
+                  <template #hover-content>
+                    <v-sheet max-width="240px">
+                      <h6 class="text-caption mb-2">Destination</h6>
+                      <p class="gray--text">
+                        Locations where Audiences are planned to be run.
+                      </p>
+                    </v-sheet>
+                  </template>
+                </tooltip>
+                - Optional
+              </h5>
+            </template>
+
             <v-row class="pt-1">
               <v-col cols="12">
                 <div class="d-flex align-center">

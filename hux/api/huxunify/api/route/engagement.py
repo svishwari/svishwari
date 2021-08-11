@@ -38,7 +38,6 @@ from huxunifylib.database.delivery_platform_management import (
 )
 from huxunify.api.schema.engagement import (
     EngagementPostSchema,
-    EngagementPutSchema,
     EngagementGetSchema,
     AudienceEngagementSchema,
     AudienceEngagementDeleteSchema,
@@ -49,6 +48,7 @@ from huxunify.api.schema.engagement import (
     CampaignPutSchema,
     DestinationEngagedAudienceSchema,
     weighted_engagement_status,
+    EngagementPutSchema,
 )
 from huxunify.api.schema.errors import NotFoundError
 from huxunify.api.route.utils import (
@@ -494,7 +494,6 @@ class UpdateEngagement(SwaggerView):
             f'Engagement "{engagement[db_c.NAME]}" updated by {user_name}.',
             api_c.ENGAGEMENT_TAG,
         )
-
         return (
             EngagementGetSchema().dump(engagement),
             HTTPStatus.OK,
@@ -652,12 +651,20 @@ class AddAudienceEngagement(SwaggerView):
         if not ObjectId.is_valid(engagement_id):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
+        database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+
+        if engagement is None:
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         body = AudienceEngagementSchema().load(
             request.get_json(), partial=True
         )
 
         # validate audiences exist
-        database = get_db_client()
         audience_names = []
         for audience in body[api_c.AUDIENCES]:
             audience_to_attach = get_audience(
@@ -674,7 +681,7 @@ class AddAudienceEngagement(SwaggerView):
             user_name,
             body[api_c.AUDIENCES],
         )
-        engagement = get_engagement(database, ObjectId(engagement_id))
+
         for audience_name in audience_names:
             create_notification(
                 database,
@@ -754,6 +761,14 @@ class DeleteAudienceEngagement(SwaggerView):
             return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
 
         database = get_db_client()
+
+        engagement = get_engagement(database, ObjectId(engagement_id))
+
+        if engagement is None:
+            return {
+                "message": api_c.ENGAGEMENT_NOT_FOUND
+            }, HTTPStatus.NOT_FOUND
+
         audience_ids = []
         body = AudienceEngagementDeleteSchema().load(
             request.get_json(), partial=True
@@ -761,9 +776,13 @@ class DeleteAudienceEngagement(SwaggerView):
         audience_names = []
         for audience_id in body[api_c.AUDIENCE_IDS]:
             if not ObjectId.is_valid(audience_id):
-                return HTTPStatus.BAD_REQUEST
+                return {"message": api_c.INVALID_ID}, HTTPStatus.BAD_REQUEST
             audience_ids.append(ObjectId(audience_id))
             audience = get_audience(database, ObjectId(audience_id))
+            if audience is None:
+                return {
+                    "message": api_c.AUDIENCE_NOT_FOUND
+                }, HTTPStatus.NOT_FOUND
             audience_names.append(audience[db_c.NAME])
 
         remove_audiences_from_engagement(
@@ -772,7 +791,7 @@ class DeleteAudienceEngagement(SwaggerView):
             user_name,
             audience_ids,
         )
-        engagement = get_engagement(database, ObjectId(engagement_id))
+
         for audience_name in audience_names:
             create_notification(
                 database,

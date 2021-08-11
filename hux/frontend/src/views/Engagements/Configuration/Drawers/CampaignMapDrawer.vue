@@ -16,8 +16,8 @@
         <data-cards
           v-if="!loading"
           bordered
-          :items="mappings"
           empty="No campaigns available to map to a delivery moment."
+          :items="mappings"
           :fields="[
             {
               key: 'campaign',
@@ -102,6 +102,7 @@ import Drawer from "@/components/common/Drawer.vue"
 import DataCards from "../../../../components/common/DataCards.vue"
 import HuxDropdown from "../../../../components/common/HuxDropdown.vue"
 import Tooltip from "../../../../components/common/Tooltip.vue"
+
 export default {
   name: "CampaignMapDrawer",
   components: { Drawer, DataCards, HuxDropdown, Tooltip },

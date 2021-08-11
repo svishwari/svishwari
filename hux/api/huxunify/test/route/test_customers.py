@@ -94,11 +94,29 @@ class TestCustomersOverview(TestCase):
         self.request_mocker.start()
 
         response = self.test_client.get(
-            self.customers,
+            f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}="
+            f"{api_c.CUSTOMERS_DEFAULT_BATCH_SIZE}&"
+            f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}="
+            f"{api_c.CUSTOMERS_DEFAULT_BATCH_NUMBER}",
             headers=t_c.STANDARD_HEADERS,
         )
         self.assertEqual(HTTPStatus.OK, response.status_code)
         data = response.json
+
+        response = self.test_client.get(
+            f"{self.customers}?{api_c.QUERY_PARAMETER_BATCH_SIZE}=abc&"
+            f"{api_c.QUERY_PARAMETER_BATCH_NUMBER}=def",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(
+            HTTPStatus.INTERNAL_SERVER_ERROR, response.status_code
+        )
+
+        response = self.test_client.get(
+            f"{self.customers}",
+            headers=t_c.STANDARD_HEADERS,
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
 
         self.assertEqual(data[api_c.TOTAL_CUSTOMERS], 1)
         self.assertTrue(data[api_c.CUSTOMERS_TAG])

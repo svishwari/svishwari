@@ -61,7 +61,7 @@ export default {
       align-items: center;
       .subprop-name {
         @extend .global-text-line;
-        flex: 1 0 40%;
+        flex: 1 0 30%;
         text-align: right;
         margin-right: 30px;
       }
