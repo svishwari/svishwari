@@ -40,9 +40,12 @@ const mutations = {
 }
 
 const actions = {
-  async getAll({ commit }) {
+  async getAll({ commit }, batchDetails) {
     try {
-      const response = await api.customers.all()
+      const response = await api.customers.getCustomers(
+        batchDetails.batchSize,
+        batchDetails.batchNumber
+      )
       commit("SET_ALL", response.data.customers)
     } catch (error) {
       handleError(error)
