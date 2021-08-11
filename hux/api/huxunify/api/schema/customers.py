@@ -275,3 +275,16 @@ class CustomerEventsSchema(Schema):
     date = DateTimeWithZ(required=True)
     total_event_count = Integer(required=True, example=5)
     event_type_counts = Nested(CustomerEventCountSchema)
+
+
+class TotalCustomersInsightsSchema(Schema):
+    """Total customer insights Schema"""
+
+    class Meta:
+        """Meta class for Schema"""
+
+        ordered = True
+
+    date = DateTimeWithZ(required=True)
+    total_customers = Integer(required=True, example=5)
+    new_customers_added = Integer(required=True, example=5)
