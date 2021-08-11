@@ -14,6 +14,7 @@ RUN yarn ci
 # test
 FROM dependencies AS test
 WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
 COPY . /app
 
 # build
