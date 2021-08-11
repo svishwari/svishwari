@@ -6,7 +6,7 @@ stages:
   - build_tag
   - set_env
   - test
-  - docker
+  - build
   - artifactory
   - argo-deploy
 
@@ -29,8 +29,8 @@ steps:
     stage: git
     title: Cloning ${{CF_REPO_NAME}} repository...
     type: git-clone
-    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
-    revision: '${{CF_BRANCH}}'
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_BRANCH}}"
 
   NumberTag:
     stage: build_tag
@@ -67,24 +67,20 @@ steps:
     type: "build"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     dockerfile: "Dockerfile"
-    image_name: "TestImage"
-    # tag: '${{DOCKER_TAG}}'
+    # image_name: "${{BUILD_NAME}}"
+    # tag: "${{DOCKER_TAG}}"
     target: test
     no_cache: false
     no_cf_cache: false
-    build_arguments:
-      - API_URL=${{API_URL}}
-      - OKTA_CLIENT_ID=${{OKTA_CLIENT_ID}}
-      - OKTA_ISSUER=${{OKTA_ISSUER}}
 
   DockerBuild:
-    stage: "docker"
+    stage: "build"
     title: "Building Docker image"
     type: "build"
     working_directory: "${{CF_REPO_NAME}}/${{SUB_REPO}}"
     dockerfile: "Dockerfile"
     image_name: "${{BUILD_NAME}}"
-    tag: '${{DOCKER_TAG}}'
+    tag: "${{DOCKER_TAG}}"
     target: serve
     no_cache: false
     no_cf_cache: false
@@ -98,10 +94,10 @@ steps:
     title: Publish artifact and codefresh build info to Artifactory
     type: deloittehux/jfrog-docker-publish
     arguments:
-      BUILD_NAME: '${{BUILD_NAME}}'
-      BUILD_NUMBER: '${{DOCKER_TAG}}'
-      JFROG_REGISTRY: '${{JFROG_REGISTRY}}'
-      BUILD_TAG: '${{DOCKER_TAG}}'
+      BUILD_NAME: "${{BUILD_NAME}}"
+      BUILD_NUMBER: "${{DOCKER_TAG}}"
+      JFROG_REGISTRY: "${{JFROG_REGISTRY}}"
+      BUILD_TAG: "${{DOCKER_TAG}}"
     when:
       branch:
         only:

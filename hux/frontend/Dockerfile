@@ -1,11 +1,5 @@
 # base
 FROM huxhub.repo.mgnt.in/node:lts-alpine AS base
-ARG OKTA_ISSUER
-ARG OKTA_CLIENT_ID
-ARG API_URL
-RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
-    "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT_ID" \
-    "\nVUE_APP_API_URL=$API_URL" \ > /tmp/env_file
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
@@ -16,7 +10,6 @@ FROM base as dependencies
 WORKDIR /app
 RUN yarn global add @vue/cli@4.5.6
 RUN yarn ci
-COPY --from=base /tmp/env_file .env
 
 # test
 FROM dependencies AS test
@@ -27,6 +20,12 @@ RUN yarn test:unit
 
 # build
 FROM dependencies AS build
+ARG OKTA_ISSUER
+ARG OKTA_CLIENT_ID
+ARG API_URL
+RUN echo -e "VUE_APP_OKTA_ISSUER=$OKTA_ISSUER" \
+    "\nVUE_APP_OKTA_CLIENT_ID=$OKTA_CLIENT_ID" \
+    "\nVUE_APP_API_URL=$API_URL" \ > .env
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . /app
