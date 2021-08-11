@@ -270,7 +270,7 @@ class DestinationBatchJob:
             response_batch_submit["ResponseMetadata"]["HTTPStatusCode"]
             != HTTPStatus.OK.value
         ):
-            status = db_const.STATUS_FAILED
+            status = db_const.AUDIENCE_STATUS_ERROR
 
         set_delivery_job_status(
             self.database,

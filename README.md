@@ -20,6 +20,7 @@ Hux Unified API|[https://unified-api-dev.main.use1.hux-unified-dev1.in/api/v1/ui
 CDM API|[https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-dev1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-stg1.in/docs#/)|[https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/](https://customer-profile-api.main.use1.hux-unified-rc1.in/docs#/)| - |
 Tecton|[http://decisioning-client.tecton.ai/](http://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|[https://decisioning-client.tecton.ai/](https://decisioning-client.tecton.ai/)|
 Grafana|[https://grafana.hux-unified-dev1.in/](https://grafana.hux-unified-dev1.in/)|[https://grafana.hux-unified-stg1.in/](https://grafana.hux-unified-stg1.in/)|[https://grafana.hux-unified-rc1.in/](https://grafana.hux-unified-rc1.in/)|[https://grafana.hux-decisioning.in/](https://grafana.hux-decisioning.in/)|
+Artifactory|[https://repo.mgnt.in/artifactory](repo.mgnt.in/artifactory)|[https://repo.mgnt.in/artifactory](repo.mgnt.in/artifactory)|[https://repo.mgnt.in/artifactory](repo.mgnt.in/artifactory)|[https://repo.mgnt.in/artifactory](repo.mgnt.in/artifactory)|
 Prometheus| - | - | - | - |
 
 ## Introduction (Project Justice League)
