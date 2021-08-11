@@ -10,17 +10,26 @@
       class="mx-auto tooltip-style"
     >
       <div class="bar-hover">
+        <div color="naroBlack">
+          {{ sourceInput.date | date("MMM DD [,] YYYY") }}
+        </div>
         <div>
           <span class="append-circle color-women"></span
-          ><span class="font-size-tooltip">{{ sourceInput.women_spend | currency }}</span>
+          ><span class="font-size-tooltip">{{
+            sourceInput.women_spend | currency
+          }}</span>
         </div>
         <div>
           <span class="append-circle color-men"></span
-          ><span class="font-size-tooltip">{{ sourceInput.men_spend | currency }}</span>
+          ><span class="font-size-tooltip">{{
+            sourceInput.men_spend | currency
+          }}</span>
         </div>
         <div>
           <span class="append-circle color-other"></span
-          ><span class="font-size-tooltip">{{ sourceInput.others_spend | currency }}</span>
+          ><span class="font-size-tooltip">{{
+            sourceInput.others_spend | currency
+          }}</span>
         </div>
       </div>
     </v-card>
@@ -85,36 +94,36 @@ export default {
 
 .tooltip-style {
   @extend .income-tooltip-style;
-  max-width: 96px;
-  height: 104px;
+  max-width: 110px;
+  height: 110px;
   top: -420px;
   left: -242px;
   z-index: 1;
 }
 .append-circle {
-  height: 15px;
-  width: 15px;
+  height: 12px;
+  width: 12px;
   background-color: #fff;
   border-radius: 50%;
   display: inline-block;
-  margin-top: 10px;
+  margin-top: 6px;
   margin-right: 8px;
 }
 .color-women {
   border: 1px solid rgba(0, 85, 135, 1);
 }
 .color-men {
-  border: 1px solid #0c9ddb;
+  border: 1px solid var(--v-royalBlue-base);
 }
 .color-other {
-  border: 1px solid #42effd;
+  border: 1px solid var(--v-oceanBlue-base);
 }
 .font-size-tooltip {
   font-family: Open Sans;
-font-style: normal;
-font-weight: normal;
-font-size: 12px;
-line-height: 16px;
-color: #4F4F4F;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--v-gray-base);
 }
 </style>

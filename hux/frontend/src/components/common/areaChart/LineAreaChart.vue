@@ -239,7 +239,7 @@ export default {
             .attr("r", 3.5)
             .attr("cx", () => xScale(new Date(points.data.date)) + 40)
             .attr("cy", () => yScale(points[1]))
-            .attr("data", (d) => points.data)
+            .attr("data", () => points.data)
             .style("fill", colorCodes[index])
             .attr("stroke", colorCodes[index])
             .on("mouseover", (d) => dotHoverIn(d, points.data))
@@ -259,7 +259,7 @@ export default {
           .attr("x2", xPosition)
           .attr("y2", height)
 
-        svg.selectAll(".dot").each(function (_, i) {
+        svg.selectAll(".dot").each(function () {
           if (this.getAttribute("cx") == xPosition) {
             svg
               .append("circle")
@@ -276,7 +276,7 @@ export default {
         this.tooltipDisplay(true, areaData)
       }
 
-      let dotHoverOut = (d) => {
+      let dotHoverOut = () => {
         d3Select.selectAll(".hover-line").remove()
         d3Select.selectAll(".hover-circle").remove()
         this.tooltipDisplay(false)
@@ -299,10 +299,10 @@ export default {
         .enter()
         .append("g")
         .attr("class", "legend")
-        .attr("transform", function (d) {
+        .attr("transform", function () {
           let y = line * 25
           let x = col
-          col += 5 * 3 + 25
+          col += 35
           return "translate(" + x + "," + y + ")"
         })
 
@@ -310,14 +310,14 @@ export default {
         .append("circle")
         .attr("cx", 10)
         .attr("cy", 10)
-        .attr("r", 3)
+        .attr("r", 2.5)
         .style("fill", function (d) {
           return color(d.label)
         })
 
       legend
         .append("text")
-        .attr("x", 18)
+        .attr("x", 16)
         .attr("y", 9)
         .attr("dy", ".55em")
         .attr("class", "neroBlack--text")
